@@ -1,0 +1,37 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Physics Subtopic Schema",
+    "description": "Schema for sharded subtopic files in the Physics Lab project.",
+    "type": "object",
+    "additionalProperties": {
+        "type": "object",
+        "required": ["title", "parents", "content"],
+        "properties": {
+            "title": { 
+                "type": "string", 
+                "minLength": 3,
+                "description": "The display title of the subtopic in Title Case."
+            },
+            "parents": { 
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "List of slug(s) for the parent topics/subtopics."
+            },
+            "content": { 
+                "type": "string", 
+                "minLength": 100,
+                "description": "Detailed university-level HTML content (6 sections recommended)."
+            },
+            "formula_ids": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "List of formula IDs referencing the global formula_registry."
+            },
+            "status": { 
+                "type": "string", 
+                "enum": ["published", "draft"],
+                "default": "published"
+            }
+        }
+    }
+}

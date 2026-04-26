@@ -192,10 +192,8 @@ class PhysicsOrchestrator:
         if slug in self.data["subtopics"]:
             existing_shard = self.slug_to_shard.get(slug, "Unknown")
             print(f"WARNING: Slug [{slug}] already exists in {existing_shard}. Merging/Updating instead.")
-            # If it already exists, we will update the existing shard entry instead of creating a new one
             shard_file = existing_shard
         else:
-            # New subtopic: Determine target shard
             parent_slug = subtopic_data.get("parents", ["misc"])[0]
             shard_file = f"{parent_slug}.json"
             if parent_slug in self.data["subtopics"]:
@@ -207,13 +205,29 @@ class PhysicsOrchestrator:
         self.shards[shard_file][slug] = subtopic_data
         self.data["subtopics"][slug] = subtopic_data
         self.slug_to_shard[slug] = shard_file
-        
-        # 2. Registry update
         self.registry[subtopic_data["title"]] = slug
         self._refresh_sorted_titles()
-        
         self.apply_auto_links(slug)
         return True
+
+    def ingest_subtopic_platinum(self, slug, subtopic_data):
+        """Atomsically adds a subtopic and its local formulas to the registry, returning final IDs."""
+        # 1. Extract and register local formulas
+        final_ids = subtopic_data.get("formula_ids", [])
+        if "formulas" in subtopic_data:
+            for f_obj in subtopic_data["formulas"]:
+                f_id = self.add_formula(
+                    f_obj.get("title"),
+                    f_obj.get("equation"),
+                    f_obj.get("interpretation") or f_obj.get("breakdown")
+                )
+                final_ids.append(f_id)
+            del subtopic_data["formulas"]
+        
+        subtopic_data["formula_ids"] = list(set(final_ids))
+        
+        # 2. Hand over to standard sharding logic
+        return self.add_subtopic(slug, subtopic_data)
 
     def add_formula(self, title, equation, interpretation):
         """Adds a formula to the registry and returns its ID."""

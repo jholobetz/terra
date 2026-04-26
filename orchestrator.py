@@ -48,7 +48,7 @@ class PhysicsOrchestrator:
                 elif file == "entities.json":
                     self.data["entities"] = content
                 elif file == "search_index.json":
-                    pass
+                    self.data["search_index"] = content
                 else:
                     # Subtopic shard
                     self.shards[file] = content
@@ -188,6 +188,10 @@ class PhysicsOrchestrator:
 
     def add_subtopic(self, slug, subtopic_data, link_in_parent=True):
         """Adds subtopic to appropriate shard and updates registry. Prevents duplicates."""
+        # 0. Protected Slug Check (Main Topics)
+        if slug in self.data["topics"]:
+            raise Exception(f"CRITICAL: Attempted to overwrite Protected Main Topic: [{slug}]. Operation denied.")
+
         # 1. Mandatory Global Duplicate Check
         if slug in self.data["subtopics"]:
             existing_shard = self.slug_to_shard.get(slug, "Unknown")

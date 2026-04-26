@@ -246,27 +246,63 @@ class PhysicsOrchestrator:
         }
         return f_id
 
-    def build(self):
-        """Pre-renders all subtopics into static HTML for performance."""
-        print("Starting Static Build...")
+    def get_server_url(self):
+        """Extracts the primary test server URL from GEMINI.md."""
+        gemini_path = ".gemini/GEMINI.md"
+        if os.path.exists(gemini_path):
+            with open(gemini_path, "r") as f:
+                match = re.search(r"Primary Test Server:.*`(http[^`]+)`", f.read())
+                if match:
+                    return match.group(1).rstrip("/")
+        return "http://localhost" # Fallback
+
+    def build_selective(self, slugs):
+        """Pre-renders specific subtopics into static HTML."""
+        print(f"Starting Selective Build for {len(slugs)} topics...")
         output_dir = "public/cache/subtopic"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
             
-        # Ensure server is running for build
-        server = subprocess.Popen(["php", "-S", "localhost:8001", "-t", "public"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["sleep", "2"])
+        base_url = self.get_server_url()
+        print(f"Targeting Server: {base_url}")
+        success_count = 0
+        
+        for slug in slugs:
+            sys.stdout.write(f"  -> Rendering {slug}...")
+            sys.stdout.flush()
+            try:
+                url = f"{base_url}/physics/subtopic/{slug}?preview=0"
+                result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=15)
+                if result.stdout:
+                    with open(os.path.join(output_dir, f"{slug}.html"), "w") as f:
+                        f.write(result.stdout)
+                    success_count += 1
+                print(" Done.")
+            except Exception as e:
+                print(f" FAILED: {str(e)}")
+        
+        print(f"SUCCESS: Pre-rendered {success_count} static pages.")
+
+    def build(self):
+        """Pre-renders all indexed topics into static HTML."""
+        print("Starting Full Static Build...")
+        output_dir = "public/cache/subtopic"
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            
+        base_url = self.get_server_url()
+        print(f"Targeting Server: {base_url}")
         
         success_count = 0
-        total = len(self.data["subtopics"])
+        total = len(self.data["search_index"])
         
-        for i, slug in enumerate(self.data["subtopics"]):
+        for i, slug in enumerate(self.data["search_index"]):
             sys.stdout.write(f"\rBuilding {i+1}/{total}: {slug}...")
             sys.stdout.flush()
             
             try:
-                url = f"http://localhost:8001/physics/subtopic/{slug}?preview=1"
-                result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=5)
+                url = f"{base_url}/physics/subtopic/{slug}?preview=0"
+                result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=10)
                 if result.stdout:
                     with open(os.path.join(output_dir, f"{slug}.html"), "w") as f:
                         f.write(result.stdout)
@@ -274,7 +310,6 @@ class PhysicsOrchestrator:
             except Exception as e:
                 print(f"\nERROR building {slug}: {str(e)}")
         
-        server.terminate()
         print(f"\nSUCCESS: Pre-rendered {success_count} static pages in {output_dir}")
 
     def validate(self):

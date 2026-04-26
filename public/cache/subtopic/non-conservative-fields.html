@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Conservative Electric Fields - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="0624a87cc66713f86be2949a70917aee">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="0624a87cc66713f86be2949a70917aee"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
+            &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
+        </div>
+        <nav>
+        <a href="/physics">Home</a>
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/stokes-theorem">Stokes' Theorem</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/faradays-law">Faraday's Law</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">Non-Conservative Electric Fields</span>
+    </nav>
+
+    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
+        <div id="abstract-diagram" 
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
+             data-config='{"type":"abstract"}'>
+        </div>
+        <div style="position: relative; z-index: 1;">
+            <h1>Non-Conservative Electric Fields</h1>
+        </div>
+    </header>
+    
+    <div class="content-body">
+        <p>A <strong>Non-Conservative Electric Field</strong> is a vector field whose line integral around a <strong>closed path</strong> is non-zero, meaning work done on a charge depends on the path taken. In university-level physics, these fields are the direct result of <a href="/physics/subtopic/electromagnetic-induction" class="subtopic-link"><strong>Electromagnetic Induction</strong></a>. Unlike electrostatic fields, which are <strong>irrotational</strong> (\( 
+abla \times \mathbf{E} = 0 \)), non-conservative electric fields have a non-zero <strong>curl</strong>, driven by the rate of change of magnetic flux.</p>
+
+                    <h3>1. Faraday's Law and Induction</h3>
+                    <p>The existence of non-conservative electric fields is dictated by <a href="/physics/subtopic/faradays-law" class="subtopic-link"><strong>Faraday's Law</strong></a>:
+                    \[ 
+abla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t} \]
+                    This equation proves that a changing magnetic field (\( \mathbf{B} \)) is the physical "source" of electric <strong>vorticity</strong>. While static charges create radial, conservative fields, time-varying magnetic environments create "swirling" electric fields that loop around the magnetic field lines.</p>
+
+                    <h3>2. Breaking the Potential Definition</h3>
+                    <p>In electrostatics, the electric field is defined as the negative <strong>gradient</strong> of a scalar potential (\( \mathbf{E} = -
+abla \Phi \)). For a non-conservative field, this definition is mathematically impossible because the curl of a gradient is always zero. To represent the full field, one must include the <strong>Magnetic Vector Potential</strong> (\( \mathbf{A} \)):
+                    \[ \mathbf{E} = -
+abla \Phi - \frac{\partial \mathbf{A}}{\partial t} \]
+                    The second term represents the non-conservative contribution, showing that "Voltage" becomes an ambiguous, path-dependent quantity in dynamic circuits.</p>
+
+                    <h3>3. Work in a Closed Loop</h3>
+                    <p>For a conservative field, moving a charge around a <strong>closed path</strong> results in zero net work. In a non-conservative field, the work per unit charge—known as <a href="/physics/subtopic/electromotive-force" class="subtopic-link"><strong>Electromotive Force (EMF)</strong></a>—is non-zero:
+                    \[ \mathcal{E} = \oint \mathbf{E} \cdot d\mathbf{l} = -\frac{d\Phi_m}{dt} \]
+                    this is principle behind the <strong>circular loops</strong> of a transformer or generator. The field does work on electrons in the wire, converting magnetic energy into electrical energy through its rotational geometry.</p>
+
+                    <h3>4. Topology and the EMF</h3>
+                    <p>Non-conservative fields often exist in <strong>multiply connected</strong> regions, such as the space around a solenoid. Even if the magnetic field is confined inside the solenoid, the electric field induced outside can have a non-zero <strong>circulation</strong>. This highlights the role of <strong>Topology</strong> in field theory: the global connectivity of the field lines dictates the available energy for work.</p>
+
+                    <h3>5. Eddy Currents and Heat</h3>
+                    <p>When a bulk conductor is placed in a changing magnetic field, non-conservative electric fields induce internal loops of current called <strong>Eddy Currents</strong>. These currents follow the path-dependent nature of the field, leading to <strong>energy dissipation</strong> via Joule heating. This effect is used in magnetic braking and induction stoves, where the "Swirl" of the electric field is used to perform macroscopic mechanical work.</p>
+
+                    <h3>6. Relativistic Frame Effects</h3>
+                    <p>In the framework of <strong>Special Relativity</strong>, a field that appears purely electrostatic (conservative) to one observer may appear as a combination of electric and magnetic fields (non-conservative) to another. This <strong>Lorentz Transformation</strong> proves that the "Conservative" status of a field is <strong>observer-dependent</strong>, linking the subatomic behavior of charges to the 4D geometry of the <strong>Minkowski Spacetime</strong>.</p>    </div>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/electromagnetic-induction" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Electromagnetic Induction</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/transformer-emf" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Transformer EMF</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/closed-path" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Closed Path Integrals and Circulation</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <script src="/js/diagram_engine.js" defer></script>
+
+    <section class="equations-section">
+    <h2>Key Equations</h2>
+    <p class="instruction">Click a formula to see its breakdown.</p>
+    <ul class="equations-list" id="equations-list">
+                                    <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Non-Zero Curl</span>
+                                                <span class="equation">\[ 
+abla \times \mathbf{E} = -\partial \mathbf{B} / \partial t 
+eq 0 \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Non-Zero Curl:</strong> The mathematical condition where an electric field wraps around itself in loops.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Voltage-from-Motion</span>
+                                                <span class="equation">\[ \oint \mathbf{E} \cdot d\mathbf{l} = \text{EMF} \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Voltage-from-Motion:</strong> How a changing magnet creates a "push" that doesn't depend on start/end points.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Energy Drift</span>
+                                                <span class="equation">\[ W = q \oint \mathbf{E} \cdot d\mathbf{l} 
+eq 0 \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Energy Drift:</strong> Why moving a charge in a circle through these fields results in a change in its energy.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Gradient Break</span>
+                                                <span class="equation">\[ \mathbf{E}_{ind} = -\partial \mathbf{A} / \partial t \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Gradient Break:</strong> Why you cannot use a simple scalar "height" map to describe induced electricity.                        </div>
+                                            </div>
+                </li>
+                        </ul>
+</section>
+
+<script nonce="0624a87cc66713f86be2949a70917aee">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const container = event.target.closest('.equation-container');
+        if (!container) return;
+
+        const breakdown = container.querySelector('.breakdown');
+        if (breakdown) {
+            const isVisible = breakdown.style.display === 'block';
+            breakdown.style.display = isVisible ? 'none' : 'block';
+            container.classList.toggle('active', !isVisible);
+            
+            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([breakdown]);
+            }
+        }
+    });
+});
+</script>
+<style>
+.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
+.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
+.equation-container:hover { background: rgba(255,255,255,0.05); }
+.equation-container.active { border-color: var(--accent); }
+</style>
+
+    <footer class="subtopic-footer">
+                    <a href="/physics/subtopic/faradays-law" class="btn btn-secondary">&larr; Back to Faraday's Law</a>
+            </footer>
+</article>
+                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
+                        <span>🔄</span> <strong>Sync Now</strong>
+                    </a>
+                </div>    </main>
+</body>
+</html>

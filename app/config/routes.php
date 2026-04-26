@@ -34,6 +34,7 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/simulations/@slug', [ $app->physicsController(), 'viewSimulation' ]);
 		$router->get('/topic/@slug', [ $app->physicsController(), 'viewTopic' ]);
 		$router->get('/subtopic/@slug', [ $app->physicsController(), 'viewSubtopic' ]);
+		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 	});
 	
 }, [ SecurityHeadersMiddleware::class ]);

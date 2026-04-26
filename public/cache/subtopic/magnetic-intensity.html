@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magnetic Intensity (H-Field) - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="492c4c0444aabb669380f336c6a4c51c">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="492c4c0444aabb669380f336c6a4c51c"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
+            &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
+        </div>
+        <nav>
+        <a href="/physics">Home</a>
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/stokes-theorem">Stokes' Theorem</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/amperes-law">Ampère's Law</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">Magnetic Intensity (H-Field)</span>
+    </nav>
+
+    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
+        <div id="abstract-diagram" 
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
+             data-config='{"type":"abstract"}'>
+        </div>
+        <div style="position: relative; z-index: 1;">
+            <h1>Magnetic Intensity (H-Field)</h1>
+        </div>
+    </header>
+    
+    <div class="content-body">
+        <p><strong>Magnetic Intensity</strong> (\( \mathbf{H} \)), also known as the auxiliary magnetic field, is a vector field introduced to simplify the study of magnetism in material media. While the fundamental field \( \mathbf{B} \) represents the total magnetic induction (including the response of the material), \( \mathbf{H} \) is primarily associated with the <strong>Free Currents</strong> that can be directly controlled. This distinction is vital for engineering applications and for understanding how materials like iron amplify or shield magnetic fields.</p>
+
+                    <h3>1. Definition: Beyond the B-Field</h3>
+                    <p>In a vacuum, \( \mathbf{B} \) and \( \mathbf{H} \) are simply related by the constant \( \mu_0 \). In matter, however, the material becomes magnetized, creating its own internal magnetic contribution. The <strong>Magnetic Intensity</strong> is defined as \( \mathbf{H} \equiv \frac{\mathbf{B}}{\mu_0} - \mathbf{M} \), where \( \mathbf{M} \) is the magnetization. This definition effectively "subtracts" the material's internal response, allowing physicists to focus on the external sources of the field.</p>
+
+                    <h3>2. Ampère's Law in Matter</h3>
+                    <p>The primary advantage of the \( \mathbf{H} \) field is that it obeys a modified <a href="/physics/subtopic/amperes-law" class="subtopic-link"><strong>Ampère's Law</strong></a>: \( 
+abla \times \mathbf{H} = \mathbf{J}_f \). Here, \( \mathbf{J}_f \) refers only to the free current density (e.g., current in a copper wire). All the complex, microscopic "bound currents" of the material are hidden within the definition of \( \mathbf{H} \). This makes it the preferred field for calculating the magnetic response of transformers, solenoids with cores, and magnetic circuits.</p>
+
+                    <h3>3. Constitutive Relations and Permeability</h3>
+                    <p>The relationship between \( \mathbf{B} \) and \( \mathbf{H} \) in a material is known as a <strong>Constitutive Relation</strong>. For linear, isotropic materials, this expressed as \( \mathbf{B} = \mu \mathbf{H} \), where \( \mu \) is the <strong>Magnetic Permeability</strong>. The ratio \( \mu/\mu_0 \) is the relative permeability (\( \mu_r \)), which can range from nearly 1 for air to over 5,000 for high-grade transformer steel, reflecting the material's ability to concentrate magnetic flux.</p>
+
+                    <h3>4. Boundary Conditions at Interfaces</h3>
+                    <p>The \( \mathbf{H} \) field is governed by specific <strong>Interface Conditions</strong>. Applying the integral form of Ampère's Law shows that the tangential component of \( \mathbf{H} \) is discontinuous across a boundary by an amount equal to the surface current density: \( \hat{\mathbf{n}} \times (\mathbf{H}_2 - \mathbf{H}_1) = \mathbf{K}_f \). If there is no surface current, the tangential \( \mathbf{H} \) is continuous, a rule used to determine how magnetic fields "bend" when entering a magnetic core.</p>
+
+                    <h3>5. Magnetic Scalar Potential (\( \Phi_m \))</h3>
+                    <p>In regions where there are no free currents (\( \mathbf{J}_f = 0 \)), the curl of \( \mathbf{H} \) is zero. In such regions, the \( \mathbf{H} \) field can be expressed as the negative gradient of a scalar potential: \( \mathbf{H} = -
+abla \Phi_m \). This allows magnetic problems to be solved using the same mathematical techniques as <strong>Electrostatics</strong>, such as solving <a href="/physics/subtopic/laplace-equation" class="subtopic-link"><strong>Laplace's Equation</strong></a> for the potential to find the field distribution around permanent magnets.</p>
+
+                    <h3>6. Hysteresis and Non-Linearity</h3>
+                    <p>In <strong>Ferromagnetic</strong> materials, the relationship between \( \mathbf{B} \) and \( \mathbf{H} \) is non-linear and exhibits <strong>Hysteresis</strong>. The value of \( \mathbf{B} \) depends not only on the current value of \( \mathbf{H} \), but also on the history of the material. When plotted on a B-H curve, this creates a loop that represents the energy dissipated as heat during each cycle of magnetization. Understanding the H-field is essential for minimizing these "core losses" in AC electrical machinery.</p>
+
+<h3>Related Theoretical Frameworks</h3><p>The study of Magnetic Intensity (H-Field) is intrinsically linked to the <strong><a href="/physics/subtopic/magnetic-field-relation" class="subtopic-link">Constitutive Relations in Magnetic Matter</a></strong>, which provides the necessary analytical depth for understanding the underlying physical manifold.</p>    </div>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/laplaces-equation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Laplace's Equation in Magnetostatics</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/magnetization" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Magnetization and Magnetic Materials</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/field-intensity-relation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Field-Intensity Relation</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <script src="/js/diagram_engine.js" defer></script>
+
+    <section class="equations-section">
+    <h2>Key Equations</h2>
+    <p class="instruction">Click a formula to see its breakdown.</p>
+    <ul class="equations-list" id="equations-list">
+                                    <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Auxiliary Field</span>
+                                                <span class="equation">\[ \mathbf{H} = \frac{\mathbf{B}}{\mu_0} - \mathbf{M} \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Auxiliary Field:</strong> The vector field defined to isolate the effects of free currents from bound material currents.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Source Equation</span>
+                                                <span class="equation">\[ 
+abla \times \mathbf{H} = \mathbf{J}_f + \frac{\partial \mathbf{D}}{\partial t} \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Source Equation:</strong> The law stating that the curl of H is determined solely by free charge flow.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Material Response</span>
+                                                <span class="equation">\[ \mathbf{B} = \mu \mathbf{H} \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Material Response:</strong> The constant that measures how much magnetic induction is generated per unit of intensity.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Boundary Rule</span>
+                                                <span class="equation">\[ \hat{\mathbf{n}} \times (\mathbf{H}_2 - \mathbf{H}_1) = \mathbf{K}_f \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Boundary Rule:</strong> States that the tangential H-field is conserved across an interface unless a surface current exists.                        </div>
+                                            </div>
+                </li>
+                        </ul>
+</section>
+
+<script nonce="492c4c0444aabb669380f336c6a4c51c">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const container = event.target.closest('.equation-container');
+        if (!container) return;
+
+        const breakdown = container.querySelector('.breakdown');
+        if (breakdown) {
+            const isVisible = breakdown.style.display === 'block';
+            breakdown.style.display = isVisible ? 'none' : 'block';
+            container.classList.toggle('active', !isVisible);
+            
+            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([breakdown]);
+            }
+        }
+    });
+});
+</script>
+<style>
+.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
+.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
+.equation-container:hover { background: rgba(255,255,255,0.05); }
+.equation-container.active { border-color: var(--accent); }
+</style>
+
+    <footer class="subtopic-footer">
+                    <a href="/physics/subtopic/amperes-law" class="btn btn-secondary">&larr; Back to Ampère's Law</a>
+            </footer>
+</article>
+                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
+                        <span>🔄</span> <strong>Sync Now</strong>
+                    </a>
+                </div>    </main>
+</body>
+</html>

@@ -4,6 +4,7 @@ import os
 import subprocess
 import shutil
 import hashlib
+import sys
 
 class PhysicsOrchestrator:
     def __init__(self, content_dir="app/config/content", registry_path="global_slug_registry.json"):
@@ -14,7 +15,8 @@ class PhysicsOrchestrator:
             "topics": {},
             "subtopics": {},
             "formula_registry": {},
-            "constants": {}
+            "constants": {},
+            "entities": {}
         }
         self.slug_to_shard = {}
         self.load_all_shards()
@@ -43,6 +45,10 @@ class PhysicsOrchestrator:
                     self.data["formula_registry"] = content
                 elif file == "constants.json":
                     self.data["constants"] = content
+                elif file == "entities.json":
+                    self.data["entities"] = content
+                elif file == "search_index.json":
+                    pass
                 else:
                     # Subtopic shard
                     self.shards[file] = content
@@ -53,8 +59,8 @@ class PhysicsOrchestrator:
     def _refresh_sorted_titles(self):
         self.sorted_titles = sorted(self.registry.keys(), key=len, reverse=True)
 
-    def save(self):
-        """Saves all modified shards and registries."""
+    def save(self, auto_commit=True, commit_msg=None):
+        """Saves all modified shards and registries and optionally commits to Git."""
         # 1. Save Registries/Categories
         with open(os.path.join(self.content_dir, "categories.json"), "w") as f:
             json.dump(self.data["topics"], f, indent=4)
@@ -62,11 +68,11 @@ class PhysicsOrchestrator:
             json.dump(self.data["formula_registry"], f, indent=4)
         with open(os.path.join(self.content_dir, "constants.json"), "w") as f:
             json.dump(self.data["constants"], f, indent=4)
+        with open(os.path.join(self.content_dir, "entities.json"), "w") as f:
+            json.dump(self.data["entities"], f, indent=4)
         
         # 2. Save Subtopic Shards
-        # Re-distribute data back to shards before saving
         for shard_name, shard_content in self.shards.items():
-            # Update shard content from master subtopics map
             for slug in shard_content:
                 if slug in self.data["subtopics"]:
                     shard_content[slug] = self.data["subtopics"][slug]
@@ -79,6 +85,25 @@ class PhysicsOrchestrator:
             json.dump(self.registry, f, indent=4)
             
         print(f"SUCCESS: Sharded save complete in {self.content_dir}")
+
+        if auto_commit:
+            self.commit_to_git(commit_msg)
+
+    def commit_to_git(self, message=None):
+        """Automates the git commit for content changes."""
+        if not message:
+            message = "Great Expansion: Content Update " + subprocess.check_output(["date", "+%Y-%m-%d %H:%M"]).decode().strip()
+        
+        try:
+            print(f"Committing to Git: {message}...")
+            # Stage only content and registry
+            subprocess.run(["git", "add", "app/config/content/*.json"], check=True)
+            subprocess.run(["git", "add", "global_slug_registry.json"], check=True)
+            # Commit
+            subprocess.run(["git", "commit", "-m", message], capture_output=True)
+            print("✓ Git commit successful.")
+        except Exception as e:
+            print(f"WARNING: Git commit failed: {str(e)}")
 
     def mask_mathjax(self, content):
         placeholders = []
@@ -102,6 +127,9 @@ class PhysicsOrchestrator:
         content = topic["content"]
         original_content = content
         
+        # 1. Entity Linking (Historical Figures/Facilities)
+        content = self._apply_entity_links(content)
+
         masked_content, placeholders = self.mask_mathjax(content)
         
         # Performance optimization: get titles for current slug once
@@ -132,6 +160,27 @@ class PhysicsOrchestrator:
             
         return final_content if final_content != original_content else None
 
+    def _apply_entity_links(self, content):
+        """Internal helper to link entities from entities.json."""
+        for e_id, e_data in self.data.get("entities", {}).items():
+            link = e_data["link"]
+            # Only link if not already linked to this entity (exact href check)
+            if f'href="{link}"' in content: continue
+            
+            variants = [e_data["name"]] + e_data.get("aliases", [])
+            # Sort by length descending to match longest first
+            variants.sort(key=len, reverse=True)
+            
+            for var in variants:
+                if len(var) < 3: continue
+                # Match name not preceded by > or =
+                pattern = re.compile(rf'(?<![=">])\b{re.escape(var)}\b', re.IGNORECASE)
+                if pattern.search(content):
+                    link_html = f'<a href="{link}" class="subtopic-link"><strong>{var}</strong></a>'
+                    content = pattern.sub(lambda m: link_html, content)
+                    break # Only link the first match of any variant
+        return content
+
     def _sanitize_mathjax(self, content):
         content = content.replace(" > ", " \\gt ")
         content = content.replace(" < ", " \\lt ")
@@ -139,9 +188,9 @@ class PhysicsOrchestrator:
 
     def add_subtopic(self, slug, subtopic_data, link_in_parent=True):
         """Adds subtopic to appropriate shard and updates registry."""
-        parent_slug = subtopic_data.get("parent_topic", "misc")
+        parent_slug = subtopic_data.get("parents", ["misc"])[0]
         
-        # Determine shard (use parent's shard or create new one)
+        # Determine shard
         shard_file = f"{parent_slug}.json"
         if parent_slug in self.data["subtopics"]:
             shard_file = self.slug_to_shard.get(parent_slug, shard_file)
@@ -153,35 +202,46 @@ class PhysicsOrchestrator:
         self.data["subtopics"][slug] = subtopic_data
         self.slug_to_shard[slug] = shard_file
         
-        # Registry update
         self.registry[subtopic_data["title"]] = slug
         self._refresh_sorted_titles()
         
-        if link_in_parent:
-            # Logic to link in parent would go here, similar to previous version
-            pass
-            
         self.apply_auto_links(slug)
         return True
 
-    def add_formula(self, title, equation, breakdown):
-        """Adds a formula to the registry and returns its ID."""
-        slug_title = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
-        eq_hash = hashlib.md5(equation.encode()).hexdigest()[:8]
-        f_id = f"{slug_title}-{eq_hash}"
+    def build(self):
+        """Pre-renders all subtopics into static HTML for performance."""
+        print("Starting Static Build...")
+        output_dir = "public/cache/subtopic"
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            
+        # Ensure server is running for build
+        server = subprocess.Popen(["php", "-S", "localhost:8001", "-t", "public"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["sleep", "2"])
         
-        self.data["formula_registry"][f_id] = {
-            "title": title,
-            "equation": equation,
-            "breakdown": breakdown
-        }
-        return f_id
+        success_count = 0
+        total = len(self.data["subtopics"])
+        
+        for i, slug in enumerate(self.data["subtopics"]):
+            sys.stdout.write(f"\rBuilding {i+1}/{total}: {slug}...")
+            sys.stdout.flush()
+            
+            try:
+                url = f"http://localhost:8001/physics/subtopic/{slug}?preview=1"
+                result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=5)
+                if result.stdout:
+                    with open(os.path.join(output_dir, f"{slug}.html"), "w") as f:
+                        f.write(result.stdout)
+                    success_count += 1
+            except Exception as e:
+                print(f"\nERROR building {slug}: {str(e)}")
+        
+        server.terminate()
+        print(f"\nSUCCESS: Pre-rendered {success_count} static pages in {output_dir}")
 
     def validate(self):
         print("Running Integrity Shield...")
-        # Since we removed the integrity_shield.py file in cleanup, 
-        # I should probably re-add its logic or call the PHP validator.
-        result = subprocess.run(["php", "validate_physics_data.php"], capture_output=True, text=True)
+        result = subprocess.run(["python3", "integrity_shield.py"], capture_output=True, text=True)
         print(result.stdout)
         return result.returncode == 0
 

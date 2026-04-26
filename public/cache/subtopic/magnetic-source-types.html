@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magnetic Source Types: Line, Surface, and Volume Currents - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="11c8d93cc3b17710b22896c0a4651cc1">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="11c8d93cc3b17710b22896c0a4651cc1"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
+            &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
+        </div>
+        <nav>
+        <a href="/physics">Home</a>
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/biot-savart-law">Biot-Savart Law</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">Magnetic Source Types: Line, Surface, and Volume Currents</span>
+    </nav>
+
+    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
+        <div id="abstract-diagram" 
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
+             data-config='{"type":"abstract"}'>
+        </div>
+        <div style="position: relative; z-index: 1;">
+            <h1>Magnetic Source Types: Line, Surface, and Volume Currents</h1>
+        </div>
+    </header>
+    
+    <div class="content-body">
+        <p>In university-level electromagnetism, magnetic sources are classified by their <strong>Geometric Dimension</strong>. While the <a href="/physics/subtopic/biot-savart-law" class="subtopic-link"><strong>Biot-Savart Law</strong></a> is often introduced using idealized "Line Currents," real-world physical systems involve charge flow through surfaces and three-dimensional volumes. Understanding these source types is essential for calculating the fields of superconductors, planetary dynamos, and the plasma currents in <strong>Astrophysical Fluid Dynamics</strong>.</p>
+
+                    <h3>1. Line Currents (I dl)</h3>
+                    <p>A line current is a one-dimensional idealization where charge flows along a thin filament. The source strength is defined by the current \( I \). this is standard form used for the <strong>Infinite Straight Wire</strong> and <strong>Circular Loop</strong>. It assumes the wire's cross-section is negligible compared to the distance of observation, a model-independent approximation that is highly accurate for most electrical circuits.</p>
+
+                    <h3>2. Surface Currents (K da)</h3>
+                    <p>When charge flows along a thin sheet or the boundary of a conductor, it is modeled as a <strong>Surface Current Density</strong> (\( \mathbf{K} \)). The units of \( \mathbf{K} \) are Amperes per meter. Surface currents are the primary sources in <a href="/physics/subtopic/magnetic-boundary-conditions" class="subtopic-link"><strong>Magnetic Boundary Conditions</strong></a>, where the jump in the magnetic field across an interface is determined by the local surface current. This occurs on the skin of superconductors and at the magnetopause of planetary magnetic fields.</p>
+
+                    <h3>3. Volume Currents (J d-tau)</h3>
+                    <p>The most general magnetic source is the <strong>Volume Current Density</strong> (\( \mathbf{J} \)), measured in Amperes per square meter (\( A/m^2 \)). In a 3D conductor, the total current through a cross-section is the integral of \( \mathbf{J} \cdot d\mathbf{a} \). This source type is used to derive the differential form of <a href="/physics/subtopic/amperes-law" class="subtopic-link"><strong>Ampère's Law</strong></a> (\( 
+abla \times \mathbf{B} = \mu_0 \mathbf{J} \)) and is critical for modeling the distributed currents inside stars and <strong>Neutron Stars</strong>.</p>
+
+                    <h3>4. Magnetic Dipoles as Sources</h3>
+                    <p>At the subatomic level, magnetic fields arise from <strong>Spin</strong> and <a href="/physics/subtopic/orbital-angular-momentum" class="subtopic-link"><strong>Orbital Angular Momentum</strong></a>. These "Intrinsic" sources are modeled as tiny current loops or <strong>Magnetic Dipoles</strong>. While they have zero net charge flow over macroscopic distances, their collective alignment produces the <strong>Magnetization</strong> (\( \mathbf{M} \)) of materials. This bridges the gap between purely electrical sources and the permanent magnetism of ferromagnets.</p>
+
+                    <h3>5. The Continuity Equation and Source Stability</h3>
+                    <p>For a magnetic source to be "steady" (magnetostatic), it must satisfy the <strong>Continuity Equation</strong>: \( 
+abla \cdot \mathbf{J} = 0 \). This implies that charge cannot accumulate at any point; what flows in must flow out. This steady-state requirement is what allows the <a href="/physics/subtopic/biot-savart-law" class="subtopic-link"><strong>Biot-Savart Law</strong></a> to be time-independent, ensuring that the <strong>Conservation</strong> of charge dictates the stability of the resulting magnetic field structure.</p>
+
+                    <h3>6. Relativistic Scaling of Sources</h3>
+                    <p>Because current is the product of charge density and velocity (\( \mathbf{J} = \rho \mathbf{v} \)), magnetic source types are subject to <strong>Lorentz Transformations</strong>. A volume charge density in one frame may appear as a combination of charge and current in another. This relativistic nature proves that "Source Type" is an observer-dependent classification, leading to the unification of E and B sources into the <strong>Four-Current</strong> (\( j^\mu \)) of relativistic field theory.</p>    </div>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/circular-loop" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Magnetic Field of a Circular Current Loop</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/magnetic-field-conservation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Conservation and the Solenoidal Law</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/infinite-straight-wire" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Magnetic Field of an Infinite Straight Wire</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <script src="/js/diagram_engine.js" defer></script>
+
+    <section class="equations-section">
+    <h2>Key Equations</h2>
+    <p class="instruction">Click a formula to see its breakdown.</p>
+    <ul class="equations-list" id="equations-list">
+                                    <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Line Source</span>
+                                                <span class="equation">\[ d\mathbf{B} = \frac{\mu_0}{4\pi} \frac{I d\mathbf{l} \times \hat{\mathbf{r}}}{r^2} \quad (\text{Line}) \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Line Source:</strong> The 1D model for thin wires where current follows a specific path.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Surface Density</span>
+                                                <span class="equation">\[ \mathbf{B} = \frac{\mu_0}{4\pi} \int \frac{\mathbf{K}(\mathbf{r}&#039;) \times \hat{\boldsymbol{\eta}}}{\eta^2} da&#039; \quad (\text{Surface}) \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Surface Density:</strong> The 2D model for charge flowing across boundaries or thin foils.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Volume Density</span>
+                                                <span class="equation">\[ \mathbf{B} = \frac{\mu_0}{4\pi} \int \frac{\mathbf{J}(\mathbf{r}&#039;) \times \hat{\boldsymbol{\eta}}}{\eta^2} d\tau&#039; \quad (\text{Volume}) \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Volume Density:</strong> The 3D model for currents spread throughout a solid or fluid body.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Four-Current</span>
+                                                <span class="equation">\[ j^\mu = (c\rho, \mathbf{J}) \quad (\text{Four-Current}) \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Four-Current:</strong> The relativistic vector that combines electric charge and magnetic current into one entity.                        </div>
+                                            </div>
+                </li>
+                        </ul>
+</section>
+
+<script nonce="11c8d93cc3b17710b22896c0a4651cc1">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const container = event.target.closest('.equation-container');
+        if (!container) return;
+
+        const breakdown = container.querySelector('.breakdown');
+        if (breakdown) {
+            const isVisible = breakdown.style.display === 'block';
+            breakdown.style.display = isVisible ? 'none' : 'block';
+            container.classList.toggle('active', !isVisible);
+            
+            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([breakdown]);
+            }
+        }
+    });
+});
+</script>
+<style>
+.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
+.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
+.equation-container:hover { background: rgba(255,255,255,0.05); }
+.equation-container.active { border-color: var(--accent); }
+</style>
+
+    <footer class="subtopic-footer">
+                    <a href="/physics/subtopic/biot-savart-law" class="btn btn-secondary">&larr; Back to Biot-Savart Law</a>
+            </footer>
+</article>
+                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
+                        <span>🔄</span> <strong>Sync Now</strong>
+                    </a>
+                </div>    </main>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vorticity (\(\boldsymbol{\omega}\)) - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="65ba5ddacd6b6f428f1c1bf282f24992">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="65ba5ddacd6b6f428f1c1bf282f24992"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
+            &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
+        </div>
+        <nav>
+        <a href="/physics">Home</a>
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/curl">Curl (\( \nabla \times \))</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">Vorticity (\(\boldsymbol{\omega}\))</span>
+    </nav>
+
+    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
+        <div id="abstract-diagram" 
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
+             data-config='{"type":"abstract"}'>
+        </div>
+        <div style="position: relative; z-index: 1;">
+            <h1>Vorticity (\(\boldsymbol{\omega}\))</h1>
+        </div>
+    </header>
+    
+    <div class="content-body">
+        <p><strong>Vorticity</strong> (\( \boldsymbol{\omega} \)) is a pseudovector field that describes the local spinning motion of a continuum near a point. In university-level physics and <strong>Fluid Dynamics</strong>, vorticity is defined as the <strong>curl</strong> of the velocity field: \( \boldsymbol{\omega} = 
+abla \times \mathbf{v} \). It represents the departure of a system from being a <a href="/physics/subtopic/conservative-force-field" class="subtopic-link"><strong>Conservative Force Field</strong></a>, as a fluid with non-zero vorticity cannot be described by a simple scalar velocity potential.</p>
+
+                    <h3>1. Microscopic Rotation: The Curl Rule</h3>
+                    <p>Vorticity is a point-wise measure of "Swirl." If you imagine a tiny paddle-wheel placed in a flowing gas, the rate and axis of its rotation are determined by the local vorticity. For a <strong>Conservative Field</strong>, the vorticity is identically zero (\( \boldsymbol{\omega} = 0 \)). Such flows are called <strong>irrotational</strong> or potential flows, providing the baseline for ideal <strong>Astrophysical Dynamics</strong> in stars and molecular clouds.</p>
+
+                    <h3>2. Kelvin's Circulation Theorem</h3>
+                    <p>In an ideal (inviscid) fluid, <strong>Kelvin's Theorem</strong> states that the total circulation around a closed path moving with the fluid is constant. This implies that vorticity is "trapped" or <strong>Conservation</strong>-bound within the fluid. This why <strong>Magnetic Field lines</strong> are said to be "Frozen" into the plasma; the vorticity and the magnetic flux follow the same topological rules of movement.</p>
+
+                    <h3>3. Vorticity and Energy Dissipation</h3>
+                    <p>In real fluids, <strong>Viscosity</strong> acts as a source or sink for vorticity. Viscous forces diffuse vorticity from the boundaries into the bulk, leading to <strong>Turbulence</strong>. This process is inherently <strong>Non-Conservative</strong>; the energy spent creating and maintaining vortices is dissipated as heat. Understanding this transition is essential for modeling <a href="/physics/subtopic/accretion-disk" class="subtopic-link"><strong>Accretion Disks</strong></a>, where magnetic vorticity drives the transport of angular momentum.</p>
+
+                    <h3>4. Enstrophy and Turbulence</h3>
+                    <p>The "Strength" of the vorticity in a volume is measured by <strong>Enstrophy</strong> (\( \mathcal{E} = \frac{1}{2} \int \omega^2 d\tau \)). In 2D turbulence, enstrophy is a conserved quantity, preventing energy from cascading to small scales. In 3D turbulence, however, <strong>Vortex Stretching</strong> allows vorticity to increase rapidly, leading to the complex, chaotic energy flows observed in <strong>Supernova Remnants</strong> and galactic winds.</p>
+
+                    <h3>5. Vorticity in Superfluids</h3>
+                    <p>In quantum fluids like those in the core of a <strong>Neutron Star</strong>, vorticity is <strong>Quantized</strong>. The fluid is perfectly irrotational everywhere except at discrete points called <strong>Quantum Vortices</strong>. Each vortex carries a fixed amount of circulation (\( h/m \)). The interaction of these vortices with the star's crust is believed to be the cause of <strong>Pulsar Glitches</strong>, linking subatomic vorticity to macroscopic timing shifts.</p>
+
+                    <h3>6. Relativistic Vorticity</h3>
+                    <p>In <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a>, vorticity is defined for the 4-velocity field of a fluid in the . It describes the "Twist" of the world-lines of the fluid particles. Relativistic vorticity is a critical term in the <strong>Raychaudhuri Equation</strong>; it acts as a repulsive force that can resist gravitational collapse, potentially preventing the formation of a <strong>Singularity</strong> in rotating systems.</p>    </div>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/solenoidal-condition" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Solenoidal Condition</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/electromagnetic-induction" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Electromagnetic Induction</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/magnetostatic-circulation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Magnetostatic Circulation</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <script src="/js/diagram_engine.js" defer></script>
+
+    <section class="equations-section">
+    <h2>Key Equations</h2>
+    <p class="instruction">Click a formula to see its breakdown.</p>
+    <ul class="equations-list" id="equations-list">
+                                    <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Vorticity Vector</span>
+                                                <span class="equation">\[ \boldsymbol{\omega} = 
+abla \times \mathbf{v} \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Vorticity Vector:</strong> The measure of how fast a fluid element is rotating around its own center.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Chaos Driver</span>
+                                                <span class="equation">\[ \frac{d\boldsymbol{\omega}}{dt} = (\boldsymbol{\omega} \cdot 
+abla)\mathbf{v} + 
+u 
+abla^2 \boldsymbol{\omega} \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Chaos Driver:</strong> The 3D effect where pulling on a vortex increases its spin speed.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Superfluid Rule</span>
+                                                <span class="equation">\[ \Gamma = \oint \mathbf{v} \cdot d\mathbf{l} = \iint \boldsymbol{\omega} \cdot d\mathbf{a} \quad (\text{Stokes}) \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Superfluid Rule:</strong> Why rotation in quantum stars can only happen in discrete, tiny tubes.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Non-Conservative Link</span>
+                                                <span class="equation">\[ \omega_{quantum} = \frac{n h}{m} \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Non-Conservative Link:</strong> How internal friction "kills" vorticity and turns motion into heat.                        </div>
+                                            </div>
+                </li>
+                        </ul>
+</section>
+
+<script nonce="65ba5ddacd6b6f428f1c1bf282f24992">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const container = event.target.closest('.equation-container');
+        if (!container) return;
+
+        const breakdown = container.querySelector('.breakdown');
+        if (breakdown) {
+            const isVisible = breakdown.style.display === 'block';
+            breakdown.style.display = isVisible ? 'none' : 'block';
+            container.classList.toggle('active', !isVisible);
+            
+            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([breakdown]);
+            }
+        }
+    });
+});
+</script>
+<style>
+.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
+.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
+.equation-container:hover { background: rgba(255,255,255,0.05); }
+.equation-container.active { border-color: var(--accent); }
+</style>
+
+    <footer class="subtopic-footer">
+                    <a href="/physics/subtopic/curl" class="btn btn-secondary">&larr; Back to Curl (\( \nabla \times \))</a>
+            </footer>
+</article>
+                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
+                        <span>🔄</span> <strong>Sync Now</strong>
+                    </a>
+                </div>    </main>
+</body>
+</html>

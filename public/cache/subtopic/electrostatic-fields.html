@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrostatic Fields - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="15ce7b5b97baedca0c164e15cd4fb6df">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="15ce7b5b97baedca0c164e15cd4fb6df"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
+            &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
+        </div>
+        <nav>
+        <a href="/physics">Home</a>
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/stokes-theorem">Stokes' Theorem</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/conservative-force-field">Conservative Force Field</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">Electrostatic Fields</span>
+    </nav>
+
+    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
+        <div id="abstract-diagram" 
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
+             data-config='{"type":"abstract"}'>
+        </div>
+        <div style="position: relative; z-index: 1;">
+            <h1>Electrostatic Fields</h1>
+        </div>
+    </header>
+    
+    <div class="content-body">
+        <p>An <strong>Electrostatic Field</strong> is the electric field produced by stationary charges. In university-level electromagnetism, electrostatics is defined by the fact that the field is <strong>irrotational</strong> (\( 
+abla \times \mathbf{E} = 0 \)). This condition ensures that the electric field is a <a href="/physics/subtopic/conservative-force-field" class="subtopic-link"><strong>Conservative Force Field</strong></a>, allowing for the definition of the electric potential (voltage) and the application of <strong>Energy Conservation</strong> to charged particle trajectories.</p>
+
+                    <h3>1. Coulomb's Law and Irrotationality</h3>
+                    <p>The electric field of a point charge is given by <a href="/physics/subtopic/coulombs-law" class="subtopic-link"><strong>Coulomb's Law</strong></a>: \( \mathbf{E} \propto \frac{q}{r^2} \hat{\mathbf{r}} \). Like gravity, this a radial, inverse-square field. Taking the <strong>curl</strong> of such a field in spherical coordinates yields zero. This mathematical fact is the "Charter of Electrostatics," proving that stationary charges cannot create a magnetic field or do net work on a particle in a <strong>closed path</strong>.</p>
+
+                    <h3>2. The Scalar Potential (V)</h3>
+                    <p>Because \( 
+abla \times \mathbf{E} = 0 \), the electric field can be expressed as the negative <strong>gradient</strong> of a scalar potential: \( \mathbf{E} = -
+abla V \). This potential \( V \) (measured in Volts) represents the <a href="/physics/subtopic/potential-energy" class="subtopic-link"><strong>Potential Energy</strong></a> per unit charge. In circuit theory and subatomic physics, using the scalar potential is far more efficient than tracking vector forces, as it simplifies the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of the system into a single energy map.</p>
+
+                    <h3>3. Work and Potential Difference</h3>
+                    <p>The work done by an electrostatic field on a charge \( q \) moving from A to B is \( W = q(V_A - V_B) \). This work is <strong>Path Independent</strong>. Whether a proton travels in a straight line or a complex spiral between two electrodes, the energy it gains depends only on the voltage difference. This principle is the basis for <a href="/physics/subtopic/particle-accelerators" class="subtopic-link"><strong>Particle Accelerators</strong></a> and the operation of every electronic device in modern civilization.</p>
+
+                    <h3>4. Symmetries and Isotropic Fields</h3>
+                    <p>The conservative nature of electrostatic fields is rooted in the <strong>Symmetries</strong> of the electromagnetic interaction. The field of a point charge isotropic (the same in all directions), which necessitates its irrotationality. This link between <a href="/physics/subtopic/spatial-translation-symmetry" class="subtopic-link"><strong>Spatial Translation Symmetry</strong></a> and the behavior of the field is a primary example of how the geometry of the universe dictates the laws of <strong>Classical Mechanics</strong>.</p>
+
+                    <h3>5. Boundaries and Faraday Cages</h3>
+                    <p>In the presence of conductors, the electrostatic field must satisfy specific <strong>Boundary Conditions</strong>. The field inside a conductor in equilibrium must be zero, and the surface of the conductor must be an <strong>Equipotential</strong>. This ensures that no work is done moving a charge along the surface, a direct consequence of the field being conservative. this is physical reason why a <strong>Faraday Cage</strong> provides perfect shielding against external static fields.</p>
+
+                    <h3>6. Beyond Statics: Induced Fields</h3>
+                    <p>A critical distinction at university levels is that only <em>static</em> electric fields are conservative. According to <a href="/physics/subtopic/faradays-law" class="subtopic-link"><strong>Faraday's Law</strong></a>, a changing magnetic field produces an electric field with a non-zero <strong>curl</strong> (\( 
+abla \times \mathbf{E} = -\partial \mathbf{B} / \partial t \)). These "Induced" fields are <strong>Non-Conservative</strong>; they can do net work on a <strong>closed path</strong>, a property used to drive current in generators and transformers, marking the boundary of the electrostatic regime.</p>    </div>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/closed-path" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Closed Path Integrals and Circulation</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/path-independence" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Path Independence</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/gravitational-fields" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Gravitational Fields as Conservative Systems</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <script src="/js/diagram_engine.js" defer></script>
+
+    <section class="equations-section">
+    <h2>Key Equations</h2>
+    <p class="instruction">Click a formula to see its breakdown.</p>
+    <ul class="equations-list" id="equations-list">
+                                    <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Electric Potential</span>
+                                                <span class="equation">\[ \mathbf{E} = -
+abla V \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Electric Potential:</strong> The scalar field (V) that describes the energy available to a charge at any point.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Irrotationality</span>
+                                                <span class="equation">\[ V(\mathbf{r}) = \frac{1}{4\pi\varepsilon_0} \sum \frac{q_i}{r_i} \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Irrotationality:</strong> The condition ensuring that static charges cannot create "swirling" force fields.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Work Rule</span>
+                                                <span class="equation">\[ \oint \mathbf{E} \cdot d\mathbf{l} = 0 \quad (\text{Electrostatic rule}) \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Work Rule:</strong> Why the energy gain of an electron depends only on the start and end voltage.                        </div>
+                                            </div>
+                </li>
+                            <li class="equation-item" style="list-style: none;">
+                    <div class="equation-container">
+                                                    <span class="formula-title">Equipotential Surface</span>
+                                                <span class="equation">\[ 
+abla^2 V = -\frac{\rho}{\varepsilon_0} \quad (\text{Poisson Equation}) \]</span>
+                                                <div class="breakdown" style="display: none;">
+                            <strong>Equipotential Surface:</strong> Why charges move to cancel out the field inside a conductive metal.                        </div>
+                                            </div>
+                </li>
+                        </ul>
+</section>
+
+<script nonce="15ce7b5b97baedca0c164e15cd4fb6df">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const container = event.target.closest('.equation-container');
+        if (!container) return;
+
+        const breakdown = container.querySelector('.breakdown');
+        if (breakdown) {
+            const isVisible = breakdown.style.display === 'block';
+            breakdown.style.display = isVisible ? 'none' : 'block';
+            container.classList.toggle('active', !isVisible);
+            
+            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([breakdown]);
+            }
+        }
+    });
+});
+</script>
+<style>
+.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
+.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
+.equation-container:hover { background: rgba(255,255,255,0.05); }
+.equation-container.active { border-color: var(--accent); }
+</style>
+
+    <footer class="subtopic-footer">
+                    <a href="/physics/subtopic/conservative-force-field" class="btn btn-secondary">&larr; Back to Conservative Force Field</a>
+            </footer>
+</article>
+                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
+                        <span>🔄</span> <strong>Sync Now</strong>
+                    </a>
+                </div>    </main>
+</body>
+</html>

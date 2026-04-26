@@ -78,7 +78,7 @@ class PhysicsController
         $baseDir = PROJECT_ROOT . '/app/config/content/';
         $files = scandir($baseDir);
         foreach ($files as $file) {
-            if (strpos($file, '.json') !== false && !in_array($file, ['categories.json', 'formulas.json', 'shard_index.json', 'constants.json'])) {
+            if (strpos($file, '.json') !== false && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json'])) {
                 $shard = json_decode(file_get_contents($baseDir . $file), true) ?: [];
                 if (is_array($shard)) {
                     $this->physicsContent['subtopics'] = array_merge($this->physicsContent['subtopics'], $shard);
@@ -100,6 +100,7 @@ class PhysicsController
 
         // Fetch navigation items from appropriate source
         if ($isPreview) {
+            $this->loadAllShards();
             $content = $this->getPhysicsContent();
             $topicsList = array_map(function($s, $t) {
                 $isDraft = ($t['status'] ?? '') === 'draft';
@@ -126,14 +127,10 @@ class PhysicsController
             $menuSimulations[$sim['slug']] = ['title' => $sim['title']];
         }
 
-        // Fallback for nonce to prevent 500 if not set in bootstrap
         $nonce = $this->app->get('csp_nonce') ?? '';
-
-        // Render the specific view and capture its output
         $viewData = array_merge($data, ['nonce' => $nonce]);
         $bodyContent = $this->app->view()->fetch($view, $viewData) ?: '';
 
-        // Inject a floating "Sync Now" button when in Preview Mode
         if ($isPreview) {
             $bodyContent .= '
                 <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
@@ -155,8 +152,6 @@ class PhysicsController
     public function index()
     {
         $topics = $this->fetchAllData('topics');
-        
-        // Process content to create short descriptions
         foreach ($topics as &$topic) {
             $cleanContent = strip_tags($topic['content']);
             $topic['description'] = mb_strimwidth($cleanContent, 0, 120, "...");
@@ -169,28 +164,23 @@ class PhysicsController
         ]);
     }
 
-    public function install()
-    {
-        $sqlPath = PROJECT_ROOT . '/database_init.sql';
-        if (file_exists($sqlPath)) {
-            $sql = file_get_contents($sqlPath);
-            $this->app->db()->runQuery($sql);
-            echo "<h1>Success</h1><p>Database schema initialized in MariaDB.</p>";
-            echo '<a href="/physics">Go to The Physics Lab</a>';
-        } else {
-            $this->app->halt(500, 'Schema file not found at ' . $sqlPath);
-        }
-    }
-
     public function sync(): void
     {
         $this->loadAllShards();
         $this->performSync();
-        
         $syncLock = PROJECT_ROOT . '/app/config/.last_sync';
         touch($syncLock);
-
         $this->app->redirect($this->app->request()->referrer ?: '/physics');
+    }
+
+    public function searchIndex(): void
+    {
+        $path = PROJECT_ROOT . '/app/config/content/search_index.json';
+        if (file_exists($path)) {
+            $this->app->json(json_decode(file_get_contents($path), true));
+        } else {
+            $this->app->json([]);
+        }
     }
 
     public function simulations()
@@ -226,13 +216,36 @@ class PhysicsController
             return;
         }
 
+        // Get subtopics for this topic
+        $this->loadAllShards();
+        $content = $this->getPhysicsContent();
+        $subtopics = [];
+        foreach ($content['subtopics'] as $subSlug => $sub) {
+            if (isset($sub['parents']) && in_array($slug, $sub['parents'])) {
+                $sub['slug'] = $subSlug;
+                $cleanContent = strip_tags($sub['content']);
+                $sub['description'] = mb_strimwidth($cleanContent, 0, 160, "...");
+                $subtopics[] = $sub;
+            }
+        }
+
         $this->renderWithLayout('physics/topic', array_merge($topic, [
-            'slug' => $slug,
+            'topic' => $topic,
+            'subtopics' => $subtopics,
+            'slug' => $slug
         ]));
     }
 
     public function viewSubtopic(string $slug)
     {
+        // 1. Static-First Check
+        $cachePath = PROJECT_ROOT . "/public/cache/subtopic/{$slug}.html";
+        if (file_exists($cachePath) && !$this->isPreviewActive()) {
+            header('Content-Type: text/html; charset=utf-8');
+            readfile($cachePath);
+            return;
+        }
+
         $this->requestedSlug = $slug;
         $subtopic = $this->fetchAndPrepare('subtopics', $slug);
 
@@ -242,37 +255,31 @@ class PhysicsController
         }
 
         $breadcrumbs = [];
-        // Use primary parent (index 0) for breadcrumbs
-        $currentParentSlug = !empty($subtopic['parents']) ? $subtopic['parents'][0] : ($subtopic['parent_topic'] ?? '');
+        $currentParentSlug = !empty($subtopic['parents']) ? $subtopic['parents'][0] : '';
 
         // Trace parents upwards
         while (!empty($currentParentSlug)) {
             $foundParent = false;
-
-            // 1. Check if it is a main Topic
-            $topicRow = $this->app->db()->fetchRow("SELECT title, slug FROM topics WHERE slug = ?", [$currentParentSlug]);
-            $pData = method_exists($topicRow, 'getData') ? $topicRow->getData() : (array) $topicRow;
             
-            if (!empty($pData) && isset($pData['title'])) {
+            // Try Shards for parent subtopic
+            $parentData = $this->fetchAndPrepare('subtopics', $currentParentSlug);
+            if (!empty($parentData)) {
                 array_unshift($breadcrumbs, [
-                    'title' => $pData['title'],
-                    'url' => '/physics/topic/' . $pData['slug']
+                    'title' => $parentData['title'],
+                    'url' => '/physics/subtopic/' . $currentParentSlug
                 ]);
-                $currentParentSlug = ''; // Top level reached
+                $currentParentSlug = !empty($parentData['parents']) ? $parentData['parents'][0] : '';
                 $foundParent = true;
-            } 
-            
-            // 2. Check if it is a Subtopic
-            if (!$foundParent) {
-                $subRow = $this->app->db()->fetchRow("SELECT title, slug, parent_topic FROM subtopics WHERE slug = ?", [$currentParentSlug]);
-                $pData = method_exists($subRow, 'getData') ? $subRow->getData() : (array) $subRow;
-                
-                if (!empty($pData) && isset($pData['title'])) {
+            } else {
+                // Try Categories
+                $content = $this->getPhysicsContent();
+                if (isset($content['topics'][$currentParentSlug])) {
+                    $cat = $content['topics'][$currentParentSlug];
                     array_unshift($breadcrumbs, [
-                        'title' => $pData['title'],
-                        'url' => '/physics/subtopic/' . $pData['slug']
+                        'title' => $cat['title'],
+                        'url' => '/physics/topic/' . $currentParentSlug
                     ]);
-                    $currentParentSlug = $pData['parent_topic'] ?? '';
+                    $currentParentSlug = ''; // Top reached
                     $foundParent = true;
                 }
             }
@@ -280,72 +287,82 @@ class PhysicsController
             if (!$foundParent) break;
         }
 
+        // Get Related Topics via Search Index
+        $related = $this->getRelatedTopics($slug);
+
         $this->renderWithLayout('physics/subtopic', array_merge($subtopic, [
-            'slug' => $slug,
             'breadcrumbs' => $breadcrumbs,
-            'breadcrumb_active_title' => $subtopic['title']
+            'related_topics' => $related,
+            'title' => $subtopic['title'],
+            'content' => $subtopic['content'],
+            'equations' => $subtopic['equations'] ?? [],
+            'breakdowns' => $subtopic['breakdowns'] ?? [],
+            'formulas' => $subtopic['formulas'] ?? []
         ]));
     }
 
-    /**
-     * Automatically syncs MariaDB if the physics_content.php file has been updated.
-     */
-    private function checkAutoSync(): void
+    private function getRelatedTopics(string $currentSlug, int $limit = 3): array
     {
-        if ($this->isPreviewActive()) return;
-
-        $contentFile = PROJECT_ROOT . '/app/config/physics_content.json';
-        $syncLock = PROJECT_ROOT . '/app/config/.last_sync';
-
-        if (!file_exists($contentFile)) return;
-
-        $lastSync = file_exists($syncLock) ? filemtime($syncLock) : 0;
-
-        if (filemtime($contentFile) > $lastSync) {
-            $this->performSync();
-            touch($syncLock);
+        $content = $this->getPhysicsContent();
+        $index = $content['search_index'] ?? [];
+        
+        if (!isset($index[$currentSlug])) return [];
+        
+        $currentKeywords = $index[$currentSlug]['k'] ?? [];
+        if (empty($currentKeywords)) return [];
+        
+        $scores = [];
+        foreach ($index as $slug => $data) {
+            if ($slug === $currentSlug) continue;
+            
+            $otherKeywords = $data['k'] ?? [];
+            $overlap = count(array_intersect($currentKeywords, $otherKeywords));
+            
+            if ($overlap > 0) {
+                if (!empty($data['p']) && !empty($index[$currentSlug]['p']) && $data['p'][0] === $index[$currentSlug]['p'][0]) {
+                    $overlap += 2;
+                }
+                $scores[$slug] = $overlap;
+            }
         }
+        
+        arsort($scores);
+        $relatedSlugs = array_slice(array_keys($scores), 0, $limit);
+        
+        $results = [];
+        foreach ($relatedSlugs as $rSlug) {
+            $results[] = [
+                'slug' => $rSlug,
+                'title' => $index[$rSlug]['t']
+            ];
+        }
+        
+        return $results;
     }
 
-    private function performSync(): void
+    private function checkAutoSync(): void
+    {
+        // Sharded auto-sync would need tracking of multiple files.
+        // For now, we will rely on manual sync button in preview.
+    }
+
+    protected function performSync(): void
     {
         $data = $this->getPhysicsContent();
         $db = $this->app->db();
 
-        foreach ($data['simulations'] ?? [] as $slug => $s) {
-            if (($s['status'] ?? '') === 'draft') {
-                $db->runQuery("DELETE FROM simulations WHERE slug = ?", [$slug]);
-                continue;
-            }
-            $db->runQuery("REPLACE INTO simulations (slug, title, description, physics, equations) VALUES (?, ?, ?, ?, ?)", 
-                [$slug, $s['title'], $s['description'], $s['physics'], json_encode($s['equations'] ?? [])]);
-        }
-
         foreach ($data['topics'] ?? [] as $slug => $t) {
-            if (($t['status'] ?? '') === 'draft') {
-                $db->runQuery("DELETE FROM topics WHERE slug = ?", [$slug]);
-                continue;
-            }
             $db->runQuery("REPLACE INTO topics (slug, title, content, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?)", 
                 [$slug, $t['title'], $t['content'], json_encode($t['equations'] ?? []), json_encode($t['breakdowns'] ?? []), json_encode($t['formula_ids'] ?? [])]);
         }
 
         foreach ($data['subtopics'] ?? [] as $slug => $st) {
-            if (isset($st["status"]) && $st["status"] === "draft") {
-                $db->runQuery("DELETE FROM subtopics WHERE slug = ?", [$slug]);
-                continue;
-            }
-            // Use the primary parent for the legacy database column
-            $primaryParent = !empty($st['parents']) ? $st['parents'][0] : ($st['parent_topic'] ?? '');
-
+            $primaryParent = !empty($st['parents']) ? $st['parents'][0] : '';
             $db->runQuery("REPLACE INTO subtopics (slug, parent_topic, title, content, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?, ?)", 
                 [$slug, $primaryParent, $st['title'], $st['content'], json_encode($st['equations'] ?? []), json_encode($st['breakdowns'] ?? []), json_encode($st['formula_ids'] ?? [])]);
         }
     }
 
-    /**
-     * Checks if preview mode is active based on query param or cookie.
-     */
     private function isPreviewActive(): bool
     {
         $previewQuery = $this->app->request()->query->preview;
@@ -356,9 +373,6 @@ class PhysicsController
         return ($_COOKIE['physics_preview'] ?? '0') === '1';
     }
 
-    /**
-     * Fetches all rows from either the database or the config file.
-     */
     private function fetchAllData(string $table): array
     {
         if ($this->isPreviewActive()) {
@@ -367,9 +381,6 @@ class PhysicsController
             $list = [];
             foreach ($content[$table] ?? [] as $slug => $data) {
                 $data['slug'] = $slug;
-                if (($data['status'] ?? '') === 'draft') {
-                    $data['title'] = '<span class="draft-badge">DRAFT</span> ' . $data['title'];
-                }
                 $list[] = $data;
             }
             return $list;
@@ -377,21 +388,14 @@ class PhysicsController
         return $this->app->db()->fetchAll("SELECT * FROM {$table} ORDER BY id ASC");
     }
 
-    /**
-     * Fetches a row from the database and prepares JSON fields.
-     */
     private function fetchAndPrepare(string $table, string $slug): array
     {
-        $content = $this->getPhysicsContent();
+        $content = $this->getPhysicsContent($slug);
         if ($this->isPreviewActive()) {
             $data = $content[$table][$slug] ?? null;
             if (!$data) return [];
             $data['slug'] = $slug;
-            if (($data['status'] ?? '') === 'draft') {
-                $data['title'] = '<span class="draft-badge">DRAFT</span> ' . $data['title'];
-            }
             
-            // Resolve formula IDs from registry
             $data['formulas'] = [];
             if (!empty($data['formula_ids'])) {
                 foreach ($data['formula_ids'] as $f_id) {
@@ -400,9 +404,6 @@ class PhysicsController
                     }
                 }
             }
-            
-            $data['equations'] = $data['equations'] ?? [];
-            $data['breakdowns'] = $data['breakdowns'] ?? [];
             return $data;
         }
 
@@ -410,20 +411,16 @@ class PhysicsController
         if (!$row) return [];
 
         $data = is_object($row) ? $row->getData() : $row;
-        $data['formula_ids'] = !empty($data['formula_data']) ? json_decode($data['formula_data'], true) : [];
+        $f_ids = !empty($data['formula_data']) ? json_decode($data['formula_data'], true) : [];
         
-        // Resolve formula IDs from registry in DB mode too
         $data['formulas'] = [];
-        if (!empty($data['formula_ids'])) {
-            foreach ($data['formula_ids'] as $f_id) {
+        if (!empty($f_ids)) {
+            foreach ($f_ids as $f_id) {
                 if (isset($content['formula_registry'][$f_id])) {
                     $data['formulas'][] = $content['formula_registry'][$f_id];
                 }
             }
         }
-
-        $data['equations'] = !empty($data['equations']) ? json_decode($data['equations'], true) : [];
-        $data['breakdowns'] = !empty($data['breakdowns']) ? json_decode($data['breakdowns'], true) : [];
 
         return $data;
     }

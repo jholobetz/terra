@@ -60,13 +60,18 @@ class PhysicsController
      */
     private function loadShardForSlug(string $slug): void
     {
+        if ($this->physicsContent === null) {
+            $this->getPhysicsContent();
+        }
         $baseDir = PROJECT_ROOT . '/app/config/content/';
         // Use 's' key from search_index for the shard filename
         $shardFile = $this->physicsContent['search_index'][$slug]['s'] ?? null;
         
         if ($shardFile && file_exists($baseDir . $shardFile)) {
             $shard = json_decode(file_get_contents($baseDir . $shardFile), true) ?: [];
-            $this->physicsContent['subtopics'] = array_merge($this->physicsContent['subtopics'], $shard);
+            if (is_array($shard)) {
+                $this->physicsContent['subtopics'] = array_merge($this->physicsContent['subtopics'], $shard);
+            }
         }
     }
 
@@ -75,6 +80,9 @@ class PhysicsController
      */
     private function loadAllShards(): void
     {
+        if ($this->physicsContent === null) {
+            $this->getPhysicsContent();
+        }
         $baseDir = PROJECT_ROOT . '/app/config/content/';
         $files = scandir($baseDir);
         foreach ($files as $file) {

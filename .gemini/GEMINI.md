@@ -104,3 +104,40 @@ To create new content, follow the **Assembly Line**:
 
 All content must be categorized into one or more of the 12 primary modules:
 1. Classical Mechanics, 2. Electromagnetism, 3. Relativity, 4. Quantum Physics, 5. The Standard Model, 6. Astrophysics & Cosmology, 7. Theoretical Physics, 8. Philosophy of Physics, 9. Thermodynamics & Statistical Mechanics, 10. Condensed Matter Physics, 11. Fluid Dynamics & Nonlinear Systems, 12. Mathematical Methods in Physics.
+
+---
+
+## 9. Strategic Priority: Consolidation First (Foundational Mandate)
+
+To ensure long-term scalability and institutional-grade quality, the project follows a **Density-First** strategy. Volume expansion is strictly gated by the health of the existing graph.
+
+- **Refactoring Mandate:** Technical density (Latex-to-word ratio) and conceptual depth of existing stubs MUST be prioritized over the creation of new subtopics.
+- **The 10% Expansion Gate:** The "Great Expansion" of new terms from the backlog is **PROHIBITED** unless the `integrity_shield.py` reports that "Non-Technical" or "Low-Depth" warnings constitute **less than 10%** of the total subtopic pool.
+- **Consistency over Volume:** A smaller, "Platinum Standard" encyclopedia is preferred over a larger, shallow one. Every refactoring turn must aim for a Technical Density Score > 50.
+
+---
+
+## 10. Technical Consolidation: The RefactorEngine Workflow
+
+The `refactor_engine.py` is the **exclusive authorized pathway** for batch subtopic upgrades. Manual shard editing is deprecated to prevent "Technical Debt" and "Formula Drift."
+
+### 10.1 Automated Quality Enforcement
+- **Scoring Formula:** `(MathJax_Count * 15) + (Technical_Keyword_Score)`. Any content falling below 50 is flagged for immediate refactoring.
+- **Context Preservation:** The engine mandates the preservation of established navigational pathways. AI assistants are prohibited from discarding existing internal links during refactoring.
+
+### 10.2 "Bulletproof" Execution Standards
+All batch updates must follow the atomic ingestion pipeline:
+1.  **Local Formula Definition:** Sub-agents MUST define new equations in a local `formulas` array.
+2.  **Automated Sanitization:** The engine must handle all MathJax backslash escaping to ensure JSON validity.
+3.  **Atomic Ingestion:** Shards and the global formula registry must be updated simultaneously via `ingest_subtopic_platinum`.
+4.  **Zero-Error Validation:** Any batch that introduces a "Broken Link" or "Broken Formula" error MUST be reverted or fixed before the next turn.
+
+---
+
+## 11. Environment & Deployment
+
+To maintain testing consistency across sessions, all automation and validation tools must target the authorized live environment.
+
+- **Primary Test Server:** `http://172.16.1.208`
+- **Build Protocol:** The `orchestrator.build()` method uses this address to pre-render static HTML. Any change to the server IP must be updated here first to ensure tool synchronization.
+

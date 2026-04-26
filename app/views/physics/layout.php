@@ -172,6 +172,6 @@
         <?= $body_content ?>
     </main>
 
-    <script src="/js/search_engine.js" nonce="<?= $nonce ?>" defer></script>
+    <script src="/physics/js/search_engine.js" nonce="<?= $nonce ?>" defer></script>
 </body>
 </html>

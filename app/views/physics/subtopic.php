@@ -37,7 +37,7 @@
         </section>
     <?php endif; ?>
 
-    <script src="/js/diagram_engine.js" defer></script>
+    <script src="/physics/js/diagram_engine.js" defer></script>
 
     <?php $this->render('physics/_equations_partial', ['equations' => $equations, 'breakdowns' => $breakdowns, 'nonce' => $nonce]); ?>
 

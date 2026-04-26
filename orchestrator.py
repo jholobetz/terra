@@ -187,13 +187,19 @@ class PhysicsOrchestrator:
         return content
 
     def add_subtopic(self, slug, subtopic_data, link_in_parent=True):
-        """Adds subtopic to appropriate shard and updates registry."""
-        parent_slug = subtopic_data.get("parents", ["misc"])[0]
-        
-        # Determine shard
-        shard_file = f"{parent_slug}.json"
-        if parent_slug in self.data["subtopics"]:
-            shard_file = self.slug_to_shard.get(parent_slug, shard_file)
+        """Adds subtopic to appropriate shard and updates registry. Prevents duplicates."""
+        # 1. Mandatory Global Duplicate Check
+        if slug in self.data["subtopics"]:
+            existing_shard = self.slug_to_shard.get(slug, "Unknown")
+            print(f"WARNING: Slug [{slug}] already exists in {existing_shard}. Merging/Updating instead.")
+            # If it already exists, we will update the existing shard entry instead of creating a new one
+            shard_file = existing_shard
+        else:
+            # New subtopic: Determine target shard
+            parent_slug = subtopic_data.get("parents", ["misc"])[0]
+            shard_file = f"{parent_slug}.json"
+            if parent_slug in self.data["subtopics"]:
+                shard_file = self.slug_to_shard.get(parent_slug, shard_file)
         
         if shard_file not in self.shards:
             self.shards[shard_file] = {}
@@ -202,11 +208,29 @@ class PhysicsOrchestrator:
         self.data["subtopics"][slug] = subtopic_data
         self.slug_to_shard[slug] = shard_file
         
+        # 2. Registry update
         self.registry[subtopic_data["title"]] = slug
         self._refresh_sorted_titles()
         
         self.apply_auto_links(slug)
         return True
+
+    def add_formula(self, title, equation, interpretation):
+        """Adds a formula to the registry and returns its ID."""
+        slug_title = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
+        eq_hash = hashlib.md5(equation.encode()).hexdigest()[:8]
+        f_id = f"{slug_title}-{eq_hash}"
+        
+        self.data["formula_registry"][f_id] = {
+            "title": title,
+            "equation": equation,
+            "semantic_variables": {},
+            "interpretation": interpretation,
+            "symmetry_origin": "Great Expansion: Derivation pending.",
+            "limits_and_boundary": "Great Expansion: Boundary analysis pending.",
+            "status": "platinum-draft"
+        }
+        return f_id
 
     def build(self):
         """Pre-renders all subtopics into static HTML for performance."""

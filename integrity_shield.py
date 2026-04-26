@@ -28,37 +28,20 @@ class IntegrityShield:
             self.schema = None
 
     def load_data(self):
-        self.all_subtopics = {}
-        self.formula_registry = {}
-        self.entities = {}
-        self.topics = {}
+        from orchestrator import PhysicsOrchestrator
+        self.orch = PhysicsOrchestrator(content_dir=self.content_dir)
+        self.all_subtopics = self.orch.data["subtopics"]
+        self.formula_registry = self.orch.data["formula_registry"]
+        self.entities = self.orch.data["entities"]
+        self.topics = self.orch.data["topics"]
         
-        if not os.path.exists(self.content_dir):
-            return
-
-        for file in os.listdir(self.content_dir):
-            if not file.endswith(".json"): continue
-            path = os.path.join(self.content_dir, file)
-            
-            with open(path, "r") as f:
-                content = json.load(f)
-            
-            if file == "categories.json":
-                self.topics = content
-            elif file == "formulas.json":
-                self.formula_registry = content
-            elif file == "entities.json":
-                self.entities = content
-            elif file == "constants.json":
-                pass
-            elif file == "search_index.json":
-                pass
-            else:
-                # Subtopic shard
-                self.stats["shards"] += 1
-                self.all_subtopics.update(content)
-                # SCHEMA VALIDATION
-                if HAS_JSONSCHEMA and self.schema:
+        # Schema validation still needs to iterate files
+        if HAS_JSONSCHEMA and self.schema:
+            for file in os.listdir(self.content_dir):
+                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json"]:
+                    path = os.path.join(self.content_dir, file)
+                    with open(path, "r") as f:
+                        content = json.load(f)
                     try:
                         validate(instance=content, schema=self.schema)
                     except ValidationError as e:
@@ -66,6 +49,7 @@ class IntegrityShield:
 
         self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
         self.stats["topics"] = len(self.all_subtopics)
+        self.stats["shards"] = len(self.orch.shards)
 
     def check_formulas(self):
         for slug, sub in self.all_subtopics.items():
@@ -73,6 +57,20 @@ class IntegrityShield:
                 self.stats["formulas"] += 1
                 if f_id not in self.formula_registry:
                     self.errors.append(f"Broken Formula: [{slug}] refs unknown ID '{f_id}'")
+
+    def check_duplicates(self):
+        """Ensures every subtopic slug exists in exactly one shard."""
+        slug_map = {}
+        for file in os.listdir(self.content_dir):
+            if not file.endswith(".json") or file in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json"]:
+                continue
+            path = os.path.join(self.content_dir, file)
+            with open(path, "r") as f:
+                shard_content = json.load(f)
+                for slug in shard_content:
+                    if slug in slug_map:
+                        self.errors.append(f"CRITICAL DUPLICATE: [{slug}] exists in both {slug_map[slug]} and {file}")
+                    slug_map[slug] = file
 
     def check_technical_density(self):
         tech_terms = ["manifold", "operator", "unitary", "tensor", "symmetry", "conservation", "variational", "hamiltonian", "lagrangian", "eigenvalue", "generator"]
@@ -119,6 +117,7 @@ class IntegrityShield:
         print(f"Directory: {self.content_dir}")
         print(f"Status: {self.stats['shards']} shards, {self.stats['topics']} topics.")
         
+        self.check_duplicates()
         self.check_formulas()
         self.check_technical_density()
         self.check_entities()

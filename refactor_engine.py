@@ -3,6 +3,7 @@ import re
 import os
 import sys
 import subprocess
+import hashlib
 from orchestrator import PhysicsOrchestrator
 
 class RefactorEngine:
@@ -12,13 +13,28 @@ class RefactorEngine:
 
     def score_topic(self, content):
         if not content: return 0
+        # 1. LaTeX Density (Weight: 15 per instance)
         latex_count = len(re.findall(r'\\\(|\\\[', content))
+        
+        # 2. Technical Keyword Depth (Weight: 5 per term)
         term_score = sum(5 for term in self.tech_terms if term in content.lower())
+        
+        # 3. Section Depth (Platinum: 4 to 8 sections)
         sections = len(re.findall(r'<h3>', content))
         section_penalty = 0
-        if sections < 6:
-            section_penalty = (6 - sections) * 20
-        return max(0, (latex_count * 15) + term_score - section_penalty)
+        if sections < 4:
+            section_penalty = (4 - sections) * 25
+        elif sections > 8:
+            section_penalty = (sections - 8) * 10 
+        
+        # 4. Word Count (The "Thinness" Guard)
+        text_only = re.sub(r'<[^>]+>', '', content)
+        words = len(re.findall(r'\w+', text_only))
+        word_penalty = 0
+        if words < 500:
+            word_penalty = (500 - words) // 2 
+        
+        return max(0, (latex_count * 15) + term_score - section_penalty - word_penalty)
 
     def get_lowest_density_targets(self, limit=10):
         scores = []
@@ -28,8 +44,31 @@ class RefactorEngine:
         scores.sort(key=lambda x: x[1])
         return [s[0] for s in scores[:limit]]
 
+    def get_surgical_grounding(self, targets):
+        """Builds a highly relevant grounding list based on target parents."""
+        relevant_slugs = set(targets)
+        for slug in targets:
+            sub = self.orch.data["subtopics"].get(slug, {})
+            parents = sub.get("parents", [])
+            relevant_slugs.update(parents)
+            for other_slug, other_data in self.orch.data["subtopics"].items():
+                if any(p in other_data.get("parents", []) for p in parents):
+                    relevant_slugs.add(other_slug)
+                if len(relevant_slugs) > 300: break
+        
+        return list(relevant_slugs)[:300]
+
     def generate_research_brief(self, slugs):
-        brief = {"instruction": "Upgrade to Platinum Standard.", "targets": {}}
+        grounding = self.get_surgical_grounding(slugs)
+        brief = {
+            "instruction": "Upgrade to Platinum Standard (4-8 sections, >800 words, university-level depth).",
+            "hallucination_control": "STRICT MINIMIZE HALLUCINATIONS. ONLY link to the provided grounding slugs.",
+            "targets": {},
+            "grounding_data": {
+                "authorized_slugs": grounding,
+                "mandatory_formulas": "Define ALL new equations in the 'formulas' array."
+            }
+        }
         for slug in slugs:
             sub = self.orch.data["subtopics"][slug]
             brief["targets"][slug] = {
@@ -61,6 +100,63 @@ class RefactorEngine:
             return False
         return True
 
+    def clear_cache_for_slugs(self, slugs):
+        """Removes static HTML cache files for the given slugs."""
+        cache_dir = "public/cache/subtopic"
+        for slug in slugs:
+            cache_file = os.path.join(cache_dir, f"{slug}.html")
+            if os.path.exists(cache_file):
+                print(f"Clearing cache for {slug}...")
+                os.remove(cache_file)
+
+    def sanitize_payload(self, data):
+        """Autonomous Sanitization: Fixes field names and formatting drifts."""
+        sanitized = {}
+        valid_slugs = set(self.orch.registry.values())
+        valid_slugs.update(self.orch.data.get("search_index", {}).keys())
+        valid_slugs.update(self.orch.data.get("topics", {}).keys()) # Include main topics
+        all_batch_slugs = set(data.keys())
+
+        for slug, sub_data in data.items():
+            if "formulas" in sub_data:
+                for f_obj in sub_data["formulas"]:
+                    if "latex" in f_obj and "equation" not in f_obj:
+                        f_obj["equation"] = f_obj["latex"]
+                    if "interpretation" in f_obj and "breakdown" not in f_obj:
+                        f_obj["breakdown"] = f_obj["interpretation"]
+                    if not f_obj.get("title"):
+                        f_obj["title"] = f"Identity for {slug}"
+                    if not f_obj.get("breakdown"):
+                        f_obj["breakdown"] = "Fulsome technical derivation."
+
+            if "content" in sub_data:
+                content = sub_data["content"]
+                content = re.sub(r'^Here is the upgraded content:|^Sure, here is the JSON:|^File written\.', '', content, flags=re.IGNORECASE).strip()
+                
+                # Robust Link Auto-Correction
+                # Use a non-greedy attribute match but stop at tag end
+                link_pattern = re.compile(r'<a\s+href=[\\\"\'/]+physics/(subtopic|topic)/([^\\\"\' >]+)[\\\"\' ]+[^>]*>(.*?)</a>')
+                
+                def link_replacer(match):
+                    l_type = match.group(1)
+                    target = match.group(2)
+                    inner_text = match.group(3)
+                    
+                    if target in valid_slugs or target in all_batch_slugs:
+                        return match.group(0)
+                    else:
+                        print(f"  [Auto-Sanitize] Stripping hallucinated link: {target}")
+                        return inner_text
+                
+                sub_data["content"] = link_pattern.sub(link_replacer, content)
+
+            if "formula_ids" in sub_data:
+                valid_formulas = set(self.orch.data.get("formula_registry", {}).keys())
+                sub_data["formula_ids"] = [f for f in sub_data["formula_ids"] if f in valid_formulas]
+
+            sanitized[slug] = sub_data
+        return sanitized
+
     def finalize_ingestion(self, json_path):
         with open(json_path, 'r') as f:
             s = f.read()
@@ -69,54 +165,21 @@ class RefactorEngine:
             g = match.group(0)
             if g[1] in 'nrtbf\\"': return g
             return '\\\\' + g[1]
-        
         fixed_s = re.sub(r'\\.', replacer, s, flags=re.DOTALL)
         
         try:
-            data = json.loads(fixed_s)
+            raw_data = json.loads(fixed_s)
+            data = self.sanitize_payload(raw_data)
             slugs = list(data.keys())
             
-            # Get valid slugs to prevent broken links
-            valid_slugs = set(self.orch.registry.values())
-            valid_slugs.update(self.orch.data.get("search_index", {}).keys())
-            
             for slug, sub_data in data.items():
-                if "formulas" in sub_data:
-                    for f_obj in sub_data["formulas"]:
-                        if not f_obj.get("title"):
-                            f_obj["title"] = f_obj.get("id") or f"Equation for {slug}"
-                            
-                # Auto-strip hallucinated links
-                if "content" in sub_data:
-                    content = sub_data["content"]
-                    pattern = re.compile(r'<a href="/physics/subtopic/([^"]+)"[^>]*>(.*?)</a>')
-                    def link_replacer(match):
-                        target = match.group(1)
-                        if target in valid_slugs or target in slugs:
-                            return match.group(0)
-                        else:
-                            print(f"  [Auto-Correction] Stripping hallucinated link: {target}")
-                            return match.group(2)
-                    sub_data["content"] = pattern.sub(link_replacer, content)
-
-                # Auto-strip hallucinated formula IDs
-                if "formula_ids" in sub_data:
-                    valid_formulas = set(self.orch.data.get("formula_registry", {}).keys())
-                    filtered_f_ids = []
-                    for f_id in sub_data["formula_ids"]:
-                        if f_id in valid_formulas:
-                            filtered_f_ids.append(f_id)
-                        else:
-                            print(f"  [Auto-Correction] Stripping hallucinated formula ID: {f_id}")
-                    sub_data["formula_ids"] = filtered_f_ids
-
                 self.orch.ingest_subtopic_platinum(slug, sub_data)
             
-            self.orch.save(auto_commit=True, commit_msg=f"RefactorEngine: Automated upgrade for {len(data)} topics.")
+            self.orch.save(auto_commit=True, commit_msg=f"RefactorEngine: Platinum Alignment Pass for {len(data)} topics.")
             self.trigger_sync()
+            self.clear_cache_for_slugs(slugs)
             self.orch.build_selective(slugs)
 
-            # --- POST-INGESTION SAFETY GATE ---
             if not self.validate_integrity():
                 self.rollback()
                 return False
@@ -125,6 +188,8 @@ class RefactorEngine:
             return True
         except Exception as e:
             print(f"Ingestion Failed: {e}")
+            import traceback
+            traceback.print_exc()
             return False
 
 if __name__ == "__main__":

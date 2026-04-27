@@ -127,32 +127,63 @@ class PhysicsOrchestrator:
         content = topic["content"]
         original_content = content
         
-        # 1. Entity Linking (Historical Figures/Facilities)
+        # 1. Entity Linking
         content = self._apply_entity_links(content)
 
-        masked_content, placeholders = self.mask_mathjax(content)
+        # 2. Mask MathJax AND existing links to prevent corruption
+        masked_content, mj_placeholders = self.mask_mathjax(content)
         
-        # Performance optimization: get titles for current slug once
+        # Mask COMPLETE <a> tags first
+        link_placeholders = {}
+        link_count = 0
+        def link_masker(match):
+            nonlocal link_count
+            ph = f"##L_MASK_{link_count}##"
+            link_placeholders[ph] = match.group(0)
+            link_count += 1
+            return ph
+        
+        masked_content = re.sub(r"<a\s+[^>]*>.*?</a>", link_masker, masked_content, flags=re.DOTALL)
+        
+        # Mask remaining HTML tags (strong, p, etc.)
+        tag_placeholders = {}
+        tag_count = 0
+        def tag_masker(match):
+            nonlocal tag_count
+            ph = f"##T_MASK_{tag_count}##"
+            tag_placeholders[ph] = match.group(0)
+            tag_count += 1
+            return ph
+        
+        masked_content = re.sub(r"<[^>]+>", tag_masker, masked_content)
+        
+        # 3. Single-pass title replacement
         current_titles = [t for t, s in self.registry.items() if s == slug]
-
-        for title in self.sorted_titles:
-            target_slug = self.registry[title]
-            if target_slug == slug or title in current_titles:
-                continue
-            
-            if f'href="/physics/subtopic/{target_slug}"' in masked_content:
-                continue
-
-            link_html = f'<a href="/physics/subtopic/{target_slug}" class="subtopic-link"><strong>{title}</strong></a>'
-            bold_tag = f"<strong>{title}</strong>"
-            
-            if bold_tag in masked_content:
-                masked_content = masked_content.replace(bold_tag, link_html)
-            else:
-                plain_pattern = re.compile(rf'(?<![=">])\b{re.escape(title)}\b(?![<])')
-                masked_content = plain_pattern.sub(lambda m: link_html, masked_content)
+        valid_titles = [t for t in self.sorted_titles if self.registry[t] != slug and t not in current_titles]
         
-        final_content = self.unmask_mathjax(masked_content, placeholders)
+        if valid_titles:
+            pattern_str = "\b(" + "|".join(re.escape(t) for t in valid_titles) + ")\b"
+            title_pattern = re.compile(pattern_str)
+            
+            def title_replacer(match):
+                title = match.group(0)
+                target_slug = self.registry[title]
+                # Return as a link that we mask immediately
+                nonlocal link_count
+                ph = f"##L_MASK_{link_count}##"
+                link_placeholders[ph] = f"<a href="/physics/subtopic/{target_slug}" class="subtopic-link"><strong>{title}</strong></a>"
+                link_count += 1
+                return ph
+
+            masked_content = title_pattern.sub(title_replacer, masked_content)
+        
+        # 4. Unmask EVERYTHING
+        for ph, original in tag_placeholders.items():
+            masked_content = masked_content.replace(ph, original)
+        for ph, original in link_placeholders.items():
+            masked_content = masked_content.replace(ph, original)
+
+        final_content = self.unmask_mathjax(masked_content, mj_placeholders)
         final_content = self._sanitize_mathjax(final_content)
         
         if not dry_run:

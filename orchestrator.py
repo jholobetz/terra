@@ -171,7 +171,7 @@ class PhysicsOrchestrator:
                 # Return as a link that we mask immediately
                 nonlocal link_count
                 ph = f"##L_MASK_{link_count}##"
-                link_placeholders[ph] = f"<a href="/physics/subtopic/{target_slug}" class="subtopic-link"><strong>{title}</strong></a>"
+                link_placeholders[ph] = f'<a href="/physics/subtopic/{target_slug}" class="subtopic-link"><strong>{title}</strong></a>'
                 link_count += 1
                 return ph
 

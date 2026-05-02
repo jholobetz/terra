@@ -249,19 +249,26 @@ class PhysicsController
         // Get subtopics for this topic
         $this->loadAllShards();
         $content = $this->getPhysicsContent();
-        $subtopics = [];
+        
+        // Build subtopics map for dynamic rendering
+        $subtopicsMap = [];
         foreach ($content['subtopics'] as $subSlug => $sub) {
-            if (isset($sub['parents']) && in_array($slug, $sub['parents'])) {
-                $sub['slug'] = $subSlug;
-                $cleanContent = strip_tags($sub['content']);
-                $sub['description'] = mb_strimwidth($cleanContent, 0, 160, "...");
-                $subtopics[] = $sub;
-            }
+            if (!is_array($sub)) continue;
+            $subtopicsMap[$subSlug] = [
+                'title' => $sub['title'] ?? $subSlug,
+                'snippet' => $sub['snippet'] ?? '',
+                'snippet_svg' => $sub['snippet_svg'] ?? ''
+            ];
         }
 
         $this->renderWithLayout('physics/topic', array_merge($topic, [
             'topic' => $topic,
-            'subtopics' => $subtopics,
+            'subtopics_map' => $subtopicsMap,
+            'pillars' => !empty($topic['pillars']) ? (is_string($topic['pillars']) ? json_decode($topic['pillars'], true) : $topic['pillars']) : null,
+            'bridges' => !empty($topic['bridges']) ? (is_string($topic['bridges']) ? json_decode($topic['bridges'], true) : $topic['bridges']) : null,
+            'intro' => $topic['intro'] ?? null,
+            'field' => $topic['field'] ?? null,
+            'density' => $topic['density'] ?? null,
             'slug' => $slug
         ]));
     }
@@ -385,14 +392,14 @@ class PhysicsController
         $db = $this->app->db();
 
         foreach ($data['topics'] ?? [] as $slug => $t) {
-            $db->runQuery("REPLACE INTO topics (slug, title, content, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?)", 
-                [$slug, $t['title'], $t['content'], json_encode($t['equations'] ?? []), json_encode($t['breakdowns'] ?? []), json_encode($t['formula_ids'] ?? [])]);
+            $db->runQuery("REPLACE INTO topics (slug, title, content, pillars, intro, bridges, field, density, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                [$slug, $t['title'], $t['content'], json_encode($t['pillars'] ?? []), $t['intro'] ?? '', json_encode($t['bridges'] ?? []), $t['field'] ?? '', $t['density'] ?? '', json_encode($t['equations'] ?? []), json_encode($t['breakdowns'] ?? []), json_encode($t['formula_ids'] ?? [])]);
         }
 
         foreach ($data['subtopics'] ?? [] as $slug => $st) {
             $primaryParent = !empty($st['parents']) ? $st['parents'][0] : '';
-            $db->runQuery("REPLACE INTO subtopics (slug, parent_topic, title, content, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?, ?)", 
-                [$slug, $primaryParent, $st['title'], $st['content'], json_encode($st['equations'] ?? []), json_encode($st['breakdowns'] ?? []), json_encode($st['formula_ids'] ?? [])]);
+            $db->runQuery("REPLACE INTO subtopics (slug, parent_topic, title, content, snippet, snippet_svg, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                [$slug, $primaryParent, $st['title'], $st['content'], $st['snippet'] ?? '', $st['snippet_svg'] ?? '', json_encode($st['equations'] ?? []), json_encode($st['breakdowns'] ?? []), json_encode($st['formula_ids'] ?? [])]);
         }
     }
 

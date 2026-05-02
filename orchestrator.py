@@ -35,6 +35,8 @@ class PhysicsOrchestrator:
     def __init__(self, content_dir="app/config/content", registry_path="global_slug_registry.json"):
         self.content_dir = content_dir
         self.registry_path = registry_path
+        self.svg_engine = os.path.join(os.getcwd(), "scripts/tex2svg.js")
+        self.svg_cache = {}
         self.shards = {} # Subtopic shards
         self.topic_shards = {} # Main topic shards
         self.data = {
@@ -100,9 +102,106 @@ class PhysicsOrchestrator:
     def _refresh_sorted_titles(self):
         self.sorted_titles = sorted(self.registry.keys(), key=len, reverse=True)
 
+    def convert_to_svg(self, latex, is_display=False):
+        """Converts a LaTeX string to SVG using the Node.js runway engine."""
+        cache_key = f"{latex}_{is_display}"
+        if hasattr(self, 'svg_cache') and cache_key in self.svg_cache:
+            return self.svg_cache[cache_key]
+
+        # Clean LaTeX for CLI (remove delimiters)
+        clean_latex = latex.replace("\\(", "").replace("\\)", "").replace("\\[", "").replace("\\]", "").strip()
+        
+        try:
+            mode = "display" if is_display else "inline"
+            result = subprocess.run(["node", self.svg_engine, clean_latex, mode], capture_output=True, text=True, timeout=5)
+            if result.returncode == 0 and result.stdout:
+                svg_code = result.stdout.strip()
+                if hasattr(self, 'svg_cache'):
+                    self.svg_cache[cache_key] = svg_code
+                return svg_code
+        except Exception as e:
+            print(f"SVG Error for [{clean_latex}]: {str(e)}")
+        
+        return latex
+
+    def get_svg_snippet(self, content):
+        """Generates a snippet where math is replaced by static SVG paths."""
+        if not content: return ""
+        
+        # 1. Protect Numbered Headers
+        clean = re.sub(r'\d+\.\s+[A-Z].*', '', content)
+        
+        # 2. Extract first 3 sentences using structural boundaries (preserving HTML/Math)
+        math_blocks = []
+        def mask_math(match):
+            placeholder = f"___MATH_BLOCK_{len(math_blocks)}___"
+            math_blocks.append(match.group(0))
+            return placeholder
+
+        masked = re.sub(r'\\+\[.*?\\+\]', mask_math, clean)
+        masked = re.sub(r'\\+\(.*?\\+\)', mask_math, masked)
+        
+        # Strip other HTML tags for sentence splitting
+        text_only = re.sub(r'<.*?>', '', masked)
+        sentences = re.split(r'(?<=[.!?])\s+', text_only)
+        snippet_masked = " ".join(sentences[:3])
+        if len(sentences) > 3 and not snippet_masked.endswith('.'):
+            snippet_masked += "."
+
+        # 3. Restore and Convert Math Blocks
+        def restore_and_convert(match):
+            try:
+                idx = int(match.group(1))
+                latex = math_blocks[idx]
+                is_display = "\\[" in latex or "\\\\[" in latex
+                return self.convert_to_svg(latex, is_display)
+            except:
+                return ""
+
+        final_snippet = re.sub(r'___MATH_BLOCK_(\d+)___', restore_and_convert, snippet_masked)
+        
+        # 4. Final cleanup
+        final_snippet = re.sub(r'\(\s*\)', '', final_snippet)
+        return final_snippet.strip()
+
+    def get_safe_snippet(self, content):
+        """Extracts a math-free 3-sentence snippet from HTML content."""
+        if not content: return ""
+        # 1. Strip out MathJax inline and display formulas completely
+        clean = re.sub(r'\\+\[.*?\\+\]', '', content)
+        clean = re.sub(r'\\+\(.*?\\+\)', '', clean)
+        
+        # 2. Strip HTML
+        clean = re.sub(r'<.*?>', '', clean)
+        
+        # 3. Strip Numbered Headers
+        clean = re.sub(r'\d+\.\s+[A-Z].*', '', clean)
+        
+        # 4. Cleanup orphaned parentheses like "( )" or "()"
+        clean = re.sub(r'\(\s*\)', '', clean)
+        
+        # 5. Collapse whitespace and fix punctuation spacing
+        clean = re.sub(r'\s+([.,!?])', r'\1', clean)
+        clean = " ".join(clean.split())
+        
+        # 6. Extract 3 sentences
+        sentences = re.split(r'(?<=[.!?])\s+', clean)
+        snippet = " ".join(sentences[:3])
+        if len(sentences) > 3 and not snippet.endswith('.'):
+            snippet += "."
+            
+        return snippet.strip()
+
     def save(self, auto_commit=True, commit_msg=None, unlock_protected=False):
         """Saves all modified shards and registries and optionally commits to Git."""
-        # 1. Save Registries
+        # 1. Generate Snippets for all subtopics before saving
+        print(f"Generating snippets for {len(self.data['subtopics'])} subtopics...")
+        for slug, subtopic in self.data["subtopics"].items():
+            content = subtopic.get("content", "")
+            subtopic["snippet"] = self.get_safe_snippet(content)
+            subtopic["snippet_svg"] = self.get_svg_snippet(content)
+
+        # 2. Save Registries
         # Clean topics for categories.json (metadata only)
         clean_topics = {}
         for slug, meta in self.data["topics"].items():
@@ -120,7 +219,7 @@ class PhysicsOrchestrator:
         with open(os.path.join(self.content_dir, "entities.json"), "w") as f:
             json.dump(self.data["entities"], f, indent=4)
         
-        # 2. Save Topic Shards (Protected)
+        # 3. Save Topic Shards (Protected)
         for slug, content in self.topic_shards.items():
             path = os.path.join(self.content_dir, "topics", f"{slug}.json")
             if os.path.exists(path) and not unlock_protected:
@@ -134,7 +233,7 @@ class PhysicsOrchestrator:
             with open(path, "w") as f:
                 json.dump(content, f, indent=4)
 
-        # 3. Save Subtopic Shards
+        # 4. Save Subtopic Shards
         for shard_name, shard_content in self.shards.items():
             for slug in shard_content:
                 if slug in self.data["subtopics"]:
@@ -144,7 +243,7 @@ class PhysicsOrchestrator:
             with open(path, "w") as f:
                 json.dump(shard_content, f, indent=4)
 
-        # 4. Save Global Registry
+        # 5. Save Global Registry
         with open(self.registry_path, "w") as f:
             json.dump(self.registry, f, indent=4)
             

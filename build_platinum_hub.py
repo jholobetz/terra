@@ -16,85 +16,46 @@ class HubBuilder:
             self.topic_data = json.load(f)
 
     def get_safe_snippet(self, content):
-        # 1. Standardize delimiters to single-backslash in memory
-        content = content.replace('\\\\(', '\\(').replace('\\\\)', '\\)')
-        content = content.replace('\\\\\\[', '\\[').replace('\\\\\\]', '\\]')
+        # 1. Strip out MathJax inline and display formulas completely
+        # Match \( ... \) and \[ ... \] (allowing for backslash variations)
+        clean = re.sub(r'\\+\[.*?\\+\]', '', content)
+        clean = re.sub(r'\\+\(.*?\\+\)', '', clean)
         
-        # 2. Protection: Replace with unique tokens
-        content = content.replace('\\(', '___MJ_INLINE_OPEN___').replace('\\)', '___MJ_INLINE_CLOSE___')
-        content = content.replace('\\[', '___MJ_DISPLAY_OPEN___').replace('\\]', '___MJ_DISPLAY_CLOSE___')
+        # 2. Strip HTML
+        clean = re.sub(r'<.*?>', '', clean)
         
-        # 3. Strip HTML
-        clean = re.sub(r'<.*?>', '', content)
-        
-        # 4. Strip Numbered Headers
+        # 3. Strip Numbered Headers
         clean = re.sub(r'\d+\.\s+[A-Z].*', '', clean)
         
-        # 5. Collapse whitespace
+        # 4. Cleanup orphaned parentheses like "( )" or "()" that might be left behind
+        clean = re.sub(r'\(\s*\)', '', clean)
+        
+        # 5. Collapse whitespace and fix punctuation spacing
+        clean = re.sub(r'\s+([.,!?])', r'\1', clean)
         clean = " ".join(clean.split())
         
         # 6. Extract 3 sentences
         sentences = re.split(r'(?<=[.!?])\s+', clean)
         snippet = " ".join(sentences[:3])
-        if len(sentences) > 3:
+        if len(sentences) > 3 and not snippet.endswith('.'):
             snippet += "."
             
-        # 7. Restore delimiters
-        snippet = snippet.replace('___MJ_INLINE_OPEN___', '\\(').replace('___MJ_INLINE_CLOSE___', '\\)')
-        snippet = snippet.replace('___MJ_DISPLAY_OPEN___', '\\[').replace('___MJ_DISPLAY_CLOSE___', '\\]')
-        
-        return snippet
+        return snippet.strip()
 
     def build_hub(self, title, metadata, pillars):
-        html = f"<p>{metadata['intro']}</p>\n\n"
-        html += '<div class="high-signal-banner">\n'
-        html += f'    <div class="signal-item"><strong>Field:</strong> {metadata["field"]}</div>\n'
-        html += f'    <div class="signal-item"><strong>Standard:</strong> Platinum</div>\n'
-        html += f'    <div class="signal-item"><strong>Technical Density:</strong> {metadata["density"]}</div>\n'
-        html += f'    <div class="signal-item"><strong>Bridges:</strong> {len(metadata["bridges"])}</div>\n'
-        html += '</div>\n'
+        # Store metadata in the topic data for dynamic rendering
+        self.topic_data["intro"] = metadata.get("intro", "")
+        self.topic_data["field"] = metadata.get("field", "")
+        self.topic_data["density"] = metadata.get("density", "")
+        self.topic_data["bridges"] = metadata.get("bridges", {})
+        self.topic_data["pillars"] = pillars
+        
+        # Clear static content to force dynamic view
+        self.topic_data["content"] = ""
 
-        for pillar in pillars:
-            html += f'\n<section class="concept-pillar">\n'
-            html += f'    <h3 class="pillar-header">{pillar["title"]}</h3>\n'
-            html += f'    <p class="pillar-narrative">{pillar["narrative"]}</p>\n'
-            html += '    <div class="concept-grid">\n'
-            
-            for slug in pillar['slugs']:
-                if slug not in self.shard_data: continue
-                sub = self.shard_data[slug]
-                
-                # Check for Frontier terms
-                frontier_terms = ["manifold", "topology", "tensor", "bundle", "chaos", "nonlinear", "covariant", "lie", "symplectic", "geodesic", "action"]
-                is_frontier = any(t in sub['title'].lower() or t in slug for t in frontier_terms)
-                is_foundational = any(t in sub['title'].lower() or t in slug for t in ["newton", "law", "galileo", "static", "force", "energy", "work"])
-                level = "Frontier" if is_frontier else ("Foundational" if is_foundational else "Analytical")
-                
-                snippet = self.get_safe_snippet(sub['content'])
-                clean_title = sub['title'].replace('\\\\', '\\')
-                
-                html += f'        <div class="concept-card">\n'
-                html += f'            <div class="concept-anchor">\n'
-                html += f'                <span class="level-tag level-{level.lower()}">{level}</span>\n'
-                html += f'                <h4><strong><a href="/physics/subtopic/{slug}" class="subtopic-link">{clean_title}</a></strong></h4>\n'
-                html += '            </div>\n'
-                html += '            <div class="concept-detail">\n'
-                html += f'                <p>{snippet}</p>\n'
-                html += '            </div>\n'
-                html += '        </div>\n'
-            
-            html += '    </div>\n</section>\n'
-
-        # Bridge Matrix
-        html += '\n<div class="bridge-matrix">\n    <h3>Cross-Disciplinary Bridges</h3>\n'
-        for field, bridge in metadata['bridges'].items():
-            html += f'    <div class="bridge-item">\n        <strong>{field}:</strong>\n        <p>{bridge}</p>\n    </div>\n'
-        html += '</div>'
-
-        self.topic_data["content"] = html
         with open(self.topic_path, "w") as f:
             json.dump(self.topic_data, f, indent=4)
-        print(f"SUCCESS: Platinum Hub built for {self.topic_slug}")
+        print(f"SUCCESS: Platinum Hub Metadata built for {self.topic_slug}")
 
 if __name__ == "__main__":
     builder = HubBuilder("classical-mechanics")

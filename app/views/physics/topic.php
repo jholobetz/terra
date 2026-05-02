@@ -74,10 +74,16 @@ if (!function_exists('getConceptLevel')) {
             <?php if (!empty($bridges)): ?>
                 <div class="bridge-matrix">
                     <h3>Cross-Disciplinary Bridges</h3>
-                    <?php foreach ($bridges as $f => $desc): ?>
+                    <?php foreach ($bridges as $b): ?>
                         <div class="bridge-item">
-                            <strong><?= $f ?>:</strong>
-                            <p><?= $desc ?></p>
+                            <strong>
+                                <?php if (!empty($b['slug'])): ?>
+                                    <a href="/physics/topic/<?= $b['slug'] ?>" class="bridge-link"><?= $b['title'] ?></a>
+                                <?php else: ?>
+                                    <?= $b['title'] ?>
+                                <?php endif; ?>:
+                            </strong>
+                            <p><?= $b['description'] ?></p>
                         </div>
                     <?php endforeach; ?>
                 </div>

@@ -261,11 +261,31 @@ class PhysicsController
             ];
         }
 
+        // Resolve Bridges (Slug to metadata mapping)
+        $resolvedBridges = [];
+        $topicBridges = !empty($topic['bridges']) ? (is_string($topic['bridges']) ? json_decode($topic['bridges'], true) : $topic['bridges']) : [];
+        
+        foreach ($topicBridges as $bridgeKey => $desc) {
+            if (isset($content['topics'][$bridgeKey])) {
+                $resolvedBridges[] = [
+                    'title' => $content['topics'][$bridgeKey]['title'],
+                    'slug' => $bridgeKey,
+                    'description' => $desc
+                ];
+            } else {
+                $resolvedBridges[] = [
+                    'title' => $bridgeKey,
+                    'slug' => null,
+                    'description' => $desc
+                ];
+            }
+        }
+
         $this->renderWithLayout('physics/topic', array_merge($topic, [
             'topic' => $topic,
             'subtopics_map' => $subtopicsMap,
             'pillars' => !empty($topic['pillars']) ? (is_string($topic['pillars']) ? json_decode($topic['pillars'], true) : $topic['pillars']) : null,
-            'bridges' => !empty($topic['bridges']) ? (is_string($topic['bridges']) ? json_decode($topic['bridges'], true) : $topic['bridges']) : null,
+            'bridges' => $resolvedBridges,
             'intro' => $topic['intro'] ?? null,
             'field' => $topic['field'] ?? null,
             'density' => $topic['density'] ?? null,

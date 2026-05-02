@@ -63,9 +63,9 @@ if __name__ == "__main__":
         "field": "Classical Mechanics", "density": "210",
         "intro": "Classical mechanics represents the foundational mathematical edifice of the physical sciences, providing a deterministic framework for describing the evolution of macroscopic systems through the 4D manifold of spacetime. This university-level exposition utilizes the abstract visual manifold as a guide to the underlying symplectic geometry, revealing the hidden symmetries that anchor the physical world in a balance of conserved quantities and invariant laws.",
         "bridges": {
-            "Quantum Physics": "Classical mechanics serves as the high-energy, macroscopic limit of quantum mechanics, where the Hamilton-Jacobi equation provides the phase-evolution map.",
-            "Relativity": "Newtonian dynamics is the low-velocity approximation of relativity, where Galilean transformations are replaced by the Lorentz group.",
-            "Thermodynamics": "The total dynamics of multi-particle systems lead to thermodynamic laws through the ensemble averaging of phase-space states."
+            "quantum-physics": "Classical mechanics serves as the high-energy, macroscopic limit of quantum mechanics, where the Hamilton-Jacobi equation provides the phase-evolution map.",
+            "relativity": "Newtonian dynamics is the low-velocity approximation of relativity, where Galilean transformations are replaced by the Lorentz group.",
+            "thermodynamics-statistical-mechanics": "The total dynamics of multi-particle systems lead to thermodynamic laws through the ensemble averaging of phase-space states."
         }
     }
     pillars = [

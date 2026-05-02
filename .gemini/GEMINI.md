@@ -73,6 +73,7 @@ curl -s http://localhost/physics/subtopic/slug | grep -E "\\\\\\(|\\\\\\\\\\["
     - **JSON Escaping:** TeX commands starting with JSON escape characters (e.g., `\\nu`, `\\rho`, `\\tau`) MUST be double-escaped in the shard file to prevent "eaten" backslashes.
     - **No HTML Escaping:** Equations in formula cards MUST NOT be passed through `htmlspecialchars()`, as alignment characters like `&` are essential for MathJax parsing.
 - **Linking Convention:** Use `<strong><a href="/physics/subtopic/slug" class="subtopic-link">Title</a></strong>` for internal subtopic links and `/physics/topic/slug` for main modules.
+- **Link Preservation Mandate:** When refactoring or expanding an existing subtopic, AI assistants MUST first extract all internal links containing the `class="subtopic-link"` attribute and ensure they are contextually re-integrated into the new high-signal content. This ensures the integrity of the knowledge graph while allowing for the removal of legacy or non-standard external links. Discarding established subtopic-link pathways is a critical failure.
 - **No Linguistic Artifacts:** Zero tolerance for doubled words or "AI Fluff."
 
 ---
@@ -142,7 +143,15 @@ All batch updates must follow the atomic ingestion pipeline:
 1.  **Local Formula Definition:** Sub-agents MUST define new equations in a local `formulas` array.
 2.  **Automated Sanitization:** The engine must handle all MathJax backslash escaping to ensure JSON validity.
 3.  **Atomic Ingestion:** Shards and the global formula registry must be updated simultaneously via `ingest_subtopic_platinum`.
-4.  **Zero-Error Validation:** Any batch that introduces a "Broken Link" or "Broken Formula" error MUST be reverted or fixed before the next turn.
+4.  **Subtopic-Link Extraction & Re-injection:** The engine MUST verify that all pre-existing links with `class="subtopic-link"` are preserved in the new content version.
+5.  **Zero-Error Validation:** Any batch that introduces a "Broken Link" or "Broken Formula" error MUST be reverted or fixed before the next turn.
+
+### 10.3 Quality Assurance for Batch Operations
+To prevent systemic failures during large-scale refactoring, the following QA rules are enforced:
+- **Atomic Batch Limit:** Maximum of **5-10 subtopics** per refactoring batch. Large batches (>20) are prohibited to ensure human-level oversight per topic.
+- **Mandatory "Before & After" Density Check:** Every batch must report a delta in word count and technical density. Content must show a minimum 50% increase in depth to be considered a successful refactor.
+- **Snapshot Requirement:** The orchestrator MUST create a temporary backup of the target shard before any batch operation. If `integrity_shield.py` returns any errors post-ingestion, the shard MUST be immediately restored from the snapshot.
+- **Sub-Agent Independent Verification:** After a batch is ingested, a separate sub-agent (The Auditor) must be tasked with verifying a random 20% sample of the batch for factual accuracy and link functionality.
 
 ---
 

@@ -251,10 +251,33 @@ class PhysicsOrchestrator:
         final_content = self.unmask_mathjax(masked_content, placeholders)
         final_content = self._sanitize_mathjax(final_content)
         
+        # Topological Reinforcement: Inject link back to primary parent
+        if slug in self.data["subtopics"]:
+            final_content = self._inject_parent_link(slug, final_content, parents)
+
         if not dry_run:
             topic["content"] = final_content
             
         return final_content if final_content != original_content else None
+
+    def _inject_parent_link(self, slug, content, parents):
+        """Prepends a navigation link to the primary parent module."""
+        if not parents:
+            return content
+            
+        primary_parent = parents[0]
+        if primary_parent not in self.data["topics"]:
+            return content
+            
+        parent_title = self.data["topics"][primary_parent]["title"]
+        # Format the foundational link
+        link_html = f'<p class="foundational-link">Part of the <a href="/physics/topic/{primary_parent}" class="subtopic-link"><strong>{parent_title}</strong></a> module.</p>'
+        
+        # If already exists, replace it (keeps it fresh); otherwise prepend
+        if '<p class="foundational-link">' in content:
+            return re.sub(r'<p class="foundational-link">.*?</p>\n*', f'{link_html}\n\n', content, flags=re.DOTALL)
+        
+        return f"{link_html}\n\n{content}"
 
     def _apply_entity_links(self, content):
         """Internal helper to link entities from entities.json."""

@@ -65,7 +65,8 @@ curl -s http://localhost/physics/subtopic/slug | grep -E "\\\\\\(|\\\\\\\\\\["
 
 ## 4. Content Quality Standards: The "Platinum Standard"
 
-- **University-Level Depth:** Every subtopic must contain 6 distinct sections of rigorous technical explanation.
+- **Technical Scope:** Every subtopic must contain **4 to 8 distinct sections** of rigorous technical explanation, depending on the breadth of available academic material. This flexibility ensures depth for complex theories while maintaining integrity for specialized niche topics.
+- **Factuality & Integrity:** All content MUST be derived from established physical principles and academic consensus. **Zero Tolerance for Hallucinations**: AI assistants must not invent terminology, historical dates, or physical relationships. If reliable data for a section is unavailable, the section count should be reduced toward the minimum threshold (4) rather than padded with speculative content.
 - **Main Topic Layout:** Main topics must use the bulleted layout with high verbosity (**3-4 sentences per bullet point**) to provide deep technical context.
 - **MathJax 3 Configuration:** 
     - **Delimiters:** Use `\\(` and `\\)` for inline, and `\\\\[` and `\\\\]` for display-style equations in raw JSON content.

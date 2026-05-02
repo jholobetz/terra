@@ -9,15 +9,9 @@
     <script nonce="<?= $nonce ?>">
         window.MathJax = {
             tex: {
-                inlineMath: [['\\\\(', '\\\\)'], ['$', '$']],
-                displayMath: [['\\\\[', '\\\\]'], ['$$', '$$']],
-                processEscapes: true,
-                macros: {
-                    mathbf: ["{\\\\boldsymbol{#1}}", 1]
-                }
-            },
-            options: {
-                enableMenu: false
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
             }
         };
     </script>

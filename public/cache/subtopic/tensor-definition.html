@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tensor Definition and Structure - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="f46f65a8120eafa43339aa2ad0762a12">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="f46f65a8120eafa43339aa2ad0762a12"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
+    </style>
+</head>
+<body>
+        <nav>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">Tensor Definition and Structure</span>
+    </nav>
+
+    <header class="subtopic-header">
+        <h1>Tensor Definition and Structure</h1>
+    </header>
+    
+    <div class="content-body">
+        <p>The <strong>Field Strength Tensor</strong> (\( F^{\mu
+u} \)) is defined as the antisymmetric rank-2 tensor whose components represent the observable electric and magnetic fields. In university-level physics, this definition is the primary "Dictionary" for translating 3D Newtonian forces into the 4D language of <strong>Special Relativity</strong>. It provides the coordinate-independent framework required to satisfy the <strong>Principle of Relativity</strong>.</p>
+
+                    <h3>1. The Exterior Derivative Origin</h3>
+                    <p>The most fundamental definition of the tensor is the "4D Curl" of the <strong>Electromagnetic 4-Potential</strong>:
+                    \[ F_{\mu
+u} = \partial_\mu A_
+u - \partial_
+u A_\mu \]
+                    This derivation shows that the fields are not independent but are derived from a single 4-vector landscape. The <strong>Antisymmetric</strong> nature of this subtraction is what ensures that only 6 of the 16 possible components in the 4x4 matrix are physically independent.</p>
+
+                    <h3>2. Identifying the 3D Parts</h3>
+                    <p>In a standard coordinate system \( (ct, x, y, z) \), the definition yields:
+                        <ul>
+                            <li><strong>Time-Space Components (\(F^{0i}\)):</strong> Identified as the <strong>electric field</strong> (\( E_i / c \)).</li>
+                            <li><strong>Space-Space Components (\(F^{ij}\)):</strong> Identified as the <strong>magnetic field</strong> (\( \epsilon_{ijk} B_k \)).</li>
+                        </ul>
+                    This confirms that E and B are two different "projections" of a single 4D object, explaining why they transform into each other under a <strong>Lorentz Transformation</strong>.</p>
+
+                    <h3>3. Raising and Lowering with \(\eta_{\mu
+u}\)</h3>
+                    <p>To define the contravariant form (\( F^{\mu
+u} \)), we use the <strong>Minkowski Metric</strong>: \( F^{\mu
+u} = \eta^{\mu\alpha} \eta^{
+u\beta} F_{\alpha\beta} \). In our universe's metric signature (\( + - - - \)), this operation flips the sign of the magnetic components relative to the electric ones. This a critical university-level detail for maintaining the <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariance</strong></a> of the <a href="/physics/subtopic/inhomogeneous-equations" class="subtopic-link"><strong>Inhomogeneous Maxwell Equations</strong></a>.</p>
+
+                    <h3>4. The Matrix Map</h3>
+                    <p>The tensor is visually mapped to a matrix where the diagonal is zero.
+                    \[ F^{\mu
+u} = \begin{pmatrix} 0 & -E_x/c & -E_y/c & -E_z/c \ E_x/c & 0 & -B_z & B_y \ \dots & \dots & \dots & 0 \end{pmatrix} \]
+                    This matrix acts as the "Switchboard" for electrodynamics. Every possible physical interaction—from the <strong>Coulomb Force</strong> to <a href="/physics/subtopic/electromagnetic-radiation" class="subtopic-link"><strong>Electromagnetic Radiation</strong></a>—is encoded in the values of these 16 (6 independent) slots.</p>
+
+                    <h3>5. Gauge Redundancy</h3>
+                    <p>The definition of the tensor includes an inherent <a href="/physics/subtopic/gauge-invariance" class="subtopic-link"><strong>Gauge Invariance</strong></a>. Since \( \partial_\mu \partial_
+u \Lambda = \partial_
+u \partial_\mu \Lambda \), adding a gradient to the potential does not change the tensor. This proves that the physical world is "Gauge-Blind," responding only to the 4D "twist" of the potential and not its absolute value, a core tenet of <strong>Gauge Theories</strong>.</p>
+
+                    <h3>6. Epistemic Status: The Tensor Identity</h3>
+                    <p>Is the tensor "Real," or are E and B the reality? 4D <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> favors the tensor. It is the only object that has a consistent physical meaning for all moving observers. The <strong>Tensor Definition</strong> is the first step toward the <strong>Covariant Formulation</strong>, allowing us to describe the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of light and matter as a single 4D geometric history.</p>    </div>
+
+    <section class="equations-section">
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
+    <ul class="equations-list" id="equations-list">
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            exterior derivative                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ F_{\mu
+u} = \partial_\mu A_
+u - \partial_
+u A_\mu \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>exterior derivative:</strong> The math operation that builds the field from the potential map.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            E-B Mapping                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ F^{0i} = - E_i / c \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>E-B Mapping:</strong> Why three spots in the matrix hold electric data and three hold magnetic data.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Antisymmetry                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ F^{ij} = - \epsilon_{ijk} B_k \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Antisymmetry:</strong> Why swapping the row and column of a field value flips its plus/minus label.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Index raising                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ F^{\mu
+u} = \eta^{\mu\alpha} \eta^{
+u\beta} F_{\alpha\beta} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Index raising:</strong> How the shape of space (eta) is used to calculate the final tensor values.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
+</section>
+
+<script nonce="f46f65a8120eafa43339aa2ad0762a12">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
+            }
+        }
+    });
+});
+</script>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/relativistic-unification" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Relativistic Unification of E and B</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/inhomogeneous-equations" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Inhomogeneous Maxwell Equations</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/antisymmetric-tensor" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Antisymmetric Tensor Properties</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <footer class="subtopic-footer" style="margin-top: 40px;">
+            </footer>
+</article>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="f46f65a8120eafa43339aa2ad0762a12" defer></script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-Vectors and the Covariant Formalism - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="6dd8b04c22096438bc043f837261fe43">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="6dd8b04c22096438bc043f837261fe43"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
+    </style>
+</head>
+<body>
+        <nav>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">4-Vectors and the Covariant Formalism</span>
+    </nav>
+
+    <header class="subtopic-header">
+        <h1>4-Vectors and the Covariant Formalism</h1>
+    </header>
+    
+    <div class="content-body">
+        <p>4-Vectors are the fundamental mathematical objects used to express the laws of physics in the four-dimensional language of Minkowski spacetime. In university-level relativity, a 4-vector is defined not just as a set of four numbers, but as a geometric entity whose components transform in a specific way under a Lorentz transformation, ensuring that physical laws remain consistent across all inertial frames.</p>
+
+                    <h3>1. Geometric Definition and Transformation</h3>
+                    <p>A <a href="/physics/subtopic/contravariant-4-vector" class="subtopic-link"><strong>Contravariant 4-Vector</strong></a> \( V^\mu \) is defined by its transformation law. If an observer in frame \( S \) measures components \( V^\mu \), an observer in frame \( S' \) moving with relative velocity \( v \) will measure:
+                    \[ V'^\mu = \Lambda^\mu_
+u V^
+u \]
+                    Where \( \Lambda^\mu_
+u \) is the Lorentz transformation matrix. This requirement ensures that any equation written using 4-vectors is automatically <a href="/physics/subtopic/lorentz-covariant" class="subtopic-link"><strong>Lorentz Covariant</strong></a>, meaning it maintains its mathematical form for all observers.</p>
+
+                    <h3>2. The Position 4-Vector (\( x^\mu \))</h3>
+                    <p>The prototype for all 4-vectors is the <a href="/physics/subtopic/position-4-vector" class="subtopic-link"><strong>Position 4-Vector</strong></a>, which labels an event in spacetime:
+                    \[ x^\mu = (ct, x, y, z) = (x^0, x^1, x^2, x^3) \]
+                    The zeroth component (\( x^0 = ct \)) has units of length, allowing all components to be treated on an equal footing. This vector represents a point in the , and its differential \( dx^\mu \) defines the path of an object through spacetime.</p>
+
+                    <h3>3. Contravariance vs. Covariance</h3>
+                    <p>To calculate invariant quantities, we distinguish between <a href="/physics/subtopic/contravariant" class="subtopic-link"><strong>Contravariant</strong></a> (upper index \( V^\mu \)) and <a href="/physics/subtopic/covariant" class="subtopic-link"><strong>Covariant</strong></a> (lower index \( V_\mu \)) components. They are linked by the <a href="/physics/subtopic/minkowski-metric" class="subtopic-link"><strong>Minkowski Metric</strong></a> (\( \eta_{\mu
+u} \)):
+                    \[ V_\mu = \eta_{\mu
+u} V^
+u \]
+                    In the standard \( (+ - - -) \) signature, this simply flips the sign of the spatial components: \( V_\mu = (V^0, -V^1, -V^2, -V^3) \). This "index gymnastics" is essential for handling the non-Euclidean geometry of spacetime.</p>
+
+                    <h3>4. The Velocity 4-Vector (\( U^\mu \))</h3>
+                    <p>In relativity, ordinary velocity (\( \mathbf{u} = d\mathbf{x}/dt \)) is not a 4-vector because time is relative. Instead, we define the <a href="/physics/subtopic/four-velocity" class="subtopic-link"><strong>4-Velocity</strong></a> by differentiating position with respect to <a href="/physics/subtopic/proper-time" class="subtopic-link"><strong>Proper Time</strong></a> (\( 	au \)):
+                    \[ U^\mu = \frac{dx^\mu}{d	au} = \gamma(c, u_x, u_y, u_z) \]
+                    The 4-velocity has a unique property: its "length" (magnitude) is always constant and equal to the speed of light: \( U^\mu U_\mu = c^2 \). This implies that all objects are "moving" through spacetime at speed \( c \).</p>
+
+                    <h3>5. The <a href="/physics/subtopic/energy-momentum-4-vector" class="subtopic-link"><strong>Energy-Momentum 4-Vector</strong></a> (\( p^\mu \))</h3>
+                    <p>The most important 4-vector in dynamics is the <a href="/physics/subtopic/four-momentum" class="subtopic-link"><strong>4-Momentum</strong></a>, which unifies energy and linear momentum:
+                    \[ p^\mu = m U^\mu = (E/c, p_x, p_y, p_z) \]
+                    This unification shows that energy is simply the "temporal component" of momentum. In any closed system, the total 4-momentum is conserved, providing a single, unified conservation law that encompasses both the conservation of energy and the conservation of momentum.</p>
+
+                    <h3>6. The Invariant Inner Product</h3>
+                    <p>The scalar product of two 4-vectors is defined as \( A \cdot B = A^\mu B_\mu = A^0 B^0 - \mathbf{A} \cdot \mathbf{B} \). This product is a <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariant</strong></a>, meaning all observers calculate the same value. For the momentum 4-vector, the invariant is the particle's rest mass:
+                    \[ p^\mu p_\mu = \frac{E^2}{c^2} - p^2 = m^2 c^2 \]
+                    This relation is the fundamental link between an object's energy, momentum, and mass, and it remains the same regardless of how fast the object is moving relative to the observer.</p>    </div>
+
+    <section class="equations-section">
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
+    <ul class="equations-list" id="equations-list">
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            <a href="/physics/subtopic/lorentz-transformation" class="subtopic-link">Lorentz Transformation</a>                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ V'^\mu = \Lambda^\mu_
+u V^
+u \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong><a href="/physics/subtopic/lorentz-transformation" class="subtopic-link">Lorentz Transformation</a>:</strong> The general rule for how 4-vector components change between inertial frames.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            <a href="/physics/subtopic/position-4-vector" class="subtopic-link">Position 4-Vector</a>                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ x^\mu = (ct, \mathbf{x}) \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong><a href="/physics/subtopic/position-4-vector" class="subtopic-link">Position 4-Vector</a>:</strong> The fundamental coordinate vector representing an event in 4D spacetime.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            <a href="/physics/subtopic/four-momentum" class="subtopic-link">4-Momentum</a>                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ p^\mu = (E/c, \mathbf{p}) \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong><a href="/physics/subtopic/four-momentum" class="subtopic-link">4-Momentum</a>:</strong> The unification of relativistic energy and momentum into a single geometric object.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            <a href="/physics/subtopic/invariant-mass" class="subtopic-link">Invariant Mass</a>                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ p^\mu p_\mu = m^2 c^2 \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong><a href="/physics/subtopic/invariant-mass" class="subtopic-link">Invariant Mass</a>:</strong> The scalar product of the 4-momentum with itself, which is constant for all observers.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
+</section>
+
+<script nonce="6dd8b04c22096438bc043f837261fe43">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
+            }
+        }
+    });
+});
+</script>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/contravariant-4-vector" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Contravariant 4-Vectors (\(V^\mu\))</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/contravariant" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Contravariance and Index Gymnastics</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/four-velocity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">4-Velocity (\(U^\mu\))</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <footer class="subtopic-footer" style="margin-top: 40px;">
+            </footer>
+</article>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="6dd8b04c22096438bc043f837261fe43" defer></script>
+</body>
+</html>

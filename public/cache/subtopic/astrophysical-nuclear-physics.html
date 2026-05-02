@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuclear Physics in the Cosmos - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="ded7e55cd56705643c047e4806f066c6">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="ded7e55cd56705643c047e4806f066c6"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
+    </style>
+</head>
+<body>
+        <nav>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">Nuclear Physics in the Cosmos</span>
+    </nav>
+
+    <header class="subtopic-header">
+        <h1>Nuclear Physics in the Cosmos</h1>
+    </header>
+    
+    <div class="content-body">
+        <p>Nuclear Physics is the study of the fundamental interactions within the atomic nucleus, providing the energy source that powers the stars and the mechanism for creating all the elements in the periodic table. In university-level astrophysics, nuclear processes are analyzed through the lens of <a href="/physics/subtopic/nuclear-binding-energy" class="subtopic-link"><strong>Binding Energy</strong></a>, <a href="/physics/subtopic/nuclear-cross-sections" class="subtopic-link"><strong>Cross-Sections</strong></a>, and <a href="/physics/topic/quantum-physics" class="subtopic-link"><strong>Quantum Tunneling</strong></a>, revealing how the subatomic world dictates the life and death of the largest structures in the universe.</p>
+
+                    <h3>1. Stellar Furnaces: The p-p Chain and CNO Cycle</h3>
+                    <p>Stars spend most of their lives fusing hydrogen into helium. For stars like the Sun, this occurs via the <a href="/physics/subtopic/pp-chain" class="subtopic-link"><strong>Proton-Proton (p-p) Chain</strong></a>, a series of reactions that overcome the electrostatic repulsion between protons. In more massive stars, the <a href="/physics/subtopic/cno-cycle" class="subtopic-link"><strong>CNO (Carbon-Nitrogen-Oxygen) Cycle</strong></a> dominates, using heavy nuclei as catalysts to facilitate fusion at much higher rates. Both processes convert mass into energy according to Einstein's \( E=mc^2 \), releasing the neutrinos and photons that allow us to observe the stellar interior.</p>
+
+                    <h3>2. The Gamow Window and Quantum Tunneling</h3>
+                    <p>A major paradox in astrophysics is that stellar cores are often too "cold" for classical fusion; thermal energy of protons is much lower than the <a href="/physics/subtopic/coulomb-barrier" class="subtopic-link"><strong>Coulomb Barrier</strong></a>. Fusion is only possible due to <a href="/physics/topic/quantum-physics" class="subtopic-link"><strong>Quantum Tunneling</strong></a>. The probability of fusion depends on the <a href="/physics/subtopic/gamow-factor" class="subtopic-link"><strong>Gamow Factor</strong></a>, which increases with energy, while the number of particles follows a <a href="/physics/subtopic/maxwell-boltzmann" class="subtopic-link"><strong>Maxwell-Boltzmann Distribution</strong></a>, which decreases with energy. The product of these two functions creates the <a href="/physics/subtopic/gamow-peak" class="subtopic-link"><strong>Gamow Peak</strong></a>, the narrow energy range where nearly all stellar nuclear reactions occur.</p>
+
+                    <h3>3. Big Bang Nucleosynthesis (BBN)</h3>
+                    <p>In the first few minutes of the universe, the entire cosmos acted as a nuclear reactor. <a href="/physics/subtopic/bbn-theory" class="subtopic-link"><strong>BBN</strong></a> predicted the primordial abundances of light isotopes—specifically \( ^1H, ^2H, ^3He, ^4He, \) and \( ^7Li \). Because the universe was expanding and cooling rapidly, the "bottleneck" of deuterium formation prevented the synthesis of heavier elements, leaving a chemical signature that serves as one of the most powerful proofs of the Big Bang model.</p>
+
+                    <h3>4. Advanced Burning: The Triple-Alpha Process</h3>
+                    <p>As stars exhaust their hydrogen, they contract and heat up until helium fusion becomes possible. Because there are no stable nuclei with mass numbers 5 or 8, helium must fuse via the <a href="/physics/subtopic/triple-alpha" class="subtopic-link"><strong>Triple-Alpha Process</strong></a>, where three alpha particles (\( ^4He \)) collide nearly simultaneously to form \( ^{12}C \). This rare reaction is only efficient due to a precise <a href="/physics/subtopic/nuclear-resonance" class="subtopic-link"><strong>Nuclear Resonance</strong></a> in the carbon nucleus, a "fine-tuning" of the strong nuclear force that is essential for the existence of carbon-based life.</p>
+
+                    <h3>5. The Origin of Heavy Elements: n-Capture</h3>
+                    <p>Elements heavier than iron (\( ^{56}Fe \)) cannot be formed by fusion because the reactions become endothermic. Instead, they are created through <a href="/physics/subtopic/neutron-capture" class="subtopic-link"><strong>Neutron Capture</strong></a>. The <a href="/physics/subtopic/s-process" class="subtopic-link"><strong>s-process (slow)</strong></a> occurs in red giants, where neutrons are added one-by-one over long timescales. The <a href="/physics/subtopic/r-process" class="subtopic-link"><strong>r-process (rapid)</strong></a> occurs in cataclysmic events like supernovae or neutron star mergers, where an intense neutron flux "floods" nuclei, creating the heaviest elements like gold, platinum, and uranium.</p>
+
+                    <h3>6. Nuclear Equation of State (EoS)</h3>
+                    <p>In the most extreme environments, such as the cores of <a href="/physics/subtopic/neutron-stars" class="subtopic-link"><strong>Neutron Stars</strong></a>, matter is compressed to densities exceeding that of an atomic nucleus. The stability of these objects depends on the <a href="/physics/subtopic/nuclear-eos" class="subtopic-link"><strong>Nuclear Equation of State</strong></a>, which describes the pressure as a function of density and nucleon composition. This EoS is governed by the <a href="/physics/subtopic/strong-interaction" class="subtopic-link"><strong>Strong Interaction</strong></a> and the <a href="/physics/subtopic/pauli-exclusion-principle" class="subtopic-link"><strong>Pauli Exclusion Principle</strong></a> applied to neutrons, marking the ultimate boundary where nuclear physics and general relativity merge.</p>    </div>
+
+    <section class="equations-section">
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
+    <ul class="equations-list" id="equations-list">
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            <a href="/physics/subtopic/mass-defect" class="subtopic-link">Mass Defect</a>                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ E_{bind} = [Z m_p + N m_n - M(Z, N)] c^2 \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong><a href="/physics/subtopic/mass-defect" class="subtopic-link">Mass Defect</a>:</strong> The energy released when nucleons cluster into a nucleus, powering all stellar and explosive events.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            <a href="/physics/subtopic/tunneling-probability" class="subtopic-link">Tunneling Probability</a>                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ P(E) \propto e^{-\sqrt{E_G/E}} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong><a href="/physics/subtopic/tunneling-probability" class="subtopic-link">Tunneling Probability</a>:</strong> The mathematical description of how particles penetrate the Coulomb barrier at sub-classical energies.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            <a href="/physics/subtopic/carbon-synthesis" class="subtopic-link">Carbon Synthesis</a>                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ 3(^4He) 
+ightarrow ^{12}C + 7.27 	ext{ MeV} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong><a href="/physics/subtopic/carbon-synthesis" class="subtopic-link">Carbon Synthesis</a>:</strong> The critical bridge that allows the universe to bypass the mass-5 and mass-8 stability gaps.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            <a href="/physics/subtopic/stellar-reaction-dynamics" class="subtopic-link">Stellar Dynamics</a>                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \frac{dX_i}{dt} = \sum_{j,k} [N_k \langle \sigma v 
+angle_{jk 	o i} X_j X_k] \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong><a href="/physics/subtopic/stellar-reaction-dynamics" class="subtopic-link">Stellar Dynamics</a>:</strong> The differential equation relating particle abundances to their nuclear cross-sections (\(\sigma\)) and velocities.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
+</section>
+
+<script nonce="ded7e55cd56705643c047e4806f066c6">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
+            }
+        }
+    });
+});
+</script>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/gamow-peak" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Gamow Peak (Window)</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/strong-interaction" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Strong Interaction</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/coulomb-barrier" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Coulomb Barrier</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <footer class="subtopic-footer" style="margin-top: 40px;">
+            </footer>
+</article>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="ded7e55cd56705643c047e4806f066c6" defer></script>
+</body>
+</html>

@@ -6,19 +6,16 @@
     <title>Energy Density (\(u_E\)) - Terra</title>
 
     <!-- MathJax Configuration -->
-    <script nonce="4c49a1b7bee920dd88d2b852cad07686">
+    <script nonce="05aee1b3afc0a0d72a66bd49c4282b81">
         window.MathJax = {
             tex: {
                 inlineMath: [['\\(', '\\)']],
                 displayMath: [['\\[', '\\]']],
                 processEscapes: true
-            },
-            options: {
-                processHtmlClass: 'tex2jax_process'
             }
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="4c49a1b7bee920dd88d2b852cad07686"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="05aee1b3afc0a0d72a66bd49c4282b81"></script>
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -115,16 +112,34 @@
             vertical-align: middle;
             letter-spacing: 0.5px;
         }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
     </style>
 </head>
 <body>
-            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
-            &nbsp;&nbsp;|&nbsp;&nbsp; 
-            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
-        </div>
         <nav>
-        <a href="/physics">Home</a>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
         <div class="dropdown">
             <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
             <div class="dropdown-content">
@@ -136,11 +151,23 @@
                                     <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
                                     <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
                                     <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
                             </div>
         </div>
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -149,22 +176,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/subtopic/electric-field">Electric Field (\( \mathbf{E} \))</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Energy Density (\(u_E\))</span>
     </nav>
 
-    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
-        <div id="abstract-diagram" 
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
-             data-config='{"type":"abstract"}'>
-        </div>
-        <div style="position: relative; z-index: 1;">
-            <h1>Energy Density (\(u_E\))</h1>
-        </div>
+    <header class="subtopic-header">
+        <h1>Energy Density (\(u_E\))</h1>
     </header>
     
     <div class="content-body">
@@ -173,7 +190,8 @@
                     <h3>1. The Electric Field Density</h3>
                     <p>For an electrostatic field in a vacuum, the energy density is proportional to the square of the field strength:
                     \[ u_E = \frac{1}{2}\varepsilon_0 E^2 \]
-                    This relation shows that even in regions of space where no charges are present (\( \rho=0 \)), the field lines themselves possess energy. This "Field-Centric" perspective is what allows for the existence of <a href="/physics/subtopic/electromagnetic-radiation" class="subtopic-link"><strong>Electromagnetic Radiation</strong></a>, as the energy density can propagate across the  independently of its source.</p>
+                    This relation shows that even in regions of space where no charges are present (\( 
+ho=0 \)), the field lines themselves possess energy. This "Field-Centric" perspective is what allows for the existence of <a href="/physics/subtopic/electromagnetic-radiation" class="subtopic-link"><strong>Electromagnetic Radiation</strong></a>, as the energy density can propagate across the  independently of its source.</p>
 
                     <h3>2. Magnetic Energy Density</h3>
                     <p>In <strong>Magnetostatics</strong>, a similar relationship exists for the magnetic field: \( u_B = \frac{1}{2\mu_0} B^2 \). When combined with the electric density, we get the total electromagnetic energy density. This balance is critical for the stability of stars and <a href="/physics/subtopic/neutron-stars" class="subtopic-link"><strong>Neutron Stars</strong></a>, where the magnetic energy density can become high enough to exert significant <strong>Stellar Pressure</strong> on the plasma.</p>
@@ -190,108 +208,220 @@
                     <p>A major <strong>Epistemic Limit</strong> in modern physics is the <strong>Vacuum Energy Density</strong>. Quantum mechanics predicts that the vacuum has a non-zero "Zero-Point" energy density (\( u_{vac} \)). In <strong>Physical Cosmology</strong>, this energy density acts as <strong>Dark Energy</strong> (\( \Lambda \)), driving the <strong>Accelerating Expansion</strong> of the manifold. The discrepancy between the predicted and observed vacuum density is the greatest unsolved problem in <strong>Theoretical Physics</strong>.</p>
 
                     <h3>6. Energy Flux and the Poynting Vector</h3>
-                    <p>Energy density is linked to the movement of energy via the <strong>Poynting Vector</strong> (\( \mathbf{S} = \mathbf{E} \times \mathbf{H} \)). The <strong>Conservation</strong> of energy in a field is expressed as:
+                    <p>Energy density is linked to the movement of energy via the <strong>Poynting Vector</strong> (\( \mathbf{S} = \mathbf{E} 	imes \mathbf{H} \)). The <strong>Conservation</strong> of energy in a field is expressed as:
                     \[ \frac{\partial u}{\partial t} + 
 abla \cdot \mathbf{S} = -\mathbf{J} \cdot \mathbf{E} \]
                     This continuity equation shows that the local change in energy density is balanced by the flow of energy and the work done on charges, providing the complete dynamical description of light and power.</p>    </div>
 
-            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
-            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
-            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/divergent-fields" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Divergent Fields and Source Density</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/electromagnetic-field-tensor" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Electromagnetic Field Tensor (\(F^{\mu\nu}\))</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/electromagnetic-stress-energy" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Electromagnetic Stress-Energy Tensor</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                            </div>
-        </section>
-    
-    <script src="/js/diagram_engine.js" defer></script>
-
     <section class="equations-section">
-    <h2>Key Equations</h2>
-    <p class="instruction">Click a formula to see its breakdown.</p>
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
     <ul class="equations-list" id="equations-list">
-                                    <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Energy per Space</span>
-                                                <span class="equation">\[ u_E = \frac{1}{2} \varepsilon_0 E^2 \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Energy per Space:</strong> The calculation of how much "power" is packed into a cubic meter of vacuum.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Field Strength Law</span>
-                                                <span class="equation">\[ u_B = \frac{B^2}{2\mu_0} \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Field Strength Law:</strong> Why doubling the electric field results in four times the stored energy.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Dielectric Density</span>
-                                                <span class="equation">\[ \text{Total } U = \int u d\tau \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Dielectric Density:</strong> How materials change the energy storage capacity of a region.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Dark Energy Density</span>
-                                                <span class="equation">\[ T^{\mu
-u} \implies T^{00} = \text{Energy Density} \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Dark Energy Density:</strong> The constant energy of space that dictates the universe's growth.                        </div>
-                                            </div>
-                </li>
-                        </ul>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Energy per Space                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ u_E = \frac{1}{2} \varepsilon_0 E^2 \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Energy per Space:</strong> The calculation of how much "power" is packed into a cubic meter of vacuum.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Field Strength Law                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ u_B = \frac{B^2}{2\mu_0} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Field Strength Law:</strong> Why doubling the electric field results in four times the stored energy.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Dielectric Density                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ 	ext{Total } U = \int u d	au \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Dielectric Density:</strong> How materials change the energy storage capacity of a region.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Dark Energy Density                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ T^{\mu
+u} \implies T^{00} = 	ext{Energy Density} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Dark Energy Density:</strong> The constant energy of space that dictates the universe's growth.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
 </section>
 
-<script nonce="4c49a1b7bee920dd88d2b852cad07686">
+<script nonce="05aee1b3afc0a0d72a66bd49c4282b81">
 document.addEventListener('DOMContentLoaded', function() {
     const list = document.getElementById('equations-list');
     if (!list) return;
 
     list.addEventListener('click', function(event) {
-        const container = event.target.closest('.equation-container');
-        if (!container) return;
-
-        const breakdown = container.querySelector('.breakdown');
-        if (breakdown) {
-            const isVisible = breakdown.style.display === 'block';
-            breakdown.style.display = isVisible ? 'none' : 'block';
-            container.classList.toggle('active', !isVisible);
-            
-            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                MathJax.typesetPromise([breakdown]);
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
             }
         }
     });
 });
 </script>
-<style>
-.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
-.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
-.equation-container:hover { background: rgba(255,255,255,0.05); }
-.equation-container.active { border-color: var(--accent); }
-</style>
 
-    <footer class="subtopic-footer">
-                    <a href="/physics/subtopic/electric-field" class="btn btn-secondary">&larr; Back to Electric Field (\( \mathbf{E} \))</a>
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/stress-energy-tensor" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Stress-Energy Tensor (\(T_{\mu
+u}\))</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/field-energy" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Field Energy and Storage</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/electromagnetic-field-tensor" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Electromagnetic Field Tensor (\(F^{\mu
+u}\))</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <footer class="subtopic-footer" style="margin-top: 40px;">
             </footer>
 </article>
-                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
-                        <span>🔄</span> <strong>Sync Now</strong>
-                    </a>
-                </div>    </main>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="05aee1b3afc0a0d72a66bd49c4282b81" defer></script>
 </body>
 </html>

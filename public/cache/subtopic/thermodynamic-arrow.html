@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermodynamic Arrow of Time - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="b4afbf742568360051eafd5827415896">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="b4afbf742568360051eafd5827415896"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
+    </style>
+</head>
+<body>
+        <nav>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">Thermodynamic Arrow of Time</span>
+    </nav>
+
+    <header class="subtopic-header">
+        <h1>Thermodynamic Arrow of Time</h1>
+    </header>
+    
+    <div class="content-body">
+        <p>The Thermodynamic Arrow of Time is the direction of time defined by the inevitable increase of <a href="/physics/subtopic/entropy" class="subtopic-link"><strong>Entropy</strong></a> in isolated systems. It is the most "Obvious" arrow of time, explaining why we see candles burn down and glass shatter, but never the reverse. In university-level philosophy of physics, this arrow is understood as a statistical consequence of the <strong>Past Hypothesis</strong>, linking the microscopic randomness of <strong>Statistical Mechanics</strong> to the global expansion of the Big Bang.</p>
+
+                    <h3>1. The Statistical Postulate</h3>
+                    <p>Thermodynamic arrow arises from the sheer number of particles in a system. There are vastly more "Disordered" (high-entropy) configurations of atoms than "Ordered" ones. According to <strong>Boltzmann's H-Theorem</strong>, a system will most likely move toward the state of highest probability. However, this only defines a direction if the system <em>starts</em> in a low-probability state. Thermodynamic arrow is thus a measure of the universe "shuffling" its way toward equilibrium.</p>
+
+                    <h3>2. Loschmidt's Paradox and Symmetry</h3>
+                    <p>A major philosophical challenge is <strong>Loschmidt's Paradox</strong>: the underlying laws of physics are time-symmetric, yet thermodynamic arrow is asymmetric. If entropy increases toward the future, statistical mechanics suggests it should also increase toward the <em>past</em> (making the present a rare fluctuation). To avoid this "statistical disaster," we must invoke the <strong>Past Hypothesis</strong>: the universe started in an <strong>Extremely Low Entropy</strong> state by definition.</p>
+
+                    <h3>3. Maxwell's Demon and Information</h3>
+                    <p>Thermodynamic arrow is also linked to <strong>Information Theory</strong>. "Maxwell's Demon" is a thought experiment where a tiny being sorts fast and slow molecules to decrease entropy. This was resolved by <strong>Landauer's Principle</strong>, which shows that erasing information (the demon's memory) requires an increase in entropy. This proves that the arrow of time is the reason why <strong>Physical Causality</strong> and computation are one-way processes.</p>
+
+                    <h3>4. Link to the Cosmological Arrow</h3>
+                    <p>There is a deep debate about whether thermodynamic arrow is "caused" by the <strong>Cosmological Arrow of Time</strong> (the expansion of space). As space expands, the maximum possible entropy of the universe increases. This keeps the actual entropy far below the maximum, preventing <strong>Heat Death</strong> and allowing thermodynamic arrow to persist. In this view, we only see entropy increase because there is always "new room" for disorder to grow.</p>
+
+                    <h3>5. The Psychological and Causal Arrows</h3>
+                    <p>Philosophers like <strong>David Albert</strong> argue that thermodynamic arrow is the "Parent" of all other arrows. Our <strong>Psychological Arrow</strong> (remembering the past but not the future) exists because our brains are thermodynamic engines that leave "traces" (entropy increases) as they store memories. Similarly, <strong>Physical Causality</strong>—the idea that causes precede effects—is rooted in the fact that it is statistically easier to influence the future than the past.</p>
+
+                    <h3>6. The End of the Arrow: Heat Death</h3>
+                    <p>Thermodynamic arrow will eventually "die." Once the universe reaches a state of <strong>Thermal Equilibrium</strong> (maximum entropy), there will be no more gradients, no more work, and no more "direction" to events. In this <strong>Heat Death</strong>, time may still exist as a dimension, but the "Arrow" will vanish. This state represents the ultimate <strong>Epistemic Limit</strong>, where the distinction between past and future becomes physically meaningless.</p>    </div>
+
+    <section class="equations-section">
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
+    <ul class="equations-list" id="equations-list">
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Statistical Flow                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ S = k_B \ln W \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Statistical Flow:</strong> The rule that systems move toward the most probable (disordered) configurations.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Math Proof                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \frac{dS}{dt} \ge 0 \quad (	ext{Second Law}) \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Math Proof:</strong> Boltzmann's derivation of how molecular collisions lead to macroscopic irreversibility.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Landauer Limit                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ P(\Delta S < 0) \propto e^{-	ext{Number of particles}} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Landauer Limit:</strong> The requirement that creating and destroying data has a thermodynamic cost.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Arrow Death                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ W_{max} \propto a(t)^3 \quad (	ext{Expansion Link}) \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Arrow Death:</strong> Why the direction of time disappears once maximum disorder is achieved.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
+</section>
+
+<script nonce="b4afbf742568360051eafd5827415896">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
+            }
+        }
+    });
+});
+</script>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/arrow-of-time" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Arrow of Time</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/david-albert" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">David Albert and the Past Hypothesis</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/thermodynamic-bridge" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Thermodynamic Bridge</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <footer class="subtopic-footer" style="margin-top: 40px;">
+            </footer>
+</article>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="b4afbf742568360051eafd5827415896" defer></script>
+</body>
+</html>

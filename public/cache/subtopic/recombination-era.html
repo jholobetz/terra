@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recombination and Decoupling - Terra</title>
+
+    <!-- MathJax Configuration -->
+    <script nonce="19dddfe307c5673b6e3eaefa0892221e">
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="19dddfe307c5673b6e3eaefa0892221e"></script>
+    
+    <style>
+        :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        main { max-width: 1000px; margin: 0 auto; padding-top: 40px; }
+        li { margin-bottom: 1rem; }
+        h1, h2, h3 { color: var(--accent); }
+        nav { border-bottom: 1px solid #233554; padding-bottom: 20px; margin-bottom: 30px; display: flex; gap: 25px; justify-content: flex-end; align-items: center; }
+        nav a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; line-height: 1; }
+        nav a:hover { text-decoration: underline; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border-top: 3px solid var(--accent); }
+        
+        /* Home Page Tile Layout */
+        .hero { text-align: center; padding: 60px 0; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.8; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; margin: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { border: 1px solid var(--accent); color: var(--accent); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .topic-card { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid #233554; transition: all 0.3s ease; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
+        .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
+
+        /* Subtopic Links */
+        .subtopic-link {
+            color: #b464ff;
+            text-decoration: none;
+        }
+        .subtopic-link:hover { /* Brighter shade for better accessibility */
+            color: #c990ff;
+            text-decoration: underline;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb { display: flex; align-items: center; margin-bottom: 20px; font-size: 0.85rem; color: #8892b0;justify-content: flex-start; border-bottom: none; padding-bottom: 0; gap: 8px;}
+        .breadcrumb a { color: var(--accent); text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: normal; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { opacity: 0.7; padding-left: 2px; }
+
+        /* Topic Page Equations */
+        .equations-list { list-style: none; padding: 0; }
+        .equation-item { margin-bottom: 20px; }
+        mjx-container { color: #FFD700; }
+        .equation-container { cursor: pointer; transition: color 0.2s ease; }
+        .equation-container:hover { color: var(--accent); }
+        .breakdown { color: var(--accent); padding-top: 10px; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-flex; align-items: center; }
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background-color: var(--card-bg); 
+            min-width: 220px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            border: 1px solid #233554;
+            border-radius: 8px;
+            top: 100%;
+            right: 0;
+        }
+        .dropdown-content a { 
+            color: var(--text); 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            display: block; 
+            text-transform: none; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #233554;
+            margin: 0;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #1d2d44; color: var(--accent); text-decoration: none; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropbtn { cursor: default; }
+
+        /* Draft Badge */
+        .draft-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
+    </style>
+</head>
+<body>
+        <nav>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                                    <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                                    <a href="/physics/topic/relativity">Relativity</a>
+                                    <a href="/physics/topic/quantum-physics">Quantum Physics</a>
+                                    <a href="/physics/topic/standard-model">The Standard Model</a>
+                                    <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                                    <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                                    <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
+                            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+            <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
+                            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="subtopic-content">
+    <nav class="breadcrumb">
+        <a href="/physics">Home</a>
+                <span>&rsaquo;</span>
+        <span style="opacity: 1; color: #8892b0;">Recombination and Decoupling</span>
+    </nav>
+
+    <header class="subtopic-header">
+        <h1>Recombination and Decoupling</h1>
+    </header>
+    
+    <div class="content-body">
+        <p><strong>Recombination</strong> refers to the epoch in the early universe (\( z \approx 1,100 \)) when the temperature dropped enough for protons and electrons to bind together into neutral hydrogen atoms. Following recombination, the <strong>Photon-Baryon Fluid</strong> underwent <strong>Decoupling</strong>, where radiation and matter ceased to interact significantly. In university-level cosmology, this era marks the transition from an opaque, plasma-dominated universe to a transparent, matter-dominated one, leading directly to the release of the <strong>CMB</strong>.</p>
+
+                    <h3>1. The Ionization Balance (Saha Equation)</h3>
+                    <p>The timing of recombination is determined by the <strong>Saha Equation</strong>, which relates the ionization fraction \( x_e \) to the temperature and density of the gas. Although the binding energy of hydrogen is \( 13.6 	ext{ eV} \) (\( \sim 150,000 	ext{ K} \)), recombination did not occur until the temperature reached \( \sim 3,000 	ext{ K} \). This delay was caused by the massive number of photons relative to baryons; even a tiny "tail" of high-energy photons was enough to keep the gas ionized until the universe was much cooler.</p>
+
+                    <h3>2. The Bottleneck: Two-Photon Decay</h3>
+                    <p>Direct recombination to the ground state of hydrogen is inefficient because the resulting ultraviolet photon immediately re-ionizes a neighboring atom. Recombination can only proceed through the <strong>2s-1s Two-Photon Decay</strong> or the Lyman-alpha transition. This subatomic "Bottleneck" slowed the process, ensuring that the transition from plasma to gas took place over a period of roughly 100,000 years, providing a well-defined thickness to the <strong>Surface of Last Scattering</strong>.</p>
+
+                    <h3>3. Decoupling and Free-Streaming</h3>
+                    <p>As neutral hydrogen formed, the <strong>Thomson Scattering</strong> cross-section vanished. The photons, no longer "trapped" by frequent collisions with free electrons, began to <strong>Free-Stream</strong> through the universe. This decoupling event is what we observe today as the <strong>CMB</strong>. The matter, no longer supported by <strong>Radiation Pressure</strong>, was finally free to collapse under <strong>Jeans Instability</strong>, beginning the formation of the first stars.</p>
+
+                    <h3>4. Recombination and the Sound Horizon</h3>
+                    <p>The physical distance a sound wave could travel from the Big Bang until the moment of recombination defines the <strong>Sound Horizon</strong>. This length scale is frozen into the distribution of matter and radiation at the moment of decoupling. It serves as a "Standard Ruler" for cosmology; by measuring its angular size in the <strong>CMB Anisotropies</strong>, astronomers can determine the absolute expansion rate and the <strong>Hubble Constant</strong>.</p>
+
+                    <h3>5. Post-Recombination: The Dark Ages</h3>
+                    <p>After recombination, the universe was filled with neutral gas but contained no stars. This era is known as the <strong>Cosmic Dark Ages</strong>. During this time, the temperature of the matter dropped faster than the temperature of the radiation (\( T_m \propto a^{-2} \) vs \( T_\gamma \propto a^{-1} \)). This thermodynamic "Mismatch" is the primary subject of <strong>21-cm Cosmology</strong>, which seeks to observe the first structures emerging from the dark neutral void.</p>
+
+                    <h3>6. Reionization: The Second Transition</h3>
+                    <p>The neutral state of the universe was temporary. Hundreds of millions of years after recombination, the first stars and quasars emitted intense UV radiation that <strong>Reionized</strong> the intergalactic medium. This second phase transition return the gas to a plasma state, but at much lower densities. Measuring the "Optical Depth to Reionization" allows physicists to date the birth of the first light-producing objects in the <strong>History of the Universe</strong>.</p>    </div>
+
+    <section class="equations-section">
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
+    <ul class="equations-list" id="equations-list">
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Ionization Rule                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \frac{x_e^2}{1-x_e} = \frac{1}{n_b} \left( \frac{m_e k_B T}{2\pi \hbar^2} 
+ight)^{3/2} e^{-\frac{13.6 	ext{ eV}}{k_B T}} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Ionization Rule:</strong> The equation that determines when protons and electrons can first form neutral atoms.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Light Freedom                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ z_{rec} \approx 1,100 \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Light Freedom:</strong> The specific event where photons stopped bumping into matter and began their journey to our telescopes.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Cosmic Ruler                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ t_{rec} \approx 380,000 	ext{ years} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Cosmic Ruler:</strong> The maximum distance a pressure wave could travel before the plasma became transparent.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Post-Neutrals Era                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ r_s = \int_0^{t_{rec}} \frac{c_s(t)}{a(t)} dt \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Post-Neutrals Era:</strong> The period of cosmic history between the formation of atoms and the birth of the first stars.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
+</section>
+
+<script nonce="19dddfe307c5673b6e3eaefa0892221e">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
+            }
+        }
+    });
+});
+</script>
+
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/cmb-theory" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Cosmic Microwave Background (CMB)</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/angular-power-spectrum" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The CMB Angular Power Spectrum</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/radiation-pressure" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Radiation Pressure</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <footer class="subtopic-footer" style="margin-top: 40px;">
+            </footer>
+</article>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="19dddfe307c5673b6e3eaefa0892221e" defer></script>
+</body>
+</html>

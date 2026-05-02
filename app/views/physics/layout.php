@@ -12,9 +12,6 @@
                 inlineMath: [['\\(', '\\)']],
                 displayMath: [['\\[', '\\]']],
                 processEscapes: true
-            },
-            options: {
-                processHtmlClass: 'tex2jax_process'
             }
         };
     </script>

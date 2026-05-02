@@ -6,19 +6,16 @@
     <title>Magnetism as a Relativistic Correction - Terra</title>
 
     <!-- MathJax Configuration -->
-    <script nonce="ec6525e37610501e749b10dcc0cf1009">
+    <script nonce="2a96dff4e79581e697369186405cdad7">
         window.MathJax = {
             tex: {
                 inlineMath: [['\\(', '\\)']],
                 displayMath: [['\\[', '\\]']],
                 processEscapes: true
-            },
-            options: {
-                processHtmlClass: 'tex2jax_process'
             }
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="ec6525e37610501e749b10dcc0cf1009"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="2a96dff4e79581e697369186405cdad7"></script>
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -115,16 +112,34 @@
             vertical-align: middle;
             letter-spacing: 0.5px;
         }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
     </style>
 </head>
 <body>
-            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
-            &nbsp;&nbsp;|&nbsp;&nbsp; 
-            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
-        </div>
         <nav>
-        <a href="/physics">Home</a>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
         <div class="dropdown">
             <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
             <div class="dropdown-content">
@@ -136,11 +151,23 @@
                                     <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
                                     <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
                                     <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
                             </div>
         </div>
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -149,32 +176,23 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/subtopic/biot-savart-law">Biot-Savart Law</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Magnetism as a Relativistic Correction</span>
     </nav>
 
-    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
-        <div id="abstract-diagram" 
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
-             data-config='{"type":"abstract"}'>
-        </div>
-        <div style="position: relative; z-index: 1;">
-            <h1>Magnetism as a Relativistic Correction</h1>
-        </div>
+    <header class="subtopic-header">
+        <h1>Magnetism as a Relativistic Correction</h1>
     </header>
     
     <div class="content-body">
         <p>In modern university-level physics, magnetism is not viewed as an independent force, but as a <strong>Relativistic Correction</strong> to the electric field. When electric charges are in motion, the effects of <strong>Special Relativity</strong>—specifically <strong>Length Contraction</strong> and the relativity of simultaneity—transform part of the electrostatic interaction into what we observe as a magnetic force. This perspective unifies electricity and magnetism into a single 4D <strong>Electromagnetic Tensor</strong>.</p>
 
                     <h3>1. The Gedanken Experiment: Moving Wire</h3>
-                    <p>Consider a neutral wire carrying a current and a test charge moving parallel to it. In the lab frame, the wire is neutral (\( \rho_{net}=0 \)). However, in the <strong>Rest Frame</strong> of the test charge, the positive ions and negative electrons in the wire move at different velocities. Due to <strong>Lorentz Contraction</strong>, their densities change at different rates, causing the wire to appear electrically charged. The resulting "Coulomb" force in the charge's frame is what we call the <strong>Magnetic Force</strong> in the lab frame.</p>
+                    <p>Consider a neutral wire carrying a current and a test charge moving parallel to it. In the lab frame, the wire is neutral (\( 
+ho_{net}=0 \)). However, in the <strong>Rest Frame</strong> of the test charge, the positive ions and negative electrons in the wire move at different velocities. Due to <strong>Lorentz Contraction</strong>, their densities change at different rates, causing the wire to appear electrically charged. The resulting "Coulomb" force in the charge's frame is what we call the <strong>Magnetic Force</strong> in the lab frame.</p>
 
                     <h3>2. The Velocity Factor (v/c)^2</h3>
-                    <p>The strength of the magnetic force relative to the electric force is proportional to \( (v/c)^2 \). Because the speed of light (\( c \)) is so large, magnetism is an extremely weak effect for individual particles. However, in a bulk conductor, the <strong>Charge Density</strong> is so immense that even the tiny relativistic shifts of slowly drifting electrons (\( \sim \text{mm/s} \)) result in macroscopic magnetic fields capable of powering motors and lifting tons of steel.</p>
+                    <p>The strength of the magnetic force relative to the electric force is proportional to \( (v/c)^2 \). Because the speed of light (\( c \)) is so large, magnetism is an extremely weak effect for individual particles. However, in a bulk conductor, the <strong>Charge Density</strong> is so immense that even the tiny relativistic shifts of slowly drifting electrons (\( \sim 	ext{mm/s} \)) result in macroscopic magnetic fields capable of powering motors and lifting tons of steel.</p>
 
                     <h3>3. The Electromagnetic Field Tensor (F-mu-nu)</h3>
                     <p>The relativistic unification is formalized using the <strong>Field Strength Tensor</strong>. In this 4x4 matrix, the E-field components occupy the time-space slots, while the B-field components occupy the space-space slots. Under a <strong>Lorentz Transformation</strong>, these components mix. This proves that the division of the field into "Electric" and "Magnetic" parts is entirely <strong>Observer-Dependent</strong>, depending on the relative velocity between the source and the detector.</p>
@@ -182,7 +200,7 @@
                     <h3>4. Magnetic Force and the Four-Force</h3>
                     <p>In the , the <strong>Lorentz Force Law</strong> is written as \( f^\mu = q F^{\mu
 u} U_
-u \), where \( U \) is the four-velocity. This elegant equation shows that the magnetic part of the force (\( q \mathbf{v} \times \mathbf{B} \)) is the necessary partner to the electric part (\( q \mathbf{E} \)) required to maintain <strong>Lorentz Covariance</strong>. Without magnetism, the laws of electricity would change depending on how fast you were moving, violating the <strong>Principle of Relativity</strong>.</p>
+u \), where \( U \) is the four-velocity. This elegant equation shows that the magnetic part of the force (\( q \mathbf{v} 	imes \mathbf{B} \)) is the necessary partner to the electric part (\( q \mathbf{E} \)) required to maintain <strong>Lorentz Covariance</strong>. Without magnetism, the laws of electricity would change depending on how fast you were moving, violating the <strong>Principle of Relativity</strong>.</p>
 
                     <h3>5. Retardation and the Liénard-Wiechert Potentials</h3>
                     <p>A deeper consequence of relativity is that fields do not update instantly. When a charge moves, the <strong>Causal Topology</strong> of space ensures that the information travels at speed \( c \). This leads to <strong>Retarded Potentials</strong>, where the field at a point depends on the position of the charge at an earlier time. The <a href="/physics/subtopic/biot-savart-law" class="subtopic-link"><strong>Biot-Savart Law</strong></a> is the magnetostatic limit of this process, valid only when the time delay is negligible compared to the system's dynamics.</p>
@@ -190,107 +208,217 @@ u \), where \( U \) is the four-velocity. This elegant equation shows that the m
                     <h3>6. Magnetism in Astrophysical General Relativity</h3>
                     <p>On cosmic scales, the relativistic nature of magnetism becomes extreme. Near a <strong>Black Hole</strong>, the <strong>Metric Tensor</strong> "drags" the electromagnetic field through the warping of spacetime (frame-dragging). This creates <strong>Relativistic Jets</strong> and powers the emission from <strong>Pulsars</strong>. In these environments, the distinction between E and B is lost in the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of the , proving that magnetism is a core feature of the relativistic geometry of the universe.</p>    </div>
 
-            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
-            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
-            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/moving-charges" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Magnetism of Moving Charges</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/static-law" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Coulomb's Law as a Static Limit</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/inverse-square-law-physics" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Inverse-Square Dependence</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                            </div>
-        </section>
-    
-    <script src="/js/diagram_engine.js" defer></script>
-
     <section class="equations-section">
-    <h2>Key Equations</h2>
-    <p class="instruction">Click a formula to see its breakdown.</p>
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
     <ul class="equations-list" id="equations-list">
-                                    <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Unified Matrix</span>
-                                                <span class="equation">\[ F^{\mu
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Unified Matrix                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ F^{\mu
 u} = \partial^\mu A^
 u - \partial^
-u A^\mu \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Unified Matrix:</strong> The 4D object that contains both electric and magnetic field components.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Charge Imbalance</span>
-                                                <span class="equation">\[ \mathbf{B} = \frac{\mathbf{v} \times \mathbf{E}}{c^2} \quad (\text{Low-velocity limit}) \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Charge Imbalance:</strong> How length contraction creates magnetic forces from neutral wires.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Law Consistency</span>
-                                                <span class="equation">\[ \lambda = \lambda_0 \gamma \quad (\text{Relativistic density}) \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Law Consistency:</strong> The requirement that physical laws look the same to all moving observers.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Relativistic Scaling</span>
-                                                <span class="equation">\[ f^\mu = q F^{\mu
+u A^\mu \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Unified Matrix:</strong> The 4D object that contains both electric and magnetic field components.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Charge Imbalance                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \mathbf{B} = \frac{\mathbf{v} 	imes \mathbf{E}}{c^2} \quad (	ext{Low-velocity limit}) \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Charge Imbalance:</strong> How length contraction creates magnetic forces from neutral wires.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Law Consistency                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \lambda = \lambda_0 \gamma \quad (	ext{Relativistic density}) \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Law Consistency:</strong> The requirement that physical laws look the same to all moving observers.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Relativistic Scaling                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ f^\mu = q F^{\mu
 u} U_
-u \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Relativistic Scaling:</strong> Why magnetism is weak for slow objects but dominates in high-energy physics.                        </div>
-                                            </div>
-                </li>
-                        </ul>
+u \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Relativistic Scaling:</strong> Why magnetism is weak for slow objects but dominates in high-energy physics.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
 </section>
 
-<script nonce="ec6525e37610501e749b10dcc0cf1009">
+<script nonce="2a96dff4e79581e697369186405cdad7">
 document.addEventListener('DOMContentLoaded', function() {
     const list = document.getElementById('equations-list');
     if (!list) return;
 
     list.addEventListener('click', function(event) {
-        const container = event.target.closest('.equation-container');
-        if (!container) return;
-
-        const breakdown = container.querySelector('.breakdown');
-        if (breakdown) {
-            const isVisible = breakdown.style.display === 'block';
-            breakdown.style.display = isVisible ? 'none' : 'block';
-            container.classList.toggle('active', !isVisible);
-            
-            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                MathJax.typesetPromise([breakdown]);
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
             }
         }
     });
 });
 </script>
-<style>
-.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
-.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
-.equation-container:hover { background: rgba(255,255,255,0.05); }
-.equation-container.active { border-color: var(--accent); }
-</style>
 
-    <footer class="subtopic-footer">
-                    <a href="/physics/subtopic/biot-savart-law" class="btn btn-secondary">&larr; Back to Biot-Savart Law</a>
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/static-law" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Coulomb's Law as a Static Limit</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/moving-charges" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Magnetism of Moving Charges</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/retarded-potentials" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Retarded Potentials and Causal Electrodynamics</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <footer class="subtopic-footer" style="margin-top: 40px;">
             </footer>
 </article>
-                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
-                        <span>🔄</span> <strong>Sync Now</strong>
-                    </a>
-                </div>    </main>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="2a96dff4e79581e697369186405cdad7" defer></script>
 </body>
 </html>

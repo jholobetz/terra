@@ -46,21 +46,32 @@ Mandatory checks before any commit:
 3.  **Relational Health:** Every Formula ID must resolve in the registry.
 4.  **Technical Density:** Content must meet the "University Level" score (LaTeX-to-word ratio).
 5.  **Historical Integrity:** All key entities from `entities.json` must be linked.
+6.  **Protected Slug Isolation:** No protected main topic slugs may exist within subtopic shards.
 
-### 3.2 Post-Update Validation
+### 3.2 Main Topic Immutability
+The 12 core topics are **Locked**.
+- **Source of Truth:** Content lives exclusively in `app/config/content/topics/[slug].json`. 
+- **Registry Hygiene:** `categories.json` MUST only contain metadata (title and shard path). The orchestrator automatically strips content from this file during save to prevent "split-brain" synchronization errors.
+- **Save Safeguard:** The `orchestrator.py` will refuse to overwrite core topic shards unless `unlock_protected=True` is explicitly passed.
+
+### 3.3 Post-Update Validation
 After syncing, verify live rendering using `curl`:
 ```bash
-# Check for MathJax (exactly one backslash) and link hygiene
+# Check for MathJax (exactly one backslash in final HTML) and link hygiene
 curl -s http://localhost/physics/subtopic/slug | grep -E "\\\\\\(|\\\\\\\\\\["
 ```
 
 ---
 
-## 4. Content Quality Standards: The "Gold Standard"
+## 4. Content Quality Standards: The "Platinum Standard"
 
 - **University-Level Depth:** Every subtopic must contain 6 distinct sections of rigorous technical explanation.
-- **MathJax:** Use `\\(` and `\\)` for inline, and `\\\\[` and `\\\\]` for display-style equations.
-- **Linking Convention:** Use `<strong><a href="/physics/subtopic/slug" class="subtopic-link">Title</a></strong>` for internal links.
+- **Main Topic Layout:** Main topics must use the bulleted layout with high verbosity (**3-4 sentences per bullet point**) to provide deep technical context.
+- **MathJax 3 Configuration:** 
+    - **Delimiters:** Use `\\(` and `\\)` for inline, and `\\\\[` and `\\\\]` for display-style equations in raw JSON content.
+    - **JSON Escaping:** TeX commands starting with JSON escape characters (e.g., `\\nu`, `\\rho`, `\\tau`) MUST be double-escaped in the shard file to prevent "eaten" backslashes.
+    - **No HTML Escaping:** Equations in formula cards MUST NOT be passed through `htmlspecialchars()`, as alignment characters like `&` are essential for MathJax parsing.
+- **Linking Convention:** Use `<strong><a href="/physics/subtopic/slug" class="subtopic-link">Title</a></strong>` for internal subtopic links and `/physics/topic/slug` for main modules.
 - **No Linguistic Artifacts:** Zero tolerance for doubled words or "AI Fluff."
 
 ---

@@ -6,19 +6,16 @@
     <title>Vorticity (\(\boldsymbol{\omega}\)) - Terra</title>
 
     <!-- MathJax Configuration -->
-    <script nonce="65ba5ddacd6b6f428f1c1bf282f24992">
+    <script nonce="88842aafe751ff476b92d9663fa66b9c">
         window.MathJax = {
             tex: {
                 inlineMath: [['\\(', '\\)']],
                 displayMath: [['\\[', '\\]']],
                 processEscapes: true
-            },
-            options: {
-                processHtmlClass: 'tex2jax_process'
             }
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="65ba5ddacd6b6f428f1c1bf282f24992"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="88842aafe751ff476b92d9663fa66b9c"></script>
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -115,16 +112,34 @@
             vertical-align: middle;
             letter-spacing: 0.5px;
         }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
     </style>
 </head>
 <body>
-            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
-            &nbsp;&nbsp;|&nbsp;&nbsp; 
-            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
-        </div>
         <nav>
-        <a href="/physics">Home</a>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
         <div class="dropdown">
             <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
             <div class="dropdown-content">
@@ -136,11 +151,23 @@
                                     <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
                                     <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
                                     <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
                             </div>
         </div>
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -149,27 +176,17 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/subtopic/curl">Curl (\( \nabla \times \))</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Vorticity (\(\boldsymbol{\omega}\))</span>
     </nav>
 
-    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
-        <div id="abstract-diagram" 
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
-             data-config='{"type":"abstract"}'>
-        </div>
-        <div style="position: relative; z-index: 1;">
-            <h1>Vorticity (\(\boldsymbol{\omega}\))</h1>
-        </div>
+    <header class="subtopic-header">
+        <h1>Vorticity (\(\boldsymbol{\omega}\))</h1>
     </header>
     
     <div class="content-body">
         <p><strong>Vorticity</strong> (\( \boldsymbol{\omega} \)) is a pseudovector field that describes the local spinning motion of a continuum near a point. In university-level physics and <strong>Fluid Dynamics</strong>, vorticity is defined as the <strong>curl</strong> of the velocity field: \( \boldsymbol{\omega} = 
-abla \times \mathbf{v} \). It represents the departure of a system from being a <a href="/physics/subtopic/conservative-force-field" class="subtopic-link"><strong>Conservative Force Field</strong></a>, as a fluid with non-zero vorticity cannot be described by a simple scalar velocity potential.</p>
+abla 	imes \mathbf{v} \). It represents the departure of a system from being a <a href="/physics/subtopic/conservative-force-field" class="subtopic-link"><strong>Conservative Force Field</strong></a>, as a fluid with non-zero vorticity cannot be described by a simple scalar velocity potential.</p>
 
                     <h3>1. Microscopic Rotation: The Curl Rule</h3>
                     <p>Vorticity is a point-wise measure of "Swirl." If you imagine a tiny paddle-wheel placed in a flowing gas, the rate and axis of its rotation are determined by the local vorticity. For a <strong>Conservative Field</strong>, the vorticity is identically zero (\( \boldsymbol{\omega} = 0 \)). Such flows are called <strong>irrotational</strong> or potential flows, providing the baseline for ideal <strong>Astrophysical Dynamics</strong> in stars and molecular clouds.</p>
@@ -181,7 +198,7 @@ abla \times \mathbf{v} \). It represents the departure of a system from being a 
                     <p>In real fluids, <strong>Viscosity</strong> acts as a source or sink for vorticity. Viscous forces diffuse vorticity from the boundaries into the bulk, leading to <strong>Turbulence</strong>. This process is inherently <strong>Non-Conservative</strong>; the energy spent creating and maintaining vortices is dissipated as heat. Understanding this transition is essential for modeling <a href="/physics/subtopic/accretion-disk" class="subtopic-link"><strong>Accretion Disks</strong></a>, where magnetic vorticity drives the transport of angular momentum.</p>
 
                     <h3>4. Enstrophy and Turbulence</h3>
-                    <p>The "Strength" of the vorticity in a volume is measured by <strong>Enstrophy</strong> (\( \mathcal{E} = \frac{1}{2} \int \omega^2 d\tau \)). In 2D turbulence, enstrophy is a conserved quantity, preventing energy from cascading to small scales. In 3D turbulence, however, <strong>Vortex Stretching</strong> allows vorticity to increase rapidly, leading to the complex, chaotic energy flows observed in <strong>Supernova Remnants</strong> and galactic winds.</p>
+                    <p>The "Strength" of the vorticity in a volume is measured by <strong>Enstrophy</strong> (\( \mathcal{E} = \frac{1}{2} \int \omega^2 d	au \)). In 2D turbulence, enstrophy is a conserved quantity, preventing energy from cascading to small scales. In 3D turbulence, however, <strong>Vortex Stretching</strong> allows vorticity to increase rapidly, leading to the complex, chaotic energy flows observed in <strong>Supernova Remnants</strong> and galactic winds.</p>
 
                     <h3>5. Vorticity in Superfluids</h3>
                     <p>In quantum fluids like those in the core of a <strong>Neutron Star</strong>, vorticity is <strong>Quantized</strong>. The fluid is perfectly irrotational everywhere except at discrete points called <strong>Quantum Vortices</strong>. Each vortex carries a fixed amount of circulation (\( h/m \)). The interaction of these vortices with the star's crust is believed to be the cause of <strong>Pulsar Glitches</strong>, linking subatomic vorticity to macroscopic timing shifts.</p>
@@ -189,106 +206,216 @@ abla \times \mathbf{v} \). It represents the departure of a system from being a 
                     <h3>6. Relativistic Vorticity</h3>
                     <p>In <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a>, vorticity is defined for the 4-velocity field of a fluid in the . It describes the "Twist" of the world-lines of the fluid particles. Relativistic vorticity is a critical term in the <strong>Raychaudhuri Equation</strong>; it acts as a repulsive force that can resist gravitational collapse, potentially preventing the formation of a <strong>Singularity</strong> in rotating systems.</p>    </div>
 
-            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
-            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
-            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/solenoidal-condition" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Solenoidal Condition</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/electromagnetic-induction" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Electromagnetic Induction</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/magnetostatic-circulation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Magnetostatic Circulation</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                            </div>
-        </section>
-    
-    <script src="/js/diagram_engine.js" defer></script>
-
     <section class="equations-section">
-    <h2>Key Equations</h2>
-    <p class="instruction">Click a formula to see its breakdown.</p>
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
     <ul class="equations-list" id="equations-list">
-                                    <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Vorticity Vector</span>
-                                                <span class="equation">\[ \boldsymbol{\omega} = 
-abla \times \mathbf{v} \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Vorticity Vector:</strong> The measure of how fast a fluid element is rotating around its own center.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Chaos Driver</span>
-                                                <span class="equation">\[ \frac{d\boldsymbol{\omega}}{dt} = (\boldsymbol{\omega} \cdot 
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Vorticity Vector                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \boldsymbol{\omega} = 
+abla 	imes \mathbf{v} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Vorticity Vector:</strong> The measure of how fast a fluid element is rotating around its own center.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Chaos Driver                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \frac{d\boldsymbol{\omega}}{dt} = (\boldsymbol{\omega} \cdot 
 abla)\mathbf{v} + 
 u 
-abla^2 \boldsymbol{\omega} \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Chaos Driver:</strong> The 3D effect where pulling on a vortex increases its spin speed.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Superfluid Rule</span>
-                                                <span class="equation">\[ \Gamma = \oint \mathbf{v} \cdot d\mathbf{l} = \iint \boldsymbol{\omega} \cdot d\mathbf{a} \quad (\text{Stokes}) \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Superfluid Rule:</strong> Why rotation in quantum stars can only happen in discrete, tiny tubes.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Non-Conservative Link</span>
-                                                <span class="equation">\[ \omega_{quantum} = \frac{n h}{m} \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Non-Conservative Link:</strong> How internal friction "kills" vorticity and turns motion into heat.                        </div>
-                                            </div>
-                </li>
-                        </ul>
+abla^2 \boldsymbol{\omega} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Chaos Driver:</strong> The 3D effect where pulling on a vortex increases its spin speed.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Superfluid Rule                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \Gamma = \oint \mathbf{v} \cdot d\mathbf{l} = \iint \boldsymbol{\omega} \cdot d\mathbf{a} \quad (	ext{Stokes}) \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Superfluid Rule:</strong> Why rotation in quantum stars can only happen in discrete, tiny tubes.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Non-Conservative Link                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \omega_{quantum} = \frac{n h}{m} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Non-Conservative Link:</strong> How internal friction "kills" vorticity and turns motion into heat.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
 </section>
 
-<script nonce="65ba5ddacd6b6f428f1c1bf282f24992">
+<script nonce="88842aafe751ff476b92d9663fa66b9c">
 document.addEventListener('DOMContentLoaded', function() {
     const list = document.getElementById('equations-list');
     if (!list) return;
 
     list.addEventListener('click', function(event) {
-        const container = event.target.closest('.equation-container');
-        if (!container) return;
-
-        const breakdown = container.querySelector('.breakdown');
-        if (breakdown) {
-            const isVisible = breakdown.style.display === 'block';
-            breakdown.style.display = isVisible ? 'none' : 'block';
-            container.classList.toggle('active', !isVisible);
-            
-            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                MathJax.typesetPromise([breakdown]);
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
             }
         }
     });
 });
 </script>
-<style>
-.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
-.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
-.equation-container:hover { background: rgba(255,255,255,0.05); }
-.equation-container.active { border-color: var(--accent); }
-</style>
 
-    <footer class="subtopic-footer">
-                    <a href="/physics/subtopic/curl" class="btn btn-secondary">&larr; Back to Curl (\( \nabla \times \))</a>
+            <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
+            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
+            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/magnetostatic-circulation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Magnetostatic Circulation</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/spherical-coordinates" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Curl in Spherical Coordinates</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/geometric-bridge" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Geometric Bridge (Stokes' Theorem)</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                            </div>
+        </section>
+    
+    <footer class="subtopic-footer" style="margin-top: 40px;">
             </footer>
 </article>
-                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
-                        <span>🔄</span> <strong>Sync Now</strong>
-                    </a>
-                </div>    </main>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="88842aafe751ff476b92d9663fa66b9c" defer></script>
 </body>
 </html>

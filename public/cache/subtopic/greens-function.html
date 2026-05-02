@@ -6,19 +6,16 @@
     <title>Green's Functions in Electrodynamics - Terra</title>
 
     <!-- MathJax Configuration -->
-    <script nonce="a38f5a36ad6497e9b990701a48f1120b">
+    <script nonce="526167b7ffa62859be88d44b7da2f44e">
         window.MathJax = {
             tex: {
                 inlineMath: [['\\(', '\\)']],
                 displayMath: [['\\[', '\\]']],
                 processEscapes: true
-            },
-            options: {
-                processHtmlClass: 'tex2jax_process'
             }
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="a38f5a36ad6497e9b990701a48f1120b"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="526167b7ffa62859be88d44b7da2f44e"></script>
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -115,16 +112,34 @@
             vertical-align: middle;
             letter-spacing: 0.5px;
         }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
     </style>
 </head>
 <body>
-            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
-            &nbsp;&nbsp;|&nbsp;&nbsp; 
-            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
-        </div>
         <nav>
-        <a href="/physics">Home</a>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
         <div class="dropdown">
             <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
             <div class="dropdown-content">
@@ -136,11 +151,23 @@
                                     <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
                                     <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
                                     <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
                             </div>
         </div>
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -149,24 +176,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/subtopic/biot-savart-law">Biot-Savart Law</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/subtopic/coulombs-law">Coulomb's Law</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Green's Functions in Electrodynamics</span>
     </nav>
 
-    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
-        <div id="abstract-diagram" 
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
-             data-config='{"type":"abstract"}'>
-        </div>
-        <div style="position: relative; z-index: 1;">
-            <h1>Green's Functions in Electrodynamics</h1>
-        </div>
+    <header class="subtopic-header">
+        <h1>Green's Functions in Electrodynamics</h1>
     </header>
     
     <div class="content-body">
@@ -179,8 +194,10 @@ abla^2 G(\mathbf{r}, \mathbf{r}') = \delta^3(\mathbf{r} - \mathbf{r}') \]
                     In an infinite vacuum (the <strong>Free-Space Green's Function</strong>), the solution is \( G = 1/ (4\pi |\mathbf{r} - \mathbf{r}'|) \). This exactly the form of the <strong>Coulomb Potential</strong>, proving that the \( 1/r \) potential is the "natural" response of 3D Euclidean space to a point source.</p>
 
                     <h3>2. Solving Poisson's Equation</h3>
-                    <p>For a general charge density \( \rho(\mathbf{r}) \), the <strong>Electrostatic Potential</strong> is found by the integral:
-                    \[ \Phi(\mathbf{r}) = \frac{1}{\varepsilon_0} \int \rho(\mathbf{r}') G(\mathbf{r}, \mathbf{r}') d^3\mathbf{r}' \]
+                    <p>For a general charge density \( 
+ho(\mathbf{r}) \), the <strong>Electrostatic Potential</strong> is found by the integral:
+                    \[ \Phi(\mathbf{r}) = \frac{1}{\varepsilon_0} \int 
+ho(\mathbf{r}') G(\mathbf{r}, \mathbf{r}') d^3\mathbf{r}' \]
                     This method is far more powerful than <a href="/physics/subtopic/coulombs-law" class="subtopic-link"><strong>Coulomb's Law</strong></a> alone because it can be adapted to complex <strong>Boundary Conditions</strong> (using Dirichlet or Neumann Green's functions), allowing for the calculation of fields near conductors or inside grounded boxes.</p>
 
                     <h3>3. The Method of Images</h3>
@@ -197,6 +214,191 @@ abla^2 G(\mathbf{r}, \mathbf{r}') = \delta^3(\mathbf{r} - \mathbf{r}') \]
                     <h3>6. Epistemic Status: The Identity of the Field</h3>
                     <p>Philosophically, Green's functions suggest that fields are "Relationship Maps" rather than absolute entities. The field at a point is not an independent fact, but a weighted sum of its relationships to all sources in the universe. This <strong>Relational</strong> view is essential for <strong>Astrophysical General Relativity</strong>, where the <strong>Metric Tensor</strong> acts as a generalized Green's function for the distribution of mass-energy in the Big Bang.</p>    </div>
 
+    <section class="equations-section">
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
+    <ul class="equations-list" id="equations-list">
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Point reaction                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ 
+abla^2 G(\mathbf{r}, \mathbf{r}') = -4\pi \delta(\mathbf{r} - \mathbf{r}') \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Point reaction:</strong> The specific field shape created by one single subatomic unit of charge.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Integral sum                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ V(\mathbf{r}) = \int 
+ho(\mathbf{r}') G(\mathbf{r}, \mathbf{r}') d^3r' \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Integral sum:</strong> The technique of solving big problems by adding up the Green's function for every tiny part.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Geometric Shield                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ G_{free} = \frac{1}{|\mathbf{r} - \mathbf{r}'|} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Geometric Shield:</strong> How the Green's function is modified to account for metal plates or wires.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Retardation                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ G_{ret} = \frac{\delta(t - t' - R/c)}{R} \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Retardation:</strong> The time-shifted Green's function that respects the cosmic speed limit.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
+</section>
+
+<script nonce="526167b7ffa62859be88d44b7da2f44e">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
+            }
+        }
+    });
+});
+</script>
+
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
@@ -204,96 +406,22 @@ abla^2 G(\mathbf{r}, \mathbf{r}') = \delta^3(\mathbf{r} - \mathbf{r}') \]
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Dirac Delta Function</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/field-equations" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Field Equations</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
                                     <a href="/physics/subtopic/static-law" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Coulomb's Law as a Static Limit</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/retarded-potentials" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Retarded Potentials and Causal Electrodynamics</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
-    <script src="/js/diagram_engine.js" defer></script>
-
-    <section class="equations-section">
-    <h2>Key Equations</h2>
-    <p class="instruction">Click a formula to see its breakdown.</p>
-    <ul class="equations-list" id="equations-list">
-                                    <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Point reaction</span>
-                                                <span class="equation">\[ 
-abla^2 G(\mathbf{r}, \mathbf{r}&#039;) = -4\pi \delta(\mathbf{r} - \mathbf{r}&#039;) \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Point reaction:</strong> The specific field shape created by one single subatomic unit of charge.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Integral sum</span>
-                                                <span class="equation">\[ V(\mathbf{r}) = \int \rho(\mathbf{r}&#039;) G(\mathbf{r}, \mathbf{r}&#039;) d^3r&#039; \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Integral sum:</strong> The technique of solving big problems by adding up the Green's function for every tiny part.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Geometric Shield</span>
-                                                <span class="equation">\[ G_{free} = \frac{1}{|\mathbf{r} - \mathbf{r}&#039;|} \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Geometric Shield:</strong> How the Green's function is modified to account for metal plates or wires.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Retardation</span>
-                                                <span class="equation">\[ G_{ret} = \frac{\delta(t - t&#039; - R/c)}{R} \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Retardation:</strong> The time-shifted Green's function that respects the cosmic speed limit.                        </div>
-                                            </div>
-                </li>
-                        </ul>
-</section>
-
-<script nonce="a38f5a36ad6497e9b990701a48f1120b">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const container = event.target.closest('.equation-container');
-        if (!container) return;
-
-        const breakdown = container.querySelector('.breakdown');
-        if (breakdown) {
-            const isVisible = breakdown.style.display === 'block';
-            breakdown.style.display = isVisible ? 'none' : 'block';
-            container.classList.toggle('active', !isVisible);
-            
-            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                MathJax.typesetPromise([breakdown]);
-            }
-        }
-    });
-});
-</script>
-<style>
-.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
-.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
-.equation-container:hover { background: rgba(255,255,255,0.05); }
-.equation-container.active { border-color: var(--accent); }
-</style>
-
-    <footer class="subtopic-footer">
-                    <a href="/physics/subtopic/coulombs-law" class="btn btn-secondary">&larr; Back to Coulomb's Law</a>
+    <footer class="subtopic-footer" style="margin-top: 40px;">
             </footer>
 </article>
-                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
-                        <span>🔄</span> <strong>Sync Now</strong>
-                    </a>
-                </div>    </main>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="526167b7ffa62859be88d44b7da2f44e" defer></script>
 </body>
 </html>

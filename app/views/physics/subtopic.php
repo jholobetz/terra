@@ -9,19 +9,15 @@
         <span style="opacity: 1; color: #8892b0;"><?= $title ?></span>
     </nav>
 
-    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
-        <div id="abstract-diagram" 
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
-             data-config='<?= json_encode($subtopic["visual_config"] ?? ["type" => "abstract"]) ?>'>
-        </div>
-        <div style="position: relative; z-index: 1;">
-            <h1><?= $title ?? 'Subtopic' ?></h1>
-        </div>
+    <header class="subtopic-header">
+        <h1><?= $title ?? 'Subtopic' ?></h1>
     </header>
     
     <div class="content-body">
         <?= $content ?? '<p>No content available for this subtopic.</p>' ?>
     </div>
+
+    <?php $this->render('physics/_equations_partial', ['equations' => $equations ?? [], 'breakdowns' => $breakdowns ?? [], 'formulas' => $formulas ?? [], 'nonce' => $nonce]); ?>
 
     <?php if (!empty($related_topics)): ?>
         <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
@@ -37,11 +33,7 @@
         </section>
     <?php endif; ?>
 
-    <script src="/physics/js/diagram_engine.js" defer></script>
-
-    <?php $this->render('physics/_equations_partial', ['equations' => $equations, 'breakdowns' => $breakdowns, 'nonce' => $nonce]); ?>
-
-    <footer class="subtopic-footer">
+    <footer class="subtopic-footer" style="margin-top: 40px;">
         <?php if (!empty($breadcrumbs)): 
             $lastCrumb = end($breadcrumbs);
         ?>

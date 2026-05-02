@@ -6,19 +6,16 @@
     <title>Irrotational Fields - Terra</title>
 
     <!-- MathJax Configuration -->
-    <script nonce="1ea86ad2b2d1e5994832a06f5be6cfb7">
+    <script nonce="ba5cd60586d4c62c25a3432428f27e77">
         window.MathJax = {
             tex: {
                 inlineMath: [['\\(', '\\)']],
                 displayMath: [['\\[', '\\]']],
                 processEscapes: true
-            },
-            options: {
-                processHtmlClass: 'tex2jax_process'
             }
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="1ea86ad2b2d1e5994832a06f5be6cfb7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="ba5cd60586d4c62c25a3432428f27e77"></script>
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -115,16 +112,34 @@
             vertical-align: middle;
             letter-spacing: 0.5px;
         }
+
+        /* Search Styles */
+        .search-container { position: relative; margin-right: auto; margin-left: 20px; flex: 1; max-width: 300px; }
+        #search-input { background: #112240; border: 1px solid #233554; color: var(--text); padding: 8px 15px; border-radius: 20px; width: 100%; font-size: 0.9rem; outline: none; }
+        #search-input:focus { border-color: var(--accent); }
+        #search-results { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background: #112240; border: 1px solid #233554; border-radius: 8px; 
+            max-height: 300px; overflow-y: auto; z-index: 2000; margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .search-result-item { 
+            padding: 10px 15px; border-bottom: 1px solid #233554; cursor: pointer; 
+            text-decoration: none; display: block; color: var(--text);
+        }
+        .search-result-item:hover { background: #1d2d44; color: var(--accent); }
+        .search-result-item small { display: block; opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
     </style>
 </head>
 <body>
-            <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-            PREVIEW MODE ACTIVE: Viewing changes from physics_content.php 
-            &nbsp;&nbsp;|&nbsp;&nbsp; 
-            <a href="?preview=0" style="color: white; text-decoration: underline;">Exit Preview</a>
-        </div>
         <nav>
-        <a href="/physics">Home</a>
+        <a href="/physics" style="margin-right: 10px;">Home</a>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
+            <div id="search-results"></div>
+        </div>
+
         <div class="dropdown">
             <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
             <div class="dropdown-content">
@@ -136,11 +151,23 @@
                                     <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
                                     <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
                                     <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                                    <a href="/physics/topic/thermodynamics-statistical-mechanics">Thermodynamics and Statistical Mechanics</a>
+                                    <a href="/physics/topic/condensed-matter">Condensed Matter Physics</a>
+                                    <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
+                                    <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
                             </div>
         </div>
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
+                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
+                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
+                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
+                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
+                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
+                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
+                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
+                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -149,28 +176,127 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/subtopic/gradient">The Gradient (\( \nabla \))</a>
-                    <span>&rsaquo;</span>
-            <a href="/physics/subtopic/potential-theory">Potential Theory</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Irrotational Fields</span>
     </nav>
 
-    <header class="subtopic-header" style="position: relative; overflow: hidden; background: #0a192f; padding: 40px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #233554;">
-        <div id="abstract-diagram" 
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
-             data-config='{"type":"abstract"}'>
-        </div>
-        <div style="position: relative; z-index: 1;">
-            <h1>Irrotational Fields</h1>
-        </div>
+    <header class="subtopic-header">
+        <h1>Irrotational Fields</h1>
     </header>
     
     <div class="content-body">
         <p>An Irrotational Field is a <a href="/physics/subtopic/vector-fields" class="subtopic-link"><strong>Vector Field</strong></a> whose <a href="/physics/subtopic/curl" class="subtopic-link"><strong>Curl</strong></a> is identically zero everywhere. In university-level philosophy of physics, irrotational fields represent 'Pure Potentiality.' They anchor our <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the realization that the vacuum handles <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of conservative forces by restricting them to the gradients of a <a href="/physics/subtopic/scalar-field" class="subtopic-link"><strong>Scalar Potential</strong></a>.</p><h3>1. The Zero-Curl Condition and Potentials</h3><p>In university-level theory, any irrotational field in a <strong>Simply Connected</strong> domain is the negative gradient of a scalar potential. This ensures that the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> are conservative, providing the definitive map for <strong>Electrostatics</strong> and <strong>Newtonian Gravity</strong>.</p><h3>2. <a href="/physics/subtopic/path-independence" class="subtopic-link"><strong>Path Independence</strong></a> and Conservative Energy</h3><p>In an irrotational manifold, the work done between two points is <strong>Independent of the Path</strong>. In university-level mechanics, this reveals that the causal structure does not permit work in a closed loop. This anchors <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the belief that the manifold handles energy by ensuring work is an absolute function of state data bits.</p><h3>3. The Bridge to Helmholtz Decomposition</h3><p>Irrotational fields form the 'Curl-Free' part of the <a href="/physics/subtopic/helmholtz-theorem" class="subtopic-link"><strong>Helmholtz Theorem</strong></a>. In university-level astrophysics, they describe lamellar flow and static field configurations. This link provides <a href="/physics/subtopic/the-bridge" class="subtopic-link"><strong>The Bridge</strong></a> between local derivatives and global <a href="/physics/subtopic/conservation-law" class="subtopic-link"><strong>Conservation Laws</strong></a>.</p><h3>4. Irrotationality and Information Theory</h3><p>From the perspective of <a href="/physics/subtopic/information-theory" class="subtopic-link"><strong>Information Theory</strong></a>, an irrotational field is a '<a href="/physics/subtopic/vorticity" class="subtopic-link"><strong>Vorticity</strong></a>-Neutral Data Set.' The vacuum handles the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> by ensuring information bits move without generating 'Swirl.' This investigation pushes the boundaries of our understanding, providing the ultimate map for <a href="/physics/subtopic/mathematical-realism" class="subtopic-link"><strong>Mathematical Realism</strong></a>.</p>    </div>
+
+    <section class="equations-section">
+    <h2>Key Theoretical Identities</h2>
+    <p class="instruction">Interact with identities to explore their semantic depth.</p>
+    <ul class="equations-list" id="equations-list">
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Irrotational Identity                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ 
+abla 	imes \mathbf{F} = 0 \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Irrotational Identity:</strong> The fundamental rule asserting that a field is irrotational if its local rotation vector bit identically vanishes.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
+                <div class="platinum-formula-card" 
+                     style="border: 1px solid #233554; border-radius: 12px; background: #112240; overflow: hidden; transition: all 0.3s ease;">
+                    
+                    <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                            Potential Gradient Law                        </span>
+                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                    </div>
+
+                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
+                            \[ \mathbf{F} = -
+abla \Phi \]
+                        </div>
+                    </div>
+
+                    <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
+                        <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
+                                    <strong>Potential Gradient Law:</strong> The mathematical proof that any irrotational field can be identically derived from a scalar potential bit-stream.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Symmetry derivation pending.                                </p>
+                            </div>
+                            <div class="depth-column">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                    Great Expansion: Limiting case analysis pending.                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
+</section>
+
+<script nonce="ba5cd60586d4c62c25a3432428f27e77">
+document.addEventListener('DOMContentLoaded', function() {
+    const list = document.getElementById('equations-list');
+    if (!list) return;
+
+    list.addEventListener('click', function(event) {
+        const trigger = event.target.closest('.formula-expand-trigger');
+        if (!trigger) return;
+        const card = trigger.closest('.platinum-formula-card');
+        const body = card.querySelector('.formula-body');
+        const icon = trigger.querySelector('.expand-icon');
+        if (body) {
+            const isHidden = window.getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                card.style.borderColor = 'var(--accent)';
+                icon.innerText = '[ Click to Collapse ]';
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
+            } else {
+                body.style.display = 'none';
+                card.style.borderColor = '#233554';
+                icon.innerText = '[ Click to Expand Depth ]';
+            }
+        }
+    });
+});
+</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -179,79 +305,23 @@
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Solenoidal Fields</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/flux-balance" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Fluxes</strong>
+                                    <a href="/physics/subtopic/vector-calculus" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Vector Calculus</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/laplacian-operator" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Laplacian (\( \nabla^2 \))</strong>
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Laplacian (\( 
+abla^2 \))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
-    <script src="/js/diagram_engine.js" defer></script>
-
-    <section class="equations-section">
-    <h2>Key Equations</h2>
-    <p class="instruction">Click a formula to see its breakdown.</p>
-    <ul class="equations-list" id="equations-list">
-                                    <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Irrotational Identity</span>
-                                                <span class="equation">\[ \nabla \times \mathbf{F} = 0 \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Irrotational Identity:</strong> The fundamental rule asserting that a field is irrotational if its local rotation vector bit identically vanishes.                        </div>
-                                            </div>
-                </li>
-                            <li class="equation-item" style="list-style: none;">
-                    <div class="equation-container">
-                                                    <span class="formula-title">Potential Gradient Law</span>
-                                                <span class="equation">\[ \mathbf{F} = -\nabla \Phi \]</span>
-                                                <div class="breakdown" style="display: none;">
-                            <strong>Potential Gradient Law:</strong> The mathematical proof that any irrotational field can be identically derived from a scalar potential bit-stream.                        </div>
-                                            </div>
-                </li>
-                        </ul>
-</section>
-
-<script nonce="1ea86ad2b2d1e5994832a06f5be6cfb7">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const container = event.target.closest('.equation-container');
-        if (!container) return;
-
-        const breakdown = container.querySelector('.breakdown');
-        if (breakdown) {
-            const isVisible = breakdown.style.display === 'block';
-            breakdown.style.display = isVisible ? 'none' : 'block';
-            container.classList.toggle('active', !isVisible);
-            
-            if (!isVisible && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                MathJax.typesetPromise([breakdown]);
-            }
-        }
-    });
-});
-</script>
-<style>
-.formula-title { display: block; margin-bottom: 5px; color: var(--accent); font-size: 1em; font-weight: 600; }
-.equation-container { border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
-.equation-container:hover { background: rgba(255,255,255,0.05); }
-.equation-container.active { border-color: var(--accent); }
-</style>
-
-    <footer class="subtopic-footer">
-                    <a href="/physics/subtopic/potential-theory" class="btn btn-secondary">&larr; Back to Potential Theory</a>
+    <footer class="subtopic-footer" style="margin-top: 40px;">
             </footer>
 </article>
-                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-                    <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
-                        <span>🔄</span> <strong>Sync Now</strong>
-                    </a>
-                </div>    </main>
+    </main>
+
+    <script src="/physics/js/search_engine.js" nonce="ba5cd60586d4c62c25a3432428f27e77" defer></script>
 </body>
 </html>

@@ -23,7 +23,7 @@ if ($hasFormulas): ?>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ <?= htmlspecialchars($f['equation']) ?> \]
+                            \[ <?= $f['equation'] ?> \]
                         </div>
                     </div>
 

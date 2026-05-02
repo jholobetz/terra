@@ -13,6 +13,13 @@ class PhysicsOrchestrator:
         "condensed-matter", "fluids-nonlinear", "mathematical-methods", "philosophy-of-physics"
     }
 
+    # Terms that are too common to auto-link in plain text (must be bolded to link)
+    AMBIGUOUS_TERMS = {
+        "Mass", "Force", "Spin", "Field", "Charge", "Energy", "Time", "Space", 
+        "Work", "State", "Scale", "Phase", "Flow", "Bits", "Vacuum", "Current", 
+        "Wave", "Source", "Logic", "Point", "Group"
+    }
+
     def __init__(self, content_dir="app/config/content", registry_path="global_slug_registry.json"):
         self.content_dir = content_dir
         self.registry_path = registry_path
@@ -174,6 +181,7 @@ class PhysicsOrchestrator:
         
         content = topic["content"]
         original_content = content
+        parents = topic.get("parents", [])
         
         # 1. Entity Linking (Historical Figures/Facilities)
         content = self._apply_entity_links(content)
@@ -185,7 +193,14 @@ class PhysicsOrchestrator:
 
         for title in self.sorted_titles:
             target_slug = self.registry[title]
+            
+            # Safeguard 1: Don't link a topic to itself or its alternative titles
             if target_slug == slug or title in current_titles:
+                continue
+                
+            # Safeguard 2: Don't link to a main parent module if we are already in its shard
+            # This prevents redundant "Classical Mechanics" links inside the Classical shard
+            if target_slug in parents:
                 continue
             
             if target_slug in self.data["topic_contents"]:
@@ -196,14 +211,21 @@ class PhysicsOrchestrator:
             link_html = f'<a href="{url}" class="subtopic-link"><strong>{title}</strong></a>'
             bold_tag = f"<strong>{title}</strong>"
             
+            # Action 1: If title is BOLDED, always link it (High Intent)
             if bold_tag in masked_content:
                 # Avoid nesting if already linked
                 if f'>{bold_tag}</a>' in masked_content:
                     continue
                 masked_content = masked_content.replace(bold_tag, link_html)
-            elif f'href="/physics/subtopic/{target_slug}"' not in masked_content and f'href="/physics/topic/{target_slug}"' not in masked_content:
-                plain_pattern = re.compile(rf'(?<![=">])\b{re.escape(title)}\b(?![<])')
-                masked_content = plain_pattern.sub(lambda m: link_html, masked_content)
+                
+            # Action 2: If title is PLAIN TEXT, link it only if NOT ambiguous
+            elif title not in self.AMBIGUOUS_TERMS:
+                # Ensure it's not already part of a link
+                if f'href="/physics/subtopic/{target_slug}"' not in masked_content and f'href="/physics/topic/{target_slug}"' not in masked_content:
+                    # Match title word-boundary, case-sensitive for plain text
+                    plain_pattern = re.compile(rf'(?<![=">])\b{re.escape(title)}\b(?![<])')
+                    # We only link the FIRST occurrence in plain text to avoid "Link Bloat"
+                    masked_content = plain_pattern.sub(lambda m: link_html, masked_content, count=1)
         
         final_content = self.unmask_mathjax(masked_content, placeholders)
         final_content = self._sanitize_mathjax(final_content)

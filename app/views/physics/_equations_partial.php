@@ -48,6 +48,31 @@ if ($hasFormulas): ?>
                                 </p>
                             </div>
                         </div>
+
+                        <?php if (!empty($f['semantic_variables'])): ?>
+                        <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                <?php foreach ($f['semantic_variables'] as $symbol => $var): 
+                                    $url = '';
+                                    if (strpos($var['ref'], 'constants/') === 0) {
+                                        $url = '/physics/constants'; // Generic for now, or link to a specific constant anchor
+                                    } else if (strpos($var['ref'], 'subtopics/') === 0) {
+                                        $url = '/physics/subtopic/' . str_replace('subtopics/', '', $var['ref']);
+                                    }
+                                ?>
+                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( <?= $symbol ?> \):</span> 
+                                        <?php if ($url): ?>
+                                            <a href="<?= $url ?>" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;"><?= $var['name'] ?></a>
+                                        <?php else: ?>
+                                            <span style="color: #ccd6f6;"><?= $var['name'] ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </li>

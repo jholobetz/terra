@@ -124,8 +124,8 @@ All content must be categorized into one or more of the 12 primary modules:
 To ensure long-term scalability and institutional-grade quality, the project follows a **Density-First** strategy. Volume expansion is strictly gated by the health of the existing graph.
 
 - **Refactoring Mandate:** Technical density (Latex-to-word ratio) and conceptual depth of existing stubs MUST be prioritized over the creation of new subtopics.
-- **The 10% Expansion Gate:** The "Great Expansion" of new terms from the backlog is **PROHIBITED** unless the `integrity_shield.py` reports that "Non-Technical" or "Low-Depth" warnings constitute **less than 10%** of the total subtopic pool.
-- **Consistency over Volume:** A smaller, "Platinum Standard" encyclopedia is preferred over a larger, shallow one. Every refactoring turn must aim for a Technical Density Score > 50.
+- **The 10% Expansion Gate:** The "Great Expansion" of new terms from the backlog is **PROHIBITED** unless the `integrity_shield.py` reports that "Non-Technical" or "Low-Depth" warnings (topics < 500 words) constitute **less than 10%** of the total subtopic pool.
+- **Consistency over Volume:** A smaller, "Platinum Standard" encyclopedia is preferred over a larger, shallow one. Every refactoring turn must aim for a Technical Density Score > 60 and a word count > 500.
 
 ---
 
@@ -134,7 +134,7 @@ To ensure long-term scalability and institutional-grade quality, the project fol
 The `refactor_engine.py` is the **exclusive authorized pathway** for batch subtopic upgrades. Manual shard editing is deprecated to prevent "Technical Debt" and "Formula Drift."
 
 ### 10.1 Automated Quality Enforcement
-- **Scoring Formula:** `(MathJax_Count * 15) + (Technical_Keyword_Score)`. Any content falling below 50 is flagged for immediate refactoring.
+- **Scoring Formula:** `(MathJax_Count * 15) + (Technical_Keyword_Score)`. Any content falling below 60 is flagged for immediate refactoring.
 - **Context Preservation:** The engine mandates the preservation of established navigational pathways. AI assistants are prohibited from discarding existing internal links during refactoring.
 
 ### 10.2 "Bulletproof" Execution Standards

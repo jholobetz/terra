@@ -90,9 +90,9 @@ class IntegrityShield:
             term_score = sum(5 for term in tech_terms if term in content.lower())
             words = len(re.findall(r'\w+', content))
             total_score = (latex_count * 15) + term_score
-            if words < 200:
+            if words < 500:
                 self.warnings.append(f"Low Depth: [{slug}] word count too low ({words}).")
-            if total_score < 20:
+            if total_score < 30:
                 self.warnings.append(f"Non-Technical: [{slug}] density too low (Score: {total_score}).")
 
     def check_entities(self):

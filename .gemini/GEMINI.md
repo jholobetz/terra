@@ -11,7 +11,7 @@ To ensure O(1) performance and context efficiency as we scale to 18,000 subtopic
 ### 1.1 Data Structure (`app/config/content/`)
 The database is sharded into modular JSON files by top-level category:
 - `categories.json`: Defines the 12 major physics modules.
-- `formulas.json`: The global registry of 4,600+ unique mathematical identities (Platinum Standard).
+- `formulas.json`: The global registry of 4,100+ unique mathematical identities (Platinum Standard).
 - `constants.json`: Normalized physical constants ($\hbar, c, G$, etc.).
 - `entities.json`: Historical figures and research facilities.
 - `search_index.json`: Master metadata map for lazy loading and discovery.
@@ -61,18 +61,13 @@ The 12 core topics are **Locked**.
 - **Registry Hygiene:** `categories.json` MUST only contain metadata (title and shard path). The orchestrator automatically strips content from this file during save to prevent "split-brain" synchronization errors.
 - **Save Safeguard:** The `orchestrator.py` will refuse to overwrite core topic shards unless `unlock_protected=True` is explicitly passed.
 
-### 3.3 Post-Update Validation
-After syncing, verify live rendering using `curl`:
-```bash
-# Check for MathJax (exactly one backslash in final HTML) and link hygiene
-curl -s http://localhost/physics/subtopic/slug | grep -E "\\\\\\(|\\\\\\\\\\["
-```
-
 ---
 
 ## 4. Content Quality Standards: The "Platinum Standard"
 
-- **Technical Scope:** Every subtopic must contain **4 to 8 distinct sections** of rigorous technical explanation, depending on the breadth of available academic material. This flexibility ensures depth for complex theories while maintaining integrity for specialized niche topics.
+- **Technical Scope:** 
+    - **Subtopics:** 4 to 8 sections, hard floor of 500 words, target 700-1,000 words. This ensures a comprehensive university-level deep dive rather than a brief summary.
+    - **Main Topics (Hubs):** 6 to 8 sections, hard floor of 1,200 words, target 1,500-2,000 words. These must provide a comprehensive narrative that contextually absorbs all child links in the shard.
 - **Factuality & Integrity:** All content MUST be derived from established physical principles and academic consensus. **Zero Tolerance for Hallucinations**: AI assistants must not invent terminology, historical dates, or physical relationships. If reliable data for a section is unavailable, the section count should be reduced toward the minimum threshold (4) rather than padded with speculative content.
 - **Main Topic Layout:** Main topics must use the bulleted layout with high verbosity (**3-4 sentences per bullet point**) to provide deep technical context.
 - **MathJax 3 Configuration:** 
@@ -133,8 +128,10 @@ All content must be categorized into one or more of the 12 primary modules:
 To ensure long-term scalability and institutional-grade quality, the project follows a **Density-First** strategy. Volume expansion is strictly gated by the health of the existing graph.
 
 - **Refactoring Mandate:** Technical density (Latex-to-word ratio) and conceptual depth of existing stubs MUST be prioritized over the creation of new subtopics.
-- **The 10% Expansion Gate:** The "Great Expansion" of new terms from the backlog is **PROHIBITED** unless the `integrity_shield.py` reports that "Non-Technical" or "Low-Depth" warnings (topics < 500 words) constitute **less than 10%** of the total subtopic pool.
-- **Consistency over Volume:** A smaller, "Platinum Standard" encyclopedia is preferred over a larger, shallow one. Every refactoring turn must aim for a Technical Density Score > 60 and a word count > 500.
+- **The 10% Expansion Gate:** The "Great Expansion" of new terms from the backlog is **PROHIBITED** unless the `integrity_shield.py` reports that "Non-Technical" or "Low-Depth" warnings constitute **less than 10%** of the total subtopic pool.
+- **Consistency over Volume:** A smaller, "Platinum Standard" encyclopedia is preferred over a larger, shallow one. Every refactoring turn must aim for:
+    - **Subtopics:** Technical Density Score > 60 and word count > 500.
+    - **Main Topics:** Technical Density Score > 150 and word count > 1,200.
 
 ---
 
@@ -169,4 +166,3 @@ To maintain testing consistency across sessions, all automation and validation t
 
 - **Primary Test Server:** `http://172.16.1.208`
 - **Build Protocol:** The `orchestrator.build()` method uses this address to pre-render static HTML. Any change to the server IP must be updated here first to ensure tool synchronization.
-

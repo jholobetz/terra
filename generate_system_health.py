@@ -3,6 +3,7 @@ import re
 import os
 import sys
 from datetime import datetime
+from collections import defaultdict
 
 class HealthDashboard:
     def __init__(self, content_dir="app/config/content"):
@@ -29,11 +30,14 @@ class HealthDashboard:
                 "broken_formulas": 0,
                 "orphans_count": 0
             },
-            "shard_health": {}
+            "shard_health": {},
+            "cluster_map": {}
         }
         self.all_subtopics = {}
         self.all_slugs = set()
-        self.incoming_links = {}
+        self.incoming_links = defaultdict(int)
+        self.slug_to_cat = {}
+        self.link_matrix = defaultdict(lambda: defaultdict(int))
 
     def load_data(self):
         from orchestrator import PhysicsOrchestrator
@@ -43,8 +47,13 @@ class HealthDashboard:
         self.topics = self.orch.data["topics"]
         self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
         
-        for slug in self.all_slugs:
-            self.incoming_links[slug] = 0
+        # Mapping for Cluster Map
+        for cat_slug in self.topics:
+            shard_name = f"{cat_slug}.json"
+            if shard_name in self.orch.shards:
+                for sub_slug in self.orch.shards[shard_name]:
+                    self.slug_to_cat[sub_slug] = cat_slug
+            self.slug_to_cat[cat_slug] = cat_slug
 
     def analyze(self):
         total_score = 0
@@ -59,6 +68,8 @@ class HealthDashboard:
                 if "content" not in sub: continue
                 
                 content = sub["content"]
+                source_cat = self.slug_to_cat.get(slug, "misc")
+                
                 # Stats
                 words = len(re.findall(r'\w+', content))
                 latex_count = len(re.findall(r'\\\(|\\\[', content))
@@ -81,13 +92,17 @@ class HealthDashboard:
                 if density_score < 30:
                     self.health_data["platinum_scorecard"]["non_technical_count"] += 1
                     
-                # Link Scan for Orphans
+                # Link Scan
                 matches = link_pattern.findall(content)
                 for _, target in matches:
                     self.health_data["global_stats"]["total_links"] += 1
-                    if target in self.incoming_links:
-                        self.incoming_links[target] += 1
-                    else:
+                    self.incoming_links[target] += 1
+                    
+                    target_cat = self.slug_to_cat.get(target)
+                    if target_cat:
+                        self.link_matrix[source_cat][target_cat] += 1
+                    
+                    if target not in self.all_slugs:
                         self.health_data["integrity_summary"]["broken_links"] += 1
                 
                 # Formula check
@@ -113,13 +128,26 @@ class HealthDashboard:
             self.health_data["platinum_scorecard"]["platinum_percentage"] = round((self.health_data["platinum_scorecard"]["platinum_count"] / count) * 100, 2)
         
         # Orphans
-        self.health_data["integrity_summary"]["orphans_count"] = sum(1 for s, c in self.incoming_links.items() if c == 0 and s not in self.topics)
+        self.health_data["integrity_summary"]["orphans_count"] = sum(1 for s in self.all_subtopics if self.incoming_links[s] == 0)
+        
+        # Finalize Cluster Map
+        for cat in self.topics:
+            matrix = self.link_matrix[cat]
+            total_out = sum(matrix.values())
+            internal = matrix.get(cat, 0)
+            external = total_out - internal
+            
+            self.health_data["cluster_map"][cat] = {
+                "title": self.topics[cat]["title"],
+                "silo_factor": round(internal / total_out, 2) if total_out > 0 else 1.0,
+                "bridge_ratio": round(external / total_out, 2) if total_out > 0 else 0.0,
+                "top_partner": max({k: v for k, v in matrix.items() if k != cat}, key=matrix.get, default="None")
+            }
 
     def save(self):
         with open("system_health.json", "w") as f:
             json.dump(self.health_data, f, indent=4)
-        print(f"SUCCESS: System Health Dashboard generated.")
-        print(f"Platinum Score: {self.health_data['platinum_scorecard']['platinum_percentage']}%")
+        print(f"SUCCESS: System Health Dashboard updated with Cluster Map.")
 
 if __name__ == "__main__":
     dashboard = HealthDashboard()

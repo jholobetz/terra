@@ -53,6 +53,7 @@ The project tracks global progress via `generate_system_health.py`. Every batch 
 - **Global Platinum %**: The percentage of topics meeting the 500w/60-density threshold.
 - **Orphan Monitoring**: Tracking subtopics with 0 incoming links.
 - **Shard-Level Health**: identifying which modules require priority refactoring.
+- **Cluster Map Density**: Tracking the inter-category connectivity via `cluster_map.json` to prevent "Knowledge Silos." Every major refactor should aim to improve the **Bridge Ratio** of the targeted module.
 
 ### 3.3 Main Topic Immutability
 The 12 core topics are **Locked**.

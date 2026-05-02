@@ -59,15 +59,24 @@ class IntegrityShield:
                     self.errors.append(f"Broken Formula: [{slug}] refs unknown ID '{f_id}'")
 
     def check_duplicates(self):
-        """Ensures every subtopic slug exists in exactly one shard."""
+        """Ensures every subtopic slug exists in exactly one shard and no protected slugs in subtopic shards."""
         slug_map = {}
+        protected_topics = self.orch.PROTECTED_TOPICS
+
         for file in os.listdir(self.content_dir):
             if not file.endswith(".json") or file in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json"]:
                 continue
+
+            # Skip the topics directory as it's handled separately or contains the protected ones
+            if "topics/" in file: continue 
+
             path = os.path.join(self.content_dir, file)
             with open(path, "r") as f:
                 shard_content = json.load(f)
                 for slug in shard_content:
+                    if slug in protected_topics:
+                        self.errors.append(f"PROTECTED SLUG VIOLATION: [{slug}] found in subtopic shard {file}")
+
                     if slug in slug_map:
                         self.errors.append(f"CRITICAL DUPLICATE: [{slug}] exists in both {slug_map[slug]} and {file}")
                     slug_map[slug] = file
@@ -96,6 +105,16 @@ class IntegrityShield:
                 if "content" in sub and pattern.search(sub["content"]):
                     self.warnings.append(f"Unlinked Entity: [{slug}] mentions '{name}'. Auto-link recommended.")
 
+    def check_registry(self):
+        """Ensures all protected topics are pinned in the registry."""
+        registry_reverse = {v: k for k, v in self.orch.registry.items()}
+        for slug in self.orch.PROTECTED_TOPICS:
+            if slug not in registry_reverse:
+                self.errors.append(f"REGISTRY MISSING: Protected topic [{slug}] not found in global registry.")
+            
+            # Check for title-slug consistency if possible, though slugs are the primary IDs
+            # The registry maps Title -> Slug
+
     def check_links(self):
         link_pattern = re.compile(r'href=[\\"]+/physics/(subtopic|topic)/([^\\"]+)[\\"]+')
         def scan(text, source):
@@ -119,6 +138,7 @@ class IntegrityShield:
         
         self.check_duplicates()
         self.check_formulas()
+        self.check_registry()
         self.check_technical_density()
         self.check_entities()
         self.check_links()

@@ -64,9 +64,18 @@ class PhysicsController
             $this->getPhysicsContent();
         }
         $baseDir = PROJECT_ROOT . '/app/config/content/';
-        // Use 's' key from search_index for the shard filename
-        $shardFile = $this->physicsContent['search_index'][$slug]['s'] ?? null;
         
+        // 1. Check if it is a main topic shard
+        if (isset($this->physicsContent['topics'][$slug]['shard'])) {
+            $shardPath = $baseDir . $this->physicsContent['topics'][$slug]['shard'];
+            if (file_exists($shardPath)) {
+                $topicData = json_decode(file_get_contents($shardPath), true) ?: [];
+                $this->physicsContent['topics'][$slug] = array_merge($this->physicsContent['topics'][$slug], $topicData);
+            }
+        }
+
+        // 2. Check if it is a subtopic shard (via search_index)
+        $shardFile = $this->physicsContent['search_index'][$slug]['s'] ?? null;
         if ($shardFile && file_exists($baseDir . $shardFile)) {
             $shard = json_decode(file_get_contents($baseDir . $shardFile), true) ?: [];
             if (is_array($shard)) {
@@ -84,6 +93,19 @@ class PhysicsController
             $this->getPhysicsContent();
         }
         $baseDir = PROJECT_ROOT . '/app/config/content/';
+
+        // 1. Load Main Topic Shards
+        foreach ($this->physicsContent['topics'] as $slug => $meta) {
+            if (isset($meta['shard'])) {
+                $shardPath = $baseDir . $meta['shard'];
+                if (file_exists($shardPath)) {
+                    $topicData = json_decode(file_get_contents($shardPath), true) ?: [];
+                    $this->physicsContent['topics'][$slug] = array_merge($this->physicsContent['topics'][$slug], $topicData);
+                }
+            }
+        }
+
+        // 2. Load Subtopic Shards
         $files = scandir($baseDir);
         foreach ($files as $file) {
             if (strpos($file, '.json') !== false && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json'])) {
@@ -246,13 +268,15 @@ class PhysicsController
 
     public function viewSubtopic(string $slug)
     {
-        // 1. Static-First Check
+        // 1. Static Check (Temporarily disabled for CSP/MathJax debugging)
+        /*
         $cachePath = PROJECT_ROOT . "/public/cache/subtopic/{$slug}.html";
         if (file_exists($cachePath) && !$this->isPreviewActive()) {
             header('Content-Type: text/html; charset=utf-8');
             readfile($cachePath);
             return;
         }
+        */
 
         $this->requestedSlug = $slug;
         $subtopic = $this->fetchAndPrepare('subtopics', $slug);
@@ -356,6 +380,7 @@ class PhysicsController
 
     protected function performSync(): void
     {
+        $this->loadAllShards();
         $data = $this->getPhysicsContent();
         $db = $this->app->db();
 

@@ -9,9 +9,23 @@
     <script nonce="<?= $nonce ?>">
         window.MathJax = {
             tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true,
+                macros: {
+                    mathbf: ["{\\boldsymbol{#1}}", 1]
+                }
+            },
+            options: {
+                enableMenu: false
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                    MathJax.startup.promise.then(() => {
+                        console.log('MathJax initial typesetting complete');
+                    });
+                }
             }
         };
     </script>

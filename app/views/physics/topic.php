@@ -78,7 +78,7 @@ if (!function_exists('getConceptLevel')) {
                         <div class="bridge-item">
                             <strong>
                                 <?php if (!empty($b['slug'])): ?>
-                                    <a href="/physics/topic/<?= $b['slug'] ?>" class="bridge-link"><?= $b['title'] ?></a>
+                                    <a href="/physics/topic/<?= $b['slug'] ?>" class="topic-link"><?= $b['title'] ?></a>
                                 <?php else: ?>
                                     <?= $b['title'] ?>
                                 <?php endif; ?>:

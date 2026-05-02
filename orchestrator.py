@@ -20,6 +20,18 @@ class PhysicsOrchestrator:
         "Wave", "Source", "Logic", "Point", "Group"
     }
 
+    # Terms that require technical 'anchors' nearby to auto-link in plain text
+    TERM_ANCHORS = {
+        "Mass": ["rest", "invariant", "relativistic", "energy", "gravity", "defect", "higgs"],
+        "Field": ["gauge", "force", "electromagnetic", "scalar", "tensor", "interaction", "gradient"],
+        "Spin": ["quantum", "pauli", "boson", "fermion", "angular momentum", "half-integer"],
+        "Entropy": ["thermodynamics", "boltzmann", "statistical", "disorder", "information", "second law"],
+        "Action": ["lagrangian", "hamilton", "stationary", "integral", "variational", "principle"],
+        "Phase": ["transition", "space", "diagram", "berry", "geometric", "state"],
+        "Current": ["density", "charge", "flow", "ampere", "magnetic", "displacement"],
+        "Wave": ["function", "equation", "packet", "interference", "diffraction", "propagation"]
+    }
+
     def __init__(self, content_dir="app/config/content", registry_path="global_slug_registry.json"):
         self.content_dir = content_dir
         self.registry_path = registry_path
@@ -218,10 +230,19 @@ class PhysicsOrchestrator:
                     continue
                 masked_content = masked_content.replace(bold_tag, link_html)
                 
-            # Action 2: If title is PLAIN TEXT, link it only if NOT ambiguous
+            # Action 2: If title is PLAIN TEXT, link only if it passes contextual safeguards
             elif title not in self.AMBIGUOUS_TERMS:
                 # Ensure it's not already part of a link
                 if f'href="/physics/subtopic/{target_slug}"' not in masked_content and f'href="/physics/topic/{target_slug}"' not in masked_content:
+                    
+                    # SEMANTIC COLLISION SAFEGUARD:
+                    # If the term is in TERM_ANCHORS, check if any anchor word is in the text
+                    if title in self.TERM_ANCHORS:
+                        anchors = self.TERM_ANCHORS[title]
+                        text_lower = masked_content.lower()
+                        if not any(anchor in text_lower for anchor in anchors):
+                            continue # Skip linking if no technical context found
+
                     # Match title word-boundary, case-sensitive for plain text
                     plain_pattern = re.compile(rf'(?<![=">])\b{re.escape(title)}\b(?![<])')
                     # We only link the FIRST occurrence in plain text to avoid "Link Bloat"

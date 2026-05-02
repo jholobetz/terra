@@ -37,7 +37,7 @@ All AI assistants MUST adhere to these rules to prevent token exhaustion:
 
 ## 3. Governance & Quality Gating
 
-NO change is considered complete until it passes the **Integrity Shield**.
+NO change is considered complete until it passes the **Integrity Shield** and the **System Health Dashboard** is updated.
 
 ### 3.1 The Integrity Shield (`integrity_shield.py`)
 Mandatory checks before any commit:
@@ -48,7 +48,13 @@ Mandatory checks before any commit:
 5.  **Historical Integrity:** All key entities from `entities.json` must be linked.
 6.  **Protected Slug Isolation:** No protected main topic slugs may exist within subtopic shards.
 
-### 3.2 Main Topic Immutability
+### 3.2 System Health Dashboard (`system_health.json`)
+The project tracks global progress via `generate_system_health.py`. Every batch operation MUST report the following metrics:
+- **Global Platinum %**: The percentage of topics meeting the 500w/60-density threshold.
+- **Orphan Monitoring**: Tracking subtopics with 0 incoming links.
+- **Shard-Level Health**: identifying which modules require priority refactoring.
+
+### 3.3 Main Topic Immutability
 The 12 core topics are **Locked**.
 - **Source of Truth:** Content lives exclusively in `app/config/content/topics/[slug].json`. 
 - **Registry Hygiene:** `categories.json` MUST only contain metadata (title and shard path). The orchestrator automatically strips content from this file during save to prevent "split-brain" synchronization errors.

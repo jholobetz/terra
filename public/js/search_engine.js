@@ -38,16 +38,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = data.t.toLowerCase();
             const cleanTitle = title.replace(/[''s]/g, '');
 
-            if (title === query || cleanTitle === cleanQuery) score += 100;
-            else if (title.startsWith(query) || cleanTitle.startsWith(cleanQuery)) score += 80;
-            else if (title.includes(query) || cleanTitle.includes(cleanQuery)) score += 50;
-            else if (data.k && data.k.some(k => k.toLowerCase().includes(query))) score += 20;
+            // 1. Base Score (Title matching)
+            if (title === query || cleanTitle === cleanQuery) score += 1000;
+            else if (title.startsWith(query) || cleanTitle.startsWith(cleanQuery)) score += 800;
+            else if (title.includes(query) || cleanTitle.includes(cleanQuery)) score += 500;
+            else if (data.k && data.k.some(k => k.toLowerCase().includes(query))) score += 200;
 
             if (score > 0) {
+                // 2. Technical Weighting (Density bonus)
+                // Add 10% of density weight to the score
+                score += (data.w || 0) * 0.5;
+
+                // 3. Platinum Standard Bonus
+                // Boost platinum topics by 20%
+                if (data.pl) score *= 1.2;
+
                 scoredMatches.push({ slug, score, ...data });
             }
         }
 
+        // Sort by score descending, then by title length (shorter is more specific)
         scoredMatches.sort((a, b) => b.score - a.score || a.t.length - b.t.length);
 
         if (scoredMatches.length > 0) {

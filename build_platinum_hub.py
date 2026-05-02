@@ -16,33 +16,32 @@ class HubBuilder:
             self.topic_data = json.load(f)
 
     def get_safe_snippet(self, content):
-        # 1. Strip HTML tags but preserve MathJax delimiters
-        # We replace delimiters with unique tokens that don't contain < or >
-        content = content.replace('\\(', '___INLINE_START___').replace('\\)', '___INLINE_END___')
-        content = content.replace('\\[', '___DISPLAY_START___').replace('\\]', '___DISPLAY_END___')
+        # 1. Standardize delimiters to single-backslash in memory
+        content = content.replace('\\\\(', '\\(').replace('\\\\)', '\\)')
+        content = content.replace('\\\\\\[', '\\[').replace('\\\\\\]', '\\]')
         
-        # 2. Strip HTML
+        # 2. Protection: Replace with unique tokens
+        content = content.replace('\\(', '___MJ_INLINE_OPEN___').replace('\\)', '___MJ_INLINE_CLOSE___')
+        content = content.replace('\\[', '___MJ_DISPLAY_OPEN___').replace('\\]', '___MJ_DISPLAY_CLOSE___')
+        
+        # 3. Strip HTML
         clean = re.sub(r'<.*?>', '', content)
         
-        # 3. Strip Numbered Headers
+        # 4. Strip Numbered Headers
         clean = re.sub(r'\d+\.\s+[A-Z].*', '', clean)
         
-        # 4. Collapse whitespace
+        # 5. Collapse whitespace
         clean = " ".join(clean.split())
         
-        # 5. Extract sentences
+        # 6. Extract 3 sentences
         sentences = re.split(r'(?<=[.!?])\s+', clean)
         snippet = " ".join(sentences[:3])
         if len(sentences) > 3:
             snippet += "."
             
-        # 6. Restore MathJax with CORRECT single backslashes for memory
-        snippet = snippet.replace('___INLINE_START___', '\\(').replace('___INLINE_END___', '\\)')
-        snippet = snippet.replace('___DISPLAY_START___', '\\[').replace('___DISPLAY_END___', '\\]')
-        
-        # 7. Final Safety: If a snippet ended mid-math, close it
-        if snippet.count('\\(') > snippet.count('\\)'): snippet += ' \\)'
-        if snippet.count('\\[') > snippet.count('\\]'): snippet += ' \\]'
+        # 7. Restore delimiters
+        snippet = snippet.replace('___MJ_INLINE_OPEN___', '\\(').replace('___MJ_INLINE_CLOSE___', '\\)')
+        snippet = snippet.replace('___MJ_DISPLAY_OPEN___', '\\[').replace('___MJ_DISPLAY_CLOSE___', '\\]')
         
         return snippet
 
@@ -69,11 +68,10 @@ class HubBuilder:
                 frontier_terms = ["manifold", "topology", "tensor", "bundle", "chaos", "nonlinear", "covariant", "lie", "symplectic", "geodesic", "action"]
                 is_frontier = any(t in sub['title'].lower() or t in slug for t in frontier_terms)
                 is_foundational = any(t in sub['title'].lower() or t in slug for t in ["newton", "law", "galileo", "static", "force", "energy", "work"])
-                
                 level = "Frontier" if is_frontier else ("Foundational" if is_foundational else "Analytical")
                 
                 snippet = self.get_safe_snippet(sub['content'])
-                clean_title = sub['title'].replace('\\\\', '\\') # Ensure single backslash in memory
+                clean_title = sub['title'].replace('\\\\', '\\')
                 
                 html += f'        <div class="concept-card">\n'
                 html += f'            <div class="concept-anchor">\n'
@@ -96,7 +94,7 @@ class HubBuilder:
         self.topic_data["content"] = html
         with open(self.topic_path, "w") as f:
             json.dump(self.topic_data, f, indent=4)
-        print(f"SUCCESS: Platinum Hub Built with High-Integrity Snippets for {self.topic_slug}")
+        print(f"SUCCESS: Platinum Hub built for {self.topic_slug}")
 
 if __name__ == "__main__":
     builder = HubBuilder("classical-mechanics")

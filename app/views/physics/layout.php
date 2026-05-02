@@ -9,13 +9,24 @@
     <script nonce="<?= $nonce ?>">
         window.MathJax = {
             tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
+                inlineMath: [['\\\\(', '\\\\)'], ['$', '$']],
+                displayMath: [['\\\\[', '\\\\]'], ['$$', '$$']],
                 processEscapes: true
+            },
+            options: {
+                enableMenu: false
             }
         };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="<?= $nonce ?>"></script>
+    
+    <script nonce="<?= $nonce ?>">
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise();
+            }
+        });
+    </script>
     
     <link rel="stylesheet" href="/css/physics.css">
     

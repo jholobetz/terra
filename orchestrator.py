@@ -202,14 +202,26 @@ class PhysicsOrchestrator:
             
         return snippet.strip()
 
+    def get_hero_math(self, content):
+        """Extracts the first technical formula to use as a stylized card badge."""
+        if not content: return ""
+        # Find the first math block (prioritize display math)
+        match = re.search(r'\\+\[.*?\\+\]', content) or re.search(r'\\+\(.*?\\+\)', content)
+        if match:
+            latex = match.group(0)
+            is_display = "\\[" in latex or "\\\\[" in latex
+            return self.convert_to_svg(latex, is_display)
+        return ""
+
     def save(self, auto_commit=True, commit_msg=None, unlock_protected=False):
         """Saves all modified shards and registries and optionally commits to Git."""
         # 1. Generate Snippets for all subtopics before saving
-        print(f"Generating snippets for {len(self.data['subtopics'])} subtopics...")
+        print(f"Generating snippets and hero math for {len(self.data['subtopics'])} subtopics...")
         for slug, subtopic in self.data["subtopics"].items():
             content = subtopic.get("content", "")
             subtopic["snippet"] = self.get_safe_snippet(content)
             subtopic["snippet_svg"] = self.get_svg_snippet(content)
+            subtopic["hero_math"] = self.get_hero_math(content)
 
         # 2. Save Registries
         # Clean topics for categories.json (metadata only)

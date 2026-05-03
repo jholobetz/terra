@@ -264,7 +264,8 @@ class PhysicsController
             $subtopicsMap[$subSlug] = [
                 'title' => $sub['title'] ?? $subSlug,
                 'snippet' => $sub['snippet'] ?? '',
-                'snippet_svg' => $sub['snippet_svg'] ?? ''
+                'snippet_svg' => $sub['snippet_svg'] ?? '',
+                'hero_math' => $sub['hero_math'] ?? ''
             ];
         }
 
@@ -425,8 +426,8 @@ class PhysicsController
 
         foreach ($data['subtopics'] ?? [] as $slug => $st) {
             $primaryParent = !empty($st['parents']) ? $st['parents'][0] : '';
-            $db->runQuery("REPLACE INTO subtopics (slug, parent_topic, title, content, snippet, snippet_svg, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-                [$slug, $primaryParent, $st['title'], $st['content'], $st['snippet'] ?? '', $st['snippet_svg'] ?? '', json_encode($st['equations'] ?? []), json_encode($st['breakdowns'] ?? []), json_encode($st['formula_ids'] ?? [])]);
+            $db->runQuery("REPLACE INTO subtopics (slug, parent_topic, title, content, snippet, snippet_svg, hero_math, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                [$slug, $primaryParent, $st['title'], $st['content'], $st['snippet'] ?? '', $st['snippet_svg'] ?? '', $st['hero_math'] ?? '', json_encode($st['equations'] ?? []), json_encode($st['breakdowns'] ?? []), json_encode($st['formula_ids'] ?? [])]);
         }
     }
 

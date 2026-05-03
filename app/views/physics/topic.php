@@ -62,6 +62,13 @@ if (!function_exists('getConceptLevel')) {
                                     <span class="level-tag level-<?= strtolower($level) ?>"><?= $level ?></span>
                                     <h4><strong><a href="/physics/subtopic/<?= $slug ?>" class="subtopic-link"><?= str_replace('\\\\', '\\', $sub['title']) ?></a></strong></h4>
                                 </div>
+                                
+                                <?php if (!empty($sub['hero_math'])): ?>
+                                    <div class="hero-math-badge" style="margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 4px; text-align: center;">
+                                        <?= $sub['hero_math'] ?>
+                                    </div>
+                                <?php endif; ?>
+
                                 <div class="concept-detail">
                                     <p><?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?></p>
                                 </div>

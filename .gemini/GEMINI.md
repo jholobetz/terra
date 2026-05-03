@@ -74,7 +74,10 @@ The 12 core topics are **Locked**.
     - **Word Count:** Hard floor of 650 words, target 800-1,200.
     - **Symmetry Focus:** Explicitly identify the underlying symmetry group or invariance principle (e.g., Lorentz Group, U(1), Noether Charge).
     - **Boundary Analysis:** Discuss the limits of the model (e.g., where the theory breaks down, such as the classical limit or strong-curvature limit).
-    - **Reference Layer:** Every subtopic MUST conclude with a **"Key Theoretical Identities"** section providing a rigorous mathematical summary (matrices, tensor forms, and invariant conditions).
+    - **Reference Layer:** Every subtopic MUST conclude with a **"Key Theoretical Identities"** section providing a rigorous mathematical summary. This section follows the **3-Tier Identity Model**:
+        1. **Local Identity:** The primary equations unique to the current topic (e.g., the dilation formula).
+        2. **Bridge Identity:** The relation to adjacent concepts (e.g., how dilation relates to length contraction or 4-velocity).
+        3. **Foundational Anchor:** The universal principle or invariant of the Hub that enables the local math (e.g., the Minkowski Metric or Noether's Theorem).
 - **Graph & Integrity:**
     - **Link Density:** Minimum 5 contextual `class="subtopic-link"` anchors per expansion.
     - **MathJax 3:** Use `\( ... \)` for inline and `\[ ... \]` for display.

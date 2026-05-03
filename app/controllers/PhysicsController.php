@@ -246,6 +246,7 @@ class PhysicsController
         }
 
         $this->requestedSlug = $slug;
+        $this->loadAllShards();
         $topic = $this->fetchAndPrepare('topics', $slug);
 
         if (empty($topic)) {
@@ -253,8 +254,6 @@ class PhysicsController
             return;
         }
 
-        // Get subtopics for this topic
-        $this->loadAllShards();
         $content = $this->getPhysicsContent();
         
         // Build subtopics map for dynamic rendering
@@ -434,9 +433,14 @@ class PhysicsController
     private function isPreviewActive(): bool
     {
         $previewQuery = $this->app->request()->query->preview;
-        if ($previewQuery !== null) {
-            setcookie('physics_preview', $previewQuery, time() + 3600, '/');
-            return $previewQuery === '1';
+        $buildMode = $this->app->request()->query->build_mode;
+        
+        if ($previewQuery !== null || $buildMode !== null) {
+            $isActive = ($previewQuery === '1' || $buildMode === '1');
+            if ($previewQuery !== null) {
+                setcookie('physics_preview', $isActive ? '1' : '0', time() + 3600, '/');
+            }
+            return $isActive;
         }
         return ($_COOKIE['physics_preview'] ?? '0') === '1';
     }

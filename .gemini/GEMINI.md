@@ -63,20 +63,23 @@ The 12 core topics are **Locked**.
 
 ---
 
-## 4. Content Quality Standards: The "Platinum Standard"
+## 4. Content Quality Standards: The "Organic Platinum Standard"
 
-- **Technical Scope:** 
-    - **Subtopics:** 4 to 8 sections, hard floor of 500 words, target 700-1,000 words. This ensures a comprehensive university-level deep dive rather than a brief summary.
-    - **Main Topics (Hubs):** 6 to 8 sections, hard floor of 1,200 words, target 1,500-2,000 words. These must provide a comprehensive narrative that contextually absorbs all child links in the shard.
-- **Factuality & Integrity:** All content MUST be derived from established physical principles and academic consensus. **Zero Tolerance for Hallucinations**: AI assistants must not invent terminology, historical dates, or physical relationships. If reliable data for a section is unavailable, the section count should be reduced toward the minimum threshold (4) rather than padded with speculative content.
-- **Main Topic Layout:** Main topics must use the bulleted layout with high verbosity (**3-4 sentences per bullet point**) to provide deep technical context.
-- **MathJax 3 Configuration:** 
-    - **Delimiters:** Use `\\(` and `\\)` for inline, and `\\\\[` and `\\\\]` for display-style equations in raw JSON content.
-    - **JSON Escaping:** TeX commands starting with JSON escape characters (e.g., `\\nu`, `\\rho`, `\\tau`) MUST be double-escaped in the shard file to prevent "eaten" backslashes.
-    - **No HTML Escaping:** Equations in formula cards MUST NOT be passed through `htmlspecialchars()`, as alignment characters like `&` are essential for MathJax parsing.
-- **Linking Convention:** Use `<strong><a href="/physics/subtopic/slug" class="subtopic-link">Title</a></strong>` for internal subtopic links and `/physics/topic/slug` with the `class="topic-link"` attribute for main modules.
-- **Link Preservation Mandate:** When refactoring or expanding any content, AI assistants MUST first extract all internal links containing the `class="subtopic-link"` or `class="topic-link"` attributes and ensure they are contextually re-integrated into the new high-signal content. This ensures the integrity of the entire knowledge graph—from specific subtopics to major technical gateways—while allowing for the removal of legacy external links. Discarding established navigational pathways is a critical failure.
-- **No Linguistic Artifacts:** Zero tolerance for doubled words or "AI Fluff."
+- **Form & Style:** 
+    - **Technical Paragraphs:** Use dense, university-grade prose. NO bullet points in the main body.
+    - **Variable Structure:** No fixed section counts. Structure must flow naturally from the topic's complexity (min 3 deep sections).
+    - **Implicit Authority:** NEVER use phrases like "University-level," "Advanced," or meta-commentary about the writing (e.g., "This section discusses..."). Let the rigor of the vocabulary and math establish the grade.
+    - **No Linguistic Artifacts:** Zero tolerance for "AI Fluff" (e.g., "In conclusion," "It is important to note," "Furthermore" at the start of every paragraph).
+- **Technical Rigor:**
+    - **Word Count:** Hard floor of 650 words, target 800-1,200.
+    - **Symmetry Focus:** Explicitly identify the underlying symmetry group or invariance principle (e.g., Lorentz Group, U(1), Noether Charge).
+    - **Boundary Analysis:** Discuss the limits of the model (e.g., where the theory breaks down, such as the classical limit or strong-curvature limit).
+    - **Reference Layer:** Every subtopic MUST conclude with a **"Key Theoretical Identities"** section providing a rigorous mathematical summary (matrices, tensor forms, and invariant conditions).
+- **Graph & Integrity:**
+    - **Link Density:** Minimum 5 contextual `class="subtopic-link"` anchors per expansion.
+    - **MathJax 3:** Use `\( ... \)` for inline and `\[ ... \]` for display.
+    - **JSON Injection:** Use **Python Raw Strings** (`r"""..."""`) for all database writes to prevent LaTeX control character mangling (e.g., `\beta` becoming a backspace).
+    - **Link Preservation Mandate:** When refactoring or expanding any content, AI assistants MUST first extract all internal links containing the `class="subtopic-link"` or `class="topic-link"` attributes and ensure they are contextually re-integrated into the new high-signal content. This ensures the integrity of the entire knowledge graph.
 
 ---
 

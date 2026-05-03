@@ -189,7 +189,26 @@ To support the main home page index (`/physics`) for Hubs that have transitioned
 To maintain 100% compatibility with the Content Security Policy (CSP) while utilizing the static deployment model:
 - **No Inline Scripts:** All JavaScript—including MathJax configuration and Hub interaction logic—MUST reside in external `.js` files (e.g., `/js/mathjax_config.js`, `/js/hub_interactions.js`).
 - **Nonce-Free External Scripts:** External scripts on the project's own domain are trusted by `script-src 'self'`. They MUST NOT use dynamic nonces in the HTML, as nonces are invalid when served from the static cache.
-- **Build Protocol:** The cache MUST be purged (`rm -rf public/cache/*`) before running the `orchestrator.build()` method to ensure old, script-polluted HTML is never re-saved.
+- **Build Protocol:** The cache MUST be purged (`rm -rf public/cache/*`) before running the `orchestrator.build(force=True)` method to ensure old HTML is never re-served after layout changes. Standard updates use the incremental builder (default).
+
+---
+
+## 13. System Maintenance & Auditing
+
+### 13.1 Incremental Build Engine
+To ensure high-performance updates, the `orchestrator.build()` method uses content hashing:
+- **Build Manifest:** MD5 hashes of all topic and subtopic content are stored in `build_manifest.json`.
+- **Skip Logic:** Unchanged pages are skipped during the build cycle, reducing update times by >95%.
+
+### 13.2 Platinum Audit Tool
+The orchestrator includes a `self.audit()` method to track the project's progress toward the Platinum Standard:
+- **Density Target:** Minimum 500 words per subtopic.
+- **Technical Target:** Zero subtopics with missing mathematical formulas.
+- **Visual Target:** 100% "Hero Math" badge coverage.
+
+---
+
+## 14. Environment & Deployment
 
 To maintain testing consistency across sessions, all automation and validation tools must target the authorized live environment.
 

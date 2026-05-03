@@ -180,9 +180,10 @@ Mathematical formulas in Hub cards are pre-rendered into static vector paths dur
 ### 12.3 Unified Navigational Styling
 Both `.subtopic-link` and `.topic-link` are globally defined in `layout.php`. They share a high-contrast purple palette (`#b464ff`) with a bright lavender hover (`#c990ff`) and clear underline behavior to maintain technical legibility.
 
----
-
-## 13. Environment & Deployment
+### 12.4 Home Page Index Compatibility (Pending)
+To support the main home page index (`/physics`) for Hubs that have transitioned to the dynamic 'Pillar' architecture:
+- **Strategy:** The orchestrator's `save()` process must synchronize the topic's `intro` metadata field into the `content` field.
+- **Rationale:** The home page template expects a `content` string to truncate for card summaries. Syncing the intro ensures compatibility without requiring a rewrite of the legacy home page template.
 
 To maintain testing consistency across sessions, all automation and validation tools must target the authorized live environment.
 

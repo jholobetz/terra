@@ -101,14 +101,3 @@ if (!function_exists('getConceptLevel')) {
         <a href="/physics" class="btn btn-secondary">&larr; Back to Home</a>
     </footer>
 </article>
-
-<script nonce="<?= $nonce ?>">
-    /**
-     * Standard typeset for formulas section
-     */
-    document.addEventListener('DOMContentLoaded', () => {
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise();
-        }
-    });
-</script>

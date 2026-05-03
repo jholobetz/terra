@@ -185,6 +185,12 @@ To support the main home page index (`/physics`) for Hubs that have transitioned
 - **Implementation:** The orchestrator's `save()` process now automatically synchronizes the topic's `intro` metadata field into the `content` field if `content` is empty.
 - **Rationale:** This ensures the home page card has text to truncate for summaries without requiring changes to the legacy home page template.
 
+### 12.5 Static-Safe Interactivity Standard
+To maintain 100% compatibility with the Content Security Policy (CSP) while utilizing the static deployment model:
+- **No Inline Scripts:** All JavaScript—including MathJax configuration and Hub interaction logic—MUST reside in external `.js` files (e.g., `/js/mathjax_config.js`, `/js/hub_interactions.js`).
+- **Nonce-Free External Scripts:** External scripts on the project's own domain are trusted by `script-src 'self'`. They MUST NOT use dynamic nonces in the HTML, as nonces are invalid when served from the static cache.
+- **Build Protocol:** The cache MUST be purged (`rm -rf public/cache/*`) before running the `orchestrator.build()` method to ensure old, script-polluted HTML is never re-saved.
+
 To maintain testing consistency across sessions, all automation and validation tools must target the authorized live environment.
 
 - **Primary Test Server:** `http://172.16.1.208`

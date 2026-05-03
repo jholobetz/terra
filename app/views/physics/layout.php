@@ -5,28 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Physics Lab' ?> - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="<?= $nonce ?>">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)'], ['$', '$']],
-                displayMath: [['\\[', '\\]'], ['$$', '$$']],
-                processEscapes: true
-            },
-            options: {
-                enableMenu: false
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="<?= $nonce ?>"></script>
-    
-    <script nonce="<?= $nonce ?>">
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise();
-            }
-        });
-    </script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
     
     <link rel="stylesheet" href="/css/physics.css">
     
@@ -182,6 +164,6 @@
         <?= $body_content ?>
     </main>
 
-    <script src="/js/search_engine.js" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

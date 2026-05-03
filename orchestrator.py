@@ -221,6 +221,12 @@ class PhysicsOrchestrator:
         
         # 3. Save Topic Shards (Protected)
         for slug, content in self.topic_shards.items():
+            # SYNC INTRO TO CONTENT FOR HOME PAGE COMPATIBILITY
+            # If the hub has transitioned to dynamic architecture (content is empty),
+            # copy the intro into content so the home page card has text to display.
+            if content.get("intro") and not content.get("content"):
+                content["content"] = content["intro"]
+
             path = os.path.join(self.content_dir, "topics", f"{slug}.json")
             if os.path.exists(path) and not unlock_protected:
                 # Optional: Compare hashes to see if it actually changed

@@ -37,7 +37,9 @@ class PhysicsOrchestrator:
         self.registry_path = registry_path
         self.svg_engine = os.path.join(os.getcwd(), "scripts/tex2svg.js")
         self.svg_cache_path = "global_svg_cache.json"
+        self.build_manifest_path = "build_manifest.json"
         self.svg_cache = {}
+        self.build_manifest = {}
         self.shards = {} # Subtopic shards
         self.topic_shards = {} # Main topic shards
         
@@ -49,6 +51,15 @@ class PhysicsOrchestrator:
                 print(f"LOADED: {len(self.svg_cache)} pre-rendered SVGs from persistent cache.")
             except Exception as e:
                 print(f"CACHE WARNING: Failed to load SVG cache: {str(e)}")
+
+        # Load Build Manifest if it exists
+        if os.path.exists(self.build_manifest_path):
+            try:
+                with open(self.build_manifest_path, "r") as f:
+                    self.build_manifest = json.load(f)
+                print(f"LOADED: Build manifest with {len(self.build_manifest)} hashes.")
+            except Exception as e:
+                print(f"MANIFEST WARNING: Failed to load build manifest: {str(e)}")
         
         self.data = {
             "topics": {}, # Meta registry
@@ -587,9 +598,9 @@ class PhysicsOrchestrator:
         }
         return f_id
 
-    def build(self):
-        """Pre-renders all subtopics and hubs into static HTML for performance."""
-        print("Starting Static Build...")
+    def build(self, force=False):
+        """Pre-renders all subtopics and hubs into static HTML for performance. Incremental by default."""
+        print(f"Starting Static Build {'(FORCE)' if force else '(Incremental)'}...")
         
         # 1. Build Subtopics
         sub_dir = "public/cache/subtopic"
@@ -597,8 +608,24 @@ class PhysicsOrchestrator:
             os.makedirs(sub_dir)
             
         success_count = 0
+        skip_count = 0
         total_subs = len(self.data["subtopics"])
         for i, slug in enumerate(self.data["subtopics"]):
+            sub = self.data["subtopics"][slug]
+            
+            # Calculate Content Hash
+            content_str = json.dumps({
+                "t": sub.get("title"),
+                "c": sub.get("content"),
+                "s": sub.get("snippet_svg"),
+                "h": sub.get("hero_math")
+            }, sort_keys=True)
+            new_hash = hashlib.md5(content_str.encode()).hexdigest()
+            
+            if not force and self.build_manifest.get(f"subtopic_{slug}") == new_hash:
+                skip_count += 1
+                continue
+
             sys.stdout.write(f"\rBuilding Subtopic {i+1}/{total_subs}: {slug}...")
             sys.stdout.flush()
             try:
@@ -607,6 +634,7 @@ class PhysicsOrchestrator:
                 if result.stdout:
                     with open(os.path.join(sub_dir, f"{slug}.html"), "w") as f:
                         f.write(result.stdout)
+                    self.build_manifest[f"subtopic_{slug}"] = new_hash
                     success_count += 1
             except Exception as e:
                 print(f"\nError building subtopic {slug}: {str(e)}")
@@ -619,6 +647,25 @@ class PhysicsOrchestrator:
         total_hubs = len(self.data["topics"])
         print(f"\nBuilding {total_hubs} Hubs...")
         for i, slug in enumerate(self.data["topics"]):
+            topic = self.data["topics"][slug]
+            # Try to get data from topic_shards if available (for pillars/metadata)
+            shard = self.topic_shards.get(slug, topic)
+
+            # Calculate Content Hash
+            hub_str = json.dumps({
+                "t": shard.get("title"),
+                "i": shard.get("intro"),
+                "p": shard.get("pillars"),
+                "b": shard.get("bridges"),
+                "f": shard.get("field"),
+                "d": shard.get("density")
+            }, sort_keys=True)
+            new_hash = hashlib.md5(hub_str.encode()).hexdigest()
+
+            if not force and self.build_manifest.get(f"hub_{slug}") == new_hash:
+                skip_count += 1
+                continue
+
             sys.stdout.write(f"\rBuilding Hub {i+1}/{total_hubs}: {slug}...")
             sys.stdout.flush()
             try:
@@ -627,11 +674,65 @@ class PhysicsOrchestrator:
                 if result.stdout:
                     with open(os.path.join(hub_dir, f"{slug}.html"), "w") as f:
                         f.write(result.stdout)
+                    self.build_manifest[f"hub_{slug}"] = new_hash
                     success_count += 1
             except Exception as e:
                 print(f"\nError building hub {slug}: {str(e)}")
         
-        print(f"\nSUCCESS: Pre-rendered static pages in public/cache")
+        # Save Build Manifest
+        with open(self.build_manifest_path, "w") as f:
+            json.dump(self.build_manifest, f, indent=4)
+
+        print(f"\nSUCCESS: Pre-rendered static pages. Built: {success_count}, Skipped: {skip_count}")
+
+    def audit(self):
+        """Performs a deep technical audit of all subtopics and hubs."""
+        print("Starting Platinum Audit...")
+        report = {
+            "low_density": [], # < 500 words
+            "missing_math": [], # No LaTeX delimiters
+            "missing_hero": [], # No hero math
+            "total_words": 0,
+            "total_subtopics": len(self.data["subtopics"])
+        }
+
+        for slug, sub in self.data["subtopics"].items():
+            content = sub.get("content", "")
+            
+            # 1. Word Count
+            text_only = re.sub(r'<.*?>', '', content)
+            words = text_only.split()
+            word_count = len(words)
+            report["total_words"] += word_count
+            
+            if word_count < 500:
+                report["low_density"].append((slug, word_count))
+            
+            # 2. Math Check
+            if not (re.search(r'\\+\(', content) or re.search(r'\\+\[', content)):
+                report["missing_math"].append(slug)
+                
+            # 3. Hero Check
+            if not sub.get("hero_math"):
+                report["missing_hero"].append(slug)
+
+        # Print Summary
+        print(f"\n--- AUDIT REPORT ---")
+        print(f"Total Subtopics: {report['total_subtopics']}")
+        print(f"Total Word Count: {report['total_words']:,}")
+        print(f"Average Words/Topic: {int(report['total_words']/report['total_subtopics'])}")
+        print(f"--------------------")
+        print(f"Low Density Topics (< 500 words): {len(report['low_density'])}")
+        print(f"Missing Math: {len(report['missing_math'])}")
+        print(f"Missing Hero Math: {len(report['missing_hero'])}")
+        
+        if report["low_density"]:
+            print(f"\nTop 10 Thinnest Topics:")
+            sorted_thin = sorted(report["low_density"], key=lambda x: x[1])
+            for slug, count in sorted_thin[:10]:
+                print(f"  - [{slug}]: {count} words")
+
+        return report
 
     def validate(self):
         print("Running Integrity Shield...")

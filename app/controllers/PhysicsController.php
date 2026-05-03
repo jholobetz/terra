@@ -161,7 +161,9 @@ class PhysicsController
         $viewData = array_merge($data, ['nonce' => $nonce]);
         $bodyContent = $this->app->view()->fetch($view, $viewData) ?: '';
 
-        if ($isPreview) {
+        $isBuildMode = ($this->app->request()->query->build_mode === '1');
+
+        if ($isPreview && !$isBuildMode) {
             $bodyContent .= '
                 <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
                     <a href="/physics/sync" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 50px; padding: 12px 24px; text-decoration: none; display: flex; align-items: center; gap: 8px; background-color: #007bff; color: white; border: none; font-family: sans-serif;">
@@ -172,7 +174,7 @@ class PhysicsController
 
         $this->app->render('physics/layout', array_merge($viewData, [
             'body_content' => $bodyContent,
-            'is_preview' => $isPreview,
+            'is_preview' => $isPreview && !$isBuildMode,
             'nonce' => $nonce,
             'menu_topics' => $menuTopics,
             'menu_simulations' => $menuSimulations,

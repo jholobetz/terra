@@ -42,7 +42,9 @@ class PhysicsOrchestrator:
         self.build_manifest = {}
         self.shards = {} # Subtopic shards
         self.topic_shards = {} # Main topic shards
-        
+        self.slug_to_shard = {}
+        self.shard_to_slugs = {}
+
         # Load SVG Cache if it exists
         if os.path.exists(self.svg_cache_path):
             try:
@@ -60,7 +62,7 @@ class PhysicsOrchestrator:
                 print(f"LOADED: Build manifest with {len(self.build_manifest)} hashes.")
             except Exception as e:
                 print(f"MANIFEST WARNING: Failed to load build manifest: {str(e)}")
-        
+
         self.data = {
             "topics": {}, # Meta registry
             "topic_contents": {}, # Loaded content for main topics
@@ -69,17 +71,25 @@ class PhysicsOrchestrator:
             "constants": {},
             "entities": {}
         }
-        self.slug_to_shard = {}
-        
+
         # Load Global Slug Registry
         if os.path.exists(self.registry_path):
             with open(self.registry_path, "r") as f:
                 self.registry = json.load(f)
         else:
             self.registry = {}
-            
+
         self._load_content()
         self._refresh_sorted_titles()
+
+    def get_file_hash(self, filepath):
+        """Calculates MD5 hash of a file."""
+        if not os.path.exists(filepath): return None
+        hasher = hashlib.md5()
+        with open(filepath, 'rb') as f:
+            buf = f.read()
+            hasher.update(buf)
+        return hasher.hexdigest()
 
     def _load_content(self):
         """Loads all JSON shards from the content directory."""
@@ -93,13 +103,13 @@ class PhysicsOrchestrator:
         for root, dirs, files in os.walk(self.content_dir):
             for file in files:
                 if not file.endswith(".json"): continue
-                
+
                 path = os.path.join(root, file)
                 rel_path = os.path.relpath(path, self.content_dir)
 
                 with open(path, "r") as f:
                     content = json.load(f)
-                
+
                 if rel_path == "formulas.json":
                     self.data["formula_registry"] = content
                 elif rel_path == "constants.json":
@@ -117,10 +127,11 @@ class PhysicsOrchestrator:
                 else:
                     # Subtopic shard
                     self.shards[rel_path] = content
+                    self.shard_to_slugs[rel_path] = []
                     for slug in content:
                         self.data["subtopics"][slug] = content[slug]
                         self.slug_to_shard[slug] = rel_path
-
+                        self.shard_to_slugs[rel_path].append(slug)
     def _refresh_sorted_titles(self):
         self.sorted_titles = sorted(self.registry.keys(), key=len, reverse=True)
 
@@ -271,6 +282,8 @@ class PhysicsOrchestrator:
             
             with open(path, "w") as f:
                 json.dump(content, f, indent=4)
+            # Record shard hash
+            self.build_manifest[f"shard_topic_{slug}"] = self.get_file_hash(path)
 
         # 4. Save Subtopic Shards
         for shard_name, shard_content in self.shards.items():
@@ -281,6 +294,8 @@ class PhysicsOrchestrator:
             path = os.path.join(self.content_dir, shard_name)
             with open(path, "w") as f:
                 json.dump(shard_content, f, indent=4)
+            # Record shard hash
+            self.build_manifest[f"shard_{shard_name}"] = self.get_file_hash(path)
 
         # 5. Save Global Registry
         with open(self.registry_path, "w") as f:
@@ -291,8 +306,12 @@ class PhysicsOrchestrator:
             with open(self.svg_cache_path, "w") as f:
                 json.dump(self.svg_cache, f, indent=4)
             print(f"SAVED: {len(self.svg_cache)} SVGs to persistent cache.")
+
+            # 7. Save Build Manifest
+            with open(self.build_manifest_path, "w") as f:
+                json.dump(self.build_manifest, f, indent=4)
         except Exception as e:
-            print(f"CACHE WARNING: Failed to save SVG cache: {str(e)}")
+            print(f"CACHE WARNING: Failed to save caches: {str(e)}")
 
         print(f"SUCCESS: Fully sharded save complete in {self.content_dir}")
 
@@ -598,92 +617,103 @@ class PhysicsOrchestrator:
         }
         return f_id
 
-    def build(self, force=False):
-        """Pre-renders all subtopics and hubs into static HTML for performance. Incremental by default."""
-        print(f"Starting Static Build {'(FORCE)' if force else '(Incremental)'}...")
+    def build(self, force=False, slug=None):
+        """Pre-renders all subtopics and hubs into static HTML. Shard-incremental by default."""
+        if slug:
+            print(f"Surgically building: {slug}...")
+            if slug in self.data["subtopics"]:
+                self._render_page(f"http://localhost/physics/subtopic/{slug}?build_mode=1", f"public/cache/subtopic/{slug}.html")
+            elif slug in self.data["topics"]:
+                self._render_page(f"http://localhost/physics/topic/{slug}?build_mode=1", f"public/cache/topic/{slug}.html")
+            else:
+                print(f"ERROR: Slug [{slug}] not found in topics or subtopics.")
+            return
+
+        print(f"Starting Static Build {'(FORCE)' if force else '(Shard-Incremental)'}...")
         
         # 1. Build Subtopics
         sub_dir = "public/cache/subtopic"
-        if not os.path.exists(sub_dir):
-            os.makedirs(sub_dir)
+        if not os.path.exists(sub_dir): os.makedirs(sub_dir)
             
         success_count = 0
         skip_count = 0
-        total_subs = len(self.data["subtopics"])
-        for i, slug in enumerate(self.data["subtopics"]):
-            sub = self.data["subtopics"][slug]
+        
+        for rel_path, sub_slugs in self.shard_to_slugs.items():
+            shard_path = os.path.join(self.content_dir, rel_path)
+            current_hash = self.get_file_hash(shard_path)
             
-            # Calculate Content Hash
-            content_str = json.dumps({
-                "t": sub.get("title"),
-                "c": sub.get("content"),
-                "s": sub.get("snippet_svg"),
-                "h": sub.get("hero_math")
-            }, sort_keys=True)
-            new_hash = hashlib.md5(content_str.encode()).hexdigest()
-            
-            if not force and self.build_manifest.get(f"subtopic_{slug}") == new_hash:
-                skip_count += 1
-                continue
+            if not force and self.build_manifest.get(f"shard_{rel_path}") == current_hash:
+                # Entire shard is clean, check individual slugs just in case 
+                # (to ensure HTML files actually exist in cache)
+                all_exist = True
+                for s in sub_slugs:
+                    if not os.path.exists(os.path.join(sub_dir, f"{s}.html")):
+                        all_exist = False
+                        break
+                if all_exist:
+                    skip_count += len(sub_slugs)
+                    continue
 
-            sys.stdout.write(f"\rBuilding Subtopic {i+1}/{total_subs}: {slug}...")
-            sys.stdout.flush()
-            try:
-                url = f"http://localhost/physics/subtopic/{slug}?build_mode=1"
-                result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=10)
-                if result.stdout:
-                    with open(os.path.join(sub_dir, f"{slug}.html"), "w") as f:
-                        f.write(result.stdout)
-                    self.build_manifest[f"subtopic_{slug}"] = new_hash
+            # Shard is dirty, process it
+            print(f"Processing Dirty Shard: {rel_path}...")
+            for s in sub_slugs:
+                sub = self.data["subtopics"][s]
+                content_str = json.dumps({
+                    "t": sub.get("title"), "c": sub.get("content"),
+                    "s": sub.get("snippet_svg"), "h": sub.get("hero_math")
+                }, sort_keys=True)
+                item_hash = hashlib.md5(content_str.encode()).hexdigest()
+
+                if not force and self.build_manifest.get(f"subtopic_{s}") == item_hash and os.path.exists(os.path.join(sub_dir, f"{s}.html")):
+                    skip_count += 1
+                    continue
+
+                if self._render_page(f"http://localhost/physics/subtopic/{s}?build_mode=1", os.path.join(sub_dir, f"{s}.html")):
+                    self.build_manifest[f"subtopic_{s}"] = item_hash
                     success_count += 1
-            except Exception as e:
-                print(f"\nError building subtopic {slug}: {str(e)}")
+            
+            # Update shard hash in manifest after processing
+            self.build_manifest[f"shard_{rel_path}"] = current_hash
 
         # 2. Build Topic Hubs
         hub_dir = "public/cache/topic"
-        if not os.path.exists(hub_dir):
-            os.makedirs(hub_dir)
+        if not os.path.exists(hub_dir): os.makedirs(hub_dir)
             
-        total_hubs = len(self.data["topics"])
-        print(f"\nBuilding {total_hubs} Hubs...")
-        for i, slug in enumerate(self.data["topics"]):
-            topic = self.data["topics"][slug]
-            # Try to get data from topic_shards if available (for pillars/metadata)
-            shard = self.topic_shards.get(slug, topic)
-
-            # Calculate Content Hash
+        print(f"\nBuilding Hubs...")
+        for hub_slug in self.data["topics"]:
+            topic = self.data["topics"][hub_slug]
+            shard = self.topic_shards.get(hub_slug, topic)
             hub_str = json.dumps({
-                "t": shard.get("title"),
-                "i": shard.get("intro"),
-                "p": shard.get("pillars"),
-                "b": shard.get("bridges"),
-                "f": shard.get("field"),
-                "d": shard.get("density")
+                "t": shard.get("title"), "i": shard.get("intro"), "p": shard.get("pillars"),
+                "b": shard.get("bridges"), "f": shard.get("field"), "d": shard.get("density")
             }, sort_keys=True)
             new_hash = hashlib.md5(hub_str.encode()).hexdigest()
 
-            if not force and self.build_manifest.get(f"hub_{slug}") == new_hash:
+            if not force and self.build_manifest.get(f"hub_{hub_slug}") == new_hash and os.path.exists(os.path.join(hub_dir, f"{hub_slug}.html")):
                 skip_count += 1
                 continue
 
-            sys.stdout.write(f"\rBuilding Hub {i+1}/{total_hubs}: {slug}...")
-            sys.stdout.flush()
-            try:
-                url = f"http://localhost/physics/topic/{slug}?build_mode=1"
-                result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=10)
-                if result.stdout:
-                    with open(os.path.join(hub_dir, f"{slug}.html"), "w") as f:
-                        f.write(result.stdout)
-                    self.build_manifest[f"hub_{slug}"] = new_hash
-                    success_count += 1
-            except Exception as e:
-                print(f"\nError building hub {slug}: {str(e)}")
+            if self._render_page(f"http://localhost/physics/topic/{hub_slug}?build_mode=1", os.path.join(hub_dir, f"{hub_slug}.html")):
+                self.build_manifest[f"hub_{hub_slug}"] = new_hash
+                success_count += 1
         
-        # Save Build Manifest
+        # Save Manifest
         with open(self.build_manifest_path, "w") as f:
             json.dump(self.build_manifest, f, indent=4)
 
         print(f"\nSUCCESS: Pre-rendered static pages. Built: {success_count}, Skipped: {skip_count}")
+
+    def _render_page(self, url, output_path):
+        """Helper to render a URL via curl and save to output_path."""
+        try:
+            result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=10)
+            if result.stdout:
+                with open(output_path, "w") as f:
+                    f.write(result.stdout)
+                return True
+        except Exception as e:
+            print(f"\nError rendering {url}: {str(e)}")
+        return False
 
     def audit(self):
         """Performs a deep technical audit of all subtopics and hubs."""

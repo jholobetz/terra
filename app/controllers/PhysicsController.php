@@ -215,6 +215,17 @@ class PhysicsController
         }
     }
 
+    public function constants()
+    {
+        $this->loadAllShards();
+        $constants = $this->physicsContent['constants'] ?? [];
+        
+        $this->renderWithLayout('physics/constants', [
+            'title' => 'Fundamental Physical Constants',
+            'constants' => $constants
+        ]);
+    }
+
     public function simulations()
     {
         $this->loadAllShards();

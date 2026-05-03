@@ -37,13 +37,13 @@ if ($hasFormulas): ?>
                             </div>
                             <div class="depth-column">
                                 <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <?= $f['symmetry_origin'] ?? 'Analysis pending.' ?>
                                 </p>
                             </div>
                             <div class="depth-column">
                                 <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <?= $f['limits_and_boundary'] ?? 'Case analysis pending.' ?>
                                 </p>
                             </div>
@@ -53,14 +53,15 @@ if ($hasFormulas): ?>
                         <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
                             <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
                             <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                                <?php foreach ($f['semantic_variables'] as $symbol => $var): 
-                                    $url = '';
-                                    if (strpos($var['ref'], 'constants/') === 0) {
-                                        $url = '/physics/constants'; // Generic for now, or link to a specific constant anchor
-                                    } else if (strpos($var['ref'], 'subtopics/') === 0) {
-                                        $url = '/physics/subtopic/' . str_replace('subtopics/', '', $var['ref']);
-                                    }
-                                ?>
+                                    <?php foreach ($f['semantic_variables'] as $symbol => $var): 
+                                        $url = '';
+                                        if (strpos($var['ref'], 'constants/') === 0) {
+                                            $constantSlug = str_replace('constants/', '', $var['ref']);
+                                            $url = '/physics/constants#' . $constantSlug;
+                                        } else if (strpos($var['ref'], 'subtopics/') === 0) {
+                                            $url = '/physics/subtopic/' . str_replace('subtopics/', '', $var['ref']);
+                                        }
+                                    ?>
                                     <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
                                         <span style="color: var(--accent); font-weight: 700;">\( <?= $symbol ?> \):</span> 
                                         <?php if ($url): ?>

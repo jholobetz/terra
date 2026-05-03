@@ -715,6 +715,49 @@ class PhysicsOrchestrator:
             print(f"\nError rendering {url}: {str(e)}")
         return False
 
+    def update_formula(self, formula_id, data):
+        """Surgically updates an entry in the global formulas.json registry."""
+        if formula_id not in self.data["formula_registry"]:
+            print(f"WARNING: Formula ID [{formula_id}] not found. Creating new entry.")
+            self.data["formula_registry"][formula_id] = {}
+        
+        # Merge data
+        for key, value in data.items():
+            self.data["formula_registry"][formula_id][key] = value
+        
+        # Ensure status is platinum if we are beefing it up
+        self.data["formula_registry"][formula_id]["status"] = "platinum"
+        print(f"SUCCESS: Updated formula [{formula_id}]. Run save() to persist.")
+
+    def deploy_change(self, slug, build_hub=True):
+        """Unified workflow to save, build, and sync a single concept change."""
+        print(f"Deploying change for: {slug}...")
+        # 1. Clear snippets and force regeneration for this slug
+        if slug in self.data["subtopics"]:
+            self.data["subtopics"][slug].pop('snippet', None)
+            self.data["subtopics"][slug].pop('snippet_svg', None)
+            self.data["subtopics"][slug].pop('hero_math', None)
+        
+        # 2. Save modified shards
+        self.save(auto_commit=False, unlock_protected=True)
+        
+        # 3. Surgical Build
+        self.build(slug=slug)
+        
+        # 4. Optional Hub Rebuild
+        if build_hub:
+            # Find parent topic
+            parents = []
+            if slug in self.data["subtopics"]:
+                parents = self.data["subtopics"][slug].get("parents", [])
+            for p in parents:
+                if p in self.data["topics"]:
+                    self.build(slug=p)
+        
+        # 5. CLI Sync
+        subprocess.run(["php", "cli_sync.php"], capture_output=True)
+        print(f"SUCCESS: [{slug}] is now live in the static cache.")
+
     def audit(self):
         """Performs a deep technical audit of all subtopics and hubs."""
         print("Starting Platinum Audit...")

@@ -74,8 +74,8 @@ The 12 core topics are **Locked**.
     - **Delimiters:** Use `\\(` and `\\)` for inline, and `\\\\[` and `\\\\]` for display-style equations in raw JSON content.
     - **JSON Escaping:** TeX commands starting with JSON escape characters (e.g., `\\nu`, `\\rho`, `\\tau`) MUST be double-escaped in the shard file to prevent "eaten" backslashes.
     - **No HTML Escaping:** Equations in formula cards MUST NOT be passed through `htmlspecialchars()`, as alignment characters like `&` are essential for MathJax parsing.
-- **Linking Convention:** Use `<strong><a href="/physics/subtopic/slug" class="subtopic-link">Title</a></strong>` for internal subtopic links and `/physics/topic/slug` for main modules.
-- **Link Preservation Mandate:** When refactoring or expanding an existing subtopic, AI assistants MUST first extract all internal links containing the `class="subtopic-link"` attribute and ensure they are contextually re-integrated into the new high-signal content. This ensures the integrity of the knowledge graph while allowing for the removal of legacy or non-standard external links. Discarding established subtopic-link pathways is a critical failure.
+- **Linking Convention:** Use `<strong><a href="/physics/subtopic/slug" class="subtopic-link">Title</a></strong>` for internal subtopic links and `/physics/topic/slug` with the `class="topic-link"` attribute for main modules.
+- **Link Preservation Mandate:** When refactoring or expanding any content, AI assistants MUST first extract all internal links containing the `class="subtopic-link"` or `class="topic-link"` attributes and ensure they are contextually re-integrated into the new high-signal content. This ensures the integrity of the entire knowledge graph—from specific subtopics to major technical gateways—while allowing for the removal of legacy external links. Discarding established navigational pathways is a critical failure.
 - **No Linguistic Artifacts:** Zero tolerance for doubled words or "AI Fluff."
 
 ---
@@ -160,7 +160,29 @@ To prevent systemic failures during large-scale refactoring, the following QA ru
 
 ---
 
-## 11. Environment & Deployment
+## 12. The Platinum Hub Standard & SSR-to-SVG Pipeline
+
+To ensure 100% rendering stability in high-density technical grids (Hubs), the project utilizes a **Server-Side Rendering (SSR) to SVG** pipeline.
+
+### 12.1 The Data-Driven "Pillar" Architecture
+Main Topics (Hubs) no longer store static HTML. They are assembled dynamically from structured JSON metadata:
+- **Pillars:** Modular sections containing a title, narrative, and a list of subtopic slugs.
+- **Bridges:** Cross-disciplinary links to other Hubs, resolved automatically into `.topic-link` anchors.
+- **Metadata:** Field, standard level, and technical density are stored as first-class attributes.
+
+### 12.2 SSR-to-SVG Pipeline (`orchestrator.py` & `scripts/tex2svg.js`)
+Mathematical formulas in Hub cards are pre-rendered into static vector paths during the build process:
+1.  **Snippet Generation:** The orchestrator extracts a 3-sentence summary from subtopics during `save()`.
+2.  **SVG Conversion:** The Node.js `tex2svg.js` utility transforms LaTeX into inline SVGs.
+3.  **Gold Standard:** All pre-rendered Hub math uses the **Precision Gold** (`#FFD700`) color for high-contrast visibility.
+4.  **Bulletproof Display:** The Hub view (`topic.php`) prioritizes the `snippet_svg` field. This guarantees 0ms client-side render time and immunity to MathJax script conflicts or CSS grid layout pressure.
+
+### 12.3 Unified Navigational Styling
+Both `.subtopic-link` and `.topic-link` are globally defined in `layout.php`. They share a high-contrast purple palette (`#b464ff`) with a bright lavender hover (`#c990ff`) and clear underline behavior to maintain technical legibility.
+
+---
+
+## 13. Environment & Deployment
 
 To maintain testing consistency across sessions, all automation and validation tools must target the authorized live environment.
 

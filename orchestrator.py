@@ -36,9 +36,20 @@ class PhysicsOrchestrator:
         self.content_dir = content_dir
         self.registry_path = registry_path
         self.svg_engine = os.path.join(os.getcwd(), "scripts/tex2svg.js")
+        self.svg_cache_path = "global_svg_cache.json"
         self.svg_cache = {}
         self.shards = {} # Subtopic shards
         self.topic_shards = {} # Main topic shards
+        
+        # Load SVG Cache if it exists
+        if os.path.exists(self.svg_cache_path):
+            try:
+                with open(self.svg_cache_path, "r") as f:
+                    self.svg_cache = json.load(f)
+                print(f"LOADED: {len(self.svg_cache)} pre-rendered SVGs from persistent cache.")
+            except Exception as e:
+                print(f"CACHE WARNING: Failed to load SVG cache: {str(e)}")
+        
         self.data = {
             "topics": {}, # Meta registry
             "topic_contents": {}, # Loaded content for main topics
@@ -105,7 +116,7 @@ class PhysicsOrchestrator:
     def convert_to_svg(self, latex, is_display=False):
         """Converts a LaTeX string to SVG using the Node.js runway engine."""
         cache_key = f"{latex}_{is_display}"
-        if hasattr(self, 'svg_cache') and cache_key in self.svg_cache:
+        if cache_key in self.svg_cache:
             return self.svg_cache[cache_key]
 
         # Clean LaTeX for CLI (remove delimiters)
@@ -116,8 +127,7 @@ class PhysicsOrchestrator:
             result = subprocess.run(["node", self.svg_engine, clean_latex, mode], capture_output=True, text=True, timeout=5)
             if result.returncode == 0 and result.stdout:
                 svg_code = result.stdout.strip()
-                if hasattr(self, 'svg_cache'):
-                    self.svg_cache[cache_key] = svg_code
+                self.svg_cache[cache_key] = svg_code
                 return svg_code
         except Exception as e:
             print(f"SVG Error for [{clean_latex}]: {str(e)}")
@@ -253,6 +263,14 @@ class PhysicsOrchestrator:
         with open(self.registry_path, "w") as f:
             json.dump(self.registry, f, indent=4)
             
+        # 6. Save SVG Cache
+        try:
+            with open(self.svg_cache_path, "w") as f:
+                json.dump(self.svg_cache, f, indent=4)
+            print(f"SAVED: {len(self.svg_cache)} SVGs to persistent cache.")
+        except Exception as e:
+            print(f"CACHE WARNING: Failed to save SVG cache: {str(e)}")
+
         print(f"SUCCESS: Fully sharded save complete in {self.content_dir}")
 
         if auto_commit:
@@ -558,31 +576,50 @@ class PhysicsOrchestrator:
         return f_id
 
     def build(self):
-        """Pre-renders all subtopics into static HTML for performance."""
+        """Pre-renders all subtopics and hubs into static HTML for performance."""
         print("Starting Static Build...")
-        output_dir = "public/cache/subtopic"
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        
+        # 1. Build Subtopics
+        sub_dir = "public/cache/subtopic"
+        if not os.path.exists(sub_dir):
+            os.makedirs(sub_dir)
             
-        # Use Primary Test Server for build
         success_count = 0
-        total = len(self.data["subtopics"])
-
+        total_subs = len(self.data["subtopics"])
         for i, slug in enumerate(self.data["subtopics"]):
-            sys.stdout.write(f"\rBuilding {i+1}/{total}: {slug}...")
+            sys.stdout.write(f"\rBuilding Subtopic {i+1}/{total_subs}: {slug}...")
             sys.stdout.flush()
-
             try:
                 url = f"http://localhost/physics/subtopic/{slug}?build_mode=1"
-                result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=5)
+                result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=10)
                 if result.stdout:
-                    with open(os.path.join(output_dir, f"{slug}.html"), "w") as f:
+                    with open(os.path.join(sub_dir, f"{slug}.html"), "w") as f:
                         f.write(result.stdout)
                     success_count += 1
             except Exception as e:
-                print(f"\nERROR building {slug}: {str(e)}")
+                print(f"\nError building subtopic {slug}: {str(e)}")
 
-        print(f"\nSUCCESS: Pre-rendered {success_count} static pages in {output_dir}")
+        # 2. Build Topic Hubs
+        hub_dir = "public/cache/topic"
+        if not os.path.exists(hub_dir):
+            os.makedirs(hub_dir)
+            
+        total_hubs = len(self.data["topics"])
+        print(f"\nBuilding {total_hubs} Hubs...")
+        for i, slug in enumerate(self.data["topics"]):
+            sys.stdout.write(f"\rBuilding Hub {i+1}/{total_hubs}: {slug}...")
+            sys.stdout.flush()
+            try:
+                url = f"http://localhost/physics/topic/{slug}?build_mode=1"
+                result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=10)
+                if result.stdout:
+                    with open(os.path.join(hub_dir, f"{slug}.html"), "w") as f:
+                        f.write(result.stdout)
+                    success_count += 1
+            except Exception as e:
+                print(f"\nError building hub {slug}: {str(e)}")
+        
+        print(f"\nSUCCESS: Pre-rendered static pages in public/cache")
 
     def validate(self):
         print("Running Integrity Shield...")

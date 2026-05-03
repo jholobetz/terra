@@ -238,6 +238,13 @@ class PhysicsController
 
     public function viewTopic(string $slug)
     {
+        $cachePath = PROJECT_ROOT . "/public/cache/topic/{$slug}.html";
+        if (file_exists($cachePath) && !$this->isPreviewActive()) {
+            header('Content-Type: text/html; charset=utf-8');
+            readfile($cachePath);
+            return;
+        }
+
         $this->requestedSlug = $slug;
         $topic = $this->fetchAndPrepare('topics', $slug);
 

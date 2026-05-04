@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Propagation Vector (\(\mathbf{k}\)) - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="3baf4bb425769abc7d09f02a907b8937">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="3baf4bb425769abc7d09f02a907b8937"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/electromagnetic-wave-equation">The Electromagnetic Wave Equation</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Propagation Vector (\(\mathbf{k}\))</span>
     </nav>
@@ -193,7 +184,7 @@
                     This relates the geometry of the  to the subatomic scale of the wave. For <a href="/physics/subtopic/monochromatic-plane-waves" class="subtopic-link"><strong>Monochromatic Plane Waves</strong></a>, \( \mathbf{k} \) is constant across the entire wavefront, ensuring that the energy flows in a single, well-defined direction.</p>
 
                     <h3>2. The Phase Identity</h3>
-                    <p>The dot product \( \mathbf{k} \cdot \mathbf{r} \) represents the phase contribution from the spatial position. The planes of constant phase are defined by the condition \( \mathbf{k} \cdot \mathbf{r} = 	ext{const} \). This mathematical structure explains why light rays move in "straight lines" in a vacuum, as the <strong>Propagation Vector</strong> follows the <strong>Geodesic</strong> paths of the 4D spacetime manifold.</p>
+                    <p>The dot product \( \mathbf{k} \cdot \mathbf{r} \) represents the phase contribution from the spatial position. The planes of constant phase are defined by the condition \( \mathbf{k} \cdot \mathbf{r} = \text{const} \). This mathematical structure explains why light rays move in "straight lines" in a vacuum, as the <strong>Propagation Vector</strong> follows the <strong>Geodesic</strong> paths of the 4D spacetime manifold.</p>
 
                     <h3>3. Transverse Constraints</h3>
                     <p>According to Maxwell's equations, the <strong>electric field</strong> (\( \mathbf{E} \)) and <strong>magnetic field</strong> (\( \mathbf{B} \)) must be <strong>orthogonal</strong> to the propagation vector (\( \mathbf{k} \cdot \mathbf{E} = 0 \)). this is <strong>Transverse Nature</strong> of light. It implies that the "information" carried by the wave is always perpendicular to its motion, a fact essential for understanding <strong>Polarization</strong>.</p>
@@ -206,8 +197,7 @@
 
                     <h3>6. Relativistic 4-Wave Vector</h3>
                     <p>In <strong>Special Relativity</strong>, the propagation vector and the angular frequency combine to form the <strong>4-Wave Vector</strong> (\( k^\mu \)):
-                    \[ k^\mu = \left( \frac{\omega}{c}, k_x, k_y, k_z 
-ight) \]
+                    \[ k^\mu = \left( \frac{\omega}{c}, k_x, k_y, k_z \right) \]
                     This 4D object is <strong>Null</strong> (\( k_\mu k^\mu = 0 \)) for light in a vacuum. This unified form ensures that the <strong>Lorentz Transformation</strong> correctly predicts the <strong>Doppler Effect</strong> and the <strong>Aberration of Light</strong>, anchoring the wave vector in 4D spacetime geometry.</p>    </div>
 
     <section class="equations-section">
@@ -233,22 +223,23 @@ ight) \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>The k-measure:</strong> How many wave cycles are packed into each meter of space.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -263,29 +254,39 @@ ight) \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \mathbf{k} \cdot \mathbf{E} = 0 \quad (	ext{Transverse}) \]
+                            \[ \mathbf{k} \cdot \mathbf{E} = 0 \quad (\text{Transverse}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Vector Pointer:</strong> The math arrow that tells us which way the light is flying.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{E} \):</span> 
+                                                                                    <a href="/physics/subtopic/electric-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Electric Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -300,29 +301,30 @@ ight) \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \mathbf{k} \cdot \mathbf{r} - \omega t = 	ext{const} \]
+                            \[ \mathbf{k} \cdot \mathbf{r} - \omega t = \text{const} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Medium Link:</strong> Why the wave vector gets longer (and wavelength shorter) inside glass.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -344,54 +346,36 @@ ight) \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Quantum link:</strong> The law relating the direction of the wave to the "kick" of the photon.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="3baf4bb425769abc7d09f02a907b8937">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -412,10 +396,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/electromagnetic-wave-equation" class="btn btn-secondary">&larr; Back to The Electromagnetic Wave Equation</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="3baf4bb425769abc7d09f02a907b8937" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

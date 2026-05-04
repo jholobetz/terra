@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homogeneous Maxwell Equations - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="8f5c8219b45931d6b123ea96b66ce3ee">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="8f5c8219b45931d6b123ea96b66ce3ee"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/standard-model">The Standard Model</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/gauge-theory">Gauge Theory and the Gauge Principle</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/field-strength-tensor">The Electromagnetic Field Strength Tensor (\( F^{\mu\nu} \))</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Homogeneous Maxwell Equations</span>
     </nav>
@@ -185,35 +178,27 @@
     </header>
     
     <div class="content-body">
-        <p>The Homogeneous Maxwell Equations are the two laws of electromagnetism that describe the internal geometric constraints of the field, independent of any sources. In university-level physics, these are <a href="/physics/subtopic/faradays-law" class="subtopic-link"><strong>Faraday's Law</strong></a> and <a href="/physics/subtopic/gausss-law-for-magnetism" class="subtopic-link"><strong>Gauss's Law for Magnetism</strong></a>. In the <strong>Covariant Formulation</strong>, they are expressed as a single topological identity: \( \partial_{[\mu} F_{
-u\lambda]} = 0 \), known as the <strong>Bianchi Identity</strong>.</p>
+        <p>The Homogeneous Maxwell Equations are the two laws of electromagnetism that describe the internal geometric constraints of the field, independent of any sources. In university-level physics, these are <a href="/physics/subtopic/faradays-law" class="subtopic-link"><strong>Faraday's Law</strong></a> and <a href="/physics/subtopic/gausss-law-for-magnetism" class="subtopic-link"><strong>Gauss's Law for Magnetism</strong></a>. In the <strong>Covariant Formulation</strong>, they are expressed as a single topological identity: \( \partial_{[\mu} F_{\nu\lambda]} = 0 \), known as the <strong>Bianchi Identity</strong>.</p>
 
                     <h3>1. Topological Closure and No Monopoles</h3>
                     <p>The homogeneous equations describe the "Shape" of the electromagnetic field lines. 
                         <ul>
-                            <li><strong>Gauss's Law for Magnetism:</strong> \( 
-abla \cdot \mathbf{B} = 0 \)—Magnetic field lines are always <strong>closed paths</strong>.</li>
-                            <li><strong>Faraday's Law:</strong> \( 
-abla 	imes \mathbf{E} = -\dots \)—Magnetic changes create electric swirls.</li>
+                            <li><strong>Gauss's Law for Magnetism:</strong> \( \nabla \cdot \mathbf{B} = 0 \)—Magnetic field lines are always <strong>closed paths</strong>.</li>
+                            <li><strong>Faraday's Law:</strong> \( \nabla \times \mathbf{E} = -\dots \)—Magnetic changes create electric swirls.</li>
                         </ul>
-                    The fact that the 4-divergence of the dual tensor is zero (\( \partial_\mu 	ilde{F}^{\mu
-u} = 0 \)) is the mathematical proof for the absence of <a href="/physics/subtopic/magnetic-monopoles" class="subtopic-link"><strong>Magnetic Monopoles</strong></a> in the Standard Model.</p>
+                    The fact that the 4-divergence of the dual tensor is zero (\( \partial_\mu \tilde{F}^{\mu\nu} = 0 \)) is the mathematical proof for the absence of <a href="/physics/subtopic/magnetic-monopoles" class="subtopic-link"><strong>Magnetic Monopoles</strong></a> in the Standard Model.</p>
 
                     <h3>2. Requirement for a Potential</h3>
                     <p>Mathematically, the homogeneous equations are the necessary and sufficient condition for the existence of an <strong>Electromagnetic 4-Potential</strong> (\( A^\mu \)). According to the <strong>Poincaré Lemma</strong>, if a field is "Closed" (\( dF=0 \)), it must be "Exact" (\( F=dA \)). This proves that the <strong>Field Strength Tensor</strong> can only be consistently defined if there is an underlying potential landscape in the .</p>
 
                     <h3>3. The Bianchi Identity in 4D</h3>
-                    <p>The equation \( \partial_\mu F_{
-u\lambda} + \partial_
-u F_{\lambda\mu} + \partial_\lambda F_{\mu
-u} = 0 \) is a cyclic sum of derivatives. This <strong>Bianchi Identity</strong> is an absolute property of the 's geometry. It ensures that the E and B fields are perfectly "linked," such that a change in one <em>must</em> manifest as a specific variation in the other to maintain topological consistency.</p>
+                    <p>The equation \( \partial_\mu F_{\nu\lambda} + \partial_\nu F_{\lambda\mu} + \partial_\lambda F_{\mu\nu} = 0 \) is a cyclic sum of derivatives. This <strong>Bianchi Identity</strong> is an absolute property of the 's geometry. It ensures that the E and B fields are perfectly "linked," such that a change in one <em>must</em> manifest as a specific variation in the other to maintain topological consistency.</p>
 
                     <h3>4. Induction and Wave Dynamics</h3>
                     <p>The homogeneous equations provide the "Feedback" required for <a href="/physics/subtopic/electromagnetic-radiation" class="subtopic-link"><strong>Electromagnetic Radiation</strong></a>. While the <strong>Inhomogeneous Equations</strong> describe how charges make fields, the homogeneous equations describe how fields make each other (Induction). This coupling is the <strong>Geometric Origin</strong> of the 4D wave propagation of light, allowing it to sustain itself in the vacuum.</p>
 
                     <h3>5. Electric-Magnetic Duality</h3>
-                    <p>In the absence of sources (\( J^
-u=0 \)), both the inhomogeneous and homogeneous equations are perfectly symmetric under the swap of E and B fields. This <strong>Duality</strong> is a major focus of <strong>Theoretical Physics</strong>, leading to the study of "S-Duality" in <strong>String Theory</strong> and the search for magnetic charge in the <strong>Early Universe</strong> to restore this symmetry.</p>
+                    <p>In the absence of sources (\( J^\nu=0 \)), both the inhomogeneous and homogeneous equations are perfectly symmetric under the swap of E and B fields. This <strong>Duality</strong> is a major focus of <strong>Theoretical Physics</strong>, leading to the study of "S-Duality" in <strong>String Theory</strong> and the search for magnetic charge in the <strong>Early Universe</strong> to restore this symmetry.</p>
 
                     <h3>6. Epistemic Status: Geometry vs. Dynamics</h3>
                     <p>The homogeneous equations are often called "Geometric" because they are not solved to find the field strength, but to ensure the field strength is "Valid." They are the "logic checks" of the 4D <a href="/physics/subtopic/spacetime-causal-topology" class="subtopic-link"><strong>Causal Topology</strong></a>. This <strong>Epistemic</strong> distinction highlights that the universe has rigid structural rules that fields must obey, regardless of the matter they interact with.</p>    </div>
@@ -228,36 +213,36 @@ u=0 \)), both the inhomogeneous and homogeneous equations are perfectly symmetri
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Topology Rule                        </span>
+                            Geometric Consistency                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \partial_{[\mu} F_{
-u\lambda]} = 0 \]
+                            \[ \partial_{[\mu} F_{\nu\lambda]} = 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Topology Rule:</strong> The law that field lines must fit together perfectly without ends.                                </p>
+                                    <strong>Geometric Consistency:</strong> The rule that field derivatives must cancel out in a specific rotation to be valid.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -272,30 +257,30 @@ u\lambda]} = 0 \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \partial_\mu 	ilde{F}^{\mu
-u} = 0 \quad (	ext{Dual form}) \]
+                            \[ \partial_\mu \tilde{F}^{\mu\nu} = 0 \quad (\text{Dual form}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Magnetic Limit:</strong> The relativistic proof that isolated "north" or "south" poles do not exist.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -304,36 +289,45 @@ u} = 0 \quad (	ext{Dual form}) \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Faraday Origin                        </span>
+                            <a href="/physics/subtopic/differential-form-magnetism" class="subtopic-link">Differential Form</a>                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla \cdot \mathbf{B} = 0 \]
+                            \[ \nabla \cdot \mathbf{B} = 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Faraday Origin:</strong> Why magnetic changes are geometrically forced to produce electricity.                                </p>
+                                    <strong><a href="/physics/subtopic/differential-form-magnetism" class="subtopic-link">Differential Form</a>:</strong> The magnetic field is solenoidal and has no divergence (sources or sinks).                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{B} \):</span> 
+                                                                                    <a href="/physics/subtopic/magnetic-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Magnetic Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -348,72 +342,57 @@ abla \cdot \mathbf{B} = 0 \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla 	imes \mathbf{E} + \frac{\partial \mathbf{B}}{\partial t} = 0 \]
+                            \[ \nabla \times \mathbf{E} + \frac{\partial \mathbf{B}}{\partial t} = 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Potential link:</strong> The math proof that allows us to define voltages and vectors for all fields.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{E} \):</span> 
+                                                                                    <a href="/physics/subtopic/electric-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Electric Field</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{B} \):</span> 
+                                                                                    <a href="/physics/subtopic/magnetic-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Magnetic Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="8f5c8219b45931d6b123ea96b66ce3ee">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/bianchi-identity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Bianchi Identity in Electromagnetism</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
                                     <a href="/physics/subtopic/homogeneous-maxwell" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Homogeneous Maxwell Equation</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/bianchi-identity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Bianchi Identity in Electromagnetism</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/inhomogeneous-equations" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
@@ -424,10 +403,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/field-strength-tensor" class="btn btn-secondary">&larr; Back to The Electromagnetic Field Strength Tensor (\( F^{\mu\nu} \))</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="8f5c8219b45931d6b123ea96b66ce3ee" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

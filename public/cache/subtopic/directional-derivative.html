@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Directional Derivative - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="a518d7dd862492e25b80750ce26e4607">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="a518d7dd862492e25b80750ce26e4607"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/gradient">The Gradient (\( \nabla \))</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Directional Derivative</span>
     </nav>
@@ -189,35 +180,28 @@
 
                     <h3>1. Definition and Dot Product</h3>
                     <p>For a scalar field \( f(\mathbf{r}) \) and a unit vector \( \hat{\mathbf{u}} \), the directional derivative \( D_{\mathbf{u}} f \) is defined as the dot product:
-                    \[ D_{\mathbf{u}} f = 
-abla f \cdot \hat{\mathbf{u}} \]
+                    \[ D_{\mathbf{u}} f = \nabla f \cdot \hat{\mathbf{u}} \]
                     This equation shows that the change in \( f \) in the \( \hat{\mathbf{u}} \) direction is the projection of the <strong>gradient</strong> onto that direction. It quantifies how "steep" the hill is along a specific 4D compass bearing.</p>
 
                     <h3>2. Maximum and Minimum Rates of Change</h3>
-                    <p>From the properties of the dot product (\( A \cdot B = |A||B| \cos 	heta \)), the directional derivative is maximized when \( \hat{\mathbf{u}} \) is parallel to \( 
-abla f \). 
+                    <p>From the properties of the dot product (\( A \cdot B = |A||B| \cos \theta \)), the directional derivative is maximized when \( \hat{\mathbf{u}} \) is parallel to \( \nabla f \). 
                         <ul>
-                            <li><strong>Maximum Increase:</strong> When \( 	heta = 0 \), \( D_{\mathbf{u}} f = |
-abla f| \).</li>
-                            <li><strong>Maximum Decrease:</strong> When \( 	heta = 180^\circ \), \( D_{\mathbf{u}} f = -|
-abla f| \).</li>
-                            <li><strong>Zero Change:</strong> When \( 	heta = 90^\circ \), the derivative is zero (moving along a <strong>level surface</strong>).</li>
+                            <li><strong>Maximum Increase:</strong> When \( \theta = 0 \), \( D_{\mathbf{u}} f = |\nabla f| \).</li>
+                            <li><strong>Maximum Decrease:</strong> When \( \theta = 180^\circ \), \( D_{\mathbf{u}} f = -|\nabla f| \).</li>
+                            <li><strong>Zero Change:</strong> When \( \theta = 90^\circ \), the derivative is zero (moving along a <strong>level surface</strong>).</li>
                         </ul>
                     This hierarchy is the basis for <strong>Hamiltonian Mechanics</strong> and the path-finding of matter in the 4D vacuum.</p>
 
                     <h3>3. The Observer's Experience</h3>
                     <p>The directional derivative is critical for describing what a particle "Feels" as it moves. If a particle has velocity \( \mathbf{v} \), the time-rate of change of the potential it experiences is:
-                    \[ \frac{d\Phi}{dt} = \frac{\partial \Phi}{\partial t} + \mathbf{v} \cdot 
-abla \Phi \]
+                    \[ \frac{d\Phi}{dt} = \frac{\partial \Phi}{\partial t} + \mathbf{v} \cdot \nabla \Phi \]
                     The second term is the directional derivative multiplied by speed. This "Convective" term is what allows a static 4D potential to create a time-varying signal in a moving detector, a hallmark of <strong>Relativistic Dynamics</strong>.</p>
 
                     <h3>4. Derivatives in Curvilinear Coordinates</h3>
                     <p>In systems with <strong>Symmetries</strong> (spherical or cylindrical), the unit vector \( \hat{\mathbf{u}} \) must be expressed in the local basis. The directional derivative accounts for the 4D scale factors of the manifold, ensuring that the rate of change is physically consistent whether measured along a radius or an arc. This essential for solving <strong>Boundary Conditions</strong> in <strong>Astrophysics</strong>.</p>
 
                     <h3>5. Link to the Total Differential</h3>
-                    <p>The directional derivative is the "1D slice" of the <strong>Total Differential</strong>. If you multiply \( D_{\mathbf{u}} f \) by an infinitesimal distance \( ds \), you get the small change \( df = 
-abla f \cdot (\hat{\mathbf{u}} ds) = 
-abla f \cdot d\mathbf{r} \). This link ensures that <strong>Conservation</strong> laws are local and continuous, dictating the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of the field.</p>
+                    <p>The directional derivative is the "1D slice" of the <strong>Total Differential</strong>. If you multiply \( D_{\mathbf{u}} f \) by an infinitesimal distance \( ds \), you get the small change \( df = \nabla f \cdot (\hat{\mathbf{u}} ds) = \nabla f \cdot d\mathbf{r} \). This link ensures that <strong>Conservation</strong> laws are local and continuous, dictating the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of the field.</p>
 
                     <h3>6. Epistemic Status: The Perspective Slope</h3>
                     <p>The directional derivative is an <strong>Epistemic</strong> bridge. It tells us how the 4D <strong>Block Universe</strong> appears from a specific 4D trajectory. While the <strong>gradient</strong> is the absolute objective slope, the directional derivative is the subjective rate of change for a given path. It anchors <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the fact that perspective and absolute geometry are mathematically unified through the dot product.</p>    </div>
@@ -238,30 +222,30 @@ abla f \cdot d\mathbf{r} \). This link ensures that <strong>Conservation</strong
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ D_{\hat{\mathbf{u}}} f = 
-abla f \cdot \hat{\mathbf{u}} \]
+                            \[ D_{\hat{\mathbf{u}}} f = \nabla f \cdot \hat{\mathbf{u}} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>The Path-Rate:</strong> The rule for calculating how fast a field changes as you move along a specific line.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -276,29 +260,30 @@ abla f \cdot \hat{\mathbf{u}} \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ D_{\hat{\mathbf{u}}} f = \lim_{h 	o 0} \frac{f(\mathbf{r} + h\hat{\mathbf{u}}) - f(\mathbf{r})}{h} \]
+                            \[ D_{\hat{\mathbf{u}}} f = \lim_{h \to 0} \frac{f(\mathbf{r} + h\hat{\mathbf{u}}) - f(\mathbf{r})}{h} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Dot Product link:</strong> Why the slope in any direction is just a piece of the total gradient.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -313,30 +298,30 @@ abla f \cdot \hat{\mathbf{u}} \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ |
-abla f| \cos 	heta = D_{\hat{\mathbf{u}}} f \]
+                            \[ |\nabla f| \cos \theta = D_{\hat{\mathbf{u}}} f \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Optimization Rule:</strong> The proof that the gradient points in the "most uphill" direction.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -351,69 +336,40 @@ abla f| \cos 	heta = D_{\hat{\mathbf{u}}} f \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{df}{dt} = \frac{\partial f}{\partial t} + \mathbf{v} \cdot 
-abla f \]
+                            \[ \frac{df}{dt} = \frac{\partial f}{\partial t} + \mathbf{v} \cdot \nabla f \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Convective Rate:</strong> How a particle "feels" a field change due to its own motion.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="a518d7dd862492e25b80750ce26e4607">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                                     <a href="/physics/subtopic/potential-relation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Potential Relation (\(\mathbf{F} = -
-abla \Phi\))</strong>
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Potential Relation (\(\mathbf{F} = -\nabla \Phi\))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/total-differential" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
@@ -428,10 +384,11 @@ abla \Phi\))</strong>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/gradient" class="btn btn-secondary">&larr; Back to The Gradient (\( \nabla \))</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="a518d7dd862492e25b80750ce26e4607" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

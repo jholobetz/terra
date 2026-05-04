@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Foundations of Quantum Mechanics - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="f64e933b6c2100051df2f6ce30ef70df">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="f64e933b6c2100051df2f6ce30ef70df"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,8 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Foundations of Quantum Mechanics</span>
     </nav>
@@ -188,22 +177,19 @@
         <p>Quantum Mechanics is the fundamental theoretical framework that describes the behavior of matter and energy at the smallest scales. In university-level theory, it is not merely a set of rules for atoms, but a rigorous mathematical system based on the <a href="/physics/subtopic/axiomatic-postulates" class="subtopic-link"><strong>Axiomatic Postulates</strong></a> of Hilbert space and operator algebra. It represents the ultimate departure from classical determinism, replacing fixed trajectories with a dynamical evolution of probability amplitudes.</p>
 
                     <h3>1. The Hilbert Space Postulate</h3>
-                    <p>The first axiom of theoretical quantum mechanics states that the complete physical state of a system is represented by a <a href="/physics/subtopic/state-vector" class="subtopic-link"><strong>State Vector</strong></a> (\( |\psi
-angle \)) in a complex <a href="/physics/subtopic/hilbert-space" class="subtopic-link"><strong>Hilbert Space</strong></a>. This space is a complete inner product space where the geometry of the vectors encodes the possibilities of the system. This geometric representation allows for the <a href="/physics/subtopic/quantum-superposition" class="subtopic-link"><strong>Principle of Superposition</strong></a>, where a system can exist in a linear combination of multiple states simultaneously, a concept that is the foundation for quantum computing and information.</p>
+                    <p>The first axiom of theoretical quantum mechanics states that the complete physical state of a system is represented by a <a href="/physics/subtopic/state-vector" class="subtopic-link"><strong>State Vector</strong></a> (\( |\psi\rangle \)) in a complex <a href="/physics/subtopic/hilbert-space" class="subtopic-link"><strong>Hilbert Space</strong></a>. This space is a complete inner product space where the geometry of the vectors encodes the possibilities of the system. This geometric representation allows for the <a href="/physics/subtopic/quantum-superposition" class="subtopic-link"><strong>Principle of Superposition</strong></a>, where a system can exist in a linear combination of multiple states simultaneously, a concept that is the foundation for quantum computing and information.</p>
 
                     <h3>2. Observables as Hermitian Operators</h3>
                     <p>In theoretical framework, every physical observable is associated with a <a href="/physics/subtopic/hermitian-operators" class="subtopic-link"><strong>Hermitian Operator</strong></a> (\( \hat{A} \)). The requirement of Hermiticity (\( \hat{A} = \hat{A}^\dagger \)) ensures that the measurement outcomes (eigenvalues) are always real-valued, reflecting the physical reality of lab results. Measurement is viewed as a projection of the state vector onto the <a href="/physics/subtopic/eigenbasis" class="subtopic-link"><strong>Eigenbasis</strong></a> of the operator, providing the bridge between abstract mathematical states and concrete experimental observations.</p>
 
                     <h3>3. Canonical Quantization and Commutators</h3>
                     <p>The transition from classical to quantum mechanics is achieved through <a href="/physics/subtopic/canonical-quantization" class="subtopic-link"><strong>Canonical Quantization</strong></a>. Following the logic of Paul Dirac, classical Poisson brackets are replaced by <a href="/physics/subtopic/quantum-commutators" class="subtopic-link"><strong>Quantum Commutators</strong></a>:
-                    \[ \{q, p\} 	o \frac{1}{i\hbar} [\hat{q}, \hat{p}] \]
+                    \[ \{q, p\} \to \frac{1}{i\hbar} [\hat{q}, \hat{p}] \]
                     This replacement leads to the <a href="/physics/subtopic/canonical-commutation-relation" class="subtopic-link"><strong>Canonical Commutation Relation</strong></a> (\( [\hat{x}, \hat{p}] = i\hbar \)), which is the mathematical origin of the <a href="/physics/subtopic/uncertainty-principle" class="subtopic-link"><strong>Heisenberg Uncertainty Principle</strong></a>. It proves that the non-commutative nature of the operators is what prevents the simultaneous knowledge of position and momentum.</p>
 
                     <h3>4. Unitary Evolution: The Schrödinger Equation</h3>
                     <p>The time evolution of a quantum system is governed by the <a href="/physics/subtopic/hamiltonian-operator" class="subtopic-link"><strong>Hamiltonian Operator</strong></a> (\( \hat{H} \)), which represents the total energy. The <a href="/physics/subtopic/schrodinger-equation" class="subtopic-link"><strong>Schrödinger Equation</strong></a> dictates that the state vector evolves unitarily:
-                    \[ i\hbar \frac{\partial}{\partial t} |\psi(t)
-angle = \hat{H} |\psi(t)
-angle \]
+                    \[ i\hbar \frac{\partial}{\partial t} |\psi(t)\rangle = \hat{H} |\psi(t)\rangle \]
                     Because the <a href="/physics/subtopic/hamiltonian" class="subtopic-link"><strong>Hamiltonian</strong></a> is Hermitian, the evolution operator (\( e^{-i\hat{H}t/\hbar} \)) is <a href="/physics/subtopic/unitary-evolution-quantum" class="subtopic-link"><strong>Unitary</strong></a>, meaning it preserves the total probability (the norm of the state vector) over time, ensuring the statistical consistency of theory.</p>
 
                     <h3>5. The Path Integral and the Action Link</h3>
@@ -237,22 +223,32 @@ angle \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <a href="/physics/subtopic/uncertainty-origin" class="subtopic-link"><strong>Uncertainty Origin</strong></a>: The non-zero relation between position and momentum operators that limits simultaneous precision.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \hbar \):</span> 
+                                                                                    <a href="/physics/constants#h-bar" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Reduced Planck Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -274,22 +270,40 @@ angle \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <a href="/physics/subtopic/probability-conservation" class="subtopic-link"><strong>Probability Conservation</strong></a>: The requirement that the total probability of finding a system in any state remains 100% over time.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \hbar \):</span> 
+                                                                                    <a href="/physics/constants#h-bar" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Reduced Planck Constant</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \psi \):</span> 
+                                                                                    <a href="/physics/subtopic/wave-function" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Wave Function</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \hat{H} \):</span> 
+                                                                                    <a href="/physics/subtopic/hamiltonian" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Hamiltonian</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -304,31 +318,43 @@ angle \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \langle \phi | \hat{A} \psi 
-angle = \langle \hat{A} \phi | \psi 
-angle \]
+                            \[ \langle \phi | \hat{A} \psi \rangle = \langle \hat{A} \phi | \psi \rangle \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <a href="/physics/subtopic/reality-constraint" class="subtopic-link"><strong>Reality Constraint</strong></a>: The mathematical property ensuring that energy and momentum values are measured as real numbers.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \psi \):</span> 
+                                                                                    <a href="/physics/subtopic/wave-function" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Wave Function</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \phi \):</span> 
+                                                                                    <a href="/physics/subtopic/scalar-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Scalar Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -343,85 +369,68 @@ angle \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \mathcal{A}(A 	o B) = \int \mathcal{D}x(t) e^{iS[x(t)]/\hbar} \]
+                            \[ \mathcal{A}(A \to B) = \int \mathcal{D}x(t) e^{iS[x(t)]/\hbar} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <a href="/physics/subtopic/variational-link" class="subtopic-link"><strong>Variational Link</strong></a>: The summation over histories that connects the classical action to the quantum wave function.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \hbar \):</span> 
+                                                                                    <a href="/physics/constants#h-bar" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Reduced Planck Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="f64e933b6c2100051df2f6ce30ef70df">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/axiomatic-postulates" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Axiomatic Postulates</strong>
+                                    <a href="/physics/subtopic/momentum-operator" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Momentum Operator (\(\hat{p}\))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/hamiltonian-operator" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Hamiltonian Operator</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/quantum-mechanics" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Quantum Foundations for QFT</strong>
+                                    <a href="/physics/subtopic/axiomatic-postulates" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Axiomatic Postulates</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/topic/theoretical-physics" class="btn btn-secondary">&larr; Back to Theoretical Physics</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="f64e933b6c2100051df2f6ce30ef70df" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

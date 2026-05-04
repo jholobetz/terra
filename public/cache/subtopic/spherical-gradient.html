@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Gradient in Spherical Coordinates - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="783f86ac18b6729a76b393176ece6973">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="783f86ac18b6729a76b393176ece6973"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/gradient">The Gradient (\( \nabla \))</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Gradient in Spherical Coordinates</span>
     </nav>
@@ -185,33 +176,30 @@
     </header>
     
     <div class="content-body">
-        <p>The <strong>Spherical Gradient</strong> is the expression of the <strong>gradient</strong> operator in terms of radius \( r \), polar angle \( 	heta \), and azimuthal angle \( \phi \). In university-level physics, this is most common form of the operator, as the fundamental sources of nature (atoms, stars, point charges) possess <strong>spherical symmetry</strong>. It accounts for the 4D curvature of the coordinate shells, providing the correct link between <a href="/physics/subtopic/scalar-potentials" class="subtopic-link"><strong>Scalar Potentials</strong></a> and <a href="/physics/subtopic/vector-force-fields" class="subtopic-link"><strong>Vector Force Fields</strong></a> in 3D space.</p>
+        <p>The <strong>Spherical Gradient</strong> is the expression of the <strong>gradient</strong> operator in terms of radius \( r \), polar angle \( \theta \), and azimuthal angle \( \phi \). In university-level physics, this is most common form of the operator, as the fundamental sources of nature (atoms, stars, point charges) possess <strong>spherical symmetry</strong>. It accounts for the 4D curvature of the coordinate shells, providing the correct link between <a href="/physics/subtopic/scalar-potentials" class="subtopic-link"><strong>Scalar Potentials</strong></a> and <a href="/physics/subtopic/vector-force-fields" class="subtopic-link"><strong>Vector Force Fields</strong></a> in 3D space.</p>
 
                     <h3>1. Scale Factors and Geometry</h3>
-                    <p>In spherical coordinates, the infinitesimal displacement is \( d\mathbf{r} = dr \hat{\mathbf{r}} + r d	heta \hat{\boldsymbol{	heta}} + r \sin 	heta d\phi \hat{\boldsymbol{\phi}} \). To maintain the units of "Change per Length," the derivatives must be scaled:
+                    <p>In spherical coordinates, the infinitesimal displacement is \( d\mathbf{r} = dr \hat{\mathbf{r}} + r d\theta \hat{\boldsymbol{\theta}} + r \sin \theta d\phi \hat{\boldsymbol{\phi}} \). To maintain the units of "Change per Length," the derivatives must be scaled:
                         <ul>
-                            <li><strong>Polar Term (\(	heta\)):</strong> Scaled by \( 1/r \) because a change in angle spans a distance proportional to the radius.</li>
-                            <li><strong>Azimuthal Term (\(\phi\)):</strong> Scaled by \( 1/(r \sin 	heta) \) because the "width" of the longitude lines shrinks near the poles.</li>
+                            <li><strong>Polar Term (\(\theta\)):</strong> Scaled by \( 1/r \) because a change in angle spans a distance proportional to the radius.</li>
+                            <li><strong>Azimuthal Term (\(\phi\)):</strong> Scaled by \( 1/(r \sin \theta) \) because the "width" of the longitude lines shrinks near the poles.</li>
                         </ul></p>
 
                     <h3>2. The Spherical Formula</h3>
-                    <p>The gradient of a scalar field \( f(r, 	heta, \phi) \) is:
-                    \[ 
-abla f = \frac{\partial f}{\partial r} \hat{\mathbf{r}} + \frac{1}{r}\frac{\partial f}{\partial 	heta} \hat{\boldsymbol{	heta}} + \frac{1}{r \sin 	heta}\frac{\partial f}{\partial \phi} \hat{\boldsymbol{\phi}} \]
+                    <p>The gradient of a scalar field \( f(r, \theta, \phi) \) is:
+                    \[ \nabla f = \frac{\partial f}{\partial r} \hat{\mathbf{r}} + \frac{1}{r}\frac{\partial f}{\partial \theta} \hat{\boldsymbol{\theta}} + \frac{1}{r \sin \theta}\frac{\partial f}{\partial \phi} \hat{\boldsymbol{\phi}} \]
                     This operator allows us to calculate the <strong>Coulomb Force</strong> or the gravitational pull of a planet by taking the derivative of a \( 1/r \) potential, correctly recovering the <strong>inverse-square law</strong>.</p>
 
                     <h3>3. Point Charges and Point Masses</h3>
                     <p>For a point source at the origin, the <strong>potential definition</strong> is \( \Phi = k/r \). Applying the spherical gradient yields:
-                    \[ \mathbf{E} = -
-abla (k/r) = -(-k/r^2) \hat{\mathbf{r}} = \frac{k}{r^2} \hat{\mathbf{r}} \]
+                    \[ \mathbf{E} = -\nabla (k/r) = -(-k/r^2) \hat{\mathbf{r}} = \frac{k}{r^2} \hat{\mathbf{r}} \]
                     This simple 1D result is only possible because the spherical gradient "Bakes in" the 4D geometry of the sphere, ensuring that the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> are consistent with <a href="/physics/subtopic/gausss-law" class="subtopic-link"><strong>Gauss's Law</strong></a>.</p>
 
                     <h3>4. Angular Momentum and Quantum Numbers</h3>
-                    <p>In <strong>Quantum Mechanics</strong>, the angular parts of the spherical gradient are related to the <a href="/physics/subtopic/angular-momentum" class="subtopic-link"><strong>Angular Momentum</strong></a> operator \( \mathbf{L} \). The derivatives \( \partial/\partial 	heta \) and \( \partial/\partial \phi \) dictate the shapes of the <strong>Atomic Orbitals</strong> (s, p, d, f), linking the <strong>gradient</strong> of the electron's <strong>Wave Function</strong> to its 4D orbital energy levels.</p>
+                    <p>In <strong>Quantum Mechanics</strong>, the angular parts of the spherical gradient are related to the <a href="/physics/subtopic/angular-momentum" class="subtopic-link"><strong>Angular Momentum</strong></a> operator \( \mathbf{L} \). The derivatives \( \partial/\partial \theta \) and \( \partial/\partial \phi \) dictate the shapes of the <strong>Atomic Orbitals</strong> (s, p, d, f), linking the <strong>gradient</strong> of the electron's <strong>Wave Function</strong> to its 4D orbital energy levels.</p>
 
                     <h3>5. Applications in Astrophysics</h3>
-                    <p>Spherical gradients are essential for modeling <strong>Stellar structure</strong>. The pressure gradient \( 
-abla P \) in a star must be balanced by gravity to prevent collapse. Using the spherical form allows astronomers to solve the <strong>Stellar Structure Equations</strong> for massive <strong>White Dwarfs</strong> and <strong>Compact Objects</strong>, dictating the <strong>Stellar Lifecycle</strong>.</p>
+                    <p>Spherical gradients are essential for modeling <strong>Stellar structure</strong>. The pressure gradient \( \nabla P \) in a star must be balanced by gravity to prevent collapse. Using the spherical form allows astronomers to solve the <strong>Stellar Structure Equations</strong> for massive <strong>White Dwarfs</strong> and <strong>Compact Objects</strong>, dictating the <strong>Stellar Lifecycle</strong>.</p>
 
                     <h3>6. Epistemic Status: The Natural Basis</h3>
                     <p>The spherical gradient is the "Natural Basis" for 4D <a href="/physics/subtopic/potential-theory" class="subtopic-link"><strong>Potential Theory</strong></a>. While Cartesian math is easier for flat plates, the universe is mostly made of spheres. By using the spherical gradient, physics respects the <strong>Geometric Origin</strong> of forces, anchoring <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the belief that the math should match the symmetry of the source.</p>    </div>
@@ -232,30 +220,39 @@ abla P \) in a star must be balanced by gravity to prevent collapse. Using the s
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla f = \frac{\partial f}{\partial r} \hat{r} + \frac{1}{r} \frac{\partial f}{\partial 	heta} \hat{	heta} + \frac{1}{r\sin	heta} \frac{\partial f}{\partial \phi} \hat{\phi} \]
+                            \[ \nabla f = \frac{\partial f}{\partial r} \hat{r} + \frac{1}{r} \frac{\partial f}{\partial \theta} \hat{\theta} + \frac{1}{r\sin\theta} \frac{\partial f}{\partial \phi} \hat{\phi} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Inverse-Square link:</strong> The rule that turns a 1/r potential into a 1/r^2 force.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \phi \):</span> 
+                                                                                    <a href="/physics/subtopic/scalar-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Scalar Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -264,35 +261,45 @@ abla f = \frac{\partial f}{\partial r} \hat{r} + \frac{1}{r} \frac{\partial f}{\
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            The 1/r Factor                        </span>
+                            Harmonic Link                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ ds^2 = dr^2 + r^2 d	heta^2 + r^2 \sin^2 	heta d\phi^2 \]
+                            \[ ds^2 = dr^2 + r^2 d\theta^2 + r^2 \sin^2 \theta d\phi^2 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>The 1/r Factor:</strong> Why the "tilt" of a field depends on how far you are from the center.                                </p>
+                                    <strong>Harmonic Link:</strong> The connection between the angular curl and the discrete energy levels of electrons.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \phi \):</span> 
+                                                                                    <a href="/physics/subtopic/scalar-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Scalar Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -314,22 +321,32 @@ abla f = \frac{\partial f}{\partial r} \hat{r} + \frac{1}{r} \frac{\partial f}{\
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Pole Rule:</strong> Why angle changes near the north/south poles count for very little distance.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \Phi \):</span> 
+                                                                                    <a href="/physics/subtopic/potential-definition" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Potential Definition</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -344,87 +361,59 @@ abla f = \frac{\partial f}{\partial r} \hat{r} + \frac{1}{r} \frac{\partial f}{\
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla^2 = \frac{1}{r^2}\frac{\partial}{\partial r}(r^2\frac{\partial}{\partial r}) + \frac{1}{r^2\sin	heta}\dots \]
+                            \[ \nabla^2 = \frac{1}{r^2}\frac{\partial}{\partial r}(r^2\frac{\partial}{\partial r}) + \frac{1}{r^2\sin\theta}\dots \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Angular Momentum:</strong> How the "swirl" part of the gradient builds the shapes of atoms.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="783f86ac18b6729a76b393176ece6973">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                                     <a href="/physics/subtopic/gradient-operator" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Gradient Operator (\(
-abla\))</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/scalar-potentials" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Scalar Potentials</strong>
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Gradient Operator (\(\nabla\))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/cylindrical-gradient" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Gradient in Cylindrical Coordinates</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
+                                    <a href="/physics/subtopic/scalar-potentials" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Scalar Potentials</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/gradient" class="btn btn-secondary">&larr; Back to The Gradient (\( \nabla \))</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="783f86ac18b6729a76b393176ece6973" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

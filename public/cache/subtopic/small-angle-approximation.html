@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Small Angle Approximation - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="2937644cc64cda6e946ffce34d4a6306">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="2937644cc64cda6e946ffce34d4a6306"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/cosmic-distance-ladder">The Cosmic Distance Ladder</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/astrophysical-parallax">Stellar Parallax and Geometric Distances</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Small Angle Approximation</span>
     </nav>
@@ -185,25 +178,25 @@
     </header>
     
     <div class="content-body">
-        <p>The Small Angle Approximation is a mathematical simplification used when the angle involved is very close to zero. In university-level physics, it is used whenever the size or shift of an object is much smaller than its distance. In <strong>Stellar Parallax</strong>, where angles are always less than one arcsecond (\( 1/3600 	ext{ deg} \)), this approximation is not just a convenience but a fundamental requirement for linearizing the complex trigonometric equations of astrometry.</p>
+        <p>The Small Angle Approximation is a mathematical simplification used when the angle involved is very close to zero. In university-level physics, it is used whenever the size or shift of an object is much smaller than its distance. In <strong>Stellar Parallax</strong>, where angles are always less than one arcsecond (\( 1/3600 \text{ deg} \)), this approximation is not just a convenience but a fundamental requirement for linearizing the complex trigonometric equations of astrometry.</p>
 
                     <h3>1. The Taylor Series Foundation</h3>
-                    <p>The approximation is derived from the <strong>Taylor Series</strong> expansion of trigonometric functions. For angle \( 	heta \) measured in <strong>Radians</strong>:
+                    <p>The approximation is derived from the <strong>Taylor Series</strong> expansion of trigonometric functions. For angle \( \theta \) measured in <strong>Radians</strong>:
                         <ul>
-                            <li>\( \sin 	heta = 	heta - \frac{	heta^3}{3!} + \dots \approx 	heta \)</li>
-                            <li>\( 	an 	heta = 	heta + \frac{	heta^3}{3} + \dots \approx 	heta \)</li>
-                            <li>\( \cos 	heta \approx 1 - \frac{	heta^2}{2} \approx 1 \)</li>
+                            <li>\( \sin \theta = \theta - \frac{\theta^3}{3!} + \dots \approx \theta \)</li>
+                            <li>\( \tan \theta = \theta + \frac{\theta^3}{3} + \dots \approx \theta \)</li>
+                            <li>\( \cos \theta \approx 1 - \frac{\theta^2}{2} \approx 1 \)</li>
                         </ul>
-                    For the tiny angles in parallax, the terms of order \( 	heta^2 \) and higher are negligible, allowing us to treat the curved geometry of the sky as locally flat.</p>
+                    For the tiny angles in parallax, the terms of order \( \theta^2 \) and higher are negligible, allowing us to treat the curved geometry of the sky as locally flat.</p>
 
                     <h3>2. Linearizing the Parallax Formula</h3>
-                    <p>The exact parallax distance is \( d = B / 	an p \). Applying the small angle approximation, this becomes \( d = B / p \). This <strong>Linear Relation</strong> is the reason why the <strong>Parsec</strong> (\( d = 1/p \)) is such a robust unit. It ensures that doubling the distance results in exactly half the angular shift, a property that makes the statistical analysis of star clusters and galactic rotation much more tractable.</p>
+                    <p>The exact parallax distance is \( d = B / \tan p \). Applying the small angle approximation, this becomes \( d = B / p \). This <strong>Linear Relation</strong> is the reason why the <strong>Parsec</strong> (\( d = 1/p \)) is such a robust unit. It ensures that doubling the distance results in exactly half the angular shift, a property that makes the statistical analysis of star clusters and galactic rotation much more tractable.</p>
 
                     <h3>3. Accuracy and Error Analysis</h3>
-                    <p>The "cost" of the approximation is incredibly low in astrophysics. For angle of \( 1'' \), the error introduced by using \( p \) instead of \( 	an p \) is less than \( 10^{-11} \). This far below the precision of even the <strong>Gaia Mission</strong>. However, at university levels, physicists must remain aware that the approximation requires \( 	heta \) to be in <strong>Radians</strong>, a frequent source of calculation errors when converting from arcseconds.</p>
+                    <p>The "cost" of the approximation is incredibly low in astrophysics. For angle of \( 1'' \), the error introduced by using \( p \) instead of \( \tan p \) is less than \( 10^{-11} \). This far below the precision of even the <strong>Gaia Mission</strong>. However, at university levels, physicists must remain aware that the approximation requires \( \theta \) to be in <strong>Radians</strong>, a frequent source of calculation errors when converting from arcseconds.</p>
 
                     <h3>4. Diffraction and Resolution Limits</h3>
-                    <p>The small angle approximation also governs the <strong>Rayleigh Criterion</strong> for telescope resolution: \( 	heta \approx 1.22 \lambda / D \). This limit determines the smallest parallax angle a telescope can resolve. Because the angle is small, the "blurring" of the star (the Airy disk) can be treated as a simple linear function of the wavelength and the aperture, linking the physics of <strong>Wave Optics</strong> to the geometry of astrometry.</p>
+                    <p>The small angle approximation also governs the <strong>Rayleigh Criterion</strong> for telescope resolution: \( \theta \approx 1.22 \lambda / D \). This limit determines the smallest parallax angle a telescope can resolve. Because the angle is small, the "blurring" of the star (the Airy disk) can be treated as a simple linear function of the wavelength and the aperture, linking the physics of <strong>Wave Optics</strong> to the geometry of astrometry.</p>
 
                     <h3>5. Small Angles in General Relativity</h3>
                     <p>In the study of <strong>Gravitational Lensing</strong>, the deflection angle \( \alpha \) is almost always treated using the small angle approximation. The path of light is modeled as two straight lines that meet at a sharp angle at the lens. This simplification allows for the derivation of the <strong>Lens Equation</strong> and the Einstein Radius, providing a geometric map of dark matter without the need for full non-linear tensor integration.</p>
@@ -227,29 +220,30 @@
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \sin 	heta \approx 	an 	heta \approx 	heta \quad (	heta \ll 1) \]
+                            \[ \sin \theta \approx \tan \theta \approx \theta \quad (\theta \ll 1) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Math Basis:</strong> The series derivation that allows complex trig functions to be replaced by linear variables.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -271,22 +265,23 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Reciprocal Rule:</strong> Why distance and angle have a perfectly predictable, inverse relationship in space.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -308,22 +303,23 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Calculation Rule:</strong> The essential requirement that all angles be converted to circular measure before approximating.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -338,61 +334,34 @@
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 1 - \cos 	heta \approx \frac{	heta^2}{2} \]
+                            \[ 1 - \cos \theta \approx \frac{\theta^2}{2} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Relativistic Optics:</strong> How the small angle rule makes the study of light bending manageable.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="2937644cc64cda6e946ffce34d4a6306">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -413,10 +382,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/astrophysical-parallax" class="btn btn-secondary">&larr; Back to Stellar Parallax and Geometric Distances</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="2937644cc64cda6e946ffce34d4a6306" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

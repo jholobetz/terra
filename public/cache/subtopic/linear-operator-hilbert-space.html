@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hilbert Space (Linear Operators) - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="4023e03de46be89e80b5a87dc62c3a30">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="4023e03de46be89e80b5a87dc62c3a30"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,14 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/theoretical-quantum-mechanics">The Foundations of Quantum Mechanics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/hilbert-space">Hilbert Space</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/linear-operators">Linear Operators and Hilbert Space</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Hilbert Space (Linear Operators)</span>
     </nav>
@@ -188,33 +183,22 @@
         <p>In the study of <strong>Linear Operators</strong>, a <a href="/physics/subtopic/hilbert-space" class="subtopic-link"><strong>Hilbert Space</strong></a> (\( \mathcal{H} \)) is the rigorous mathematical structure upon which these operators act. In university-level quantum mechanics, it is defined as a complete inner product space over the complex numbers. This 4D-like geometric space is essential because it allows physical states to be represented as vectors, and observable quantities to be represented as linear transformations (operators) mapping this space onto itself.</p>
 
                   <h3>1. The Vector Space Foundation</h3>
-                  <p>A Hilbert space is first and foremost a linear vector space. This means that if \( |\psi
-angle \) and \( |\phi
-angle \) are valid states in \( \mathcal{H} \), any linear combination \( \alpha|\psi
-angle + \beta|\phi
-angle \) (where \( \alpha, \beta \) are complex numbers) is also a valid state. This algebraic property is the direct mathematical origin of the <strong>Superposition Principle</strong>, ensuring that linear operators can systematically distribute across superimposed states.</p>
+                  <p>A Hilbert space is first and foremost a linear vector space. This means that if \( |\psi\rangle \) and \( |\phi\rangle \) are valid states in \( \mathcal{H} \), any linear combination \( \alpha|\psi\rangle + \beta|\phi\rangle \) (where \( \alpha, \beta \) are complex numbers) is also a valid state. This algebraic property is the direct mathematical origin of the <strong>Superposition Principle</strong>, ensuring that linear operators can systematically distribute across superimposed states.</p>
 
                   <h3>2. <a href="/physics/subtopic/inner-product" class="subtopic-link"><strong>The Inner Product</strong></a> and Geometry</h3>
-                  <p>What distinguishes a Hilbert space from a generic vector space is the existence of an <strong>Inner Product</strong>, denoted \( \langle\phi|\psi
-angle \). This operation takes two vectors and returns a complex number, providing a measure of their "overlap" or geometric projection. The inner product induces a norm (or length) for every vector, \( ||\psi|| = \sqrt{\langle\psi|\psi
-angle} \), establishing the Euclidean-like geometry required to calculate transition probabilities and enforce the <strong>Born Interpretation</strong>.</p>
+                  <p>What distinguishes a Hilbert space from a generic vector space is the existence of an <strong>Inner Product</strong>, denoted \( \langle\phi|\psi\rangle \). This operation takes two vectors and returns a complex number, providing a measure of their "overlap" or geometric projection. The inner product induces a norm (or length) for every vector, \( ||\psi|| = \sqrt{\langle\psi|\psi\rangle} \), establishing the Euclidean-like geometry required to calculate transition probabilities and enforce the <strong>Born Interpretation</strong>.</p>
 
                   <h3>3. Completeness and Convergence</h3>
                   <p>A critical university-level requirement is that \( \mathcal{H} \) must be a <strong>Complete Space</strong>. This means every Cauchy sequence of vectors in the space converges to a limit that is also within the space. Completeness guarantees that infinite series expansions—such as representing a state using an infinite basis of <strong>Eigenstates</strong>—are mathematically well-defined and physically meaningful without "leaking" into non-physical limits.</p>
 
                   <h3>4. Action of Linear Operators</h3>
-                  <p>A linear operator \( \hat{A} \) acts on a vector \( |\psi
-angle \) in \( \mathcal{H} \) to produce a new vector \( |\psi'
-angle \). The study of these operators focuses on how they transform the geometry of the space. For example, a <strong>Unitary Operator</strong> rigidly rotates the state vector, preserving its norm (representing time evolution), while a <strong>Projection Operator</strong> collapses the vector onto a specific subspace (representing quantum measurement).</p>
+                  <p>A linear operator \( \hat{A} \) acts on a vector \( |\psi\rangle \) in \( \mathcal{H} \) to produce a new vector \( |\psi'\rangle \). The study of these operators focuses on how they transform the geometry of the space. For example, a <strong>Unitary Operator</strong> rigidly rotates the state vector, preserving its norm (representing time evolution), while a <strong>Projection Operator</strong> collapses the vector onto a specific subspace (representing quantum measurement).</p>
 
                   <h3>5. The Dual Space and Adjoints</h3>
-                  <p>Every Hilbert space \( \mathcal{H} \) has an associated dual space \( \mathcal{H}^* \), populated by linear functionals (the "Bra" vectors \( \langle\phi| \)). The relationship between an operator and the inner product defines the <strong>Adjoint Operator</strong> \( \hat{A}^\dagger \), such that \( \langle\phi|\hat{A}\psi
-angle = \langle\hat{A}^\dagger\phi|\psi
-angle \). Operators that are self-adjoint (<strong>Hermitian</strong>) have real eigenvalues, making them the sole mathematical candidates for physical observables.</p>
+                  <p>Every Hilbert space \( \mathcal{H} \) has an associated dual space \( \mathcal{H}^* \), populated by linear functionals (the "Bra" vectors \( \langle\phi| \)). The relationship between an operator and the inner product defines the <strong>Adjoint Operator</strong> \( \hat{A}^\dagger \), such that \( \langle\phi|\hat{A}\psi\rangle = \langle\hat{A}^\dagger\phi|\psi\rangle \). Operators that are self-adjoint (<strong>Hermitian</strong>) have real eigenvalues, making them the sole mathematical candidates for physical observables.</p>
 
                   <h3>6. Infinite Dimensions</h3>
-                  <p>While some operators act on finite-dimensional spaces (like spin matrices), the operators for continuous variables like position and momentum act on an <strong>Infinite-Dimensional</strong> Hilbert space, specifically the space of square-integrable functions \( L^2 \). In these spaces, linear operators often take the form of differential operators (e.g., \( \hat{p} = -i\hbar
-abla \)), necessitating the rigorous functional analysis that underpins modern <strong>Theoretical Physics</strong>.</p>    </div>
+                  <p>While some operators act on finite-dimensional spaces (like spin matrices), the operators for continuous variables like position and momentum act on an <strong>Infinite-Dimensional</strong> Hilbert space, specifically the space of square-integrable functions \( L^2 \). In these spaces, linear operators often take the form of differential operators (e.g., \( \hat{p} = -i\hbar\nabla \)), necessitating the rigorous functional analysis that underpins modern <strong>Theoretical Physics</strong>.</p>    </div>
 
     <section class="equations-section">
     <h2>Key Theoretical Identities</h2>
@@ -232,33 +216,47 @@ abla \)), necessitating the rigorous functional analysis that underpins modern <
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \hat{A}(\alpha|\psi
-angle + \beta|\phi
-angle) = \alpha\hat{A}|\psi
-angle + \beta\hat{A}|\phi
-angle \]
+                            \[ \hat{A}(\alpha|\psi\rangle + \beta|\phi\rangle) = \alpha\hat{A}|\psi\rangle + \beta\hat{A}|\phi\rangle \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Absolute Convergence:</strong> The property that prevents infinite sums from yielding unphysical results.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \alpha \):</span> 
+                                                                                    <a href="/physics/constants#alpha" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Fine-structure Constant</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \psi \):</span> 
+                                                                                    <a href="/physics/subtopic/wave-function" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Wave Function</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \phi \):</span> 
+                                                                                    <a href="/physics/subtopic/scalar-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Scalar Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -273,31 +271,43 @@ angle \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \langle\phi|\hat{A}\psi
-angle = \langle\hat{A}^\dagger\phi|\psi
-angle \]
+                            \[ \langle\phi|\hat{A}\psi\rangle = \langle\hat{A}^\dagger\phi|\psi\rangle \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Bra-Ket Synergy:</strong> The mirror space of linear functionals essential for defining operator adjoints.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \psi \):</span> 
+                                                                                    <a href="/physics/subtopic/wave-function" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Wave Function</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \phi \):</span> 
+                                                                                    <a href="/physics/subtopic/scalar-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Scalar Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -312,62 +322,43 @@ angle \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ ||\psi|| = \sqrt{\langle\psi|\psi
-angle} < \infty \]
+                            \[ ||\psi|| = \sqrt{\langle\psi|\psi\rangle} < \infty \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Mathematical Context:</strong> This formula describes a key relationship within Hilbert Space (Linear Operators).                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \psi \):</span> 
+                                                                                    <a href="/physics/subtopic/wave-function" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Wave Function</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="4023e03de46be89e80b5a87dc62c3a30">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -376,22 +367,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Complete Inner Product Spaces</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/linear-operator-linearity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Linearity Condition in Quantum Mechanics</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
                                     <a href="/physics/subtopic/projection-operators" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Projection Operators</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/complete-space" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Completeness of Space</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/linear-operators" class="btn btn-secondary">&larr; Back to Linear Operators and Hilbert Space</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="4023e03de46be89e80b5a87dc62c3a30" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

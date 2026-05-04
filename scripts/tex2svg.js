@@ -47,8 +47,8 @@ try {
     const styleMatch = svgHtml.match(/style="([^"]*)"/);
     const mjStyle = styleMatch ? styleMatch[1] : '';
     
-    // Merge with Platinum Standard Styling (Cyan for cards)
-    const finalStyle = `color: #64ffda; ${mjStyle}`;
+    // Merge with Platinum Standard Styling (Gold for high-contrast cards)
+    const finalStyle = `color: #FFD700; ${mjStyle}`;
     
     // Reconstruct the tag
     svgHtml = svgHtml.replace(/style="[^"]*"/, `style="${finalStyle}"`);

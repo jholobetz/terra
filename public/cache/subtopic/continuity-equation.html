@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Continuity Equation - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="1bbc6f16db7498e668ef7401daf3c18c">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="1bbc6f16db7498e668ef7401daf3c18c"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/gausss-theorem">Gauss's (Divergence) Theorem</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Continuity Equation</span>
     </nav>
@@ -191,19 +182,13 @@
                     <p>The integral form of the continuity equation relates the time rate of change of total charge \( Q \) inside a volume \( V \) to the net <strong>Current</strong> \( I \) flowing out through the surface \( S \): \( dQ/dt = -\oint_S \mathbf{J} \cdot d\mathbf{a} \). This a global bookkeeping rule: if the charge inside decreases, it must have appeared as a current crossing the surface. This macroscopic view is the basis for <strong>Kirchhoff's Current Law</strong> in circuit analysis.</p>
 
                     <h3>2. Differential Form: Local Conservation</h3>
-                    <p>By applying the <strong>Divergence Theorem</strong> to the integral form, we derive the differential continuity equation: \( \frac{\partial 
-ho}{\partial t} + 
-abla \cdot \mathbf{J} = 0 \). Here, \( 
-ho \) is the charge density and \( \mathbf{J} \) is the current density. This local version is far more powerful, as it must hold at every single point in spacetime, forbidding any "teleportation" of charge and enforcing the speed limit of <strong>Special Relativity</strong>.</p>
+                    <p>By applying the <strong>Divergence Theorem</strong> to the integral form, we derive the differential continuity equation: \( \frac{\partial \rho}{\partial t} + \nabla \cdot \mathbf{J} = 0 \). Here, \( \rho \) is the charge density and \( \mathbf{J} \) is the current density. This local version is far more powerful, as it must hold at every single point in spacetime, forbidding any "teleportation" of charge and enforcing the speed limit of <strong>Special Relativity</strong>.</p>
 
                     <h3>3. The Source of Maxwell's Correction</h3>
-                    <p>The continuity equation exposed a flaw in the original version of <a href="/physics/subtopic/amperes-law" class="subtopic-link"><strong>Ampère's Law</strong></a> (\( 
-abla 	imes \mathbf{B} = \mu_0 \mathbf{J} \)). Since the divergence of a curl is always zero, <a href="/physics/subtopic/amperes-law" class="subtopic-link"><strong>Ampère's Law</strong></a> implied \( 
-abla \cdot \mathbf{J} = 0 \), which contradicted the continuity equation for time-varying densities. Maxwell resolved this by adding the <strong>Displacement Current</strong>, which ensured that the total effective current always satisfies the requirement of conservation.</p>
+                    <p>The continuity equation exposed a flaw in the original version of <a href="/physics/subtopic/amperes-law" class="subtopic-link"><strong>Ampère's Law</strong></a> (\( \nabla \times \mathbf{B} = \mu_0 \mathbf{J} \)). Since the divergence of a curl is always zero, <a href="/physics/subtopic/amperes-law" class="subtopic-link"><strong>Ampère's Law</strong></a> implied \( \nabla \cdot \mathbf{J} = 0 \), which contradicted the continuity equation for time-varying densities. Maxwell resolved this by adding the <strong>Displacement Current</strong>, which ensured that the total effective current always satisfies the requirement of conservation.</p>
 
                     <h3>4. Relativistic Form: The 4-Divergence</h3>
-                    <p>In relativistic electrodynamics, charge density and current density are unified into a single <strong>4-Current</strong> (\( J^\mu = (c
-ho, \mathbf{J}) \)). The continuity equation is then expressed with elegant simplicity as the vanishing of the <strong>4-Divergence</strong>: \( \partial_\mu J^\mu = 0 \). This formulation shows that the conservation of charge is a Lorentz-invariant property, valid in all frames of reference and consistent with the geometry of <strong>Minkowski Spacetime</strong>.</p>
+                    <p>In relativistic electrodynamics, charge density and current density are unified into a single <strong>4-Current</strong> (\( J^\mu = (c\rho, \mathbf{J}) \)). The continuity equation is then expressed with elegant simplicity as the vanishing of the <strong>4-Divergence</strong>: \( \partial_\mu J^\mu = 0 \). This formulation shows that the conservation of charge is a Lorentz-invariant property, valid in all frames of reference and consistent with the geometry of <strong>Minkowski Spacetime</strong>.</p>
 
                     <h3>5. Gauge Invariance and Conservation</h3>
                     <p>Charge conservation is deeply linked to <a href="/physics/subtopic/gauge-invariance" class="subtopic-link"><strong>Gauge Invariance</strong></a>. In quantum field theory, the requirement that the physics remain unchanged under a local phase shift of the wave function (a gauge transformation) <em>forces</em> the current to be conserved. This link, established via <a href="/physics/subtopic/noethers-theorem" class="subtopic-link"><strong>Noether's Theorem</strong></a>, proves that the continuity equation is not just a rule for matter, but a structural necessity of the universe's underlying symmetries.</p>
@@ -221,37 +206,36 @@ ho, \mathbf{J}) \)). The continuity equation is then expressed with elegant simp
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Local Balance                        </span>
+                            General Continuity Law                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{\partial 
-ho}{\partial t} + 
-abla \cdot \mathbf{J} = 0 \]
+                            \[ \frac{\partial \rho}{\partial t} + \nabla \cdot \mathbf{J} = 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Local Balance:</strong> Relates the time-rate of change of density to the spatial divergence of flow.                                </p>
+                                    <strong>General Continuity Law:</strong> The mathematical proof that the local rate of change of a quantity is identically equal to the negative divergence of its flux.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -273,22 +257,23 @@ abla \cdot \mathbf{J} = 0 \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Global Rule:</strong> The total current leaving a volume must equal the rate of charge depletion inside.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -297,7 +282,7 @@ abla \cdot \mathbf{J} = 0 \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            4-Current Conservation                        </span>
+                            Noether Current Identity                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
@@ -310,22 +295,23 @@ abla \cdot \mathbf{J} = 0 \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>4-Current Conservation:</strong> The unified spacetime expression of charge conservation.                                </p>
+                                    <strong>Noether Current Identity:</strong> The fundamental rule asserting that the four-divergence of the symmetry current identically vanishes, representing local conservation.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -340,64 +326,43 @@ abla \cdot \mathbf{J} = 0 \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla \cdot (
-abla 	imes \mathbf{B}) = 0 \implies 
-abla \cdot \mathbf{J} = 0 \]
+                            \[ \nabla \cdot (\nabla \times \mathbf{B}) = 0 \implies \nabla \cdot \mathbf{J} = 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Variational Proof:</strong> Why Ampère's law required modification to remain compatible with charge conservation.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{B} \):</span> 
+                                                                                    <a href="/physics/subtopic/magnetic-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Magnetic Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="1bbc6f16db7498e668ef7401daf3c18c">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -418,10 +383,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/gausss-theorem" class="btn btn-secondary">&larr; Back to Gauss's (Divergence) Theorem</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="1bbc6f16db7498e668ef7401daf3c18c" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

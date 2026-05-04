@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Stellar Structure Equations - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="47d8a903061ae0f91541811f32957fc4">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="47d8a903061ae0f91541811f32957fc4"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,8 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Stellar Structure Equations</span>
     </nav>
@@ -191,29 +180,23 @@
                     <p>Stellar modeling is guided by the <a href="/physics/subtopic/vogt-russell-theorem" class="subtopic-link"><strong>Vogt-Russell Theorem</strong></a>, which asserts that the structure of a star is uniquely determined by its <a href="/physics/subtopic/mass" class="subtopic-link"><strong>Mass</strong></a> and its <a href="/physics/subtopic/chemical-composition" class="subtopic-link"><strong>Chemical Composition</strong></a>. The stellar structure equations solve for the distribution of these properties as a function of the radius (\( r \)) or the enclosed mass (\( M_r \)), providing a 1D "slice" of the star's interior from core to surface.</p>
 
                     <h3>2. Conservation of Mass</h3>
-                    <p>The simplest equation accounts for the distribution of matter. The <a href="/physics/subtopic/mass-conservation-equation" class="subtopic-link"><strong>Mass Conservation Equation</strong></a> relates the change in enclosed mass to the local density (\( 
-ho \)):
-                    \[ \frac{dm}{dr} = 4 \pi r^2 
-ho(r) \]
-                    In <a href="/physics/subtopic/lagrangian" class="subtopic-link"><strong>Lagrangian</strong></a> coordinates, where mass is the independent variable, this becomes \( dr/dm = 1/(4\pi r^2 
-ho) \). This equation ensures that the sum of all internal layers equals the total mass of the star.</p>
+                    <p>The simplest equation accounts for the distribution of matter. The <a href="/physics/subtopic/mass-conservation-equation" class="subtopic-link"><strong>Mass Conservation Equation</strong></a> relates the change in enclosed mass to the local density (\( \rho \)):
+                    \[ \frac{dm}{dr} = 4 \pi r^2 \rho(r) \]
+                    In <a href="/physics/subtopic/lagrangian" class="subtopic-link"><strong>Lagrangian</strong></a> coordinates, where mass is the independent variable, this becomes \( dr/dm = 1/(4\pi r^2 \rho) \). This equation ensures that the sum of all internal layers equals the total mass of the star.</p>
 
                     <h3>3. Hydrostatic Equilibrium: Pressure vs. Gravity</h3>
                     <p>A stable star exists in a state of <a href="/physics/subtopic/hydrostatic-equilibrium" class="subtopic-link"><strong>Hydrostatic Equilibrium</strong></a>, where the inward pull of gravity is perfectly balanced by the outward pressure gradient:
-                    \[ \frac{dP}{dr} = -\frac{G m 
-ho}{r^2} \]
+                    \[ \frac{dP}{dr} = -\frac{G m \rho}{r^2} \]
                     This equation dictates that the pressure must increase towards the center to support the weight of the overlying layers. It is the most critical constraint on stellar stability; any imbalance results in a rapid dynamical timescale collapse or expansion.</p>
 
                     <h3>4. <a href="/physics/subtopic/total-mechanical-energy" class="subtopic-link"><strong>Conservation of Energy</strong></a>: Nuclear Generation</h3>
                     <p>The <a href="/physics/subtopic/energy-generation-equation" class="subtopic-link"><strong>Energy Generation Equation</strong></a> accounts for the heat produced by nuclear fusion in the core:
-                    \[ \frac{dL}{dr} = 4 \pi r^2 
-ho \epsilon \]
+                    \[ \frac{dL}{dr} = 4 \pi r^2 \rho \epsilon \]
                     Here, \( L \) is the luminosity and \( \epsilon \) is the energy release rate per unit mass (from the p-p chain or CNO cycle). This equation proves that the total light emitted at the surface is the integral of all the nuclear reactions occurring in the deep interior.</p>
 
                     <h3>5. Energy Transport: Radiation and Convection</h3>
                     <p>The <a href="/physics/subtopic/temperature-gradient-equation" class="subtopic-link"><strong>Temperature Gradient Equation</strong></a> describes how energy moves from the core to the surface. If radiation is the dominant mode, the gradient is dictated by the <a href="/physics/subtopic/rosseland-opacity" class="subtopic-link"><strong>Rosseland Mean Opacity</strong></a> (\( \kappa \)):
-                    \[ \frac{dT}{dr} = -\frac{3 \kappa 
-ho L}{16 \pi a c r^2 T^3} \]
+                    \[ \frac{dT}{dr} = -\frac{3 \kappa \rho L}{16 \pi a c r^2 T^3} \]
                     If the radiative gradient becomes too steep, the star becomes unstable to <a href="/physics/subtopic/convection" class="subtopic-link"><strong>Convection</strong></a>. In these regions, large-scale fluid motions transport energy more efficiently, and the temperature gradient follows the <a href="/physics/subtopic/adiabatic-lapse-rate" class="subtopic-link"><strong>Adiabatic Lapse Rate</strong></a>.</p>
 
                     <h3>6. Boundary Conditions and Integration</h3>
@@ -235,30 +218,30 @@ ho L}{16 \pi a c r^2 T^3} \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{dm}{dr} = 4 \pi r^2 
-ho \]
+                            \[ \frac{dm}{dr} = 4 \pi r^2 \rho \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <a href="/physics/subtopic/mass-distribution" class="subtopic-link"><strong>Mass Distribution</strong></a>: Relates the star's density profile to the accumulation of mass as radius increases.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -273,30 +256,30 @@ ho \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{dP}{dr} = -\frac{Gm
-ho}{r^2} \]
+                            \[ \frac{dP}{dr} = -\frac{Gm\rho}{r^2} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <a href="/physics/subtopic/mechanical-balance" class="subtopic-link"><strong>Mechanical Balance</strong></a>: The hydrostatic equation ensuring the star does not collapse under its own weight.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -311,30 +294,30 @@ ho}{r^2} \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{dL}{dr} = 4 \pi r^2 
-ho \epsilon \]
+                            \[ \frac{dL}{dr} = 4 \pi r^2 \rho \epsilon \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <a href="/physics/subtopic/luminosity-origin" class="subtopic-link"><strong>Luminosity Origin</strong></a>: Tracks the production of energy from nuclear fusion processes in the core.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -349,86 +332,68 @@ ho \epsilon \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{dT}{dr} = -\frac{3 \kappa 
-ho L}{16 \pi a c r^2 T^3} \]
+                            \[ \frac{dT}{dr} = -\frac{3 \kappa \rho L}{16 \pi a c r^2 T^3} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <a href="/physics/subtopic/thermal-transport" class="subtopic-link"><strong>Thermal Transport</strong></a>: Describes the diffusion of photons through the dense stellar plasma.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="47d8a903061ae0f91541811f32957fc4">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/standard-solar-model" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Standard Solar Model</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
                                     <a href="/physics/subtopic/temperature-gradient-equation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Temperature Gradient Equation</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/vogt-russell-theorem" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Vogt-Russell Theorem</strong>
+                                    <a href="/physics/subtopic/standard-solar-model" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Standard Solar Model</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/mass-distribution" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Mass Distribution</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/topic/astrophysics" class="btn btn-secondary">&larr; Back to Astrophysics and Cosmology</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="47d8a903061ae0f91541811f32957fc4" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Covariant Divergence and Conservation - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="2e9072b60be40e74e1e57528a02e28de">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="2e9072b60be40e74e1e57528a02e28de"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/astrophysical-general-relativity">General Relativity in Astrophysics and Cosmology</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/einstein-field-equations">The Einstein Field Equations</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Covariant Divergence and Conservation</span>
     </nav>
@@ -185,38 +178,26 @@
     </header>
     
     <div class="content-body">
-        <p>The <strong>Covariant Divergence</strong> (\( 
-abla_\mu \)) is the generalization of the standard vector divergence to curved 4-dimensional manifolds. In university-level physics, it is the mathematical operator required to ensure that the <strong>Conservation</strong> of energy and momentum is maintained in the presence of <a href="/physics/subtopic/curvature-of-spacetime" class="subtopic-link"><strong>Curvature of Spacetime</strong></a>. It provides the rigorous link between the <strong>Einstein Tensor</strong> and the <strong>Stress-Energy Tensor</strong>.</p>
+        <p>The <strong>Covariant Divergence</strong> (\( \nabla_\mu \)) is the generalization of the standard vector divergence to curved 4-dimensional manifolds. In university-level physics, it is the mathematical operator required to ensure that the <strong>Conservation</strong> of energy and momentum is maintained in the presence of <a href="/physics/subtopic/curvature-of-spacetime" class="subtopic-link"><strong>Curvature of Spacetime</strong></a>. It provides the rigorous link between the <strong>Einstein Tensor</strong> and the <strong>Stress-Energy Tensor</strong>.</p>
 
                     <h3>1. The Need for Covariant Differentiation</h3>
-                    <p>In flat space, the partial derivative \( \partial_\mu \) is sufficient. However, in curved space, the <strong>Metric Tensor</strong> varies, meaning that the coordinate axes themselves "bend." To calculate the true rate of change of a field, one must include the <a href="/physics/subtopic/christoffel-symbols" class="subtopic-link"><strong>Christoffel Symbols</strong></a> (\( \Gamma^\lambda_{\mu
-u} \)) which account for this geometric warping. The covariant divergence of a vector \( V^\mu \) is:
-                    \[ 
-abla_\mu V^\mu = \partial_\mu V^\mu + \Gamma^\mu_{\mu\lambda} V^\lambda \]
+                    <p>In flat space, the partial derivative \( \partial_\mu \) is sufficient. However, in curved space, the <strong>Metric Tensor</strong> varies, meaning that the coordinate axes themselves "bend." To calculate the true rate of change of a field, one must include the <a href="/physics/subtopic/christoffel-symbols" class="subtopic-link"><strong>Christoffel Symbols</strong></a> (\( \Gamma^\lambda_{\mu\nu} \)) which account for this geometric warping. The covariant divergence of a vector \( V^\mu \) is:
+                    \[ \nabla_\mu V^\mu = \partial_\mu V^\mu + \Gamma^\mu_{\mu\lambda} V^\lambda \]
                     This ensures that the "Flow" of a physical quantity is measured correctly relative to the 's geometry.</p>
 
                     <h3>2. Conservation of Stress-Energy</h3>
                     <p>The most important application of covariant divergence is the local conservation of energy and momentum:
-                    \[ 
-abla_\mu T^{\mu
-u} = 0 \]
+                    \[ \nabla_\mu T^{\mu\nu} = 0 \]
                     This equation asserts that while energy and momentum can be exchanged between matter and the gravitational field, they cannot be created or destroyed locally. This <strong>Physical Causality</strong> requirement is what dictated the specific mathematical form of the <strong>Einstein Field Equations</strong>.</p>
 
                     <h3>3. The Contracted Bianchi Identity</h3>
-                    <p>The Einstein tensor (\( G_{\mu
-u} \)) was specifically constructed to have a vanishing covariant divergence: \( 
-abla_\mu G^{\mu
-u} \equiv 0 \). This a purely geometric property known as the <strong>Contracted Bianchi Identity</strong>. By setting \( G_{\mu
-u} \propto T_{\mu
-u} \), Einstein ensured that the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of the manifold's geometry are "automatically" consistent with the conservation laws of matter.</p>
+                    <p>The Einstein tensor (\( G_{\mu\nu} \)) was specifically constructed to have a vanishing covariant divergence: \( \nabla_\mu G^{\mu\nu} \equiv 0 \). This a purely geometric property known as the <strong>Contracted Bianchi Identity</strong>. By setting \( G_{\mu\nu} \propto T_{\mu\nu} \), Einstein ensured that the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of the manifold's geometry are "automatically" consistent with the conservation laws of matter.</p>
 
                     <h3>4. Covariant Divergence in Fluid Dynamics</h3>
-                    <p>In <strong>Astrophysical Fluid Dynamics</strong>, the covariant divergence of the four-velocity (\( 
-abla_\mu U^\mu \)) measures the <strong>Expansion History</strong> of a fluid element. If the divergence is positive, the fluid is expanding; if negative, it is contracting. This operator is essential for the <strong>Friedmann Equations</strong>, where it describes the global expansion of the  fluid since the Big Bang.</p>
+                    <p>In <strong>Astrophysical Fluid Dynamics</strong>, the covariant divergence of the four-velocity (\( \nabla_\mu U^\mu \)) measures the <strong>Expansion History</strong> of a fluid element. If the divergence is positive, the fluid is expanding; if negative, it is contracting. This operator is essential for the <strong>Friedmann Equations</strong>, where it describes the global expansion of the  fluid since the Big Bang.</p>
 
                     <h3>5. <a href="/physics/subtopic/gauge-invariance" class="subtopic-link"><strong>Gauge Invariance</strong></a> and Divergence</h3>
-                    <p>In <strong>Gauge Theories</strong>, the covariant divergence ensures that the physical predictions of theory are <strong>Lorentz Invariant</strong>. For the <strong>Electromagnetic 4-Potential</strong>, the Lorenz Gauge condition (\( 
-abla_\mu A^\mu = 0 \)) is a statement about the solenoidal nature of the potential in the , linking the geometry of electromagnetism to that of gravity.</p>
+                    <p>In <strong>Gauge Theories</strong>, the covariant divergence ensures that the physical predictions of theory are <strong>Lorentz Invariant</strong>. For the <strong>Electromagnetic 4-Potential</strong>, the Lorenz Gauge condition (\( \nabla_\mu A^\mu = 0 \)) is a statement about the solenoidal nature of the potential in the , linking the geometry of electromagnetism to that of gravity.</p>
 
                     <h3>6. Epistemic Status: The Identity of Conservation</h3>
                     <p>The vanishing covariant divergence suggests that conservation laws are not separate "Rules" that matter follows, but are intrinsic properties of 4D geometry. In this view, energy is conserved <em>because</em> space is curved in a specific way. This <strong>Ontological</strong> shift, where physics is absorbed into geometry, is the defining legacy of <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a> and the <strong>Einstein Field Equations</strong>.</p>    </div>
@@ -231,37 +212,36 @@ abla_\mu A^\mu = 0 \)) is a statement about the solenoidal nature of the potenti
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Divergence shift                        </span>
+                            <a href="/physics/subtopic/cosmological-constant" class="subtopic-link">Cosmological Constant</a>                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla_\mu T^{\mu
-u} = 0 \]
+                            \[ \nabla_\mu T^{\mu\nu} = 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Divergence shift:</strong> How the rate of change is corrected to account for the bending of space axes.                                </p>
+                                    <strong><a href="/physics/subtopic/cosmological-constant" class="subtopic-link">Cosmological Constant</a>:</strong> A term representing the energy density of the vacuum, often associated with dark energy.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -276,30 +256,30 @@ u} = 0 \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla_\mu V^\mu = \frac{1}{\sqrt{-g}} \partial_\mu (\sqrt{-g} V^\mu) \]
+                            \[ \nabla_\mu V^\mu = \frac{1}{\sqrt{-g}} \partial_\mu (\sqrt{-g} V^\mu) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Conservation Law:</strong> The mathematical proof that energy and momentum stay constant in a 4D world.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -308,37 +288,45 @@ abla_\mu V^\mu = \frac{1}{\sqrt{-g}} \partial_\mu (\sqrt{-g} V^\mu) \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Square-root-g                        </span>
+                            Geometric Necessity                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla_\mu G^{\mu
-u} \equiv 0 \]
+                            \[ \nabla_\mu G^{\mu\nu} \equiv 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Square-root-g:</strong> The geometric factor that ensures volumes are calculated correctly during differentiation.                                </p>
+                                    <strong>Geometric Necessity:</strong> A relation that is true by the very definition of the field symbols, regardless of motion.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( G \):</span> 
+                                                                                    <a href="/physics/constants#G" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Gravitational Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -360,80 +348,52 @@ u} \equiv 0 \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Geometric Necessity:</strong> Why the "bend" of space must perfectly track the "amount" of matter.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="2e9072b60be40e74e1e57528a02e28de">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                                     <a href="/physics/subtopic/einstein-tensor" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Einstein Tensor (\(G_{\mu
-u}\))</strong>
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Einstein Tensor (\(G_{\mu\nu}\))</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/ricci-tensor" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Ricci Tensor (\(R_{\mu\nu}\))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/stress-energy-tensor" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Stress-Energy Tensor (\(T_{\mu
-u}\))</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/ricci-scalar" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Ricci Scalar (R)</strong>
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Stress-Energy Tensor (\(T_{\mu\nu}\))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/einstein-field-equations" class="btn btn-secondary">&larr; Back to The Einstein Field Equations</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="2e9072b60be40e74e1e57528a02e28de" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

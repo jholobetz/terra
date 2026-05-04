@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Lane-Emden Equation - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="0ce64c05df6d03ea9cfd825fe2bc9e07">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="0ce64c05df6d03ea9cfd825fe2bc9e07"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -188,13 +175,12 @@
         <p>The <strong>Lane-Emden Equation</strong> is the fundamental non-linear differential equation that describes the internal density structure of a self-gravitating fluid in <strong>Hydrostatic Equilibrium</strong>. Derived from the combination of gravity and <strong>Polytropic Relations</strong>, it is the cornerstone of university-level stellar structure theory. Solving the Lane-Emden equation allows astrophysicists to calculate the pressure, temperature, and density of a star at every point from its core to its surface.</p>
 
                     <h3>1. Dimensional Scaling: The variables xi and theta</h3>
-                    <p>To solve for stellar structure, physicists transform the physical variables into dimensionless ones: <strong>theta (\( 	heta \))</strong>, representing the normalized density, and <strong>xi (\( \xi \))</strong>, representing the normalized radius. The Lane-Emden equation is then expressed as:
-                    \[ \frac{1}{\xi^2} \frac{d}{d\xi} \left( \xi^2 \frac{d	heta}{d\xi} 
-ight) = -	heta^n \]
+                    <p>To solve for stellar structure, physicists transform the physical variables into dimensionless ones: <strong>theta (\( \theta \))</strong>, representing the normalized density, and <strong>xi (\( \xi \))</strong>, representing the normalized radius. The Lane-Emden equation is then expressed as:
+                    \[ \frac{1}{\xi^2} \frac{d}{d\xi} \left( \xi^2 \frac{d\theta}{d\xi} \right) = -\theta^n \]
                     This elegant form reveals that the internal geometry of all stars with the same <strong>Polytropic Index</strong> (\( n \)) is identical, regardless of their absolute mass or size.</p>
 
                     <h3>2. Boundary Conditions and Solutions</h3>
-                    <p>The equation is solved starting from the center (\( \xi=0 \)) with the boundary conditions \( 	heta=1 \) (central density) and \( d	heta/d\xi=0 \) (zero pressure gradient at the core). The surface of the star is defined as the point \( \xi_1 \) where \( 	heta \) first drops to zero. Analytical solutions exist for only three cases: \( n=0 \) (constant density), \( n=1 \) (linear), and \( n=5 \) (infinite radius), with all other realistic stellar models requiring <strong>Numerical Integration</strong>.</p>
+                    <p>The equation is solved starting from the center (\( \xi=0 \)) with the boundary conditions \( \theta=1 \) (central density) and \( d\theta/d\xi=0 \) (zero pressure gradient at the core). The surface of the star is defined as the point \( \xi_1 \) where \( \theta \) first drops to zero. Analytical solutions exist for only three cases: \( n=0 \) (constant density), \( n=1 \) (linear), and \( n=5 \) (infinite radius), with all other realistic stellar models requiring <strong>Numerical Integration</strong>.</p>
 
                     <h3>3. The n = 1.5 Polytrope: Convective Stars</h3>
                     <p>The \( n=1.5 \) solution describes stars that are perfectly mixed by <a href="/physics/subtopic/convection" class="subtopic-link"><strong>Convection</strong></a> or supported by non-relativistic <strong>Quantum Degeneracy Pressure</strong>. This model provides an excellent approximation for red dwarfs and white dwarfs. It predicts that these objects have a well-defined surface and a specific ratio between central and average density, linking subatomic particle counts to the star's macroscopic volume.</p>
@@ -203,7 +189,7 @@ ight) = -	heta^n \]
                     <p>The \( n=3 \) solution is known as the <strong>Eddington Standard Model</strong>. it describes massive stars where <strong>Radiation Pressure</strong> provides the primary support against gravity. At \( n=3 \), the mass of the star is independent of its radius, a critical mathematical feature that explains why massive stars are so close to the limit of stability. This model was the first to successfully explain the <strong>Luminosity-Mass Relation</strong> observed in the night sky.</p>
 
                     <h3>5. Mass-Radius Relationships</h3>
-                    <p>The most powerful result of the Lane-Emden equation is the <strong>Mass-Radius Scaling</strong>. It proves that for a fixed polytropic index, the mass and radius are related by \( M \propto R^{(3-n)/(1-n)} \). This explains why white dwarfs shrink as they gain mass (\( n=1.5 	o M \propto R^{-3} \)), a counter-intuitive quantum effect that is a direct consequence of the Lane-Emden geometry.</p>
+                    <p>The most powerful result of the Lane-Emden equation is the <strong>Mass-Radius Scaling</strong>. It proves that for a fixed polytropic index, the mass and radius are related by \( M \propto R^{(3-n)/(1-n)} \). This explains why white dwarfs shrink as they gain mass (\( n=1.5 \to M \propto R^{-3} \)), a counter-intuitive quantum effect that is a direct consequence of the Lane-Emden geometry.</p>
 
                     <h3>6. Beyond Polytropes: Real Stars</h3>
                     <p>Modern astrophysics uses the Lane-Emden equation as a benchmark for more complex <strong>Stellar Evolution</strong> codes. While real stars have varying indices and complex nuclear heating, the Lane-Emden "Skeletons" provide the essential geometric framework. Deviations from the Lane-Emden profile are used to detect <strong>Core Over-shooting</strong> and the presence of exotic matter in neutron star cores, proving that this 19th-century equation remains the "Master Map" for the internal dynamics of the universe.</p>    </div>
@@ -224,30 +210,30 @@ ight) = -	heta^n \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla^2 	heta = -	heta^n \]
+                            \[ \nabla^2 \theta = -\theta^n \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Standard Star:</strong> The mathematical curve that defines the density from core to surface for a given index.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -262,31 +248,43 @@ abla^2 	heta = -	heta^n \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \xi = r \left[ \frac{4\pi G 
-ho_c^2}{(n+1)P_c} 
-ight]^{1/2} \]
+                            \[ \xi = r \left[ \frac{4\pi G \rho_c^2}{(n+1)P_c} \right]^{1/2} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Star Edge:</strong> The specific radius (xi-1) where internal pressure vanishes and the star ends.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( G \):</span> 
+                                                                                    <a href="/physics/constants#G" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Gravitational Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -301,33 +299,43 @@ ight]^{1/2} \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ M = -4\pi \left[ \frac{(n+1)P_c}{4\pi G 
-ho_c^2} 
-ight]^{3/2} 
-ho_c \left( \xi^2 \frac{d	heta}{d\xi} 
-ight)_{\xi_1} \]
+                            \[ M = -4\pi \left[ \frac{(n+1)P_c}{4\pi G \rho_c^2} \right]^{3/2} \rho_c \left( \xi^2 \frac{d\theta}{d\xi} \right)_{\xi_1} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Radiative Balance:</strong> The n=3 case that provides the foundation for our understanding of the most luminous stars.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( G \):</span> 
+                                                                                    <a href="/physics/constants#G" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Gravitational Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -349,54 +357,36 @@ ight)_{\xi_1} \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Quantum Geometry:</strong> Why increasing gravity in a degenerate star causes it to become physically smaller.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="0ce64c05df6d03ea9cfd825fe2bc9e07">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -421,6 +411,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="0ce64c05df6d03ea9cfd825fe2bc9e07" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

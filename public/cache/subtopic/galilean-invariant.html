@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galilean Invariance - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="1c6f597d1cc5f73ee575ade189d1b56d">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="1c6f597d1cc5f73ee575ade189d1b56d"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/relativity">Relativity</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/galilean-relativity">Galilean Relativity and Absolute Space</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/inertial-frames">Inertial Frames of Reference</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Galilean Invariance</span>
     </nav>
@@ -185,25 +178,25 @@
     </header>
     
     <div class="content-body">
-        <p>Galilean Invariance is the principle that the laws of <strong>Classical Mechanics</strong> maintain their mathematical form under a <a href="/physics/subtopic/galilean-transformation" class="subtopic-link"><strong>Galilean Transformation</strong></a>. In university-level physics, an "Invariant" is a physical quantity (like mass or length) that is the same for all classical observers, while a "Covariant" law (like \( F=ma \)) is a rule that looks the same in all <strong>Inertial Frames</strong>. Together, they define the <strong>Geometric Origin</strong> of the Newtonian universe.</p>
+        <p>Galilean Invariance is the principle that the laws of <strong>Classical Mechanics</strong> maintain their mathematical form under a <a href="/physics/subtopic/galilean-transformation" class="subtopic-link"><strong>Galilean Transformation</strong></a>. In university-level physics, an "Invariant" is a physical quantity (like mass or length) that is the same for all classical observers, while a "Covariant" law (like \(F=ma\)) is a rule that looks the same in all <strong>Inertial Frames</strong>. Together, they define the <strong>Geometric Origin</strong> of the Newtonian universe.</p>
 
                     <h3>1. The Invariant quantities: <a href="/physics/subtopic/mass" class="subtopic-link"><strong>Mass</strong></a>, Length, Time</h3>
                     <p>In the Galilean manifold, three fundamental quantities are absolute:
                         <ul>
-                            <li><strong>Inertial <a href="/physics/subtopic/mass" class="subtopic-link"><strong>Mass</strong></a> (\( m \)):</strong> An object's weight-resistance does not change with speed.</li>
-                            <li><strong>Spatial Length (\( L \)):</strong> A ruler has the same length whether moving or at rest.</li>
-                            <li><strong>Time Interval (\( \Delta t \)):</strong> Duration is universal (<a href="/physics/subtopic/absolute-time" class="subtopic-link"><strong>Absolute Time</strong></a>).</li>
+                            <li><strong>Inertial <a href="/physics/subtopic/mass" class="subtopic-link"><strong>Mass</strong></a> (\(m\)):</strong> An object's weight-resistance does not change with speed.</li>
+                            <li><strong>Spatial Length (\(L\)):</strong> A ruler has the same length whether moving or at rest.</li>
+                            <li><strong>Time Interval (\(\Delta t\)):</strong> Duration is universal (<a href="/physics/subtopic/absolute-time" class="subtopic-link"><strong>Absolute Time</strong></a>).</li>
                         </ul>
                     This triad of invariants forms the bedrock of <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the 18th and 19th centuries.</p>
 
                     <h3>2. Invariance of Newton's Second Law</h3>
-                    <p>The core of Galilean invariance is that acceleration is an invariant (\( \mathbf{a}' = \mathbf{a} \)). Since \( \mathbf{r}' = \mathbf{r} - \mathbf{v}t \), taking two time derivatives yields \( \ddot{\mathbf{r}}' = \ddot{\mathbf{r}} \). Because force (\( \mathbf{F} \)) and mass are also invariant, the equation \( \mathbf{F} = m\mathbf{a} \) is identical in all classical <strong>Inertial Frames</strong>. This ensures that the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of a falling apple are the same on a ship as they are on land.</p>
+                    <p>The core of Galilean invariance is that acceleration is an invariant (\(\mathbf{a}' = \mathbf{a}\)). Since \(\mathbf{r}' = \mathbf{r} - \mathbf{v}t\), taking two time derivatives yields \(\ddot{\mathbf{r}}' = \ddot{\mathbf{r}}\). Because force (\(\mathbf{F}\)) and mass are also invariant, the equation \(\mathbf{F} = m\mathbf{a}\) is identical in all classical <strong>Inertial Frames</strong>. This ensures that the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of a falling apple are the same on a ship as they are on land.</p>
 
                     <h3>3. <a href="/physics/subtopic/conservation-law" class="subtopic-link"><strong>Conservation Laws</strong></a> and Symmetry</h3>
                     <p>According to <a href="/physics/subtopic/noethers-theorem" class="subtopic-link"><strong>Noether's Theorem</strong></a>, Galilean invariance is linked to the <strong>Conservation</strong> of momentum and energy. 
                         <ul>
-                            <li><strong>Spatial Translation Symmetry:</strong> Laws don't change with position \(	o\) <strong>Momentum</strong> is conserved.</li>
-                            <li><strong>Time Translation Symmetry:</strong> Laws don't change with time \(	o\) <strong>Energy</strong> is conserved.</li>
+                            <li><strong>Spatial Translation Symmetry:</strong> Laws don't change with position \(\to\) <strong>Momentum</strong> is conserved.</li>
+                            <li><strong>Time Translation Symmetry:</strong> Laws don't change with time \(\to\) <strong>Energy</strong> is conserved.</li>
                         </ul>
                     These symmetries are the internal "Code" of the , dictating the stability of orbits and collisions.</p>
 
@@ -211,7 +204,7 @@
                     <p>The first sign that Galilean invariance was incomplete came from electromagnetism. <a href="/physics/subtopic/maxwells-equations" class="subtopic-link"><strong>Maxwell's Equations</strong></a> are <em>not</em> Galilean invariant; they predict a constant speed for <a href="/physics/subtopic/electromagnetic-radiation" class="subtopic-link"><strong>Electromagnetic Radiation</strong></a> that would change under a Galilean boost. This mismatch proved that either Newton was wrong or Maxwell was wrong, leading to the <strong>Theoretical Crisis</strong> that birthed <strong>Special Relativity</strong>.</p>
 
                     <h3>5. Transition to Lorentz Invariance</h3>
-                    <p>In the 20th century, Galilean invariance was replaced by <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariance</strong></a>. We discovered that length and time are not invariants, but are components of the <strong>Invariant Spacetime Interval</strong>. The Galilean group is now understood to be the <strong>non-relativistic</strong> limit of the Lorentz group, valid only when the <a href="/physics/subtopic/lorentz-factor" class="subtopic-link"><strong>Lorentz Factor</strong></a> (\( \gamma \)) is approximately 1.</p>
+                    <p>In the 20th century, Galilean invariance was replaced by <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariance</strong></a>. We discovered that length and time are not invariants, but are components of the <strong>Invariant Spacetime Interval</strong>. The Galilean group is now understood to be the <strong>non-relativistic</strong> limit of the Lorentz group, valid only when the <a href="/physics/subtopic/lorentz-factor" class="subtopic-link"><strong>Lorentz Factor</strong></a> (\(\gamma\)) is approximately 1.</p>
 
                     <h3>6. Epistemic Status: The Symmetry of Mechanics</h3>
                     <p>Galilean invariance remains the most important symmetry in <strong>Engineering</strong> and terrestrial physics. It tells us that there is no "Special" spot or speed in the classical . This <strong>Ontological</strong> equality of frames is the highest achievement of 17th-century thought, providing the logical foundation for the <strong>History of the Universe</strong> before the relativistic era.</p>    </div>
@@ -232,29 +225,30 @@
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \mathbf{F} = m \mathbf{a} 	o \mathbf{F}' = m' \mathbf{a}' \quad (	ext{Covariance}) \]
+                            \[ \mathbf{F} = m \mathbf{a} \to \mathbf{F}' = m' \mathbf{a}' \quad (\text{Covariance}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Rule consistency:</strong> Why the laws of physics don't break when you go from a stop to a constant speed.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -263,35 +257,36 @@
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Scalar Invariants                        </span>
+                            Invariant Length                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \Delta \mathbf{r}' = \Delta \mathbf{r} \quad (	ext{Length Invariance}) \]
+                            \[ \Delta \mathbf{r}' = \Delta \mathbf{r} \quad (\text{Length Invariance}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Scalar Invariants:</strong> The assumption that weight and length are absolute facts of an object.                                </p>
+                                    <strong>Invariant Length:</strong> Why the size of a box doesn't change when you move in classical physics.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -306,29 +301,30 @@
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \Delta t' = \Delta t \quad (	ext{Time Invariance}) \]
+                            \[ \Delta t' = \Delta t \quad (\text{Time Invariance}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Space balance:</strong> How the "sameness" of different locations leads to the conservation of momentum.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -343,61 +339,34 @@
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ E = \frac{1}{2}mv^2 \quad (	ext{Not invariant!}) \]
+                            \[ E = \frac{1}{2}mv^2 \quad (\text{Not invariant!}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Induction Fail:</strong> Why light-speed math proved that Galilean rules were only half-right.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="1c6f597d1cc5f73ee575ade189d1b56d">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -406,22 +375,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Galilean Transformation</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/velocity-transformation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Velocity Transformation</strong>
+                                    <a href="/physics/subtopic/uniformity-of-time" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Uniformity of Time</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/vector-addition-velocities" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Vector Addition of Velocities</strong>
+                                    <a href="/physics/subtopic/galilean-group" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Galilean Group</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/inertial-frames" class="btn btn-secondary">&larr; Back to Inertial Frames of Reference</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="1c6f597d1cc5f73ee575ade189d1b56d" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

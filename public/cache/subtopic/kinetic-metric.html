@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Kinetic Metric - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="55589440075c7b5caf3923be9263632c">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="55589440075c7b5caf3923be9263632c"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/analytical-mechanics">Analytical Mechanics and Variational Dynamics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/kinetic-energy">Kinetic Energy</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Kinetic Metric</span>
     </nav>
@@ -188,7 +181,7 @@
         <p>The <strong>Kinetic Metric</strong> (\( g_{ij} \)) is a Riemannian metric on the <a href="/physics/subtopic/configuration-space" class="subtopic-link"><strong>Configuration Space</strong></a> manifold that defines the "local distance" between states based on the system's mass and geometry. In university-level mechanics, the kinetic energy \( T \) is the quadratic form associated with this metric: \( T = \frac{1}{2} g_{ij} \dot{q}^i \dot{q}^j \). This identifies the <strong>Metric Tensor</strong> as the fundamental measure of <strong>Inertia</strong>, proving that the dynamics of a system are dictated by the "stiffness" of its manifold.</p>
 
                     <h3>1. The Geometry of Inertia</h3>
-                    <p>In Cartesian coordinates, the metric tensor is just a diagonal matrix of masses. However, in <a href="/physics/subtopic/generalized-coordinates" class="subtopic-link"><strong>Generalized Coordinates</strong></a> (like angles or lengths in a rotating frame), the metric becomes coordinate-dependent and non-diagonal. For example, in spherical coordinates, \( g_{	heta	heta} = mr^2 \). This shows that the "distance" moved in configuration space depends on how much mass is being displaced, linking <strong>Analytical Mechanics</strong> to the geometry of <strong>Minkowski Spacetime</strong>.</p>
+                    <p>In Cartesian coordinates, the metric tensor is just a diagonal matrix of masses. However, in <a href="/physics/subtopic/generalized-coordinates" class="subtopic-link"><strong>Generalized Coordinates</strong></a> (like angles or lengths in a rotating frame), the metric becomes coordinate-dependent and non-diagonal. For example, in spherical coordinates, \( g_{\theta\theta} = mr^2 \). This shows that the "distance" moved in configuration space depends on how much mass is being displaced, linking <strong>Analytical Mechanics</strong> to the geometry of <strong>Minkowski Spacetime</strong>.</p>
 
                     <h3>2. Defining the Line Element (ds)</h3>
                     <p>The <strong>Line Element</strong> \( ds^2 = g_{ij} dq^i dq^j \) represents the infinitesimal distance in configuration space. This distance is physically related to the <a href="/physics/subtopic/action-integral" class="subtopic-link"><strong>Action Integral</strong></a>. A path with a large "geometric length" corresponds to a path with high total kinetic energy. This allows mechanics to be reframed as a problem of finding the shortest or straightest possible path (a <strong>Geodesic</strong>) on the kinetic manifold.</p>
@@ -200,7 +193,7 @@
                     <p>A profound university-level result is <strong>Maupertuis' Principle</strong>, which shows that a particle with constant energy \( E \) in a potential \( V \) follows a geodesic of a modified metric: \( g_{ij}^{phys} = (E - V) g_{ij} \). This "Jacobi Metric" incorporates the <a href="/physics/subtopic/potential-energy" class="subtopic-link"><strong>Potential Energy</strong></a> into the geometry of space, proving that force can always be viewed as a curvature of the manifold rather than an external push.</p>
 
                     <h3>5. Kinetic Metric in Multi-Body Systems</h3>
-                    <p>For a system of \( N \) particles, the kinetic metric is a \( 3N 	imes 3N \) matrix that encodes all the mass-couplings. If the particles are connected (as in a <strong>Rigid Body</strong>), the metric is restricted to the 6-dimensional sub-manifold of translation and rotation. This <strong>Dimensional Reduction</strong> is the geometric reason why complex machines can be analyzed using a small number of <strong>Degrees of Freedom</strong>.</p>
+                    <p>For a system of \( N \) particles, the kinetic metric is a \( 3N \times 3N \) matrix that encodes all the mass-couplings. If the particles are connected (as in a <strong>Rigid Body</strong>), the metric is restricted to the 6-dimensional sub-manifold of translation and rotation. This <strong>Dimensional Reduction</strong> is the geometric reason why complex machines can be analyzed using a small number of <strong>Degrees of Freedom</strong>.</p>
 
                     <h3>6. Quantum Metric: The Fisher Information</h3>
                     <p>In <strong>Quantum Mechanics</strong> and information theory, the kinetic metric has a counterpart called the <strong>Fisher Information Metric</strong>. It measures the "distance" between different <strong>Probability Distributions</strong>. Just as the kinetic metric determines the path of a classical particle, the information metric determines the speed and direction of <strong>Wave Function</strong> evolution, linking the <strong>Born Interpretation</strong> to the Riemannian geometry of the vacuum.</p>    </div>
@@ -228,22 +221,23 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Inertia Rule:</strong> The mathematical grid that weights different movements based on mass and distance.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -265,22 +259,23 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Coordinate Matrix:</strong> The array of numbers that describes the local geometry of the configuration space.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -302,22 +297,23 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Space Step:</strong> The infinitesimal measure of "physical effort" required to move between two states.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -332,61 +328,34 @@
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \Gamma^k_{ij} = 	ext{Metric Derivatives} \quad (	ext{Inertial Connection}) \]
+                            \[ \Gamma^k_{ij} = \text{Metric Derivatives} \quad (\text{Inertial Connection}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Natural Path:</strong> Why objects in space "want" to follow the lines of least metric resistance.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="55589440075c7b5caf3923be9263632c">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -407,10 +376,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/kinetic-energy" class="btn btn-secondary">&larr; Back to Kinetic Energy</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="55589440075c7b5caf3923be9263632c" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

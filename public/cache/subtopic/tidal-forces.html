@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tidal Forces and Curvature - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="0efe0e9c47288345d168a6a41a665aad">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="0efe0e9c47288345d168a6a41a665aad"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/relativity">Relativity</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/geodesic-motion">Geodesic Motion and Free-Fall</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Tidal Forces and Curvature</span>
     </nav>
@@ -188,16 +179,12 @@
         <p><strong>Tidal Forces</strong> are the secondary effects of a non-uniform gravitational field, manifesting as a differential "stretching" or "squeezing" force on an extended body. In university-level physics, tidal forces are the physical signature of the <a href="/physics/subtopic/curvature-of-spacetime" class="subtopic-link"><strong>Curvature of Spacetime</strong></a>. While the <strong>Equivalence Principle</strong> cancel gravity at a single point, it cannot cancel the <a href="/physics/subtopic/geodesic-deviation" class="subtopic-link"><strong>Geodesic Deviation</strong></a> between two neighboring points, revealing the 's geometry.</p>
 
                     <h3>1. Newtonian Tidal Gradient</h3>
-                    <p>In classical gravity, tidal forces arise because the 1/r^2 pull is stronger on the side of an object closer to the source. The tidal acceleration is proportional to the gradient of the field: \( a_{tidal} \propto \partial \mathbf{g} / \partial r \propto 1/r^3 \). This why the Moon causes tides on Earth: the water on the near side is pulled harder than the water on the far side, creating a 4D deformation of the planet's surface.</p>
+                    <p>In classical gravity, tidal forces arise because the 1/r^2 pull is stronger on the side of an object closer to the source. The tidal acceleration is proportional to the gradient of the field: \(a_{tidal} \propto \partial \mathbf{g} / \partial r \propto 1/r^3\). This why the Moon causes tides on Earth: the water on the near side is pulled harder than the water on the far side, creating a 4D deformation of the planet's surface.</p>
 
                     <h3>2. The Equation of Geodesic Deviation</h3>
                     <p>In <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a>, tidal forces are described by the <strong>Equation of Geodesic Deviation</strong>:
-                    \[ \frac{D^2 \xi^\mu}{d	au^2} = R^\mu_{
-u
-ho\sigma} u^
-u \xi^
-ho u^\sigma \]
-                    This equation relates the relative acceleration of two test particles (\( \xi \)) to the <strong>Riemann Curvature Tensor</strong>. It proves that what we call "Tidal Force" is literally the mathematical <strong>Curvature</strong> of space and time acting on matter.</p>
+                    \[\frac{D^2 \xi^\mu}{d\tau^2} = R^\mu_{\nu\rho\sigma} u^\nu \xi^\rho u^\sigma\]
+                    This equation relates the relative acceleration of two test particles (\(\xi\)) to the <strong>Riemann Curvature Tensor</strong>. It proves that what we call "Tidal Force" is literally the mathematical <strong>Curvature</strong> of space and time acting on matter.</p>
 
                     <h3>3. Squeezing and Stretching: Spaghettification</h3>
                     <p>Tidal forces are always <strong>anisotropic</strong>. Near a <strong>Black Hole</strong>, an object is stretched in the radial direction and squeezed in the transverse directions. As the object approaches the <strong>Schwarzschild Radius</strong>, these forces can exceed the <strong>Strong Interaction</strong> and electromagnetic bonds of atoms, leading to "Spaghettification"—the total dissolution of the object into a 1D stream of matter.</p>
@@ -206,7 +193,7 @@ ho u^\sigma \]
                     <p>The <strong>Roche Limit</strong> is the distance at which the tidal forces of a massive body exceed the internal gravity of a satellite. If a moon or star crosses this limit, it is torn apart. In <strong>Astrophysics</strong>, this process creates the <a href="/physics/subtopic/accretion-disk" class="subtopic-link"><strong>Accretion Disks</strong></a> seen around black holes and provides a mechanism for <strong>Tidal Disruption Events (TDEs)</strong>, linking 4D geometry to the brightest flares in the sky.</p>
 
                     <h3>5. Tidal Effects in Gravitational Waves</h3>
-                    <p><a href="/physics/subtopic/gravitational-waves" class="subtopic-link"><strong>Gravitational Waves</strong></a> are essentially moving tidal forces. As a wave passes, it stretches and squeezes the  in a <strong>transverse</strong> pattern. Detectors like <strong>LIGO</strong> measure these tiny tidal deviations (\( \sim 10^{-18} 	ext{ m} \)) between suspended mirrors. This proves that curvature can exist and propagate independently of a static mass source, carrying energy through the 4D vacuum.</p>
+                    <p><a href="/physics/subtopic/gravitational-waves" class="subtopic-link"><strong>Gravitational Waves</strong></a> are essentially moving tidal forces. As a wave passes, it stretches and squeezes the  in a <strong>transverse</strong> pattern. Detectors like <strong>LIGO</strong> measure these tiny tidal deviations (\(\sim 10^{-18} \text{ m}\)) between suspended mirrors. This proves that curvature can exist and propagate independently of a static mass source, carrying energy through the 4D vacuum.</p>
 
                     <h3>6. Epistemic Status: The Reality of Force</h3>
                     <p>While the "Force of Gravity" is an <strong>Epistemic</strong> illusion of coordinates, Tidal Force is <strong>Ontologically</strong> real. No choice of <strong>Inertial Frame</strong> can make tidal forces disappear. They are the "Intrinsic" part of gravity that defines the <strong>Geometric Origin</strong> of the universe, anchoring <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the non-vanishing components of the Riemann tensor.</p>    </div>
@@ -234,22 +221,23 @@ ho u^\sigma \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Differential Pull:</strong> Why gravity feels stronger on the part of you that is closer to the ground.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -264,33 +252,39 @@ ho u^\sigma \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{D^2 \xi^\mu}{d	au^2} = R^\mu_{
-u
-ho\sigma} U^
-u \xi^
-ho U^\sigma \]
+                            \[ \frac{D^2 \xi^\mu}{d\tau^2} = R^\mu_{\nu\rho\sigma} U^\nu \xi^\rho U^\sigma \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Infinite Stretch:</strong> The extreme tidal effect near a black hole that pulls matter into long strings.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \sigma \):</span> 
+                                                                                    <a href="/physics/constants#sigma-sb" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Stefan-Boltzmann Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -305,31 +299,30 @@ ho U^\sigma \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ R_{Roche} \approx 2.44 R_M (
-ho_M/
-ho_m)^{1/3} \]
+                            \[ R_{Roche} \approx 2.44 R_M (\rho_M/\rho_m)^{1/3} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Destruction Limit:</strong> The point where a planet's gravity tears its moon into rings.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -344,61 +337,34 @@ ho_m)^{1/3} \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ F_{tide} \propto 	ext{Mass} / 	ext{Distance}^3 \]
+                            \[ F_{tide} \propto \text{Mass} / \text{Distance}^3 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Geodesic Deviation:</strong> How we use the relative motion of two particles to "feel" the shape of space.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="0efe0e9c47288345d168a6a41a665aad">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -419,10 +385,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/geodesic-motion" class="btn btn-secondary">&larr; Back to Geodesic Motion and Free-Fall</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="0efe0e9c47288345d168a6a41a665aad" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

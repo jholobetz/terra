@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reynolds Transport Theorem - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="a0978dd34c7a322baf62f8e10b2373e5">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="a0978dd34c7a322baf62f8e10b2373e5"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/classical-mechanics">Classical Mechanics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/newtons-second-law">The Equation of Motion</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Reynolds Transport Theorem</span>
     </nav>
@@ -189,14 +180,11 @@
 
                   <h3>1. The Fundamental Identity</h3>
                   <p>RTT states that the time derivative of an extensive property \( N \) of a system is equal to the rate of change of \( N \) within the control volume plus the net <strong>flux</strong> of \( N \) through the boundaries:
-                  \[ \frac{dN_{sys}}{dt} = \frac{d}{dt} \int_{CV} \eta 
-ho dV + \oint_{CS} \eta 
-ho (\mathbf{v} \cdot \hat{\mathbf{n}}) dA \]
+                  \[ \frac{dN_{sys}}{dt} = \frac{d}{dt} \int_{CV} \eta \rho dV + \oint_{CS} \eta \rho (\mathbf{v} \cdot \hat{\mathbf{n}}) dA \]
                   where \( \eta \) is the property per unit mass. This theorem ensures that physical laws (like the conservation of mass or momentum) are satisfied even when we observe them from a fixed 4D window in space.</p>
 
                   <h3>2. Link to Newton's Second Law</h3>
-                  <p>Applying RTT to momentum (\( \mathbf{P} = \int \mathbf{v} 
-ho dV \)) yields the integral form of the <strong>Equation of Motion</strong> for fluids. It accounts for the force required to accelerate the fluid inside a volume and the force required to handle the momentum flux of fluid entering or leaving. this is rigorous foundation for <strong>Rocketry</strong> and jet propulsion, where the momentum "Exhausted" into the  provides the thrust.</p>
+                  <p>Applying RTT to momentum (\( \mathbf{P} = \int \mathbf{v} \rho dV \)) yields the integral form of the <strong>Equation of Motion</strong> for fluids. It accounts for the force required to accelerate the fluid inside a volume and the force required to handle the momentum flux of fluid entering or leaving. this is rigorous foundation for <strong>Rocketry</strong> and jet propulsion, where the momentum "Exhausted" into the  provides the thrust.</p>
 
                   <h3>3. Conservation of Mass</h3>
                   <p>When applied to mass (\( \eta = 1 \)), RTT derives the <strong>Continuity Equation</strong>. It proves that any change in mass within a region must be balanced by a flow across its surface. This 4D <a href="/physics/subtopic/spacetime-causal-topology" class="subtopic-link"><strong>Causal Topology</strong></a> of "What goes in must come out (or stay)" is the non-negotiable constraint on all <strong>Astrophysical Fluid Dynamics</strong> and planetary atmosphere models.</p>
@@ -227,54 +215,27 @@ ho dV \)) yields the integral form of the <strong>Equation of Motion</strong> fo
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Eulerian View:</strong> The fixed region in space where properties are monitored over time.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="a0978dd34c7a322baf62f8e10b2373e5">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -295,10 +256,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/newtons-second-law" class="btn btn-secondary">&larr; Back to The Equation of Motion</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="a0978dd34c7a322baf62f8e10b2373e5" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

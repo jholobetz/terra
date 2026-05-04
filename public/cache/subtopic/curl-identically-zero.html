@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Curl is Identically Zero - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="c770191df7670eeb3dac86bf421c3eb4">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="c770191df7670eeb3dac86bf421c3eb4"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/gradient">The Gradient (\( \nabla \))</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Curl is Identically Zero</span>
     </nav>
@@ -185,30 +176,22 @@
     </header>
     
     <div class="content-body">
-        <p>The <strong>Curl is identically zero</strong> property is a fundamental theorem of <a href="/physics/subtopic/vector-calculus" class="subtopic-link"><strong>Vector Calculus</strong></a> stating that the <strong>curl</strong> of the <strong>gradient</strong> of any smooth scalar field is always the zero vector. In university-level physics, this identity (\( 
-abla 	imes 
-abla \phi = 0 \)) is the mathematical requirement for the existence of <a href="/physics/subtopic/scalar-potentials" class="subtopic-link"><strong>Scalar Potentials</strong></a> and the defining characteristic of <strong>Conservative Force Fields</strong>.</p>
+        <p>The <strong>Curl is identically zero</strong> property is a fundamental theorem of <a href="/physics/subtopic/vector-calculus" class="subtopic-link"><strong>Vector Calculus</strong></a> stating that the <strong>curl</strong> of the <strong>gradient</strong> of any smooth scalar field is always the zero vector. In university-level physics, this identity (\( \nabla \times \nabla \phi = 0 \)) is the mathematical requirement for the existence of <a href="/physics/subtopic/scalar-potentials" class="subtopic-link"><strong>Scalar Potentials</strong></a> and the defining characteristic of <strong>Conservative Force Fields</strong>.</p>
 
                     <h3>1. The Calculus Proof</h3>
                     <p>The identity arises from the equality of mixed partial derivatives (Clairaut's Theorem). When you take the curl of a gradient, the components involve terms like \( \frac{\partial^2 \phi}{\partial x \partial y} - \frac{\partial^2 \phi}{\partial y \partial x} \). For any twice-differentiable field, these terms cancel exactly. This "Geometric Cancellation" proves that the "Swirl" of a "Slope" is zero, providing the  baseline for <a href="/physics/subtopic/potential-theory" class="subtopic-link"><strong>Potential Theory</strong></a>.</p>
 
                     <h3>2. <a href="/physics/subtopic/irrotational-fields" class="subtopic-link"><strong>Irrotational Fields</strong></a> and conservative forces</h3>
-                    <p>A vector field \( \mathbf{F} \) is called <strong>irrotational</strong> if its curl is zero. The "Identically Zero" property proves that <em>any</em> field derived from a potential (\( \mathbf{F} = -
-abla \Phi \)) is automatically irrotational. This ensures that the <strong>electric field</strong> in electrostatics and the gravitational field of a point mass have zero circulation, dictating that moving a <strong>Fermion</strong> in a <strong>closed path</strong> does zero net work.</p>
+                    <p>A vector field \( \mathbf{F} \) is called <strong>irrotational</strong> if its curl is zero. The "Identically Zero" property proves that <em>any</em> field derived from a potential (\( \mathbf{F} = -\nabla \Phi \)) is automatically irrotational. This ensures that the <strong>electric field</strong> in electrostatics and the gravitational field of a point mass have zero circulation, dictating that moving a <strong>Fermion</strong> in a <strong>closed path</strong> does zero net work.</p>
 
                     <h3>3. Simple Connectedness and Exceptions</h3>
-                    <p>A university-level nuance is the requirement for a <strong>simply connected</strong> domain. In regions with "Holes" (like the space around a long wire carrying current), a field can have \( 
-abla 	imes \mathbf{B} = 0 \) locally but still have a non-zero integral around the hole. This distinction is critical in <strong>Electrodynamics</strong>, as it allows for the existence of <strong>Magnetic Fields</strong> that "swirl" despite being curl-free in specific sub-regions.</p>
+                    <p>A university-level nuance is the requirement for a <strong>simply connected</strong> domain. In regions with "Holes" (like the space around a long wire carrying current), a field can have \( \nabla \times \mathbf{B} = 0 \) locally but still have a non-zero integral around the hole. This distinction is critical in <strong>Electrodynamics</strong>, as it allows for the existence of <strong>Magnetic Fields</strong> that "swirl" despite being curl-free in specific sub-regions.</p>
 
                     <h3>4. Potential Reconstruction</h3>
-                    <p>The "Identically Zero" property also works in reverse: if \( 
-abla 	imes \mathbf{A} = 0 \), then \( \mathbf{A} \) <em>can</em> be written as a gradient. This "Poincaré Lemma" allows physicists to "Reconstruct" the voltage or energy landscape just by measuring the force directions. It is the primary tool for finding <strong>potential-relation</strong> mappings in <strong>Analytical Mechanics</strong>.</p>
+                    <p>The "Identically Zero" property also works in reverse: if \( \nabla \times \mathbf{A} = 0 \), then \( \mathbf{A} \) <em>can</em> be written as a gradient. This "Poincaré Lemma" allows physicists to "Reconstruct" the voltage or energy landscape just by measuring the force directions. It is the primary tool for finding <strong>potential-relation</strong> mappings in <strong>Analytical Mechanics</strong>.</p>
 
                     <h3>5. Identity in Curved Spacetime</h3>
-                    <p>In <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a>, this identity is generalized. The commutator of <strong>Covariant Derivatives</strong> acting on a scalar is zero: \( [
-abla_\mu, 
-abla_
-u] \phi = 0 \). This symmetry ensures that the  does not possess "Torsion" of the scalar density, a fact essential for the consistency of the <strong>Einstein Field Equations</strong> and the  of the <strong>observable universe</strong>.</p>
+                    <p>In <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a>, this identity is generalized. The commutator of <strong>Covariant Derivatives</strong> acting on a scalar is zero: \( [\nabla_\mu, \nabla_\nu] \phi = 0 \). This symmetry ensures that the  does not possess "Torsion" of the scalar density, a fact essential for the consistency of the <strong>Einstein Field Equations</strong> and the  of the <strong>observable universe</strong>.</p>
 
                     <h3>6. Epistemic Status: The Stability of Potentials</h3>
                     <p>This identity is an <strong>Ontological</strong> guardrail. It tells us that energy can be stored in a field without it "leaking" into circular eddies. It anchors <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the belief that the universe follows exact mathematical symmetries. The fact that the curl is identically zero is what makes the 4D <strong>Block Universe</strong> predictable, ensuring that energy <strong>Conservation</strong> is a robust 4D law.</p>    </div>
@@ -229,31 +212,39 @@ u] \phi = 0 \). This symmetry ensures that the  does not possess "Torsion" of th
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla 	imes (
-abla \phi) = 0 \]
+                            \[ \nabla \times (\nabla \phi) = 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Geometric Rule:</strong> The rule that you can't have a "whirlpool" in a field that is just a simple slope.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \phi \):</span> 
+                                                                                    <a href="/physics/subtopic/scalar-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Scalar Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -268,30 +259,39 @@ abla \phi) = 0 \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \oint (
-abla \phi) \cdot d\mathbf{l} = 0 \]
+                            \[ \oint (\nabla \phi) \cdot d\mathbf{l} = 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Calculus Root:</strong> Why the identity depends on the order of derivatives not mattering.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \phi \):</span> 
+                                                                                    <a href="/physics/subtopic/scalar-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Scalar Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -313,22 +313,32 @@ abla \phi) \cdot d\mathbf{l} = 0 \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Conservative Proof:</strong> Why any field with a "Voltage" cannot have circular "Swirls."                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \phi \):</span> 
+                                                                                    <a href="/physics/subtopic/scalar-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Scalar Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -343,64 +353,43 @@ abla \phi) \cdot d\mathbf{l} = 0 \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ [
-abla_\mu, 
-abla_
-u] \phi = 0 \quad (	ext{Scalar Torsion-Free}) \]
+                            \[ [\nabla_\mu, \nabla_\nu] \phi = 0 \quad (\text{Scalar Torsion-Free}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Reconstruction:</strong> How the zero-curl rule lets us find the energy map from the force map.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \phi \):</span> 
+                                                                                    <a href="/physics/subtopic/scalar-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Scalar Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="c770191df7670eeb3dac86bf421c3eb4">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -421,10 +410,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/gradient" class="btn btn-secondary">&larr; Back to The Gradient (\( \nabla \))</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="c770191df7670eeb3dac86bf421c3eb4" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

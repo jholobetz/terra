@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Charge-Current 4-Vector (\(J^\mu\)) - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="c2bb384d4b3e1a9ce0116d55e31dc8d9">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="c2bb384d4b3e1a9ce0116d55e31dc8d9"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/maxwells-correction">Maxwell's Correction and Displacement Current</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Charge-Current 4-Vector (\(J^\mu\))</span>
     </nav>
@@ -185,19 +176,15 @@
     </header>
     
     <div class="content-body">
-        <p>The <strong>Charge-Current 4-Vector</strong> (\(J^\mu\)) is the relativistic object that unifies electric charge density (\(
-ho\)) and current density (\(\mathbf{J}\)) into a single 4D quantity. In university-level relativity, this unification is essential for maintaining <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariance</strong></a>, proving that what one observer sees as a "Static Charge" another may see as a "Moving Current."</p>
+        <p>The <strong>Charge-Current 4-Vector</strong> (\(J^\mu\)) is the relativistic object that unifies electric charge density (\(\rho\)) and current density (\(\mathbf{J}\)) into a single 4D quantity. In university-level relativity, this unification is essential for maintaining <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariance</strong></a>, proving that what one observer sees as a "Static Charge" another may see as a "Moving Current."</p>
 
                   <h3>1. Defining the 4-Vector</h3>
                   <p>In 4D Minkowski spacetime, the 4-current is defined as:
-                  \[ J^\mu = (c
-ho, J_x, J_y, J_z) \]
+                  \[ J^\mu = (c\rho, J_x, J_y, J_z) \]
                   This structure ensures that the total charge of a system is an invariant quantity (a <strong>Lorentz Scalar</strong>), even though the density and flow appear different in different inertial frames. This geometric view is the foundation of <a href="/physics/subtopic/manifestly-covariant" class="subtopic-link"><strong>Manifestly Covariant</strong></a> electrodynamics.</p>
 
                   <h3>2. <a href="/physics/subtopic/continuity-equation" class="subtopic-link"><strong>The Continuity Equation</strong></a> as a 4-Divergence</h3>
-                  <p>The law of charge conservation, which classically requires two separate terms (\(\partial 
-ho/\partial t + 
-abla \cdot \mathbf{J} = 0\)), is expressed with radical simplicity in 4D notation as the vanishing of the 4-divergence:
+                  <p>The law of charge conservation, which classically requires two separate terms (\(\partial \rho/\partial t + \nabla \cdot \mathbf{J} = 0\)), is expressed with radical simplicity in 4D notation as the vanishing of the 4-divergence:
                   \[ \partial_\mu J^\mu = 0 \]
                   This single equation captures the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of charge conservation, asserting that charge cannot be created or destroyed at any point in the 4D <strong>Block Universe</strong>.</p>
 
@@ -205,10 +192,7 @@ abla \cdot \mathbf{J} = 0\)), is expressed with radical simplicity in 4D notatio
                   <p>Under a <strong>Lorentz Boost</strong>, the components of \(J^\mu\) transform like space and time coordinates. A high charge density in its rest frame will appear as a higher density and a current in a moving frame due to <strong>Length Contraction</strong>. This transformation is what guarantees that the <strong>Maxwell Equations</strong> yield consistent results for all observers, anchoring <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the geometry of the manifold.</p>
 
                   <h3>4. Source of the Field Tensor</h3>
-                  <p>In the covariant formulation, the charge-current 4-vector acts as the source for the <strong>Electromagnetic Field Tensor</strong> (\(F^{\mu
-u}\)). The inhomogeneous Maxwell equations collapse into \(\partial_\mu F^{\mu
-u} = \mu_0 J^
-u\). This proves that <strong>Maxwell's Correction</strong> is not an ad-hoc addition but a geometric necessity of the , required to keep the source terms consistent with the 4D <a href="/physics/subtopic/spacetime-causal-topology" class="subtopic-link"><strong>Causal Topology</strong></a>.</p>    </div>
+                  <p>In the covariant formulation, the charge-current 4-vector acts as the source for the <strong>Electromagnetic Field Tensor</strong> (\(F^{\mu\nu}\)). <a href="/physics/subtopic/inhomogeneous-maxwell" class="subtopic-link"><strong>The inhomogeneous Maxwell equations</strong></a> collapse into \(\partial_\mu F^{\mu\nu} = \mu_0 J^\nu\). This proves that <strong>Maxwell's Correction</strong> is not an ad-hoc addition but a geometric necessity of the , required to keep the source terms consistent with the 4D <a href="/physics/subtopic/spacetime-causal-topology" class="subtopic-link"><strong>Causal Topology</strong></a>.</p>    </div>
 
     <section class="equations-section">
     <h2>Key Theoretical Identities</h2>
@@ -220,36 +204,45 @@ u\). This proves that <strong>Maxwell's Correction</strong> is not an ad-hoc add
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Unified Source                        </span>
+                            <a href="/physics/subtopic/inhomogeneous-maxwell" class="subtopic-link">Inhomogeneous Maxwell</a>                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ J^\mu = (c
-ho, \mathbf{J}) \]
+                            \[ J^\mu = (c\rho, \mathbf{J}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Unified Source:</strong> The 4-vector combining static matter density and relativistic motion.                                </p>
+                                    <strong><a href="/physics/subtopic/inhomogeneous-maxwell" class="subtopic-link">Inhomogeneous Maxwell</a>:</strong> The unified tensor form of the source-dependent electromagnetic laws.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -258,7 +251,7 @@ ho, \mathbf{J}) \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Total Conservation                        </span>
+                            Noether Current Identity                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
@@ -271,22 +264,23 @@ ho, \mathbf{J}) \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Total Conservation:</strong> The covariant expression of the principle that charge is never created or destroyed.                                </p>
+                                    <strong>Noether Current Identity:</strong> The fundamental rule asserting that the four-divergence of the symmetry current identically vanishes, representing local conservation.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -295,79 +289,59 @@ ho, \mathbf{J}) \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Technical Relation                        </span>
+                            <a href="/physics/subtopic/homogeneous-maxwell" class="subtopic-link">Homogeneous Maxwell</a>                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \partial_\mu F^{\mu
-u} = \mu_0 J^
-u \]
+                            \[ \partial_\mu F^{\mu\nu} = \mu_0 J^\nu \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Mathematical Context:</strong> This formula describes a key relationship within The Charge-Current 4-Vector (\(J^\mu\)).                                </p>
+                                    <strong><a href="/physics/subtopic/homogeneous-maxwell" class="subtopic-link">Homogeneous Maxwell</a>:</strong> The geometric identity ensuring field consistency and the absence of magnetic monopoles.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mu_0 \):</span> 
+                                                                                    <a href="/physics/constants#mu-0" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Vacuum Permeability</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="c2bb384d4b3e1a9ce0116d55e31dc8d9">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/covariant-inhomogeneous-equation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Covariant Inhomogeneous Maxwell Equation</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
                                     <a href="/physics/subtopic/electromagnetic-current-physics" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Electromagnetic Current</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/covariant-inhomogeneous-equation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Covariant Inhomogeneous Maxwell Equation</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/relativistic-unification" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
@@ -378,10 +352,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/maxwells-correction" class="btn btn-secondary">&larr; Back to Maxwell's Correction and Displacement Current</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="c2bb384d4b3e1a9ce0116d55e31dc8d9" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

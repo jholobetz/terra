@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Electromagnetic Wave Equation - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="32dd9b6baa74c870d6bdcfce992faf72">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="32dd9b6baa74c870d6bdcfce992faf72"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,8 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Electromagnetic Wave Equation</span>
     </nav>
@@ -188,36 +177,22 @@
         <p>The Electromagnetic Wave Equation is a second-order partial differential equation that describes the propagation of electromagnetic waves through a medium or a vacuum. Derived from Maxwell's equations, it represents theoretical pinnacle of classical electrodynamics, proving that light is an electromagnetic phenomenon and establishing the foundation for the field of optics and modern communications.</p>
 
                     <h3>1. Derivation from Maxwell's Equations</h3>
-                    <p>In a vacuum (where charge density \( 
-ho = 0 \) and current density \( \mathbf{J} = 0 \)), the wave equation is derived by taking the curl of the rotational Maxwell equations. For the electric field:
-                    \[ 
-abla 	imes (
-abla 	imes \mathbf{E}) = 
-abla 	imes \left( -\frac{\partial \mathbf{B}}{\partial t} 
-ight) \]
-                    Using the vector identity \( 
-abla 	imes (
-abla 	imes \mathbf{E}) = 
-abla(
-abla \cdot \mathbf{E}) - 
-abla^2 \mathbf{E} \) and substituting <a href="/physics/subtopic/gausss-law" class="subtopic-link"><strong>Gauss's Law</strong></a> (\( 
-abla \cdot \mathbf{E} = 0 \)), we arrive at the standard 3D wave equation:
-                    \[ 
-abla^2 \mathbf{E} = \mu_0 \varepsilon_0 \frac{\partial^2 \mathbf{E}}{\partial t^2} \]
-                    A identical derivation for the magnetic field yields \( 
-abla^2 \mathbf{B} = \mu_0 \varepsilon_0 \frac{\partial^2 \mathbf{B}}{\partial t^2} \), demonstrating that both fields propagate as waves through spacetime.</p>
+                    <p>In a vacuum (where charge density \( \rho = 0 \) and current density \( \mathbf{J} = 0 \)), the wave equation is derived by taking the curl of the rotational Maxwell equations. For the electric field:
+                    \[ \nabla \times (\nabla \times \mathbf{E}) = \nabla \times \left( -\frac{\partial \mathbf{B}}{\partial t} \right) \]
+                    Using the vector identity \( \nabla \times (\nabla \times \mathbf{E}) = \nabla(\nabla \cdot \mathbf{E}) - \nabla^2 \mathbf{E} \) and substituting <a href="/physics/subtopic/gausss-law" class="subtopic-link"><strong>Gauss's Law</strong></a> (\( \nabla \cdot \mathbf{E} = 0 \)), we arrive at the standard 3D wave equation:
+                    \[ \nabla^2 \mathbf{E} = \mu_0 \varepsilon_0 \frac{\partial^2 \mathbf{E}}{\partial t^2} \]
+                    A identical derivation for the magnetic field yields \( \nabla^2 \mathbf{B} = \mu_0 \varepsilon_0 \frac{\partial^2 \mathbf{B}}{\partial t^2} \), demonstrating that both fields propagate as waves through spacetime.</p>
 
                     <h3>2. The Significance of the Speed of Light (\( c \))</h3>
-                    <p>The wave equation identifies the velocity of propagation as \( v = 1/\sqrt{\mu_0 \varepsilon_0} \). When James Clerk Maxwell calculated this value using measured constants for vacuum permittivity and permeability, he found it to be approximately \( 3 	imes 10^8 \) m/s—exactly the measured speed of light. This "Numerical Coincidence" led to the profound realization that light is not a separate entity but a self-sustaining oscillation of electromagnetic fields. In modern physics, \( c \) is viewed not just as a speed but as a fundamental constant of the spacetime metric.</p>
+                    <p>The wave equation identifies the velocity of propagation as \( v = 1/\sqrt{\mu_0 \varepsilon_0} \). When James Clerk Maxwell calculated this value using measured constants for vacuum permittivity and permeability, he found it to be approximately \( 3 \times 10^8 \) m/s—exactly the measured speed of light. This "Numerical Coincidence" led to the profound realization that light is not a separate entity but a self-sustaining oscillation of electromagnetic fields. In modern physics, \( c \) is viewed not just as a speed but as a fundamental constant of the spacetime metric.</p>
 
                     <h3>3. Harmonic Plane Wave Solutions</h3>
                     <p>The simplest and most physically significant solutions to the wave equation are <a href="/physics/subtopic/monochromatic-plane-waves" class="subtopic-link"><strong>Monochromatic Plane Waves</strong></a>. These are represented in complex notation as:
-                    \[ 	ilde{\mathbf{E}}(\mathbf{r},t) = \mathbf{E}_0 e^{i(\mathbf{k} \cdot \mathbf{r} - \omega t)} \]
+                    \[ \tilde{\mathbf{E}}(\mathbf{r},t) = \mathbf{E}_0 e^{i(\mathbf{k} \cdot \mathbf{r} - \omega t)} \]
                     Where \( \mathbf{k} \) is the <a href="/physics/subtopic/propagation-vector" class="subtopic-link"><strong>Propagation Vector</strong></a> (pointing in the direction of travel) and \( \omega \) is the angular frequency. For these solutions to satisfy the wave equation, the dispersion relation \( \omega = ck \) must hold. Plane waves serve as the "basis functions" for more complex wave packets through <a href="/physics/subtopic/fourier-synthesis" class="subtopic-link"><strong>Fourier Synthesis</strong></a>.</p>
 
                     <h3>4. Transverse Nature and Polarization</h3>
-                    <p>Maxwell's equations impose strict constraints on the geometry of electromagnetic waves. <a href="/physics/subtopic/gausss-law" class="subtopic-link"><strong>Gauss's Law</strong></a> (\( 
-abla \cdot \mathbf{E} = 0 \)) implies that \( \mathbf{k} \cdot \mathbf{E}_0 = 0 \), meaning the electric field must be perpendicular to the direction of propagation. Similarly, \( \mathbf{B} \) is perpendicular to both \( \mathbf{k} \) and \( \mathbf{E} \). This <a href="/physics/subtopic/transverse-nature" class="subtopic-link"><strong>Transverse Nature</strong></a> allows for the phenomenon of <a href="/physics/subtopic/polarization" class="subtopic-link"><strong>Polarization</strong></a>—the orientation of the electric field vector in the plane perpendicular to motion—which is essential for technologies ranging from 3D cinema to satellite communications.</p>
+                    <p>Maxwell's equations impose strict constraints on the geometry of electromagnetic waves. <a href="/physics/subtopic/gausss-law" class="subtopic-link"><strong>Gauss's Law</strong></a> (\( \nabla \cdot \mathbf{E} = 0 \)) implies that \( \mathbf{k} \cdot \mathbf{E}_0 = 0 \), meaning the electric field must be perpendicular to the direction of propagation. Similarly, \( \mathbf{B} \) is perpendicular to both \( \mathbf{k} \) and \( \mathbf{E} \). This <a href="/physics/subtopic/transverse-nature" class="subtopic-link"><strong>Transverse Nature</strong></a> allows for the phenomenon of <a href="/physics/subtopic/polarization" class="subtopic-link"><strong>Polarization</strong></a>—the orientation of the electric field vector in the plane perpendicular to motion—which is essential for technologies ranging from 3D cinema to satellite communications.</p>
 
                     <h3>5. Energy Transport and Phase Relations</h3>
                     <p>In a vacuum, the electric and magnetic fields of a plane wave are in phase and their magnitudes are related by \( E_0 = c B_0 \). This phase-locking ensures a steady flow of energy, characterized by the <a href="/physics/subtopic/poynting-vector" class="subtopic-link"><strong>Poynting Vector</strong></a>. Because the energy density of the electric field (\( \frac{1}{2}\varepsilon_0 E^2 \)) and magnetic field (\( \frac{1}{2\mu_0} B^2 \)) are equal, the total energy is distributed symmetrically between the two components, moving through space as a unified "wavefront" of physical influence.</p>
@@ -245,30 +220,43 @@ abla \cdot \mathbf{E} = 0 \)) implies that \( \mathbf{k} \cdot \mathbf{E}_0 = 0 
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla^2 \mathbf{E} = \frac{1}{c^2} \frac{\partial^2 \mathbf{E}}{\partial t^2} \]
+                            \[ \nabla^2 \mathbf{E} = \frac{1}{c^2} \frac{\partial^2 \mathbf{E}}{\partial t^2} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong><a href="/physics/subtopic/wave-equation-physics" class="subtopic-link">The Wave Equation</a>:</strong> The second-order PDE describing how the electric field propagates as a wave through space and time.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{E} \):</span> 
+                                                                                    <a href="/physics/subtopic/electric-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Electric Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -290,22 +278,36 @@ abla^2 \mathbf{E} = \frac{1}{c^2} \frac{\partial^2 \mathbf{E}}{\partial t^2} \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong><a href="/physics/subtopic/velocity-of-light" class="subtopic-link">Velocity of Light</a>:</strong> Relates the speed of propagation to the fundamental electromagnetic constants of the vacuum.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mu_0 \):</span> 
+                                                                                    <a href="/physics/constants#mu-0" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Vacuum Permeability</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -320,29 +322,39 @@ abla^2 \mathbf{E} = \frac{1}{c^2} \frac{\partial^2 \mathbf{E}}{\partial t^2} \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 	ilde{\mathbf{E}}(\mathbf{r},t) = \mathbf{E}_0 e^{i(\mathbf{k} \cdot \mathbf{r} - \omega t)} \]
+                            \[ \tilde{\mathbf{E}}(\mathbf{r},t) = \mathbf{E}_0 e^{i(\mathbf{k} \cdot \mathbf{r} - \omega t)} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong><a href="/physics/subtopic/wave-phase" class="subtopic-link">Wave Phase</a>:</strong> The argument of the harmonic solution, defining the spatial and temporal oscillation of the wavefront.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{E} \):</span> 
+                                                                                    <a href="/physics/subtopic/electric-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Electric Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -364,78 +376,52 @@ abla^2 \mathbf{E} = \frac{1}{c^2} \frac{\partial^2 \mathbf{E}}{\partial t^2} \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong><a href="/physics/subtopic/relativistic-wave-equation" class="subtopic-link">Relativistic Wave Equation</a>:</strong> The covariant form of the wave equation using the d'Alembertian operator in 4D spacetime.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="32dd9b6baa74c870d6bdcfce992faf72">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/monochromatic-plane-waves" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Monochromatic Plane Waves</strong>
+                                    <a href="/physics/subtopic/transverse-nature" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Transverse Nature of EM Waves</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/propagation-vector" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Propagation Vector (\(\mathbf{k}\))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/transverse-nature" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Transverse Nature of EM Waves</strong>
+                                    <a href="/physics/subtopic/divergence" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Divergence (\( \nabla \cdot \))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/topic/electromagnetism" class="btn btn-secondary">&larr; Back to Electromagnetism</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="32dd9b6baa74c870d6bdcfce992faf72" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

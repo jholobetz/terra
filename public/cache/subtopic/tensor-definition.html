@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tensor Definition and Structure - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="f46f65a8120eafa43339aa2ad0762a12">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="f46f65a8120eafa43339aa2ad0762a12"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/standard-model">The Standard Model</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/gauge-theory">Gauge Theory and the Gauge Principle</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/field-strength-tensor">The Electromagnetic Field Strength Tensor (\( F^{\mu\nu} \))</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Tensor Definition and Structure</span>
     </nav>
@@ -185,15 +178,11 @@
     </header>
     
     <div class="content-body">
-        <p>The <strong>Field Strength Tensor</strong> (\( F^{\mu
-u} \)) is defined as the antisymmetric rank-2 tensor whose components represent the observable electric and magnetic fields. In university-level physics, this definition is the primary "Dictionary" for translating 3D Newtonian forces into the 4D language of <strong>Special Relativity</strong>. It provides the coordinate-independent framework required to satisfy the <strong>Principle of Relativity</strong>.</p>
+        <p>The <strong>Field Strength Tensor</strong> (\( F^{\mu\nu} \)) is defined as the antisymmetric rank-2 tensor whose components represent the observable electric and magnetic fields. In university-level physics, this definition is the primary "Dictionary" for translating 3D Newtonian forces into the 4D language of <strong>Special Relativity</strong>. It provides the coordinate-independent framework required to satisfy the <strong>Principle of Relativity</strong>.</p>
 
                     <h3>1. The Exterior Derivative Origin</h3>
                     <p>The most fundamental definition of the tensor is the "4D Curl" of the <strong>Electromagnetic 4-Potential</strong>:
-                    \[ F_{\mu
-u} = \partial_\mu A_
-u - \partial_
-u A_\mu \]
+                    \[ F_{\mu\nu} = \partial_\mu A_\nu - \partial_\nu A_\mu \]
                     This derivation shows that the fields are not independent but are derived from a single 4-vector landscape. The <strong>Antisymmetric</strong> nature of this subtraction is what ensures that only 6 of the 16 possible components in the 4x4 matrix are physically independent.</p>
 
                     <h3>2. Identifying the 3D Parts</h3>
@@ -204,23 +193,16 @@ u A_\mu \]
                         </ul>
                     This confirms that E and B are two different "projections" of a single 4D object, explaining why they transform into each other under a <strong>Lorentz Transformation</strong>.</p>
 
-                    <h3>3. Raising and Lowering with \(\eta_{\mu
-u}\)</h3>
-                    <p>To define the contravariant form (\( F^{\mu
-u} \)), we use the <strong>Minkowski Metric</strong>: \( F^{\mu
-u} = \eta^{\mu\alpha} \eta^{
-u\beta} F_{\alpha\beta} \). In our universe's metric signature (\( + - - - \)), this operation flips the sign of the magnetic components relative to the electric ones. This a critical university-level detail for maintaining the <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariance</strong></a> of the <a href="/physics/subtopic/inhomogeneous-equations" class="subtopic-link"><strong>Inhomogeneous Maxwell Equations</strong></a>.</p>
+                    <h3>3. Raising and Lowering with \(\eta_{\mu\nu}\)</h3>
+                    <p>To define the contravariant form (\( F^{\mu\nu} \)), we use the <strong>Minkowski Metric</strong>: \( F^{\mu\nu} = \eta^{\mu\alpha} \eta^{\nu\beta} F_{\alpha\beta} \). In our universe's metric signature (\( + - - - \)), this operation flips the sign of the magnetic components relative to the electric ones. This a critical university-level detail for maintaining the <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariance</strong></a> of the <a href="/physics/subtopic/inhomogeneous-equations" class="subtopic-link"><strong>Inhomogeneous Maxwell Equations</strong></a>.</p>
 
                     <h3>4. The Matrix Map</h3>
                     <p>The tensor is visually mapped to a matrix where the diagonal is zero.
-                    \[ F^{\mu
-u} = \begin{pmatrix} 0 & -E_x/c & -E_y/c & -E_z/c \ E_x/c & 0 & -B_z & B_y \ \dots & \dots & \dots & 0 \end{pmatrix} \]
+                    \[ F^{\mu\nu} = \begin{pmatrix} 0 & -E_x/c & -E_y/c & -E_z/c \ E_x/c & 0 & -B_z & B_y \ \dots & \dots & \dots & 0 \end{pmatrix} \]
                     This matrix acts as the "Switchboard" for electrodynamics. Every possible physical interaction—from the <strong>Coulomb Force</strong> to <a href="/physics/subtopic/electromagnetic-radiation" class="subtopic-link"><strong>Electromagnetic Radiation</strong></a>—is encoded in the values of these 16 (6 independent) slots.</p>
 
                     <h3>5. Gauge Redundancy</h3>
-                    <p>The definition of the tensor includes an inherent <a href="/physics/subtopic/gauge-invariance" class="subtopic-link"><strong>Gauge Invariance</strong></a>. Since \( \partial_\mu \partial_
-u \Lambda = \partial_
-u \partial_\mu \Lambda \), adding a gradient to the potential does not change the tensor. This proves that the physical world is "Gauge-Blind," responding only to the 4D "twist" of the potential and not its absolute value, a core tenet of <strong>Gauge Theories</strong>.</p>
+                    <p>The definition of the tensor includes an inherent <a href="/physics/subtopic/gauge-invariance" class="subtopic-link"><strong>Gauge Invariance</strong></a>. Since \( \partial_\mu \partial_\nu \Lambda = \partial_\nu \partial_\mu \Lambda \), adding a gradient to the potential does not change the tensor. This proves that the physical world is "Gauge-Blind," responding only to the 4D "twist" of the potential and not its absolute value, a core tenet of <strong>Gauge Theories</strong>.</p>
 
                     <h3>6. Epistemic Status: The Tensor Identity</h3>
                     <p>Is the tensor "Real," or are E and B the reality? 4D <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> favors the tensor. It is the only object that has a consistent physical meaning for all moving observers. The <strong>Tensor Definition</strong> is the first step toward the <strong>Covariant Formulation</strong>, allowing us to describe the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of light and matter as a single 4D geometric history.</p>    </div>
@@ -235,38 +217,36 @@ u \partial_\mu \Lambda \), adding a gradient to the potential does not change th
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            exterior derivative                        </span>
+                            Tensor-Potential Law                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ F_{\mu
-u} = \partial_\mu A_
-u - \partial_
-u A_\mu \]
+                            \[ F_{\mu\nu} = \partial_\mu A_\nu - \partial_\nu A_\mu \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>exterior derivative:</strong> The math operation that builds the field from the potential map.                                </p>
+                                    <strong>Tensor-Potential Identity:</strong> The mathematical proof that the physical electromagnetic fields are identically derived from the 4-dimensional rotation of the potential bit-stream.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -288,22 +268,32 @@ u A_\mu \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>E-B Mapping:</strong> Why three spots in the matrix hold electric data and three hold magnetic data.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -325,22 +315,23 @@ u A_\mu \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Antisymmetry:</strong> Why swapping the row and column of a field value flips its plus/minus label.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -355,63 +346,43 @@ u A_\mu \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ F^{\mu
-u} = \eta^{\mu\alpha} \eta^{
-u\beta} F_{\alpha\beta} \]
+                            \[ F^{\mu\nu} = \eta^{\mu\alpha} \eta^{\nu\beta} F_{\alpha\beta} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Index raising:</strong> How the shape of space (eta) is used to calculate the final tensor values.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \alpha \):</span> 
+                                                                                    <a href="/physics/constants#alpha" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Fine-structure Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="f46f65a8120eafa43339aa2ad0762a12">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -420,22 +391,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Relativistic Unification of E and B</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/inhomogeneous-equations" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Inhomogeneous Maxwell Equations</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
                                     <a href="/physics/subtopic/antisymmetric-tensor" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Antisymmetric Tensor Properties</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/inhomogeneous-equations" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Inhomogeneous Maxwell Equations</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/field-strength-tensor" class="btn btn-secondary">&larr; Back to The Electromagnetic Field Strength Tensor (\( F^{\mu\nu} \))</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="f46f65a8120eafa43339aa2ad0762a12" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

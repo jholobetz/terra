@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ehrenfest's Theorem - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="0625d6c183e86596fcf7a17c9a823578">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="0625d6c183e86596fcf7a17c9a823578"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/theoretical-quantum-mechanics">The Foundations of Quantum Mechanics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/hamiltonian-operator">Hamiltonian Operator</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Ehrenfest's Theorem</span>
     </nav>
@@ -188,25 +181,15 @@
         <p>Ehrenfest's Theorem is a fundamental result in <strong>Quantum Physics</strong> that relates the time-rate of change of the <strong>Expectation Value</strong> of a quantum operator to the expectation value of its commutator with the <a href="/physics/subtopic/hamiltonian" class="subtopic-link"><strong>Hamiltonian</strong></a>. In university-level mechanics, this theorem is the rigorous proof the <strong>Correspondence Principle</strong>, showing that quantum mechanical averages follow the laws of <strong>Classical Mechanics</strong>.</p>
 
                     <h3>1. The Heisenberg Equation for Averages</h3>
-                    <p>The time evolution of the expectation value \( \langle A 
-angle = \langle \psi | \hat{A} | \psi 
-angle \) is given by:
-                    \[ \frac{d}{dt} \langle A 
-angle = \frac{1}{i\hbar} \langle [\hat{A}, \hat{H}] 
-angle + \langle \frac{\partial \hat{A}}{\partial t} 
-angle \]
+                    <p>The time evolution of the expectation value \( \langle A \rangle = \langle \psi | \hat{A} | \psi \rangle \) is given by:
+                    \[ \frac{d}{dt} \langle A \rangle = \frac{1}{i\hbar} \langle [\hat{A}, \hat{H}] \rangle + \langle \frac{\partial \hat{A}}{\partial t} \rangle \]
                     This equation is the quantum analog of <a href="/physics/subtopic/poisson-dynamics" class="subtopic-link"><strong>Poisson Dynamics</strong></a> (\( df/dt = \{f, H\} \)). It shows that the "Average" properties of a particle are generated by the Hamiltonian in exactly the same algebraic way as in the classical .</p>
 
                     <h3>2. Recovery of Newton's Laws</h3>
                     <p>Applying Ehrenfest's theorem to the position (\( \hat{x} \)) and momentum (\( \hat{p} \)) operators yields:
                         <ul>
-                            <li><strong>Velocity:</strong> \( d\langle x 
-angle / dt = \langle p 
-angle / m \).</li>
-                            <li><strong>Force:</strong> \( d\langle p 
-angle / dt = -\langle 
-abla V 
-angle \).</li>
+                            <li><strong>Velocity:</strong> \( d\langle x \rangle / dt = \langle p \rangle / m \).</li>
+                            <li><strong>Force:</strong> \( d\langle p \rangle / dt = -\langle \nabla V \rangle \).</li>
                         </ul>
                     These relations look identical to <strong>Newton's Second Law</strong> and the definition of velocity, proving that the center of a quantum 4D wave packet moves like a classical particle.</p>
 
@@ -214,15 +197,10 @@ angle \).</li>
                     <p>A university-level nuance is that Ehrenfest's theorem does <em>not</em> imply that a quantum particle is a classical particle. While the center follows classical laws, the <strong>Uncertainty Principle</strong> causes the wave packet to spread over time. This spreading is a purely quantum effect of the 4D <a href="/physics/subtopic/spacetime-causal-topology" class="subtopic-link"><strong>Causal Topology</strong></a> that has no classical analog, anchoring <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the wave-nature of matter.</p>
 
                     <h3>4. Requirement for Classical Limits</h3>
-                    <p>For the average force \( \langle 
-abla V(x) 
-angle \) to equal the force at the average position \( 
-abla V(\langle x 
-angle) \), the potential must be "Slowly varying" over the width of the wave packet. This condition is the physical reason why the <strong>Correspondence Principle</strong> only holds when the system is large compared to its subatomic components, dictating the <a href="/physics/subtopic/stability-threshold" class="subtopic-link"><strong>Stability Threshold</strong></a> of macroscopic objects.</p>
+                    <p>For the average force \( \langle \nabla V(x) \rangle \) to equal the force at the average position \( \nabla V(\langle x \rangle) \), the potential must be "Slowly varying" over the width of the wave packet. This condition is the physical reason why the <strong>Correspondence Principle</strong> only holds when the system is large compared to its subatomic components, dictating the <a href="/physics/subtopic/stability-threshold" class="subtopic-link"><strong>Stability Threshold</strong></a> of macroscopic objects.</p>
 
                     <h3>5. Ehrenfest's Theorem and Conserved Quantities</h3>
-                    <p>If an operator commutes with the Hamiltonian (\( [\hat{A}, \hat{H}] = 0 \)), then \( d\langle A 
-angle / dt = 0 \). This means the expectation value is a <a href="/physics/subtopic/conserved-quantity" class="subtopic-link"><strong>Conserved Quantity</strong></a>. Ehrenfest's theorem thus provides the link between 4D <strong>Symmetry</strong> (like rotation or translation) and the stability of quantum measurements, tracing the <strong>History of the Universe</strong> through its invariant averages.</p>
+                    <p>If an operator commutes with the Hamiltonian (\( [\hat{A}, \hat{H}] = 0 \)), then \( d\langle A \rangle / dt = 0 \). This means the expectation value is a <a href="/physics/subtopic/conserved-quantity" class="subtopic-link"><strong>Conserved Quantity</strong></a>. Ehrenfest's theorem thus provides the link between 4D <strong>Symmetry</strong> (like rotation or translation) and the stability of quantum measurements, tracing the <strong>History of the Universe</strong> through its invariant averages.</p>
 
                     <h3>6. Epistemic Status: The Classical Shadow</h3>
                     <p>Ehrenfest's theorem teaches us that classical physics is the "Average" of quantum reality. It suggests that the 4D <strong>Block Universe</strong> we perceive is a macroscopic shadow of a deeper, probabilistic 4D geometry. Theorem is the <strong>Epistemic</strong> bridge that allows us to trust our classical intuition in a world that is fundamentally governed by the <a href="/physics/subtopic/hamiltonian-operator" class="subtopic-link"><strong>Hamiltonian Operator</strong></a>.</p>    </div>
@@ -243,31 +221,43 @@ angle / dt = 0 \). This means the expectation value is a <a href="/physics/subto
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{d}{dt} \langle \hat{A} 
-angle = \frac{1}{i\hbar} \langle [\hat{A}, \hat{H}] 
-angle \]
+                            \[ \frac{d}{dt} \langle \hat{A} \rangle = \frac{1}{i\hbar} \langle [\hat{A}, \hat{H}] \rangle \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Quantum-to-Classic:</strong> The rule that the middle of a quantum cloud moves like a normal rock.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \hbar \):</span> 
+                                                                                    <a href="/physics/constants#h-bar" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Reduced Planck Constant</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \hat{H} \):</span> 
+                                                                                    <a href="/physics/subtopic/hamiltonian" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Hamiltonian</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -282,31 +272,30 @@ angle \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ m \frac{d}{dt} \langle \hat{x} 
-angle = \langle \hat{p} 
-angle \]
+                            \[ m \frac{d}{dt} \langle \hat{x} \rangle = \langle \hat{p} \rangle \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Poisson Origin:</strong> How the "math-twist" between a value and energy creates movement.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -315,38 +304,36 @@ angle \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Classical check                        </span>
+                            Ehrenfest's Theorem                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{d}{dt} \langle \hat{p} 
-angle = - \langle 
-abla V(\hat{x}) 
-angle \]
+                            \[ \frac{d}{dt} \langle \hat{p} \rangle = - \langle \nabla V(\hat{x}) \rangle \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Classical check:</strong> Why Ehrenfest only works if the environment doesn't change too fast.                                </p>
+                                    <strong>Ehrenfest's Theorem:</strong> The quantum mechanical analog of Newton's Second Law for expectation values.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -361,62 +348,43 @@ angle \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \langle [\hat{x}, \hat{p}] 
-angle = i\hbar \]
+                            \[ \langle [\hat{x}, \hat{p}] \rangle = i\hbar \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Stable Averages:</strong> Why things only stay constant if they "get along" with the total energy operator.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \hbar \):</span> 
+                                                                                    <a href="/physics/constants#h-bar" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Reduced Planck Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="0625d6c183e86596fcf7a17c9a823578">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -425,22 +393,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Correspondence Principle</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/position-operator" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Position Operator (\(\hat{x}\))</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
                                     <a href="/physics/subtopic/time-dependent-schrodinger-equation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Time-Dependent Schrödinger Equation (TDSE)</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/schrodinger-equation-motion" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Schrödinger Equation as an Equation of Motion</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/hamiltonian-operator" class="btn btn-secondary">&larr; Back to Hamiltonian Operator</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="0625d6c183e86596fcf7a17c9a823578" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

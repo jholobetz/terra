@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Magnetic Intensity (H-Field) - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="45aa14250bd218b300e69ae150e69320">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="45aa14250bd218b300e69ae150e69320"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/stokes-theorem">Stokes' Theorem</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/amperes-law">Ampère's Law</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Magnetic Intensity (H-Field)</span>
     </nav>
@@ -191,18 +184,16 @@
                     <p>In a vacuum, \( \mathbf{B} \) and \( \mathbf{H} \) are simply related by the constant \( \mu_0 \). In matter, however, the material becomes magnetized, creating its own internal magnetic contribution. The <strong>Magnetic Intensity</strong> is defined as \( \mathbf{H} \equiv \frac{\mathbf{B}}{\mu_0} - \mathbf{M} \), where \( \mathbf{M} \) is the magnetization. This definition effectively "subtracts" the material's internal response, allowing physicists to focus on the external sources of the field.</p>
 
                     <h3>2. Ampère's Law in Matter</h3>
-                    <p>The primary advantage of the \( \mathbf{H} \) field is that it obeys a modified <a href="/physics/subtopic/amperes-law" class="subtopic-link"><strong>Ampère's Law</strong></a>: \( 
-abla 	imes \mathbf{H} = \mathbf{J}_f \). Here, \( \mathbf{J}_f \) refers only to the free current density (e.g., current in a copper wire). All the complex, microscopic "bound currents" of the material are hidden within the definition of \( \mathbf{H} \). This makes it the preferred field for calculating the magnetic response of transformers, solenoids with cores, and magnetic circuits.</p>
+                    <p>The primary advantage of the \( \mathbf{H} \) field is that it obeys a modified <a href="/physics/subtopic/amperes-law" class="subtopic-link"><strong>Ampère's Law</strong></a>: \( \nabla \times \mathbf{H} = \mathbf{J}_f \). Here, \( \mathbf{J}_f \) refers only to the free current density (e.g., current in a copper wire). All the complex, microscopic "bound currents" of the material are hidden within the definition of \( \mathbf{H} \). This makes it the preferred field for calculating the magnetic response of transformers, solenoids with cores, and magnetic circuits.</p>
 
                     <h3>3. Constitutive Relations and Permeability</h3>
                     <p>The relationship between \( \mathbf{B} \) and \( \mathbf{H} \) in a material is known as a <strong>Constitutive Relation</strong>. For linear, isotropic materials, this expressed as \( \mathbf{B} = \mu \mathbf{H} \), where \( \mu \) is the <strong>Magnetic Permeability</strong>. The ratio \( \mu/\mu_0 \) is the relative permeability (\( \mu_r \)), which can range from nearly 1 for air to over 5,000 for high-grade transformer steel, reflecting the material's ability to concentrate magnetic flux.</p>
 
                     <h3>4. Boundary Conditions at Interfaces</h3>
-                    <p>The \( \mathbf{H} \) field is governed by specific <strong>Interface Conditions</strong>. Applying the integral form of Ampère's Law shows that the tangential component of \( \mathbf{H} \) is discontinuous across a boundary by an amount equal to the surface current density: \( \hat{\mathbf{n}} 	imes (\mathbf{H}_2 - \mathbf{H}_1) = \mathbf{K}_f \). If there is no surface current, the tangential \( \mathbf{H} \) is continuous, a rule used to determine how magnetic fields "bend" when entering a magnetic core.</p>
+                    <p>The \( \mathbf{H} \) field is governed by specific <strong>Interface Conditions</strong>. Applying the integral form of Ampère's Law shows that the tangential component of \( \mathbf{H} \) is discontinuous across a boundary by an amount equal to the surface current density: \( \hat{\mathbf{n}} \times (\mathbf{H}_2 - \mathbf{H}_1) = \mathbf{K}_f \). If there is no surface current, the tangential \( \mathbf{H} \) is continuous, a rule used to determine how magnetic fields "bend" when entering a magnetic core.</p>
 
                     <h3>5. Magnetic Scalar Potential (\( \Phi_m \))</h3>
-                    <p>In regions where there are no free currents (\( \mathbf{J}_f = 0 \)), the curl of \( \mathbf{H} \) is zero. In such regions, the \( \mathbf{H} \) field can be expressed as the negative gradient of a scalar potential: \( \mathbf{H} = -
-abla \Phi_m \). This allows magnetic problems to be solved using the same mathematical techniques as <strong>Electrostatics</strong>, such as solving <a href="/physics/subtopic/laplace-equation" class="subtopic-link"><strong>Laplace's Equation</strong></a> for the potential to find the field distribution around permanent magnets.</p>
+                    <p>In regions where there are no free currents (\( \mathbf{J}_f = 0 \)), the curl of \( \mathbf{H} \) is zero. In such regions, the \( \mathbf{H} \) field can be expressed as the negative gradient of a scalar potential: \( \mathbf{H} = -\nabla \Phi_m \). This allows magnetic problems to be solved using the same mathematical techniques as <strong>Electrostatics</strong>, such as solving <a href="/physics/subtopic/laplace-equation" class="subtopic-link"><strong>Laplace's Equation</strong></a> for the potential to find the field distribution around permanent magnets.</p>
 
                     <h3>6. Hysteresis and Non-Linearity</h3>
                     <p>In <strong>Ferromagnetic</strong> materials, the relationship between \( \mathbf{B} \) and \( \mathbf{H} \) is non-linear and exhibits <strong>Hysteresis</strong>. The value of \( \mathbf{B} \) depends not only on the current value of \( \mathbf{H} \), but also on the history of the material. When plotted on a B-H curve, this creates a loop that represents the energy dissipated as heat during each cycle of magnetization. Understanding the H-field is essential for minimizing these "core losses" in AC electrical machinery.</p>
@@ -232,22 +223,36 @@ abla \Phi_m \). This allows magnetic problems to be solved using the same mathem
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Auxiliary Field:</strong> The vector field defined to isolate the effects of free currents from bound material currents.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mu_0 \):</span> 
+                                                                                    <a href="/physics/constants#mu-0" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Vacuum Permeability</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{B} \):</span> 
+                                                                                    <a href="/physics/subtopic/magnetic-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Magnetic Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -262,30 +267,30 @@ abla \Phi_m \). This allows magnetic problems to be solved using the same mathem
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla 	imes \mathbf{H} = \mathbf{J}_f + \frac{\partial \mathbf{D}}{\partial t} \]
+                            \[ \nabla \times \mathbf{H} = \mathbf{J}_f + \frac{\partial \mathbf{D}}{\partial t} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Source Equation:</strong> The law stating that the curl of H is determined solely by free charge flow.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -294,7 +299,7 @@ abla 	imes \mathbf{H} = \mathbf{J}_f + \frac{\partial \mathbf{D}}{\partial t} \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Material Response                        </span>
+                            Response Factor                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
@@ -307,22 +312,32 @@ abla 	imes \mathbf{H} = \mathbf{J}_f + \frac{\partial \mathbf{D}}{\partial t} \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Material Response:</strong> The constant that measures how much magnetic induction is generated per unit of intensity.                                </p>
+                                    <strong>Response Factor:</strong> The property that determines how "easily" a material allows magnetic flux to pass through it.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{B} \):</span> 
+                                                                                    <a href="/physics/subtopic/magnetic-field" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Magnetic Field</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -337,85 +352,59 @@ abla 	imes \mathbf{H} = \mathbf{J}_f + \frac{\partial \mathbf{D}}{\partial t} \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \hat{\mathbf{n}} 	imes (\mathbf{H}_2 - \mathbf{H}_1) = \mathbf{K}_f \]
+                            \[ \hat{\mathbf{n}} \times (\mathbf{H}_2 - \mathbf{H}_1) = \mathbf{K}_f \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Boundary Rule:</strong> States that the tangential H-field is conserved across an interface unless a surface current exists.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="45aa14250bd218b300e69ae150e69320">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/laplaces-equation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Laplace's Equation in Magnetostatics</strong>
+                                    <a href="/physics/subtopic/field-intensity-relation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Field-Intensity Relation</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/magnetization" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Magnetization and Magnetic Materials</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/field-intensity-relation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Field-Intensity Relation</strong>
+                                    <a href="/physics/subtopic/laplaces-equation" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Laplace's Equation in Magnetostatics</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/amperes-law" class="btn btn-secondary">&larr; Back to Ampère's Law</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="45aa14250bd218b300e69ae150e69320" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

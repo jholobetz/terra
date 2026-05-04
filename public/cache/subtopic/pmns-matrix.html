@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The PMNS Matrix - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="ab8a586b18f7dc767d9a5b3edd0402e1">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="ab8a586b18f7dc767d9a5b3edd0402e1"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,8 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/mathematical-methods">Mathematical Methods in Physics</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The PMNS Matrix</span>
     </nav>
@@ -188,31 +177,23 @@
         <p>The <strong>Pontecorvo-Maki-Nakagawa-Sakata (PMNS) Matrix</strong> is the unitary matrix that describes the mixing of <strong>Neutrino</strong> flavors in the lepton sector of the Standard Model. Similar to the CKM matrix for quarks, it defines the probability that a neutrino created in one flavor (e.g., an electron neutrino) will be detected as another (e.g., a muon or tau neutrino). In university-level astrophysics, the PMNS matrix is the key to <a href="/physics/subtopic/leptogenesis" class="subtopic-link"><strong>Leptogenesis</strong></a>—theory that the matter in our universe originated from the asymmetric properties of neutrinos.</p>
 
                     <h3>1. Neutrino Oscillations</h3>
-                    <p>Neutrinos are created in <strong>Flavor Eigenstates</strong> (\( 
-u_e, 
-u_\mu, 
-u_	au \)) during nuclear reactions, but they propagate as <strong>Mass Eigenstates</strong> (\( 
-u_1, 
-u_2, 
-u_3 \)). Because the masses are different, the quantum mechanical phases of the mass states evolve at different rates, leading to <strong>Neutrino Oscillations</strong>. The PMNS matrix is the mathematical map that dictates how these flavors swap as the neutrino travels across the solar system or the galaxy.</p>
+                    <p>Neutrinos are created in <strong>Flavor Eigenstates</strong> (\( \nu_e, \nu_\mu, \nu_\tau \)) during nuclear reactions, but they propagate as <strong>Mass Eigenstates</strong> (\( \nu_1, \nu_2, \nu_3 \)). Because the masses are different, the quantum mechanical phases of the mass states evolve at different rates, leading to <strong>Neutrino Oscillations</strong>. The PMNS matrix is the mathematical map that dictates how these flavors swap as the neutrino travels across the solar system or the galaxy.</p>
 
                     <h3>2. Comparison with the CKM Matrix</h3>
                     <p>The PMNS matrix differs from the CKM matrix in two fundamental ways:
                         <ul>
-                            <li><strong>Mixing Angles:</strong> CKM angles are tiny, but two of the three PMNS angles are quite large (\( 	heta_{12} \approx 33^\circ, 	heta_{23} \approx 45^\circ \)). Neutrinos mix "vigorously" compared to quarks.</li>
+                            <li><strong>Mixing Angles:</strong> CKM angles are tiny, but two of the three PMNS angles are quite large (\( \theta_{12} \approx 33^\circ, \theta_{23} \approx 45^\circ \)). Neutrinos mix "vigorously" compared to quarks.</li>
                             <li><strong>Majorana Phases:</strong> If neutrinos are their own antiparticles (<strong>Majorana fermions</strong>), the PMNS matrix contains two extra complex phases that can also violate CP-symmetry.</li>
                         </ul></p>
 
                     <h3>3. CP Violation in Leptons</h3>
-                    <p>The PMNS matrix contains a Dirac CP-violating phase (\( \delta_{CP} \)). If \( \sin \delta_{CP} 
-eq 0 \), neutrinos and antineutrinos oscillate differently. Recent data from the <strong>DUNE</strong> and Hyper-Kamiokande experiments suggest that this phase may be large. This critical for <a href="/physics/subtopic/leptogenesis" class="subtopic-link"><strong>Leptogenesis</strong></a>, as it provides a mechanism to generate an initial surplus of leptons over antileptons in the early universe, which is then converted into a baryon surplus.</p>
+                    <p>The PMNS matrix contains a Dirac CP-violating phase (\( \delta_{CP} \)). If \( \sin \delta_{CP} \neq 0 \), neutrinos and antineutrinos oscillate differently. Recent data from the <strong>DUNE</strong> and Hyper-Kamiokande experiments suggest that this phase may be large. This critical for <a href="/physics/subtopic/leptogenesis" class="subtopic-link"><strong>Leptogenesis</strong></a>, as it provides a mechanism to generate an initial surplus of leptons over antileptons in the early universe, which is then converted into a baryon surplus.</p>
 
                     <h3>4. The Seesaw Mechanism and New Physics</h3>
                     <p>Because neutrinos have such tiny masses, physicists believe they acquire mass through the <strong>Seesaw Mechanism</strong> involving extremely heavy right-handed neutrinos. These heavy states would have their own mixing matrix, potentially with even more sources of CP violation. The properties of the PMNS matrix at low energies are our only window into this high-energy "New Physics" that likely operated during the first fraction of a second after the Big Bang.</p>
 
                     <h3>5. Mass Hierarchy: Normal vs. Inverted</h3>
-                    <p>A major unknown in the PMNS matrix is the <strong>Mass Ordering</strong>. In the "Normal Hierarchy," \( 
-u_3 \) is the heaviest; in the "Inverted Hierarchy," it is the lightest. This ordering affects the sensitivity of the PMNS matrix to CP violation and dictates the rate of <strong>Neutrinoless Double Beta Decay</strong>. Resolving this hierarchy is a top priority for 21st-century <strong>Standard Model</strong> research.</p>
+                    <p>A major unknown in the PMNS matrix is the <strong>Mass Ordering</strong>. In the "Normal Hierarchy," \( \nu_3 \) is the heaviest; in the "Inverted Hierarchy," it is the lightest. This ordering affects the sensitivity of the PMNS matrix to CP violation and dictates the rate of <strong>Neutrinoless Double Beta Decay</strong>. Resolving this hierarchy is a top priority for 21st-century <strong>Standard Model</strong> research.</p>
 
                     <h3>6. Implications for Baryogenesis</h3>
                     <p>The PMNS matrix provides a much more promising path for explaining the <strong>Matter-Antimatter Asymmetry</strong> than the quark sector. Because the mixing angles are large, the potential for generating a large asymmetry is higher. By measuring the CP phase in neutrinos, physicists hope to prove that the reason the universe is not empty of matter is because of the subtle, quantum-mechanical "Handedness" of the lightest and most elusive particles in existence.</p>    </div>
@@ -240,22 +221,32 @@ u_3 \) is the heaviest; in the "Inverted Hierarchy," it is the lightest. This or
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Flavor Swap:</strong> The matrix describing how neutrinos change identity as they move through space.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -270,31 +261,39 @@ u_3 \) is the heaviest; in the "Inverted Hierarchy," it is the lightest. This or
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ P(
-u_\alpha 	o 
-u_\beta) = \delta_{\alpha\beta} - 4 \sum_{i>j} 	ext{Re}(U_{\alpha i}^* U_{\beta i} U_{\alpha j} U_{\beta j}^*) \sin^2(\Delta m_{ij}^2 L / 4E) \]
+                            \[ P(\nu_\alpha \to \nu_\beta) = \delta_{\alpha\beta} - 4 \sum_{i>j} \text{Re}(U_{\alpha i}^* U_{\beta i} U_{\alpha j} U_{\beta j}^*) \sin^2(\Delta m_{ij}^2 L / 4E) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Quantum Rotation:</strong> The large values (\( 	heta_{12}, 	heta_{23}, 	heta_{13} \)) that define the strength of neutrino flavor jumping.                                </p>
+                                    <strong>Quantum Rotation:</strong> The large values (\( \theta_{12}, \theta_{23}, \theta_{13} \)) that define the strength of neutrino flavor jumping.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \alpha \):</span> 
+                                                                                    <a href="/physics/constants#alpha" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Fine-structure Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -309,29 +308,30 @@ u_\beta) = \delta_{\alpha\beta} - 4 \sum_{i>j} 	ext{Re}(U_{\alpha i}^* U_{\beta 
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \Delta m_{21}^2 \approx 7.5 	imes 10^{-5} 	ext{ eV}^2 \]
+                            \[ \Delta m_{21}^2 \approx 7.5 \times 10^{-5} \text{ eV}^2 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>CP Violation Source:</strong> The complex parameter that determines if neutrinos and antineutrinos behave differently.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -346,85 +346,68 @@ u_\beta) = \delta_{\alpha\beta} - 4 \sum_{i>j} 	ext{Re}(U_{\alpha i}^* U_{\beta 
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 	ext{Im}(U_{\alpha i} U_{\beta j} U_{\alpha j}^* U_{\beta i}^*) \propto \sin \delta_{CP} \]
+                            \[ \text{Im}(U_{\alpha i} U_{\beta j} U_{\alpha j}^* U_{\beta i}^*) \propto \sin \delta_{CP} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Hierarchy Problem:</strong> The unknown arrangement of neutrino masses that impacts cosmological models.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \alpha \):</span> 
+                                                                                    <a href="/physics/constants#alpha" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Fine-structure Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="ab8a586b18f7dc767d9a5b3edd0402e1">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/leptogenesis" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Leptogenesis</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/leptons" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Leptons and the Weak Interaction</strong>
+                                    <a href="/physics/subtopic/ckm-matrix" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The CKM Matrix</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/seesaw-mechanism" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Seesaw Mechanism</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
+                                    <a href="/physics/subtopic/leptogenesis" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Leptogenesis</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/topic/mathematical-methods" class="btn btn-secondary">&larr; Back to Mathematical Methods in Physics</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="ab8a586b18f7dc767d9a5b3edd0402e1" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inertial Frames of Reference - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="87e21f1940dd1c0025c6b0cae5a338da">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="87e21f1940dd1c0025c6b0cae5a338da"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/relativity">Relativity</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/galilean-relativity">Galilean Relativity and Absolute Space</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Inertial Frames of Reference</span>
     </nav>
@@ -188,7 +179,7 @@
         <p>An <strong>Inertial Frame of Reference</strong> is a privileged coordinate system in which the laws of physics—specifically Newton's laws of motion—take their simplest, "unaccelerated" form. This fundamental concept provides the mathematical and physical "arena" for classical mechanics and serves as the conceptual prerequisite for both Special and General Relativity.</p>
 
                     <h3>1. Axiomatic Foundation and Newton's First Law</h3>
-                    <p>The existence of inertial frames is not merely an observation but an <a href="/physics/subtopic/axiom-of-inertia" class="subtopic-link"><strong>axiom</strong></a> of classical mechanics. Newton's First Law serves as the definitive test for such a frame: an observer is in an inertial frame if, and only if, a particle free from all external forces (\( \mathbf{F}_{net} = 0 \)) maintains a state of constant velocity or rest. In these frames, the <a href="/physics/subtopic/euclidean-geometry-inertia" class="subtopic-link"><strong>Euclidean Geometry</strong></a> of space and the <a href="/physics/subtopic/uniformity-of-time" class="subtopic-link"><strong>Uniformity of Time</strong></a> are preserved, ensuring that the background "metric" remains flat and static.</p>
+                    <p>The existence of inertial frames is not merely an observation but an <a href="/physics/subtopic/axiom-of-inertia" class="subtopic-link"><strong>axiom</strong></a> of classical mechanics. Newton's First Law serves as the definitive test for such a frame: an observer is in an inertial frame if, and only if, a particle free from all external forces (\(\mathbf{F}_{net} = 0\)) maintains a state of constant velocity or rest. In these frames, the <a href="/physics/subtopic/euclidean-geometry-inertia" class="subtopic-link"><strong>Euclidean Geometry</strong></a> of space and the <a href="/physics/subtopic/uniformity-of-time" class="subtopic-link"><strong>Uniformity of Time</strong></a> are preserved, ensuring that the background "metric" remains flat and static.</p>
 
                     <h3>2. Geometric Flatness and Symmetries</h3>
                     <p>In an inertial frame, the geometry of spacetime is assumed to be flat. This flatness implies high degrees of <strong>Symmetry</strong>, which are the foundations for the <strong>Conservation</strong> of momentum and energy via <a href="/physics/subtopic/noethers-theorem" class="subtopic-link"><strong>Noether's Theorem</strong></a>:</p>
@@ -202,10 +193,10 @@
                     <p>The <a href="/physics/subtopic/principle-galilean-relativity" class="subtopic-link"><strong>Principle of Galilean Relativity</strong></a> asserts that the laws of mechanics are identical in all inertial frames. However, <strong>Special Relativity</strong> showed that these frames are actually linked by <strong>Lorentz Transformations</strong>. In the limit where velocities are much less than the <strong>Velocity of Light</strong>, the two descriptions converge, proving that our 3D classical frames are non-relativistic approximations of a deeper 4D geometric reality.</p>
 
                     <h3>4. Spacetime Geometry: The Affine Connection</h3>
-                    <p>From a modern differential geometric perspective, an inertial frame is one in which the <a href="/physics/subtopic/affine-connection-inertia" class="subtopic-link"><strong>Affine Connection</strong></a> (\( \Gamma^\mu_{\alpha\beta} \)) vanishes throughout the manifold. This means the coordinate lines are "straight" in the sense of parallel transport. A particle in an inertial frame follows a <strong>geodesic</strong>, the shortest path between two points in spacetime.</p>
+                    <p>From a modern differential geometric perspective, an inertial frame is one in which the <a href="/physics/subtopic/affine-connection-inertia" class="subtopic-link"><strong>Affine Connection</strong></a> (\(\Gamma^\mu_{\alpha\beta}\)) vanishes throughout the manifold. This means the coordinate lines are "straight" in the sense of parallel transport. A particle in an inertial frame follows a <strong>geodesic</strong>, the shortest path between two points in spacetime.</p>
 
                     <h3>5. Non-Inertial Frames and Fictitious Forces</h3>
-                    <p>When an observer's frame of reference is accelerating or rotating, it is classified as <a href="/physics/subtopic/non-inertial-frames" class="subtopic-link"><strong>Non-Inertial</strong></a>. In such a frame, Newton's laws appear to fail because objects accelerate without any physical interaction. To restore the validity of \( \mathbf{F} = m\mathbf{a} \), we must introduce <a href="/physics/subtopic/fictitious-forces" class="subtopic-link"><strong>Fictitious Forces</strong></a> (pseudo-forces) such as the Centrifugal and Coriolis forces.</p>
+                    <p>When an observer's frame of reference is accelerating or rotating, it is classified as <a href="/physics/subtopic/non-inertial-frames" class="subtopic-link"><strong>Non-Inertial</strong></a>. In such a frame, Newton's laws appear to fail because objects accelerate without any physical interaction. To restore the validity of \(\mathbf{F} = m\mathbf{a}\), we must introduce <a href="/physics/subtopic/fictitious-forces" class="subtopic-link"><strong>Fictitious Forces</strong></a> (<a href="/physics/subtopic/pseudo-force" class="subtopic-link"><strong>pseudo-forces</strong></a>) such as the Centrifugal and Coriolis forces.</p>
 
                     <h3>6. Mach's Principle and Local Inertial Frames</h3>
                     <p>In <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a>, the concept of a global inertial frame is abolished. Einstein introduced the <strong>Equivalence Principle</strong>: a frame in "free-fall" within a gravitational field is *locally* inertial. This shifted the definition of inertia from a static background to a dynamic interaction between matter and the geometry of spacetime.</p>
@@ -235,22 +226,23 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Galilean Transformation:</strong> The coordinate map between two inertial frames moving at relative velocity \( \mathbf{v} \).                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -259,7 +251,7 @@
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Galilean Invariance                        </span>
+                            Invariance of Acceleration                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
@@ -272,22 +264,23 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Galilean Invariance:</strong> States that acceleration is absolute and identical for all inertial observers.                                </p>
+                                    <strong>Invariance of Acceleration:</strong> Proves that the fundamental dynamical quantities are preserved across classical frames.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -309,22 +302,23 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong><a href="/physics/subtopic/pseudo-force" class="subtopic-link">Pseudo-Force</a>:</strong> Correction terms added in non-inertial frames to account for the frame's own acceleration.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -346,78 +340,61 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong><a href="/physics/subtopic/vanishing-connection" class="subtopic-link">Vanishing Connection</a>:</strong> The geometric condition for a frame to be inertial, where coordinate lines are geodesics.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \alpha \):</span> 
+                                                                                    <a href="/physics/constants#alpha" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Fine-structure Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="87e21f1940dd1c0025c6b0cae5a338da">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/vector-addition-velocities" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Vector Addition of Velocities</strong>
+                                    <a href="/physics/subtopic/vanishing-connection" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Vanishing Connection</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/uniformity-of-time" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Uniformity of Time</strong>
+                                    <a href="/physics/subtopic/newtons-first-law" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Newton's First Law (Inertia)</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/galilean-group" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Galilean Group</strong>
+                                    <a href="/physics/subtopic/fictitious-forces" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Fictitious Forces (Pseudo-Forces)</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/galilean-relativity" class="btn btn-secondary">&larr; Back to Galilean Relativity and Absolute Space</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="87e21f1940dd1c0025c6b0cae5a338da" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

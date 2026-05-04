@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Potential Energy - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="79ce30f2b76cea39d65d408ae82de9d9">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="79ce30f2b76cea39d65d408ae82de9d9"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/electromagnetism">Electromagnetism</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/stokes-theorem">Stokes' Theorem</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/conservative-force-field">Conservative Force Field</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Potential Energy</span>
     </nav>
@@ -185,21 +178,12 @@
     </header>
     
     <div class="content-body">
-        <p>Potential energy (\( V \)) represents the "stored" energy of a system by virtue of its configuration or position within a force field. In university-level mechanics, this formalized through <a href="/physics/subtopic/potential-theory" class="subtopic-link"><strong>Potential Theory</strong></a>, where interactions are described by scalar fields rather than vector forces. A force field is <a href="/physics/subtopic/conservative-force-field" class="subtopic-link"><strong>Conservative</strong></a> if it is irrotational (\( 
-abla 	imes \mathbf{F} = 0 \)), which is the necessary and sufficient condition for the existence of a scalar potential such that \( \mathbf{F} = -
-abla V \).</p>
+        <p>Potential energy (\( V \)) represents the "stored" energy of a system by virtue of its configuration or position within a force field. In university-level mechanics, this formalized through <a href="/physics/subtopic/potential-theory" class="subtopic-link"><strong>Potential Theory</strong></a>, where interactions are described by scalar fields rather than vector forces. A force field is <a href="/physics/subtopic/conservative-force-field" class="subtopic-link"><strong>Conservative</strong></a> if it is irrotational (\( \nabla \times \mathbf{F} = 0 \)), which is the necessary and sufficient condition for the existence of a scalar potential such that \( \mathbf{F} = -\nabla V \).</p>
 
                     <h3>1. The Laplacian and Poisson's Equation</h3>
-                    <p>In field theory, the potential \( \Phi \) is related to its source density \( 
-ho \) (mass or charge) through <a href="/physics/subtopic/poisson-equation" class="subtopic-link"><strong>Poisson's Equation</strong></a>:
-                    \[ 
-abla^2 \Phi = f(
-ho) \]
-                    For Newtonian gravity, this manifests as \( 
-abla^2 \Phi = 4\pi G 
-ho \), where the <strong>Laplacian operator</strong> (\( 
-abla^2 \)) measures the flux density of the field. In regions free of sources, the potential satisfies <a href="/physics/subtopic/laplace-equation" class="subtopic-link"><strong>Laplace's Equation</strong></a> (\( 
-abla^2 \Phi = 0 \)), and the resulting solutions are <a href="/physics/subtopic/harmonic-functions-physics" class="subtopic-link"><strong>Harmonic Functions</strong></a>, characterized by the property that the potential at any point is the average of its neighbors.</p>
+                    <p>In field theory, the potential \( \Phi \) is related to its source density \( \rho \) (mass or charge) through <a href="/physics/subtopic/poisson-equation" class="subtopic-link"><strong>Poisson's Equation</strong></a>:
+                    \[ \nabla^2 \Phi = f(\rho) \]
+                    For Newtonian gravity, this manifests as \( \nabla^2 \Phi = 4\pi G \rho \), where the <strong>Laplacian operator</strong> (\( \nabla^2 \)) measures the flux density of the field. In regions free of sources, the potential satisfies <a href="/physics/subtopic/laplace-equation" class="subtopic-link"><strong>Laplace's Equation</strong></a> (\( \nabla^2 \Phi = 0 \)), and the resulting solutions are <a href="/physics/subtopic/harmonic-functions-physics" class="subtopic-link"><strong>Harmonic Functions</strong></a>, characterized by the property that the potential at any point is the average of its neighbors.</p>
 
                     <h3>2. Stability Analysis and the Harmonic Approximation</h3>
                     <p>Potential energy landscapes determine the mechanical stability of a system. At an equilibrium point \( x_0 \), the first derivative vanishes (\( V'(x_0) = 0 \)). By performing a <strong>Taylor Expansion</strong> around this point:
@@ -212,22 +196,16 @@ abla^2 \Phi = 0 \)), and the resulting solutions are <a href="/physics/subtopic/
                     </ul></p>
 
                     <h3>3. The Virial Theorem</h3>
-                    <p>The <a href="/physics/subtopic/virial-theorem" class="subtopic-link"><strong>Virial Theorem</strong></a> provides a profound relationship between the time-averaged kinetic energy \( \langle T 
-angle \) and potential energy \( \langle V 
-angle \) for stable, bound systems. For a power-law potential of the form \( V \propto r^n \), theorem states:
-                    \[ 2\langle T 
-angle = n\langle V 
-angle \]
-                    In gravitational or electrostatic systems (\( n = -1 \)), this yields \( 2\langle T 
-angle = -\langle V 
-angle \), a result critical for analyzing the stability of galaxies, star clusters, and atomic structures.</p>
+                    <p>The <a href="/physics/subtopic/virial-theorem" class="subtopic-link"><strong>Virial Theorem</strong></a> provides a profound relationship between the time-averaged kinetic energy \( \langle T \rangle \) and potential energy \( \langle V \rangle \) for stable, bound systems. For a power-law potential of the form \( V \propto r^n \), theorem states:
+                    \[ 2\langle T \rangle = n\langle V \rangle \]
+                    In gravitational or electrostatic systems (\( n = -1 \)), this yields \( 2\langle T \rangle = -\langle V \rangle \), a result critical for analyzing the stability of galaxies, star clusters, and atomic structures.</p>
 
                     <h3>4. Gauge Freedom and Effective Potentials</h3>
                     <p>Potential energy is defined only up to an arbitrary constant, a property known as <a href="/physics/subtopic/gauge-freedom" class="subtopic-link"><strong>Gauge Freedom</strong></a>. This allows physicists to set a reference "zero point" at infinity or the ground. In central force problems, the conservation of angular momentum allows the reduction of a 3D problem to 1D by introducing an <strong>Effective Potential</strong>:
                     \[ V_{eff}(r) = V(r) + \frac{L^2}{2mr^2} \]
                     The "centrifugal barrier" term (\( L^2/2mr^2 \)) prevents the particle from reaching the origin, creating a stable potential well that governs planetary and atomic orbits.</p>
                     <h3>5. Gauge Invariance and Potential Offsets</h3>
-                    <p>Potential energy is only defined up to an additive constant (\( V 	o V + C \)), a property known as <a href="/physics/subtopic/gauge-invariance" class="subtopic-link"><strong>Gauge Invariance</strong></a>. In classical mechanics, this constant does not affect the forces or the equations of motion. However, in university-level theoretical physics, the choice of the <strong>Zero Point</strong> can have profound implications, particularly in the study of subatomic particles and the cosmological constant, where the absolute value of energy density dictates the curvature of spacetime.</p>
+                    <p>Potential energy is only defined up to an additive constant (\( V \to V + C \)), a property known as <a href="/physics/subtopic/gauge-invariance" class="subtopic-link"><strong>Gauge Invariance</strong></a>. In classical mechanics, this constant does not affect the forces or the equations of motion. However, in university-level theoretical physics, the choice of the <strong>Zero Point</strong> can have profound implications, particularly in the study of subatomic particles and the cosmological constant, where the absolute value of energy density dictates the curvature of spacetime.</p>
 
                     <h3>6. Effective Potentials and Central Forces</h3>
                     <p>In systems with rotational symmetry, the <strong>Effective Potential</strong> (\( V_{eff} \)) is used to reduce 2D or 3D problems to a single radial dimension. By combining the physical potential with the centrifugal energy term arising from angular momentum conservation, physicists can analyze stable orbits and scattering events. This technique proves that the stability of planets and atoms is a consequence of the topological "well" created by the interaction of potential energy and dynamical constraints.</p>
@@ -244,36 +222,36 @@ angle \), a result critical for analyzing the stability of galaxies, star cluste
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Gradient Relationship                        </span>
+                            Gradient Force Identity                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \mathbf{F} = -
-abla V \]
+                            \[ \mathbf{F} = -\nabla V \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Gradient Relationship:</strong> Defines the force as the negative gradient of the potential field, indicating the direction of steepest descent.                                </p>
+                                    <strong>Gradient Force Identity:</strong> The mathematical proof that force vectors are identically derived from the spatial rate of change of a scalar potential.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -288,31 +266,43 @@ abla V \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla^2 \Phi = 4\pi G 
-ho \]
+                            \[ \nabla^2 \Phi = 4\pi G \rho \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Poisson's Equation:</strong> Relates the curvature of the potential field to the density of its physical sources.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( G \):</span> 
+                                                                                    <a href="/physics/constants#G" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Gravitational Constant</a>
+                                                                            </div>
+                                                                    <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \Phi \):</span> 
+                                                                                    <a href="/physics/subtopic/potential-definition" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Potential Definition</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -327,31 +317,30 @@ ho \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 2\langle T 
-angle = n\langle V 
-angle \]
+                            \[ 2\langle T \rangle = n\langle V \rangle \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Virial Theorem:</strong> Connects time-averaged kinetic and potential energies in stable bound systems.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -373,78 +362,52 @@ angle \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Harmonic Expansion:</strong> Models any stable equilibrium as a simple harmonic oscillator for small perturbations.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="79ce30f2b76cea39d65d408ae82de9d9">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    <a href="/physics/subtopic/electromagnetism" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Electromagnetism</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
                                     <a href="/physics/subtopic/gravitational-fields" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Gravitational Fields as Conservative Systems</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/potential-definition" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Potential Definition and Reference Points</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
-                                    <a href="/physics/subtopic/negative-gradient" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Negative Gradient Relation</strong>
+                                    <a href="/physics/subtopic/vector-calculus" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Vector Calculus</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/conservative-force-field" class="btn btn-secondary">&larr; Back to Conservative Force Field</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="79ce30f2b76cea39d65d408ae82de9d9" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

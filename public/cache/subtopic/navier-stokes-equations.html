@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Navier-Stokes Equations - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="a1d02d2734333aaaf1b7cd61913d611c">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="a1d02d2734333aaaf1b7cd61913d611c"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,8 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/fluids-nonlinear">Fluid Dynamics and Nonlinear Systems</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Navier-Stokes Equations</span>
     </nav>
@@ -185,22 +174,7 @@
     </header>
     
     <div class="content-body">
-        <p>The <strong>Navier-Stokes Equations</strong> represent the pinnacle of classical fluid mechanics, providing a rigorous mathematical description of the motion of viscous fluid substances. In university-level physics, these partial differential equations (PDEs) are derived from the fundamental conservation laws of mass, momentum, and energy. They govern phenomena ranging from the laminar flow of blood in capillaries to the high-Reynolds-number turbulence in stellar interiors and galactic gas clouds.</p><h3>1. The Continuum Hypothesis and Conservation Laws</h3><p>The derivation of the Navier-Stokes equations rests on the <strong>Continuum Hypothesis</strong>, which treats the fluid as a continuous medium rather than a collection of discrete particles. The equations are essentially a statement of <a href="/physics/subtopic/isaac-newton" class="subtopic-link"><strong>Newton</strong></a>'s Second Law applied to fluid elements. The first component is the <strong>Continuity Equation</strong>, representing the conservation of mass: \( \frac{\partial 
-ho}{\partial t} + 
-abla \cdot (
-ho \mathbf{v}) = 0 \). For an incompressible fluid, this simplifies to \( 
-abla \cdot \mathbf{v} = 0 \), imposing a divergence-free constraint on the velocity field.</p><h3>2. The Cauchy Stress Tensor and Stokes' Hypothesis</h3><p>In a viscous fluid, internal forces are described by the <strong>Cauchy Stress Tensor</strong> (\( \sigma \)), which accounts for both isotropic pressure and anisotropic viscous stresses. For a Newtonian fluid, the stress is assumed to be linearly proportional to the rate of strain. <strong>Stokes' Hypothesis</strong> further simplifies this by relating the bulk viscosity to the shear viscosity. The resulting stress tensor is decomposed as: \( \sigma = -p\mathbf{I} + \mu (
-abla \mathbf{v} + (
-abla \mathbf{v})^T) + \lambda (
-abla \cdot \mathbf{v})\mathbf{I} \), where \( \mu \) is the dynamic viscosity and \( \lambda \) is the second viscosity coefficient.</p><h3>3. The Momentum Equation: Advection and Diffusion</h3><p>The core of the Navier-Stokes framework is the momentum equation: \[ 
-ho \left( \frac{\partial \mathbf{v}}{\partial t} + \mathbf{v} \cdot 
-abla \mathbf{v} 
-ight) = -
-abla p + \mu 
-abla^2 \mathbf{v} + \mathbf{f} \] This equation highlights the competition between <strong>Advection</strong> (the non-linear term \( \mathbf{v} \cdot 
-abla \mathbf{v} \)) and <strong>Diffusion</strong> (the viscous term \( \mu 
-abla^2 \mathbf{v} \)). The non-linearity of the advective term is the source of the complex, often chaotic behavior observed in fluid systems, making the equations notoriously difficult to solve analytically.</p><h3>4. Dimensionless Analysis: The Reynolds and Mach Numbers</h3><p>To characterize fluid regimes, physicists use dimensionless numbers derived from the Navier-Stokes equations. The most critical is the <strong>Reynolds Number</strong> (\( Re = 
-ho v L / \mu \)), which measures the ratio of inertial forces to viscous forces. At low \( Re \), flow is <strong>Laminar</strong> and predictable; at high \( Re \), it becomes <strong>Turbulent</strong>. Additionally, the <strong>Mach Number</strong> (\( M = v/c_s \)) determines the importance of compressibility, with \( M \gt 0.3 \) typically requiring the full compressible form of the equations.</p><h3>5. The Millennium Problem: Existence and Smoothness</h3><p>Despite their widespread use, the mathematical foundation of the 3D incompressible Navier-Stokes equations remains incomplete. One of the seven <strong>Millennium Prize Problems</strong> is to prove whether, given smooth initial conditions, a solution always exists and remains smooth (without "blowing up") for all time. This is not merely a formal concern; it touches on whether the continuum description of fluids remains physically consistent at all scales or if the equations eventually fail to describe reality as singularities form.</p><h3>6. From Laminar Flow to High-Reynolds Turbulence</h3><p>In the limit of high Reynolds numbers, fluids enter the regime of <strong>Turbulence</strong>, characterized by a self-similar cascade of energy from large scales to small scales (the <strong>Kolmogorov Cascade</strong>). In astrophysics, turbulence in the <strong>Interstellar Medium (ISM)</strong> and <a href="/physics/subtopic/accretion-disk" class="subtopic-link"><strong>Accretion Disks</strong></a> is modeled using the Navier-Stokes equations coupled with magnetic fields (MHD). Because direct simulation of all scales is computationally impossible, researchers rely on <strong>Large Eddy Simulations (LES)</strong> and <strong>Reynolds-Averaged Navier-Stokes (RANS)</strong> models to approximate the chaotic transfer of momentum.</p>    </div>
+        <p>The <strong>Navier-Stokes Equations</strong> represent the pinnacle of classical fluid mechanics, providing a rigorous mathematical description of the motion of viscous fluid substances. In university-level physics, these partial differential equations (PDEs) are derived from the fundamental conservation laws of mass, momentum, and energy. They govern phenomena ranging from the laminar flow of blood in capillaries to the high-Reynolds-number turbulence in stellar interiors and galactic gas clouds.</p><h3>1. The Continuum Hypothesis and Conservation Laws</h3><p>The derivation of the Navier-Stokes equations rests on the <strong>Continuum Hypothesis</strong>, which treats the fluid as a continuous medium rather than a collection of discrete particles. The equations are essentially a statement of <a href="/physics/subtopic/isaac-newton" class="subtopic-link"><strong>Newton</strong></a>'s Second Law applied to fluid elements. The first component is the <strong>Continuity Equation</strong>, representing the conservation of mass: \( \frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{v}) = 0 \). For an incompressible fluid, this simplifies to \( \nabla \cdot \mathbf{v} = 0 \), imposing a divergence-free constraint on the velocity field.</p><h3>2. The Cauchy Stress Tensor and Stokes' Hypothesis</h3><p>In a viscous fluid, internal forces are described by the <strong>Cauchy Stress Tensor</strong> (\( \sigma \)), which accounts for both isotropic pressure and anisotropic viscous stresses. For a Newtonian fluid, the stress is assumed to be linearly proportional to the rate of strain. <strong>Stokes' Hypothesis</strong> further simplifies this by relating the bulk viscosity to the shear viscosity. The resulting stress tensor is decomposed as: \( \sigma = -p\mathbf{I} + \mu (\nabla \mathbf{v} + (\nabla \mathbf{v})^T) + \lambda (\nabla \cdot \mathbf{v})\mathbf{I} \), where \( \mu \) is the dynamic viscosity and \( \lambda \) is the second viscosity coefficient.</p><h3>3. The Momentum Equation: Advection and Diffusion</h3><p>The core of the Navier-Stokes framework is the momentum equation: \[ \rho \left( \frac{\partial \mathbf{v}}{\partial t} + \mathbf{v} \cdot \nabla \mathbf{v} \right) = -\nabla p + \mu \nabla^2 \mathbf{v} + \mathbf{f} \] This equation highlights the competition between <strong>Advection</strong> (the non-linear term \( \mathbf{v} \cdot \nabla \mathbf{v} \)) and <strong>Diffusion</strong> (the viscous term \( \mu \nabla^2 \mathbf{v} \)). The non-linearity of the advective term is the source of the complex, often chaotic behavior observed in fluid systems, making the equations notoriously difficult to solve analytically.</p><h3>4. Dimensionless Analysis: The Reynolds and Mach Numbers</h3><p>To characterize fluid regimes, physicists use dimensionless numbers derived from the Navier-Stokes equations. The most critical is the <strong>Reynolds Number</strong> (\( Re = \rho v L / \mu \)), which measures the ratio of inertial forces to viscous forces. At low \( Re \), flow is <strong>Laminar</strong> and predictable; at high \( Re \), it becomes <strong>Turbulent</strong>. Additionally, the <strong>Mach Number</strong> (\( M = v/c_s \)) determines the importance of compressibility, with \( M \gt 0.3 \) typically requiring the full compressible form of the equations.</p><h3>5. The Millennium Problem: Existence and Smoothness</h3><p>Despite their widespread use, the mathematical foundation of the 3D incompressible Navier-Stokes equations remains incomplete. One of the seven <strong>Millennium Prize Problems</strong> is to prove whether, given smooth initial conditions, a solution always exists and remains smooth (without "blowing up") for all time. This is not merely a formal concern; it touches on whether the continuum description of fluids remains physically consistent at all scales or if the equations eventually fail to describe reality as singularities form.</p><h3>6. From Laminar Flow to High-Reynolds Turbulence</h3><p>In the limit of high Reynolds numbers, fluids enter the regime of <strong>Turbulence</strong>, characterized by a self-similar cascade of energy from large scales to small scales (the <strong>Kolmogorov Cascade</strong>). In astrophysics, turbulence in the <strong>Interstellar Medium (ISM)</strong> and <a href="/physics/subtopic/accretion-disk" class="subtopic-link"><strong>Accretion Disks</strong></a> is modeled using the Navier-Stokes equations coupled with magnetic fields (MHD). Because direct simulation of all scales is computationally impossible, researchers rely on <strong>Large Eddy Simulations (LES)</strong> and <strong>Reynolds-Averaged Navier-Stokes (RANS)</strong> models to approximate the chaotic transfer of momentum.</p>    </div>
 
     <section class="equations-section">
     <h2>Key Theoretical Identities</h2>
@@ -218,34 +192,30 @@ ho v L / \mu \)), which measures the ratio of inertial forces to viscous forces.
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-ho \frac{D\mathbf{v}}{Dt} = -
-abla P + \eta 
-abla^2 \mathbf{v} + (\zeta + \frac{\eta}{3}) 
-abla(
-abla \cdot \mathbf{v}) + \mathbf{f}_{ext} \]
+                            \[ \rho \frac{D\mathbf{v}}{Dt} = -\nabla P + \eta \nabla^2 \mathbf{v} + (\zeta + \frac{\eta}{3}) \nabla(\nabla \cdot \mathbf{v}) + \mathbf{f}_{ext} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Friction Source:</strong> The part of the equation proportional to the Laplacian of velocity, representing internal resistance.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -260,30 +230,39 @@ abla \cdot \mathbf{v}) + \mathbf{f}_{ext} \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \sigma_{ij} = -P \delta_{ij} + \eta (\partial_j v_i + \partial_i v_j - \frac{2}{3} \delta_{ij} 
-abla \cdot \mathbf{v}) \]
+                            \[ \sigma_{ij} = -P \delta_{ij} + \eta (\partial_j v_i + \partial_i v_j - \frac{2}{3} \delta_{ij} \nabla \cdot \mathbf{v}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Internal Force Map:</strong> The 3x3 matrix describing both pressure and viscous "drags" within the fluid.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \sigma \):</span> 
+                                                                                    <a href="/physics/constants#sigma-sb" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Stefan-Boltzmann Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -292,36 +271,36 @@ abla \cdot \mathbf{v}) \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Flow Marker                        </span>
+                            Flow Regime                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ Re = \frac{
-ho v L}{\eta} \]
+                            \[ Re = \frac{\rho v L}{\eta} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Flow Marker:</strong> A ratio used to determine if a system is stable (laminar) or chaotic (turbulent).                                </p>
+                                    <strong>Flow Regime:</strong> A dimensionless number that determines if a fluid flow is laminar (smooth) or turbulent.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -343,64 +322,46 @@ ho v L}{\eta} \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Heat Source:</strong> The mathematical expression for the rate at which kinetic energy is lost to thermal heat.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \Phi \):</span> 
+                                                                                    <a href="/physics/subtopic/potential-definition" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Potential Definition</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="a1d02d2734333aaaf1b7cd61913d611c">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/vorticity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Vorticity (\(\boldsymbol{\omega}\))</strong>
+                                    <a href="/physics/subtopic/fluids-nonlinear" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Fluid Dynamics and Nonlinear Systems</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/accretion-disk" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Accretion Disks</strong>
+                                    <a href="/physics/subtopic/astrophysical-fluids" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Astrophysical Fluids</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/astrophysical-fluid-dynamics" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
@@ -411,10 +372,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/topic/fluids-nonlinear" class="btn btn-secondary">&larr; Back to Fluid Dynamics and Nonlinear Systems</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="a1d02d2734333aaaf1b7cd61913d611c" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

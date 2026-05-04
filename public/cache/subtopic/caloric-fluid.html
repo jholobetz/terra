@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caloric Fluid - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="9bd67eab0d0aacfeca5c07089e2809d4">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="9bd67eab0d0aacfeca5c07089e2809d4"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/philosophy-of-physics">Philosophy of Physics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/scientific-realism">Scientific Realism</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Caloric Fluid</span>
     </nav>
@@ -188,34 +179,6 @@
         <p>The <strong>Caloric Theory</strong> was the dominant 18th and early 19th-century scientific theory of heat. It posited that heat is a self-repellent, weightless fluid called <strong>caloric</strong> that flows from hotter bodies to colder ones. While theory was eventually superseded by the <strong>Kinetic Theory of Heat</strong> (which defines heat as the random motion of particles), it remains a classic example of an empirically successful but ontologically false theory, serving as a pillar for the <a href="/physics/subtopic/pessimistic-meta-induction" class="subtopic-link"><strong>Pessimistic Meta-Induction</strong></a> challenge to scientific realism.</p><h3>1. The Logic of Caloric</h3><p>Caloric theory was not merely speculative; it provided a robust quantitative framework for thermodynamics. It successfully explained phenomena such as thermal expansion (as caloric particles occupied more space), the melting of ice (as matter absorbed caloric), and the behavior of gases. Theory was so successful that it allowed pioneers like <strong>Sadi Carnot</strong> to derive the laws of the heat engine, which remain fundamentally correct even though his underlying assumption—that heat was a conserved fluid—was later proven wrong.</p><h3>2. The Refutation: Work and Heat</h3><p>The death of caloric theory was driven by the realization that heat is a form of energy that can be converted into mechanical work. <strong>Benjamin Thompson (Count Rumford)</strong> observed the heat generated during the boring of cannons, noting that an inexhaustible amount of heat could be produced by friction. This contradicted the idea of caloric as a conserved fluid. Later, <strong>James Prescott Joule</strong> performed definitive experiments demonstrating a precise conversion factor between mechanical work and heat, showing that heat could be 'produced' and 'destroyed' by doing work on a system, rendering the conserved fluid model untenable.</p><h3>3. From Fluid to Kinetic Energy</h3><p>The replacement of caloric theory by the <strong>Kinetic Theory</strong> was a paradigm shift. Heat was no longer seen as a substance *in* a body, but as the *energy* of the motion of the body's constituent particles. This shift also resolved the issue of temperature: rather than being a measure of the density of 'caloric fluid', temperature became a measure of the average kinetic energy of the particles. This unified thermodynamics with classical mechanics, creating the foundation for <strong>Statistical Mechanics</strong>.</p><h3>4. Philosophical Lessons for Realism</h3><p>The Caloric Theory is often used by anti-realists to argue that the success of a theory's predictions is not a reliable indicator of the truth of its theoretical entities. Because caloric theory predicted phenomena such as the laws of the Carnot cycle with great precision, realists are forced to explain why it was so successful despite its underlying entities being purely fictitious. Realists generally counter that while the <em>entity</em> (caloric) was false, theory was <strong>approximately true</strong> in its functional description of heat-transfer relations, which were preserved in the later kinetic model.</p>    </div>
 
     
-<script nonce="9bd67eab0d0aacfeca5c07089e2809d4">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
@@ -223,8 +186,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Historical Counter</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/scientific-realism" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Scientific Realism</strong>
+                                    <a href="/physics/subtopic/thermal-transport" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Thermal Transport</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                                     <a href="/physics/subtopic/pragmatism-physics" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
@@ -235,10 +198,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/scientific-realism" class="btn btn-secondary">&larr; Back to Scientific Realism</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="9bd67eab0d0aacfeca5c07089e2809d4" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

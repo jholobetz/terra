@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Geodesic Equation of Motion - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="0da43a55bf46aec5dac7097979bf025f">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="0da43a55bf46aec5dac7097979bf025f"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/relativity">Relativity</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/geodesic-motion">Geodesic Motion and Free-Fall</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Geodesic Equation of Motion</span>
     </nav>
@@ -185,24 +176,24 @@
     </header>
     
     <div class="content-body">
-        <p>The <strong>Equation of Motion</strong> for a particle in <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a> is the geodesic equation, which describes the 4D trajectory of an object in <a href="/physics/subtopic/free-fall" class="subtopic-link"><strong>Free-Fall</strong></a>. In university-level physics, this equation replaces Newton's Second Law (\( F=ma \)). It asserts that the acceleration of an object is not caused by an external <strong>Force</strong>, but by the object's 4-velocity interacting with the 4D <strong>Connection Coefficient</strong> of the manifold.</p>
+        <p>The <strong>Equation of Motion</strong> for a particle in <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a> is the geodesic equation, which describes the 4D trajectory of an object in <a href="/physics/subtopic/free-fall" class="subtopic-link"><strong>Free-Fall</strong></a>. In university-level physics, this equation replaces Newton's Second Law (\(F=ma\)). It asserts that the acceleration of an object is not caused by an external <strong>Force</strong>, but by the object's 4-velocity interacting with the 4D <strong>Connection Coefficient</strong> of the manifold.</p>
 
                     <h3>1. Form of the Geodesic Equation</h3>
                     <p>The equation is a set of four coupled, non-linear second-order differential equations:
-                    \[ \frac{d^2 x^\mu}{d	au^2} + \Gamma^\mu_{\alpha\beta} \frac{dx^\alpha}{d	au} \frac{dx^\beta}{d	au} = 0 \]
-                    The first term represents the 4-acceleration in a coordinate system, and the second term involving the <a href="/physics/subtopic/christoffel-symbols" class="subtopic-link"><strong>Christoffel Symbols</strong></a> (\( \Gamma \)) accounts for the 4D curvature. Together, they ensure that the <strong>Covariant Acceleration</strong> is zero, defining the state of <strong>Inertia</strong>.</p>
+                    \[\frac{d^2 x^\mu}{d\tau^2} + \Gamma^\mu_{\alpha\beta} \frac{dx^\alpha}{d\tau} \frac{dx^\beta}{d\tau} = 0\]
+                    The first term represents the 4-acceleration in a coordinate system, and the second term involving the <a href="/physics/subtopic/christoffel-symbols" class="subtopic-link"><strong>Christoffel Symbols</strong></a> (\(\Gamma\)) accounts for the 4D curvature. Together, they ensure that the <strong>Covariant Acceleration</strong> is zero, defining the state of <strong>Inertia</strong>.</p>
 
                     <h3>2. Gravity as a Fictitious Force</h3>
-                    <p>In this framework, the term \( \Gamma^\mu_{\alpha\beta} U^\alpha U^\beta \) looks like a force, but it is purely geometric. It is mathematically identical to the "Centrifugal Force" or "Coriolis Force" encountered in <strong>Classical Mechanics</strong> when using rotating frames. This proves that gravity is an <strong>Epistemic</strong> artifact of our coordinate choices in a curved , anchoring <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the geometry of space.</p>
+                    <p>In this framework, the term \(\Gamma^\mu_{\alpha\beta} U^\alpha U^\beta\) looks like a force, but it is purely geometric. It is mathematically identical to the "Centrifugal Force" or "Coriolis Force" encountered in <strong>Classical Mechanics</strong> when using rotating frames. This proves that gravity is an <strong>Epistemic</strong> artifact of our coordinate choices in a curved , anchoring <a href="/physics/subtopic/scientific-realism" class="subtopic-link"><strong>Scientific Realism</strong></a> in the geometry of space.</p>
 
                     <h3>3. Affine Parameters and Light</h3>
-                    <p>For massive particles, the equation is parameterized by <a href="/physics/subtopic/proper-time" class="subtopic-link"><strong>Proper Time</strong></a> (\( 	au \)). For <a href="/physics/subtopic/null-geodesics" class="subtopic-link"><strong>Null Geodesics</strong></a> (light), proper time is zero, so the equation is parameterized by an <strong>Affine Parameter</strong> (\( \lambda \)). This ensures that the <strong>Equation of Motion</strong> remains valid for photons, dictating the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of <a href="/physics/subtopic/electromagnetic-radiation" class="subtopic-link"><strong>Electromagnetic Radiation</strong></a> near massive stars.</p>
+                    <p>For massive particles, the equation is parameterized by <a href="/physics/subtopic/proper-time" class="subtopic-link"><strong>Proper Time</strong></a> (\(\tau\)). For <a href="/physics/subtopic/null-geodesics" class="subtopic-link"><strong>Null Geodesics</strong></a> (light), proper time is zero, so the equation is parameterized by an <strong>Affine Parameter</strong> (\(\lambda\)). This ensures that the <strong>Equation of Motion</strong> remains valid for photons, dictating the <a href="/physics/subtopic/total-dynamics" class="subtopic-link"><strong>Total Dynamics</strong></a> of <a href="/physics/subtopic/electromagnetic-radiation" class="subtopic-link"><strong>Electromagnetic Radiation</strong></a> near massive stars.</p>
 
                     <h3>4. Integration and Initial Conditions</h3>
                     <p>To find a particle's path, one must integrate the geodesic equation given an <strong>Initial Mass</strong> and 4-velocity. In simple 4D geometries like the <strong>Schwarzschild Metric</strong>, this leads to the orbits of planets. In complex, time-dependent manifolds (like the <strong>Early Universe</strong>), the equations describe the <strong>Expansion History</strong> of the cosmic fluid, linking local motion to global 4D <a href="/physics/subtopic/spacetime-causal-topology" class="subtopic-link"><strong>Causal Topology</strong></a>.</p>
 
                     <h3>5. Deviation and Force Coupling</h3>
-                    <p>If an external force (like the <strong>Lorentz Force</strong>) is present, it is added to the right-hand side of the equation: \( a^\mu + \Gamma U U = f^\mu/m \). This "Force Coupling" shows how matter is pushed off its natural 4D path, providing a unified description of both gravitational "drift" and non-gravitational "push" in the <strong>Standard Model</strong>.</p>
+                    <p>If an external force (like the <strong>Lorentz Force</strong>) is present, it is added to the right-hand side of the equation: \(a^\mu + \Gamma U U = f^\mu/m\). This "Force Coupling" shows how matter is pushed off its natural 4D path, providing a unified description of both gravitational "drift" and non-gravitational "push" in the <strong>Standard Model</strong>.</p>
 
                     <h3>6. Epistemic Status: The Law of Persistence</h3>
                     <p>The geodesic equation is the 4D <strong>Ontological</strong> successor to the Law of Inertia. It tells us that objects persist in their "straight" 4D motion unless acted upon. By reducing the <strong>History of the Universe</strong> to a set of differential equations, physics proves that the <strong>Block Universe</strong> is a predictable, geometric structure where motion is a property of the manifold itself.</p>    </div>
@@ -217,7 +208,7 @@
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Geodesic Equation                        </span>
+                            Geometric Force                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
@@ -230,22 +221,32 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Geodesic Equation:</strong> The central math rule that tells matter how to move in a curved universe.                                </p>
+                                    <strong>Geometric Force:</strong> The part of the equation that accounts for the curvature of the coordinate system.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \alpha \):</span> 
+                                                                                    <a href="/physics/constants#alpha" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Fine-structure Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -260,32 +261,30 @@
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ U^
-u 
-abla_
-u U^\mu = 0 \quad (	ext{Geometric Form}) \]
+                            \[ U^\nu \nabla_\nu U^\mu = 0 \quad (\text{Geometric Form}) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Geometric Correction:</strong> Why gravity feels like a push but is actually just the bend of the coordinate grid.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -300,29 +299,30 @@ u U^\mu = 0 \quad (	ext{Geometric Form}) \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{dU^\mu}{d	au} = f^\mu_{non-grav} / m - \Gamma U U \]
+                            \[ \frac{dU^\mu}{d\tau} = f^\mu_{non-grav} / m - \Gamma U U \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>4D Tracking:</strong> The system used to draw the world-line of every star and planet in space.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -337,62 +337,34 @@ u U^\mu = 0 \quad (	ext{Geometric Form}) \]
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ 
-abla_{\mathbf{U}} \mathbf{U} = 0 \]
+                            \[ \nabla_{\mathbf{U}} \mathbf{U} = 0 \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Force coupling:</strong> How to add real pushes (like magnets) to the natural curves of gravity.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="0da43a55bf46aec5dac7097979bf025f">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -413,10 +385,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/geodesic-motion" class="btn btn-secondary">&larr; Back to Geodesic Motion and Free-Fall</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="0da43a55bf46aec5dac7097979bf025f" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parallax Baseline - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="52fb335260ae28ed11836356f6aec8b6">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="52fb335260ae28ed11836356f6aec8b6"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/astrophysics">Astrophysics and Cosmology</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/cosmic-distance-ladder">The Cosmic Distance Ladder</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/astrophysical-parallax">Stellar Parallax and Geometric Distances</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Parallax Baseline</span>
     </nav>
@@ -188,13 +181,13 @@
         <p>In astrometry and surveying, the <strong>Baseline</strong> is the physical distance between two distinct points of observation used to determine the distance to a remote object via trigonometry. In the context of <strong>Stellar Parallax</strong>, the baseline is the most critical parameter for determining the precision and reach of the measurement. A longer baseline results in a larger apparent shift, allowing astronomers to resolve the distances to much further stars with higher accuracy.</p>
 
                     <h3>1. The Astronomical Unit (1 AU) as a Baseline</h3>
-                    <p>The standard baseline for measuring stellar distances is the semi-major axis of the Earth's orbit around the Sun, defined as one <strong>Astronomical Unit (AU)</strong> (\( \sim 150 	ext{ million km} \)). By observing a star from opposite sides of the orbit (a six-month interval), astronomers effectively use a total baseline of \( 2 	ext{ AU} \). However, by convention, the <strong>Parallax Angle</strong> (\( p \)) is calculated relative to a baseline of \( 1 	ext{ AU} \), forming the basis for the definition of the <strong>Parsec</strong>.</p>
+                    <p>The standard baseline for measuring stellar distances is the semi-major axis of the Earth's orbit around the Sun, defined as one <strong>Astronomical Unit (AU)</strong> (\( \sim 150 \text{ million km} \)). By observing a star from opposite sides of the orbit (a six-month interval), astronomers effectively use a total baseline of \( 2 \text{ AU} \). However, by convention, the <strong>Parallax Angle</strong> (\( p \)) is calculated relative to a baseline of \( 1 \text{ AU} \), forming the basis for the definition of the <strong>Parsec</strong>.</p>
 
                     <h3>2. The Inverse Relationship: Distance and Angle</h3>
-                    <p>The relationship between the baseline (\( B \)), the parallax angle (\( p \)), and the distance (\( d \)) is given by \( d = B / 	an p \). Because stars are extremely distant, the angles involved are always smaller than one arcsecond. This necessitates the use of the <strong>Small Angle Approximation</strong>, where \( d \approx B / p \). In this regime, the uncertainty in distance is directly proportional to the uncertainty in the angular measurement, proving that the maximum measurable distance is limited by the instrument's angular resolution for a fixed baseline.</p>
+                    <p>The relationship between the baseline (\( B \)), the parallax angle (\( p \)), and the distance (\( d \)) is given by \( d = B / \tan p \). Because stars are extremely distant, the angles involved are always smaller than one arcsecond. This necessitates the use of the <strong>Small Angle Approximation</strong>, where \( d \approx B / p \). In this regime, the uncertainty in distance is directly proportional to the uncertainty in the angular measurement, proving that the maximum measurable distance is limited by the instrument's angular resolution for a fixed baseline.</p>
 
                     <h3>3. Secular Parallax: The Solar Baseline</h3>
-                    <p>To measure distances to even more remote stars, astronomers utilize the <strong>Secular Parallax</strong>. This method uses the Sun's own motion through the local interstellar medium as a "traveling" baseline. The Sun moves at approximately \( 20 	ext{ km/s} \), creating a baseline that grows by about \( 4 	ext{ AU} \) every year. Over decades, this creates a much larger baseline than the Earth's orbit, allowing for the statistical measurement of distances to distant star clusters and the overall scale of the galactic neighborhood.</p>
+                    <p>To measure distances to even more remote stars, astronomers utilize the <strong>Secular Parallax</strong>. This method uses the Sun's own motion through the local interstellar medium as a "traveling" baseline. The Sun moves at approximately \( 20 \text{ km/s} \), creating a baseline that grows by about \( 4 \text{ AU} \) every year. Over decades, this creates a much larger baseline than the Earth's orbit, allowing for the statistical measurement of distances to distant star clusters and the overall scale of the galactic neighborhood.</p>
 
                     <h3>4. Moving-Cluster and Statistical Baselines</h3>
                     <p>Advanced astrometry employs "virtual" baselines through the <strong>Moving-Cluster Method</strong>. By observing the common proper motions of a group of stars (like the Hyades), astronomers can derive their distance using the convergence point of their trajectories. This <strong>Statistical Baseline</strong> technique bypasses the need for simultaneous observations from different points, linking the group's internal velocity dispersion to the global geometric scale of the Milky Way.</p>
@@ -221,29 +214,30 @@
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ d = \frac{B}{	an p} \approx \frac{B}{p} \]
+                            \[ d = \frac{B}{\tan p} \approx \frac{B}{p} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Distance Calculation:</strong> Relates the distance of an object to the length of the baseline and the measured angular shift.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -258,29 +252,30 @@
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ d 	ext{ (pc)} = \frac{1 	ext{ (AU)}}{p 	ext{ (arcsec)}} \]
+                            \[ d \text{ (pc)} = \frac{1 \text{ (AU)}}{p \text{ (arcsec)}} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Standard Measure:</strong> Why 1 AU is chosen as the unit baseline for all interstellar distance calculations.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -302,22 +297,23 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Precision Constraint:</strong> Shows how small errors in angle measurement (\( \Delta p \)) lead to large errors in distance as p decreases.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -339,54 +335,27 @@
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Resolution Factor:</strong> The distance between receptors in a radio array that determines the "sharpness" of the cosmic image.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="52fb335260ae28ed11836356f6aec8b6">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -407,10 +376,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/astrophysical-parallax" class="btn btn-secondary">&larr; Back to Stellar Parallax and Geometric Distances</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="52fb335260ae28ed11836356f6aec8b6" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

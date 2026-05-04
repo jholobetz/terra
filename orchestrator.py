@@ -893,6 +893,67 @@ class PhysicsOrchestrator:
         subprocess.run(["php", "cli_sync.php"], capture_output=True)
         print(f"SUCCESS: [{slug}] is now live in the static cache.")
 
+    def audit_registry(self):
+        """Analyzes the slug registry for identity collisions and linguistic divergence."""
+        print("Starting Registry Identity Audit...")
+        
+        # 1. Reverse the registry: Slug -> [Titles]
+        slug_map = {}
+        for title, slug in self.registry.items():
+            if slug not in slug_map:
+                slug_map[slug] = []
+            slug_map[slug].append(title)
+        
+        collisions = []
+        for slug, titles in slug_map.items():
+            if len(titles) > 1:
+                # Calculate basic divergence
+                # If titles are very different lengths or words don't overlap, flag high risk
+                base_title = titles[0].lower()
+                for t in titles[1:]:
+                    words_base = set(re.findall(r'\w+', base_title))
+                    words_other = set(re.findall(r'\w+', t.lower()))
+                    
+                    overlap = len(words_base.intersection(words_other))
+                    union = len(words_base.union(words_other))
+                    similarity = overlap / union if union > 0 else 0
+                    
+                    if similarity < 0.4:
+                        collisions.append({
+                            "slug": slug,
+                            "titles": titles,
+                            "similarity": similarity,
+                            "risk": "HIGH"
+                        })
+                    elif similarity < 0.8:
+                        collisions.append({
+                            "slug": slug,
+                            "titles": titles,
+                            "similarity": similarity,
+                            "risk": "MEDIUM (Alias?)"
+                        })
+
+        # 2. Output Report
+        print(f"\n--- REGISTRY AUDIT REPORT ---")
+        print(f"Total Slugs Analyzed: {len(slug_map)}")
+        print(f"Total Multi-Title Slugs: {sum(1 for t in slug_map.values() if len(t) > 1)}")
+        print(f"Potential Collisions Detected: {len(collisions)}")
+        print(f"-----------------------------")
+        
+        high_risk = [c for c in collisions if c["risk"] == "HIGH"]
+        if high_risk:
+            print(f"\n[HIGH RISK] Identity Collisions (Low Linguistic Overlap):")
+            for c in high_risk:
+                print(f"  - [{c['slug']}]: {', '.join(c['titles'])} (Sim: {c['similarity']:.2f})")
+                
+        medium_risk = [c for c in collisions if "MEDIUM" in c["risk"]]
+        if medium_risk:
+             print(f"\n[MEDIUM RISK] Potential Aliases (Review Required):")
+             for c in medium_risk[:10]: # Cap at 10 for summary
+                 print(f"  - [{c['slug']}]: {', '.join(c['titles'])} (Sim: {c['similarity']:.2f})")
+        
+        return collisions
+
     def audit(self):
         """Performs a deep technical audit of all subtopics and hubs."""
         print("Starting Platinum Audit...")

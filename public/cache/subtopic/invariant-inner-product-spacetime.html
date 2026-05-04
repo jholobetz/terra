@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Invariant Inner Product - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="d5dc4322f818c25415fac55f18996d62">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="d5dc4322f818c25415fac55f18996d62"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,14 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/relativity">Relativity</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/time-dilation">Kinematic Time Dilation</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/spacetime-interval">Spacetime Interval</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/lorentz-invariance">Lorentz Invariance</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Invariant Inner Product</span>
     </nav>
@@ -185,27 +180,26 @@
     </header>
     
     <div class="content-body">
-        <p>The <strong>Invariant Inner Product</strong> is the mathematical operation that defines the geometry of <strong>Minkowski Spacetime</strong>. In university-level relativity, it is the contraction of two 4-vectors using the <strong>Metric Tensor</strong> (\( \eta_{\mu
-u} \)). This product always yields a <strong>Lorentz Scalar</strong>, providing the observer-independent measure of length and angle in the .</p>
+        <p>The <strong>Invariant Inner Product</strong> is the mathematical operation that defines the geometry of <strong>Minkowski Spacetime</strong>. In university-level relativity, it is the contraction of two 4-vectors using the <strong>Metric Tensor</strong> (\(\eta_{\mu\nu}\)). This product always yields a <strong>Lorentz Scalar</strong>, providing the observer-independent measure of length and angle in the .</p>
 
                   <h3>1. The Minkowski Metric</h3>
-                  <p>Unlike the Euclidean inner product (\( A \cdot B = A_x B_x + A_y B_y + A_z B_z \)), the relativistic version accounts for the negative sign of the time dimension. Using the signature \( (+, -, -, -) \), the inner product of two 4-vectors \( A \) and \( B \) is:
-                  \[ A \cdot B = A^\mu B_\mu = A^0 B^0 - \mathbf{A} \cdot \mathbf{B} \]
+                  <p>Unlike the Euclidean inner product (\(A \cdot B = A_x B_x + A_y B_y + A_z B_z\)), the relativistic version accounts for the negative sign of the time dimension. Using the signature \((+, -, -, -)\), the inner product of two 4-vectors \(A\) and \(B\) is:
+                  \[A \cdot B = A^\mu B_\mu = A^0 B^0 - \mathbf{A} \cdot \mathbf{B}\]
                   This "indefinite" metric is what gives 4D spacetime its unique <a href="/physics/subtopic/spacetime-causal-topology" class="subtopic-link"><strong>Causal Topology</strong></a>.</p>
 
                   <h3>2. Norm and Causality</h3>
-                  <p>The "length" of a 4-vector is defined as its inner product with itself (\( A^2 = A \cdot A \)). The sign of this norm determines the vector's nature:
+                  <p>The "length" of a 4-vector is defined as its inner product with itself (\(A^2 = A \cdot A\)). The sign of this norm determines the vector's nature:
                   <ul>
-                    <li><strong>Timelike (\( \gt 0 \)):</strong> Separation where a signal can travel slower than light (matter).</li>
-                    <li><strong>Lightlike (\( = 0 \)):</strong> Paths followed by photons (the <strong>Light Cone</strong>).</li>
-                    <li><strong>Spacelike (\( \lt 0 \)):</strong> Separations that cannot be connected by any signal.</li>
+                    <li><strong>Timelike (\(\gt 0\)):</strong> Separation where a signal can travel slower than light (matter).</li>
+                    <li><strong>Lightlike (\(= 0\)):</strong> Paths followed by photons (the <strong>Light Cone</strong>).</li>
+                    <li><strong>Spacelike (\(\lt 0\)):</strong> Separations that cannot be connected by any signal.</li>
                   </ul></p>
 
                   <h3>3. Conservation of the Product</h3>
-                  <p>The power of the invariant inner product lies in its <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariance</strong></a>. If two observers in different frames measure the components of vectors \( A \) and \( B \), they will get different values. However, when they perform the contraction \( A^\mu B_\mu \), they will calculate the exact same number. This represents an <strong>Objective Reality</strong> that transcends the observer's perspective.</p>
+                  <p>The power of the invariant inner product lies in its <a href="/physics/subtopic/lorentz-invariance" class="subtopic-link"><strong>Lorentz Invariance</strong></a>. If two observers in different frames measure the components of vectors \(A\) and \(B\), they will get different values. However, when they perform the contraction \(A^\mu B_\mu\), they will calculate the exact same number. This represents an <strong>Objective Reality</strong> that transcends the observer's perspective.</p>
 
                   <h3>4. Application in Field Theory</h3>
-                  <p>In <strong>Quantum Field Theory</strong>, interactions are often expressed as inner products. For example, the interaction between a current (\( J^\mu \)) and a potential (\( A_\mu \)) is the scalar \( J^\mu A_\mu \). By building theories out of these products, physicists ensure that the laws of nature are <a href="/physics/subtopic/manifestly-covariant" class="subtopic-link"><strong>Manifestly Covariant</strong></a>, preserving the <strong>Principle of Relativity</strong> at the subatomic level.</p>    </div>
+                  <p>In <strong>Quantum Field Theory</strong>, interactions are often expressed as inner products. For example, the interaction between a current (\(J^\mu\)) and a potential (\(A_\mu\)) is the scalar \(J^\mu A_\mu\). By building theories out of these products, physicists ensure that the laws of nature are <a href="/physics/subtopic/manifestly-covariant" class="subtopic-link"><strong>Manifestly Covariant</strong></a>, preserving the <strong>Principle of Relativity</strong> at the subatomic level.</p>    </div>
 
     <section class="equations-section">
     <h2>Key Theoretical Identities</h2>
@@ -223,30 +217,30 @@ u} \)). This product always yields a <strong>Lorentz Scalar</strong>, providing 
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ A \cdot B = \eta_{\mu
-u} A^\mu B^nu \]
+                            \[ A \cdot B = \eta_{\mu\nu} A^\mu B^nu \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Metric Tensor:</strong> The 4x4 matrix that defines the "rules" of distance in Minkowski space.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -255,36 +249,36 @@ u} A^\mu B^nu \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Contraction                        </span>
+                            Minkowski Metric Tensor                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \eta_{\mu
-u} = 	ext{diag}(1, -1, -1, -1) \]
+                            \[ \eta_{\mu\nu} = \text{diag}(1, -1, -1, -1) \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Contraction:</strong> The process of summing over indices to produce a frame-independent scalar.                                </p>
+                                    <strong>Lorentzian Signature:</strong> The standard representation in flat space, where the positive time component distinguishes history from geometry.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -306,54 +300,27 @@ u} = 	ext{diag}(1, -1, -1, -1) \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Mathematical Context:</strong> This formula describes a key relationship within The Invariant Inner Product.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="d5dc4322f818c25415fac55f18996d62">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -362,22 +329,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Invariant Lagrangian and Action</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/lorentz-invariant-quantity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Lorentz Invariant Quantities</strong>
+                                    <a href="/physics/subtopic/charge-current-4-vector" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Charge-Current 4-Vector (\(J^\mu\))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/lorentz-scalar" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Lorentz Scalars and Invariant Fields</strong>
+                                    <a href="/physics/subtopic/lorentz-invariant-quantity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Lorentz Invariant Quantities</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/lorentz-invariance" class="btn btn-secondary">&larr; Back to Lorentz Invariance</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="d5dc4322f818c25415fac55f18996d62" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

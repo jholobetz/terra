@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orbital Angular Momentum - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="e9d9bc9462a45dee14218a89546c440e">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="e9d9bc9462a45dee14218a89546c440e"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,14 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/theoretical-quantum-mechanics">The Foundations of Quantum Mechanics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/action-integral">Action Integral</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/angular-momentum">Angular Momentum</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Orbital Angular Momentum</span>
     </nav>
@@ -185,7 +180,7 @@
     </header>
     
     <div class="content-body">
-        <p>Orbital <a href="/physics/subtopic/angular-momentum" class="subtopic-link"><strong>Angular Momentum</strong></a> (\( \mathbf{L} \)) is the vector quantity that describes the rotational motion of a particle or system of particles about a specific origin. In university-level mechanics, it is defined as the cross product of the position vector and the linear momentum: \( \mathbf{L} = \mathbf{r} 	imes \mathbf{p} \). This quantity represents the <a href="/physics/subtopic/generator-of-rotations" class="subtopic-link"><strong>Generator of Rotations</strong></a> through space and is the key to understanding central-force motion, including planetary orbits and atomic electronic states.</p>
+        <p>Orbital <a href="/physics/subtopic/angular-momentum" class="subtopic-link"><strong>Angular Momentum</strong></a> (\( \mathbf{L} \)) is the vector quantity that describes the rotational motion of a particle or system of particles about a specific origin. In university-level mechanics, it is defined as the cross product of the position vector and the linear momentum: \( \mathbf{L} = \mathbf{r} \times \mathbf{p} \). This quantity represents the <a href="/physics/subtopic/generator-of-rotations" class="subtopic-link"><strong>Generator of Rotations</strong></a> through space and is the key to understanding central-force motion, including planetary orbits and atomic electronic states.</p>
 
                     <h3>1. Cross Product Definition and Geometry</h3>
                     <p>The vector \( \mathbf{L} \) is perpendicular to the plane formed by the position (\( \mathbf{r} \)) and momentum (\( \mathbf{p} \)) vectors. Its magnitude is given by \( L = rp \sin \phi \), where \( \phi \) is the angle between the two. This geometric structure ensures that for a <strong>Central Force</strong>, where the force is always directed toward the origin, the angular momentum vector remains constant in both magnitude and direction, forcing the motion to remain a fixed 2D plane.</p>
@@ -194,22 +189,18 @@
                     <p>For a particle in an orbit, the rate at which the position vector sweeps out area is proportional to the orbital angular momentum: \( dA/dt = L / (2m) \). This provides the mathematical proof for <a href="/physics/subtopic/keplers-second-law" class="subtopic-link"><strong>Kepler's Second Law</strong></a>. In any system where angular momentum is conserved, the particle must sweep out equal areas in equal times, a rule that holds for any attractive or repulsive force that depends only on the distance from the source.</p>
 
                     <h3>3. <a href="/physics/subtopic/generalized-coordinates" class="subtopic-link"><strong>Generalized Coordinates</strong></a> and Conjugate Momenta</h3>
-                    <p>In the <a href="/physics/subtopic/lagrangian" class="subtopic-link"><strong>Lagrangian</strong></a> framework, if a system is described in spherical coordinates (\( r, 	heta, \phi \)), the orbital angular momentum is the <a href="/physics/subtopic/canonical-momentum" class="subtopic-link"><strong>Canonical Momentum</strong></a> conjugate to the angular coordinates. For example, \( p_\phi = \partial L / \partial \dot{\phi} = mr^2 \sin^2 	heta \dot{\phi} \). This identification allows physicists to treat rotations with the same algebraic rigor as linear translations, linking conservation laws directly to the <a href="/physics/subtopic/isotropy-of-space" class="subtopic-link"><strong>Isotropy of Space</strong></a>.</p>
+                    <p>In the <a href="/physics/subtopic/lagrangian" class="subtopic-link"><strong>Lagrangian</strong></a> framework, if a system is described in spherical coordinates (\( r, \theta, \phi \)), the orbital angular momentum is the <a href="/physics/subtopic/canonical-momentum" class="subtopic-link"><strong>Canonical Momentum</strong></a> conjugate to the angular coordinates. For example, \( p_\phi = \partial L / \partial \dot{\phi} = mr^2 \sin^2 \theta \dot{\phi} \). This identification allows physicists to treat rotations with the same algebraic rigor as linear translations, linking conservation laws directly to the <a href="/physics/subtopic/isotropy-of-space" class="subtopic-link"><strong>Isotropy of Space</strong></a>.</p>
 
                     <h3>4. Multi-Particle Systems and Center of Mass</h3>
                     <p>For a system of particles, the total orbital angular momentum is the sum of the angular momentum of the <strong>Center of <a href="/physics/subtopic/mass" class="subtopic-link"><strong>Mass</strong></a> (CM)</strong> and the internal angular momentum relative to the CM. 
-                    \[ \mathbf{L}_{total} = \mathbf{R} 	imes \mathbf{P} + \sum \mathbf{r}_i' 	imes \mathbf{p}_i' \]
+                    \[ \mathbf{L}_{total} = \mathbf{R} \times \mathbf{P} + \sum \mathbf{r}_i' \times \mathbf{p}_i' \]
                     This decomposition allows for the separation of the global trajectory (e.g., a planet orbiting a star) from the internal rotational dynamics of the body itself.</p>
 
                     <h3>5. Quantum Orbital Momentum and Spherical Harmonics</h3>
-                    <p>In quantum mechanics, orbital angular momentum is quantized. The operator \( \hat{\mathbf{L}} = -i\hbar (\mathbf{r} 	imes 
-abla) \) has eigenvalues restricted to \( L^2 = l(l+1)\hbar^2 \), where \( l \) is an integer. The stationary states of the system are described by <strong>Spherical Harmonics</strong> (\( Y_{lm} \)), which dictate the 3D shapes of electron probability clouds in atoms, providing the physical basis for chemical bonding.</p>
+                    <p>In quantum mechanics, orbital angular momentum is quantized. The operator \( \hat{\mathbf{L}} = -i\hbar (\mathbf{r} \times \nabla) \) has eigenvalues restricted to \( L^2 = l(l+1)\hbar^2 \), where \( l \) is an integer. The stationary states of the system are described by <strong>Spherical Harmonics</strong> (\( Y_{lm} \)), which dictate the 3D shapes of electron probability clouds in atoms, providing the physical basis for chemical bonding.</p>
 
                     <h3>6. Relativistic <a href="/physics/subtopic/angular-momentum" class="subtopic-link"><strong>Angular Momentum</strong></a> Tensor</h3>
-                    <p>In <strong>Special Relativity</strong>, orbital angular momentum is not a 3-vector but part of antisymmetric rank-2 <strong>Angular Momentum Tensor</strong> (\( M^{\mu
-u} = x^\mu p^
-u - x^
-u p^\mu \)). The spatial components of this tensor correspond to the classical \( \mathbf{L} \), while the mixed time-space components describe the motion of the center of mass. This formulation ensures that angular momentum conservation is a <a href="/physics/subtopic/manifestly-covariant" class="subtopic-link"><strong>Manifestly Covariant</strong></a> law, consistent across all Lorentz frames.</p>    </div>
+                    <p>In <strong>Special Relativity</strong>, orbital angular momentum is not a 3-vector but part of antisymmetric rank-2 <strong>Angular Momentum Tensor</strong> (\( M^{\mu\nu} = x^\mu p^\nu - x^\nu p^\mu \)). The spatial components of this tensor correspond to the classical \( \mathbf{L} \), while the mixed time-space components describe the motion of the center of mass. This formulation ensures that angular momentum conservation is a <a href="/physics/subtopic/manifestly-covariant" class="subtopic-link"><strong>Manifestly Covariant</strong></a> law, consistent across all Lorentz frames.</p>    </div>
 
     <section class="equations-section">
     <h2>Key Theoretical Identities</h2>
@@ -221,35 +212,45 @@ u p^\mu \)). The spatial components of this tensor correspond to the classical \
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Orbital Source                        </span>
+                            <a href="/physics/subtopic/orbital-angular-momentum" class="subtopic-link">Orbital Momentum</a>                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \mathbf{L} = \mathbf{r} 	imes \mathbf{p} \]
+                            \[ \mathbf{L} = \mathbf{r} \times \mathbf{p} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Orbital Source:</strong> The fundamental definition linking spatial position and linear momentum to rotational strength.                                </p>
+                                    <strong><a href="/physics/subtopic/orbital-angular-momentum" class="subtopic-link">Orbital Momentum</a>:</strong> The cross product of position and linear momentum, dependent on the choice of origin.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathbf{p} \):</span> 
+                                                                                    <a href="/physics/subtopic/linear-momentum" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Momentum</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -264,29 +265,30 @@ u p^\mu \)). The spatial components of this tensor correspond to the classical \
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \frac{d\mathbf{L}}{dt} = \mathbf{r} 	imes \mathbf{F} = \boldsymbol{	au} \]
+                            \[ \frac{d\mathbf{L}}{dt} = \mathbf{r} \times \mathbf{F} = \mathbf{\tau} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Dynamical Law:</strong> Shows that angular momentum changes only in response to a net external torque.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -308,22 +310,32 @@ u p^\mu \)). The spatial components of this tensor correspond to the classical \
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Integer Spin:</strong> The restriction of orbital momentum to discrete values in quantum systems.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \hbar \):</span> 
+                                                                                    <a href="/physics/constants#h-bar" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Reduced Planck Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -338,64 +350,34 @@ u p^\mu \)). The spatial components of this tensor correspond to the classical \
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ M^{\mu
-u} = x^\mu p^
-u - x^
-u p^\mu \]
+                            \[ M^{\mu\nu} = x^\mu p^\nu - x^\nu p^\mu \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Relativistic Form:</strong> The 4D generalization that unifies rotation and center-of-mass motion.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="e9d9bc9462a45dee14218a89546c440e">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -408,18 +390,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Central Forces</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/generator-of-rotations" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Generator of Rotations</strong>
+                                    <a href="/physics/subtopic/angular-momentum" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Angular Momentum</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/angular-momentum" class="btn btn-secondary">&larr; Back to Angular Momentum</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="e9d9bc9462a45dee14218a89546c440e" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

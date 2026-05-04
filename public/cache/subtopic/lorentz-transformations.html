@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Lorentz Transformations - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="8bfc542d6643ebe4f28ef182e2d4fbc8">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="8bfc542d6643ebe4f28ef182e2d4fbc8"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,10 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/relativity">Relativity</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/galilean-relativity">Galilean Relativity and Absolute Space</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">The Lorentz Transformations</span>
     </nav>
@@ -185,36 +176,34 @@
     </header>
     
     <div class="content-body">
-        <p>The Lorentz Transformations are the set of linear equations that relate the space and time coordinates of events as measured by two observers in uniform relative motion. Unlike the Galilean transformations of classical mechanics, the Lorentz transformations preserve the speed of light (\( c \)) for all observers, fundamentally altering our understanding of the relationship between space, time, and causality.</p>
+        <p>The Lorentz Transformations are the set of linear equations that relate the space and time coordinates of events as measured by two observers in uniform relative motion. Unlike the Galilean transformations of classical mechanics, the Lorentz transformations preserve the speed of light (\(c\)) for all observers, fundamentally altering our understanding of the relationship between space, time, and causality.</p>
 
                     <h3>1. Derivation from Einstein's Postulates</h3>
-                    <p>The Lorentz transformations were derived by Albert Einstein based on two foundational postulates: that the laws of physics are invariant in all inertial frames, and that the speed of light in a vacuum is a constant. In university-level relativity, these equations are found by requiring that the <a href="/physics/subtopic/spacetime-interval" class="subtopic-link"><strong>Spacetime Interval</strong></a> (\( s^2 = c^2t^2 - x^2 \)) be invariant between observers. This mathematical requirement necessitates a transformation that "mixes" space and time coordinates, replacing the absolute time of Newton.</p>
+                    <p>The Lorentz transformations were derived by Albert Einstein based on two foundational postulates: that the laws of physics are invariant in all inertial frames, and that the speed of light in a vacuum is a constant. In university-level relativity, these equations are found by requiring that the <a href="/physics/subtopic/spacetime-interval" class="subtopic-link"><strong>Spacetime Interval</strong></a> (\(s^2 = c^2t^2 - x^2\)) be invariant between observers. This mathematical requirement necessitates a transformation that "mixes" space and time coordinates, replacing the absolute time of Newton.</p>
 
-                    <h3>2. The Lorentz Factor (\( \gamma \))</h3>
+                    <h3>2. The Lorentz Factor (\(\gamma\))</h3>
                     <p>A central quantity in these transformations is the <a href="/physics/subtopic/lorentz-factor" class="subtopic-link"><strong>Lorentz Factor</strong></a>, defined as:
-                    \[ \gamma = \frac{1}{\sqrt{1 - v^2/c^2}} \]
-                    As the relative velocity \( v \) approaches the speed of light, \( \gamma \) approaches infinity. This factor dictates the magnitude of all relativistic effects, such as time dilation and length contraction, and ensures that the speed of light remains an unreachable limit for massive objects.</p>
+                    \[\gamma = \frac{1}{\sqrt{1 - v^2/c^2}}\]
+                    As the relative velocity \(v\) approaches the speed of light, \(\gamma\) approaches infinity. This factor dictates the magnitude of all relativistic effects, such as time dilation and length contraction, and ensures that the speed of light remains an unreachable limit for massive objects.</p>
 
                     <h3>3. Transformation of Coordinates</h3>
-                    <p>For an observer in frame \( S' \) moving at velocity \( v \) along the x-axis of frame \( S \), the transformation of an event from \( S \) to \( S' \) is given by:
-                    \[ x' = \gamma(x - vt) \]
-                    \[ y' = y \]
-                    \[ z' = z \]
-                    \[ t' = \gamma(t - \frac{vx}{c^2}) \]
-                    The transformation for \( t' \) is the most radical departure from classical intuition, showing that the time measured by an observer depends on their spatial position—a phenomenon known as the <strong>Relativity of Simultaneity</strong>.</p>
+                    <p>For an observer in frame \(S'\) moving at velocity \(v\) along the x-axis of frame \(S\), the transformation of an event from \(S\) to \(S'\) is given by:
+                    \[x' = \gamma(x - vt)\]
+                    \[y' = y\]
+                    \[z' = z\]
+                    \[t' = \gamma(t - \frac{vx}{c^2})\]
+                    The transformation for \(t'\) is the most radical departure from classical intuition, showing that the time measured by an observer depends on their spatial position—a phenomenon known as the <strong>Relativity of Simultaneity</strong>.</p>
 
                     <h3>4. Length Contraction and Time Dilation</h3>
-                    <p>The Lorentz transformations directly predict the hallmark effects of Special Relativity. <strong>Time Dilation</strong> (\( \Delta t = \gamma \Delta 	au \)) shows that moving clocks run slower, while <strong>Length Contraction</strong> (\( L = L_0/\gamma \)) shows that objects are measured to be shorter in the direction of their motion. These are not mechanical "strains" on the objects but geometric consequences of the way different observers measure the 4-dimensional spacetime manifold.</p>
+                    <p>The Lorentz transformations directly predict the hallmark effects of Special Relativity. <strong>Time Dilation</strong> (\(\Delta t = \gamma \Delta \tau\)) shows that moving clocks run slower, while <strong>Length Contraction</strong> (\(L = L_0/\gamma\)) shows that objects are measured to be shorter in the direction of their motion. These are not mechanical "strains" on the objects but geometric consequences of the way different observers measure the 4-dimensional spacetime manifold.</p>
 
                     <h3>5. Relativistic Velocity Addition</h3>
-                    <p>Because space and time transform together, the classical addition of velocities (\( u = u' + v \)) must be replaced. The <a href="/physics/subtopic/relativistic-velocity-addition" class="subtopic-link"><strong>Relativistic Velocity Addition Law</strong></a> is:
-                    \[ u = \frac{u' + v}{1 + u'v/c^2} \]
-                    This formula ensures that even if you add a velocity near \( c \) to another velocity near \( c \), the resulting speed never exceeds \( c \), maintaining the consistency of the cosmic speed limit.</p>
+                    <p>Because space and time transform together, the classical addition of velocities (\(u = u' + v\)) must be replaced. The <a href="/physics/subtopic/relativistic-velocity-addition" class="subtopic-link"><strong>Relativistic Velocity Addition Law</strong></a> is:
+                    \[u = \frac{u' + v}{1 + u'v/c^2}\]
+                    This formula ensures that even if you add a velocity near \(c\) to another velocity near \(c\), the resulting speed never exceeds \(c\), maintaining the consistency of the cosmic speed limit.</p>
 
                     <h3>6. The 4-Vector Formalism</h3>
-                    <p>In modern theoretical physics, the Lorentz transformations are expressed using <strong>Minkowski Matrices</strong>. Coordinates are treated as a single 4-vector \( x^\mu = (ct, x, y, z) \), and the transformation is a "rotation" in spacetime: \( x'^\mu = \Lambda^\mu_
-u x^
-u \). This perspective unifies space and time into a single geometric entity, proving that the division between "space" and "time" is observer-dependent, while the underlying 4D geometry is absolute.</p>
+                    <p>In modern theoretical physics, the Lorentz transformations are expressed using <strong>Minkowski Matrices</strong>. Coordinates are treated as a single 4-vector \(x^\mu = (ct, x, y, z)\), and the transformation is a "rotation" in spacetime: \(x'^\mu = \Lambda^\mu_\nu x^\nu\). This perspective unifies space and time into a single geometric entity, proving that the division between "space" and "time" is observer-dependent, while the underlying 4D geometry is absolute.</p>
 
 <h3>Related Theoretical Frameworks</h3><p>The study of The Lorentz Transformations is intrinsically linked to several specialized concepts, including the <strong><a href="/physics/subtopic/coordinate-transformation-relativity" class="subtopic-link">Relativistic Coordinate Transformation</a></strong> and <strong><a href="/physics/subtopic/minkowski-matrices" class="subtopic-link">Minkowski Matrices and the Lorentz Group</a></strong>. These topics provide the necessary analytical depth for a comprehensive understanding of the manifold's dynamics.</p>    </div>
 
@@ -241,22 +230,23 @@ u \). This perspective unifies space and time into a single geometric entity, pr
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Lorentz Factor:</strong> The fundamental scaling factor of relativity, defined in terms of the velocity ratio \(\beta = v/c\).                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -278,22 +268,23 @@ u \). This perspective unifies space and time into a single geometric entity, pr
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Coordinate Transformation:</strong> The linear mapping between the space and time measurements of two inertial observers.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -302,7 +293,7 @@ u \). This perspective unifies space and time into a single geometric entity, pr
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Velocity Addition                        </span>
+                            Covariant Maxwell Equation                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
@@ -315,22 +306,32 @@ u \). This perspective unifies space and time into a single geometric entity, pr
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Velocity Addition:</strong> The law ensuring that the composition of velocities never exceeds the speed of light.                                </p>
+                                    <strong>Covariant Maxwell Equation:</strong> An example of a physical law written in tensor form to ensure it satisfies the principle of relativity.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -339,7 +340,7 @@ u \). This perspective unifies space and time into a single geometric entity, pr
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Matrix Form                        </span>
+                            Relativistic Sum                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
@@ -352,78 +353,61 @@ u \). This perspective unifies space and time into a single geometric entity, pr
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Matrix Form:</strong> The covariant representation of the transformation as a linear operation on the 4-position vector.                                </p>
+                                    <strong>Relativistic Sum:</strong> The non-linear addition of velocities that preserves the speed of light as an invariant limit.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( c \):</span> 
+                                                                                    <a href="/physics/constants#c" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Speed of Light</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
 
-<script nonce="8bfc542d6643ebe4f28ef182e2d4fbc8">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
-
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                                    <a href="/physics/subtopic/lorentz-factor" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Lorentz Factor</strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
-                    </a>
                                     <a href="/physics/subtopic/coordinate-transformation-relativity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Relativistic Coordinate Transformation</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/minkowski-matrices" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Minkowski Matrices and the Lorentz Group</strong>
+                                    <a href="/physics/subtopic/relativity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Relativity</strong>
+                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    </a>
+                                    <a href="/physics/subtopic/position-4-vector" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Position 4-Vector (\(x^\mu\))</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/galilean-relativity" class="btn btn-secondary">&larr; Back to Galilean Relativity and Absolute Space</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="8bfc542d6643ebe4f28ef182e2d4fbc8" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

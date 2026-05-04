@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manifestly Covariant - Terra</title>
 
-    <!-- MathJax Configuration -->
-    <script nonce="61039503ca76a02512bca4cf690feb3a">
-        window.MathJax = {
-            tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']],
-                processEscapes: true
-            }
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async nonce="61039503ca76a02512bca4cf690feb3a"></script>
+    <!-- MathJax Static-Safe Configuration -->
+    <script src="/js/mathjax_config.js"></script>
+    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="/js/hub_interactions.js"></script>
+    
+    <link rel="stylesheet" href="/css/physics.css">
     
     <style>
         :root { --bg: #0a192f; --text: #ccd6f6; --accent: #64ffda; --card-bg: #112240; }
@@ -43,12 +38,12 @@
         .topic-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7); }
         .read-more { color: var(--accent); text-decoration: none; font-weight: 600; margin-top: auto; padding-top: 15px; display: inline-block; }
 
-        /* Subtopic Links */
-        .subtopic-link {
+        /* Technical Links */
+        .subtopic-link, .topic-link {
             color: #b464ff;
             text-decoration: none;
         }
-        .subtopic-link:hover { /* Brighter shade for better accessibility */
+        .subtopic-link:hover, .topic-link:hover {
             color: #c990ff;
             text-decoration: underline;
         }
@@ -160,14 +155,6 @@
         <div class="dropdown">
             <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
             <div class="dropdown-content">
-                                    <a href="/physics/simulations/pendulum">Simple Pendulum</a>
-                                    <a href="/physics/simulations/double-pendulum">Double Pendulum</a>
-                                    <a href="/physics/simulations/projectile-motion">Projectile Motion</a>
-                                    <a href="/physics/simulations/n-body-orbit">N-Body Orbit</a>
-                                    <a href="/physics/simulations/electric-field">Electric Field Visualizer</a>
-                                    <a href="/physics/simulations/wave-superposition">Wave Superposition</a>
-                                    <a href="/physics/simulations/brownian-motion">Brownian Motion</a>
-                                    <a href="/physics/simulations/gauss-law">Gauss's Law Visualizer</a>
                             </div>
         </div>
     </nav>
@@ -176,6 +163,12 @@
         <article class="subtopic-content">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/topic/theoretical-physics">Theoretical Physics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/theoretical-quantum-mechanics">The Foundations of Quantum Mechanics</a>
+                    <span>&rsaquo;</span>
+            <a href="/physics/subtopic/action-integral">Action Integral</a>
                 <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;">Manifestly Covariant</span>
     </nav>
@@ -188,9 +181,7 @@
         <p>In theoretical physics, a theory or equation is described as Manifestly Covariant if its form remains unchanged under a group of transformations (typically the Lorentz group) and this symmetry is immediately obvious through its mathematical notation. This achieved by expressing physical laws solely in terms of <strong>Tensors</strong>, <strong>4-vectors</strong>, and <strong>Spinors</strong>. Manifest covariance is the gold standard for relativistic theories, ensuring that the laws of nature are identical for all observers regardless of their state of motion.</p>
 
                     <h3>1. Symmetry and Tensor Notation</h3>
-                    <p>The core of manifest covariance lies in the use of <strong>Index Notation</strong>. By using Greek indices (\( \mu, 
-u \dots \)) to represent coordinates in 4D spacetime, physicists ensure that every term in an equation transforms in the exact same way. If both sides of an equation are tensors of the same rank, the equation is guaranteed to hold in all reference frames. This removes the need for laborious coordinate transformations, as the geometry of the <strong>Minkowski Metric</strong> (\( \eta_{\mu
-u} \)) is built directly into the grammar of theory.</p>
+                    <p>The core of manifest covariance lies in the use of <strong>Index Notation</strong>. By using Greek indices (\( \mu, \nu \dots \)) to represent coordinates in 4D spacetime, physicists ensure that every term in an equation transforms in the exact same way. If both sides of an equation are tensors of the same rank, the equation is guaranteed to hold in all reference frames. This removes the need for laborious coordinate transformations, as the geometry of the <strong>Minkowski Metric</strong> (\( \eta_{\mu\nu} \)) is built directly into the grammar of theory.</p>
 
                     <h3>2. Invariance vs. Covariance</h3>
                     <p>University-level physics makes a critical distinction between <strong>Invariance</strong> and <strong>Covariance</strong>. A quantity is <em>invariant</em> (like the Action \( S \) or the <a href="/physics/subtopic/spacetime-interval" class="subtopic-link"><strong>Spacetime Interval</strong></a> \( ds^2 \)) if its numerical value is the same for all observers. An equation is <em>covariant</em> if its mathematical form remains the same, even if the individual components of the vectors change. Manifest covariance ensures that the transition between frames is "transparent," preserving the structural integrity of the physical law across the entire <strong>Poincaré Group</strong>.</p>
@@ -199,15 +190,10 @@ u} \)) is built directly into the grammar of theory.</p>
                     <p>The <strong>Action Principle</strong> is the preferred starting point for relativistic physics because the Action (\( S = \int \mathcal{L} d^4x \)) is a <strong>Lorentz Scalar</strong>—the simplest type of invariant. Because the action does not change under a boost or rotation, the resulting equations of motion derived via \( \delta S = 0 \) are automatically covariant. This "Top-Down" approach is far more robust than attempting to "relativize" Newtonian equations, which often lack manifest symmetry and require complex corrections.</p>
 
                     <h3>4. Contrasting with Non-Manifest Forms</h3>
-                    <p>Classical electromagnetism provides a classic example. <a href="/physics/subtopic/maxwells-equations" class="subtopic-link"><strong>Maxwell's Equations</strong></a> in their 3-vector form (\( 
-abla \cdot \mathbf{E}, 
-abla 	imes \mathbf{B} \dots \)) are covariant under Lorentz transformations, but they are <em>not</em> manifestly so; the symmetry is hidden. By transitioning to the <strong>Electromagnetic Field Tensor</strong> (\( F^{\mu
-u} \)), the four equations collapse into two manifestly covariant tensor statements. This unification reveals that electricity and magnetism are not separate forces, but different components of a single relativistic field.</p>
+                    <p>Classical electromagnetism provides a classic example. <a href="/physics/subtopic/maxwells-equations" class="subtopic-link"><strong>Maxwell's Equations</strong></a> in their 3-vector form (\( \nabla \cdot \mathbf{E}, \nabla \times \mathbf{B} \dots \)) are covariant under Lorentz transformations, but they are <em>not</em> manifestly so; the symmetry is hidden. By transitioning to the <strong>Electromagnetic Field Tensor</strong> (\( F^{\mu\nu} \)), the four equations collapse into two manifestly covariant tensor statements. This unification reveals that electricity and magnetism are not separate forces, but different components of a single relativistic field.</p>
 
                     <h3>5. General Covariance and Curvature</h3>
-                    <p>In <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a>, the principle is extended to <strong>General Covariance</strong>, requiring physical laws to be invariant under <em>any</em> smooth coordinate transformation. This achieved using the <strong>Metric Tensor</strong> (\( g_{\mu
-u} \)) and the <strong>Covariant Derivative</strong> (\( 
-abla_\mu \)), which accounts for the curvature of the spacetime manifold. In this context, manifest covariance is not just a stylistic choice but a physical necessity, expressing the idea that the "background" coordinates are arbitrary and only the geometric relations are real.</p>
+                    <p>In <a href="/physics/subtopic/general-relativity" class="subtopic-link"><strong>General Relativity</strong></a>, the principle is extended to <strong>General Covariance</strong>, requiring physical laws to be invariant under <em>any</em> smooth coordinate transformation. This achieved using the <strong>Metric Tensor</strong> (\( g_{\mu\nu} \)) and the <strong>Covariant Derivative</strong> (\( \nabla_\mu \)), which accounts for the curvature of the spacetime manifold. In this context, manifest covariance is not just a stylistic choice but a physical necessity, expressing the idea that the "background" coordinates are arbitrary and only the geometric relations are real.</p>
 
                     <h3>6. Importance in the Standard Model</h3>
                     <p>All modern <strong>Gauge Theories</strong>, including Quantum Electrodynamics (QED) and the Standard Model, are built on the requirement of manifest covariance. This ensures that the interactions between particles, mediated by <strong>Gauge Bosons</strong>, respect the causal structure of spacetime. Without manifest covariance, it would be impossible to consistently define <strong>Renormalization</strong> or to ensure that information does not travel faster than the speed of light, preserving the principle of <strong>Local Causality</strong>.</p>    </div>
@@ -228,31 +214,30 @@ abla_\mu \)), which accounts for the curvature of the spacetime manifold. In thi
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ A^\mu = \Lambda^\mu_{\;
-u} A^
-u \]
+                            \[ A^\mu = \Lambda^\mu_{\;\nu} A^\nu \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Lorentz Transformation:</strong> The fundamental rule for how 4-vectors change between frames, the basis for manifest covariance.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -261,37 +246,45 @@ u \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Covariant Electrodynamics                        </span>
+                            <a href="/physics/subtopic/homogeneous-maxwell" class="subtopic-link">Homogeneous Maxwell</a>                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ \partial_\mu F^{\mu
-u} = \mu_0 J^
-u \]
+                            \[ \partial_\mu F^{\mu\nu} = \mu_0 J^\nu \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Covariant Electrodynamics:</strong> The manifestly covariant form of Maxwell's equations using the field strength tensor.                                </p>
+                                    <strong><a href="/physics/subtopic/homogeneous-maxwell" class="subtopic-link">Homogeneous Maxwell</a>:</strong> The geometric identity ensuring field consistency and the absence of magnetic monopoles.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mu_0 \):</span> 
+                                                                                    <a href="/physics/constants#mu-0" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Vacuum Permeability</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -300,38 +293,45 @@ u \]
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            Einstein Field Equations                        </span>
+                            Dynamical Spacetime                        </span>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ G_{\mu
-u} + \Lambda g_{\mu
-u} = \kappa T_{\mu
-u} \]
+                            \[ G_{\mu\nu} + \Lambda g_{\mu\nu} = \kappa T_{\mu\nu} \]
                         </div>
                     </div>
 
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
-                                    <strong>Einstein Field Equations:</strong> Expresses gravity as a purely geometric tensor equation, independent of coordinate choice.                                </p>
+                                    <a href="/physics/subtopic/dynamical-spacetime" class="subtopic-link"><strong>Dynamical Spacetime</strong></a>: Relates the curvature of the manifold (\(G\)) to the distribution of mass-energy (\(T\)), removing the need for a fixed background.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( G \):</span> 
+                                                                                    <a href="/physics/constants#G" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Gravitational Constant</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
                     <li class="equation-item" style="list-style: none; margin-bottom: 25px;">
@@ -353,54 +353,36 @@ u} \]
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Physical Interpretation</h4>
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <strong>Invariant Volume Element:</strong> The correction factor required to make the action integral a true scalar in curved spacetime.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Symmetry & Origin</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Symmetry derivation pending.                                </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Limits & Boundary</h4>
-                                <p style="font-size: 0.95rem; line-height: 1.5; color: #8892b0;">
+                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <p style="font-size: 0.95rem; line-height: 1.5;">
                                     Great Expansion: Limiting case analysis pending.                                </p>
                             </div>
                         </div>
-                    </div>
+
+                                                <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                                        <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
+                                        <span style="color: var(--accent); font-weight: 700;">\( \mathcal{L} \):</span> 
+                                                                                    <a href="/physics/subtopic/lagrangian" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;">Lagrangian</a>
+                                                                            </div>
+                                                            </div>
+                        </div>
+                                            </div>
                 </div>
             </li>
             </ul>
 </section>
-
-<script nonce="61039503ca76a02512bca4cf690feb3a">
-document.addEventListener('DOMContentLoaded', function() {
-    const list = document.getElementById('equations-list');
-    if (!list) return;
-
-    list.addEventListener('click', function(event) {
-        const trigger = event.target.closest('.formula-expand-trigger');
-        if (!trigger) return;
-        const card = trigger.closest('.platinum-formula-card');
-        const body = card.querySelector('.formula-body');
-        const icon = trigger.querySelector('.expand-icon');
-        if (body) {
-            const isHidden = window.getComputedStyle(body).display === 'none';
-            if (isHidden) {
-                body.style.display = 'block';
-                card.style.borderColor = 'var(--accent)';
-                icon.innerText = '[ Click to Collapse ]';
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) MathJax.typesetPromise([body]);
-            } else {
-                body.style.display = 'none';
-                card.style.borderColor = '#233554';
-                icon.innerText = '[ Click to Expand Depth ]';
-            }
-        }
-    });
-});
-</script>
 
             <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
@@ -409,22 +391,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Spacetime Volumes</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/classical-field-theory" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Classical Field Theory</strong>
+                                    <a href="/physics/subtopic/relativity" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Relativity</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
-                                    <a href="/physics/subtopic/manifest-covariance" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">Manifest Covariance</strong>
+                                    <a href="/physics/subtopic/invariance-principle" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;">The Principle of Invariance</strong>
                         <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
                     </a>
                             </div>
         </section>
     
     <footer class="subtopic-footer" style="margin-top: 40px;">
+                    <a href="/physics/subtopic/action-integral" class="btn btn-secondary">&larr; Back to Action Integral</a>
             </footer>
 </article>
     </main>
 
-    <script src="/physics/js/search_engine.js" nonce="61039503ca76a02512bca4cf690feb3a" defer></script>
+    <script src="/js/search_engine.js" defer></script>
 </body>
 </html>

@@ -67,6 +67,7 @@ The 12 core topics are **Locked**.
 
 - **Form & Style:** 
     - **Technical Paragraphs:** Use dense, university-grade prose. NO bullet points in the main body.
+    - **Clean Headers:** <h3> and <h4> headers MUST be strictly text-only. Anchors/links are forbidden in headers to maintain visual and layout integrity.
     - **Variable Structure:** No fixed section counts. Structure must flow naturally from the topic's complexity (min 3 deep sections).
     - **Implicit Authority:** NEVER use phrases like "University-level," "Advanced," or meta-commentary about the writing (e.g., "This section discusses..."). Let the rigor of the vocabulary and math establish the grade.
     - **No Linguistic Artifacts:** Zero tolerance for "AI Fluff" (e.g., "In conclusion," "It is important to note," "Furthermore" at the start of every paragraph).
@@ -81,6 +82,7 @@ The 12 core topics are **Locked**.
     - **Centralized Rigor:** Improving a formula in `formulas.json` instantly upgrades its technical depth across every page and Hub that references it.
 - **Graph & Integrity:**
     - **Link Density:** Minimum 5 contextual `class="subtopic-link"` anchors per expansion.
+    - **Single Link Rule:** Each unique subtopic or topic MUST be linked exactly once within the main technical prose. This prevents navigational clutter and focuses the user's attention. Note: Foundational concepts may be re-linked within the "Key Theoretical Identities" interactive cards.
     - **MathJax 3:** Use `\( ... \)` for inline and `\[ ... \]` for display.
     - **JSON Injection:** Use **Python Raw Strings** (`r"""..."""`) for all database writes to prevent LaTeX control character mangling (e.g., `\beta` becoming a backspace).
     - **Link Preservation Mandate:** When refactoring or expanding any content, AI assistants MUST first extract all internal links containing the `class="subtopic-link"` or `class="topic-link"` attributes and ensure they are contextually re-integrated into the new high-signal content. This ensures the integrity of the entire knowledge graph.

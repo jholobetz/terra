@@ -286,11 +286,31 @@ class PhysicsOrchestrator:
             self.build_manifest[f"shard_topic_{slug}"] = self.get_file_hash(path)
 
         # 4. Save Subtopic Shards
-        for shard_name, shard_content in self.shards.items():
-            for slug in shard_content:
-                if slug in self.data["subtopics"]:
-                    shard_content[slug] = self.data["subtopics"][slug]
+        # Map all subtopics to their shards
+        for slug, subtopic in self.data["subtopics"].items():
+            found_shard = False
+            for shard_name, shard_content in self.shards.items():
+                if slug in shard_content:
+                    shard_content[slug] = subtopic
+                    found_shard = True
+                    break
             
+            if not found_shard:
+                # NEW SUBTOPIC - Determine best shard
+                # Default to the first parent's shard or theoretical-physics.json
+                target_shard = "theoretical-physics.json"
+                if subtopic.get("parents"):
+                    p = subtopic["parents"][0]
+                    if f"{p}.json" in self.shards:
+                        target_shard = f"{p}.json"
+                
+                if target_shard not in self.shards:
+                    self.shards[target_shard] = {}
+                
+                self.shards[target_shard][slug] = subtopic
+                print(f"NEW SUBTOPIC: Assigned [{slug}] to shard [{target_shard}]")
+
+        for shard_name, shard_content in self.shards.items():
             path = os.path.join(self.content_dir, shard_name)
             with open(path, "w") as f:
                 json.dump(shard_content, f, indent=4)

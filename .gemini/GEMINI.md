@@ -70,19 +70,18 @@ The 12 core topics are **Locked**.
     - **Clean Headers:** <h3> and <h4> headers MUST be strictly text-only. Anchors/links are forbidden in headers to maintain visual and layout integrity.
     - **Variable Structure:** No fixed section counts. Structure must flow naturally from the topic's complexity (min 3 deep sections).
     - **Implicit Authority:** NEVER use phrases like "University-level," "Advanced," or meta-commentary about the writing (e.g., "This section discusses..."). Let the rigor of the vocabulary and math establish the grade.
-    - **No Linguistic Artifacts:** Zero tolerance for "AI Fluff" (e.g., "In conclusion," "It is important to note," "Furthermore" at the start of every paragraph).
+    - **No Domain Declaration:** Do NOT state the parent Hub name in the lead paragraph (e.g., "In the framework of Relativity..."). Dive directly into the physical definition.
+    - **No Linguistic Artifacts:** Zero tolerance for "AI Fluff" (e.g., "In conclusion," "It is important to note," "Furthermore" at the start of every paragraph, "Tapestry of", "Imagine a world").
 - **Technical Rigor:**
     - **Word Count:** Hard floor of 650 words, target 800-1,200.
     - **Symmetry Focus:** Explicitly identify the underlying symmetry group or invariance principle (e.g., Lorentz Group, U(1), Noether Charge).
-    - **Boundary Analysis:** Discuss the limits of the model (e.g., where the theory breaks down, such as the classical limit or strong-curvature limit).
-    - **Unified Identity Standard:** Subtopics MUST NOT contain a manual "Key Theoretical Identities" text section. Instead, all technical rigor must be moved into the **Interactive Formula Cards** via the `formula_ids` array. These cards follow the **3-Tier Identity Model**:
-        1. **Local Tier (Identity):** The primary equations unique to the topic.
-        2. **Bridge Tier (Symmetry & Origin):** Relationship to adjacent concepts and deep symmetry derivations.
-        3. **Foundational Anchor (Limits):** The universal Hub invariant and the breakdown limits of the physics.
-    - **Centralized Rigor:** Improving a formula in `formulas.json` instantly upgrades its technical depth across every page and Hub that references it.
-- **Graph & Integrity:**
-    - **Link Density:** Minimum 5 contextual `class="subtopic-link"` anchors per expansion.
-    - **Single Link Rule:** Each unique subtopic or topic MUST be linked exactly once within the main technical prose. This prevents navigational clutter and focuses the user's attention. Note: Foundational concepts may be re-linked within the "Key Theoretical Identities" interactive cards.
+    - **Boundary Analysis:** Discuss the limits of the model (e.g., where the theory breaks down).
+    - **Identity Cards:** Use the 3-Tier Model (Local, Bridge, Foundational) via interactive formula cards.
+- **Topological Precision:**
+    - **Strict 1-to-1 Correlation:** Every slug must map to exactly one canonical title in `global_slug_registry.json`.
+    - **Contextual Integrity:** The Sentinel performs 'Structural Dissonance' checks (e.g., preventing a generic slug like 'action' from having a specific title like 'Relativistic Action').
+    - **Single Link Rule:** Each unique subtopic/topic MUST be linked exactly once within the prose.
+    - **Link Density:** Minimum 5 high-signal links per subtopic.
     - **MathJax 3:** Use `\( ... \)` for inline and `\[ ... \]` for display.
     - **JSON Injection:** Use **Python Raw Strings** (`r"""..."""`) for all database writes to prevent LaTeX control character mangling (e.g., `\beta` becoming a backspace).
     - **Link Preservation Mandate:** When refactoring or expanding any content, AI assistants MUST first extract all internal links containing the `class="subtopic-link"` or `class="topic-link"` attributes and ensure they are contextually re-integrated into the new high-signal content. This ensures the integrity of the entire knowledge graph.

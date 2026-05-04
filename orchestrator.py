@@ -715,6 +715,141 @@ class PhysicsOrchestrator:
             print(f"\nError rendering {url}: {str(e)}")
         return False
 
+    def get_pillar_context(self, slug):
+        """Finds the position of a slug within its parent Hub roadmaps."""
+        context = {
+            "parent_hub": None,
+            "current_pillar": None,
+            "next_slug": None,
+            "prev_slug": None,
+            "neighbors": []
+        }
+        
+        for hub_slug, hub_data in self.topic_shards.items():
+            for pillar in hub_data.get("pillars", []):
+                slugs = pillar.get("slugs", [])
+                if slug in slugs:
+                    idx = slugs.index(slug)
+                    context["parent_hub"] = hub_data["title"]
+                    context["current_pillar"] = pillar["title"]
+                    context["neighbors"] = slugs
+                    if idx > 0:
+                        context["prev_slug"] = slugs[idx-1]
+                    if idx < len(slugs) - 1:
+                        context["next_slug"] = slugs[idx+1]
+                    return context
+        return context
+
+    # Broad Technical Anchors used for Context Affinity Scoring
+    HUB_SIGNATURES = {
+        "relativity": ["relativity", "lorentz", "invariance", "manifold", "metric", "interval", "curvature", "spacetime", "covariant"],
+        "classical-mechanics": ["mechanics", "newton", "lagrangian", "hamiltonian", "action", "symmetry", "momentum", "constraint", "geodesic", "inertia"],
+        "quantum-physics": ["quantum", "wavefunction", "operator", "hilbert", "uncertainty", "superposition", "quanta", "eigenstate", "unitary"],
+        "standard-model": ["standard model", "gauge", "boson", "fermion", "symmetry", "field", "coupling", "renormalization", "flavor", "spinor"],
+        "astrophysics": ["astrophysics", "astronomy", "luminosity", "stellar", "galaxy", "collapse", "degenerate", "accretion", "redshift", "horizon"],
+        "thermodynamics-statistical-mechanics": ["thermodynamics", "entropy", "partition", "statistical", "ensemble", "temperature", "equilibrium", "boltzmann"]
+    }
+
+    def validate_platinum_standard(self, slug, html):
+        """Enforces the Organic Platinum Standard with Semantic Signature Enforcement."""
+        errors = []
+        text_only = re.sub(r'<.*?>', '', html).lower()
+        word_count = len(text_only.split())
+        
+        # 1. Structural Checks
+        if word_count < 650:
+            errors.append(f"Technical Density Failure: {word_count} words (Target: 650+).")
+
+        headers = re.findall(r'<h[34][^>]*>.*?</h[34]>', html, re.IGNORECASE | re.DOTALL)
+        for h in headers:
+            if "<a" in h.lower():
+                errors.append(f"Visual Integrity Violation: Links found in header {h}.")
+
+        if any(char in html for char in ['\b', '\a', '\f', '\v']):
+            errors.append("Mathematical Sanity Failure: Mangled control characters detected.")
+
+        # 2. Topological Link Analysis
+        links = re.findall(r'href="/physics/subtopic/([^"]*)"', html)
+        if len(links) < 5:
+            errors.append(f"Graph Connectivity Failure: Only {len(links)} links found (Target: 5+).")
+        
+        # Check for duplicate links (Single Link Rule)
+        seen_links = set()
+        for l in links:
+            if l in seen_links:
+                errors.append(f"Navigation Clutter: Duplicate link to [{l}] found.")
+            seen_links.add(l)
+
+        # 3. Semantic Signature Enforcement (Context Integrity)
+        sub = self.data["subtopics"].get(slug, {})
+        parents = sub.get("parents", [])
+        
+        # Recursive Hub Resolution: find which Gateway Hub(s) this topic ultimately belongs to
+        resolved_hubs = set()
+        queue = list(parents)
+        visited = set()
+        while queue:
+            p = queue.pop(0)
+            if p in visited: continue
+            visited.add(p)
+            if p in self.HUB_SIGNATURES:
+                resolved_hubs.add(p)
+            else:
+                # Check if this parent is itself a subtopic with its own parents
+                parent_sub = self.data["subtopics"].get(p)
+                if parent_sub and "parents" in parent_sub:
+                    queue.extend(parent_sub["parents"])
+
+        # Calculate affinity for all hubs
+        scores = {}
+        for hub, signature in self.HUB_SIGNATURES.items():
+            count = sum(1 for word in signature if word in text_only)
+            scores[hub] = count
+
+        # Must have highest affinity for parent hub
+        for p in resolved_hubs:
+            parent_score = scores.get(p, 0)
+            # Find if any other hub is outscoring the parent (Contextual Leakage)
+            for other_hub, other_score in scores.items():
+                if other_hub != p and other_score > parent_score + 2:
+                     errors.append(f"Contextual Leakage: Topic [{slug}] for Hub [{p}] has higher semantic affinity for [{other_hub}].")
+            
+            if parent_score < 2:
+                errors.append(f"Theoretical Signal Loss: Content lacks foundational vocabulary for Hub [{p}].")
+
+        # 4. Context Integrity: Title-Slug Dissonance
+        title = sub.get("title", "")
+        if title:
+            # Generalized specificity markers
+            markers = ["qft", "quantum field theory", "general-relativity", "special-relativity", "quantum", "classical", "statistical"]
+            for m in markers:
+                m_slug = m.replace(" ", "-")
+                if m_slug in slug.lower() and m not in title.lower():
+                    errors.append(f"Context Dissonance: Slug implies [{m}], but Title [{title}] is generic.")
+                if m in title.lower() and m_slug not in slug.lower() and m.replace(" ", "") not in slug.lower():
+                    errors.append(f"Context Dissonance: Title implies [{m}], but Slug [{slug}] is generic.")
+
+        # 5. Implicit Authority: Forbidden Meta-Talk
+        meta_ban = ["university-level", "advanced topics", "this section discusses", "this investigation", "in conclusion"]
+        for phrase in meta_ban:
+            if phrase in text_only:
+                errors.append(f"Implicit Authority Violation: Forbidden meta-talk detected: '{phrase}'.")
+
+        # 6. Linguistic Artifact Scrubber (Anti-Fluff)
+        ban_phrases = ["imagine a world", "in the realm of", "journey through", "tapestry of", "it is important to note"]
+        for phrase in ban_phrases:
+            if phrase in text_only:
+                errors.append(f"Linguistic Artifact: '{phrase}' (AI Fluff).")
+
+        if errors:
+            print(f"PLATINUM VALIDATION FAILED for [{slug}]:")
+            for e in errors:
+                print(f"  - {e}")
+            return False
+        
+        print(f"✓ Platinum Validation Passed for [{slug}] ({word_count} words).")
+        return True
+
     def update_formula(self, formula_id, data):
         """Surgically updates an entry in the global formulas.json registry."""
         if formula_id not in self.data["formula_registry"]:

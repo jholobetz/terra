@@ -108,7 +108,7 @@ class PhysicsController
         // 2. Load Subtopic Shards
         $files = scandir($baseDir);
         foreach ($files as $file) {
-            if (strpos($file, '.json') !== false && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json'])) {
+            if (strpos($file, '.json') !== false && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json', 'pillar_profiles.json'])) {
                 $shard = json_decode(file_get_contents($baseDir . $file), true) ?: [];
                 if (is_array($shard)) {
                     $this->physicsContent['subtopics'] = array_merge($this->physicsContent['subtopics'], $shard);
@@ -315,15 +315,13 @@ class PhysicsController
 
     public function viewSubtopic(string $slug)
     {
-        // 1. Static Check (Temporarily disabled for CSP/MathJax debugging)
-        /*
+        // 1. Static Check
         $cachePath = PROJECT_ROOT . "/public/cache/subtopic/{$slug}.html";
         if (file_exists($cachePath) && !$this->isPreviewActive()) {
             header('Content-Type: text/html; charset=utf-8');
             readfile($cachePath);
             return;
         }
-        */
 
         $this->requestedSlug = $slug;
         $subtopic = $this->fetchAndPrepare('subtopics', $slug);

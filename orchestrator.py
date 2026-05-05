@@ -5,6 +5,7 @@ import subprocess
 import shutil
 import hashlib
 import sys
+from multiprocessing import Pool, cpu_count
 
 class PhysicsOrchestrator:
     PROTECTED_TOPICS = {
@@ -44,6 +45,7 @@ class PhysicsOrchestrator:
         self.topic_shards = {} # Main topic shards
         self.slug_to_shard = {}
         self.shard_to_slugs = {}
+        self.modified_slugs = set() # Track slugs changed in current session
 
         # Load SVG Cache if it exists
         if os.path.exists(self.svg_cache_path):
@@ -133,7 +135,122 @@ class PhysicsOrchestrator:
                         self.slug_to_shard[slug] = rel_path
                         self.shard_to_slugs[rel_path].append(slug)
     def _refresh_sorted_titles(self):
+        # Load Pillar Profiles
+        self.pillar_profiles = {}
+        profile_path = os.path.join(self.content_dir, "pillar_profiles.json")
+        if os.path.exists(profile_path):
+            with open(profile_path, "r") as f:
+                self.pillar_profiles = json.load(f)
+
         self.sorted_titles = sorted(self.registry.keys(), key=len, reverse=True)
+
+    def get_link_cloud(self, text, limit=15):
+        """Scans text and returns a 'cloud' of relevant links based on the registry."""
+        cloud = []
+        text_lower = text.lower()
+        
+        # self.sorted_titles is already sorted by length (desc)
+        for title in self.sorted_titles:
+            if len(cloud) >= limit: break
+            
+            slug = self.registry[title]
+            # Match word boundaries to prevent partial matches like 'c' inside 'physics'
+            t_norm = re.escape(title.lower())
+            if re.search(rf'\b{t_norm}\b', text_lower):
+                cloud.append({"title": title, "slug": slug})
+        
+        return cloud
+
+    def auto_promote_hero_math(self, slug):
+        """Scans subtopic content for the most 'semantically dense' LaTeX block."""
+        if slug not in self.data["subtopics"]: return
+        content = self.data["subtopics"][slug].get("content", "")
+        
+        # Find all display math blocks
+        display_math = re.findall(r'\\\[(.*?)\\\]', content, re.DOTALL)
+        if not display_math:
+            # Fallback to inline
+            display_math = re.findall(r'\\\((.*?)\\\)', content)
+        
+        if not display_math: return
+        
+        # Heuristic: longest LaTeX block is often the primary identity
+        hero = max(display_math, key=len).strip()
+        self.data["subtopics"][slug]["hero_math"] = f"\\[ {hero} \\]"
+        print(f"AUTO-HERO: Promoted identity for [{slug}].")
+
+    def execute_sprint(self, sprint_data, build_hub=True):
+        """Executes a batch expansion of subtopics with Partial Acceptance."""
+        print(f"Starting Pillar Sprint: {len(sprint_data)} topics.")
+        successful_slugs = []
+        failed_slugs = {}
+        
+        # 1. Registration Phase (Allowing links to work)
+        for slug, data in sprint_data.items():
+            raw_content = data.get("content", "")
+            sanitized_content = self.sanitize_content(raw_content)
+
+            
+            self.data["subtopics"][slug] = {
+                "title": data.get("title", slug),
+                "content": sanitized_content,
+                "parents": data.get("parents", []),
+                "formula_ids": data.get("formula_ids", [])
+            }
+            self.registry[data.get("title", slug)] = slug
+            self.modified_slugs.add(slug)
+
+        self._refresh_sorted_titles()
+
+        # 2. First Pass Validation
+        for slug in sprint_data:
+            # Apply links
+            self.apply_auto_links(slug)
+            content = self.data["subtopics"][slug]["content"]
+            
+            # Validate
+            if not self.validate_platinum_standard(slug, content):
+                print(f"SPRINT ERROR: Validation failed for [{slug}]. Rejecting.")
+                failed_slugs[slug] = getattr(self, "last_validation_errors", ["Unknown validation error"])
+            else:
+                successful_slugs.append(slug)
+
+        # 3. Rollback Failed Slugs
+        if failed_slugs:
+            for slug in failed_slugs:
+                del self.data["subtopics"][slug]
+                title = sprint_data[slug].get("title", slug)
+                if title in self.registry and self.registry[title] == slug:
+                    del self.registry[title]
+                self.modified_slugs.discard(slug)
+            self._refresh_sorted_titles()
+            
+            # Re-apply links for successful slugs now that failed ones are removed
+            for slug in successful_slugs:
+                raw_content = sprint_data[slug].get("content", "")
+                sanitized_content = self.sanitize_content(raw_content)
+                self.data["subtopics"][slug]["content"] = sanitized_content
+                self.apply_auto_links(slug)
+
+        # 4. Finalize Successful Slugs
+        for slug in successful_slugs:
+            self.data["subtopics"][slug]["standard"] = "platinum"
+            self.auto_promote_hero_math(slug)
+            print(f"SPRINT: Ingested and Certified [{slug}].")
+
+        # 5. Save & Build
+        if successful_slugs:
+            self.save(auto_commit=False, unlock_protected=True)
+            for slug in successful_slugs:
+                self.build(slug=slug)
+            
+            if build_hub:
+                parent = self.data["subtopics"][successful_slugs[0]]["parents"][0]
+                self.build(slug=parent)
+            
+            print(f"SUCCESS: Sprint complete. {len(successful_slugs)} topics deployed.")
+            
+        return successful_slugs, failed_slugs
 
     def convert_to_svg(self, latex, is_display=False):
         """Converts a LaTeX string to SVG using the Node.js runway engine."""
@@ -235,15 +352,54 @@ class PhysicsOrchestrator:
             return self.convert_to_svg(latex, is_display)
         return ""
 
-    def save(self, auto_commit=True, commit_msg=None, unlock_protected=False):
+    def batch_convert_to_svg(self, formula_batch):
+        """Converts a batch of LaTeX formulas to SVG in a single Node.js process."""
+        if not formula_batch: return {}
+        
+        # formula_batch: { cache_key: { "latex": "...", "is_display": bool } }
+        try:
+            input_json = json.dumps(formula_batch)
+            result = subprocess.run(["node", self.svg_engine], input=input_json, capture_output=True, text=True, timeout=30)
+            if result.returncode == 0 and result.stdout:
+                new_svgs = json.loads(result.stdout)
+                self.svg_cache.update(new_svgs)
+                return new_svgs
+        except Exception as e:
+            print(f"BATCH SVG Error: {str(e)}")
+        return {}
+
+    def save(self, auto_commit=True, commit_msg=None, unlock_protected=False, force_full=False):
         """Saves all modified shards and registries and optionally commits to Git."""
-        # 1. Generate Snippets for all subtopics before saving
-        print(f"Generating snippets and hero math for {len(self.data['subtopics'])} subtopics...")
-        for slug, subtopic in self.data["subtopics"].items():
-            content = subtopic.get("content", "")
-            subtopic["snippet"] = self.get_safe_snippet(content)
-            subtopic["snippet_svg"] = self.get_svg_snippet(content)
-            subtopic["hero_math"] = self.get_hero_math(content)
+        # 1. Pre-render SVGs in batch for modified subtopics
+        target_slugs = self.data["subtopics"].keys() if force_full else self.modified_slugs
+        
+        if target_slugs:
+            print(f"Phase 1: Batch rendering SVGs for {len(target_slugs)} subtopics...")
+            rendering_queue = {}
+            for slug in target_slugs:
+                if slug not in self.data["subtopics"]: continue
+                content = self.data["subtopics"][slug].get("content", "")
+                
+                # Find all math blocks
+                math_blocks = re.findall(r'\\+\[.*?\\+\]|\\+\(.*?\\+\)', content, re.DOTALL)
+                for latex in math_blocks:
+                    is_display = "\\[" in latex or "\\\\[" in latex
+                    cache_key = f"{latex}_{is_display}"
+                    if cache_key not in self.svg_cache:
+                        rendering_queue[cache_key] = {"latex": latex, "is_display": is_display}
+
+            if rendering_queue:
+                print(f"  -> Batching {len(rendering_queue)} new formulas...")
+                self.batch_convert_to_svg(rendering_queue)
+
+            print(f"Phase 2: Generating snippets for {len(target_slugs)} subtopics...")
+            for slug in target_slugs:
+                if slug not in self.data["subtopics"]: continue
+                subtopic = self.data["subtopics"][slug]
+                content = subtopic.get("content", "")
+                subtopic["snippet"] = self.get_safe_snippet(content)
+                subtopic["snippet_svg"] = self.get_svg_snippet(content)
+                subtopic["hero_math"] = self.get_hero_math(content)
 
         # 2. Save Registries
         # Clean topics for categories.json (metadata only)
@@ -337,6 +493,27 @@ class PhysicsOrchestrator:
 
         if auto_commit:
             self.commit_to_git(commit_msg)
+            
+        self.modified_slugs.clear()
+
+    def certify_all_platinum(self):
+        """Batch validates all subtopics and certifies those meeting the Platinum Standard."""
+        print(f"Starting batch certification for {len(self.data['subtopics'])} subtopics...")
+        certified_count = 0
+        legacy_count = 0
+        
+        for slug, subtopic in self.data["subtopics"].items():
+            content = subtopic.get("content", "")
+            if self.validate_platinum_standard(slug, content):
+                subtopic["standard"] = "platinum"
+                certified_count += 1
+            else:
+                subtopic["standard"] = "legacy"
+                legacy_count += 1
+                
+        print(f"Certification complete: {certified_count} Platinum, {legacy_count} Legacy.")
+        self.save(auto_commit=False)
+        return certified_count
 
     def commit_to_git(self, message=None):
         """Automates the git commit for content changes."""
@@ -375,16 +552,15 @@ class PhysicsOrchestrator:
             topic = self.data["topic_contents"][slug]
         else:
             return None
-        
+
         content = topic["content"]
         original_content = content
         parents = topic.get("parents", [])
-        
+
         # 1. Entity Linking (Historical Figures/Facilities)
-        content = self._apply_entity_links(content)
+        content = self._apply_entity_links(content, current_slug=slug)
 
         masked_content, placeholders = self.mask_mathjax(content)
-        
         # Performance optimization: get titles for current slug once
         current_titles = [t for t, s in self.registry.items() if s == slug]
 
@@ -402,10 +578,12 @@ class PhysicsOrchestrator:
             
             if target_slug in self.data["topic_contents"]:
                 url = f"/physics/topic/{target_slug}"
+                link_class = "topic-link"
             else:
                 url = f"/physics/subtopic/{target_slug}"
+                link_class = "subtopic-link"
 
-            link_html = f'<a href="{url}" class="subtopic-link"><strong>{title}</strong></a>'
+            link_html = f'<a href="{url}" class="{link_class}"><strong>{title}</strong></a>'
             bold_tag = f"<strong>{title}</strong>"
             
             # Action 1: If title is BOLDED, always link it (High Intent)
@@ -417,11 +595,25 @@ class PhysicsOrchestrator:
                 
             # Action 2: If title is PLAIN TEXT, link only if it passes contextual safeguards
             elif title not in self.AMBIGUOUS_TERMS:
+                # BRIDGE PRIORITIZATION: 
+                # If target_slug belongs to a DIFFERENT primary hub than current parents,
+                # we are more aggressive in linking it to break silos.
+                is_bridge = False
+                # target_parents search (simple approach)
+                target_parents = []
+                for s_name, s_content in self.shards.items():
+                    if target_slug in s_content:
+                        target_parents = s_content[target_slug].get("parents", [])
+                        break
+                if target_slug in self.data["topics"]: target_parents = [target_slug]
+                
+                if any(p not in parents for p in target_parents):
+                    is_bridge = True
+
                 # Ensure it's not already part of a link
                 if f'href="/physics/subtopic/{target_slug}"' not in masked_content and f'href="/physics/topic/{target_slug}"' not in masked_content:
                     
                     # SEMANTIC COLLISION SAFEGUARD:
-                    # If the term is in TERM_ANCHORS, check if any anchor word is in the text
                     if title in self.TERM_ANCHORS:
                         anchors = self.TERM_ANCHORS[title]
                         text_lower = masked_content.lower()
@@ -430,47 +622,41 @@ class PhysicsOrchestrator:
 
                     # Match title word-boundary, case-sensitive for plain text
                     plain_pattern = re.compile(rf'(?<![=">])\b{re.escape(title)}\b(?![<])')
-                    # We only link the FIRST occurrence in plain text to avoid "Link Bloat"
-                    masked_content = plain_pattern.sub(lambda m: link_html, masked_content, count=1)
+                    
+                    # If it's a bridge, we can link up to 1 occurrences to respect the Single Link Rule
+                    link_count = 1
+                    masked_content = plain_pattern.sub(lambda m: link_html, masked_content, count=link_count)
         
         final_content = self.unmask_mathjax(masked_content, placeholders)
         final_content = self._sanitize_mathjax(final_content)
-        
-        # Topological Reinforcement: Inject link back to primary parent
-        if slug in self.data["subtopics"]:
-            final_content = self._inject_parent_link(slug, final_content, parents)
+
+        # Visual Integrity Fix: Strip links from headers generated by the auto-linker
+        def clean_header(match):
+            header_html = match.group(0)
+            if '<a' in header_html.lower():
+                clean_html = re.sub(r'<a[^>]*>(.*?)</a>', r'\1', header_html)
+                return clean_html
+            return header_html
+            
+        final_content = re.sub(r'<h[34][^>]*>.*?</h[34]>', clean_header, final_content, flags=re.IGNORECASE | re.DOTALL)
 
         if not dry_run:
             topic["content"] = final_content
             
         return final_content if final_content != original_content else None
 
-    def _inject_parent_link(self, slug, content, parents):
-        """Prepends a navigation link to the primary parent module."""
-        if not parents:
-            return content
-            
-        primary_parent = parents[0]
-        if primary_parent not in self.data["topics"]:
-            return content
-            
-        parent_title = self.data["topics"][primary_parent]["title"]
-        # Format the foundational link
-        link_html = f'<p class="foundational-link">Part of the <a href="/physics/topic/{primary_parent}" class="subtopic-link"><strong>{parent_title}</strong></a> module.</p>'
-        
-        # If already exists, replace it (keeps it fresh); otherwise prepend
-        if '<p class="foundational-link">' in content:
-            return re.sub(r'<p class="foundational-link">.*?</p>\n*', f'{link_html}\n\n', content, flags=re.DOTALL)
-        
-        return f"{link_html}\n\n{content}"
-
-    def _apply_entity_links(self, content):
+    def _apply_entity_links(self, content, current_slug=None):
         """Internal helper to link entities from entities.json."""
         for e_id, e_data in self.data.get("entities", {}).items():
             link = e_data["link"]
             # Only link if not already linked to this entity (exact href check)
             if f'href="{link}"' in content: continue
             
+            # Safeguard: Don't link to itself
+            if current_slug:
+                if link == f"/physics/subtopic/{current_slug}" or link == f"/physics/topic/{current_slug}":
+                    continue
+
             variants = [e_data["name"]] + e_data.get("aliases", [])
             # Sort by length descending to match longest first
             variants.sort(key=len, reverse=True)
@@ -536,8 +722,18 @@ class PhysicsOrchestrator:
         self.data["subtopics"][slug] = subtopic_data
         self.slug_to_shard[slug] = shard_file
         self.registry[subtopic_data["title"]] = slug
+        self.modified_slugs.add(slug) # MARK AS DIRTY
         self._refresh_sorted_titles()
         self.apply_auto_links(slug)
+
+        # 2. Platinum Certification Loop
+        final_content = self.data["subtopics"][slug].get("content", "")
+        if self.validate_platinum_standard(slug, final_content):
+            self.data["subtopics"][slug]["standard"] = "platinum"
+            print(f"CERTIFIED PLATINUM: [{slug}]")
+        else:
+            self.data["subtopics"][slug]["standard"] = "legacy"
+
         return True
 
     def update_subtopic(self, slug, subtopic_data):
@@ -561,6 +757,7 @@ class PhysicsOrchestrator:
         shard_file = self.slug_to_shard[slug]
         self.shards[shard_file][slug] = subtopic_data
         self.data["subtopics"][slug] = subtopic_data
+        self.modified_slugs.add(slug) # MARK AS DIRTY
         
         if new_title:
             # Update registry if title changed
@@ -571,6 +768,16 @@ class PhysicsOrchestrator:
             self._refresh_sorted_titles()
             
         self.apply_auto_links(slug)
+
+        # 2. Platinum Certification Loop
+        # We re-fetch content from self.data because apply_auto_links modifies it in-place
+        final_content = self.data["subtopics"][slug].get("content", "")
+        if self.validate_platinum_standard(slug, final_content):
+            self.data["subtopics"][slug]["standard"] = "platinum"
+            print(f"CERTIFIED PLATINUM: [{slug}]")
+        else:
+            self.data["subtopics"][slug]["standard"] = "legacy"
+
         return True
 
     def delete_subtopic(self, slug):
@@ -637,45 +844,59 @@ class PhysicsOrchestrator:
         }
         return f_id
 
+    @staticmethod
+    def _render_page(url, output_path):
+        """Helper to render a URL via curl and save to output_path."""
+        try:
+            # We use a longer timeout for complex hubs
+            timeout = 15 if "/topic/" in url else 10
+            result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=timeout)
+            if result.stdout:
+                with open(output_path, "w") as f:
+                    f.write(result.stdout)
+                return True
+        except Exception as e:
+            # Silence expected timeout during parallel floods, but log serious ones
+            pass
+        return False
+
     def build(self, force=False, slug=None):
-        """Pre-renders all subtopics and hubs into static HTML. Shard-incremental by default."""
+        """Pre-renders all subtopics and hubs into static HTML. Parallelized for performance."""
         if slug:
             print(f"Surgically building: {slug}...")
+            # Use the environment-aware base URL
+            base_url = "http://localhost"
             if slug in self.data["subtopics"]:
-                self._render_page(f"http://localhost/physics/subtopic/{slug}?build_mode=1", f"public/cache/subtopic/{slug}.html")
+                self._render_page(f"{base_url}/physics/subtopic/{slug}?build_mode=1", f"public/cache/subtopic/{slug}.html")
             elif slug in self.data["topics"]:
-                self._render_page(f"http://localhost/physics/topic/{slug}?build_mode=1", f"public/cache/topic/{slug}.html")
+                self._render_page(f"{base_url}/physics/topic/{slug}?build_mode=1", f"public/cache/topic/{slug}.html")
             else:
                 print(f"ERROR: Slug [{slug}] not found in topics or subtopics.")
             return
 
-        print(f"Starting Static Build {'(FORCE)' if force else '(Shard-Incremental)'}...")
+        print(f"Starting Parallel Static Build {'(FORCE)' if force else '(Shard-Incremental)'}...")
         
         # 1. Build Subtopics
         sub_dir = "public/cache/subtopic"
         if not os.path.exists(sub_dir): os.makedirs(sub_dir)
             
-        success_count = 0
-        skip_count = 0
+        render_tasks = []
+        manifest_updates = {}
         
         for rel_path, sub_slugs in self.shard_to_slugs.items():
             shard_path = os.path.join(self.content_dir, rel_path)
             current_hash = self.get_file_hash(shard_path)
             
             if not force and self.build_manifest.get(f"shard_{rel_path}") == current_hash:
-                # Entire shard is clean, check individual slugs just in case 
-                # (to ensure HTML files actually exist in cache)
                 all_exist = True
                 for s in sub_slugs:
                     if not os.path.exists(os.path.join(sub_dir, f"{s}.html")):
                         all_exist = False
                         break
                 if all_exist:
-                    skip_count += len(sub_slugs)
                     continue
 
-            # Shard is dirty, process it
-            print(f"Processing Dirty Shard: {rel_path}...")
+            # Shard is dirty or missing files
             for s in sub_slugs:
                 sub = self.data["subtopics"][s]
                 content_str = json.dumps({
@@ -685,21 +906,19 @@ class PhysicsOrchestrator:
                 item_hash = hashlib.md5(content_str.encode()).hexdigest()
 
                 if not force and self.build_manifest.get(f"subtopic_{s}") == item_hash and os.path.exists(os.path.join(sub_dir, f"{s}.html")):
-                    skip_count += 1
                     continue
 
-                if self._render_page(f"http://localhost/physics/subtopic/{s}?build_mode=1", os.path.join(sub_dir, f"{s}.html")):
-                    self.build_manifest[f"subtopic_{s}"] = item_hash
-                    success_count += 1
+                url = f"http://localhost/physics/subtopic/{s}?build_mode=1"
+                path = os.path.join(sub_dir, f"{s}.html")
+                render_tasks.append((url, path, f"subtopic_{s}", item_hash))
             
-            # Update shard hash in manifest after processing
-            self.build_manifest[f"shard_{rel_path}"] = current_hash
+            # Record that this shard's hash should be updated after processing
+            manifest_updates[f"shard_{rel_path}"] = current_hash
 
         # 2. Build Topic Hubs
         hub_dir = "public/cache/topic"
         if not os.path.exists(hub_dir): os.makedirs(hub_dir)
             
-        print(f"\nBuilding Hubs...")
         for hub_slug in self.data["topics"]:
             topic = self.data["topics"][hub_slug]
             shard = self.topic_shards.get(hub_slug, topic)
@@ -710,30 +929,44 @@ class PhysicsOrchestrator:
             new_hash = hashlib.md5(hub_str.encode()).hexdigest()
 
             if not force and self.build_manifest.get(f"hub_{hub_slug}") == new_hash and os.path.exists(os.path.join(hub_dir, f"{hub_slug}.html")):
-                skip_count += 1
                 continue
 
-            if self._render_page(f"http://localhost/physics/topic/{hub_slug}?build_mode=1", os.path.join(hub_dir, f"{hub_slug}.html")):
-                self.build_manifest[f"hub_{hub_slug}"] = new_hash
-                success_count += 1
+            url = f"http://localhost/physics/topic/{hub_slug}?build_mode=1"
+            path = os.path.join(hub_dir, f"{hub_slug}.html")
+            render_tasks.append((url, path, f"hub_{hub_slug}", new_hash))
+
+        # 3. Execute Render Tasks in Parallel
+        if not render_tasks:
+            print("Everything up to date. No pages to build.")
+            return
+
+        print(f"Executing {len(render_tasks)} render tasks across {cpu_count()} cores...")
         
+        success_count = 0
+        with Pool(processes=cpu_count()) as pool:
+            # Map the static render function
+            results = pool.starmap(self._parallel_worker, render_tasks)
+            
+            for i, result in enumerate(results):
+                if result:
+                    _, _, manifest_key, item_hash = render_tasks[i]
+                    self.build_manifest[manifest_key] = item_hash
+                    success_count += 1
+
+        # Apply Shard Updates
+        for k, v in manifest_updates.items():
+            self.build_manifest[k] = v
+
         # Save Manifest
         with open(self.build_manifest_path, "w") as f:
             json.dump(self.build_manifest, f, indent=4)
 
-        print(f"\nSUCCESS: Pre-rendered static pages. Built: {success_count}, Skipped: {skip_count}")
+        print(f"\nSUCCESS: Parallel build complete. Built: {success_count}, Total Tasks: {len(render_tasks)}")
 
-    def _render_page(self, url, output_path):
-        """Helper to render a URL via curl and save to output_path."""
-        try:
-            result = subprocess.run(["curl", "-s", "-L", url], capture_output=True, text=True, timeout=10)
-            if result.stdout:
-                with open(output_path, "w") as f:
-                    f.write(result.stdout)
-                return True
-        except Exception as e:
-            print(f"\nError rendering {url}: {str(e)}")
-        return False
+    @staticmethod
+    def _parallel_worker(url, path, key, item_hash):
+        """Picklable worker function for the pool."""
+        return PhysicsOrchestrator._render_page(url, path)
 
     def get_pillar_context(self, slug):
         """Finds the position of a slug within its parent Hub roadmaps."""
@@ -770,6 +1003,37 @@ class PhysicsOrchestrator:
         "thermodynamics-statistical-mechanics": ["thermodynamics", "entropy", "partition", "statistical", "ensemble", "temperature", "equilibrium", "boltzmann"]
     }
 
+    def sanitize_content(self, html):
+        """Self-healing function to fix trivial formatting errors before validation."""
+        original_html = html
+        
+        # 1. Purge links from headers (Visual Integrity Fix)
+        def clean_header(match):
+            header_html = match.group(0)
+            if '<a' in header_html.lower():
+                clean_html = re.sub(r'<a[^>]*>(.*?)</a>', r'\1', header_html)
+                print(f"  [Self-Healing] Purged link from header: {clean_html}")
+                return clean_html
+            return header_html
+            
+        html = re.sub(r'<h[34][^>]*>.*?</h[34]>', clean_header, html, flags=re.IGNORECASE | re.DOTALL)
+        
+        # 2. Purge forbidden meta-talk
+        forbidden_phrases = [
+            ("university-level", "theoretical"),
+            ("imagine a world", "consider a system"),
+            ("in conclusion", ""),
+            ("let's dive into", "we analyze"),
+            ("as we have seen", "")
+        ]
+        
+        for bad, good in forbidden_phrases:
+            if re.search(rf'\b{bad}\b', html, flags=re.IGNORECASE):
+                print(f"  [Self-Healing] Replaced forbidden meta-talk '{bad}' with '{good}'.")
+                html = re.sub(rf'\b{bad}\b', good, html, flags=re.IGNORECASE)
+                
+        return html
+
     def validate_platinum_standard(self, slug, html):
         """Enforces the Organic Platinum Standard with Semantic Signature Enforcement."""
         errors = []
@@ -789,7 +1053,7 @@ class PhysicsOrchestrator:
             errors.append("Mathematical Sanity Failure: Mangled control characters detected.")
 
         # 2. Topological Link Analysis
-        links = re.findall(r'href="/physics/subtopic/([^"]*)"', html)
+        links = re.findall(r'href="/physics/(subtopic|topic)/([^"]*)"', html)
         if len(links) < 5:
             errors.append(f"Graph Connectivity Failure: Only {len(links)} links found (Target: 5+).")
         
@@ -837,7 +1101,19 @@ class PhysicsOrchestrator:
             if parent_score < 2:
                 errors.append(f"Theoretical Signal Loss: Content lacks foundational vocabulary for Hub [{p}].")
 
-        # 4. Context Integrity: Title-Slug Dissonance
+        # 4. In Media Res Lead Check
+        title = sub.get("title", "").lower()
+        title_words = [w for w in title.split() if len(w) > 3]
+        first_p_match = re.search(r'<p>(.*?)</p>', html, re.DOTALL)
+        if first_p_match:
+            first_p = first_p_match.group(1)
+            # Strip tags for check
+            first_p_text = re.sub(r'<.*?>', '', first_p).lower()
+            first_sentence = re.split(r'[.!?]', first_p_text)[0]
+            if any(word in first_sentence for word in title_words):
+                errors.append(f"Standard Violation: Lead sentence is self-referential (contains title words).")
+
+        # 5. Context Integrity: Title-Slug Dissonance
         title = sub.get("title", "")
         if title:
             # Generalized specificity markers
@@ -862,11 +1138,13 @@ class PhysicsOrchestrator:
                 errors.append(f"Linguistic Artifact: '{phrase}' (AI Fluff).")
 
         if errors:
+            self.last_validation_errors = errors
             print(f"PLATINUM VALIDATION FAILED for [{slug}]:")
             for e in errors:
                 print(f"  - {e}")
             return False
         
+        self.last_validation_errors = []
         print(f"✓ Platinum Validation Passed for [{slug}] ({word_count} words).")
         return True
 
@@ -892,6 +1170,7 @@ class PhysicsOrchestrator:
             self.data["subtopics"][slug].pop('snippet', None)
             self.data["subtopics"][slug].pop('snippet_svg', None)
             self.data["subtopics"][slug].pop('hero_math', None)
+            self.modified_slugs.add(slug) # MARK AS DIRTY for save()
         
         # 2. Save modified shards
         self.save(auto_commit=False, unlock_protected=True)

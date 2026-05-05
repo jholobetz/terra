@@ -25,12 +25,12 @@ The database is sharded into modular JSON files by top-level category:
 
 ---
 
-## 2. The "Blob Strategy" for Context Efficiency
+## 2. Context Efficiency: The "Structured Retrieval" Protocol
 
-All AI assistants MUST adhere to these rules to prevent token exhaustion:
-1.  **Local Orchestration:** Treat data shards as local "blobs." Never read or transmit files > 1MB into the chat history.
+All AI assistants MUST adhere to these rules to prevent token exhaustion and JSON corruption:
+1.  **Structured Retrieval:** Agents MUST use `python3 retrieve_concept.py <slug>` to examine subtopic or topic content. NEVER use `grep` followed by line-based `read_file` for content discovery, as this causes context bloat and risk of JSON corruption.
 2.  **Server-Side Processing:** Perform all batch updates, interlinking, and validation using Python scripts (`orchestrator.py`, `integrity_shield.py`) on the server.
-3.  **Surgical Peeking:** Use `grep_search` or `read_file` with precise line ranges to inspect data.
+3.  **Local Orchestration:** Treat data shards as local "blobs." Never read or transmit files > 1MB into the chat history.
 4.  **Batch Compression:** Use sub-agents to draft content and "blob" the final validated objects into shards in a single turn.
 
 ---
@@ -70,7 +70,9 @@ The 12 core topics are **Locked**.
     - **Clean Headers:** <h3> and <h4> headers MUST be strictly text-only. Anchors/links are forbidden in headers to maintain visual and layout integrity.
     - **Variable Structure:** No fixed section counts. Structure must flow naturally from the topic's complexity (min 3 deep sections).
     - **Implicit Authority:** NEVER use phrases like "University-level," "Advanced," or meta-commentary about the writing (e.g., "This section discusses..."). Let the rigor of the vocabulary and math establish the grade.
-    - **No Domain Declaration:** Do NOT state the parent Hub name in the lead paragraph (e.g., "In the framework of Relativity..."). Dive directly into the physical definition.
+    - **In Media Res Lead:** The first sentence of the first paragraph MUST NOT mention the subtopic title, its variations, or the parent Hub name. Prose must dive directly into the physical or mathematical context.
+        - **BAD:** "The Lorentz factor is..." or "In the framework of Relativity..."
+        - **GOOD:** "The necessity of maintaining the invariance of the spacetime interval requires..."
     - **No Linguistic Artifacts:** Zero tolerance for "AI Fluff" (e.g., "In conclusion," "It is important to note," "Furthermore" at the start of every paragraph, "Tapestry of", "Imagine a world").
 - **Technical Rigor:**
     - **Word Count:** Hard floor of 650 words, target 800-1,200.

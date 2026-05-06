@@ -59,8 +59,16 @@ class HealthDashboard:
         total_score = 0
         link_pattern = re.compile(r'href=[\\"]+/physics/(subtopic|topic)/([^\\"]+)[\\"]+')
         
+        # Add violation metrics to scorecard
+        self.health_data["platinum_scorecard"].update({
+            "pseudo_platinum_count": 0,
+            "lead_violations": 0,
+            "artifact_violations": 0,
+            "flag_violations": 0
+        })
+
         for shard_name, shard_data in self.orch.shards.items():
-            shard_stats = {"count": 0, "platinum": 0, "avg_words": 0, "avg_density": 0}
+            shard_stats = {"count": 0, "platinum": 0, "avg_words": 0, "avg_density": 0, "violations": 0}
             shard_words = 0
             shard_density = 0
             
@@ -68,6 +76,7 @@ class HealthDashboard:
                 if "content" not in sub: continue
                 
                 content = sub["content"]
+                title = sub.get("title", "")
                 source_cat = self.slug_to_cat.get(slug, "misc")
                 
                 # Stats
@@ -76,18 +85,40 @@ class HealthDashboard:
                 term_score = sum(5 for term in self.tech_terms if term in content.lower())
                 density_score = (latex_count * 15) + term_score
                 
+                # Qualitative Checks
+                # 1. Lead Violation (In Media Res)
+                first_sentence = content[:150].lower()
+                has_lead_violation = title.lower() in first_sentence or slug.replace('-', ' ') in first_sentence
+                
+                # 2. Artifact Violation (No Bullets)
+                has_artifact_violation = "<ul>" in content or "<li>" in content
+
+                if has_lead_violation: self.health_data["platinum_scorecard"]["lead_violations"] += 1
+                if has_artifact_violation: self.health_data["platinum_scorecard"]["artifact_violations"] += 1
+                
+                # Flag Logic
+                is_flagged = sub.get("standard") == "platinum"
+                meets_quant = words >= 650 and density_score >= 60 # OPS word floor is 650
+                
+                # Strict Certification: Must be flagged AND pass qualitative checks
+                is_organic_platinum = is_flagged and not (has_lead_violation or has_artifact_violation)
+                
+                if is_flagged and (has_lead_violation or has_artifact_violation):
+                    self.health_data["platinum_scorecard"]["flag_violations"] += 1
+                    shard_stats["violations"] += 1
+
+                if is_organic_platinum:
+                    shard_stats["platinum"] += 1
+                    self.health_data["platinum_scorecard"]["platinum_count"] += 1
+                elif meets_quant and not is_flagged:
+                    self.health_data["platinum_scorecard"]["pseudo_platinum_count"] += 1
+
                 # Update Shard
                 shard_stats["count"] += 1
                 shard_words += words
                 shard_density += density_score
                 
-                # Check Platinum (500w, 60 density)
-                is_platinum = words >= 500 and density_score >= 60
-                if is_platinum:
-                    shard_stats["platinum"] += 1
-                    self.health_data["platinum_scorecard"]["platinum_count"] += 1
-                
-                if words < 500:
+                if words < 650:
                     self.health_data["platinum_scorecard"]["low_depth_count"] += 1
                 if density_score < 30:
                     self.health_data["platinum_scorecard"]["non_technical_count"] += 1

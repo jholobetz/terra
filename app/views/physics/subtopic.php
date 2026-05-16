@@ -3,7 +3,14 @@
         <a href="/physics">Home</a>
         <?php foreach ($breadcrumbs as $crumb): ?>
             <span>&rsaquo;</span>
-            <a href="<?= htmlspecialchars($crumb['url']) ?>"><?= $crumb['title'] ?></a>
+            <?php if (isset($crumb['is_multi'])): ?>
+                <?php foreach ($crumb['links'] as $index => $link): ?>
+                    <?= $index > 0 ? ' | ' : '' ?>
+                    <a href="<?= htmlspecialchars($link['url']) ?>"><?= $link['title'] ?></a>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <a href="<?= htmlspecialchars($crumb['url']) ?>"><?= $crumb['title'] ?></a>
+            <?php endif; ?>
         <?php endforeach; ?>
         <span>&rsaquo;</span>
         <span style="opacity: 1; color: #8892b0;"><?= $title ?></span>

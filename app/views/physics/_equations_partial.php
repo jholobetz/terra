@@ -22,8 +22,12 @@ if ($hasFormulas): ?>
                     </div>
 
                     <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
-                        <div class="math-content" style="font-size: 1.4rem; color: #fff;">
-                            \[ <?= $f['equation'] ?> \]
+                        <div class="math-content" style="font-size: 1.4rem; color: #FFD700;">
+                            <?php if (strpos($f['equation'], '<svg') === 0): ?>
+                                <?= $f['equation'] ?>
+                            <?php else: ?>
+                                \[ <?= $f['equation'] ?> \]
+                            <?php endif; ?>
                         </div>
                     </div>
 

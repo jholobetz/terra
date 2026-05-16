@@ -12,6 +12,7 @@ if(file_exists(__DIR__. $ds . 'config.php') === false) {
 }
 
 // Ensure required directories exist for a smooth server migration
+ini_set('memory_limit', '512M');
 $logDir = __DIR__ . $ds . '..' . $ds . 'log';
 if (!is_dir($logDir)) {
     mkdir($logDir, 0775, true);

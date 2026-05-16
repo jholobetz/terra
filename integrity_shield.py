@@ -131,6 +131,15 @@ class IntegrityShield:
             if "content" in topic:
                 scan(topic["content"], slug)
 
+    def check_latex_formatting(self):
+        """Ensures Platinum subtopics do not contain raw LaTeX delimiters."""
+        for slug, sub in self.all_subtopics.items():
+            if sub.get("standard") == "platinum":
+                content = sub.get("content", "")
+                # Pattern for \( or \[ or \) or \]
+                if re.search(r'\\{1,2}\[|\\{1,2}\(|\\{1,2}\]|\\{1,2}\)', content):
+                    self.errors.append(f"SSR VIOLATION: [{slug}] is Platinum but contains raw LaTeX delimiters. Pre-rendering required.")
+
     def run(self):
         print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
         print(f"Directory: {self.content_dir}")
@@ -142,6 +151,7 @@ class IntegrityShield:
         self.check_technical_density()
         self.check_entities()
         self.check_links()
+        self.check_latex_formatting()
         
         print(f"Stats:  {self.stats['links']} links, {self.stats['formulas']} formula refs.")
         

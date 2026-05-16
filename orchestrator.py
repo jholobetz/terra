@@ -252,18 +252,15 @@ class PhysicsOrchestrator:
             
         return successful_slugs, failed_slugs
 
-    def convert_to_svg(self, latex, is_display=False):
-        """Converts a LaTeX string to SVG using the Node.js runway engine."""
-        cache_key = f"{latex}_{is_display}"
+    def convert_to_svg(self, clean_latex, is_display=False, color='#FFD700'):
+        """Converts a clean LaTeX string (no delimiters) to SVG using the Node.js runway engine."""
+        cache_key = f"{clean_latex}_{is_display}_{color}"
         if cache_key in self.svg_cache:
             return self.svg_cache[cache_key]
 
-        # Clean LaTeX for CLI (remove delimiters)
-        clean_latex = latex.replace("\\(", "").replace("\\)", "").replace("\\[", "").replace("\\]", "").strip()
-        
         try:
             mode = "display" if is_display else "inline"
-            result = subprocess.run(["node", self.svg_engine, clean_latex, mode], capture_output=True, text=True, timeout=5)
+            result = subprocess.run(["node", self.svg_engine, clean_latex, mode, color], capture_output=True, text=True, timeout=5)
             if result.returncode == 0 and result.stdout:
                 svg_code = result.stdout.strip()
                 self.svg_cache[cache_key] = svg_code
@@ -271,24 +268,35 @@ class PhysicsOrchestrator:
         except Exception as e:
             print(f"SVG Error for [{clean_latex}]: {str(e)}")
         
-        return latex
+        return clean_latex
 
-    def get_svg_snippet(self, content):
+    def get_svg_snippet(self, content, color='#FFD700'):
         """Generates a snippet where math is replaced by static SVG paths."""
         if not content: return ""
         
-        # 1. Protect Numbered Headers
+        # 1. Mask existing SVGs to protect them from tag stripping
+        svg_blocks = []
+        def mask_existing_svg(match):
+            placeholder = f"___EXISTING_SVG_{len(svg_blocks)}___"
+            svg_blocks.append(match.group(0))
+            return placeholder
+        
+        content = re.sub(r'<svg.*?</svg>', mask_existing_svg, content, flags=re.DOTALL)
+
+        # 2. Protect Numbered Headers
         clean = re.sub(r'\d+\.\s+[A-Z].*', '', content)
         
-        # 2. Extract first 3 sentences using structural boundaries (preserving HTML/Math)
+        # 3. Extract math blocks (preserving LaTeX inside capturing group 1)
         math_blocks = []
         def mask_math(match):
             placeholder = f"___MATH_BLOCK_{len(math_blocks)}___"
-            math_blocks.append(match.group(0))
+            # match.group(1) is the clean LaTeX without delimiters
+            math_blocks.append((match.group(1), match.group(0)))
             return placeholder
 
-        masked = re.sub(r'\\+\[.*?\\+\]', mask_math, clean)
-        masked = re.sub(r'\\+\(.*?\\+\)', mask_math, masked)
+        # Capture content between \[ \] or \( \)
+        masked = re.sub(r'\\{1,2}\[(.*?)\\{1,2}\]', mask_math, clean, flags=re.DOTALL)
+        masked = re.sub(r'\\{1,2}\((.*?)\\{1,2}\)', mask_math, masked, flags=re.DOTALL)
         
         # Strip other HTML tags for sentence splitting
         text_only = re.sub(r'<.*?>', '', masked)
@@ -297,19 +305,23 @@ class PhysicsOrchestrator:
         if len(sentences) > 3 and not snippet_masked.endswith('.'):
             snippet_masked += "."
 
-        # 3. Restore and Convert Math Blocks
+        # 4. Restore and Convert Math Blocks
         def restore_and_convert(match):
             try:
                 idx = int(match.group(1))
-                latex = math_blocks[idx]
-                is_display = "\\[" in latex or "\\\\[" in latex
-                return self.convert_to_svg(latex, is_display)
+                clean_latex, original = math_blocks[idx]
+                is_display = "\\[" in original or "\\\\[" in original
+                return self.convert_to_svg(clean_latex.strip(), is_display, color=color)
             except:
                 return ""
 
         final_snippet = re.sub(r'___MATH_BLOCK_(\d+)___', restore_and_convert, snippet_masked)
         
-        # 4. Final cleanup
+        # Restore existing SVGs
+        for i, svg in enumerate(svg_blocks):
+            final_snippet = final_snippet.replace(f'___EXISTING_SVG_{i}___', svg)
+
+        # 5. Final cleanup
         final_snippet = re.sub(r'\(\s*\)', '', final_snippet)
         return final_snippet.strip()
 
@@ -317,8 +329,8 @@ class PhysicsOrchestrator:
         """Extracts a math-free 3-sentence snippet from HTML content."""
         if not content: return ""
         # 1. Strip out MathJax inline and display formulas completely
-        clean = re.sub(r'\\+\[.*?\\+\]', '', content)
-        clean = re.sub(r'\\+\(.*?\\+\)', '', clean)
+        clean = re.sub(r'\\{1,2}\[.*?\\{1,2}\]', '', content, flags=re.DOTALL)
+        clean = re.sub(r'\\{1,2}\(.*?\\{1,2}\)', '', clean, flags=re.DOTALL)
         
         # 2. Strip HTML
         clean = re.sub(r'<.*?>', '', clean)
@@ -341,15 +353,30 @@ class PhysicsOrchestrator:
             
         return snippet.strip()
 
-    def get_hero_math(self, content):
+    def get_hero_math(self, content, color='#FFD700'):
         """Extracts the first technical formula to use as a stylized card badge."""
         if not content: return ""
+
+        # 0. Check for already rendered SVGs (Platinum fallback)
+        # Prioritize display-styled SVGs
+        svg_display_match = re.search(r'<div class="math-display".*?>(<svg.*?</svg>)</div>', content, flags=re.DOTALL)
+        if svg_display_match:
+            return svg_display_match.group(1)
+        
+        # Then any SVG
+        svg_match = re.search(r'<svg.*?</svg>', content, flags=re.DOTALL)
+        if svg_match:
+            return svg_match.group(0)
+
         # Find the first math block (prioritize display math)
-        match = re.search(r'\\+\[.*?\\+\]', content) or re.search(r'\\+\(.*?\\+\)', content)
-        if match:
-            latex = match.group(0)
-            is_display = "\\[" in latex or "\\\\[" in latex
-            return self.convert_to_svg(latex, is_display)
+        display_match = re.search(r'\\{1,2}\[(.*?)\\{1,2}\]', content, flags=re.DOTALL)
+        if display_match:
+            return self.convert_to_svg(display_match.group(1).strip(), True, color=color)
+            
+        inline_match = re.search(r'\\{1,2}\((.*?)\\{1,2}\)', content, flags=re.DOTALL)
+        if inline_match:
+            return self.convert_to_svg(inline_match.group(1).strip(), False, color=color)
+            
         return ""
 
     def batch_convert_to_svg(self, formula_batch):
@@ -368,6 +395,67 @@ class PhysicsOrchestrator:
             print(f"BATCH SVG Error: {str(e)}")
         return {}
 
+    def render_content_to_svg(self, slug):
+        """Replaces all LaTeX delimiters in a subtopic's content with pre-rendered SVGs."""
+        if slug not in self.data["subtopics"]: return
+        sub = self.data["subtopics"][slug]
+        content = sub.get("content", "")
+        # Platinum Standard: All math is rendered in Gold #FFD700 for high-signal visibility
+        color = "#FFD700"
+
+        # 1. Replace Display Math \[ ... \]
+        def replace_display(match):
+            latex = match.group(1).strip()
+            svg = self.convert_to_svg(latex, is_display=True, color=color)
+            return f'<div class="math-display" style="text-align: center; margin: 25px 0;">{svg}</div>'
+        
+        content = re.sub(r'\\+\[(.*?)\\+\]', replace_display, content, flags=re.DOTALL)
+
+        # 2. Replace Inline Math \( ... \)
+        def replace_inline(match):
+            latex = match.group(1).strip()
+            return self.convert_to_svg(latex, is_display=False, color=color)
+        
+        content = re.sub(r'\\+\((.*?)\\+\)', replace_inline, content, flags=re.DOTALL)
+        
+        sub["content"] = content
+
+    def render_registry_to_svg(self, color='#FFD700'):
+        """Pre-renders all formulas in the registry to static SVGs."""
+        print(f"Pre-rendering formula registry ({len(self.data['formula_registry'])} items) in {color}...")
+        rendering_queue = {}
+        
+        # We need the original LaTeX to re-render. 
+        # If the equation is already an SVG, we might have lost the LaTeX unless it's in a backup.
+        # However, for this project, many SVGs were added by agents.
+        # Let's try to extract LaTeX from the title or just skip if it's already an SVG and we can't recover.
+        
+        for f_id, formula in self.data["formula_registry"].items():
+            eqn = formula.get("equation", "")
+            if not eqn: continue
+            
+            # If it's already an SVG, we can't easily re-render without the source LaTeX.
+            # But we can try to fix the COLOR via string replacement if it's an SVG.
+            if eqn.startswith("<svg"):
+                # Fix color in-place
+                formula["equation"] = eqn.replace('color: #64ffda', f'color: {color}').replace('color: #64FFDA', f'color: {color}')
+                continue
+            
+            cache_key = f"REG_{f_id}_{color}"
+            rendering_queue[cache_key] = {"latex": eqn, "is_display": True, "color": color}
+            
+        if rendering_queue:
+            print(f"  -> Batching {len(rendering_queue)} formulas...")
+            new_svgs = self.batch_convert_to_svg(rendering_queue)
+            
+            # Update registry
+            for f_id, formula in self.data["formula_registry"].items():
+                cache_key = f"REG_{f_id}_{color}"
+                if cache_key in self.svg_cache:
+                    formula["equation"] = self.svg_cache[cache_key]
+            
+            print("  -> Registry pre-rendered and updated.")
+
     def save(self, auto_commit=True, commit_msg=None, unlock_protected=False, force_full=False):
         """Saves all modified shards and registries and optionally commits to Git."""
         # 1. Pre-render SVGs in batch for modified subtopics
@@ -378,28 +466,36 @@ class PhysicsOrchestrator:
             rendering_queue = {}
             for slug in target_slugs:
                 if slug not in self.data["subtopics"]: continue
-                content = self.data["subtopics"][slug].get("content", "")
-                
-                # Find all math blocks
+                subtopic = self.data["subtopics"][slug]
+                content = subtopic.get("content", "")
+                color = "#FFD700" # Math Standard
+
+                # IMPORTANT: Generate snippets BEFORE pre-rendering content to SVGs
+                # This ensures snippet generators have raw LaTeX to work with if possible,
+                # though our patched generators now handle both.
+                subtopic["snippet"] = self.get_safe_snippet(content)
+                subtopic["snippet_svg"] = self.get_svg_snippet(content, color=color)
+                subtopic["hero_math"] = self.get_hero_math(content, color=color)
+
+                # Auto-render main content if Platinum
+                if subtopic.get("standard") == "platinum":
+                    self.render_content_to_svg(slug)
+                    # Refresh content after rendering for phase 1 batching check below
+                    content = subtopic.get("content", "")
+
+                # Find all math blocks for batching
                 math_blocks = re.findall(r'\\+\[.*?\\+\]|\\+\(.*?\\+\)', content, re.DOTALL)
                 for latex in math_blocks:
+                    # Strip delimiters for cleaner cache and engine processing
+                    clean_latex = re.sub(r'^\\{1,2}\[|^\\{1,2}\(|\\{1,2}\]$|\\{1,2}\)$', '', latex).strip()
                     is_display = "\\[" in latex or "\\\\[" in latex
-                    cache_key = f"{latex}_{is_display}"
+                    cache_key = f"{clean_latex}_{is_display}_{color}"
                     if cache_key not in self.svg_cache:
-                        rendering_queue[cache_key] = {"latex": latex, "is_display": is_display}
+                        rendering_queue[cache_key] = {"latex": clean_latex, "is_display": is_display, "color": color}
 
             if rendering_queue:
                 print(f"  -> Batching {len(rendering_queue)} new formulas...")
                 self.batch_convert_to_svg(rendering_queue)
-
-            print(f"Phase 2: Generating snippets for {len(target_slugs)} subtopics...")
-            for slug in target_slugs:
-                if slug not in self.data["subtopics"]: continue
-                subtopic = self.data["subtopics"][slug]
-                content = subtopic.get("content", "")
-                subtopic["snippet"] = self.get_safe_snippet(content)
-                subtopic["snippet_svg"] = self.get_svg_snippet(content)
-                subtopic["hero_math"] = self.get_hero_math(content)
 
         # 2. Save Registries
         # Clean topics for categories.json (metadata only)
@@ -472,6 +568,18 @@ class PhysicsOrchestrator:
                 json.dump(shard_content, f, indent=4)
             # Record shard hash
             self.build_manifest[f"shard_{shard_name}"] = self.get_file_hash(path)
+
+        # 4.5 Update Search Index (Mapping slugs to shards for PHP controller)
+        search_index = {}
+        for shard_name, shard_content in self.shards.items():
+            for slug, sub in shard_content.items():
+                search_index[slug] = {
+                    "t": sub.get("title", slug),
+                    "s": shard_name
+                }
+        with open(os.path.join(self.content_dir, "search_index.json"), "w") as f:
+            json.dump(search_index, f, indent=4)
+        print(f"SUCCESS: Search index updated with {len(search_index)} entries.")
 
         # 5. Save Global Registry
         with open(self.registry_path, "w") as f:
@@ -865,7 +973,7 @@ class PhysicsOrchestrator:
         if slug:
             print(f"Surgically building: {slug}...")
             # Use the environment-aware base URL
-            base_url = "http://localhost"
+            base_url = "http://localhost:8000"
             if slug in self.data["subtopics"]:
                 self._render_page(f"{base_url}/physics/subtopic/{slug}?build_mode=1", f"public/cache/subtopic/{slug}.html")
             elif slug in self.data["topics"]:
@@ -908,7 +1016,7 @@ class PhysicsOrchestrator:
                 if not force and self.build_manifest.get(f"subtopic_{s}") == item_hash and os.path.exists(os.path.join(sub_dir, f"{s}.html")):
                     continue
 
-                url = f"http://localhost/physics/subtopic/{s}?build_mode=1"
+                url = f"http://localhost:8000/physics/subtopic/{s}?build_mode=1"
                 path = os.path.join(sub_dir, f"{s}.html")
                 render_tasks.append((url, path, f"subtopic_{s}", item_hash))
             
@@ -931,7 +1039,7 @@ class PhysicsOrchestrator:
             if not force and self.build_manifest.get(f"hub_{hub_slug}") == new_hash and os.path.exists(os.path.join(hub_dir, f"{hub_slug}.html")):
                 continue
 
-            url = f"http://localhost/physics/topic/{hub_slug}?build_mode=1"
+            url = f"http://localhost:8000/physics/topic/{hub_slug}?build_mode=1"
             path = os.path.join(hub_dir, f"{hub_slug}.html")
             render_tasks.append((url, path, f"hub_{hub_slug}", new_hash))
 

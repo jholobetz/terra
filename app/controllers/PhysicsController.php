@@ -43,15 +43,16 @@ class PhysicsController
                 if (file_exists($baseDir . 'search_index.json')) {
                     $this->physicsContent['search_index'] = json_decode(file_get_contents($baseDir . 'search_index.json'), true) ?: [];
                 }
-
-                // 2. Conditional Shard Loading
-                if ($targetSlug) {
-                    $this->loadShardForSlug($targetSlug);
-                } else if ($this->requestedSlug) {
-                    $this->loadShardForSlug($this->requestedSlug);
-                }
             }
         }
+
+        // 2. Conditional Shard Loading (Always check even if physicsContent is set)
+        if ($targetSlug) {
+            $this->loadShardForSlug($targetSlug);
+        } else if ($this->requestedSlug) {
+            $this->loadShardForSlug($this->requestedSlug);
+        }
+
         return $this->physicsContent;
     }
 
@@ -60,13 +61,10 @@ class PhysicsController
      */
     private function loadShardForSlug(string $slug): void
     {
-        if ($this->physicsContent === null) {
-            $this->getPhysicsContent();
-        }
         $baseDir = PROJECT_ROOT . '/app/config/content/';
         
         // 1. Check if it is a main topic shard
-        if (isset($this->physicsContent['topics'][$slug]['shard'])) {
+        if (isset($this->physicsContent['topics'][$slug]['shard']) && !isset($this->physicsContent['topics'][$slug]['pillars'])) {
             $shardPath = $baseDir . $this->physicsContent['topics'][$slug]['shard'];
             if (file_exists($shardPath)) {
                 $topicData = json_decode(file_get_contents($shardPath), true) ?: [];
@@ -75,6 +73,10 @@ class PhysicsController
         }
 
         // 2. Check if it is a subtopic shard (via search_index)
+        if (isset($this->physicsContent['subtopics'][$slug])) {
+            return;
+        }
+
         $shardFile = $this->physicsContent['search_index'][$slug]['s'] ?? null;
         if ($shardFile && file_exists($baseDir . $shardFile)) {
             $shard = json_decode(file_get_contents($baseDir . $shardFile), true) ?: [];
@@ -252,10 +254,28 @@ class PhysicsController
     public function viewTopic(string $slug)
     {
         $cachePath = PROJECT_ROOT . "/public/cache/topic/{$slug}.html";
-        if (file_exists($cachePath) && !$this->isPreviewActive()) {
+        $isStale = $this->isHubCacheStale($slug, $cachePath);
+
+        // Auto-sync manifest if stale or preview
+        if ($isStale || $this->isPreviewActive()) {
+            $manifestPath = PROJECT_ROOT . "/hub_manifests/{$slug}.json";
+            if (file_exists($manifestPath)) {
+                $manifestData = json_decode(file_get_contents($manifestPath), true);
+                if ($manifestData) {
+                    $this->syncIndividualTopic($slug, $manifestData);
+                }
+            }
+        }
+
+        if (file_exists($cachePath) && !$isStale && !$this->isPreviewActive()) {
             header('Content-Type: text/html; charset=utf-8');
             readfile($cachePath);
             return;
+        }
+
+        // If stale, purge cache
+        if ($isStale && file_exists($cachePath)) {
+            unlink($cachePath);
         }
 
         $this->requestedSlug = $slug;
@@ -315,12 +335,19 @@ class PhysicsController
 
     public function viewSubtopic(string $slug)
     {
-        // 1. Static Check
+        // 1. Static Check with Auto-Invalidation
         $cachePath = PROJECT_ROOT . "/public/cache/subtopic/{$slug}.html";
-        if (file_exists($cachePath) && !$this->isPreviewActive()) {
+        $isStale = $this->isCacheStale($slug, $cachePath);
+
+        if (file_exists($cachePath) && !$isStale && !$this->isPreviewActive()) {
             header('Content-Type: text/html; charset=utf-8');
             readfile($cachePath);
             return;
+        }
+
+        // If stale, delete it so fetchAndPrepare won't return stale database results if synced
+        if ($isStale && file_exists($cachePath)) {
+            unlink($cachePath);
         }
 
         $this->requestedSlug = $slug;
@@ -331,38 +358,7 @@ class PhysicsController
             return;
         }
 
-        $breadcrumbs = [];
-        $currentParentSlug = !empty($subtopic['parents']) ? $subtopic['parents'][0] : '';
-
-        // Trace parents upwards
-        while (!empty($currentParentSlug)) {
-            $foundParent = false;
-            
-            // Try Shards for parent subtopic
-            $parentData = $this->fetchAndPrepare('subtopics', $currentParentSlug);
-            if (!empty($parentData)) {
-                array_unshift($breadcrumbs, [
-                    'title' => $parentData['title'],
-                    'url' => '/physics/subtopic/' . $currentParentSlug
-                ]);
-                $currentParentSlug = !empty($parentData['parents']) ? $parentData['parents'][0] : '';
-                $foundParent = true;
-            } else {
-                // Try Categories
-                $content = $this->getPhysicsContent();
-                if (isset($content['topics'][$currentParentSlug])) {
-                    $cat = $content['topics'][$currentParentSlug];
-                    array_unshift($breadcrumbs, [
-                        'title' => $cat['title'],
-                        'url' => '/physics/topic/' . $currentParentSlug
-                    ]);
-                    $currentParentSlug = ''; // Top reached
-                    $foundParent = true;
-                }
-            }
-
-            if (!$foundParent) break;
-        }
+        $breadcrumbs = $this->resolveBreadcrumbs(!empty($subtopic['parents']) ? (array)$subtopic['parents'] : []);
 
         // Get Related Topics via Search Index
         $related = $this->getRelatedTopics($slug);
@@ -376,6 +372,163 @@ class PhysicsController
             'breakdowns' => $subtopic['breakdowns'] ?? [],
             'formulas' => $subtopic['formulas'] ?? []
         ]));
+    }
+
+    /**
+     * Resolves multiple parent slugs into a flat breadcrumb structure.
+     * Supports both Topic Hubs and Subtopic parents with recursive lineage tracing.
+     */
+    private function resolveBreadcrumbs(array $parentSlugs, array $visited = []): array
+    {
+        $content = $this->getPhysicsContent();
+        $hubs = [];
+        $intermediates = [];
+
+        foreach ($parentSlugs as $slug) {
+            if (in_array($slug, $visited)) continue;
+            $visited[] = $slug;
+
+            // 1. Check if it's a Topic Hub (Category)
+            if (isset($content['topics'][$slug])) {
+                $hubs[$slug] = [
+                    'title' => $content['topics'][$slug]['title'],
+                    'url' => '/physics/topic/' . $slug
+                ];
+            } else {
+                // 2. Check if it's a Subtopic parent
+                $subData = $this->fetchAndPrepare('subtopics', $slug);
+                if (!empty($subData) && isset($subData['title'])) {
+                    $intermediates[$slug] = [
+                        'title' => $subData['title'],
+                        'url' => '/physics/subtopic/' . $slug,
+                        'parents' => !empty($subData['parents']) ? (array)$subData['parents'] : []
+                    ];
+                }
+            }
+        }
+
+        $crumbs = [];
+        
+        // If we found direct hubs, group them
+        if (!empty($hubs)) {
+            $crumbs[] = [
+                'is_multi' => true,
+                'links' => array_values($hubs)
+            ];
+        }
+
+        // If no direct hubs but we have intermediates, trace the first intermediate upwards
+        if (empty($hubs) && !empty($intermediates)) {
+            $first = reset($intermediates);
+            $ancestors = $this->resolveBreadcrumbs($first['parents'], $visited);
+            $crumbs = array_merge($ancestors, [[
+                'title' => $first['title'],
+                'url' => $first['url']
+            ]]);
+        } elseif (!empty($intermediates)) {
+            // If we have hubs AND intermediates, just append the first intermediate for context
+            $first = reset($intermediates);
+            $crumbs[] = [
+                'title' => $first['title'],
+                'url' => $first['url']
+            ];
+        }
+
+        return $crumbs;
+    }
+
+    /**
+     * Checks if the cached Hub HTML is older than the source manifest.
+     */
+    private function isHubCacheStale(string $slug, string $cachePath): bool
+    {
+        if (!file_exists($cachePath)) return true;
+
+        $manifestPath = PROJECT_ROOT . "/hub_manifests/{$slug}.json";
+        if (!file_exists($manifestPath)) return false;
+
+        return filemtime($manifestPath) > filemtime($cachePath);
+    }
+
+    /**
+     * Checks if the cached HTML file is older than the source JSON shard.
+     */
+    private function isCacheStale(string $slug, string $cachePath): bool
+    {
+        if (!file_exists($cachePath)) return true;
+
+        $content = $this->getPhysicsContent($slug);
+        $shardFile = $content['search_index'][$slug]['s'] ?? null;
+        
+        if (!$shardFile) return false;
+
+        $shardPath = PROJECT_ROOT . '/app/config/content/' . $shardFile;
+        if (!file_exists($shardPath)) return false;
+
+        return filemtime($shardPath) > filemtime($cachePath);
+    }
+
+    /**
+     * Surgically syncs a single topic (hub) from JSON manifest to Database.
+     */
+    private function syncIndividualTopic(string $slug, array $data): void
+    {
+        $pillars = !empty($data['pillars']) ? json_encode($data['pillars']) : '[]';
+        $bridges = !empty($data['metadata']['bridges']) ? json_encode($data['metadata']['bridges']) : '[]';
+        
+        $this->app->db()->runQuery(
+            "INSERT INTO topics (slug, title, intro, field, density, pillars, bridges) 
+             VALUES (?, ?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE 
+                title = VALUES(title), 
+                intro = VALUES(intro), 
+                field = VALUES(field), 
+                density = VALUES(density), 
+                pillars = VALUES(pillars), 
+                bridges = VALUES(bridges)",
+            [
+                $slug,
+                $data['title'],
+                $data['metadata']['intro'] ?? '',
+                $data['metadata']['field'] ?? '',
+                $data['metadata']['density'] ?? '',
+                $pillars,
+                $bridges
+            ]
+        );
+    }
+
+    /**
+     * Surgically syncs a single subtopic from JSON to Database.
+     */
+    private function syncIndividualSubtopic(string $slug, array $data): void
+    {
+        // Safety check to ensure we have valid data before syncing
+        if (empty($data['title']) || empty($data['content'])) {
+            return;
+        }
+
+        $formulaData = !empty($data['formula_ids']) ? json_encode($data['formula_ids']) : '[]';
+        $parents = !empty($data['parents']) ? json_encode($data['parents']) : '[]';
+
+        $this->app->db()->runQuery(
+            "INSERT INTO subtopics (slug, title, content, formula_data, parents, standard) 
+             VALUES (?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE 
+                title = VALUES(title), 
+                content = VALUES(content), 
+                formula_data = VALUES(formula_data), 
+                parents = VALUES(parents), 
+                standard = VALUES(standard)",
+            [
+                $slug,
+                $data['title'],
+                $data['content'],
+                $formulaData,
+                $parents,
+                $data['standard'] ?? 'legacy'
+            ]
+        );
     }
 
     private function getRelatedTopics(string $currentSlug, int $limit = 3): array
@@ -474,6 +627,12 @@ class PhysicsController
     private function fetchAndPrepare(string $table, string $slug): array
     {
         $content = $this->getPhysicsContent($slug);
+        
+        // Auto-sync individual node if we are in view mode and cache was stale
+        if (!$this->isPreviewActive() && $table === 'subtopics' && isset($content['subtopics'][$slug])) {
+            $this->syncIndividualSubtopic($slug, $content['subtopics'][$slug]);
+        }
+
         if ($this->isPreviewActive()) {
             $data = $content[$table][$slug] ?? null;
             if (!$data) return [];
@@ -493,7 +652,14 @@ class PhysicsController
         $row = $this->app->db()->fetchRow("SELECT * FROM {$table} WHERE slug = ?", [$slug]);
         if (!$row) return [];
 
-        $data = is_object($row) ? $row->getData() : $row;
+        // Normalize to associative array
+        $data = [];
+        if (is_object($row)) {
+            $data = method_exists($row, 'getData') ? $row->getData() : (array) $row;
+        } else {
+            $data = $row;
+        }
+        
         $f_ids = !empty($data['formula_data']) ? json_decode($data['formula_data'], true) : [];
         
         $data['formulas'] = [];

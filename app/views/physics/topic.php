@@ -24,9 +24,9 @@ if (!function_exists('getConceptLevel')) {
         min-width: 0 !important;
         overflow: visible !important;
     }
-    .math-content {
-        overflow-x: auto;
-        max-width: 100%;
+    .hero-math-badge svg {
+        max-width: 100% !important;
+        height: auto !important;
     }
 </style>
 

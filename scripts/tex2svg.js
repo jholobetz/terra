@@ -19,10 +19,10 @@ RegisterHTMLHandler(adaptor);
 const tex = new TeX({ 
     packages: AllPackages.filter(p => p !== 'bussproofs' && p !== 'physics')
 });
-const svg = new SVG({ fontCache: 'local' });
+const svg = new SVG({ fontCache: 'none' });
 const html = mathjax.document('', { InputJax: tex, OutputJax: svg });
 
-function convert(latex, isDisplay) {
+function convert(latex, isDisplay, color = '#FFD700') {
     try {
         const node = html.convert(latex, {
             display: isDisplay,
@@ -31,10 +31,20 @@ function convert(latex, isDisplay) {
             containerWidth: 80 * 16
         });
         let svgHtml = adaptor.innerHTML(node);
+        
+        // Remove hardcoded MathJax styles if any and inject our theme color
+        // The SVG from MathJax with fontCache: 'none' has inline paths
         const styleMatch = svgHtml.match(/style="([^"]*)"/);
         const mjStyle = styleMatch ? styleMatch[1] : '';
-        const finalStyle = `color: #FFD700; ${mjStyle}`;
-        return svgHtml.replace(/style="[^"]*"/, `style="${finalStyle}"`);
+        const finalStyle = `color: ${color}; ${mjStyle}`;
+        
+        if (styleMatch) {
+            svgHtml = svgHtml.replace(/style="[^"]*"/, `style="${finalStyle}"`);
+        } else {
+            svgHtml = svgHtml.replace('<svg ', `<svg style="${finalStyle}" `);
+        }
+        
+        return svgHtml;
     } catch (err) {
         return `<span class="math-error">${err.message}</span>`;
     }
@@ -45,7 +55,8 @@ if (process.argv.length > 2) {
     // Single mode (Legacy CLI compatibility)
     const latex = process.argv[2] || '';
     const isDisplay = process.argv[3] === 'display';
-    process.stdout.write(convert(latex, isDisplay));
+    const color = process.argv[4] || '#FFD700';
+    process.stdout.write(convert(latex, isDisplay, color));
 } else {
     // Batch mode (JSON from stdin)
     let inputData = '';
@@ -55,7 +66,7 @@ if (process.argv.length > 2) {
             const batch = JSON.parse(inputData);
             const results = {};
             for (const [key, item] of Object.entries(batch)) {
-                results[key] = convert(item.latex, item.is_display);
+                results[key] = convert(item.latex, item.is_display, item.color || '#FFD700');
             }
             process.stdout.write(JSON.stringify(results));
         } catch (err) {

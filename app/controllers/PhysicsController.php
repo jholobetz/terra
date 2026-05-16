@@ -508,24 +508,35 @@ class PhysicsController
             return;
         }
 
-        $formulaData = !empty($data['formula_ids']) ? json_encode($data['formula_ids']) : '[]';
-        $parents = !empty($data['parents']) ? json_encode($data['parents']) : '[]';
+        $primaryParent = !empty($data['parents']) ? $data['parents'][0] : '';
 
         $this->app->db()->runQuery(
-            "INSERT INTO subtopics (slug, title, content, formula_data, parents, standard) 
-             VALUES (?, ?, ?, ?, ?, ?)
+            "INSERT INTO subtopics (slug, parent_topic, title, content, snippet, snippet_svg, hero_math, equations, breakdowns, formula_data, parents, standard) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE 
+                parent_topic = VALUES(parent_topic), 
                 title = VALUES(title), 
                 content = VALUES(content), 
+                snippet = VALUES(snippet),
+                snippet_svg = VALUES(snippet_svg),
+                hero_math = VALUES(hero_math),
+                equations = VALUES(equations),
+                breakdowns = VALUES(breakdowns),
                 formula_data = VALUES(formula_data), 
                 parents = VALUES(parents), 
                 standard = VALUES(standard)",
             [
                 $slug,
+                $primaryParent,
                 $data['title'],
                 $data['content'],
-                $formulaData,
-                $parents,
+                $data['snippet'] ?? '',
+                $data['snippet_svg'] ?? '',
+                $data['hero_math'] ?? '',
+                json_encode($data['equations'] ?? []),
+                json_encode($data['breakdowns'] ?? []),
+                json_encode($data['formula_ids'] ?? []),
+                json_encode($data['parents'] ?? []),
                 $data['standard'] ?? 'legacy'
             ]
         );
@@ -583,14 +594,38 @@ class PhysicsController
         $db = $this->app->db();
 
         foreach ($data['topics'] ?? [] as $slug => $t) {
-            $db->runQuery("REPLACE INTO topics (slug, title, content, pillars, intro, bridges, field, density, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+            $db->runQuery("INSERT INTO topics (slug, title, content, pillars, intro, bridges, field, density, equations, breakdowns, formula_data) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE 
+                    title = VALUES(title), content = VALUES(content), pillars = VALUES(pillars), intro = VALUES(intro), 
+                    bridges = VALUES(bridges), field = VALUES(field), density = VALUES(density), equations = VALUES(equations), 
+                    breakdowns = VALUES(breakdowns), formula_data = VALUES(formula_data)", 
                 [$slug, $t['title'], $t['content'], json_encode($t['pillars'] ?? []), $t['intro'] ?? '', json_encode($t['bridges'] ?? []), $t['field'] ?? '', $t['density'] ?? '', json_encode($t['equations'] ?? []), json_encode($t['breakdowns'] ?? []), json_encode($t['formula_ids'] ?? [])]);
         }
 
         foreach ($data['subtopics'] ?? [] as $slug => $st) {
             $primaryParent = !empty($st['parents']) ? $st['parents'][0] : '';
-            $db->runQuery("REPLACE INTO subtopics (slug, parent_topic, title, content, snippet, snippet_svg, hero_math, equations, breakdowns, formula_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-                [$slug, $primaryParent, $st['title'], $st['content'], $st['snippet'] ?? '', $st['snippet_svg'] ?? '', $st['hero_math'] ?? '', json_encode($st['equations'] ?? []), json_encode($st['breakdowns'] ?? []), json_encode($st['formula_ids'] ?? [])]);
+            $db->runQuery("INSERT INTO subtopics (slug, parent_topic, title, content, snippet, snippet_svg, hero_math, equations, breakdowns, formula_data, parents, standard) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE 
+                    parent_topic = VALUES(parent_topic), title = VALUES(title), content = VALUES(content), 
+                    snippet = VALUES(snippet), snippet_svg = VALUES(snippet_svg), hero_math = VALUES(hero_math), 
+                    equations = VALUES(equations), breakdowns = VALUES(breakdowns), formula_data = VALUES(formula_data), 
+                    parents = VALUES(parents), standard = VALUES(standard)", 
+                [
+                    $slug, 
+                    $primaryParent, 
+                    $st['title'], 
+                    $st['content'], 
+                    $st['snippet'] ?? '', 
+                    $st['snippet_svg'] ?? '', 
+                    $st['hero_math'] ?? '', 
+                    json_encode($st['equations'] ?? []), 
+                    json_encode($st['breakdowns'] ?? []), 
+                    json_encode($st['formula_ids'] ?? []),
+                    json_encode($st['parents'] ?? []),
+                    $st['standard'] ?? 'legacy'
+                ]);
         }
     }
 

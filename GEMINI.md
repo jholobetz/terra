@@ -75,13 +75,13 @@ To support massive cross-hub connectivity and eliminate "Shard Drift" confusion,
 
 ---
 
-### D. Sprint V3 Protocol (Sectional Assembly)
-*   **Directive:** For complex or high-priority nodes, utilize sectional generation to prevent turn-limit timeouts.
-*   **Workflow:**
-    1.  **Lead Draft:** Generate the "In Media Res" lead independently.
-    2.  **Core Expansion:** Flesh out technical prose and MathJax identities.
-    3.  **Validation Check:** Immediate local validation with `integrity_shield.py`.
-    4.  **Correction:** If rejected, only refactor the specific violating section.
+### D. Unified Pipeline Workflow (The Two-Turn Standard)
+*   **Directive:** To maximize efficiency and prevent context bloat, the refactoring of any single subtopic MUST be accomplished in exactly two conversational turns using the localized pipeline.
+*   **Turn 1 (Context Retrieval):** Execute `PYTHONPATH=. python3 scripts/maintenance/retrieve_concept.py <slug>` to gather the legacy content and the foundational context for the target node.
+*   **Turn 2 (Draft & Commit):** 
+    1.  Draft the new, OPS-compliant HTML directly into a temporary file (e.g., `draft.html`) using native file-writing tools. **Strictly Forbidden:** Do NOT use Python scripts with string variables (`cat << 'EOF' > temp.py...`) to inject content into JSON, as this causes LaTeX escaping errors.
+    2.  Execute the unified pipeline: `PYTHONPATH=. python3 scripts/maintenance/commit_node.py <slug> draft.html`.
+*   **Pipeline Autonomy:** The `commit_node.py` script serves as the absolute authority. It autonomously handles JSON injection, auto-linking (`auto_linker.py`), SVG pre-rendering, Integrity Shield validation, and advancing the `sprint.json` tracker.
 
 ## 4. Scope and Locked Assets
 
@@ -106,10 +106,10 @@ The `integrity_shield.py` is the automated arbiter of these standards. No node s
 
 ## 8. Workflow Integrity & The Sprint Protocol
 *   **The Sprint Source of Truth:** All refactoring sequences must be governed by a `sprint.json` file in the root directory. This file is initialized at the start of every pillar by a literal read of the relevant `hub_manifests/{hub}.json`.
+*   **Pre-Flight Arbitration:** Before initiating any refactor (Turn 1), the agent MUST execute `PYTHONPATH=. python3 scripts/maintenance/verify_and_skip.py <slug>`. If the script returns a "PASS", the agent must skip the target and move to the next item in the sprint. This prevents redundant work on nodes that are already OPS-compliant.
 *   **The Physical Lock:** The agent is strictly forbidden from proposing or refactoring any subtopic that does not match the `next_target` defined in `sprint.json`.
-*   **Mandatory State Verifications:** Before certifying a node as "Platinum" in the tracker, the following four checks must be performed:
-    1.  **Physical Mapping Check:** Confirm that the target's `shard` in the tracker matches the storage location defined in `app/config/content/search_index.json`.
-    2.  **Link-Check Audit:** Run a verification script/command to ensure every `subtopic-link` created in the prose exists as a valid slug in the search index.
-    3.  **Integrity Shield Certification:** Execute `integrity_shield.py` and confirm a "PASS" result for word count, lead compliance, and zero-artifact prose.
-    4.  **Parentage Parity:** Verify that the target node's `"parents"` array in the JSON shard includes the Hub slug currently being graduated.
-*   **The Update Cycle:** Every successful elevation must be immediately followed by an update to `sprint.json`, marking the slug as `platinum` and moving the `next_target` pointer to the literal next item in the manifest array.
+*   **Mandatory State Verifications:** The `commit_node.py` pipeline inherently enforces all required state verifications before allowing a node to graduate:
+    1.  **Physical Mapping:** Confirms the target's shard matches the storage location.
+    2.  **Auto-Linking:** Resolves and injects `<a href...>` tags based on `<strong>` terms.
+    3.  **Integrity Shield:** Executes `integrity_shield.py` for word count, zero-artifact prose, and broken-link checks.
+    4.  **Automatic Progression:** Upon a "PASS", it updates `sprint.json`, marks the slug as `platinum`, and moves the `next_target` pointer to the literal next item in the array.

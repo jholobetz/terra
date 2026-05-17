@@ -44,7 +44,11 @@ This document defines the foundation of the **Organic Platinum Standard (OPS)**.
 *   **Directive:** Mathematics must be integrated naturally into the narrative flow. 
 *   **Requirement:** Formulas can be rendered in-line (\( ... \)) or as display equations (\[ ... \]) based on their physical complexity and pedagogical importance.
 *   **Organic Variance:** There is no requirement for a single "Hero Formula." A node may contain multiple display equations, or none at all, provided the technical density remains high. The structure should be dictated by the specific derivation, not a template.
-*   **Identity Curation:** The number of equations registered in the "Key Theoretical Identities" section must be **organic**. The agent is strictly forbidden from defaulting to a fixed pattern (e.g., a "balanced pair" of Definition + Application). Curation must be driven by the technical depth of the subtopic; foundational nodes should include all critical identities required for a graduate-level understanding, whether that results in one, four, or more equations.
+*   **Identity Curation (Organic Scaling):** The number of equations registered in the "Key Theoretical Identities" section must be **organic**, ranging from **one (1) to N**. The agent is strictly forbidden from defaulting to a fixed pattern (e.g., always 4 equations). Curation must be driven strictly by the mathematical skeleton required for a University-level understanding. Every registered identity must meet at least one of these criteria:
+    1.  **Defining Law:** Establishes the primary physical behavior.
+    2.  **Limiting Case:** Demonstrates the mathematical connection to a classical or simpler regime.
+    3.  **Operational Metric:** Defines the primary observational or experimental relationship.
+*   **The Identity Lock:** A node is strictly forbidden from graduating to "Platinum" standard if it contains fewer than **one (1) registered theoretical identity**. The `commit_node.py` pipeline will enforce a hard failure if this condition is not met.
 
 ---
 
@@ -77,13 +81,14 @@ To support massive cross-hub connectivity and eliminate "Shard Drift" confusion,
 
 ---
 
-### D. Unified Pipeline Workflow (The Two-Turn Standard)
-*   **Directive:** To maximize efficiency and prevent context bloat, the refactoring of any single subtopic MUST be accomplished in exactly two conversational turns using the localized pipeline.
-*   **Turn 1 (Context Retrieval):** Execute `PYTHONPATH=. python3 scripts/maintenance/retrieve_concept.py <slug>` to gather the legacy content and the foundational context for the target node.
-*   **Turn 2 (Draft & Commit):** 
-    1.  Draft the new, OPS-compliant HTML directly into a temporary file (e.g., `draft.html`) using native file-writing tools. **Strictly Forbidden:** Do NOT use Python scripts with string variables (`cat << 'EOF' > temp.py...`) to inject content into JSON, as this causes LaTeX escaping errors.
-    2.  Execute the unified pipeline: `PYTHONPATH=. python3 scripts/maintenance/commit_node.py <slug> draft.html`.
-*   **Pipeline Autonomy:** The `commit_node.py` script serves as the absolute authority. It autonomously handles JSON injection, auto-linking (`auto_linker.py`), SVG pre-rendering, Integrity Shield validation, and advancing the `sprint.json` tracker.
+### D. Unified Pipeline Workflow (The Zero-Prompt Standard)
+*   **Directive:** To maximize efficiency and prevent confirmation fatigue, the refactoring of subtopics is executed via the **"Zero-Prompt Workflow."**
+*   **Turn 1 (Silent Retrieval):** Execute native `read_file` calls to gather the legacy content and the foundational context. Perform the "verify and skip" check internally. This turn is completely silent.
+*   **Turn 2 (Silent Graduation):** 
+    1.  Draft the new HTML into `draft.html` and the theoretical identities into `identities.json` using native `write_file`.
+    2.  Trigger the commit by writing a trigger payload to `scripts/maintenance/inbox/`.
+*   **The Watcher Protocol:** A background process (`maintenance_watcher.py`) monitors the inbox. Upon detecting a trigger, it autonomously executes the `commit_node.py` pipeline (including SVG rendering, auto-linking, MariaDB sync, and Git commits). This ensures that complex shell side-effects are performed without requiring manual user confirmation for every node.
+*   **Pipeline Autonomy:** The `commit_node.py` script serves as the absolute authority. It handles JSON injection, auto-linking, SVG pre-rendering, Integrity Shield validation, and advancing the `sprint.json` tracker.
 
 ## 4. Scope and Locked Assets
 
@@ -107,11 +112,32 @@ To support massive cross-hub connectivity and eliminate "Shard Drift" confusion,
 The `integrity_shield.py` is the automated arbiter of these standards. No node shall be certified as "Platinum" if it triggers a Lead Violation or an Artifact Violation.
 
 ## 8. Workflow Integrity & The Sprint Protocol
-*   **The Sprint Source of Truth:** All refactoring sequences must be governed by a `sprint.json` file in the root directory. This file is initialized at the start of every pillar by a literal read of the relevant `hub_manifests/{hub}.json`.
-*   **Pre-Flight Arbitration:** Before initiating any refactor (Turn 1), the agent MUST execute `PYTHONPATH=. python3 scripts/maintenance/verify_and_skip.py <slug>`. If the script returns a "PASS", the agent must skip the target and move to the next item in the sprint. This prevents redundant work on nodes that are already OPS-compliant.
-*   **The Physical Lock:** The agent is strictly forbidden from proposing or refactoring any subtopic that does not match the `next_target` defined in `sprint.json`.
-*   **Mandatory State Verifications:** The `commit_node.py` pipeline inherently enforces all required state verifications before allowing a node to graduate:
-    1.  **Physical Mapping:** Confirms the target's shard matches the storage location.
-    2.  **Auto-Linking:** Resolves and injects `<a href...>` tags based on `<strong>` terms.
-    3.  **Integrity Shield:** Executes `integrity_shield.py` for word count, zero-artifact prose, and broken-link checks.
-    4.  **Automatic Progression:** Upon a "PASS", it updates `sprint.json`, marks the slug as `platinum`, and moves the `next_target` pointer to the literal next item in the array.
+
+The refactoring of hubs is governed by a rigorous hierarchical sprint process that ensures no node is skipped and pedagogical continuity is maintained.
+
+### A. The Sprint Source of Truth
+*   **sprint.json:** All active work is tracked here. This file defines the immediate queue of subtopics for the current pillar.
+*   **hub_tracker.json:** Located in `subfiles/`, this serves as the high-level project dashboard, tracking the completion status of all 12 hubs and their constituent pillars.
+
+### B. The Sprint Lifecycle (Hub & Pillar Level)
+1.  **Pillar Initialization:** Every new pillar must be initialized via the master utility: `PYTHONPATH=. python3 scripts/maintenance/init_sprint.py <hub-slug> <pillar-index>`. This script parses the `hub_manifests/{hub}.json` file and populates the `sprint.json` queue.
+2.  **Node Execution:** The agent must resolve nodes one-by-one in the exact order specified in the queue.
+3.  **Pre-Flight Arbitration:** Before Turn 1 of any node, execute `PYTHONPATH=. python3 scripts/maintenance/verify_and_skip.py <slug>`. If it returns "PASS", the node is already platinum-compliant; move to the next.
+4.  **The Physical Lock:** The agent is strictly forbidden from proposing or refactoring any subtopic that does not match the `next_target` in `sprint.json`.
+5.  **Pillar Graduation:** When the `next_target` reaches "Pillar Complete", the agent must manually update `subfiles/hub_tracker.json` to mark that specific pillar index as `completed`.
+6.  **Sequential Chaining:** Upon completing a pillar, the agent must immediately initialize the next pillar in the hub. If the hub is 100% complete, the agent proceeds to the next hub in the pedagogical curriculum.
+
+### C. Mandatory State Verifications
+The `commit_node.py` pipeline inherently enforces all required state verifications before allowing a node to graduate:
+1.  **Physical Mapping:** Confirms the target's shard matches the storage location.
+2.  **Identity Lock:** Validates that at least one (1) technical identity is registered.
+3.  **Auto-Linking:** Resolves and injects `<a href...>` tags based on `<strong>` terms.
+4.  **Integrity Shield:** Executes `integrity_shield.py` for word count and zero-artifact prose.
+5.  **Automatic Progression:** Updates `sprint.json`, marks the slug as `platinum`, and moves the `next_target` pointer.
+
+## 9. Execution Environment
+
+### A. The Sandbox Mandate
+*   **Directive:** To ensure state determinism, process isolation, and reliable rollback capabilities, the Gemini CLI and all associated build/maintenance processes MUST operate within a **Sandbox Environment** (e.g., Docker, Vagrant, or an isolated Virtual Machine).
+*   **Rationale:** Sandbox execution prevents "Machine-Specific Drift," protects the host operating system from high-velocity side-effects, and allows for rapid state restoration in the event of a cascade failure during autonomous build cycles.
+*   **Snapshotting:** The environment should be snapshotted or committed to source control before initiating large-scale automated refactors to guarantee a clean recovery point.

@@ -38,11 +38,13 @@ This document defines the foundation of the **Organic Platinum Standard (OPS)**.
 
 ### B. The Limiting Case Clause
 *   **Directive:** Every Platinum node must mathematically or conceptually demonstrate its **Limiting Case** (e.g., how General Relativity reduces to Newtonian gravity in the weak-field limit).
+*   **Linguistic Variance:** The agent is strictly forbidden from using formulaic lead-ins for structural requirements. Specifically, the phrase "The limiting case of..." (or variations thereof) must not be used to anchor the final paragraph. Technical requirements must be woven into the prose using varied, sophisticated transitions that maintain the narrative's academic momentum without signaling a summary or conclusion.
 
 ### C. Organic Mathematical Integration
 *   **Directive:** Mathematics must be integrated naturally into the narrative flow. 
 *   **Requirement:** Formulas can be rendered in-line (\( ... \)) or as display equations (\[ ... \]) based on their physical complexity and pedagogical importance.
 *   **Organic Variance:** There is no requirement for a single "Hero Formula." A node may contain multiple display equations, or none at all, provided the technical density remains high. The structure should be dictated by the specific derivation, not a template.
+*   **Identity Curation:** The number of equations registered in the "Key Theoretical Identities" section must be **organic**. The agent is strictly forbidden from defaulting to a fixed pattern (e.g., a "balanced pair" of Definition + Application). Curation must be driven by the technical depth of the subtopic; foundational nodes should include all critical identities required for a graduate-level understanding, whether that results in one, four, or more equations.
 
 ---
 

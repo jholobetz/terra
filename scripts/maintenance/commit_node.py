@@ -25,8 +25,14 @@ def commit_node(slug, html_file):
     with open(shard_path, 'r') as f:
         shard_data = json.load(f)
         
+    # Generate snippet from first ~25 words of text (stripping HTML)
+    import re
+    text_only = re.sub(r'<[^>]+>', '', html_content)
+    snippet = " ".join(text_only.split()[:30]) + "..."
+    
     shard_data[slug]['content'] = html_content
     shard_data[slug]['standard'] = 'platinum'
+    shard_data[slug]['snippet'] = snippet
     
     with open(shard_path, 'w') as f:
         json.dump(shard_data, f, indent=4)
@@ -54,6 +60,10 @@ def commit_node(slug, html_file):
                 cache_file = f"public/cache/topic/{p}.html"
                 if os.path.exists(cache_file):
                     os.remove(cache_file)
+
+        # 4c. Targeted MariaDB Sync
+        print(f"Injecting {slug} into MariaDB...")
+        os.system(f"php scripts/maintenance/sync_node.php {slug}")
         
         # 5. Integrity Shield
         from integrity_shield import IntegrityShield

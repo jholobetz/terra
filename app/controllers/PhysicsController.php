@@ -110,7 +110,7 @@ class PhysicsController
         // 2. Load Subtopic Shards
         $files = scandir($baseDir);
         foreach ($files as $file) {
-            if (strpos($file, '.json') !== false && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json', 'pillar_profiles.json'])) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'json' && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json', 'pillar_profiles.json'])) {
                 $shard = json_decode(file_get_contents($baseDir . $file), true) ?: [];
                 if (is_array($shard)) {
                     $this->physicsContent['subtopics'] = array_merge($this->physicsContent['subtopics'], $shard);

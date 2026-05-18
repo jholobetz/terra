@@ -80,7 +80,8 @@ class HealthDashboard:
                 source_cat = self.slug_to_cat.get(slug, "misc")
                 
                 # Stats
-                words = len(re.findall(r'\w+', content))
+                text_only = re.sub(r'<[^>]+>', ' ', content)
+                words = len(re.findall(r'\w+', text_only))
                 latex_count = len(re.findall(r'\\\(|\\\[', content))
                 term_score = sum(5 for term in self.tech_terms if term in content.lower())
                 density_score = (latex_count * 15) + term_score

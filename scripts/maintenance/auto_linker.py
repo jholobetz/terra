@@ -113,10 +113,10 @@ def run_auto_linker(shards, index_path):
             print(f"Repaired and updated links in {shard_path}")
 
 if __name__ == "__main__":
+    import glob
+    content_dir = 'app/config/content'
     shards_to_process = [
-        'app/config/content/electromagnetism.json',
-        'app/config/content/classical-mechanics.json',
-        'app/config/content/relativity.json',
-        'app/config/content/theoretical-physics.json'
+        f for f in glob.glob(os.path.join(content_dir, '*.json'))
+        if os.path.basename(f) not in ('search_index.json', 'categories.json', 'pillar_profiles.json')
     ]
-    run_auto_linker(shards_to_process, 'app/config/content/search_index.json')
+    run_auto_linker(shards_to_process, os.path.join(content_dir, 'search_index.json'))

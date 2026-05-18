@@ -96,4 +96,9 @@ To maximize efficiency, the refactoring of subtopics is executed via a backgroun
 *   `integrity_shield.py` is the automated arbiter. No node graduates if it triggers a Lead Violation, an Artifact Violation (e.g., `**`), or falls below the word count threshold.
 
 ### C. Project Roadmap
-*   Refactor the 12 main Topic Hubs one-by-one, progressing through individual pillars sequentially. Progress is tracked in `subfiles/hub_tracker.json`.
+*   **Recursive Graduation (The Deep Rigor Mandate):** Having finalized the 12 primary Topic Hubs, the curriculum must now expand into the "Second and Third Shells" of the knowledge graph.
+    *   **Scope:** Any subtopic reachable via a direct link from a Platinum node must itself graduate to Platinum standard.
+    *   **Priority:** Nodes linked from three or more independent Platinum nodes (e.g., `total-dynamics`, `scientific-realism`) are "Master Connectors" and must be prioritized for high-density refactoring (1,200+ words).
+    *   **Integrity:** This recursive expansion ensures a uniform "Immersive Platinum Environment" where students encounter senior-undergraduate rigor regardless of their navigation path.
+*   **Progress Tracking:** Progress is tracked in `subfiles/hub_tracker.json`. Current Hub status: 100% Graduated.
+

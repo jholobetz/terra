@@ -1,6 +1,6 @@
 <?php
 /**
- * Targeted Sync Utility - Injects a single slug from JSON into MariaDB.
+ * Targeted Sync Utility - Injects a single slug (topic or subtopic) from JSON into MariaDB.
  * Usage: php sync_node.php <slug>
  */
 
@@ -15,10 +15,13 @@ if ($argc < 2) {
 $slug = $argv[1];
 $controller = $app->physicsController();
 
-// Use Reflection to access the private sync method
+// Use Reflection to access methods
 $reflection = new ReflectionClass(get_class($controller));
-$syncMethod = $reflection->getMethod('syncIndividualSubtopic');
-$syncMethod->setAccessible(true);
+$syncSubtopic = $reflection->getMethod('syncIndividualSubtopic');
+$syncSubtopic->setAccessible(true);
+
+$syncTopic = $reflection->getMethod('syncIndividualTopic');
+$syncTopic->setAccessible(true);
 
 // Access the internal data loader
 $getContent = $reflection->getMethod('getPhysicsContent');
@@ -26,9 +29,12 @@ $getContent->setAccessible(true);
 $content = $getContent->invoke($controller, $slug);
 
 if (isset($content['subtopics'][$slug])) {
-    $syncMethod->invoke($controller, $slug, $content['subtopics'][$slug]);
-    echo "✓ MariaDB Injection Successful: [$slug]\n";
+    $syncSubtopic->invoke($controller, $slug, $content['subtopics'][$slug]);
+    echo "✓ MariaDB Injection Successful: Subtopic [$slug]\n";
+} elseif (isset($content['topics'][$slug])) {
+    $syncTopic->invoke($controller, $slug, $content['topics'][$slug]);
+    echo "✓ MariaDB Injection Successful: Main Topic Hub [$slug]\n";
 } else {
-    echo "✗ Error: Slug [$slug] not found in content shards.\n";
+    echo "✗ Error: Slug [$slug] not found in content shards or topic manifests.\n";
     exit(1);
 }

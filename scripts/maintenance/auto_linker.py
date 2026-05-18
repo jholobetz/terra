@@ -16,6 +16,13 @@ def run_auto_linker(shards, index_path):
 
     valid_slugs = set(search_index.keys())
 
+    # Load global aliases
+    aliases = {}
+    alias_path = 'subfiles/auto_link_aliases.json'
+    if os.path.exists(alias_path):
+        with open(alias_path, 'r') as f:
+            aliases = json.load(f)
+
     for shard_path in shards:
         if not os.path.exists(shard_path):
             continue
@@ -76,17 +83,9 @@ def run_auto_linker(shards, index_path):
                         i = match.end()
                         continue
                     
-                    target_slug = normalize_slug(inner_text)
-                    
-                    # Aliases
-                    if target_slug == "maxwell-equations" and "maxwells-equations" in valid_slugs:
-                        target_slug = "maxwells-equations"
-                    if target_slug == "lorentz-transformations" and "lorentz-transformation" in valid_slugs:
-                        target_slug = "lorentz-transformation"
-                    if target_slug == "gauss-law" and "gausss-law" in valid_slugs:
-                        target_slug = "gausss-law"
-                    if target_slug == "curie-temperature" and "curie-temp" in valid_slugs:
-                         target_slug = "curie-temp"
+                    target_slug = aliases.get(inner_text)
+                    if not target_slug:
+                        target_slug = normalize_slug(inner_text)
                     
                     if target_slug in valid_slugs and target_slug != slug and target_slug not in linked_in_node:
                         link_tag = f'<a href="/physics/subtopic/{target_slug}" class="subtopic-link"><strong>{inner_text}</strong></a>'

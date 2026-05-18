@@ -99,6 +99,8 @@ To maximize efficiency, the refactoring of subtopics is executed via a backgroun
 *   **Recursive Graduation (The Deep Rigor Mandate):** Having finalized the 12 primary Topic Hubs, the curriculum must now expand into the "Second and Third Shells" of the knowledge graph.
     *   **Scope:** Any subtopic reachable via a direct link from a Platinum node must itself graduate to Platinum standard.
     *   **Priority:** Nodes linked from three or more independent Platinum nodes (e.g., `total-dynamics`, `scientific-realism`) are "Master Connectors" and must be prioritized for high-density refactoring (1,200+ words).
-    *   **Integrity:** This recursive expansion ensures a uniform "Immersive Platinum Environment" where students encounter senior-undergraduate rigor regardless of their navigation path.
+*   **Topological Tightening & Organic Growth:** To ensure maximum graph density, the project utilizes a continuous audit of physical entities.
+    *   **Phase A: Auto-Linking (Structural Integrity):** Any term wrapped in `<strong>` tags that exists in the `global_slug_registry.json` but is not yet linked on its first mention within a node must be automatically upgraded to an anchor link (`<a href="..."><strong>...</strong></a>`).
+    *   **Phase B: Backlog Population (Organic Expansion):** Bold terms that appear across three or more independent nodes but lack a dedicated subtopic in the registry are identified as "Expansion Candidates." High-frequency candidates (20+ nodes, e.g., `Block Universe`, `Big Bang`) are prioritized for curriculum expansion.
 *   **Progress Tracking:** Progress is tracked in `subfiles/hub_tracker.json`. Current Hub status: 100% Graduated.
 

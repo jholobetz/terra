@@ -5,7 +5,7 @@ import sys
 
 # Attempt to import jsonschema, fallback to basic check if not available
 try:
-    from jsonschema import validate, ValidationError
+    from jsonschema import Draft7Validator
     HAS_JSONSCHEMA = True
 except ImportError:
     HAS_JSONSCHEMA = False
@@ -35,17 +35,16 @@ class IntegrityShield:
         self.entities = self.orch.data["entities"]
         self.topics = self.orch.data["topics"]
         
-        # Schema validation still needs to iterate files
         if HAS_JSONSCHEMA and self.schema:
+            validator = Draft7Validator(self.schema)
             for file in os.listdir(self.content_dir):
                 if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json"]:
                     path = os.path.join(self.content_dir, file)
                     with open(path, "r") as f:
                         content = json.load(f)
-                    try:
-                        validate(instance=content, schema=self.schema)
-                    except ValidationError as e:
-                        self.errors.append(f"Schema Violation in {file}: {e.message}")
+                    for err in validator.iter_errors(content):
+                        slug = err.path[0] if err.path else "<root>"
+                        self.errors.append(f"Schema Violation in {file} :: {slug}: {err.message}")
 
         self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
         self.stats["topics"] = len(self.all_subtopics)

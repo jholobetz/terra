@@ -31,7 +31,7 @@ Authoritative spec for content style and structure: **`GEMINI.md`** (Organic Pla
 Use the dedicated retriever — **never grep/read shard JSON directly** for content discovery (causes context bloat / corruption risk per OPS protocol):
 
 ```
-PYTHONPATH=. python3 scripts/maintenance/retrieve_concept.py <slug>
+PYTHONPATH=. .venv/bin/python3 scripts/maintenance/retrieve_concept.py <slug>
 ```
 
 It auto-builds `slug_shard_map.json` and strips heavy SVG fields from the payload.
@@ -47,14 +47,14 @@ Content changes go through the watcher, not direct shard edits:
 Run the watcher with:
 
 ```
-PYTHONPATH=. python3 scripts/maintenance/maintenance_watcher.py
+PYTHONPATH=. .venv/bin/python3 scripts/maintenance/maintenance_watcher.py
 ```
 
 `commit_node.py` enforces a **minimum of 1 registered identity per slug** to graduate to `standard: "platinum"` — it aborts otherwise.
 
 ### Quality gate
 
-`integrity_shield.py` is the automated arbiter (lead violations, `**` artifacts, word count, broken formula refs, duplicate slugs across shards, protected-slug violations). Run standalone with `PYTHONPATH=. python3 integrity_shield.py`. It is also invoked at the end of every `commit_node.py` run.
+`integrity_shield.py` is the automated arbiter (lead violations, `**` artifacts, word count, broken formula refs, duplicate slugs across shards, protected-slug violations). Run standalone with `PYTHONPATH=. .venv/bin/python3 integrity_shield.py`. It is also invoked at the end of every `commit_node.py` run. The shield reports ALL schema violations per shard (not just the first), so the error count is topic-accurate.
 
 ### Auto-linking
 
@@ -82,7 +82,7 @@ There is also a `sync_node.php` script invoked by `commit_node.py` that injects 
 
 ## Conventions worth knowing
 
-- Python scripts assume `PYTHONPATH=.` and run from repo root.
+- Python scripts assume `PYTHONPATH=.` and run from repo root, invoked via `.venv/bin/python3` (the project venv). Using the system `python3` silently disables `jsonschema` validation in the integrity shield — the shield reports SECURE while skipping structural checks.
 - Subtopic shards have `.bak` siblings; `commit_node.py` rewrites them on every commit and uses them as the rollback path. Don't delete `.bak` files casually.
 - The 12 slugs in `orchestrator.PROTECTED_TOPICS` are LOCKED — they live in `topics/` and bypass the OPS. The Integrity Shield flags any subtopic shard that contains one of these slugs.
 - Bold emphasis in content uses `<strong>` only — `**markdown**` is an OPS artifact violation.

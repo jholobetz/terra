@@ -90,4 +90,6 @@ There is also a `sync_node.php` script invoked by `commit_node.py` that injects 
 
 ## What lives at repo root vs. what doesn't
 
-Repo root holds operational state files (`sprint.json`, `build_manifest.json`, `global_svg_cache.json`, `slug_shard_map.json`, `identities.json`, `draft*.html`, `id_*.json`) and pipeline scripts (`orchestrator.py`, `integrity_shield.py`, `patch_*.py`, `count_unlinked.py`, `generate_alias_map.py`, `fix_registry.py`). These are part of the active workflow — expect them to be modified by pipeline runs.
+Repo root holds operational state files (`sprint.json`, `build_manifest.json`, `global_svg_cache.json`, `slug_shard_map.json`, `identities.json`, `draft*.html`, `id_*.json`) and the pipeline spine (`orchestrator.py`, `integrity_shield.py`). Reusable utilities (`count_unlinked.py`) may also live at root. These are part of the active workflow — expect them to be modified by pipeline runs.
+
+Completed migration / patch scripts go to `scripts/oneshots/` with a one-line README entry — see `scripts/oneshots/README.md`. Don't re-run them blindly; they were written against the corpus state at the time and may corrupt current data.

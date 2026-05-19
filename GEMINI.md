@@ -84,6 +84,7 @@ To maximize efficiency, the refactoring of subtopics is executed via a backgroun
 
 ### C. Execution Environment (Sandbox)
 *   All build and maintenance processes MUST operate within a **Sandbox Environment** (Docker/Vagrant) to ensure state determinism and process isolation.
+*   **Virtual Environment Mandate:** All Python-based operations and scripts MUST be executed using the project's local virtual environment (`.venv/`). The system interpreter should never be used for maintenance tasks.
 
 ---
 

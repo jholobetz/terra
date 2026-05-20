@@ -59,19 +59,23 @@ if ($hasFormulas): ?>
                             <div style="display: flex; flex-wrap: wrap; gap: 15px;">
                                     <?php foreach ($f['semantic_variables'] as $symbol => $var): 
                                         $url = '';
-                                        if (strpos($var['ref'], 'constants/') === 0) {
-                                            $constantSlug = str_replace('constants/', '', $var['ref']);
-                                            $url = '/physics/constants#' . $constantSlug;
-                                        } else if (strpos($var['ref'], 'subtopics/') === 0) {
-                                            $url = '/physics/subtopic/' . str_replace('subtopics/', '', $var['ref']);
+                                        $varName = is_array($var) ? ($var['name'] ?? $symbol) : $var;
+                                        if (is_array($var)) {
+                                            $ref = $var['ref'] ?? '';
+                                            if (strpos($ref, 'constants/') === 0) {
+                                                $constantSlug = str_replace('constants/', '', $ref);
+                                                $url = '/physics/constants#' . $constantSlug;
+                                            } else if (strpos($ref, 'subtopics/') === 0) {
+                                                $url = '/physics/subtopic/' . str_replace('subtopics/', '', $ref);
+                                            }
                                         }
                                     ?>
                                     <div class="var-tag" style="background: rgba(100, 255, 218, 0.05); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(100, 255, 218, 0.2); font-size: 0.85rem;">
                                         <span style="color: var(--accent); font-weight: 700;">\( <?= $symbol ?> \):</span> 
                                         <?php if ($url): ?>
-                                            <a href="<?= $url ?>" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;"><?= $var['name'] ?></a>
+                                            <a href="<?= $url ?>" class="subtopic-link" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;"><strong><?= $varName ?></strong></a>
                                         <?php else: ?>
-                                            <span style="color: #ccd6f6;"><?= $var['name'] ?></span>
+                                            <span style="color: #ccd6f6;"><?= $varName ?></span>
                                         <?php endif; ?>
                                     </div>
                                 <?php endforeach; ?>

@@ -24,7 +24,7 @@ This document is the **Supreme Authority** for all architectural, stylistic, and
 *   **Note:** Paragraphs MUST be wrapped in `<p>` tags for proper HTML rendering. This is not considered a structural artifact.
 
 ### C. Technical Density & Tone
-*   **Word Count:** 650+ words minimum; 1,000+ target for core nodes.
+*   **Word Count:** 650 to 1,000 words for all Platinum nodes.
 *   **MathJax Frequency:** High density of LaTeX (\( ... \) or \[ ... \]). Prose must calculate, not just describe.
 *   **Calibre:** Senior undergraduate to graduate-level academic rigor.
 
@@ -99,7 +99,7 @@ To maximize efficiency, the refactoring of subtopics is executed via a backgroun
 ### C. Project Roadmap
 *   **Recursive Graduation (The Deep Rigor Mandate):** Having finalized the 12 primary Topic Hubs, the curriculum must now expand into the "Second and Third Shells" of the knowledge graph.
     *   **Scope:** Any subtopic reachable via a direct link from a Platinum node must itself graduate to Platinum standard.
-    *   **Priority:** Nodes linked from three or more independent Platinum nodes (e.g., `total-dynamics`, `scientific-realism`) are "Master Connectors" and must be prioritized for high-density refactoring (1,200+ words).
+    *   **Priority:** Nodes linked from three or more independent Platinum nodes (e.g., `total-dynamics`, `scientific-realism`) are "Master Connectors" and must be prioritized for high-density refactoring (target 1,000 words).
 *   **Topological Tightening & Organic Growth:** To ensure maximum graph density, the project utilizes a continuous audit of physical entities.
     *   **Phase A: Auto-Linking (Structural Integrity):** Any term wrapped in `<strong>` tags that exists in the `global_slug_registry.json` but is not yet linked on its first mention within a node must be automatically upgraded to an anchor link (`<a href="..."><strong>...</strong></a>`).
     *   **Phase B: Backlog Population (Organic Expansion):** Bold terms that appear across three or more independent nodes but lack a dedicated subtopic in the registry are identified as "Expansion Candidates." High-frequency candidates (20+ nodes, e.g., `Block Universe`, `Big Bang`) are prioritized for curriculum expansion.

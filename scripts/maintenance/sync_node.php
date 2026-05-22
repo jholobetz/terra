@@ -13,26 +13,16 @@ if ($argc < 2) {
 }
 
 $slug = $argv[1];
-$controller = $app->physicsController();
+$service = $app->physicsService();
+$service->setPreviewMode(true);
 
-// Use Reflection to access methods
-$reflection = new ReflectionClass(get_class($controller));
-$syncSubtopic = $reflection->getMethod('syncIndividualSubtopic');
-$syncSubtopic->setAccessible(true);
-
-$syncTopic = $reflection->getMethod('syncIndividualTopic');
-$syncTopic->setAccessible(true);
-
-// Access the internal data loader
-$getContent = $reflection->getMethod('getPhysicsContent');
-$getContent->setAccessible(true);
-$content = $getContent->invoke($controller, $slug);
+$content = $service->getPhysicsContent($slug);
 
 if (isset($content['subtopics'][$slug])) {
-    $syncSubtopic->invoke($controller, $slug, $content['subtopics'][$slug]);
+    $service->syncIndividualSubtopic($slug, $content['subtopics'][$slug]);
     echo "✓ MariaDB Injection Successful: Subtopic [$slug]\n";
 } elseif (isset($content['topics'][$slug])) {
-    $syncTopic->invoke($controller, $slug, $content['topics'][$slug]);
+    $service->syncIndividualTopic($slug, $content['topics'][$slug]);
     echo "✓ MariaDB Injection Successful: Main Topic Hub [$slug]\n";
 } else {
     echo "✗ Error: Slug [$slug] not found in content shards or topic manifests.\n";

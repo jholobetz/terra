@@ -5,25 +5,31 @@ require __DIR__ . '/app/config/bootstrap.php';
 echo "Starting CLI Synchronization (Safe Mode)...\n";
 
 try {
-    $controller = $app->physicsController();
+    $service = $app->physicsService();
+    $service->setPreviewMode(true);
 
-    // Use Reflection to call private/protected methods
-    $reflection = new ReflectionClass(get_class($controller));
-    
     echo "Loading all shards...\n";
-    $loadAllShards = $reflection->getMethod('loadAllShards');
-    $loadAllShards->setAccessible(true);
-    $loadAllShards->invoke($controller);
+    $service->loadAllShards();
 
-    echo "Performing database sync...\n";
-    $performSync = $reflection->getMethod('performSync');
-    $performSync->setAccessible(true);
-    $performSync->invoke($controller);
+    // Check for database orphans first to report them
+    $orphans = $service->pruneOrphans(true);
+    if (!empty($orphans)) {
+        echo "Found " . count($orphans) . " stale database records to be pruned:\n";
+        foreach ($orphans as $slug) {
+            echo "  - $slug\n";
+        }
+    } else {
+        echo "No orphaned database records detected.\n";
+    }
+
+    echo "Performing database sync and pruning...\n";
+    $service->performSync();
 
     $syncLock = __DIR__ . '/app/config/.last_sync';
     touch($syncLock);
     
-    echo "✓ Synchronization Complete.\n";
+    echo "✓ Synchronization and Clean-up Complete.\n";
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }
+

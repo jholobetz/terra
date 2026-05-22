@@ -63,6 +63,10 @@ To ensure O(1) performance and context efficiency, the project uses a **Sharded 
 ### B. Logical Topology (Hubs)
 *   Hubs are "Curated Playlists" defined by manifests (`hub_manifests/*.json`). 
 *   **Multi-Parent Mapping:** Subtopics spanning multiple disciplines must list all relevant hubs in their `"parents"` array metadata.
+*   **Logical Hub vs. Narrative Overview Mapping:**
+    *   **Topic Hub (Category):** Named as the root slug (e.g., `theoretical-physics`). These serve as logical metadata parents and are **LOCKED** (do not conform to the OPS).
+    *   **Overview Subtopic (Article):** Named with a suffix (e.g., `theoretical-physics-overview`). These are standard subtopics in the physical shard carrying the Platinum academic prose and mathematical overviews.
+    *   **Linking Rule:** All internal links routing to a primary discipline entryway MUST point to the narrative Overview Subtopic slug (e.g., `<a href="/physics/subtopic/theoretical-physics-overview"><strong>Theoretical Physics</strong></a>`), NOT to the locked logical hub slug, to avoid category page routing dead-ends.
 
 ### C. Unified Notation Registry
 *   Adhere to the project's established notation dialect: Einstein summation for tensors, dots for time-derivatives, and bold vectors ($\mathbf{v}$).

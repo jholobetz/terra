@@ -11,9 +11,10 @@ except ImportError:
     HAS_JSONSCHEMA = False
 
 class IntegrityShield:
-    def __init__(self, content_dir="app/config/content", schema_path="app/config/subtopic.schema.json"):
+    def __init__(self, content_dir="app/config/content", schema_path="app/config/subtopic.schema.json", target_slug=None):
         self.content_dir = content_dir
         self.schema_path = schema_path
+        self.target_slug = target_slug
         self.errors = []
         self.warnings = []
         self.stats = {"links": 0, "formulas": 0, "topics": 0, "shards": 0}
@@ -35,15 +36,23 @@ class IntegrityShield:
         self.entities = self.orch.data["entities"]
         self.topics = self.orch.data["topics"]
         
+        self.target_shard = None
+        if self.target_slug:
+            self.target_shard = self.orch.slug_to_shard.get(self.target_slug)
+
         if HAS_JSONSCHEMA and self.schema:
             validator = Draft7Validator(self.schema)
-            for file in os.listdir(self.content_dir):
+            files_to_validate = [self.target_shard] if self.target_shard else os.listdir(self.content_dir)
+            for file in files_to_validate:
+                if not file: continue
                 if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json"]:
                     path = os.path.join(self.content_dir, file)
                     with open(path, "r") as f:
                         content = json.load(f)
                     for err in validator.iter_errors(content):
                         slug = err.path[0] if err.path else "<root>"
+                        if self.target_slug and slug != self.target_slug:
+                            continue
                         self.errors.append(f"Schema Violation in {file} :: {slug}: {err.message}")
 
         self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
@@ -51,7 +60,10 @@ class IntegrityShield:
         self.stats["shards"] = len(self.orch.shards)
 
     def check_formulas(self):
-        for slug, sub in self.all_subtopics.items():
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub: continue
             for f_id in sub.get("formula_ids", []):
                 self.stats["formulas"] += 1
                 if f_id not in self.formula_registry:
@@ -72,18 +84,28 @@ class IntegrityShield:
             path = os.path.join(self.content_dir, file)
             with open(path, "r") as f:
                 shard_content = json.load(f)
-                for slug in shard_content:
-                    if slug in protected_topics:
-                        self.errors.append(f"PROTECTED SLUG VIOLATION: [{slug}] found in subtopic shard {file}")
+                if self.target_slug:
+                    if self.target_slug in shard_content:
+                        if self.target_slug in protected_topics:
+                            self.errors.append(f"PROTECTED SLUG VIOLATION: [{self.target_slug}] found in subtopic shard {file}")
+                        if self.target_slug in slug_map:
+                            self.errors.append(f"CRITICAL DUPLICATE: [{self.target_slug}] exists in both {slug_map[self.target_slug]} and {file}")
+                        slug_map[self.target_slug] = file
+                else:
+                    for slug in shard_content:
+                        if slug in protected_topics:
+                            self.errors.append(f"PROTECTED SLUG VIOLATION: [{slug}] found in subtopic shard {file}")
 
-                    if slug in slug_map:
-                        self.errors.append(f"CRITICAL DUPLICATE: [{slug}] exists in both {slug_map[slug]} and {file}")
-                    slug_map[slug] = file
+                        if slug in slug_map:
+                            self.errors.append(f"CRITICAL DUPLICATE: [{slug}] exists in both {slug_map[slug]} and {file}")
+                        slug_map[slug] = file
 
     def check_technical_density(self):
         tech_terms = ["manifold", "operator", "unitary", "tensor", "symmetry", "conservation", "variational", "hamiltonian", "lagrangian", "eigenvalue", "generator"]
-        for slug, sub in self.all_subtopics.items():
-            if "content" not in sub: continue
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub or "content" not in sub: continue
             content = sub["content"]
             latex_count = len(re.findall(r'\\\(|\\\[', content))
             term_score = sum(5 for term in tech_terms if term in content.lower())
@@ -96,23 +118,27 @@ class IntegrityShield:
 
     def check_entities(self):
         """Finds entity names in text that are NOT yet linked."""
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
         for e_id, e_data in self.entities.items():
             name = e_data["name"]
             # Match name not preceded by > or = and not followed by <
             pattern = re.compile(rf'(?<![=">])\b{re.escape(name)}\b(?![<])')
-            for slug, sub in self.all_subtopics.items():
-                if "content" in sub and pattern.search(sub["content"]):
+            for slug in subtopics_to_check:
+                sub = self.all_subtopics.get(slug)
+                if not sub or "content" not in sub: continue
+                if pattern.search(sub["content"]):
                     self.warnings.append(f"Unlinked Entity: [{slug}] mentions '{name}'. Auto-link recommended.")
 
     def check_registry(self):
         """Ensures all protected topics are pinned in the registry."""
+        if self.target_slug and self.target_slug not in self.orch.PROTECTED_TOPICS:
+            return
         registry_reverse = {v: k for k, v in self.orch.registry.items()}
         for slug in self.orch.PROTECTED_TOPICS:
+            if self.target_slug and slug != self.target_slug:
+                continue
             if slug not in registry_reverse:
                 self.errors.append(f"REGISTRY MISSING: Protected topic [{slug}] not found in global registry.")
-            
-            # Check for title-slug consistency if possible, though slugs are the primary IDs
-            # The registry maps Title -> Slug
 
     def check_links(self):
         link_pattern = re.compile(r'href=[\\"]+/physics/(subtopic|topic)/([^\\"]+)[\\"]+')
@@ -123,16 +149,27 @@ class IntegrityShield:
                 if target not in self.all_slugs:
                     self.errors.append(f"Broken Link: [{source}] -> '{target}'")
 
-        for slug, sub in self.all_subtopics.items():
-            if "content" in sub:
-                scan(sub["content"], slug)
-        for slug, topic in self.topics.items():
-            if "content" in topic:
-                scan(topic["content"], slug)
+        if self.target_slug:
+            sub = self.all_subtopics.get(self.target_slug)
+            if sub and "content" in sub:
+                scan(sub["content"], self.target_slug)
+            topic = self.topics.get(self.target_slug)
+            if topic and "content" in topic:
+                scan(topic["content"], self.target_slug)
+        else:
+            for slug, sub in self.all_subtopics.items():
+                if "content" in sub:
+                    scan(sub["content"], slug)
+            for slug, topic in self.topics.items():
+                if "content" in topic:
+                    scan(topic["content"], slug)
 
     def check_latex_formatting(self):
         """Ensures Platinum subtopics do not contain raw LaTeX delimiters."""
-        for slug, sub in self.all_subtopics.items():
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub: continue
             if sub.get("standard") == "platinum":
                 content = sub.get("content", "")
                 # Pattern for \( or \[ or \) or \]
@@ -142,7 +179,10 @@ class IntegrityShield:
     def run(self):
         print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
         print(f"Directory: {self.content_dir}")
-        print(f"Status: {self.stats['shards']} shards, {self.stats['topics']} topics.")
+        if self.target_slug:
+            print(f"Status: Targeted audit on slug '{self.target_slug}' in shard '{self.target_shard}'")
+        else:
+            print(f"Status: {self.stats['shards']} shards, {self.stats['topics']} topics.")
         
         self.check_duplicates()
         self.check_formulas()
@@ -176,6 +216,7 @@ class IntegrityShield:
         return True
 
 if __name__ == "__main__":
-    shield = IntegrityShield()
+    target = sys.argv[1] if len(sys.argv) > 1 else None
+    shield = IntegrityShield(target_slug=target)
     success = shield.run()
     sys.exit(0 if success else 1)

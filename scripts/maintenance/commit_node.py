@@ -152,7 +152,7 @@ def commit_node(slug, html_file, identities_file=None):
         
         # 5. Integrity Shield
         from integrity_shield import IntegrityShield
-        shield = IntegrityShield()
+        shield = IntegrityShield(target_slug=slug)
         
         success = shield.run()
         if not success:

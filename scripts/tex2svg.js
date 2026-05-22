@@ -52,11 +52,30 @@ function convert(latex, isDisplay, color = '#FFD700') {
 
 // 3. Batch Processing Logic
 if (process.argv.length > 2) {
-    // Single mode (Legacy CLI compatibility)
-    const latex = process.argv[2] || '';
-    const isDisplay = process.argv[3] === 'display';
-    const color = process.argv[4] || '#FFD700';
-    process.stdout.write(convert(latex, isDisplay, color));
+    if (process.argv[2] === '--daemon') {
+        const readline = require('readline');
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+            terminal: false
+        });
+        rl.on('line', (line) => {
+            try {
+                if (!line.trim()) return;
+                const item = JSON.parse(line);
+                const svg = convert(item.latex, item.is_display, item.color || '#FFD700');
+                console.log(JSON.stringify({ svg: svg }));
+            } catch (err) {
+                console.log(JSON.stringify({ error: err.message }));
+            }
+        });
+    } else {
+        // Single mode (Legacy CLI compatibility)
+        const latex = process.argv[2] || '';
+        const isDisplay = process.argv[3] === 'display';
+        const color = process.argv[4] || '#FFD700';
+        process.stdout.write(convert(latex, isDisplay, color));
+    }
 } else {
     // Batch mode (JSON from stdin)
     let inputData = '';

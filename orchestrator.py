@@ -7,6 +7,53 @@ import hashlib
 import sys
 from multiprocessing import Pool, cpu_count
 
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+
+class TrieRegexCompiler:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end = True
+
+    def _build_regex(self, node):
+        if not node.children:
+            return ""
+        
+        alternatives = []
+        for char, child_node in sorted(node.children.items()):
+            suffix = self._build_regex(child_node)
+            escaped_char = re.escape(char)
+            if suffix:
+                alternatives.append(escaped_char + suffix)
+            else:
+                alternatives.append(escaped_char)
+                
+        if len(alternatives) == 1:
+            result = alternatives[0]
+        else:
+            result = "(?:" + "|".join(alternatives) + ")"
+            
+        if node.is_end:
+            result += "?"
+        return result
+
+    def compile(self, words):
+        valid_words = [w for w in words if isinstance(w, str) and w.strip()]
+        if not valid_words:
+            return r"\b\B"
+        for word in valid_words:
+            self.insert(word)
+        return r"\b" + self._build_regex(self.root) + r"\b"
+
 class PhysicsOrchestrator:
     PROTECTED_TOPICS = {
         "classical-mechanics", "electromagnetism", "relativity", "quantum-physics",
@@ -143,6 +190,13 @@ class PhysicsOrchestrator:
                 self.pillar_profiles = json.load(f)
 
         self.sorted_titles = sorted(self.registry.keys(), key=len, reverse=True)
+        self.registry_lower = {k.lower(): v for k, v in self.registry.items()}
+        
+        # Build the single-pass Trie-compiled regex for plain text keywords
+        valid_trie_titles = [t for t in self.sorted_titles if t not in self.AMBIGUOUS_TERMS]
+        trie_compiler = TrieRegexCompiler()
+        compiled_trie = trie_compiler.compile(valid_trie_titles)
+        self.compiled_plain_regex = re.compile(rf'(?<![=">])({compiled_trie})(?![<])')
 
     def get_link_cloud(self, text, limit=15):
         """Scans text and returns a 'cloud' of relevant links based on the registry."""
@@ -252,12 +306,71 @@ class PhysicsOrchestrator:
             
         return successful_slugs, failed_slugs
 
+    def _start_mathjax_daemon(self):
+        """Starts a persistent Node.js subprocess to render MathJax equations line-by-line."""
+        if hasattr(self, '_mathjax_process') and self._mathjax_process and self._mathjax_process.poll() is None:
+            return
+        
+        try:
+            self._mathjax_process = subprocess.Popen(
+                ["node", self.svg_engine, "--daemon"],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                bufsize=1 # Line-buffered
+            )
+            print("MathJax persistent daemon started.")
+        except Exception as e:
+            print(f"Failed to start MathJax persistent daemon: {e}")
+            self._mathjax_process = None
+
+    def __del__(self):
+        if hasattr(self, '_mathjax_process') and self._mathjax_process:
+            try:
+                self._mathjax_process.stdin.close()
+                self._mathjax_process.terminate()
+                self._mathjax_process.wait(timeout=1)
+            except Exception:
+                pass
+
     def convert_to_svg(self, clean_latex, is_display=False, color='#FFD700'):
-        """Converts a clean LaTeX string (no delimiters) to SVG using the Node.js runway engine."""
+        """Converts a clean LaTeX string (no delimiters) to SVG using the persistent MathJax daemon or fallback."""
         cache_key = f"{clean_latex}_{is_display}_{color}"
         if cache_key in self.svg_cache:
             return self.svg_cache[cache_key]
 
+        # Try daemon mode
+        self._start_mathjax_daemon()
+        if hasattr(self, '_mathjax_process') and self._mathjax_process and self._mathjax_process.poll() is None:
+            try:
+                payload = json.dumps({
+                    "latex": clean_latex,
+                    "is_display": is_display,
+                    "color": color
+                })
+                self._mathjax_process.stdin.write(payload + "\n")
+                self._mathjax_process.stdin.flush()
+                
+                # Read response line
+                response_line = self._mathjax_process.stdout.readline().strip()
+                if response_line:
+                    res = json.loads(response_line)
+                    if "svg" in res:
+                        svg_code = res["svg"]
+                        self.svg_cache[cache_key] = svg_code
+                        return svg_code
+                    elif "error" in res:
+                        print(f"Daemon MathJax Error for [{clean_latex}]: {res['error']}")
+            except Exception as e:
+                print(f"Daemon communication error: {e}. Falling back to subprocess...")
+                try:
+                    self._mathjax_process.terminate()
+                except Exception:
+                    pass
+                self._mathjax_process = None
+
+        # Fallback to single-shot subprocess
         try:
             mode = "display" if is_display else "inline"
             result = subprocess.run(["node", self.svg_engine, clean_latex, mode, color], capture_output=True, text=True, timeout=5)
@@ -266,7 +379,7 @@ class PhysicsOrchestrator:
                 self.svg_cache[cache_key] = svg_code
                 return svg_code
         except Exception as e:
-            print(f"SVG Error for [{clean_latex}]: {str(e)}")
+            print(f"SVG Fallback Error for [{clean_latex}]: {str(e)}")
         
         return clean_latex
 
@@ -671,19 +784,85 @@ class PhysicsOrchestrator:
         masked_content, placeholders = self.mask_mathjax(content)
         # Performance optimization: get titles for current slug once
         current_titles = [t for t, s in self.registry.items() if s == slug]
+        linked_in_node = set()
+        # Pre-populate already linked slugs inside masked_content to satisfy the Single Link Rule
+        existing_links = re.findall(r'href=[\\"]+/physics/(?:subtopic|topic)/([^\\"/#?]+)[\\"]+', masked_content)
+        for target in existing_links:
+            linked_in_node.add(target)
 
-        for title in self.sorted_titles:
-            target_slug = self.registry[title]
-            
+        # Action 1: If title is BOLDED, always link it (High Intent)
+        strong_pattern = re.compile(r'<strong>(.*?)</strong>')
+        
+        def replace_strong(match):
+            inner_text = match.group(1).strip()
+            # Case-insensitive alias lookup to resolve target slug
+            target_slug = self.registry_lower.get(inner_text.lower())
+            if not target_slug:
+                return match.group(0)
+                
             # Safeguard 1: Don't link a topic to itself or its alternative titles
-            if target_slug == slug or title in current_titles:
-                continue
+            if target_slug == slug or inner_text in current_titles:
+                return match.group(0)
                 
             # Safeguard 2: Don't link to a main parent module if we are already in its shard
-            # This prevents redundant "Classical Mechanics" links inside the Classical shard
             if target_slug in parents:
-                continue
+                return match.group(0)
+                
+            # Ensure it's not already linked in this node
+            if target_slug in linked_in_node:
+                return match.group(0)
+                
+            # Link formatting
+            if target_slug in self.data["topic_contents"]:
+                url = f"/physics/topic/{target_slug}"
+                link_class = "topic-link"
+            else:
+                url = f"/physics/subtopic/{target_slug}"
+                link_class = "subtopic-link"
+                
+            link_html = f'<a href="{url}" class="{link_class}"><strong>{inner_text}</strong></a>'
+            linked_in_node.add(target_slug)
+            return link_html
             
+        masked_content = strong_pattern.sub(replace_strong, masked_content)
+
+        # Action 2: If title is PLAIN TEXT, link only if it passes contextual safeguards (Single-Pass O(N) Scan)
+        def is_inside_link(pos):
+            pre = masked_content[:pos]
+            last_a_open = pre.rfind('<a')
+            last_a_close = pre.rfind('</a>')
+            return last_a_open > last_a_close
+
+        def replace_plain(match):
+            matched_title = match.group(1)
+            target_slug = self.registry_lower.get(matched_title.lower())
+            if not target_slug:
+                return match.group(0)
+                
+            # Safeguard 1: Don't link a topic to itself or its alternative titles
+            if target_slug == slug or matched_title in current_titles:
+                return match.group(0)
+                
+            # Safeguard 2: Don't link to a main parent module if we are already in its shard
+            if target_slug in parents:
+                return match.group(0)
+                
+            # Ensure it's not already linked in this node
+            if target_slug in linked_in_node:
+                return match.group(0)
+                
+            # Ensure it is not already inside a link tag
+            if is_inside_link(match.start()):
+                return match.group(0)
+                
+            # SEMANTIC COLLISION SAFEGUARD:
+            if matched_title in self.TERM_ANCHORS:
+                anchors = self.TERM_ANCHORS[matched_title]
+                text_lower = masked_content.lower()
+                if not any(anchor in text_lower for anchor in anchors):
+                    return match.group(0) # Skip if no technical context found
+
+            # Determine URL and class
             if target_slug in self.data["topic_contents"]:
                 url = f"/physics/topic/{target_slug}"
                 link_class = "topic-link"
@@ -691,49 +870,11 @@ class PhysicsOrchestrator:
                 url = f"/physics/subtopic/{target_slug}"
                 link_class = "subtopic-link"
 
-            link_html = f'<a href="{url}" class="{link_class}"><strong>{title}</strong></a>'
-            bold_tag = f"<strong>{title}</strong>"
-            
-            # Action 1: If title is BOLDED, always link it (High Intent)
-            if bold_tag in masked_content:
-                # Avoid nesting if already linked
-                if f'>{bold_tag}</a>' in masked_content:
-                    continue
-                masked_content = masked_content.replace(bold_tag, link_html)
-                
-            # Action 2: If title is PLAIN TEXT, link only if it passes contextual safeguards
-            elif title not in self.AMBIGUOUS_TERMS:
-                # BRIDGE PRIORITIZATION: 
-                # If target_slug belongs to a DIFFERENT primary hub than current parents,
-                # we are more aggressive in linking it to break silos.
-                is_bridge = False
-                # target_parents search (simple approach)
-                target_parents = []
-                for s_name, s_content in self.shards.items():
-                    if target_slug in s_content:
-                        target_parents = s_content[target_slug].get("parents", [])
-                        break
-                if target_slug in self.data["topics"]: target_parents = [target_slug]
-                
-                if any(p not in parents for p in target_parents):
-                    is_bridge = True
+            link_html = f'<a href="{url}" class="{link_class}"><strong>{matched_title}</strong></a>'
+            linked_in_node.add(target_slug)
+            return link_html
 
-                # Ensure it's not already part of a link
-                if f'href="/physics/subtopic/{target_slug}"' not in masked_content and f'href="/physics/topic/{target_slug}"' not in masked_content:
-                    
-                    # SEMANTIC COLLISION SAFEGUARD:
-                    if title in self.TERM_ANCHORS:
-                        anchors = self.TERM_ANCHORS[title]
-                        text_lower = masked_content.lower()
-                        if not any(anchor in text_lower for anchor in anchors):
-                            continue # Skip linking if no technical context found
-
-                    # Match title word-boundary, case-sensitive for plain text
-                    plain_pattern = re.compile(rf'(?<![=">])\b{re.escape(title)}\b(?![<])')
-                    
-                    # If it's a bridge, we can link up to 1 occurrences to respect the Single Link Rule
-                    link_count = 1
-                    masked_content = plain_pattern.sub(lambda m: link_html, masked_content, count=link_count)
+        masked_content = self.compiled_plain_regex.sub(replace_plain, masked_content)
         
         final_content = self.unmask_mathjax(masked_content, placeholders)
         final_content = self._sanitize_mathjax(final_content)

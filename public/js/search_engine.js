@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             results.innerHTML = limited.map(m => `
                 <a href="/physics/subtopic/${m.slug}" class="search-result-item">
                     <strong>${m.t}</strong>
-                    <small>${m.p.join(' &rsaquo; ')}</small>
+                    <small>${(m.p && Array.isArray(m.p)) ? m.p.join(' &rsaquo; ') : (m.s ? m.s.replace('.json', '') : '')}</small>
                 </a>
             `).join('');
             results.style.display = 'block';

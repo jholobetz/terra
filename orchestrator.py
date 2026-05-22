@@ -682,14 +682,58 @@ class PhysicsOrchestrator:
             # Record shard hash
             self.build_manifest[f"shard_{shard_name}"] = self.get_file_hash(path)
 
-        # 4.5 Update Search Index (Mapping slugs to shards for PHP controller)
+        # 4.5 Update Search Index (Mapping slugs to shards with rich stats and metadata for search)
         search_index = {}
+        tech_terms = ["manifold", "operator", "unitary", "tensor", "symmetry", "conservation", "variational", "hamiltonian", "lagrangian", "eigenvalue", "generator"]
+        
         for shard_name, shard_content in self.shards.items():
             for slug, sub in shard_content.items():
+                content = sub.get("content", "")
+                title = sub.get("title", "Untitled")
+                
+                # Calculate stats for Weighting
+                words = len(re.findall(r'\w+', content))
+                latex_count = len(re.findall(r'\\\(|\\\[', content))
+                term_score = sum(1 for term in tech_terms if term in content.lower())
+                
+                # Platinum Check (Current standards: 500w, 60 density)
+                density_score = (latex_count * 15) + (term_score * 5)
+                is_platinum = 1 if (words >= 500 and density_score >= 60) else 0
+
+                # Keyword Extraction
+                keywords = set()
+                # 1. Bolded terms
+                bold_matches = re.findall(r'<strong>(.*?)</strong>', content)
+                for b in bold_matches:
+                    clean_b = re.sub(r'<[^>]+>', '', b).strip().lower()
+                    if len(clean_b) > 2: keywords.add(clean_b)
+                    
+                # 2. Technical Terms
+                for term in tech_terms:
+                    if term in content.lower():
+                        keywords.add(term)
+                
+                # 3. Formula IDs
+                for f_id in sub.get("formula_ids", []):
+                    clean_fid = re.sub(r'<[^>]+>', '', f_id).replace('-', ' ')
+                    keywords.add(clean_fid)
+
+                # 4. Clean keywords
+                final_keywords = set()
+                for kw in keywords:
+                    clean = re.sub(r'<[^>]+>', '', kw).strip().lower()
+                    if len(clean) > 2 and not clean.startswith('a href'):
+                        final_keywords.add(clean)
+
                 search_index[slug] = {
-                    "t": sub.get("title", slug),
-                    "s": shard_name
+                    "t": title,
+                    "p": sub.get("parents", []),
+                    "s": shard_name,
+                    "k": list(final_keywords),
+                    "w": density_score,
+                    "pl": is_platinum
                 }
+                
         with open(os.path.join(self.content_dir, "search_index.json"), "w") as f:
             json.dump(search_index, f, indent=4)
         print(f"SUCCESS: Search index updated with {len(search_index)} entries.")

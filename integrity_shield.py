@@ -113,6 +113,13 @@ class IntegrityShield:
                 self.stats["formulas"] += 1
                 if f_id not in self.formula_registry:
                     self.errors.append(f"Broken Formula: [{slug}] refs unknown ID '{f_id}'")
+                else:
+                    eq = self.formula_registry[f_id].get("equation", "")
+                    if re.search(r'(fill|stroke)=[\\"\']?red[\\"\']?', eq) or "math-error" in eq:
+                        self.errors.append(
+                            f"MathJax Rendering Error: [{slug}] refs formula '{f_id}' "
+                            f"which contains MathJax compilation errors (red-text markup or math-error)."
+                        )
 
     def check_duplicates(self):
         """Ensures every subtopic slug exists in exactly one shard and no protected slugs in subtopic shards."""

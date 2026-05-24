@@ -29,23 +29,67 @@ class IntegrityShield:
             self.schema = None
 
     def load_data(self):
-        from orchestrator import PhysicsOrchestrator
-        self.orch = PhysicsOrchestrator(content_dir=self.content_dir)
-        self.all_subtopics = self.orch.data["subtopics"]
-        self.formula_registry = self.orch.data["formula_registry"]
-        self.entities = self.orch.data["entities"]
-        self.topics = self.orch.data["topics"]
+        search_index_path = os.path.join(self.content_dir, "search_index.json")
+        formulas_path = os.path.join(self.content_dir, "formulas.json")
+        entities_path = os.path.join(self.content_dir, "entities.json")
+        categories_path = os.path.join(self.content_dir, "categories.json")
         
+        with open(search_index_path, "r") as f:
+            search_index = json.load(f)
+        with open(formulas_path, "r") as f:
+            self.formula_registry = json.load(f)
+        with open(entities_path, "r") as f:
+            self.entities = json.load(f)
+        with open(categories_path, "r") as f:
+            self.topics = json.load(f)
+            
         self.target_shard = None
         if self.target_slug:
-            self.target_shard = self.orch.slug_to_shard.get(self.target_slug)
+            entry = search_index.get(self.target_slug)
+            if entry and isinstance(entry, dict):
+                self.target_shard = entry.get("s")
+            elif isinstance(entry, str):
+                self.target_shard = entry
+            
+        if self.target_slug and self.target_shard:
+            # OPTIMIZED single-target path
+            shard_path = os.path.join(self.content_dir, self.target_shard)
+            with open(shard_path, "r") as f:
+                shard_data = json.load(f)
+            self.all_subtopics = {self.target_slug: shard_data.get(self.target_slug, {})}
+            self.all_slugs = set(search_index.keys()).union(set(self.topics.keys()))
+            self.stats["topics"] = 1
+            self.stats["shards"] = 1
+            
+            class MockOrchestrator:
+                def __init__(self, registry, protected_topics):
+                    self.registry = registry
+                    self.PROTECTED_TOPICS = protected_topics
+            protected_topics = {
+                "classical-mechanics", "electromagnetism", "relativity", "quantum-physics",
+                "standard-model", "astrophysics", "theoretical-physics", "thermodynamics-statistical-mechanics"
+            }
+            registry_path = "global_slug_registry.json"
+            registry = {}
+            if os.path.exists(registry_path):
+                with open(registry_path, "r") as f:
+                    registry = json.load(f)
+            self.orch = MockOrchestrator(registry, protected_topics)
+        else:
+            # Standard full crawl path
+            from orchestrator import PhysicsOrchestrator
+            self.orch = PhysicsOrchestrator(content_dir=self.content_dir)
+            self.all_subtopics = self.orch.data["subtopics"]
+            self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
+            self.stats["topics"] = len(self.all_subtopics)
+            self.stats["shards"] = len(self.orch.shards)
 
         if HAS_JSONSCHEMA and self.schema:
             validator = Draft7Validator(self.schema)
             files_to_validate = [self.target_shard] if self.target_shard else os.listdir(self.content_dir)
             for file in files_to_validate:
                 if not file: continue
-                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json"]:
+                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json"]:
                     path = os.path.join(self.content_dir, file)
                     with open(path, "r") as f:
                         content = json.load(f)
@@ -55,9 +99,10 @@ class IntegrityShield:
                             continue
                         self.errors.append(f"Schema Violation in {file} :: {slug}: {err.message}")
 
-        self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
-        self.stats["topics"] = len(self.all_subtopics)
-        self.stats["shards"] = len(self.orch.shards)
+        if not self.target_slug:
+            self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
+            self.stats["topics"] = len(self.all_subtopics)
+            self.stats["shards"] = len(self.orch.shards)
 
     def check_formulas(self):
         subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
@@ -75,7 +120,7 @@ class IntegrityShield:
         protected_topics = self.orch.PROTECTED_TOPICS
 
         for file in os.listdir(self.content_dir):
-            if not file.endswith(".json") or file in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json"]:
+            if not file.endswith(".json") or file in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json"]:
                 continue
 
             # Skip the topics directory as it's handled separately or contains the protected ones
@@ -107,9 +152,10 @@ class IntegrityShield:
             sub = self.all_subtopics.get(slug)
             if not sub or "content" not in sub: continue
             content = sub["content"]
-            latex_count = len(re.findall(r'\\\(|\\\[', content))
-            term_score = sum(5 for term in tech_terms if term in content.lower())
-            words = len(re.findall(r'\w+', content))
+            content_no_svg = re.sub(r'<svg.*?</svg>', '', content, flags=re.DOTALL)
+            latex_count = len(re.findall(r'\\\(|\\\[', content)) + content.count("<svg")
+            term_score = sum(5 for term in tech_terms if term in content_no_svg.lower())
+            words = len(re.findall(r'\w+', content_no_svg))
             total_score = (latex_count * 15) + term_score
             if words < 500:
                 self.warnings.append(f"Low Depth: [{slug}] word count too low ({words}).")

@@ -4,6 +4,10 @@ import os
 import shutil
 import hashlib
 
+# Add current working directory to path to resolve local imports cleanly
+sys.path.append(os.getcwd())
+
+
 def register_identities(identities_file, slug, orch):
     """Registers new theoretical identities into the formulas registry and updates the slug's formula_ids."""
     if not identities_file or not os.path.exists(identities_file):
@@ -106,7 +110,6 @@ def commit_node(slug, html_file, identities_file=None):
         
         # 4. SVG Rendering
         orch = PhysicsOrchestrator() # Re-init to pick up linked content and new identities in memory
-        orch.render_content_to_svg(slug)
         
         # 4a. Pre-render associated formulas specifically
         subtopic_data = orch.data["subtopics"].get(slug, {})
@@ -128,9 +131,9 @@ def commit_node(slug, html_file, identities_file=None):
                     cache_key = f"REG_{f_id}_#FFD700"
                     if cache_key in orch.svg_cache:
                         orch.data["formula_registry"][f_id]["equation"] = orch.svg_cache[cache_key]
-
-        # Save will now write BOTH the shard and the updated formula registry
-        orch.save(force_full=True, unlock_protected=True)
+ 
+        # Save will now write BOTH the shard and the updated formula registry, whitelisted to target slug
+        orch.save(target_slugs=[slug], unlock_protected=True)
         
         # 4b. Rebuild Parent Hub Caches
         parents = orch.data["subtopics"].get(slug, {}).get("parents", [])

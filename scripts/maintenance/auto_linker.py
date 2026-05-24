@@ -32,14 +32,53 @@ def run_auto_linker(shards, index_path):
 
     aliases_lower = {k.lower(): v for k, v in aliases.items()}
 
-    # Compile the Trie regex compiler over all possible aliases and slugs
-    trie_words = set(aliases.keys()) | valid_slugs
-    trie_compiler = TrieRegexCompiler()
-    compiled_trie = trie_compiler.compile(list(trie_words))
-    # We compile the regex to find <strong>(trie_words)</strong> case-insensitively
-    strong_trie_pattern = re.compile(rf'<strong>({compiled_trie})</strong>', re.IGNORECASE)
+    import hashlib
+    def get_cache_hash():
+        hasher = hashlib.md5()
+        reg = {}
+        if os.path.exists(registry_path):
+            with open(registry_path, 'r') as f:
+                reg = json.load(f)
+        hasher.update(json.dumps(reg, sort_keys=True).encode('utf-8'))
+        
+        ent = {}
+        entities_path = 'app/config/content/entities.json'
+        if os.path.exists(entities_path):
+            with open(entities_path, 'r') as f:
+                ent = json.load(f)
+        hasher.update(json.dumps(ent, sort_keys=True).encode('utf-8'))
+        
+        if os.path.exists(alias_path):
+            with open(alias_path, 'rb') as f:
+                hasher.update(f.read())
+                
+        if os.path.exists(index_path):
+            with open(index_path, 'rb') as f:
+                hasher.update(f.read())
+                
+        return hasher.hexdigest()
 
-    # REFINED Link pattern to handle both normal and escaped quotes in JSON
+    cache_path = 'app/config/content/compiled_trie_regex.json'
+    loaded_from_cache = False
+    
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, 'r') as f:
+                cache_data = json.load(f)
+            if cache_data.get('cache_hash') == get_cache_hash():
+                compiled_strong = cache_data['bold_strong_pattern']
+                strong_trie_pattern = re.compile(rf'<strong>({compiled_strong})</strong>', re.IGNORECASE)
+                loaded_from_cache = True
+                print("LOAD CACHE: Successfully loaded compiled bold patterns from disk cache in auto_linker.")
+        except Exception as e:
+            print(f"CACHE WARNING: Failed to load precompiled cache in auto_linker: {str(e)}")
+
+    if not loaded_from_cache:
+        trie_words = set(aliases.keys()) | valid_slugs
+        trie_compiler = TrieRegexCompiler()
+        compiled_trie = trie_compiler.compile(list(trie_words))
+        strong_trie_pattern = re.compile(rf'<strong>({compiled_trie})</strong>', re.IGNORECASE)
+
     link_pattern = re.compile(r'<a\s+href=[\\"]+([^\\"]+)[\\"]+[^>]*>(.*?)</a>')
 
     for shard_path in shards:

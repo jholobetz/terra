@@ -169,6 +169,8 @@ class PhysicsOrchestrator:
                     pass # Already loaded
                 elif rel_path == "search_index.json":
                     pass
+                elif rel_path == "compiled_trie_regex.json":
+                    pass
                 elif rel_path.startswith("topics/"):
                     slug = file.replace(".json", "")
                     self.topic_shards[slug] = content
@@ -181,6 +183,86 @@ class PhysicsOrchestrator:
                         self.data["subtopics"][slug] = content[slug]
                         self.slug_to_shard[slug] = rel_path
                         self.shard_to_slugs[rel_path].append(slug)
+    def _get_cache_hash(self):
+        """Calculates a combined MD5 hash of registry and entity files for cache validation."""
+        hasher = hashlib.md5()
+        hasher.update(json.dumps(self.registry, sort_keys=True).encode('utf-8'))
+        entities = self.data.get("entities", {})
+        hasher.update(json.dumps(entities, sort_keys=True).encode('utf-8'))
+        
+        # Add auto_link_aliases if it exists
+        alias_path = 'subfiles/auto_link_aliases.json'
+        if os.path.exists(alias_path):
+            with open(alias_path, "rb") as f:
+                hasher.update(f.read())
+                
+        # Add search_index if it exists
+        search_index_path = os.path.join(self.content_dir, "search_index.json")
+        if os.path.exists(search_index_path):
+            with open(search_index_path, "rb") as f:
+                hasher.update(f.read())
+                
+        return hasher.hexdigest()
+
+    def precompile_trie_regex(self):
+        """Pre-compiles both plain text, bold trie words, and entity variants, and saves them to a cache file."""
+        cache_path = os.path.join(self.content_dir, "compiled_trie_regex.json")
+        
+        # 1. Plain text keywords pattern for orchestrator
+        valid_trie_titles = [t for t in self.sorted_titles if t not in self.AMBIGUOUS_TERMS]
+        trie_compiler = TrieRegexCompiler()
+        compiled_plain = trie_compiler.compile(valid_trie_titles)
+        
+        # 2. Strong/Bold pattern for auto_linker.py
+        aliases = {}
+        alias_path = 'subfiles/auto_link_aliases.json'
+        if os.path.exists(alias_path):
+            with open(alias_path, 'r') as f:
+                aliases = json.load(f)
+        aliases.update(self.registry)
+        
+        valid_slugs = set()
+        search_index_path = os.path.join(self.content_dir, "search_index.json")
+        if os.path.exists(search_index_path):
+            with open(search_index_path, 'r') as f:
+                search_index = json.load(f)
+                valid_slugs = set(search_index.keys())
+                
+        trie_words = set(aliases.keys()) | valid_slugs
+        trie_compiler_strong = TrieRegexCompiler()
+        compiled_strong = trie_compiler_strong.compile(list(trie_words))
+        
+        # 3. Entities pattern & variant map
+        entity_variants = []
+        entity_variant_map = {}
+        for e_id, e_data in self.data.get("entities", {}).items():
+            link = e_data["link"]
+            name_lower = e_data["name"].lower()
+            entity_variants.append(e_data["name"])
+            entity_variant_map[name_lower] = link
+            for alias in e_data.get("aliases", []):
+                entity_variants.append(alias)
+                entity_variant_map[alias.lower()] = link
+                
+        valid_entity_variants = [v for v in entity_variants if len(v) >= 3]
+        compiled_entities = ""
+        if valid_entity_variants:
+            trie_compiler_entities = TrieRegexCompiler()
+            compiled_entities = trie_compiler_entities.compile(valid_entity_variants)
+            
+        cache_data = {
+            "cache_hash": self._get_cache_hash(),
+            "plain_text_pattern": compiled_plain,
+            "bold_strong_pattern": compiled_strong,
+            "entities_pattern": compiled_entities,
+            "entities_variant_map": entity_variant_map
+        }
+        
+        with open(cache_path, "w") as f:
+            json.dump(cache_data, f, indent=4)
+        print("PRECOMPILE: Saved compiled trie regex cache to disk.")
+        return cache_data
+
     def _refresh_sorted_titles(self):
         # Load Pillar Profiles
         self.pillar_profiles = {}
@@ -192,11 +274,61 @@ class PhysicsOrchestrator:
         self.sorted_titles = sorted(self.registry.keys(), key=len, reverse=True)
         self.registry_lower = {k.lower(): v for k, v in self.registry.items()}
         
-        # Build the single-pass Trie-compiled regex for plain text keywords
-        valid_trie_titles = [t for t in self.sorted_titles if t not in self.AMBIGUOUS_TERMS]
-        trie_compiler = TrieRegexCompiler()
-        compiled_trie = trie_compiler.compile(valid_trie_titles)
-        self.compiled_plain_regex = re.compile(rf'(?<![=">])({compiled_trie})(?![<])')
+        cache_path = os.path.join(self.content_dir, "compiled_trie_regex.json")
+        loaded_from_cache = False
+        
+        if os.path.exists(cache_path):
+            try:
+                with open(cache_path, "r") as f:
+                    cache_data = json.load(f)
+                if cache_data.get("cache_hash") == self._get_cache_hash():
+                    compiled_plain = cache_data["plain_text_pattern"]
+                    self.compiled_plain_regex = re.compile(rf'(?<![=">])({compiled_plain})(?![<])')
+                    
+                    compiled_entities = cache_data.get("entities_pattern", "")
+                    if compiled_entities:
+                        self.compiled_entities_regex = re.compile(rf'(?<![=">])({compiled_entities})(?![<])', re.IGNORECASE)
+                    else:
+                        self.compiled_entities_regex = None
+                    self.entity_variant_map = cache_data.get("entities_variant_map", {})
+                    
+                    loaded_from_cache = True
+                    print("LOAD CACHE: Successfully loaded compiled trie patterns from disk cache.")
+            except Exception as e:
+                print(f"CACHE WARNING: Failed to load pre-compiled cache: {str(e)}. Recompiling dynamically...")
+                
+        if not loaded_from_cache:
+            # Fallback to dynamic compilation
+            valid_trie_titles = [t for t in self.sorted_titles if t not in self.AMBIGUOUS_TERMS]
+            trie_compiler = TrieRegexCompiler()
+            compiled_plain = trie_compiler.compile(valid_trie_titles)
+            self.compiled_plain_regex = re.compile(rf'(?<![=">])({compiled_plain})(?![<])')
+            
+            # Dynamic entities compilation
+            entity_variants = []
+            self.entity_variant_map = {}
+            for e_id, e_data in self.data.get("entities", {}).items():
+                link = e_data["link"]
+                name_lower = e_data["name"].lower()
+                entity_variants.append(e_data["name"])
+                self.entity_variant_map[name_lower] = link
+                for alias in e_data.get("aliases", []):
+                    entity_variants.append(alias)
+                    self.entity_variant_map[alias.lower()] = link
+                    
+            valid_entity_variants = [v for v in entity_variants if len(v) >= 3]
+            if valid_entity_variants:
+                trie_compiler_entities = TrieRegexCompiler()
+                compiled_entities = trie_compiler_entities.compile(valid_entity_variants)
+                self.compiled_entities_regex = re.compile(rf'(?<![=">])({compiled_entities})(?![<])', re.IGNORECASE)
+            else:
+                self.compiled_entities_regex = None
+                
+            # Automatically save/build cache for subsequent operations
+            try:
+                self.precompile_trie_regex()
+            except Exception as e:
+                print(f"CACHE WARNING: Failed to save precompiled cache: {str(e)}")
 
     def get_link_cloud(self, text, limit=15):
         """Scans text and returns a 'cloud' of relevant links based on the registry."""
@@ -569,33 +701,25 @@ class PhysicsOrchestrator:
             
             print("  -> Registry pre-rendered and updated.")
 
-    def save(self, auto_commit=True, commit_msg=None, unlock_protected=False, force_full=False):
+    def save(self, auto_commit=True, commit_msg=None, unlock_protected=False, force_full=False, target_slugs=None):
         """Saves all modified shards and registries and optionally commits to Git."""
         # 1. Pre-render SVGs in batch for modified subtopics
-        target_slugs = self.data["subtopics"].keys() if force_full else self.modified_slugs
+        if target_slugs is not None:
+            slugs_to_process = target_slugs
+        else:
+            slugs_to_process = self.data["subtopics"].keys() if force_full else self.modified_slugs
         
-        if target_slugs:
-            print(f"Phase 1: Batch rendering SVGs for {len(target_slugs)} subtopics...")
+        if slugs_to_process:
+            print(f"Phase 1: Batch rendering SVGs for {len(slugs_to_process)} subtopics...")
             rendering_queue = {}
-            for slug in target_slugs:
+            color = "#FFD700" # Math Standard
+            
+            # Step A: Scan and queue all raw math blocks first across all targets
+            for slug in slugs_to_process:
                 if slug not in self.data["subtopics"]: continue
                 subtopic = self.data["subtopics"][slug]
                 content = subtopic.get("content", "")
-                color = "#FFD700" # Math Standard
-
-                # IMPORTANT: Generate snippets BEFORE pre-rendering content to SVGs
-                # This ensures snippet generators have raw LaTeX to work with if possible,
-                # though our patched generators now handle both.
-                subtopic["snippet"] = self.get_safe_snippet(content)
-                subtopic["snippet_svg"] = self.get_svg_snippet(content, color=color)
-                subtopic["hero_math"] = self.get_hero_math(content, color=color)
-
-                # Auto-render main content if Platinum
-                if subtopic.get("standard") == "platinum":
-                    self.render_content_to_svg(slug)
-                    # Refresh content after rendering for phase 1 batching check below
-                    content = subtopic.get("content", "")
-
+                
                 # Find all math blocks for batching
                 math_blocks = re.findall(r'\\+\[.*?\\+\]|\\+\(.*?\\+\)', content, re.DOTALL)
                 for latex in math_blocks:
@@ -606,9 +730,27 @@ class PhysicsOrchestrator:
                     if cache_key not in self.svg_cache:
                         rendering_queue[cache_key] = {"latex": clean_latex, "is_display": is_display, "color": color}
 
+            # Step B: Run a single batch Node process to pre-populate self.svg_cache
             if rendering_queue:
                 print(f"  -> Batching {len(rendering_queue)} new formulas...")
                 self.batch_convert_to_svg(rendering_queue)
+
+            # Step C: Generate snippets and render content to SVGs from 100% warm cache
+            for slug in slugs_to_process:
+                if slug not in self.data["subtopics"]: continue
+                subtopic = self.data["subtopics"][slug]
+                content = subtopic.get("content", "")
+                
+                # IMPORTANT: Generate snippets BEFORE pre-rendering content to SVGs
+                # This ensures snippet generators have raw LaTeX to work with if possible,
+                # though our patched generators now handle both.
+                subtopic["snippet"] = self.get_safe_snippet(content)
+                subtopic["snippet_svg"] = self.get_svg_snippet(content, color=color)
+                subtopic["hero_math"] = self.get_hero_math(content, color=color)
+
+                # Auto-render main content if Platinum
+                if subtopic.get("standard") == "platinum":
+                    self.render_content_to_svg(slug)
 
         # 2. Save Registries
         # Clean topics for categories.json (metadata only)
@@ -651,13 +793,23 @@ class PhysicsOrchestrator:
             self.build_manifest[f"shard_topic_{slug}"] = self.get_file_hash(path)
 
         # 4. Save Subtopic Shards
-        # Map all subtopics to their shards
-        for slug, subtopic in self.data["subtopics"].items():
+        shards_to_write = set()
+        
+        # Determine target slugs to process for saving shards
+        if target_slugs is not None:
+            slugs_to_save = target_slugs
+        else:
+            slugs_to_save = self.data["subtopics"].keys() if force_full else self.modified_slugs
+            
+        for slug in slugs_to_save:
+            if slug not in self.data["subtopics"]: continue
+            subtopic = self.data["subtopics"][slug]
             found_shard = False
             for shard_name, shard_content in self.shards.items():
                 if slug in shard_content:
                     shard_content[slug] = subtopic
                     found_shard = True
+                    shards_to_write.add(shard_name)
                     break
             
             if not found_shard:
@@ -673,12 +825,19 @@ class PhysicsOrchestrator:
                     self.shards[target_shard] = {}
                 
                 self.shards[target_shard][slug] = subtopic
+                shards_to_write.add(target_shard)
                 print(f"NEW SUBTOPIC: Assigned [{slug}] to shard [{target_shard}]")
 
-        for shard_name, shard_content in self.shards.items():
+        # If saving full or no specific whitelist was given, write all shards, 
+        # otherwise write only the modified ones.
+        if target_slugs is None and (force_full or not self.modified_slugs):
+            shards_to_write = set(self.shards.keys())
+            
+        for shard_name in shards_to_write:
+            if shard_name not in self.shards: continue
             path = os.path.join(self.content_dir, shard_name)
             with open(path, "w") as f:
-                json.dump(shard_content, f, indent=4)
+                json.dump(self.shards[shard_name], f, indent=4)
             # Record shard hash
             self.build_manifest[f"shard_{shard_name}"] = self.get_file_hash(path)
 
@@ -692,13 +851,14 @@ class PhysicsOrchestrator:
                 title = sub.get("title", "Untitled")
                 
                 # Calculate stats for Weighting
-                words = len(re.findall(r'\w+', content))
-                latex_count = len(re.findall(r'\\\(|\\\[', content))
-                term_score = sum(1 for term in tech_terms if term in content.lower())
+                content_no_svg = re.sub(r'<svg.*?</svg>', '', content, flags=re.DOTALL)
+                words = len(re.findall(r'\w+', content_no_svg))
+                latex_count = len(re.findall(r'\\\(|\\\[', content)) + content.count("<svg")
+                term_score = sum(1 for term in tech_terms if term in content_no_svg.lower())
                 
                 # Platinum Check (Current standards: 500w, 60 density)
                 density_score = (latex_count * 15) + (term_score * 5)
-                is_platinum = 1 if (words >= 500 and density_score >= 60) else 0
+                is_platinum = 1 if (sub.get("standard") == "platinum" or (words >= 500 and density_score >= 60)) else 0
 
                 # Keyword Extraction
                 keywords = set()
@@ -939,30 +1099,47 @@ class PhysicsOrchestrator:
         return final_content if final_content != original_content else None
 
     def _apply_entity_links(self, content, current_slug=None):
-        """Internal helper to link entities from entities.json."""
-        for e_id, e_data in self.data.get("entities", {}).items():
-            link = e_data["link"]
-            # Only link if not already linked to this entity (exact href check)
-            if f'href="{link}"' in content: continue
+        """Internal helper to link entities from entities.json using single-pass Trie matching."""
+        if not self.compiled_entities_regex:
+            return content
             
-            # Safeguard: Don't link to itself
+        linked_in_node = set()
+        
+        # Identify already linked entities in content to satisfy single-link rules
+        existing_links = re.findall(r'href=[\\"]+([^\\"]+)[\\"]+', content)
+        for link in existing_links:
+            linked_in_node.add(link)
+            
+        def replace_entity(match):
+            matched_var = match.group(1)
+            link = self.entity_variant_map.get(matched_var.lower())
+            
+            if not link:
+                return match.group(0)
+                
+            # Safeguard 1: Don't link to itself
             if current_slug:
                 if link == f"/physics/subtopic/{current_slug}" or link == f"/physics/topic/{current_slug}":
-                    continue
-
-            variants = [e_data["name"]] + e_data.get("aliases", [])
-            # Sort by length descending to match longest first
-            variants.sort(key=len, reverse=True)
+                    return match.group(0)
+                    
+            # Ensure it is not already linked in this node (exact href check)
+            if link in linked_in_node:
+                return match.group(0)
+                
+            # Ensure it is not already inside an anchor link tag
+            pos = match.start()
+            pre = content[:pos]
+            last_a_open = pre.rfind('<a')
+            last_a_close = pre.rfind('</a>')
+            if last_a_open > last_a_close:
+                return match.group(0)
+                
+            # Match succeeded, format and record link
+            link_html = f'<a href="{link}" class="subtopic-link"><strong>{matched_var}</strong></a>'
+            linked_in_node.add(link)
+            return link_html
             
-            for var in variants:
-                if len(var) < 3: continue
-                # Match name not preceded by > or =
-                pattern = re.compile(rf'(?<![=">])\b{re.escape(var)}\b', re.IGNORECASE)
-                if pattern.search(content):
-                    link_html = f'<a href="{link}" class="subtopic-link"><strong>{var}</strong></a>'
-                    content = pattern.sub(lambda m: link_html, content)
-                    break # Only link the first match of any variant
-        return content
+        return self.compiled_entities_regex.sub(replace_entity, content)
 
     def _sanitize_mathjax(self, content):
         content = content.replace(" > ", " \\gt ")

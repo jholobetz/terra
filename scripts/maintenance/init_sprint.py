@@ -1,6 +1,9 @@
 import sys
 import json
 import os
+from datetime import datetime
+
+ACTIVE_SPRINT_PATH = 'subfiles/active_expansion_sprint.json'
 
 def init_sprint(hub_slug, pillar_index_str):
     try:
@@ -36,17 +39,32 @@ def init_sprint(hub_slug, pillar_index_str):
         print("Warning: search_index.json not found. Assuming default shards.")
         search_index = {}
 
+    # Load backlog frequencies if available (optional enrichment)
+    backlog_freq = {}
+    backlog_path = 'subfiles/expansion_backlog.json'
+    if os.path.exists(backlog_path):
+        try:
+            with open(backlog_path, 'r') as f:
+                for item in json.load(f):
+                    if 'suggested_slug' in item:
+                        backlog_freq[item['suggested_slug']] = item.get('frequency')
+        except (json.JSONDecodeError, OSError):
+            pass
+
     queue = []
-    
+    shards_involved = set()
+
     # We load shard data lazily to avoid loading the same file multiple times if possible
     loaded_shards = {}
 
     for slug in slugs:
-        shard_name = search_index.get(slug, {}).get('s', f'{hub_slug}.json')
+        si_entry = search_index.get(slug, {})
+        shard_name = si_entry.get('s', f'{hub_slug}.json')
+        title = si_entry.get('t', slug)
         status = 'pending'
-        
+
         shard_path = os.path.join('app/config/content', shard_name)
-        
+
         if shard_name not in loaded_shards:
             if os.path.exists(shard_path):
                 with open(shard_path, 'r') as f:
@@ -59,28 +77,39 @@ def init_sprint(hub_slug, pillar_index_str):
 
         shard_data = loaded_shards[shard_name]
         node = shard_data.get(slug, {})
-        
-        if node.get('standard') == 'platinum':
-            status = 'platinum'
-            
-        queue.append({'slug': slug, 'shard': shard_name, 'status': status})
 
-    next_target = next((item['slug'] for item in queue if item['status'] == 'pending'), 'Pillar Complete')
+        if node.get('standard') == 'platinum':
+            status = 'completed'
+
+        shards_involved.add(shard_name)
+        queue.append({
+            'slug': slug,
+            'title': title,
+            'shard': shard_name,
+            'frequency': backlog_freq.get(slug),
+            'status': status
+        })
+
+    active_target = next((item['slug'] for item in queue if item['status'] == 'pending'), None)
 
     sprint_data = {
+        'sprint_id': f'{hub_slug}_pillar_{pillar_index + 1}',
+        'theme': pillar_title,
         'hub': hub_slug,
         'pillar': pillar_title,
-        'last_updated': '2026-05-16',
+        'last_updated': datetime.now().strftime('%Y-%m-%d'),
+        'shards_involved': sorted(shards_involved),
         'queue': queue,
-        'next_target': next_target
+        'active_target': active_target
     }
 
-    with open('sprint.json', 'w') as f:
+    with open(ACTIVE_SPRINT_PATH, 'w') as f:
         json.dump(sprint_data, f, indent=4)
+        f.write('\n')
 
-    print(f"✓ Sprint initialized successfully.")
+    print(f"✓ Sprint initialized at {ACTIVE_SPRINT_PATH}")
     print(f"  Total items: {len(queue)}")
-    print(f"  Next target: {next_target}")
+    print(f"  Active target: {active_target if active_target else 'Sprint Complete'}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

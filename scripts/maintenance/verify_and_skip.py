@@ -2,6 +2,9 @@ import sys
 import json
 import os
 import re
+from datetime import datetime
+
+ACTIVE_SPRINT_PATH = 'subfiles/active_expansion_sprint.json'
 
 def verify_and_skip(slug):
     print(f"--- PRE-FLIGHT VERIFICATION: {slug} ---")
@@ -60,37 +63,40 @@ def verify_and_skip(slug):
         
     print(f"✓ VERIFIED: {slug} is already OPS-compliant (Word count: {word_count}).")
 
-    # 5. Advance Sprint (The "Skip" Logic)
-    sprint_path = 'sprint.json'
-    if os.path.exists(sprint_path):
-        with open(sprint_path, 'r') as f:
+    # 5. Advance Active Sprint (The "Skip" Logic)
+    if os.path.exists(ACTIVE_SPRINT_PATH):
+        with open(ACTIVE_SPRINT_PATH, 'r') as f:
             sprint = json.load(f)
-            
+
         found = False
-        for item in sprint['queue']:
-            if item['slug'] == slug:
-                item['status'] = 'platinum'
+        for item in sprint.get('queue', []):
+            if item.get('slug') == slug:
+                item['status'] = 'completed'
                 found = True
-                
+                break
+
         if not found:
-            print(f"Warning: {slug} not found in current sprint queue.")
-        else:
-            next_slug = None
-            for item in sprint['queue']:
-                if item['status'] == 'pending':
-                    next_slug = item['slug']
-                    break
-                    
-            if next_slug:
-                sprint['next_target'] = next_slug
-            else:
-                sprint['next_target'] = 'Pillar Complete'
-                
-            with open(sprint_path, 'w') as f:
-                json.dump(sprint, f, indent=4)
-                
-            print(f"✓ SPRINT ADVANCED: Next target is {sprint['next_target']}")
-    
+            sprint.setdefault('ad_hoc_graduations', []).append({
+                'slug': slug,
+                'graduated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'source': 'verify_and_skip'
+            })
+            print(f"Warning: {slug} not in active sprint queue. Recorded as ad-hoc graduation.")
+
+        next_slug = next(
+            (item['slug'] for item in sprint.get('queue', []) if item.get('status') == 'pending'),
+            None
+        )
+        sprint['active_target'] = next_slug
+        sprint['last_updated'] = datetime.now().strftime('%Y-%m-%d')
+
+        with open(ACTIVE_SPRINT_PATH, 'w') as f:
+            json.dump(sprint, f, indent=4)
+            f.write('\n')
+
+        target_msg = next_slug if next_slug else 'Sprint Complete'
+        print(f"✓ SPRINT ADVANCED: Next target is {target_msg}")
+
     print(f"ACTION: SKIPPING refactor for {slug}.")
     sys.exit(0)
 

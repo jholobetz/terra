@@ -3,11 +3,14 @@ import json
 import os
 import shutil
 import hashlib
+from datetime import datetime
 
 # Add current working directory to path to resolve local imports cleanly
 sys.path.append(os.getcwd())
 
 from scripts.maintenance.latex_sanitizer import sanitize_latex
+
+ACTIVE_SPRINT_PATH = 'subfiles/active_expansion_sprint.json'
 
 
 def register_identities(identities_file, slug, orch):
@@ -171,29 +174,49 @@ def commit_node(slug, html_file, identities_file=None):
             else:
                 print("Integrity Shield failed for other reasons, but ignoring for now or you can handle it.")
                 
-        # 6. Advance Sprint
-        with open('sprint.json', 'r') as f:
-            sprint = json.load(f)
-            
-        for item in sprint['queue']:
-            if item['slug'] == slug:
-                item['status'] = 'platinum'
-                
-        next_slug = None
-        for item in sprint['queue']:
-            if item['status'] == 'pending':
-                next_slug = item['slug']
-                break
-                
-        if next_slug:
-            sprint['next_target'] = next_slug
+        # 6. Advance Active Sprint
+        if not os.path.exists(ACTIVE_SPRINT_PATH):
+            print(f"WARNING: Active sprint file not found at {ACTIVE_SPRINT_PATH}. Skipping sprint advancement.")
         else:
-            sprint['next_target'] = 'Pillar Complete'
-            
-        with open('sprint.json', 'w') as f:
-            json.dump(sprint, f, indent=4)
-            
-        print(f"Successfully committed {slug}. Next target: {sprint['next_target']}")
+            with open(ACTIVE_SPRINT_PATH, 'r') as f:
+                sprint = json.load(f)
+
+            found_in_queue = False
+            for item in sprint.get('queue', []):
+                if item.get('slug') == slug:
+                    item['status'] = 'completed'
+                    found_in_queue = True
+                    break
+
+            if not found_in_queue:
+                sprint.setdefault('ad_hoc_graduations', []).append({
+                    'slug': slug,
+                    'graduated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                })
+                print(f"WARNING: [{slug}] was not in the active sprint queue.")
+                print(f"         Recorded as ad-hoc graduation in {ACTIVE_SPRINT_PATH}.")
+                print(f"         If scope has shifted, re-initialize the sprint via init_sprint.py.")
+
+            next_slug = next(
+                (item['slug'] for item in sprint.get('queue', []) if item.get('status') == 'pending'),
+                None
+            )
+            sprint['active_target'] = next_slug
+            sprint['last_updated'] = datetime.now().strftime('%Y-%m-%d')
+
+            with open(ACTIVE_SPRINT_PATH, 'w') as f:
+                json.dump(sprint, f, indent=4)
+                f.write('\n')
+
+            target_msg = next_slug if next_slug else 'Sprint Complete'
+            print(f"Successfully committed {slug}. Next target: {target_msg}")
+
+        # 7. Refresh system health snapshot
+        print("Refreshing system_health.json...")
+        env_prefix = "PYTHONPATH=. " if not os.environ.get('PYTHONPATH') else ""
+        rc = os.system(f"{env_prefix}.venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null")
+        if rc != 0:
+            print(f"WARNING: system_health regeneration exited with code {rc}.")
         
     except Exception as e:
         print(f"Failed: {e}")

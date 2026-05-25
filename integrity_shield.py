@@ -115,7 +115,7 @@ class IntegrityShield:
                     self.errors.append(f"Broken Formula: [{slug}] refs unknown ID '{f_id}'")
                 else:
                     eq = self.formula_registry[f_id].get("equation", "")
-                    if re.search(r'(fill|stroke)=[\\"\']?red[\\"\']?', eq) or "math-error" in eq:
+                    if "merror" in eq or "mjx-error" in eq or "math-error" in eq or re.search(r'(fill|stroke)=[\\"\']?red[\\"\']?', eq):
                         self.errors.append(
                             f"MathJax Rendering Error: [{slug}] refs formula '{f_id}' "
                             f"which contains MathJax compilation errors (red-text markup or math-error)."

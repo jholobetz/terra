@@ -7,6 +7,8 @@ import hashlib
 # Add current working directory to path to resolve local imports cleanly
 sys.path.append(os.getcwd())
 
+from scripts.maintenance.latex_sanitizer import sanitize_latex
+
 
 def register_identities(identities_file, slug, orch):
     """Registers new theoretical identities into the formulas registry and updates the slug's formula_ids."""
@@ -27,6 +29,7 @@ def register_identities(identities_file, slug, orch):
         # Generate stable hash-based ID if not already suffixed
         raw_id = item.get('id', 'temp-id')
         equation = item.get('equation', '')
+        equation = sanitize_latex(equation)
         
         # Consistent with our Temp scripts: Use first 8 chars of hash
         suffix = hashlib.md5(equation.encode()).hexdigest()[:8]

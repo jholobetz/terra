@@ -611,10 +611,14 @@ class PhysicsOrchestrator:
                     res = json.loads(response_line)
                     if "svg" in res:
                         svg_code = res["svg"]
+                        if not svg_code.startswith("<svg") or "math-error" in svg_code or "merror" in svg_code or "mjx-error" in svg_code or 'fill="red"' in svg_code or 'stroke="red"' in svg_code or 'fill=\"red\"' in svg_code or 'stroke=\"red\"' in svg_code:
+                            raise ValueError(f"MathJax compilation error in formula: {clean_latex}")
                         self.svg_cache[cache_key] = svg_code
                         return svg_code
                     elif "error" in res:
                         print(f"Daemon MathJax Error for [{clean_latex}]: {res['error']}")
+            except ValueError as e:
+                raise e
             except Exception as e:
                 print(f"Daemon communication error: {e}. Falling back to subprocess...")
                 try:
@@ -629,8 +633,12 @@ class PhysicsOrchestrator:
             result = subprocess.run(["node", self.svg_engine, clean_latex, mode, color], capture_output=True, text=True, timeout=5)
             if result.returncode == 0 and result.stdout:
                 svg_code = result.stdout.strip()
+                if not svg_code.startswith("<svg") or "math-error" in svg_code or "merror" in svg_code or "mjx-error" in svg_code or 'fill="red"' in svg_code or 'stroke="red"' in svg_code or 'fill=\"red\"' in svg_code or 'stroke=\"red\"' in svg_code:
+                    raise ValueError(f"MathJax compilation error in formula: {clean_latex}")
                 self.svg_cache[cache_key] = svg_code
                 return svg_code
+        except ValueError as e:
+            raise e
         except Exception as e:
             print(f"SVG Fallback Error for [{clean_latex}]: {str(e)}")
         
@@ -755,8 +763,17 @@ class PhysicsOrchestrator:
             result = subprocess.run(["node", self.svg_engine], input=input_json, capture_output=True, text=True, timeout=30)
             if result.returncode == 0 and result.stdout:
                 new_svgs = json.loads(result.stdout)
+                
+                # Check for MathJax compilation errors
+                for key, svg in new_svgs.items():
+                    if not svg.startswith("<svg") or "math-error" in svg or "merror" in svg or "mjx-error" in svg or 'fill="red"' in svg or 'stroke="red"' in svg or 'fill=\"red\"' in svg or 'stroke=\"red\"' in svg:
+                        failed_latex = formula_batch.get(key, {}).get("latex", "Unknown")
+                        raise ValueError(f"MathJax compilation error in formula: {failed_latex}")
+                
                 self.svg_cache.update(new_svgs)
                 return new_svgs
+        except ValueError as e:
+            raise e
         except Exception as e:
             print(f"BATCH SVG Error: {str(e)}")
         return {}

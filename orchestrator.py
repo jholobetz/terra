@@ -130,6 +130,8 @@ class PhysicsOrchestrator:
 
         self._load_content()
         self._refresh_sorted_titles()
+        self._compile_dynamic_signatures()
+
 
     def get_file_hash(self, filepath):
         """Calculates MD5 hash of a file."""
@@ -139,6 +141,125 @@ class PhysicsOrchestrator:
             buf = f.read()
             hasher.update(buf)
         return hasher.hexdigest()
+
+    def _tokenize(self, text):
+        """Tokenize content by stripping HTML tags, removing stop words, and keeping words >= 3 chars."""
+        if not text:
+            return []
+        # Strip HTML tags
+        clean_text = re.sub(r'<[^>]+>', ' ', text.lower())
+        # Replace non-alphabetic characters with space
+        clean_text = re.sub(r'[^a-z\s]', ' ', clean_text)
+        # Tokenize and filter stop words and words < 3 characters
+        stop_words = {
+            "the", "and", "ofa", "for", "with", "that", "this", "these", "those",
+            "from", "into", "onto", "upon", "about", "above", "below", "been",
+            "have", "has", "had", "will", "would", "shall", "should", "can",
+            "could", "may", "might", "must", "they", "them", "their", "then",
+            "than", "thence", "thus", "therefore", "here", "there", "where",
+            "when", "why", "how", "what", "which", "who", "whom", "whose",
+            "its", "our", "your", "his", "her", "their", "are", "was", "were",
+            "been", "being", "does", "done", "doing", "did", "both", "each",
+            "few", "more", "most", "some", "such", "only", "own", "same", "so",
+            "too", "very", "one", "two", "three", "four", "five", "six",
+            "seven", "eight", "nine", "ten", "has", "had", "not", "but", "all",
+            "any", "out", "off", "under", "over", "again", "further", "once",
+            "here", "there", "when", "where", "why", "how", "all", "any", "both",
+            "each", "few", "more", "most", "other", "some", "such", "no", "nor",
+            "not", "only", "own", "same", "so", "than", "too", "very", "can",
+            "will", "just", "should", "now", "of", "in", "to", "on", "at", "by",
+            "an", "as", "is", "it", "its"
+        }
+        tokens = [word for word in clean_text.split() if len(word) >= 3 and word not in stop_words]
+        return tokens
+
+    def _compile_dynamic_signatures(self):
+        """Dynamically builds the HUB_SIGNATURES dictionary using TF-IDF of all Platinum nodes."""
+        print("  [Dynamic Signatures] Initiating TF-IDF compiler across Platinum nodes...")
+        
+        # 1. Collect all Platinum subtopics
+        platinum_subs = {}
+        for slug, sub in self.data.get("subtopics", {}).items():
+            if sub.get("standard") == "platinum":
+                platinum_subs[slug] = sub
+                
+        num_platinum = len(platinum_subs)
+        print(f"  [Dynamic Signatures] Found {num_platinum} graduated Platinum subtopics.")
+        
+        # Fallback safeguard: if we have fewer than 5 platinum nodes, use default static signatures
+        if num_platinum < 5:
+            print("  [Dynamic Signatures] Insufficient Platinum nodes. Falling back to default signatures.")
+            return
+
+        # 2. Compute term frequency (TF) and document frequency (DF)
+        tf = {}
+        df = {}
+        
+        for slug, sub in platinum_subs.items():
+            content_html = sub.get("content", "")
+            title_text = sub.get("title", "")
+            tokens = self._tokenize(title_text) * 3 + self._tokenize(content_html)
+            
+            tf[slug] = {}
+            unique_words = set()
+            for token in tokens:
+                tf[slug][token] = tf[slug].get(token, 0) + 1
+                unique_words.add(token)
+                
+            for word in unique_words:
+                df[word] = df.get(word, 0) + 1
+                
+        # 3. Compute IDF for all words
+        import math
+        idf = {}
+        for word, count in df.items():
+            idf[word] = math.log(1 + num_platinum / (1 + count))
+            
+        # 4. Resolve each Platinum subtopic to its parent gateway hub(s)
+        hub_word_scores = {hub: {} for hub in self.HUB_SIGNATURES}
+        
+        for slug, sub in platinum_subs.items():
+            parents = sub.get("parents", [])
+            
+            # Recursive Hub Resolution: find which Gateway Hub(s) this topic belongs to
+            resolved_hubs = set()
+            queue = list(parents)
+            visited = set()
+            while queue:
+                p = queue.pop(0)
+                if p in visited: continue
+                visited.add(p)
+                if p in self.HUB_SIGNATURES:
+                    resolved_hubs.add(p)
+                else:
+                    parent_sub = self.data["subtopics"].get(p)
+                    if parent_sub and "parents" in parent_sub:
+                        queue.extend(parent_sub["parents"])
+                        
+            if not resolved_hubs:
+                continue
+                
+            sub_tf = tf.get(slug, {})
+            doc_len = sum(sub_tf.values())
+            if doc_len == 0: continue
+            
+            for word, count in sub_tf.items():
+                w_tf = count / doc_len
+                w_tfidf = w_tf * idf.get(word, 0.0)
+                
+                for hub in resolved_hubs:
+                    hub_word_scores[hub][word] = hub_word_scores[hub].get(word, 0.0) + w_tfidf
+                    
+        # 5. Overwrite self.HUB_SIGNATURES with the top 15 highest-weighted words for each hub
+        for hub, scores in hub_word_scores.items():
+            if not scores:
+                print(f"  [Dynamic Signatures] WARNING: Hub '{hub}' has no associated Platinum vocabulary. Keeping fallback signatures.")
+                continue
+                
+            sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+            top_words = [word for word, score in sorted_words[:15]]
+            self.HUB_SIGNATURES[hub] = top_words
+            print(f"  [Dynamic Signatures] Compiled Hub '{hub}': {top_words}")
 
     def _load_content(self):
         """Loads all JSON shards from the content directory."""
@@ -1470,8 +1591,15 @@ class PhysicsOrchestrator:
         "quantum-physics": ["quantum", "wavefunction", "operator", "hilbert", "uncertainty", "superposition", "quanta", "eigenstate", "unitary"],
         "standard-model": ["standard model", "gauge", "boson", "fermion", "symmetry", "field", "coupling", "renormalization", "flavor", "spinor"],
         "astrophysics": ["astrophysics", "astronomy", "luminosity", "stellar", "galaxy", "collapse", "degenerate", "accretion", "redshift", "horizon"],
-        "thermodynamics-statistical-mechanics": ["thermodynamics", "entropy", "partition", "statistical", "ensemble", "temperature", "equilibrium", "boltzmann"]
+        "thermodynamics-statistical-mechanics": ["thermodynamics", "entropy", "partition", "statistical", "ensemble", "temperature", "equilibrium", "boltzmann"],
+        "electromagnetism": ["maxwell", "faraday", "coulomb", "inductance", "dielectric", "magnetic", "permeability", "flux", "charge", "current"],
+        "philosophy-of-physics": ["epistemic", "ontological", "realism", "determinism", "causality", "empiricism", "metaphysics", "modal", "reductionism"],
+        "condensed-matter": ["lattice", "phonon", "semiconductor", "band", "superconductor", "doping", "ferromagnetism", "cooper", "bosonic"],
+        "fluids-nonlinear": ["navier", "stokes", "turbulence", "reynolds", "viscosity", "convection", "chaotic", "bifurcation", "attractor"],
+        "mathematical-methods": ["fourier", "laplace", "differential", "integral", "matrix", "vector", "transform", "boundary", "eigenvalue"],
+        "theoretical-physics": ["principles", "axioms", "mathematical", "formalism", "gauge", "conservation", "supersymmetry", "string", "gravity"]
     }
+
 
     def sanitize_content(self, html):
         """Self-healing function to fix trivial formatting errors before validation."""
@@ -1557,8 +1685,14 @@ class PhysicsOrchestrator:
         # Calculate affinity for all hubs
         scores = {}
         for hub, signature in self.HUB_SIGNATURES.items():
-            count = sum(1 for word in signature if word in text_only)
+            count = 0
+            for word in signature:
+                # Upgrade C: Regex boundary with dynamic technical/grammatical suffixes
+                pattern = re.compile(r"\b" + re.escape(word) + r"(?:s|al|ally|ism|ist|ists|ing|ed|er|ers|es|tion|tions|tional|tionally|ity|ities|ic|ical|ically)?\b", re.IGNORECASE)
+                if pattern.search(text_only):
+                    count += 1
             scores[hub] = count
+
 
         # Must have highest affinity for parent hub
         for p in resolved_hubs:

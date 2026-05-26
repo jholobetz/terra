@@ -61,6 +61,10 @@ class PhysicsOrchestrator:
         "condensed-matter", "fluids-nonlinear", "mathematical-methods", "philosophy-of-physics"
     }
 
+    # Hub signature compilation: exclude words appearing in >this fraction of platinum docs as
+    # corpus-background vocabulary (see subfiles/tfidf_signature_audit_2026-05-25.md).
+    DF_CEILING_PCT = 0.60
+
     # Terms that are too common to auto-link in plain text (must be bolded to link)
     AMBIGUOUS_TERMS = {
         "Mass", "Force", "Spin", "Field", "Charge", "Energy", "Time", "Space", 
@@ -244,9 +248,12 @@ class PhysicsOrchestrator:
             if doc_len == 0: continue
             
             for word, count in sub_tf.items():
+                # Background-vocabulary filter: skip words appearing in >DF_CEILING_PCT of platinum docs
+                if df.get(word, 0) / num_platinum > self.DF_CEILING_PCT:
+                    continue
                 w_tf = count / doc_len
                 w_tfidf = w_tf * idf.get(word, 0.0)
-                
+
                 for hub in resolved_hubs:
                     hub_word_scores[hub][word] = hub_word_scores[hub].get(word, 0.0) + w_tfidf
                     

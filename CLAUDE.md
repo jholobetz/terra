@@ -84,11 +84,15 @@ Our context-affinity validation engine has been upgraded to a state-of-the-art d
    re.compile(r"\b" + re.escape(word) + r"(?:s|al|ally|ism|ist|ists|ing|ed|er|ers|es|tion|tions|tional|tionally|ity|ities|ic|ical|ically)?\b", re.IGNORECASE)
    ```
    This prevents grammatical extensions in the prose (e.g., "mechanical" or "classicality") from artificially lowering scores.
+4. **Background-Vocabulary DF Ceiling (Upgrade D)**: A `DF_CEILING_PCT` class constant on `PhysicsOrchestrator` (default `0.60`) filters tokens appearing in more than 60% of platinum documents out of signature compilation. Eliminates corpus-background pollution — words like `energy`, `manifold`, and `vacuum` (each previously in 8 of 12 hub signatures while themselves appearing in 80%+ of platinum docs) — that produced false-positive `Contextual Leakage` errors during graduation validation.
 
 ---
 
 ## 🏆 4. Recent Sprints & Milestones
 
+* **May 25, 2026**: Canonicalized the sprint tracker on `subfiles/active_expansion_sprint.json` (retiring `sprint.json`, archived as `subfiles/sprint_phase_0_hub_overviews.json`) and rewired the three pipeline scripts (`commit_node.py`, `init_sprint.py`, `verify_and_skip.py`) accordingly. Added **DF ceiling (Upgrade D)** to TF-IDF signature compilation via `DF_CEILING_PCT = 0.60`.
+* **May 25, 2026**: Migrated 46 misplaced shard entries to their resolved hubs — 27 cosmology nodes (philosophy-of-physics → astrophysics), 16 stat-mech nodes (theoretical-physics → thermodynamics-statistical-mechanics), and the 3-node metric-tensor cluster (classical-mechanics → relativity). Reparented `leptons` (removed quantum-physics) and `lie-groups` (philosophy-of-physics → mathematical-methods) to eliminate false-positive TF-IDF contextual leakage.
+* **May 25, 2026**: Scrubbed 6 corpus-wide template artifacts — `university-level` (1,667 occurrences in legacy content) plus five platinum-content malformations: `selectioning`, `dictacted`, `reproductioning`, `concetto`, and `seleccioning`.
 * **May 24, 2026**: Fully completed **Phase 9 (Sprint 2, Node 1)**: Graduated **`expansion-history`** (Expansion History of the Universe) to standard Platinum in `astrophysics.json`, registering `hubble-parameter-evolution` and `friedmann-acceleration-cosmology`.
 * **May 24, 2026**: Refactored the core quality-assurance validation pipeline in `orchestrator.py`, implementing **TF-IDF dynamic signatures (Upgrade A)**, **full 12-hub affinity validation (Upgrade B)**, and **suffix-matching regex bounds (Upgrade C)**.
 * **May 24, 2026**: Completed **Sprint 1 (Quantum Foundations & Boundary Conditions)**: Graduated **`wave-function`**, **`born-interpretation`**, **`fermions`**, and **`past-hypothesis`** to standard Platinum.

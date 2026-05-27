@@ -35,6 +35,10 @@ All Python operations must be executed using the project's local virtual environ
   ```
 
 ### 🛡️ Validation & Test Suite
+* **Central Tracking Authority (CTA) Sync**: Scans physical shards in real-time, self-heals desynchronizations in the expansion backlog, and displays the database status dashboard:
+  ```bash
+  .venv/bin/python3 scripts/maintenance/sync_backlog.py
+  ```
 * **Single-Node Integrity Audit**: Runs all schema, formula, and topological checks on a single slug:
   ```bash
   .venv/bin/python3 integrity_shield.py <subtopic-slug>
@@ -123,6 +127,13 @@ To maximize token economy and maintain perfect graduation consistency:
    ```
    This guarantees that high-density theoretical identities are never lost during graduation.
 5. **Auto-Backlog Sync**: Successful graduates are automatically marked as `completed` inside `subfiles/expansion_backlog.json` at the system level.
+
+### E. Central Tracking Authority (CTA)
+To ensure absolute mathematical consistency across all source registries and progress tracking views:
+1. **Real-time Disk Parsing**: The sync engine (`sync_backlog.py`) directly parses all 14 physical content JSON shards to extract the *exact ground truth* standard (`platinum` vs `legacy`) for all 1,584 subtopics, completely bypassing intermediate database steps.
+2. **Self-Healing Backlog Registry**: It compares disk truth against `subfiles/expansion_backlog.json` and dynamically heals desynchronizations, setting status to `"completed"` for disk Platinum entries and `"pending"` for legacy ones.
+3. **Database Status Dashboard**: Calculates total subtopics, platinum count, legacy count, and overall progress percentage, outputting a beautiful visual progress bar and category/shard breakdown table.
+4. **Auto-Teardown Gate**: The tracking engine is integrated directly into the `batch_graduate.py` teardown, guaranteeing the central backlog registry self-heals after every successful batch graduation.
 
 ---
 

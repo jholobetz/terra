@@ -166,6 +166,17 @@ def main():
         
     print_table(results)
     
+    # Run the Central Tracking Authority sync to self-heal and print final stats
+    if not any(not r['success'] or not r['shield_secure'] for r in results):
+        print("🤖 [Batch Complete] Triggering Central Tracking Authority sync...")
+        try:
+            subprocess.run(
+                [".venv/bin/python3", "scripts/maintenance/sync_backlog.py"],
+                check=True
+            )
+        except Exception as e:
+            print(f"Warning: Could not trigger Central Tracking Authority sync: {e}")
+    
     # Set exit status
     if any(not r['success'] or not r['shield_secure'] for r in results):
         sys.exit(1)

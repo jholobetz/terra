@@ -12,8 +12,17 @@ def normalize_slug(text):
     return s
 
 def main():
+    # Detect batch mode and extract flags to preserve slug parsing compatibility
+    batch_mode = False
+    if "--batch" in sys.argv:
+        batch_mode = True
+        sys.argv.remove("--batch")
+    elif "-b" in sys.argv:
+        batch_mode = True
+        sys.argv.remove("-b")
+
     if len(sys.argv) < 2:
-        print("Usage: python3 bootstrap_expansion.py <term_name_or_slug> [parent_shard.json]")
+        print("Usage: python3 bootstrap_expansion.py <term_name_or_slug> [parent_shard.json] [--batch | -b]")
         sys.exit(1)
         
     raw_target = sys.argv[1]
@@ -194,22 +203,29 @@ def main():
 """
 
     # Write files to disk
-    with open("draft.html", "w") as f:
+    draft_path = f"draft_{slug}.html" if batch_mode else "draft.html"
+    identities_path_out = f"identities_{slug}.json" if batch_mode else "identities.json"
+
+    with open(draft_path, "w") as f:
         f.write(html_content)
-    print("SCAFFOLD: Successfully wrote draft.html to workspace.")
+    print(f"SCAFFOLD: Successfully wrote {draft_path} to workspace.")
     
-    with open("identities.json", "w") as f:
+    with open(identities_path_out, "w") as f:
         json.dump(identities_data, f, indent=4)
-    print("SCAFFOLD: Successfully wrote identities.json to workspace.")
+    print(f"SCAFFOLD: Successfully wrote {identities_path_out} to workspace.")
     
     # 7. Print operational tips
     print("\n" + "="*60)
     print("SCAFFOLD COMPLETE & READY FOR GRADUATION!")
     print("="*60)
-    print(f"1. Open the file 'draft.html' in your editor and compose the prose.")
-    print(f"2. Open 'identities.json' to review/edit the scaffolded physical identity.")
-    print(f"3. Run the compiler once finished to graduate the subtopic:")
-    print(f"   .venv/bin/python3 scripts/maintenance/commit_node.py {slug} draft.html identities.json")
+    print(f"1. Open the file '{draft_path}' in your editor and compose the prose.")
+    print(f"2. Open '{identities_path_out}' to review/edit the scaffolded physical identity.")
+    if batch_mode:
+        print(f"3. Compile this node alongside others using the batch orchestrator:")
+        print(f"   .venv/bin/python3 scripts/maintenance/batch_graduate.py {slug}")
+    else:
+        print(f"3. Run the compiler once finished to graduate the subtopic:")
+        print(f"   .venv/bin/python3 scripts/maintenance/commit_node.py {slug} {draft_path} {identities_path_out}")
     print("="*60 + "\n")
 
 if __name__ == "__main__":

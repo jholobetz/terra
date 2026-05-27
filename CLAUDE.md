@@ -9,9 +9,13 @@ This document is the **Supreme Authority** for all architectural, stylistic, and
 All Python operations must be executed using the project's local virtual environment (`.venv/`). The system interpreter should never be used for maintenance tasks.
 
 ### 📦 Content Graduation Pipeline
-* **Bootstrap Scaffolding**: Automatically creates topological neighbor transitions in `draft.html` and formats `identities.json` placeholders:
+* **Bootstrap Scaffolding**: Automatically creates topological neighbor transitions in standard or batch-safe modes:
   ```bash
+  # Standard Mode (Default: draft.html & identities.json)
   .venv/bin/python3 scripts/maintenance/bootstrap_expansion.py <subtopic-slug>
+  
+  # Batch Mode (Collision-free: draft_<slug>.html & identities_<slug>.json)
+  .venv/bin/python3 scripts/maintenance/bootstrap_expansion.py <subtopic-slug> --batch
   ```
 * **Retrieve Concept Details**: Crawls shards to safely view JSON metadata without context bloat:
   ```bash
@@ -110,14 +114,15 @@ To maximize efficiency, the refactoring of subtopics can be executed via an auto
 
 ### D. The Token-Saver Batch Protocol
 To maximize token economy and maintain perfect graduation consistency:
-1. **Silent Log Redirection**: The batch orchestrator (`batch_graduate.py`) runs the compiler as an isolated subprocess, writing detailed link and validation logging to `logs/graduations/<slug>.log`. Only the success/warning summary is printed in the terminal, preventing 30k+ token log payloads from inflating conversational memory.
-2. **Collision-Free Templates**: Prevents write collisions by letting developers write slug-specific templates (`draft_<slug>.html` and `identities_<slug>.json`) in parallel. The batch runner automatically resolves, compiles, and deletes them upon success.
-3. **Identity-Lock Merging**: The compiler (`commit_node.py`) is patched to dynamically combine newly registered premium identities with the subtopic's existing legacy formulas:
+1. **Batch-Safe Scaffolding**: Passing the `--batch` or `-b` flag to `bootstrap_expansion.py` outputs slug-specific templates (`draft_<slug>.html` and `identities_<slug>.json`) to prevent placeholder overwrite collisions when preparing multiple nodes concurrently.
+2. **Silent Log Redirection**: The batch orchestrator (`batch_graduate.py`) runs the compiler as an isolated subprocess, writing detailed link and validation logging to `logs/graduations/<slug>.log`. Only the success/warning summary is printed in the terminal, preventing 30k+ token log payloads from inflating conversational memory.
+3. **Collision-Free Compilation**: Automatically resolves, compiles, and deletes slug-specific templates upon graduation, keeping the git status clean.
+4. **Identity-Lock Merging**: The compiler (`commit_node.py`) is patched to dynamically combine newly registered premium identities with the subtopic's existing legacy formulas:
    ```python
    combined_fids = new_fids + [fid for fid in existing_fids if fid not in new_fids]
    ```
    This guarantees that high-density theoretical identities are never lost during graduation.
-4. **Auto-Backlog Sync**: Successful graduates are automatically marked as `completed` inside `subfiles/expansion_backlog.json` at the system level.
+5. **Auto-Backlog Sync**: Successful graduates are automatically marked as `completed` inside `subfiles/expansion_backlog.json` at the system level.
 
 ---
 

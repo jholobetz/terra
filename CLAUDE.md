@@ -21,6 +21,10 @@ All Python operations must be executed using the project's local virtual environ
   ```bash
   .venv/bin/python3 scripts/maintenance/commit_node.py <subtopic-slug> draft.html
   ```
+* **Batch Graduation (Token-Saver Mode)**: Silently compiles multiple drafts sequentially to prevent token bloat, resolves collision-free templates (`draft_<slug>.html`), syncs backlog registries, and prints a visual summary report:
+  ```bash
+  .venv/bin/python3 scripts/maintenance/batch_graduate.py <slug1> [slug2] [slug3] ...
+  ```
 * **Synchronize MariaDB Database (Manual)**: Synchronizes the physical JSON shards on disk with the active SQL database:
   ```bash
   php scripts/maintenance/sync_node.php <subtopic-slug>
@@ -103,6 +107,17 @@ To maximize efficiency, the refactoring of subtopics can be executed via an auto
 1. **Turn 1 (Silent Retrieval)**: Execute native `read_file` calls or retrieve concept details to gather legacy content. Perform the "verify and skip" check internally.
 2. **Turn 2 (Silent Graduation)**: Draft new HTML into `draft.html` and identities into `identities.json`. Trigger the commit by writing a trigger payload to `scripts/maintenance/inbox/`.
 3. **The Watcher Protocol**: `maintenance_watcher.py` autonomously executes `commit_node.py` (SVG rendering, auto-linking, MariaDB sync, and Git commits).
+
+### D. The Token-Saver Batch Protocol
+To maximize token economy and maintain perfect graduation consistency:
+1. **Silent Log Redirection**: The batch orchestrator (`batch_graduate.py`) runs the compiler as an isolated subprocess, writing detailed link and validation logging to `logs/graduations/<slug>.log`. Only the success/warning summary is printed in the terminal, preventing 30k+ token log payloads from inflating conversational memory.
+2. **Collision-Free Templates**: Prevents write collisions by letting developers write slug-specific templates (`draft_<slug>.html` and `identities_<slug>.json`) in parallel. The batch runner automatically resolves, compiles, and deletes them upon success.
+3. **Identity-Lock Merging**: The compiler (`commit_node.py`) is patched to dynamically combine newly registered premium identities with the subtopic's existing legacy formulas:
+   ```python
+   combined_fids = new_fids + [fid for fid in existing_fids if fid not in new_fids]
+   ```
+   This guarantees that high-density theoretical identities are never lost during graduation.
+4. **Auto-Backlog Sync**: Successful graduates are automatically marked as `completed` inside `subfiles/expansion_backlog.json` at the system level.
 
 ---
 

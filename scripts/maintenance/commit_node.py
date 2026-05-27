@@ -85,7 +85,13 @@ def commit_node(slug, html_file, identities_file=None):
     if identities_file:
         new_fids = register_identities(identities_file, slug, orch)
         if new_fids:
-            shard_data[slug]['formula_ids'] = new_fids
+            # Retrieve existing formula IDs safely and combine, preserving uniqueness
+            existing_fids = shard_data[slug].get('formula_ids', [])
+            if not isinstance(existing_fids, list):
+                existing_fids = []
+            combined_fids = new_fids + [fid for fid in existing_fids if fid not in new_fids]
+            shard_data[slug]['formula_ids'] = combined_fids
+            
             # Save formula registry to disk immediately
             with open("app/config/content/formulas.json", "w") as f:
                 json.dump(orch.data["formula_registry"], f, indent=4)

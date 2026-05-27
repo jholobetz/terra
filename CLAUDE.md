@@ -67,6 +67,7 @@ To graduate a subtopic from standard "legacy" to "platinum," it must pass these 
 * **Link Preservation**: When refactoring, developers MUST first extract all existing internal links and ensure they are contextually re-integrated into the new draft.
 * **Technical Density & Tone**: Strictly between **650 to 1,000 words** of dense, senior undergraduate to graduate-level academic prose.
 * **MathJax Frequency**: High density of LaTeX (\( ... \) or \[ ... \]). Prose must calculate, not just describe.
+* **Prose Structural Variety**: The number of paragraphs MUST vary organically between 4 and 6 (or more) depending on the complexity of the topic. The developer is strictly forbidden from standardizing on a fixed paragraph count across multiple subtopics in a sprint. The division of paragraphs must reflect the logical structure of the argument.
 
 ### B. Topological & Symmetrical Symmetries
 * **Small-World Connectivity**: Every Platinum node must establish:

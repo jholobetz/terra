@@ -596,6 +596,10 @@ class PhysicsOrchestrator:
 
     def convert_to_svg(self, clean_latex, is_display=False, color='#FFD700'):
         """Converts a clean LaTeX string (no delimiters) to SVG using the persistent MathJax daemon or fallback."""
+        import re
+        # Clean double-escaped backslashes before LaTeX commands (e.g. \\mu -> \mu)
+        clean_latex = re.sub(r'\\{2,}([a-zA-Z])', r'\\\1', clean_latex)
+
         cache_key = f"{clean_latex}_{is_display}_{color}"
         if cache_key in self.svg_cache:
             return self.svg_cache[cache_key]

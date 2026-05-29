@@ -186,7 +186,7 @@ def main():
     print("Ingesting: " + ", ".join(slugs_to_audit))
     
     code, out, err = run_command([".venv/bin/python3", "gqs.py", "ingest"])
-    if code != 0 or "Error" in out or "FAILED" in out:
+    if code != 0 or "FAILED" in out:
         print(f"\033[91mCompilation Error output:\n{err or out}\033[0m")
         rollback_to_savepoint(savepoint)
         

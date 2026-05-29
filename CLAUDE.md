@@ -27,6 +27,16 @@ Our unified developer CLI manages the entire GQS pipeline lifecycle, offering au
 .venv/bin/python3 gqs.py refill [N]
 ```
 
+### 🛡️ Guarded Sprint Orchestrator (Token-Saver & Zero-Interruption)
+Consolidates the entire GQS cycle into a single transaction, automating syntax checking, compilation, and post-graduation audits with local git backups and self-healing rollbacks:
+```bash
+# Execute an autonomous, quality-guarded sprint for N stack targets
+.venv/bin/python3 scripts/maintenance/run_gqs_sprint.py --count <N>
+
+# Run static syntax and OPS style checks without compiling (Dry-Run Mode)
+.venv/bin/python3 scripts/maintenance/run_gqs_sprint.py --count <N> --dry-run
+```
+
 ### 📦 Content Graduation Pipeline
 * **Bootstrap Scaffolding**: Automatically creates topological neighbor transitions in standard or batch-safe modes:
   ```bash
@@ -163,6 +173,17 @@ To scale content ingestion while maintaining absolute OPS qualitative compliance
 3. **Compliance-Guaranteed Scaffolding (`gqs.py template <N>`)**: Scaffolds the exact schema-compliant JSON structures inside `subfiles/batch_payload.json` for active queue items, pre-annotated with deterministic paragraph boundaries and bold-link target guidelines.
 4. **Subprocess Ingestion (`gqs.py ingest` -> `batch_ingest.py`)**: Sequentially compiles drafted prose against stack metadata, auto-renders MathJax equations to SVGs, updates relational shards, marks backlog items completed, pops them from the stack, and refills the stack.
 
+### G. Guarded Sprint Orchestrator (`run_gqs_sprint.py`)
+To prevent quality drift under zero-interruption autonomous runs, the GQS pipeline is wrapped in a strict three-stage transaction loop:
+1. **Pre-Flight Git Savepoint**: Creates an automated git commit snapshot of the clean workspace before launching operations, recording a precise rollback hash.
+2. **Pre-Compilation Static Syntax Guards**: Scans `subfiles/batch_payload.json` to verify that all drafted prose strictly adheres to the OPS Gates (word limits 650–1,000, 4–6 organic paragraphs, no forbidden starter definitions, no raw LaTeX leakages, no markdown lists or headers). *Aborts if style gates are breached.*
+3. **In-Flight Compilation Arrest**: Intercepts `gqs.py ingest` exit codes. If any compilation or MathJax pre-rendering fails, the script triggers an automatic rollback.
+4. **Post-Compilation Integrity Audits**: Invokes `integrity_shield.py` and `orchestrator.py` on the graduated shards. Any broken links, duplicated entries, or context affinity leaks will trigger an automatic rollback:
+   ```bash
+   git reset --hard <savepoint-hash>
+   ```
+5. **Git Success Commit**: Stages and commits all metadata and shard updates into a single transaction on success, restoring the repository to a clean state.
+
 ---
 
 ## 🗺️ 4. Project Roadmap & Topological Growth
@@ -183,6 +204,9 @@ To ensure maximum graph density, the project utilizes a continuous audit of phys
 
 ## 🏆 5. Recent Sprints & Milestones
 
+* **May 28, 2026**: Completed **Sprint 4 (Continuous Structural Evolution)**: Graduated **`stellar-lifecycle`**, **`hierarchy-problem`**, **`bell-inequality`**, **`source-of-gravity`**, **`maxwell-faraday-law`**, and **`von-neumann-chain`** in a single autonomous guarding run, reaching 34.47% completion.
+* **May 28, 2026**: Completed **Sprint 3 (Deep Energy & Matter Core)**: Graduated **`cold-dark-matter`**, **`circular-loop`**, and **`chirality`** to standard Platinum, verifying custom TF-IDF hub signatures.
+* **May 28, 2026**: Completed **Sprint 2 (Geometry, Bounds & Relativity)**: Graduated **`extra-dimensions`**, **`singularity-theorems`**, and **`constancy-of-light-speed`** to standard Platinum.
 * **May 26, 2026**: Graduated **`string-theory`** (String Theory and M-Theory) to standard Platinum in `theoretical-physics.json`. Overwrote raw Polyakov actions to SVG vectors and resolved topological constraints.
 * **May 26, 2026**: Graduated **`epistemic-limit`** (The Epistemic Limit of the Big Bang) to standard Platinum in `philosophy-of-physics.json`, resolving Planck boundaries and non-local realism limits.
 * **May 26, 2026**: Graduated **`relativistic-quantum-field-theory`** (Relativistic Quantum Field Theory) to standard Platinum in `standard-model.json`, adding second quantization operators and Feynman integrals.

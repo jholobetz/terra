@@ -210,28 +210,10 @@ To graduate the remaining 939 pending legacy nodes to the Organic Platinum Stand
 
 ---
 
-## 🏆 5. Recent Sprints & Milestones
+## 🏆 5. Session Progress & Tracking
 
-* **May 29, 2026**: Completed **Sprint 9 (Triangulations, Seeing Limits, and Polytropes)**: Graduated **`parsec`** (Trigonometric Parallax Distance Relation), **`atmospheric-seeing`** (Fried Parameter Angular Seeing Limit), and **`lane-emden-equation`** (Lane-Emden Equation for Polytropic Stellar Structures) in a single autonomous guarding run, reaching **41.48%** completion.
-* **May 29, 2026**: Completed **Sprint 8 (Nuclear Stability, Resonances, and Capture Chains)**: Graduated **`iron-peak`** (Nuclear Binding Energy per Nucleon), **`nuclear-resonance`** (Breit-Wigner Resonance Formula), and **`s-process`** (s-Process Abundance Evolution Equation) in a single autonomous guarding run, reaching **41.29%** completion.
-* **May 29, 2026**: Completed **Sprint 7 (Action Orbits, Lenses, and Mass Discrepancies)**: Graduated **`old-quantum-theory`** (Bohr-Sommerfeld Quantization Rule), **`gravitational-lensing`** (Lens Equation), and **`mass-defect`** (Nuclear Binding Energy and Mass Defect) in a single autonomous guarding run, reaching **41.10%** completion.
-* **May 29, 2026**: Completed **Sprint 6 (Scales, Spin Networks, and Virtual Displacements)**: Graduated **`renormalization-group`** (Callan-Symanzik Equation), **`quantized`** (Area Operator Eigenvalues), and **`virtual-work`** (Principle of Virtual Work) in a single autonomous guarding run, reaching **40.91%** completion.
+Session progress is managed entirely dynamically by the system. AI co-developers and humans should **never** manually log sprint milestones in this file. Instead, view the live progress dashboard, shard completion percentages, and active target queue at any time by running:
 
-* **May 29, 2026**: Completed **Sprint 5 (Lorentz, Totality, and Variational Trajectories)**: Graduated **`retarded-waves`** (Inhomogeneous Wave Identity), **`level-iv-multiverse`** (Totality), and **`history`** (Propagator) in a single autonomous guarding run, reaching **40.72%** completion.
-
-
-* **May 28, 2026**: Completed **Sprint 4 (Continuous Structural Evolution)**: Graduated **`stellar-lifecycle`**, **`hierarchy-problem`**, **`bell-inequality`**, **`source-of-gravity`**, **`maxwell-faraday-law`**, and **`von-neumann-chain`** in a single autonomous guarding run, reaching 34.47% completion.
-* **May 28, 2026**: Completed **Sprint 3 (Deep Energy & Matter Core)**: Graduated **`cold-dark-matter`**, **`circular-loop`**, and **`chirality`** to standard Platinum, verifying custom TF-IDF hub signatures.
-* **May 28, 2026**: Completed **Sprint 2 (Geometry, Bounds & Relativity)**: Graduated **`extra-dimensions`**, **`singularity-theorems`**, and **`constancy-of-light-speed`** to standard Platinum.
-* **May 26, 2026**: Graduated **`string-theory`** (String Theory and M-Theory) to standard Platinum in `theoretical-physics.json`. Overwrote raw Polyakov actions to SVG vectors and resolved topological constraints.
-* **May 26, 2026**: Graduated **`epistemic-limit`** (The Epistemic Limit of the Big Bang) to standard Platinum in `philosophy-of-physics.json`, resolving Planck boundaries and non-local realism limits.
-* **May 26, 2026**: Graduated **`relativistic-quantum-field-theory`** (Relativistic Quantum Field Theory) to standard Platinum in `standard-model.json`, adding second quantization operators and Feynman integrals.
-* **May 26, 2026**: Graduated **`inertial-frames`** (Inertial Frames of Reference) to standard Platinum in `relativity.json`, bridging Galilean invariants and local pseudo-force vanishings.
-* **May 26, 2026**: Graduated **`cosmic-budget`** (The Cosmic Budget) to standard Platinum in `astrophysics.json`, linking Friedmann density parameters and critical densities.
-* **May 26, 2026**: Graduated **`energy-density`** (Energy Density of Fields) to standard Platinum in `electromagnetism.json`, establishing classical field limits.
-* **May 25, 2026**: Canonicalized the sprint tracker on `subfiles/active_expansion_sprint.json` (retiring `sprint.json`, archived as `subfiles/sprint_phase_0_hub_overviews.json`) and rewired scripts. Added **DF ceiling (Upgrade D)** via `DF_CEILING_PCT = 0.60`.
-* **May 25, 2026**: Migrated 46 misplaced shard entries to their resolved hubs — 27 cosmology nodes (philosophy-of-physics → astrophysics), 16 stat-mech nodes (theoretical-physics → thermodynamics-statistical-mechanics), and the 3-node metric-tensor cluster (classical-mechanics → relativity).
-* **May 25, 2026**: Scrubbed 6 corpus-wide template artifacts — `university-level` (1,667 occurrences in legacy content) plus five platinum-content malformations: `selectioning`, `dictacted`, `reproductioning`, `concetto`, and `seleccioning`.
-* **May 24, 2026**: Fully completed **Phase 9 (Sprint 2, Node 1)**: Graduated **`expansion-history`** (Expansion History of the Universe) to standard Platinum in `astrophysics.json`.
-* **May 24, 2026**: Refactored the QA validation pipeline in `orchestrator.py`, implementing **TF-IDF dynamic signatures (Upgrade A)**, **full 12-hub affinity validation (Upgrade B)**, and **suffix-matching regex bounds (Upgrade C)**.
-* **May 24, 2026**: Completed **Sprint 1 (Quantum Foundations & Boundary Conditions)**: Graduated **`wave-function`**, **`born-interpretation`**, **`fermions`**, and **`past-hypothesis`** to standard Platinum.
+```bash
+.venv/bin/python3 gqs.py status
+```

@@ -201,10 +201,18 @@ To ensure maximum graph density, the project utilizes a continuous audit of phys
 * **Phase B: Backlog Population (Organic Expansion)**: Bold terms that appear across three or more independent nodes but lack a dedicated subtopic in the registry are identified as "Expansion Candidates." High-frequency candidates (20+ nodes, e.g., `Block Universe`, `Big Bang`) are prioritized for curriculum expansion.
 * **Progress Tracking**: Progress is tracked in `subfiles/hub_tracker.json`. Current Hub status: 100% Graduated.
 
+### C. Project Goal: 100% OPS Token-Aware Graduation Roadmap
+To graduate the remaining 939 pending legacy nodes to the Organic Platinum Standard, the project adheres to a token-aware and rate-limit conscious goal:
+* **Context Accumulation & Compaction Safe Boundary**: Sprints are batched in groups of 3 nodes (~6,500 tokens/sprint). Context compaction and resettlement is scheduled every 15 sprints (~45 nodes) with a 5-minute overhead window to keep conversational intelligence sharp.
+* **API Rate-Limit Cooling**: Incorporates a 10-second cooling latency per sprint to completely bypass RPM/TPM transient limitations.
+* **Refined Continuous Execution Time**: **~11.32 hours** of active, uninterrupted pipeline processing.
+* **Refined Collaborative Calendar Timeline**: **~10.5 days** of active pairing at standard daily rhythms, ensuring mathematically localized identities are curators-driven and qualitatively rich.
+
 ---
 
 ## 🏆 5. Recent Sprints & Milestones
 
+* **May 29, 2026**: Completed **Sprint 5 (Lorentz, Totality, and Variational Trajectories)**: Graduated **`retarded-waves`** (Inhomogeneous Wave Identity), **`level-iv-multiverse`** (Totality), and **`history`** (Propagator) in a single autonomous guarding run, reaching **40.72%** completion.
 * **May 28, 2026**: Completed **Sprint 4 (Continuous Structural Evolution)**: Graduated **`stellar-lifecycle`**, **`hierarchy-problem`**, **`bell-inequality`**, **`source-of-gravity`**, **`maxwell-faraday-law`**, and **`von-neumann-chain`** in a single autonomous guarding run, reaching 34.47% completion.
 * **May 28, 2026**: Completed **Sprint 3 (Deep Energy & Matter Core)**: Graduated **`cold-dark-matter`**, **`circular-loop`**, and **`chirality`** to standard Platinum, verifying custom TF-IDF hub signatures.
 * **May 28, 2026**: Completed **Sprint 2 (Geometry, Bounds & Relativity)**: Graduated **`extra-dimensions`**, **`singularity-theorems`**, and **`constancy-of-light-speed`** to standard Platinum.

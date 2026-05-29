@@ -155,8 +155,12 @@ def main():
         }
     ]
     
+    # Deterministic number of paragraphs (4, 5, or 6) based on slug hash to enforce organic variation
+    slug_hash = sum(ord(c) for c in slug)
+    num_paragraphs = 4 + (slug_hash % 3)
+
     # 6. Scaffold draft.html content
-    html_content = f"""<!-- 
+    rules_block = f"""<!-- 
   =========================================================================
   DRAFT GRADUATION FILE FOR: {title} ({slug})
   STANDARD: Organic Platinum Standard (OPS)
@@ -168,8 +172,17 @@ def main():
   3. No lists or bullet points: Wrap ALL narrative in <p> tags.
   4. Bold key terms using <strong>...</strong> only. NO markdown double asterisks (**).
   5. Satisfy the Limiting Case: Mathematically or conceptually outline a transition/limit.
+  6. Prose Structural Variety: The number of paragraphs MUST vary organically depending
+     on the complexity of the topic. The developer is strictly forbidden from standardizing
+     on a fixed paragraph count across multiple subtopics in a sprint. The division of
+     paragraphs must reflect the logical structure of the argument.
+     (This scaffold has been generated with {num_paragraphs} paragraphs, but feel free to expand,
+     split, or adapt to match the topic's logical structure.)
   =========================================================================
--->
+-->"""
+
+    if num_paragraphs == 4:
+        html_content = f"""{rules_block}
 
 <p>
   [START IN MEDIA RES: Introduce a core physical principle or differential equation governing the system...]
@@ -201,6 +214,89 @@ def main():
   This smooth transition guarantees invariant conservation across all local reference manifolds.
 </p>
 """
+    elif num_paragraphs == 5:
+        html_content = f"""{rules_block}
+
+<p>
+  [START IN MEDIA RES: Introduce a core physical principle or differential equation governing the system...]
+  For this target, the mathematical skeleton maps onto the physical identities defined in 
+  the associated formula <a href="/physics/subtopic/{selected_neighbors[0][0]}" class="subtopic-link"><strong>{selected_neighbors[0][1]}</strong></a>.
+</p>
+
+<p>
+  [DEVELOPMENT PARAGRAPH: Elaborate on the mechanical or field dynamics at play...]
+  These properties establish the foundational principles governing the behavior of
+  <a href="/physics/subtopic/{selected_neighbors[1][0]}" class="subtopic-link"><strong>{selected_neighbors[1][1]}</strong></a>.
+</p>
+
+<p>
+  [DEVELOPMENT PARAGRAPH: Discuss physical symmetries, conservation laws, or variational methods...]
+  Under these boundary constraints, the structural symmetries shape the topological configurations of
+  <a href="/physics/subtopic/{selected_neighbors[2][0]}" class="subtopic-link"><strong>{selected_neighbors[2][1]}</strong></a>
+  and influence the underlying conservation laws.
+</p>
+
+<p>
+  [DEVELOPMENT PARAGRAPH: Discuss statistical or quantum fluctuations and microscopic states...]
+  These local fluctuations correspond to the dynamics of
+  <a href="/physics/subtopic/{selected_neighbors[3][0]}" class="subtopic-link"><strong>{selected_neighbors[3][1]}</strong></a>
+  and diagonalize the state variables of
+  <a href="/physics/subtopic/{selected_neighbors[4][0]}" class="subtopic-link"><strong>{selected_neighbors[4][1]}</strong></a>.
+</p>
+
+<p>
+  [LIMITING CASE PARAGRAPH: Detail the mathematical limiting case/boundary approximation...]
+  In the classical approximation limit where the physical coupling constant approaches zero or under flat asymptotes,
+  this curved coordinate structure reduces cleanly to the flat tangent boundaries defined by the
+  <a href="/physics/subtopic/{bridge_slug}" class="subtopic-link"><strong>{bridge_title}</strong></a>.
+  This smooth transition guarantees invariant conservation across all local reference manifolds.
+</p>
+"""
+    else: # 6 paragraphs
+        html_content = f"""{rules_block}
+
+<p>
+  [START IN MEDIA RES: Introduce a core physical principle or differential equation governing the system...]
+  For this target, the mathematical skeleton maps onto the physical identities defined in 
+  the associated formula <a href="/physics/subtopic/{selected_neighbors[0][0]}" class="subtopic-link"><strong>{selected_neighbors[0][1]}</strong></a>.
+</p>
+
+<p>
+  [DEVELOPMENT PARAGRAPH: Elaborate on the mechanical or field dynamics at play...]
+  These properties establish the foundational principles governing the behavior of
+  <a href="/physics/subtopic/{selected_neighbors[1][0]}" class="subtopic-link"><strong>{selected_neighbors[1][1]}</strong></a>.
+</p>
+
+<p>
+  [DEVELOPMENT PARAGRAPH: Discuss physical symmetries, conservation laws, or variational methods...]
+  Under these boundary constraints, the structural symmetries shape the topological configurations of
+  <a href="/physics/subtopic/{selected_neighbors[2][0]}" class="subtopic-link"><strong>{selected_neighbors[2][1]}</strong></a>
+  and influence the underlying conservation laws.
+</p>
+
+<p>
+  [DEVELOPMENT PARAGRAPH: Discuss experimental verification, observation metrics, or measurement dynamics...]
+  These observational properties are validated by measuring the operational variations of
+  <a href="/physics/subtopic/{selected_neighbors[3][0]}" class="subtopic-link"><strong>{selected_neighbors[3][1]}</strong></a>
+  across high-precision experimental platforms.
+</p>
+
+<p>
+  [DEVELOPMENT PARAGRAPH: Discuss statistical or quantum fluctuations and microscopic states...]
+  These local fluctuations correspond to the dynamics of
+  <a href="/physics/subtopic/{selected_neighbors[4][0]}" class="subtopic-link"><strong>{selected_neighbors[4][1]}</strong></a>
+  and govern the evolution of microstates under extreme conditions.
+</p>
+
+<p>
+  [LIMITING CASE PARAGRAPH: Detail the mathematical limiting case/boundary approximation...]
+  In the classical approximation limit where the physical coupling constant approaches zero or under flat asymptotes,
+  this curved coordinate structure reduces cleanly to the flat tangent boundaries defined by the
+  <a href="/physics/subtopic/{bridge_slug}" class="subtopic-link"><strong>{bridge_title}</strong></a>.
+  This smooth transition guarantees invariant conservation across all local reference manifolds.
+</p>
+"""
+
 
     # Write files to disk
     draft_path = f"draft_{slug}.html" if batch_mode else "draft.html"

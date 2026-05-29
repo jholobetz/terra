@@ -8,6 +8,25 @@ This document is the **Supreme Authority** for all architectural, stylistic, and
 
 All Python operations must be executed using the project's local virtual environment (`.venv/`). The system interpreter should never be used for maintenance tasks.
 
+### 🎛️ Unified Session Controller (Recommended)
+Our unified developer CLI manages the entire GQS pipeline lifecycle, offering automatic backlog synchronization, status dashboards, structure-compliant templating, and compilation:
+```bash
+# Check current database metrics, active drafts, and next priority targets
+.venv/bin/python3 gqs.py status
+
+# Automatically scaffold the next N GQS targets into subfiles/batch_payload.json
+.venv/bin/python3 gqs.py template <N>
+
+# Graduate and compile all drafted targets in subfiles/batch_payload.json
+.venv/bin/python3 gqs.py ingest
+
+# Run a structural and formula validation audit (site-wide or single slug)
+.venv/bin/python3 gqs.py audit [slug]
+
+# Replenish the pre-resolved GQS stack depth and sync the active sprint
+.venv/bin/python3 gqs.py refill [N]
+```
+
 ### 📦 Content Graduation Pipeline
 * **Bootstrap Scaffolding**: Automatically creates topological neighbor transitions in standard or batch-safe modes:
   ```bash
@@ -68,6 +87,7 @@ To graduate a subtopic from standard "legacy" to "platinum," it must pass these 
 * **Technical Density & Tone**: Strictly between **650 to 1,000 words** of dense, senior undergraduate to graduate-level academic prose.
 * **MathJax Frequency**: High density of LaTeX (\( ... \) or \[ ... \]). Prose must calculate, not just describe.
 * **Prose Structural Variety**: The number of paragraphs MUST vary organically between 4 and 6 (or more) depending on the complexity of the topic. The developer is strictly forbidden from standardizing on a fixed paragraph count across multiple subtopics in a sprint. The division of paragraphs must reflect the logical structure of the argument.
+* **Organically Distributed Linkages**: Symmetrical subtopic links must be distributed organically across multiple paragraphs (e.g., paragraphs 1 to N-1). Do NOT bunch all neighbor bolds/links in a single paragraph (especially the first paragraph), as it creates visual clutter and disrupts reading flow. The GQS template builder automatically shards neighbor lists across paragraphs, and agents must strictly adhere to these distributed guidelines.
 
 ### B. Topological & Symmetrical Symmetries
 * **Small-World Connectivity**: Every Platinum node must establish:
@@ -135,6 +155,13 @@ To ensure absolute mathematical consistency across all source registries and pro
 2. **Self-Healing Backlog Registry**: It compares disk truth against `subfiles/expansion_backlog.json` and dynamically heals desynchronizations, setting status to `"completed"` for disk Platinum entries and `"pending"` for legacy ones.
 3. **Database Status Dashboard**: Calculates total subtopics, platinum count, legacy count, and overall progress percentage, outputting a beautiful visual progress bar and category/shard breakdown table.
 4. **Auto-Teardown Gate**: The tracking engine is integrated directly into the `batch_graduate.py` teardown, guaranteeing the central backlog registry self-heals after every successful batch graduation.
+
+### F. The Graduation Queue Stack (GQS) Pipeline
+To scale content ingestion while maintaining absolute OPS qualitative compliance, the project organizes work via a central queue stack pre-computed in `subfiles/graduation_queue_stack.json`:
+1. **Pre-Computation (`generate_sprint_queue.py`)**: Automatically resolves target metrics (deterministic paragraph counts, neighbor linkages, cross-hub bridges, and registered math identities) for the top pending backlog items based on frequency.
+2. **Unified CLI Controller (`gqs.py`)**: Consolidates backlog synchronization, templating, ingestion, and validation into a single command-line interface. Keeps `subfiles/active_expansion_sprint.json` in absolute lockstep.
+3. **Compliance-Guaranteed Scaffolding (`gqs.py template <N>`)**: Scaffolds the exact schema-compliant JSON structures inside `subfiles/batch_payload.json` for active queue items, pre-annotated with deterministic paragraph boundaries and bold-link target guidelines.
+4. **Subprocess Ingestion (`gqs.py ingest` -> `batch_ingest.py`)**: Sequentially compiles drafted prose against stack metadata, auto-renders MathJax equations to SVGs, updates relational shards, marks backlog items completed, pops them from the stack, and refills the stack.
 
 ---
 

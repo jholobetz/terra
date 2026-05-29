@@ -13,6 +13,7 @@ To ensure seamless integration with the `batch_ingest.py` utility, all subagent 
 5. Hero Formula: Centered \[ ... \] with an Interpretation paragraph.
 6. Technical Level: Graduate physics.
 7. Outgoing Links: 5+ per subtopic.
+8. Prose Structural Variety: The number of paragraphs MUST vary organically between 4 and 6 (or more) depending on the complexity of the topic. Strictly forbid standardizing on a fixed paragraph count (e.g. exactly 4 paragraphs) across multiple subtopics. The division of paragraphs must reflect the logical structure of the argument.
 
 ### OUTPUT FORMAT:
 Return a SINGLE, valid JSON object. Do not include any text before or after the JSON block.

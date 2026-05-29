@@ -768,6 +768,12 @@ class PhysicsOrchestrator:
         """Converts a batch of LaTeX formulas to SVG in a single Node.js process."""
         if not formula_batch: return {}
         
+        # Clean double-escaped backslashes in all formulas in the batch
+        import re
+        for key, item in formula_batch.items():
+            if "latex" in item:
+                item["latex"] = re.sub(r'\\{2,}([a-zA-Z])', r'\\\1', item["latex"])
+
         # formula_batch: { cache_key: { "latex": "...", "is_display": bool } }
         try:
             input_json = json.dumps(formula_batch)
@@ -874,6 +880,8 @@ class PhysicsOrchestrator:
                 for latex in math_blocks:
                     # Strip delimiters for cleaner cache and engine processing
                     clean_latex = re.sub(r'^\\{1,2}\[|^\\{1,2}\(|\\{1,2}\]$|\\{1,2}\)$', '', latex).strip()
+                    # Clean double-escaped backslashes before LaTeX commands (e.g. \\mu -> \mu)
+                    clean_latex = re.sub(r'\\{2,}([a-zA-Z])', r'\\\1', clean_latex)
                     is_display = "\\[" in latex or "\\\\[" in latex
                     cache_key = f"{clean_latex}_{is_display}_{color}"
                     if cache_key not in self.svg_cache:

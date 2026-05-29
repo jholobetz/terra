@@ -93,6 +93,13 @@ To graduate a subtopic from standard "legacy" to "platinum," it must pass these 
   * *Forbidden*: Lists, bullets, or numbered elements (`<ul>`, `<li>`, `<ol>`).
   * *Forbidden*: Fragmented headers or summaries inside content strings.
   * *Syntax Purity*: Wrap all paragraphs in `<p>` tags. Bold key terms using `<strong>` tags only. **Strict ban on markdown double asterisks (`**`) or underscores (`__`) inside JSON content strings.**
+* **The "Anti-Formulaic Integration" Rule**: Formulaic introductory phrases for mathematical equations (e.g., *"This is defined by the following equation..."*, *"The formula for this is..."*, or *"The Wigner function can be written as..."*) are strictly forbidden. Mathematical equations must be woven organically as grammatical continuations of physical sentences (e.g., *"...which yields the Majorana mass term, written mathematically as \(\mathcal{L} = ...\), that breaks..."*).
+* **Positional Variation for Equations**: Primary mathematical identities must not be constrained to a single fixed position (such as always residing in Paragraph 2). The formula must be placed where it logically belongs in the physical narrative—whether as a defining axiom early on, an intermediate step of a derivation, or an observational metric at the close of the narrative.
+* **Immediate Physical Coupling**: No mathematical formula can sit isolated. Every term, coefficient, and operator within a LaTeX block must be coupled directly to a physical mechanism described in the surrounding prose, explaining its precise role in the system.
+* **Rigorous Pure-Prose (Zero-Formula) Guidelines**: Conceptual, philosophical, or interpretative nodes that do not utilize equations must establish alternative standards of academic rigor:
+  1. Maintain university-level density using high-precision physical/philosophical terminology (e.g., *counterfactual definiteness*, *ontological commitment*, *superselection sectors*).
+  2. Implement formal logical syllogisms or thought experiments as structural surrogates for mathematical derivations.
+  3. Increase topological bridge connectivity to contextualize and map the relationships between neighboring mathematical nodes.
 * **Link Preservation**: When refactoring, developers MUST first extract all existing internal links and ensure they are contextually re-integrated into the new draft.
 * **Technical Density & Tone**: Strictly between **650 to 1,000 words** of dense, senior undergraduate to graduate-level academic prose.
 * **MathJax Frequency**: High density of LaTeX (\( ... \) or \[ ... \]). Prose must calculate, not just describe.

@@ -229,6 +229,20 @@ class IntegrityShield:
                 if re.search(r'\\{1,2}\[|\\{1,2}\(|\\{1,2}\]|\\{1,2}\)', content):
                     self.errors.append(f"SSR VIOLATION: [{slug}] is Platinum but contains raw LaTeX delimiters. Pre-rendering required.")
 
+    def check_math_rendering(self):
+        """Ensures all display math blocks in Platinum subtopics are fully compiled to SVGs."""
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub: continue
+            if sub.get("standard") == "platinum":
+                content = sub.get("content", "")
+                # Ensure all display math blocks contain <svg> tags and do not leak raw LaTeX
+                math_displays = re.findall(r'<div class="math-display"[^>]*>(.*?)</div>', content, re.DOTALL)
+                for i, display in enumerate(math_displays):
+                    if "<svg" not in display:
+                        self.errors.append(f"MATH RENDERING VIOLATION: [{slug}] is Platinum but has a raw LaTeX display math equation (missing SVG): '{display[:80]}...'")
+
     def run(self):
         print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
         print(f"Directory: {self.content_dir}")
@@ -244,6 +258,8 @@ class IntegrityShield:
         self.check_entities()
         self.check_links()
         self.check_latex_formatting()
+        self.check_math_rendering()
+
         
         print(f"Stats:  {self.stats['links']} links, {self.stats['formulas']} formula refs.")
         

@@ -105,6 +105,13 @@ def run_syntax_guards(payload_path):
         if "**" in content or "__" in content:
             violations.append(f"[{slug}] Markdown residue violation: double asterisks (**) or underscores (__) are forbidden. Use <strong> instead.")
             
+        # Check for un-delimited display math blocks
+        math_displays_raw = re.findall(r'<div class="math-display"[^>]*>(.*?)</div>', content, re.DOTALL)
+        for i, display in enumerate(math_displays_raw):
+            if not re.search(r'^\\{1,2}\[|^\\{1,2}\(|^\\{1,2}\]|\\{1,2}\]$|\\{1,2}\)$', display.strip()):
+                violations.append(f"[{slug}] Math display violation: Equation inside <div class=\"math-display\"> is missing standard delimiters \\\\ [ and \\\\ ]. Delimiters are required for the SVG compiler to recognize and process the LaTeX.")
+
+            
         # 3. Word count check (650 to 1,000 words)
         content_clean = re.sub(r"<[^>]*>", " ", content)  # Strip tags
         content_clean = re.sub(r"\\\(.*?\\\)|\\\[.*?\\\]", " ", content_clean) # Strip LaTeX blocks for word counting

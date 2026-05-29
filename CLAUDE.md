@@ -104,7 +104,7 @@ To graduate a subtopic from standard "legacy" to "platinum," it must pass these 
   * Minimum of **5 outgoing links** to neighboring subtopics.
   * Minimum of **2 incoming links** from other subtopics.
   * Minimum of **1 cross-hub bridge** connecting to a completely different Pillar Hub (e.g., Astrophysics linking to Thermodynamics).
-* **The Identity Lock & Organic Curation**: A node is strictly forbidden from graduating if it contains fewer than **one (1) registered theoretical identity**. Curation of equations registered in the "Key Theoretical Identities" section must be organic (1 to N) and driven by the mathematical skeleton required for a university-level understanding. Every registered identity must meet at least one of these criteria:
+* **Organic Formula Integration**: Mathematical equations are integrated in a purely organic, topic-driven manner rather than being dictated by a rigid "Identity Lock." Conceptual, interpretive, or philosophical subtopics (e.g., *scientific-realism*, *anthropic-principle*, *epistemic-boundary*) are graduated as high-density qualitative academic prose with zero registered formulas. Mathematical or physical law subtopics (e.g., *rotation-velocity*, *dirac-equation*) must register high-density LaTeX equations that naturally anchor the mathematical description. Curation of equations must be driven entirely by the logical requirements of the topic at a university level, satisfying the following criteria when formulas are included:
   1. **Defining Law**: Establishes the primary physical behavior.
   2. **Limiting Case**: Demonstrates the connection to a classical or simpler regime.
   3. **Operational Metric**: Defines the primary observational or experimental relationship.

@@ -174,10 +174,11 @@ def generate_template(num_items=1):
             p_idx = eligible_p_indices[idx % len(eligible_p_indices)]
             p_neighbors[p_idx].append(n_title)
         
-        # Dynamically vary the positions of the math identity and the cross-hub bridge
+        # Fully unconstrained dynamic allocation across the entire range [1, paragraphs]
+        # This eliminates the Paragraph 3 clustering bottleneck while maintaining zero overlap.
         slug_hash = sum(ord(c) for c in slug)
-        math_p_index = 2 + (slug_hash % (paragraphs - 2))
-        bridge_p_index = 3 if math_p_index != 3 else 2
+        math_p_index = 1 + (slug_hash % paragraphs)
+        bridge_p_index = 2 if math_p_index != 2 else 3
         
         # Build paragraph templates
         p_list = []
@@ -202,14 +203,20 @@ def generate_template(num_items=1):
                 )
             else:
                 p_text = f"Paragraph {i}/{paragraphs}: Technical expansion on the physical/mathematical framework."
-                if i == math_p_index:
-                    p_text += f" Integrate the key mathematical identity lock: {identity_title} in a centered display math block, written mathematically as <div class=\"math-display\" style=\"text-align: center; margin: 25px 0;\">\\\\[ {identity_eq} \\\\]</div>."
-                if i == bridge_p_index:
-                    p_text += f" Establish the cross-hub connectivity bridge to the topic of {bridge_title}."
-                
                 n_list = p_neighbors[i]
                 if n_list:
                     p_text += f" Bold the first mention of neighbor terms using <strong>[Term]</strong>: {', '.join(n_list)}."
+            
+            # Append dynamic identity and bridge locks to ANY paragraph index (including 1 and N)
+            if i == math_p_index:
+                p_text += (
+                    f" Integrate the key mathematical identity lock: {identity_title} in a centered display math block, "
+                    f"written mathematically as <div class=\"math-display\" style=\"text-align: center; margin: 25px 0;\">\\\\[ {identity_eq} \\\\]</div>. "
+                    f"CRITICAL: Weave the equation organically; DO NOT introduce it using formulaic phrases like 'written mathematically as' "
+                    f"and DO NOT follow it with a glossary-style list starting with 'where [symbol] is...'."
+                )
+            if i == bridge_p_index:
+                p_text += f" Establish the cross-hub connectivity bridge to the topic of {bridge_title}."
             
             p_list.append(f"<p>[{p_text}]</p>")
             

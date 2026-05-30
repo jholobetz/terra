@@ -14,6 +14,60 @@ from datetime import datetime
 GQS_PATH = "subfiles/graduation_queue_stack.json"
 PAYLOAD_PATH = "subfiles/batch_payload.json"
 ACTIVE_SPRINT_PATH = "subfiles/active_expansion_sprint.json"
+HEALTH_PATH = "system_health.json"
+
+
+def print_quality_breakdown(health_path=HEALTH_PATH):
+    """Surface the platinum classification + qualitative violations from
+    system_health.json so users see both the CTA-aligned (flagged) count
+    and the strict (organic) count in one place. Silent no-op if the
+    file is missing or malformed — the CTA dashboard above is the
+    authoritative live source.
+    """
+    if not os.path.exists(health_path):
+        return
+    try:
+        with open(health_path) as f:
+            health = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return
+
+    sc = health.get("platinum_scorecard")
+    if not sc:
+        return
+
+    integrity = health.get("integrity_summary", {})
+    last = health.get("last_updated", "unknown")
+
+    flagged = sc.get("flagged_platinum_count", 0)
+    flagged_pct = sc.get("flagged_platinum_percentage", 0)
+    organic = sc.get("organic_platinum_count", 0)
+    organic_pct = sc.get("organic_platinum_percentage", 0)
+    flag_viol = sc.get("flag_violations", 0)
+    pseudo = sc.get("pseudo_platinum_count", 0)
+
+    print()
+    print("=" * 80)
+    print(f" QUALITY BREAKDOWN (system_health.json @ {last}) ".center(80, "="))
+    print("=" * 80)
+    print("  PLATINUM CLASSIFICATION:")
+    print(f"    \033[92mFlagged (CTA-aligned):    {flagged:>4}\033[0m  ({flagged_pct}%)  -- standard == \"platinum\" on disk")
+    print(f"    \033[92mOrganic (strict):         {organic:>4}\033[0m  ({organic_pct}%)  -- flagged + passes qualitative gates")
+    print(f"    \033[93mFlag violations:          {flag_viol:>4}\033[0m            -- flagged but fails lead/artifact")
+    print(f"    \033[93mPseudo-platinum:          {pseudo:>4}\033[0m            -- meets quant but not flagged")
+    print()
+    print("  QUALITATIVE VIOLATIONS:")
+    print(f"    Lead-rule (In Media Res):    {sc.get('lead_violations', 0)}")
+    print(f"    Artifact (lists/bullets):    {sc.get('artifact_violations', 0)}")
+    print(f"    Low depth (<650 words):      {sc.get('low_depth_count', 0)}")
+    print(f"    Non-technical density:       {sc.get('non_technical_count', 0)}")
+    print()
+    print("  INTEGRITY SUMMARY:")
+    print(f"    Broken links:         {integrity.get('broken_links', 0)}")
+    print(f"    Broken formulas:      {integrity.get('broken_formulas', 0)}")
+    print(f"    Orphans (no inbound): {integrity.get('orphans_count', 0)}")
+    print("=" * 80)
+
 
 def show_status():
     print("=" * 80)
@@ -23,7 +77,10 @@ def show_status():
     # 1. Sync backlog and show CTA dashboard
     print("🤖 Synchronizing backlog and auditing database...")
     subprocess.run([".venv/bin/python3", "scripts/maintenance/sync_backlog.py"])
-    
+
+    # 1b. Surface platinum classification (flagged vs organic) + violations
+    print_quality_breakdown()
+
     # 2. Read GQS Stack
     if os.path.exists(GQS_PATH):
         with open(GQS_PATH, "r") as f:

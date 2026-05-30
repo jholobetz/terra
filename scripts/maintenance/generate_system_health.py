@@ -5,10 +5,59 @@ import sys
 from datetime import datetime
 from collections import defaultdict
 
+
+TECH_TERMS = [
+    "manifold", "operator", "unitary", "tensor", "symmetry", "conservation",
+    "variational", "hamiltonian", "lagrangian", "eigenvalue", "generator",
+]
+
+
+def score_subtopic(slug, sub):
+    """Compute the per-subtopic OPS scorecard bits used by the health dashboard.
+
+    Returns a dict with word count, density score, and the flag/organic/
+    violation booleans. Two distinct platinum definitions live here:
+    - is_flagged: standard == "platinum" on disk (matches the CTA count)
+    - is_organic_platinum: flagged AND passes lead + artifact checks
+    The difference between the two is the flag-violation count.
+    """
+    content = sub.get("content", "")
+    title = sub.get("title", "")
+    standard = sub.get("standard", "legacy")
+
+    text_only = re.sub(r'<[^>]+>', ' ', content)
+    words = len(re.findall(r'\w+', text_only))
+    latex_count = len(re.findall(r'\\\(|\\\[', content))
+    term_score = sum(5 for term in TECH_TERMS if term in content.lower())
+    density_score = (latex_count * 15) + term_score
+
+    first_sentence = content[:150].lower()
+    has_lead_violation = title.lower() in first_sentence or slug.replace('-', ' ') in first_sentence
+    has_artifact_violation = "<ul>" in content or "<li>" in content
+
+    is_flagged = standard == "platinum"
+    meets_quant = words >= 650 and density_score >= 60
+    is_organic_platinum = is_flagged and not (has_lead_violation or has_artifact_violation)
+    has_flag_violation = is_flagged and (has_lead_violation or has_artifact_violation)
+    is_pseudo_platinum = meets_quant and not is_flagged
+
+    return {
+        "words": words,
+        "density_score": density_score,
+        "is_flagged": is_flagged,
+        "is_organic_platinum": is_organic_platinum,
+        "is_pseudo_platinum": is_pseudo_platinum,
+        "has_lead_violation": has_lead_violation,
+        "has_artifact_violation": has_artifact_violation,
+        "has_flag_violation": has_flag_violation,
+        "meets_quant": meets_quant,
+    }
+
+
 class HealthDashboard:
     def __init__(self, content_dir="app/config/content"):
         self.content_dir = content_dir
-        self.tech_terms = ["manifold", "operator", "unitary", "tensor", "symmetry", "conservation", "variational", "hamiltonian", "lagrangian", "eigenvalue", "generator"]
+        self.tech_terms = TECH_TERMS
         self.health_data = {
             "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "global_stats": {
@@ -20,8 +69,13 @@ class HealthDashboard:
                 "average_density_score": 0
             },
             "platinum_scorecard": {
-                "platinum_count": 0,
-                "platinum_percentage": 0,
+                # flagged_*: matches the CTA disk count (standard == "platinum")
+                # organic_*: subset that also passes lead + artifact qualitative checks
+                # The two diverge by exactly `flag_violations`.
+                "flagged_platinum_count": 0,
+                "flagged_platinum_percentage": 0,
+                "organic_platinum_count": 0,
+                "organic_platinum_percentage": 0,
                 "low_depth_count": 0,
                 "non_technical_count": 0
             },
@@ -74,54 +128,37 @@ class HealthDashboard:
             
             for slug, sub in shard_data.items():
                 if "content" not in sub: continue
-                
-                content = sub["content"]
-                title = sub.get("title", "")
-                source_cat = self.slug_to_cat.get(slug, "misc")
-                
-                # Stats
-                text_only = re.sub(r'<[^>]+>', ' ', content)
-                words = len(re.findall(r'\w+', text_only))
-                latex_count = len(re.findall(r'\\\(|\\\[', content))
-                term_score = sum(5 for term in self.tech_terms if term in content.lower())
-                density_score = (latex_count * 15) + term_score
-                
-                # Qualitative Checks
-                # 1. Lead Violation (In Media Res)
-                first_sentence = content[:150].lower()
-                has_lead_violation = title.lower() in first_sentence or slug.replace('-', ' ') in first_sentence
-                
-                # 2. Artifact Violation (No Bullets)
-                has_artifact_violation = "<ul>" in content or "<li>" in content
 
-                if has_lead_violation: self.health_data["platinum_scorecard"]["lead_violations"] += 1
-                if has_artifact_violation: self.health_data["platinum_scorecard"]["artifact_violations"] += 1
-                
-                # Flag Logic
-                is_flagged = sub.get("standard") == "platinum"
-                meets_quant = words >= 650 and density_score >= 60 # OPS word floor is 650
-                
-                # Strict Certification: Must be flagged AND pass qualitative checks
-                is_organic_platinum = is_flagged and not (has_lead_violation or has_artifact_violation)
-                
-                if is_flagged and (has_lead_violation or has_artifact_violation):
+                content = sub["content"]
+                source_cat = self.slug_to_cat.get(slug, "misc")
+                s = score_subtopic(slug, sub)
+
+                if s["has_lead_violation"]:
+                    self.health_data["platinum_scorecard"]["lead_violations"] += 1
+                if s["has_artifact_violation"]:
+                    self.health_data["platinum_scorecard"]["artifact_violations"] += 1
+
+                if s["is_flagged"]:
+                    self.health_data["platinum_scorecard"]["flagged_platinum_count"] += 1
+
+                if s["has_flag_violation"]:
                     self.health_data["platinum_scorecard"]["flag_violations"] += 1
                     shard_stats["violations"] += 1
 
-                if is_organic_platinum:
+                if s["is_organic_platinum"]:
                     shard_stats["platinum"] += 1
-                    self.health_data["platinum_scorecard"]["platinum_count"] += 1
-                elif meets_quant and not is_flagged:
+                    self.health_data["platinum_scorecard"]["organic_platinum_count"] += 1
+                elif s["is_pseudo_platinum"]:
                     self.health_data["platinum_scorecard"]["pseudo_platinum_count"] += 1
 
                 # Update Shard
                 shard_stats["count"] += 1
-                shard_words += words
-                shard_density += density_score
-                
-                if words < 650:
+                shard_words += s["words"]
+                shard_density += s["density_score"]
+
+                if s["words"] < 650:
                     self.health_data["platinum_scorecard"]["low_depth_count"] += 1
-                if density_score < 30:
+                if s["density_score"] < 30:
                     self.health_data["platinum_scorecard"]["non_technical_count"] += 1
                     
                 # Link Scan
@@ -144,8 +181,8 @@ class HealthDashboard:
                         self.health_data["integrity_summary"]["broken_formulas"] += 1
 
                 self.health_data["global_stats"]["total_subtopics"] += 1
-                self.health_data["global_stats"]["total_words"] += words
-                total_score += density_score
+                self.health_data["global_stats"]["total_words"] += s["words"]
+                total_score += s["density_score"]
 
             if shard_stats["count"] > 0:
                 shard_stats["avg_words"] = round(shard_words / shard_stats["count"], 1)
@@ -157,7 +194,10 @@ class HealthDashboard:
         if count > 0:
             self.health_data["global_stats"]["average_word_count"] = round(self.health_data["global_stats"]["total_words"] / count, 1)
             self.health_data["global_stats"]["average_density_score"] = round(total_score / count, 1)
-            self.health_data["platinum_scorecard"]["platinum_percentage"] = round((self.health_data["platinum_scorecard"]["platinum_count"] / count) * 100, 2)
+            flagged = self.health_data["platinum_scorecard"]["flagged_platinum_count"]
+            organic = self.health_data["platinum_scorecard"]["organic_platinum_count"]
+            self.health_data["platinum_scorecard"]["flagged_platinum_percentage"] = round((flagged / count) * 100, 2)
+            self.health_data["platinum_scorecard"]["organic_platinum_percentage"] = round((organic / count) * 100, 2)
         
         # Orphans
         self.health_data["integrity_summary"]["orphans_count"] = sum(1 for s in self.all_subtopics if self.incoming_links[s] == 0)

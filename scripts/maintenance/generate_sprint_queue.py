@@ -162,8 +162,8 @@ def main():
             if isinstance(data, dict) and data.get("s") == shard_file:
                 all_neighbors.append((s, data.get("t", s)))
 
-        # Sort neighbors to ensure deterministic select
-        all_neighbors.sort(key=lambda x: len(x[1]), reverse=True)
+        # Sort neighbors deterministic-randomly unique to each target slug to avoid clumping
+        all_neighbors.sort(key=lambda x: hashlib.md5((slug + x[0]).encode('utf-8')).hexdigest())
         selected_neighbors = all_neighbors[:5]
         while len(selected_neighbors) < 5:
             selected_neighbors.append(("theoretical-physics-overview", "Theoretical Physics Overview"))

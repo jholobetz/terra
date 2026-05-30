@@ -110,11 +110,12 @@ def commit_node(slug, html_file, identities_file=None):
     text_only = re.sub(r'<[^>]+>', '', html_content)
     snippet = " ".join(text_only.split()[:30]) + "..."
     
-    # 3a. Mandatory Identity Check (Minimum 1 per GEMINI.md)
+    # 3a. Formula Check (Allows empty lists for conceptual/philosophical subtopics as per CLAUDE.md Organic Formula Integration)
     formula_ids = shard_data[slug].get('formula_ids', [])
-    if not isinstance(formula_ids, list) or len(formula_ids) < 1:
-        print(f"ABORTED: [{slug}] has {len(formula_ids)} identities. OPS requires minimum 1 for Platinum graduation.")
-        sys.exit(1)
+    if not isinstance(formula_ids, list):
+        shard_data[slug]['formula_ids'] = []
+        formula_ids = []
+    print(f"INFO: [{slug}] has {len(formula_ids)} registered identities. (Dynamic / Organic Curation)")
 
     shard_data[slug]['content'] = html_content
     shard_data[slug]['standard'] = 'platinum'

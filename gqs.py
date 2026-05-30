@@ -117,6 +117,11 @@ def generate_template(num_items=1):
             p_idx = eligible_p_indices[idx % len(eligible_p_indices)]
             p_neighbors[p_idx].append(n_title)
         
+        # Dynamically vary the positions of the math identity and the cross-hub bridge
+        slug_hash = sum(ord(c) for c in slug)
+        math_p_index = 2 + (slug_hash % (paragraphs - 2))
+        bridge_p_index = 3 if math_p_index != 3 else 2
+        
         # Build paragraph templates
         p_list = []
         for i in range(1, paragraphs + 1):
@@ -140,9 +145,9 @@ def generate_template(num_items=1):
                 )
             else:
                 p_text = f"Paragraph {i}/{paragraphs}: Technical expansion on the physical/mathematical framework."
-                if i == 2:
+                if i == math_p_index:
                     p_text += f" Integrate the key mathematical identity lock: {identity_title} with equation \\( {identity_eq} \\)."
-                if i == 3:
+                if i == bridge_p_index:
                     p_text += f" Establish the cross-hub connectivity bridge to the topic of {bridge_title}."
                 
                 n_list = p_neighbors[i]

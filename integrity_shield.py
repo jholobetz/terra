@@ -30,14 +30,27 @@ class IntegrityShield:
 
     def load_data(self):
         search_index_path = os.path.join(self.content_dir, "search_index.json")
-        formulas_path = os.path.join(self.content_dir, "formulas.json")
         entities_path = os.path.join(self.content_dir, "entities.json")
         categories_path = os.path.join(self.content_dir, "categories.json")
         
         with open(search_index_path, "r") as f:
             search_index = json.load(f)
-        with open(formulas_path, "r") as f:
-            self.formula_registry = json.load(f)
+            
+        # Load sharded formulas
+        formulas_dir = os.path.join(self.content_dir, "formulas")
+        self.formula_registry = {}
+        if os.path.exists(formulas_dir):
+            for file in os.listdir(formulas_dir):
+                if file.startswith("shard_") and file.endswith(".json"):
+                    with open(os.path.join(formulas_dir, file), "r") as f:
+                        self.formula_registry.update(json.load(f))
+        else:
+            # Fallback to monolithic formulas.json
+            formulas_path = os.path.join(self.content_dir, "formulas.json")
+            if os.path.exists(formulas_path):
+                with open(formulas_path, "r") as f:
+                    self.formula_registry = json.load(f)
+                    
         with open(entities_path, "r") as f:
             self.entities = json.load(f)
         with open(categories_path, "r") as f:

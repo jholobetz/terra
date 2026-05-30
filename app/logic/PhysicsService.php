@@ -64,9 +64,8 @@ class PhysicsService
                 if (file_exists($baseDir . 'categories.json')) {
                     $this->physicsContent['topics'] = json_decode(file_get_contents($baseDir . 'categories.json'), true) ?: [];
                 }
-                if (file_exists($baseDir . 'formulas.json')) {
-                    $this->physicsContent['formula_registry'] = json_decode(file_get_contents($baseDir . 'formulas.json'), true) ?: [];
-                }
+                // Formulas are now lazily loaded on-demand via loadFormula()
+                // to optimize memory consumption and speed up page bootstrap times.
                 if (file_exists($baseDir . 'search_index.json')) {
                     $this->physicsContent['search_index'] = json_decode(file_get_contents($baseDir . 'search_index.json'), true) ?: [];
                 }
@@ -263,6 +262,39 @@ class PhysicsService
     }
 
     /**
+     * Lazily resolves and loads an individual formula from the 256 hash-based shards.
+     */
+    public function loadFormula(string $fId): ?array
+    {
+        if (isset($this->physicsContent['formula_registry'][$fId])) {
+            return $this->physicsContent['formula_registry'][$fId];
+        }
+
+        $baseDir = PROJECT_ROOT . '/app/config/content/';
+        $hexPrefix = substr(md5($fId), 0, 2);
+        $shardPath = $baseDir . 'formulas/shard_' . $hexPrefix . '.json';
+
+        if (file_exists($shardPath)) {
+            $shardContent = json_decode(file_get_contents($shardPath), true) ?: [];
+            if (isset($shardContent[$fId])) {
+                $this->physicsContent['formula_registry'][$fId] = $shardContent[$fId];
+                return $shardContent[$fId];
+            }
+        }
+
+        // Fallback to check the loaded registry or look in monolithic formulas.json if it exists
+        if (file_exists($baseDir . 'formulas.json')) {
+            $monolithic = json_decode(file_get_contents($baseDir . 'formulas.json'), true) ?: [];
+            if (isset($monolithic[$fId])) {
+                $this->physicsContent['formula_registry'][$fId] = $monolithic[$fId];
+                return $monolithic[$fId];
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Fetches, validates cache invalidations, and maps formula identities.
      */
     public function fetchAndPrepare(string $table, string $slug): array
@@ -282,8 +314,9 @@ class PhysicsService
             $data['formulas'] = [];
             if (!empty($data['formula_ids'])) {
                 foreach ($data['formula_ids'] as $f_id) {
-                    if (isset($content['formula_registry'][$f_id])) {
-                        $data['formulas'][] = $content['formula_registry'][$f_id];
+                    $formula = $this->loadFormula($f_id);
+                    if ($formula) {
+                        $data['formulas'][] = $formula;
                     }
                 }
             }
@@ -299,8 +332,9 @@ class PhysicsService
         $data['formulas'] = [];
         if (!empty($f_ids)) {
             foreach ($f_ids as $f_id) {
-                if (isset($content['formula_registry'][$f_id])) {
-                    $data['formulas'][] = $content['formula_registry'][$f_id];
+                $formula = $this->loadFormula($f_id);
+                if ($formula) {
+                    $data['formulas'][] = $formula;
                 }
             }
         }

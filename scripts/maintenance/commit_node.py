@@ -93,8 +93,7 @@ def commit_node(slug, html_file, identities_file=None):
             shard_data[slug]['formula_ids'] = combined_fids
             
             # Save formula registry to disk immediately
-            with open("app/config/content/formulas.json", "w") as f:
-                json.dump(orch.data["formula_registry"], f, indent=4)
+            orch.save_formula_registry()
             print("Saved updated formula registry to disk.")
 
     # Generate snippet from first ~30 words of text (stripping HTML)

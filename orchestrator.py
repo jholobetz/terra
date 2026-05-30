@@ -289,6 +289,8 @@ class PhysicsOrchestrator:
 
                 if rel_path == "formulas.json":
                     self.data["formula_registry"] = content
+                elif rel_path.startswith("formulas/shard_") and rel_path.endswith(".json"):
+                    self.data["formula_registry"].update(content)
                 elif rel_path == "constants.json":
                     self.data["constants"] = content
                 elif rel_path == "entities.json":
@@ -856,6 +858,25 @@ class PhysicsOrchestrator:
             
             print("  -> Registry pre-rendered and updated.")
 
+    def save_formula_registry(self):
+        """Surgically shards and saves the formula registry into 256 hash-based JSON files."""
+        formulas_dir = os.path.join(self.content_dir, "formulas")
+        os.makedirs(formulas_dir, exist_ok=True)
+        
+        # Partition the formulas dictionary
+        sharded_formulas = {f"{i:02x}": {} for i in range(256)}
+        import hashlib
+        for f_id, data in self.data["formula_registry"].items():
+            prefix = hashlib.md5(f_id.encode("utf-8")).hexdigest()[:2]
+            sharded_formulas[prefix][f_id] = data
+            
+        # Write each shard to disk
+        for prefix, shard_data in sharded_formulas.items():
+            shard_path = os.path.join(formulas_dir, f"shard_{prefix}.json")
+            with open(shard_path, "w") as f:
+                json.dump(shard_data, f, indent=4)
+        print(f"SAVED: Sharded formula registry (256 shards) to {formulas_dir}")
+
     def save(self, auto_commit=True, commit_msg=None, unlock_protected=False, force_full=False, target_slugs=None):
         """Saves all modified shards and registries and optionally commits to Git."""
         # 1. Pre-render SVGs in batch for modified subtopics
@@ -920,8 +941,7 @@ class PhysicsOrchestrator:
 
         with open(os.path.join(self.content_dir, "categories.json"), "w") as f:
             json.dump(clean_topics, f, indent=4)
-        with open(os.path.join(self.content_dir, "formulas.json"), "w") as f:
-            json.dump(self.data["formula_registry"], f, indent=4)
+        self.save_formula_registry()
         with open(os.path.join(self.content_dir, "constants.json"), "w") as f:
             json.dump(self.data["constants"], f, indent=4)
         with open(os.path.join(self.content_dir, "entities.json"), "w") as f:

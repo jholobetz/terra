@@ -13,6 +13,17 @@ from scripts.maintenance.latex_sanitizer import sanitize_latex
 ACTIVE_SPRINT_PATH = 'subfiles/active_expansion_sprint.json'
 
 
+def merge_formula_ids(new_fids, existing_fids):
+    """Return new_fids followed by existing_fids with overlaps removed.
+
+    New IDs keep their positional precedence; a non-list existing_fids is
+    treated as empty to defend against malformed shard entries.
+    """
+    if not isinstance(existing_fids, list):
+        existing_fids = []
+    return new_fids + [fid for fid in existing_fids if fid not in new_fids]
+
+
 def register_identities(identities_file, slug, orch):
     """Registers new theoretical identities into the formulas registry and updates the slug's formula_ids."""
     if not identities_file or not os.path.exists(identities_file):
@@ -87,9 +98,7 @@ def commit_node(slug, html_file, identities_file=None):
         if new_fids:
             # Retrieve existing formula IDs safely and combine, preserving uniqueness
             existing_fids = shard_data[slug].get('formula_ids', [])
-            if not isinstance(existing_fids, list):
-                existing_fids = []
-            combined_fids = new_fids + [fid for fid in existing_fids if fid not in new_fids]
+            combined_fids = merge_formula_ids(new_fids, existing_fids)
             shard_data[slug]['formula_ids'] = combined_fids
             
             # Save formula registry to disk immediately

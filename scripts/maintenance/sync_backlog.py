@@ -32,36 +32,69 @@ def scan_disk_standards():
                 
     return subtopics
 
+def dedupe_backlog(entries):
+    """Collapse duplicate suggested_slug rows; promote status when any duplicate is completed.
+
+    Preserves first-appearance order of survivors. Entries without
+    suggested_slug are kept verbatim (they can't be duplicates of anything).
+    Does not mutate the input list or its entries.
+    """
+    result = []
+    seen_at = {}  # slug -> index in result
+    for entry in entries:
+        slug = entry.get("suggested_slug")
+        if not slug:
+            result.append(dict(entry))
+            continue
+        if slug not in seen_at:
+            seen_at[slug] = len(result)
+            result.append(dict(entry))
+        else:
+            survivor = result[seen_at[slug]]
+            if entry.get("status") == "completed" and survivor.get("status") != "completed":
+                survivor["status"] = "completed"
+    return result
+
+
 def self_heal_backlog(disk_state):
-    """Aligns expansion_backlog.json status with the actual standard found on disk."""
+    """Aligns expansion_backlog.json with disk truth and collapses duplicate slugs.
+
+    Returns (healed_count, total_count). total_count reflects entries after
+    deduplication, not the raw on-disk row count. The file is rewritten if
+    either a status flip or a deduplication occurred.
+    """
     if not os.path.exists(BACKLOG_PATH):
         print(f"Warning: Backlog file not found at {BACKLOG_PATH}. Skipping self-healing.")
         return 0, 0
-        
+
     with open(BACKLOG_PATH, "r") as f:
         backlog = json.load(f)
-        
+
+    original_len = len(backlog)
+    backlog = dedupe_backlog(backlog)
+    deduped_count = original_len - len(backlog)
+
     healed_count = 0
     total_count = len(backlog)
-    
+
     for entry in backlog:
         slug = entry.get("suggested_slug")
         if slug in disk_state:
             real_std = disk_state[slug]["standard"]
             current_status = entry.get("status")
-            
+
             # Map physical standard directly to status
             expected_status = "completed" if real_std == "platinum" else "pending"
-            
+
             if current_status != expected_status:
                 entry["status"] = expected_status
                 healed_count += 1
-                
-    if healed_count > 0:
+
+    if healed_count > 0 or deduped_count > 0:
         with open(BACKLOG_PATH, "w") as f:
             json.dump(backlog, f, indent=4)
             f.write("\n")
-            
+
     return healed_count, total_count
 
 def print_progress_dashboard(disk_state):

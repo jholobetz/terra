@@ -146,7 +146,7 @@ def generate_template(num_items=1):
             else:
                 p_text = f"Paragraph {i}/{paragraphs}: Technical expansion on the physical/mathematical framework."
                 if i == math_p_index:
-                    p_text += f" Integrate the key mathematical identity lock: {identity_title} with equation \\( {identity_eq} \\)."
+                    p_text += f" Integrate the key mathematical identity lock: {identity_title} in a centered display math block, written mathematically as <div class=\"math-display\" style=\"text-align: center; margin: 25px 0;\">\\\\[ {identity_eq} \\\\]</div>."
                 if i == bridge_p_index:
                     p_text += f" Establish the cross-hub connectivity bridge to the topic of {bridge_title}."
                 

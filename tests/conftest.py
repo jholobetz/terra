@@ -14,7 +14,9 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCRIPT_PATH = REPO_ROOT / "scripts" / "maintenance" / "run_gqs_sprint.py"
-VENV_PYTHON = REPO_ROOT / ".venv" / "bin" / "python3"
+# Use the interpreter that's running pytest so tests work both in dev (under
+# the project's .venv) and in CI (where setup-python provides the runtime).
+PYTHON_BIN = sys.executable
 
 # Make `from scripts.maintenance.X import Y` resolvable for unit tests that
 # import helpers directly. Black-box subprocess tests don't need this.
@@ -79,7 +81,7 @@ def run_gates(workspace):
         payload_path = workspace / "subfiles" / "batch_payload.json"
         payload_path.write_text(json.dumps(payload))
         return subprocess.run(
-            [str(VENV_PYTHON), str(SCRIPT_PATH), "--dry-run"],
+            [PYTHON_BIN, str(SCRIPT_PATH), "--dry-run"],
             cwd=workspace,
             env=_isolated_git_env(),
             capture_output=True,

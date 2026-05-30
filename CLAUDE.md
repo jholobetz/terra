@@ -11,7 +11,11 @@ All Python operations must be executed using the project's local virtual environ
 ### 🎛️ Unified Session Controller (Recommended)
 Our unified developer CLI manages the entire GQS pipeline lifecycle, offering automatic backlog synchronization, status dashboards, structure-compliant templating, and compilation:
 ```bash
-# Check current database metrics, active drafts, and next priority targets
+# Check current database metrics, active drafts, and next priority targets.
+# Surfaces three sections in one screen: the live CTA disk dashboard, the
+# Quality Breakdown (flagged vs organic platinum counts, qualitative
+# violations, and integrity summary read from system_health.json), and the
+# top GQS queue targets. No mental reconciliation across files required.
 .venv/bin/python3 gqs.py status
 
 # Automatically scaffold the next N GQS targets into subfiles/batch_payload.json
@@ -64,6 +68,10 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   ```
 
 ### 🛡️ Validation & Test Suite
+* **Automated Pytest Suite**: Runs the full regression net (~1 second locally, ~30 seconds on CI). Covers OPS prose-gate validation, formula-id merge invariants, the integrity shield against fixture shards, CTA backlog reconciliation (heal + dedupe), the system_health platinum classifier, and the `gqs.py status` quality renderer. Also wired to CI via `.github/workflows/tests.yml` on every push and pull request to `master`:
+  ```bash
+  .venv/bin/python3 -m pytest tests/
+  ```
 * **Central Tracking Authority (CTA) Sync**: Scans physical shards in real-time, self-heals desynchronizations in the expansion backlog, and displays the database status dashboard:
   ```bash
   .venv/bin/python3 scripts/maintenance/sync_backlog.py
@@ -170,9 +178,15 @@ To maximize token economy and maintain perfect graduation consistency:
 ### E. Central Tracking Authority (CTA)
 To ensure absolute mathematical consistency across all source registries and progress tracking views:
 1. **Real-time Disk Parsing**: The sync engine (`sync_backlog.py`) directly parses all 14 physical content JSON shards to extract the *exact ground truth* standard (`platinum` vs `legacy`) for all 1,584 subtopics, completely bypassing intermediate database steps.
-2. **Self-Healing Backlog Registry**: It compares disk truth against `subfiles/expansion_backlog.json` and dynamically heals desynchronizations, setting status to `"completed"` for disk Platinum entries and `"pending"` for legacy ones.
-3. **Database Status Dashboard**: Calculates total subtopics, platinum count, legacy count, and overall progress percentage, outputting a beautiful visual progress bar and category/shard breakdown table.
-4. **Auto-Teardown Gate**: The tracking engine is integrated directly into the `batch_graduate.py` teardown, guaranteeing the central backlog registry self-heals after every successful batch graduation.
+2. **Self-Healing Backlog Registry**: Compares disk truth against `subfiles/expansion_backlog.json` and dynamically heals desynchronizations, setting status to `"completed"` for disk Platinum entries and `"pending"` for legacy ones.
+3. **Duplicate-Slug Dedupe (Self-Healing)**: `self_heal_backlog` also collapses entries sharing a `suggested_slug` on every sync via the pure `dedupe_backlog` function. Punctuation variants that resolve to the same slug (e.g., `"Conservation"` and `"Conservation:"` → `conservation`) are merged, with status promoted to `completed` when any duplicate had it. First-appearance order is preserved; entries without `suggested_slug` are kept verbatim. The backlog file is rewritten only when the heal pass or the dedupe pass produced a change.
+4. **Database Status Dashboard**: Calculates total subtopics, platinum count, legacy count, and overall progress percentage, outputting a beautiful visual progress bar and category/shard breakdown table.
+5. **Auto-Teardown Gate**: The tracking engine is integrated directly into the `batch_graduate.py` teardown, guaranteeing the central backlog registry self-heals after every successful batch graduation.
+6. **Two Platinum Definitions (Critical Distinction)**: The project exposes two distinct platinum counts that future contributors MUST keep separate. Conflating them was the source of the dashboard-drift incident resolved in this codebase:
+   * **Flagged Platinum** (`flagged_platinum_count` in `system_health.json`): the raw disk count of subtopics with `standard == "platinum"`. This is the authoritative live count and matches the CTA dashboard exactly.
+   * **Organic Platinum** (`organic_platinum_count`): the strict subset that additionally passes the §2.A lead-rule and artifact-violation gates. Always `≤ flagged_platinum_count`.
+   * **Flag Violations** (`flag_violations`): the difference between the two — slugs flagged as platinum but failing the qualitative checks. By construction, `flagged_platinum_count == organic_platinum_count + flag_violations`.
+   * `gqs.py status` surfaces both counts side-by-side with the gap explained, so users never have to reconcile across files in their head.
 
 ### F. The Graduation Queue Stack (GQS) Pipeline
 To scale content ingestion while maintaining absolute OPS qualitative compliance, the project organizes work via a central queue stack pre-computed in `subfiles/graduation_queue_stack.json`:
@@ -191,6 +205,17 @@ To prevent quality drift under zero-interruption autonomous runs, the GQS pipeli
    git reset --hard <savepoint-hash>
    ```
 5. **Git Success Commit**: Stages and commits all metadata and shard updates into a single transaction on success, restoring the repository to a clean state.
+
+### H. Automated Pytest Suite (`tests/`)
+The `tests/` directory is the regression net for every architectural invariant described above. Six in-process and black-box test files cover the highest-leverage seams:
+1. **`test_ops_gates.py`**: drives `run_gqs_sprint.py --dry-run` against a tempdir-based payload fixture and asserts each OPS gate from §2.A fires correctly (in-media-res lead, paragraph structure, word band, markdown residue, math-display delimiters, list/header bans).
+2. **`test_identity_lock.py`**: pins the `merge_formula_ids` helper extracted from `commit_node.py` — the load-bearing one-line invariant that prevents legacy formula loss during graduation when new identities are registered.
+3. **`test_integrity_shield.py`**: exercises `IntegrityShield` against a synthetic fixture `content_dir`, covering broken links, broken formula references, MathJax-error markup, duplicate slugs across shards, density warnings, raw-LaTeX SSR violations, unrendered math displays, and entity auto-link warnings.
+4. **`test_sync_backlog.py`**: covers both `scan_disk_standards` (disk-truth extraction) and `self_heal_backlog` (heal + dedupe). Includes a critical anti-regression test that the function keys off `suggested_slug`, not `slug`.
+5. **`test_system_health.py`**: pins `score_subtopic`, the per-node classifier extracted from `generate_system_health.py` that drives the `flagged_platinum_count` and `organic_platinum_count` counters described in §3.E.
+6. **`test_gqs_status.py`**: covers `print_quality_breakdown` (graceful no-op on missing/malformed `system_health.json`, correct rendering of the dual platinum classification).
+
+**Operating discipline**: keep the suite green. Every refactor in this document — especially the surgical extractions (`merge_formula_ids`, `dedupe_backlog`, `score_subtopic`, `print_quality_breakdown`) — was paired with tests that lock down byte-identical behavior. The suite runs in ~1 second locally and on every push and pull request to `master` via `.github/workflows/tests.yml`.
 
 ---
 

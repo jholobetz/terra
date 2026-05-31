@@ -202,15 +202,18 @@ To ensure absolute mathematical consistency across all source registries and pro
 
 ### F. The Graduation Queue Stack (GQS) Pipeline
 To scale content ingestion while maintaining absolute OPS qualitative compliance, the project organizes work via a central queue stack pre-computed in `subfiles/graduation_queue_stack.json`:
-1. **Pre-Computation (`generate_sprint_queue.py`)**: Automatically resolves target metrics (deterministic paragraph counts, neighbor linkages, cross-hub bridges, and registered math identities) for the top pending backlog items based on frequency.
-2. **Unified CLI Controller (`gqs.py`)**: Consolidates backlog synchronization, templating, ingestion, and validation into a single command-line interface. Keeps `subfiles/active_expansion_sprint.json` in absolute lockstep.
-3. **Compliance-Guaranteed Scaffolding (`gqs.py template <N>`)**: Scaffolds the exact schema-compliant JSON structures inside `subfiles/batch_payload.json` for active queue items, pre-annotated with deterministic paragraph boundaries and bold-link target guidelines.
-4. **Subprocess Ingestion (`gqs.py ingest` -> `batch_ingest.py`)**: Sequentially compiles drafted prose against stack metadata, auto-renders MathJax equations to SVGs, updates relational shards, marks backlog items completed, pops them from the stack, and refills the stack.
+1. **Pre-Computation (`generate_sprint_queue.py`)**: Automatically resolves target metrics (deterministic paragraph counts, neighbor linkages, cross-hub bridges, and registered math identities) for the top pending backlog items.
+2. **Backlog Math Registry (`subfiles/backlog_math_registry.json`)**: Serves as the single source of truth for pre-assigned, mathematically localized identities. The queue generator queries this registry first. If a subtopic is registered, it loads the localized template; if missing, it scaffolds a `"PLACEHOLDER"` template.
+3. **Decoupled Compiler Ingestion**: The batch ingester (`batch_ingest.py`) is decoupled to prioritize the customized mathematical `"identities"` fields directly from `subfiles/batch_payload.json` rather than dragging the fallback values from the stack file.
+4. **Unified CLI Controller (`gqs.py`)**: Consolidates backlog synchronization, templating, ingestion, and validation into a single command-line interface. Keeps `subfiles/active_expansion_sprint.json` in absolute lockstep.
+5. **Compliance-Guaranteed Scaffolding (`gqs.py template <N>`)**: Scaffolds the exact schema-compliant JSON structures inside `subfiles/batch_payload.json` for active queue items, pre-annotated with deterministic paragraph boundaries, bold-link target guidelines, and structured math `"identities"`.
+6. **Subprocess Ingestion (`gqs.py ingest` -> `batch_ingest.py`)**: Sequentially compiles drafted prose against payload and stack metadata, auto-renders MathJax equations to SVGs, updates relational shards, marks backlog items completed, pops them from the stack, and refills the stack.
 
 ### G. Guarded Sprint Orchestrator (`run_gqs_sprint.py`)
 To prevent quality drift under zero-interruption autonomous runs, the GQS pipeline is wrapped in a strict three-stage transaction loop that guarantees a clean git history tree and zero lost changes:
 1. **Pre-Flight Git Savepoint**: Creates an automated, staged git commit snapshot (`chore: automated pre-flight GQS savepoint...`) representing the workspace draft state before launching operations, recording a precise rollback hash.
-2. **Pre-Compilation Static Syntax Guards**: Scans `subfiles/batch_payload.json` to verify that all drafted prose strictly adheres to the OPS Gates (word limits 650–1,000, 4–6 organic paragraphs, no forbidden starter definitions, no raw LaTeX leakages, no markdown lists or headers). *Aborts if style gates are breached, rolling back the pre-flight commit safely.*
+2. **Pre-Compilation Static Syntax Guards**: Scans `subfiles/batch_payload.json` to verify that all drafted prose strictly adheres to the OPS Gates (word limits 650–1,000, 4–6 organic paragraphs, no forbidden starter definitions, no raw LaTeX leakages, no markdown lists or headers). *Also enforces the Placeholder Fail-Safe, aborting the transaction immediately if the payload contains scaffolded "PLACEHOLDER" text in any math block or title.*
+
 3. **In-Flight Compilation Arrest**: Intercepts `gqs.py ingest` exit codes. If any compilation or MathJax pre-rendering fails, the script triggers an automatic rollback.
 4. **Post-Compilation Integrity Audits**: Invokes `integrity_shield.py` and `orchestrator.py` on the graduated shards. Any broken links, duplicated entries, or context affinity leaks will trigger an automatic rollback.
 5. **Self-Healing Transactional Rollback**: On any quality gate or compilation failure:

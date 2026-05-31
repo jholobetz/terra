@@ -224,8 +224,17 @@ def generate_template(num_items=1):
             "title": title,
             "content": "".join(p_list),
             "standard": "platinum",
-            "parents": [parent_hub]
+            "parents": [parent_hub],
+            "identities": [
+                {
+                    "id": item["identity"]["id"],
+                    "title": identity_title,
+                    "equation": identity_eq,
+                    "description": item["identity"].get("description", "")
+                }
+            ]
         }
+
         scaffolded_slugs.append(slug)
 
     with open(PAYLOAD_PATH, "w") as f:

@@ -112,34 +112,34 @@ def main():
     bridge_slug, bridge_title = BRIDGES.get(shard_file, ("minkowski-metric", "Minkowski Metric"))
     print(f"Selected Bridge:    {bridge_title} ({bridge_slug})")
     
-    # 5. Math Identity Scaffolding
     MATH_TEMPLATES = {
         "thermodynamics-statistical-mechanics.json": {
-            "title": "Canonical Partition Function and Phase Space Density",
-            "equation": "\\[ Z = \\int e^{-\\beta H(\\mathbf{q}, \\mathbf{p})} \\frac{d^N \\mathbf{q} \\, d^N \\mathbf{p}}{h^{3N}} \\]",
-            "description": "Defines the canonical partition function by integrating the Boltzmann factor over the classical phase space volume element."
+            "title": "PLACEHOLDER: Localized Title Needed",
+            "equation": "\\[ \\text{PLACEHOLDER: Localized Equation Needed} \\]",
+            "description": "Please override this placeholder with a mathematically localized identity."
         },
         "relativity.json": {
-            "title": "Invariant Spacetime Interval",
-            "equation": "\\[ ds^2 = g_{\\mu\\nu} d x^\\mu d x^\\nu \\]",
-            "description": "Establishes the invariant metric interval under general coordinate transformations."
+            "title": "PLACEHOLDER: Localized Title Needed",
+            "equation": "\\[ \\text{PLACEHOLDER: Localized Equation Needed} \\]",
+            "description": "Please override this placeholder with a mathematically localized identity."
         },
         "quantum-physics.json": {
-            "title": "Schrödinger Time Evolution Operator",
-            "equation": "\\[ U(t, t_0) = e^{-i H (t - t_0) / \\hbar} \\]",
-            "description": "Defines the unitary time-evolution operator for a time-independent Hamiltonian."
+            "title": "PLACEHOLDER: Localized Title Needed",
+            "equation": "\\[ \\text{PLACEHOLDER: Localized Equation Needed} \\]",
+            "description": "Please override this placeholder with a mathematically localized identity."
         },
         "theoretical-physics.json": {
-            "title": "Euler-Lagrange Field Equation",
-            "equation": "\\[ \\partial_\\mu \\left( \\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)} \\right) - \\frac{\\partial \\mathcal{L}}{\\partial \\phi} = 0 \\]",
-            "description": "Derives the equations of motion for a continuous field from the extremization of the action."
+            "title": "PLACEHOLDER: Localized Title Needed",
+            "equation": "\\[ \\text{PLACEHOLDER: Localized Equation Needed} \\]",
+            "description": "Please override this placeholder with a mathematically localized identity."
         },
         "classical-mechanics.json": {
-            "title": "Hamilton's Canonical Equations of Motion",
-            "equation": "\\[ \\dot{q}_i = \\frac{\\partial H}{\\partial p_i}, \\quad \\dot{p}_i = -\\frac{\\partial H}{\\partial q_i} \\]",
-            "description": "Establishes the canonical equations governing particle trajectories in classical phase space."
+            "title": "PLACEHOLDER: Localized Title Needed",
+            "equation": "\\[ \\text{PLACEHOLDER: Localized Equation Needed} \\]",
+            "description": "Please override this placeholder with a mathematically localized identity."
         }
     }
+
     
     template = MATH_TEMPLATES.get(shard_file, MATH_TEMPLATES["theoretical-physics.json"])
     # Generate unique formula ID using target slug hash

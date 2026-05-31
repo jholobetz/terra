@@ -98,6 +98,11 @@ def run_syntax_guards(payload_path):
             violations.append(f"[{slug}] Content is still a scaffolded placeholder. Please write the actual prose first.")
             continue
             
+        # Check for placeholder identity/equations
+        if "placeholder" in content.lower() or "placeholder" in title.lower():
+            violations.append(f"[{slug}] Placeholder Violation: Content or title contains scaffolded 'PLACEHOLDER' text in the math block or title. Please replace it with a mathematically localized, topic-specific equation.")
+
+            
         # 1. Parse paragraphs
         paragraphs = re.findall(r"<p>(.*?)</p>", content, re.DOTALL)
         if not paragraphs:

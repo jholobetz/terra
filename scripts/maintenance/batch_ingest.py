@@ -85,14 +85,20 @@ def main():
             results.append({"slug": slug, "success": False, "error": "No content in payload"})
             continue
 
-        # Look up metadata in the GQS stack
-        stack_entry = gqs_map.get(slug)
-        if not stack_entry:
-            print(f"  \033[91m↳ Warning: {slug} not found in GQS stack. Proceeding with ad-hoc defaults.\033[0m")
-            # If not in GQS, mock an identity or check default files
-            identity_data = []
+        # Look up metadata: Prioritize structured identities from payload (Safeguard 2)
+        if "identities" in data and data["identities"]:
+            identity_data = data["identities"]
+            print(f"  [Ingestion] Using localized mathematical identity from batch payload.")
         else:
-            identity_data = [stack_entry["identity"]]
+            # Fallback to looking up in the GQS stack
+            stack_entry = gqs_map.get(slug)
+            if not stack_entry:
+                print(f"  \033[91m↳ Warning: {slug} not found in GQS stack. Proceeding with ad-hoc defaults.\033[0m")
+                # If not in GQS, mock an identity or check default files
+                identity_data = []
+            else:
+                identity_data = [stack_entry["identity"]]
+
 
         # 2. Write temporary draft and identities files to disk to invoke compile logic cleanly
         temp_draft = f"draft_{slug}.html"

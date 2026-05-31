@@ -27,69 +27,69 @@ BRIDGES = {
 
 MATH_TEMPLATES = {
     "thermodynamics-statistical-mechanics.json": {
-        "title": "Canonical Partition Function and Phase Space Density",
-        "equation": "Z = \\int e^{-\\beta H(\\mathbf{q}, \\mathbf{p})} \\frac{d^N \\mathbf{q} \\, d^N \\mathbf{p}}{h^{3N}}",
-        "description": "Defines the canonical partition function by integrating the Boltzmann factor over the classical phase space volume element."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "relativity.json": {
-        "title": "Invariant Spacetime Interval",
-        "equation": "ds^2 = g_{\\mu\\nu} d x^\\mu d x^\\nu",
-        "description": "Establishes the invariant metric interval under general coordinate transformations."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "quantum-physics.json": {
-        "title": "Schrödinger Time Evolution Operator",
-        "equation": "U(t, t_0) = e^{-i H (t - t_0) / \\hbar}",
-        "description": "Defines the unitary time-evolution operator for a time-independent Hamiltonian."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "theoretical-physics.json": {
-        "title": "Euler-Lagrange Field Equation",
-        "equation": "\\partial_\\mu \\left( \\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)} \\right) - \\frac{\\partial \\mathcal{L}}{\\partial \\phi} = 0",
-        "description": "Derives the equations of motion for a continuous field from the extremization of the action."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "classical-mechanics.json": {
-        "title": "Hamilton's Canonical Equations of Motion",
-        "equation": "\\dot{q}_i = \\frac{\\partial H}{\\partial p_i}, \\quad \\dot{p}_i = -\\frac{\\partial H}{\\partial q_i}",
-        "description": "Establishes the canonical equations governing particle trajectories in classical phase space."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "electromagnetism.json": {
-        "title": "Maxwell-Ampère Law with Displacement Current",
-        "equation": "\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\varepsilon_0 \\frac{\\partial \\mathbf{E}}{\\partial t}",
-        "description": "Formulates the generation of magnetic fields from electric currents and time-varying electric fields."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "astrophysics.json": {
-        "title": "Friedmann Equation for Cosmic Expansion",
-        "equation": "\\left(\\frac{\\dot{a}}{a}\\right)^2 = \\frac{8\\pi G}{3}\\rho - \\frac{k c^2}{a^2} + \\frac{\\Lambda c^2}{3}",
-        "description": "Governs the expansion rate of the universe based on its energy-density components, spatial curvature, and cosmological constant."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "philosophy-of-physics.json": {
-        "title": "Heisenberg Uncertainty Principle",
-        "equation": "\\sigma_x \\sigma_p \\ge \\frac{\\hbar}{2}",
-        "description": "Sets the fundamental limit of precision with which certain pairs of physical properties of a particle can be known simultaneously."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "standard-model.json": {
-        "title": "Covariant Dirac Equation",
-        "equation": "(i \\gamma^\\mu D_\\mu - m)\\psi = 0",
-        "description": "Describes the relativistic quantum mechanics of spin-1/2 fermions interacting with gauge fields."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "fluids-nonlinear.json": {
-        "title": "Incompressible Navier-Stokes Equations",
-        "equation": "\\rho \\left(\\frac{\\partial \\mathbf{u}}{\\partial t} + \\mathbf{u} \\cdot \\nabla \\mathbf{u}\\right) = -\\nabla p + \\mu \\nabla^2 \\mathbf{u}",
-        "description": "Governs the motion of viscous, incompressible fluid substances under spatial velocity and pressure gradients."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "mathematical-methods.json": {
-        "title": "Generalized Fourier Transform",
-        "equation": "\\hat{f}(\\xi) = \\int_{-\\infty}^{\\infty} f(x) e^{-2\\pi i x \\xi} dx",
-        "description": "Transforms a spatial or temporal function into its constituent spectral frequency components."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "condensed-matter.json": {
-        "title": "Bloch Particle Wavefunction",
-        "equation": "\\psi_{\\mathbf{k}}(\\mathbf{r}) = e^{i \\mathbf{k} \\cdot \\mathbf{r}} u_{\\mathbf{k}}(\\mathbf{r})",
-        "description": "Formulates the quantum wavefunction of a particle residing in a periodic potential structure like a crystal lattice."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     },
     "legacy-orphans.json": {
-        "title": "Euler-Lagrange Field Equation",
-        "equation": "\\partial_\\mu \\left( \\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)} \\right) - \\frac{\\partial \\mathcal{L}}{\\partial \\phi} = 0",
-        "description": "Derives the equations of motion for a continuous field from the extremization of the action."
+        "title": "PLACEHOLDER: Localized Title Needed",
+        "equation": "\\text{PLACEHOLDER: Localized Equation Needed}",
+        "description": "Please override this placeholder with a mathematically localized identity."
     }
 }
 
@@ -121,6 +121,18 @@ def main():
         sys.exit(1)
     with open(BACKLOG_PATH, "r") as f:
         backlog = json.load(f)
+
+    # 2b. Load backlog math registry (Safeguard 3)
+    math_registry_path = "subfiles/backlog_math_registry.json"
+    backlog_math_registry = {}
+    if os.path.exists(math_registry_path):
+        try:
+            with open(math_registry_path, "r") as f:
+                backlog_math_registry = json.load(f)
+            print(f"Loaded {len(backlog_math_registry)} math templates from {math_registry_path}.")
+        except Exception as e:
+            print(f"Warning: Failed to load {math_registry_path}: {e}")
+
 
     # Filter backlog for pending items that exist as legacy-tier nodes in a shard
     pending_items = [item for item in backlog if item.get("status") == "pending" and item.get("suggested_slug") in search_index]
@@ -174,8 +186,13 @@ def main():
         b_slug, b_title = BRIDGES.get(shard_file, ("minkowski-metric", "Minkowski Metric"))
         bridge_dict = {"slug": b_slug, "title": b_title}
 
-        # Resolve Math Template and generate formula ID
-        template = MATH_TEMPLATES.get(shard_file, MATH_TEMPLATES["theoretical-physics.json"])
+        # Resolve Math Template and generate formula ID (Safeguard 3)
+        if slug in backlog_math_registry:
+            template = backlog_math_registry[slug]
+            print(f"  [GQS Stack] Using premium localized mathematical identity for '{slug}'.")
+        else:
+            template = MATH_TEMPLATES.get(shard_file, MATH_TEMPLATES["theoretical-physics.json"])
+            
         hash_id = hashlib.md5(f"{slug}-identity-1".encode('utf-8')).hexdigest()[:8]
         formula_id = f"{slug}-identity-1-{hash_id}"
         identity_dict = {
@@ -184,6 +201,7 @@ def main():
             "equation": template["equation"],
             "description": template["description"]
         }
+
 
         # Calculate paragraph count target deterministically
         slug_hash = sum(ord(c) for c in slug)

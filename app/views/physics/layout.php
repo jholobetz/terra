@@ -127,6 +127,12 @@
     </style>
 </head>
 <body>
+    <?php
+    $sprites_path = __DIR__ . '/../../config/content/math_sprites.svg';
+    if (file_exists($sprites_path)) {
+        readfile($sprites_path);
+    }
+    ?>
     <?php if ($is_preview ?? false): ?>
         <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
             PREVIEW MODE ACTIVE: Viewing changes from sharded JSON files 

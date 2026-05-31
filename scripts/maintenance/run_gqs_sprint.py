@@ -44,12 +44,17 @@ def get_git_savepoint():
         sys.exit(1)
     return out.strip()
 
-def rollback_to_savepoint(savepoint):
-    """Executes a hard reset to restore the codebase to the clean savepoint."""
+def rollback_to_savepoint(savepoint, committed_pre_flight):
+    """Executes a hard reset to restore the codebase to the clean savepoint and rolls back the savepoint commit."""
     print(f"\n\033[1;91m💥 CRITICAL QUALITY GATE FAILURE: Initiating automatic transaction rollback...\033[0m")
     code, _, err = run_command(["git", "reset", "--hard", savepoint])
     if code == 0:
-        print(f"\033[92m✓ ROLLBACK SUCCESSFUL: Restored workspace state to savepoint commit {savepoint[:8]}.\033[0m")
+        if committed_pre_flight:
+            # Rollback the pre-flight commit to leave changes uncommitted
+            run_command(["git", "reset", "HEAD~1"])
+            print(f"\033[92m✓ ROLLBACK SUCCESSFUL: Restored workspace state to uncommitted changes before GQS sprint.\033[0m")
+        else:
+            print(f"\033[92m✓ ROLLBACK SUCCESSFUL: Restored workspace state to clean savepoint commit {savepoint[:8]}.\033[0m")
     else:
         print(f"\033[91m⚠️ CRITICAL ERROR: Git rollback failed. Error: {err}\033[0m")
     sys.exit(1)
@@ -59,11 +64,13 @@ def run_pre_flight():
     print("🤖 Running pre-flight workspace verification...")
     # Check git status
     code, out, _ = run_command(["git", "status", "--porcelain"])
+    committed = False
     if code == 0 and out.strip():
         print("📝 Staging uncommitted changes and creating an automated pre-flight savepoint...")
         run_command(["git", "add", "."])
         run_command(["git", "commit", "-m", f"chore: automated pre-flight GQS savepoint {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
-    return get_git_savepoint()
+        committed = True
+    return get_git_savepoint(), committed
 
 def run_syntax_guards(payload_path):
     """Scans subfiles/batch_payload.json to verify that written prose adheres to OPS guidelines."""
@@ -159,8 +166,8 @@ def main():
     print_banner("GQS SPRINT ORCHESTRATOR: AUTOMATED QUALITY HARNESS")
     
     # 1. Pre-flight Git checkpoint
-    savepoint = run_pre_flight()
-    print(f"\033[92m✓ Pre-flight savepoint recorded: {savepoint[:8]}\033[0m\n")
+    savepoint, committed_savepoint = run_pre_flight()
+    print(f"\033[92m✓ Pre-flight savepoint recorded: {savepoint[:8]} (committed: {committed_savepoint})\033[0m\n")
 
     # If payload is empty, check if we need to template
     if not os.path.exists(PAYLOAD_PATH) or os.path.getsize(PAYLOAD_PATH) == 2:
@@ -168,19 +175,28 @@ def main():
         code, out, err = run_command([".venv/bin/python3", "gqs.py", "template", str(args.count)])
         if code != 0:
             print(f"\033[91mScaffolding failed: {err or out}\033[0m")
+            if committed_savepoint:
+                run_command(["git", "reset", "HEAD~1"])
             sys.exit(1)
         print(out)
         print("\033[93mNotice: Scaffolded templates generated. Please write the prose in subfiles/batch_payload.json before running again.\033[0m")
+        if committed_savepoint:
+            # Revert the savepoint commit so the template remains as uncommitted change
+            run_command(["git", "reset", "HEAD~1"])
         sys.exit(0)
 
     # 2. Guardrail Stage 1: Syntax & OPS checks
     if not run_syntax_guards(PAYLOAD_PATH):
         # We don't rollback yet because the user is editing subfiles/batch_payload.json local draft
         print("\033[93mNotice: Ingestion aborted due to style violations. Workspace preserved for correction.\033[0m")
+        if committed_savepoint:
+            run_command(["git", "reset", "HEAD~1"])
         sys.exit(1)
 
     if args.dry_run:
         print("\033[92m✓ Dry-run completed. No compilation was performed.\033[0m")
+        if committed_savepoint:
+            run_command(["git", "reset", "HEAD~1"])
         sys.exit(0)
 
     # Read payload slugs to run targeted audits later
@@ -195,7 +211,7 @@ def main():
     code, out, err = run_command([".venv/bin/python3", "gqs.py", "ingest"])
     if code != 0 or "FAILED" in out:
         print(f"\033[91mCompilation Error output:\n{err or out}\033[0m")
-        rollback_to_savepoint(savepoint)
+        rollback_to_savepoint(savepoint, committed_savepoint)
         
     print("\033[92m✓ [Guardrail Stage 2 PASS] Ingestion and compilation completed successfully.\033[0m")
 
@@ -206,14 +222,19 @@ def main():
         code, out, err = run_command([".venv/bin/python3", "integrity_shield.py", slug])
         if code != 0 or "ERRORS FOUND" in out:
             print(f"\033[91mAudit failed for '{slug}' output:\n{out}\033[0m")
-            rollback_to_savepoint(savepoint)
+            rollback_to_savepoint(savepoint, committed_savepoint)
             
     print("\033[92m✓ [Guardrail Stage 3 PASS] All graduated nodes successfully passed integrity audits.\033[0m")
 
     # 5. Success Finalization & Metadata commit
     print("\n📝 Finalizing GQS sprint metadata...")
     run_command(["git", "add", "."])
-    code, _, _ = run_command(["git", "commit", "-m", f"docs: graduate {len(slugs_to_audit)} nodes to platinum ({', '.join(slugs_to_audit)})"])
+    commit_msg = f"docs: graduate {len(slugs_to_audit)} nodes to platinum ({', '.join(slugs_to_audit)})"
+    if committed_savepoint:
+        code, _, _ = run_command(["git", "commit", "--amend", "-m", commit_msg])
+    else:
+        code, _, _ = run_command(["git", "commit", "-m", commit_msg])
+        
     if code == 0:
         print("\033[92m✓ Git transaction committed successfully.\033[0m")
     

@@ -7,6 +7,65 @@ import hashlib
 import sys
 from multiprocessing import Pool, cpu_count
 
+class AhoCorasickNode:
+    def __init__(self):
+        self.transitions = {}
+        self.fail = None
+        self.output = []
+
+class AhoCorasick:
+    def __init__(self):
+        self.root = AhoCorasickNode()
+
+    def insert(self, word):
+        node = self.root
+        for char in word.lower():
+            if char not in node.transitions:
+                node.transitions[char] = AhoCorasickNode()
+            node = node.transitions[char]
+        node.output.append(word)
+
+    def build(self):
+        from collections import deque
+        queue = deque()
+        
+        # First level transitions fail back to root
+        for char, child in self.root.transitions.items():
+            child.fail = self.root
+            queue.append(child)
+
+        while queue:
+            node = queue.popleft()
+            for char, child in node.transitions.items():
+                f = node.fail
+                while f is not None and char not in f.transitions:
+                    f = f.fail
+                child.fail = f.transitions[char] if f is not None else self.root
+                child.output.extend(child.fail.output)
+                queue.append(child)
+
+    def search(self, text):
+        """
+        Scans text and returns a list of (start_idx, end_idx, matched_word) tuples.
+        """
+        node = self.root
+        matches = []
+        text_lower = text.lower()
+        
+        for i, char in enumerate(text_lower):
+            while node is not None and char not in node.transitions:
+                node = node.fail
+            if node is not None:
+                node = node.transitions[char]
+            else:
+                node = self.root
+                
+            for word in node.output:
+                start_idx = i - len(word) + 1
+                end_idx = i + 1
+                matches.append((start_idx, end_idx, word))
+        return matches
+
 class TrieNode:
     def __init__(self):
         self.children = {}
@@ -89,6 +148,7 @@ class PhysicsOrchestrator:
         self.registry_path = registry_path
         self.svg_engine = os.path.join(os.getcwd(), "scripts/tex2svg.js")
         self.svg_cache_path = "global_svg_cache.json"
+        self.signatures_cache_path = os.path.join("subfiles", "hub_signatures.json")
         self.build_manifest_path = "build_manifest.json"
         self.svg_cache = {}
         self.build_manifest = {}
@@ -178,9 +238,7 @@ class PhysicsOrchestrator:
         return tokens
 
     def _compile_dynamic_signatures(self):
-        """Dynamically builds the HUB_SIGNATURES dictionary using TF-IDF of all Platinum nodes."""
-        print("  [Dynamic Signatures] Initiating TF-IDF compiler across Platinum nodes...")
-        
+        """Dynamically builds the HUB_SIGNATURES dictionary using TF-IDF of all Platinum nodes, with persistent caching."""
         # 1. Collect all Platinum subtopics
         platinum_subs = {}
         for slug, sub in self.data.get("subtopics", {}).items():
@@ -188,14 +246,39 @@ class PhysicsOrchestrator:
                 platinum_subs[slug] = sub
                 
         num_platinum = len(platinum_subs)
-        print(f"  [Dynamic Signatures] Found {num_platinum} graduated Platinum subtopics.")
         
         # Fallback safeguard: if we have fewer than 5 platinum nodes, use default static signatures
         if num_platinum < 5:
             print("  [Dynamic Signatures] Insufficient Platinum nodes. Falling back to default signatures.")
             return
 
-        # 2. Compute term frequency (TF) and document frequency (DF)
+        # 2. Check Cache
+        cache_path = getattr(self, "signatures_cache_path", os.path.join("subfiles", "hub_signatures.json"))
+        
+        # Compute corpus hash based on sorting slugs, titles, and contents
+        hasher = hashlib.md5()
+        for slug in sorted(platinum_subs.keys()):
+            sub = platinum_subs[slug]
+            hasher.update(slug.encode('utf-8'))
+            hasher.update(sub.get("title", "").encode('utf-8'))
+            hasher.update(sub.get("content", "").encode('utf-8'))
+        corpus_hash = hasher.hexdigest()
+
+        if os.path.exists(cache_path):
+            try:
+                with open(cache_path, "r") as f:
+                    cache_data = json.load(f)
+                if cache_data.get("corpus_hash") == corpus_hash and isinstance(cache_data.get("signatures"), dict):
+                    self.HUB_SIGNATURES.update(cache_data["signatures"])
+                    print(f"  [Dynamic Signatures] LOADED: TF-IDF signatures from persistent cache (hash: {corpus_hash[:8]}).")
+                    return
+            except Exception as e:
+                print(f"  [Dynamic Signatures] CACHE WARNING: Failed to load signatures cache: {str(e)}")
+
+        print("  [Dynamic Signatures] Initiating TF-IDF compiler across Platinum nodes...")
+        print(f"  [Dynamic Signatures] Found {num_platinum} graduated Platinum subtopics.")
+
+        # 3. Compute term frequency (TF) and document frequency (DF)
         tf = {}
         df = {}
         
@@ -213,13 +296,13 @@ class PhysicsOrchestrator:
             for word in unique_words:
                 df[word] = df.get(word, 0) + 1
                 
-        # 3. Compute IDF for all words
+        # 4. Compute IDF for all words
         import math
         idf = {}
         for word, count in df.items():
             idf[word] = math.log(1 + num_platinum / (1 + count))
             
-        # 4. Resolve each Platinum subtopic to its parent gateway hub(s)
+        # 5. Resolve each Platinum subtopic to its parent gateway hub(s)
         hub_word_scores = {hub: {} for hub in self.HUB_SIGNATURES}
         
         for slug, sub in platinum_subs.items():
@@ -257,7 +340,7 @@ class PhysicsOrchestrator:
                 for hub in resolved_hubs:
                     hub_word_scores[hub][word] = hub_word_scores[hub].get(word, 0.0) + w_tfidf
                     
-        # 5. Overwrite self.HUB_SIGNATURES with the top 15 highest-weighted words for each hub
+        # 6. Overwrite self.HUB_SIGNATURES with the top 15 highest-weighted words for each hub
         for hub, scores in hub_word_scores.items():
             if not scores:
                 print(f"  [Dynamic Signatures] WARNING: Hub '{hub}' has no associated Platinum vocabulary. Keeping fallback signatures.")
@@ -267,6 +350,21 @@ class PhysicsOrchestrator:
             top_words = [word for word, score in sorted_words[:15]]
             self.HUB_SIGNATURES[hub] = top_words
             print(f"  [Dynamic Signatures] Compiled Hub '{hub}': {top_words}")
+
+        # 7. Write compiled signatures to cache
+        import datetime
+        try:
+            os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+            cache_data = {
+                "last_updated": datetime.datetime.now().isoformat(),
+                "corpus_hash": corpus_hash,
+                "signatures": {hub: self.HUB_SIGNATURES[hub] for hub in self.HUB_SIGNATURES}
+            }
+            with open(cache_path, "w") as f:
+                json.dump(cache_data, f, indent=4)
+            print(f"  [Dynamic Signatures] CACHED: TF-IDF signatures to {cache_path} (hash: {corpus_hash[:8]}).")
+        except Exception as e:
+            print(f"  [Dynamic Signatures] CACHE WARNING: Failed to write signatures cache: {str(e)}")
 
     def _load_content(self):
         """Loads all JSON shards from the content directory."""
@@ -460,6 +558,13 @@ class PhysicsOrchestrator:
             except Exception as e:
                 print(f"CACHE WARNING: Failed to save precompiled cache: {str(e)}")
 
+        # Build Aho-Corasick trie for efficient plain text auto-linking
+        valid_trie_titles = [t for t in self.sorted_titles if t not in self.AMBIGUOUS_TERMS]
+        self.plain_ahocorasick = AhoCorasick()
+        for title in valid_trie_titles:
+            self.plain_ahocorasick.insert(title)
+        self.plain_ahocorasick.build()
+
     def get_link_cloud(self, text, limit=15):
         """Scans text and returns a 'cloud' of relevant links based on the registry."""
         cloud = []
@@ -596,8 +701,79 @@ class PhysicsOrchestrator:
             except Exception:
                 pass
 
+    def _spriteify_svg(self, svg_code):
+        """Extracts paths from raw SVG and replaces them with <use href="#math-path-<hash>"/>, compiling to a central sprite sheet."""
+        if not svg_code or not svg_code.startswith("<svg"):
+            return svg_code
+        
+        # Load or initialize sprites
+        sprites_path = os.path.join(self.content_dir, "math_sprites.svg")
+        sprites = {}
+        if os.path.exists(sprites_path):
+            try:
+                with open(sprites_path, "r") as f:
+                    content = f.read()
+                # Find all <path id="..." d="..." /> inside defs
+                import re
+                paths = re.findall(r'<path\s+id="([^"]+)"\s+d="([^"]+)"\s*/?>', content)
+                for pid, d in paths:
+                    sprites[d] = pid
+            except Exception:
+                pass
+
+        # Find all paths in this SVG code
+        import re
+        import hashlib
+        
+        path_pattern = re.compile(r'<path([^>]*d="([^"]+)"[^>]*)>(?:</path>)?')
+        matches = path_pattern.findall(svg_code)
+        if not matches:
+            return svg_code
+
+        updated_sprites = False
+        def replace_path(match):
+            nonlocal updated_sprites
+            attrs_str = match.group(1)
+            d_val = match.group(2)
+            
+            # Generate a stable 10-char hash of the path definition
+            h = hashlib.md5(d_val.strip().encode('utf-8')).hexdigest()[:10]
+            pid = f"math-path-{h}"
+            
+            if d_val not in sprites:
+                sprites[d_val] = pid
+                updated_sprites = True
+            
+            clean_attrs = re.sub(r'\s*d="[^"]+"', '', attrs_str)
+            clean_attrs = clean_attrs.rstrip(' /')
+            
+            return f'<use href="#{pid}"{clean_attrs} />'
+
+        new_svg = path_pattern.sub(replace_path, svg_code)
+
+        if updated_sprites:
+            try:
+                sprite_lines = [
+                    '<?xml version="1.0" encoding="UTF-8"?>',
+                    '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">',
+                    '  <defs>'
+                ]
+                for d_val, pid in sorted(sprites.items(), key=lambda x: x[1]):
+                    sprite_lines.append(f'    <path id="{pid}" d="{d_val}" />')
+                sprite_lines.extend([
+                    '  </defs>',
+                    '</svg>'
+                ])
+                os.makedirs(os.path.dirname(sprites_path), exist_ok=True)
+                with open(sprites_path, "w") as f:
+                    f.write("\n".join(sprite_lines))
+            except Exception:
+                pass
+
+        return new_svg
+
     def convert_to_svg(self, clean_latex, is_display=False, color='#FFD700'):
-        """Converts a clean LaTeX string (no delimiters) to SVG using the persistent MathJax daemon or fallback."""
+        """Converts a clean LaTeX string (no delimiters) to SVG using the persistent MathJax daemon or fallback, with vector spritification."""
         import re
         # Clean double-escaped backslashes before LaTeX commands (e.g. \\mu -> \mu)
         clean_latex = re.sub(r'\\{2,}([a-zA-Z])', r'\\\1', clean_latex)
@@ -626,6 +802,7 @@ class PhysicsOrchestrator:
                         svg_code = res["svg"]
                         if not svg_code.startswith("<svg") or "math-error" in svg_code or "merror" in svg_code or "mjx-error" in svg_code or 'fill="red"' in svg_code or 'stroke="red"' in svg_code or 'fill=\"red\"' in svg_code or 'stroke=\"red\"' in svg_code:
                             raise ValueError(f"MathJax compilation error in formula: {clean_latex}")
+                        svg_code = self._spriteify_svg(svg_code)
                         self.svg_cache[cache_key] = svg_code
                         return svg_code
                     elif "error" in res:
@@ -648,6 +825,7 @@ class PhysicsOrchestrator:
                 svg_code = result.stdout.strip()
                 if not svg_code.startswith("<svg") or "math-error" in svg_code or "merror" in svg_code or "mjx-error" in svg_code or 'fill="red"' in svg_code or 'stroke="red"' in svg_code or 'fill=\"red\"' in svg_code or 'stroke=\"red\"' in svg_code:
                     raise ValueError(f"MathJax compilation error in formula: {clean_latex}")
+                svg_code = self._spriteify_svg(svg_code)
                 self.svg_cache[cache_key] = svg_code
                 return svg_code
         except ValueError as e:
@@ -1255,7 +1433,57 @@ class PhysicsOrchestrator:
             linked_in_node.add(target_slug)
             return link_html
 
-        masked_content = self.compiled_plain_regex.sub(replace_plain, masked_content)
+        # Action 2: If title is PLAIN TEXT, link only if it passes contextual safeguards (Aho-Corasick Scan)
+        if hasattr(self, "plain_ahocorasick") and self.plain_ahocorasick:
+            matches = self.plain_ahocorasick.search(masked_content)
+            valid_matches = []
+            for start, end, word in matches:
+                # 1. Word boundaries
+                if not ((start == 0 or not masked_content[start-1].isalnum()) and 
+                        (end == len(masked_content) or not masked_content[end].isalnum())):
+                    continue
+                # 2. Negative lookbehind: not preceded by =" or >
+                if start > 0:
+                    prev_char = masked_content[start-1]
+                    if prev_char in ['=', '"', '>']:
+                        if prev_char == '"' and start > 1 and masked_content[start-2] == '=':
+                            continue
+                        if prev_char in ['=', '>']:
+                            continue
+                # 3. Negative lookahead: not followed by <
+                if end < len(masked_content) and masked_content[end] == '<':
+                    continue
+                
+                actual_word = masked_content[start:end]
+                valid_matches.append((start, end, actual_word))
+
+            # Resolve overlaps (longest match first)
+            valid_matches.sort(key=lambda x: (x[0], -(x[1] - x[0])))
+            non_overlapping = []
+            last_end = -1
+            for start, end, word in valid_matches:
+                if start >= last_end:
+                    non_overlapping.append((start, end, word))
+                    last_end = end
+
+            # Replace from right to left
+            non_overlapping.sort(key=lambda x: x[0], reverse=True)
+            for start, end, word in non_overlapping:
+                class MockMatch:
+                    def __init__(self, w, s, e):
+                        self._word = w
+                        self._start = s
+                        self._end = e
+                    def group(self, idx):
+                        return self._word
+                    def start(self):
+                        return self._start
+                mock_match = MockMatch(word, start, end)
+                replacement = replace_plain(mock_match)
+                if replacement != word:
+                    masked_content = masked_content[:start] + replacement + masked_content[end:]
+        else:
+            masked_content = self.compiled_plain_regex.sub(replace_plain, masked_content)
         
         final_content = self.unmask_mathjax(masked_content, placeholders)
         final_content = self._sanitize_mathjax(final_content)

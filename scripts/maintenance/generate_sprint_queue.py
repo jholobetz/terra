@@ -183,7 +183,24 @@ def main():
         neighbors_list = [{"slug": n[0], "title": n[1]} for n in selected_neighbors]
 
         # Resolve Cross-Hub Bridge
-        b_slug, b_title = BRIDGES.get(shard_file, ("minkowski-metric", "Minkowski Metric"))
+        if shard_file in BRIDGES:
+            b_slug, b_title = BRIDGES[shard_file]
+        else:
+            # Deterministic hash-based selection from a pool of diverse, high-quality cross-hub bridges
+            fallback_pool = [
+                ("minkowski-metric", "Minkowski Metric"),
+                ("hamiltons-principle", "Hamilton's Principle"),
+                ("background-independence", "Background Independence"),
+                ("energy-momentum-relation", "Energy-Momentum Relation"),
+                ("entropy", "Entropy"),
+                ("principle-of-equivalence", "Principle of Equivalence"),
+                ("gauge-invariance", "Gauge Invariance"),
+                ("action-functional", "Action Functional"),
+                ("stationary-action", "Stationary Action"),
+                ("least-action", "Least Action")
+            ]
+            hash_val = int(hashlib.md5(slug.encode('utf-8')).hexdigest(), 16)
+            b_slug, b_title = fallback_pool[hash_val % len(fallback_pool)]
         bridge_dict = {"slug": b_slug, "title": b_title}
 
         # Resolve Math Template and generate formula ID (Safeguard 3)

@@ -101,7 +101,7 @@ To graduate a subtopic from standard "legacy" to "platinum," it must pass these 
   * *Forbidden*: Lists, bullets, or numbered elements (`<ul>`, `<li>`, `<ol>`).
   * *Forbidden*: Fragmented headers or summaries inside content strings.
   * *Syntax Purity*: Wrap all paragraphs in `<p>` tags. Bold key terms using `<strong>` tags only. **Strict ban on markdown double asterisks (`**`) or underscores (`__`) inside JSON content strings.**
-* **The "Anti-Formulaic Integration" Rule**: Formulaic introductory phrases for mathematical equations (e.g., *"This is defined by the following equation..."*, *"The formula for this is..."*, or *"The Wigner function can be written as..."*) are strictly forbidden. Mathematical equations must be woven organically as grammatical continuations of physical sentences (e.g., *"...which yields the Majorana mass term, written mathematically as \(\mathcal{L} = ...\), that breaks..."*).
+* **The "Anti-Formulaic Integration" Rule**: Formulaic introductory phrases for mathematical equations (e.g., *"This is defined by the following equation..."*, *"The formula for this is..."*, or *"The Wigner function can be written as..."*) are strictly forbidden. Mathematical equations must be woven organically as grammatical continuations of physical sentences (e.g., *"...which yields the Majorana mass term, \(\mathcal{L} = ...\), that breaks..."*).
 * **Positional Variation for Equations**: Primary mathematical identities are dynamically allocated across the entire paragraph range (from Paragraph 1 to the final Paragraph $N$). Equations must reside where they logically belong in the physical narrative:
   * *Paragraph 1 Placement (Axiomatic Approach)*: Serves as the ultimate "In Media Res" start. Perfect for fundamental, self-evident equations (e.g. the Dirac or Schrödinger equations) that require no introductory hand-waving and immediately govern the opening sentences.
   * *Middle Paragraph Placement (Derivational Approach)*: Serves as the transitional bridge in an active physical derivation or mechanical argument.
@@ -123,7 +123,7 @@ To graduate a subtopic from standard "legacy" to "platinum," it must pass these 
   * Minimum of **5 outgoing links** to neighboring subtopics.
   * Minimum of **2 incoming links** from other subtopics.
   * Minimum of **1 cross-hub bridge** connecting to a completely different Pillar Hub (e.g., Astrophysics linking to Thermodynamics).
-* **Organic Formula Integration**: Mathematical equations are integrated in a purely organic, topic-driven manner rather than being dictated by a rigid "Identity Lock." Conceptual, interpretive, or philosophical subtopics (e.g., *scientific-realism*, *anthropic-principle*, *epistemic-boundary*) are graduated as high-density qualitative academic prose with zero registered formulas. For mathematical or physical law subtopics, incorporating mathematical academic rigor is highly suggested to clarify technical terminology, but it is not rigidly forced or expected. Curation of equations must be driven entirely by the logical and narrative requirements of the topic to maintain an organic flow, satisfying the following criteria when formulas are included:
+* **Organic Formula Integration**: Mathematical equations must be integrated in a purely organic, topic-driven manner. While the GQS pipeline systematically registers mathematically localized "Identity Locks" (Formula IDs) unique to each topic to prevent generic placeholder pollution, their incorporation in the prose must flow naturally according to the logical requirements of the narrative. Conceptual, interpretive, or philosophical subtopics (e.g., *scientific-realism*, *anthropic-principle*, *epistemic-boundary*) are graduated as high-density qualitative academic prose with zero registered formulas. Curation of equations must be driven entirely by the logical and narrative requirements of the topic to maintain an organic flow, satisfying the following criteria when formulas are included:
   1. **Defining Law**: Establishes the primary physical behavior.
   2. **Limiting Case**: Demonstrates the connection to a classical or simpler regime.
   3. **Operational Metric**: Defines the primary observational or experimental relationship.
@@ -228,17 +228,17 @@ The `tests/` directory is the regression net for every architectural invariant d
 Having finalized the 12 primary Topic Hubs, the curriculum expands into the **Second and Third Shells** of the knowledge graph:
 
 ### A. Recursive Graduation (The Deep Rigor Mandate)
-* **Scope**: Any subtopic reachable via a direct link from a Platinum node must itself graduate to Platinum standard.
-* **Priority**: Nodes linked from three or more independent Platinum nodes (e.g., `total-dynamics`, `scientific-realism`) are "Master Connectors" and must be prioritized for high-density refactoring (target 1,000 words).
+* **Scope**: Any subtopic reachable via a direct link from a Platinum node is targeted to graduate to Platinum standard in subsequent sprints. This represents the long-term topological growth roadmap.
+* **Execution Priority**: Rather than triggering an immediate, infinite recursive cascade, these linked nodes must be systematically queued and processed in batches via the central GQS backlog CLI, prioritizing "Master Connectors" linked from three or more independent Platinum nodes (e.g., `total-dynamics`, `scientific-realism`) for high-density refactoring (target 1,000 words).
 
 ### B. Topological Tightening & Organic Growth
 To ensure maximum graph density, the project utilizes a continuous audit of physical entities:
 * **Phase A: Auto-Linking (Structural Integrity)**: Any term wrapped in `<strong>` tags that exists in `global_slug_registry.json` but is not yet linked on its first mention within a node must be automatically upgraded to an anchor link (`<a href="..."><strong>...</strong></a>`).
 * **Phase B: Backlog Population (Organic Expansion)**: Bold terms that appear across three or more independent nodes but lack a dedicated subtopic in the registry are identified as "Expansion Candidates." High-frequency candidates (20+ nodes, e.g., `Block Universe`, `Big Bang`) are prioritized for curriculum expansion.
-* **Progress Tracking**: Progress is tracked in `subfiles/hub_tracker.json`. Current Hub status: 100% Graduated.
+* **Progress Tracking**: Progress is tracked in `subfiles/hub_tracker.json` and visualized via `.venv/bin/python3 gqs.py status`, which serves as the live source of truth. Current Hub status: Shards like Classical Mechanics and Condensed Matter are 100% Graduated, with other shards actively progressing.
 
 ### C. Project Goal: 100% OPS Token-Aware Graduation Roadmap
-To graduate the remaining 939 pending legacy nodes to the Organic Platinum Standard, the project adheres to a token-aware and rate-limit conscious goal:
+To graduate the remaining 609 pending legacy nodes to the Organic Platinum Standard, the project adheres to a token-aware and rate-limit conscious goal:
 * **Context Accumulation & Compaction Safe Boundary**: Sprints are batched in groups of 3 nodes (~6,500 tokens/sprint). Context compaction and resettlement is scheduled every 15 sprints (~45 nodes) with a 5-minute overhead window to keep conversational intelligence sharp.
 * **API Rate-Limit Cooling**: Incorporates a 10-second cooling latency per sprint to completely bypass RPM/TPM transient limitations.
 * **Refined Continuous Execution Time**: **~11.32 hours** of active, uninterrupted pipeline processing.

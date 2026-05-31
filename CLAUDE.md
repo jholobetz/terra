@@ -1,6 +1,6 @@
 # Physics Lab Co-Developer Guide — Universal CLAUDE.md
 
-This document is the **Supreme Authority** for all architectural, stylistic, and procedural decisions in the Physics Lab project. All AI systems and human developers MUST adhere to these mandates to maintain the "Gold Standard" of a university-level digital encyclopedia.
+This document is the **Supreme Authority** for all architectural, stylistic, and procedural decisions in the Physics Lab project. All AI systems and human developers MUST adhere to these mandates to maintain the "Organic Platinum Standard" (OPS) of a university-level digital encyclopedia.
 
 ---
 

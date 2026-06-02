@@ -88,6 +88,11 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   ```bash
   .venv/bin/python3 scripts/maintenance/spritify_assets.py
   ```
+* **Semantic Hallucination & Drift Shield**: Audits typeset LaTeX symbols against physical prose explanation anchors, checks for leaked display delimiters inside paragraphs, validates balanced delimiters, and prevents consecutive glossary-style listing patterns:
+  ```bash
+  .venv/bin/python3 scripts/maintenance/hallucination_shield.py [--slug <slug>]
+  ```
+
 
 ---
 
@@ -116,7 +121,7 @@ To graduate a subtopic from standard "legacy" to "platinum," it must pass these 
   2. Implement formal logical syllogisms or thought experiments as structural surrogates for mathematical derivations.
   3. Increase topological bridge connectivity to contextualize and map the relationships between neighboring mathematical nodes.
 * **Link Preservation**: When refactoring, developers MUST first extract all existing internal links and ensure they are contextually re-integrated into the new draft.
-* **Technical Density & Tone**: Strictly between **650 to 1,000 words** of dense, senior undergraduate to graduate-level academic prose.
+* **Technical Density & Tone**: Strictly between **650 to 1,000 words** of dense, senior undergraduate to graduate-level academic prose. **For primary Category Hub Overview articles (designated with the `-overview` suffix), this baseline is elevated to a strict target range of 800 to 1,000 words to ensure adequate coverage of the core curriculum and topological link capacity.**
 * **MathJax Frequency & Rich Variable Density**: Weave precise, high-density inline mathematical symbols, variables, tensors, and operators (e.g., \( \Phi \), \( p^\mu \), \( \langle \phi | \psi \rangle \)) on their first mention and consistently throughout the text. These serve as visual and cognitive landmarks that ground the technical physics, eliminate the visual "wall of text" feel, and reflect true graduate-level textbook density.
   * **NON-NEGOTIABLE TARGET**: Every single paragraph of every graduated subtopic node—including purely conceptual, interpretive, or philosophical nodes—MUST contain at least 2 to 4 distinct inline MathJax expressions (e.g. \( g_{\mu\nu} \), \( |\Psi^+\rangle \), \( \hat{H} \)) to maintain visual texture and eliminate the plain-text 'wall of text' aesthetic. Pure-prose passages with zero typeset math are strictly prohibited.
   * **Explicit Variable Coupling (Strict Requirement)**: Never reference a physics field, parameter, coordinate, or concept purely by name if it has a standard symbol representation; couple it immediately to its mathematical symbol (e.g., writing "metric tensor \( g_{\mu\nu} \)" instead of just "the metric tensor", "Hilbert space \( \mathcal{H} \)" instead of "Hilbert space", or "action functional \( S[\phi] \)" instead of "the action"). All subsequent references should be symbolically anchored.
@@ -147,7 +152,7 @@ Adhere to the project's established notation dialect across all equations:
 
 ### D. Structural Gateway Constraints
 * **Topic Hubs (Categories)**: The 12 primary category entryways (e.g., `astrophysics`, `relativity`) serve as locked logical metadata structures and **DO NOT** conform to the OPS. They must **never** be altered.
-* **Overview Articles**: Corresponding narrative overview articles are designated with the `-overview` suffix (e.g., `theoretical-physics-overview`). These carry the high-density academic overviews and conform strictly to the OPS. **All internal links routing to a primary discipline entryway must point to the narrative Overview Subtopic slug, not the locked category slug, to avoid category routing dead-ends.**
+* **Overview Articles**: Corresponding narrative overview articles are designated with the `-overview` suffix (e.g., `theoretical-physics-overview`). These carry the high-density academic overviews and conform strictly to the OPS. **They must adhere to a strict target range of 800 to 1,000 words (elevated from the standard 650-word minimum) and must contain at least 5 outbound links to map the subtopics of their respective hub.** All internal links routing to a primary discipline entryway must point to the narrative Overview Subtopic slug, not the locked category slug, to avoid category routing dead-ends.
 
 ---
 

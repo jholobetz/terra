@@ -102,7 +102,13 @@ class TrieRegexCompiler:
             result = "(?:" + "|".join(alternatives) + ")"
             
         if node.is_end:
-            result += "?"
+            if len(result) > 1 and not (result.startswith("(?:") and result.endswith(")")):
+                if len(result) == 2 and result[0] == '\\':
+                    result += "?"
+                else:
+                    result = "(?:" + result + ")?"
+            else:
+                result += "?"
         return result
 
     def compile(self, words):

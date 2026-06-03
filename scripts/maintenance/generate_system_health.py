@@ -2,6 +2,7 @@ import json
 import re
 import os
 import sys
+sys.path.append(os.getcwd())
 from datetime import datetime
 from collections import defaultdict
 

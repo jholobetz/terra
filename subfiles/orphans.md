@@ -1,6 +1,6 @@
 # 🌌 Physics Lab: Orphan Subtopics (0 Inbound Links)
 
-Total Orphans Found: **91**
+Total Orphans Found: **78**
 
 Orphan subtopics have **0 inbound links** from other subtopics. Under the **Organic Platinum Standard (OPS)**, a graduated node must have a **minimum of 2 incoming links** and **1 cross-hub bridge**.
 
@@ -13,7 +13,6 @@ Orphan subtopics have **0 inbound links** from other subtopics. Under the **Orga
 | The Radiation-Matter Equality Epoch | `equality-epoch` | 🟢 `platinum` |
 | The Firewall Paradox (AMPS) | `firewall-paradox` | 🟢 `platinum` |
 | Hot Dark Matter (HDM) | `hot-dark-matter` | 🟢 `platinum` |
-| Mass Conservation Equation | `mass-conservation-equation` | 🟢 `platinum` |
 | The Poisson Equation in General Relativity | `poisson-equation-gr` | 🟢 `platinum` |
 | The r-process (Rapid Neutron Capture) | `r-process` | 🟢 `platinum` |
 | The Repulsive Strong Nuclear Force | `repulsive-strong-force` | 🟢 `platinum` |
@@ -30,12 +29,10 @@ Orphan subtopics have **0 inbound links** from other subtopics. Under the **Orga
 | Lagrange Multipliers | `lagrange-multipliers` | 🟢 `platinum` |
 | Newton's First Law (Inertia) | `newtons-first-law` | 🟢 `platinum` |
 | The Poisson Algebra of Rotations | `poisson-algebra` | 🟢 `platinum` |
-| Rotational Dynamics | `rotational-dynamics` | 🟢 `platinum` |
 | Rotational Symmetry (Isotropy) | `rotational-symmetry` | 🟢 `platinum` |
 | Symmetry of Interactions | `symmetry-of-interactions` | 🟢 `platinum` |
 | The Tangent Bundle (TQ) | `tangent-bundle` | 🟢 `platinum` |
 | Tensor Mapping (L = I omega) | `tensor-mapping` | 🟢 `platinum` |
-| Topology of Configuration Space | `topology-mechanics` | 🟢 `platinum` |
 | The Tsiolkovsky Rocket Equation | `tsiolkovsky-rocket-equation` | 🟢 `platinum` |
 | Universal Law of Gravitation | `universal-gravitation` | 🟢 `platinum` |
 | Vectors and Euclidean Space | `vectors-euclidean-space` | 🟢 `platinum` |
@@ -70,16 +67,13 @@ Orphan subtopics have **0 inbound links** from other subtopics. Under the **Orga
 
 | Subtopic Title | Slug | Standard |
 | :--- | :--- | :--- |
-| Discrete Set | `discrete-set` | 🟢 `platinum` |
 | The Incomplete Theory Argument (EPR) | `incomplete-theory` | 🟢 `platinum` |
-| The Light Cone Boundary | `light-cone-boundary-physics` | 🟢 `platinum` |
 | Mathematical Structure | `mathematical-structure` | 🟢 `platinum` |
 | The Meaning Rule (Verificationism) | `meaning-rule` | 🟢 `platinum` |
 | Objective Probability (Propensities) | `objective-probability-propensities` | 🟢 `platinum` |
 | The Ontology of Particles vs. Fields | `particles-vs-fields` | 🟢 `platinum` |
 | QBism (Quantum Bayesianism) | `qbism` | 🟢 `platinum` |
 | Simplicity (Occam's Razor) | `simplicity` | 🟢 `platinum` |
-| Symmetry Groups | `symmetry-groups` | 🟢 `platinum` |
 
 ## 📁 quantum-physics.json
 
@@ -87,7 +81,6 @@ Orphan subtopics have **0 inbound links** from other subtopics. Under the **Orga
 | :--- | :--- | :--- |
 | Intensity and Photon Flux | `light-intensity-quantum` | 🟢 `platinum` |
 | Einstein's Photoelectric Equation | `photoelectric-equation-einstein` | 🟢 `platinum` |
-| Quantum Representation | `quantum-representation` | 🟢 `platinum` |
 | Single-Valued Wave Function | `single-valued` | 🟢 `platinum` |
 | Standing Wave Condition | `standing-wave-condition` | 🟢 `platinum` |
 | The Work Function (\( \Phi \)) | `work-function-photoelectric` | 🟢 `platinum` |
@@ -119,18 +112,12 @@ Orphan subtopics have **0 inbound links** from other subtopics. Under the **Orga
 | Baryon Number (B) | `baryon-number-gut` | 🟢 `platinum` |
 | Canonical Relations: The Algebra of Fields | `canonical-relation` | 🟢 `platinum` |
 | Completeness of Space | `complete-space` | 🟢 `platinum` |
-| Constants of the Motion | `constant-of-motion` | 🟢 `platinum` |
 | Continuous Collapse (CSL) | `continuous-collapse` | 🟢 `platinum` |
-| Fermat's Principle of Least Time | `fermats-principle` | 🟢 `platinum` |
-| Physical Fields | `fields-theory` | 🟢 `platinum` |
 | The Geometric Metric and K\u00e4hler Structures | `geometric-metric-phase-space` | 🟢 `platinum` |
 | Hilbert Space (Linear Operators) | `linear-operator-hilbert-space` | 🟢 `platinum` |
-| M-Theory | `m-theory` | 🟢 `platinum` |
-| Orthonormal Basis | `orthonormal-basis` | 🟢 `platinum` |
 | The Position Operator (\(\hat{x}\)) | `position-operator` | 🟢 `platinum` |
 | Process 1 (Non-Unitary) | `process-1-nonunitary` | 🟢 `platinum` |
 | Propagators and Green's Functions | `propagators-qft` | 🟢 `platinum` |
-| Quantum Commutators | `quantum-commutators` | 🟢 `platinum` |
 | Spacetime Volumes | `spacetime-volumes` | 🟢 `platinum` |
 | State Geometry (Phase Space) | `state-geometry` | 🟢 `platinum` |
 | State Preservation and Unitary Flow | `state-preservation` | 🟢 `platinum` |

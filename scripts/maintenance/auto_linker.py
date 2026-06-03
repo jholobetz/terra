@@ -159,6 +159,6 @@ if __name__ == "__main__":
     content_dir = 'app/config/content'
     shards_to_process = [
         f for f in glob.glob(os.path.join(content_dir, '*.json'))
-        if os.path.basename(f) not in ('search_index.json', 'categories.json', 'pillar_profiles.json', 'formulas.json', 'constants.json', 'entities.json')
+        if os.path.basename(f) not in ('search_index.json', 'categories.json', 'pillar_profiles.json', 'formulas.json', 'constants.json', 'entities.json', 'compiled_trie_regex.json')
     ]
     run_auto_linker(shards_to_process, os.path.join(content_dir, 'search_index.json'))

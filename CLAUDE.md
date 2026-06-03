@@ -276,6 +276,12 @@ To graduate the remaining 609 pending legacy nodes to the Organic Platinum Stand
 * **Refined Continuous Execution Time**: **~11.32 hours** of active, uninterrupted pipeline processing.
 * **Refined Collaborative Calendar Timeline**: **~10.5 days** of active pairing at standard daily rhythms, ensuring mathematically localized identities are curators-driven and qualitatively rich.
 
+### D. Ingestion & Orphan Resolution Optimizations
+To accelerate curriculum integration and lower the manual overhead of resolving remaining orphans:
+* **Automated "Bold-Wrapping" Crawler**: Build a script (`autobold_orphans.py`) to search the entire plain-prose database for occurrences of orphan titles or aliases, wrapping the first match in `<strong>` tags. This automatically cures already-mentioned orphans.
+* **Lexical Suffix and Parenthesis Bypass**: Update `TrieRegexCompiler.compile` lookaround boundaries (`(?<!\w)` and `(?!\w)`) to ignore trailing punctuation, MathJax wrappers, and parentheticals (e.g. ignoring `(Inertia)` or `(Stokes' Theorem)`), allowing the auto-linker to match variations natively.
+* **CLI-Driven \`gqs.py adopt\` Subcommand**: Automate sentence additions by querying `subfiles/adoption_suggestions.json` and auto-generating contextually enriched paragraphs containing the target bolded orphan, writing directly to `batch_payload.json`.
+
 ---
 
 ## 🏆 5. Session Progress & Tracking

@@ -117,7 +117,7 @@ class TrieRegexCompiler:
             return r"\b\B"
         for word in valid_words:
             self.insert(word)
-        return r"\b" + self._build_regex(self.root) + r"\b"
+        return r"(?<!\w)" + self._build_regex(self.root) + r"(?!\w)"
 
 class PhysicsOrchestrator:
     PROTECTED_TOPICS = {

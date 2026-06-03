@@ -1,6 +1,6 @@
 # 📂 Physics Lab: Adoptive Parent Suggestions for Orphans
 
-Total Orphans Analyzed: **78**
+Total Orphans Analyzed: **61**
 
 This report lists the top 5 suggested parent nodes for each orphan subtopic, calculated via token-overlap similarity, shard category alignment, and overview-hub boosts.
 
@@ -86,143 +86,6 @@ This report lists the top 5 suggested parent nodes for each orphan subtopic, cal
 | `supernova-energy-source` | Energy Source | `astrophysics.json` | 185 | 135 overlapping terms + Category Boost |
 | `interstellar-extinction` | Interstellar Extinction | `astrophysics.json` | 178 | 128 overlapping terms + Category Boost |
 | `hubble-lemaitre-law` | The Hubble-Lemaître Law | `astrophysics.json` | 178 | 128 overlapping terms + Category Boost |
-
-## 📁 classical-mechanics.json
-
-### 📭 `angular-momentum-parallelism`: Parallelism of L and Omega
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 223 | 73 overlapping terms + Category Boost + Hub Overview Boost |
-| `rotational-dynamics` | Rotational Dynamics | `classical-mechanics.json` | 175 | 125 overlapping terms + Category Boost |
-| `axiom-of-inertia` | Axiom of Inertia | `classical-mechanics.json` | 151 | 101 overlapping terms + Category Boost |
-| `torque` | Torque | `classical-mechanics.json` | 148 | 98 overlapping terms + Category Boost |
-| `lagrange-multipliers` | Lagrange Multipliers | `classical-mechanics.json` | 141 | 91 overlapping terms + Category Boost |
-
-### 📭 `coupled-oscillations`: Coupled Oscillators
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `coupled-oscillators` | Coupled Oscillators | `legacy-orphans.json` | 303 | 303 overlapping terms |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 260 | 110 overlapping terms + Category Boost + Hub Overview Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 171 | 121 overlapping terms + Category Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 169 | 119 overlapping terms + Category Boost |
-| `reynolds-transport-theorem` | Reynolds Transport Theorem | `classical-mechanics.json` | 166 | 116 overlapping terms + Category Boost |
-
-### 📭 `damped-oscillations`: Damped Oscillations
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 244 | 94 overlapping terms + Category Boost + Hub Overview Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 159 | 109 overlapping terms + Category Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 154 | 104 overlapping terms + Category Boost |
-| `driven-oscillations` | Driven Oscillations | `classical-mechanics.json` | 151 | 101 overlapping terms + Category Boost |
-| `simple-harmonic-oscillator-mechanics` | The Simple Harmonic Oscillator (SHO) | `classical-mechanics.json` | 151 | 101 overlapping terms + Category Boost |
-
-### 📭 `driven-oscillations`: Driven Oscillations
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 235 | 85 overlapping terms + Category Boost + Hub Overview Boost |
-| `damped-oscillations` | Damped Oscillations | `classical-mechanics.json` | 151 | 101 overlapping terms + Category Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 148 | 98 overlapping terms + Category Boost |
-| `simple-harmonic-oscillator-mechanics` | The Simple Harmonic Oscillator (SHO) | `classical-mechanics.json` | 143 | 93 overlapping terms + Category Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 141 | 91 overlapping terms + Category Boost |
-
-### 📭 `lagrange-multipliers`: Lagrange Multipliers
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 271 | 121 overlapping terms + Category Boost + Hub Overview Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 232 | 182 overlapping terms + Category Boost |
-| `stationary-action-principle` | Principle of Stationary Action | `classical-mechanics.json` | 224 | 174 overlapping terms + Category Boost |
-| `principal-function` | Hamilton's Principal Function | `classical-mechanics.json` | 214 | 164 overlapping terms + Category Boost |
-| `reynolds-transport-theorem` | Reynolds Transport Theorem | `classical-mechanics.json` | 211 | 161 overlapping terms + Category Boost |
-
-### 📭 `newtons-first-law`: Newton's First Law (Inertia)
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 271 | 121 overlapping terms + Category Boost + Hub Overview Boost |
-| `newtons-second-law` | The Equation of Motion | `classical-mechanics.json` | 188 | 138 overlapping terms + Category Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 181 | 131 overlapping terms + Category Boost |
-| `generator-of-spatial-translations` | Generator of Spatial Translations | `classical-mechanics.json` | 176 | 126 overlapping terms + Category Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 176 | 126 overlapping terms + Category Boost |
-
-### 📭 `poisson-algebra`: The Poisson Algebra of Rotations
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 265 | 115 overlapping terms + Category Boost + Hub Overview Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 206 | 156 overlapping terms + Category Boost |
-| `rotational-dynamics` | Rotational Dynamics | `classical-mechanics.json` | 194 | 144 overlapping terms + Category Boost |
-| `principal-function` | Hamilton's Principal Function | `classical-mechanics.json` | 193 | 143 overlapping terms + Category Boost |
-| `conservation-of-linear-momentum` | Conservation of Linear Momentum | `classical-mechanics.json` | 183 | 133 overlapping terms + Category Boost |
-
-### 📭 `rotational-symmetry`: Rotational Symmetry (Isotropy)
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 235 | 85 overlapping terms + Category Boost + Hub Overview Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 159 | 109 overlapping terms + Category Boost |
-| `torque` | Torque | `classical-mechanics.json` | 155 | 105 overlapping terms + Category Boost |
-| `external-forces` | External Forces | `classical-mechanics.json` | 154 | 104 overlapping terms + Category Boost |
-| `conservation-of-linear-momentum` | Conservation of Linear Momentum | `classical-mechanics.json` | 150 | 100 overlapping terms + Category Boost |
-
-### 📭 `symmetry-of-interactions`: Symmetry of Interactions
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 283 | 133 overlapping terms + Category Boost + Hub Overview Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 243 | 193 overlapping terms + Category Boost |
-| `newtons-third-law` | The Principle of Reciprocal Actions | `classical-mechanics.json` | 211 | 161 overlapping terms + Category Boost |
-| `conservation-of-linear-momentum` | Conservation of Linear Momentum | `classical-mechanics.json` | 206 | 156 overlapping terms + Category Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 206 | 156 overlapping terms + Category Boost |
-
-### 📭 `tangent-bundle`: The Tangent Bundle (TQ)
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 241 | 91 overlapping terms + Category Boost + Hub Overview Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 207 | 157 overlapping terms + Category Boost |
-| `principal-function` | Hamilton's Principal Function | `classical-mechanics.json` | 188 | 138 overlapping terms + Category Boost |
-| `configuration-space` | Configuration Space | `classical-mechanics.json` | 186 | 136 overlapping terms + Category Boost |
-| `conservation-of-linear-momentum` | Conservation of Linear Momentum | `classical-mechanics.json` | 178 | 128 overlapping terms + Category Boost |
-
-### 📭 `tensor-mapping`: Tensor Mapping (L = I omega)
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 223 | 73 overlapping terms + Category Boost + Hub Overview Boost |
-| `generalized-coordinates` | Generalized Coordinates | `classical-mechanics.json` | 148 | 98 overlapping terms + Category Boost |
-| `generator-of-spatial-translations` | Generator of Spatial Translations | `classical-mechanics.json` | 147 | 97 overlapping terms + Category Boost |
-| `reynolds-transport-theorem` | Reynolds Transport Theorem | `classical-mechanics.json` | 146 | 96 overlapping terms + Category Boost |
-| `stationary-action-principle` | Principle of Stationary Action | `classical-mechanics.json` | 146 | 96 overlapping terms + Category Boost |
-
-### 📭 `tsiolkovsky-rocket-equation`: The Tsiolkovsky Rocket Equation
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 284 | 134 overlapping terms + Category Boost + Hub Overview Boost |
-| `conservation-of-linear-momentum` | Conservation of Linear Momentum | `classical-mechanics.json` | 225 | 175 overlapping terms + Category Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 222 | 172 overlapping terms + Category Boost |
-| `reynolds-transport-theorem` | Reynolds Transport Theorem | `classical-mechanics.json` | 215 | 165 overlapping terms + Category Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 207 | 157 overlapping terms + Category Boost |
-
-### 📭 `universal-gravitation`: Universal Law of Gravitation
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 259 | 109 overlapping terms + Category Boost + Hub Overview Boost |
-| `newtons-second-law` | The Equation of Motion | `classical-mechanics.json` | 165 | 115 overlapping terms + Category Boost |
-| `generalized-coordinates` | Generalized Coordinates | `classical-mechanics.json` | 164 | 114 overlapping terms + Category Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 163 | 113 overlapping terms + Category Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 161 | 111 overlapping terms + Category Boost |
-
-### 📭 `vectors-euclidean-space`: Vectors and Euclidean Space
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 235 | 85 overlapping terms + Category Boost + Hub Overview Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 147 | 97 overlapping terms + Category Boost |
-| `generator-of-spatial-translations` | Generator of Spatial Translations | `classical-mechanics.json` | 146 | 96 overlapping terms + Category Boost |
-| `minkowski-spacetime` | Minkowski Spacetime | `classical-mechanics.json` | 146 | 96 overlapping terms + Category Boost |
-| `external-forces` | External Forces | `classical-mechanics.json` | 145 | 95 overlapping terms + Category Boost |
-
-### 📭 `wave-equation-derivation`: Wave Equation Derivation
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `classical-mechanics-overview` | Classical Mechanics | `classical-mechanics.json` | 237 | 87 overlapping terms + Category Boost + Hub Overview Boost |
-| `stationary-action-principle` | Principle of Stationary Action | `classical-mechanics.json` | 168 | 118 overlapping terms + Category Boost |
-| `internal-forces` | Internal Forces | `classical-mechanics.json` | 166 | 116 overlapping terms + Category Boost |
-| `reynolds-transport-theorem` | Reynolds Transport Theorem | `classical-mechanics.json` | 165 | 115 overlapping terms + Category Boost |
-| `action-integral` | Action Integral | `classical-mechanics.json` | 161 | 111 overlapping terms + Category Boost |
 
 ## 📁 electromagnetism.json
 
@@ -334,15 +197,6 @@ This report lists the top 5 suggested parent nodes for each orphan subtopic, cal
 | `taylor-expansion-mechanics` | Taylor Expansion and the Harmonic Approximation | `electromagnetism.json` | 156 | 106 overlapping terms + Category Boost |
 | `curl-identically-zero` | Curl is Identically Zero | `electromagnetism.json` | 155 | 105 overlapping terms + Category Boost |
 
-### 📭 `permeability-free-space`: Permeability of Free Space (\(\mu_0\))
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `electromagnetism-overview` | Electromagnetism | `electromagnetism.json` | 262 | 112 overlapping terms + Category Boost + Hub Overview Boost |
-| `homogeneous-maxwell` | The Homogeneous Maxwell Equation | `electromagnetism.json` | 169 | 119 overlapping terms + Category Boost |
-| `inverse-square-law-physics` | The Inverse-Square Dependence | `electromagnetism.json` | 162 | 112 overlapping terms + Category Boost |
-| `orthogonal-vectors` | Orthogonal Vectors and the Perpendicular Field | `electromagnetism.json` | 162 | 112 overlapping terms + Category Boost |
-| `field-definition` | Magnetic Field Definition | `electromagnetism.json` | 162 | 112 overlapping terms + Category Boost |
-
 ### 📭 `position-4-vector`: The Position 4-Vector (\(x^\mu\))
 | Suggested Parent Slug | Title | Shard | Score | Explanation |
 | :--- | :--- | :--- | :--- | :--- |
@@ -416,15 +270,6 @@ This report lists the top 5 suggested parent nodes for each orphan subtopic, cal
 | `david-albert` | David Albert and the Past Hypothesis | `philosophy-of-physics.json` | 246 | 196 overlapping terms + Category Boost |
 | `quantum-entanglement` | Quantum Entanglement | `philosophy-of-physics.json` | 237 | 187 overlapping terms + Category Boost |
 | `many-worlds` | Many-Worlds Interpretation | `philosophy-of-physics.json` | 210 | 160 overlapping terms + Category Boost |
-
-### 📭 `mathematical-structure`: Mathematical Structure
-| Suggested Parent Slug | Title | Shard | Score | Explanation |
-| :--- | :--- | :--- | :--- | :--- |
-| `philosophy-of-physics-overview` | Philosophy of Physics | `philosophy-of-physics.json` | 273 | 123 overlapping terms + Category Boost + Hub Overview Boost |
-| `mathematical-relations` | Mathematical Relations | `philosophy-of-physics.json` | 220 | 170 overlapping terms + Category Boost |
-| `identity-of-indiscernibles` | Identity of Indiscernibles | `philosophy-of-physics.json` | 220 | 170 overlapping terms + Category Boost |
-| `algebraic-identity` | Algebraic Identity | `philosophy-of-physics.json` | 218 | 168 overlapping terms + Category Boost |
-| `epistemic-structural-realism` | Epistemic Structural Realism | `philosophy-of-physics.json` | 217 | 167 overlapping terms + Category Boost |
 
 ### 📭 `meaning-rule`: The Meaning Rule (Verificationism)
 | Suggested Parent Slug | Title | Shard | Score | Explanation |

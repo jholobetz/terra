@@ -1,6 +1,6 @@
 # 🌌 Physics Lab: Orphan Subtopics (0 Inbound Links)
 
-Total Orphans Found: **13**
+Total Orphans Found: **9**
 
 Orphan subtopics have **0 inbound links** from other subtopics. Under the **Organic Platinum Standard (OPS)**, a graduated node must have a **minimum of 2 incoming links** and **1 cross-hub bridge**.
 
@@ -9,15 +9,6 @@ Orphan subtopics have **0 inbound links** from other subtopics. Under the **Orga
 | Subtopic Title | Slug | Standard |
 | :--- | :--- | :--- |
 | The Ontology of Particles vs. Fields | `particles-vs-fields` | 🟢 `platinum` |
-
-## 📁 quantum-physics.json
-
-| Subtopic Title | Slug | Standard |
-| :--- | :--- | :--- |
-| Intensity and Photon Flux | `light-intensity-quantum` | 🟢 `platinum` |
-| Einstein's Photoelectric Equation | `photoelectric-equation-einstein` | 🟢 `platinum` |
-| Single-Valued Wave Function | `single-valued` | 🟢 `platinum` |
-| Standing Wave Condition | `standing-wave-condition` | 🟢 `platinum` |
 
 ## 📁 relativity.json
 

@@ -1,6 +1,6 @@
 # 🌌 Physics Lab: Orphan Subtopics (0 Inbound Links)
 
-Total Orphans Found: **9**
+Total Orphans Found: **4**
 
 Orphan subtopics have **0 inbound links** from other subtopics. Under the **Organic Platinum Standard (OPS)**, a graduated node must have a **minimum of 2 incoming links** and **1 cross-hub bridge**.
 
@@ -22,14 +22,4 @@ Orphan subtopics have **0 inbound links** from other subtopics. Under the **Orga
 | :--- | :--- | :--- |
 | The Origin of W-Boson Mass | `w-boson-mass` | 🟢 `platinum` |
 | The Wine-Bottle (Mexican Hat) Potential | `wine-bottle-potential` | 🟢 `platinum` |
-
-## 📁 theoretical-physics.json
-
-| Subtopic Title | Slug | Standard |
-| :--- | :--- | :--- |
-| Completeness of Space | `complete-space` | 🟢 `platinum` |
-| The Geometric Metric and K\u00e4hler Structures | `geometric-metric-phase-space` | 🟢 `platinum` |
-| Propagators and Green's Functions | `propagators-qft` | 🟢 `platinum` |
-| Spacetime Volumes | `spacetime-volumes` | 🟢 `platinum` |
-| State Preservation and Unitary Flow | `state-preservation` | 🟢 `platinum` |
 

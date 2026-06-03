@@ -1,50 +1,52 @@
-# 🌌 Physics Lab: Senior-Undergraduate & Graduate Physics Encyclopedia
+# 🌌 Physics Lab: Senior-Undergraduate & Graduate Digital Physics Encyclopedia
 
-Physics Lab is a university-level digital physics encyclopedia designed to present high-density, mathematically rigorous academic articles. The web frontend is built on a streamlined **FlightPHP** MVC framework, while the content is powered by a sharded relational JSON database on disk and managed via a transactional **Python Content-Graduation Pipeline** that enforces the **Organic Platinum Standard (OPS)**.
+Physics Lab is a university-level digital physics encyclopedia designed to deliver mathematically rigorous, topologically dense academic articles. The web frontend is built on a streamlined **FlightPHP** MVC framework, while the underlying database is a sharded, flat-file relational JSON structure on disk. Content transitions and style gates are governed by a transactional **Python Content-Graduation Pipeline** that enforces the **Organic Platinum Standard (OPS)**.
 
 ---
 
-## 🚀 1. Project Quickstart
+## 🚀 1. Quickstart & Commands
 
-### 🌐 Web Server (PHP Frontend)
-The frontend serves the encyclopedia, handles routing to subtopics, renders LaTeX equations using pre-compiled SVGs, and runs single-node integrity checks.
+All Python-based data maintenance, content generation, and quality compilation operations must run using the project's local virtual environment (`.venv/`).
+
+### 🌐 Web Server (FlightPHP Frontend)
+The frontend serves the encyclopedia, manages URL routing to subtopics, renders LaTeX equations dynamically using lightweight MathJax SVG references, and hosts local node audits.
 * **Prerequisites**: PHP 8.0+ and Composer.
-* **Launch Development Server**:
+* **Launch Local Server**:
   ```bash
   composer install
   composer start
   ```
-  Then, navigate to `http://localhost:8000` in your web browser.
+  The application is served at `http://localhost:8000`.
 
-### 🐍 Content & Pipeline CLI (Python Backend)
-All database updates, quality audits, content generation, and pipeline refactoring are run from the project's local virtual environment (`.venv/`).
-* **Prerequisites**: Python 3.10+.
-* **Check Database Metrics & Backlog Status**:
+### 🐍 Pipeline & Content CLI (Python Backend)
+The Python pipeline controls database status, refactoring, validation, and content ingestion.
+* **Prerequisites**: Python 3.10+ and active `.venv/`.
+* **Check Status & Quality Metrics**:
   ```bash
   .venv/bin/python3 gqs.py status
+  ```
+* **Run Pytest Regression Suite**:
+  ```bash
+  .venv/bin/python3 -m pytest tests/
   ```
 * **Run Sitewide Integrity Audit**:
   ```bash
   .venv/bin/python3 integrity_shield.py
   ```
-* **Run Regression Tests**:
-  ```bash
-  .venv/bin/python3 -m pytest tests/
-  ```
 
 ---
 
-## 🏛️ 2. The Organic Platinum Standard (OPS) Quality Gates
+## 🏛️ 2. The Organic Platinum Standard (OPS)
 
-Every article in the encyclopedia is validated against strict quality gates enforced by `integrity_shield.py` and the pipeline compiler:
+Every subtopic article in the encyclopedia is validated against strict quality gates enforced by `integrity_shield.py` and the pipeline compiler:
 
 ### ✍️ Qualitative Prose Mandates
-* **The "In Media Res" Lead**: The first sentence of the first paragraph must lead directly with a physical principle, identity, or derivation. It is forbidden to start with self-referential talk (e.g., *"In this article..."*) or mention the subtopic's title within the first 15 words.
-* **Zero-Artifact Continuous Prose**: Only high-density, university-level academic HTML paragraphs wrapped in `<p>` are allowed. Lists (`<ul>`, `<ol>`), headers (`<h2>`, `<h3>`), and markdown formatting (such as `**` or `__`) inside the content strings are strictly prohibited.
-* **Anti-Formulaic Integration**: Standard glossary introductions (e.g., *"This is defined by the following equation:"* or *"...where x is mass"* immediately following an equation) are forbidden. Equations and variable symbols must be woven organically as grammatical continuations of physical sentences.
-* **Visual Texture & Math Density**: Every paragraph in every node—including conceptual or philosophical articles—must contain at least **2 to 4 distinct inline MathJax expressions** (e.g., \( g_{\mu\nu} \), \( |\Psi\rangle \)) to eliminate visual "walls of text."
-* **Explicit Variable Coupling**: Physical variables, operators, or spaces must be coupled directly with their mathematical representations on first mention (e.g., writing "metric tensor \( g_{\mu\nu} \)" instead of just "metric tensor").
-* **Plain English Word Count Cushion**: Standard subtopics must contain **650 to 1,000 words** of prose. Because the parser strips LaTeX formulas before measuring depth, developers must draft a generous plain-prose cushion (~800 words) to clear the static floor. Primary category Hub Overviews (`-overview` slugs) are elevated to a **800 to 1,000 word** target.
+1. **The "In Media Res" Lead**: The opening sentence of the article must lead directly with a physical principle, identity, or derivation. Introductory filler (e.g., *"This article covers..."* or *"The [Topic] is..."*) is strictly forbidden. The subtopic's title must not appear within the first 15 words.
+2. **Zero-Artifact Continuous Prose**: Only high-density, university-level academic HTML paragraphs wrapped in `<p>` are allowed. Lists (`<ul>`, `<ol>`), fragmented headers (`<h2>`, `<h3>`), and markdown formatting (such as `**` or `__`) inside the content strings are strictly prohibited.
+3. **Anti-Formulaic Integration**: Standard glossary introductions (e.g., *"This is defined by the following equation:"* or *"...where x is mass"* immediately following an equation) are forbidden. Equations and variable symbols must be woven organically as grammatical continuations of physical sentences.
+4. **Visual Texture & Math Density**: Every paragraph in every node—including conceptual or philosophical articles—must contain at least **2 to 4 distinct inline MathJax expressions** (e.g., \( g_{\mu\nu} \), \( |\Psi\rangle \)) to eliminate visual "walls of text."
+5. **Explicit Variable Coupling**: Physical variables, operators, or spaces must be coupled directly with their mathematical representations on first mention (e.g., writing "metric tensor \( g_{\mu\nu} \)" instead of just "metric tensor").
+6. **Plain English Word Count Cushion**: Standard subtopics must contain **650 to 1,000 words** of prose. Because the parser strips LaTeX formulas before measuring depth, developers must draft a generous plain-prose cushion (~800 words) to clear the static floor. Primary category Hub Overviews (`-overview` slugs) are elevated to a **800 to 1,000 word** target.
 
 ### 🕸️ Topological & Connectivity Symmetries
 To graduate a node to Platinum standard, it must establish a resilient small-world network topology:
@@ -54,7 +56,7 @@ To graduate a node to Platinum standard, it must establish a resilient small-wor
 
 ---
 
-## 📂 3. Platform Architecture
+## 📂 3. Repository Directory Structure
 
 ```
 physics-lab/
@@ -65,29 +67,44 @@ physics-lab/
 │   │   ├── content/            # The Sharded JSON Relational Database
 │   │   │   ├── astrophysics.json
 │   │   │   ├── classical-mechanics.json
-│   │   │   ├── electromagnetism.json
 │   │   │   ├── ... (13 Content Shards)
 │   │   │   ├── search_index.json      # Global content index mapping
 │   │   │   └── math_sprites.svg       # Consolidated vector MathJax glyphs
-│   │   └── routes.php          # Frontend URL routing
+│   │   ├── routes.php          # Frontend URL routing
+│   │   └── services.php        # Dependency injection configuration
 │   └── views/                  # UI Layouts & HTML Templates
+│       └── physics/
+│           ├── layout.php      # Base HTML template containing SVG sprite sheet
+│           └── subtopic.php    # Single subtopic rendering template
 │
-├── tests/                      # Python Automated Regression Suite
-│   ├── test_gqs_status.py      # Dashboard and status CLI assertions
-│   ├── test_integrity_shield.py # Strict schema & linkage regression checks
+├── scripts/
+│   └── maintenance/            # Python Content Maintenance Scripts
+│       ├── auto_linker.py      # Keyword auto-linking state machine
+│       ├── run_gqs_sprint.py   # Transactional sprint orchestrator
+│       ├── spritify_assets.py  # MathJax SVG sprite sheet compiler
+│       ├── generate_system_health.py # Health dashboard updater
+│       └── ...
+│
+├── tests/                      # Automated Regression Suite
 │   ├── test_ops_gates.py       # OPS style gate checks (dry-run mode)
-│   └── ... (6 test files)
+│   ├── test_integrity_shield.py # Strict schema & linkage regression checks
+│   ├── test_sync_backlog.py    # Backlog verification assertions
+│   └── ...
 │
 ├── subfiles/                   # Pipeline registries and queues
 │   ├── auto_link_aliases.json  # Search aliases for keyword auto-linking
-│   ├── orphans.md              # Live record of unlinked graph nodes
-│   └── system_health.json      # Latest compiled database metrics
+│   ├── hub_signatures.json     # Cached TF-IDF signatures for categories
+│   └── system_health.json      # Compiled database metrics
 │
 ├── orchestrator.py             # TF-IDF Affinity & Context-Affinity Engine
 ├── integrity_shield.py         # The Sitewide Quality Assurance Gate
 ├── gqs.py                      # Graduation Queue Stack CLI
 └── README.md                   # Project documentation
 ```
+
+---
+
+## 🏛️ 4. Key Architectural Systems
 
 ### 🗄️ Relational JSON Database Sharding
 The database is fully flat-file and relational, sharded by physical physics categories inside `app/config/content/`. Shard membership is mapped globally in `app/config/content/search_index.json`. This maintains high disk-read speeds without requiring heavy external database servers in development.
@@ -98,9 +115,14 @@ To prevent **Catastrophic Backtracking** during keyword scanning, the compiler r
 ### 🎨 MathJax SVG Sprite Sheets
 To optimize page load times and avoid git database bloat, MathJax equations are parsed during compilation, and raw path vectors are consolidated into a single sprite sheet: `app/config/content/math_sprites.svg`. Individual inline HTML equations reference these paths via lightweight `<use href="#math-path-<hash>"/>` tags, shrinking equation markup size by over 90%.
 
+### 🧠 TF-IDF Context-Affinity Engine (`orchestrator.py`)
+To prevent "contextual leakage" (e.g., discussing too much astrophysics in a thermodynamics node), `PhysicsOrchestrator` computes dynamic Term Frequency-Inverse Document Frequency (TF-IDF) signatures for each of the 12 curriculum hubs:
+* **Background Vocabulary Filtering**: A `DF_CEILING_PCT` (default `0.60`) filters out background vocabulary (words appearing in >60% of all platinum documents, such as `energy`, `field`, `manifold`) to eliminate false positives.
+* **Persistent Signature Cache**: Rebuilding signatures is optimized using a signature cache `subfiles/hub_signatures.json`, validated by a stable MD5 hash of all active Platinum subtopics to keep orchestration startup under 5ms.
+
 ---
 
-## 🛠️ 4. The Content-Graduation CLI Guide
+## 🛠️ 5. Content-Graduation CLI Guide
 
 The GQS pipeline manages the transition of content from draft to production:
 
@@ -123,6 +145,23 @@ The GQS pipeline manages the transition of content from draft to production:
 
 ### 🛡️ Transactional Sprint Safety
 To ensure zero content loss during automated runs, `run_gqs_sprint.py` executes a **Three-Stage Transaction Loop**:
-1. **Savepoint**: Generates a local git savepoint commit of your workspace draft state.
+1. **Savepoint**: Generates an automated local git savepoint commit of your workspace draft state before launching operations, recording a precise rollback hash.
 2. **Arrest**: Verifies OPS prose rules and attempts MathJax vector rendering. Any failure immediately rolls back the workspace to the savepoint hash, preserving local drafts without polluting the git tree.
 3. **Amend**: On successful ingestion, compiles and consolidates the changes into one clean, final graduation commit.
+
+---
+
+## 🛠️ 6. Maintenance Scripts Directory
+
+Here is a summary of the load-bearing scripts located in `scripts/maintenance/`:
+
+* **`auto_linker.py`**: Runs keyword scanning and builds relative anchor links.
+* **`run_gqs_sprint.py`**: Executes a quality-guarded sprint loop for GQS queue targets.
+* **`spritify_assets.py`**: Compresses MathJax SVGs in shards and caches, updating the global `math_sprites.svg` sheet.
+* **`generate_system_health.py`**: Evaluates word counts, densities, qualitative violations, and compiles the `system_health.json` ledger.
+* **`generate_orphans_list.py`**: Identifies subtopics with 0 incoming links and writes reports to `subfiles/orphans.md` and `subfiles/orphans.json`.
+* **`sync_backlog.py`**: Performs real-time scanning of shard standards to sync the central tracking backlog and deduplicate slugs.
+* **`hallucination_shield.py`**: Audits LaTeX symbols in mathematical markup against plain-text anchor words to detect notation drift.
+* **`bootstrap_expansion.py`**: Scaffolds template HTML and identity files for draft expansion (standard or batch mode).
+* **`commit_node.py`**: Graduations compiler that takes single-node draft HTML, renders MathJax to SVG, performs auto-linking, and writes to database shards.
+* **`batch_graduate.py`**: Performs token-saving isolated subprocess compilation for multiple drafted subtopics sequentially.

@@ -28,7 +28,7 @@ def score_subtopic(slug, sub):
 
     text_only = re.sub(r'<[^>]+>', ' ', content)
     words = len(re.findall(r'\w+', text_only))
-    latex_count = len(re.findall(r'\\\(|\\\[', content))
+    latex_count = len(re.findall(r'\\\(|\\\[|<svg', content))
     term_score = sum(5 for term in TECH_TERMS if term in content.lower())
     density_score = (latex_count * 15) + term_score
 

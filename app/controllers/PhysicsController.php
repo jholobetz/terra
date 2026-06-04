@@ -164,7 +164,7 @@ class PhysicsController
             'field' => $topic['field'] ?? null,
             'density' => $topic['density'] ?? null,
             'slug' => $slug
-        ]));
+        ]), $cachePath);
     }
 
     /**
@@ -202,13 +202,13 @@ class PhysicsController
             'equations' => $subtopic['equations'] ?? [],
             'breakdowns' => $subtopic['breakdowns'] ?? [],
             'formulas' => $subtopic['formulas'] ?? []
-        ]));
+        ]), $cachePath);
     }
 
     /**
      * Render action embedding pages into standard HTML bootstrap templates.
      */
-    protected function renderWithLayout(string $view, array $data = []): void
+    protected function renderWithLayout(string $view, array $data = [], ?string $cachePath = null): void
     {
         $isPreview = $this->service()->isPreviewActive();
         $isBuildMode = ($this->app->request()->query->build_mode === '1');
@@ -256,13 +256,23 @@ class PhysicsController
                 </div>';
         }
 
-        $this->app->render('physics/layout', array_merge($viewData, [
+        $html = $this->app->view()->fetch('physics/layout', array_merge($viewData, [
             'body_content' => $bodyContent,
             'is_preview' => $isPreview && !$isBuildMode,
             'nonce' => $nonce,
             'menu_topics' => $menuTopics,
             'menu_simulations' => $menuSimulations,
-        ]));
+        ])) ?: '';
+
+        if ($cachePath && !$isPreview && !$isBuildMode) {
+            $dir = dirname($cachePath);
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            file_put_contents($cachePath, $html);
+        }
+
+        echo $html;
     }
 
     /**

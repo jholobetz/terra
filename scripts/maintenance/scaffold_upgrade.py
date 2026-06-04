@@ -19,6 +19,7 @@ PAYLOAD_PATH = "subfiles/batch_payload.json"
 def main():
     parser = argparse.ArgumentParser(description="🪐 Physics Lab: Scaffold Substandard Platinum Nodes for Upgrade")
     parser.add_argument("--slug", type=str, help="Specific subtopic slug to scaffold")
+    parser.add_argument("--shard", type=str, help="Filter substandard nodes by shard name (e.g., classical-mechanics.json)")
     parser.add_argument("--count", type=int, help="Number of worst-offending subtopics to scaffold")
     parser.add_argument("--list", action="store_true", help="List all substandard subtopics without scaffolding")
     args = parser.parse_args()
@@ -44,6 +45,8 @@ def main():
 
     for shard_name, shard_data in orch.shards.items():
         if shard_name == "compiled_trie_regex.json":
+            continue
+        if args.shard and shard_name != args.shard and shard_name != f"{args.shard}.json":
             continue
         for slug, sub in shard_data.items():
             if "content" not in sub:

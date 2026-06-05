@@ -130,6 +130,12 @@
     <!-- Load math sprites asynchronously for static external reference & browser caching -->
     <script>
         (function() {
+            function redraw() {
+                document.querySelectorAll('use').forEach(u => {
+                    const h = u.getAttribute('href');
+                    if (h) { u.setAttribute('href', ''); u.setAttribute('href', h); }
+                });
+            }
             fetch('/math_sprites.svg?v=<?= file_exists(PROJECT_ROOT . "/public/math_sprites.svg") ? filemtime(PROJECT_ROOT . "/public/math_sprites.svg") : time() ?>')
                 .then(res => {
                     if (!res.ok) throw new Error('SVG load failed');
@@ -138,8 +144,12 @@
                 .then(svg => {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(svg, 'image/svg+xml');
-                    const svgEl = doc.documentElement;
-                    document.body.insertBefore(svgEl, document.body.firstChild);
+                    document.body.insertBefore(doc.documentElement, document.body.firstChild);
+                    redraw();
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', redraw);
+                    }
+                    window.addEventListener('load', redraw);
                 })
                 .catch(err => console.error('Math sprites fetch failed:', err));
         })();

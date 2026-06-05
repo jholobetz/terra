@@ -133,6 +133,11 @@ class IntegrityShield:
                             f"MathJax Rendering Error: [{slug}] refs formula '{f_id}' "
                             f"which contains MathJax compilation errors (red-text markup or math-error)."
                         )
+                    if "math-path-" in eq:
+                        self.errors.append(
+                            f"SPRITIFIED FORMULA DETECTED: [{slug}] refs formula '{f_id}' "
+                            f"which contains spritified math references ('math-path-'). Only fully-inlined SVGs are allowed."
+                        )
 
     def check_duplicates(self):
         """Ensures every subtopic slug exists in exactly one shard and no protected slugs in subtopic shards."""
@@ -256,6 +261,16 @@ class IntegrityShield:
                     if "<svg" not in display:
                         self.errors.append(f"MATH RENDERING VIOLATION: [{slug}] is Platinum but has a raw LaTeX display math equation (missing SVG): '{display[:80]}...'")
 
+    def check_spritified_references(self):
+        """Ensures all subtopics do not contain spritified SVG math references."""
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub: continue
+            content = sub.get("content", "")
+            if "math-path-" in content:
+                self.errors.append(f"SPRITIFIED MATH DETECTED: [{slug}] contains spritified math references ('math-path-'). Only fully-inlined self-contained SVGs are allowed.")
+
     def run(self):
         print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
         print(f"Directory: {self.content_dir}")
@@ -272,6 +287,7 @@ class IntegrityShield:
         self.check_links()
         self.check_latex_formatting()
         self.check_math_rendering()
+        self.check_spritified_references()
 
         
         print(f"Stats:  {self.stats['links']} links, {self.stats['formulas']} formula refs.")

@@ -258,3 +258,28 @@ def test_anchor_wrapped_entity_does_not_emit_warning(shield_workspace):
     shield = IntegrityShield(target_slug="src-node")
     shield.run()
     assert not any("Unlinked Entity" in w for w in shield.warnings), shield.warnings
+
+
+def test_spritified_math_reference_blocked(shield_workspace):
+    bad_ref = '<p>The Lagrangian is conventionally formulated as <svg><use href="#math-path-1234567890"/></svg></p>'
+    populate(
+        shield_workspace,
+        search_index={"src-node": "test_shard.json"},
+        shards={"test_shard.json": {"src-node": platinum_node(content=bad_ref)}},
+    )
+    shield = IntegrityShield(target_slug="src-node")
+    shield.run()
+    assert any("SPRITIFIED MATH DETECTED" in e for e in shield.errors), shield.errors
+
+
+def test_spritified_formula_blocked(shield_workspace):
+    populate(
+        shield_workspace,
+        search_index={"src-node": "test_shard.json"},
+        shards={"test_shard.json": {"src-node": platinum_node(formula_ids=["bad-formula"])}},
+        formulas={"bad-formula": {"title": "Bad Formula", "equation": "<svg><use href=\"#math-path-123\"/></svg>"}},
+    )
+    shield = IntegrityShield(target_slug="src-node")
+    shield.run()
+    assert any("SPRITIFIED FORMULA DETECTED" in e for e in shield.errors), shield.errors
+

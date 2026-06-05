@@ -35,7 +35,7 @@ _BLOCK = (
     "The tensor structure of the field equations reveals the underlying eigenvalue "
     "spectrum and the manifold geometry of the configuration space. "
 )
-PLATINUM_PROSE = "<p>" + (_BLOCK * 10) + "</p>"
+PLATINUM_PROSE = "<p>" + (_BLOCK * 12) + "</p>"
 
 
 def platinum_node(content=None, content_extra="", standard="platinum", formula_ids=None):

@@ -136,10 +136,10 @@
                     return res.text();
                 })
                 .then(svg => {
-                    const div = document.createElement('div');
-                    div.style.display = 'none';
-                    div.innerHTML = svg.replace(/^<\?xml[^?]*\?>\s*/, '');
-                    document.body.insertBefore(div, document.body.firstChild);
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(svg, 'image/svg+xml');
+                    const svgEl = doc.documentElement;
+                    document.body.insertBefore(svgEl, document.body.firstChild);
                 })
                 .catch(err => console.error('Math sprites fetch failed:', err));
         })();

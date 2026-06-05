@@ -13,7 +13,18 @@ from orchestrator import PhysicsOrchestrator
 
 def main():
     content_dir = "app/config/content"
-    artifact_dir = "/Users/holobetj/.gemini/antigravity-cli/brain/bbe38160-17c6-4e20-bcb0-1ae8207f61b0"
+    
+    # Resolve the active brain/artifact directory dynamically based on most recently modified folder
+    brain_root = "/Users/holobetj/.gemini/antigravity-cli/brain"
+    if os.path.exists(brain_root):
+        subdirs = [os.path.join(brain_root, d) for d in os.listdir(brain_root) if os.path.isdir(os.path.join(brain_root, d)) and d not in ["scratch", ".system_generated"]]
+        if subdirs:
+            artifact_dir = max(subdirs, key=os.path.getmtime)
+        else:
+            artifact_dir = os.path.join(brain_root, "f00c9f92-ea35-4744-8df8-f28e06ff6e48")
+    else:
+        artifact_dir = "subfiles"
+        
     os.makedirs(artifact_dir, exist_ok=True)
     report_path = os.path.join(artifact_dir, "substandard_report.md")
 

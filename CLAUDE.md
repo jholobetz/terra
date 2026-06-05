@@ -67,6 +67,22 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   php scripts/maintenance/sync_node.php <subtopic-slug>
   ```
 
+### 🔄 Substandard Subtopic Upgrade Pipeline
+For existing subtopics that are already flagged as platinum on disk but fail depth (< 650 words) or density (< 60) quality gates, use this high-efficiency upgrade pipeline:
+* **Step 1: Scaffold & Recover Raw LaTeX**: Identify worst-offending nodes, pull their uncompiled history from Git, and populate `subfiles/batch_payload.json`:
+  ```bash
+  .venv/bin/python3 scripts/maintenance/scaffold_upgrade.py --count <N> --recover-latex
+  ```
+* **Step 2: Expand Prose & Weave Math**: Expand the content inside `subfiles/batch_payload.json` to 800+ words (providing a word count cushion since LaTeX blocks are stripped during compliance checks) and insert mathematically localized equations.
+* **Step 3: Auto-Format Neighbors & Verify Compliance**: Auto-insert neighbor link tags and run static syntax/style guards:
+  ```bash
+  .venv/bin/python3 scripts/maintenance/check_draft_compliance.py --autofix
+  ```
+* **Step 4: Compile & Graduate**: Run the transaction-backed GQS sprint coordinator to compile, build SVGs, verify integrity, and commit to Git:
+  ```bash
+  .venv/bin/python3 scripts/maintenance/run_gqs_sprint.py --count <N>
+  ```
+
 ### 🛡️ Validation & Test Suite
 * **Automated Pytest Suite**: Runs the full regression net (~1 second locally, ~30 seconds on CI). Covers OPS prose-gate validation, formula-id merge invariants, the integrity shield against fixture shards, CTA backlog reconciliation (heal + dedupe), the system_health platinum classifier, and the `gqs.py status` quality renderer. Also wired to CI via `.github/workflows/tests.yml` on every push and pull request to `master`:
   ```bash

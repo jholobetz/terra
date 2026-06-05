@@ -42,8 +42,8 @@ def main():
             if "content" not in sub:
                 continue
             
-            stats = score_subtopic(slug, sub)
             cat_slug = slug_to_cat.get(slug, "legacy-orphans")
+            stats = score_subtopic(slug, sub, category=cat_slug)
             cat_title = orch.data["topics"].get(cat_slug, {}).get("title", cat_slug.replace('-', ' ').title())
 
             sub_info = {
@@ -60,10 +60,11 @@ def main():
             if stats["words"] < 650:
                 low_depth_subtopics.append(sub_info)
             
-            if stats["density_score"] < 30:
-                low_density_critical.append(sub_info)
-            elif stats["density_score"] < 60:
-                low_density_substandard.append(sub_info)
+            if stats["density_score"] < stats["density_target"]:
+                if stats["density_score"] < 30:
+                    low_density_critical.append(sub_info)
+                else:
+                    low_density_substandard.append(sub_info)
 
             if stats["has_lead_violation"] or stats["has_artifact_violation"]:
                 qualitative_violations.append(sub_info)

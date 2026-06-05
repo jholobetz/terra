@@ -135,3 +135,27 @@ def test_density_credits_latex_blocks():
     # \\( and \\[ each count for 15. Two blocks → 30. No tech terms.
     s = score_subtopic("test-node", node(content=r"<p>see \( a \) and \[ b \]</p>"))
     assert s["density_score"] == 30
+
+
+def test_subjective_subtopic_lowers_density_target():
+    # Node in philosophy-of-physics category/parent gets density target 30
+    sub = node(content="<p>some content</p>", standard="platinum")
+    sub["parents"] = ["philosophy-of-physics"]
+    s = score_subtopic("philosophical-concept", sub, category="philosophy-of-physics")
+    assert s["is_subjective"] is True
+    assert s["density_target"] == 30
+
+
+def test_lexical_subjectivity_detection():
+    # No math, high density of subjective terms vs objective terms
+    content = "<p>This thought experiment explores the realism of quantum interpretations and ontological commitments.</p>"
+    s = score_subtopic("conceptual-subtopic", node(content=content))
+    assert s["is_subjective"] is True
+    assert s["density_target"] == 30
+
+
+def test_objective_subtopic_retains_density_target_60():
+    # Standard physics node gets target 60
+    s = score_subtopic("tensor-math", node(content="<p>symmetry and tensor operator</p>"), category="relativity")
+    assert s["is_subjective"] is False
+    assert s["density_target"] == 60

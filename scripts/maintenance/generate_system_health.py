@@ -13,7 +13,35 @@ TECH_TERMS = [
 ]
 
 
-def score_subtopic(slug, sub):
+def is_node_subjective(slug, sub, category=None):
+    """Determine if a subtopic is conceptual/philosophical rather than derivational/mathematical."""
+    parents = sub.get("parents", [])
+    if category == "philosophy-of-physics" or "philosophy-of-physics" in parents:
+        return True
+        
+    content = sub.get("content", "").lower()
+    formula_ids = sub.get("formula_ids", [])
+    
+    # If a node has registered formulas, it is treated as objective/mathematical
+    if len(formula_ids) > 0:
+        return False
+        
+    # Check lexical indicators if there are no registered formulas
+    sub_terms = ["interpret", "epistem", "ontolog", "realis", "debate", "argument", "paradox", "thought experiment"]
+    obj_terms = ["tensor", "operator", "equation", "metric", "eigen", "covariant", "derivation"]
+    
+    s_score = sum(content.count(t) for t in sub_terms)
+    # Count each LaTeX block or SVG as an objectivity indicator
+    latex_count = len(re.findall(r'\\\(|\\\[|<svg', content))
+    o_score = sum(content.count(t) for t in obj_terms) + (latex_count * 2)
+    
+    if s_score > o_score:
+        return True
+        
+    return False
+
+
+def score_subtopic(slug, sub, category=None):
     """Compute the per-subtopic OPS scorecard bits used by the health dashboard.
 
     Returns a dict with word count, density score, and the flag/organic/
@@ -36,8 +64,12 @@ def score_subtopic(slug, sub):
     has_lead_violation = title.lower() in first_sentence or slug.replace('-', ' ') in first_sentence
     has_artifact_violation = "<ul>" in content or "<li>" in content
 
+    # Subjective vs Objective weighting
+    is_subjective = is_node_subjective(slug, sub, category=category)
+    density_target = 30 if is_subjective else 60
+
     is_flagged = standard == "platinum"
-    meets_quant = words >= 650 and density_score >= 60
+    meets_quant = words >= 650 and density_score >= density_target
     is_organic_platinum = is_flagged and not (has_lead_violation or has_artifact_violation)
     has_flag_violation = is_flagged and (has_lead_violation or has_artifact_violation)
     is_pseudo_platinum = meets_quant and not is_flagged
@@ -45,6 +77,8 @@ def score_subtopic(slug, sub):
     return {
         "words": words,
         "density_score": density_score,
+        "density_target": density_target,
+        "is_subjective": is_subjective,
         "is_flagged": is_flagged,
         "is_organic_platinum": is_organic_platinum,
         "is_pseudo_platinum": is_pseudo_platinum,
@@ -132,7 +166,7 @@ class HealthDashboard:
 
                 content = sub["content"]
                 source_cat = self.slug_to_cat.get(slug, "misc")
-                s = score_subtopic(slug, sub)
+                s = score_subtopic(slug, sub, category=source_cat)
 
                 if s["has_lead_violation"]:
                     self.health_data["platinum_scorecard"]["lead_violations"] += 1
@@ -159,7 +193,7 @@ class HealthDashboard:
 
                 if s["words"] < 650:
                     self.health_data["platinum_scorecard"]["low_depth_count"] += 1
-                if s["density_score"] < 30:
+                if s["density_score"] < s["density_target"]:
                     self.health_data["platinum_scorecard"]["non_technical_count"] += 1
                     
                 # Link Scan

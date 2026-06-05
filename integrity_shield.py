@@ -3,6 +3,8 @@ import re
 import os
 import sys
 
+from scripts.maintenance.generate_system_health import is_node_subjective
+
 # Attempt to import jsonschema, fallback to basic check if not available
 try:
     from jsonschema import Draft7Validator
@@ -182,10 +184,15 @@ class IntegrityShield:
             term_score = sum(5 for term in tech_terms if term in content_no_svg.lower())
             words = len(re.findall(r'\w+', content_no_svg))
             total_score = (latex_count * 15) + term_score
+            
+            # Subjective vs Objective weighting
+            is_subjective = is_node_subjective(slug, sub)
+            density_target = 30 if is_subjective else 60
+            
             if words < 650:
                 self.warnings.append(f"Low Depth: [{slug}] word count too low ({words}).")
-            if total_score < 30:
-                self.warnings.append(f"Non-Technical: [{slug}] density too low (Score: {total_score}).")
+            if total_score < density_target:
+                self.warnings.append(f"Non-Technical: [{slug}] density too low (Score: {total_score}, Target: {density_target}).")
 
     def check_entities(self):
         """Finds entity names in text that are NOT yet linked."""

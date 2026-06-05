@@ -40,12 +40,7 @@ if (!function_exists('getConceptLevel')) {
             <!-- DATA-DRIVEN PLATINUM HUB -->
             <p><?= $intro ?? 'Accessing the deep mathematical structure of the physical manifold.' ?></p>
 
-            <div class="high-signal-banner">
-                <div class="signal-item"><strong>Field:</strong> <?= $field ?? $title ?></div>
-                <div class="signal-item"><strong>Standard:</strong> Platinum</div>
-                <div class="signal-item"><strong>Technical Density:</strong> <?= $density ?? '185' ?></div>
-                <div class="signal-item"><strong>Bridges:</strong> <?= !empty($bridges) ? count($bridges) : '0' ?></div>
-            </div>
+
 
             <?php foreach ($pillars as $pillar): ?>
                 <section class="concept-pillar">

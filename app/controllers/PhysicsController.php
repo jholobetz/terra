@@ -148,6 +148,18 @@ class PhysicsController
             }, $svg);
         };
 
+        // Fetch overview subtopic first paragraph for high-signal intro
+        $overviewSlug = $slug . '-overview';
+        $overviewSub = $this->service()->fetchAndPrepare('subtopics', $overviewSlug);
+        $firstParagraph = null;
+        if (!empty($overviewSub) && !empty($overviewSub['content'])) {
+            if (preg_match('/<p>(.*?)<\/p>/is', $overviewSub['content'], $pMatches)) {
+                $firstParagraph = $pMatches[1];
+            }
+        }
+        $intro = $firstParagraph ?? ($topic['intro'] ?? null);
+        $intro = $inlineSvgFunc($intro);
+
         // Construct subtopics lookup map for subtopic card details
         $subtopicsMap = [];
         foreach ($content['subtopics'] as $subSlug => $sub) {
@@ -184,7 +196,7 @@ class PhysicsController
             'subtopics_map' => $subtopicsMap,
             'pillars' => !empty($topic['pillars']) ? (is_string($topic['pillars']) ? json_decode($topic['pillars'], true) : $topic['pillars']) : null,
             'bridges' => $resolvedBridges,
-            'intro' => $topic['intro'] ?? null,
+            'intro' => $intro,
             'field' => $topic['field'] ?? null,
             'density' => $topic['density'] ?? null,
             'slug' => $slug

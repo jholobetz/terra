@@ -127,33 +127,7 @@
     </style>
 </head>
 <body>
-    <!-- Load math sprites asynchronously for static external reference & browser caching -->
-    <script>
-        (function() {
-            function redraw() {
-                document.querySelectorAll('use').forEach(u => {
-                    const h = u.getAttribute('href');
-                    if (h) { u.setAttribute('href', ''); u.setAttribute('href', h); }
-                });
-            }
-            fetch('/math_sprites.svg?v=<?= file_exists(PROJECT_ROOT . "/public/math_sprites.svg") ? filemtime(PROJECT_ROOT . "/public/math_sprites.svg") : time() ?>')
-                .then(res => {
-                    if (!res.ok) throw new Error('SVG load failed');
-                    return res.text();
-                })
-                .then(svg => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(svg, 'image/svg+xml');
-                    document.body.insertBefore(doc.documentElement, document.body.firstChild);
-                    redraw();
-                    if (document.readyState === 'loading') {
-                        document.addEventListener('DOMContentLoaded', redraw);
-                    }
-                    window.addEventListener('load', redraw);
-                })
-                .catch(err => console.error('Math sprites fetch failed:', err));
-        })();
-    </script>
+
     <?php if ($is_preview ?? false): ?>
         <div style="background: #ff4757; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
             PREVIEW MODE ACTIVE: Viewing changes from sharded JSON files 

@@ -93,5 +93,19 @@ def main():
                 except Exception as e:
                     print(f"Error processing {filepath}: {e}")
 
+    # Also process global_svg_cache.json in the root directory
+    cache_filepath = "global_svg_cache.json"
+    if os.path.exists(cache_filepath):
+        try:
+            with open(cache_filepath, "r") as f:
+                data = json.load(f)
+            
+            if process_json_recursive(data, sprites):
+                with open(cache_filepath, "w") as f:
+                    json.dump(data, f, indent=4)
+                print(f"De-spritified and updated: {cache_filepath}")
+        except Exception as e:
+            print(f"Error processing {cache_filepath}: {e}")
+
 if __name__ == "__main__":
     main()

@@ -154,7 +154,7 @@ class PhysicsController
         $firstParagraph = null;
         if (!empty($overviewSub) && !empty($overviewSub['content'])) {
             if (preg_match('/<p>(.*?)<\/p>/is', $overviewSub['content'], $pMatches)) {
-                $firstParagraph = $pMatches[1];
+                $firstParagraph = $this->getFirstSentences($pMatches[1], 3);
             }
         }
         $intro = $firstParagraph ?? ($topic['intro'] ?? null);
@@ -348,5 +348,51 @@ class PhysicsController
         if (!file_exists($shardPath)) return false;
 
         return filemtime($shardPath) > filemtime($cachePath);
+    }
+
+    private function getFirstSentences(string $html, int $count = 3): string
+    {
+        $len = strlen($html);
+        $inTag = false;
+        $sentenceCount = 0;
+        $endPos = $len;
+        
+        for ($i = 0; $i < $len; $i++) {
+            $char = $html[$i];
+            if ($char === '<') {
+                $inTag = true;
+            } elseif ($char === '>') {
+                $inTag = false;
+            } elseif (!$inTag) {
+                if (in_array($char, ['.', '!', '?'])) {
+                    $prevChar = ($i > 0) ? $html[$i-1] : '';
+                    $nextChar = ($i < $len - 1) ? $html[$i+1] : '';
+                    
+                    if (is_numeric($prevChar) || is_numeric($nextChar)) {
+                        continue;
+                    }
+                    
+                    if ($i >= 3) {
+                        $last3 = substr($html, $i-3, 3);
+                        if ($last3 === 'QED' || $last3 === 'e.g' || $last3 === 'i.e') {
+                            continue;
+                        }
+                    }
+                    
+                    if ($nextChar === '' || ctype_space($nextChar) || $nextChar === '<') {
+                        $sentenceCount++;
+                        if ($sentenceCount === $count) {
+                            $endPos = $i + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if ($endPos < $len) {
+            return rtrim(substr($html, 0, $endPos)) . ' ...';
+        }
+        return $html;
     }
 }

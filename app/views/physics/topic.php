@@ -38,6 +38,9 @@ if (!function_exists('getConceptLevel')) {
     <div class="content-body">
         <?php if (!empty($pillars) && is_array($pillars)): ?>
             <!-- DATA-DRIVEN PLATINUM HUB -->
+            <div class="overview-link-container" style="margin: 0 0 15px 0; font-size: 0.9rem;">
+                <a href="/physics/subtopic/<?= $slug ?>-overview" class="subtopic-link" style="font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px;">Overview &rarr;</a>
+            </div>
             <p><?= $intro ?? 'Accessing the deep mathematical structure of the physical manifold.' ?></p>
 
 

@@ -146,6 +146,9 @@ def format_draft(slug, draft_data, search_index, aliases):
             linked_slugs.add(n_slug)
             replacements_count += 1
             print(f"  ✓ Formatted neighbor link: '{term}' -> '{n_slug}'")
+            # Re-tokenize to ensure the newly inserted HTML tags are placed at odd indices
+            content = "".join(tokens)
+            tokens = token_pattern.split(content)
 
     if replacements_count > 0:
         # Reassemble content

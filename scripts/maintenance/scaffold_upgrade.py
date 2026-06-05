@@ -20,7 +20,7 @@ PAYLOAD_PATH = "subfiles/batch_payload.json"
 def get_raw_latex_from_history(shard_name, slug):
     """Search git history for the most recent commit of shard_name where slug contains uncompiled LaTeX."""
     filepath = os.path.join("app/config/content", shard_name)
-    cmd = ["git", "log", "--format=%H", "--", filepath]
+    cmd = ["git", "log", "-S", slug, "--format=%H", "--", filepath]
     try:
         commits = subprocess.check_output(cmd, text=True).strip().split("\n")
     except Exception:

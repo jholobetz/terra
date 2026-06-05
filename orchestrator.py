@@ -773,6 +773,11 @@ class PhysicsOrchestrator:
                 os.makedirs(os.path.dirname(sprites_path), exist_ok=True)
                 with open(sprites_path, "w") as f:
                     f.write("\n".join(sprite_lines))
+                # Also write to public/ for static external reference & browser caching
+                public_sprites_path = os.path.join("public", "math_sprites.svg")
+                os.makedirs(os.path.dirname(public_sprites_path), exist_ok=True)
+                with open(public_sprites_path, "w") as f:
+                    f.write("\n".join(sprite_lines))
             except Exception:
                 pass
 

@@ -139,6 +139,13 @@ def main():
             with open(sprites_path, "w") as f:
                 f.write("\n".join(sprite_lines))
             print(f"  [Sprites] WRITTEN: {len(sprites)} unique paths saved to {sprites_path}.")
+
+            # Also save to public/ directory for static external reference & browser caching
+            public_sprites_path = os.path.join("public", "math_sprites.svg")
+            os.makedirs(os.path.dirname(public_sprites_path), exist_ok=True)
+            with open(public_sprites_path, "w") as f:
+                f.write("\n".join(sprite_lines))
+            print(f"  [Sprites] WRITTEN: {len(sprites)} unique paths saved to {public_sprites_path}.")
         except Exception as e:
             print(f"  [Sprites] ERROR writing sprite sheet: {e}")
 
@@ -184,18 +191,29 @@ def main():
             # Check if it is already embedded
             if "math_sprites.svg" not in layout_content:
                 body_tag = "<body>"
-                embed_code = """<body>
-    <?php
-    $sprites_path = __DIR__ . '/../../config/content/math_sprites.svg';
-    if (file_exists($sprites_path)) {
-        readfile($sprites_path);
-    }
-    ?>"""
+                embed_code = r"""<body>
+    <!-- Load math sprites asynchronously for static external reference & browser caching -->
+    <script>
+        (function() {
+            fetch('/math_sprites.svg')
+                .then(res => {
+                    if (!res.ok) throw new Error('SVG load failed');
+                    return res.text();
+                })
+                .then(svg => {
+                    const div = document.createElement('div');
+                    div.style.display = 'none';
+                    div.innerHTML = svg.replace(/^<\?xml[^?]*\?>\s*/, '');
+                    document.body.insertBefore(div, document.body.firstChild);
+                })
+                .catch(err => console.error('Math sprites fetch failed:', err));
+        })();
+    </script>"""
                 if body_tag in layout_content:
                     layout_content = layout_content.replace(body_tag, embed_code)
                     with open(layout_path, "w") as f:
                         f.write(layout_content)
-                    print("  [Layout] Successfully injected sprites embedding logic after <body> tag!")
+                    print("  [Layout] Successfully injected sprites async loading script after <body> tag!")
                 else:
                     print("  [Layout] WARNING: Could not find <body> tag in layout.php to inject sprites!")
             else:

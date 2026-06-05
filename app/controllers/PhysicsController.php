@@ -124,6 +124,30 @@ class PhysicsController
 
         $content = $this->service()->getPhysicsContent();
         
+        // Load math sprites for dynamic inlining on hub card views
+        $sprites = [];
+        $spritesPath = PROJECT_ROOT . '/app/config/content/math_sprites.svg';
+        if (file_exists($spritesPath)) {
+            $spritesContent = file_get_contents($spritesPath);
+            preg_match_all('/<path\s+id="([^"]+)"\s+d="([^"]+)"\s*\/?>/', $spritesContent, $matches, PREG_SET_ORDER);
+            foreach ($matches as $match) {
+                $sprites[$match[1]] = $match[2];
+            }
+        }
+
+        $inlineSvgFunc = function(string $svg) use ($sprites): string {
+            if (empty($svg) || empty($sprites)) return $svg;
+            return preg_replace_callback('/<use\s+(?:href|xlink:href)="#(math-path-[a-f0-9]+)"([^>]*)\/?>/i', function($m) use ($sprites) {
+                $id = $m[1];
+                $attrs = $m[2];
+                $d = $sprites[$id] ?? '';
+                if ($d) {
+                    return '<path id="' . $id . '" d="' . $d . '"' . $attrs . ' />';
+                }
+                return $m[0];
+            }, $svg);
+        };
+
         // Construct subtopics lookup map for subtopic card details
         $subtopicsMap = [];
         foreach ($content['subtopics'] as $subSlug => $sub) {
@@ -131,8 +155,8 @@ class PhysicsController
             $subtopicsMap[$subSlug] = [
                 'title' => $sub['title'] ?? $subSlug,
                 'snippet' => $sub['snippet'] ?? '',
-                'snippet_svg' => $sub['snippet_svg'] ?? '',
-                'hero_math' => $sub['hero_math'] ?? ''
+                'snippet_svg' => $inlineSvgFunc($sub['snippet_svg'] ?? ''),
+                'hero_math' => $inlineSvgFunc($sub['hero_math'] ?? '')
             ];
         }
 

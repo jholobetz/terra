@@ -130,7 +130,7 @@
     <!-- Load math sprites asynchronously for static external reference & browser caching -->
     <script>
         (function() {
-            fetch('/math_sprites.svg')
+            fetch('/math_sprites.svg?v=<?= file_exists(PROJECT_ROOT . "/public/math_sprites.svg") ? filemtime(PROJECT_ROOT . "/public/math_sprites.svg") : time() ?>')
                 .then(res => {
                     if (!res.ok) throw new Error('SVG load failed');
                     return res.text();

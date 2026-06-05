@@ -9,6 +9,7 @@ import os
 import sys
 import json
 import argparse
+import subprocess
 sys.path.append(os.getcwd())
 
 from scripts.maintenance.generate_system_health import score_subtopic
@@ -16,12 +17,36 @@ from orchestrator import PhysicsOrchestrator
 
 PAYLOAD_PATH = "subfiles/batch_payload.json"
 
+def get_raw_latex_from_history(shard_name, slug):
+    """Search git history for the most recent commit of shard_name where slug contains uncompiled LaTeX."""
+    filepath = os.path.join("app/config/content", shard_name)
+    cmd = ["git", "log", "--format=%H", "--", filepath]
+    try:
+        commits = subprocess.check_output(cmd, text=True).strip().split("\n")
+    except Exception:
+        return None
+    for commit in commits:
+        if not commit:
+            continue
+        try:
+            show_cmd = ["git", "show", f"{commit}:{filepath}"]
+            content_str = subprocess.check_output(show_cmd, text=True)
+            data = json.loads(content_str)
+            if slug in data:
+                content = data[slug].get("content", "")
+                if "\\(" in content or "\\[" in content or "$$" in content:
+                    return content
+        except Exception:
+            continue
+    return None
+
 def main():
     parser = argparse.ArgumentParser(description="🪐 Physics Lab: Scaffold Substandard Platinum Nodes for Upgrade")
     parser.add_argument("--slug", type=str, help="Specific subtopic slug to scaffold")
     parser.add_argument("--shard", type=str, help="Filter substandard nodes by shard name (e.g., classical-mechanics.json)")
     parser.add_argument("--count", type=int, help="Number of worst-offending subtopics to scaffold")
     parser.add_argument("--list", action="store_true", help="List all substandard subtopics without scaffolding")
+    parser.add_argument("--recover-latex", action="store_true", help="Attempt to recover uncompiled raw LaTeX draft from Git history")
     args = parser.parse_args()
 
     content_dir = "app/config/content"
@@ -137,10 +162,22 @@ def main():
         slug = node["slug"]
         sub = node["sub"]
         
+        content = sub.get("content", "")
+        recovered = False
+        if args.recover_latex:
+            print(f"🔍 Searching Git history for raw LaTeX content for '{slug}'...")
+            hist_content = get_raw_latex_from_history(node["shard"], slug)
+            if hist_content:
+                content = hist_content
+                recovered = True
+                print(f"  ✓ Recovered uncompiled LaTeX draft from Git history.")
+            else:
+                print(f"  ⚠️ Could not find uncompiled historical LaTeX. Falling back to current SVG content.")
+        
         # Keep identities empty so the compiler preserves existing formula registrations in the shard.
         payload[slug] = {
             "title": sub.get("title", slug),
-            "content": sub.get("content", ""),
+            "content": content,
             "standard": "platinum",
             "parents": sub.get("parents", [node["parent_hub"]]),
             "identities": []
@@ -157,6 +194,7 @@ def main():
     print("👉 Edit subfiles/batch_payload.json to expand/upgrade the prose & math.")
     print("👉 When ready, run:")
     print("   .venv/bin/python3 scripts/maintenance/run_gqs_sprint.py")
+
 
 if __name__ == "__main__":
     main()

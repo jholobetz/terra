@@ -175,7 +175,7 @@ Adhere to the project's established notation dialect across all equations:
 ## 🏛️ 3. Core Platform Architecture
 
 ### A. Sharded Relational JSON Database
-* The database is stored as unified storage shards inside `app/config/content/` (e.g. `astrophysics.json`, `relativity.json`).
+* The database is stored as unified storage shards inside `app/config/content/` (e.g. `astrophysics.json`, `relativity.json`). There are 13 physical shards on disk, corresponding to the 12 logical curriculum category hubs plus one additional utility shard, `legacy-orphans.json`, which stores unassigned legacy topics.
 * Concepts are mapped uniquely to exactly **one** physical storage shard.
 * Shard slugs are indexed and resolved globally via `search_index.json`.
 
@@ -191,13 +191,13 @@ Our context-affinity validation engine uses a dynamic state-of-the-art model:
 4. **Background-Vocabulary DF Ceiling**: A `DF_CEILING_PCT` class constant on `PhysicsOrchestrator` (default `0.60`) filters tokens appearing in more than 60% of platinum documents out of signature compilation. Eliminates corpus-background pollution — words like `energy`, `manifold`, and `vacuum` — that produced false-positive `Contextual Leakage` errors during graduation validation.
 
 ### C. The Background Watcher Protocol (Zero-Prompt Pipeline)
-To maximize efficiency, the refactoring of subtopics can be executed via an autonomous background watcher protocol:
+For single-node ad-hoc expansions, refactoring can be executed via an autonomous background watcher protocol:
 1. **Turn 1 (Silent Retrieval)**: Execute native `read_file` calls or retrieve concept details to gather legacy content. Perform the "verify and skip" check internally.
 2. **Turn 2 (Silent Graduation)**: Draft new HTML into `draft.html` and identities into `identities.json`. Trigger the commit by writing a trigger payload to `scripts/maintenance/inbox/`.
 3. **The Watcher Protocol**: `maintenance_watcher.py` autonomously executes `commit_node.py` (SVG rendering, auto-linking, MariaDB sync, and Git commits).
 
 ### D. The Token-Saver Batch Protocol
-To maximize token economy and maintain perfect graduation consistency:
+For upgrading substandard nodes and processing GQS queue items in groups (the primary pipeline), the batch protocol is used:
 1. **Batch-Safe Scaffolding**: Passing the `--batch` or `-b` flag to `bootstrap_expansion.py` outputs slug-specific templates (`draft_<slug>.html` and `identities_<slug>.json`) to prevent placeholder overwrite collisions when preparing multiple nodes concurrently.
 2. **Silent Log Redirection**: The batch orchestrator (`batch_graduate.py`) runs the compiler as an isolated subprocess, writing detailed link and validation logging to `logs/graduations/<slug>.log`. Only the success/warning summary is printed in the terminal, preventing 30k+ token log payloads from inflating conversational memory.
 3. **Collision-Free Compilation**: Automatically resolves, compiles, and deletes slug-specific templates upon graduation, keeping the git status clean.
@@ -216,10 +216,11 @@ To ensure absolute mathematical consistency across all source registries and pro
 4. **Database Status Dashboard**: Calculates total subtopics, platinum count, legacy count, and overall progress percentage, outputting a beautiful visual progress bar and category/shard breakdown table.
 5. **Auto-Teardown Gate**: The tracking engine is integrated directly into the `batch_graduate.py` teardown, guaranteeing the central backlog registry self-heals after every successful batch graduation.
 6. **Two Platinum Definitions (Critical Distinction)**: The project exposes two distinct platinum counts that future contributors MUST keep separate. Conflating them was the source of the dashboard-drift incident resolved in this codebase:
-   * **Flagged Platinum** (`flagged_platinum_count` in `system_health.json`): the raw disk count of subtopics with `standard == "platinum"`. This is the authoritative live count and matches the CTA dashboard exactly.
-   * **Organic Platinum** (`organic_platinum_count`): the strict subset that additionally passes the §2.A lead-rule and artifact-violation gates. Always `≤ flagged_platinum_count`.
-   * **Flag Violations** (`flag_violations`): the difference between the two — slugs flagged as platinum but failing the qualitative checks. By construction, `flagged_platinum_count == organic_platinum_count + flag_violations`.
-   * `gqs.py status` surfaces both counts side-by-side with the gap explained, so users never have to reconcile across files in their head.
+    * **Flagged Platinum** (`flagged_platinum_count` in `system_health.json`): the raw disk count of subtopics with `standard == "platinum"`. This is the authoritative live count and matches the CTA dashboard exactly.
+    * **Organic Platinum** (`organic_platinum_count`): the strict subset that additionally passes the §2.A lead-rule and artifact-violation gates. Always `≤ flagged_platinum_count`.
+    * **Flag Violations** (`flag_violations`): the difference between the two — slugs flagged as platinum but failing the qualitative checks. By construction, `flagged_platinum_count == organic_platinum_count + flag_violations`.
+    * **Substandard Nodes**: Flagged/Organic nodes that fail quantitative gates (depth < 650 words or density < 60). These do not count as qualitative "Flag Violations" but represent the target queue for substandard upgrade sprints.
+    * `gqs.py status` surfaces both counts side-by-side with the gap explained, so users never have to reconcile across files in their head.
 
 ### F. The Graduation Queue Stack (GQS) Pipeline
 To scale content ingestion while maintaining absolute OPS qualitative compliance, the project organizes work via a central queue stack pre-computed in `subfiles/graduation_queue_stack.json`:
@@ -285,8 +286,8 @@ To ensure maximum graph density, the project utilizes a continuous audit of phys
 * **Phase B: Backlog Population (Organic Expansion)**: Bold terms that appear across three or more independent nodes but lack a dedicated subtopic in the registry are identified as "Expansion Candidates." High-frequency candidates (20+ nodes, e.g., `Block Universe`, `Big Bang`) are prioritized for curriculum expansion.
 * **Progress Tracking**: Progress is tracked in `subfiles/hub_tracker.json` and visualized via `.venv/bin/python3 gqs.py status`, which serves as the live source of truth. Current Hub status: Shards like Classical Mechanics and Condensed Matter are 100% Graduated, with other shards actively progressing.
 
-### C. Project Goal: 100% OPS Token-Aware Graduation Roadmap
-To graduate the remaining 609 pending legacy nodes to the Organic Platinum Standard, the project adheres to a token-aware and rate-limit conscious goal:
+### C. Project Goal: 100% OPS Substandard Upgrade Roadmap
+To graduate all remaining substandard subtopics (low depth/density) to the Organic Platinum Standard, the project adheres to a token-aware and rate-limit conscious goal:
 * **Context Accumulation & Compaction Safe Boundary**: Sprints are batched in groups of 3 nodes (~6,500 tokens/sprint). Context compaction and resettlement is scheduled every 15 sprints (~45 nodes) with a 5-minute overhead window to keep conversational intelligence sharp.
 * **API Rate-Limit Cooling**: Incorporates a 10-second cooling latency per sprint to completely bypass RPM/TPM transient limitations.
 * **Refined Continuous Execution Time**: **~11.32 hours** of active, uninterrupted pipeline processing.

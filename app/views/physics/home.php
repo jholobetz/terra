@@ -14,25 +14,6 @@ require_once __DIR__ . '/_topic_icons.php';
     </div>
 </section>
 
-<!-- Signal Metrics Banner -->
-<section class="metrics-banner">
-    <div class="metric-item">
-        <span class="metric-value">1,584</span>
-        <span class="metric-label">Graduated Subtopics</span>
-    </div>
-    <div class="metric-item">
-        <span class="metric-value">100%</span>
-        <span class="metric-label">Organic Platinum Progress</span>
-    </div>
-    <div class="metric-item">
-        <span class="metric-value">5,892</span>
-        <span class="metric-label">Mathematical Identity Locks</span>
-    </div>
-    <div class="metric-item">
-        <span class="metric-value">12</span>
-        <span class="metric-label">Active Simulations</span>
-    </div>
-</section>
 
 <!-- Curriculum Dashboard & Sandbox Grid -->
 <div class="dashboard-layout">

@@ -219,6 +219,9 @@ function get_topic_icon_and_class(string $slug): array {
         $meta = get_topic_icon_and_class($topic['slug']);
     ?>
         <a href="/physics/topic/<?= htmlspecialchars($topic['slug']) ?>" class="topic-card <?= $meta['class'] ?>">
+            <div class="card-watermark">
+                <?= $meta['svg'] ?>
+            </div>
             <div class="topic-card-header">
                 <?= $meta['svg'] ?>
                 <h3><?= $topic['title'] ?></h3>

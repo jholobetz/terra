@@ -431,6 +431,8 @@ main {
     box-sizing: border-box;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    position: relative;
+    overflow: hidden;
 }
 
 .topic-card:hover {
@@ -449,12 +451,16 @@ main {
     font-size: 0.88rem;
     line-height: 1.55;
     margin: 14px 0;
+    position: relative;
+    z-index: 2;
 }
 
 .topic-card-header {
     display: flex;
     align-items: center;
     margin-bottom: 6px;
+    position: relative;
+    z-index: 2;
 }
 
 .card-icon {
@@ -474,6 +480,8 @@ main {
     display: flex;
     align-items: center;
     transition: transform 0.2s;
+    position: relative;
+    z-index: 2;
 }
 
 .topic-card:hover .read-more {
@@ -482,6 +490,32 @@ main {
 
 .topic-card:hover .card-icon {
     transform: rotate(6deg) scale(1.06);
+}
+
+/* Background Watermark Graphic */
+.card-watermark {
+    position: absolute;
+    bottom: -35px;
+    right: -35px;
+    width: 170px;
+    height: 170px;
+    opacity: 0.04;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform: rotate(-15deg);
+    z-index: 1;
+}
+
+.card-watermark svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: inherit;
+}
+
+.topic-card:hover .card-watermark {
+    transform: scale(1.18) rotate(-5deg);
+    opacity: 0.09;
 }
 
 /* Color Coding Cards & Hover Glow Matrix */

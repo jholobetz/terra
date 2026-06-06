@@ -1223,3 +1223,63 @@ mjx-container {
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================================================
+   🌌 INTERACTIVE MATHJAX / FORMULA SYNCHRONIZATION
+   ============================================================ */
+
+/* SVG glyph transition & highlight */
+.math-content svg use {
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.math-content.has-highlighted svg use:not(.highlighted-term) {
+    opacity: 0.25;
+}
+
+.math-content.has-highlighted svg use.highlighted-term {
+    opacity: 1;
+    fill: var(--accent-color) !important;
+    filter: drop-shadow(0 0 5px var(--accent-color));
+}
+
+/* CHTML glyph transition & highlight */
+.math-content mjx-c {
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.math-content.has-highlighted mjx-c:not(.highlighted-term) {
+    opacity: 0.25;
+}
+
+.math-content.has-highlighted mjx-c.highlighted-term {
+    opacity: 1;
+    color: var(--accent-color) !important;
+    text-shadow: 0 0 5px var(--accent-color);
+}
+
+/* Var Tag Interactive Styling */
+.var-tag {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    user-select: none;
+}
+
+.var-tag:hover {
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent) !important;
+    border-color: var(--accent-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 12%, transparent);
+}
+
+.var-tag:hover span {
+    text-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 50%, transparent);
+}
+

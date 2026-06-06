@@ -80,4 +80,23 @@ document.addEventListener('DOMContentLoaded', () => {
             results.style.display = 'none';
         }
     });
+
+    // 2. Pre-fill Search from URL parameter (e.g. ?search=query)
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('search');
+    if (searchQuery) {
+        input.value = searchQuery;
+        // Trigger focus to load the search data index
+        input.dispatchEvent(new Event('focus'));
+        
+        // Wait for the index to load
+        const checkIndex = setInterval(() => {
+            if (searchData) {
+                clearInterval(checkIndex);
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }, 50);
+        // Timeout after 3 seconds if index fails to load
+        setTimeout(() => clearInterval(checkIndex), 3000);
+    }
 });

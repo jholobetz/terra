@@ -51,11 +51,35 @@ class PhysicsController
     public function constants()
     {
         $content = $this->service()->getPhysicsContent();
-        $constants = $content['constants'] ?? [];
+        $notation = $content['notation'] ?? [];
+        
+        // Filter notation where type is 'constant'
+        $constants = array_filter($notation, function($item) {
+            return ($item['type'] ?? '') === 'constant';
+        });
+        
+        // Fallback to legacy constants if notation is empty
+        if (empty($constants)) {
+            $constants = $content['constants'] ?? [];
+        }
         
         $this->renderWithLayout('physics/constants', [
             'title' => 'Fundamental Physical Constants',
             'constants' => $constants
+        ]);
+    }
+
+    /**
+     * View action rendering the unified physical symbols and notation library.
+     */
+    public function symbols()
+    {
+        $content = $this->service()->getPhysicsContent();
+        $notation = $content['notation'] ?? [];
+        
+        $this->renderWithLayout('physics/symbols', [
+            'title' => 'Fundamental Symbols & Notation Reference',
+            'notation' => $notation
         ]);
     }
 

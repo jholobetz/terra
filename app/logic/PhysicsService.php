@@ -57,7 +57,8 @@ class PhysicsService
                 'formula_registry' => [],
                 'search_index' => [],
                 'simulations' => [],
-                'constants' => []
+                'constants' => [],
+                'notation' => []
             ];
 
             if (is_dir($baseDir)) {
@@ -71,6 +72,9 @@ class PhysicsService
                 }
                 if (file_exists($baseDir . 'constants.json')) {
                     $this->physicsContent['constants'] = json_decode(file_get_contents($baseDir . 'constants.json'), true) ?: [];
+                }
+                if (file_exists($baseDir . 'notation.json')) {
+                    $this->physicsContent['notation'] = json_decode(file_get_contents($baseDir . 'notation.json'), true) ?: [];
                 }
             }
         }

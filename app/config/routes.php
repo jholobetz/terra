@@ -35,6 +35,7 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/topic/@slug', [ $app->physicsController(), 'viewTopic' ]);
 		$router->get('/subtopic/@slug', [ $app->physicsController(), 'viewSubtopic' ]);
 		$router->get('/constants', [ $app->physicsController(), 'constants' ]);
+		$router->get('/symbols', [ $app->physicsController(), 'symbols' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 	});
 	

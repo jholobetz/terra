@@ -1,4 +1,4 @@
-<article class="physics-page">
+<article class="physics-page" style="--accent-color: var(--accent-default);">
     <header class="page-header">
         <span class="category-tag">Fundamental Reference</span>
         <h1>Fundamental Physical Constants</h1>
@@ -11,10 +11,10 @@
         <?php foreach ($constants as $slug => $c): ?>
             <section class="constant-card" id="<?= $slug ?>" style="background: #112240; border: 1px solid #233554; border-radius: 12px; padding: 25px; transition: transform 0.3s ease;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--accent);"><?= $c['name'] ?></h3>
-                    <code style="background: rgba(100, 255, 218, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 1.1rem;">
+                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--accent-color);"><?= $c['name'] ?></h3>
+                    <span style="background: rgba(100, 255, 218, 0.1); color: var(--accent-color); padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 1.1rem; display: inline-block;">
                         \( <?= $c['symbol'] ?> \)
-                    </code>
+                    </span>
                 </div>
                 
                 <div class="constant-value" style="margin-bottom: 20px;">
@@ -38,16 +38,17 @@
 <style>
     .constant-card:hover {
         transform: translateY(-5px);
-        border-color: var(--accent);
+        border-color: var(--accent-color);
     }
     .constant-card:target {
-        border-color: var(--accent);
+        border-color: var(--accent-color);
         box-shadow: 0 0 20px rgba(100, 255, 218, 0.15);
         animation: pulse 2s infinite;
     }
     @keyframes pulse {
         0% { border-color: #233554; }
-        50% { border-color: var(--accent); }
+        50% { border-color: var(--accent-color); }
         100% { border-color: #233554; }
     }
 </style>
+

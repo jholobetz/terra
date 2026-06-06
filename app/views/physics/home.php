@@ -68,8 +68,9 @@ require_once __DIR__ . '/_topic_icons.php';
             </div>
             
             <div class="equation-box">
-                <div class="equation-render">
-                    \[ \theta''(t) + \class{color-damping}{\gamma}\theta'(t) + \frac{\class{color-gravity}{g}}{\class{color-length}{L}}\sin\theta = 0 \]
+                <div class="equation-render" style="font-size: 0.85rem; line-height: 1.4;">
+                    \[ \mathbf{a} = -g\hat{j} - \class{color-damping}{C_d} v \mathbf{v} \]
+                    \[ \mathbf{v}_0 = \class{color-gravity}{v_0}(\cos\class{color-length}{\theta}\hat{i} + \sin\class{color-length}{\theta}\hat{j}) \]
                 </div>
             </div>
             
@@ -79,16 +80,20 @@ require_once __DIR__ . '/_topic_icons.php';
             
             <div class="controls-box">
                 <div class="control-group">
-                    <label for="slider-gravity">Gravity (<span class="color-gravity" style="font-style: italic; font-family: serif; font-weight: bold;">g</span>): <span id="val-gravity">9.8</span> m/s²</label>
-                    <input type="range" id="slider-gravity" min="0" max="25" step="0.1" value="9.8">
+                    <label for="slider-velocity">Velocity (<span class="color-gravity" style="font-style: italic; font-family: serif; font-weight: bold;">v<sub>0</sub></span>): <span id="val-velocity">55</span> m/s</label>
+                    <input type="range" id="slider-velocity" min="15" max="100" step="1" value="55">
                 </div>
                 <div class="control-group">
-                    <label for="slider-length">Length (<span class="color-length" style="font-style: italic; font-family: serif; font-weight: bold;">L</span>): <span id="val-length">1.5</span> m</label>
-                    <input type="range" id="slider-length" min="0.5" max="3.0" step="0.1" value="1.5">
+                    <label for="slider-angle">Angle (<span class="color-length" style="font-style: italic; font-family: serif; font-weight: bold;">&theta;</span>): <span id="val-angle">45</span>&deg;</label>
+                    <input type="range" id="slider-angle" min="0" max="90" step="1" value="45">
                 </div>
                 <div class="control-group">
-                    <label for="slider-damping">Damping (<span class="color-damping" style="font-style: italic; font-family: serif; font-weight: bold;">&gamma;</span>): <span id="val-damping">0.10</span></label>
-                    <input type="range" id="slider-damping" min="0" max="0.5" step="0.01" value="0.10">
+                    <label for="slider-drag">Drag (<span class="color-damping" style="font-style: italic; font-family: serif; font-weight: bold;">C<sub>d</sub></span>): <span id="val-drag">0.02</span></label>
+                    <input type="range" id="slider-drag" min="0.00" max="0.10" step="0.005" value="0.02">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <button id="launch-btn" class="btn btn-primary" style="flex: 1; font-size: 0.8rem; padding: 8px;">Fire Cannon!</button>
+                    <button id="clear-btn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px;">Clear</button>
                 </div>
             </div>
         </div>

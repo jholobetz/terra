@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Interactive Pendulum Simulation Sandbox
+    // 2. Interactive Projectile Motion Sandbox
     const canvas = document.getElementById('sandbox-canvas');
     if (!canvas) return;
     
@@ -49,139 +49,176 @@ document.addEventListener('DOMContentLoaded', () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    // Sliders
-    const sliderGravity = document.getElementById('slider-gravity');
-    const sliderLength = document.getElementById('slider-length');
-    const sliderDamping = document.getElementById('slider-damping');
+    // Sliders & UI Elements
+    const sliderVelocity = document.getElementById('slider-velocity');
+    const sliderAngle = document.getElementById('slider-angle');
+    const sliderDrag = document.getElementById('slider-drag');
     
-    const valGravity = document.getElementById('val-gravity');
-    const valLength = document.getElementById('val-length');
-    const valDamping = document.getElementById('val-damping');
+    const valVelocity = document.getElementById('val-velocity');
+    const valAngle = document.getElementById('val-angle');
+    const valDrag = document.getElementById('val-drag');
     
-    // Physics parameters
-    let g = parseFloat(sliderGravity.value);
-    let L = parseFloat(sliderLength.value);
-    let gamma = parseFloat(sliderDamping.value);
+    const launchBtn = document.getElementById('launch-btn');
+    const clearBtn = document.getElementById('clear-btn');
     
-    // State
-    let theta = Math.PI / 4; // Initial angle (45 degrees)
-    let omega = 0.0;
+    // Physics parameters & state
+    let v0 = parseFloat(sliderVelocity.value);
+    let angle = parseFloat(sliderAngle.value);
+    let drag = parseFloat(sliderDrag.value);
+    const g = 9.81; // standard gravity
     
-    // Dragging state
-    let isDragging = false;
-    let mouseX = 0;
-    let mouseY = 0;
-    
-    // Trail history
-    const trail = [];
-    const maxTrailLength = 25;
+    let projectiles = [];
+    let particles = [];
+    let lastTime = performance.now();
     
     // Connect sliders to state
-    sliderGravity.addEventListener('input', (e) => {
-        g = parseFloat(e.target.value);
-        valGravity.textContent = g.toFixed(1);
+    sliderVelocity.addEventListener('input', (e) => {
+        v0 = parseFloat(e.target.value);
+        valVelocity.textContent = v0;
     });
-    sliderLength.addEventListener('input', (e) => {
-        L = parseFloat(e.target.value);
-        valLength.textContent = L.toFixed(1);
+    sliderAngle.addEventListener('input', (e) => {
+        angle = parseFloat(e.target.value);
+        valAngle.textContent = angle;
     });
-    sliderDamping.addEventListener('input', (e) => {
-        gamma = parseFloat(e.target.value);
-        valDamping.textContent = gamma.toFixed(2);
+    sliderDrag.addEventListener('input', (e) => {
+        drag = parseFloat(e.target.value);
+        valDrag.textContent = drag.toFixed(3);
     });
     
-    // Coordinate conversion helpers
-    function getBobPosition(width, height) {
-        const pivotX = width / 2;
-        const pivotY = 40;
-        const scale = 75; // px per meter
-        const cx = pivotX + Math.sin(theta) * (L * scale);
-        const cy = pivotY + Math.cos(theta) * (L * scale);
-        return { pivotX, pivotY, cx, cy };
-    }
+    clearBtn.addEventListener('click', () => {
+        projectiles = [];
+        particles = [];
+    });
     
-    // Mouse/Touch Events
-    function getMouseCoords(e) {
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-            x: clientX - rect.left,
-            y: clientY - rect.top
-        };
-    }
-    
-    function onStart(e) {
-        const coords = getMouseCoords(e);
+    // Launch Projectile
+    function fireCannon() {
         const logicalWidth = canvas.width / window.devicePixelRatio;
         const logicalHeight = canvas.height / window.devicePixelRatio;
-        const { cx, cy } = getBobPosition(logicalWidth, logicalHeight);
         
-        const dist = Math.hypot(coords.x - cx, coords.y - cy);
-        if (dist < 22) {
-            isDragging = true;
-            omega = 0;
+        const groundY = logicalHeight - 35;
+        const cannonX = 35;
+        const cannonY = groundY;
+        
+        const rad = (angle * Math.PI) / 180;
+        const barrelLen = 30;
+        
+        // Muzzle position
+        const mx = cannonX + Math.cos(rad) * barrelLen;
+        const my = cannonY - Math.sin(rad) * barrelLen;
+        
+        // Velocity scale (converts physical m/s to canvas speed per frame)
+        const scale = 0.14;
+        
+        projectiles.push({
+            x: mx,
+            y: my,
+            vx: v0 * Math.cos(rad) * scale,
+            vy: -v0 * Math.sin(rad) * scale,
+            radius: 4,
+            color: '#00ffff', // cyan shell
+            trailColor: 'rgba(0, 210, 255, 0.45)',
+            path: [],
+            active: true
+        });
+        
+        // Spawn muzzle flash smoke particles
+        for (let i = 0; i < 8; i++) {
+            const pAngle = rad + (Math.random() - 0.5) * 0.4;
+            const pSpeed = 1.5 + Math.random() * 3.0;
+            particles.push({
+                x: mx, y: my,
+                vx: pSpeed * Math.cos(pAngle),
+                vy: -pSpeed * Math.sin(pAngle),
+                radius: 2 + Math.random() * 4,
+                color: `rgba(255, 78, 136, ${0.3 + Math.random() * 0.5})`, // orange/pink smoke
+                age: 0,
+                maxAge: 12 + Math.random() * 8,
+                type: 'smoke'
+            });
         }
     }
     
-    function onMove(e) {
-        if (!isDragging) return;
-        const coords = getMouseCoords(e);
-        const logicalWidth = canvas.width / window.devicePixelRatio;
-        const logicalHeight = canvas.height / window.devicePixelRatio;
-        const { pivotX, pivotY } = getBobPosition(logicalWidth, logicalHeight);
-        
-        const dx = coords.x - pivotX;
-        const dy = coords.y - pivotY;
-        
-        // Calculate angle from vertical (y points down, so dy is positive down)
-        theta = Math.atan2(dx, dy);
-        omega = 0;
-        e.preventDefault();
+    if (launchBtn) launchBtn.addEventListener('click', fireCannon);
+    
+    // Spawn floor explosion sparks
+    function triggerExplosion(ex, ey) {
+        for (let i = 0; i < 12; i++) {
+            const pAngle = Math.random() * Math.PI; // bounce upwards
+            const pSpeed = 1.0 + Math.random() * 3.0;
+            particles.push({
+                x: ex, y: ey,
+                vx: pSpeed * Math.cos(pAngle),
+                vy: -pSpeed * Math.sin(pAngle),
+                radius: 1.5 + Math.random() * 2,
+                color: `rgba(255, 215, 0, ${0.7 + Math.random() * 0.3})`, // gold sparks
+                age: 0,
+                maxAge: 15 + Math.random() * 10,
+                type: 'spark'
+            });
+        }
     }
-    
-    function onEnd() {
-        isDragging = false;
-    }
-    
-    canvas.addEventListener('mousedown', onStart);
-    canvas.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onEnd);
-    
-    canvas.addEventListener('touchstart', onStart, { passive: false });
-    canvas.addEventListener('touchmove', onMove, { passive: false });
-    window.addEventListener('touchend', onEnd);
     
     // Main loop
-    let lastTime = performance.now();
-    
     function step(timestamp) {
-        const dt = Math.min((timestamp - lastTime) / 1000, 0.1); // Limit dt to 100ms
+        const dt = Math.min((timestamp - lastTime) / 1000, 0.1) * 60; // limit and scale dt
         lastTime = timestamp;
         
         const logicalWidth = canvas.width / window.devicePixelRatio;
         const logicalHeight = canvas.height / window.devicePixelRatio;
+        const groundY = logicalHeight - 35;
         
-        if (!isDragging) {
-            // Physics: Euler-Cromer integration
-            // theta'' = -(g/L)*sin(theta) - gamma*omega
-            const alpha = -(g / L) * Math.sin(theta) - gamma * omega;
-            omega += alpha * dt;
-            theta += omega * dt;
+        // 1. Update active projectiles
+        for (let p of projectiles) {
+            if (!p.active) continue;
+            
+            const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy) || 0.001;
+            
+            // Drag force (opposite to velocity direction)
+            const fDragX = -drag * speed * p.vx * 0.09;
+            const fDragY = -drag * speed * p.vy * 0.09;
+            
+            // Gravity force (downwards)
+            const fGravY = g * 0.022;
+            
+            // Velocity Verlet/Euler-Cromer integration step
+            p.vx += fDragX * dt;
+            p.vy += (fDragY + fGravY) * dt;
+            
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            
+            // Save path coordinates
+            p.path.push({ x: p.x, y: p.y });
+            if (p.path.length > 250) p.path.shift();
+            
+            // Ground collision check
+            if (p.y >= groundY) {
+                p.y = groundY;
+                p.active = false;
+                triggerExplosion(p.x, p.y);
+            }
         }
         
-        const { pivotX, pivotY, cx, cy } = getBobPosition(logicalWidth, logicalHeight);
-        
-        // Save trail position
-        trail.push({ x: cx, y: cy });
-        if (trail.length > maxTrailLength) {
-            trail.shift();
+        // 2. Update smoke and spark particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const pt = particles[i];
+            pt.x += pt.vx;
+            pt.y += pt.vy;
+            pt.age++;
+            
+            if (pt.type === 'spark') {
+                pt.vy += 0.08; // sparks experience gravity
+            }
+            
+            if (pt.age >= pt.maxAge) {
+                particles.splice(i, 1);
+            }
         }
         
-        // Draw
+        // 3. Render
         ctx.clearRect(0, 0, logicalWidth, logicalHeight);
         
-        // Grid background (subtle technical dots)
+        // Technical dots grid background
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
         ctx.lineWidth = 1;
         const gridSize = 25;
@@ -198,75 +235,72 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.stroke();
         }
         
-        // Draw trail (glowing gradient trail)
-        if (trail.length > 1) {
-            ctx.beginPath();
-            ctx.moveTo(trail[0].x, trail[0].y);
-            for (let i = 1; i < trail.length; i++) {
-                ctx.lineTo(trail[i].x, trail[i].y);
-            }
-            ctx.strokeStyle = 'rgba(100, 255, 218, 0.15)';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.stroke();
-        }
-        
-        // Draw Rod (technical line with measurement markers)
+        // Draw Ground Line
         ctx.beginPath();
-        ctx.moveTo(pivotX, pivotY);
-        ctx.lineTo(cx, cy);
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(logicalWidth, groundY);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        
-        // Draw measurement markers along rod
-        const divisions = 5;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-        ctx.lineWidth = 1;
-        for (let i = 1; i < divisions; i++) {
-            const fraction = i / divisions;
-            const mx = pivotX + (cx - pivotX) * fraction;
-            const my = pivotY + (cy - pivotY) * fraction;
-            // Draw ticks perpendicular to the rod
-            const perpX = -Math.cos(theta) * 3;
-            const perpY = Math.sin(theta) * 3;
-            ctx.beginPath();
-            ctx.moveTo(mx - perpX, my - perpY);
-            ctx.lineTo(mx + perpX, my + perpY);
-            ctx.stroke();
-        }
-        
-        // Draw Pivot
-        ctx.beginPath();
-        ctx.arc(pivotX, pivotY, 5, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Draw Bob (glassmorphic particle with glowing center)
-        // Outer glow
-        const glowRad = isDragging ? 18 : 14;
-        const radGlow = ctx.createRadialGradient(cx, cy, 2, cx, cy, glowRad);
-        radGlow.addColorStop(0, 'rgba(100, 255, 218, 0.8)');
-        radGlow.addColorStop(0.3, 'rgba(100, 255, 218, 0.4)');
-        radGlow.addColorStop(1, 'rgba(100, 255, 218, 0)');
+        // Draw Projectile Trails
+        for (let p of projectiles) {
+            if (p.path.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(p.path[0].x, p.path[0].y);
+                for (let i = 1; i < p.path.length; i++) {
+                    ctx.lineTo(p.path[i].x, p.path[i].y);
+                }
+                ctx.strokeStyle = p.trailColor;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
         
-        ctx.beginPath();
-        ctx.arc(cx, cy, glowRad, 0, Math.PI * 2);
-        ctx.fillStyle = radGlow;
-        ctx.fill();
+        // Draw Shells
+        for (let p of projectiles) {
+            if (p.active) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = p.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
         
-        // Inner circle
+        // Draw Particles (Smoke & Sparks)
+        for (let pt of particles) {
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, pt.radius * (1 - pt.age / pt.maxAge), 0, Math.PI * 2);
+            ctx.fillStyle = pt.color;
+            ctx.fill();
+        }
+        
+        // Draw Cannon Base and Barrel
+        const cannonX = 35;
+        const cannonY = groundY;
+        const rad = (angle * Math.PI) / 180;
+        const barrelLen = 30;
+        
+        // Barrel line
         ctx.beginPath();
-        ctx.arc(cx, cy, 7, 0, Math.PI * 2);
-        ctx.fillStyle = '#64ffda';
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = '#64ffda';
+        ctx.moveTo(cannonX, cannonY);
+        ctx.lineTo(cannonX + Math.cos(rad) * barrelLen, cannonY - Math.sin(rad) * barrelLen);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        
+        // Cannon wheels/base mount
+        ctx.beginPath();
+        ctx.arc(cannonX, cannonY, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e293b';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
         ctx.fill();
-        ctx.shadowBlur = 0; // Reset shadow
+        ctx.stroke();
         
         requestAnimationFrame(step);
     }

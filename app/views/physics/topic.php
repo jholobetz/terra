@@ -47,23 +47,7 @@ if (!function_exists('getConceptLevel')) {
     <div class="content-body">
         <?php if (!empty($pillars) && is_array($pillars)): ?>
             <!-- DATA-DRIVEN PLATINUM HUB -->
-            <?php if (!empty($field) || !empty($density)): ?>
-                <div class="high-signal-banner">
-                    <?php if (!empty($field)): ?>
-                        <div class="signal-item">
-                            <strong>Domain:</strong> <?= htmlspecialchars($field) ?>
-                        </div>
-                    <?php endif; ?>
-                    <?php if (!empty($density)): ?>
-                        <div class="signal-item">
-                            <strong>Information Density:</strong> <?= htmlspecialchars($density) ?> bits/node
-                        </div>
-                    <?php endif; ?>
-                    <div class="signal-item">
-                        <strong>Classification:</strong> OPS Platinum
-                    </div>
-                </div>
-            <?php endif; ?>
+
 
             <div class="overview-link-container" style="margin: 0 0 20px 0; font-size: 0.95rem;">
                 <a href="/physics/subtopic/<?= $slug ?>-overview" class="subtopic-link" style="font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px;">Explore Overview &rarr;</a>

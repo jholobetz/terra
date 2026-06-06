@@ -38,7 +38,7 @@
 
             <nav>
                 <div class="dropdown">
-                    <a href="#" class="dropbtn">Topics &blacktriangledown;</a>
+                    <a href="#" class="dropbtn btn btn-secondary">Topics &blacktriangledown;</a>
                     <div class="dropdown-content">
                         <?php foreach($menu_topics as $slug => $topic): ?>
                             <a href="/physics/topic/<?= $slug ?>"><?= $topic['title'] ?></a>
@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a href="/physics/simulations" class="dropbtn">Simulations &blacktriangledown;</a>
+                    <a href="/physics/simulations" class="dropbtn btn btn-primary">Simulations &blacktriangledown;</a>
                     <div class="dropdown-content">
                         <?php foreach($menu_simulations as $slug => $sim): ?>
                             <a href="/physics/simulations/<?= $slug ?>"><?= $sim['title'] ?></a>

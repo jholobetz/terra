@@ -480,6 +480,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.stroke();
     }
 
+    // Main animation loop
+    function loop(timestamp) {
+        draw();
+        requestAnimationFrame(loop);
+    }
+
     // Start loop
     requestAnimationFrame(loop);
 });

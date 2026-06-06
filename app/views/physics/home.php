@@ -212,25 +212,7 @@ function get_topic_icon_and_class(string $slug): array {
     </div>
 </section>
 
-<!-- Metrics Banner -->
-<div class="metrics-banner">
-    <div class="metric-item">
-        <span class="metric-value">1,584</span>
-        <span class="metric-label">Graduated Subtopics</span>
-    </div>
-    <div class="metric-item">
-        <span class="metric-value">100%</span>
-        <span class="metric-label">Organic Platinum Progress</span>
-    </div>
-    <div class="metric-item">
-        <span class="metric-value">5,892</span>
-        <span class="metric-label">Math Identity Locks</span>
-    </div>
-    <div class="metric-item">
-        <span class="metric-value">12</span>
-        <span class="metric-label">Active Hub Modules</span>
-    </div>
-</div>
+
 
 <section class="topics-grid">
     <?php foreach ($topics as $topic): 

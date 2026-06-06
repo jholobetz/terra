@@ -8,8 +8,8 @@ require_once __DIR__ . '/_topic_icons.php';
         <h1><?= htmlspecialchars($title) ?></h1>
         <p class="subtitle"><?= htmlspecialchars($subtitle) ?></p>
         <div class="hero-cta">
-            <a href="/physics/topic/classical-mechanics" class="btn btn-primary">Start Exploring</a>
-            <a href="/physics/simulations" class="btn btn-secondary">Try Simulations</a>
+            <a href="/physics/topic/classical-mechanics" class="btn btn-secondary">Start Exploring</a>
+            <a href="/physics/simulations" class="btn btn-primary">Try Simulations</a>
         </div>
     </div>
 </section>

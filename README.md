@@ -120,6 +120,14 @@ To prevent "contextual leakage" (e.g., discussing too much astrophysics in a the
 * **Background Vocabulary Filtering**: A `DF_CEILING_PCT` (default `0.60`) filters out background vocabulary (words appearing in >60% of all platinum documents, such as `energy`, `field`, `manifold`) to eliminate false positives.
 * **Persistent Signature Cache**: Rebuilding signatures is optimized using a signature cache `subfiles/hub_signatures.json`, validated by a stable MD5 hash of all active Platinum subtopics to keep orchestration startup under 5ms.
 
+### 🎨 Category Theming & Design System
+To ensure a consistent, color-coded visual hierarchy across the encyclopedia's 12 primary physics categories, the frontend implements a CSS custom property scoping system:
+* **Dynamic Scoping**: The wrapper element of Category Hubs (`topic.php`) and Subtopic Detail pages (`subtopic.php`) sets `--accent-color: var(--accent-<theme>);` dynamically based on the parent category resolved from the shared `_topic_icons.php` asset registry.
+* **Theme Tokens**: A neon token palette is defined globally in `public/css/physics.css` (e.g., `--accent-classical: #10b981` (emerald), `--accent-relativity: #8b5cf6` (deep violet)).
+* **Glassmorphic Components**: UI elements like `.concept-card`, `.related-card`, and equations panels dynamically resolve hover borders, neon shadow glows, and link decorations using native CSS `color-mix(in srgb, var(--accent-color) X%, transparent)` bounds.
+* **Dynamic Watermarks**: Custom-designed category vector SVGs are reused dynamically as subtle background watermarks inside hubs, header headers, and simulation launcher cards to unify the visual identity.
+* **Navbar Theme Rollouts**: Navbar menu headers and their dropdown items are styled with secondary (violet) and primary (cyan) themes, using transparent bridge overlays to maintain cursor-hover stability.
+
 ---
 
 ## 🛠️ 5. Content-Graduation CLI Guide

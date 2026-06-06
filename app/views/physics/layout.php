@@ -31,9 +31,12 @@
         <div class="container nav-wrapper">
             <a href="/physics" class="logo">Physics Lab</a>
             
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search the manifold..." autocomplete="off">
-                <div id="search-results"></div>
+            <div class="search-trigger-container">
+                <button id="search-modal-trigger" class="search-modal-trigger">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <span>Search...</span>
+                    <kbd class="shortcut">⌘K</kbd>
+                </button>
             </div>
 
             <nav>
@@ -64,6 +67,32 @@
     <footer class="main-footer">
         <p>&copy; <?= date('Y') ?> Physics Lab Digital Encyclopedia. All rights reserved.</p>
     </footer>
+
+    <!-- Spotlight Search Modal -->
+    <div id="search-modal" class="search-modal">
+        <div class="search-modal-backdrop"></div>
+        <div class="search-modal-container">
+            <div class="search-modal-content">
+                <div class="search-modal-header">
+                    <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="modal-search-input" placeholder="Search equations, topics, and constants..." autocomplete="off">
+                    <button class="close-modal-btn">&times;</button>
+                </div>
+                <div class="search-modal-body">
+                    <div class="search-tips">
+                        <span>Press <kbd>Esc</kbd> to close</span>
+                        <span>Use <kbd>↑</kbd> <kbd>↓</kbd> to navigate</span>
+                    </div>
+                    <div id="modal-search-results" class="modal-search-results">
+                        <div class="search-placeholder">
+                            <p>Search the mathematical manifold</p>
+                            <small>Type to search subtopics, physical constants, or defining equations...</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="/js/search_engine.js" defer></script>
 </body>

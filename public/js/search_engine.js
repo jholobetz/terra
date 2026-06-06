@@ -1,26 +1,123 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const input = document.getElementById('search-input');
-    const results = document.getElementById('search-results');
+    // Spotlight Search Modal DOM Elements
+    const trigger = document.getElementById('search-modal-trigger');
+    const modal = document.getElementById('search-modal');
+    const input = document.getElementById('modal-search-input');
+    const results = document.getElementById('modal-search-results');
+    const closeBtn = document.querySelector('.close-modal-btn');
+    const backdrop = document.querySelector('.search-modal-backdrop');
+    
     let searchData = null;
+    let highlightedIndex = -1;
+    let resultItems = [];
 
-    if (!input) return;
+    if (!modal || !input) return;
 
-    input.addEventListener('focus', async () => {
-        if (!searchData) {
-            input.placeholder = "Loading index...";
-            try {
-                const response = await fetch('/physics/search-index');
-                if (!response.ok) throw new Error('Search index load failed');
-                searchData = await response.json();
-                input.placeholder = "Search the manifold...";
-                console.log('Knowledge Graph indexed:', Object.keys(searchData).length, 'topics');
-            } catch (e) {
-                input.placeholder = "Search unavailable";
-                console.error('Search Engine Error:', e);
+    // Helper: format pathway breadcrumbs nicely (e.g., quantum-physics -> Quantum Physics)
+    function formatPath(pathArray) {
+        if (!pathArray || !Array.isArray(pathArray)) return '';
+        return pathArray.map(slug => 
+            slug.split('-')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ')
+        ).join(' &rsaquo; ');
+    }
+
+    // Load Search Index
+    async function loadIndex() {
+        if (searchData) return;
+        input.placeholder = "Loading encyclopedia index...";
+        try {
+            const response = await fetch('/physics/search-index');
+            if (!response.ok) throw new Error('Search index load failed');
+            searchData = await response.json();
+            input.placeholder = "Search equations, topics, and constants...";
+            console.log('Spotlight Search Engine initialized:', Object.keys(searchData).length, 'topics indexed.');
+        } catch (e) {
+            input.placeholder = "Search currently unavailable";
+            console.error('Search Index Error:', e);
+        }
+    }
+
+    // Modal Control Functions
+    function openModal() {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Lock background scrolling
+        loadIndex();
+        setTimeout(() => input.focus(), 50); // Autofocus input field
+        highlightedIndex = -1;
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+        input.value = '';
+        resetResultsPlaceholder();
+        highlightedIndex = -1;
+    }
+
+    function resetResultsPlaceholder() {
+        results.innerHTML = `
+            <div class="search-placeholder">
+                <p>Search the mathematical manifold</p>
+                <small>Type to search subtopics, physical constants, or defining equations...</small>
+            </div>
+        `;
+    }
+
+    // Trigger Listeners
+    if (trigger) trigger.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+
+    // Global Hotkeys (Cmd+K / Ctrl+K and Escape)
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            if (modal.classList.contains('active')) {
+                closeModal();
+            } else {
+                openModal();
+            }
+        }
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    // Keyboard Arrow Navigation
+    input.addEventListener('keydown', (e) => {
+        if (!modal.classList.contains('active') || resultItems.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            highlightedIndex = (highlightedIndex + 1) % resultItems.length;
+            updateHighlight();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            highlightedIndex = (highlightedIndex - 1 + resultItems.length) % resultItems.length;
+            updateHighlight();
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const activeIndex = highlightedIndex >= 0 ? highlightedIndex : 0;
+            if (resultItems[activeIndex]) {
+                resultItems[activeIndex].click();
             }
         }
     });
 
+    function updateHighlight() {
+        resultItems.forEach((item, index) => {
+            if (index === highlightedIndex) {
+                item.classList.add('highlighted');
+                item.scrollIntoView({ block: 'nearest' });
+            } else {
+                item.classList.remove('highlighted');
+            }
+        });
+    }
+
+    // Input Searching logic
     input.addEventListener('input', (e) => {
         if (!searchData) return;
         
@@ -28,7 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const cleanQuery = query.replace(/[''s]/g, ''); 
         
         if (query.length < 2) {
-            results.style.display = 'none';
+            resetResultsPlaceholder();
+            resultItems = [];
+            highlightedIndex = -1;
             return;
         }
 
@@ -45,58 +144,64 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (data.k && data.k.some(k => k.toLowerCase().includes(query))) score += 200;
 
             if (score > 0) {
-                // 2. Technical Weighting (Density bonus)
-                // Add 10% of density weight to the score
+                // 2. Density weight bonus
                 score += (data.w || 0) * 0.5;
 
                 // 3. Platinum Standard Bonus
-                // Boost platinum topics by 20%
                 if (data.pl) score *= 1.2;
 
                 scoredMatches.push({ slug, score, ...data });
             }
         }
 
-        // Sort by score descending, then by title length (shorter is more specific)
+        // Sort by score descending, then by title length
         scoredMatches.sort((a, b) => b.score - a.score || a.t.length - b.t.length);
 
         if (scoredMatches.length > 0) {
             const limited = scoredMatches.slice(0, 10);
             results.innerHTML = limited.map(m => `
-                <a href="/physics/subtopic/${m.slug}" class="search-result-item">
-                    <strong>${m.t}</strong>
-                    <small>${(m.p && Array.isArray(m.p)) ? m.p.join(' &rsaquo; ') : (m.s ? m.s.replace('.json', '') : '')}</small>
+                <a href="/physics/subtopic/${m.slug}" class="modal-search-item">
+                    <div class="modal-search-item-header">
+                        <span class="modal-search-item-title">${m.t}</span>
+                        ${m.pl ? '<span class="modal-search-item-badge">Platinum</span>' : ''}
+                    </div>
+                    <div class="modal-search-item-path">
+                        <span>${formatPath(m.p)}</span>
+                        ${m.s ? `<span style="opacity:0.4;">&bull; ${m.s.replace('.json', '')}</span>` : ''}
+                    </div>
                 </a>
             `).join('');
-            results.style.display = 'block';
+
+            // Collect items for arrow navigation
+            resultItems = Array.from(results.querySelectorAll('.modal-search-item'));
+            highlightedIndex = 0;
+            updateHighlight();
+
+            // Render MathJax equations in search results dynamically!
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
+            }
         } else {
-            results.innerHTML = '<div class="search-result-item" style="cursor:default; opacity:0.6;">No matches in the manifold...</div>';
-            results.style.display = 'block';
+            results.innerHTML = '<div class="search-placeholder"><p>No matches in the manifold...</p><small>Try searching another physical concept or symbol.</small></div>';
+            resultItems = [];
+            highlightedIndex = -1;
         }
     });
 
-    document.addEventListener('click', (e) => {
-        if (!input.contains(e.target) && !results.contains(e.target)) {
-            results.style.display = 'none';
-        }
-    });
-
-    // 2. Pre-fill Search from URL parameter (e.g. ?search=query)
+    // Handle background search query parameter pre-fill
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get('search');
     if (searchQuery) {
+        openModal();
         input.value = searchQuery;
-        // Trigger focus to load the search data index
-        input.dispatchEvent(new Event('focus'));
         
-        // Wait for the index to load
+        // Wait for the index to load before running search query
         const checkIndex = setInterval(() => {
             if (searchData) {
                 clearInterval(checkIndex);
                 input.dispatchEvent(new Event('input', { bubbles: true }));
             }
         }, 50);
-        // Timeout after 3 seconds if index fails to load
         setTimeout(() => clearInterval(checkIndex), 3000);
     }
 });

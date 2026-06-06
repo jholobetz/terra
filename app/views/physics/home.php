@@ -69,7 +69,7 @@ require_once __DIR__ . '/_topic_icons.php';
             
             <div class="equation-box">
                 <div class="equation-render">
-                    \[ \theta''(t) + {\color{hotpink}\gamma}\theta'(t) + \frac{{\color{deepskyblue}g}}{{\color{limegreen}L}}\sin\theta = 0 \]
+                    \[ \theta''(t) + {\color{magenta}\gamma}\theta'(t) + \frac{{\color{cyan}g}}{{\color{green}L}}\sin\theta = 0 \]
                 </div>
             </div>
             
@@ -79,15 +79,15 @@ require_once __DIR__ . '/_topic_icons.php';
             
             <div class="controls-box">
                 <div class="control-group">
-                    <label for="slider-gravity">Gravity (<span style="color:#00d2ff; font-style: italic; font-family: serif; font-weight: bold;">g</span>): <span id="val-gravity">9.8</span> m/s²</label>
+                    <label for="slider-gravity">Gravity (<span style="color:#00ffff; font-style: italic; font-family: serif; font-weight: bold;">g</span>): <span id="val-gravity">9.8</span> m/s²</label>
                     <input type="range" id="slider-gravity" min="0" max="25" step="0.1" value="9.8">
                 </div>
                 <div class="control-group">
-                    <label for="slider-length">Length (<span style="color:#10b981; font-style: italic; font-family: serif; font-weight: bold;">L</span>): <span id="val-length">1.5</span> m</label>
+                    <label for="slider-length">Length (<span style="color:#00ff00; font-style: italic; font-family: serif; font-weight: bold;">L</span>): <span id="val-length">1.5</span> m</label>
                     <input type="range" id="slider-length" min="0.5" max="3.0" step="0.1" value="1.5">
                 </div>
                 <div class="control-group">
-                    <label for="slider-damping">Damping (<span style="color:#ff4e88; font-style: italic; font-family: serif; font-weight: bold;">&gamma;</span>): <span id="val-damping">0.10</span></label>
+                    <label for="slider-damping">Damping (<span style="color:#ff00ff; font-style: italic; font-family: serif; font-weight: bold;">&gamma;</span>): <span id="val-damping">0.10</span></label>
                     <input type="range" id="slider-damping" min="0" max="0.5" step="0.01" value="0.10">
                 </div>
             </div>

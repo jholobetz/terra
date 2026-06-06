@@ -7,14 +7,6 @@ window.MathJax = {
     },
     options: {
         enableMenu: false
-    },
-    startup: {
-        pageReady: () => {
-            console.log("MathJax is ready. Starting typesetting...");
-            return MathJax.startup.defaultPageReady().then(() => {
-                console.log("MathJax typesetting complete.");
-            });
-        }
     }
 };
 
@@ -33,6 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.warn("Invalid hash selector:", hash, e);
                 }
             }
-        });
+        }).catch(err => console.warn("MathJax initial typeset error:", err));
     }
 });

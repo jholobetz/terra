@@ -25,6 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Force MathJax typesetting on the sandbox display equation
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        const renderEl = document.querySelector('.equation-render');
+        if (renderEl) {
+            window.MathJax.typesetPromise([renderEl]).catch(err => console.warn("Sandbox math typesetting failed:", err));
+        }
+    }
+
     // 2. Interactive Pendulum Simulation Sandbox
     const canvas = document.getElementById('sandbox-canvas');
     if (!canvas) return;

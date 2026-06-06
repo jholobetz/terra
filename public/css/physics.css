@@ -219,7 +219,17 @@ main {
     top: 100%;
     right: 0;
     margin-top: 8px;
-    overflow: hidden;
+}
+
+/* Bridge the 8px hover gap so the dropdown doesn't disappear when moving cursor down */
+.dropdown-content::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: transparent;
 }
 
 .dropdown-content a {
@@ -235,8 +245,15 @@ main {
     transition: all 0.2s;
 }
 
+.dropdown-content a:first-child {
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+}
+
 .dropdown-content a:last-child {
     border-bottom: none;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
 }
 
 .dropdown-content a:hover {

@@ -1,4 +1,22 @@
-<article class="subtopic-content">
+<?php
+require_once __DIR__ . '/_topic_icons.php';
+
+// Resolve parent topic slug from breadcrumbs for category-specific theming
+$parentSlug = null;
+if (!empty($breadcrumbs) && is_array($breadcrumbs)) {
+    foreach ($breadcrumbs as $crumb) {
+        if (isset($crumb['url']) && strpos($crumb['url'], '/physics/topic/') === 0) {
+            $parentSlug = str_replace('/physics/topic/', '', $crumb['url']);
+            break;
+        }
+    }
+}
+
+$meta = get_topic_icon_and_class($parentSlug ?? '');
+$theme = $meta['theme'] ?? 'default';
+?>
+
+<article class="subtopic-content" style="--accent-color: var(--accent-<?= $theme ?>);">
     <nav class="breadcrumb">
         <a href="/physics">Home</a>
         <?php foreach ($breadcrumbs as $crumb): ?>
@@ -31,9 +49,9 @@
             <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
             <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                 <?php foreach ($related_topics as $rel): ?>
-                    <a href="/physics/subtopic/<?= $rel['slug'] ?>" class="related-card" style="background: #112240; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px solid #233554; transition: all 0.3s ease; display: block;">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px;"><?= $rel['title'] ?></strong>
-                        <span style="font-size: 0.85rem; color: #8892b0;">Dive deeper into the related theoretical framework.</span>
+                    <a href="/physics/subtopic/<?= $rel['slug'] ?>" class="related-card">
+                        <strong><?= $rel['title'] ?></strong>
+                        <span>Dive deeper into the related theoretical framework.</span>
                     </a>
                 <?php endforeach; ?>
             </div>

@@ -156,6 +156,13 @@ def commit_node(slug, html_file, identities_file=None):
         # Save will now write BOTH the shard and the updated formula registry, whitelisted to target slug
         orch.save(target_slugs=[slug], unlock_protected=True)
         
+        # Compile notation registry to aggregate semantic variables
+        try:
+            from scripts.maintenance.compile_notation import compile_notation
+            compile_notation()
+        except Exception as notation_err:
+            print(f"Warning: Failed to compile notation registry: {notation_err}")
+        
         # 4b. Rebuild Parent Hub Caches
         parents = orch.data["subtopics"].get(slug, {}).get("parents", [])
         for p in parents:

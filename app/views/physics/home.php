@@ -69,7 +69,7 @@ require_once __DIR__ . '/_topic_icons.php';
             
             <div class="equation-box">
                 <div class="equation-render">
-                    \[ \theta''(t) + {\color{#ff4e88}\gamma}\theta'(t) + \frac{{\color{#00d2ff}g}}{{\color{#10b981}L}}\sin\theta = 0 \]
+                    \[ \theta''(t) + {\color{hotpink}\gamma}\theta'(t) + \frac{{\color{deepskyblue}g}}{{\color{limegreen}L}}\sin\theta = 0 \]
                 </div>
             </div>
             

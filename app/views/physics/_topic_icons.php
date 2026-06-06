@@ -213,3 +213,34 @@ if (!function_exists('get_topic_icon_and_class')) {
         }
     }
 }
+
+if (!function_exists('get_simulation_category')) {
+    function get_simulation_category(string $slug): string {
+        switch ($slug) {
+            case 'double-pendulum':
+            case 'pendulum':
+            case 'projectile-motion':
+            case 'wave-superposition':
+                return 'classical-mechanics';
+            case 'electric-field':
+            case 'gauss-law':
+                return 'electromagnetism';
+            case 'spacetime-relativity':
+            case 'gravitational-lensing':
+                return 'relativity';
+            case 'bells-inequality':
+            case 'path-integral':
+            case 'wavefunction-tunneling':
+                return 'quantum-physics';
+            case 'n-body-orbit':
+                return 'astrophysics';
+            case 'brownian-motion':
+            case 'maxwells-demon':
+                return 'thermodynamics-statistical-mechanics';
+            case 'vortex-street':
+                return 'fluids-nonlinear';
+            default:
+                return 'default';
+        }
+    }
+}

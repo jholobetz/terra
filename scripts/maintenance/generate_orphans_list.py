@@ -31,10 +31,10 @@ def list_orphans():
             for _, target in matches:
                 incoming_links[target] += 1
                 
-    # An orphan is a subtopic slug that has 0 incoming links
+    # An orphan is a subtopic slug that has 0 incoming links (excluding utility shard notation entries)
     orphans = []
     for slug, sub in all_subtopics.items():
-        if incoming_links[slug] == 0:
+        if "content" in sub and incoming_links[slug] == 0:
             # Gather standard status, shard name, and title
             shard_name = "unknown"
             for s_name, shard_data in orch.shards.items():

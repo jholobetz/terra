@@ -234,8 +234,11 @@ class HealthDashboard:
             self.health_data["platinum_scorecard"]["flagged_platinum_percentage"] = round((flagged / count) * 100, 2)
             self.health_data["platinum_scorecard"]["organic_platinum_percentage"] = round((organic / count) * 100, 2)
         
-        # Orphans
-        self.health_data["integrity_summary"]["orphans_count"] = sum(1 for s in self.all_subtopics if self.incoming_links[s] == 0)
+        # Orphans (exclude utility shards/notation elements that do not contain subtopic content)
+        self.health_data["integrity_summary"]["orphans_count"] = sum(
+            1 for s in self.all_subtopics 
+            if "content" in self.all_subtopics[s] and self.incoming_links[s] == 0
+        )
         
         # Finalize Cluster Map
         for cat in self.topics:

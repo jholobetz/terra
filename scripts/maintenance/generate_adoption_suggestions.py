@@ -45,10 +45,10 @@ def main():
             for _, target in matches:
                 incoming_links[target] += 1
                 
-    # Filter orphans
+    # Filter orphans (excluding utility shard notation entries)
     orphans = []
     for slug, sub in all_subtopics.items():
-        if incoming_links[slug] == 0:
+        if "content" in sub and incoming_links[slug] == 0:
             # Locate shard
             shard_name = "unknown"
             for s_name, shard_data in orch.shards.items():

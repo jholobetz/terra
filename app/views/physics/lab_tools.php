@@ -118,7 +118,31 @@
             <span class="read-more">Launch Workspace &rarr;</span>
         </a>
 
-        <!-- Card 5: Simulations Hub -->
+        <!-- Card 5: Anthropic Constant Tuner -->
+        <a href="/physics/anthropic-tuner" class="topic-card card-astrophysics" style="--card-accent: var(--accent-astrophysics);">
+            <div class="card-watermark">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="28" stroke="currentColor" stroke-width="1"/>
+                    <ellipse cx="50" cy="50" rx="35" ry="12" stroke="currentColor" stroke-width="1" transform="rotate(-30 50 50)"/>
+                </svg>
+            </div>
+            <div class="topic-card-header">
+                <svg viewBox="0 0 100 100" class="card-icon" style="color: var(--accent-astrophysics);">
+                    <circle cx="50" cy="50" r="10" fill="none" stroke="var(--accent-astrophysics)" stroke-width="1.8"/>
+                    <circle cx="50" cy="50" r="28" stroke="currentColor" stroke-dasharray="4 4" stroke-width="1" opacity="0.3"/>
+                    <ellipse cx="50" cy="50" rx="35" ry="12" stroke="currentColor" stroke-width="1" fill="none" transform="rotate(-30 50 50)" opacity="0.4"/>
+                    <path d="M 15 80 L 40 80" stroke="currentColor" stroke-linecap="round" stroke-width="2" opacity="0.2"/>
+                    <circle cx="30" cy="80" r="4.5" fill="var(--accent-astrophysics)"/>
+                    <path d="M 60 80 L 85 80" stroke="currentColor" stroke-linecap="round" stroke-width="2" opacity="0.2"/>
+                    <circle cx="75" cy="80" r="4.5" fill="var(--accent-astrophysics)"/>
+                </svg>
+                <h3>Anthropic Constant Tuner</h3>
+            </div>
+            <p>Adjust the fundamental dials of the universe. Recalculate stellar lifetimes, atomic structures, and cosmic scaling parameters under varying physical constants.</p>
+            <span class="read-more">Launch Tuner &rarr;</span>
+        </a>
+
+        <!-- Card 6: Simulations Hub -->
         <a href="/physics/simulations" class="topic-card card-classical" style="--card-accent: var(--accent-classical);">
             <div class="card-watermark">
                 <svg viewBox="0 0 100 100">

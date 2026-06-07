@@ -67,6 +67,10 @@
                             <span class="module-title">Correspondence Workspace</span>
                             <span class="module-desc">Classical vs quantum trajectories</span>
                         </a>
+                        <a href="/physics/anthropic-tuner" class="nav-module-link">
+                            <span class="module-title">Anthropic Tuner</span>
+                            <span class="module-desc">Cosmological dials &amp; scales</span>
+                        </a>
                         <a href="/physics/simulations" class="nav-module-link">
                             <span class="module-title">Simulations</span>
                             <span class="module-desc">Interactive physics sandboxes</span>

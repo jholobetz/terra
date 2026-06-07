@@ -135,6 +135,16 @@ class PhysicsController
     }
 
     /**
+     * View action rendering the interactive Anthropic Constant Tuner & Cosmological Scaling Sandbox (Pillar E).
+     */
+    public function anthropicTuner()
+    {
+        $this->renderWithLayout('physics/anthropic_tuner', [
+            'title' => "Anthropic Constant Tuner & Cosmological Sandbox"
+        ]);
+    }
+
+    /**
      * View action rendering interactive simulations list.
      */
     public function simulations()

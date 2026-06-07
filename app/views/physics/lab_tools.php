@@ -72,7 +72,31 @@
             <span class="read-more">Launch Toggle &rarr;</span>
         </a>
 
-        <!-- Card 3: Simulations Hub -->
+        <!-- Card 3: Noether's Vault -->
+        <a href="/physics/noethers-vault" class="topic-card card-theoretical" style="--card-accent: var(--accent-theoretical);">
+            <div class="card-watermark">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="32" stroke="currentColor" stroke-width="1" fill="none"/>
+                    <path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="topic-card-header">
+                <svg viewBox="0 0 100 100" class="card-icon" style="color: var(--accent-theoretical);">
+                    <circle cx="50" cy="50" r="32" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1" opacity="0.3"/>
+                    <circle cx="50" cy="50" r="24" stroke="currentColor" stroke-dasharray="5 2" stroke-width="1.2" opacity="0.4"/>
+                    <path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke="var(--accent-theoretical)" stroke-linecap="round" stroke-width="2"/>
+                    <polygon points="85,50 81,46 89,46" fill="var(--accent-theoretical)"/>
+                    <circle cx="50" cy="50" r="5" fill="var(--accent-theoretical)"/>
+                    <line x1="15" y1="50" x2="85" y2="50" stroke="currentColor" stroke-width="0.8" opacity="0.2"/>
+                    <line x1="50" y1="15" x2="50" y2="85" stroke="currentColor" stroke-width="0.8" opacity="0.2"/>
+                </svg>
+                <h3>Noether's Vault</h3>
+            </div>
+            <p>Explore the profound link between physical symmetries and conservation laws. Map continuous coordinate shifts to conserved Noether currents.</p>
+            <span class="read-more">Launch Vault &rarr;</span>
+        </a>
+
+        <!-- Card 4: Simulations Hub -->
         <a href="/physics/simulations" class="topic-card card-classical" style="--card-accent: var(--accent-classical);">
             <div class="card-watermark">
                 <svg viewBox="0 0 100 100">

@@ -115,6 +115,16 @@ class PhysicsController
     }
 
     /**
+     * View action rendering the interactive Noether's Vault (Symmetry-to-Conservation Mapping).
+     */
+    public function noethersVault()
+    {
+        $this->renderWithLayout('physics/noethers_vault', [
+            'title' => "Noether's Vault - Symmetry & Conservation"
+        ]);
+    }
+
+    /**
      * View action rendering interactive simulations list.
      */
     public function simulations()

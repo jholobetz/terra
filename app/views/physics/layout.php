@@ -59,6 +59,10 @@
                             <span class="module-title">Notation Toggle</span>
                             <span class="module-desc">Compare mathematical frameworks</span>
                         </a>
+                        <a href="/physics/noethers-vault" class="nav-module-link">
+                            <span class="module-title">Noether's Vault</span>
+                            <span class="module-desc">Symmetry &amp; conservation mapping</span>
+                        </a>
                         <a href="/physics/simulations" class="nav-module-link">
                             <span class="module-title">Simulations</span>
                             <span class="module-desc">Interactive physics sandboxes</span>

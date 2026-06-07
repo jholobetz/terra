@@ -105,6 +105,16 @@ class PhysicsController
     }
 
     /**
+     * View action rendering the Lab Tools landing page.
+     */
+    public function labTools()
+    {
+        $this->renderWithLayout('physics/lab_tools', [
+            'title' => 'Lab Tools Hub'
+        ]);
+    }
+
+    /**
      * View action rendering interactive simulations list.
      */
     public function simulations()

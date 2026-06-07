@@ -95,6 +95,16 @@ class PhysicsController
     }
 
     /**
+     * View action rendering the interactive Multi-Representation Notation Toggle.
+     */
+    public function notationToggle()
+    {
+        $this->renderWithLayout('physics/notation_toggle', [
+            'title' => 'Multi-Representation Notation Toggle'
+        ]);
+    }
+
+    /**
      * View action rendering interactive simulations list.
      */
     public function simulations()

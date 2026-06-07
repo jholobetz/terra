@@ -37,6 +37,7 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/constants', [ $app->physicsController(), 'constants' ]);
 		$router->get('/symbols', [ $app->physicsController(), 'symbols' ]);
 		$router->get('/dimensional-solver', [ $app->physicsController(), 'dimensionalSolver' ]);
+		$router->get('/notation-toggle', [ $app->physicsController(), 'notationToggle' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 	});
 	

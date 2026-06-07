@@ -49,6 +49,7 @@
                     </div>
                 </div>
                 <a href="/physics/dimensional-solver" class="btn btn-secondary">Solver</a>
+                <a href="/physics/notation-toggle" class="btn btn-secondary">Notation Toggle</a>
                 <div class="dropdown">
                     <a href="/physics/simulations" class="dropbtn btn btn-primary">Simulations &blacktriangledown;</a>
                     <div class="dropdown-content dropdown-content-primary">

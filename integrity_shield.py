@@ -104,7 +104,7 @@ class IntegrityShield:
             files_to_validate = [self.target_shard] if self.target_shard else os.listdir(self.content_dir)
             for file in files_to_validate:
                 if not file: continue
-                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json"]:
+                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json"]:
                     path = os.path.join(self.content_dir, file)
                     with open(path, "r") as f:
                         content = json.load(f)
@@ -147,7 +147,7 @@ class IntegrityShield:
         protected_topics = self.orch.PROTECTED_TOPICS
 
         for file in os.listdir(self.content_dir):
-            if not file.endswith(".json") or file in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json"]:
+            if not file.endswith(".json") or file in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json"]:
                 continue
 
             # Skip the topics directory as it's handled separately or contains the protected ones

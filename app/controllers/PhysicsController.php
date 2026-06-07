@@ -69,9 +69,6 @@ class PhysicsController
         ]);
     }
 
-    /**
-     * View action rendering the unified physical symbols and notation library.
-     */
     public function symbols()
     {
         $content = $this->service()->getPhysicsContent();
@@ -79,6 +76,20 @@ class PhysicsController
         
         $this->renderWithLayout('physics/symbols', [
             'title' => 'Fundamental Symbols & Notation Reference',
+            'notation' => $notation
+        ]);
+    }
+
+    /**
+     * View action rendering the interactive Dimensional Solver and Algebraic Consistency Engine.
+     */
+    public function dimensionalSolver()
+    {
+        $content = $this->service()->getPhysicsContent();
+        $notation = $content['notation'] ?? [];
+        
+        $this->renderWithLayout('physics/dimensional_solver', [
+            'title' => 'Dimensional Solver & Consistency Engine',
             'notation' => $notation
         ]);
     }

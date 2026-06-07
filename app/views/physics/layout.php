@@ -12,7 +12,7 @@
 
     <!-- MathJax Static-Safe Configuration -->
     <script src="/js/mathjax_config.js"></script>
-    <script src="/js/lib/tex-mml-chtml.js" id="MathJax-script" defer></script>
+    <script src="/js/lib/tex-chtml-full.js" id="MathJax-script" defer></script>
     <script src="/js/hub_interactions.js"></script>
     
     <link rel="stylesheet" href="/css/physics.css">
@@ -48,6 +48,7 @@
                         <?php endforeach; ?>
                     </div>
                 </div>
+                <a href="/physics/dimensional-solver" class="btn btn-secondary">Solver</a>
                 <div class="dropdown">
                     <a href="/physics/simulations" class="dropbtn btn btn-primary">Simulations &blacktriangledown;</a>
                     <div class="dropdown-content dropdown-content-primary">

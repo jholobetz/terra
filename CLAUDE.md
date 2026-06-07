@@ -170,12 +170,36 @@ Adhere to the project's established notation dialect across all equations:
 * **Topic Hubs (Categories)**: The 12 primary category entryways (e.g., `astrophysics`, `relativity`) serve as locked logical metadata structures and **DO NOT** conform to the OPS. They must **never** be altered.
 * **Overview Articles**: Corresponding narrative overview articles are designated with the `-overview` suffix (e.g., `theoretical-physics-overview`). These carry the high-density academic overviews and conform strictly to the OPS. **They must adhere to a strict target range of 800 to 1,000 words (elevated from the standard 650-word minimum) and must contain at least 5 outbound links to map the subtopics of their respective hub.** All internal links routing to a primary discipline entryway must point to the narrative Overview Subtopic slug, not the locked category slug, to avoid category routing dead-ends.
 
+### E. Mandatory GQS & Scaffold Upgrade Workflows
+* **Strict Ban on Direct Shard Editing**: AI agents and developers MUST NOT edit the prose, math formulas, or data structures directly within the sharded database files (`app/config/content/*.json`). Direct manual edits bypass LaTeX-to-SVG compilation, auto-linking, and validation tests, resulting in un-rendered raw LaTeX math syntax, broken pages, and desynchronized MathJax SVG cache/sprite mappings.
+* **Upgrading Existing Platinum Nodes**:
+  - Always run the upgrade utility first with the target slug and `--recover-latex` flag:
+    ```bash
+    .venv/bin/python3 scripts/maintenance/scaffold_upgrade.py --slug <slug> --recover-latex
+    ```
+  - This extracts the raw LaTeX equations (`\( ... \)` and `\[ ... \]`) from Git history to prevent loss of mathematical formulas or attempts to edit unreadable pre-rendered `<path>` elements, outputting a clean draft structure into `subfiles/batch_payload.json`.
+* **Graduating Legacy Backlog Nodes**:
+  - Scaffold the next stack target into the batch payload using the unified controller CLI:
+    ```bash
+    .venv/bin/python3 gqs.py template <N>
+    ```
+  - Edit and expand the target content inside `subfiles/batch_payload.json` ensuring full compliance with the OPS Gates (§2.A).
+* **Ingestion and Validation**:
+  - Ingest the drafted changes using either the unified controller:
+    ```bash
+    .venv/bin/python3 gqs.py ingest
+    ```
+  - Or the transaction-guarded sprint coordinator:
+    ```bash
+    .venv/bin/python3 scripts/maintenance/run_gqs_sprint.py --count <N>
+    ```
+
 ---
 
 ## 🏛️ 3. Core Platform Architecture
 
 ### A. Sharded Relational JSON Database
-* The database is stored as unified storage shards inside `app/config/content/` (e.g. `astrophysics.json`, `relativity.json`). There are 13 physical shards on disk, corresponding to the 12 logical curriculum category hubs plus one additional utility shard, `legacy-orphans.json`, which stores unassigned legacy topics.
+* The database is stored as unified storage shards inside `app/config/content/` (e.g. `astrophysics.json`, `relativity.json`). There are 14 physical shards on disk, corresponding to the 12 logical curriculum category hubs plus two additional utility shards: `legacy-orphans.json` (which stores unassigned legacy topics) and `notation.json`.
 * Concepts are mapped uniquely to exactly **one** physical storage shard.
 * Shard slugs are indexed and resolved globally via `search_index.json`.
 
@@ -250,7 +274,7 @@ To prevent quality drift under zero-interruption autonomous runs, the GQS pipeli
 To minimize database JSON shard sizes, reduce git repository bloat, and improve browser rendering latency, the compilation pipeline implements dynamic vector spritification for MathJax SVGs:
 1. **Glyph Extraction & Sprite Compilation**: During `convert_to_svg`, any generated MathJax SVG is parsed, and all raw `<path d="..." />` elements are extracted. Unique path definitions are consolidated into a single, global sprite sheet: `app/config/content/math_sprites.svg`.
 2. **References via Use Elements**: Inline mathematical SVG markup is rewritten to replace heavy path descriptors with lightweight `<use href="#math-path-<hash>"/>` tags. This reduces the size of each inline equation by ~90% (from ~5KB to ~300 bytes).
-3. **Persistent Cache & Shards Optimization**: Re-running the optimizer (`spritify_assets.py`) shrunked the persistent cache `global_svg_cache.json` from **50.37 MB to 14.90 MB (70.4% reduction)** and all 13 sharded JSON files by **10% to 18%**.
+3. **Persistent Cache & Shards Optimization**: Re-running the optimizer (`spritify_assets.py`) shrunked the persistent cache `global_svg_cache.json` from **50.37 MB to 14.90 MB (70.4% reduction)** and all 14 sharded JSON files by **10% to 18%**.
 4. **Layout Integration**: The sprite sheet is dynamically embedded directly inside `app/views/physics/layout.php` immediately after the `<body>` tag, enabling instantaneous site-wide mathematical rendering.
 
 ### I. Aho-Corasick Auto-linking Engine
@@ -272,36 +296,7 @@ The `tests/` directory is the regression net for every architectural invariant d
 
 ---
 
-## 🗺️ 4. Project Roadmap & Topological Growth
-
-Having finalized the 12 primary Topic Hubs, the curriculum expands into the **Second and Third Shells** of the knowledge graph:
-
-### A. Recursive Graduation (The Deep Rigor Mandate)
-* **Scope**: Any subtopic reachable via a direct link from a Platinum node is targeted to graduate to Platinum standard in subsequent sprints. This represents the long-term topological growth roadmap.
-* **Execution Priority**: Rather than triggering an immediate, infinite recursive cascade, these linked nodes must be systematically queued and processed in batches via the central GQS backlog CLI, prioritizing "Master Connectors" linked from three or more independent Platinum nodes (e.g., `total-dynamics`, `scientific-realism`) for high-density refactoring (target 1,000 words).
-
-### B. Topological Tightening & Organic Growth
-To ensure maximum graph density, the project utilizes a continuous audit of physical entities:
-* **Phase A: Auto-Linking (Structural Integrity)**: Any term wrapped in `<strong>` tags that exists in `global_slug_registry.json` but is not yet linked on its first mention within a node must be automatically upgraded to an anchor link (`<a href="..."><strong>...</strong></a>`).
-* **Phase B: Backlog Population (Organic Expansion)**: Bold terms that appear across three or more independent nodes but lack a dedicated subtopic in the registry are identified as "Expansion Candidates." High-frequency candidates (20+ nodes, e.g., `Block Universe`, `Big Bang`) are prioritized for curriculum expansion.
-* **Progress Tracking**: Progress is tracked in `subfiles/hub_tracker.json` and visualized via `.venv/bin/python3 gqs.py status`, which serves as the live source of truth. Current Hub status: Shards like Classical Mechanics and Condensed Matter are 100% Graduated, with other shards actively progressing.
-
-### C. Project Goal: 100% OPS Substandard Upgrade Roadmap
-To graduate all remaining substandard subtopics (low depth/density) to the Organic Platinum Standard, the project adheres to a token-aware and rate-limit conscious goal:
-* **Context Accumulation & Compaction Safe Boundary**: Sprints are batched in groups of 3 nodes (~6,500 tokens/sprint). Context compaction and resettlement is scheduled every 15 sprints (~45 nodes) with a 5-minute overhead window to keep conversational intelligence sharp.
-* **API Rate-Limit Cooling**: Incorporates a 10-second cooling latency per sprint to completely bypass RPM/TPM transient limitations.
-* **Refined Continuous Execution Time**: **~11.32 hours** of active, uninterrupted pipeline processing.
-* **Refined Collaborative Calendar Timeline**: **~10.5 days** of active pairing at standard daily rhythms, ensuring mathematically localized identities are curators-driven and qualitatively rich.
-
-### D. Ingestion & Orphan Resolution Optimizations
-To accelerate curriculum integration and lower the manual overhead of resolving remaining orphans:
-* **Automated "Bold-Wrapping" Crawler**: Build a script (`autobold_orphans.py`) to search the entire plain-prose database for occurrences of orphan titles or aliases, wrapping the first match in `<strong>` tags. This automatically cures already-mentioned orphans.
-* **Lexical Suffix and Parenthesis Bypass**: Update `TrieRegexCompiler.compile` lookaround boundaries (`(?<!\w)` and `(?!\w)`) to ignore trailing punctuation, MathJax wrappers, and parentheticals (e.g. ignoring `(Inertia)` or `(Stokes' Theorem)`), allowing the auto-linker to match variations natively.
-* **CLI-Driven \`gqs.py adopt\` Subcommand**: Automate sentence additions by querying `subfiles/adoption_suggestions.json` and auto-generating contextually enriched paragraphs containing the target bolded orphan, writing directly to `batch_payload.json`.
-
----
-
-## 🏆 5. Session Progress & Tracking
+## 🏆 4. Session Progress & Tracking
 
 Session progress is managed entirely dynamically by the system. AI co-developers and humans should **never** manually log sprint milestones in this file. Instead, view the live progress dashboard, shard completion percentages, and active target queue at any time by running:
 

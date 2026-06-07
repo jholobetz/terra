@@ -140,6 +140,10 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas = document.getElementById("genealogy-canvas");
     ctx = canvas.getContext("2d");
 
+    // Resize canvas
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
     // Initialize node positions randomly near center
     resetPositions();
 
@@ -580,4 +584,11 @@ function hexToRgba(hex, alpha) {
     let g = parseInt(hex.slice(3, 5), 16);
     let b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function resizeCanvas() {
+    if (canvas) {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+    }
 }

@@ -63,6 +63,10 @@
                             <span class="module-title">Noether's Vault</span>
                             <span class="module-desc">Symmetry &amp; conservation mapping</span>
                         </a>
+                        <a href="/physics/correspondence-workspace" class="nav-module-link">
+                            <span class="module-title">Correspondence Workspace</span>
+                            <span class="module-desc">Classical vs quantum trajectories</span>
+                        </a>
                         <a href="/physics/simulations" class="nav-module-link">
                             <span class="module-title">Simulations</span>
                             <span class="module-desc">Interactive physics sandboxes</span>

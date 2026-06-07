@@ -96,7 +96,29 @@
             <span class="read-more">Launch Vault &rarr;</span>
         </a>
 
-        <!-- Card 4: Simulations Hub -->
+        <!-- Card 4: Correspondence Workspace -->
+        <a href="/physics/correspondence-workspace" class="topic-card card-quantum" style="--card-accent: var(--accent-quantum);">
+            <div class="card-watermark">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="35" cy="50" r="5" fill="currentColor"/>
+                    <path d="M 15 50 Q 25 20, 35 50 T 55 50 T 75 50" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="topic-card-header">
+                <svg viewBox="0 0 100 100" class="card-icon" style="color: var(--accent-quantum);">
+                    <line x1="15" y1="50" x2="85" y2="50" stroke="currentColor" stroke-width="0.8" opacity="0.2"/>
+                    <circle cx="35" cy="50" r="5" fill="#ffd700"/>
+                    <path d="M 15 50 Q 25 20, 35 50 T 55 50 T 75 50 T 85 50" fill="none" stroke="var(--accent-quantum)" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="50" cy="50" r="30" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1" opacity="0.3"/>
+                    <line x1="35" y1="25" x2="35" y2="75" stroke="var(--accent-quantum)" stroke-dasharray="2 2" stroke-width="1.2"/>
+                </svg>
+                <h3>Correspondence Workspace</h3>
+            </div>
+            <p>Observe the quantum-classical transition. Compare point-particle classical trajectories against quantum wave packet expectation values and phase space flows.</p>
+            <span class="read-more">Launch Workspace &rarr;</span>
+        </a>
+
+        <!-- Card 5: Simulations Hub -->
         <a href="/physics/simulations" class="topic-card card-classical" style="--card-accent: var(--accent-classical);">
             <div class="card-watermark">
                 <svg viewBox="0 0 100 100">

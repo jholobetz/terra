@@ -125,6 +125,16 @@ class PhysicsController
     }
 
     /**
+     * View action rendering the interactive Classical-to-Quantum Correspondence Workspace (Pillar D).
+     */
+    public function correspondenceWorkspace()
+    {
+        $this->renderWithLayout('physics/correspondence_workspace', [
+            'title' => "Correspondence Workspace - Classical vs Quantum Flows"
+        ]);
+    }
+
+    /**
      * View action rendering interactive simulations list.
      */
     public function simulations()

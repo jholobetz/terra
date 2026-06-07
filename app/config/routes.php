@@ -39,6 +39,7 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/dimensional-solver', [ $app->physicsController(), 'dimensionalSolver' ]);
 		$router->get('/notation-toggle', [ $app->physicsController(), 'notationToggle' ]);
 		$router->get('/noethers-vault', [ $app->physicsController(), 'noethersVault' ]);
+		$router->get('/correspondence-workspace', [ $app->physicsController(), 'correspondenceWorkspace' ]);
 		$router->get('/lab-tools', [ $app->physicsController(), 'labTools' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 	});

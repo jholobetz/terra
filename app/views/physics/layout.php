@@ -48,8 +48,19 @@
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <a href="/physics/dimensional-solver" class="btn btn-secondary">Solver</a>
-                <a href="/physics/notation-toggle" class="btn btn-secondary">Notation Toggle</a>
+                <div class="dropdown">
+                    <a href="#" class="dropbtn btn btn-secondary">Lab Tools &blacktriangledown;</a>
+                    <div class="dropdown-content dropdown-content-tertiary">
+                        <a href="/physics/dimensional-solver" class="nav-module-link">
+                            <span class="module-title">Dimensional Solver</span>
+                            <span class="module-desc">Verify formulas &amp; dimensions</span>
+                        </a>
+                        <a href="/physics/notation-toggle" class="nav-module-link">
+                            <span class="module-title">Notation Toggle</span>
+                            <span class="module-desc">Compare mathematical frameworks</span>
+                        </a>
+                    </div>
+                </div>
                 <div class="dropdown">
                     <a href="/physics/simulations" class="dropbtn btn btn-primary">Simulations &blacktriangledown;</a>
                     <div class="dropdown-content dropdown-content-primary">

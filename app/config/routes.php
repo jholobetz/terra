@@ -41,6 +41,7 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/noethers-vault', [ $app->physicsController(), 'noethersVault' ]);
 		$router->get('/correspondence-workspace', [ $app->physicsController(), 'correspondenceWorkspace' ]);
 		$router->get('/anthropic-tuner', [ $app->physicsController(), 'anthropicTuner' ]);
+		$router->get('/genealogy-explorer', [ $app->physicsController(), 'genealogyExplorer' ]);
 		$router->get('/lab-tools', [ $app->physicsController(), 'labTools' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 	});

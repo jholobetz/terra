@@ -142,7 +142,34 @@
             <span class="read-more">Launch Tuner &rarr;</span>
         </a>
 
-        <!-- Card 6: Simulations Hub -->
+        <!-- Card 6: Genealogy Explorer -->
+        <a href="/physics/genealogy-explorer" class="topic-card card-math-methods" style="--card-accent: var(--accent-math-methods);">
+            <div class="card-watermark">
+                <svg viewBox="0 0 100 100">
+                    <line x1="30" y1="30" x2="50" y2="55" stroke="currentColor" stroke-width="1"/>
+                    <line x1="70" y1="30" x2="50" y2="55" stroke="currentColor" stroke-width="1"/>
+                    <circle cx="50" cy="55" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="topic-card-header">
+                <svg viewBox="0 0 100 100" class="card-icon" style="color: var(--accent-math-methods);">
+                    <line x1="30" y1="30" x2="50" y2="55" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+                    <line x1="70" y1="30" x2="50" y2="55" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+                    <line x1="50" y1="55" x2="30" y2="80" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+                    <line x1="50" y1="55" x2="70" y2="80" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+                    <circle cx="30" cy="30" r="7" fill="var(--accent-math-methods)"/>
+                    <circle cx="70" cy="30" r="7" fill="var(--accent-math-methods)"/>
+                    <circle cx="50" cy="55" r="9" fill="#ffffff" stroke="var(--accent-math-methods)" stroke-width="2"/>
+                    <circle cx="30" cy="80" r="6" fill="currentColor"/>
+                    <circle cx="70" cy="80" r="6" fill="currentColor"/>
+                </svg>
+                <h3>Genealogy Explorer</h3>
+            </div>
+            <p>Trace the mathematical lineage of physical laws. Interact with a dynamic network graph connecting fundamental axioms to derivations and physical applications.</p>
+            <span class="read-more">Launch Explorer &rarr;</span>
+        </a>
+
+        <!-- Card 7: Simulations Hub -->
         <a href="/physics/simulations" class="topic-card card-classical" style="--card-accent: var(--accent-classical);">
             <div class="card-watermark">
                 <svg viewBox="0 0 100 100">

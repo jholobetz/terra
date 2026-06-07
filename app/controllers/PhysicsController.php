@@ -145,6 +145,16 @@ class PhysicsController
     }
 
     /**
+     * View action rendering the interactive Concept Derivation Genealogy Explorer (Pillar F).
+     */
+    public function genealogyExplorer()
+    {
+        $this->renderWithLayout('physics/genealogy_explorer', [
+            'title' => "Concept Derivation Genealogy Explorer"
+        ]);
+    }
+
+    /**
      * View action rendering interactive simulations list.
      */
     public function simulations()

@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a href="#" class="dropbtn btn btn-secondary">Lab Tools &blacktriangledown;</a>
+                    <a href="#" class="dropbtn btn btn-primary">Lab Tools &blacktriangledown;</a>
                     <div class="dropdown-content dropdown-content-tertiary">
                         <a href="/physics/dimensional-solver" class="nav-module-link">
                             <span class="module-title">Dimensional Solver</span>
@@ -59,14 +59,10 @@
                             <span class="module-title">Notation Toggle</span>
                             <span class="module-desc">Compare mathematical frameworks</span>
                         </a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <a href="/physics/simulations" class="dropbtn btn btn-primary">Simulations &blacktriangledown;</a>
-                    <div class="dropdown-content dropdown-content-primary">
-                        <?php foreach($menu_simulations as $slug => $sim): ?>
-                            <a href="/physics/simulations/<?= $slug ?>"><?= $sim['title'] ?></a>
-                        <?php endforeach; ?>
+                        <a href="/physics/simulations" class="nav-module-link">
+                            <span class="module-title">Simulations</span>
+                            <span class="module-desc">Interactive physics sandboxes</span>
+                        </a>
                     </div>
                 </div>
             </nav>

@@ -714,63 +714,70 @@ class PhysicsOrchestrator:
     def convert_to_svg(self, clean_latex, is_display=False, color='#FFD700'):
         """Converts a clean LaTeX string (no delimiters) to SVG using the persistent MathJax daemon or fallback, with vector spritification."""
         import re
+        import html
         # Clean double-escaped backslashes before LaTeX commands (e.g. \\mu -> \mu)
         clean_latex = re.sub(r'\\{2,}([a-zA-Z])', r'\\\1', clean_latex)
 
         cache_key = f"{clean_latex}_{is_display}_{color}"
+        svg_code = None
         if cache_key in self.svg_cache:
-            return self.svg_cache[cache_key]
-
-        # Try daemon mode
-        self._start_mathjax_daemon()
-        if hasattr(self, '_mathjax_process') and self._mathjax_process and self._mathjax_process.poll() is None:
-            try:
-                payload = json.dumps({
-                    "latex": clean_latex,
-                    "is_display": is_display,
-                    "color": color
-                })
-                self._mathjax_process.stdin.write(payload + "\n")
-                self._mathjax_process.stdin.flush()
-                
-                # Read response line
-                response_line = self._mathjax_process.stdout.readline().strip()
-                if response_line:
-                    res = json.loads(response_line)
-                    if "svg" in res:
-                        svg_code = res["svg"]
-                        if not svg_code.startswith("<svg") or "math-error" in svg_code or "merror" in svg_code or "mjx-error" in svg_code or 'fill="red"' in svg_code or 'stroke="red"' in svg_code or 'fill=\"red\"' in svg_code or 'stroke=\"red\"' in svg_code:
-                            raise ValueError(f"MathJax compilation error in formula: {clean_latex}")
-                        svg_code = self._spriteify_svg(svg_code)
-                        self.svg_cache[cache_key] = svg_code
-                        return svg_code
-                    elif "error" in res:
-                        print(f"Daemon MathJax Error for [{clean_latex}]: {res['error']}")
-            except ValueError as e:
-                raise e
-            except Exception as e:
-                print(f"Daemon communication error: {e}. Falling back to subprocess...")
+            svg_code = self.svg_cache[cache_key]
+        else:
+            # Try daemon mode
+            self._start_mathjax_daemon()
+            if hasattr(self, '_mathjax_process') and self._mathjax_process and self._mathjax_process.poll() is None:
                 try:
-                    self._mathjax_process.terminate()
-                except Exception:
-                    pass
-                self._mathjax_process = None
+                    payload = json.dumps({
+                        "latex": clean_latex,
+                        "is_display": is_display,
+                        "color": color
+                    })
+                    self._mathjax_process.stdin.write(payload + "\n")
+                    self._mathjax_process.stdin.flush()
+                    
+                    # Read response line
+                    response_line = self._mathjax_process.stdout.readline().strip()
+                    if response_line:
+                        res = json.loads(response_line)
+                        if "svg" in res:
+                            svg_res = res["svg"]
+                            if not svg_res.startswith("<svg") or "math-error" in svg_res or "merror" in svg_res or "mjx-error" in svg_res or 'fill="red"' in svg_res or 'stroke="red"' in svg_res or 'fill=\"red\"' in svg_res or 'stroke=\"red\"' in svg_res:
+                                raise ValueError(f"MathJax compilation error in formula: {clean_latex}")
+                            svg_code = self._spriteify_svg(svg_res)
+                            self.svg_cache[cache_key] = svg_code
+                        elif "error" in res:
+                            print(f"Daemon MathJax Error for [{clean_latex}]: {res['error']}")
+                except ValueError as e:
+                    raise e
+                except Exception as e:
+                    print(f"Daemon communication error: {e}. Falling back to subprocess...")
+                    try:
+                        self._mathjax_process.terminate()
+                    except Exception:
+                        pass
+                    self._mathjax_process = None
 
-        # Fallback to single-shot subprocess
-        try:
-            mode = "display" if is_display else "inline"
-            result = subprocess.run(["node", self.svg_engine, clean_latex, mode, color], capture_output=True, text=True, timeout=5)
-            if result.returncode == 0 and result.stdout:
-                svg_code = result.stdout.strip()
-                if not svg_code.startswith("<svg") or "math-error" in svg_code or "merror" in svg_code or "mjx-error" in svg_code or 'fill="red"' in svg_code or 'stroke="red"' in svg_code or 'fill=\"red\"' in svg_code or 'stroke=\"red\"' in svg_code:
-                    raise ValueError(f"MathJax compilation error in formula: {clean_latex}")
-                svg_code = self._spriteify_svg(svg_code)
-                self.svg_cache[cache_key] = svg_code
-                return svg_code
-        except ValueError as e:
-            raise e
-        except Exception as e:
-            print(f"SVG Fallback Error for [{clean_latex}]: {str(e)}")
+            # Fallback to single-shot subprocess
+            if svg_code is None:
+                try:
+                    mode = "display" if is_display else "inline"
+                    result = subprocess.run(["node", self.svg_engine, clean_latex, mode, color], capture_output=True, text=True, timeout=5)
+                    if result.returncode == 0 and result.stdout:
+                        svg_res = result.stdout.strip()
+                        if not svg_res.startswith("<svg") or "math-error" in svg_res or "merror" in svg_res or "mjx-error" in svg_res or 'fill="red"' in svg_res or 'stroke="red"' in svg_res or 'fill=\"red\"' in svg_res or 'stroke=\"red\"' in svg_res:
+                            raise ValueError(f"MathJax compilation error in formula: {clean_latex}")
+                        svg_code = self._spriteify_svg(svg_res)
+                        self.svg_cache[cache_key] = svg_code
+                except ValueError as e:
+                    raise e
+                except Exception as e:
+                    print(f"SVG Fallback Error for [{clean_latex}]: {str(e)}")
+
+        if svg_code:
+            if svg_code.startswith("<svg ") and 'data-tex="' not in svg_code:
+                escaped_latex = html.escape(clean_latex)
+                svg_code = svg_code.replace("<svg ", f'<svg data-tex="{escaped_latex}" ', 1)
+            return svg_code
         
         return clean_latex
 

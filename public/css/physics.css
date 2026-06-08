@@ -862,7 +862,8 @@ nav .btn:hover {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     position: relative;
-    overflow: hidden;
+    overflow: visible !important;
+    min-width: 0 !important;
 }
 
 .concept-card:hover {
@@ -917,6 +918,16 @@ nav .btn:hover {
     border-radius: 6px;
     text-align: center;
     transition: all 0.25s;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-math-badge svg {
+    color: #FFD700 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .concept-card:hover .hero-math-badge {
@@ -1807,5 +1818,80 @@ mjx-container {
 @keyframes slideDown {
     from { transform: translateY(-15px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+/* ============================================================
+   🪐 INTERACTIVE DERIVATION ACCORDION STYLES
+   ============================================================ */
+
+.derivation-accordion {
+    background: rgba(15, 23, 42, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    margin: 24px 0;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.derivation-accordion[open] {
+    background: rgba(15, 23, 42, 0.45);
+    border-color: rgba(100, 255, 218, 0.25);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 12px rgba(100, 255, 218, 0.04);
+}
+
+.derivation-summary {
+    padding: 14px 20px;
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-color, #64ffda);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.derivation-summary::-webkit-details-marker {
+    display: none;
+}
+
+.derivation-summary:hover {
+    background: rgba(100, 255, 218, 0.04);
+    color: #ffffff;
+}
+
+.derivation-summary::after {
+    content: '→';
+    font-family: monospace;
+    font-size: 1.1rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--accent-color, #64ffda);
+}
+
+.derivation-accordion[open] .derivation-summary::after {
+    transform: rotate(90deg);
+}
+
+.derivation-content {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(3, 7, 18, 0.2);
+    animation: accordionSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes accordionSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 

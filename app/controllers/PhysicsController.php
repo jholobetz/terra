@@ -105,6 +105,16 @@ class PhysicsController
     }
 
     /**
+     * View action rendering the Symbolic Legendre Transformer.
+     */
+    public function legendreTransformer()
+    {
+        $this->renderWithLayout('physics/legendre_transformer', [
+            'title' => 'Symbolic Legendre Transformer'
+        ]);
+    }
+
+    /**
      * View action rendering the Lab Tools landing page.
      */
     public function labTools()

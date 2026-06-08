@@ -169,7 +169,31 @@
             <span class="read-more">Launch Explorer &rarr;</span>
         </a>
 
-        <!-- Card 7: Simulations Hub -->
+        <!-- Card 7: Legendre Transformer -->
+        <a href="/physics/legendre-transformer" class="topic-card card-theoretical" style="--card-accent: var(--accent-theoretical);">
+            <div class="card-watermark">
+                <svg viewBox="0 0 100 100">
+                    <path d="M 20 80 Q 50 20, 80 80" fill="none" stroke="currentColor" stroke-width="1.2"/>
+                    <line x1="50" y1="20" x2="50" y2="80" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+                </svg>
+            </div>
+            <div class="topic-card-header">
+                <svg viewBox="0 0 100 100" class="card-icon" style="color: var(--accent-theoretical);">
+                    <path d="M 20 80 L 80 20" stroke="currentColor" stroke-width="1.2" opacity="0.3"/>
+                    <path d="M 20 20 L 80 80" stroke="currentColor" stroke-width="1.2" opacity="0.3"/>
+                    <circle cx="50" cy="50" r="15" fill="none" stroke="var(--accent-theoretical)" stroke-width="2"/>
+                    <line x1="50" y1="20" x2="50" y2="80" stroke="var(--accent-theoretical)" stroke-width="1.5"/>
+                    <line x1="20" y1="50" x2="80" y2="50" stroke="var(--accent-theoretical)" stroke-width="1.5"/>
+                    <circle cx="50" cy="20" r="3.5" fill="currentColor"/>
+                    <circle cx="50" cy="80" r="3.5" fill="currentColor"/>
+                </svg>
+                <h3>Legendre Transformer</h3>
+            </div>
+            <p>Compute canonical momentum derivatives, solve velocity inversions, and symbolically construct Hamiltonian functions from Lagrangians.</p>
+            <span class="read-more">Launch Transformer &rarr;</span>
+        </a>
+
+        <!-- Card 8: Simulations Hub -->
         <a href="/physics/simulations" class="topic-card card-classical" style="--card-accent: var(--accent-classical);">
             <div class="card-watermark">
                 <svg viewBox="0 0 100 100">

@@ -24,18 +24,6 @@ if (!function_exists('getConceptLevel')) {
 }
 ?>
 
-<style>
-    /* Hub-Specific Layout Overrides */
-    .concept-card {
-        min-width: 0 !important;
-        overflow: visible !important;
-    }
-    .hero-math-badge svg {
-        max-width: 100% !important;
-        height: auto !important;
-    }
-</style>
-
 <article class="topic-content" style="--accent-color: var(--accent-<?= $theme ?>);">
     <header class="topic-header">
         <div class="topic-header-watermark">

@@ -59,6 +59,10 @@
                             <span class="module-title">Notation Toggle</span>
                             <span class="module-desc">Compare mathematical frameworks</span>
                         </a>
+                        <a href="/physics/legendre-transformer" class="nav-module-link">
+                            <span class="module-title">Legendre Transformer</span>
+                            <span class="module-desc">Symbolic Lagrangian-Hamiltonian mapping</span>
+                        </a>
                         <a href="/physics/noethers-vault" class="nav-module-link">
                             <span class="module-title">Noether's Vault</span>
                             <span class="module-desc">Symmetry &amp; conservation mapping</span>
@@ -120,5 +124,7 @@
     </div>
 
     <script src="/js/search_engine.js" defer></script>
+    <script src="/js/mathjax_inspector.js" defer></script>
+    <script src="/js/derivation_accordions.js" defer></script>
 </body>
 </html>

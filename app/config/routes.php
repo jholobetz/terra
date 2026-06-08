@@ -38,6 +38,7 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/symbols', [ $app->physicsController(), 'symbols' ]);
 		$router->get('/dimensional-solver', [ $app->physicsController(), 'dimensionalSolver' ]);
 		$router->get('/notation-toggle', [ $app->physicsController(), 'notationToggle' ]);
+		$router->get('/legendre-transformer', [ $app->physicsController(), 'legendreTransformer' ]);
 		$router->get('/noethers-vault', [ $app->physicsController(), 'noethersVault' ]);
 		$router->get('/correspondence-workspace', [ $app->physicsController(), 'correspondenceWorkspace' ]);
 		$router->get('/anthropic-tuner', [ $app->physicsController(), 'anthropicTuner' ]);

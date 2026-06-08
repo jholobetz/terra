@@ -1,8 +1,8 @@
 /**
- * 🌌 PHYSICS LAB: MathJax LaTeX Source Inspector
+ * 🌌 PHYSICS LAB: MathJax LaTeX Source & Plain-Text Inspector
  * 
  * Intercepts hovering / clicking on equations to allow students and content developers
- * to inspect and copy the raw LaTeX source.
+ * to inspect and copy both the raw LaTeX source and a cleaned plain-text representation.
  */
 
 const MathJaxInspector = {
@@ -24,12 +24,12 @@ const MathJaxInspector = {
             .mathjax-inspector-tooltip {
                 position: absolute;
                 z-index: 10000;
-                background: rgba(15, 23, 42, 0.9);
+                background: rgba(15, 23, 42, 0.93);
                 backdrop-filter: blur(12px) saturate(180%);
                 -webkit-backdrop-filter: blur(12px) saturate(180%);
                 border: 1px solid rgba(255, 255, 255, 0.12);
                 border-radius: 8px;
-                padding: 10px 14px;
+                padding: 12px 14px;
                 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 
                             0 0 0 1px rgba(255, 255, 255, 0.05),
                             0 0 20px rgba(100, 255, 218, 0.15);
@@ -42,9 +42,9 @@ const MathJaxInspector = {
                 color: var(--text-color, #f1f5f9);
                 display: flex;
                 flex-direction: column;
-                gap: 8px;
-                max-width: 340px;
-                min-width: 180px;
+                gap: 10px;
+                max-width: 360px;
+                min-width: 200px;
                 box-sizing: border-box;
             }
             
@@ -53,13 +53,20 @@ const MathJaxInspector = {
                 transform: translateY(0) scale(1);
                 pointer-events: auto;
             }
+
+            .mathjax-inspector-section {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                width: 100%;
+            }
             
             .mathjax-inspector-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 gap: 12px;
-                font-size: 0.75rem;
+                font-size: 0.72rem;
                 font-weight: 600;
                 letter-spacing: 0.05em;
                 text-transform: uppercase;
@@ -84,12 +91,12 @@ const MathJaxInspector = {
             }
             
             .mathjax-inspector-btn {
-                background: linear-gradient(135deg, rgba(100, 255, 218, 0.12) 0%, rgba(0, 210, 255, 0.12) 100%);
-                border: 1px solid rgba(100, 255, 218, 0.35);
+                background: linear-gradient(135deg, rgba(100, 255, 218, 0.1) 0%, rgba(0, 210, 255, 0.1) 100%);
+                border: 1px solid rgba(100, 255, 218, 0.3);
                 color: var(--accent-color, #64ffda);
-                padding: 6px 12px;
+                padding: 5px 12px;
                 border-radius: 6px;
-                font-size: 0.8rem;
+                font-size: 0.76rem;
                 font-weight: 600;
                 cursor: pointer;
                 display: flex;
@@ -101,9 +108,9 @@ const MathJaxInspector = {
             }
             
             .mathjax-inspector-btn:hover {
-                background: linear-gradient(135deg, rgba(100, 255, 218, 0.22) 0%, rgba(0, 210, 255, 0.22) 100%);
-                border-color: rgba(100, 255, 218, 0.7);
-                box-shadow: 0 0 12px rgba(100, 255, 218, 0.3);
+                background: linear-gradient(135deg, rgba(100, 255, 218, 0.2) 0%, rgba(0, 210, 255, 0.2) 100%);
+                border-color: rgba(100, 255, 218, 0.6);
+                box-shadow: 0 0 10px rgba(100, 255, 218, 0.2);
                 transform: translateY(-1px);
             }
             
@@ -112,10 +119,10 @@ const MathJaxInspector = {
             }
             
             .mathjax-inspector-btn.copied {
-                background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(52, 211, 153, 0.2) 100%);
-                border-color: rgba(16, 185, 129, 0.7);
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(52, 211, 153, 0.15) 100%);
+                border-color: rgba(16, 185, 129, 0.6);
                 color: #10b981;
-                box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
             }
             
             /* Equation highlighting on hover */
@@ -137,17 +144,32 @@ const MathJaxInspector = {
         const tooltip = document.createElement('div');
         tooltip.className = 'mathjax-inspector-tooltip';
         tooltip.innerHTML = `
-            <div class="mathjax-inspector-header">
-                <span>LaTeX Source</span>
+            <div class="mathjax-inspector-section">
+                <div class="mathjax-inspector-header">
+                    <span>LaTeX Source</span>
+                </div>
+                <div class="mathjax-inspector-code" id="mathjax-inspector-code-val"></div>
+                <button class="mathjax-inspector-btn" id="mathjax-inspector-copy-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="copy-icon">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span class="btn-text">Copy LaTeX</span>
+                </button>
             </div>
-            <div class="mathjax-inspector-code" id="mathjax-inspector-code-val"></div>
-            <button class="mathjax-inspector-btn" id="mathjax-inspector-copy-btn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="copy-icon">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
-                <span class="btn-text">Copy LaTeX</span>
-            </button>
+            <div class="mathjax-inspector-section" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; margin-top: 2px;">
+                <div class="mathjax-inspector-header">
+                    <span>Plain Text (Search / Solver)</span>
+                </div>
+                <div class="mathjax-inspector-code" id="mathjax-inspector-text-val"></div>
+                <button class="mathjax-inspector-btn" id="mathjax-inspector-copy-text-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="copy-icon">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span class="btn-text">Copy Plain Text</span>
+                </button>
+            </div>
         `;
         document.body.appendChild(tooltip);
         this.tooltipEl = tooltip;
@@ -160,11 +182,18 @@ const MathJaxInspector = {
             this.startHideTimeout();
         });
 
-        // Setup copy button action
+        // Setup LaTeX copy button action
         const copyBtn = tooltip.querySelector('#mathjax-inspector-copy-btn');
         copyBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             this.copyLatex();
+        });
+
+        // Setup Plain Text copy button action
+        const copyTextBtn = tooltip.querySelector('#mathjax-inspector-copy-text-btn');
+        copyTextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.copyPlainText();
         });
     },
 
@@ -205,7 +234,6 @@ const MathJaxInspector = {
                 e.stopPropagation();
 
                 if (this.activeElement === container && this.tooltipEl.classList.contains('visible')) {
-                    // Click on the active equation copies immediately
                     this.copyLatex();
                 } else {
                     this.show(container);
@@ -227,7 +255,6 @@ const MathJaxInspector = {
         const mathJaxContainer = el.closest('.MathJax, mjx-container, .math-content');
         if (mathJaxContainer && window.MathJax && window.MathJax.startup && window.MathJax.startup.document && window.MathJax.startup.document.math) {
             try {
-                // MathJax math list is an iterable, not a standard Array. Iterate via for...of.
                 for (const mathItem of window.MathJax.startup.document.math) {
                     if (mathItem && mathItem.typesetRoot && (
                         mathItem.typesetRoot === mathJaxContainer ||
@@ -251,10 +278,118 @@ const MathJaxInspector = {
         return null;
     },
 
+    /**
+     * Translates LaTeX formulas into standard mathematical programming/ASCIImath style
+     * for seamless compatibility with internal Search & Solver features.
+     */
+    latexToPlainText(latex) {
+        if (!latex) return '';
+        
+        let text = latex.trim();
+
+        // 1. Strip delimiters if present (e.g. \( ... \) or $$ ... $$)
+        text = text.replace(/^\\\(/, '').replace(/\\\)$/, '');
+        text = text.replace(/^\$\$/, '').replace(/\$\$$/, '');
+        text = text.replace(/^\$/, '').replace(/\$/, '');
+
+        // 2. Normalize derivatives and common fraction structures
+        text = text.replace(/\\frac\{d\}\{d([a-zA-Z])\}/g, 'd/d$1');
+        text = text.replace(/\\frac\{\\partial\}\{\\partial\s*([a-zA-Z])\}/g, 'partial/partial $1');
+        
+        // General fractions: \frac{A}{B} -> (A) / (B)
+        let hasFraction = true;
+        while (hasFraction) {
+            const nextText = text.replace(/\\frac\{((?:[^{}]|\{[^{}]*\})*)\}\{((?:[^{}]|\{[^{}]*\})*)\}/g, '($1)/($2)');
+            if (nextText === text) {
+                hasFraction = false;
+            } else {
+                text = nextText;
+            }
+        }
+
+        // 3. Strip visual style/font command wrappers: e.g. \mathbf{F} -> F
+        let hasStyles = true;
+        while (hasStyles) {
+            const nextText = text.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{((?:[^{}]|\{[^{}]*\})*)\}/g, '$2');
+            if (nextText === text) {
+                hasStyles = false;
+            } else {
+                text = nextText;
+            }
+        }
+        
+        // Command blocks without curly braces: e.g. \mathbf F -> F
+        text = text.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s+([a-zA-Z0-9])/g, '$2');
+
+        // 4. Clean braces around exponents & subscripts: e.g. _{ext} -> _ext, ^{2} -> ^2
+        text = text.replace(/_\{([^}]+)\}/g, '_$1');
+        text = text.replace(/\^\{([^}]+)\}/g, '^$1');
+
+        // 5. Map LaTeX Greek letters & symbols to plain text identifiers
+        const greekMap = {
+            '\\hbar': 'hbar',
+            '\\epsilon_0': 'eps0',
+            '\\epsilon': 'epsilon',
+            '\\mu_0': 'mu0',
+            '\\mu': 'mu',
+            '\\pi': 'pi',
+            '\\omega': 'omega',
+            '\\rho': 'rho',
+            '\\sigma': 'sigma',
+            '\\lambda': 'lambda',
+            '\\nu': 'nu',
+            '\\theta': 'theta',
+            '\\xi': 'xi',
+            '\\eta': 'eta',
+            '\\partial': 'partial',
+            '\\delta': 'delta',
+            '\\Delta': 'Delta',
+            '\\alpha': 'alpha',
+            '\\beta': 'beta',
+            '\\gamma': 'gamma',
+            '\\tau': 'tau',
+            '\\phi': 'phi',
+            '\\psi': 'psi',
+            '\\chi': 'chi',
+            '\\zeta': 'zeta',
+            '\\dots': '...',
+            '\\infty': 'inf'
+        };
+        
+        for (const [latexSym, plainSym] of Object.entries(greekMap)) {
+            const escapedSym = latexSym.replace(/\\/g, '\\\\');
+            const reg = new RegExp(escapedSym, 'g');
+            text = text.replace(reg, plainSym);
+        }
+
+        // 6. Replace operators
+        text = text.replace(/\\cdot/g, ' * ');
+        text = text.replace(/\\times/g, ' * ');
+        text = text.replace(/\\ast/g, ' * ');
+        text = text.replace(/\\star/g, ' * ');
+        text = text.replace(/\\div/g, ' / ');
+
+        // 7. Simplify brackets
+        text = text.replace(/\\left\(/g, '(').replace(/\\right\)/g, ')');
+        text = text.replace(/\\left\[/g, '[').replace(/\\right\]/g, ']');
+        text = text.replace(/\\left\\\{/g, '{').replace(/\\right\\\}/g, '}');
+
+        // 8. Simplify matrix blocks
+        text = text.replace(/\\begin\{[a-zA-Z]+\}/g, '[').replace(/\\end\{[a-zA-Z]+\}/g, ']');
+        text = text.replace(/&/g, ', ').replace(/\\\\/g, ', ');
+
+        // 9. Final cleanups: strip stray backslashes before variables and extra whitespaces
+        text = text.replace(/\\([a-zA-Z]+)/g, '$1');
+        text = text.replace(/\s+/g, ' ');
+        text = text.replace(/\*\s*\*/g, '*');
+        text = text.trim();
+
+        return text;
+    },
+
     show(container) {
         this.clearHideTimeout();
 
-        // Avoid layout thrashing if we are already showing the tooltip for this equation
         if (this.activeElement === container && this.tooltipEl.classList.contains('visible')) {
             return;
         }
@@ -265,25 +400,36 @@ const MathJaxInspector = {
             return;
         }
 
+        const plainText = this.latexToPlainText(latex);
         this.activeElement = container;
 
         // Populate values
         const codeVal = this.tooltipEl.querySelector('#mathjax-inspector-code-val');
         codeVal.textContent = latex;
-        codeVal.title = latex; // Show full on hover
+        codeVal.title = latex;
 
-        // Reset copy button state
+        const textVal = this.tooltipEl.querySelector('#mathjax-inspector-text-val');
+        textVal.textContent = plainText;
+        textVal.title = plainText;
+
+        // Reset button states
         const copyBtn = this.tooltipEl.querySelector('#mathjax-inspector-copy-btn');
         copyBtn.className = 'mathjax-inspector-btn';
-        const btnText = copyBtn.querySelector('.btn-text');
-        btnText.textContent = 'Copy LaTeX';
-        const copyIcon = copyBtn.querySelector('.copy-icon');
-        copyIcon.innerHTML = `
+        copyBtn.querySelector('.btn-text').textContent = 'Copy LaTeX';
+        copyBtn.querySelector('.copy-icon').innerHTML = `
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         `;
 
-        // Get active category accent color if available
+        const copyTextBtn = this.tooltipEl.querySelector('#mathjax-inspector-copy-text-btn');
+        copyTextBtn.className = 'mathjax-inspector-btn';
+        copyTextBtn.querySelector('.btn-text').textContent = 'Copy Plain Text';
+        copyTextBtn.querySelector('.copy-icon').innerHTML = `
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        `;
+
+        // Get category accent color
         let accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
         if (!accentColor) accentColor = '#64ffda';
 
@@ -291,19 +437,16 @@ const MathJaxInspector = {
         const rect = container.getBoundingClientRect();
         const tooltipRect = this.tooltipEl.getBoundingClientRect();
 
-        // Calculate page coordinates
         const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
         const scrollY = window.pageYOffset || document.documentElement.scrollTop;
 
-        let top = rect.top + scrollY - tooltipRect.height - 12; // 12px gap above
+        let top = rect.top + scrollY - tooltipRect.height - 12;
         let left = rect.left + scrollX + (rect.width - tooltipRect.width) / 2;
 
-        // Boundary check: if overflows top of screen, show below
         if (rect.top - tooltipRect.height - 12 < 10) {
-            top = rect.bottom + scrollY + 12; // 12px gap below
+            top = rect.bottom + scrollY + 12;
         }
 
-        // Boundary check: left and right edges
         const padding = 10;
         const viewportWidth = document.documentElement.clientWidth;
         if (left < padding) {
@@ -314,10 +457,7 @@ const MathJaxInspector = {
 
         this.tooltipEl.style.top = `${top}px`;
         this.tooltipEl.style.left = `${left}px`;
-
-        // Apply theme color
         this.tooltipEl.style.setProperty('--accent-color', accentColor);
-
         this.tooltipEl.classList.add('visible');
     },
 
@@ -340,22 +480,16 @@ const MathJaxInspector = {
         }
     },
 
-    copyLatex() {
-        if (!this.activeElement) return;
-
-        const latex = this.getLatexForElement(this.activeElement);
-        if (!latex) return;
-
+    copyToClipboard(text, btnId) {
         const performCopy = () => {
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                return navigator.clipboard.writeText(latex);
+                return navigator.clipboard.writeText(text);
             }
             
-            // Fallback copy for non-secure HTTP contexts
             return new Promise((resolve, reject) => {
                 try {
                     const textArea = document.createElement("textarea");
-                    textArea.value = latex;
+                    textArea.value = text;
                     textArea.style.top = "0";
                     textArea.style.left = "0";
                     textArea.style.position = "fixed";
@@ -374,25 +508,19 @@ const MathJaxInspector = {
         };
 
         performCopy().then(() => {
-            // Visual confirmation
-            const copyBtn = this.tooltipEl.querySelector('#mathjax-inspector-copy-btn');
+            const copyBtn = this.tooltipEl.querySelector(btnId);
             copyBtn.classList.add('copied');
             const btnText = copyBtn.querySelector('.btn-text');
             btnText.textContent = 'Copied!';
 
-            // Checkmark SVG icon
             const copyIcon = copyBtn.querySelector('.copy-icon');
-            copyIcon.innerHTML = `
-                <polyline points="20 6 9 17 4 12"></polyline>
-            `;
+            copyIcon.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
 
-            // Subtle pulse
             copyBtn.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 copyBtn.style.transform = '';
             }, 100);
 
-            // Hide after a brief delay
             setTimeout(() => {
                 if (this.activeElement) {
                     this.hide();
@@ -401,6 +529,21 @@ const MathJaxInspector = {
         }).catch(err => {
             console.error('Failed to copy text: ', err);
         });
+    },
+
+    copyLatex() {
+        if (!this.activeElement) return;
+        const latex = this.getLatexForElement(this.activeElement);
+        if (!latex) return;
+        this.copyToClipboard(latex, '#mathjax-inspector-copy-btn');
+    },
+
+    copyPlainText() {
+        if (!this.activeElement) return;
+        const latex = this.getLatexForElement(this.activeElement);
+        if (!latex) return;
+        const plainText = this.latexToPlainText(latex);
+        this.copyToClipboard(plainText, '#mathjax-inspector-copy-text-btn');
     }
 };
 

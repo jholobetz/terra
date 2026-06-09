@@ -217,7 +217,7 @@ class MultiAgentCritic:
         return []
 
     # Agent 3: Consensus Judge Agent
-    def judge_consensus(self, cms_content, claims, literature):
+    def judge_consensus(self, cms_content, claims, literature, title=None):
         """
         Evaluates similarity between extracted claims/CMS content and retrieved paper abstracts.
         Returns a consensus score (0.0 to 1.0) and supported citations.
@@ -234,6 +234,11 @@ class MultiAgentCritic:
         supported_citations = []
         similarities = []
 
+        # Prepare title words for exact keyword overlap check
+        title_words = []
+        if title:
+            title_words = [w.lower() for w in re.findall(r'\b\w{3,}\b', title) if w.lower() not in ['and', 'the', 'for', 'with', 'about', 'from']]
+
         for claim in claims:
             claim_text = claim["assertion"]
             # Check maximum similarity of this claim against any individual paper abstract
@@ -247,16 +252,29 @@ class MultiAgentCritic:
                     best_paper = paper
 
             similarities.append(max_sim)
-            # If a paper is highly relevant (sim >= 0.12) or contains exact keyword overlap, mark it as supporting
-            if max_sim >= 0.12 and best_paper not in supported_citations:
+
+            # Check if there is exact keyword overlap with the subtopic title
+            has_keyword_overlap = False
+            if title_words and best_paper:
+                paper_title_lower = best_paper["title"].lower()
+                paper_abstract_lower = best_paper["abstract"].lower()
+                # If all significant words in the subtopic title exist in the paper title or abstract
+                has_keyword_overlap = all(w in paper_title_lower or w in paper_abstract_lower for w in title_words)
+
+            # If a paper is highly relevant (sim >= 0.08) or contains exact keyword overlap, mark it as supporting
+            if best_paper and (max_sim >= 0.08 or has_keyword_overlap) and best_paper not in supported_citations:
                 supported_citations.append(best_paper)
 
         # Scale consensus score based on global similarity
         # Since global similarity is typically around 0.15 - 0.35, we multiply by 3.0
         consensus_score = min(global_sim * 3.0, 1.0)
         
-        # Require at least one supporting citation for a consensus score > 0.0
-        if not supported_citations:
+        # Boost consensus score based on verified supporting citations
+        if supported_citations:
+            boost = min(len(supported_citations) * 0.08, 0.25)
+            consensus_score = min(consensus_score + boost, 1.0)
+        else:
+            # Require at least one supporting citation for a consensus score > 0.0
             consensus_score = 0.0
 
         return consensus_score, supported_citations
@@ -295,7 +313,7 @@ class MultiAgentCritic:
         print(f"🔹 Retrieved {len(literature)} literature record(s) from APIs/Cache.")
 
         # Step 3: Consensus Judge
-        consensus_score, citations = self.judge_consensus(content, claims, literature)
+        consensus_score, citations = self.judge_consensus(content, claims, literature, title)
         print(f"🔹 Consensus Score: {consensus_score:.3f}")
         print(f"🔹 Verified Citations Count: {len(citations)}")
 

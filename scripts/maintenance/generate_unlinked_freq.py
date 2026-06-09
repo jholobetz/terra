@@ -11,7 +11,7 @@ def generate_unlinked_freq(content_dir, output_file):
     # Identify valid shards
     shard_files = [
         f for f in glob.glob(os.path.join(content_dir, '*.json'))
-        if os.path.basename(f) not in ('search_index.json', 'categories.json', 'pillar_profiles.json', 'formulas.json', 'constants.json', 'entities.json')
+        if os.path.basename(f) not in ('search_index.json', 'categories.json', 'pillar_profiles.json', 'formulas.json', 'constants.json', 'entities.json', 'notation.json', 'particles.json')
     ]
 
     for filepath in shard_files:

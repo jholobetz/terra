@@ -29,7 +29,8 @@ def load_shards():
     shard_map = {}
     ignore_files = {
         "categories.json", "formulas.json", "constants.json", 
-        "entities.json", "search_index.json", "compiled_trie_regex.json"
+        "entities.json", "search_index.json", "compiled_trie_regex.json",
+        "notation.json", "particles.json", "pillar_profiles.json"
     }
     
     pattern = os.path.join(CONTENT_DIR, "*.json")

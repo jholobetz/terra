@@ -405,6 +405,8 @@ class PhysicsOrchestrator:
                     pass
                 elif rel_path == "compiled_trie_regex.json":
                     pass
+                elif rel_path in ["notation.json", "particles.json", "pillar_profiles.json"]:
+                    pass
                 elif rel_path.startswith("topics/"):
                     slug = file.replace(".json", "")
                     self.topic_shards[slug] = content

@@ -4,6 +4,9 @@ import os
 import sys
 
 from scripts.maintenance.generate_system_health import is_node_subjective
+from scripts.maintenance.nist_constants_verifier import audit_constants
+from scripts.maintenance.pdg_particle_verifier import audit_particles
+from scripts.maintenance.semantic_prose_verifier import audit_semantic_prose
 
 # Attempt to import jsonschema, fallback to basic check if not available
 try:
@@ -13,9 +16,10 @@ except ImportError:
     HAS_JSONSCHEMA = False
 
 class IntegrityShield:
-    def __init__(self, content_dir="app/config/content", schema_path="app/config/subtopic.schema.json", target_slug=None):
+    def __init__(self, content_dir="app/config/content", schema_path="app/config/subtopic.schema.json", formula_schema_path="app/config/formula.schema.json", target_slug=None):
         self.content_dir = content_dir
         self.schema_path = schema_path
+        self.formula_schema_path = formula_schema_path
         self.target_slug = target_slug
         self.errors = []
         self.warnings = []
@@ -29,6 +33,12 @@ class IntegrityShield:
                 self.schema = json.load(f)
         else:
             self.schema = None
+
+        if os.path.exists(self.formula_schema_path):
+            with open(self.formula_schema_path, "r") as f:
+                self.formula_schema = json.load(f)
+        else:
+            self.formula_schema = None
 
     def load_data(self):
         search_index_path = os.path.join(self.content_dir, "search_index.json")
@@ -99,20 +109,34 @@ class IntegrityShield:
             self.stats["topics"] = len(self.all_subtopics)
             self.stats["shards"] = len(self.orch.shards)
 
-        if HAS_JSONSCHEMA and self.schema:
-            validator = Draft7Validator(self.schema)
-            files_to_validate = [self.target_shard] if self.target_shard else os.listdir(self.content_dir)
-            for file in files_to_validate:
-                if not file: continue
-                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json"]:
-                    path = os.path.join(self.content_dir, file)
-                    with open(path, "r") as f:
-                        content = json.load(f)
-                    for err in validator.iter_errors(content):
-                        slug = err.path[0] if err.path else "<root>"
-                        if self.target_slug and slug != self.target_slug:
-                            continue
-                        self.errors.append(f"Schema Violation in {file} :: {slug}: {err.message}")
+        if HAS_JSONSCHEMA:
+            if self.schema:
+                validator = Draft7Validator(self.schema)
+                files_to_validate = [self.target_shard] if self.target_shard else os.listdir(self.content_dir)
+                for file in files_to_validate:
+                    if not file: continue
+                    if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json", "particles.json"]:
+                        path = os.path.join(self.content_dir, file)
+                        with open(path, "r") as f:
+                            content = json.load(f)
+                        for err in validator.iter_errors(content):
+                            slug = err.path[0] if err.path else "<root>"
+                            if self.target_slug and slug != self.target_slug:
+                                continue
+                            self.errors.append(f"Schema Violation in {file} :: {slug}: {err.message}")
+
+            if self.formula_schema:
+                formula_validator = Draft7Validator(self.formula_schema)
+                formulas_dir = os.path.join(self.content_dir, "formulas")
+                if os.path.exists(formulas_dir):
+                    for file in os.listdir(formulas_dir):
+                        if file.startswith("shard_") and file.endswith(".json"):
+                            path = os.path.join(formulas_dir, file)
+                            with open(path, "r") as f:
+                                content = json.load(f)
+                            for err in formula_validator.iter_errors(content):
+                                f_id = err.path[0] if err.path else "<root>"
+                                self.errors.append(f"Formula Schema Violation in formulas/{file} :: {f_id}: {err.message}")
 
         if not self.target_slug:
             self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
@@ -147,7 +171,7 @@ class IntegrityShield:
         protected_topics = self.orch.PROTECTED_TOPICS
 
         for file in os.listdir(self.content_dir):
-            if not file.endswith(".json") or file in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json"]:
+            if not file.endswith(".json") or file in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json", "particles.json"]:
                 continue
 
             # Skip the topics directory as it's handled separately or contains the protected ones
@@ -278,6 +302,36 @@ class IntegrityShield:
             if "math-path-" in content:
                 self.errors.append(f"SPRITIFIED MATH DETECTED: [{slug}] contains spritified math references ('math-path-'). Only fully-inlined self-contained SVGs are allowed.")
 
+    def check_constants(self):
+        if not self.target_slug:
+            success = audit_constants(
+                constants_path=os.path.join(self.content_dir, "constants.json"),
+                ref_path="app/config/ref_data/codata_2022.json"
+            )
+            if not success:
+                self.errors.append("NIST CODATA Constants Alignment Check failed.")
+
+    def check_particles(self):
+        if not self.target_slug:
+            success = audit_particles(
+                particles_path=os.path.join(self.content_dir, "particles.json"),
+                ref_path="app/config/ref_data/pdg_2024.json"
+            )
+            if not success:
+                self.errors.append("PDG Particle Properties Alignment Check failed.")
+
+    def check_semantic_prose(self):
+        ref_path = "app/config/ref_data/semantic_references.json"
+        if not os.path.exists(ref_path):
+            return
+        success = audit_semantic_prose(
+            content_dir=self.content_dir,
+            ref_path=ref_path,
+            target_slug=self.target_slug
+        )
+        if not success:
+            self.errors.append("Semantic Prose Validation failed (possible semantic drift or critical keyword omission).")
+
     def run(self):
         print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
         print(f"Directory: {self.content_dir}")
@@ -295,6 +349,9 @@ class IntegrityShield:
         self.check_latex_formatting()
         self.check_math_rendering()
         self.check_spritified_references()
+        self.check_constants()
+        self.check_particles()
+        self.check_semantic_prose()
 
         
         print(f"Stats:  {self.stats['links']} links, {self.stats['formulas']} formula refs.")

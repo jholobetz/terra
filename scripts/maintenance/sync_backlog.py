@@ -15,7 +15,7 @@ def scan_disk_standards():
         
     for file in os.listdir(CONTENT_DIR):
         # Scan only subtopic content shards
-        if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "compiled_trie_regex.json"]:
+        if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "compiled_trie_regex.json", "notation.json", "particles.json", "pillar_profiles.json"]:
             path = os.path.join(CONTENT_DIR, file)
             try:
                 with open(path, "r") as f:

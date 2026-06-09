@@ -9,6 +9,11 @@ from datetime import datetime
 sys.path.append(os.getcwd())
 
 from scripts.maintenance.latex_sanitizer import sanitize_latex
+try:
+    from scripts.maintenance.run_critic import MultiAgentCritic
+    HAS_CRITIC = True
+except ImportError:
+    HAS_CRITIC = False
 
 ACTIVE_SPRINT_PATH = 'subfiles/active_expansion_sprint.json'
 
@@ -125,6 +130,14 @@ def commit_node(slug, html_file, identities_file=None):
         json.dump(shard_data, f, indent=4)
         
     try:
+        # 2b. Run Literature Consensus Critic (Tier 3)
+        if HAS_CRITIC:
+            print(f"Running Literature Consensus Critic validation for {slug}...")
+            critic = MultiAgentCritic()
+            critic_success = critic.verify_slug(slug, write_citations=True)
+            if not critic_success:
+                raise Exception("Literature Consensus Critic validation failed (low similarity or lack of scientific support).")
+
         # 3. Auto Linker
         from auto_linker import run_auto_linker
         run_auto_linker([shard_path], 'app/config/content/search_index.json')

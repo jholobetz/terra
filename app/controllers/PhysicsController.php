@@ -500,4 +500,207 @@ class PhysicsController
         }
         return $html;
     }
+
+    /**
+     * View action rendering the Admin Dashboard.
+     */
+    public function adminDashboard()
+    {
+        // Enforce localhost security check
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('HTTP/1.1 403 Forbidden');
+            echo 'Forbidden: Admin access restricted to localhost.';
+            exit;
+        }
+
+        // Read system_health.json
+        $healthPath = 'system_health.json';
+        $health = [];
+        if (file_exists($healthPath)) {
+            $health = json_decode(file_get_contents($healthPath), true);
+        }
+
+        $this->renderWithLayout('physics/admin/dashboard', [
+            'title' => 'GQS & Integrity Health Dashboard',
+            'health' => $health
+        ]);
+    }
+
+    /**
+     * View action rendering the OPS WYSIWYG Shard Editor.
+     */
+    public function wysiwygEditor()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('HTTP/1.1 403 Forbidden');
+            echo 'Forbidden: Admin access restricted to localhost.';
+            exit;
+        }
+
+        // Load active drafts in subfiles/batch_payload.json
+        $payloadPath = 'subfiles/batch_payload.json';
+        $payloads = [];
+        if (file_exists($payloadPath)) {
+            $payloads = json_decode(file_get_contents($payloadPath), true) ?: [];
+        }
+
+        // Load list of all subtopic slugs
+        $slugsList = [];
+        $slugShardMapPath = 'slug_shard_map.json';
+        if (file_exists($slugShardMapPath)) {
+            $slugsList = array_keys(json_decode(file_get_contents($slugShardMapPath), true) ?: []);
+        }
+
+        $this->renderWithLayout('physics/admin/editor', [
+            'title' => 'OPS WYSIWYG Shard Editor',
+            'payloads' => $payloads,
+            'slugs' => $slugsList
+        ]);
+    }
+
+    /**
+     * View action rendering the Literature Consensus Critic Portal.
+     */
+    public function criticPortal()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('HTTP/1.1 403 Forbidden');
+            echo 'Forbidden: Admin access restricted to localhost.';
+            exit;
+        }
+
+        // Load literature cache
+        $cachePath = 'app/config/ref_data/literature_cache.json';
+        $cache = [];
+        if (file_exists($cachePath)) {
+            $cache = json_decode(file_get_contents($cachePath), true) ?: [];
+        }
+
+        // Load registered semantic references
+        $refPath = 'app/config/ref_data/semantic_references.json';
+        $references = [];
+        if (file_exists($refPath)) {
+            $references = json_decode(file_get_contents($refPath), true) ?: [];
+        }
+
+        $this->renderWithLayout('physics/admin/critic', [
+            'title' => 'Literature Consensus Critic Portal',
+            'cache' => $cache,
+            'references' => $references
+        ]);
+    }
+
+    /**
+     * REST Endpoint: Run the Auto-Linker
+     */
+    public function apiRunAutoLinker()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Forbidden']);
+            exit;
+        }
+
+        // Run auto_linker script
+        $cmd = "PYTHONPATH=. .venv/bin/python3 scripts/maintenance/auto_linker.py 2>&1";
+        exec($cmd, $output, $return_var);
+
+        // Regenerate system health snapshot
+        exec("PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => ($return_var === 0),
+            'logs' => implode("\n", $output)
+        ]);
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Run Consensus Critic on a slug
+     */
+    public function apiRunCritic()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Forbidden']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $slug = $input['slug'] ?? '';
+        $writeCitations = $input['write_citations'] ?? false;
+
+        if (empty($slug)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Empty slug']);
+            exit;
+        }
+
+        $writeFlag = $writeCitations ? ' --write-citations' : '';
+        $cmd = "PYTHONPATH=. .venv/bin/python3 scripts/maintenance/run_critic.py --slug " . escapeshellarg($slug) . $writeFlag . " 2>&1";
+        exec($cmd, $output, $return_var);
+
+        // Regenerate system health
+        exec("PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => ($return_var === 0),
+            'logs' => implode("\n", $output)
+        ]);
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Save draft to batch_payload.json
+     */
+    public function apiSaveDraft()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Forbidden']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $slug = $input['slug'] ?? '';
+        $title = $input['title'] ?? '';
+        $content = $input['content'] ?? '';
+        $parents = $input['parents'] ?? [];
+        $identities = $input['identities'] ?? [];
+
+        if (empty($slug) || empty($content)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Slug and content are required.']);
+            exit;
+        }
+
+        // Save to payload
+        $payloadPath = 'subfiles/batch_payload.json';
+        $payloads = [];
+        if (file_exists($payloadPath)) {
+            $payloads = json_decode(file_get_contents($payloadPath), true) ?: [];
+        }
+
+        $payloads[$slug] = [
+            'title' => $title ?: $slug,
+            'content' => $content,
+            'standard' => 'platinum',
+            'parents' => $parents,
+            'identities' => $identities
+        ];
+
+        file_put_contents($payloadPath, json_encode($payloads, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    }
 }

@@ -45,6 +45,14 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/genealogy-explorer', [ $app->physicsController(), 'genealogyExplorer' ]);
 		$router->get('/lab-tools', [ $app->physicsController(), 'labTools' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
+
+		// Admin & Developer Control Panel Routes
+		$router->get('/admin/dashboard', [ $app->physicsController(), 'adminDashboard' ]);
+		$router->get('/admin/editor', [ $app->physicsController(), 'wysiwygEditor' ]);
+		$router->get('/admin/critic', [ $app->physicsController(), 'criticPortal' ]);
+		$router->post('/admin/api/run-autolinker', [ $app->physicsController(), 'apiRunAutoLinker' ]);
+		$router->post('/admin/api/run-critic', [ $app->physicsController(), 'apiRunCritic' ]);
+		$router->post('/admin/api/save-draft', [ $app->physicsController(), 'apiSaveDraft' ]);
 	});
 	
 }, [ SecurityHeadersMiddleware::class ]);

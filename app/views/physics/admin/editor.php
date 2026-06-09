@@ -40,6 +40,21 @@
                 </select>
             </div>
 
+            <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                <label class="meta-label">Load Existing Subtopic</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="existing-slug-input" list="existing-slugs" placeholder="Search subtopics..." style="flex: 1; min-width: 0;" class="meta-input">
+                    <datalist id="existing-slugs">
+                        <?php foreach ($slugs as $slugSlug): ?>
+                            <option value="<?= htmlspecialchars($slugSlug) ?>"></option>
+                        <?php endforeach; ?>
+                    </datalist>
+                    <button onclick="loadExistingSubtopic()" class="btn btn-secondary" style="border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; font-size: 0.9rem; cursor: pointer;">
+                        Load
+                    </button>
+                </div>
+            </div>
+
             <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: flex; flex-direction: column; gap: 12px;">
                 <div>
                     <label class="meta-label">Subtopic Slug</label>
@@ -388,6 +403,47 @@ function saveDraft() {
     })
     .catch(err => {
         alert('Error saving draft: ' + err);
+    });
+}
+
+function loadExistingSubtopic() {
+    const slug = document.getElementById('existing-slug-input').value.trim();
+    if (!slug) {
+        alert('Please select or type a subtopic slug first.');
+        return;
+    }
+
+    fetch('/physics/admin/api/get-subtopic/' + slug)
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            const s = data.subtopic;
+            document.getElementById('draft-selector').value = ''; // Reset draft selector
+            
+            const slugInput = document.getElementById('node-slug');
+            slugInput.value = s.slug;
+            slugInput.readOnly = true; // Prevent changing slug of existing node directly
+            
+            document.getElementById('node-title').value = s.title || '';
+            document.getElementById('node-parent').value = (s.parents && s.parents[0]) ? s.parents[0] : '';
+            document.getElementById('prose-editor').value = s.content || '';
+            
+            if (s.identities && s.identities[0]) {
+                document.getElementById('node-identity-id').value = s.identities[0].id || '';
+                document.getElementById('node-identity-eq').value = s.identities[0].equation || '';
+            } else {
+                document.getElementById('node-identity-id').value = '';
+                document.getElementById('node-identity-eq').value = '';
+            }
+            
+            updateEditorMetrics();
+            alert('✓ Loaded existing subtopic [' + slug + '] into editor.');
+        } else {
+            alert('❌ Error: ' + data.error);
+        }
+    })
+    .catch(err => {
+        alert('Error loading subtopic: ' + err);
     });
 }
 </script>

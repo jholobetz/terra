@@ -703,4 +703,46 @@ class PhysicsController
         echo json_encode(['success' => true]);
         exit;
     }
+
+    /**
+     * REST Endpoint: Fetch subtopic details by slug
+     */
+    public function apiGetSubtopic($slug)
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Forbidden']);
+            exit;
+        }
+
+        $content = $this->service()->getPhysicsContent($slug);
+        $subtopic = $content['subtopics'][$slug] ?? null;
+
+        if (!$subtopic) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Subtopic not found']);
+            exit;
+        }
+
+        // Also resolve the parent category from search index or shard mapping
+        $parent = null;
+        $searchIndex = $content['search_index'] ?? [];
+        if (isset($searchIndex[$slug]['s'])) {
+            $parent = str_replace('.json', '', $searchIndex[$slug]['s']);
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'subtopic' => [
+                'slug' => $slug,
+                'title' => $subtopic['title'] ?? '',
+                'content' => $subtopic['content'] ?? '',
+                'parents' => $parent ? [$parent] : [],
+                'identities' => $subtopic['identities'] ?? []
+            ]
+        ]);
+        exit;
+    }
 }

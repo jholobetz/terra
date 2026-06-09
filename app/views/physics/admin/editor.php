@@ -300,7 +300,7 @@ function updateEditorMetrics() {
 
     // 2. In Media Res Lead Rule
     const indLead = document.getElementById('indicator-lead');
-    const firstParaMatch = text.match(/<p>(.*?)<\/p>/);
+    const firstParaMatch = text.match(/<p>([\s\S]*?)<\/p>/);
     if (firstParaMatch) {
         const firstPara = firstParaMatch[1].toLowerCase().replace(/<[^>]+>/g, '');
         const bannedPrefixes = ['the ', 'this ', 'in this', 'a ', 'an '];
@@ -322,20 +322,30 @@ function updateEditorMetrics() {
 
     // 3. MathJax Density (At least 2 inline math elements per paragraph)
     const indDensity = document.getElementById('indicator-density');
-    const paragraphs = text.match(/<p>.*?<\/p>/g) || [];
-    let densityPass = paragraphs.length > 0;
+    const paragraphs = text.match(/<p>[\s\S]*?<\/p>/g) || [];
+    let densityPass = true;
+    let checkedParagraphsCount = 0;
     
     for (let p of paragraphs) {
+        // Strip HTML tags to evaluate text length (excluding layout structures)
+        const plainText = p.replace(/<[^>]+>/g, '').trim();
+        if (plainText.length === 0) {
+            continue; // Skip empty spacer paragraphs
+        }
+        
+        checkedParagraphsCount++;
         const openMatches = p.match(/\\\(/g) || [];
         const closeMatches = p.match(/\\\)/g) || [];
-        const mathCount = Math.min(openMatches.length, closeMatches.length);
-        if (mathCount < 2) {
+        const rawMathCount = Math.min(openMatches.length, closeMatches.length);
+        const svgMathCount = (p.match(/<svg\b[^>]*\bdata-tex=/g) || []).length;
+        
+        const totalMathCount = rawMathCount + svgMathCount;
+        if (totalMathCount < 2) {
             densityPass = false;
-            break;
         }
     }
     
-    if (densityPass && paragraphs.length > 0) {
+    if (densityPass && checkedParagraphsCount > 0) {
         indDensity.className = 'score-indicator pass';
     } else {
         indDensity.className = 'score-indicator';

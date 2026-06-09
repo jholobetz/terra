@@ -53,6 +53,7 @@ $router->group('', function(Router $router) use ($app) {
 		$router->post('/admin/api/run-autolinker', [ $app->physicsController(), 'apiRunAutoLinker' ]);
 		$router->post('/admin/api/run-critic', [ $app->physicsController(), 'apiRunCritic' ]);
 		$router->post('/admin/api/register-reference', [ $app->physicsController(), 'apiRegisterReference' ]);
+		$router->post('/admin/api/update-verification', [ $app->physicsController(), 'apiUpdateVerification' ]);
 		$router->post('/admin/api/save-draft', [ $app->physicsController(), 'apiSaveDraft' ]);
 		$router->get('/admin/api/get-subtopic/@slug', [ $app->physicsController(), 'apiGetSubtopic' ]);
 	});

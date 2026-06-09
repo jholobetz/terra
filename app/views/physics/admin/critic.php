@@ -69,7 +69,7 @@
                                                             <?= htmlspecialchars($cit['title'] ?? '') ?>
                                                         <?php endif; ?>
                                                     </div>
-                                                    <div style="font-family: monospace; font-size: 0.7rem; color: var(--text-muted); margin-top: 1px;">
+                                                    <div style="font-family: monospace; font-size: 0.7rem; color: var(--text-muted); margin-top: 1px; word-break: break-all;">
                                                         DOI: <?= htmlspecialchars(($cit['doi'] ?? '') ?: 'arXiv identifier') ?>
                                                     </div>
                                                 </div>
@@ -93,6 +93,9 @@
                                     <div style="display: flex; justify-content: flex-end; gap: 8px;">
                                         <button class="btn-action btn-critic-audit" data-slug="<?= $slug ?>" title="Run dry-run consensus check">🔍 Audit</button>
                                         <button class="btn-action primary btn-critic-stamp" data-slug="<?= $slug ?>" title="Stamp verified DOIs into JSON shard">📖 Stamp</button>
+                                        <?php if ($isVerified): ?>
+                                            <button class="btn-action btn-critic-edit" data-slug="<?= $slug ?>" data-title="<?= htmlspecialchars($ref['title']) ?>" data-citations='<?= htmlspecialchars(json_encode($citations), ENT_QUOTES, 'UTF-8') ?>' title="Edit verified citations" style="background: rgba(0, 191, 255, 0.1); border-color: rgba(0, 191, 255, 0.2);">✏️ Edit</button>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
@@ -114,7 +117,7 @@
                     <span class="terminal-dot green"></span>
                     <span id="console-title" style="margin-left: 10px; font-size: 0.75rem; color: var(--text-muted);">critic_agent.log</span>
                 </div>
-                <pre id="terminal-console" style="flex: 1; margin: 0; font-size: 0.85rem; line-height: 1.4; color: #00ffff; text-shadow: 0 0 4px rgba(0, 255, 255, 0.2); overflow-y: auto;">Critic portal loaded. Select an action (Audit / Stamp) to trigger claim extraction and literature cross-referencing...</pre>
+                <pre id="terminal-console" style="flex: 1; margin: 0; font-size: 0.85rem; line-height: 1.4; color: #00ffff; text-shadow: 0 0 4px rgba(0, 255, 255, 0.2); overflow: auto; white-space: pre-wrap; word-break: break-all;">Critic portal loaded. Select an action (Audit / Stamp) to trigger claim extraction and literature cross-referencing...</pre>
             </div>
         </div>
     </div>
@@ -128,7 +131,7 @@ body.physics-lab main.container {
 
 .admin-critic-grid {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
     gap: 30px;
 }
 
@@ -517,6 +520,187 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    // Edit citations modal elements
+    const editModal = document.getElementById('edit-citations-modal');
+    const closeEditBtn = document.getElementById('btn-close-edit-modal');
+    const cancelEditBtn = document.getElementById('btn-cancel-edit');
+    const editForm = document.getElementById('edit-citations-form');
+    const editSlugInput = document.getElementById('edit-slug');
+    const editModalTitle = document.getElementById('edit-modal-title');
+    const citationsListContainer = document.getElementById('citations-list-container');
+    const addCitationBtn = document.getElementById('btn-add-citation');
+    const editErrorDiv = document.getElementById('edit-error');
+
+    const closeEditModal = () => {
+        if (editModal) {
+            editModal.style.display = 'none';
+        }
+        if (editForm) {
+            editForm.reset();
+        }
+        if (citationsListContainer) {
+            citationsListContainer.innerHTML = '';
+        }
+        if (editErrorDiv) {
+            editErrorDiv.style.display = 'none';
+        }
+    };
+
+    if (closeEditBtn) closeEditBtn.addEventListener('click', closeEditModal);
+    if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModal);
+
+    // Render citation fieldsets
+    const renderCitationItem = (citation = {}) => {
+        const div = document.createElement('div');
+        div.className = 'citation-item-card';
+        div.style.background = 'rgba(255, 255, 255, 0.02)';
+        div.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+        div.style.borderRadius = '8px';
+        div.style.padding = '15px';
+        div.style.position = 'relative';
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        div.style.gap = '10px';
+
+        const title = citation.title || '';
+        const doi = citation.doi || '';
+        const authors = Array.isArray(citation.authors) ? citation.authors.join(', ') : (citation.authors || '');
+        const url = citation.url || '';
+
+        div.innerHTML = `
+            <button type="button" class="btn-remove-citation" style="position: absolute; top: 10px; right: 10px; background: rgba(255, 95, 86, 0.15); border: 1px solid rgba(255, 95, 86, 0.3); color: #ff5f56; border-radius: 4px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer;">Remove</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Paper Title</label>
+                    <input type="text" class="cit-title" value="${title.replace(/"/g, '&quot;')}" placeholder="e.g. The Theory of Everything" style="background: #090a0d; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 6px 10px; color: #ffffff; font-size: 0.85rem;" required>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Authors (Comma-separated)</label>
+                    <input type="text" class="cit-authors" value="${authors.replace(/"/g, '&quot;')}" placeholder="e.g. J. Doe, A. Smith" style="background: #090a0d; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 6px 10px; color: #ffffff; font-size: 0.85rem;" required>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">DOI</label>
+                    <input type="text" class="cit-doi" value="${doi.replace(/"/g, '&quot;')}" placeholder="e.g. 10.1103/PhysRevD.98.044009" style="background: #090a0d; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 6px 10px; color: #ffffff; font-size: 0.85rem;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">URL</label>
+                    <input type="text" class="cit-url" value="${url.replace(/"/g, '&quot;')}" placeholder="e.g. https://doi.org/..." style="background: #090a0d; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 6px 10px; color: #ffffff; font-size: 0.85rem;">
+                </div>
+            </div>
+        `;
+
+        div.querySelector('.btn-remove-citation').addEventListener('click', () => {
+            div.remove();
+        });
+
+        citationsListContainer.appendChild(div);
+    };
+
+    document.querySelectorAll('.btn-critic-edit').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const slug = btn.getAttribute('data-slug');
+            const title = btn.getAttribute('data-title');
+            let citations = [];
+            try {
+                citations = JSON.parse(btn.getAttribute('data-citations')) || [];
+            } catch(e) {
+                console.error(e);
+            }
+
+            if (editSlugInput) editSlugInput.value = slug;
+            if (editModalTitle) editModalTitle.textContent = `Edit Citations: ${title}`;
+
+            if (citationsListContainer) {
+                citationsListContainer.innerHTML = '';
+                if (citations.length > 0) {
+                    citations.forEach(cit => renderCitationItem(cit));
+                } else {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.id = 'edit-citations-empty-msg';
+                    emptyMsg.style.textAlign = 'center';
+                    emptyMsg.style.padding = '20px';
+                    emptyMsg.style.color = 'var(--text-muted)';
+                    emptyMsg.style.fontSize = '0.9rem';
+                    emptyMsg.textContent = 'No papers associated with this reference. Click Add to insert one.';
+                    citationsListContainer.appendChild(emptyMsg);
+                }
+            }
+
+            if (editModal) editModal.style.display = 'flex';
+        });
+    });
+
+    if (addCitationBtn) {
+        addCitationBtn.addEventListener('click', () => {
+            const emptyMsg = document.getElementById('edit-citations-empty-msg');
+            if (emptyMsg) emptyMsg.remove();
+            renderCitationItem();
+        });
+    }
+
+    if (editForm) {
+        editForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const slug = editSlugInput ? editSlugInput.value : '';
+            if (!slug) return;
+
+            const citationCards = citationsListContainer.querySelectorAll('.citation-item-card');
+            const citationsData = [];
+
+            citationCards.forEach(card => {
+                const title = card.querySelector('.cit-title').value.trim();
+                const authors = card.querySelector('.cit-authors').value.trim();
+                const doi = card.querySelector('.cit-doi').value.trim();
+                const url = card.querySelector('.cit-url').value.trim();
+
+                if (title && authors) {
+                    citationsData.push({
+                        title: title,
+                        authors: authors,
+                        doi: doi,
+                        url: url
+                    });
+                }
+            });
+
+            const submitBtn = document.getElementById('btn-submit-edit');
+            if (submitBtn) submitBtn.disabled = true;
+
+            fetch(BASE_URL + '/physics/admin/api/update-verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    slug: slug,
+                    citations: citationsData
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (submitBtn) submitBtn.disabled = false;
+                if (data.success) {
+                    closeEditModal();
+                    window.location.reload();
+                } else {
+                    if (editErrorDiv) {
+                        editErrorDiv.textContent = data.error || 'Failed to update citations.';
+                        editErrorDiv.style.display = 'block';
+                    }
+                }
+            })
+            .catch(err => {
+                if (submitBtn) submitBtn.disabled = false;
+                if (editErrorDiv) {
+                    editErrorDiv.textContent = 'Network error: ' + err;
+                    editErrorDiv.style.display = 'block';
+                }
+            });
+        });
+    }
 });
 </script>
 
@@ -529,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cursor: pointer;
     transition: color 0.2s;
 }
-#btn-close-register-modal:hover {
+#btn-close-register-modal:hover, #btn-close-edit-modal:hover {
     color: #ffffff !important;
 }
 .combobox-item:hover {
@@ -538,6 +722,11 @@ document.addEventListener('DOMContentLoaded', () => {
 .combobox-item.active {
     background: var(--accent-default);
     color: #000000;
+}
+.citation-item-card input:focus {
+    outline: none;
+    border-color: var(--accent-default) !important;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
 }
 </style>
 
@@ -587,6 +776,33 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
                 <button type="button" id="btn-cancel-register" class="btn-action">Cancel</button>
                 <button type="submit" id="btn-submit-register" class="btn-action primary">Register Reference</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Citations Modal Container -->
+<div id="edit-citations-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+    <div class="glass-panel" style="width: 650px; max-width: 95%; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif;" id="edit-modal-title">Edit Citations</h3>
+            <button id="btn-close-edit-modal" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s;">&times;</button>
+        </div>
+        
+        <form id="edit-citations-form" style="display: flex; flex-direction: column; gap: 15px;">
+            <input type="hidden" id="edit-slug" name="slug" value="">
+            
+            <div id="citations-list-container" style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Citation cards will be generated dynamically here -->
+            </div>
+            
+            <button type="button" id="btn-add-citation" class="btn-action" style="align-self: flex-start; background: rgba(85, 255, 85, 0.1); border-color: rgba(85, 255, 85, 0.2); font-weight: 500;">+ Add Citation Manually</button>
+            
+            <div id="edit-error" style="color: #ff5f56; font-size: 0.85rem; display: none; margin-top: 5px;"></div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px;">
+                <button type="button" id="btn-cancel-edit" class="btn-action">Cancel</button>
+                <button type="submit" id="btn-submit-edit" class="btn-action primary">Save Changes</button>
             </div>
         </form>
     </div>

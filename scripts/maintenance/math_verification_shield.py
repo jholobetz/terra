@@ -153,8 +153,8 @@ def clean_latex_to_python(latex_str):
     for op in operators:
         cleaned = cleaned.replace(op, ' ')
         
-    cleaned = re.sub(r'\^([a-zA-Z\\mu\\nu\\alpha\\beta]+)', '', cleaned)
-    cleaned = re.sub(r'\^\{([a-zA-Z\\mu\\nu\\alpha\\beta]+)\}', '', cleaned)
+    cleaned = re.sub(r'\^([a-zA-Z\\]+)', '', cleaned)
+    cleaned = re.sub(r'\^\{([a-zA-Z\\\s]+)\}', '', cleaned)
     cleaned = cleaned.replace('^', '**')
     cleaned = re.sub(r'\*\*\{([^}]+)\}', r'**(\1)', cleaned)
     
@@ -166,7 +166,7 @@ def clean_latex_to_python(latex_str):
     greek_letters = ['mu', 'nu', 'alpha', 'beta', 'gamma', 'delta', 'theta', 'phi', 'psi', 'omega', 'tau', 'sigma', 'lambda', 'chi', 'rho', 'eta', 'xi', 'kappa']
     cleaned = re.sub(r'_(' + '|'.join(greek_letters) + r')([a-zA-Z])', r'_\1 * \2', cleaned)
     # Also split unbraced subscript with backslash command followed by a letter (e.g. m_\mu c^2)
-    cleaned = re.sub(r'_(\\[a-zA-Z]+)\s*([a-zA-Z])', r'_\1 * \2', cleaned)
+    cleaned = re.sub(r'_(\\[a-zA-Z]+)\b\s*([a-zA-Z])', r'_\1 * \2', cleaned)
     
     # 2. For braced subscripts, insert a '*' after the closing brace if followed by a letter or backslash command
     cleaned = re.sub(r'\}\s*([a-zA-Z]|\\[a-zA-Z])', r'} * \1', cleaned)
@@ -983,7 +983,7 @@ def _verify_dimensions_inner(formula_id, title, raw_eq, semantic_vars, constants
         global_local_names = set()
         for p in parts_latex:
             cleaned = clean_latex_to_python(p)
-            if cleaned == '0':
+            if cleaned.strip() == '0':
                 parts_parsed.append((p, cleaned, None, {}))
                 continue
             expr, local_ns = string_to_sympy_expr(cleaned)
@@ -992,7 +992,7 @@ def _verify_dimensions_inner(formula_id, title, raw_eq, semantic_vars, constants
             
         dimensions_evaluated = []
         for p, cleaned, expr, local_ns in parts_parsed:
-            if cleaned == '0':
+            if cleaned.strip() == '0':
                 dimensions_evaluated.append(('0', sp.Integer(0)))
                 continue
                 

@@ -777,6 +777,103 @@ class PhysicsController
     }
 
     /**
+     * REST Endpoint: Update verification citations for a processed subtopic
+     */
+    public function apiUpdateVerification()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Forbidden']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $slug = $input['slug'] ?? '';
+        $citations = $input['citations'] ?? [];
+
+        if (empty($slug)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Subtopic slug is required.']);
+            exit;
+        }
+
+        // Get content shard info using PhysicsService helper
+        $content = $this->service()->getPhysicsContent($slug);
+        $searchIndex = $content['search_index'] ?? [];
+        $shardFile = $searchIndex[$slug]['s'] ?? null;
+        $baseDir = PROJECT_ROOT . '/app/config/content/';
+
+        if (!$shardFile || !file_exists($baseDir . $shardFile)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Shard file for subtopic not found.']);
+            exit;
+        }
+
+        // Load the shard file
+        $shardData = json_decode(file_get_contents($baseDir . $shardFile), true) ?: [];
+        if (!isset($shardData[$slug])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Subtopic not found in content shard.']);
+            exit;
+        }
+
+        // Keep or create verification block
+        $verification = $shardData[$slug]['verification'] ?? [];
+        if (empty($verification)) {
+            $verification = [
+                'verified_date' => date('Y-m-d'),
+                'consensus_score' => 1.00,
+                'agents' => [
+                    'extractor' => 'ManualEditor-v1.0',
+                    'critic' => 'ManualEditor-v1.0',
+                    'judge' => 'ManualEditor-v1.0'
+                ]
+            ];
+        }
+
+        // Clean & set the citations
+        $cleanedCitations = [];
+        foreach ($citations as $cit) {
+            $authors = $cit['authors'] ?? [];
+            if (is_string($authors)) {
+                $authors = array_map('trim', explode(',', $authors));
+                $authors = array_filter($authors);
+            }
+            $cleanedCitations[] = [
+                'doi' => trim($cit['doi'] ?? ''),
+                'title' => trim($cit['title'] ?? ''),
+                'authors' => array_values($authors),
+                'url' => trim($cit['url'] ?? '')
+            ];
+        }
+
+        $verification['citations'] = $cleanedCitations;
+        $shardData[$slug]['verification'] = $verification;
+
+        // Save back to JSON shard on disk
+        if (file_put_contents($baseDir . $shardFile, json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) === false) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Failed to save updated shard back to disk.']);
+            exit;
+        }
+
+        // Clear service cache and sync to DB
+        $this->service()->clearCache();
+        $subtopicData = $this->service()->fetchAndPrepare('subtopics', $slug);
+        if (!empty($subtopicData)) {
+            $this->service()->syncIndividualSubtopic($slug, $subtopicData);
+        }
+
+        // Regenerate system health
+        exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    /**
      * REST Endpoint: Save draft to batch_payload.json
      */
     public function apiSaveDraft()

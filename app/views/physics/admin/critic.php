@@ -162,7 +162,7 @@
 .terminal-dot.green { background: #27c93f; }
 </style>
 
-<script>
+<script nonce="<?= $nonce ?>">
 function runCritic(slug, writeCitations) {
     const consoleElem = document.getElementById('terminal-console');
     const titleElem = document.getElementById('console-title');

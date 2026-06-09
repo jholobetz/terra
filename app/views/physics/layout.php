@@ -15,7 +15,7 @@
     <script src="/js/lib/tex-chtml-full.js" id="MathJax-script" defer></script>
     <script src="/js/hub_interactions.js"></script>
     <link rel="stylesheet" href="/css/physics.css">
-    <script>
+    <script nonce="<?= $nonce ?>">
         const BASE_URL = '<?= Flight::request()->base ?>';
     </script>
 </head>

@@ -260,7 +260,7 @@ $shards = $health['shard_health'] ?? [];
 }
 </style>
 
-<script>
+<script nonce="<?= $nonce ?>">
 function runMaintenance(action) {
     const consoleElem = document.getElementById('terminal-console');
     consoleElem.textContent = '[$] Running ' + action + '...\n';

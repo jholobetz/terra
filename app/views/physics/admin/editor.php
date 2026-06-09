@@ -139,7 +139,7 @@
 </div>
 
 <!-- Load payloads as JS variable securely -->
-<script>
+<script nonce="<?= $nonce ?>">
 const activeDrafts = <?= json_encode($payloads) ?>;
 </script>
 
@@ -216,7 +216,7 @@ const activeDrafts = <?= json_encode($payloads) ?>;
 }
 </style>
 
-<script>
+<script nonce="<?= $nonce ?>">
 let typesetTimeout = null;
 
 function loadSelectedDraft() {

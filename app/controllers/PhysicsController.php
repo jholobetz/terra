@@ -515,7 +515,7 @@ class PhysicsController
         }
 
         // Read system_health.json
-        $healthPath = 'system_health.json';
+        $healthPath = PROJECT_ROOT . '/system_health.json';
         $health = [];
         if (file_exists($healthPath)) {
             $health = json_decode(file_get_contents($healthPath), true);
@@ -540,7 +540,7 @@ class PhysicsController
         }
 
         // Load active drafts in subfiles/batch_payload.json
-        $payloadPath = 'subfiles/batch_payload.json';
+        $payloadPath = PROJECT_ROOT . '/subfiles/batch_payload.json';
         $payloads = [];
         if (file_exists($payloadPath)) {
             $payloads = json_decode(file_get_contents($payloadPath), true) ?: [];
@@ -548,7 +548,7 @@ class PhysicsController
 
         // Load list of all subtopic slugs
         $slugsList = [];
-        $slugShardMapPath = 'slug_shard_map.json';
+        $slugShardMapPath = PROJECT_ROOT . '/slug_shard_map.json';
         if (file_exists($slugShardMapPath)) {
             $slugsList = array_keys(json_decode(file_get_contents($slugShardMapPath), true) ?: []);
         }
@@ -573,14 +573,14 @@ class PhysicsController
         }
 
         // Load literature cache
-        $cachePath = 'app/config/ref_data/literature_cache.json';
+        $cachePath = PROJECT_ROOT . '/app/config/ref_data/literature_cache.json';
         $cache = [];
         if (file_exists($cachePath)) {
             $cache = json_decode(file_get_contents($cachePath), true) ?: [];
         }
 
         // Load registered semantic references
-        $refPath = 'app/config/ref_data/semantic_references.json';
+        $refPath = PROJECT_ROOT . '/app/config/ref_data/semantic_references.json';
         $references = [];
         if (file_exists($refPath)) {
             $references = json_decode(file_get_contents($refPath), true) ?: [];
@@ -606,11 +606,11 @@ class PhysicsController
         }
 
         // Run auto_linker script
-        $cmd = "PYTHONPATH=. .venv/bin/python3 scripts/maintenance/auto_linker.py 2>&1";
+        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/auto_linker.py 2>&1";
         exec($cmd, $output, $return_var);
 
         // Regenerate system health snapshot
-        exec("PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
+        exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
 
         header('Content-Type: application/json');
         echo json_encode([
@@ -643,11 +643,11 @@ class PhysicsController
         }
 
         $writeFlag = $writeCitations ? ' --write-citations' : '';
-        $cmd = "PYTHONPATH=. .venv/bin/python3 scripts/maintenance/run_critic.py --slug " . escapeshellarg($slug) . $writeFlag . " 2>&1";
+        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/run_critic.py --slug " . escapeshellarg($slug) . $writeFlag . " 2>&1";
         exec($cmd, $output, $return_var);
 
         // Regenerate system health
-        exec("PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
+        exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
 
         header('Content-Type: application/json');
         echo json_encode([
@@ -683,7 +683,7 @@ class PhysicsController
         }
 
         // Save to payload
-        $payloadPath = 'subfiles/batch_payload.json';
+        $payloadPath = PROJECT_ROOT . '/subfiles/batch_payload.json';
         $payloads = [];
         if (file_exists($payloadPath)) {
             $payloads = json_decode(file_get_contents($payloadPath), true) ?: [];

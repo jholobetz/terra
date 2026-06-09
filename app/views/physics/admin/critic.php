@@ -302,8 +302,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (form) {
             form.reset();
         }
+        if (searchInput) {
+            searchInput.value = "";
+        }
+        if (slugInput) {
+            slugInput.value = "";
+        }
         if (errorDiv) {
             errorDiv.style.display = 'none';
+        }
+        if (items) {
+            items.forEach(item => item.style.display = 'flex');
+        }
+        if (emptyState) {
+            emptyState.style.display = 'none';
         }
     };
 
@@ -343,70 +355,120 @@ document.addEventListener('DOMContentLoaded', () => {
         return sortedWords.slice(0, 7).join(", ");
     }
 
-    if (selectElem) {
-        selectElem.addEventListener('change', () => {
-            const slug = selectElem.value;
-            const selectedOption = selectElem.options[selectElem.selectedIndex];
-            const title = selectedOption.getAttribute('data-title') || '';
-            
-            const titleInput = document.getElementById('reg-title');
-            const proseInput = document.getElementById('reg-prose');
-            const keywordsInput = document.getElementById('reg-keywords');
+    // Combobox elements
+    const searchInput = document.getElementById('reg-search');
+    const slugInput = document.getElementById('reg-slug');
+    const dropdown = document.getElementById('reg-combobox-dropdown');
+    const items = dropdown ? dropdown.querySelectorAll('.combobox-item') : [];
+    const emptyState = document.getElementById('combobox-empty-state');
 
-            if (titleInput) {
-                titleInput.value = title;
-            }
+    function triggerSlugChange(slug, title) {
+        const titleInput = document.getElementById('reg-title');
+        const proseInput = document.getElementById('reg-prose');
+        const keywordsInput = document.getElementById('reg-keywords');
 
-            if (!slug) {
-                if (proseInput) proseInput.value = "";
-                if (keywordsInput) keywordsInput.value = "";
-                return;
-            }
+        if (titleInput) {
+            titleInput.value = title;
+        }
 
-            // Fetch subtopic details to auto-populate prose & keywords
-            if (proseInput) {
-                proseInput.value = "Loading description...";
-            }
-            if (keywordsInput) {
-                keywordsInput.value = "Extracting key terms...";
-            }
+        if (!slug) {
+            if (proseInput) proseInput.value = "";
+            if (keywordsInput) keywordsInput.value = "";
+            return;
+        }
 
-            fetch(BASE_URL + '/physics/admin/api/get-subtopic/' + slug)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.subtopic) {
-                        const snippet = data.subtopic.snippet || '';
-                        
-                        if (proseInput) {
-                            proseInput.value = snippet;
-                        }
-                        if (keywordsInput) {
-                            keywordsInput.value = extractKeywords(snippet || data.subtopic.content || '');
-                        }
-                    } else {
-                        if (proseInput) proseInput.value = "";
-                        if (keywordsInput) keywordsInput.value = "";
+        // Fetch subtopic details to auto-populate prose & keywords
+        if (proseInput) {
+            proseInput.value = "Loading description...";
+        }
+        if (keywordsInput) {
+            keywordsInput.value = "Extracting key terms...";
+        }
+
+        fetch(BASE_URL + '/physics/admin/api/get-subtopic/' + slug)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.subtopic) {
+                    const snippet = data.subtopic.snippet || '';
+                    if (proseInput) {
+                        proseInput.value = snippet;
                     }
-                })
-                .catch(err => {
-                    console.error("Error fetching subtopic:", err);
+                    if (keywordsInput) {
+                        keywordsInput.value = extractKeywords(snippet || data.subtopic.content || '');
+                    }
+                } else {
                     if (proseInput) proseInput.value = "";
                     if (keywordsInput) keywordsInput.value = "";
-                });
+                }
+            })
+            .catch(err => {
+                console.error("Error fetching subtopic:", err);
+                if (proseInput) proseInput.value = "";
+                if (keywordsInput) keywordsInput.value = "";
+            });
+    }
+
+    // Show dropdown on focus
+    if (searchInput && dropdown) {
+        searchInput.addEventListener('focus', () => {
+            dropdown.style.display = 'block';
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Filter items on input
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            items.forEach(item => {
+                const title = item.getAttribute('data-title').toLowerCase();
+                const slug = item.getAttribute('data-slug').toLowerCase();
+
+                if (title.includes(query) || slug.includes(query)) {
+                    item.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            if (emptyState) {
+                emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        });
+
+        // Handle item clicks
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                const slug = item.getAttribute('data-slug');
+                const title = item.getAttribute('data-title');
+
+                searchInput.value = title;
+                slugInput.value = slug;
+                dropdown.style.display = 'none';
+
+                triggerSlugChange(slug, title);
+            });
         });
     }
 
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const slug = document.getElementById('reg-slug').value;
+            const slug = slugInput ? slugInput.value : '';
             const title = document.getElementById('reg-title').value;
             const prose = document.getElementById('reg-prose').value;
             const keywords = document.getElementById('reg-keywords').value;
 
             if (!slug || !title || !prose || !keywords) {
                 if (errorDiv) {
-                    errorDiv.textContent = 'All fields are required.';
+                    errorDiv.textContent = 'All fields are required. Please select a valid subtopic from the search suggestions.';
                     errorDiv.style.display = 'block';
                 }
                 return;
@@ -470,6 +532,13 @@ document.addEventListener('DOMContentLoaded', () => {
 #btn-close-register-modal:hover {
     color: #ffffff !important;
 }
+.combobox-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+.combobox-item.active {
+    background: var(--accent-default);
+    color: #000000;
+}
 </style>
 
 <!-- Modal Container -->
@@ -481,16 +550,21 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         
         <form id="register-reference-form" style="display: flex; flex-direction: column; gap: 15px;">
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <label for="reg-slug" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Select Subtopic Slug</label>
-                <select id="reg-slug" name="slug" style="background: #090a0d; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px 12px; color: #ffffff; width: 100%; font-size: 0.9rem; cursor: pointer;">
-                    <option value="">-- Select an unregistered subtopic --</option>
+            <div style="display: flex; flex-direction: column; gap: 6px; position: relative;">
+                <label for="reg-search" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Select Subtopic</label>
+                <input type="text" id="reg-search" placeholder="Type to search unregistered subtopics..." style="background: #090a0d; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px 12px; color: #ffffff; width: 100%; font-size: 0.9rem;" autocomplete="off">
+                <input type="hidden" id="reg-slug" name="slug" value="">
+                
+                <!-- Dropdown list -->
+                <div id="reg-combobox-dropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; max-height: 200px; overflow-y: auto; background: #090a0d; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; z-index: 10100; margin-top: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
                     <?php foreach ($unregisteredSubtopics as $sub): ?>
-                        <option value="<?= htmlspecialchars($sub['slug']) ?>" data-title="<?= htmlspecialchars($sub['title']) ?>">
-                            <?= htmlspecialchars($sub['title']) ?> (<?= htmlspecialchars($sub['slug']) ?>)
-                        </option>
+                        <div class="combobox-item" data-slug="<?= htmlspecialchars($sub['slug']) ?>" data-title="<?= htmlspecialchars($sub['title']) ?>" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 0.85rem; transition: background 0.15s; color: #ffffff; display: flex; justify-content: space-between;">
+                            <span style="font-weight: 500;"><?= htmlspecialchars($sub['title']) ?></span>
+                            <span style="color: var(--text-muted); font-size: 0.75rem; font-family: monospace;"><?= htmlspecialchars($sub['slug']) ?></span>
+                        </div>
                     <?php endforeach; ?>
-                </select>
+                    <div id="combobox-empty-state" style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 0.85rem; display: none;">No subtopics found</div>
+                </div>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 6px;">

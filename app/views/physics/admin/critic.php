@@ -69,8 +69,8 @@
                                 </td>
                                 <td style="padding: 12px 8px; text-align: right;">
                                     <div style="display: flex; justify-content: flex-end; gap: 8px;">
-                                        <button onclick="runCritic('<?= $slug ?>', false)" class="btn-action" title="Run dry-run consensus check">🔍 Audit</button>
-                                        <button onclick="runCritic('<?= $slug ?>', true)" class="btn-action primary" title="Stamp verified DOIs into JSON shard">📖 Stamp</button>
+                                        <button class="btn-action btn-critic-audit" data-slug="<?= $slug ?>" title="Run dry-run consensus check">🔍 Audit</button>
+                                        <button class="btn-action primary btn-critic-stamp" data-slug="<?= $slug ?>" title="Stamp verified DOIs into JSON shard">📖 Stamp</button>
                                     </div>
                                 </td>
                             </tr>
@@ -199,4 +199,19 @@ function runCritic(slug, writeCitations) {
         consoleElem.textContent += '\nError executing critic agent: ' + err;
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.btn-critic-audit').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const slug = btn.getAttribute('data-slug');
+            runCritic(slug, false);
+        });
+    });
+    document.querySelectorAll('.btn-critic-stamp').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const slug = btn.getAttribute('data-slug');
+            runCritic(slug, true);
+        });
+    });
+});
 </script>

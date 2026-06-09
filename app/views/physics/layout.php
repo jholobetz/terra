@@ -16,7 +16,7 @@
     <script src="/js/hub_interactions.js"></script>
     <link rel="stylesheet" href="/css/physics.css">
     <script nonce="<?= $nonce ?>">
-        const BASE_URL = '<?= Flight::request()->base ?>';
+        const BASE_URL = '<?= rtrim(Flight::request()->base, "/") ?>';
     </script>
 </head>
 <body class="physics-lab">

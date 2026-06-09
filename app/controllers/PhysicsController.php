@@ -546,11 +546,30 @@ class PhysicsController
             $payloads = json_decode(file_get_contents($payloadPath), true) ?: [];
         }
 
-        // Load list of all subtopic slugs
+        // Load list of all subtopic slugs and their titles from search index
         $slugsList = [];
         $slugShardMapPath = PROJECT_ROOT . '/slug_shard_map.json';
+        $searchIndexPath = PROJECT_ROOT . '/app/config/content/search_index.json';
+        
         if (file_exists($slugShardMapPath)) {
-            $slugsList = array_keys(json_decode(file_get_contents($slugShardMapPath), true) ?: []);
+            $slugsMap = json_decode(file_get_contents($slugShardMapPath), true) ?: [];
+            $searchIndex = [];
+            if (file_exists($searchIndexPath)) {
+                $searchIndex = json_decode(file_get_contents($searchIndexPath), true) ?: [];
+            }
+            
+            foreach ($slugsMap as $slug => $shard) {
+                // Exclude categories/constants/notation sharding if any
+                if ($shard !== 'constants.json' && $shard !== 'categories.json' && $shard !== 'notation.json') {
+                    $title = $searchIndex[$slug]['t'] ?? '';
+                    if (empty($title) || $title === 'Untitled') {
+                        $title = ucwords(str_replace('-', ' ', $slug));
+                    }
+                    $slugsList[$slug] = $title;
+                }
+            }
+            // Sort case-insensitively by title
+            asort($slugsList, SORT_NATURAL | SORT_FLAG_CASE);
         }
 
         $this->renderWithLayout('physics/admin/editor', [
@@ -732,6 +751,32 @@ class PhysicsController
             $parent = str_replace('.json', '', $searchIndex[$slug]['s']);
         }
 
+        // Resolve formulas/identities
+        $identities = $subtopic['identities'] ?? [];
+        if (empty($identities)) {
+            $formulaIds = $subtopic['formula_ids'] ?? [];
+            foreach ($formulaIds as $fId) {
+                $formula = $this->service()->loadFormula($fId);
+                if ($formula) {
+                    $latex = '';
+                    if (!empty($formula['equation'])) {
+                        if (preg_match('/data-tex="([^"]+)"/', $formula['equation'], $matches)) {
+                            $latex = html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        } else {
+                            $latex = $formula['equation'];
+                        }
+                    }
+                    // Strip the hex suffix (e.g., -ca9b4fff) to match input raw ID
+                    $cleanId = preg_replace('/-[a-f0-9]{8}$/', '', $fId);
+                    $identities[] = [
+                        'id' => $cleanId,
+                        'title' => $formula['title'] ?? '',
+                        'equation' => $latex
+                    ];
+                }
+            }
+        }
+
         header('Content-Type: application/json');
         echo json_encode([
             'success' => true,
@@ -740,7 +785,7 @@ class PhysicsController
                 'title' => $subtopic['title'] ?? '',
                 'content' => $subtopic['content'] ?? '',
                 'parents' => $parent ? [$parent] : [],
-                'identities' => $subtopic['identities'] ?? []
+                'identities' => $identities
             ]
         ]);
         exit;

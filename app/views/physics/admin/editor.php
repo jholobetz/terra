@@ -32,7 +32,7 @@
             </h4>
             
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <select id="draft-selector" onchange="loadSelectedDraft()" style="width: 100%; background: #0f1015; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; color: #ffffff; font-size: 0.95rem;">
+                <select id="draft-selector" style="width: 100%; background: #0f1015; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; color: #ffffff; font-size: 0.95rem;">
                     <option value="">-- Create New Draft --</option>
                     <?php foreach ($payloads as $slug => $data): ?>
                         <option value="<?= htmlspecialchars($slug) ?>"><?= htmlspecialchars($slug) ?> (<?= htmlspecialchars($data['title']) ?>)</option>
@@ -45,11 +45,11 @@
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="existing-slug-input" list="existing-slugs" placeholder="Search subtopics..." style="flex: 1; min-width: 0;" class="meta-input">
                     <datalist id="existing-slugs">
-                        <?php foreach ($slugs as $slugSlug): ?>
-                            <option value="<?= htmlspecialchars($slugSlug) ?>"></option>
+                        <?php foreach ($slugs as $slugSlug => $slugTitle): ?>
+                            <option value="<?= htmlspecialchars($slugSlug) ?>"><?= htmlspecialchars($slugTitle) ?></option>
                         <?php endforeach; ?>
                     </datalist>
-                    <button onclick="loadExistingSubtopic()" class="btn btn-secondary" style="border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; font-size: 0.9rem; cursor: pointer;">
+                    <button id="btn-load-existing" class="btn btn-secondary" style="border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; font-size: 0.9rem; cursor: pointer;">
                         Load
                     </button>
                 </div>
@@ -78,7 +78,7 @@
                 </div>
             </div>
 
-            <button onclick="saveDraft()" class="btn btn-primary" style="margin-top: auto; width: 100%; font-weight: 600;">
+            <button id="btn-save-draft" class="btn btn-primary" style="margin-top: auto; width: 100%; font-weight: 600;">
                 💾 Save Staged Draft
             </button>
         </div>
@@ -91,7 +91,7 @@
                 </h4>
                 <span style="font-size: 0.8rem; color: var(--text-muted);">Wrap paragraphs in &lt;p&gt; tags</span>
             </div>
-            <textarea id="prose-editor" oninput="updateEditorMetrics()" placeholder="<p>The invariance of the spacetime interval...</p>" style="flex: 1; width: 100%; background: #07080b; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 15px; color: #e0e0e0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.5; resize: none;"></textarea>
+            <textarea id="prose-editor" placeholder="<p>The invariance of the spacetime interval...</p>" style="flex: 1; width: 100%; background: #07080b; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 15px; color: #e0e0e0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.5; resize: none;"></textarea>
         </div>
 
         <!-- Right Pane: Live Preview & Scorecard Tabs -->
@@ -446,4 +446,26 @@ function loadExistingSubtopic() {
         alert('Error loading subtopic: ' + err);
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const draftSelector = document.getElementById('draft-selector');
+    if (draftSelector) {
+        draftSelector.addEventListener('change', loadSelectedDraft);
+    }
+
+    const loadBtn = document.getElementById('btn-load-existing');
+    if (loadBtn) {
+        loadBtn.addEventListener('click', loadExistingSubtopic);
+    }
+
+    const saveBtn = document.getElementById('btn-save-draft');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', saveDraft);
+    }
+
+    const proseEditor = document.getElementById('prose-editor');
+    if (proseEditor) {
+        proseEditor.addEventListener('input', updateEditorMetrics);
+    }
+});
 </script>

@@ -104,10 +104,10 @@ $shards = $health['shard_health'] ?? [];
                     <span style="font-size: 0.8rem; color: var(--text-muted); font-family: monospace;">Localhost execution</span>
                 </h3>
                 <div style="margin: 15px 0 20px 0; display: flex; gap: 12px;">
-                    <button onclick="runMaintenance('run-autolinker')" id="btn-autolinker" class="btn btn-secondary" style="border: 1px solid rgba(255,255,255,0.1);">
+                    <button id="btn-autolinker" class="btn btn-secondary" style="border: 1px solid rgba(255,255,255,0.1);">
                         🔗 Run Auto-Linker
                     </button>
-                    <button onclick="runFullAudit()" id="btn-audit" class="btn btn-secondary" style="border: 1px solid rgba(255,255,255,0.1);">
+                    <button id="btn-audit" class="btn btn-secondary" style="border: 1px solid rgba(255,255,255,0.1);">
                         🛡️ Run Structural Audit
                     </button>
                 </div>
@@ -320,4 +320,15 @@ function runFullAudit() {
         consoleElem.textContent += '\nError executing audit: ' + err;
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const autolinkerBtn = document.getElementById('btn-autolinker');
+    if (autolinkerBtn) {
+        autolinkerBtn.addEventListener('click', () => runMaintenance('run-autolinker'));
+    }
+    const auditBtn = document.getElementById('btn-audit');
+    if (auditBtn) {
+        auditBtn.addEventListener('click', runFullAudit);
+    }
+});
 </script>

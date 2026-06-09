@@ -14,8 +14,10 @@
     <script src="/js/mathjax_config.js"></script>
     <script src="/js/lib/tex-chtml-full.js" id="MathJax-script" defer></script>
     <script src="/js/hub_interactions.js"></script>
-    
     <link rel="stylesheet" href="/css/physics.css">
+    <script>
+        const BASE_URL = '<?= Flight::request()->base ?>';
+    </script>
 </head>
 <body class="physics-lab">
 

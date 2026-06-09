@@ -268,7 +268,7 @@ function runMaintenance(action) {
     const btn = document.getElementById('btn-autolinker');
     btn.disabled = true;
     
-    fetch('/physics/admin/api/' + action, {
+    fetch(BASE_URL + '/physics/admin/api/' + action, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -298,7 +298,7 @@ function runFullAudit() {
     btn.disabled = true;
     
     // We can simulate full audit by running run_critic with no slug (or query stats)
-    fetch('/physics/admin/api/run-critic', {
+    fetch(BASE_URL + '/physics/admin/api/run-critic', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

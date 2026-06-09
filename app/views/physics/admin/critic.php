@@ -174,7 +174,7 @@ function runCritic(slug, writeCitations) {
     const buttons = document.querySelectorAll('.btn-action');
     buttons.forEach(btn => btn.disabled = true);
 
-    fetch('/physics/admin/api/run-critic', {
+    fetch(BASE_URL + '/physics/admin/api/run-critic', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

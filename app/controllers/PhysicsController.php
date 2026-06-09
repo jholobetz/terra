@@ -605,10 +605,42 @@ class PhysicsController
             $references = json_decode(file_get_contents($refPath), true) ?: [];
         }
 
+        // Load subtopics to read actual stamped verification status
+        $subtopics = [];
+        foreach (array_keys($references) as $slug) {
+            $subtopic = $this->service()->fetchAndPrepare('subtopics', $slug);
+            if (!empty($subtopic)) {
+                $subtopics[$slug] = $subtopic;
+            }
+        }
+
+        // Load unregistered subtopics for the registration dropdown
+        if ($this->service()->isPreviewActive()) {
+            $this->service()->loadAllShards();
+            $content = $this->service()->getPhysicsContent();
+            $subtopicsList = array_map(function($s, $sub) {
+                return ['slug' => $s, 'title' => $sub['title']];
+            }, array_keys($content['subtopics']), $content['subtopics']);
+        } else {
+            $subtopicsList = $this->app->db()->fetchAll("SELECT slug, title FROM subtopics ORDER BY title ASC");
+        }
+
+        $unregisteredSubtopics = [];
+        foreach ($subtopicsList as $sub) {
+            $row = is_object($sub) && method_exists($sub, 'getData') ? $sub->getData() : (array) $sub;
+            $s = $row['slug'] ?? '';
+            $t = $row['title'] ?? '';
+            if ($s && !isset($references[$s])) {
+                $unregisteredSubtopics[] = ['slug' => $s, 'title' => $t];
+            }
+        }
+
         $this->renderWithLayout('physics/admin/critic', [
             'title' => 'Literature Consensus Critic Portal',
             'cache' => $cache,
-            'references' => $references
+            'references' => $references,
+            'subtopics' => $subtopics,
+            'unregisteredSubtopics' => $unregisteredSubtopics
         ]);
     }
 
@@ -655,15 +687,23 @@ class PhysicsController
         $slug = $input['slug'] ?? '';
         $writeCitations = $input['write_citations'] ?? false;
 
-        if (empty($slug)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Empty slug']);
-            exit;
-        }
-
+        $slugFlag = !empty($slug) ? " --slug " . escapeshellarg($slug) : "";
         $writeFlag = $writeCitations ? ' --write-citations' : '';
-        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/run_critic.py --slug " . escapeshellarg($slug) . $writeFlag . " 2>&1";
+        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/run_critic.py" . $slugFlag . $writeFlag . " 2>&1";
         exec($cmd, $output, $return_var);
+
+        if ($writeCitations && $return_var === 0) {
+            $this->service()->clearCache();
+            if (!empty($slug)) {
+                $subtopicData = $this->service()->fetchAndPrepare('subtopics', $slug);
+                if (!empty($subtopicData)) {
+                    $this->service()->syncIndividualSubtopic($slug, $subtopicData);
+                }
+            } else {
+                $this->service()->loadAllShards();
+                $this->service()->performSync();
+            }
+        }
 
         // Regenerate system health
         exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
@@ -673,6 +713,66 @@ class PhysicsController
             'success' => ($return_var === 0),
             'logs' => implode("\n", $output)
         ]);
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Register a new subtopic in semantic_references.json
+     */
+    public function apiRegisterReference()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Forbidden']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $slug = $input['slug'] ?? '';
+        $title = $input['title'] ?? '';
+        $prose = $input['reference_prose'] ?? '';
+        $keywordsInput = $input['keywords'] ?? '';
+
+        if (empty($slug) || empty($title) || empty($prose) || empty($keywordsInput)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'All fields are required.']);
+            exit;
+        }
+
+        // Parse keywords
+        $keywords = array_map('trim', explode(',', $keywordsInput));
+        $keywords = array_filter($keywords); // remove empty elements
+
+        $refPath = PROJECT_ROOT . '/app/config/ref_data/semantic_references.json';
+        $references = [];
+        if (file_exists($refPath)) {
+            $references = json_decode(file_get_contents($refPath), true) ?: [];
+        }
+
+        // Check if already registered
+        if (isset($references[$slug])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Subtopic already registered as reference.']);
+            exit;
+        }
+
+        // Add the reference
+        $references[$slug] = [
+            'title' => $title,
+            'reference_prose' => $prose,
+            'keywords' => array_values($keywords)
+        ];
+
+        // Save back to JSON file
+        if (file_put_contents($refPath, json_encode($references, JSON_PRETTY_PRINT)) === false) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Failed to write to database file.']);
+            exit;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
         exit;
     }
 
@@ -784,6 +884,7 @@ class PhysicsController
                 'slug' => $slug,
                 'title' => $subtopic['title'] ?? '',
                 'content' => $subtopic['content'] ?? '',
+                'snippet' => $subtopic['snippet'] ?? '',
                 'parents' => $parent ? [$parent] : [],
                 'identities' => $identities
             ]

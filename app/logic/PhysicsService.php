@@ -16,6 +16,14 @@ class PhysicsService
     }
 
     /**
+     * Clears the memory cache of physics content, forcing a reload from disk.
+     */
+    public function clearCache(): void
+    {
+        $this->physicsContent = null;
+    }
+
+    /**
      * Toggles or queries the active preview state.
      */
     public function isPreviewActive(): bool
@@ -333,6 +341,10 @@ class PhysicsService
         $data = is_object($row) && method_exists($row, 'getData') ? $row->getData() : (array) $row;
         $f_ids = !empty($data['formula_data']) ? json_decode($data['formula_data'], true) : [];
         
+        if (isset($data['verification']) && is_string($data['verification'])) {
+            $data['verification'] = json_decode($data['verification'], true);
+        }
+
         $data['formulas'] = [];
         if (!empty($f_ids)) {
             foreach ($f_ids as $f_id) {
@@ -358,8 +370,8 @@ class PhysicsService
         $primaryParent = !empty($data['parents']) ? $data['parents'][0] : '';
 
         $this->app->db()->runQuery(
-            "INSERT INTO subtopics (slug, parent_topic, title, content, snippet, snippet_svg, hero_math, equations, breakdowns, formula_data, parents, standard) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            "INSERT INTO subtopics (slug, parent_topic, title, content, snippet, snippet_svg, hero_math, equations, breakdowns, formula_data, parents, standard, verification) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE 
                 parent_topic = VALUES(parent_topic), 
                 title = VALUES(title), 
@@ -371,7 +383,8 @@ class PhysicsService
                 breakdowns = VALUES(breakdowns),
                 formula_data = VALUES(formula_data), 
                 parents = VALUES(parents), 
-                standard = VALUES(standard)",
+                standard = VALUES(standard),
+                verification = VALUES(verification)",
             [
                 $slug,
                 $primaryParent,
@@ -384,7 +397,8 @@ class PhysicsService
                 json_encode($data['breakdowns'] ?? []),
                 json_encode($data['formula_ids'] ?? []),
                 json_encode($data['parents'] ?? []),
-                $data['standard'] ?? 'legacy'
+                $data['standard'] ?? 'legacy',
+                !empty($data['verification']) ? json_encode($data['verification']) : null
             ]
         );
     }

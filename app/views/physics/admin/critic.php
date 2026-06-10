@@ -82,19 +82,21 @@
                                     <?php endif; ?>
                                 </td>
                                 <td style="padding: 12px 8px; text-align: center;">
-                                    <?php if ($isVerified): ?>
-                                        <span class="badge badge-pass" style="background: rgba(85,255,85,0.1); color: #55ff55; border: 1px solid rgba(85,255,85,0.2); padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Verified</span>
-                                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; font-family: monospace;">Score: <?= number_format(is_array($verification) ? ($verification['consensus_score'] ?? 0.0) : 0.0, 2) ?></div>
-                                    <?php else: ?>
-                                        <span class="badge badge-warn" style="background: rgba(255,153,0,0.1); color: #ff9900; border: 1px solid rgba(255,153,0,0.2); padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Pending</span>
-                                    <?php endif; ?>
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                                        <?php if ($isVerified): ?>
+                                            <span class="badge badge-pass" style="background: rgba(85,255,85,0.1); color: #55ff55; border: 1px solid rgba(85,255,85,0.2); padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Verified</span>
+                                            <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">Score: <?= number_format(is_array($verification) ? ($verification['consensus_score'] ?? 0.0) : 0.0, 2) ?></div>
+                                        <?php else: ?>
+                                            <span class="badge badge-warn" style="background: rgba(255,153,0,0.1); color: #ff9900; border: 1px solid rgba(255,153,0,0.2); padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Pending</span>
+                                        <?php endif; ?>
+                                        <button class="btn-action btn-critic-audit" data-slug="<?= $slug ?>" title="Run dry-run consensus check" style="margin-top: 4px;">🔍 Audit</button>
+                                    </div>
                                 </td>
                                 <td style="padding: 12px 8px; text-align: right;">
-                                    <div style="display: flex; justify-content: flex-end; gap: 8px;">
-                                        <button class="btn-action btn-critic-audit" data-slug="<?= $slug ?>" title="Run dry-run consensus check">🔍 Audit</button>
-                                        <button class="btn-action primary btn-critic-stamp" data-slug="<?= $slug ?>" title="Stamp verified DOIs into JSON shard">📖 Stamp</button>
+                                    <div style="display: flex; justify-content: flex-end; gap: 6px;">
+                                        <button class="btn-action primary btn-critic-stamp" data-slug="<?= $slug ?>" title="Stamp verified DOIs into JSON shard" style="padding: 3px 6px; font-size: 0.75rem; border-radius: 4px;">📖 Stamp</button>
                                         <?php if ($isVerified): ?>
-                                            <button class="btn-action btn-critic-edit" data-slug="<?= $slug ?>" data-title="<?= htmlspecialchars($ref['title']) ?>" data-citations='<?= htmlspecialchars(json_encode($citations), ENT_QUOTES, 'UTF-8') ?>' title="Edit verified citations" style="background: rgba(0, 191, 255, 0.1); border-color: rgba(0, 191, 255, 0.2);">✏️ Edit</button>
+                                            <button class="btn-action btn-critic-edit" data-slug="<?= $slug ?>" data-title="<?= htmlspecialchars($ref['title']) ?>" data-citations='<?= htmlspecialchars(json_encode($citations), ENT_QUOTES, 'UTF-8') ?>' title="Edit verified citations" style="background: rgba(0, 191, 255, 0.1); border-color: rgba(0, 191, 255, 0.2); padding: 3px 6px; font-size: 0.75rem; border-radius: 4px;">✏️ Edit</button>
                                         <?php endif; ?>
                                     </div>
                                 </td>
@@ -171,14 +173,16 @@ body.physics-lab main.container {
 }
 
 .btn-action.primary {
-    background: var(--accent-default);
-    border-color: var(--accent-default);
+    background: #00bfff;
+    border-color: #00bfff;
+    color: #000000;
     font-weight: 600;
 }
 
 .btn-action.primary:hover {
-    background: #00bfff;
-    border-color: #00bfff;
+    background: #007acc;
+    border-color: #007acc;
+    color: #e6b800;
 }
 
 .terminal-box {

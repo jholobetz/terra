@@ -183,6 +183,118 @@ class MultiAgentCritic:
         except Exception:
             return []
 
+    def query_inspire_hep(self, query, max_results=3):
+        """Queries the official INSPIRE-HEP REST API."""
+        import time
+        # Enforce polite rate limit throttling
+        time.sleep(2.0)
+        encoded_query = urllib.parse.quote(f"find t {query}")
+        url = f"https://inspirehep.net/api/literature?q={encoded_query}&size={max_results}"
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'PhysicsLabCritic/2.0 (admin@physicslab.org; https://physicslab.org)'})
+            with urllib.request.urlopen(req, timeout=5) as response:
+                data = json.loads(response.read().decode('utf-8'))
+            
+            results = []
+            for hit in data.get("hits", {}).get("hits", []):
+                metadata = hit.get("metadata", {})
+                title = metadata.get("titles", [{"title": "Unknown Title"}])[0].get("title", "Unknown Title")
+                authors = [a.get("full_name", "") for a in metadata.get("authors", [])]
+                doi = metadata.get("dois", [{"value": ""}])[0].get("value") if metadata.get("dois") else ""
+                
+                # Fetch abstract
+                abstracts = metadata.get("abstracts", [])
+                abstract = abstracts[0].get("value", "") if abstracts else ""
+                if abstract:
+                    abstract = re.sub(r'<[^>]+>', ' ', abstract).strip()
+                else:
+                    abstract = f"High-Energy Physics publication '{title}' by {', '.join(authors[:3])}."
+                
+                # Retrieve URL
+                arxiv_value = ""
+                if metadata.get("arxiv_eprints"):
+                    arxiv_value = metadata.get("arxiv_eprints")[0].get("value", "")
+                url_str = f"https://doi.org/{doi}" if doi else (f"https://arxiv.org/abs/{arxiv_value}" if arxiv_value else "")
+                
+                results.append({
+                    "title": title,
+                    "authors": authors,
+                    "doi": doi,
+                    "abstract": abstract,
+                    "url": url_str
+                })
+            return results
+        except Exception:
+            return []
+
+    def query_semantic_scholar(self, query, max_results=3):
+        """Queries Semantic Scholar's open paper search API."""
+        import time
+        # Enforce polite rate limit throttling
+        time.sleep(1.0)
+        encoded_query = urllib.parse.quote(query)
+        url = f"https://api.semanticscholar.org/graph/v1/paper/search?query={encoded_query}&limit={max_results}&fields=title,authors,abstract,externalIds,url"
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'PhysicsLabCritic/2.0 (admin@physicslab.org; https://physicslab.org)'})
+            with urllib.request.urlopen(req, timeout=5) as response:
+                data = json.loads(response.read().decode('utf-8'))
+            
+            results = []
+            for item in data.get("data", []):
+                title = item.get("title", "Unknown Title")
+                doi = item.get("externalIds", {}).get("DOI", "")
+                authors = [a.get("name", "") for a in item.get("authors", [])]
+                abstract = item.get("abstract", "") or ""
+                if abstract:
+                    abstract = re.sub(r'<[^>]+>', ' ', abstract).strip()
+                else:
+                    abstract = f"Academic publication '{title}' by {', '.join(authors[:3])}."
+                
+                results.append({
+                    "title": title,
+                    "authors": authors,
+                    "doi": doi,
+                    "abstract": abstract,
+                    "url": item.get("url", f"https://doi.org/{doi}" if doi else "")
+                })
+            return results
+        except Exception:
+            return []
+
+    def query_google_books(self, query, max_results=3):
+        """Queries Google Books API for textbook references."""
+        import time
+        # Enforce polite rate limit throttling
+        time.sleep(1.0)
+        encoded_query = urllib.parse.quote(query)
+        url = f"https://www.googleapis.com/books/v1/volumes?q={encoded_query}&maxResults={max_results}"
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'PhysicsLabCritic/2.0 (admin@physicslab.org; https://physicslab.org)'})
+            with urllib.request.urlopen(req, timeout=5) as response:
+                data = json.loads(response.read().decode('utf-8'))
+            
+            results = []
+            for item in data.get("items", []):
+                volume = item.get("volumeInfo", {})
+                title = volume.get("title", "Unknown Title")
+                authors = volume.get("authors", [])
+                description = volume.get("description", "")
+                if description:
+                    description = re.sub(r'<[^>]+>', ' ', description).strip()
+                else:
+                    description = f"Physics monograph/textbook '{title}' by {', '.join(authors[:3])}."
+                
+                results.append({
+                    "title": title,
+                    "authors": authors,
+                    "doi": "",
+                    "abstract": description,
+                    "url": volume.get("infoLink", "")
+                })
+            return results
+        except Exception:
+            return []
+
     def get_literature(self, slug, title, claims):
         """Attempts live queries, falls back to cache."""
         # 1. First check cache
@@ -190,7 +302,6 @@ class MultiAgentCritic:
             return self.literature_cache[slug]
 
         # 2. Try online queries if we have internet / sandbox bypassed
-        print(f"📡 Querying external APIs (arXiv + Crossref) for [{slug}]...")
         # Formulate query from slug title and claim entities
         search_query = title
         if claims:
@@ -199,21 +310,54 @@ class MultiAgentCritic:
             if words:
                 search_query += " " + " ".join(words[:2])
 
+        shard_name = self.slug_shard_map.get(slug, "")
+        arxiv_results = []
+        crossref_results = []
+        inspire_hep_results = []
+        google_books_results = []
+        semantic_scholar_results = []
+
+        # Route to specialized services
+        if shard_name in ["standard-model.json", "quantum-physics.json"]:
+            print(f"📡 Querying specialized High Energy Physics API (INSPIRE-HEP) for [{slug}]...")
+            inspire_hep_results = self.query_inspire_hep(search_query)
+        elif shard_name in ["classical-mechanics.json"]:
+            print(f"📡 Querying Google Books API for textbook reference for [{slug}]...")
+            google_books_results = self.query_google_books(search_query)
+
+        # Always query standard APIs (arXiv + Crossref)
+        print(f"📡 Querying standard literature APIs (arXiv + Crossref) for [{slug}]...")
         arxiv_results = self.query_arxiv(search_query)
         crossref_results = self.query_crossref(search_query)
-        combined = arxiv_results + crossref_results
 
-        if combined:
+        combined = inspire_hep_results + google_books_results + arxiv_results + crossref_results
+
+        # If no results obtained yet, query Semantic Scholar fallback
+        if not combined:
+            print(f"📡 Querying fallback academic graph (Semantic Scholar) for [{slug}]...")
+            semantic_scholar_results = self.query_semantic_scholar(search_query)
+            combined = semantic_scholar_results
+
+        # Deduplicate based on title
+        seen_titles = set()
+        deduped = []
+        for paper in combined:
+            norm_title = paper["title"].lower().strip()
+            if norm_title not in seen_titles:
+                seen_titles.add(norm_title)
+                deduped.append(paper)
+
+        if deduped:
             # Save new results in cache to save tokens/requests next time
-            self.literature_cache[slug] = combined
+            self.literature_cache[slug] = deduped
             try:
                 with open(self.cache_path, "w") as f:
                     json.dump(self.literature_cache, f, indent=2)
             except Exception:
                 pass
-            return combined
+            return deduped
         
-        # If both fail and not in cache, return empty
+        # If all fail and not in cache, return empty
         return []
 
     # Agent 3: Consensus Judge Agent

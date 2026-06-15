@@ -144,6 +144,7 @@ def test_subjective_subtopic_lowers_density_target():
     s = score_subtopic("philosophical-concept", sub, category="philosophy-of-physics")
     assert s["is_subjective"] is True
     assert s["density_target"] == 30
+    assert s["word_target"] == 500
 
 
 def test_lexical_subjectivity_detection():

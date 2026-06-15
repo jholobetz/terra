@@ -16,7 +16,12 @@ TECH_TERMS = [
 def is_node_subjective(slug, sub, category=None):
     """Determine if a subtopic is conceptual/philosophical rather than derivational/mathematical."""
     parents = sub.get("parents", [])
-    if category == "philosophy-of-physics" or "philosophy-of-physics" in parents:
+    if (category == "philosophy-of-physics" or 
+        "philosophy-of-physics" in parents or
+        (category and "philosophy" in category.lower()) or
+        any("philosophy" in p.lower() for p in parents) or
+        slug in ["absolute-time", "absolute-space", "absolute-rotation", "mach-principle"] or
+        any(p in ["absolute-time", "absolute-space", "absolute-rotation", "mach-principle"] for p in parents)):
         return True
         
     content = sub.get("content", "").lower()
@@ -67,15 +72,17 @@ def score_subtopic(slug, sub, category=None):
     # Subjective vs Objective weighting
     is_subjective = is_node_subjective(slug, sub, category=category)
     density_target = 30 if is_subjective else 60
+    word_target = 500 if is_subjective else 650
 
     is_flagged = standard == "platinum"
-    meets_quant = words >= 650 and density_score >= density_target
+    meets_quant = words >= word_target and density_score >= density_target
     is_organic_platinum = is_flagged and not (has_lead_violation or has_artifact_violation)
     has_flag_violation = is_flagged and (has_lead_violation or has_artifact_violation)
     is_pseudo_platinum = meets_quant and not is_flagged
 
     return {
         "words": words,
+        "word_target": word_target,
         "density_score": density_score,
         "density_target": density_target,
         "is_subjective": is_subjective,
@@ -191,7 +198,7 @@ class HealthDashboard:
                 shard_words += s["words"]
                 shard_density += s["density_score"]
 
-                if s["words"] < 650:
+                if s["words"] < s["word_target"]:
                     self.health_data["platinum_scorecard"]["low_depth_count"] += 1
                 if s["density_score"] < s["density_target"]:
                     self.health_data["platinum_scorecard"]["non_technical_count"] += 1

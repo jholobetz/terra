@@ -49,7 +49,7 @@ def test_scorecard_reconciliation_invariant():
             cat = slug_to_cat.get(slug)
             stats = score_subtopic(slug, sub, category=cat)
             
-            is_low_depth = stats["words"] < 650
+            is_low_depth = stats["words"] < stats["word_target"]
             is_low_density = stats["density_score"] < stats["density_target"]
             
             if is_low_depth:

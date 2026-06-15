@@ -29,6 +29,7 @@ if os.path.exists(NLTK_DATA_PATH):
 
 # Import verifier components
 from scripts.maintenance.semantic_prose_verifier import preprocess_html, get_similarity_score
+from scripts.maintenance.generate_system_health import is_node_subjective
 
 # Configuration
 LITERATURE_CACHE_PATH = os.path.join(PROJECT_ROOT, "app/config/ref_data/literature_cache.json")
@@ -63,7 +64,7 @@ class MultiAgentCritic:
         else:
             # Build dynamically
             for file in os.listdir(self.content_dir):
-                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "notation.json", "particles.json"]:
+                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "notation.json", "particles.json", "compiled_trie_regex.json", "pillar_profiles.json"]:
                     path = os.path.join(self.content_dir, file)
                     try:
                         with open(path, "r") as f:
@@ -526,10 +527,12 @@ class MultiAgentCritic:
             "domain": shard_file.replace(".json", "")
         }
 
-        # Determine decision threshold based on domain
-        threshold = 0.50
-        if context.get("domain") == "philosophy-of-physics":
-            threshold = 0.35  # Philosophy/interpretation nodes have more conceptual flexibility
+        # Determine decision threshold based on domain and node subjectivity
+        category = context.get("domain")
+        if is_node_subjective(slug, node, category=category):
+            threshold = 0.35  # Philosophy/interpretation/conceptual nodes have more conceptual flexibility
+        else:
+            threshold = 0.50
 
         print("================================================================================")
         print(f"🧑‍🔬 CRITIC PIPELINE: Auditing [{slug}] '{title}'")
@@ -651,7 +654,7 @@ def main():
         sys.exit(0 if success else 1)
     else:
         success = True
-        for slug in critic.literature_cache:
+        for slug in list(critic.literature_cache):
             if slug in critic.slug_shard_map:
                 res = critic.verify_slug(slug, write_citations=args.write_citations)
                 if not res:

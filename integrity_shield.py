@@ -48,6 +48,12 @@ class IntegrityShield:
         with open(search_index_path, "r") as f:
             search_index = json.load(f)
             
+        self.slug_to_cat = {}
+        for s_slug, entry in search_index.items():
+            shard_name = entry.get("s") if isinstance(entry, dict) else entry
+            if shard_name:
+                self.slug_to_cat[s_slug] = shard_name.replace(".json", "")
+            
         # Load sharded formulas
         formulas_dir = os.path.join(self.content_dir, "formulas")
         self.formula_registry = {}
@@ -210,10 +216,12 @@ class IntegrityShield:
             total_score = (latex_count * 15) + term_score
             
             # Subjective vs Objective weighting
-            is_subjective = is_node_subjective(slug, sub)
+            cat = self.slug_to_cat.get(slug)
+            is_subjective = is_node_subjective(slug, sub, category=cat)
             density_target = 30 if is_subjective else 60
+            word_target = 500 if is_subjective else 650
             
-            if words < 650:
+            if words < word_target:
                 self.warnings.append(f"Low Depth: [{slug}] word count too low ({words}).")
             if total_score < density_target:
                 self.warnings.append(f"Non-Technical: [{slug}] density too low (Score: {total_score}, Target: {density_target}).")

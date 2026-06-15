@@ -83,8 +83,8 @@ def main():
 
             stats = score_subtopic(slug, sub, category=slug_to_cat.get(slug))
             
-            # Substandard if words < 650 or density < density_target
-            is_low_depth = stats["words"] < 650
+            # Substandard if words < word_target or density < density_target
+            is_low_depth = stats["words"] < stats["word_target"]
             is_low_density = stats["density_score"] < stats["density_target"]
 
             if is_low_depth or is_low_density:
@@ -94,6 +94,7 @@ def main():
                     "shard": shard_name,
                     "parent_hub": slug_to_cat.get(slug, shard_name.replace(".json", "")),
                     "words": stats["words"],
+                    "word_target": stats["word_target"],
                     "density": stats["density_score"],
                     "density_target": stats["density_target"],
                     "is_low_depth": is_low_depth,
@@ -103,16 +104,16 @@ def main():
 
     # Sort substandard nodes by a combined penalty score:
     # Lower word count and lower density get prioritized.
-    # We normalize them: words/650 + density/density_target (lower is worse)
+    # We normalize them: words/word_target + density/density_target (lower is worse)
     def priority_score(node):
-        w_ratio = min(1.0, node["words"] / 650.0)
+        w_ratio = min(1.0, node["words"] / float(node["word_target"]))
         d_ratio = min(1.0, node["density"] / float(node["density_target"]))
         return w_ratio + d_ratio
 
     substandard_nodes.sort(key=priority_score)
 
     total_substandard = len(substandard_nodes)
-    print(f"Found {total_substandard} substandard platinum nodes in total (either < 650 words or < density_target).")
+    print(f"Found {total_substandard} substandard platinum nodes in total (either < word_target or < density_target).")
 
     if args.list or (not args.slug and not args.count):
         # List mode
@@ -124,7 +125,7 @@ def main():
         for i, node in enumerate(substandard_nodes[:20]):
             defects = []
             if node["is_low_depth"]:
-                defects.append(f"Low Depth ({node['words']}/650)")
+                defects.append(f"Low Depth ({node['words']}/{node['word_target']})")
             if node["is_low_density"]:
                 defects.append(f"Low Density ({node['density']}/{node['density_target']})")
             defects_str = ", ".join(defects)
@@ -184,7 +185,7 @@ def main():
         }
         
         print(f"  * Scaffolded: \033[1m{slug}\033[0m")
-        print(f"      Current Word Count: {node['words']} (Needs {650 - node['words']}+ words to reach 650)")
+        print(f"      Current Word Count: {node['words']} (Needs {node['word_target'] - node['words']}+ words to reach {node['word_target']})")
         print(f"      Current Density: {node['density']} (Needs to reach {node['density_target']})")
 
     with open(PAYLOAD_PATH, "w") as f:

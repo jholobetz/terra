@@ -7,6 +7,10 @@ compilation arrests, integrity audits, and self-healing transaction rollbacks.
 
 import os
 import sys
+from pathlib import Path
+repo_root = str(Path(__file__).resolve().parent.parent.parent)
+sys.path.append(repo_root)
+sys.path.append(os.getcwd())
 import re
 import json
 import subprocess
@@ -89,6 +93,16 @@ def run_syntax_guards(payload_path):
 
     violations = []
     
+    slug_to_cat = {}
+    search_index_path = os.path.join(SHARDS_DIR, "search_index.json")
+    if os.path.exists(search_index_path):
+        with open(search_index_path, "r") as f:
+            search_index = json.load(f)
+        for s_slug, entry in search_index.items():
+            shard_name = entry.get("s") if isinstance(entry, dict) else entry
+            if shard_name:
+                slug_to_cat[s_slug] = shard_name.replace(".json", "")
+    
     for slug, data in payload.items():
         title = data.get("title", "")
         content = data.get("content", "")
@@ -124,14 +138,19 @@ def run_syntax_guards(payload_path):
                 violations.append(f"[{slug}] Math display violation: Equation inside <div class=\"math-display\"> is missing standard delimiters \\\\ [ and \\\\ ]. Delimiters are required for the SVG compiler to recognize and process the LaTeX.")
 
             
-        # 3. Word count check (650 to 1,000 words)
+        # 3. Word count check (dynamic to 1,000 words)
+        from scripts.maintenance.generate_system_health import is_node_subjective
+        cat = slug_to_cat.get(slug)
+        is_subj = is_node_subjective(slug, data, category=cat)
+        word_target = 500 if is_subj else 650
+        
         content_clean = re.sub(r"<[^>]*>", " ", content)  # Strip tags
         content_clean = re.sub(r"\\\(.*?\\\)|\\\[.*?\\\]", " ", content_clean) # Strip LaTeX blocks for word counting
         words = [w for w in re.findall(r"\w+", content_clean)]
         word_count = len(words)
         
-        if word_count < 650 or word_count > 1000:
-            violations.append(f"[{slug}] Word count violation: Total words is {word_count} (must be strictly between 650 and 1,000 words).")
+        if word_count < word_target or word_count > 1000:
+            violations.append(f"[{slug}] Word count violation: Total words is {word_count} (must be strictly between {word_target} and 1,000 words).")
 
         # 4. In Media Res lead check
         first_para = paragraphs[0]

@@ -63,12 +63,13 @@ def main():
                 "shard": shard_name,
                 "category": cat_title,
                 "words": stats["words"],
+                "word_target": stats["word_target"],
                 "density": stats["density_score"],
                 "has_lead_violation": stats["has_lead_violation"],
                 "has_artifact_violation": stats["has_artifact_violation"]
             }
 
-            if stats["words"] < 650:
+            if stats["words"] < stats["word_target"]:
                 low_depth_subtopics.append(sub_info)
             
             if stats["density_score"] < stats["density_target"]:
@@ -94,17 +95,17 @@ def main():
         
         f.write("## Summary Statistics\n\n")
         f.write(f"- **Total Subtopics Scanned:** {len(orch.data['subtopics'])}\n")
-        f.write(f"- **Low-Depth Subtopics (< 650 words):** {len(low_depth_subtopics)}\n")
+        f.write(f"- **Low-Depth Subtopics:** {len(low_depth_subtopics)}\n")
         f.write(f"- **Critically Low Density (< 30 score):** {len(low_density_critical)}\n")
         f.write(f"- **Sub-standard Density (30 - 59 score):** {len(low_density_substandard)}\n")
         f.write(f"- **Qualitative Violations (Lead/List gates):** {len(qualitative_violations)}\n\n")
 
-        f.write("## 1. Low-Depth Subtopics (< 650 words)\n")
-        f.write("These subtopics fail the quantitative depth threshold. A minimum of 650 words of rich technical prose is required.\n\n")
-        f.write("| Subtopic Title / Slug | Shard | Category | Word Count |\n")
+        f.write("## 1. Low-Depth Subtopics\n")
+        f.write("These subtopics fail the quantitative depth threshold. A minimum of 650 words (500 for subjective/philosophical nodes) of rich technical prose is required.\n\n")
+        f.write("| Subtopic Title / Slug | Shard | Category | Word Count / Target |\n")
         f.write("| --- | --- | --- | --- |\n")
         for sub in low_depth_subtopics:
-            f.write(f"| [{sub['title']}](file://{os.path.abspath(content_dir)}/{sub['shard']}) <br>`{sub['slug']}` | `{sub['shard']}` | {sub['category']} | **{sub['words']}** |\n")
+            f.write(f"| [{sub['title']}](file://{os.path.abspath(content_dir)}/{sub['shard']}) <br>`{sub['slug']}` | `{sub['shard']}` | {sub['category']} | **{sub['words']}** / {sub['word_target']} |\n")
         f.write("\n")
 
         f.write("## 2. Critically Low Technical Density (< 30 score)\n")

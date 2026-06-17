@@ -328,6 +328,7 @@ class PhysicsService
                 foreach ($data['formula_ids'] as $f_id) {
                     $formula = $this->loadFormula($f_id);
                     if ($formula) {
+                        $formula['id'] = $f_id;
                         $data['formulas'][] = $formula;
                     }
                 }
@@ -348,10 +349,11 @@ class PhysicsService
         $data['formulas'] = [];
         if (!empty($f_ids)) {
             foreach ($f_ids as $f_id) {
-                $formula = $this->loadFormula($f_id);
-                if ($formula) {
-                    $data['formulas'][] = $formula;
-                }
+                 $formula = $this->loadFormula($f_id);
+                 if ($formula) {
+                     $formula['id'] = $f_id;
+                     $data['formulas'][] = $formula;
+                 }
             }
         }
 
@@ -488,6 +490,94 @@ class PhysicsService
         }
 
         return array_values($orphans);
+    }
+
+    /**
+     * Finds all subtopics that reference a specific formula ID.
+     */
+    public function getSubtopicsByFormula(string $formulaId): array
+    {
+        $allSubtopics = $this->fetchAllData('subtopics');
+        $matched = [];
+        foreach ($allSubtopics as $subtopic) {
+            $fIds = [];
+            if (isset($subtopic['formula_data'])) {
+                // From DB: JSON string or array
+                $fIds = is_string($subtopic['formula_data']) 
+                    ? (json_decode($subtopic['formula_data'], true) ?: []) 
+                    : (array) $subtopic['formula_data'];
+            } else if (isset($subtopic['formula_ids'])) {
+                // From Shard: Array
+                $fIds = $subtopic['formula_ids'];
+            }
+            
+            if (in_array($formulaId, $fIds)) {
+                $matched[] = [
+                    'slug' => $subtopic['slug'] ?? '',
+                    'title' => $subtopic['title'] ?? 'Untitled Subtopic'
+                ];
+            }
+        }
+        return $matched;
+    }
+
+    /**
+     * Searches for a formula entry by matching its LaTeX equation.
+     */
+    public function searchFormulaByLatex(string $latex): ?array
+    {
+        $targetLatex = $this->normalizeLatex($latex);
+        if (empty($targetLatex)) return null;
+
+        $baseDir = PROJECT_ROOT . '/app/config/content/formulas/';
+        $files = glob($baseDir . 'shard_*.json');
+        
+        foreach ($files as $file) {
+            $content = json_decode(file_get_contents($file), true) ?: [];
+            foreach ($content as $fId => $formula) {
+                $eq = $formula['equation'] ?? '';
+                $cleanEq = $eq;
+                if (strpos($eq, '<svg') === 0) {
+                    if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
+                        $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
+                    }
+                }
+                
+                if ($this->normalizeLatex($cleanEq) === $targetLatex) {
+                    $formula['id'] = $fId;
+                    return $formula;
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Normalizes LaTeX mathematical strings to ignore white spaces, styles, and braces.
+     */
+    private function normalizeLatex(string $latex): string
+    {
+        $normalized = $latex;
+        // Strip delimiters
+        $normalized = preg_replace('/^\\\\\\(/', '', $normalized);
+        $normalized = preg_replace('/\\\\\\)$/', '', $normalized);
+        $normalized = preg_replace('/^\$\$/', '', $normalized);
+        $normalized = preg_replace('/\$\$$/', '', $normalized);
+        $normalized = preg_replace('/^\$/', '', $normalized);
+        $normalized = preg_replace('/\$$/', '', $normalized);
+        
+        // Strip visual styling commands like \vec, \mathbf, \hat, \mathrm, \cssId
+        $normalized = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\\{([^}]+)\\}/', '$2', $normalized);
+        $normalized = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\\\[a-zA-Z]+|[a-zA-Z0-9])/', '$2', $normalized);
+        
+        // Strip MathJax \cssId{...}{...} wraps to compare only pure math
+        $normalized = preg_replace('/\\\\cssId\\{[^}]+\\}\\{([^}]+)\\}/', '$1', $normalized);
+        
+        // Strip whitespaces, backslashes, and braces
+        $normalized = preg_replace('/[^a-zA-Z0-9_\\^\\-=+\\/*()\\[\\]<>\.,;?]/', '', $normalized);
+        
+        return strtolower($normalized);
     }
 }
 

@@ -44,6 +44,8 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/anthropic-tuner', [ $app->physicsController(), 'anthropicTuner' ]);
 		$router->get('/genealogy-explorer', [ $app->physicsController(), 'genealogyExplorer' ]);
 		$router->get('/lab-tools', [ $app->physicsController(), 'labTools' ]);
+		$router->get('/equation-explainer', [ $app->physicsController(), 'equationExplainer' ]);
+		$router->get('/api/explain', [ $app->physicsController(), 'apiExplain' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 
 		// Admin & Developer Control Panel Routes

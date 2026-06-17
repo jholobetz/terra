@@ -170,6 +170,17 @@ const MathJaxInspector = {
                     <span class="btn-text">Copy Plain Text</span>
                 </button>
             </div>
+            <div class="mathjax-inspector-section" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; margin-top: 2px;">
+                <button class="mathjax-inspector-btn" id="mathjax-inspector-explain-btn" style="background: linear-gradient(135deg, rgba(100, 255, 218, 0.15) 0%, rgba(0, 210, 255, 0.15) 100%); border-color: rgba(100, 255, 218, 0.45);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <line x1="11" y1="8" x2="11" y2="14"></line>
+                        <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                    <span class="btn-text">Explain Equation 🔬</span>
+                </button>
+            </div>
         `;
         document.body.appendChild(tooltip);
         this.tooltipEl = tooltip;
@@ -194,6 +205,26 @@ const MathJaxInspector = {
         copyTextBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             this.copyPlainText();
+        });
+
+        // Setup Explain button action
+        const explainBtn = tooltip.querySelector('#mathjax-inspector-explain-btn');
+        explainBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!this.activeElement) return;
+            
+            // Check if there is an associated formula ID on a parent container
+            const container = this.activeElement.closest('[data-formula-id]');
+            const formulaId = container ? container.getAttribute('data-formula-id') : null;
+            
+            if (formulaId) {
+                window.location.href = '/physics/equation-explainer?id=' + encodeURIComponent(formulaId);
+            } else {
+                const latex = this.getLatexForElement(this.activeElement);
+                if (latex) {
+                    window.location.href = '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+                }
+            }
         });
     },
 

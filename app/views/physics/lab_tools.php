@@ -216,6 +216,25 @@
             <p>Run real-time numerical solvers for mechanics, waves, fields, thermodynamics, and quantum systems directly in your browser.</p>
             <span class="read-more">Explore Simulations &rarr;</span>
         </a>
+
+        <!-- Card 9: Equation Explainer -->
+        <a href="/physics/equation-explainer" class="topic-card card-quantum" style="--card-accent: var(--accent-quantum);">
+            <div class="card-watermark">
+                <svg viewBox="0 0 100 100">
+                    <text x="50" y="65" font-family="Space Grotesk, serif" font-size="32" font-style="italic" font-weight="bold" fill="currentColor" text-anchor="middle">🔬</text>
+                </svg>
+            </div>
+            <div class="topic-card-header">
+                <svg viewBox="0 0 100 100" class="card-icon" style="color: var(--accent-quantum);">
+                    <circle cx="45" cy="45" r="20" stroke="var(--accent-quantum)" stroke-width="1.8" fill="none" opacity="0.8"/>
+                    <line x1="59" y1="59" x2="85" y2="85" stroke="var(--accent-quantum)" stroke-width="3" stroke-linecap="round"/>
+                    <text x="45" y="52" font-family="Space Grotesk, serif" font-size="20" font-weight="bold" fill="currentColor" text-anchor="middle">Ψ</text>
+                </svg>
+                <h3>Equation Explainer</h3>
+            </div>
+            <p>Deconstruct LaTeX physics equations in real-time. Trace mathematical symmetries, examine boundary limits, and analyze semantic variables.</p>
+            <span class="read-more">Launch Explainer &rarr;</span>
+        </a>
     </section>
 
     <!-- Reference Directories Section -->

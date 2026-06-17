@@ -21,7 +21,7 @@ if ($hasFormulas): ?>
                         <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
                     </div>
 
-                    <div class="formula-math-display" style="padding: 30px 20px; text-align: center; background: #112240;">
+                    <div class="formula-math-display" data-formula-id="<?= htmlspecialchars($f['id'] ?? '') ?>" style="padding: 30px 20px; text-align: center; background: #112240;">
                         <div class="math-content" style="font-size: 1.4rem; color: #FFD700;">
                             <?php if (strpos($f['equation'], '<svg') === 0): ?>
                                 <?= $f['equation'] ?>

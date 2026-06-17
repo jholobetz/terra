@@ -125,6 +125,60 @@ class PhysicsController
     }
 
     /**
+     * View action rendering the interactive Equation Explainer.
+     */
+    public function equationExplainer()
+    {
+        $id = $this->app->request()->query['id'] ?? '';
+        $latex = $this->app->request()->query['latex'] ?? '';
+        
+        $formula = null;
+        $subtopics = [];
+        
+        if (!empty($id)) {
+            $formula = $this->service()->loadFormula($id);
+            if ($formula) {
+                $formula['id'] = $id;
+                $subtopics = $this->service()->getSubtopicsByFormula($id);
+            }
+        } elseif (!empty($latex)) {
+            $formula = $this->service()->searchFormulaByLatex($latex);
+            if ($formula) {
+                $subtopics = $this->service()->getSubtopicsByFormula($formula['id']);
+            }
+        }
+        
+        $this->renderWithLayout('physics/equation_explainer', [
+            'title' => 'Interactive Equation Explainer',
+            'id' => $id,
+            'latex' => $latex,
+            'formula' => $formula,
+            'subtopics' => $subtopics
+        ]);
+    }
+
+    /**
+     * REST Action matching user-submitted raw LaTeX to a database formula.
+     */
+    public function apiExplain()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        
+        $latex = $this->app->request()->query['latex'] ?? '';
+        if (empty($latex)) {
+            echo json_encode(['success' => false, 'error' => 'No LaTeX provided.']);
+            return;
+        }
+        
+        $formula = $this->service()->searchFormulaByLatex($latex);
+        if ($formula) {
+            echo json_encode(['success' => true, 'formula' => $formula]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'No matching formula found in shards.']);
+        }
+    }
+
+    /**
      * View action rendering the interactive Noether's Vault (Symmetry-to-Conservation Mapping).
      */
     public function noethersVault()

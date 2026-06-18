@@ -213,18 +213,17 @@ const MathJaxInspector = {
             e.stopPropagation();
             if (!this.activeElement) return;
             
-            // Check if there is an associated formula ID on a parent container
-            const container = this.activeElement.closest('[data-formula-id]');
-            const formulaId = container ? container.getAttribute('data-formula-id') : null;
-            
-            const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
-            if (formulaId) {
-                window.location.href = baseUrl + '/physics/equation-explainer?id=' + encodeURIComponent(formulaId);
-            } else {
-                const latex = this.getLatexForElement(this.activeElement);
-                if (latex) {
-                    window.location.href = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+            const latex = this.getLatexForElement(this.activeElement);
+            if (latex) {
+                const container = this.activeElement.closest('[data-formula-id]');
+                const formulaId = container ? container.getAttribute('data-formula-id') : null;
+                const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
+                
+                let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+                if (formulaId) {
+                    url += '&id=' + encodeURIComponent(formulaId);
                 }
+                window.location.href = url;
             }
         });
     },

@@ -141,7 +141,9 @@ class PhysicsController
                 $formula['id'] = $id;
                 $subtopics = $this->service()->getSubtopicsByFormula($id);
             }
-        } elseif (!empty($latex)) {
+        }
+        
+        if (!$formula && !empty($latex)) {
             $formula = $this->service()->searchFormulaByLatex($latex);
             if ($formula) {
                 $subtopics = $this->service()->getSubtopicsByFormula($formula['id']);

@@ -65,9 +65,9 @@ const EquationExplainer = {
             unit: 'J/K',
             desc: 'A physical constant relating the average relative kinetic energy of particles in a gas with the thermodynamic temperature.',
             alternatives: [
-                { name: 'Spring Constant', type: 'variable', unit: 'N/m', desc: 'The force constant representing the stiffness of a spring (Hooke's Law).' },
+                { name: 'Spring Constant', type: 'variable', unit: 'N/m', desc: 'The force constant representing the stiffness of a spring (Hooke\'s Law).' },
                 { name: 'Wave Vector', type: 'variable', unit: 'rad/m', desc: 'A vector indicating the direction and rate of space-phase variation of a wave.' },
-                { name: 'Thermal Conductivity', type: 'variable', unit: 'W/(m·K)', desc: 'The measure of a material's ability to conduct heat.' }
+                { name: 'Thermal Conductivity', type: 'variable', unit: 'W/(m·K)', desc: 'The measure of a material\'s ability to conduct heat.' }
             ]
         },
         'l': { name: 'Length / Angular Quantum Number', type: 'variable', unit: 'm', desc: 'The physical size of an object, or orbital angular momentum quantum number.' },
@@ -141,13 +141,13 @@ const EquationExplainer = {
         'W': { name: 'Work Done / Watt', type: 'variable', unit: 'J or W', desc: 'Energy transferred by a force acting over a distance, or SI unit of power.' },
         'X': { name: 'Reactance / General Coordinate', type: 'variable', unit: 'Ω or m', desc: 'Opposition of a circuit element to alternating current, or generic coordinate.' },
         'Y': {
-            name: 'Young's Modulus',
+            name: 'Young\'s Modulus',
             type: 'variable',
             unit: 'Pa',
             desc: 'The measure of tensile elasticity or stiffness of a solid material.',
             alternatives: [
                 { name: 'Weak Hypercharge', type: 'variable', unit: 'dimensionless', desc: 'The generator of the U(1) weak hypercharge gauge group.' },
-                { name: 'Spherical Harmonic', type: 'variable', unit: 'dimensionless', desc: 'Angular wavefunction solutions to Laplace's equation in spherical coordinates.' }
+                { name: 'Spherical Harmonic', type: 'variable', unit: 'dimensionless', desc: 'Angular wavefunction solutions to Laplace\'s equation in spherical coordinates.' }
             ]
         },
         'Z': { name: 'Atomic Number / Partition Function', type: 'variable', unit: 'dimensionless', desc: 'Protons in a nucleus, or the statistical sum over microstates.' },
@@ -275,7 +275,7 @@ const EquationExplainer = {
                 name: 'Spherical Harmonic', 
                 type: 'variable', 
                 unit: 'dimensionless', 
-                description: 'Angular wavefunction solutions to Laplace's equation in spherical coordinates.' 
+                description: 'Angular wavefunction solutions to Laplace\'s equation in spherical coordinates.' 
             };
         }
         
@@ -294,7 +294,7 @@ const EquationExplainer = {
         const SEMANTIC_CLUSTERS = [
             {
                 domain: 'thermodynamics',
-                indicators: ['P', 'V', 'n', 'R', 'S', 'Q', 'U', '\Delta', 'k_B'],
+                indicators: ['P', 'V', 'n', 'R', 'S', 'Q', 'U', '\\Delta', 'k_B'],
                 overrides: {
                     'T': { name: 'Temperature', type: 'variable', unit: 'K', description: 'Thermodynamic temperature scale measuring the average kinetic energy of the particles.' },
                     'k': { name: 'Boltzmann Constant', type: 'constant', unit: 'J/K', description: 'A physical constant relating the average kinetic energy of particles in a gas with the thermodynamic temperature.' },
@@ -304,22 +304,22 @@ const EquationExplainer = {
             },
             {
                 domain: 'harmonic_motion',
-                indicators: ['f', '\omega', '\nu', '\lambda', '\sin', '\cos', 'A'],
+                indicators: ['f', '\\omega', '\\nu', '\\lambda', '\\sin', '\\cos', 'A'],
                 overrides: {
                     'T': { name: 'Time Period', type: 'variable', unit: 's', description: 'The time taken for one complete cycle of a repeating wave or oscillation.' }
                 }
             },
             {
                 domain: 'dynamics',
-                indicators: ['F', 'm', 'a', '\theta', '\mu_s', 'g', 'N'],
+                indicators: ['F', 'm', 'a', '\\theta', '\\mu_s', 'g', 'N'],
                 overrides: {
                     'T': { name: 'Tension', type: 'variable', unit: 'N', description: 'The pulling force transmitted axially by means of a string, cable, or chain.' },
-                    'k': { name: 'Spring Constant', type: 'variable', unit: 'N/m', description: 'The force constant representing the stiffness of a spring (Hooke's Law).' }
+                    'k': { name: 'Spring Constant', type: 'variable', unit: 'N/m', description: 'The force constant representing the stiffness of a spring (Hooke\'s Law).' }
                 }
             },
             {
                 domain: 'gauge_theory',
-                indicators: ['D_\mu', 'g_s', 'W_\mu', 'B_\mu', '\tau^a', 'G_\mu^a', 'T^a', '\tau', 'Y', 'g', 'g''],
+                indicators: ['D_\\mu', 'g_s', 'W_\\mu', 'B_\\mu', '\\tau^a', 'G_\\mu^a', 'T^a', '\\tau', 'Y', 'g', 'g\''],
                 overrides: {
                     'T': { name: 'SU(3) Gauge Generator', type: 'variable', unit: 'dimensionless', description: 'Generators of the SU(3) color gauge group in quantum chromodynamics, typically represented by the Gell-Mann matrices.' },
                     'Y': { name: 'Weak Hypercharge', type: 'variable', unit: 'dimensionless', description: 'The generator of the U(1) weak hypercharge gauge group.' }

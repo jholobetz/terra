@@ -170,6 +170,5 @@ Here is a summary of the load-bearing scripts located in `scripts/maintenance/`:
 * **`generate_orphans_list.py`**: Identifies subtopics with 0 incoming links and writes reports to `subfiles/orphans.md` and `subfiles/orphans.json`.
 * **`sync_backlog.py`**: Performs real-time scanning of shard standards to sync the central tracking backlog and deduplicate slugs.
 * **`hallucination_shield.py`**: Audits LaTeX symbols in mathematical markup against plain-text anchor words to detect notation drift.
-* **`bootstrap_expansion.py`**: Scaffolds template HTML and identity files for draft expansion (standard or batch mode).
 * **`commit_node.py`**: Graduations compiler that takes single-node draft HTML, renders MathJax to SVG, performs auto-linking, and writes to database shards.
-* **`batch_graduate.py`**: Performs token-saving isolated subprocess compilation for multiple drafted subtopics sequentially.
+* **`batch_ingest.py`**: Performs token-saving subprocess compilation for multiple drafted subtopics sequentially.

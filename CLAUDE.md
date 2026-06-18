@@ -41,26 +41,10 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
 .venv/bin/python3 scripts/maintenance/run_gqs_sprint.py --count <N> --dry-run
 ```
 
-### 📦 Content Graduation Pipeline
-* **Bootstrap Scaffolding**: Automatically creates topological neighbor transitions in standard or batch-safe modes:
-  ```bash
-  # Standard Mode (Default: draft.html & identities.json)
-  .venv/bin/python3 scripts/maintenance/bootstrap_expansion.py <subtopic-slug>
-  
-  # Batch Mode (Collision-free: draft_<slug>.html & identities_<slug>.json)
-  .venv/bin/python3 scripts/maintenance/bootstrap_expansion.py <subtopic-slug> --batch
-  ```
+### 📦 Content Operations and Utilities
 * **Retrieve Concept Details**: Crawls shards to safely view JSON metadata without context bloat:
   ```bash
   .venv/bin/python3 scripts/maintenance/retrieve_concept.py <subtopic-slug>
-  ```
-* **Compile and Graduate Subtopic**: Compiles the draft, auto-links keywords, renders formulas to vector SVGs, updates shards, and commits to Git:
-  ```bash
-  .venv/bin/python3 scripts/maintenance/commit_node.py <subtopic-slug> draft.html
-  ```
-* **Batch Graduation (Token-Saver Mode)**: Silently compiles multiple drafts sequentially to prevent token bloat, resolves collision-free templates (`draft_<slug>.html`), syncs backlog registries, and prints a visual summary report:
-  ```bash
-  .venv/bin/python3 scripts/maintenance/batch_graduate.py <slug1> [slug2] [slug3] ...
   ```
 * **Synchronize MariaDB Database (Manual)**: Synchronizes the physical JSON shards on disk with the active SQL database:
   ```bash
@@ -214,17 +198,17 @@ Our context-affinity validation engine uses a dynamic state-of-the-art model:
    This prevents grammatical extensions in the prose (e.g., "mechanical" or "classicality") from artificially lowering scores.
 4. **Background-Vocabulary DF Ceiling**: A `DF_CEILING_PCT` class constant on `PhysicsOrchestrator` (default `0.60`) filters tokens appearing in more than 60% of platinum documents out of signature compilation. Eliminates corpus-background pollution — words like `energy`, `manifold`, and `vacuum` — that produced false-positive `Contextual Leakage` errors during graduation validation.
 
-### C. The Background Watcher Protocol (Zero-Prompt Pipeline)
+## C. The Background Watcher Protocol (Zero-Prompt Pipeline)
 For single-node ad-hoc expansions, refactoring can be executed via an autonomous background watcher protocol:
 1. **Turn 1 (Silent Retrieval)**: Execute native `read_file` calls or retrieve concept details to gather legacy content. Perform the "verify and skip" check internally.
-2. **Turn 2 (Silent Graduation)**: Draft new HTML into `draft.html` and identities into `identities.json`. Trigger the commit by writing a trigger payload to `scripts/maintenance/inbox/`.
+2. **Turn 2 (Silent Graduation)**: Draft new HTML and identities to temporary file locations. Trigger the commit by writing a trigger payload (specifying the paths to the draft files) to `scripts/maintenance/inbox/`.
 3. **The Watcher Protocol**: `maintenance_watcher.py` autonomously executes `commit_node.py` (SVG rendering, auto-linking, MariaDB sync, and Git commits).
 
-### D. The Token-Saver Batch Protocol
+## D. The Token-Saver Batch Protocol
 For upgrading substandard nodes and processing GQS queue items in groups (the primary pipeline), the batch protocol is used:
-1. **Batch-Safe Scaffolding**: Passing the `--batch` or `-b` flag to `bootstrap_expansion.py` outputs slug-specific templates (`draft_<slug>.html` and `identities_<slug>.json`) to prevent placeholder overwrite collisions when preparing multiple nodes concurrently.
-2. **Silent Log Redirection**: The batch orchestrator (`batch_graduate.py`) runs the compiler as an isolated subprocess, writing detailed link and validation logging to `logs/graduations/<slug>.log`. Only the success/warning summary is printed in the terminal, preventing 30k+ token log payloads from inflating conversational memory.
-3. **Collision-Free Compilation**: Automatically resolves, compiles, and deletes slug-specific templates upon graduation, keeping the git status clean.
+1. **Batch-Safe Scaffolding**: `gqs.py template <N>` scaffolds the next queue targets or substandard nodes directly into `subfiles/batch_payload.json`, preventing manual template collisions.
+2. **Silent Log Redirection**: The batch ingester (`batch_ingest.py`) runs the compiler as an isolated subprocess, writing detailed link and validation logging to `logs/graduations/<slug>.log`. Only the success/warning summary is printed in the terminal, preventing 30k+ token log payloads from inflating conversational memory.
+3. **Collision-Free Compilation**: Automatically writes slug-specific temporary drafts (`draft_<slug>.html` and `identities_<slug>.json`) during compilation and deletes them upon completion, keeping the git status clean.
 4. **Identity-Lock Merging**: The compiler (`commit_node.py`) is patched to dynamically combine newly registered premium identities with the subtopic's existing legacy formulas:
    ```python
    combined_fids = new_fids + [fid for fid in existing_fids if fid not in new_fids]
@@ -232,13 +216,13 @@ For upgrading substandard nodes and processing GQS queue items in groups (the pr
    This guarantees that high-density theoretical identities are never lost during graduation.
 5. **Auto-Backlog Sync**: Successful graduates are automatically marked as `completed` inside `subfiles/expansion_backlog.json` at the system level.
 
-### E. Central Tracking Authority (CTA)
+## E. Central Tracking Authority (CTA)
 To ensure absolute mathematical consistency across all source registries and progress tracking views:
 1. **Real-time Disk Parsing**: The sync engine (`sync_backlog.py`) directly parses all 14 physical content JSON shards to extract the *exact ground truth* standard (`platinum` vs `legacy`) for all 1,584 subtopics, completely bypassing intermediate database steps.
 2. **Self-Healing Backlog Registry**: Compares disk truth against `subfiles/expansion_backlog.json` and dynamically heals desynchronizations, setting status to `"completed"` for disk Platinum entries and `"pending"` for legacy ones.
 3. **Duplicate-Slug Dedupe (Self-Healing)**: `self_heal_backlog` also collapses entries sharing a `suggested_slug` on every sync via the pure `dedupe_backlog` function. Punctuation variants that resolve to the same slug (e.g., `"Conservation"` and `"Conservation:"` → `conservation`) are merged, with status promoted to `completed` when any duplicate had it. First-appearance order is preserved; entries without `suggested_slug` are kept verbatim. The backlog file is rewritten only when the heal pass or the dedupe pass produced a change.
 4. **Database Status Dashboard**: Calculates total subtopics, platinum count, legacy count, and overall progress percentage, outputting a beautiful visual progress bar and category/shard breakdown table.
-5. **Auto-Teardown Gate**: The tracking engine is integrated directly into the `batch_graduate.py` teardown, guaranteeing the central backlog registry self-heals after every successful batch graduation.
+5. **Auto-Teardown Gate**: The tracking engine is integrated directly into the `batch_ingest.py` post-ingestion flow, guaranteeing the central backlog registry self-heals after every successful batch ingestion.
 6. **Two Platinum Definitions (Critical Distinction)**: The project exposes two distinct platinum counts that future contributors MUST keep separate. Conflating them was the source of the dashboard-drift incident resolved in this codebase:
     * **Flagged Platinum** (`flagged_platinum_count` in `system_health.json`): the raw disk count of subtopics with `standard == "platinum"`. This is the authoritative live count and matches the CTA dashboard exactly.
     * **Organic Platinum** (`organic_platinum_count`): the strict subset that additionally passes the §2.A lead-rule and artifact-violation gates. Always `≤ flagged_platinum_count`.

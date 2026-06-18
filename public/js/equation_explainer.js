@@ -59,7 +59,17 @@ const EquationExplainer = {
         'h': { name: 'Planck Constant', type: 'constant', unit: 'J·s', desc: 'The quantum of electromagnetic action relating photon energy to frequency.' },
         'i': { name: 'Imaginary Unit / Summation Index', type: 'constant', unit: 'dimensionless', desc: 'The mathematical constant defined by i² = -1, or a counting index in sums.' },
         'j': { name: 'Current Density / Index', type: 'variable', unit: 'A/m²', desc: 'The flow of electric current per unit cross-sectional area.' },
-        'k': { name: 'Boltzmann Constant / Spring Constant', type: 'constant', unit: 'J/K or N/m', desc: 'Relates particle kinetic energy to temperature, or represents spring stiffness.' },
+        'k': {
+            name: 'Boltzmann Constant',
+            type: 'constant',
+            unit: 'J/K',
+            desc: 'A physical constant relating the average relative kinetic energy of particles in a gas with the thermodynamic temperature.',
+            alternatives: [
+                { name: 'Spring Constant', type: 'variable', unit: 'N/m', desc: 'The force constant representing the stiffness of a spring (Hooke's Law).' },
+                { name: 'Wave Vector', type: 'variable', unit: 'rad/m', desc: 'A vector indicating the direction and rate of space-phase variation of a wave.' },
+                { name: 'Thermal Conductivity', type: 'variable', unit: 'W/(m·K)', desc: 'The measure of a material's ability to conduct heat.' }
+            ]
+        },
         'l': { name: 'Length / Angular Quantum Number', type: 'variable', unit: 'm', desc: 'The physical size of an object, or orbital angular momentum quantum number.' },
         'm': { name: 'Mass', type: 'variable', unit: 'kg', desc: 'A fundamental measure of the amount of matter in a body and its resistance to acceleration.' },
         'n': { name: 'Refractive Index / Particle Density', type: 'variable', unit: 'dimensionless or m⁻³', desc: 'The ratio of speed of light in vacuum to that in a medium, or particles per unit volume.' },
@@ -92,16 +102,54 @@ const EquationExplainer = {
         'M': { name: 'Total Mass / Magnetization', type: 'variable', unit: 'kg or A/m', desc: 'The total inertial mass of a system, or net magnetic dipole moment density.' },
         'N': { name: 'Number of Particles / Normal Force', type: 'variable', unit: 'dimensionless or N', desc: 'The total count of atoms/molecules, or perpendicular contact force.' },
         'O': { name: 'Operator / Big O Notation', type: 'variable', unit: 'dimensionless', desc: 'A mathematical action performed on a state vector, or asymptotic growth boundary.' },
-        'P': { name: 'Power / Pressure', type: 'variable', unit: 'W or Pa', desc: 'The rate at which work is done, or normal force applied per unit area.' },
+        'P': {
+            name: 'Pressure',
+            type: 'variable',
+            unit: 'Pa',
+            desc: 'The perpendicular force exerted per unit area on the boundary of a system.',
+            alternatives: [
+                { name: 'Power', type: 'variable', unit: 'W', desc: 'The rate at which work is done or energy is transferred.' },
+                { name: 'Probability', type: 'variable', unit: 'dimensionless', desc: 'The likelihood of a specific event occurring, ranging from 0 to 1.' },
+                { name: 'Momentum', type: 'variable', unit: 'kg·m/s', desc: 'The product of the mass and velocity of an object (uppercase variant).' }
+            ]
+        },
         'Q': { name: 'Heat / Total Charge', type: 'variable', unit: 'J or C', desc: 'Thermal energy transferred due to temperature difference, or net electrical charge.' },
         'R': { name: 'Ideal Gas Constant / Resistance / Radius', type: 'constant', unit: 'J/(mol·K) or Ω or m', desc: 'Universal gas constant, electrical resistance, or spatial radius.' },
-        'S': { name: 'Entropy / Action', type: 'variable', unit: 'J/K or J·s', desc: 'The measure of disorder, or the path integral of the Lagrangian over time.' },
-        'T': { name: 'Temperature / Time Period / Tension', type: 'variable', unit: 'K or s or N', desc: 'Thermodynamic temperature scale, duration of one full cycle, or pull force.' },
+        'S': {
+            name: 'Entropy',
+            type: 'variable',
+            unit: 'J/K',
+            desc: 'A thermodynamic quantity representing the degree of disorder or randomness in a system.',
+            alternatives: [
+                { name: 'Action', type: 'variable', unit: 'J·s', desc: 'The path integral of the Lagrangian over time representing the trajectory of a system.' },
+                { name: 'Poynting Vector', type: 'variable', unit: 'W/m²', desc: 'The directional energy flux density of an electromagnetic field.' }
+            ]
+        },
+        'T': {
+            name: 'Temperature',
+            type: 'variable',
+            unit: 'K',
+            desc: 'Thermodynamic temperature scale measuring the average kinetic energy of the particles.',
+            alternatives: [
+                { name: 'Time Period', type: 'variable', unit: 's', desc: 'The duration of one complete cycle of a repeating wave or oscillation.' },
+                { name: 'Tension', type: 'variable', unit: 'N', desc: 'Axial pulling force transmitted through a string, rope, or chain.' },
+                { name: 'SU(3) Gauge Generator', type: 'variable', unit: 'dimensionless', desc: 'Generators of the SU(3) color gauge group in quantum chromodynamics, typically represented by the Gell-Mann matrices.' }
+            ]
+        },
         'U': { name: 'Internal Energy / Potential Energy', type: 'variable', unit: 'J', desc: 'Energy stored within a thermodynamic system, or position-dependent energy.' },
         'V': { name: 'Volume / Electric Potential', type: 'variable', unit: 'm³ or V', desc: 'The amount of three-dimensional space enclosed, or electrostatic voltage.' },
         'W': { name: 'Work Done / Watt', type: 'variable', unit: 'J or W', desc: 'Energy transferred by a force acting over a distance, or SI unit of power.' },
         'X': { name: 'Reactance / General Coordinate', type: 'variable', unit: 'Ω or m', desc: 'Opposition of a circuit element to alternating current, or generic coordinate.' },
-        'Y': { name: 'Young\'s Modulus / Spherical Harmonic', type: 'variable', unit: 'Pa or dimensionless', desc: 'The measure of tensile stiffness of a material, or angular wavefunction solution.' },
+        'Y': {
+            name: 'Young's Modulus',
+            type: 'variable',
+            unit: 'Pa',
+            desc: 'The measure of tensile elasticity or stiffness of a solid material.',
+            alternatives: [
+                { name: 'Weak Hypercharge', type: 'variable', unit: 'dimensionless', desc: 'The generator of the U(1) weak hypercharge gauge group.' },
+                { name: 'Spherical Harmonic', type: 'variable', unit: 'dimensionless', desc: 'Angular wavefunction solutions to Laplace's equation in spherical coordinates.' }
+            ]
+        },
         'Z': { name: 'Atomic Number / Partition Function', type: 'variable', unit: 'dimensionless', desc: 'Protons in a nucleus, or the statistical sum over microstates.' },
 
         // Lowercase Greek Letters
@@ -143,10 +191,171 @@ const EquationExplainer = {
     },
 
     init() {
+        this.activeDomain = '';
+        this.loadReferrerContext();
         this.loadUserCustomizations();
         this.cacheElements();
         this.bindEvents();
         this.loadInitialState();
+    },
+
+    loadReferrerContext() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const contextParam = urlParams.get('context');
+        if (contextParam) {
+            const DOMAIN_MAP = {
+                'thermodynamics-statistical-mechanics': 'thermodynamics',
+                'classical-mechanics': 'mechanics',
+                'standard-model': 'particle_physics',
+                'astrophysics': 'astrophysics',
+                'relativity': 'relativity',
+                'quantum-physics': 'quantum'
+            };
+            this.activeDomain = DOMAIN_MAP[contextParam] || contextParam;
+            return;
+        }
+
+        const referrer = document.referrer;
+        if (referrer && referrer.includes('/physics/subtopic/')) {
+            const parts = referrer.split('/');
+            const subtopicSlug = parts[parts.length - 1].split('?')[0];
+            
+            fetch(`${BASE_URL}/physics/search-index`)
+                .then(res => res.json())
+                .then(index => {
+                    const entry = index[subtopicSlug];
+                    if (entry && entry.s) {
+                        const shard = entry.s.replace('.json', '');
+                        const DOMAIN_MAP = {
+                            'thermodynamics-statistical-mechanics': 'thermodynamics',
+                            'classical-mechanics': 'mechanics',
+                            'standard-model': 'particle_physics',
+                            'astrophysics': 'astrophysics',
+                            'relativity': 'relativity',
+                            'quantum-physics': 'quantum'
+                        };
+                        this.activeDomain = DOMAIN_MAP[shard] || '';
+                        if (this.activeDomain) {
+                            console.log(`Detected active domain: ${this.activeDomain} from referrer subtopic ${subtopicSlug}`);
+                            if (this.latexInput && this.latexInput.value.trim() && !this.currentId) {
+                                this.renderElementsBreakdown(this.latexInput.value.trim(), {});
+                            }
+                        }
+                    }
+                })
+                .catch(err => console.warn('Could not determine referrer context:', err));
+        }
+    },
+
+    getDynamicOverrides(latex) {
+        const overrides = {};
+        if (!latex) return overrides;
+
+        // Layer 3: Subscript and Syntactic Grammar checks
+        if (/T\^([a-d])|T\_([a-d])|T\^\{([a-d])\}|T\_\{([a-d])\}/.test(latex)) {
+            overrides['T'] = { 
+                name: 'SU(3) Gauge Generator', 
+                type: 'variable', 
+                unit: 'dimensionless', 
+                description: 'Generators of the SU(3) color gauge group in quantum chromodynamics, typically represented by the Gell-Mann matrices.' 
+            };
+        }
+        
+        if (/T\_[0if]|T\_\{[0if]\}/.test(latex)) {
+            overrides['T'] = { 
+                name: 'Temperature', 
+                type: 'variable', 
+                unit: 'K', 
+                description: 'Thermodynamic temperature scale measuring the average kinetic energy of the particles.' 
+            };
+        }
+
+        if (/Y\_[lL]\^([mM])|Y\_\{[lL]\}\^\{([mM])\}/.test(latex)) {
+            overrides['Y'] = { 
+                name: 'Spherical Harmonic', 
+                type: 'variable', 
+                unit: 'dimensionless', 
+                description: 'Angular wavefunction solutions to Laplace's equation in spherical coordinates.' 
+            };
+        }
+        
+        if (/Y\s*\/\s*2|\frac\{\s*Y\s*\}\{\s*2\s*\}/.test(latex)) {
+            overrides['Y'] = { 
+                name: 'Weak Hypercharge', 
+                type: 'variable', 
+                unit: 'dimensionless', 
+                description: 'The generator of the U(1) weak hypercharge gauge group.' 
+            };
+        }
+
+        // Layer 2: Heuristic Token Co-occurrence (Semantic Clustering)
+        const tokens = this.extractAllMathTokens(latex).map(t => t.symbol);
+        
+        const SEMANTIC_CLUSTERS = [
+            {
+                domain: 'thermodynamics',
+                indicators: ['P', 'V', 'n', 'R', 'S', 'Q', 'U', '\Delta', 'k_B'],
+                overrides: {
+                    'T': { name: 'Temperature', type: 'variable', unit: 'K', description: 'Thermodynamic temperature scale measuring the average kinetic energy of the particles.' },
+                    'k': { name: 'Boltzmann Constant', type: 'constant', unit: 'J/K', description: 'A physical constant relating the average kinetic energy of particles in a gas with the thermodynamic temperature.' },
+                    'P': { name: 'Pressure', type: 'variable', unit: 'Pa', description: 'Force applied perpendicular to the surface of an object per unit area.' },
+                    'S': { name: 'Entropy', type: 'variable', unit: 'J/K', description: 'A thermodynamic quantity representing the degree of disorder or randomness in a system.' }
+                }
+            },
+            {
+                domain: 'harmonic_motion',
+                indicators: ['f', '\omega', '\nu', '\lambda', '\sin', '\cos', 'A'],
+                overrides: {
+                    'T': { name: 'Time Period', type: 'variable', unit: 's', description: 'The time taken for one complete cycle of a repeating wave or oscillation.' }
+                }
+            },
+            {
+                domain: 'dynamics',
+                indicators: ['F', 'm', 'a', '\theta', '\mu_s', 'g', 'N'],
+                overrides: {
+                    'T': { name: 'Tension', type: 'variable', unit: 'N', description: 'The pulling force transmitted axially by means of a string, cable, or chain.' },
+                    'k': { name: 'Spring Constant', type: 'variable', unit: 'N/m', description: 'The force constant representing the stiffness of a spring (Hooke's Law).' }
+                }
+            },
+            {
+                domain: 'gauge_theory',
+                indicators: ['D_\mu', 'g_s', 'W_\mu', 'B_\mu', '\tau^a', 'G_\mu^a', 'T^a', '\tau', 'Y', 'g', 'g''],
+                overrides: {
+                    'T': { name: 'SU(3) Gauge Generator', type: 'variable', unit: 'dimensionless', description: 'Generators of the SU(3) color gauge group in quantum chromodynamics, typically represented by the Gell-Mann matrices.' },
+                    'Y': { name: 'Weak Hypercharge', type: 'variable', unit: 'dimensionless', description: 'The generator of the U(1) weak hypercharge gauge group.' }
+                }
+            }
+        ];
+
+        let bestDomain = null;
+        let maxOverlap = 0;
+
+        SEMANTIC_CLUSTERS.forEach(cluster => {
+            const overlap = cluster.indicators.filter(ind => tokens.includes(ind) || latex.includes(ind)).length;
+            if (overlap >= 2 && overlap > maxOverlap) {
+                maxOverlap = overlap;
+                bestDomain = cluster;
+            }
+        });
+
+        const activeCluster = SEMANTIC_CLUSTERS.find(c => c.domain === this.activeDomain);
+        if (activeCluster) {
+            Object.entries(activeCluster.overrides).forEach(([sym, val]) => {
+                if (!overrides[sym]) {
+                    overrides[sym] = val;
+                }
+            });
+        }
+
+        if (bestDomain) {
+            Object.entries(bestDomain.overrides).forEach(([sym, val]) => {
+                if (!overrides[sym]) {
+                    overrides[sym] = val;
+                }
+            });
+        }
+
+        return overrides;
     },
 
     loadUserCustomizations() {
@@ -323,14 +532,19 @@ const EquationExplainer = {
             .then(res => res.json())
             .then(index => {
                 const results = [];
-                index.forEach(item => {
-                    if (item.type === 'subtopic' && item.formula_ids && item.formula_ids.includes(id)) {
-                        results.push({
-                            slug: item.slug,
-                            title: item.title
-                        });
+                const cleanId = id.replace(/-/g, ' ');
+                for (const [slug, item] of Object.entries(index)) {
+                    const isSubtopic = item.s && !item.s.startsWith('topics/');
+                    if (isSubtopic && item.k) {
+                        const hasFormula = item.k.some(kw => kw === cleanId || kw === id.toLowerCase() || kw.includes(cleanId));
+                        if (hasFormula) {
+                            results.push({
+                                slug: slug,
+                                title: item.t
+                            });
+                        }
                     }
-                });
+                }
                 return results;
             })
             .catch(err => {
@@ -407,6 +621,8 @@ const EquationExplainer = {
             return;
         }
 
+        const dynamicOverrides = this.getDynamicOverrides(latex);
+
         tokens.forEach(tok => {
             const symbol = tok.symbol;
             let info = null;
@@ -443,6 +659,8 @@ const EquationExplainer = {
                         ref: 'constants/' + foundConstant.symbol,
                         source: 'constants'
                     };
+                } else if (dynamicOverrides[symbol]) {
+                    info = { ...dynamicOverrides[symbol], source: 'dynamic' };
                 } else if (this.physicsDictionary[symbol]) {
                     info = { ...this.physicsDictionary[symbol], source: 'dictionary' };
                 } else {
@@ -507,6 +725,40 @@ const EquationExplainer = {
             }
         }
 
+        let disambigHtml = '';
+        const dictEntry = this.physicsDictionary[symbol];
+        if (dictEntry && dictEntry.alternatives) {
+            const allOptions = [
+                { name: dictEntry.name, type: dictEntry.type || 'variable', unit: dictEntry.unit || 'dimensionless', description: dictEntry.desc || dictEntry.description || '' },
+                ...dictEntry.alternatives.map(alt => ({
+                    name: alt.name,
+                    type: alt.type || 'variable',
+                    unit: alt.unit || 'dimensionless',
+                    description: alt.desc || alt.description || ''
+                }))
+            ];
+            const availableOptions = allOptions.filter(opt => opt.name.toLowerCase() !== info.name.toLowerCase());
+            if (availableOptions.length > 0) {
+                disambigHtml = `
+                    <div class="disambiguation-box" style="margin-top: 6px; font-size: 0.74rem; color: var(--text-muted, #94a3b8); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <span>Context overrides:</span>
+                        ${availableOptions.map(opt => `
+                            <button class="alt-disambig-btn" 
+                                    data-name="${opt.name}" 
+                                    data-type="${opt.type}" 
+                                    data-unit="${opt.unit}" 
+                                    data-desc="${opt.description}"
+                                    style="background: rgba(100,255,218,0.05); border: 1px solid rgba(100,255,218,0.15); color: var(--accent-default, #64ffda); padding: 1px 6px; border-radius: 3px; cursor: pointer; font-size: 0.72rem; font-family: inherit; transition: all 0.2s;"
+                                    onmouseover="this.style.background='rgba(100,255,218,0.12)'"
+                                    onmouseout="this.style.background='rgba(100,255,218,0.05)'">
+                                ${opt.name}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
         row.innerHTML = `
             <div class="symbol-badge ${typeClass}" title="${badgeTypeLabel}">${mathjaxSymbol}</div>
             <div class="symbol-content-wrapper" style="flex: 1; display: flex; flex-direction: column;">
@@ -514,12 +766,13 @@ const EquationExplainer = {
                     <div style="display: flex; align-items: center; gap: 8px;">
                         ${nameHtml}
                         <button class="edit-var-btn" style="background: transparent; border: none; color: var(--text-muted, #94a3b8); cursor: pointer; padding: 2px; display: inline-flex; align-items: center; justify-content: center; transition: color 0.2s;" title="Edit Definition">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"/></svg>
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"/></svg>
                         </button>
                     </div>
                     <span class="var-unit-lbl" style="font-size: 0.76rem; font-family: 'Fira Code', clock, monospace; color: #a8a29e; background: rgba(255,255,255,0.04); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.04); ${info.unit && info.unit !== 'dimensionless' && info.unit !== 'operator' ? '' : 'display: none;'}">${info.unit || ''}</span>
                 </div>
                 <div class="var-desc-lbl" style="font-size: 0.82rem; color: var(--text-muted, #94a3b8); line-height: 1.4;">${info.description || info.desc || ''}</div>
+                ${disambigHtml}
             </div>
         `;
 
@@ -558,6 +811,41 @@ const EquationExplainer = {
             e.stopPropagation();
             this.toggleVarEditForm(row, symbol, info);
         });
+
+        const bindAltListeners = (targetRow) => {
+            const altBtns = targetRow.querySelectorAll('.alt-disambig-btn');
+            altBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const newName = btn.getAttribute('data-name');
+                    const newType = btn.getAttribute('data-type');
+                    const newUnit = btn.getAttribute('data-unit');
+                    const newDesc = btn.getAttribute('data-desc');
+
+                    const updatedInfo = {
+                        name: newName,
+                        type: newType,
+                        unit: newUnit,
+                        description: newDesc
+                    };
+
+                    this.userCustomizations[symbol] = updatedInfo;
+                    try {
+                        localStorage.setItem('physics_explainer_custom_' + symbol, JSON.stringify(updatedInfo));
+                    } catch (err) {
+                        console.warn('Could not write custom variable definitions to localStorage:', err);
+                    }
+
+                    this.renderVariableRow(symbol, { ...updatedInfo, source: 'user' }, targetRow);
+
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        window.MathJax.typesetPromise([targetRow]).catch(err => console.warn(err));
+                    }
+                });
+            });
+        };
+
+        bindAltListeners(row);
 
         if (!existingRow) {
             this.symbolsList.appendChild(row);

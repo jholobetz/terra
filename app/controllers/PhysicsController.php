@@ -266,7 +266,12 @@ class PhysicsController
 
         if (file_exists($cachePath) && !$isStale && !$this->service()->isPreviewActive()) {
             header('Content-Type: text/html; charset=utf-8');
-            readfile($cachePath);
+            $html = file_get_contents($cachePath);
+            $nonce = $this->app->get('csp_nonce');
+            if ($nonce) {
+                $html = preg_replace('/nonce=["\']([a-f0-9]{32})["\']/', 'nonce="' . $nonce . '"', $html);
+            }
+            echo $html;
             return;
         }
 
@@ -372,7 +377,12 @@ class PhysicsController
 
         if (file_exists($cachePath) && !$isStale && !$this->service()->isPreviewActive()) {
             header('Content-Type: text/html; charset=utf-8');
-            readfile($cachePath);
+            $html = file_get_contents($cachePath);
+            $nonce = $this->app->get('csp_nonce');
+            if ($nonce) {
+                $html = preg_replace('/nonce=["\']([a-f0-9]{32})["\']/', 'nonce="' . $nonce . '"', $html);
+            }
+            echo $html;
             return;
         }
 

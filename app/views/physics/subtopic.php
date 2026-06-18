@@ -37,10 +37,10 @@ $theme = $meta['theme'] ?? 'default';
     <header class="subtopic-header">
         <h1><?= $title ?? 'Subtopic' ?></h1>
         <?php if (!empty($verification)): ?>
-            <div class="verification-badge" style="display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 12px; background: rgba(100, 255, 218, 0.08); border: 1px solid var(--accent-color); border-radius: 4px; font-size: 0.85rem; color: var(--accent-color); font-weight: 500;">
+            <a href="#literature-consensus" class="verification-badge" style="cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 12px; background: rgba(100, 255, 218, 0.08); border: 1px solid var(--accent-color); border-radius: 4px; font-size: 0.85rem; color: var(--accent-color); font-weight: 500; transition: all 0.2s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.16)'" onmouseout="this.style.background='rgba(100, 255, 218, 0.08)'">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 <span>Academic Consensus Verified</span>
-            </div>
+            </a>
         <?php endif; ?>
     </header>
     
@@ -51,7 +51,7 @@ $theme = $meta['theme'] ?? 'default';
     <?php $this->render('physics/_equations_partial', ['equations' => $equations ?? [], 'breakdowns' => $breakdowns ?? [], 'formulas' => $formulas ?? [], 'nonce' => $nonce]); ?>
 
     <?php if (!empty($verification)): ?>
-        <section class="verification-section" style="margin-top: 50px; padding: 25px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.45) 0%, rgba(3, 7, 18, 0.6) 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 4px solid var(--accent-color); border-radius: 8px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">
+        <section id="literature-consensus" class="verification-section" style="margin-top: 50px; padding: 25px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.45) 0%, rgba(3, 7, 18, 0.6) 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 4px solid var(--accent-color); border-radius: 8px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">
             <h3 style="color: #ccd6f6; margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px var(--accent-color));"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 <span style="background: linear-gradient(90deg, #f1f5f9 0%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Scientific Accreditation & Literature Consensus</span>

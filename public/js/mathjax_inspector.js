@@ -218,11 +218,11 @@ const MathJaxInspector = {
             const formulaId = container ? container.getAttribute('data-formula-id') : null;
             
             if (formulaId) {
-                window.location.href = '/physics/equation-explainer?id=' + encodeURIComponent(formulaId);
+                window.location.href = BASE_URL + '/physics/equation-explainer?id=' + encodeURIComponent(formulaId);
             } else {
                 const latex = this.getLatexForElement(this.activeElement);
                 if (latex) {
-                    window.location.href = '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+                    window.location.href = BASE_URL + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
                 }
             }
         });

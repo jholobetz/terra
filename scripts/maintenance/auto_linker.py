@@ -97,23 +97,31 @@ def run_auto_linker(shards, index_path):
             def replace_link(match):
                 nonlocal modified_shard
                 full_href = match.group(1)
-                target_slug = full_href.split('/')[-1]
                 inner_content = match.group(2)
+                clean_inner = inner_content.replace('<strong>', '').replace('</strong>', '')
                 
-                if target_slug in linked_in_node or target_slug == slug:
-                    clean_inner = inner_content.replace('<strong>', '').replace('</strong>', '')
-                    modified_shard = True
-                    print(f"Downgraded redundant link to '{target_slug}' in {slug}")
-                    return f'<strong>{clean_inner}</strong>'
-                else:
-                    if '<strong>' not in inner_content:
-                        inner_content = f'<strong>{inner_content}</strong>'
+                if full_href.startswith('/physics/subtopic/'):
+                    target_slug = full_href.split('/')[-1]
+                    if target_slug not in valid_slugs:
+                        modified_shard = True
+                        print(f"Downgraded invalid link to '{target_slug}' in {slug}")
+                        return f'<strong>{clean_inner}</strong>'
                     
-                    repair_link = f'<a href="/physics/subtopic/{target_slug}" class="subtopic-link">{inner_content}</a>'
-                    linked_in_node.add(target_slug)
-                    modified_shard = True
-                    print(f"Standardized link for '{target_slug}' in {slug}")
-                    return repair_link
+                    if target_slug in linked_in_node or target_slug == slug:
+                        modified_shard = True
+                        print(f"Downgraded redundant link to '{target_slug}' in {slug}")
+                        return f'<strong>{clean_inner}</strong>'
+                    else:
+                        if '<strong>' not in inner_content:
+                            inner_content = f'<strong>{inner_content}</strong>'
+                        
+                        repair_link = f'<a href="/physics/subtopic/{target_slug}" class="subtopic-link">{inner_content}</a>'
+                        linked_in_node.add(target_slug)
+                        modified_shard = True
+                        print(f"Standardized link for '{target_slug}' in {slug}")
+                        return repair_link
+                else:
+                    return match.group(0)
 
             content_pass1 = link_pattern.sub(replace_link, content)
 

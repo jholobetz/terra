@@ -10,7 +10,7 @@ def build_cache():
     mapping = {}
     # Subtopic shards
     for file in os.listdir(CONTENT_DIR):
-        if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "compiled_trie_regex.json", "notation.json", "particles.json", "pillar_profiles.json"]:
+        if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "compiled_trie_regex.json", "notation.json", "particles.json", "pillar_profiles.json", "formula_aliases.json"]:
             path = os.path.join(CONTENT_DIR, file)
             try:
                 with open(path, "r") as f:

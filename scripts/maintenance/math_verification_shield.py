@@ -1166,7 +1166,7 @@ def load_formula_categories(content_dir):
         categories = json.load(f)
         
     formula_to_contexts = {}
-    exclude = ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json", "particles.json", "pillar_profiles.json"]
+    exclude = ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json", "particles.json", "pillar_profiles.json", "formula_aliases.json"]
     
     if os.path.exists(content_dir):
         for file in os.listdir(content_dir):

@@ -9,6 +9,7 @@ import sys
 import json
 import subprocess
 from datetime import datetime
+from pydantic import BaseModel, Field
 
 # Paths
 GQS_PATH = "subfiles/graduation_queue_stack.json"
@@ -289,6 +290,414 @@ def refill(limit=30):
     print(f"🔄 Replenishing central GQS queue stack (Target depth: {limit})...")
     subprocess.run([".venv/bin/python3", "scripts/maintenance/generate_sprint_queue.py", str(limit)])
 
+def extract_latex_from_svg(svg_string: str) -> str:
+    import re, html
+    match = re.search(r'data-tex="([^"]+)"', svg_string)
+    if match:
+        return html.unescape(match.group(1))
+    return ""
+
+def formula_status():
+    import glob
+    shards_dir = "app/config/content/formulas"
+    shard_files = glob.glob(os.path.join(shards_dir, "shard_*.json"))
+    shard_files.sort()
+    
+    total = 0
+    pending = []
+    
+    for filepath in shard_files:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            try:
+                data = json.load(f)
+            except Exception:
+                continue
+            for f_id, formula in data.items():
+                total += 1
+                if formula.get("interpretation") in ["Analysis pending.", "Analysis pending"]:
+                    pending.append({
+                        "id": f_id,
+                        "title": formula.get("title", "Unknown"),
+                        "shard": os.path.basename(filepath)
+                    })
+                    
+    enriched = total - len(pending)
+    pct = (enriched / total * 100) if total > 0 else 100.0
+    
+    print("=" * 80)
+    print("🪐 PHYSICS LAB: FORMULA REGISTRY STATUS".center(80))
+    print("=" * 80)
+    print(f"  * Total Formulas:  {total}")
+    print(f"  * Enriched:        {enriched} ({pct:.2f}%)")
+    print(f"  * Pending (Placeholder): {len(pending)} ({100.0 - pct:.2f}%)")
+    
+    if pending:
+        print("\n📌 NEXT PENDING FORMULAS TO ENRICH:")
+        pending.sort(key=lambda x: x["id"])
+        for i, item in enumerate(pending[:5]):
+            print(f"  {i+1:02d}. \033[1m{item['id']}\033[0m ({item['title']})")
+            print(f"      Shard: {item['shard']}")
+    else:
+        print("\n🎉 All formulas have been successfully enriched!")
+    print("=" * 80)
+
+def generate_formula_template(num_items=5):
+    import glob
+    shards_dir = "app/config/content/formulas"
+    shard_files = glob.glob(os.path.join(shards_dir, "shard_*.json"))
+    shard_files.sort()
+    
+    pending = []
+    for filepath in shard_files:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            try:
+                data = json.load(f)
+            except Exception:
+                continue
+            for f_id, formula in data.items():
+                if formula.get("interpretation") in ["Analysis pending.", "Analysis pending"]:
+                    pending.append((f_id, formula))
+                    
+    if not pending:
+        print("Notice: No pending formulas found in the registry to scaffold.")
+        return
+        
+    pending.sort(key=lambda x: x[0])
+    
+    payload_path = "subfiles/formula_payload.json"
+    payload = {}
+    if os.path.exists(payload_path):
+        try:
+            with open(payload_path, 'r', encoding='utf-8') as f:
+                payload = json.load(f)
+        except Exception:
+            payload = {}
+            
+    scaffolded_ids = []
+    
+    for f_id, formula in pending[:num_items]:
+        if f_id in payload:
+            continue
+        latex_src = extract_latex_from_svg(formula.get("equation", ""))
+        
+        payload[f_id] = {
+            "title": formula.get("title", "Unknown Formula"),
+            "equation_svg": formula.get("equation", ""),
+            "latex": latex_src,
+            "conceptual_definition": "[AI-DRAFT: A high-level conceptual explanation of what this physics formula represents.]",
+            "intuitive_summary": "[AI-DRAFT: A concise, single-sentence summary of the physical intuition behind the equation.]",
+            "interpretation": "[AI-DRAFT: A paragraph explaining the role of variables in the equation and their physical relationships.]",
+            "symmetry_origin": "[AI-DRAFT: The coordinate invariance, conservation law, or physical derivation origin.]",
+            "limits_and_boundary": "[AI-DRAFT: Asymptotic limits when variables approach zero or infinity.]",
+            "semantic_variables": {
+                "[symbol]": {
+                    "name": "[AI-DRAFT: Physical name]",
+                    "type": "variable",
+                    "unit": "[SI units]",
+                    "description": "[AI-DRAFT: Detailed explanation]"
+                }
+            }
+        }
+        scaffolded_ids.append(f_id)
+        
+    if not scaffolded_ids:
+        print("Notice: All of the next pending formulas are already scaffolded in the payload.")
+        return
+        
+    with open(payload_path, 'w', encoding='utf-8') as f:
+        json.dump(payload, f, indent=4, ensure_ascii=False)
+        
+    print(f"✓ SUCCESS: Scaffolded {len(scaffolded_ids)} formula entries in {payload_path}:")
+    for f_id in scaffolded_ids:
+        print(f"  * \033[1m{f_id}\033[0m ({payload[f_id]['title']})")
+    print("\n👉 Open subfiles/formula_payload.json and replace the placeholders with rich academic definitions,")
+    print("   or ask me (Antigravity) to draft them for you using the platform model.")
+
+def ingest_formulas():
+    import glob, hashlib, tempfile
+    payload_path = "subfiles/formula_payload.json"
+    if not os.path.exists(payload_path):
+        print(f"Error: Ingestion payload not found at {payload_path}")
+        return
+        
+    with open(payload_path, 'r', encoding='utf-8') as f:
+        payload = json.load(f)
+        
+    if not payload:
+        print("Notice: Formula payload is empty. Nothing to ingest.")
+        return
+        
+    has_scaffold = False
+    for f_id, data in payload.items():
+        if any("[AI-DRAFT" in str(v) for v in data.values()) or any("[AI-DRAFT" in str(v) for v in data.get("semantic_variables", {}).values()):
+            has_scaffold = True
+            break
+            
+    if has_scaffold:
+        print("\033[91m⚠️ WARNING: The formula payload contains unprocessed placeholders!\033[0m")
+        print("Please replace all bracketed instructions in subfiles/formula_payload.json with definitions before ingesting.")
+        confirm = input("Are you sure you want to proceed? (y/N): ").strip().lower()
+        if confirm != 'y':
+            print("Aborted.")
+            return
+
+    print("🚀 Ingesting formula definitions into local JSON shards...")
+    shards_dir = "app/config/content/formulas"
+    
+    shards_updated = set()
+    
+    for f_id, draft in payload.items():
+        hex_prefix = hashlib.md5(f_id.encode('utf-8')).hexdigest()[:2]
+        shard_path = os.path.join(shards_dir, f"shard_{hex_prefix}.json")
+        
+        if not os.path.exists(shard_path):
+            print(f"  ⚠️ Error: Shard file does not exist: {shard_path} for formula '{f_id}'")
+            continue
+            
+        with open(shard_path, 'r', encoding='utf-8') as f:
+            try:
+                shard_data = json.load(f)
+            except Exception as e:
+                print(f"  ⚠️ Error loading shard {shard_path}: {e}")
+                continue
+                
+        if f_id not in shard_data:
+            print(f"  ⚠️ Error: Formula '{f_id}' not found in target shard {shard_path}")
+            continue
+            
+        formula = shard_data[f_id]
+        
+        formula["conceptual_definition"] = draft.get("conceptual_definition", "")
+        formula["intuitive_summary"] = draft.get("intuitive_summary", "")
+        formula["interpretation"] = draft.get("interpretation", "")
+        formula["symmetry_origin"] = draft.get("symmetry_origin", "")
+        formula["limits_and_boundary"] = draft.get("limits_and_boundary", "")
+        
+        sem_vars = {}
+        for sym, v_data in draft.get("semantic_variables", {}).items():
+            if sym == "[symbol]" or "[AI-DRAFT" in str(v_data):
+                continue
+            sem_vars[sym] = {
+                "name": v_data.get("name", sym),
+                "type": v_data.get("type", "variable"),
+                "unit": v_data.get("unit", "dimensionless"),
+                "description": v_data.get("description", "")
+            }
+        formula["semantic_variables"] = sem_vars
+        
+        temp_fd, temp_path = tempfile.mkstemp(dir=os.path.dirname(shard_path))
+        try:
+            with open(temp_fd, 'w', encoding='utf-8') as f:
+                json.dump(shard_data, f, indent=4, ensure_ascii=False)
+            os.replace(temp_path, shard_path)
+            shards_updated.add(shard_path)
+            print(f"  ✓ Updated formula '{f_id}' in {os.path.basename(shard_path)}")
+        except Exception as e:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            print(f"  ⚠️ Error saving shard {shard_path}: {e}")
+            
+    with open(payload_path, 'w', encoding='utf-8') as f:
+        json.dump({}, f, indent=4)
+        
+    print(f"\n✓ SUCCESS: Ingested drafts and updated {len(shards_updated)} shard files.")
+    
+    print("\n🔄 Synchronizing database tables...")
+    try:
+        subprocess.run(["php", "cli_sync.php"])
+        print("✓ Database table sync completed.")
+    except Exception as e:
+        print(f"  ⚠️ Database sync failed: {e}")
+
+# Define Pydantic Schema for Structured Output at Global Scope
+class SemanticVariable(BaseModel):
+    symbol: str = Field(description="The mathematical symbol of the variable as it appears in the equation (e.g. F_g, m_1, r).")
+    name: str = Field(description="The physical name of the variable (e.g. First Mass).")
+    type: str = Field(description="Whether it is a variable parameter or physical constant (must be 'variable' or 'constant').")
+    unit: str = Field(description="The SI units of the variable (e.g., kg, m/s).")
+    description: str = Field(description="Detailed explanation of what this variable represents in this context.")
+
+class PhysicsFormulaMetadata(BaseModel):
+    conceptual_definition: str = Field(description="A high-level conceptual explanation of what this physics formula represents.")
+    intuitive_summary: str = Field(description="A concise, single-sentence summary of the physical intuition behind the equation.")
+    interpretation: str = Field(description="A paragraph explaining the role of variables in the equation and their physical relationships.")
+    symmetry_origin: str = Field(description="The coordinate invariance, conservation law, or physical derivation origin.")
+    limits_and_boundary: str = Field(description="Asymptotic limits when variables approach zero or infinity.")
+    semantic_variables: list[SemanticVariable] = Field(description="List of all mathematical variables in the formula.")
+
+def seed(rate_tier="free"):
+    """Enrich empty/placeholder formula entries across the 256 JSON shards using the Gemini API.
+    Uses the modern google-genai SDK and secure Keychain API key retrieval.
+    """
+    import glob
+    import re
+    import html
+    import time
+    import keyring
+    import os
+    import tempfile
+    
+    try:
+        from google import genai
+        from google.genai import types
+        from google.genai.errors import APIError
+    except ImportError:
+        print("Error: The 'google-genai' package is not installed in the virtual environment.")
+        print("Please run: .venv/bin/python3 -m pip install google-genai")
+        sys.exit(1)
+
+    # Parse rate tier or custom cooldown
+    cooldown = 4.5  # Default safe delay for Free Tier (approx 13 RPM, limit is 15 RPM)
+    try:
+        cooldown = float(rate_tier)
+    except ValueError:
+        if rate_tier in ["paid", "pay", "unlimited"]:
+            cooldown = 0.2
+            print("Using paid/high-throughput rate tier (0.2s cooldown per request).")
+        else:
+            print(f"Using default free rate tier (4.5s cooldown per request).")
+
+    # 1. Configure Gemini API Client
+    print("Retrieving API key from Keychain...", flush=True)
+    api_key = keyring.get_password("physics_lab", "gemini_api_key")
+    if not api_key:
+        print("Error: Gemini API key not found in your OS Keychain.")
+        print("Please store your key in the keychain first by running:")
+        print("  .venv/bin/keyring set physics_lab gemini_api_key")
+        sys.exit(1)
+    print("API key successfully retrieved.", flush=True)
+
+    client = genai.Client(api_key=api_key)
+    MODEL_NAME = 'gemini-3.5-flash'
+    SHARDS_DIR = "app/config/content/formulas"
+
+    def extract_latex_from_svg(svg_string: str) -> str:
+        match = re.search(r'data-tex="([^"]+)"', svg_string)
+        if match:
+            return html.unescape(match.group(1))
+        return ""
+
+    def process_shard(filepath: str):
+        print(f"Checking shard: {os.path.basename(filepath)}...", flush=True)
+        with open(filepath, 'r', encoding='utf-8') as f:
+            try:
+                shard_data = json.load(f)
+            except Exception as e:
+                print(f"Error loading {os.path.basename(filepath)}: {e}", flush=True)
+                return
+        
+        updated = False
+        
+        for formula_id, formula in shard_data.items():
+            if formula.get("interpretation") in ["Analysis pending.", "Analysis pending"]:
+                title = formula.get("title", "Unknown Formula")
+                svg_eq = formula.get("equation", "")
+                latex_src = extract_latex_from_svg(svg_eq)
+                
+                if not latex_src:
+                    print(f"  Skipping '{title}' (Unable to parse LaTeX from SVG)", flush=True)
+                    continue
+                    
+                print(f"  -> Seeding missing definition for: '{title}'...", flush=True)
+                
+                prompt = f"""
+                You are an expert physics professor and digital encyclopedia curator. 
+                Author a detailed explanation of the physics formula:
+                Title: {title}
+                LaTeX Equation: {latex_src}
+                
+                Follow these constraints:
+                1. Keep descriptions clear, mathematically rigorous, and educational.
+                2. Format any variables in text descriptions with LaTeX inline delimiters: \\( variable \\).
+                3. Ensure SI units in variables are standard (e.g. kg, m/s^2, J).
+                """
+                
+                # Call Gemini API with retries
+                max_retries = 3
+                backoff_delay = 10.0
+                response = None
+                
+                for attempt in range(max_retries):
+                    try:
+                        response = client.models.generate_content(
+                            model=MODEL_NAME,
+                            contents=prompt,
+                            config=types.GenerateContentConfig(
+                                response_mime_type="application/json",
+                                response_schema=PhysicsFormulaMetadata
+                            )
+                        )
+                        break
+                    except APIError as e:
+                        if e.code in [429, 503]:
+                            print(f"    Temporary error {e.code} (attempt {attempt + 1}/{max_retries}). Sleeping for {backoff_delay} seconds...", flush=True)
+                            time.sleep(backoff_delay)
+                            backoff_delay *= 2
+                        else:
+                            print(f"    API Error generating content for '{title}': {e}", flush=True)
+                            break
+                    except Exception as e:
+                        print(f"    General Error generating content for '{title}': {e}", flush=True)
+                        break
+                
+                if response is None:
+                    print(f"    Skipping '{title}' due to persistent API errors. Cooling down for 5.0 seconds...", flush=True)
+                    time.sleep(5.0)
+                    continue
+                    
+                try:
+                    meta = json.loads(response.text)
+                    vars_list = meta.get("semantic_variables", [])
+                    vars_dict = {}
+                    for v in vars_list:
+                        symbol = v.get("symbol")
+                        if symbol:
+                            vars_dict[symbol] = {
+                                "name": v.get("name", symbol),
+                                "type": v.get("type", "variable"),
+                                "unit": v.get("unit", "dimensionless"),
+                                "description": v.get("description", "")
+                            }
+                    
+                    formula["conceptual_definition"] = meta.get("conceptual_definition", "Conceptual definition pending.")
+                    formula["intuitive_summary"] = meta.get("intuitive_summary", "Intuitive summary pending.")
+                    formula["interpretation"] = meta.get("interpretation", "Analysis pending.")
+                    formula["symmetry_origin"] = meta.get("symmetry_origin", "Theoretical origin under investigation.")
+                    formula["limits_and_boundary"] = meta.get("limits_and_boundary", "Boundary conditions pending.")
+                    formula["semantic_variables"] = vars_dict
+                    
+                    updated = True
+                    print(f"    Success: Enriched metadata for '{title}'", flush=True)
+                    time.sleep(cooldown)
+                except Exception as e:
+                    print(f"    Error parsing generated content for '{title}': {e}", flush=True)
+                    time.sleep(cooldown)
+                    
+        if updated:
+            temp_fd, temp_path = tempfile.mkstemp(dir=os.path.dirname(filepath))
+            try:
+                with open(temp_fd, 'w', encoding='utf-8') as f:
+                    json.dump(shard_data, f, indent=4, ensure_ascii=False)
+                os.replace(temp_path, filepath)
+                print(f"  Saved changes to {os.path.basename(filepath)}", flush=True)
+            except Exception as e:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                print(f"  Error saving changes to {os.path.basename(filepath)}: {e}", flush=True)
+
+    # Find all shards
+    shard_files = glob.glob(os.path.join(SHARDS_DIR, "shard_*.json"))
+    shard_files.sort()
+    
+    if not shard_files:
+        print(f"No formula JSON shards found in {SHARDS_DIR}", flush=True)
+        return
+        
+    print(f"Found {len(shard_files)} shards. Commencing GQS Database Seeding...", flush=True)
+    for filepath in shard_files:
+        process_shard(filepath)
+    print("Database seeding completed.", flush=True)
+
 def main():
     if len(sys.argv) < 2:
         show_status()
@@ -319,13 +728,32 @@ def main():
             except ValueError:
                 pass
         refill(limit)
+    elif cmd == "seed":
+        rate_tier = sys.argv[2] if len(sys.argv) > 2 else "free"
+        seed(rate_tier)
+    elif cmd == "formula-status":
+        formula_status()
+    elif cmd == "formula-template":
+        num = 5
+        if len(sys.argv) > 2:
+            try:
+                num = int(sys.argv[2])
+            except ValueError:
+                pass
+        generate_formula_template(num)
+    elif cmd == "formula-ingest":
+        ingest_formulas()
     else:
         print(f"Unknown command '{cmd}'. Available commands:")
-        print("  status        Display database status and next stack queue items (Default)")
-        print("  template [N]  Scaffold the next N items into subfiles/batch_payload.json")
-        print("  ingest        Graduate all drafted subtopics from subfiles/batch_payload.json")
-        print("  audit [slug]  Run structural and formula validation audits")
-        print("  refill [N]    Replenish GQS stack depth and sync expansion sprint")
+        print("  status            Display database status and next stack queue items (Default)")
+        print("  template [N]      Scaffold the next N items into subfiles/batch_payload.json")
+        print("  ingest            Graduate all drafted subtopics from subfiles/batch_payload.json")
+        print("  audit [slug]      Run structural and formula validation audits")
+        print("  refill [N]        Replenish GQS stack depth and sync expansion sprint")
+        print("  seed              Enrich missing formula/identity definitions using the Gemini API")
+        print("  formula-status    Display live status of formula registry and pending placeholders")
+        print("  formula-template  Scaffold the next N pending formulas into subfiles/formula_payload.json")
+        print("  formula-ingest    Graduate completed formula drafts from subfiles/formula_payload.json")
         sys.exit(1)
 
 if __name__ == "__main__":

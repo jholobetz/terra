@@ -176,7 +176,7 @@ def audit_semantic_prose(content_dir="app/config/content", ref_path="app/config/
         # Build mapping on the fly
         slug_shard_map = {}
         for file in os.listdir(content_dir):
-            if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "notation.json", "particles.json"]:
+            if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "notation.json", "particles.json", "pillar_profiles.json", "formula_aliases.json"]:
                 path = os.path.join(content_dir, file)
                 try:
                     with open(path, "r") as f:

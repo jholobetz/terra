@@ -22,6 +22,15 @@ const EquationExplainer = {
     compilerStatus: null,
     formulaTitle: null,
     formulaBadge: null,
+    conceptualIntroCard: null,
+    
+    aiScenariosSection: null,
+    aiScenariosList: null,
+    aiSimulationCard: null,
+    sandboxCanvas: null,
+    sandboxSliders: null,
+    sonifyToggleBtn: null,
+    
     officialBreakdown: null,
     symbolsBreakdown: null,
     symbolsList: null,
@@ -33,6 +42,18 @@ const EquationExplainer = {
     
     // Debounce timer
     debounceTimer: null,
+    
+    // Sandbox State
+    sandboxCtx: null,
+    sandboxAnimationId: null,
+    sandboxType: 'scaling', // 'divergence', 'curl', 'wave', 'scaling'
+    sandboxParams: {},      // variable -> numericValue
+    
+    // Audio State
+    audioCtx: null,
+    audioOscillator: null,
+    audioGain: null,
+    isSonifying: false,
     
     // Comprehensive physics dictionary mapping standard variables, constants, and operators
     physicsDictionary: {
@@ -384,6 +405,14 @@ const EquationExplainer = {
         
         this.formulaTitle = document.getElementById('formula-title');
         this.formulaBadge = document.getElementById('formula-badge');
+        this.conceptualIntroCard = document.getElementById('conceptual-intro-card');
+        
+        this.aiScenariosSection = document.getElementById('ai-scenarios-section');
+        this.aiScenariosList = document.getElementById('ai-scenarios-list');
+        this.aiSimulationCard = document.getElementById('ai-simulation-card');
+        this.sandboxCanvas = document.getElementById('sandbox-canvas');
+        this.sandboxSliders = document.getElementById('sandbox-sliders');
+        this.sonifyToggleBtn = document.getElementById('sonify-toggle-btn');
         
         this.officialBreakdown = document.getElementById('official-breakdown');
         this.symbolsBreakdown = document.getElementById('symbols-breakdown');
@@ -411,6 +440,13 @@ const EquationExplainer = {
             this.handleInputChange();
             this.latexInput.focus();
         });
+
+        // Sonification toggle
+        if (this.sonifyToggleBtn) {
+            this.sonifyToggleBtn.addEventListener('click', () => {
+                this.toggleSonification();
+            });
+        }
     },
 
     loadInitialState() {
@@ -559,7 +595,7 @@ const EquationExplainer = {
 
         // Display status
         this.explainerPlaceholder.style.display = 'none';
-        this.officialBreakdown.style.display = 'flex';
+        this.officialBreakdown.style.display = 'none'; // Keep legacy tiers container hidden, we map them below
         this.symbolsBreakdown.style.display = 'block';
         
         // Populate Title and Badge
@@ -570,12 +606,59 @@ const EquationExplainer = {
         this.formulaBadge.className = 'badge-status ' + (status.includes('draft') ? 'badge-draft' : 'badge-platinum');
         this.formulaBadge.textContent = status.replace('-', ' ').toUpperCase();
 
-        // Populate Tiers
-        document.getElementById('local-interpretation').innerHTML = formula.interpretation || 'No interpretation provided.';
-        document.getElementById('symmetry-origin').innerHTML = formula.symmetry_origin || 'Symmetry derivations pending.';
-        document.getElementById('limits-boundary').innerHTML = formula.limits_and_boundary || 'Boundary analysis pending.';
+        const synthesis = this.synthesizeCustomOverview(this.currentLatex);
 
-        // Deconstruct EVERY element in the LaTeX string, merging database semantic definitions
+        // Populate Conceptual Definition / Google-style summary at the top
+        if (this.conceptualIntroCard) {
+            const definition = formula.conceptual_definition || synthesis.intro;
+            const summary = formula.intuitive_summary || synthesis.summary;
+            
+            this.conceptualIntroCard.style.display = 'flex';
+            this.conceptualIntroCard.innerHTML = `
+                <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                    ✦ AI Overview
+                </h4>
+                <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
+                    ${definition}
+                </div>
+                <div class="intuitive-summary" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-muted, #94a3b8); border-left: 2px solid var(--accent-default, #64ffda); padding-left: 12px; font-style: italic; margin-top: 4px;">
+                    ${summary}
+                </div>
+            `;
+        }
+
+        // Build and render scenarios
+        let scenarios = formula.scenarios;
+        if (!scenarios || scenarios.length === 0) {
+            // Map legacy tiers to scenarios
+            scenarios = [];
+            if (formula.interpretation && formula.interpretation !== 'No interpretation provided.') {
+                scenarios.push({
+                    condition: 'Interpretation (Local Identity)',
+                    implication: formula.interpretation.replace(/<[^>]*>/g, '') // Strip HTML tags for clean text
+                });
+            }
+            if (formula.symmetry_origin && formula.symmetry_origin !== 'Symmetry derivations pending.') {
+                scenarios.push({
+                    condition: 'Symmetry & Coordinate Invariance',
+                    implication: formula.symmetry_origin.replace(/<[^>]*>/g, '')
+                });
+            }
+            if (formula.limits_and_boundary && formula.limits_and_boundary !== 'Boundary analysis pending.') {
+                scenarios.push({
+                    condition: 'Limiting Cases & Boundaries',
+                    implication: formula.limits_and_boundary.replace(/<[^>]*>/g, '')
+                });
+            }
+
+            // If still empty, use synthesis fallback
+            if (scenarios.length === 0) {
+                scenarios = synthesis.scenarios;
+            }
+        }
+        this.renderAIScenariosSection(scenarios);
+
+        // Deconstruct EVERY element in the LaTeX string, merging database semantic definitions for left panel hover list
         this.renderElementsBreakdown(this.currentLatex, formula.semantic_variables || {});
 
         // Populate Topological Bridges
@@ -583,13 +666,16 @@ const EquationExplainer = {
 
         // Setup Dimensional Solver Link
         this.setupSolverLink(this.currentLatex);
+
+        // Initialize sandbox simulator
+        this.initSandbox(this.currentLatex, formula.semantic_variables || {});
     },
 
     renderCustomExplanation(latex) {
         this.currentFormula = null;
         this.currentSubtopics = [];
 
-        // Hide official tiers
+        // Hide old layout elements
         this.explainerPlaceholder.style.display = 'none';
         this.officialBreakdown.style.display = 'none';
         this.symbolsBreakdown.style.display = 'block';
@@ -600,11 +686,35 @@ const EquationExplainer = {
         this.formulaBadge.className = 'badge-status badge-unregistered';
         this.formulaBadge.textContent = 'Live Analysis';
 
+        // Synthesize dynamic AI Overview
+        const synthesis = this.synthesizeCustomOverview(latex);
+
+        if (this.conceptualIntroCard) {
+            this.conceptualIntroCard.style.display = 'flex';
+            this.conceptualIntroCard.innerHTML = `
+                <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                    ✦ AI Overview
+                </h4>
+                <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
+                    ${synthesis.intro}
+                </div>
+                <div class="intuitive-summary" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-muted, #94a3b8); border-left: 2px solid var(--accent-default, #64ffda); padding-left: 12px; font-style: italic; margin-top: 4px;">
+                    ${synthesis.summary}
+                </div>
+            `;
+        }
+
+        // Render AI scenarios
+        this.renderAIScenariosSection(synthesis.scenarios);
+
         // Deconstruct EVERY element in the custom LaTeX string
         this.renderElementsBreakdown(latex, {});
 
         // Setup Dimensional Solver Link
         this.setupSolverLink(latex);
+
+        // Initialize sandbox simulator
+        this.initSandbox(latex, {});
     },
 
     /**
@@ -614,7 +724,7 @@ const EquationExplainer = {
     renderElementsBreakdown(latex, officialVariables) {
         this.symbolsList.innerHTML = '';
         
-        const tokens = this.extractAllMathTokens(latex);
+        const tokens = this.extractAllMathTokens(latex, officialVariables);
         
         if (tokens.length === 0) {
             this.symbolsList.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">No math variables, constants, or operators detected.</div>';
@@ -638,6 +748,30 @@ const EquationExplainer = {
                     unit: official.unit || 'dimensionless',
                     ref: official.ref || null,
                     source: 'database'
+                };
+            } else if (/\\(int|oint|iint|iiint)/.test(symbol)) {
+                info = {
+                    name: 'Definite/Indefinite Integral',
+                    type: tok.type,
+                    description: 'Accumulates quantities over the differential range.',
+                    unit: 'dimensionless',
+                    source: 'heuristic'
+                };
+            } else if (/\\frac\{\\partial/.test(symbol)) {
+                info = {
+                    name: 'Partial Derivative',
+                    type: tok.type,
+                    description: 'Represents the rate of change of the numerator with respect to the denominator.',
+                    unit: 'dimensionless',
+                    source: 'heuristic'
+                };
+            } else if (/\\(dot|ddot)/.test(symbol)) {
+                info = {
+                    name: 'Time Derivative',
+                    type: tok.type,
+                    description: 'Represents the rate of change with respect to time.',
+                    unit: 'dimensionless',
+                    source: 'heuristic'
                 };
             } else {
                 // Try constants.json
@@ -913,7 +1047,7 @@ const EquationExplainer = {
         wrapper.querySelector('.edit-var-name').focus();
     },
 
-    extractAllMathTokens(latex) {
+    extractAllMathTokens(latex, officialVariables = {}) {
         if (!latex) return [];
 
         let text = latex.trim();
@@ -979,6 +1113,67 @@ const EquationExplainer = {
             seen.add(symbol);
             found.push({ symbol, type });
         };
+
+        // 2b. Pre-scan for official database keys to keep them grouped as unified terms
+        if (officialVariables) {
+            for (const sym of Object.keys(officialVariables)) {
+                if (this.latexContainsSymbol(text, sym)) {
+                    const isOperator = this.physicsDictionary[sym] && this.physicsDictionary[sym].type === 'operator';
+                    addToken(sym, isOperator ? 'operator' : 'variable');
+                    
+                    // Replace matched symbol in text to avoid partial matching later
+                    const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                    const regex = new RegExp(escaped, 'g');
+                    text = text.replace(regex, ' ');
+                }
+            }
+        }
+
+        // 2c. Heuristic Grouping for unregistered/custom equations (Live Analysis)
+        // Check for integrals with differentials: \int ... dt
+        const integralRegex = /\\(int|oint|iint|iiint)\b(.*?)\\?d([a-zA-Z])/g;
+        let intMatch;
+        while ((intMatch = integralRegex.exec(text)) !== null) {
+            const fullMatch = intMatch[0];
+            addToken(fullMatch, 'operator');
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
+
+        // Check for partial derivatives: \frac{\partial \Psi}{\partial t}
+        const partialRegex = /\\frac\{\\partial\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{\\partial\s*([a-zA-Z\\]+)\}/g;
+        let partMatch;
+        while ((partMatch = partialRegex.exec(text)) !== null) {
+            const fullMatch = partMatch[0];
+            addToken(fullMatch, 'operator');
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
+
+        // Check for dot derivatives: \dot{q} or \dot q
+        const dotRegex = /\\(dot|ddot)\{([a-zA-Z\\]+)\}|\\(dot|ddot)\s*([a-zA-Z])/g;
+        let dotMatch;
+        while ((dotMatch = dotRegex.exec(text)) !== null) {
+            const fullMatch = dotMatch[0];
+            addToken(fullMatch, 'variable');
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
+
+        // Check for subscripts: q_i or k_B
+        const subscriptRegex = /([a-zA-Z\\]+)_([a-zA-Z0-9]+|\{[a-zA-Z0-9]+\})/g;
+        let subMatch;
+        while ((subMatch = subscriptRegex.exec(text)) !== null) {
+            const fullMatch = subMatch[0];
+            if (fullMatch.startsWith('\\partial') || fullMatch.startsWith('\\nabla')) continue;
+            addToken(fullMatch, 'variable');
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
 
         // 3. Scan for standard physical constants symbols from constants.json first
         const constants = window.PHYSICS_CONSTANTS || {};
@@ -1117,10 +1312,16 @@ const EquationExplainer = {
     },
 
     resetExplanation() {
+        this.stopSandbox();
+        this.stopSonification();
+        
         this.explainerPlaceholder.style.display = 'flex';
         this.officialBreakdown.style.display = 'none';
         this.symbolsBreakdown.style.display = 'none';
         this.topologicalBridges.style.display = 'none';
+        if (this.conceptualIntroCard) this.conceptualIntroCard.style.display = 'none';
+        if (this.aiScenariosSection) this.aiScenariosSection.style.display = 'none';
+        if (this.aiSimulationCard) this.aiSimulationCard.style.display = 'none';
         
         this.formulaTitle.textContent = 'Selecting Equation...';
         this.formulaBadge.className = 'badge-status badge-unregistered';
@@ -1266,6 +1467,518 @@ const EquationExplainer = {
         text = text.trim();
 
         return text;
+    },
+
+    renderAIScenariosSection(scenarios) {
+        this.aiScenariosList.innerHTML = '';
+        if (!scenarios || scenarios.length === 0) {
+            this.aiScenariosSection.style.display = 'none';
+            return;
+        }
+
+        this.aiScenariosSection.style.display = 'flex';
+        scenarios.forEach(sc => {
+            const card = document.createElement('div');
+            card.className = 'ai-scenario-card';
+            card.style.cssText = 'background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;';
+            
+            // Automatically detect and wrap parenthesized LaTeX expressions in math delimiters
+            const conditionHtml = this.wrapTextMathDelimiters(sc.condition);
+            const implicationHtml = this.wrapTextMathDelimiters(sc.implication);
+
+            card.innerHTML = `
+                <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; font-family: 'Space Grotesk', sans-serif;">
+                    ${conditionHtml}
+                </h4>
+                <p style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
+                    ${implicationHtml}
+                </p>
+            `;
+            this.aiScenariosList.appendChild(card);
+        });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise([this.aiScenariosList])
+                .catch(err => console.warn('MathJax failed on AI scenarios:', err));
+        }
+    },
+
+    wrapTextMathDelimiters(text) {
+        if (typeof text !== 'string') return text;
+        // If string contains backslashes (LaTeX) but lacks math delimiters, auto-wrap parenthesized math segments
+        if (text.includes('\\') && !text.includes('\\(')) {
+            text = text.replace(/\(([^)]+\\[^)]+)\)/g, '(\\($1\\))');
+        }
+        return text;
+    },
+
+    synthesizeCustomOverview(latex) {
+        let intro = "This mathematical expression represents a physical relation between variables.";
+        let summary = "It is used to calculate the relative dynamics of the physical system.";
+        let scenarios = [];
+
+        // 1. Detect Gauss's Law / Divergence
+        if (latex.includes('\\nabla \\cdot') || latex.includes('\\text{div}')) {
+            let fieldSymbol = 'E';
+            const match = latex.match(/\\nabla\s*\\cdot\s*(\\mathbf\{[A-Z]\}|[A-Za-z])/);
+            if (match) {
+                fieldSymbol = match[1];
+            }
+            intro = `The mathematical statement represents the <strong>Divergence</strong> of the vector field $${fieldSymbol}$. This is a foundational relation in field theory, measuring whether a given point in space acts as a source or a sink for the field lines.`;
+            summary = `It states that the net flux of the field exiting an infinitesimal volume around a point is determined by the local source density.`;
+            scenarios = [
+                {
+                    condition: `Positive Divergence (\\( \\nabla \\cdot ${fieldSymbol} > 0 \\))`,
+                    implication: "The point acts as a source. Field lines diverge outward from this region (e.g., positive charges acting as sources of electric fields)."
+                },
+                {
+                    condition: `Negative Divergence (\\( \\nabla \\cdot ${fieldSymbol} < 0 \\))`,
+                    implication: "The point acts as a sink. Field lines converge inward toward this region (e.g., negative charges acting as sinks of electric fields)."
+                },
+                {
+                    condition: `Zero Divergence (\\( \\nabla \\cdot ${fieldSymbol} = 0 \\))`,
+                    implication: "The field is solenoidal. Field lines pass through the volume continuously without starting or stopping (e.g., magnetic fields, where the absence of magnetic monopoles guarantees zero divergence)."
+                }
+            ];
+        }
+        // 2. Detect Maxwell-Faraday / Curl
+        else if (latex.includes('\\nabla \\times') || latex.includes('\\text{curl}')) {
+            let fieldSymbol = 'E';
+            const match = latex.match(/\\nabla\s*\\times\s*(\\mathbf\{[A-Z]\}|[A-Za-z])/);
+            if (match) {
+                fieldSymbol = match[1];
+            }
+            intro = `The mathematical statement defines the <strong>Curl</strong> of the vector field $${fieldSymbol}$. This operator measures the rotational intensity, vorticity, or circulation of the field around a point.`;
+            summary = `It quantifies the tendency of the vector field lines to curl or rotate around a given axis.`;
+            scenarios = [
+                {
+                    condition: `Non-Zero Curl (\\( \\nabla \\times ${fieldSymbol} \\neq 0 \\))`,
+                    implication: "The field possesses circulation or rotational eddies, indicating the presence of vortex sources (e.g., induced electric fields resulting from changing magnetic flux)."
+                },
+                {
+                    condition: `Zero Curl (\\( \\nabla \\times ${fieldSymbol} = 0 \\))`,
+                    implication: "The field is conservative or irrotational. Its line integral around any closed loop is zero, allowing it to be represented as the gradient of a scalar potential."
+                }
+            ];
+        }
+        // 3. Detect Schrödinger / Time-dependent Rate equation
+        else if (latex.includes('\\partial') && latex.includes('\\partial t') || latex.includes('\\dot') || latex.includes('\\frac{d}{dt}') || latex.includes('\\ddot')) {
+            intro = "This formula defines the <strong>temporal evolution</strong> (dynamics) of a physical system. It establishes how the state vector or physical quantities change with time.";
+            summary = "It maps the rate of change of the system variables directly to the governing operator forces or energies.";
+            scenarios = [
+                {
+                    condition: "Positive Time Derivative (\\( d/dt > 0 \\))",
+                    implication: "The physical quantity or state magnitude is increasing or accumulating over time."
+                },
+                {
+                    condition: "Negative Time Derivative (\\( d/dt < 0 \\))",
+                    implication: "The physical quantity is decreasing, decaying, or dissipating over time."
+                },
+                {
+                    condition: "Zero Time Derivative (\\( d/dt = 0 \\))",
+                    implication: "The system is in a stationary state, steady-state configuration, or thermal equilibrium."
+                }
+            ];
+        }
+        // 4. Detect Action / Integrals
+        else if (latex.includes('\\int') || latex.includes('\\oint')) {
+            intro = "This formula represents an <strong>integral accumulation</strong> of physical quantities across a specific mathematical domain (boundary path, surface area, or volume space).";
+            summary = "It summates local densities to calculate a global macroscopic quantity (such as total energy, mass, charge, or action).";
+            scenarios = [
+                {
+                    condition: "Closed Loop Integration (\\( \\oint \\))",
+                    implication: "Accumulates quantities along a closed path or boundary. If the result is zero, the system is conservative; if non-zero, it represents net circulation or enclosed sources."
+                },
+                {
+                    condition: "Infinite Bounds (\\( -\\infty \\) to \\( \\infty \\))",
+                    implication: "Accumulates the quantity across all space (e.g., probability normalization in quantum mechanics summing to exactly 1)."
+                }
+            ];
+        } else {
+            scenarios = [
+                {
+                    condition: "Scaling Limits (Direct Proportionality)",
+                    implication: "Increasing the numerator variables results in a proportional increase in the left-hand side of the relation."
+                },
+                {
+                    condition: "Inverse Scaling (Inverse Proportionality)",
+                    implication: "Increasing the denominator variables causes the left-hand side quantity to decay."
+                }
+            ];
+        }
+
+        return { intro, summary, scenarios };
+    },
+
+    initSandbox(latex, variables) {
+        this.stopSandbox();
+        this.stopSonification();
+
+        if (!this.sandboxCanvas) return;
+
+        this.sandboxCtx = this.sandboxCanvas.getContext('2d');
+        this.aiSimulationCard.style.display = 'flex';
+
+        // 1. Classify Sandbox Type
+        if (latex.includes('\\nabla \\cdot') || latex.includes('\\text{div}')) {
+            this.sandboxType = 'divergence';
+        } else if (latex.includes('\\nabla \\times') || latex.includes('\\text{curl}')) {
+            this.sandboxType = 'curl';
+        } else if (latex.includes('\\partial') && latex.includes('\\partial t') || latex.includes('\\dot') || latex.includes('\\frac{d}{dt}') || latex.includes('\\ddot') || latex.includes('\\int') || latex.includes('\\oint')) {
+            this.sandboxType = 'wave';
+        } else {
+            this.sandboxType = 'scaling';
+        }
+
+        // 2. Extract active variables
+        const tokens = this.extractAllMathTokens(latex, variables);
+        const vars = tokens.filter(t => t.type === 'variable');
+
+        // Reset parameters
+        this.sandboxParams = {};
+        this.sandboxSliders.innerHTML = '';
+
+        // Default parameters based on type
+        if (this.sandboxType === 'divergence') {
+            this.sandboxParams['strength'] = 5; // Divergence value (-10 to 10)
+            this.createSlider('strength', 'Field Strength / Charge (ρ)', 'dimensionless', -10, 10, 5, 0.5);
+        } else if (this.sandboxType === 'curl') {
+            this.sandboxParams['vorticity'] = 5; // Rotational velocity (-10 to 10)
+            this.createSlider('vorticity', 'Vorticity / Circulation (Γ)', 'rad/s', -10, 10, 5, 0.5);
+        } else if (this.sandboxType === 'wave') {
+            this.sandboxParams['frequency'] = 5;
+            this.sandboxParams['amplitude'] = 4;
+            this.createSlider('frequency', 'Angular Frequency (ω)', 'Hz', 1, 15, 5, 0.2);
+            this.createSlider('amplitude', 'Wave Amplitude (A)', 'dimensionless', 1, 8, 4, 0.2);
+        } else {
+            // General scaling parameters
+            this.sandboxParams['input'] = 5;
+            this.createSlider('input', 'Control Input Variable', 'dimensionless', 0, 10, 5, 0.1);
+        }
+
+        // 3. Start render loop
+        this.startSandboxLoop();
+    },
+
+    createSlider(name, label, unit, min, max, val, step) {
+        this.sandboxParams[name] = val;
+
+        const sliderWrapper = document.createElement('div');
+        sliderWrapper.style.cssText = 'display: flex; flex-direction: column; gap: 4px;';
+
+        const labelRow = document.createElement('div');
+        labelRow.style.cssText = 'display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;';
+        
+        const labelText = document.createElement('span');
+        labelText.textContent = label;
+
+        const valText = document.createElement('span');
+        valText.style.cssText = 'font-weight: 600; color: var(--accent-default, #64ffda); font-family: "Fira Code", monospace;';
+        valText.textContent = `${val} ${unit !== 'dimensionless' ? unit : ''}`;
+
+        labelRow.appendChild(labelText);
+        labelRow.appendChild(valText);
+
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.min = min;
+        input.max = max;
+        input.value = val;
+        input.step = step;
+        input.style.cssText = 'width: 100%; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.1); outline: none; cursor: pointer; accent-color: var(--accent-default, #64ffda);';
+
+        input.addEventListener('input', (e) => {
+            const numVal = parseFloat(e.target.value);
+            this.sandboxParams[name] = numVal;
+            valText.textContent = `${numVal} ${unit !== 'dimensionless' ? unit : ''}`;
+            this.updateSonificationParameters();
+        });
+
+        sliderWrapper.appendChild(labelRow);
+        sliderWrapper.appendChild(input);
+        this.sandboxSliders.appendChild(sliderWrapper);
+    },
+
+    stopSandbox() {
+        if (this.sandboxAnimationId) {
+            cancelAnimationFrame(this.sandboxAnimationId);
+            this.sandboxAnimationId = null;
+        }
+    },
+
+    startSandboxLoop() {
+        const fps = 60;
+        let time = 0;
+
+        const render = () => {
+            if (!this.sandboxCanvas || !this.sandboxCtx) return;
+
+            const w = this.sandboxCanvas.width;
+            const h = this.sandboxCanvas.height;
+            const ctx = this.sandboxCtx;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw base grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+            ctx.lineWidth = 1;
+            const step = 20;
+            for (let x = 0; x < w; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+                ctx.stroke();
+            }
+            for (let y = 0; y < h; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+
+            // Draw active animation
+            time += 0.05;
+            if (this.sandboxType === 'divergence') {
+                this.drawDivergence(ctx, w, h, time, this.sandboxParams['strength']);
+            } else if (this.sandboxType === 'curl') {
+                this.drawCurl(ctx, w, h, time, this.sandboxParams['vorticity']);
+            } else if (this.sandboxType === 'wave') {
+                this.drawWave(ctx, w, h, time, this.sandboxParams['frequency'], this.sandboxParams['amplitude']);
+            } else {
+                this.drawScaling(ctx, w, h, time, this.sandboxParams['input']);
+            }
+
+            this.sandboxAnimationId = requestAnimationFrame(render);
+        };
+
+        render();
+    },
+
+    drawDivergence(ctx, w, h, t, strength) {
+        const cx = w / 2;
+        const cy = h / 2;
+
+        // Draw central source/sink node
+        ctx.beginPath();
+        ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+        ctx.fillStyle = strength > 0 ? '#10b981' : (strength < 0 ? '#f43f5e' : 'rgba(255, 255, 255, 0.2)');
+        ctx.fill();
+
+        // Particle stream lines
+        const numStreams = 12;
+        for (let i = 0; i < numStreams; i++) {
+            const angle = (i * Math.PI * 2) / numStreams;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+
+            ctx.strokeStyle = strength > 0 ? 'rgba(16, 185, 129, 0.12)' : (strength < 0 ? 'rgba(244, 63, 94, 0.12)' : 'rgba(255, 255, 255, 0.06)');
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + cos * 150, cy + sin * 150);
+            ctx.stroke();
+
+            // Animate moving flow dots
+            if (strength !== 0) {
+                const speed = Math.abs(strength) * 0.4;
+                const offset = (t * speed) % 150;
+                const distance = strength > 0 ? offset : (150 - offset);
+                
+                ctx.beginPath();
+                ctx.arc(cx + cos * distance, cy + sin * distance, 3, 0, Math.PI * 2);
+                ctx.fillStyle = strength > 0 ? 'var(--accent-default, #64ffda)' : '#f43f5e';
+                ctx.fill();
+            }
+        }
+    },
+
+    drawCurl(ctx, w, h, t, vorticity) {
+        const cx = w / 2;
+        const cy = h / 2;
+
+        // Draw center rotation core
+        ctx.beginPath();
+        ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+        ctx.fillStyle = vorticity !== 0 ? 'var(--accent-default, #64ffda)' : 'rgba(255, 255, 255, 0.2)';
+        ctx.fill();
+
+        // Draw rotating circles
+        const rings = [35, 65, 95];
+        rings.forEach((r, idx) => {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Rotating flow node
+            if (vorticity !== 0) {
+                const dir = vorticity > 0 ? 1 : -1;
+                const speed = Math.abs(vorticity) * 0.08 / (idx + 1);
+                const angle = t * speed * dir + (idx * Math.PI / 1.5);
+                
+                const px = cx + Math.cos(angle) * r;
+                const py = cy + Math.sin(angle) * r;
+                
+                ctx.beginPath();
+                ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+                ctx.fillStyle = vorticity > 0 ? 'var(--accent-default, #64ffda)' : '#a78bfa';
+                ctx.fill();
+            }
+        });
+    },
+
+    drawWave(ctx, w, h, t, freq, amp) {
+        ctx.strokeStyle = 'var(--accent-default, #64ffda)';
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = 'rgba(100, 255, 218, 0.4)';
+        ctx.shadowBlur = 10;
+        
+        ctx.beginPath();
+        for (let x = 0; x < w; x++) {
+            // y = Amplitude * sin(k * x - omega * t)
+            const k = 0.04;
+            const omega = freq * 0.05;
+            const y = h / 2 + (amp * 10) * Math.sin(k * x - omega * t);
+            
+            if (x === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.stroke();
+        
+        ctx.shadowBlur = 0; // Reset shadow
+    },
+
+    drawScaling(ctx, w, h, t, input) {
+        const cx = w / 2;
+        const cy = h / 2;
+
+        // Draw Slope Line
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(20, h - 20);
+        ctx.lineTo(w - 20, 20);
+        ctx.stroke();
+
+        // Draw active slider position dot
+        const startX = 40;
+        const endX = w - 40;
+        const startY = h - 30;
+        const endY = 30;
+
+        const currentX = startX + (endX - startX) * (input / 10);
+        const currentY = startY + (endY - startY) * (input / 10);
+
+        ctx.beginPath();
+        ctx.arc(currentX, currentY, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffd700';
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.4)';
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    },
+
+    toggleSonification() {
+        if (this.isSonifying) {
+            this.stopSonification();
+        } else {
+            this.startSonification();
+        }
+    },
+
+    startSonification() {
+        try {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            this.audioCtx = new AudioContextClass();
+            
+            this.audioOscillator = this.audioCtx.createOscillator();
+            this.audioGain = this.audioCtx.createGain();
+
+            this.audioOscillator.type = 'sine';
+            
+            // Connect nodes
+            this.audioOscillator.connect(this.audioGain);
+            this.audioGain.connect(this.audioCtx.destination);
+            
+            this.audioOscillator.start();
+            this.isSonifying = true;
+
+            // Set button state
+            this.sonifyToggleBtn.innerHTML = `
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/></svg>
+                Stop Audio
+            `;
+            this.sonifyToggleBtn.style.background = 'rgba(244, 63, 94, 0.1)';
+            this.sonifyToggleBtn.style.color = '#f43f5e';
+            this.sonifyToggleBtn.style.borderColor = 'rgba(244, 63, 94, 0.3)';
+
+            this.updateSonificationParameters();
+        } catch (e) {
+            console.warn('Audio Context failed to initialize:', e);
+        }
+    },
+
+    stopSonification() {
+        if (this.audioOscillator) {
+            try {
+                this.audioOscillator.stop();
+            } catch (err) {}
+            this.audioOscillator.disconnect();
+            this.audioOscillator = null;
+        }
+        if (this.audioGain) {
+            this.audioGain.disconnect();
+            this.audioGain = null;
+        }
+        if (this.audioCtx) {
+            this.audioCtx.close();
+            this.audioCtx = null;
+        }
+        
+        this.isSonifying = false;
+        
+        // Reset button state
+        this.sonifyToggleBtn.innerHTML = `
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Sonify Math
+        `;
+        this.sonifyToggleBtn.style.background = 'rgba(100, 255, 218, 0.05)';
+        this.sonifyToggleBtn.style.color = 'var(--accent-default, #64ffda)';
+        this.sonifyToggleBtn.style.borderColor = 'rgba(100, 255, 218, 0.2)';
+    },
+
+    updateSonificationParameters() {
+        if (!this.isSonifying || !this.audioOscillator || !this.audioGain) return;
+
+        let baseFrequency = 300; // Default central pitch (Hz)
+        let gainVal = 0.15;      // Default volume
+
+        if (this.sandboxType === 'divergence') {
+            const strength = this.sandboxParams['strength'] || 0;
+            baseFrequency = 300 + (strength * 20); // Pitch maps to source/sink intensity
+            gainVal = 0.05 + (Math.abs(strength) * 0.02);
+        } else if (this.sandboxType === 'curl') {
+            const vorticity = this.sandboxParams['vorticity'] || 0;
+            baseFrequency = 350 + (vorticity * 15);
+            gainVal = 0.05 + (Math.abs(vorticity) * 0.02);
+        } else if (this.sandboxType === 'wave') {
+            const freq = this.sandboxParams['frequency'] || 5;
+            const amp = this.sandboxParams['amplitude'] || 4;
+            baseFrequency = 200 + (freq * 30); // Pitch maps to angular frequency
+            gainVal = 0.02 + (amp * 0.03);      // Volume maps to wave amplitude
+        } else {
+            const input = this.sandboxParams['input'] || 5;
+            baseFrequency = 250 + (input * 40);
+        }
+
+        // Apply parameter slides smoothly
+        const t = this.audioCtx.currentTime;
+        this.audioOscillator.frequency.setTargetAtTime(baseFrequency, t, 0.05);
+        this.audioGain.gain.setTargetAtTime(gainVal, t, 0.05);
     }
 };
 

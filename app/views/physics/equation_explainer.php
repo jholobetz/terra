@@ -112,11 +112,26 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         </div>
                     </div>
 
+                    <!-- Section 1: AI Overview Banner -->
+                    <div id="conceptual-intro-card" style="display: none; background: rgba(100, 255, 218, 0.03); border: 1px solid rgba(100, 255, 218, 0.12); border-radius: 12px; padding: 20px; flex-direction: column; gap: 12px;">
+                        <!-- JS populated -->
+                    </div>
+
+                    <!-- Section 3: Physical Meaning & Scenarios -->
+                    <div id="ai-scenarios-section" style="display: none; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                            <span style="color: var(--accent-default, #64ffda);">2.</span> Understand the Physical Meaning
+                        </h3>
+                        <div id="ai-scenarios-list" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Dynamic scenario blocks -->
+                        </div>
+                    </div>
+
                     <!-- Tiers Section (Only shown when formula has detailed breakdowns) -->
                     <div id="official-breakdown" style="display: none; flex-direction: column; gap: 15px;">
                         <div class="tier-card" style="background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;">
                             <h4 style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;">
-                                1. Interpretation (Local Identity)
+                                Interpretation (Local Identity)
                             </h4>
                             <p id="local-interpretation" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
                                 --
@@ -125,7 +140,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 
                         <div class="tier-card" style="background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;">
                             <h4 style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;">
-                                2. Symmetry &amp; Coordinate Invariance
+                                Symmetry &amp; Coordinate Invariance
                             </h4>
                             <p id="symmetry-origin" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
                                 --
@@ -134,11 +149,35 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 
                         <div class="tier-card" style="background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;">
                             <h4 style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;">
-                                3. Limiting Cases &amp; Boundaries
+                                Limiting Cases &amp; Boundaries
                             </h4>
                             <p id="limits-boundary" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
                                 --
                             </p>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Live Simulation Sandbox -->
+                    <div id="ai-simulation-card" style="display: none; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 20px; flex-direction: column; gap: 15px; margin-top: 10px;">
+                        <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
+                            <span style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: var(--accent-default, #64ffda);">3.</span> Interactive Sandbox
+                            </span>
+                            <!-- Sonification Button -->
+                            <button id="sonify-toggle-btn" style="background: rgba(100, 255, 218, 0.05); border: 1px solid rgba(100, 255, 218, 0.2); color: var(--accent-default, #64ffda); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-family: 'Space Grotesk', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                                Sonify Math
+                            </button>
+                        </h3>
+
+                        <!-- Dynamic Simulation Canvas -->
+                        <div style="position: relative; width: 100%; height: 180px; background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="sandbox-canvas" width="400" height="180" style="display: block; width: 100%; height: 100%;"></canvas>
+                        </div>
+
+                        <!-- Parameter Sliders Container -->
+                        <div id="sandbox-sliders" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- JS populated sliders -->
                         </div>
                     </div>
 
@@ -299,4 +338,4 @@ window.INITIAL_SUBTOPICS = <?= json_encode($subtopics) ?>;
 window.PHYSICS_CONSTANTS = <?= $constantsJson ?>;
 </script>
 
-<script src="/js/equation_explainer.js" defer></script>
+<script src="/js/equation_explainer.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/equation_explainer.js') ?>" defer></script>

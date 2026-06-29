@@ -64,7 +64,7 @@ class MultiAgentCritic:
         else:
             # Build dynamically
             for file in os.listdir(self.content_dir):
-                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "notation.json", "particles.json", "compiled_trie_regex.json", "pillar_profiles.json"]:
+                if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "search_index.json", "entities.json", "global_slug_registry.json", "notation.json", "particles.json", "compiled_trie_regex.json", "pillar_profiles.json", "formula_aliases.json"]:
                     path = os.path.join(self.content_dir, file)
                     try:
                         with open(path, "r") as f:

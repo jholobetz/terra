@@ -9,6 +9,7 @@ class PhysicsService
     protected Engine $app;
     private ?array $physicsContent = null;
     private ?bool $isPreviewMode = null;
+    private ?array $formulaAliases = null;
 
     public function __construct(Engine $app)
     {
@@ -146,7 +147,7 @@ class PhysicsService
         // Load Subtopic Shards
         $files = scandir($baseDir);
         foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'json' && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json', 'pillar_profiles.json', 'compiled_trie_regex.json', 'notation.json'])) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'json' && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json', 'pillar_profiles.json', 'compiled_trie_regex.json', 'notation.json', 'formula_aliases.json'])) {
                 $shard = json_decode(file_get_contents($baseDir . $file), true) ?: [];
                 if (is_array($shard)) {
                     $this->physicsContent['subtopics'] = array_merge($this->physicsContent['subtopics'], $shard);
@@ -278,10 +279,42 @@ class PhysicsService
      */
     public function loadFormula(string $fId): ?array
     {
+        if ($this->formulaAliases === null) {
+            $aliasPath = PROJECT_ROOT . '/app/config/content/formula_aliases.json';
+            if (file_exists($aliasPath)) {
+                $this->formulaAliases = json_decode(file_get_contents($aliasPath), true) ?: [];
+            } else {
+                $this->formulaAliases = [];
+            }
+        }
+        if (isset($this->formulaAliases[$fId])) {
+            $fId = $this->formulaAliases[$fId];
+        }
+
         if (isset($this->physicsContent['formula_registry'][$fId])) {
             return $this->physicsContent['formula_registry'][$fId];
         }
 
+        // Live Production Mode: Query MariaDB table with error fallback
+        if (!$this->isPreviewActive()) {
+            try {
+                $row = $this->app->db()->fetchRow("SELECT * FROM formulas WHERE id = ?", [$fId]);
+                if ($row) {
+                    $formula = is_object($row) && method_exists($row, 'getData') ? $row->getData() : (array) $row;
+                    if (isset($formula['semantic_variables'])) {
+                        $formula['semantic_variables'] = is_string($formula['semantic_variables'])
+                            ? (json_decode($formula['semantic_variables'], true) ?: [])
+                            : $formula['semantic_variables'];
+                    }
+                    $this->physicsContent['formula_registry'][$fId] = $formula;
+                    return $formula;
+                }
+            } catch (\Exception $e) {
+                error_log("Database loadFormula failed, falling back to shards: " . $e->getMessage());
+            }
+        }
+
+        // Development/Fallback Mode: Load from local JSON shards
         $baseDir = PROJECT_ROOT . '/app/config/content/';
         $hexPrefix = substr(md5($fId), 0, 2);
         $shardPath = $baseDir . 'formulas/shard_' . $hexPrefix . '.json';
@@ -444,6 +477,22 @@ class PhysicsService
         $data = $this->getPhysicsContent();
         $db = $this->app->db();
 
+        // 1. Auto-provision the formulas table if it does not exist
+        $db->runQuery("CREATE TABLE IF NOT EXISTS formulas (
+            id VARCHAR(255) PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            equation MEDIUMTEXT NOT NULL,
+            conceptual_definition TEXT,
+            intuitive_summary TEXT,
+            interpretation TEXT,
+            symmetry_origin TEXT,
+            limits_and_boundary TEXT,
+            semantic_variables JSON,
+            unit_system VARCHAR(50) DEFAULT 'SI',
+            status VARCHAR(50) DEFAULT 'published'
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        // 2. Sync Topics
         foreach ($data['topics'] ?? [] as $slug => $t) {
             $db->runQuery("INSERT INTO topics (slug, title, content, pillars, intro, bridges, field, density, equations, breakdowns, formula_data) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -454,11 +503,75 @@ class PhysicsService
                 [$slug, $t['title'], $t['content'] ?? '', json_encode($t['pillars'] ?? []), $t['intro'] ?? '', json_encode($t['bridges'] ?? []), $t['field'] ?? '', $t['density'] ?? '', json_encode($t['equations'] ?? []), json_encode($t['breakdowns'] ?? []), json_encode($t['formula_ids'] ?? [])]);
         }
 
+        // 3. Sync Subtopics
         foreach ($data['subtopics'] ?? [] as $slug => $st) {
             $this->syncIndividualSubtopic($slug, $st);
         }
 
-        // Automatically prune database orphans (e.g. subtopics deleted on disk)
+        // 4. Sync Formulas (Grouped Transactionally for Performance)
+        $formulasDir = PROJECT_ROOT . '/app/config/content/formulas/';
+        $formulaFiles = glob($formulasDir . 'shard_*.json');
+        
+        $db->runQuery("START TRANSACTION");
+        try {
+            $diskFormulaIds = [];
+            foreach ($formulaFiles as $file) {
+                $content = json_decode(file_get_contents($file), true) ?: [];
+                foreach ($content as $fId => $fData) {
+                    $diskFormulaIds[] = $fId;
+                    $db->runQuery(
+                        "INSERT INTO formulas (
+                            id, title, equation, conceptual_definition, intuitive_summary, 
+                            interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
+                            unit_system, status
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE 
+                            title = VALUES(title),
+                            equation = VALUES(equation),
+                            conceptual_definition = VALUES(conceptual_definition),
+                            intuitive_summary = VALUES(intuitive_summary),
+                            interpretation = VALUES(interpretation),
+                            symmetry_origin = VALUES(symmetry_origin),
+                            limits_and_boundary = VALUES(limits_and_boundary),
+                            semantic_variables = VALUES(semantic_variables),
+                            unit_system = VALUES(unit_system),
+                            status = VALUES(status)",
+                        [
+                            $fId,
+                            $fData['title'],
+                            $fData['equation'],
+                            $fData['conceptual_definition'] ?? null,
+                            $fData['intuitive_summary'] ?? null,
+                            $fData['interpretation'] ?? null,
+                            $fData['symmetry_origin'] ?? null,
+                            $fData['limits_and_boundary'] ?? null,
+                            isset($fData['semantic_variables']) ? json_encode($fData['semantic_variables']) : null,
+                            $fData['unit_system'] ?? 'SI',
+                            $fData['status'] ?? 'published'
+                        ]
+                    );
+                }
+            }
+            
+            // Prune orphaned database formulas
+            $dbRows = $db->fetchAll("SELECT id FROM formulas");
+            $dbFormulaIds = array_map(fn($row) => $row->id, $dbRows);
+            $orphanedFormulas = array_diff($dbFormulaIds, $diskFormulaIds);
+            if (!empty($orphanedFormulas)) {
+                $placeholders = implode(',', array_fill(0, count($orphanedFormulas), '?'));
+                $db->runQuery(
+                    "DELETE FROM formulas WHERE id IN ($placeholders)",
+                    array_values($orphanedFormulas)
+                );
+            }
+
+            $db->runQuery("COMMIT");
+        } catch (\Exception $e) {
+            $db->runQuery("ROLLBACK");
+            throw $e;
+        }
+
+        // 5. Automatically prune database subtopics
         $this->pruneOrphans(false);
     }
 

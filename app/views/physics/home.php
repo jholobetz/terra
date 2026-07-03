@@ -66,12 +66,7 @@ require_once __DIR__ . '/_topic_icons.php';
                 <span class="badge">Active</span>
             </div>
             
-            <div class="equation-box">
-                <div class="equation-render" style="font-size: 0.85rem; line-height: 1.4;">
-                    \[ \mathbf{a} = -g\hat{j} - \class{math-color-current}{C_d} v \mathbf{v} \]
-                    \[ \mathbf{v}_0 = \class{math-color-mass}{v_0}(\cos\class{math-color-length}{\theta}\hat{i} + \sin\class{math-color-length}{\theta}\hat{j}) \]
-                </div>
-            </div>
+
             
             <div class="canvas-wrapper">
                 <canvas id="sandbox-canvas"></canvas>

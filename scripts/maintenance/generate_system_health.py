@@ -72,7 +72,10 @@ def score_subtopic(slug, sub, category=None):
     # Subjective vs Objective weighting
     is_subjective = is_node_subjective(slug, sub, category=category)
     density_target = 30 if is_subjective else 60
-    word_target = 500 if is_subjective else 650
+    if slug.endswith("-overview"):
+        word_target = 800
+    else:
+        word_target = 500 if is_subjective else 650
 
     is_flagged = standard == "platinum"
     meets_quant = words >= word_target and density_score >= density_target

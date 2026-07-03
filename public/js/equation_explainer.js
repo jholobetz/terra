@@ -1221,8 +1221,8 @@ const EquationExplainer = {
             addToken(sym, isOperator ? 'operator' : 'variable');
         }
 
-        // 7. Scan for explicit mathematical operators
-        const standardOperators = ['+', '-', '=', '/', '\\int', '\\oint', '\\sum', '\\partial', '\\nabla', '\\Delta'];
+        // 7. Scan for explicit mathematical operators (filtering out basic arithmetic operators)
+        const standardOperators = ['\\int', '\\oint', '\\sum', '\\partial', '\\nabla', '\\Delta'];
         standardOperators.forEach(op => {
             if (this.latexContainsSymbol(text, op)) {
                 addToken(op, 'operator');
@@ -1594,6 +1594,37 @@ const EquationExplainer = {
                     implication: "Accumulates the quantity across all space (e.g., probability normalization in quantum mechanics summing to exactly 1)."
                 }
             ];
+        }
+        // 5. Detect Gauge Symmetries / Lie Groups (e.g. SU(3)_C x SU(2)_L x U(1)_Y)
+        else if (latex.includes('SU(') || latex.includes('U(1)') || latex.includes('SO(')) {
+            intro = "This formula defines the <strong>Gauge Symmetry Group</strong> governing the interactions of a field theory. Product groups of this type specify the mathematical structure of force-carrying fields and charge conservation.";
+            summary = "Each factor in the symmetry group dictates a specific type of charge conservation and its corresponding gauge bosons.";
+            scenarios = [];
+            
+            if (latex.includes('SU(3)')) {
+                scenarios.push({
+                    condition: "SU(3) Color Symmetry",
+                    implication: "Dictates the strong nuclear force (Quantum Chromodynamics). Governs color-charged interactions mediated by 8 gluons, exhibiting confinement and asymptotic freedom."
+                });
+            }
+            if (latex.includes('SU(2)')) {
+                scenarios.push({
+                    condition: "SU(2) Weak Isospin Symmetry",
+                    implication: "Governs the electroweak weak isospin sector. Acts on left-handed chirality states and is mediated by 3 gauge bosons."
+                });
+            }
+            if (latex.includes('U(1)')) {
+                scenarios.push({
+                    condition: "U(1) Symmetries",
+                    implication: "Governs abelian phase transformations. Often represents Weak Hypercharge (U(1)_Y) in electroweak theory, or Electromagnetism (U(1)_em) mediated by a single massless boson (photon)."
+                });
+            }
+            if (latex.includes('\\times')) {
+                scenarios.push({
+                    condition: "Electroweak Symmetry Breaking",
+                    implication: "At low energy scales, the Higgs mechanism breaks the electroweak SU(2)_L x U(1)_Y symmetry down to electromagnetic U(1)_em, mixing gauge fields into physical W+, W-, Z bosons and the photon."
+                });
+            }
         } else {
             scenarios = [
                 {

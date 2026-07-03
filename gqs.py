@@ -11,6 +11,13 @@ import subprocess
 from datetime import datetime
 from pydantic import BaseModel, Field
 
+# Load environment variables from .env if present
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # Paths
 GQS_PATH = "subfiles/graduation_queue_stack.json"
 PAYLOAD_PATH = "subfiles/batch_payload.json"
@@ -135,6 +142,15 @@ def generate_template(num_items=1):
     with open(GQS_PATH, "r") as f:
         stack = json.load(f)
         
+    sem_ref_path = "app/config/ref_data/semantic_references.json"
+    sem_refs = {}
+    if os.path.exists(sem_ref_path):
+        try:
+            with open(sem_ref_path, "r") as f:
+                sem_refs = json.load(f)
+        except Exception as e:
+            print(f"Warning: Failed to load semantic references: {e}")
+        
     pending_items = [item for item in stack if item.get("status", "pending") == "pending"]
     if not pending_items:
         print("Notice: No pending backlog items in stack to scaffold.")
@@ -159,6 +175,9 @@ def generate_template(num_items=1):
         bridge_title = item["bridge"]["title"]
         identity_title = item["identity"]["title"]
         identity_eq = item["identity"]["equation"]
+        
+        # Resolve target keywords from semantic references
+        sem_keywords = sem_refs.get(slug, {}).get("keywords", [])
         
         # Parent hub resolution
         parent_hub = shard.replace(".json", "")
@@ -187,10 +206,11 @@ def generate_template(num_items=1):
             if i == 1:
                 n_list = p_neighbors[1]
                 n_text = f" Bold the first mention of neighbor terms using <strong>[Term]</strong>: {', '.join(n_list)}." if n_list else ""
+                k_text = f" Mandatory Semantic Keywords to integrate in the prose to pass OPS verification: {', '.join(sem_keywords)}." if sem_keywords else ""
                 p_text = (
                     f"Paragraph 1/{paragraphs} (OPS In-Media-Res Lead): Start directly with a physical principle, identity, or derivation. "
                     f"DO NOT start with 'The {title} is...' or 'This concept refers to...'. "
-                    f"DO NOT mention the title '{title}' in the first 15 words of the paragraph.{n_text}"
+                    f"DO NOT mention the title '{title}' in the first 15 words of the paragraph.{n_text}{k_text}"
                 )
             elif i == paragraphs:
                 n_list = p_neighbors[i]
@@ -292,10 +312,50 @@ def refill(limit=30):
 
 def extract_latex_from_svg(svg_string: str) -> str:
     import re, html
+    if not svg_string:
+        return ""
+    val = svg_string.strip()
+    if not val.startswith("<svg"):
+        if val.startswith("\\[") and val.endswith("\\]"):
+            val = val[2:-2].strip()
+        return val
+
+    # Fallbacks for SVGs missing data-tex attributes
+    if "cyclic-conservation-law" in val:
+        return r"\frac{\partial L}{\partial q_k} = 0 \implies \frac{d}{dt}\left(\frac{\partial L}{\partial \dot{q}_k}\right) = 0 \implies p_k = C"
+    if "maxwell-faraday-law" in val or "faradays-law" in val:
+        return r"\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}"
+    if "generalized-momentum-identity" in val:
+        return r"p_k = \frac{\partial L}{\partial \dot{q}^k}"
+    if "bayesian-probabilistic-failure" in val:
+        return r"P(T|S) = \frac{P(S|T)P(T)}{P(S)}"
+    if "crystal-math" in val:
+        return r"\lambda = \frac{h}{\sqrt{2m_e eV}} \approx 1.7 \text{ \AA}"
+
     match = re.search(r'data-tex="([^"]+)"', svg_string)
     if match:
         return html.unescape(match.group(1))
     return ""
+
+def is_formula_pending(formula):
+    import re
+    placeholders = [
+        "derivation pending", "analysis pending", 
+        "no interpretation provided", "symmetry derivation pending",
+        "limiting case pending", "boundary conditions pending", 
+        "theoretical origin under investigation.", "analysis pending.",
+        "great expansion: symmetry derivation pending.",
+        "great expansion: limiting case analysis pending."
+    ]
+    for field in ["conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary"]:
+        val = str(formula.get(field, "")).strip().lower()
+        if not val:
+            return True
+        if any(p in val for p in placeholders):
+            return True
+        if re.search(r'\bpending\b', val):
+            return True
+    return False
 
 def formula_status():
     import glob
@@ -314,7 +374,7 @@ def formula_status():
                 continue
             for f_id, formula in data.items():
                 total += 1
-                if formula.get("interpretation") in ["Analysis pending.", "Analysis pending"]:
+                if is_formula_pending(formula):
                     pending.append({
                         "id": f_id,
                         "title": formula.get("title", "Unknown"),
@@ -355,7 +415,7 @@ def generate_formula_template(num_items=5):
             except Exception:
                 continue
             for f_id, formula in data.items():
-                if formula.get("interpretation") in ["Analysis pending.", "Analysis pending"]:
+                if is_formula_pending(formula):
                     pending.append((f_id, formula))
                     
     if not pending:
@@ -527,15 +587,21 @@ class PhysicsFormulaMetadata(BaseModel):
 
 def seed(rate_tier="free"):
     """Enrich empty/placeholder formula entries across the 256 JSON shards using the Gemini API.
-    Uses the modern google-genai SDK and secure Keychain API key retrieval.
+    Supports Vertex AI (GCP credits) and concurrent parallel execution.
     """
     import glob
     import re
     import html
     import time
+    import threading
     import keyring
     import os
     import tempfile
+    import socket
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
+    # Prevent infinite hangs on network sockets
+    socket.setdefaulttimeout(30.0)
     
     try:
         from google import genai
@@ -547,7 +613,7 @@ def seed(rate_tier="free"):
         sys.exit(1)
 
     # Parse rate tier or custom cooldown
-    cooldown = 4.5  # Default safe delay for Free Tier (approx 13 RPM, limit is 15 RPM)
+    cooldown = 5.0  # Default safe delay for Free Tier (approx 12 RPM, limit is 15 RPM)
     try:
         cooldown = float(rate_tier)
     except ValueError:
@@ -555,27 +621,61 @@ def seed(rate_tier="free"):
             cooldown = 0.2
             print("Using paid/high-throughput rate tier (0.2s cooldown per request).")
         else:
-            print(f"Using default free rate tier (4.5s cooldown per request).")
+            print(f"Using default free rate tier (5.0s cooldown per request).")
 
-    # 1. Configure Gemini API Client
-    print("Retrieving API key from Keychain...", flush=True)
-    api_key = keyring.get_password("physics_lab", "gemini_api_key")
-    if not api_key:
-        print("Error: Gemini API key not found in your OS Keychain.")
-        print("Please store your key in the keychain first by running:")
-        print("  .venv/bin/keyring set physics_lab gemini_api_key")
-        sys.exit(1)
-    print("API key successfully retrieved.", flush=True)
+    # 1. Configure Gemini API Client (AI Studio vs Vertex AI)
+    api_key = os.environ.get("GEMINI_API_KEY") or keyring.get_password("physics_lab", "gemini_api_key")
+    gcp_project = os.environ.get("GCP_PROJECT_ID")
+    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    is_vertex = bool(gcp_project and credentials_path)
 
-    client = genai.Client(api_key=api_key)
-    MODEL_NAME = 'gemini-3.5-flash'
+    if is_vertex:
+        print(f"Initializing Vertex AI client for project: {gcp_project}", flush=True)
+        client = genai.Client(
+            vertexai=True,
+            project=gcp_project,
+            location="us-central1",
+            http_options=types.HttpOptions(timeout=30_000)
+        )
+        MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash-lite")
+        print(f"Using Vertex AI Model: {MODEL_NAME}", flush=True)
+    else:
+        if not api_key:
+            print("Error: No GEMINI_API_KEY found in environment or keyring.", flush=True)
+            sys.exit(1)
+        print("API key successfully retrieved.", flush=True)
+        if api_key.startswith("AQ.") or api_key.startswith("ya29."):
+            from google.oauth2.credentials import Credentials
+            client = genai.Client(credentials=Credentials(token=api_key), http_options=types.HttpOptions(timeout=30_000))
+        else:
+            client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
+        MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-flash-latest")
+        print(f"Using Google AI Studio Model: {MODEL_NAME}", flush=True)
+
     SHARDS_DIR = "app/config/content/formulas"
+    consecutive_429s = [0]
 
-    def extract_latex_from_svg(svg_string: str) -> str:
-        match = re.search(r'data-tex="([^"]+)"', svg_string)
-        if match:
-            return html.unescape(match.group(1))
-        return ""
+    # Determine Concurrency
+    concurrency = 1
+    if is_vertex or rate_tier in ["paid", "pay", "unlimited", "vertex"]:
+        concurrency = 10
+        cooldown = 0.0
+        print(f"Enabling parallel seeding with {concurrency} concurrent workers (cooldown: 0s).", flush=True)
+    else:
+        print(f"Running sequentially (cooldown: {cooldown}s).", flush=True)
+
+
+    def save_shard_file(filepath, shard_data):
+        temp_fd, temp_path = tempfile.mkstemp(dir=os.path.dirname(filepath))
+        try:
+            with open(temp_fd, 'w', encoding='utf-8') as f:
+                json.dump(shard_data, f, indent=4, ensure_ascii=False)
+            os.replace(temp_path, filepath)
+            print(f"  Saved changes to {os.path.basename(filepath)}", flush=True)
+        except Exception as e:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            print(f"  Error saving changes to {os.path.basename(filepath)}: {e}", flush=True)
 
     def process_shard(filepath: str):
         print(f"Checking shard: {os.path.basename(filepath)}...", flush=True)
@@ -585,114 +685,144 @@ def seed(rate_tier="free"):
             except Exception as e:
                 print(f"Error loading {os.path.basename(filepath)}: {e}", flush=True)
                 return
-        
-        updated = False
-        
+
+        pending_items = []
         for formula_id, formula in shard_data.items():
-            if formula.get("interpretation") in ["Analysis pending.", "Analysis pending"]:
-                title = formula.get("title", "Unknown Formula")
-                svg_eq = formula.get("equation", "")
-                latex_src = extract_latex_from_svg(svg_eq)
-                
-                if not latex_src:
-                    print(f"  Skipping '{title}' (Unable to parse LaTeX from SVG)", flush=True)
-                    continue
-                    
-                print(f"  -> Seeding missing definition for: '{title}'...", flush=True)
-                
-                prompt = f"""
-                You are an expert physics professor and digital encyclopedia curator. 
-                Author a detailed explanation of the physics formula:
-                Title: {title}
-                LaTeX Equation: {latex_src}
-                
-                Follow these constraints:
-                1. Keep descriptions clear, mathematically rigorous, and educational.
-                2. Format any variables in text descriptions with LaTeX inline delimiters: \\( variable \\).
-                3. Ensure SI units in variables are standard (e.g. kg, m/s^2, J).
-                """
-                
-                # Call Gemini API with retries
-                max_retries = 3
-                backoff_delay = 10.0
-                response = None
-                
-                for attempt in range(max_retries):
-                    try:
-                        response = client.models.generate_content(
-                            model=MODEL_NAME,
-                            contents=prompt,
-                            config=types.GenerateContentConfig(
-                                response_mime_type="application/json",
-                                response_schema=PhysicsFormulaMetadata
-                            )
-                        )
-                        break
-                    except APIError as e:
-                        if e.code in [429, 503]:
-                            print(f"    Temporary error {e.code} (attempt {attempt + 1}/{max_retries}). Sleeping for {backoff_delay} seconds...", flush=True)
-                            time.sleep(backoff_delay)
-                            backoff_delay *= 2
-                        else:
-                            print(f"    API Error generating content for '{title}': {e}", flush=True)
-                            break
-                    except Exception as e:
-                        print(f"    General Error generating content for '{title}': {e}", flush=True)
-                        break
-                
-                if response is None:
-                    print(f"    Skipping '{title}' due to persistent API errors. Cooling down for 5.0 seconds...", flush=True)
-                    time.sleep(5.0)
-                    continue
-                    
+            if is_formula_pending(formula):
+                pending_items.append((formula_id, formula))
+
+        if not pending_items:
+            return
+
+        print(f"Found {len(pending_items)} pending formulas in {os.path.basename(filepath)}.", flush=True)
+        shard_updated = [False]
+        write_lock = threading.Lock()
+
+        def seed_formula(formula_id, formula):
+            title = formula.get("title", "Unknown Formula")
+            svg_eq = formula.get("equation", "")
+            latex_src = extract_latex_from_svg(svg_eq)
+
+            if not latex_src:
+                print(f"  Skipping '{title}' (Unable to parse LaTeX from SVG)", flush=True)
+                return
+
+            print(f"  -> Seeding: '{title}'...", flush=True)
+
+            prompt = f"""
+            You are an expert physics professor and digital encyclopedia curator. 
+            Author a detailed explanation of the physics formula:
+            Title: {title}
+            LaTeX Equation: {latex_src}
+            
+            Follow these constraints:
+            1. Keep descriptions clear, mathematically rigorous, and educational.
+            2. Format any variables in text descriptions with LaTeX inline delimiters: \\( variable \\).
+            3. Ensure SI units in variables are standard (e.g. kg, m/s^2, J).
+            """
+
+            max_retries = 3
+            backoff_delay = 10.0
+            response = None
+            rate_limit_hit = False
+
+            for attempt in range(max_retries):
                 try:
-                    meta = json.loads(response.text)
-                    vars_list = meta.get("semantic_variables", [])
-                    vars_dict = {}
-                    for v in vars_list:
-                        symbol = v.get("symbol")
-                        if symbol:
-                            vars_dict[symbol] = {
-                                "name": v.get("name", symbol),
-                                "type": v.get("type", "variable"),
-                                "unit": v.get("unit", "dimensionless"),
-                                "description": v.get("description", "")
-                            }
-                    
-                    formula["conceptual_definition"] = meta.get("conceptual_definition", "Conceptual definition pending.")
-                    formula["intuitive_summary"] = meta.get("intuitive_summary", "Intuitive summary pending.")
-                    formula["interpretation"] = meta.get("interpretation", "Analysis pending.")
-                    formula["symmetry_origin"] = meta.get("symmetry_origin", "Theoretical origin under investigation.")
-                    formula["limits_and_boundary"] = meta.get("limits_and_boundary", "Boundary conditions pending.")
-                    formula["semantic_variables"] = vars_dict
-                    
-                    updated = True
-                    print(f"    Success: Enriched metadata for '{title}'", flush=True)
-                    time.sleep(cooldown)
+                    response = client.models.generate_content(
+                        model=MODEL_NAME,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json",
+                            response_schema=PhysicsFormulaMetadata
+                        )
+                    )
+                    break
+                except APIError as e:
+                    if e.code in [429, 503]:
+                        print(f"    Temporary error {e.code} for '{title}': {e} (attempt {attempt + 1}/{max_retries}). Sleeping...", flush=True)
+                        time.sleep(backoff_delay)
+                        backoff_delay *= 2
+                        if e.code == 429:
+                            rate_limit_hit = True
+                    else:
+                        print(f"    API Error generating content for '{title}': {e}", flush=True)
+                        break
                 except Exception as e:
-                    print(f"    Error parsing generated content for '{title}': {e}", flush=True)
-                    time.sleep(cooldown)
-                    
-        if updated:
-            temp_fd, temp_path = tempfile.mkstemp(dir=os.path.dirname(filepath))
+                    print(f"    General Error generating content for '{title}': {e}", flush=True)
+                    break
+
+            if not response or not response.text:
+                if rate_limit_hit:
+                    consecutive_429s[0] += 1
+                    print(f"    Skipping '{title}' due to persistent 429 rate limits. (Consecutive 429s: {consecutive_429s[0]})", flush=True)
+                    if consecutive_429s[0] >= 3 and not is_vertex and rate_tier not in ["paid", "pay", "unlimited", "vertex"]:
+                        print(f"\n🛑 CRITICAL: Encountered 429 RESOURCE_EXHAUSTED 3 times consecutively. Daily free tier limit likely reached. Exiting cleanly.", flush=True)
+                        raise Exception("consecutive_429_limit_reached")
+                    print("    Sleeping 30 seconds (circuit breaker)...", flush=True)
+                    time.sleep(30.0)
+                else:
+                    consecutive_429s[0] = 0
+                    print(f"    Skipping '{title}' due to persistent API errors. Cooling down...", flush=True)
+                    time.sleep(5.0)
+                return
+
             try:
-                with open(temp_fd, 'w', encoding='utf-8') as f:
-                    json.dump(shard_data, f, indent=4, ensure_ascii=False)
-                os.replace(temp_path, filepath)
-                print(f"  Saved changes to {os.path.basename(filepath)}", flush=True)
+                meta = json.loads(response.text)
+                vars_list = meta.get("semantic_variables", [])
+                vars_dict = {}
+                for v in vars_list:
+                    symbol = v.get("symbol")
+                    if symbol:
+                        vars_dict[symbol] = {
+                            "name": v.get("name", symbol),
+                            "type": v.get("type", "variable"),
+                            "unit": v.get("unit", "dimensionless"),
+                            "description": v.get("description", "")
+                        }
+
+                formula["conceptual_definition"] = meta.get("conceptual_definition", "Conceptual definition pending.")
+                formula["intuitive_summary"] = meta.get("intuitive_summary", "Intuitive summary pending.")
+                formula["interpretation"] = meta.get("interpretation", "Analysis pending.")
+                formula["symmetry_origin"] = meta.get("symmetry_origin", "Theoretical origin under investigation.")
+                formula["limits_and_boundary"] = meta.get("limits_and_boundary", "Boundary conditions pending.")
+                formula["semantic_variables"] = vars_dict
+
+                shard_updated[0] = True
+                consecutive_429s[0] = 0
+                print(f"    Success: '{title}'", flush=True)
+                with write_lock:
+                    save_shard_file(filepath, shard_data)
+                if cooldown > 0:
+                    time.sleep(cooldown)
             except Exception as e:
-                if os.path.exists(temp_path):
-                    os.remove(temp_path)
-                print(f"  Error saving changes to {os.path.basename(filepath)}: {e}", flush=True)
+                consecutive_429s[0] = 0
+                print(f"    Error parsing content for '{title}': {e}", flush=True)
+                if cooldown > 0:
+                    time.sleep(cooldown)
+
+        if concurrency > 1:
+            with ThreadPoolExecutor(max_workers=concurrency) as executor:
+                futures = {executor.submit(seed_formula, fid, f): fid for fid, f in pending_items}
+                for future in as_completed(futures):
+                    try:
+                        future.result()
+                    except Exception as e:
+                        if str(e) == "consecutive_429_limit_reached":
+                            sys.exit(0)
+                        else:
+                            print(f"    Error in worker thread: {e}", flush=True)
+        else:
+            for fid, f in pending_items:
+                seed_formula(fid, f)
 
     # Find all shards
     shard_files = glob.glob(os.path.join(SHARDS_DIR, "shard_*.json"))
     shard_files.sort()
-    
+
     if not shard_files:
         print(f"No formula JSON shards found in {SHARDS_DIR}", flush=True)
         return
-        
+
     print(f"Found {len(shard_files)} shards. Commencing GQS Database Seeding...", flush=True)
     for filepath in shard_files:
         process_shard(filepath)

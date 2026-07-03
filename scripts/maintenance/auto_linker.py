@@ -30,6 +30,19 @@ def run_auto_linker(shards, index_path):
             registry = json.load(f)
             aliases.update(registry)
 
+    # Load and append entities to aliases map
+    entities_path = 'app/config/content/entities.json'
+    if os.path.exists(entities_path):
+        with open(entities_path, 'r') as f:
+            entities_data = json.load(f)
+            for ent_id, ent_info in entities_data.items():
+                target_link = ent_info.get("link", "")
+                if target_link.startswith("/physics/subtopic/"):
+                    target_slug = target_link.split('/')[-1]
+                    aliases[ent_info["name"]] = target_slug
+                    for alias in ent_info.get("aliases", []):
+                        aliases[alias] = target_slug
+
     aliases_lower = {k.lower(): v for k, v in aliases.items()}
 
     import hashlib

@@ -675,6 +675,8 @@ class PhysicsService
         // Strip delimiters
         $normalized = preg_replace('/^\\\\\\(/', '', $normalized);
         $normalized = preg_replace('/\\\\\\)$/', '', $normalized);
+        $normalized = preg_replace('/^\\\\\\[/', '', $normalized);
+        $normalized = preg_replace('/\\\\\\]$/', '', $normalized);
         $normalized = preg_replace('/^\$\$/', '', $normalized);
         $normalized = preg_replace('/\$\$$/', '', $normalized);
         $normalized = preg_replace('/^\$/', '', $normalized);

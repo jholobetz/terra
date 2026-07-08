@@ -67,6 +67,16 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         <!-- JS populated -->
                     </div>
                 </div>
+
+                <!-- Topological Bridges Section -->
+                <div id="topological-bridges" style="display: none; margin-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px;">
+                    <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif;">
+                        Topological Bridges (Encyclopedia Contexts)
+                    </h4>
+                    <div id="bridges-container" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <!-- JS populated -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -81,15 +91,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                             <h2 id="formula-title" style="margin: 0 0 4px 0; font-size: 1.4rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif;">
                                 Selecting Equation...
                             </h2>
-                            <span id="formula-badge" class="badge-status badge-unregistered" style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; display: inline-block;">
-                                Live Analysis
-                            </span>
-                        </div>
-                        <div id="solver-redirect-container" style="display: none;">
-                            <a id="solver-redirect-link" href="#" class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px 12px; height: auto; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-weight: 600;">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                Audit Dimensions
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -112,7 +113,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         </div>
                     </div>
 
-                    <!-- Section 1: AI Overview Banner -->
+                    <!-- Section 1: Explanation Banner -->
                     <div id="conceptual-intro-card" style="display: none; background: rgba(100, 255, 218, 0.03); border: 1px solid rgba(100, 255, 218, 0.12); border-radius: 12px; padding: 20px; flex-direction: column; gap: 12px;">
                         <!-- JS populated -->
                     </div>
@@ -120,7 +121,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     <!-- Section 3: Physical Meaning & Scenarios -->
                     <div id="ai-scenarios-section" style="display: none; flex-direction: column; gap: 12px;">
                         <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                            <span style="color: var(--accent-default, #64ffda);">2.</span> Understand the Physical Meaning
+                            Understand the Physical Meaning
                         </h3>
                         <div id="ai-scenarios-list" style="display: flex; flex-direction: column; gap: 12px;">
                             <!-- Dynamic scenario blocks -->
@@ -158,10 +159,10 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     </div>
 
                     <!-- Section 4: Live Simulation Sandbox -->
-                    <div id="ai-simulation-card" style="display: none; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 20px; flex-direction: column; gap: 15px; margin-top: 10px;">
+                    <div id="ai-simulation-card" style="display: none !important; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 20px; flex-direction: column; gap: 15px; margin-top: 10px;">
                         <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
                             <span style="display: flex; align-items: center; gap: 8px;">
-                                <span style="color: var(--accent-default, #64ffda);">3.</span> Interactive Sandbox
+                                Interactive Sandbox
                             </span>
                             <!-- Sonification Button -->
                             <button id="sonify-toggle-btn" style="background: rgba(100, 255, 218, 0.05); border: 1px solid rgba(100, 255, 218, 0.2); color: var(--accent-default, #64ffda); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-family: 'Space Grotesk', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
@@ -178,16 +179,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         <!-- Parameter Sliders Container -->
                         <div id="sandbox-sliders" style="display: flex; flex-direction: column; gap: 12px;">
                             <!-- JS populated sliders -->
-                        </div>
-                    </div>
-
-                    <!-- Topological Bridges Section -->
-                    <div id="topological-bridges" style="display: none; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 15px; margin-top: auto;">
-                        <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif;">
-                            Topological Bridges (Encyclopedia Contexts)
-                        </h4>
-                        <div id="bridges-container" style="display: flex; flex-wrap: wrap; gap: 10px;">
-                            <!-- JS populated -->
                         </div>
                     </div>
 

@@ -512,17 +512,49 @@ const EquationExplainer = {
 
         this.mathRenderTarget.innerHTML = mathMarkup;
 
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise([this.mathRenderTarget])
-                .then(() => {
-                    this.setCompilerStatus('Ready', '#10b981');
-                })
-                .catch((err) => {
-                    console.error('MathJax Compilation Error:', err);
-                    this.setCompilerStatus('Syntax Error', '#ef4444');
+        if (window.MathJax) {
+            if (window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([this.mathRenderTarget])
+                    .then(() => {
+                        this.setCompilerStatus('Ready', '#10b981');
+                    })
+                    .catch((err) => {
+                        console.error('MathJax Compilation Error:', err);
+                        this.setCompilerStatus('Syntax Error', '#ef4444');
+                    });
+            } else if (window.MathJax.startup && window.MathJax.startup.promise) {
+                this.setCompilerStatus('Loading Engine...', '#f59e0b');
+                window.MathJax.startup.promise.then(() => {
+                    window.MathJax.typesetPromise([this.mathRenderTarget])
+                        .then(() => {
+                            this.setCompilerStatus('Ready', '#10b981');
+                        })
+                        .catch((err) => {
+                            console.error('MathJax Compilation Error (deferred):', err);
+                            this.setCompilerStatus('Syntax Error', '#ef4444');
+                        });
                 });
+            } else {
+                this.setCompilerStatus('Renderer Offline', '#f59e0b');
+            }
         } else {
             this.setCompilerStatus('Renderer Offline', '#f59e0b');
+        }
+    },
+
+    triggerTypeset(elements) {
+        if (!window.MathJax) {
+            console.warn('MathJax not loaded yet.');
+            return;
+        }
+        if (window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise(elements)
+                .catch(err => console.warn('MathJax typesetting failed:', err));
+        } else if (window.MathJax.startup && window.MathJax.startup.promise) {
+            window.MathJax.startup.promise.then(() => {
+                window.MathJax.typesetPromise(elements)
+                    .catch(err => console.warn('MathJax typesetting failed (deferred):', err));
+            });
         }
     },
 
@@ -603,20 +635,22 @@ const EquationExplainer = {
         
         // Status formatting
         const status = formula.status || 'platinum-draft';
-        this.formulaBadge.className = 'badge-status ' + (status.includes('draft') ? 'badge-draft' : 'badge-platinum');
-        this.formulaBadge.textContent = status.replace('-', ' ').toUpperCase();
+        if (this.formulaBadge) {
+            this.formulaBadge.className = 'badge-status ' + (status.includes('draft') ? 'badge-draft' : 'badge-platinum');
+            this.formulaBadge.textContent = status.replace('-', ' ').toUpperCase();
+        }
 
         const synthesis = this.synthesizeCustomOverview(this.currentLatex);
 
         // Populate Conceptual Definition / Google-style summary at the top
         if (this.conceptualIntroCard) {
-            const definition = formula.conceptual_definition || synthesis.intro;
-            const summary = formula.intuitive_summary || synthesis.summary;
+            const definition = this.wrapTextMathDelimiters(formula.conceptual_definition || synthesis.intro);
+            const summary = this.wrapTextMathDelimiters(formula.intuitive_summary || synthesis.summary);
             
             this.conceptualIntroCard.style.display = 'flex';
             this.conceptualIntroCard.innerHTML = `
                 <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
-                    ✦ AI Overview
+                    ✦ Explanation
                 </h4>
                 <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
                     ${definition}
@@ -625,6 +659,7 @@ const EquationExplainer = {
                     ${summary}
                 </div>
             `;
+            this.triggerTypeset([this.conceptualIntroCard]);
         }
 
         // Build and render scenarios
@@ -683,8 +718,10 @@ const EquationExplainer = {
 
         // Title and Badge
         this.formulaTitle.textContent = 'Custom Physics Formula';
-        this.formulaBadge.className = 'badge-status badge-unregistered';
-        this.formulaBadge.textContent = 'Live Analysis';
+        if (this.formulaBadge) {
+            this.formulaBadge.className = 'badge-status badge-unregistered';
+            this.formulaBadge.textContent = 'Live Analysis';
+        }
 
         // Synthesize dynamic AI Overview
         const synthesis = this.synthesizeCustomOverview(latex);
@@ -693,15 +730,16 @@ const EquationExplainer = {
             this.conceptualIntroCard.style.display = 'flex';
             this.conceptualIntroCard.innerHTML = `
                 <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
-                    ✦ AI Overview
+                    ✦ Explanation
                 </h4>
                 <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
-                    ${synthesis.intro}
+                    ${this.wrapTextMathDelimiters(synthesis.intro)}
                 </div>
                 <div class="intuitive-summary" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-muted, #94a3b8); border-left: 2px solid var(--accent-default, #64ffda); padding-left: 12px; font-style: italic; margin-top: 4px;">
-                    ${synthesis.summary}
+                    ${this.wrapTextMathDelimiters(synthesis.summary)}
                 </div>
             `;
+            this.triggerTypeset([this.conceptualIntroCard]);
         }
 
         // Render AI scenarios
@@ -812,17 +850,7 @@ const EquationExplainer = {
         });
 
         // Typeset math symbols in badges
-        if (window.MathJax) {
-            if (window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise([this.symbolsList])
-                    .catch(err => console.warn('MathJax typesetting failed on breakdown:', err));
-            } else if (window.MathJax.startup && window.MathJax.startup.promise) {
-                window.MathJax.startup.promise.then(() => {
-                    window.MathJax.typesetPromise([this.symbolsList])
-                        .catch(err => console.warn('MathJax typesetting failed on breakdown (deferred):', err));
-                });
-            }
-        }
+        this.triggerTypeset([this.symbolsList]);
     },
 
     renderVariableRow(symbol, info, existingRow = null) {
@@ -972,9 +1000,7 @@ const EquationExplainer = {
 
                     this.renderVariableRow(symbol, { ...updatedInfo, source: 'user' }, targetRow);
 
-                    if (window.MathJax && window.MathJax.typesetPromise) {
-                        window.MathJax.typesetPromise([targetRow]).catch(err => console.warn(err));
-                    }
+                    EquationExplainer.triggerTypeset([targetRow]);
                 });
             });
         };
@@ -1029,9 +1055,7 @@ const EquationExplainer = {
             this.renderVariableRow(symbol, { ...updatedInfo, source: 'user' }, row);
 
             // Retypeset the row
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise([row]).catch(err => console.warn(err));
-            }
+            EquationExplainer.triggerTypeset([row]);
         });
 
         cancelBtn.addEventListener('click', (e) => {
@@ -1039,9 +1063,7 @@ const EquationExplainer = {
             this.renderVariableRow(symbol, info, row);
 
             // Retypeset the row
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise([row]).catch(err => console.warn(err));
-            }
+            EquationExplainer.triggerTypeset([row]);
         });
 
         wrapper.querySelector('.edit-var-name').focus();
@@ -1324,9 +1346,13 @@ const EquationExplainer = {
         if (this.aiSimulationCard) this.aiSimulationCard.style.display = 'none';
         
         this.formulaTitle.textContent = 'Selecting Equation...';
-        this.formulaBadge.className = 'badge-status badge-unregistered';
-        this.formulaBadge.textContent = 'Live Analysis';
-        this.solverRedirectContainer.style.display = 'none';
+        if (this.formulaBadge) {
+            this.formulaBadge.className = 'badge-status badge-unregistered';
+            this.formulaBadge.textContent = 'Live Analysis';
+        }
+        if (this.solverRedirectContainer) {
+            this.solverRedirectContainer.style.display = 'none';
+        }
     },
 
     tokenizeLatexSymbols(latex) {
@@ -1352,10 +1378,16 @@ const EquationExplainer = {
     setupSolverLink(latex) {
         const plainText = this.latexToPlainText(latex);
         if (plainText) {
-            this.solverRedirectContainer.style.display = 'block';
-            this.solverRedirectLink.href = `${BASE_URL}/physics/dimensional-solver?formula=` + encodeURIComponent(plainText);
+            if (this.solverRedirectContainer) {
+                this.solverRedirectContainer.style.display = 'block';
+            }
+            if (this.solverRedirectLink) {
+                this.solverRedirectLink.href = `${BASE_URL}/physics/dimensional-solver?formula=` + encodeURIComponent(plainText);
+            }
         } else {
-            this.solverRedirectContainer.style.display = 'none';
+            if (this.solverRedirectContainer) {
+                this.solverRedirectContainer.style.display = 'none';
+            }
         }
     },
 
@@ -1497,19 +1529,46 @@ const EquationExplainer = {
             this.aiScenariosList.appendChild(card);
         });
 
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise([this.aiScenariosList])
-                .catch(err => console.warn('MathJax failed on AI scenarios:', err));
-        }
+        this.triggerTypeset([this.aiScenariosList]);
     },
 
     wrapTextMathDelimiters(text) {
         if (typeof text !== 'string') return text;
-        // If string contains backslashes (LaTeX) but lacks math delimiters, auto-wrap parenthesized math segments
-        if (text.includes('\\') && !text.includes('\\(')) {
-            text = text.replace(/\(([^)]+\\[^)]+)\)/g, '(\\($1\\))');
+        
+        // Protect existing \( ... \) and \[ ... \] blocks by temporarily replacing them with placeholders
+        const placeholders = [];
+        let tempText = text;
+        
+        tempText = tempText.replace(/\\\(.*?\\\)/g, match => {
+            placeholders.push(match);
+            return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
+        });
+        tempText = tempText.replace(/\\\[.*?\\\]/g, match => {
+            placeholders.push(match);
+            return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
+        });
+        
+        // Find and wrap all raw LaTeX segments that contain a backslash
+        tempText = tempText.replace(/\S*\\\S+(?:\s*[\+\-\*\/\=\<\>]\s*(?:\S*\\\S+|\b[a-zA-Z0-9]\b))*/g, match => {
+            let trimmed = match.trim();
+            
+            // Extract trailing punctuation
+            let trailingPunct = '';
+            const punctMatch = trimmed.match(/[,.;:]+$/);
+            if (punctMatch) {
+                trailingPunct = punctMatch[0];
+                trimmed = trimmed.substring(0, trimmed.length - trailingPunct.length);
+            }
+            
+            return `\\(${trimmed}\\)${trailingPunct}`;
+        });
+        
+        // Restore placeholders
+        for (let i = 0; i < placeholders.length; i++) {
+            tempText = tempText.replace(`__MATH_PLACEHOLDER_${i}__`, placeholders[i]);
         }
-        return text;
+        
+        return tempText;
     },
 
     synthesizeCustomOverview(latex) {
@@ -1648,7 +1707,7 @@ const EquationExplainer = {
         if (!this.sandboxCanvas) return;
 
         this.sandboxCtx = this.sandboxCanvas.getContext('2d');
-        this.aiSimulationCard.style.display = 'flex';
+        // this.aiSimulationCard.style.display = 'flex';
 
         // 1. Classify Sandbox Type
         if (latex.includes('\\nabla \\cdot') || latex.includes('\\text{div}')) {

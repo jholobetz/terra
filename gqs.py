@@ -828,6 +828,148 @@ def seed(rate_tier="free"):
         process_shard(filepath)
     print("Database seeding completed.", flush=True)
 
+def save_json_atomically(filepath, data):
+    import tempfile
+    temp_fd, temp_path = tempfile.mkstemp(dir=os.path.dirname(filepath))
+    try:
+        with open(temp_fd, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        os.replace(temp_path, filepath)
+        return True
+    except Exception as e:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        print(f"Error saving atomically to {filepath}: {e}")
+        return False
+
+def scaffold_to_formula_payload(formula_id: str, formula_data: dict):
+    payload_path = "subfiles/formula_payload.json"
+    payload = {}
+    if os.path.exists(payload_path):
+        try:
+            with open(payload_path, 'r', encoding='utf-8') as f:
+                payload = json.load(f)
+        except Exception:
+            payload = {}
+            
+    latex_src = extract_latex_from_svg(formula_data.get("equation", ""))
+    
+    payload[formula_id] = {
+        "title": formula_data.get("title", "Unknown Formula"),
+        "equation_svg": formula_data.get("equation", ""),
+        "latex": latex_src,
+        "conceptual_definition": "[AI-DRAFT: A high-level conceptual explanation of what this physics formula represents.]",
+        "intuitive_summary": "[AI-DRAFT: A concise, single-sentence summary of the physical intuition behind the equation.]",
+        "interpretation": "[AI-DRAFT: A paragraph explaining the role of variables in the equation and their physical relationships.]",
+        "symmetry_origin": "[AI-DRAFT: The coordinate invariance, conservation law, or physical derivation origin.]",
+        "limits_and_boundary": "[AI-DRAFT: Asymptotic limits when variables approach zero or infinity.]",
+        "semantic_variables": {
+            "[symbol]": {
+                "name": "[AI-DRAFT: Physical name]",
+                "type": "variable",
+                "unit": "[SI units]",
+                "description": "[AI-DRAFT: Detailed explanation]"
+            }
+        }
+    }
+    
+    with open(payload_path, 'w', encoding='utf-8') as f:
+        json.dump(payload, f, indent=4, ensure_ascii=False)
+    print(f"✓ Scaffolded '{formula_id}' in {payload_path}")
+
+def create_formula_entry(formula_id: str, title: str, latex: str, subtopic_slug: str = None):
+    import hashlib
+    shards_dir = "app/config/content/formulas"
+    hex_prefix = hashlib.md5(formula_id.encode('utf-8')).hexdigest()[:2]
+    shard_path = os.path.join(shards_dir, f"shard_{hex_prefix}.json")
+    
+    shard_data = {}
+    if os.path.exists(shard_path):
+        with open(shard_path, 'r', encoding='utf-8') as f:
+            try:
+                shard_data = json.load(f)
+            except Exception as e:
+                print(f"Error loading shard {shard_path}: {e}")
+                return False
+                
+    if formula_id in shard_data:
+        print(f"Error: Formula ID '{formula_id}' already exists in {os.path.basename(shard_path)}.")
+        return False
+        
+    shard_data[formula_id] = {
+        "title": title,
+        "equation": f"\\[ {latex} \\]",
+        "conceptual_definition": "derivation pending",
+        "intuitive_summary": "analysis pending",
+        "interpretation": "analysis pending",
+        "symmetry_origin": "analysis pending",
+        "limits_and_boundary": "analysis pending",
+        "status": "platinum-draft",
+        "semantic_variables": {}
+    }
+    
+    if not save_json_atomically(shard_path, shard_data):
+        return False
+    print(f"✓ Created placeholder entry in {os.path.basename(shard_path)}")
+    
+    if subtopic_slug:
+        link_formula_to_subtopic(formula_id, subtopic_slug)
+        
+    scaffold_to_formula_payload(formula_id, shard_data[formula_id])
+    return True
+
+def link_formula_to_subtopic(formula_id: str, subtopic_slug: str):
+    index_path = "app/config/content/search_index.json"
+    if not os.path.exists(index_path):
+        print("Error: search_index.json not found.")
+        return False
+        
+    with open(index_path, 'r', encoding='utf-8') as f:
+        try:
+            search_index = json.load(f)
+        except Exception as e:
+            print(f"Error loading search index: {e}")
+            return False
+            
+    if subtopic_slug not in search_index:
+        print(f"Error: Subtopic '{subtopic_slug}' not found in search index.")
+        return False
+        
+    shard_name = search_index[subtopic_slug].get("s")
+    if not shard_name:
+        print(f"Error: No shard mapped for subtopic '{subtopic_slug}'.")
+        return False
+        
+    shard_path = os.path.join("app/config/content", shard_name)
+    if not os.path.exists(shard_path):
+        print(f"Error: Shard file {shard_path} does not exist.")
+        return False
+        
+    with open(shard_path, 'r', encoding='utf-8') as f:
+        try:
+            shard_data = json.load(f)
+        except Exception as e:
+            print(f"Error loading subtopic shard {shard_path}: {e}")
+            return False
+            
+    if subtopic_slug not in shard_data:
+        print(f"Error: Subtopic '{subtopic_slug}' not found in shard {shard_name}.")
+        return False
+        
+    subtopic = shard_data[subtopic_slug]
+    if "formula_ids" not in subtopic:
+        subtopic["formula_ids"] = []
+        
+    if formula_id not in subtopic["formula_ids"]:
+        subtopic["formula_ids"].append(formula_id)
+        if save_json_atomically(shard_path, shard_data):
+            print(f"✓ Linked formula '{formula_id}' to subtopic '{subtopic_slug}' in {shard_name}")
+            return True
+    else:
+        print(f"Notice: Formula '{formula_id}' is already linked to subtopic '{subtopic_slug}'.")
+        return True
+    return False
+
 def main():
     if len(sys.argv) < 2:
         show_status()
@@ -873,6 +1015,24 @@ def main():
         generate_formula_template(num)
     elif cmd == "formula-ingest":
         ingest_formulas()
+    elif cmd == "formula-create":
+        if len(sys.argv) < 5:
+            print("Error: Missing arguments for formula-create.")
+            print("Usage: .venv/bin/python3 gqs.py formula-create <formula-id> <title> <latex-equation> [subtopic-slug]")
+            sys.exit(1)
+        fid = sys.argv[2]
+        title = sys.argv[3]
+        latex = sys.argv[4]
+        slug = sys.argv[5] if len(sys.argv) > 5 else None
+        create_formula_entry(fid, title, latex, slug)
+    elif cmd == "formula-link":
+        if len(sys.argv) < 4:
+            print("Error: Missing arguments for formula-link.")
+            print("Usage: .venv/bin/python3 gqs.py formula-link <formula-id> <subtopic-slug>")
+            sys.exit(1)
+        fid = sys.argv[2]
+        slug = sys.argv[3]
+        link_formula_to_subtopic(fid, slug)
     else:
         print(f"Unknown command '{cmd}'. Available commands:")
         print("  status            Display database status and next stack queue items (Default)")
@@ -884,6 +1044,8 @@ def main():
         print("  formula-status    Display live status of formula registry and pending placeholders")
         print("  formula-template  Scaffold the next N pending formulas into subfiles/formula_payload.json")
         print("  formula-ingest    Graduate completed formula drafts from subfiles/formula_payload.json")
+        print("  formula-create    Create a brand new formula and scaffold it for seeding")
+        print("  formula-link      Link an existing formula to a subtopic")
         sys.exit(1)
 
 if __name__ == "__main__":

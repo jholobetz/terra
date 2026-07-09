@@ -355,10 +355,11 @@ const EquationExplainer = {
             type: 'constant',
             unit: 'J/K',
             desc: 'A physical constant relating the average relative kinetic energy of particles in a gas with the thermodynamic temperature.',
+            domain: 'thermodynamics',
             alternatives: [
-                { name: 'Spring Constant', type: 'variable', unit: 'N/m', desc: 'The force constant representing the stiffness of a spring (Hooke\'s Law).' },
-                { name: 'Wave Vector', type: 'variable', unit: 'rad/m', desc: 'A vector indicating the direction and rate of space-phase variation of a wave.' },
-                { name: 'Thermal Conductivity', type: 'variable', unit: 'W/(m·K)', desc: 'The measure of a material\'s ability to conduct heat.' }
+                { name: 'Spring Constant', type: 'variable', unit: 'N/m', desc: 'The force constant representing the stiffness of a spring (Hooke\'s Law).', domain: 'classical_mechanics' },
+                { name: 'Wave Vector', type: 'variable', unit: 'rad/m', desc: 'A vector indicating the direction and rate of space-phase variation of a wave.', domain: 'optics' },
+                { name: 'Thermal Conductivity', type: 'variable', unit: 'W/(m·K)', desc: 'The measure of a material\'s ability to conduct heat.', domain: 'thermodynamics' }
             ]
         },
         'l': { name: 'Length / Angular Quantum Number', type: 'variable', unit: 'm', desc: 'The physical size of an object, or orbital angular momentum quantum number.' },
@@ -398,10 +399,11 @@ const EquationExplainer = {
             type: 'variable',
             unit: 'Pa',
             desc: 'The perpendicular force exerted per unit area on the boundary of a system.',
+            domain: 'thermodynamics',
             alternatives: [
-                { name: 'Power', type: 'variable', unit: 'W', desc: 'The rate at which work is done or energy is transferred.' },
-                { name: 'Probability', type: 'variable', unit: 'dimensionless', desc: 'The likelihood of a specific event occurring, ranging from 0 to 1.' },
-                { name: 'Momentum', type: 'variable', unit: 'kg·m/s', desc: 'The product of the mass and velocity of an object (uppercase variant).' }
+                { name: 'Power', type: 'variable', unit: 'W', desc: 'The rate at which work is done or energy is transferred.', domain: 'classical_mechanics' },
+                { name: 'Probability', type: 'variable', unit: 'dimensionless', desc: 'The likelihood of a specific event occurring, ranging from 0 to 1.', domain: 'quantum_mechanics' },
+                { name: 'Momentum', type: 'variable', unit: 'kg·m/s', desc: 'The product of the mass and velocity of an object (uppercase variant).', domain: 'classical_mechanics' }
             ]
         },
         'Q': { name: 'Heat / Total Charge', type: 'variable', unit: 'J or C', desc: 'Thermal energy transferred due to temperature difference, or net electrical charge.' },
@@ -411,9 +413,10 @@ const EquationExplainer = {
             type: 'variable',
             unit: 'J/K',
             desc: 'A thermodynamic quantity representing the degree of disorder or randomness in a system.',
+            domain: 'thermodynamics',
             alternatives: [
-                { name: 'Action', type: 'variable', unit: 'J·s', desc: 'The path integral of the Lagrangian over time representing the trajectory of a system.' },
-                { name: 'Poynting Vector', type: 'variable', unit: 'W/m²', desc: 'The directional energy flux density of an electromagnetic field.' }
+                { name: 'Action', type: 'variable', unit: 'J·s', desc: 'The path integral of the Lagrangian over time representing the trajectory of a system.', domain: 'classical_mechanics' },
+                { name: 'Poynting Vector', type: 'variable', unit: 'W/m²', desc: 'The directional energy flux density of an electromagnetic field.', domain: 'electromagnetism' }
             ]
         },
         'T': {
@@ -421,10 +424,11 @@ const EquationExplainer = {
             type: 'variable',
             unit: 'K',
             desc: 'Thermodynamic temperature scale measuring the average kinetic energy of the particles.',
+            domain: 'thermodynamics',
             alternatives: [
-                { name: 'Time Period', type: 'variable', unit: 's', desc: 'The duration of one complete cycle of a repeating wave or oscillation.' },
-                { name: 'Tension', type: 'variable', unit: 'N', desc: 'Axial pulling force transmitted through a string, rope, or chain.' },
-                { name: 'SU(3) Gauge Generator', type: 'variable', unit: 'dimensionless', desc: 'Generators of the SU(3) color gauge group in quantum chromodynamics, typically represented by the Gell-Mann matrices.' }
+                { name: 'Time Period', type: 'variable', unit: 's', desc: 'The duration of one complete cycle of a repeating wave or oscillation.', domain: 'optics' },
+                { name: 'Tension', type: 'variable', unit: 'N', desc: 'Axial pulling force transmitted through a string, rope, or chain.', domain: 'classical_mechanics' },
+                { name: 'SU(3) Gauge Generator', type: 'variable', unit: 'dimensionless', desc: 'Generators of the SU(3) color gauge group in quantum chromodynamics, typically represented by the Gell-Mann matrices.', domain: 'quantum_mechanics' }
             ]
         },
         'U': { name: 'Internal Energy / Potential Energy', type: 'variable', unit: 'J', desc: 'Energy stored within a thermodynamic system, or position-dependent energy.' },
@@ -436,9 +440,10 @@ const EquationExplainer = {
             type: 'variable',
             unit: 'Pa',
             desc: 'The measure of tensile elasticity or stiffness of a solid material.',
+            domain: 'classical_mechanics',
             alternatives: [
-                { name: 'Weak Hypercharge', type: 'variable', unit: 'dimensionless', desc: 'The generator of the U(1) weak hypercharge gauge group.' },
-                { name: 'Spherical Harmonic', type: 'variable', unit: 'dimensionless', desc: 'Angular wavefunction solutions to Laplace\'s equation in spherical coordinates.' }
+                { name: 'Weak Hypercharge', type: 'variable', unit: 'dimensionless', desc: 'The generator of the U(1) weak hypercharge gauge group.', domain: 'quantum_mechanics' },
+                { name: 'Spherical Harmonic', type: 'variable', unit: 'dimensionless', desc: 'Angular wavefunction solutions to Laplace\'s equation in spherical coordinates.', domain: 'quantum_mechanics' }
             ]
         },
         'Z': { name: 'Atomic Number / Partition Function', type: 'variable', unit: 'dimensionless', desc: 'Protons in a nucleus, or the statistical sum over microstates.' },
@@ -495,14 +500,18 @@ const EquationExplainer = {
         const contextParam = urlParams.get('context');
         if (contextParam) {
             const DOMAIN_MAP = {
+                'classical-mechanics': 'classical_mechanics',
                 'thermodynamics-statistical-mechanics': 'thermodynamics',
-                'classical-mechanics': 'mechanics',
-                'standard-model': 'particle_physics',
-                'astrophysics': 'astrophysics',
-                'relativity': 'relativity',
-                'quantum-physics': 'quantum'
+                'electromagnetism': 'electromagnetism',
+                'quantum-physics': 'quantum_mechanics',
+                'particle-physics': 'quantum_mechanics',
+                'standard-model': 'quantum_mechanics',
+                'optics': 'optics'
             };
             this.activeDomain = DOMAIN_MAP[contextParam] || contextParam;
+            if (this.activeDomainSelect && this.activeDomain) {
+                this.activeDomainSelect.value = this.activeDomain;
+            }
             return;
         }
 
@@ -518,16 +527,20 @@ const EquationExplainer = {
                     if (entry && entry.s) {
                         const shard = entry.s.replace('.json', '');
                         const DOMAIN_MAP = {
+                            'classical-mechanics': 'classical_mechanics',
                             'thermodynamics-statistical-mechanics': 'thermodynamics',
-                            'classical-mechanics': 'mechanics',
-                            'standard-model': 'particle_physics',
-                            'astrophysics': 'astrophysics',
-                            'relativity': 'relativity',
-                            'quantum-physics': 'quantum'
+                            'electromagnetism': 'electromagnetism',
+                            'quantum-physics': 'quantum_mechanics',
+                            'particle-physics': 'quantum_mechanics',
+                            'standard-model': 'quantum_mechanics',
+                            'optics': 'optics'
                         };
                         this.activeDomain = DOMAIN_MAP[shard] || '';
                         if (this.activeDomain) {
                             console.log(`Detected active domain: ${this.activeDomain} from referrer subtopic ${subtopicSlug}`);
+                            if (this.activeDomainSelect) {
+                                this.activeDomainSelect.value = this.activeDomain;
+                            }
                             if (this.latexInput && this.latexInput.value.trim() && !this.currentId) {
                                 this.renderElementsBreakdown(this.latexInput.value.trim(), {});
                             }
@@ -1044,9 +1057,19 @@ const EquationExplainer = {
         this.explainerPlaceholder = document.getElementById('explainer-placeholder');
         this.solverRedirectContainer = document.getElementById('solver-redirect-container');
         this.solverRedirectLink = document.getElementById('solver-redirect-link');
+        this.activeDomainSelect = document.getElementById('active-domain-select');
     },
 
     bindEvents() {
+        if (this.activeDomainSelect) {
+            this.activeDomainSelect.addEventListener('change', (e) => {
+                this.activeDomain = e.target.value;
+                if (this.latexInput && this.latexInput.value.trim()) {
+                    this.renderElementsBreakdown(this.latexInput.value.trim(), this.officialVariables || {});
+                }
+            });
+        }
+
         // Handle browser back/forward buttons natively
         window.addEventListener('popstate', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1451,13 +1474,99 @@ const EquationExplainer = {
      * Extracts all elements/symbols in the LaTeX equation, merges with official mapping,
      * resolves default values, and renders them in order of appearance.
      */
+    detectDomainFromLatex(latex) {
+        if (!latex) return null;
+        
+        // Define anchor symbols for each domain
+        const ANCHORS = {
+            thermodynamics: [
+                'T', 'S', 'Q', 'U', 'H', '\\Omega', '\\ln', 'k_B', 'R', 'P', 'V',
+                '\\beta', '\\mu', 'N_A'
+            ],
+            electromagnetism: [
+                '\\mathbf{E}', '\\mathbf{B}', '\\mathbf{J}', '\\rho', '\\epsilon_0',
+                '\\mu_0', '\\Phi', '\\mathbf{A}', 'q', 'e', 'E_x', 'E_y', 'E_z',
+                'B_x', 'B_y', 'B_z', '\\nabla \\times', '\\nabla \\cdot'
+            ],
+            quantum_mechanics: [
+                '\\hbar', '\\Psi', '\\psi', '\\hat{H}', '\\phi', '\\hat{p}', '\\hat{x}',
+                '\\mid', '\\rangle', '\\langle', 'i', '\\psi^*', '\\Psi^*', '\\hat{A}',
+                '\\hat{B}', '\\psi_n', 'E_n', '\\dagger'
+            ],
+            optics: [
+                'n', '\\lambda', 'f', '\\theta', '\\omega', 'k', 'I', 'I_0',
+                '\\sin', '\\cos', '\\lambda', '\\nu'
+            ]
+        };
+        
+        const counts = {
+            classical_mechanics: 0,
+            thermodynamics: 0,
+            electromagnetism: 0,
+            quantum_mechanics: 0,
+            optics: 0
+        };
+        
+        // Count matches for each domain
+        for (const [domain, symbols] of Object.entries(ANCHORS)) {
+            symbols.forEach(sym => {
+                const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                const pattern = /^[a-zA-Z0-9]+$/.test(sym) 
+                    ? new RegExp('\\b' + escaped + '\\b', 'g')
+                    : new RegExp(escaped, 'g');
+                    
+                const matches = latex.match(pattern);
+                if (matches) {
+                    counts[domain] += matches.length;
+                }
+            });
+        }
+        
+        // Check for classical mechanics anchors
+        const classicalAnchors = ['x', 'v', 'a', 'F', 'm', 'p', 't', '\\tau', 'g', 'r'];
+        classicalAnchors.forEach(sym => {
+            const pattern = new RegExp('\\b' + sym + '\\b', 'g');
+            const matches = latex.match(pattern);
+            if (matches) {
+                counts.classical_mechanics += matches.length;
+            }
+        });
+        
+        let bestDomain = null;
+        let maxCount = 0;
+        for (const [domain, count] of Object.entries(counts)) {
+            if (count > maxCount) {
+                maxCount = count;
+                bestDomain = domain;
+            }
+        }
+        
+        return bestDomain;
+    },
+
     renderElementsBreakdown(latex, officialVariables) {
         this.symbolsList.innerHTML = '';
         if (this.modifiersList) {
             this.modifiersList.innerHTML = '';
         }
         
-        const tokens = this.extractAllMathTokens(latex, officialVariables);
+        // Save officialVariables for redraw on domain change
+        this.officialVariables = officialVariables || {};
+        
+        // If it's a custom/live-compiled formula, run domain auto-detection
+        const isOfficial = this.currentId || (officialVariables && Object.keys(officialVariables).length > 0);
+        if (!isOfficial && latex) {
+            const detected = this.detectDomainFromLatex(latex);
+            if (detected && detected !== this.activeDomain) {
+                this.activeDomain = detected;
+                if (this.activeDomainSelect) {
+                    this.activeDomainSelect.value = detected;
+                }
+                console.log(`Auto-detected active domain: ${detected}`);
+            }
+        }
+
+        const tokens = this.extractAllMathTokens(latex, this.officialVariables);
         
         if (tokens.length === 0) {
             this.symbolsList.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">No math variables, constants, or operators detected.</div>';
@@ -1480,8 +1589,8 @@ const EquationExplainer = {
 
             if (this.userCustomizations[symbol]) {
                 info = { ...this.userCustomizations[symbol], type: tok.type, source: 'user' };
-            } else if (officialVariables[symbol]) {
-                const official = officialVariables[symbol];
+            } else if (this.officialVariables[symbol]) {
+                const official = this.officialVariables[symbol];
                 info = {
                     name: official.name || symbol,
                     type: official.type || tok.type,
@@ -1546,7 +1655,33 @@ const EquationExplainer = {
                 } else if (dynamicOverrides[symbol]) {
                     info = { ...dynamicOverrides[symbol], source: 'dynamic' };
                 } else if (this.physicsDictionary[symbol]) {
-                    info = { ...this.physicsDictionary[symbol], source: 'dictionary' };
+                    const dictEntry = this.physicsDictionary[symbol];
+                    let activeEntry = dictEntry;
+                    
+                    // Check if there is an override matching the active domain
+                    if (dictEntry.domain === this.activeDomain) {
+                        activeEntry = dictEntry;
+                    } else if (dictEntry.alternatives) {
+                        const match = dictEntry.alternatives.find(alt => alt.domain === this.activeDomain);
+                        if (match) {
+                            activeEntry = {
+                                name: match.name,
+                                type: match.type || dictEntry.type,
+                                unit: match.unit || dictEntry.unit,
+                                desc: match.desc || dictEntry.desc,
+                                alternatives: dictEntry.alternatives
+                            };
+                        }
+                    }
+                    
+                    info = {
+                        name: activeEntry.name,
+                        type: activeEntry.type || tok.type,
+                        description: activeEntry.desc || activeEntry.description,
+                        unit: activeEntry.unit || 'dimensionless',
+                        alternatives: dictEntry.alternatives,
+                        source: 'dictionary'
+                    };
                 } else {
                     info = {
                         name: symbol.startsWith('\\') ? symbol.substring(1) + (tok.type === 'modifier' ? ' Modifier' : ' Parameter') : symbol + (tok.type === 'modifier' ? ' Subscript/Modifier' : ' Variable'),

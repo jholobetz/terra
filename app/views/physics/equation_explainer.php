@@ -71,6 +71,18 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 15px 0; font-family: 'Space Grotesk', sans-serif;">
                         Equation Component Breakdown
                     </h4>
+
+                    <!-- Dynamic Domain Selector -->
+                    <div id="domain-selector-wrapper" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 8px;">
+                        <span style="font-size: 0.76rem; color: var(--text-muted, #94a3b8); font-family: 'Space Grotesk', sans-serif; font-weight: 500;">Active Physics Domain</span>
+                        <select id="active-domain-select" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(100, 255, 218, 0.15); color: var(--accent-default, #64ffda); border-radius: 6px; padding: 4px 10px; font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; font-weight: 500; cursor: pointer; outline: none; transition: all 0.2s;" onfocus="this.style.borderColor='var(--accent-default)'" onblur="this.style.borderColor='rgba(100, 255, 218, 0.15)'">
+                            <option value="classical_mechanics">Classical Mechanics</option>
+                            <option value="thermodynamics">Thermodynamics</option>
+                            <option value="electromagnetism">Electromagnetism</option>
+                            <option value="quantum_mechanics">Quantum & Particle Physics</option>
+                            <option value="optics">Optics & Wave Physics</option>
+                        </select>
+                    </div>
                     
                     <div id="variables-section">
                         <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-default, #64ffda); margin-bottom: 8px; font-weight: 600;">Base Variables & Constants</div>

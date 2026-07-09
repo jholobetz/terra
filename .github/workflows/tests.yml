@@ -21,5 +21,13 @@ jobs:
       - name: Download NLTK datasets
         run: |
           python -m nltk.downloader punkt punkt_tab stopwords wordnet
-      - name: Run pytest
-        run: python -m pytest tests/ -v
+      - name: Run pytest and capture logs
+        run: |
+          python -m pytest tests/ -v > pytest_run.log || {
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
+            git add pytest_run.log
+            git commit -m "chore: upload pytest run logs [skip ci]" || true
+            git push origin master || true
+            exit 1
+          }

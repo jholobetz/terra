@@ -46,6 +46,7 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/lab-tools', [ $app->physicsController(), 'labTools' ]);
 		$router->get('/equation-explainer', [ $app->physicsController(), 'equationExplainer' ]);
 		$router->get('/api/explain', [ $app->physicsController(), 'apiExplain' ]);
+		$router->get('/api/subtopic-variables/@slug', [ $app->physicsController(), 'apiGetSubtopicVariables' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 
 		// Admin & Developer Control Panel Routes

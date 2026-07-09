@@ -131,9 +131,12 @@ class PhysicsController
     {
         $id = $this->app->request()->query['id'] ?? '';
         $latex = $this->app->request()->query['latex'] ?? '';
+        $subtopicSlug = $this->app->request()->query['subtopic'] ?? '';
+        $domain = $this->app->request()->query['domain'] ?? '';
         
         $formula = null;
         $subtopics = [];
+        $subtopicVariables = [];
         
         if (!empty($id)) {
             $formula = $this->service()->loadFormula($id);
@@ -150,12 +153,22 @@ class PhysicsController
             }
         }
         
+        if (!empty($subtopicSlug)) {
+            $subtopicData = $this->service()->fetchAndPrepare('subtopics', $subtopicSlug);
+            if (!empty($subtopicData)) {
+                $subtopicVariables = $subtopicData['variables'] ?? [];
+            }
+        }
+        
         $this->renderWithLayout('physics/equation_explainer', [
             'title' => 'Interactive Equation Explainer',
             'id' => $id,
             'latex' => $latex,
             'formula' => $formula,
-            'subtopics' => $subtopics
+            'subtopics' => $subtopics,
+            'subtopicSlug' => $subtopicSlug,
+            'subtopicVariables' => $subtopicVariables,
+            'domain' => $domain
         ]);
     }
 
@@ -177,6 +190,26 @@ class PhysicsController
             echo json_encode(['success' => true, 'formula' => $formula]);
         } else {
             echo json_encode(['success' => false, 'error' => 'No matching formula found in shards.']);
+        }
+    }
+
+    /**
+     * REST Action to load subtopic variables dynamically (for referrer-based overrides).
+     */
+    public function apiGetSubtopicVariables(string $slug)
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $subtopic = $this->service()->fetchAndPrepare('subtopics', $slug);
+        if ($subtopic) {
+            echo json_encode([
+                'success' => true,
+                'variables' => $subtopic['variables'] ?? []
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Subtopic not found'
+            ]);
         }
     }
 

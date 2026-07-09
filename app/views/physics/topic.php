@@ -99,7 +99,13 @@ if (!function_exists('getConceptLevel')) {
         <?php endif; ?>
     </div>
 
-    <?php $this->render('physics/_equations_partial', ['equations' => $equations ?? [], 'breakdowns' => $breakdowns ?? [], 'formulas' => $formulas ?? [], 'nonce' => $nonce]); ?>
+    <?php $this->render('physics/_equations_partial', [
+        'equations' => $equations ?? [],
+        'breakdowns' => $breakdowns ?? [],
+        'formulas' => $formulas ?? [],
+        'nonce' => $nonce,
+        'domain' => $slug
+    ]); ?>
 
     <footer class="topic-footer">
         <a href="/physics" class="btn btn-secondary">&larr; Back to Home</a>

@@ -497,29 +497,66 @@ const EquationExplainer = {
 
     loadReferrerContext() {
         const urlParams = new URLSearchParams(window.location.search);
-        const contextParam = urlParams.get('context');
-        if (contextParam) {
+        
+        // 1. Resolve Active Domain
+        const domainParam = urlParams.get('domain') || window.INITIAL_DOMAIN;
+        if (domainParam) {
             const DOMAIN_MAP = {
                 'classical-mechanics': 'classical_mechanics',
                 'thermodynamics-statistical-mechanics': 'thermodynamics',
                 'electromagnetism': 'electromagnetism',
                 'quantum-physics': 'quantum_mechanics',
+                'quantum_mechanics': 'quantum_mechanics',
                 'particle-physics': 'quantum_mechanics',
                 'standard-model': 'quantum_mechanics',
                 'optics': 'optics'
             };
-            this.activeDomain = DOMAIN_MAP[contextParam] || contextParam;
+            this.activeDomain = DOMAIN_MAP[domainParam] || domainParam;
             if (this.activeDomainSelect && this.activeDomain) {
                 this.activeDomainSelect.value = this.activeDomain;
             }
-            return;
+        }
+        
+        // 2. Resolve Subtopic variables (from Query param or injected script state)
+        const subtopicParam = urlParams.get('subtopic') || window.SUBTOPIC_SLUG;
+        if (subtopicParam) {
+            window.SUBTOPIC_SLUG = subtopicParam;
+            if (!window.SUBTOPIC_VARIABLES || Object.keys(window.SUBTOPIC_VARIABLES).length === 0) {
+                fetch(`${BASE_URL}/physics/api/subtopic-variables/${subtopicParam}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.SUBTOPIC_VARIABLES = data.variables || {};
+                            if (this.latexInput && this.latexInput.value.trim()) {
+                                this.renderElementsBreakdown(this.latexInput.value.trim(), this.officialVariables || {});
+                            }
+                        }
+                    })
+                    .catch(err => console.warn('Could not fetch subtopic variables:', err));
+            }
         }
 
+        // 3. Resolve HTTP Referrer Context (when deep linking from a subtopic page without parameters)
         const referrer = document.referrer;
-        if (referrer && referrer.includes('/physics/subtopic/')) {
+        if (!subtopicParam && referrer && referrer.includes('/physics/subtopic/')) {
             const parts = referrer.split('/');
             const subtopicSlug = parts[parts.length - 1].split('?')[0];
+            window.SUBTOPIC_SLUG = subtopicSlug;
             
+            // Fetch variables for the referrer subtopic
+            fetch(`${BASE_URL}/physics/api/subtopic-variables/${subtopicSlug}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        window.SUBTOPIC_VARIABLES = data.variables || {};
+                        if (this.latexInput && this.latexInput.value.trim()) {
+                            this.renderElementsBreakdown(this.latexInput.value.trim(), this.officialVariables || {});
+                        }
+                    }
+                })
+                .catch(err => console.warn('Could not fetch subtopic variables from referrer:', err));
+            
+            // Map the referrer subtopic back to its physics domain
             fetch(`${BASE_URL}/physics/search-index`)
                 .then(res => res.json())
                 .then(index => {
@@ -548,6 +585,24 @@ const EquationExplainer = {
                     }
                 })
                 .catch(err => console.warn('Could not determine referrer context:', err));
+        } else if (!domainParam && !subtopicParam) {
+            // Legacy context param fallback
+            const contextParam = urlParams.get('context');
+            if (contextParam) {
+                const DOMAIN_MAP = {
+                    'classical-mechanics': 'classical_mechanics',
+                    'thermodynamics-statistical-mechanics': 'thermodynamics',
+                    'electromagnetism': 'electromagnetism',
+                    'quantum-physics': 'quantum_mechanics',
+                    'particle-physics': 'quantum_mechanics',
+                    'standard-model': 'quantum_mechanics',
+                    'optics': 'optics'
+                };
+                this.activeDomain = DOMAIN_MAP[contextParam] || contextParam;
+                if (this.activeDomainSelect && this.activeDomain) {
+                    this.activeDomainSelect.value = this.activeDomain;
+                }
+            }
         }
     },
 
@@ -1589,6 +1644,16 @@ const EquationExplainer = {
 
             if (this.userCustomizations[symbol]) {
                 info = { ...this.userCustomizations[symbol], type: tok.type, source: 'user' };
+            } else if (window.SUBTOPIC_VARIABLES && window.SUBTOPIC_VARIABLES[symbol]) {
+                const local = window.SUBTOPIC_VARIABLES[symbol];
+                info = {
+                    name: local.name || symbol,
+                    type: local.type || tok.type,
+                    description: local.description || 'Contextual subtopic reference.',
+                    unit: local.unit || 'dimensionless',
+                    ref: window.SUBTOPIC_SLUG ? 'subtopic/' + window.SUBTOPIC_SLUG : null,
+                    source: 'subtopic_context'
+                };
             } else if (this.officialVariables[symbol]) {
                 const official = this.officialVariables[symbol];
                 info = {

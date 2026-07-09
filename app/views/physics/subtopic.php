@@ -48,7 +48,14 @@ $theme = $meta['theme'] ?? 'default';
         <?= $content ?? '<p>No content available for this subtopic.</p>' ?>
     </div>
 
-    <?php $this->render('physics/_equations_partial', ['equations' => $equations ?? [], 'breakdowns' => $breakdowns ?? [], 'formulas' => $formulas ?? [], 'nonce' => $nonce]); ?>
+    <?php $this->render('physics/_equations_partial', [
+        'equations' => $equations ?? [],
+        'breakdowns' => $breakdowns ?? [],
+        'formulas' => $formulas ?? [],
+        'nonce' => $nonce,
+        'subtopicSlug' => $slug,
+        'domain' => $parentSlug
+    ]); ?>
 
     <?php if (!empty($verification)): ?>
         <section id="literature-consensus" class="verification-section" style="margin-top: 50px; padding: 25px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.45) 0%, rgba(3, 7, 18, 0.6) 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 4px solid var(--accent-color); border-radius: 8px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">

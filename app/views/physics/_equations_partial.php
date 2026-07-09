@@ -16,9 +16,23 @@ if ($hasFormulas): ?>
                     
                     <div class="formula-expand-trigger" style="padding: 15px 20px; background: rgba(100, 255, 218, 0.05); border-bottom: 1px solid #233554; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: var(--accent-color); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
-                            <?= $f['title'] ?>
+                            <?= htmlspecialchars($f['title']) ?>
                         </span>
-                        <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <?php
+                                $explainUrl = '/physics/equation-explainer?id=' . urlencode($f['id']);
+                                if (!empty($subtopicSlug)) {
+                                    $explainUrl .= '&subtopic=' . urlencode($subtopicSlug);
+                                }
+                                if (!empty($domain)) {
+                                    $explainUrl .= '&domain=' . urlencode($domain);
+                                }
+                            ?>
+                            <a href="<?= $explainUrl ?>" class="explainer-link-btn" style="font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 600; color: var(--accent-default, #64ffda); text-decoration: none; border: 1px solid rgba(100, 255, 218, 0.3); padding: 3px 10px; border-radius: 6px; background: rgba(100, 255, 218, 0.03); transition: all 0.2s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.1)'; this.style.borderColor='var(--accent-default, #64ffda)'" onmouseout="this.style.background='rgba(100, 255, 218, 0.03)'; this.style.borderColor='rgba(100, 255, 218, 0.3)'" onclick="event.stopPropagation();">
+                                Analyze Equation &rarr;
+                            </a>
+                            <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>
+                        </div>
                     </div>
 
                     <div class="formula-math-display" data-formula-id="<?= htmlspecialchars($f['id'] ?? '') ?>" style="padding: 30px 20px; text-align: center; background: #112240;">

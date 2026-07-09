@@ -364,6 +364,9 @@ window.INITIAL_LATEX = <?= json_encode($latex) ?>;
 window.INITIAL_FORMULA = <?= json_encode($formula) ?>;
 window.INITIAL_SUBTOPICS = <?= json_encode($subtopics) ?>;
 window.PHYSICS_CONSTANTS = <?= $constantsJson ?>;
+window.SUBTOPIC_SLUG = <?= json_encode($subtopicSlug) ?>;
+window.SUBTOPIC_VARIABLES = <?= json_encode($subtopicVariables) ?>;
+window.INITIAL_DOMAIN = <?= json_encode($domain) ?>;
 </script>
 
 <script src="/js/equation_explainer.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/equation_explainer.js') ?>" defer></script>

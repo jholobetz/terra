@@ -35,9 +35,9 @@ if HAS_NLTK:
 SIMILARITY_THRESHOLD_WARNING = 0.15
 SIMILARITY_THRESHOLD_ERROR = 0.08
 
-def preprocess_html(html_content):
+def preprocess_html(html_content, lowercase=True):
     """
-    Strips HTML tags, math blocks, and extracts clean lowercase plain text for semantic analysis.
+    Strips HTML tags, math blocks, and extracts clean plain text for semantic analysis.
     """
     if not html_content:
         return ""
@@ -55,9 +55,9 @@ def preprocess_html(html_content):
     # Remove all HTML tags
     text = re.sub(r'<[^>]+>', ' ', text)
     
-    # Normalize whitespace and lowercase
-    text = re.sub(r'\s+', ' ', text)
-    return text.strip().lower()
+    # Normalize whitespace
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text.lower() if lowercase else text
 
 def tokenize_and_lemmatize(text):
     """

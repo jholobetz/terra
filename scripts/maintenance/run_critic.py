@@ -90,24 +90,25 @@ class MultiAgentCritic:
         Parses draft HTML, identifies core physical assertions, numerical constraints, 
         and key topics to verify.
         """
-        clean_text = preprocess_html(html_content)
-        if not clean_text:
+        clean_text_cased = preprocess_html(html_content, lowercase=False)
+        if not clean_text_cased:
             return []
 
         try:
-            sentences = sent_tokenize(clean_text)
+            sentences = sent_tokenize(clean_text_cased)
         except Exception:
             # Simple fallback sentence splitter
-            sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', clean_text) if s.strip()]
+            sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', clean_text_cased) if s.strip()]
 
         claims = []
         # Extract sentences containing numbers, physical parameters, or key keywords
         pattern = re.compile(r'\b(law|equation|relation|constant|mass|energy|force|momentum|theory|discovered|formulated|\d+)\b', re.IGNORECASE)
         for idx, sent in enumerate(sentences):
-            if len(sent.split()) > 6 and pattern.search(sent):
+            sent_lower = sent.lower()
+            if len(sent.split()) > 6 and pattern.search(sent_lower):
                 claims.append({
                     "id": f"claim_{idx}",
-                    "assertion": sent
+                    "assertion": sent_lower
                 })
         
         # Fallback if no claims match: use first two sentences
@@ -115,7 +116,7 @@ class MultiAgentCritic:
             for idx, sent in enumerate(sentences[:2]):
                 claims.append({
                     "id": f"claim_{idx}",
-                    "assertion": sent
+                    "assertion": sent.lower()
                 })
         return claims
 

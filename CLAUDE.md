@@ -178,6 +178,12 @@ Adhere to the project's established notation dialect across all equations:
     .venv/bin/python3 scripts/maintenance/run_gqs_sprint.py --count <N>
     ```
 
+### F. Pedagogical Symbol Deconstruction (Forced Pedagogy)
+To ensure the Equation Explainer acts as a fulsome information conduit, equations must be completely deconstructed to separate physical dimensions from their situational parameters:
+* **Separation of Concerns**: In the component breakdown UI, **Base Variables & Constants** (such as Force \( \mathbf{F} \) or Velocity \( \mathbf{v} \)) must be rendered separately from **Subscripts, Superscripts & Modifiers** (such as \( \text{ext} \), \( \text{abs} \), or \( \dagger \)).
+* **Standard Modifiers Glossary**: Subscripts and superscripts representing standard physical states, operations, or constraints (e.g. \( \circ \) for standard state, \( \dagger \) for adjoints, and \( \text{net} \), \( \text{eff} \), \( \text{ext} \) for boundaries) must be looked up in a centralized glossary and explained.
+* **No Discarding Rule**: Subscripts and superscripts are never discarded during heuristic tokenization. If they are not found in the standard glossary, they must be parsed as custom modifiers to prompt explanation.
+
 ---
 
 ## 🏛️ 3. Core Platform Architecture
@@ -277,6 +283,17 @@ The `tests/` directory is the regression net for every architectural invariant d
 6. **`test_gqs_status.py`**: covers `print_quality_breakdown` (graceful no-op on missing/malformed `system_health.json`, correct rendering of the dual platinum classification).
 
 **Operating discipline**: keep the suite green. Every refactor in this document — especially the surgical extractions (`merge_formula_ids`, `dedupe_backlog`, `score_subtopic`, `print_quality_breakdown`) — was paired with tests that lock down byte-identical behavior. The suite runs in ~1 second locally and on every push and pull request to `master` via `.github/workflows/tests.yml`.
+
+### K. Interactive Drill-Down & Modifier Parsing Architecture
+The client-side Equation Explainer frontend implements an advanced parser and navigation stack to dissect LaTeX formulas:
+1. **Interactive Sub-Symbol Drill-Down**: Clicking a variable triggers "Drill-Down Mode", updating the editor input and retypesetting individual math blocks. Frontend navigation state is tracked via browser history (`popstate`) so that clicking back cleanly pops the stack and restores the parent equation.
+2. **Subscripts & Superscripts Modifier Parser**: Parses subscripts (`_`) and superscripts (`^`) from the raw LaTeX using regex patterns, classifying them against `modifierGlossary` or treating them as custom constraints to prevent loss of parameter descriptions.
+3. **Exposition Panel Organization**: Establishes a clean visual partition: the left column acts as the "Dissection Workshop" (LaTeX input, MathJax preview, Variables/Modifiers breakdown), and the right column acts as the "Exposition Suite" (Narratives, physical scenarios, and topological bridges linking the equation out to the rest of the encyclopedia).
+4. **Collision-Free Clean Index Matching**: Sorts variables and modifiers left-to-right matching their mathematical visual flow. Replaces structural commands (e.g. `\mathbf`, `\frac`) and descriptive subscript text with blank spaces of the exact same length to generate a parallel string layout where `indexOf` matches are guaranteed to be collision-free.
+
+### L. GitHub Actions CI Environment
+* **Workflow Runners**: CI builds run under Node.js 24 and Python 3.14 on macOS and Linux environments.
+* **Deprecation Safety**: Workflows defined in `.github/workflows/tests.yml` must target modern actions version packages (`actions/checkout@v6` and `actions/setup-python@v6`) to ensure warnings-free runs.
 
 ---
 

@@ -26,10 +26,9 @@ jobs:
       - name: Run pytest and capture logs
         run: |
           python -m pytest tests/ -v > pytest_run.log || {
-            git config --global user.name "GitHub Actions"
-            git config --global user.email "actions@github.com"
-            git add pytest_run.log
-            git commit -m "chore: upload pytest run logs [skip ci]" || true
-            git push origin master || true
+            echo "### Pytest Failures" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat pytest_run.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
             exit 1
           }

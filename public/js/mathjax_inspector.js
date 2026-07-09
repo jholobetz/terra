@@ -233,44 +233,25 @@ const MathJaxInspector = {
             return target.closest('svg[data-tex], .MathJax, mjx-container');
         };
 
-        // Event delegation on mouseover
-        document.body.addEventListener('mouseover', (e) => {
-            const container = findEquationContainer(e.target);
-            if (container) {
-                // If moving from inside the same container, ignore
-                if (e.relatedTarget && container.contains(e.relatedTarget)) {
-                    return;
-                }
-                this.show(container);
-            }
-        });
-
-        // Event delegation on mouseout
-        document.body.addEventListener('mouseout', (e) => {
-            const container = findEquationContainer(e.target);
-            if (container) {
-                // If moving to another element inside the same container, ignore
-                if (e.relatedTarget && container.contains(e.relatedTarget)) {
-                    return;
-                }
-                this.startHideTimeout();
-            }
-        });
-
-        // Mobile / click support
+        // Redirect directly to the equation explainer on click
         document.body.addEventListener('click', (e) => {
             const container = findEquationContainer(e.target);
             if (container) {
                 e.preventDefault();
                 e.stopPropagation();
 
-                if (this.activeElement === container && this.tooltipEl.classList.contains('visible')) {
-                    this.copyLatex();
-                } else {
-                    this.show(container);
+                const latex = this.getLatexForElement(container);
+                if (latex) {
+                    const formulaContainer = container.closest('[data-formula-id]');
+                    const formulaId = formulaContainer ? formulaContainer.getAttribute('data-formula-id') : null;
+                    const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
+                    
+                    let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+                    if (formulaId) {
+                        url += '&id=' + encodeURIComponent(formulaId);
+                    }
+                    window.location.href = url;
                 }
-            } else if (!this.tooltipEl.contains(e.target)) {
-                this.hide();
             }
         });
     },

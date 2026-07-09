@@ -566,6 +566,29 @@ class PhysicsService
             }
 
             $db->runQuery("COMMIT");
+
+            // 4a. Compile formula LaTeX index for fast lookup
+            $latexIndex = [];
+            foreach ($formulaFiles as $file) {
+                $content = json_decode(file_get_contents($file), true) ?: [];
+                foreach ($content as $fId => $fData) {
+                    $eq = $fData['equation'] ?? '';
+                    $cleanEq = $eq;
+                    if (strpos($eq, '<svg') === 0) {
+                        if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
+                            $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
+                        }
+                    }
+                    $normalized = $this->normalizeLatex($cleanEq);
+                    if (!empty($normalized)) {
+                        $latexIndex[$normalized] = $fId;
+                    }
+                }
+            }
+            file_put_contents(
+                PROJECT_ROOT . '/app/config/formulas_latex_index.json',
+                json_encode($latexIndex, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            );
         } catch (\Exception $e) {
             $db->runQuery("ROLLBACK");
             throw $e;
@@ -642,6 +665,21 @@ class PhysicsService
         $targetLatex = $this->normalizeLatex($latex);
         if (empty($targetLatex)) return null;
 
+        // Use fast pre-compiled index lookup if available
+        $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
+        if (file_exists($indexFile)) {
+            $index = json_decode(file_get_contents($indexFile), true) ?: [];
+            if (isset($index[$targetLatex])) {
+                $fId = $index[$targetLatex];
+                $formula = $this->loadFormula($fId);
+                if ($formula) {
+                    $formula['id'] = $fId;
+                    return $formula;
+                }
+            }
+        }
+
+        // Fallback to disk scan if index doesn't exist or doesn't match
         $baseDir = PROJECT_ROOT . '/app/config/content/formulas/';
         $files = glob($baseDir . 'shard_*.json');
         

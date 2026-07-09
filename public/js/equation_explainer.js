@@ -400,6 +400,7 @@ const EquationExplainer = {
     cacheElements() {
         this.latexInput = document.getElementById('latex-input');
         this.clearBtn = document.getElementById('clear-input-btn');
+        this.copyBtn = document.getElementById('copy-input-btn');
         this.mathRenderTarget = document.getElementById('math-render-target');
         this.compilerStatus = document.getElementById('compiler-status');
         
@@ -440,6 +441,35 @@ const EquationExplainer = {
             this.handleInputChange();
             this.latexInput.focus();
         });
+
+        // Copy button to copy LaTeX input to clipboard
+        if (this.copyBtn) {
+            this.copyBtn.addEventListener('click', () => {
+                const latex = this.latexInput.value;
+                if (!latex) return;
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(latex).then(() => {
+                        this.copyBtn.textContent = 'Copied!';
+                        this.copyBtn.style.color = 'var(--accent-default, #64ffda)';
+                        setTimeout(() => {
+                            this.copyBtn.textContent = 'Copy';
+                            this.copyBtn.style.color = '#eab308';
+                        }, 1500);
+                    });
+                } else {
+                    // Fallback
+                    this.latexInput.select();
+                    document.execCommand('copy');
+                    this.copyBtn.textContent = 'Copied!';
+                    this.copyBtn.style.color = 'var(--accent-default, #64ffda)';
+                    setTimeout(() => {
+                        this.copyBtn.textContent = 'Copy';
+                        this.copyBtn.style.color = '#eab308';
+                    }, 1500);
+                }
+            });
+        }
 
         // Sonification toggle
         if (this.sonifyToggleBtn) {
@@ -1535,10 +1565,18 @@ const EquationExplainer = {
     wrapTextMathDelimiters(text) {
         if (typeof text !== 'string') return text;
         
-        // Protect existing \( ... \) and \[ ... \] blocks by temporarily replacing them with placeholders
+        // Protect existing math blocks by temporarily replacing them with placeholders
         const placeholders = [];
         let tempText = text;
         
+        tempText = tempText.replace(/\$\$.*?\$\$/g, match => {
+            placeholders.push(match);
+            return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
+        });
+        tempText = tempText.replace(/\$.*?\$/g, match => {
+            placeholders.push(match);
+            return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
+        });
         tempText = tempText.replace(/\\\(.*?\\\)/g, match => {
             placeholders.push(match);
             return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
@@ -1548,8 +1586,12 @@ const EquationExplainer = {
             return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
         });
         
-        // Find and wrap all raw LaTeX segments that contain a backslash
-        tempText = tempText.replace(/\S*\\\S+(?:\s*[\+\-\*\/\=\<\>]\s*(?:\S*\\\S+|\b[a-zA-Z0-9]\b))*/g, match => {
+        // Match raw math blocks composed of backslash tokens, operators, and single variables/constants
+        tempText = tempText.replace(/(?:\S*\\\S+|[\+\-\*\/\=\<\>]+|\b[a-zA-Z0-9]\b)(?:\s+(?:\S*\\\S+|[\+\-\*\/\=\<\>]+|\b[a-zA-Z0-9]\b))*/g, match => {
+            if (!match.includes('\\')) {
+                return match; // Only wrap if it contains a LaTeX command/backslash
+            }
+            
             let trimmed = match.trim();
             
             // Extract trailing punctuation
@@ -1563,9 +1605,9 @@ const EquationExplainer = {
             return `\\(${trimmed}\\)${trailingPunct}`;
         });
         
-        // Restore placeholders
+        // Restore placeholders using a callback function to prevent JS replacement string gotchas
         for (let i = 0; i < placeholders.length; i++) {
-            tempText = tempText.replace(`__MATH_PLACEHOLDER_${i}__`, placeholders[i]);
+            tempText = tempText.replace(`__MATH_PLACEHOLDER_${i}__`, () => placeholders[i]);
         }
         
         return tempText;

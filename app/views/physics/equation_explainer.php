@@ -23,19 +23,27 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                 </h3>
                 
                 <div class="input-group" style="margin-bottom: 20px;">
-                    <label for="latex-input" style="display: block; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8);">
-                        Input LaTeX Equation:
-                    </label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label for="latex-input" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0;">
+                            Input LaTeX Equation:
+                        </label>
+                        <button id="copy-input-btn" 
+                                style="background: transparent; border: none; color: #eab308; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: color 0.2s; padding: 0;"
+                                onmouseover="this.style.color='#fde047'"
+                                onmouseout="this.style.color='#eab308'">
+                            Copy
+                        </button>
+                    </div>
                     <div style="position: relative;">
                         <textarea id="latex-input" 
                                   placeholder="e.g. i \hbar \frac{\partial}{\partial t}\Psi = \hat{H}\Psi" 
                                   autocomplete="off" 
                                   rows="3"
-                                  style="width: 100%; padding: 12px; background: rgba(3, 7, 18, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; color: #f1f5f9; font-family: 'Fira Code', 'Courier New', monospace; font-size: 0.95rem; line-height: 1.4; resize: vertical; box-sizing: border-box; outline: none; transition: border-color 0.2s;"></textarea>
+                                  style="width: 100%; padding: 12px; padding-right: 60px; background: rgba(3, 7, 18, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; color: #f1f5f9; font-family: 'Fira Code', 'Courier New', monospace; font-size: 0.95rem; line-height: 1.4; resize: vertical; box-sizing: border-box; outline: none; transition: border-color 0.2s;"></textarea>
                         <button id="clear-input-btn" 
-                                style="position: absolute; right: 10px; bottom: 12px; background: transparent; border: none; color: var(--text-muted, #94a3b8); cursor: pointer; font-size: 0.75rem; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: color 0.2s;"
-                                onmouseover="this.style.color='#f43f5e'"
-                                onmouseout="this.style.color='var(--text-muted)'">
+                                style="position: absolute; right: 10px; bottom: 12px; background: transparent; border: none; color: #f43f5e; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: color 0.2s;"
+                                onmouseover="this.style.color='#fda4af'"
+                                onmouseout="this.style.color='#f43f5e'">
                             Clear
                         </button>
                     </div>

@@ -94,12 +94,14 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                 
                 <!-- Status Banner / Header -->
                 <div id="explanation-header-wrapper" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 15px; margin-bottom: 20px;">
+                    <div id="explainer-breadcrumbs" style="display: none; font-size: 0.8rem; font-family: 'Space Grotesk', sans-serif; color: var(--text-muted, #94a3b8); margin-bottom: 8px; align-items: center; gap: 6px;"></div>
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
                         <div>
                             <h2 id="formula-title" style="margin: 0 0 4px 0; font-size: 1.4rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif;">
                                 Selecting Equation...
                             </h2>
                         </div>
+                        <span id="formula-badge" style="display: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;"></span>
                     </div>
                 </div>
 

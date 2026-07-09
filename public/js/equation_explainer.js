@@ -11,6 +11,244 @@ const EquationExplainer = {
     currentLatex: '',
     currentFormula: null,
     currentSubtopics: [],
+    navigationStack: [],
+
+    variableDictionary: {
+        'm': {
+            name: 'Mass',
+            defaultUnit: 'kg',
+            description: 'A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction.',
+            featuredEquations: [
+                { name: "Newton's Second Law", latex: "\\mathbf{F} = m \\mathbf{a}" },
+                { name: "Kinetic Energy", latex: "E_k = \\frac{1}{2} m v^2" }
+            ]
+        },
+        't': {
+            name: 'Time',
+            defaultUnit: 's',
+            description: 'The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion.',
+            featuredEquations: [
+                { name: "Schrödinger Equation", latex: "i \\hbar \\frac{\\partial}{\\partial t}\\Psi = \\hat{H}\\Psi" },
+                { name: "Newton's Second Law", latex: "\\mathbf{F} = m \\frac{d\\mathbf{v}}{dt}" }
+            ]
+        },
+        'x': {
+            name: 'Position / Displacement',
+            defaultUnit: 'm',
+            description: 'A coordinate representing the location of a particle along a specific axis, or the displacement from an equilibrium position.',
+            featuredEquations: [
+                { name: "Simple Harmonic Oscillator", latex: "\\ddot{x} + \\omega^2 x = 0" }
+            ]
+        },
+        'y': {
+            name: 'Position Coordinate',
+            defaultUnit: 'm',
+            description: 'A coordinate representing the vertical or transverse location of a particle in space.',
+            featuredEquations: []
+        },
+        'z': {
+            name: 'Position Coordinate',
+            defaultUnit: 'm',
+            description: 'A coordinate representing the longitudinal or altitude location of a particle in space.',
+            featuredEquations: []
+        },
+        'r': {
+            name: 'Radial Distance / Radius',
+            defaultUnit: 'm',
+            description: 'The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems.',
+            featuredEquations: [
+                { name: "Universal Gravitation", latex: "\\mathbf{F}_g = -G \\frac{m_1 m_2}{r^2} \\hat{\\mathbf{r}}" },
+                { name: "Coulomb's Law", latex: "F_e = \\frac{1}{4\\pi\\epsilon_0} \\frac{q_1 q_2}{r^2}" }
+            ]
+        },
+        '\\mathbf{r}': {
+            name: 'Position Vector',
+            defaultUnit: 'm',
+            description: 'A vector pointing from the coordinate origin to the current spatial location of a particle.',
+            featuredEquations: [
+                { name: "Torque Definition", latex: "\\boldsymbol{\\tau} = \\mathbf{r} \\times \\mathbf{F}" }
+            ]
+        },
+        'v': {
+            name: 'Speed / Velocity Magnitude',
+            defaultUnit: 'm/s',
+            description: 'The rate of change of position with respect to time, representing the speed of a particle.',
+            featuredEquations: [
+                { name: "Kinetic Energy", latex: "E_k = \\frac{1}{2} m v^2" }
+            ]
+        },
+        '\\mathbf{v}': {
+            name: 'Velocity Vector',
+            defaultUnit: 'm/s',
+            description: 'The vector rate of change of position, describing both the speed and direction of motion.',
+            featuredEquations: [
+                { name: "Linear Momentum", latex: "\\mathbf{p} = m \\mathbf{v}" }
+            ]
+        },
+        'a': {
+            name: 'Acceleration Magnitude',
+            defaultUnit: 'm/s²',
+            description: 'The rate of change of speed or velocity magnitude with respect to time.',
+            featuredEquations: []
+        },
+        '\\mathbf{a}': {
+            name: 'Acceleration Vector',
+            defaultUnit: 'm/s²',
+            description: 'The vector rate of change of velocity: \\mathbf{a} = \\frac{d\\mathbf{v}}{dt}.',
+            featuredEquations: [
+                { name: "Newton's Second Law", latex: "\\mathbf{F} = m \\mathbf{a}" }
+            ]
+        },
+        'p': {
+            name: 'Momentum / Pressure',
+            defaultUnit: 'kg·m/s or Pa',
+            description: 'A symbol representing momentum or pressure depending on context.',
+            contexts: {
+                'mechanics': {
+                    name: 'Linear Momentum ($p$)',
+                    unit: 'kg·m/s',
+                    description: 'The magnitude of linear momentum, representing the quantity of motion of a particle.'
+                },
+                'thermodynamics': {
+                    name: 'Pressure ($p$ or $P$)',
+                    unit: 'Pa (Pascals)',
+                    description: 'The force applied perpendicular to the surface of an object per unit area, emerging from gas particle collisions.'
+                }
+            },
+            featuredEquations: [
+                { name: "Ideal Gas Law", latex: "P V = N k_B T" }
+            ]
+        },
+        '\\mathbf{p}': {
+            name: 'Linear Momentum Vector',
+            defaultUnit: 'kg·m/s',
+            description: 'The product of mass and velocity vector: \\mathbf{p} = m\\mathbf{v}. A conserved quantity in translationally invariant systems.',
+            featuredEquations: [
+                { name: "Linear Momentum", latex: "\\mathbf{p} = m \\mathbf{v}" },
+                { name: "De Broglie Wave Relation", latex: "\\mathbf{p} = \\hbar \\mathbf{k}" }
+            ]
+        },
+        'F': {
+            name: 'Force Magnitude',
+            defaultUnit: 'N',
+            description: 'The magnitude of an interaction that causes an object with mass to accelerate.',
+            featuredEquations: []
+        },
+        '\\mathbf{F}': {
+            name: 'Force Vector',
+            defaultUnit: 'N',
+            description: 'The vector representation of any interaction that, when unopposed, will change the motion of an object.',
+            featuredEquations: [
+                { name: "Newton's Second Law", latex: "\\mathbf{F} = m \\mathbf{a}" }
+            ]
+        },
+        'E': {
+            name: 'Total Energy',
+            defaultUnit: 'J',
+            description: 'The total conserved energy of a system, encompassing kinetic, potential, and internal forms. Time translation symmetry leads to energy conservation.',
+            featuredEquations: [
+                { name: "Mass-Energy Equivalence", latex: "E = m c^2" }
+            ]
+        },
+        'L': {
+            name: 'Angular Momentum Magnitude',
+            defaultUnit: 'kg·m²/s',
+            description: 'The rotational analog of linear momentum.',
+            featuredEquations: []
+        },
+        '\\mathbf{L}': {
+            name: 'Angular Momentum Vector',
+            defaultUnit: 'kg·m²/s',
+            description: 'The vector rotational momentum, defined as \\mathbf{L} = \\mathbf{r} \\times \\mathbf{p}. Angular momentum is conserved in systems with rotational symmetry.',
+            featuredEquations: [
+                { name: "Rotational Dynamics", latex: "\\boldsymbol{\\tau} = \\frac{d\\mathbf{L}}{dt}" }
+            ]
+        },
+        'k': {
+            name: 'Stiffness / Boltzmann Constant / Wave Number',
+            defaultUnit: 'N/m or J/K or rad/m',
+            description: 'A physical parameter representing stiffness, the Boltzmann constant, or wave number depending on context.',
+            contexts: {
+                'mechanics': {
+                    name: 'Spring Stiffness (Hooke\'s Constant)',
+                    unit: 'N/m',
+                    description: 'The rigidity of a spring or elastic medium, defining restoring force per unit of displacement: $F = -kx$.'
+                },
+                'thermodynamics': {
+                    name: 'Boltzmann Constant ($k_B$)',
+                    unit: 'J/K',
+                    description: 'A physical constant relating average gas kinetic energy with thermodynamic temperature: $E = \\frac{3}{2} k_B T$.'
+                }
+            },
+            featuredEquations: [
+                { name: "Ideal Gas Law", latex: "P V = N k_B T" },
+                { name: "Simple Harmonic Oscillator", latex: "\\ddot{x} + \\omega^2 x = 0" }
+            ]
+        },
+        'T': {
+            name: 'Temperature / Tension / Period',
+            defaultUnit: 'K or N or s',
+            description: 'A symbol representing temperature, tension, or period depending on context.',
+            contexts: {
+                'mechanics': {
+                    name: 'Tension / Period',
+                    unit: 'N or s',
+                    description: 'In dynamics, tension force in a string/cable, or period (time per cycle) of periodic motion.'
+                },
+                'thermodynamics': {
+                    name: 'Absolute Temperature',
+                    unit: 'K (Kelvin)',
+                    description: 'A measure of the average kinetic energy of the particles in a system, starting from absolute zero (0 K).'
+                }
+            },
+            featuredEquations: [
+                { name: "Ideal Gas Law", latex: "P V = N k_B T" }
+            ]
+        },
+        '\\omega': {
+            name: 'Angular Frequency',
+            defaultUnit: 'rad/s',
+            description: 'A scalar measure of rotation rate or oscillation frequency, representing $2\\pi f$.',
+            featuredEquations: [
+                { name: "Simple Harmonic Oscillator", latex: "\\ddot{x} + \\omega^2 x = 0" }
+            ]
+        },
+        '\\tau': {
+            name: 'Torque / Shear Stress',
+            defaultUnit: 'N·m or Pa',
+            contexts: {
+                'mechanics': {
+                    name: 'Torque',
+                    unit: 'N·m',
+                    description: 'The rotational equivalent of force, representing the tendency of a force to rotate an object about an axis.'
+                }
+            },
+            featuredEquations: []
+        },
+        '\\boldsymbol{\\tau}': {
+            name: 'Torque Vector',
+            defaultUnit: 'N·m',
+            description: 'The vector representation of torque, defined as \\boldsymbol{\\tau} = \\mathbf{r} \\times \\mathbf{F}.',
+            featuredEquations: [
+                { name: "Torque Definition", latex: "\\boldsymbol{\\tau} = \\mathbf{r} \\times \\mathbf{F}" },
+                { name: "Rotational Dynamics", latex: "\\boldsymbol{\\tau} = \\frac{d\\mathbf{L}}{dt}" }
+            ]
+        },
+        '\\psi': {
+            name: 'Quantum Wavefunction',
+            defaultUnit: 'probability amplitude',
+            description: 'A complex wavefunction describing the probability amplitude of a quantum state.',
+            featuredEquations: []
+        },
+        '\\Psi': {
+            name: 'Wavefunction (Time-Dependent)',
+            defaultUnit: 'probability amplitude',
+            description: 'The time-dependent quantum state wave function satisfying the Schrödinger equation.',
+            featuredEquations: [
+                { name: "Schrödinger Equation", latex: "i \\hbar \\frac{\\partial}{\\partial t}\\Psi = \\hat{H}\\Psi" }
+            ]
+        }
+    },
     
     // User customizations storage (loaded from localStorage)
     userCustomizations: {},
@@ -379,6 +617,355 @@ const EquationExplainer = {
         return overrides;
     },
 
+    isSingleSymbol(latex) {
+        const cleaned = latex.trim().replace(/^\\\[/, '').replace(/\\\]$/, '').replace(/^\$\$/, '').replace(/\$\$/, '').replace(/^\$/, '').replace(/\$/, '').trim();
+        const innerMatch = cleaned.match(/^\\(mathbf|vec|hat|bar|dot|ddot|tilde|boldsymbol)\{([a-zA-Z\\]+)\}$/);
+        if (innerMatch) {
+            return innerMatch[2].length <= 10;
+        }
+        const simpleCleaned = cleaned.replace(/\\(mathbf|vec|hat|bar|dot|ddot|tilde|boldsymbol|mathrm|mathsf)/g, '').replace(/[\{\}]/g, '');
+        return simpleCleaned.length <= 4 && !/[=+\-*\/<>|]/.test(simpleCleaned);
+    },
+
+    resolveSymbolInfo(symbol) {
+        let cleanSymbol = symbol.trim().replace(/^\\(mathbf|vec|hat|bar|dot|ddot|tilde|boldsymbol)\{([a-zA-Z\\]+)\}$/, '$2').replace(/[\{\}]/g, '');
+        
+        // 1. Check constants first
+        const constants = window.PHYSICS_CONSTANTS || {};
+        for (const [key, details] of Object.entries(constants)) {
+            if (details.symbol === symbol || details.symbol === cleanSymbol) {
+                // Predefine prominent featured equations for constants
+                const constantEquations = {
+                    'h-bar': [
+                        { name: "Schrödinger Equation", latex: "i \\hbar \\frac{\\partial}{\\partial t}\\Psi = \\hat{H}\\Psi" },
+                        { name: "Heisenberg Uncertainty Principle", latex: "\\Delta x \\Delta p \\ge \\frac{\\hbar}{2}" }
+                    ],
+                    'c': [
+                        { name: "Mass-Energy Equivalence", latex: "E = m c^2" },
+                        { name: "Einstein Field Equations", latex: "G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}" }
+                    ],
+                    'G': [
+                        { name: "Universal Gravitation", latex: "\\mathbf{F}_g = -G \\frac{m_1 m_2}{r^2} \\hat{\\mathbf{r}}" },
+                        { name: "Einstein Field Equations", latex: "G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}" }
+                    ],
+                    'k-B': [
+                        { name: "Ideal Gas Law", latex: "P V = N k_B T" },
+                        { name: "Boltzmann Entropy Formula", latex: "S = k_B \\ln \\Omega" }
+                    ],
+                    'epsilon-0': [
+                        { name: "Gauss's Law", latex: "\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\epsilon_0}" },
+                        { name: "Coulomb's Law", latex: "F_e = \\frac{1}{4\\pi\\epsilon_0} \\frac{q_1 q_2}{r^2}" }
+                    ],
+                    'mu-0': [
+                        { name: "Ampere's Law", latex: "\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J}" },
+                        { name: "Speed of Light Relation", latex: "c = \\frac{1}{\\sqrt{\\epsilon_0 \\mu_0}}" }
+                    ]
+                };
+
+                return {
+                    name: details.name,
+                    type: 'constant',
+                    description: details.description || details.desc || 'Fundamental physical constant.',
+                    value: details.value,
+                    unit: details.unit,
+                    featuredEquations: constantEquations[key] || []
+                };
+            }
+        }
+        
+        // 2. Check variable dictionary with context override
+        const dictEntry = this.variableDictionary[cleanSymbol] || this.variableDictionary[symbol];
+        if (dictEntry) {
+            let activeCtx = null;
+            if (this.activeDomain && dictEntry.contexts && dictEntry.contexts[this.activeDomain]) {
+                activeCtx = dictEntry.contexts[this.activeDomain];
+            } else if (dictEntry.contexts) {
+                const firstCtxKey = Object.keys(dictEntry.contexts)[0];
+                activeCtx = dictEntry.contexts[firstCtxKey];
+            }
+            
+            return {
+                name: activeCtx ? activeCtx.name : dictEntry.name,
+                type: 'variable',
+                description: activeCtx ? activeCtx.description : dictEntry.description,
+                unit: activeCtx ? (activeCtx.unit || dictEntry.defaultUnit) : dictEntry.defaultUnit,
+                featuredEquations: dictEntry.featuredEquations || []
+            };
+        }
+        
+        // 3. Fallback
+        return {
+            name: symbol.startsWith('\\') ? symbol.substring(1).charAt(0).toUpperCase() + symbol.substring(2) + ' Parameter' : symbol + ' Variable',
+            type: 'variable',
+            description: 'This symbol represents a variable or parameter within the current physical equation.',
+            unit: 'dimensionless',
+            featuredEquations: []
+        };
+    },
+
+    drillDownIntoSymbol(symbol, info) {
+        this.pushToNavigationStack();
+        this.updateUrlParams(symbol, null);
+        if (this.latexInput) {
+            this.latexInput.value = symbol;
+        }
+        this.compileMathJax(symbol);
+        this.renderSymbolExplanation(symbol);
+    },
+
+    pushToNavigationStack() {
+        const currentItem = {
+            id: this.currentId,
+            latex: this.currentLatex,
+            formula: this.currentFormula,
+            subtopics: this.currentSubtopics,
+            title: this.formulaTitle.textContent || this.formulaTitle.innerHTML
+        };
+        if (this.navigationStack.length > 0) {
+            const last = this.navigationStack[this.navigationStack.length - 1];
+            if (last.latex === currentItem.latex) return;
+        }
+        this.navigationStack.push(currentItem);
+    },
+
+    popNavigationStack() {
+        if (this.navigationStack.length === 0) return;
+        const previous = this.navigationStack.pop();
+        
+        this.currentId = previous.id;
+        this.currentLatex = previous.latex;
+        this.currentFormula = previous.formula;
+        this.currentSubtopics = previous.subtopics;
+        
+        this.latexInput.value = previous.latex;
+        
+        this.compileMathJax(previous.latex);
+        if (previous.formula) {
+            this.renderFormula(previous.formula, previous.subtopics);
+        } else {
+            this.renderCustomExplanation(previous.latex);
+        }
+        
+        this.updateUrlParams(previous.latex, previous.id);
+        this.renderBreadcrumbs();
+    },
+
+    updateUrlParams(latex, id) {
+        const url = new URL(window.location);
+        if (latex) {
+            url.searchParams.set('latex', latex);
+        } else {
+            url.searchParams.delete('latex');
+        }
+        if (id) {
+            url.searchParams.set('id', id);
+        } else {
+            url.searchParams.delete('id');
+        }
+        window.history.pushState({}, '', url);
+    },
+
+    renderBreadcrumbs() {
+        const container = document.getElementById('explainer-breadcrumbs');
+        if (!container) return;
+        
+        console.log("Rendering breadcrumbs, navigation stack length:", this.navigationStack.length);
+        
+        if (this.navigationStack.length === 0) {
+            container.style.display = 'none';
+            container.innerHTML = '';
+            return;
+        }
+        
+        try {
+            container.style.display = 'flex';
+            container.innerHTML = '';
+            
+            const backBtn = document.createElement('button');
+            backBtn.style.background = 'transparent';
+            backBtn.style.border = 'none';
+            backBtn.style.color = 'var(--accent-default, #64ffda)';
+            backBtn.style.cursor = 'pointer';
+            backBtn.style.fontSize = '0.8rem';
+            backBtn.style.padding = '0';
+            backBtn.style.display = 'inline-flex';
+            backBtn.style.alignItems = 'center';
+            backBtn.style.gap = '4px';
+            backBtn.style.marginRight = '8px';
+            backBtn.innerHTML = `
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Back
+            `;
+            backBtn.addEventListener('click', () => {
+                this.popNavigationStack();
+            });
+            container.appendChild(backBtn);
+            
+            this.navigationStack.forEach((item, index) => {
+                const link = document.createElement('span');
+                link.style.cursor = 'pointer';
+                link.style.textDecoration = 'underline';
+                link.style.textUnderlineOffset = '2px';
+                link.style.color = 'var(--text-muted, #94a3b8)';
+                
+                let text = '';
+                if (item.formula) {
+                    text = item.title.replace(/\([^\)]+\)/g, '').trim();
+                } else {
+                    text = '\\( ' + (item.latex || '') + ' \\)';
+                }
+                
+                link.innerHTML = text;
+                link.addEventListener('click', () => {
+                    while (this.navigationStack.length > index) {
+                        this.popNavigationStack();
+                    }
+                });
+                container.appendChild(link);
+                
+                const separator = document.createElement('span');
+                separator.textContent = ' › ';
+                separator.style.color = 'rgba(255,255,255,0.2)';
+                container.appendChild(separator);
+            });
+            
+            const currentLabel = document.createElement('span');
+            currentLabel.style.color = '#ffffff';
+            currentLabel.style.fontWeight = '500';
+            currentLabel.innerHTML = '\\( ' + (this.latexInput ? this.latexInput.value : '') + ' \\)';
+            container.appendChild(currentLabel);
+            
+            this.triggerTypeset([container]);
+        } catch (e) {
+            console.error("Error rendering breadcrumbs:", e);
+        }
+    },
+
+    renderSymbolExplanation(latex) {
+        this.currentFormula = null;
+        this.currentSubtopics = [];
+
+        const symbol = latex.trim();
+        
+        this.explainerPlaceholder.style.display = 'none';
+        this.officialBreakdown.style.display = 'none';
+        this.symbolsBreakdown.style.display = 'block';
+        this.topologicalBridges.style.display = 'none';
+        if (this.aiSimulationCard) this.aiSimulationCard.style.display = 'none';
+        if (this.solverRedirectContainer) this.solverRedirectContainer.style.display = 'none';
+
+        let symbolInfo = this.resolveSymbolInfo(symbol);
+
+        this.formulaTitle.innerHTML = `${symbolInfo.name} (\\( ${symbol} \\))`;
+        if (this.formulaBadge) {
+            this.formulaBadge.style.display = 'inline-block';
+            if (symbolInfo.type === 'constant') {
+                this.formulaBadge.className = 'badge-status';
+                this.formulaBadge.style.background = 'rgba(234, 179, 8, 0.1)';
+                this.formulaBadge.style.color = '#eab308';
+                this.formulaBadge.style.border = '1px solid rgba(234, 179, 8, 0.25)';
+                this.formulaBadge.textContent = 'Physical Constant';
+            } else {
+                this.formulaBadge.className = 'badge-status';
+                this.formulaBadge.style.background = 'rgba(59, 130, 246, 0.1)';
+                this.formulaBadge.style.color = '#3b82f6';
+                this.formulaBadge.style.border = '1px solid rgba(59, 130, 246, 0.25)';
+                this.formulaBadge.textContent = 'Physical Variable';
+            }
+        }
+
+        if (this.conceptualIntroCard) {
+            this.conceptualIntroCard.style.display = 'flex';
+            
+            let valRow = '';
+            if (symbolInfo.type === 'constant' && symbolInfo.value) {
+                valRow = `
+                    <div style="margin-top: 8px; padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 0.88rem;">
+                        <span style="color: var(--text-muted, #94a3b8);">Numerical Value:</span>
+                        <strong style="color: #fbbf24; margin-left: 6px;">${symbolInfo.value}</strong> 
+                        <span style="color: #a8a29e; margin-left: 6px;">${symbolInfo.unit || ''}</span>
+                    </div>
+                `;
+            } else if (symbolInfo.unit && symbolInfo.unit !== 'dimensionless') {
+                valRow = `
+                    <div style="margin-top: 8px; padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 0.88rem;">
+                        <span style="color: var(--text-muted, #94a3b8);">Standard SI Unit:</span>
+                        <strong style="color: var(--accent-default, #64ffda); margin-left: 6px;">${symbolInfo.unit}</strong>
+                    </div>
+                `;
+            }
+
+            this.conceptualIntroCard.innerHTML = `
+                <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                    ✦ Symbol Definition
+                </h4>
+                <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
+                    ${this.wrapTextMathDelimiters(symbolInfo.description)}
+                </div>
+                ${valRow}
+            `;
+        }
+
+        this.renderSymbolContextEquations(symbol, symbolInfo);
+        this.renderBreadcrumbs();
+        this.triggerTypeset([this.formulaTitle, this.conceptualIntroCard]);
+    },
+
+    renderSymbolContextEquations(symbol, symbolInfo) {
+        this.symbolsList.innerHTML = '';
+        
+        let equations = symbolInfo.featuredEquations || [];
+        
+        if (equations.length === 0) {
+            this.symbolsList.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; font-style: italic; padding: 10px;">Select another equation in the editor to see it breakdown into its components.</div>';
+            return;
+        }
+
+        const header = document.createElement('div');
+        header.style.fontSize = '0.85rem';
+        header.style.textTransform = 'uppercase';
+        header.style.letterSpacing = '0.05em';
+        header.style.color = 'var(--text-muted, #94a3b8)';
+        header.style.marginBottom = '12px';
+        header.style.fontFamily = "'Space Grotesk', sans-serif";
+        header.textContent = `Featured Equations with ${symbol}`;
+        this.symbolsList.appendChild(header);
+
+        equations.forEach(eq => {
+            const row = document.createElement('div');
+            row.className = 'symbol-row';
+            row.style.cursor = 'pointer';
+            row.style.transition = 'all 0.2s';
+            row.style.border = '1px solid rgba(255, 255, 255, 0.04)';
+            
+            row.addEventListener('mouseover', () => {
+                row.style.background = 'rgba(100, 255, 218, 0.03)';
+                row.style.borderColor = 'rgba(100, 255, 218, 0.2)';
+            });
+            row.addEventListener('mouseout', () => {
+                row.style.background = '';
+                row.style.borderColor = 'rgba(255, 255, 255, 0.04)';
+            });
+            
+            row.addEventListener('click', () => {
+                this.navigationStack = [];
+                this.latexInput.value = eq.latex;
+                this.handleInputChange();
+            });
+
+            row.innerHTML = `
+                <div class="symbol-badge" style="background: rgba(100, 255, 218, 0.05); border-color: rgba(100, 255, 218, 0.15); color: var(--accent-default, #64ffda); font-size: 0.8rem; padding: 4px 8px; border-radius: 4px; font-family: 'Space Grotesk', sans-serif;">EQ</div>
+                <div class="symbol-content-wrapper" style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                    <strong style="color: #ffffff; font-size: 0.92rem;">${eq.name}</strong>
+                    <div style="font-family: 'Fira Code', monospace; font-size: 0.82rem; color: var(--text-muted, #94a3b8); margin-top: 2px;">$${eq.latex}$</div>
+                </div>
+            `;
+            this.symbolsList.appendChild(row);
+        });
+
+        this.triggerTypeset([this.symbolsList]);
+    },
+
     loadUserCustomizations() {
         try {
             // Load custom definitions from local storage
@@ -426,6 +1013,41 @@ const EquationExplainer = {
     },
 
     bindEvents() {
+        // Handle browser back/forward buttons natively
+        window.addEventListener('popstate', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const latex = urlParams.get('latex');
+            
+            this.navigationStack = []; // Reset stack on external history change
+            
+            if (id) {
+                fetch(`${BASE_URL}/physics/api/explain?latex=` + encodeURIComponent(latex || '') + `&id=${id}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success && data.formula) {
+                            this.currentId = data.formula.id;
+                            this.currentLatex = data.formula.latex_source || this.getCleanLatexFromEq(data.formula.equation);
+                            this.latexInput.value = this.currentLatex;
+                            this.compileMathJax(this.currentLatex);
+                            this.fetchSubtopicsForFormula(data.formula.id).then(subtopics => {
+                                this.renderFormula(data.formula, subtopics);
+                            });
+                        }
+                    });
+            } else if (latex) {
+                this.latexInput.value = latex;
+                this.compileMathJax(latex);
+                if (this.isSingleSymbol(latex)) {
+                    this.renderSymbolExplanation(latex);
+                } else {
+                    this.lookupFormulaByLatex(latex);
+                }
+            } else {
+                this.resetExplanation();
+            }
+        });
+
         // Debounced input compiling
         this.latexInput.addEventListener('input', () => {
             this.setCompilerStatus('Compiling...', '#fbbf24');
@@ -529,7 +1151,13 @@ const EquationExplainer = {
         // 1. Compile MathJax preview
         this.compileMathJax(latex);
 
-        // 2. Perform database lookup
+        // 2. Route single symbols directly
+        if (this.isSingleSymbol(latex)) {
+            this.renderSymbolExplanation(latex);
+            return;
+        }
+
+        // 3. Perform database lookup
         this.lookupFormulaByLatex(latex);
     },
 
@@ -883,6 +1511,73 @@ const EquationExplainer = {
         this.triggerTypeset([this.symbolsList]);
     },
 
+    bindRowEvents(targetRow, symbol, info) {
+        // Highlight on hover
+        targetRow.addEventListener('mouseenter', () => {
+            this.highlightSymbolInMath(symbol, true);
+        });
+        targetRow.addEventListener('mouseleave', () => {
+            this.highlightSymbolInMath(symbol, false);
+        });
+
+        // Edit button
+        const editBtn = targetRow.querySelector('.edit-var-btn');
+        if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleVarEditForm(targetRow, symbol, info);
+            });
+        }
+
+        // Drill down click handler on badge
+        const badge = targetRow.querySelector('.symbol-badge');
+        if (badge) {
+            badge.style.cursor = 'pointer';
+            badge.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.drillDownIntoSymbol(symbol, info);
+            });
+        }
+
+        // Drill down click handler on name
+        const nameLbl = targetRow.querySelector('.var-name-lbl');
+        if (nameLbl) {
+            nameLbl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.drillDownIntoSymbol(symbol, info);
+            });
+        }
+
+        // Alternate disambiguation options
+        const altBtns = targetRow.querySelectorAll('.alt-disambig-btn');
+        altBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const newName = btn.getAttribute('data-name');
+                const newType = btn.getAttribute('data-type');
+                const newUnit = btn.getAttribute('data-unit');
+                const newDesc = btn.getAttribute('data-desc');
+
+                const updatedInfo = {
+                    name: newName,
+                    type: newType,
+                    unit: newUnit,
+                    description: newDesc
+                };
+
+                this.userCustomizations[symbol] = updatedInfo;
+                try {
+                    localStorage.setItem('physics_explainer_custom_' + symbol, JSON.stringify(updatedInfo));
+                } catch (err) {
+                    console.warn('Could not write custom variable definitions to localStorage:', err);
+                }
+
+                this.renderVariableRow(symbol, { ...updatedInfo, source: 'user' }, targetRow);
+                EquationExplainer.triggerTypeset([targetRow]);
+            });
+        });
+    },
+
     renderVariableRow(symbol, info, existingRow = null) {
         const row = existingRow || document.createElement('div');
         row.className = 'symbol-row';
@@ -902,20 +1597,7 @@ const EquationExplainer = {
         const mathjaxSymbol = `$${symbol}$`;
 
         // Build name link or strong label
-        let nameHtml = `<strong class="var-name-lbl" style="color: #ffffff; font-size: 0.92rem;">${info.name}</strong>`;
-        if (info.ref) {
-            let refUrl = '';
-            if (info.ref.startsWith('constants/')) {
-                refUrl = `${BASE_URL}/physics/constants#` + info.ref.replace('constants/', '');
-            } else if (info.ref.startsWith('symbols/')) {
-                refUrl = `${BASE_URL}/physics/symbols#` + info.ref.replace('symbols/', '');
-            } else if (info.ref.startsWith('notation/')) {
-                refUrl = `${BASE_URL}/physics/symbols#` + info.ref.replace('notation/', '');
-            }
-            if (refUrl) {
-                nameHtml = `<a class="var-name-lbl" href="${refUrl}" target="_blank" style="color: var(--accent-default, #64ffda); text-decoration: none; font-size: 0.92rem; font-weight: 600; border-bottom: 1px dashed rgba(100,255,218,0.3); transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-default)'" onmouseout="this.style.borderColor='rgba(100,255,218,0.3)'">${info.name}</a>`;
-            }
-        }
+        let nameHtml = `<span class="var-name-lbl" style="color: var(--accent-default, #64ffda); text-decoration: none; font-size: 0.92rem; font-weight: 600; cursor: pointer; border-bottom: 1px dashed rgba(100,255,218,0.3); transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-default)'" onmouseout="this.style.borderColor='rgba(100,255,218,0.3)'">${info.name}</span>`;
 
         let disambigHtml = '';
         const dictEntry = this.physicsDictionary[symbol];
@@ -952,7 +1634,7 @@ const EquationExplainer = {
         }
 
         row.innerHTML = `
-            <div class="symbol-badge ${typeClass}" title="${badgeTypeLabel}">${mathjaxSymbol}</div>
+            <div class="symbol-badge ${typeClass}" title="${badgeTypeLabel}" style="cursor: pointer;">${mathjaxSymbol}</div>
             <div class="symbol-content-wrapper" style="flex: 1; display: flex; flex-direction: column;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -968,74 +1650,14 @@ const EquationExplainer = {
             </div>
         `;
 
-        // Clean up any existing listeners on update by cloning (only if updating existingRow)
         if (existingRow) {
             const newRow = row.cloneNode(true);
             row.parentNode.replaceChild(newRow, row);
-            
-            // Re-setup listeners on newRow
-            newRow.addEventListener('mouseenter', () => {
-                this.highlightSymbolInMath(symbol, true);
-            });
-            newRow.addEventListener('mouseleave', () => {
-                this.highlightSymbolInMath(symbol, false);
-            });
-
-            const editBtn = newRow.querySelector('.edit-var-btn');
-            editBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.toggleVarEditForm(newRow, symbol, info);
-            });
+            this.bindRowEvents(newRow, symbol, info);
             return;
         }
 
-        // Interactive Highlight: Hovering over the row highlights the character in the compiled math area
-        row.addEventListener('mouseenter', () => {
-            this.highlightSymbolInMath(symbol, true);
-        });
-        row.addEventListener('mouseleave', () => {
-            this.highlightSymbolInMath(symbol, false);
-        });
-
-        // Edit button click handler
-        const editBtn = row.querySelector('.edit-var-btn');
-        editBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.toggleVarEditForm(row, symbol, info);
-        });
-
-        const bindAltListeners = (targetRow) => {
-            const altBtns = targetRow.querySelectorAll('.alt-disambig-btn');
-            altBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const newName = btn.getAttribute('data-name');
-                    const newType = btn.getAttribute('data-type');
-                    const newUnit = btn.getAttribute('data-unit');
-                    const newDesc = btn.getAttribute('data-desc');
-
-                    const updatedInfo = {
-                        name: newName,
-                        type: newType,
-                        unit: newUnit,
-                        description: newDesc
-                    };
-
-                    this.userCustomizations[symbol] = updatedInfo;
-                    try {
-                        localStorage.setItem('physics_explainer_custom_' + symbol, JSON.stringify(updatedInfo));
-                    } catch (err) {
-                        console.warn('Could not write custom variable definitions to localStorage:', err);
-                    }
-
-                    this.renderVariableRow(symbol, { ...updatedInfo, source: 'user' }, targetRow);
-
-                    EquationExplainer.triggerTypeset([targetRow]);
-                });
-            });
-        };
-
-        bindAltListeners(row);
+        this.bindRowEvents(row, symbol, info);
 
         if (!existingRow) {
             this.symbolsList.appendChild(row);

@@ -1913,9 +1913,29 @@ const EquationExplainer = {
         }
 
         // Sort found tokens by order of appearance in the original LaTeX string
+        // using a cleaned LaTeX string to avoid false positives inside formatting commands
+        const getCleanSearchString = (str) => {
+            let clean = str;
+            // 1. Replace \text{...} and \mathrm{...} environments with spaces
+            clean = clean.replace(/\\(text|mathrm|mathsf)\{([^\}]+)\}/g, match => ' '.repeat(match.length));
+            // 2. Replace structural/formatting commands with spaces
+            const structuralRegex = /\\(frac|left|right|sqrt|cdot|times|div|iff|implies|ge|le|ast|star|boldsymbol|mathbf|mathsf|mathrm|text|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\b/g;
+            clean = clean.replace(structuralRegex, match => ' '.repeat(match.length));
+            // 3. Replace word-like subscripts of 3+ letters (e.g. _{ext}, _ext) with spaces
+            clean = clean.replace(/_\{[a-zA-Z]{3,\}\}/g, match => ' '.repeat(match.length));
+            clean = clean.replace(/_[a-zA-Z]{3,}/g, match => ' '.repeat(match.length));
+            return clean;
+        };
+
+        const cleanSearch = getCleanSearchString(latex);
+
         found.sort((a, b) => {
-            const indexA = latex.indexOf(a.symbol);
-            const indexB = latex.indexOf(b.symbol);
+            const hasStructuralA = /\\(frac|mathbf|mathrm|text|vec|hat|bar|tilde|dot|ddot|underline)/.test(a.symbol);
+            const indexA = hasStructuralA ? latex.indexOf(a.symbol) : cleanSearch.indexOf(a.symbol);
+            
+            const hasStructuralB = /\\(frac|mathbf|mathrm|text|vec|hat|bar|tilde|dot|ddot|underline)/.test(b.symbol);
+            const indexB = hasStructuralB ? latex.indexOf(b.symbol) : cleanSearch.indexOf(b.symbol);
+            
             return indexA - indexB;
         });
 

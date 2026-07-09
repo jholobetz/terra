@@ -14,18 +14,28 @@ import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
 from datetime import date
-import nltk
-from nltk.tokenize import sent_tokenize
-from sklearn.feature_extraction.text import TfidfVectorizer
+try:
+    import nltk
+    from nltk.tokenize import sent_tokenize
+    HAS_NLTK = True
+except ImportError:
+    HAS_NLTK = False
+
+try:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    HAS_SKLEARN = True
+except ImportError:
+    HAS_SKLEARN = False
 
 # Configure NLTK data path
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 sys.path.append(PROJECT_ROOT)
 
-NLTK_DATA_PATH = os.path.join(PROJECT_ROOT, ".venv", "nltk_data")
-if os.path.exists(NLTK_DATA_PATH):
-    nltk.data.path.append(os.path.abspath(NLTK_DATA_PATH))
+if HAS_NLTK:
+    NLTK_DATA_PATH = os.path.join(PROJECT_ROOT, ".venv", "nltk_data")
+    if os.path.exists(NLTK_DATA_PATH):
+        nltk.data.path.append(os.path.abspath(NLTK_DATA_PATH))
 
 # Import verifier components
 from scripts.maintenance.semantic_prose_verifier import preprocess_html, get_similarity_score

@@ -8,18 +8,28 @@ import os
 import sys
 import json
 import re
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from sklearn.feature_extraction.text import TfidfVectorizer
+try:
+    import nltk
+    from nltk.tokenize import word_tokenize
+    from nltk.corpus import stopwords
+    from nltk.stem import WordNetLemmatizer
+    HAS_NLTK = True
+except ImportError:
+    HAS_NLTK = False
+
+try:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    HAS_SKLEARN = True
+except ImportError:
+    HAS_SKLEARN = False
 
 # Configure NLTK data path for the local virtual environment folder
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
-NLTK_DATA_PATH = os.path.join(PROJECT_ROOT, ".venv", "nltk_data")
-if os.path.exists(NLTK_DATA_PATH):
-    nltk.data.path.append(os.path.abspath(NLTK_DATA_PATH))
+if HAS_NLTK:
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+    NLTK_DATA_PATH = os.path.join(PROJECT_ROOT, ".venv", "nltk_data")
+    if os.path.exists(NLTK_DATA_PATH):
+        nltk.data.path.append(os.path.abspath(NLTK_DATA_PATH))
 
 # Threshold parameters
 SIMILARITY_THRESHOLD_WARNING = 0.15
@@ -85,6 +95,14 @@ def get_similarity_score(reference_text, cms_text):
     if not ref_clean or not cms_clean:
         return 0.0
         
+    if not HAS_SKLEARN:
+        # Fallback simple overlap similarity
+        tokens_ref = set(re.findall(r'\b\w+\b', ref_clean))
+        tokens_cms = set(re.findall(r'\b\w+\b', cms_clean))
+        if not tokens_ref:
+            return 0.0
+        return float(len(tokens_ref & tokens_cms) / len(tokens_ref))
+
     def dummy_tokenizer(text):
         return tokenize_and_lemmatize(text)
         

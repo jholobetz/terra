@@ -293,6 +293,38 @@ const EquationExplainer = {
     audioGain: null,
     isSonifying: false,
     
+    // Glossary of standard subscripts and superscripts as modifiers
+    modifierGlossary: {
+        // Subscripts
+        'ext': { name: 'External', desc: 'Indicates a quantity exerted on the system by the external environment.' },
+        'abs': { name: 'Absolute', desc: 'Indicates a quantity measured relative to a fixed, absolute reference frame.' },
+        'int': { name: 'Internal', desc: 'Indicates a quantity originating from or acting within the boundaries of the system.' },
+        'net': { name: 'Net', desc: 'The vector or scalar sum of all individual contributions (e.g., net force).' },
+        'eff': { name: 'Effective', desc: 'The net functional value of a parameter under specific real-world conditions.' },
+        'max': { name: 'Maximum', desc: 'The peak upper limit of a varying physical quantity.' },
+        'min': { name: 'Minimum', desc: 'The absolute lower limit of a varying physical quantity.' },
+        'init': { name: 'Initial', desc: 'The starting state of a variable before a process or transformation.' },
+        'final': { name: 'Final', desc: 'The ending state of a variable at the conclusion of a process.' },
+        'tot': { name: 'Total', desc: 'The accumulated sum of all components in a system.' },
+        'in': { name: 'Incoming / Input', desc: 'Indicates a quantity entering a boundary or input channel.' },
+        'out': { name: 'Outgoing / Output', desc: 'Indicates a quantity leaving a boundary or output channel.' },
+        'sys': { name: 'System', desc: 'Refers to the specific thermodynamic or mechanical system under study.' },
+        'surr': { name: 'Surroundings', desc: 'Refers to the environment outside the defined system boundaries.' },
+        'avg': { name: 'Average', desc: 'The mean value of a parameter evaluated over a spatial or temporal interval.' },
+        
+        // Superscripts
+        '\\circ': { name: 'Standard State', desc: 'Plimsoll symbol indicating the quantity is evaluated under standard thermodynamic reference conditions (e.g. 1 bar).' },
+        '\\dagger': { name: 'Hermitian Adjoint', desc: 'Represents the conjugate transpose of an operator in quantum mechanics.' },
+        'T': { name: 'Matrix Transpose', desc: 'Represents the transpose operation on a matrix or vector.' },
+        '\\top': { name: 'Matrix Transpose', desc: 'Represents the transpose operation on a matrix or vector.' },
+        '*': { name: 'Complex Conjugate', desc: 'Represents the complex conjugate of a complex quantity.' },
+        '\\ast': { name: 'Complex Conjugate', desc: 'Represents the complex conjugate of a complex quantity.' },
+        '\\prime': { name: 'Primed Reference Frame', desc: 'Denotes coordinates or quantities measured in a moving reference frame.' },
+        '+': { name: 'Positive Charge', desc: 'Denotes that the particle or state carries a positive elementary electric charge.' },
+        '-': { name: 'Negative Charge', desc: 'Denotes that the particle or state carries a negative elementary electric charge.' },
+        '0': { name: 'Neutral Charge', desc: 'Denotes that the particle or state carries no electric charge.' }
+    },
+    
     // Comprehensive physics dictionary mapping standard variables, constants, and operators
     physicsDictionary: {
         // Operators
@@ -1005,6 +1037,8 @@ const EquationExplainer = {
         this.officialBreakdown = document.getElementById('official-breakdown');
         this.symbolsBreakdown = document.getElementById('symbols-breakdown');
         this.symbolsList = document.getElementById('symbols-list');
+        this.modifiersSection = document.getElementById('modifiers-section');
+        this.modifiersList = document.getElementById('modifiers-list');
         this.topologicalBridges = document.getElementById('topological-bridges');
         this.bridgesContainer = document.getElementById('bridges-container');
         this.explainerPlaceholder = document.getElementById('explainer-placeholder');
@@ -1419,20 +1453,31 @@ const EquationExplainer = {
      */
     renderElementsBreakdown(latex, officialVariables) {
         this.symbolsList.innerHTML = '';
+        if (this.modifiersList) {
+            this.modifiersList.innerHTML = '';
+        }
         
         const tokens = this.extractAllMathTokens(latex, officialVariables);
         
         if (tokens.length === 0) {
             this.symbolsList.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">No math variables, constants, or operators detected.</div>';
+            if (this.modifiersSection) {
+                this.modifiersSection.style.display = 'none';
+            }
             return;
         }
 
         const dynamicOverrides = this.getDynamicOverrides(latex);
+        let hasModifiers = false;
 
         tokens.forEach(tok => {
             const symbol = tok.symbol;
             let info = null;
             
+            if (tok.type === 'modifier') {
+                hasModifiers = true;
+            }
+
             if (this.userCustomizations[symbol]) {
                 info = { ...this.userCustomizations[symbol], type: tok.type, source: 'user' };
             } else if (officialVariables[symbol]) {
@@ -1444,6 +1489,15 @@ const EquationExplainer = {
                     unit: official.unit || 'dimensionless',
                     ref: official.ref || null,
                     source: 'database'
+                };
+            } else if (tok.type === 'modifier' && this.modifierGlossary[symbol]) {
+                const glossaryEntry = this.modifierGlossary[symbol];
+                info = {
+                    name: glossaryEntry.name,
+                    type: 'modifier',
+                    description: glossaryEntry.desc,
+                    unit: 'modifier',
+                    source: 'glossary'
                 };
             } else if (/\\(int|oint|iint|iiint)/.test(symbol)) {
                 info = {
@@ -1495,10 +1549,10 @@ const EquationExplainer = {
                     info = { ...this.physicsDictionary[symbol], source: 'dictionary' };
                 } else {
                     info = {
-                        name: symbol.startsWith('\\') ? symbol.substring(1) + ' Parameter' : symbol + ' Variable',
+                        name: symbol.startsWith('\\') ? symbol.substring(1) + (tok.type === 'modifier' ? ' Modifier' : ' Parameter') : symbol + (tok.type === 'modifier' ? ' Subscript/Modifier' : ' Variable'),
                         type: tok.type,
-                        description: 'Custom parameter. Click Edit to customize name, unit, and definition.',
-                        unit: 'dimensionless',
+                        description: tok.type === 'modifier' ? 'Custom modifier constraint. Click Edit to customize definition.' : 'Custom parameter. Click Edit to customize name, unit, and definition.',
+                        unit: tok.type === 'modifier' ? 'modifier' : 'dimensionless',
                         source: 'fallback'
                     };
                 }
@@ -1507,8 +1561,15 @@ const EquationExplainer = {
             this.renderVariableRow(symbol, info);
         });
 
-        // Typeset math symbols in badges
-        this.triggerTypeset([this.symbolsList]);
+        if (this.modifiersSection) {
+            this.modifiersSection.style.display = hasModifiers ? 'block' : 'none';
+        }
+
+        const typesetTargets = [this.symbolsList];
+        if (hasModifiers && this.modifiersList) {
+            typesetTargets.push(this.modifiersList);
+        }
+        this.triggerTypeset(typesetTargets);
     },
 
     bindRowEvents(targetRow, symbol, info) {
@@ -1591,6 +1652,9 @@ const EquationExplainer = {
         } else if (info.type === 'operator') {
             typeClass = 'operator-type';
             badgeTypeLabel = 'Operator';
+        } else if (info.type === 'modifier') {
+            typeClass = 'modifier-type';
+            badgeTypeLabel = 'Modifier';
         }
 
         // Wrap badge symbol in MathJax delimiters so it renders as a mathematical character
@@ -1643,7 +1707,7 @@ const EquationExplainer = {
                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"/></svg>
                         </button>
                     </div>
-                    <span class="var-unit-lbl" style="font-size: 0.76rem; font-family: 'Fira Code', clock, monospace; color: #a8a29e; background: rgba(255,255,255,0.04); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.04); ${info.unit && info.unit !== 'dimensionless' && info.unit !== 'operator' ? '' : 'display: none;'}">${info.unit || ''}</span>
+                    <span class="var-unit-lbl" style="font-size: 0.76rem; font-family: 'Fira Code', clock, monospace; color: #a8a29e; background: rgba(255,255,255,0.04); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.04); ${info.unit && info.unit !== 'dimensionless' && info.unit !== 'operator' && info.unit !== 'modifier' ? '' : 'display: none;'}">${info.unit || ''}</span>
                 </div>
                 <div class="var-desc-lbl" style="font-size: 0.82rem; color: var(--text-muted, #94a3b8); line-height: 1.4;">${info.description || info.desc || ''}</div>
                 ${disambigHtml}
@@ -1660,7 +1724,11 @@ const EquationExplainer = {
         this.bindRowEvents(row, symbol, info);
 
         if (!existingRow) {
-            this.symbolsList.appendChild(row);
+            if (info.type === 'modifier') {
+                this.modifiersList.appendChild(row);
+            } else {
+                this.symbolsList.appendChild(row);
+            }
         }
     },
 
@@ -1724,6 +1792,50 @@ const EquationExplainer = {
     extractAllMathTokens(latex, officialVariables = {}) {
         if (!latex) return [];
 
+        const found = [];
+        const seen = new Set();
+
+        const addToken = (symbol, type) => {
+            if (seen.has(symbol)) return;
+            seen.add(symbol);
+            found.push({ symbol, type });
+        };
+
+        // Extract subscripts as modifiers from original raw latex
+        const subscriptModRegex = /_\{([^\}]+)\}|_([a-zA-Z])/g;
+        let subModMatch;
+        while ((subModMatch = subscriptModRegex.exec(latex)) !== null) {
+            let content = subModMatch[1] || subModMatch[2];
+            // Clean text/mathrm wrapping: \text{ext} -> ext
+            content = content.replace(/\\(text|mathrm|mathsf|mathrm)\{([^\}]+)\}/g, '$2').trim();
+            // If the cleaned content is a word of length >= 2, it's a modifier
+            if (/^[a-zA-Z]{2,}$/.test(content)) {
+                addToken(content, 'modifier');
+            }
+        }
+
+        // Extract superscripts as modifiers from original raw latex
+        const superscriptModRegex = /\^\{([^\}]+)\}|\^([a-zA-Z0-9+\-\*\\/]+|\*|\+|0|\-|\\dagger|\\circ|\\prime)/g;
+        let superModMatch;
+        while ((superModMatch = superscriptModRegex.exec(latex)) !== null) {
+            let content = superModMatch[1] || superModMatch[2];
+            content = content.trim();
+            const isStandardModifier = this.modifierGlossary[content] || 
+                                       content === '\'' || 
+                                       content === '\\prime' ||
+                                       /^(T|\top|\dagger|\circ|\*|\ast|\+|-|0)$/.test(content);
+            if (isStandardModifier) {
+                addToken(content, 'modifier');
+            } else if (/\\(dagger|circ|prime)\b/.test(content)) {
+                const cmdMatch = content.match(/\\(dagger|circ|prime)/);
+                if (cmdMatch) {
+                    addToken('\\' + cmdMatch[1], 'modifier');
+                }
+            } else if (/^[a-zA-Z]{2,}$/.test(content) && !/^[0-9]+$/.test(content)) {
+                addToken(content, 'modifier');
+            }
+        }
+
         let text = latex.trim();
 
         // 1. Strip LaTeX structure environments
@@ -1778,15 +1890,6 @@ const EquationExplainer = {
             }
         }
         text = text.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\[a-zA-Z]+|[a-zA-Z0-9])/g, '$2');
-
-        const found = [];
-        const seen = new Set();
-
-        const addToken = (symbol, type) => {
-            if (seen.has(symbol)) return;
-            seen.add(symbol);
-            found.push({ symbol, type });
-        };
 
         // 2b. Pre-scan for official database keys to keep them grouped as unified terms
         if (officialVariables) {
@@ -1930,11 +2033,27 @@ const EquationExplainer = {
         const cleanSearch = getCleanSearchString(latex);
 
         found.sort((a, b) => {
-            const hasStructuralA = /\\(frac|mathbf|mathrm|text|vec|hat|bar|tilde|dot|ddot|underline)/.test(a.symbol);
-            const indexA = hasStructuralA ? latex.indexOf(a.symbol) : cleanSearch.indexOf(a.symbol);
+            let indexA = -1;
+            if (a.type === 'modifier') {
+                const escaped = a.symbol.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                const regex = new RegExp('([_^]\\{?\\s*|\\\\text\\{\\s*)' + escaped);
+                const match = latex.match(regex);
+                indexA = match ? match.index : latex.indexOf(a.symbol);
+            } else {
+                const hasStructuralA = /\\(frac|mathbf|mathrm|text|vec|hat|bar|tilde|dot|ddot|underline)/.test(a.symbol);
+                indexA = hasStructuralA ? latex.indexOf(a.symbol) : cleanSearch.indexOf(a.symbol);
+            }
             
-            const hasStructuralB = /\\(frac|mathbf|mathrm|text|vec|hat|bar|tilde|dot|ddot|underline)/.test(b.symbol);
-            const indexB = hasStructuralB ? latex.indexOf(b.symbol) : cleanSearch.indexOf(b.symbol);
+            let indexB = -1;
+            if (b.type === 'modifier') {
+                const escaped = b.symbol.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                const regex = new RegExp('([_^]\\{?\\s*|\\\\text\\{\\s*)' + escaped);
+                const match = latex.match(regex);
+                indexB = match ? match.index : latex.indexOf(b.symbol);
+            } else {
+                const hasStructuralB = /\\(frac|mathbf|mathrm|text|vec|hat|bar|tilde|dot|ddot|underline)/.test(b.symbol);
+                indexB = hasStructuralB ? latex.indexOf(b.symbol) : cleanSearch.indexOf(b.symbol);
+            }
             
             return indexA - indexB;
         });
@@ -2012,6 +2131,8 @@ const EquationExplainer = {
         this.explainerPlaceholder.style.display = 'flex';
         this.officialBreakdown.style.display = 'none';
         this.symbolsBreakdown.style.display = 'none';
+        if (this.modifiersSection) this.modifiersSection.style.display = 'none';
+        if (this.modifiersList) this.modifiersList.innerHTML = '';
         this.topologicalBridges.style.display = 'none';
         if (this.conceptualIntroCard) this.conceptualIntroCard.style.display = 'none';
         if (this.aiScenariosSection) this.aiScenariosSection.style.display = 'none';

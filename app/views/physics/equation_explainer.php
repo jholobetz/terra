@@ -68,21 +68,22 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 
                 <!-- Tokenized Symbols Breakdown Section -->
                 <div id="symbols-breakdown" style="display: none; margin-bottom: 25px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px;">
-                    <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 12px 0; font-family: 'Space Grotesk', sans-serif;">
+                    <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 15px 0; font-family: 'Space Grotesk', sans-serif;">
                         Equation Component Breakdown
                     </h4>
-                    <div id="symbols-list" style="display: flex; flex-direction: column; gap: 8px;">
-                        <!-- JS populated -->
+                    
+                    <div id="variables-section">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-default, #64ffda); margin-bottom: 8px; font-weight: 600;">Base Variables & Constants</div>
+                        <div id="symbols-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                            <!-- JS populated -->
+                        </div>
                     </div>
-                </div>
 
-                <!-- Topological Bridges Section -->
-                <div id="topological-bridges" style="display: none; margin-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px;">
-                    <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif;">
-                        Topological Bridges (Encyclopedia Contexts)
-                    </h4>
-                    <div id="bridges-container" style="display: flex; flex-wrap: wrap; gap: 10px;">
-                        <!-- JS populated -->
+                    <div id="modifiers-section" style="display: none; border-top: 1px dashed rgba(255, 255, 255, 0.08); padding-top: 15px; margin-top: 15px;">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #a855f7; margin-bottom: 8px; font-weight: 600;">Subscripts, Superscripts & Modifiers</div>
+                        <div id="modifiers-list" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- JS populated -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -192,6 +193,15 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         </div>
                     </div>
 
+                    <!-- Topological Bridges Section -->
+                    <div id="topological-bridges" style="display: none; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px; margin-top: 10px;">
+                        <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif;">
+                            Topological Bridges (Encyclopedia Contexts)
+                        </h4>
+                        <div id="bridges-container" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            <!-- JS populated -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -299,6 +309,11 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
     background: rgba(168, 85, 247, 0.08);
     border-color: rgba(168, 85, 247, 0.25);
     color: #c084fc;
+}
+.symbol-badge.modifier-type {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
 }
 
 /* Ensure MathJax symbols inside badges inherit color-coding */

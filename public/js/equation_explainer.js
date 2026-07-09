@@ -334,6 +334,7 @@ const EquationExplainer = {
         '\\int': { name: 'Integral Operator', type: 'operator', unit: 'operator', desc: 'Represents continuous summation or the area under a curve.' },
         '\\oint': { name: 'Closed Loop Integral', type: 'operator', unit: 'operator', desc: 'Represents line or surface integration over a closed boundary.' },
         '\\sum': { name: 'Summation Operator', type: 'operator', unit: 'operator', desc: 'Represents discrete addition of a sequence of terms.' },
+        '\\sqrt': { name: 'Square Root Operator', type: 'operator', unit: 'operator', desc: 'Represents the principal square root function, returning a number that, when multiplied by itself, yields the operand.' },
         '+': { name: 'Addition Operator', type: 'operator', unit: 'operator', desc: 'Adds mathematical values together.' },
         '-': { name: 'Subtraction Operator', type: 'operator', unit: 'operator', desc: 'Subtracts one mathematical value from another.' },
         '=': { name: 'Equality Relation', type: 'operator', unit: 'operator', desc: 'Asserts that two expressions have the exact same value.' },
@@ -2061,7 +2062,7 @@ const EquationExplainer = {
 
             // Extract single Roman letters
             const plainText = cleanContent.replace(/\\[a-zA-Z]+/g, '').trim();
-            const isLabelWord = plainText.length >= 3;
+            const isLabelWord = plainText.length >= 3 && !/\d/.test(plainText);
 
             let activeIndices = [...greekMatches];
             if (!isLabelWord && plainText.length > 0) {
@@ -2106,17 +2107,7 @@ const EquationExplainer = {
             }
         }
 
-        // 2c. Heuristic Grouping for unregistered/custom equations (Live Analysis)
-        // Check for integrals with differentials: \int ... dt
-        const integralRegex = /\\(int|oint|iint|iiint)\b(.*?)\\?d([a-zA-Z])/g;
-        let intMatch;
-        while ((intMatch = integralRegex.exec(text)) !== null) {
-            const fullMatch = intMatch[0];
-            addToken(fullMatch, 'operator');
-            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            const regex = new RegExp(escaped, 'g');
-            text = text.replace(regex, ' ');
-        }
+
 
         // Check for partial derivatives: \frac{\partial \Psi}{\partial t}
         const partialRegex = /\\frac\{\\partial\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{\\partial\s*([a-zA-Z\\]+)\}/g;
@@ -2187,7 +2178,7 @@ const EquationExplainer = {
             const sym = match[0];
             // Skip structural and formatting LaTeX commands
             const structuralCmds = new Set([
-                '\\frac', '\\left', '\\right', '\\sqrt', '\\cdot', '\\times', '\\div', 
+                '\\frac', '\\left', '\\right', '\\cdot', '\\times', '\\div', 
                 '\\iff', '\\implies', '\\ge', '\\le', '\\ast', '\\star',
                 '\\boldsymbol', '\\mathbf', '\\mathsf', '\\mathrm', '\\text', '\\mathcal', 
                 '\\vec', '\\hat', '\\bar', '\\tilde', '\\dot', '\\ddot', '\\underline'

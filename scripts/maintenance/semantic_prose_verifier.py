@@ -96,9 +96,21 @@ def get_similarity_score(reference_text, cms_text):
         return 0.0
         
     if not HAS_SKLEARN:
-        # Fallback simple overlap similarity
-        tokens_ref = set(re.findall(r'\b\w+\b', ref_clean))
-        tokens_cms = set(re.findall(r'\b\w+\b', cms_clean))
+        # Fallback simple overlap similarity excluding stop words
+        stop_words = {
+            'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any', 'are', 'as', 'at',
+            'be', 'because', 'been', 'before', 'being', 'below', 'between', 'both', 'but', 'by', 'can', 'did', 'do',
+            'does', 'doing', 'down', 'during', 'each', 'few', 'for', 'from', 'further', 'had', 'has', 'have', 'having',
+            'he', 'her', 'here', 'hers', 'herself', 'him', 'himself', 'his', 'how', 'i', 'if', 'in', 'into', 'is',
+            'it', 'its', 'itself', 'me', 'more', 'most', 'my', 'myself', 'no', 'nor', 'not', 'of', 'off', 'on', 'once',
+            'only', 'or', 'other', 'our', 'ours', 'ourselves', 'out', 'over', 'own', 'same', 'she', 'should', 'so',
+            'some', 'such', 'than', 'that', 'the', 'their', 'theirs', 'them', 'themselves', 'then', 'there', 'these',
+            'they', 'this', 'those', 'through', 'to', 'too', 'under', 'until', 'up', 'very', 'was', 'we', 'were',
+            'what', 'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'with', 'you', 'your', 'yours', 'yourself',
+            'yourselves'
+        }
+        tokens_ref = {w for w in re.findall(r'\b\w+\b', ref_clean.lower()) if w not in stop_words}
+        tokens_cms = {w for w in re.findall(r'\b\w+\b', cms_clean.lower()) if w not in stop_words}
         if not tokens_ref:
             return 0.0
         return float(len(tokens_ref & tokens_cms) / len(tokens_ref))

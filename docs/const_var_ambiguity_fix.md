@@ -62,3 +62,43 @@ With calibrated domain detection, the flagged ambiguities from Phase 1 are syste
 > Integrate the Ambiguity Scanner directly into the database synchronization script (`php cli_sync.php`). 
 
 If a developer adds a new equation with an ambiguous variable that has no database override and no matching domain alternative in the dictionary, the sync script will throw a validation error, preventing the commit until the dictionary or database override is defined.
+
+---
+
+## GQS Integration & Implementation Roadmap
+
+### 1. Estimated Timeline
+
+The entire pipeline can be implemented in **12–15 hours of developer work**:
+
+*   **Phase 1 (CLI Scanner Script)**: 3 hours to create `scripts/maintenance/audit_ambiguity.py` invoking the JS tokenizer via a lightweight Node subprocess.
+*   **Phase 2 (Domain Calibration Sweep)**: 3 hours to run the scanner on the index, identify mismatches, and refine the anchors/regexes in `detectDomainFromLatex`.
+*   **Phase 3 (Dictionary Enrichment)**: 5 hours to add domain alternatives for overloaded symbols under QFT, thermodynamics, and optics to `physicsDictionary`.
+*   **Phase 4 (GQS Integration & CI)**: 3 hours to register the new command in `gqs.py` and hook it into the pre-flight checks in `run_gqs_sprint.py`.
+
+### 2. GQS CLI Suite Integration
+
+The ambiguity auditor can be integrated into the `gqs.py` CLI controller in two primary ways:
+
+#### A. A Dedicated Sub-command: `gqs.py audit-ambiguity`
+Add a dedicated CLI entrypoint to manually run the validation sweep:
+```bash
+.venv/bin/python3 gqs.py audit-ambiguity
+```
+
+#### B. A Mandatory Graduation Gate
+Enhance the existing `gqs.py audit` and transaction-backed sprint runner (`run_gqs_sprint.py`):
+1. During subtopic or formula ingestion (`gqs.py ingest`), the pipeline automatically runs the ambiguity scanner on the newly compiled equation.
+2. If any Level 4 ambiguous variables are detected, the compilation throws a validation error and **halts the graduation sprint**, preventing broken/ambiguous entries from reaching production.
+
+---
+
+## Pedagogical & Coding Best Practices
+
+### 1. Pedagogical Best Practices (UX & User Education)
+*   **Contextual Accuracy**: Physics symbols are heavily overloaded. Displaying "Tension" in a thermodynamics formula or "Reduced Mass" in a QFT formula actively degrades the educational value of the interactive explanation. Contextual precision is vital to user trust.
+*   **Cross-Disciplinary Sidebars**: For highly overloaded variables, the explanation card can display the active context (e.g., **Entropy**), but include an expandable *"Branch Variations"* note highlighting other uses of the symbol in physics (e.g., *"In Classical Mechanics: Action"*, *"In Electromagnetism: Poynting Vector"*). This is highly educational, illustrating the historical overlap of mathematical notation.
+
+### 2. Coding Best Practices
+*   **Single Source of Truth**: The Python CLI GQS suite should not duplicate the tokenization or domain detection logic. Instead, the Python controller should invoke the actual frontend Javascript `extractAllMathTokens` and `detectDomainFromLatex` functions (via a Node.js subprocess). This ensures that any regex or syntax improvements made in the UI code are immediately active in the compiler and CI validator.
+*   **Stateless Testing**: Add regression test fixtures in `tests/` checking known edge cases (e.g., Stokes' Theorem, Covariant Derivatives, Klein-Gordon) to guarantee that the CLI auditor catches unresolved variables and regression bugs.

@@ -2118,8 +2118,16 @@ const EquationExplainer = {
                     addToken(sym, isOperator ? 'operator' : 'variable');
                     
                     // Replace matched symbol in text to avoid partial matching later
+                    let pattern;
                     const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                    const regex = new RegExp(escaped, 'g');
+                    if (sym.startsWith('\\')) {
+                        pattern = escaped + '(?![a-zA-Z])';
+                    } else if (/^[a-zA-Z0-9_\{\}]+$/.test(sym)) {
+                        pattern = '\\b' + escaped + '\\b';
+                    } else {
+                        pattern = escaped;
+                    }
+                    const regex = new RegExp(pattern, 'g');
                     text = text.replace(regex, ' ');
                 }
             }
@@ -2168,8 +2176,16 @@ const EquationExplainer = {
             if (this.latexContainsSymbol(text, sym)) {
                 addToken(sym, 'constant');
                 // Replace matched constant in text with space to avoid partial matching later
+                let pattern;
                 const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                const regex = new RegExp(escaped, 'g');
+                if (sym.startsWith('\\')) {
+                    pattern = escaped + '(?![a-zA-Z])';
+                } else if (/^[a-zA-Z0-9_\{\}]+$/.test(sym)) {
+                    pattern = '\\b' + escaped + '\\b';
+                } else {
+                    pattern = escaped;
+                }
+                const regex = new RegExp(pattern, 'g');
                 text = text.replace(regex, ' ');
             }
         }

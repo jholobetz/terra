@@ -1897,7 +1897,7 @@ const EquationExplainer = {
                 
                 if (isPartial || isTotal) {
                     const cleanSym = symbol.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)/g, '');
-                    const match = cleanSym.match(/\\frac\{(?:\\partial|d)\^?[0-9]*\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{(?:\\partial|d)\s*([a-zA-Z\\]+)\^?[0-9]*\}/);
+                    const match = cleanSym.match(/\\frac\{(?:\\partial|d)\^?[0-9]*\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)?\}\{(?:\\partial|d)\s*([a-zA-Z\\]+)\^?[0-9]*\}/);
                     
                     let name = isPartial ? 'Partial Derivative' : 'Ordinary Derivative';
                     let desc = isPartial 
@@ -1908,14 +1908,19 @@ const EquationExplainer = {
                         const num = match[1];
                         const den = match[2];
                         
-                        const numEntry = this.officialVariables[num] || this.physicsDictionary[num];
                         const denEntry = this.officialVariables[den] || this.physicsDictionary[den];
-                        
-                        const numName = numEntry ? numEntry.name.split('/')[0].trim() : num;
                         const denName = denEntry ? denEntry.name.split('/')[0].trim() : den;
                         
-                        name = `${isPartial ? 'Partial' : 'Total'} Derivative of ${numName} with respect to ${denName}`;
-                        desc = `Represents how the quantity ${numName.toLowerCase()} changes with respect to the variable ${denName.toLowerCase()}.`;
+                        if (num) {
+                            const numEntry = this.officialVariables[num] || this.physicsDictionary[num];
+                            const numName = numEntry ? numEntry.name.split('/')[0].trim() : num;
+                            
+                            name = `${isPartial ? 'Partial' : 'Total'} Derivative of ${numName} with respect to ${denName}`;
+                            desc = `Represents how the quantity ${numName.toLowerCase()} changes with respect to the variable ${denName.toLowerCase()}.`;
+                        } else {
+                            name = `${isPartial ? 'Partial' : 'Total'} Derivative Operator`;
+                            desc = `The differential operator representing the rate of change with respect to the variable ${denName.toLowerCase()}.`;
+                        }
                     }
                     
                     info = {
@@ -2434,7 +2439,7 @@ const EquationExplainer = {
         text = text.replace(spacetimeDerivRegex, ' ');
 
         // Check for partial derivatives: \frac{\partial \Psi}{\partial t}
-        const partialRegex = /\\frac\{\\partial\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{\\partial\s*([a-zA-Z\\]+)\}/g;
+        const partialRegex = /\\frac\{\\partial\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)?\}\{\\partial\s*([a-zA-Z\\]+)\}/g;
         let partMatch;
         while ((partMatch = partialRegex.exec(text)) !== null) {
             const fullMatch = partMatch[0];
@@ -2462,7 +2467,7 @@ const EquationExplainer = {
         }
 
         // Check for total derivatives: \frac{d\rho}{dt}
-        const totalDerivRegex = /\\frac\{d\^?[0-9]*\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{d\s*([a-zA-Z\\]+)\^?[0-9]*\}/g;
+        const totalDerivRegex = /\\frac\{d\^?[0-9]*\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)?\}\{d\s*([a-zA-Z\\]+)\^?[0-9]*\}/g;
         let totMatch;
         while ((totMatch = totalDerivRegex.exec(text)) !== null) {
             const fullMatch = totMatch[0];

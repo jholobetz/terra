@@ -750,8 +750,108 @@ class PhysicsService
 
         // Strip whitespaces, backslashes, and braces
         $normalized = preg_replace('/[^a-zA-Z0-9_\\^\\-=+\\/*()\\[\\]<>\.,;?]/', '', $normalized);
+        $normalized = strtolower($normalized);
+
+        // Normalize algebraic structure (commutative sorting of products and sums)
+        $normalized = $this->normalizeAlgebraicStructure($normalized);
+
+        return $normalized;
+    }
+
+    private function sortTermFactors(string $term, array $multiSymbols): string
+    {
+        $temp = $term;
+        $factors = [];
+
+        // 1. Extract division blocks (e.g. /2)
+        $pattern = '/\/(?:[0-9]+|dtau|dtheta|dphi|dchi|deta|domega|dlambda|dpsi|ds|dt|dx|dy|dz|dr|dp|dq|df|dg|dh|dk|epsilon|theta|phi|rho|pi|sigma|tau|int|oint|iint|iiint|partial|nabla|hbar|psi|lambda|omega|gamma|mu|nu|eta|delta|beta|alpha|chi|zeta|[a-zA-Z])/';
+        $temp = preg_replace_callback($pattern, function($matches) use (&$factors) {
+            $factors[] = $matches[0];
+            return '';
+        }, $temp);
+
+        // 2. Extract multi-character symbols (with optional exponents like ^2 or 2)
+        foreach ($multiSymbols as $sym) {
+            $regex = '/' . preg_quote($sym, '/') . '(?:\^[0-9]+|[0-9]+)?/';
+            $temp = preg_replace_callback($regex, function($matches) use (&$factors) {
+                $factors[] = $matches[0];
+                return ' ';
+            }, $temp);
+        }
+
+        // 3. Extract remaining single letters/variables with optional exponents (e.g. e^2, e2, c)
+        $temp = preg_replace_callback('/[a-zA-Z](?:\^[0-9]+|[0-9]+)?/', function($matches) use (&$factors) {
+            $factors[] = $matches[0];
+            return ' ';
+        }, $temp);
+
+        // 4. Extract any remaining numbers
+        $temp = preg_replace_callback('/[0-9]+/', function($matches) use (&$factors) {
+            $factors[] = $matches[0];
+            return ' ';
+        }, $temp);
+
+        // Sort factors alphabetically and join
+        sort($factors);
+        return implode('', $factors);
+    }
+
+    private function normalizeAlgebraicStructure(string $latex): string
+    {
+        // Split LHS and RHS by '='
+        $parts = explode('=', $latex);
+        $normalizedParts = [];
         
-        return strtolower($normalized);
+        $multiSymbols = [
+            'dtau', 'dtheta', 'dphi', 'dchi', 'deta', 'domega', 'dlambda', 'dpsi', 'ds', 'dt', 'dx', 'dy', 'dz', 'dr', 'dp', 'dq', 'df', 'dg', 'dh', 'dk',
+            'epsilon', 'theta', 'phi', 'rho', 'pi', 'sigma', 'tau', 'int', 'oint', 'iint', 'iiint', 
+            'partial', 'nabla', 'hbar', 'psi', 'lambda', 'omega', 'gamma', 'mu', 'nu', 'eta', 'delta', 
+            'beta', 'alpha', 'chi', 'zeta'
+        ];
+
+        foreach ($parts as $part) {
+            // Split by '+' and '-' while keeping the operators
+            $tokens = preg_split('/([+\-])/', $part, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+            
+            $currentSign = '+';
+            $terms = [];
+            
+            foreach ($tokens as $tok) {
+                if ($tok === '+' || $tok === '-') {
+                    $currentSign = $tok;
+                } else {
+                    $sortedTerm = $this->sortTermFactors($tok, $multiSymbols);
+                    if (!empty($sortedTerm)) {
+                        $terms[] = [
+                            'sign' => $currentSign,
+                            'term' => $sortedTerm
+                        ];
+                    }
+                    $currentSign = '+';
+                }
+            }
+            
+            // Sort terms alphabetically by the term itself (ignoring sign for sorting consistency)
+            usort($terms, function($a, $b) {
+                return strcmp($a['term'], $b['term']);
+            });
+            
+            // Re-join terms
+            $joined = '';
+            foreach ($terms as $i => $t) {
+                if ($i === 0) {
+                    if ($t['sign'] === '-') {
+                        $joined .= '-';
+                    }
+                    $joined .= $t['term'];
+                } else {
+                    $joined .= $t['sign'] . $t['term'];
+                }
+            }
+            $normalizedParts[] = $joined;
+        }
+        
+        return implode('=', $normalizedParts);
     }
 }
 

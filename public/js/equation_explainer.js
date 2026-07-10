@@ -576,10 +576,51 @@ const EquationExplainer = {
         'Z': { name: 'Atomic Number / Partition Function', type: 'variable', unit: 'dimensionless', desc: 'Protons in a nucleus, or the statistical sum over microstates.' },
 
         // Lowercase Greek Letters
-        '\\alpha': { name: 'Fine-structure Constant / Angular Acceleration', type: 'constant', unit: 'dimensionless or rad/s²', desc: 'Strength of electromagnetic coupling, or rate of angular velocity change.' },
-        '\\beta': { name: 'Phase Constant / Relativistic Beta', type: 'variable', unit: 'rad/m or dimensionless', desc: 'Phase shift per unit distance, or velocity as a fraction of speed of light (v/c).' },
-        '\\gamma': { name: 'Lorentz Factor / Surface Tension / Gamma Ray', type: 'variable', unit: 'dimensionless or N/m', desc: 'Relativistic scale factor, force per unit length on liquid interface, or high-energy photon.' },
-        '\\delta': { name: 'Dirac Delta / Small Increment', type: 'operator', unit: 'dimensionless', desc: 'Singular distribution representing an idealized point source, or a small variation.' },
+        '\\alpha': {
+            name: 'Fine-structure Constant',
+            type: 'constant',
+            unit: 'dimensionless',
+            desc: 'The fine-structure constant, measuring the strength of the electromagnetic interaction.',
+            domain: 'electromagnetism',
+            alternatives: [
+                { name: 'Angular Acceleration', type: 'variable', unit: 'rad/s²', desc: 'The rate of change of angular velocity over time.', domain: 'classical_mechanics' },
+                { name: 'Lorentz Index / Spacetime Index', type: 'modifier', unit: 'modifier', desc: 'A coordinate index in Minkowski space representing components of a four-vector (taking values 0, 1, 2, 3).', domain: 'quantum_mechanics' }
+            ]
+        },
+        '\\beta': {
+            name: 'Phase Constant',
+            type: 'variable',
+            unit: 'rad/m',
+            desc: 'The phase shift per unit distance of a wave propagating along a path.',
+            domain: 'optics',
+            alternatives: [
+                { name: 'Relativistic Beta', type: 'variable', unit: 'dimensionless', desc: 'Velocity as a fraction of the speed of light (v/c).', domain: 'classical_mechanics' },
+                { name: 'Lorentz Index / Spacetime Index', type: 'modifier', unit: 'modifier', desc: 'A coordinate index in Minkowski space representing components of a four-vector (taking values 0, 1, 2, 3).', domain: 'quantum_mechanics' }
+            ]
+        },
+        '\\gamma': {
+            name: 'Lorentz Factor',
+            type: 'variable',
+            unit: 'dimensionless',
+            desc: 'The relativistic scale factor describing time dilation and length contraction.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Surface Tension', type: 'variable', unit: 'N/m', desc: 'The elastic-like force per unit length on a liquid interface.', domain: 'classical_mechanics' },
+                { name: 'Gamma Ray / High-Energy Photon', type: 'variable', unit: 'dimensionless', desc: 'High-energy electromagnetic radiation or quantum photon mode.', domain: 'optics' },
+                { name: 'Lorentz Index / Spacetime Index', type: 'modifier', unit: 'modifier', desc: 'A coordinate index in Minkowski space representing components of a four-vector (taking values 0, 1, 2, 3).', domain: 'quantum_mechanics' }
+            ]
+        },
+        '\\delta': {
+            name: 'Small Increment',
+            type: 'variable',
+            unit: 'dimensionless',
+            desc: 'A small change or variation in a physical quantity.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Dirac Delta Distribution', type: 'operator', unit: 'dimensionless', desc: 'A generalized function representing an idealized point source or impulse.', domain: 'quantum_mechanics' },
+                { name: 'Lorentz Index / Spacetime Index', type: 'modifier', unit: 'modifier', desc: 'A coordinate index in Minkowski space representing components of a four-vector (taking values 0, 1, 2, 3).', domain: 'quantum_mechanics' }
+            ]
+        },
         '\\epsilon': { name: 'Permittivity / Emissivity', type: 'variable', unit: 'F/m or dimensionless', desc: 'The measure of a medium\'s resistance to an electric field.' },
         '\\zeta': { name: 'Riemann Zeta Function / Damping Ratio', type: 'variable', unit: 'dimensionless', desc: 'A complex analytical function, or rate at which oscillations decay.' },
         '\\eta': { name: 'Efficiency / Viscosity / Minkowski Metric', type: 'variable', unit: 'dimensionless or Pa·s', desc: 'Ratio of useful work output to input energy, fluid shear resistance, or flat spacetime metric.' },
@@ -650,7 +691,17 @@ const EquationExplainer = {
         '\\omega': { name: 'Angular Frequency / Velocity', type: 'variable', unit: 'rad/s', desc: 'Phase progression rate, or speed of rotation.' },
 
         // Uppercase Greek Letters
-        '\\Gamma': { name: 'Gamma Function / Circulation / Connection', type: 'variable', unit: 'dimensionless or m²/s', desc: 'Factorial function generalization, fluid rotation line integral, or Christoffel symbol.' },
+        '\\Gamma': {
+            name: 'Circulation',
+            type: 'variable',
+            unit: 'm²/s',
+            desc: 'The line integral of fluid velocity around a closed curve, measuring local rotation.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Christoffel Symbol / Affine Connection', type: 'variable', unit: 'dimensionless', desc: 'Represents gravitational force components and spacetime curvature in general relativity.', domain: 'quantum_mechanics' },
+                { name: 'Gamma Function', type: 'variable', unit: 'dimensionless', desc: 'A mathematical function that extends the concept of factorials to real and complex numbers.', domain: 'thermodynamics' }
+            ]
+        },
         '\\Delta': { name: 'Laplacian / Change Operator', type: 'operator', unit: 'operator', desc: 'Represents spatial second derivatives, or finite difference increment.' },
         '\\Theta': { name: 'Step Function / Temperature Scale', type: 'variable', unit: 'dimensionless or K', desc: 'Heaviside unit step function, or bulk temperature parameter.' },
         '\\Lambda': { name: 'Cosmological Constant / Baryon', type: 'constant', unit: 'm⁻² or GeV', desc: 'Energy density of space causing cosmic acceleration, or hyperon state.' },
@@ -1721,8 +1772,8 @@ const EquationExplainer = {
         if (!latex) return null;
         
         // 1. Syntactic / Structural Anchor Detection (Rule-Based overrides)
-        // Relativistic field theory / Gauge theory: D_\mu, \partial_\mu, \gamma^\mu, etc.
-        if (/(?:D|\\partial|\\gamma|G|W|B)_(?:\\mu|\\nu|\\alpha|\\beta)/.test(latex) || /(?:D|\\partial|\\gamma|G|W|B)\^(?:\\mu|\\nu|\\alpha|\\beta)/.test(latex)) {
+        // Relativistic field theory / Gauge theory / General Relativity: D_\mu, \partial_\mu, \gamma^\mu, \Gamma^\mu, g_{\mu\nu}, R_{\mu\nu}, etc.
+        if (/(?:D|\\partial|\\gamma|\\Gamma|g|R|G|W|B)_(?:\\mu|\\nu|\\alpha|\\beta)/.test(latex) || /(?:D|\\partial|\\gamma|\\Gamma|g|R|G|W|B)\^(?:\\mu|\\nu|\\alpha|\\beta)/.test(latex)) {
             return 'quantum_mechanics';
         }
         

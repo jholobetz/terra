@@ -340,6 +340,20 @@ class IntegrityShield:
         if not success:
             self.errors.append("Semantic Prose Validation failed (possible semantic drift or critical keyword omission).")
 
+    def check_ambiguity(self):
+        import subprocess
+        print("🛡️ Auditing formula variable ambiguity...")
+        try:
+            cmd = ["node", "scripts/maintenance/audit_ambiguity.js"]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                lines = result.stdout.split('\n')
+                for line in lines:
+                    if line.strip() and "🔍" not in line and "⚠️" not in line:
+                        self.errors.append(f"Formula Ambiguity Check failed: {line.strip()}")
+        except Exception as e:
+            self.warnings.append(f"Could not run Node.js ambiguity audit: {str(e)}")
+
     def run(self):
         print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
         print(f"Directory: {self.content_dir}")
@@ -360,6 +374,7 @@ class IntegrityShield:
         self.check_constants()
         self.check_particles()
         self.check_semantic_prose()
+        self.check_ambiguity()
 
         
         print(f"Stats:  {self.stats['links']} links, {self.stats['formulas']} formula refs.")

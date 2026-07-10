@@ -1318,11 +1318,23 @@ const EquationExplainer = {
             console.warn('MathJax not loaded yet.');
             return;
         }
+        if (window.MathJax.typesetClear) {
+            try {
+                window.MathJax.typesetClear(elements);
+            } catch (err) {
+                console.warn('MathJax typesetClear failed:', err);
+            }
+        }
         if (window.MathJax.typesetPromise) {
             window.MathJax.typesetPromise(elements)
                 .catch(err => console.warn('MathJax typesetting failed:', err));
         } else if (window.MathJax.startup && window.MathJax.startup.promise) {
             window.MathJax.startup.promise.then(() => {
+                if (window.MathJax.typesetClear) {
+                    try {
+                        window.MathJax.typesetClear(elements);
+                    } catch (e) {}
+                }
                 window.MathJax.typesetPromise(elements)
                     .catch(err => console.warn('MathJax typesetting failed (deferred):', err));
             });

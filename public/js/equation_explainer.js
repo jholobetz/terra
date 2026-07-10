@@ -1846,8 +1846,8 @@ const EquationExplainer = {
                     console.warn('Could not write custom variable definitions to localStorage:', err);
                 }
 
-                this.renderVariableRow(symbol, { ...updatedInfo, source: 'user' }, targetRow);
-                EquationExplainer.triggerTypeset([targetRow]);
+                const updatedRow = this.renderVariableRow(symbol, { ...updatedInfo, source: 'user' }, targetRow);
+                EquationExplainer.triggerTypeset([updatedRow]);
             });
         });
     },
@@ -1935,7 +1935,7 @@ const EquationExplainer = {
             const newRow = row.cloneNode(true);
             row.parentNode.replaceChild(newRow, row);
             this.bindRowEvents(newRow, symbol, info);
-            return;
+            return newRow;
         }
 
         this.bindRowEvents(row, symbol, info);
@@ -1947,6 +1947,7 @@ const EquationExplainer = {
                 this.symbolsList.appendChild(row);
             }
         }
+        return row;
     },
 
     toggleVarEditForm(row, symbol, info) {
@@ -1989,18 +1990,18 @@ const EquationExplainer = {
                 console.warn('Could not write custom variable definitions to localStorage:', err);
             }
 
-            this.renderVariableRow(symbol, { ...updatedInfo, source: 'user' }, row);
+            const updatedRow = this.renderVariableRow(symbol, { ...updatedInfo, source: 'user' }, row);
 
             // Retypeset the row
-            EquationExplainer.triggerTypeset([row]);
+            EquationExplainer.triggerTypeset([updatedRow]);
         });
 
         cancelBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            this.renderVariableRow(symbol, info, row);
+            const updatedRow = this.renderVariableRow(symbol, info, row);
 
             // Retypeset the row
-            EquationExplainer.triggerTypeset([row]);
+            EquationExplainer.triggerTypeset([updatedRow]);
         });
 
         wrapper.querySelector('.edit-var-name').focus();

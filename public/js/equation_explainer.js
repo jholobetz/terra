@@ -311,6 +311,9 @@ const EquationExplainer = {
         'sys': { name: 'System', desc: 'Refers to the specific thermodynamic or mechanical system under study.' },
         'surr': { name: 'Surroundings', desc: 'Refers to the environment outside the defined system boundaries.' },
         'avg': { name: 'Average', desc: 'The mean value of a parameter evaluated over a spatial or temporal interval.' },
+        'B': { name: 'Boltzmann Subscript', desc: 'Indicates the quantity is scaled or associated with Ludwig Boltzmann.' },
+        'e': { name: 'Electron Subscript', desc: 'Indicates properties associated with an electron (e.g. m_e).' },
+        'p': { name: 'Planck / Proton Subscript', desc: 'Indicates a quantity evaluated at the Planck scale, or associated with a proton (e.g. l_p, m_p).' },
         
         // Superscripts
         '\\circ': { name: 'Standard State', desc: 'Plimsoll symbol indicating the quantity is evaluated under standard thermodynamic reference conditions (e.g. 1 bar).' },
@@ -585,13 +588,15 @@ const EquationExplainer = {
             ]
         },
         '\\nu': {
-            name: 'Frequency / Kinematic Viscosity',
+            name: 'Kinematic Viscosity',
             type: 'variable',
-            unit: 'Hz or m²/s',
-            desc: 'The wave frequency, or ratio of dynamic viscosity to density.',
+            unit: 'm²/s',
+            desc: 'The ratio of dynamic viscosity to density, representing a fluid\'s resistance to shear flow under gravity.',
             domain: 'classical_mechanics',
             alternatives: [
-                { name: 'Lorentz Index / Spacetime Index', type: 'modifier', unit: 'modifier', desc: 'A coordinate index in Minkowski space representing components of a four-vector (taking values 0, 1, 2, 3).', domain: 'quantum_mechanics' }
+                { name: 'Lorentz Index / Spacetime Index', type: 'modifier', unit: 'modifier', desc: 'A coordinate index in Minkowski space representing components of a four-vector (taking values 0, 1, 2, 3).', domain: 'quantum_mechanics' },
+                { name: 'Frequency', type: 'variable', unit: 'Hz', desc: 'The number of wave cycles passing a reference point per unit time.', domain: 'optics' },
+                { name: 'Frequency', type: 'variable', unit: 'Hz', desc: 'The frequency of thermal radiation modes or oscillator states.', domain: 'thermodynamics' }
             ]
         },
         '\\xi': { name: 'Dimensionless Variable / Partition Function', type: 'variable', unit: 'dimensionless', desc: 'General scaled displacement, or grand canonical partition function.' },
@@ -2275,8 +2280,8 @@ const EquationExplainer = {
             let content = subModMatch[1] || subModMatch[2];
             // Clean text/mathrm wrapping: \text{ext} -> ext
             content = content.replace(/\\(text|mathrm|mathsf|mathrm)\{([^\}]+)\}/g, '$2').trim();
-            // If the cleaned content is a word of length >= 2, it's a modifier
-            if (/^[a-zA-Z]{2,}$/.test(content)) {
+            // If the cleaned content is a word of length >= 2 or in modifierGlossary, it's a modifier
+            if (/^[a-zA-Z]{2,}$/.test(content) || this.modifierGlossary[content]) {
                 addToken(content, 'modifier');
             }
         }

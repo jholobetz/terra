@@ -2126,6 +2126,10 @@ const EquationExplainer = {
                 }
             }
 
+            if (info && info.type === 'modifier') {
+                hasModifiers = true;
+            }
+
             this.renderVariableRow(symbol, info);
         });
 

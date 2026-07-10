@@ -341,7 +341,16 @@ const EquationExplainer = {
         '/': { name: 'Division Operator', type: 'operator', unit: 'operator', desc: 'Denotes division or ratio between two values.' },
 
         // Lowercase Roman Letters
-        'a': { name: 'Acceleration', type: 'variable', unit: 'm/s²', desc: 'The rate of change of velocity of an object with respect to time.' },
+        'a': {
+            name: 'Acceleration',
+            type: 'variable',
+            unit: 'm/s²',
+            desc: 'The rate of change of velocity of an object with respect to time.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Gauge Index / Color Index', type: 'modifier', unit: 'modifier', desc: 'An index labeling the generators of a gauge group (e.g. 1 to 8 for SU(3) color space).', domain: 'quantum_mechanics' }
+            ]
+        },
         'b': { name: 'Impact Parameter / Constant', type: 'variable', unit: 'm', desc: 'Perpendicular distance between the path of a projectile and the center of a potential field.' },
         'c': { name: 'Speed of Light', type: 'constant', unit: 'm/s', desc: 'The maximum speed at which all conventional matter and information in the universe can travel.' },
         'd': {
@@ -356,7 +365,16 @@ const EquationExplainer = {
         },
         'e': { name: 'Elementary Charge / Euler\'s Number', type: 'constant', unit: 'C', desc: 'The electric charge carried by a single proton, or the mathematical base of natural logarithms.' },
         'f': { name: 'Frequency', type: 'variable', unit: 'Hz', desc: 'The number of occurrences of a repeating event per unit of time.' },
-        'g': { name: 'Gravitational Acceleration', type: 'constant', unit: 'm/s²', desc: 'The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth).' },
+        'g': {
+            name: 'Gravitational Acceleration',
+            type: 'constant',
+            unit: 'm/s²',
+            desc: 'The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth).',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Gauge Coupling Constant', type: 'variable', unit: 'dimensionless', desc: 'A parameter determining the strength of a gauge interaction (e.g. strong, weak, or electromagnetic coupling).', domain: 'quantum_mechanics' }
+            ]
+        },
         'h': { name: 'Planck Constant', type: 'constant', unit: 'J·s', desc: 'The quantum of electromagnetic action relating photon energy to frequency.' },
         'i': { name: 'Imaginary Unit / Summation Index', type: 'constant', unit: 'dimensionless', desc: 'The mathematical constant defined by i² = -1, or a counting index in sums.' },
         'j': { name: 'Current Density / Index', type: 'variable', unit: 'A/m²', desc: 'The flow of electric current per unit cross-sectional area.' },
@@ -390,9 +408,28 @@ const EquationExplainer = {
 
         // Uppercase Roman Letters
         'A': { name: 'Area / Vector Potential', type: 'variable', unit: 'm² or V·s/m', desc: 'The measure of a 2D surface, or the electrodynamic magnetic vector potential.' },
-        'B': { name: 'Magnetic Field Strength', type: 'variable', unit: 'T', desc: 'The magnetic flux density representing electromagnetic field induction.' },
+        'B': {
+            name: 'Magnetic Field Strength',
+            type: 'variable',
+            unit: 'T',
+            desc: 'The magnetic flux density representing electromagnetic field induction.',
+            domain: 'electromagnetism',
+            alternatives: [
+                { name: 'B Boson Field', type: 'variable', unit: 'varies', desc: 'The gauge field representing the U(1) weak hypercharge gauge boson.', domain: 'quantum_mechanics' },
+                { name: 'Creation Operator', type: 'operator', unit: 'operator', desc: 'An operator that adds a particle to a quantum state.', domain: 'quantum_mechanics' }
+            ]
+        },
         'C': { name: 'Capacitance / Heat Capacity', type: 'variable', unit: 'F or J/K', desc: 'The ability of a body to store electrical charge, or thermal energy needed to change temperature.' },
-        'D': { name: 'Electric Displacement Field', type: 'variable', unit: 'C/m²', desc: 'The displacement flux density representing electric charge polarization in media.' },
+        'D': {
+            name: 'Electric Displacement Field',
+            type: 'variable',
+            unit: 'C/m²',
+            desc: 'The displacement flux density representing electric charge polarization in media.',
+            domain: 'electromagnetism',
+            alternatives: [
+                { name: 'Gauge Covariant Derivative', type: 'operator', unit: 'operator', desc: 'A generalization of the derivative that preserves gauge invariance in field theories.', domain: 'quantum_mechanics' }
+            ]
+        },
         'E': {
             name: 'Total Energy',
             type: 'variable',
@@ -421,7 +458,8 @@ const EquationExplainer = {
             desc: 'Empirical physical constant in Newton\'s law of universal gravitation.',
             domain: 'classical_mechanics',
             alternatives: [
-                { name: 'Gibbs Free Energy', type: 'variable', unit: 'J', desc: 'A thermodynamic potential that measures the maximum reversible work that may be performed by a thermodynamic system at constant temperature and pressure.', domain: 'thermodynamics' }
+                { name: 'Gibbs Free Energy', type: 'variable', unit: 'J', desc: 'A thermodynamic potential that measures the maximum reversible work that may be performed by a thermodynamic system at constant temperature and pressure.', domain: 'thermodynamics' },
+                { name: 'Gluon Field / Einstein Tensor', type: 'variable', unit: 'varies', desc: 'The gauge field representing gluons (strong force carrier), or the Einstein curvature tensor in relativity.', domain: 'quantum_mechanics' }
             ]
         },
         'H': {
@@ -500,7 +538,16 @@ const EquationExplainer = {
             ]
         },
         'V': { name: 'Volume / Electric Potential', type: 'variable', unit: 'm³ or V', desc: 'The amount of three-dimensional space enclosed, or electrostatic voltage.' },
-        'W': { name: 'Work Done / Watt', type: 'variable', unit: 'J or W', desc: 'Energy transferred by a force acting over a distance, or SI unit of power.' },
+        'W': {
+            name: 'Work Done / Watt',
+            type: 'variable',
+            unit: 'J or W',
+            desc: 'Energy transferred by a force acting over a distance, or SI unit of power.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'W Boson Field', type: 'variable', unit: 'varies', desc: 'The gauge field representing the W+ and W- bosons (carriers of the weak interaction).', domain: 'quantum_mechanics' }
+            ]
+        },
         'X': { name: 'Reactance / General Coordinate', type: 'variable', unit: 'Ω or m', desc: 'Opposition of a circuit element to alternating current, or generic coordinate.' },
         'Y': {
             name: 'Young\'s Modulus',
@@ -544,7 +591,16 @@ const EquationExplainer = {
             ]
         },
         '\\sigma': { name: 'Stefan-Boltzmann Constant / Surface Density / Spin Operator', type: 'constant', unit: 'W/(m²·K⁴) or C/m² or operator', desc: 'Blackbody radiation rate constant, charge per unit area, or quantum spin matrices.' },
-        '\\tau': { name: 'Torque / Proper Time / Shear Stress', type: 'variable', unit: 'N·m or s or Pa', desc: 'Rotational force, relativistic invariant proper duration, or sliding drag force.' },
+        '\\tau': {
+            name: 'Torque / Proper Time / Shear Stress',
+            type: 'variable',
+            unit: 'N·m or s or Pa',
+            desc: 'Rotational force, relativistic invariant proper duration, or sliding drag force.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Pauli Matrices / SU(2) Generator', type: 'operator', unit: 'dimensionless', desc: 'Generators of the SU(2) weak isospin gauge group (Pauli spin matrices).', domain: 'quantum_mechanics' }
+            ]
+        },
         '\\upsilon': { name: 'Upsilon Meson', type: 'variable', unit: 'dimensionless', desc: 'A bottom-antibottom quark state.' },
         '\\phi': { name: 'Azimuth Angle / Scalar Potential', type: 'variable', unit: 'rad or V', desc: 'The horizontal coordinate angle, or electrostatic scalar potential.' },
         '\\chi': { name: 'Magnetic or Electric Susceptibility', type: 'variable', unit: 'dimensionless', desc: 'The degree of polarization or magnetization in response to an applied field.' },
@@ -1623,6 +1679,16 @@ const EquationExplainer = {
         if (!latex) return null;
         
         // 1. Syntactic / Structural Anchor Detection (Rule-Based overrides)
+        // Relativistic field theory / Gauge theory: D_\mu, \partial_\mu, \gamma^\mu, etc.
+        if (/(?:D|\\partial|\\gamma|G|W|B)_(?:\\mu|\\nu|\\alpha|\\beta)/.test(latex) || /(?:D|\\partial|\\gamma|G|W|B)\^(?:\\mu|\\nu|\\alpha|\\beta)/.test(latex)) {
+            return 'quantum_mechanics';
+        }
+        
+        // Vector calculus / Stokes' / Curl / Circulation: \oint_C, \iint_S, \nabla \times
+        if (/\\(oint|iint|iiint|int)_\{?[CSV]\}?/.test(latex) || /\\nabla\s*\\times/.test(latex)) {
+            return 'classical_mechanics';
+        }
+
         // Poisson brackets: \{ A, B \} or \{ \rho, H \}
         if (/\\\{\s*[a-zA-Z0-9\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*\s*,\s*[a-zA-Z0-9\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*\s*\\\}/.test(latex)) {
             return 'classical_mechanics';
@@ -1763,7 +1829,35 @@ const EquationExplainer = {
                 hasModifiers = true;
             }
 
-            if (this.userCustomizations[symbol]) {
+            if (tok.type === 'integration_boundary') {
+                let name = 'Integration Boundary / Domain';
+                let desc = 'The domain, region, curve, or boundary over which the integral is evaluated.';
+                if (symbol === 'C') {
+                    name = 'Integration Curve / Path Contour';
+                    desc = 'The closed or open boundary path over which the line integral is evaluated.';
+                } else if (symbol === 'S') {
+                    name = 'Integration Surface';
+                    desc = 'The two-dimensional surface over which the surface integral is evaluated.';
+                } else if (symbol === 'V') {
+                    name = 'Integration Volume';
+                    desc = 'The three-dimensional volume region over which the volume integral is evaluated.';
+                }
+                info = {
+                    name: name,
+                    type: 'operator',
+                    description: desc,
+                    unit: 'dimensionless',
+                    source: 'heuristic'
+                };
+            } else if (tok.type === 'differential_operator') {
+                info = {
+                    name: 'Differential Operator',
+                    type: 'operator',
+                    description: 'Represents an infinitesimal change or differential element in calculus (e.g. dx, dt).',
+                    unit: 'operator',
+                    source: 'heuristic'
+                };
+            } else if (this.userCustomizations[symbol]) {
                 info = { ...this.userCustomizations[symbol], type: tok.type, source: 'user' };
             } else if (window.SUBTOPIC_VARIABLES && window.SUBTOPIC_VARIABLES[symbol]) {
                 const local = window.SUBTOPIC_VARIABLES[symbol];
@@ -2173,6 +2267,16 @@ const EquationExplainer = {
 
         let text = latex.trim();
 
+        // Check for integration boundaries: \oint_C, \iint_S, \int_a^b (run on original text before subscripts are stripped)
+        const integralBoundaryRegex = /\\(int|oint|iint|iiint)_\{?([a-zA-Z0-9]+)\}?/g;
+        let boundaryMatch;
+        while ((boundaryMatch = integralBoundaryRegex.exec(text)) !== null) {
+            const boundaryVar = boundaryMatch[2];
+            if (boundaryVar && /^[a-zA-Z]$/.test(boundaryVar)) {
+                addToken(boundaryVar, 'integration_boundary');
+            }
+        }
+
         // 1. Strip LaTeX structure environments
         text = text.replace(/\\begin\{[a-zA-Z]+\}/g, ' ').replace(/\\end\{[a-zA-Z]+\}/g, ' ');
 
@@ -2225,6 +2329,29 @@ const EquationExplainer = {
             }
         }
         text = text.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\[a-zA-Z]+|[a-zA-Z0-9])/g, '$2');
+
+
+
+        // Check for integration differentials: d\mathbf{l}, d\mathbf{S}, d\vec{r}, dx, dy, dt, dm, dV, dA
+        const differentialRegex = /\bd(?:\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([a-zA-Z])\}|([a-zA-Z]))\b/g;
+        let diffMatch;
+        while ((diffMatch = differentialRegex.exec(text)) !== null) {
+            const fullMatch = diffMatch[0];
+            const baseVar = diffMatch[2] || diffMatch[3];
+            
+            // Add 'd' as differential operator
+            addToken('d', 'differential_operator');
+            
+            // Add base variable
+            if (baseVar) {
+                addToken(baseVar, 'variable');
+            }
+            
+            // Replace the full match to avoid standalone 'd' or baseVar from matching later
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
 
         // Check for partial derivatives: \frac{\partial \Psi}{\partial t}
         const partialRegex = /\\frac\{\\partial\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{\\partial\s*([a-zA-Z\\]+)\}/g;

@@ -315,6 +315,20 @@ const EquationExplainer = {
         'e': { name: 'Electron Subscript', desc: 'Indicates properties associated with an electron (e.g. m_e).' },
         'p': { name: 'Planck / Proton Subscript', desc: 'Indicates a quantity evaluated at the Planck scale, or associated with a proton (e.g. l_p, m_p).' },
         
+        // Summation and Spacetime Indices
+        'i': { name: 'Summation Index', desc: 'A subscript index used to enumerate particles, states, or components (e.g. r_i).' },
+        'j': { name: 'Summation Index', desc: 'A subscript index used to enumerate particles, states, or components.' },
+        'k': { name: 'Summation Index / State Index', desc: 'A subscript index used to enumerate states, particles, or wave vector components.' },
+        'l': { name: 'Summation Index', desc: 'A subscript index used to enumerate particles, states, or components.' },
+        'm': { name: 'Summation Index', desc: 'A subscript index used to enumerate components or particles.' },
+        'n': { name: 'Summation Index / State Index', desc: 'A subscript index representing state number or particle count.' },
+        '\\alpha': { name: 'Spacetime Index / Tensor Index', desc: 'A coordinate index in tensor calculus representing dimensions (e.g., 0 to 3 in spacetime).' },
+        '\\beta': { name: 'Spacetime Index / Tensor Index', desc: 'A coordinate index in tensor calculus representing dimensions (e.g., 0 to 3 in spacetime).' },
+        '\\gamma': { name: 'Spacetime Index / Tensor Index', desc: 'A coordinate index in tensor calculus representing dimensions (e.g., 0 to 3 in spacetime).' },
+        '\\delta': { name: 'Spacetime Index / Tensor Index', desc: 'A coordinate index in tensor calculus representing dimensions (e.g., 0 to 3 in spacetime).' },
+        '\\mu': { name: 'Lorentz Index / Spacetime Index', desc: 'A coordinate index in relativity representing dimensions 0, 1, 2, 3 in spacetime.' },
+        '\\nu': { name: 'Lorentz Index / Spacetime Index', desc: 'A coordinate index in relativity representing dimensions 0, 1, 2, 3 in spacetime.' },
+        
         // Superscripts
         '\\circ': { name: 'Standard State', desc: 'Plimsoll symbol indicating the quantity is evaluated under standard thermodynamic reference conditions (e.g. 1 bar).' },
         '\\dagger': { name: 'Hermitian Adjoint', desc: 'Represents the conjugate transpose of an operator in quantum mechanics.' },
@@ -379,7 +393,17 @@ const EquationExplainer = {
             ]
         },
         'h': { name: 'Planck Constant', type: 'constant', unit: 'J·s', desc: 'The quantum of electromagnetic action relating photon energy to frequency.' },
-        'i': { name: 'Imaginary Unit / Summation Index', type: 'constant', unit: 'dimensionless', desc: 'The mathematical constant defined by i² = -1, or a counting index in sums.' },
+        'i': {
+            name: 'Summation Index',
+            type: 'modifier',
+            unit: 'dimensionless',
+            desc: 'A subscript index used to enumerate particles, states, or components (e.g. r_i).',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Imaginary Unit', type: 'constant', unit: 'dimensionless', desc: 'The mathematical constant defined by the property i² = -1.', domain: 'quantum_mechanics' },
+                { name: 'Imaginary Unit', type: 'constant', unit: 'dimensionless', desc: 'The mathematical constant defined by the property i² = -1 (sometimes written as j).', domain: 'electromagnetism' }
+            ]
+        },
         'j': { name: 'Current Density / Index', type: 'variable', unit: 'A/m²', desc: 'The flow of electric current per unit cross-sectional area.' },
         'k': {
             name: 'Boltzmann Constant',
@@ -409,7 +433,17 @@ const EquationExplainer = {
             ]
         },
         'q': { name: 'Electric Charge', type: 'variable', unit: 'C', desc: 'A physical property of matter that causes it to experience a force when placed in an electromagnetic field.' },
-        'r': { name: 'Radius / Position Vector', type: 'variable', unit: 'm', desc: 'Radial distance from a center, or the spatial position vector of a particle.' },
+        'r': {
+            name: 'Position Coordinate',
+            type: 'variable',
+            unit: 'm',
+            desc: 'The coordinate representing spatial position or radial distance of a particle.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Position Vector Magnitude', type: 'variable', unit: 'm', desc: 'The magnitude of the position vector from an origin.', domain: 'quantum_mechanics' },
+                { name: 'Radial Distance', type: 'variable', unit: 'm', desc: 'The distance from a central source or line charge.', domain: 'electromagnetism' }
+            ]
+        },
         's': { name: 'Seconds / Proper Time Interval', type: 'variable', unit: 's', desc: 'The SI unit of time, or the invariant interval traversed by a clock.' },
         't': { name: 'Time', type: 'variable', unit: 's', desc: 'The progress of existence and events in the past, present, and future.' },
         'u': { name: 'Velocity Component / Specific Internal Energy', type: 'variable', unit: 'm/s or J/kg', desc: 'Speed along a particular coordinate direction, or internal energy per unit mass.' },
@@ -2409,7 +2443,7 @@ const EquationExplainer = {
         };
 
         // Extract subscripts as modifiers from original raw latex
-        const subscriptModRegex = /_\{([^\}]+)\}|_([a-zA-Z])/g;
+        const subscriptModRegex = /_\{([^\}]+)\}|_([a-zA-Z\\]+)/g;
         let subModMatch;
         while ((subModMatch = subscriptModRegex.exec(latex)) !== null) {
             let content = subModMatch[1] || subModMatch[2];

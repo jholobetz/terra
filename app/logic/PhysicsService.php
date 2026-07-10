@@ -727,6 +727,21 @@ class PhysicsService
         // Strip MathJax \cssId{...}{...} wraps to compare only pure math
         $normalized = preg_replace('/\\\\cssId\\{[^}]+\\}\\{([^}]+)\\}/', '$1', $normalized);
         
+        // Canonicalize LaTeX fraction commands: \frac{A}{B} -> A/B
+        $hasFraction = true;
+        while ($hasFraction) {
+            $next = preg_replace('/\\\\frac\{((?:[^{}]|\{[^{}]*\})*)\}\{((?:[^{}]|\{[^{}]*\})*)\}/', '$1/$2', $normalized);
+            if ($next === $normalized) {
+                $hasFraction = false;
+            } else {
+                $normalized = $next;
+            }
+        }
+
+        // Strip subscripts for robust comparison: e.g. _{ext} -> "", _0 -> ""
+        $normalized = preg_replace('/_\{[^}]+\}/', '', $normalized);
+        $normalized = preg_replace('/_[a-zA-Z0-9]/', '', $normalized);
+
         // Strip whitespaces, backslashes, and braces
         $normalized = preg_replace('/[^a-zA-Z0-9_\\^\\-=+\\/*()\\[\\]<>\.,;?]/', '', $normalized);
         

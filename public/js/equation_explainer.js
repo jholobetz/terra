@@ -145,10 +145,68 @@ const EquationExplainer = {
         'E': {
             name: 'Total Energy',
             defaultUnit: 'J',
-            description: 'The total conserved energy of a system, encompassing kinetic, potential, and internal forms. Time translation symmetry leads to energy conservation.',
+            description: 'The total conserved energy of a system, encompassing kinetic, potential, and internal forms.',
+            contexts: {
+                'classical_mechanics': {
+                    name: 'Total Energy',
+                    unit: 'J',
+                    description: 'The total mechanical energy of a system, equal to kinetic plus potential energy.'
+                },
+                'electromagnetism': {
+                    name: 'Electric Field Strength',
+                    unit: 'V/m or N/C',
+                    description: 'The magnitude of the electric field vector, representing the force per unit charge at a point in space.'
+                },
+                'thermodynamics': {
+                    name: 'Internal Energy',
+                    unit: 'J',
+                    description: 'The total microscopic energy of a thermodynamic system, including kinetic and potential energies of its particles.'
+                }
+            },
             featuredEquations: [
                 { name: "Mass-Energy Equivalence", latex: "E = m c^2" }
             ]
+        },
+        'W': {
+            name: 'Work Done / Electrostatic Energy',
+            defaultUnit: 'J',
+            description: 'Work done on a system, or potential energy stored within a system depending on context.',
+            contexts: {
+                'classical_mechanics': {
+                    name: 'Work Done',
+                    unit: 'J',
+                    description: 'The energy transferred to or from an object via the application of force along a displacement.'
+                },
+                'electromagnetism': {
+                    name: 'Electrostatic Energy',
+                    unit: 'J',
+                    description: 'The potential energy stored in the electric field of a distribution of charges, or the total work required to assemble the charges.'
+                }
+            },
+            featuredEquations: []
+        },
+        'V': {
+            name: 'Volume / Electric Potential',
+            defaultUnit: 'm³ or V',
+            description: 'The amount of three-dimensional space enclosed, or electrostatic voltage.',
+            contexts: {
+                'classical_mechanics': {
+                    name: 'Volume',
+                    unit: 'm³',
+                    description: 'The amount of three-dimensional space enclosed by a closed surface or boundary.'
+                },
+                'thermodynamics': {
+                    name: 'Volume',
+                    unit: 'm³',
+                    description: 'The volume occupied by a thermodynamic system, acting as an extensive state variable.'
+                },
+                'electromagnetism': {
+                    name: 'Electric Potential',
+                    unit: 'V',
+                    description: 'The amount of work energy needed to move a unit of electric charge from a reference point to a specific point in an electric field.'
+                }
+            },
+            featuredEquations: []
         },
         'L': {
             name: 'Angular Momentum Magnitude',
@@ -221,6 +279,11 @@ const EquationExplainer = {
                     name: 'Torque',
                     unit: 'N·m',
                     description: 'The rotational equivalent of force, representing the tendency of a force to rotate an object about an axis.'
+                },
+                'electromagnetism': {
+                    name: 'Infinitesimal Volume Element',
+                    unit: 'm³',
+                    description: 'An infinitesimal region of space over which a volume integration is performed.'
                 }
             },
             featuredEquations: []
@@ -613,17 +676,7 @@ const EquationExplainer = {
                 { name: 'Internal Energy', type: 'variable', unit: 'J', desc: 'The total of the kinetic and potential energy of all particles stored within a thermodynamic system.', domain: 'thermodynamics' }
             ]
         },
-        'V': { name: 'Volume / Electric Potential', type: 'variable', unit: 'm³ or V', desc: 'The amount of three-dimensional space enclosed, or electrostatic voltage.' },
-        'W': {
-            name: 'Work Done / Watt',
-            type: 'variable',
-            unit: 'J or W',
-            desc: 'Energy transferred by a force acting over a distance, or SI unit of power.',
-            domain: 'classical_mechanics',
-            alternatives: [
-                { name: 'W Boson Field', type: 'variable', unit: 'varies', desc: 'The gauge field representing the W+ and W- bosons (carriers of the weak interaction).', domain: 'quantum_mechanics' }
-            ]
-        },
+
         'X': { name: 'Reactance / General Coordinate', type: 'variable', unit: 'Ω or m', desc: 'Opposition of a circuit element to alternating current, or generic coordinate.' },
         'Y': {
             name: 'Young\'s Modulus',
@@ -1018,10 +1071,36 @@ const EquationExplainer = {
         return simpleCleaned.length <= 4 && !/[=+\-*\/<>|]/.test(simpleCleaned);
     },
 
-    resolveSymbolInfo(symbol) {
+    resolveSymbolInfo(symbol, type = null) {
         let cleanSymbol = symbol.trim().replace(/^\\(mathbf|vec|hat|bar|dot|ddot|tilde|boldsymbol)\{([a-zA-Z\\]+)\}$/, '$2').replace(/[\{\}]/g, '');
         
-        // 1. Check constants first
+        // 1. Check integration boundary overrides
+        if (type === 'integration_boundary') {
+            if (symbol === 'C') {
+                return {
+                    name: 'Integration Curve / Path Contour',
+                    type: 'operator',
+                    description: 'The closed or open boundary path over which the line integral is evaluated.',
+                    unit: 'dimensionless'
+                };
+            } else if (symbol === 'S') {
+                return {
+                    name: 'Integration Surface',
+                    type: 'operator',
+                    description: 'The two-dimensional surface over which the surface integral is evaluated.',
+                    unit: 'dimensionless'
+                };
+            } else if (symbol === 'V') {
+                return {
+                    name: 'Integration Volume',
+                    type: 'operator',
+                    description: 'The three-dimensional volume region over which the volume integral is evaluated.',
+                    unit: 'dimensionless'
+                };
+            }
+        }
+
+        // 2. Check constants first
         const constants = window.PHYSICS_CONSTANTS || {};
         for (const [key, details] of Object.entries(constants)) {
             if (details.symbol === symbol || details.symbol === cleanSymbol) {
@@ -1064,7 +1143,7 @@ const EquationExplainer = {
             }
         }
         
-        // 2. Check variable dictionary with context override
+        // 3. Check variable dictionary with context override
         const dictEntry = this.variableDictionary[cleanSymbol] || this.variableDictionary[symbol];
         if (dictEntry) {
             let activeCtx = null;
@@ -1083,8 +1162,36 @@ const EquationExplainer = {
                 featuredEquations: dictEntry.featuredEquations || []
             };
         }
+
+        // 4. Check legacy physicsDictionary with active domain override support
+        const legacyEntry = this.physicsDictionary[cleanSymbol] || this.physicsDictionary[symbol];
+        if (legacyEntry) {
+            let activeLegacy = legacyEntry;
+            let match = null;
+            if (legacyEntry.alternatives) {
+                match = legacyEntry.alternatives.find(alt => alt.domain === this.activeDomain);
+            }
+            if (match) {
+                activeLegacy = {
+                    name: match.name,
+                    type: match.type || legacyEntry.type,
+                    unit: match.unit || legacyEntry.unit,
+                    desc: match.desc || legacyEntry.desc
+                };
+            } else if (legacyEntry.domain === this.activeDomain) {
+                activeLegacy = legacyEntry;
+            }
+            
+            return {
+                name: activeLegacy.name,
+                type: activeLegacy.type || 'variable',
+                description: activeLegacy.desc || activeLegacy.description || 'Physics variable.',
+                unit: activeLegacy.unit || 'dimensionless',
+                featuredEquations: []
+            };
+        }
         
-        // 3. Fallback
+        // 5. Fallback
         return {
             name: symbol.startsWith('\\') ? symbol.substring(1).charAt(0).toUpperCase() + symbol.substring(2) + ' Parameter' : symbol + ' Variable',
             type: 'variable',
@@ -1101,7 +1208,7 @@ const EquationExplainer = {
             this.latexInput.value = symbol;
         }
         this.compileMathJax(symbol);
-        this.renderSymbolExplanation(symbol);
+        this.renderSymbolExplanation(symbol, info ? (info.tokenType || info.type) : null);
     },
 
     pushToNavigationStack() {
@@ -1232,7 +1339,7 @@ const EquationExplainer = {
         }
     },
 
-    renderSymbolExplanation(latex) {
+    renderSymbolExplanation(latex, type = null) {
         this.currentFormula = null;
         this.currentSubtopics = [];
 
@@ -1245,7 +1352,7 @@ const EquationExplainer = {
         if (this.aiSimulationCard) this.aiSimulationCard.style.display = 'none';
         if (this.solverRedirectContainer) this.solverRedirectContainer.style.display = 'none';
 
-        let symbolInfo = this.resolveSymbolInfo(symbol);
+        let symbolInfo = this.resolveSymbolInfo(symbol, type);
 
         this.formulaTitle.innerHTML = `${symbolInfo.name} (\\( ${symbol} \\))`;
         if (this.formulaBadge) {
@@ -2084,6 +2191,7 @@ const EquationExplainer = {
                 info = {
                     name: name,
                     type: 'operator',
+                    tokenType: 'integration_boundary',
                     description: desc,
                     unit: 'dimensionless',
                     source: 'heuristic'
@@ -2568,6 +2676,19 @@ const EquationExplainer = {
 
         let text = latex.trim();
 
+        // Pre-scan for specific physical constants with subscripts (to prevent stripping their subscripts)
+        const constantSubscriptRegex = /\\(epsilon|mu|k|a|m|g|G|N)_(?:0|\{0\}|B|\{B\}|e|\{e\}|p|\{p\}|n|\{n\}|F|\{F\}|A|\{A\})(?![a-zA-Z])/g;
+        let constMatch;
+        while ((constMatch = constantSubscriptRegex.exec(text)) !== null) {
+            const fullMatch = constMatch[0];
+            // Normalize: strip curly braces from subscript for token representation
+            const normalizedSymbol = fullMatch.replace(/_\{([^\}]+)\}/, '_$1');
+            addToken(normalizedSymbol, 'variable');
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
+
         // Check for integration boundaries: \oint_C, \iint_S, \int_a^b (run on original text before subscripts are stripped)
         const integralBoundaryRegex = /\\(int|oint|iint|iiint)_\{?([a-zA-Z0-9]+)\}?/g;
         let boundaryMatch;
@@ -2629,6 +2750,8 @@ const EquationExplainer = {
             const regex = new RegExp(escaped, 'g');
             text = text.replace(regex, ' ');
         }
+
+
 
         // 2. Strip visual modifiers: \hat{H} -> H, \mathbf{p} -> p
         let hasStyles = true;

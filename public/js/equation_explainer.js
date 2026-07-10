@@ -397,7 +397,17 @@ const EquationExplainer = {
         'm': { name: 'Mass', type: 'variable', unit: 'kg', desc: 'A fundamental measure of the amount of matter in a body and its resistance to acceleration.' },
         'n': { name: 'Refractive Index / Particle Density', type: 'variable', unit: 'dimensionless or m⁻³', desc: 'The ratio of speed of light in vacuum to that in a medium, or particles per unit volume.' },
         'o': { name: 'Origin / Offset', type: 'variable', unit: 'dimensionless', desc: 'The starting point of a coordinate system, or baseline shift.' },
-        'p': { name: 'Momentum / Pressure', type: 'variable', unit: 'kg·m/s or Pa', desc: 'The product of mass and velocity of a body, or force applied per unit area.' },
+        'p': {
+            name: 'Linear Momentum',
+            type: 'variable',
+            unit: 'kg·m/s',
+            desc: 'The product of the mass and velocity of a body, representing its quantity of motion.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Pressure', type: 'variable', unit: 'Pa', desc: 'The perpendicular force applied per unit area on a boundary.', domain: 'thermodynamics' },
+                { name: 'Electric Dipole Moment', type: 'variable', unit: 'C·m', desc: 'A measure of the separation of positive and negative electrical charges in a system.', domain: 'electromagnetism' }
+            ]
+        },
         'q': { name: 'Electric Charge', type: 'variable', unit: 'C', desc: 'A physical property of matter that causes it to experience a force when placed in an electromagnetic field.' },
         'r': { name: 'Radius / Position Vector', type: 'variable', unit: 'm', desc: 'Radial distance from a center, or the spatial position vector of a particle.' },
         's': { name: 'Seconds / Proper Time Interval', type: 'variable', unit: 's', desc: 'The SI unit of time, or the invariant interval traversed by a clock.' },
@@ -1990,19 +2000,20 @@ const EquationExplainer = {
                     let activeEntry = dictEntry;
                     
                     // Check if there is an override matching the active domain
-                    if (dictEntry.domain === this.activeDomain) {
+                    let match = null;
+                    if (dictEntry.alternatives) {
+                        match = dictEntry.alternatives.find(alt => alt.domain === this.activeDomain);
+                    }
+                    if (match) {
+                        activeEntry = {
+                            name: match.name,
+                            type: match.type || dictEntry.type,
+                            unit: match.unit || dictEntry.unit,
+                            desc: match.desc || dictEntry.desc,
+                            alternatives: dictEntry.alternatives
+                        };
+                    } else if (dictEntry.domain === this.activeDomain) {
                         activeEntry = dictEntry;
-                    } else if (dictEntry.alternatives) {
-                        const match = dictEntry.alternatives.find(alt => alt.domain === this.activeDomain);
-                        if (match) {
-                            activeEntry = {
-                                name: match.name,
-                                type: match.type || dictEntry.type,
-                                unit: match.unit || dictEntry.unit,
-                                desc: match.desc || dictEntry.desc,
-                                alternatives: dictEntry.alternatives
-                            };
-                        }
                     }
                     
                     info = {

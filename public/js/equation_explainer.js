@@ -1892,19 +1892,19 @@ const EquationExplainer = {
             if (formula.interpretation && formula.interpretation !== 'No interpretation provided.') {
                 scenarios.push({
                     condition: 'Interpretation (Local Identity)',
-                    implication: formula.interpretation.replace(/<[^>]*>/g, '') // Strip HTML tags for clean text
+                    implication: formula.interpretation.replace(/<\/?[a-zA-Z][^>]*>/g, '') // Strip HTML tags for clean text
                 });
             }
             if (formula.symmetry_origin && formula.symmetry_origin !== 'Symmetry derivations pending.') {
                 scenarios.push({
                     condition: 'Symmetry & Coordinate Invariance',
-                    implication: formula.symmetry_origin.replace(/<[^>]*>/g, '')
+                    implication: formula.symmetry_origin.replace(/<\/?[a-zA-Z][^>]*>/g, '')
                 });
             }
             if (formula.limits_and_boundary && formula.limits_and_boundary !== 'Boundary analysis pending.') {
                 scenarios.push({
                     condition: 'Limiting Cases & Boundaries',
-                    implication: formula.limits_and_boundary.replace(/<[^>]*>/g, '')
+                    implication: formula.limits_and_boundary.replace(/<\/?[a-zA-Z][^>]*>/g, '')
                 });
             }
 

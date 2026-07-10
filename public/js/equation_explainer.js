@@ -344,7 +344,16 @@ const EquationExplainer = {
         'a': { name: 'Acceleration', type: 'variable', unit: 'm/s²', desc: 'The rate of change of velocity of an object with respect to time.' },
         'b': { name: 'Impact Parameter / Constant', type: 'variable', unit: 'm', desc: 'Perpendicular distance between the path of a projectile and the center of a potential field.' },
         'c': { name: 'Speed of Light', type: 'constant', unit: 'm/s', desc: 'The maximum speed at which all conventional matter and information in the universe can travel.' },
-        'd': { name: 'Total Differential / Distance', type: 'operator', unit: 'operator', desc: 'Represents an infinitesimal change in a variable, or physical distance.' },
+        'd': {
+            name: 'Total Differential',
+            type: 'operator',
+            unit: 'operator',
+            desc: 'Represents an infinitesimal change in a variable (e.g. dx, dt).',
+            domain: 'calculus',
+            alternatives: [
+                { name: 'Distance', type: 'variable', unit: 'm', desc: 'The physical space or separation between two points or objects.', domain: 'classical_mechanics' }
+            ]
+        },
         'e': { name: 'Elementary Charge / Euler\'s Number', type: 'constant', unit: 'C', desc: 'The electric charge carried by a single proton, or the mathematical base of natural logarithms.' },
         'f': { name: 'Frequency', type: 'variable', unit: 'Hz', desc: 'The number of occurrences of a repeating event per unit of time.' },
         'g': { name: 'Gravitational Acceleration', type: 'constant', unit: 'm/s²', desc: 'The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth).' },
@@ -384,10 +393,48 @@ const EquationExplainer = {
         'B': { name: 'Magnetic Field Strength', type: 'variable', unit: 'T', desc: 'The magnetic flux density representing electromagnetic field induction.' },
         'C': { name: 'Capacitance / Heat Capacity', type: 'variable', unit: 'F or J/K', desc: 'The ability of a body to store electrical charge, or thermal energy needed to change temperature.' },
         'D': { name: 'Electric Displacement Field', type: 'variable', unit: 'C/m²', desc: 'The displacement flux density representing electric charge polarization in media.' },
-        'E': { name: 'Total Energy / Electric Field', type: 'variable', unit: 'J or V/m', desc: 'The quantitative property representing potential/kinetic capacity, or electrical force field.' },
-        'F': { name: 'Force / Helmholtz Free Energy', type: 'variable', unit: 'N or J', desc: 'An interaction that changes the motion of an object, or thermodynamic work capacity.' },
-        'G': { name: 'Gravitational Constant / Gibbs Free Energy', type: 'constant', unit: 'm³·kg⁻¹·s⁻²', desc: 'Empirical constant of gravitational interaction, or chemical potential energy.' },
-        'H': { name: 'Hamiltonian / Enthalpy', type: 'variable', unit: 'J', desc: 'The operator representing the total energy of a system, or thermodynamic heat content.' },
+        'E': {
+            name: 'Total Energy',
+            type: 'variable',
+            unit: 'J',
+            desc: 'The total kinetic and potential capacity of a physical system.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Electric Field Strength', type: 'variable', unit: 'V/m', desc: 'The force per unit charge exerted on a test charge in an electric field.', domain: 'electromagnetism' },
+                { name: 'Total Energy', type: 'variable', unit: 'J', desc: 'The energy eigenvalue or total energy of a quantum state.', domain: 'quantum_mechanics' }
+            ]
+        },
+        'F': {
+            name: 'Force',
+            type: 'variable',
+            unit: 'N',
+            desc: 'An interaction that causes an object to undergo a change in velocity.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Helmholtz Free Energy', type: 'variable', unit: 'J', desc: 'A thermodynamic potential that measures the useful work obtainable from a closed thermodynamic system.', domain: 'thermodynamics' }
+            ]
+        },
+        'G': {
+            name: 'Gravitational Constant',
+            type: 'constant',
+            unit: 'm³/(kg·s²)',
+            desc: 'Empirical physical constant in Newton\'s law of universal gravitation.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Gibbs Free Energy', type: 'variable', unit: 'J', desc: 'A thermodynamic potential that measures the maximum reversible work that may be performed by a thermodynamic system at constant temperature and pressure.', domain: 'thermodynamics' }
+            ]
+        },
+        'H': {
+            name: 'Hamiltonian',
+            type: 'operator',
+            unit: 'J',
+            desc: 'The operator or function representing the total energy of a physical system.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Enthalpy', type: 'variable', unit: 'J', desc: 'A thermodynamic quantity equivalent to the total heat content of a system.', domain: 'thermodynamics' },
+                { name: 'Hamiltonian', type: 'operator', unit: 'J', desc: 'The operator representing the total energy of a quantum system.', domain: 'quantum_mechanics' }
+            ]
+        },
         'I': { name: 'Electric Current / Moment of Inertia', type: 'variable', unit: 'A or kg·m²', desc: 'The rate of flow of electric charge, or resistance to rotational acceleration.' },
         'J': { name: 'Angular Momentum / Current Density', type: 'variable', unit: 'kg·m²/s or A/m²', desc: 'Rotational momentum vector, or flow of electric charge per unit area.' },
         'K': { name: 'Kinetic Energy / Bulk Modulus', type: 'variable', unit: 'J or Pa', desc: 'Energy possessed by an object due to its motion, or resistance to uniform compression.' },
@@ -407,7 +454,17 @@ const EquationExplainer = {
                 { name: 'Momentum', type: 'variable', unit: 'kg·m/s', desc: 'The product of the mass and velocity of an object (uppercase variant).', domain: 'classical_mechanics' }
             ]
         },
-        'Q': { name: 'Heat / Total Charge', type: 'variable', unit: 'J or C', desc: 'Thermal energy transferred due to temperature difference, or net electrical charge.' },
+        'Q': {
+            name: 'Total Charge',
+            type: 'variable',
+            unit: 'C',
+            desc: 'The net electrical charge of a system.',
+            domain: 'electromagnetism',
+            alternatives: [
+                { name: 'Heat', type: 'variable', unit: 'J', desc: 'Thermal energy transferred between systems due to a temperature difference.', domain: 'thermodynamics' },
+                { name: 'Generalized Coordinate', type: 'variable', unit: 'varies', desc: 'Generalized coordinates in analytical mechanics.', domain: 'classical_mechanics' }
+            ]
+        },
         'R': { name: 'Ideal Gas Constant / Resistance / Radius', type: 'constant', unit: 'J/(mol·K) or Ω or m', desc: 'Universal gas constant, electrical resistance, or spatial radius.' },
         'S': {
             name: 'Entropy',
@@ -432,7 +489,16 @@ const EquationExplainer = {
                 { name: 'SU(3) Gauge Generator', type: 'variable', unit: 'dimensionless', desc: 'Generators of the SU(3) color gauge group in quantum chromodynamics, typically represented by the Gell-Mann matrices.', domain: 'quantum_mechanics' }
             ]
         },
-        'U': { name: 'Internal Energy / Potential Energy', type: 'variable', unit: 'J', desc: 'Energy stored within a thermodynamic system, or position-dependent energy.' },
+        'U': {
+            name: 'Potential Energy',
+            type: 'variable',
+            unit: 'J',
+            desc: 'Position-dependent stored energy of a system.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Internal Energy', type: 'variable', unit: 'J', desc: 'The total of the kinetic and potential energy of all particles stored within a thermodynamic system.', domain: 'thermodynamics' }
+            ]
+        },
         'V': { name: 'Volume / Electric Potential', type: 'variable', unit: 'm³ or V', desc: 'The amount of three-dimensional space enclosed, or electrostatic voltage.' },
         'W': { name: 'Work Done / Watt', type: 'variable', unit: 'J or W', desc: 'Energy transferred by a force acting over a distance, or SI unit of power.' },
         'X': { name: 'Reactance / General Coordinate', type: 'variable', unit: 'Ω or m', desc: 'Opposition of a circuit element to alternating current, or generic coordinate.' },
@@ -465,7 +531,18 @@ const EquationExplainer = {
         '\\nu': { name: 'Frequency / Kinematic Viscosity', type: 'variable', unit: 'Hz or m²/s', desc: 'The wave frequency, or ratio of dynamic viscosity to density.' },
         '\\xi': { name: 'Dimensionless Variable / Partition Function', type: 'variable', unit: 'dimensionless', desc: 'General scaled displacement, or grand canonical partition function.' },
         '\\pi': { name: 'Pi constant', type: 'constant', unit: 'dimensionless', desc: 'The ratio of a circle\'s circumference to its diameter (approx. 3.14159).' },
-        '\\rho': { name: 'Mass or Charge Density / Resistivity', type: 'variable', unit: 'kg/m³ or C/m³ or Ω·m', desc: 'Mass/charge per unit volume, or material opposition to current flow.' },
+        '\\rho': {
+            name: 'Mass Density',
+            type: 'variable',
+            unit: 'kg/m³',
+            desc: 'The mass per unit volume of a substance.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Charge Density', type: 'variable', unit: 'C/m³', desc: 'The quantity of electric charge per unit volume.', domain: 'electromagnetism' },
+                { name: 'Resistivity', type: 'variable', unit: 'Ω·m', desc: 'A measure of how strongly a material opposes the flow of electric current.', domain: 'electromagnetism' },
+                { name: 'Probability Density', type: 'variable', unit: 'varies', desc: 'The probability density function in phase space or state space.', domain: 'thermodynamics' }
+            ]
+        },
         '\\sigma': { name: 'Stefan-Boltzmann Constant / Surface Density / Spin Operator', type: 'constant', unit: 'W/(m²·K⁴) or C/m² or operator', desc: 'Blackbody radiation rate constant, charge per unit area, or quantum spin matrices.' },
         '\\tau': { name: 'Torque / Proper Time / Shear Stress', type: 'variable', unit: 'N·m or s or Pa', desc: 'Rotational force, relativistic invariant proper duration, or sliding drag force.' },
         '\\upsilon': { name: 'Upsilon Meson', type: 'variable', unit: 'dimensionless', desc: 'A bottom-antibottom quark state.' },
@@ -1545,6 +1622,23 @@ const EquationExplainer = {
     detectDomainFromLatex(latex) {
         if (!latex) return null;
         
+        // 1. Syntactic / Structural Anchor Detection (Rule-Based overrides)
+        // Poisson brackets: \{ A, B \} or \{ \rho, H \}
+        if (/\\\{\s*[a-zA-Z0-9\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*\s*,\s*[a-zA-Z0-9\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*\s*\\\}/.test(latex)) {
+            return 'classical_mechanics';
+        }
+        
+        // Bra-ket notation: \langle ... \rangle or \mid
+        if (/\\langle|\\rangle|\\mid/.test(latex)) {
+            return 'quantum_mechanics';
+        }
+        
+        // Thermodynamic differentials: dU, dS, dV, dH, dG, dQ
+        if (/\b(dU|dS|dV|dH|dG|dQ|dW)\b/.test(latex)) {
+            return 'thermodynamics';
+        }
+        
+        // 2. Co-occurrence / Match Counts
         // Define anchor symbols for each domain
         const ANCHORS = {
             thermodynamics: [
@@ -1618,14 +1712,28 @@ const EquationExplainer = {
             this.modifiersList.innerHTML = '';
         }
         
-        // Save officialVariables for redraw on domain change
-        this.officialVariables = officialVariables || {};
+        // Save officialVariables for redraw on domain change, normalizing keys to strip delimiters
+        this.officialVariables = {};
+        if (officialVariables) {
+            for (const [key, val] of Object.entries(officialVariables)) {
+                const cleanKey = key.trim()
+                                    .replace(/^\\\(/, '')
+                                    .replace(/\\\)$/, '')
+                                    .replace(/^\\\[/, '')
+                                    .replace(/\\\]$/, '')
+                                    .replace(/^\$\$/, '')
+                                    .replace(/\$\$$/, '')
+                                    .replace(/^\$/, '')
+                                    .replace(/\$/, '')
+                                    .trim();
+                this.officialVariables[cleanKey] = val;
+            }
+        }
         
-        // If it's a custom/live-compiled formula, run domain auto-detection
-        const isOfficial = this.currentId || (officialVariables && Object.keys(officialVariables).length > 0);
-        if (!isOfficial && latex) {
+        // Run domain auto-detection if activeDomain is empty
+        if (!this.activeDomain && latex) {
             const detected = this.detectDomainFromLatex(latex);
-            if (detected && detected !== this.activeDomain) {
+            if (detected) {
                 this.activeDomain = detected;
                 if (this.activeDomainSelect) {
                     this.activeDomainSelect.value = detected;
@@ -1699,6 +1807,14 @@ const EquationExplainer = {
                     name: 'Partial Derivative',
                     type: tok.type,
                     description: 'Represents the rate of change of the numerator with respect to the denominator.',
+                    unit: 'dimensionless',
+                    source: 'heuristic'
+                };
+            } else if (/\\frac\{d/.test(symbol)) {
+                info = {
+                    name: 'Total Derivative',
+                    type: tok.type,
+                    description: 'Represents the total rate of change of a quantity with respect to an independent variable.',
                     unit: 'dimensionless',
                     source: 'heuristic'
                 };
@@ -2110,6 +2226,62 @@ const EquationExplainer = {
         }
         text = text.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\[a-zA-Z]+|[a-zA-Z0-9])/g, '$2');
 
+        // Check for partial derivatives: \frac{\partial \Psi}{\partial t}
+        const partialRegex = /\\frac\{\\partial\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{\\partial\s*([a-zA-Z\\]+)\}/g;
+        let partMatch;
+        while ((partMatch = partialRegex.exec(text)) !== null) {
+            const fullMatch = partMatch[0];
+            const numVar = partMatch[1];
+            const denVar = partMatch[2];
+            
+            addToken(fullMatch, 'operator');
+            
+            if (numVar) {
+                const cleanNum = numVar.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([^\}]+)\}/g, '$2').trim();
+                if (/^\\[a-zA-Z]+$|^[a-zA-Z]$/.test(cleanNum)) {
+                    addToken(cleanNum, 'variable');
+                }
+            }
+            if (denVar) {
+                const cleanDen = denVar.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([^\}]+)\}/g, '$2').trim();
+                if (/^\\[a-zA-Z]+$|^[a-zA-Z]$/.test(cleanDen)) {
+                    addToken(cleanDen, 'variable');
+                }
+            }
+            
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
+
+        // Check for total derivatives: \frac{d\rho}{dt}
+        const totalDerivRegex = /\\frac\{d\^?[0-9]*\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{d\s*([a-zA-Z\\]+)\^?[0-9]*\}/g;
+        let totMatch;
+        while ((totMatch = totalDerivRegex.exec(text)) !== null) {
+            const fullMatch = totMatch[0];
+            const numVar = totMatch[1];
+            const denVar = totMatch[2];
+            
+            addToken(fullMatch, 'operator');
+            
+            if (numVar) {
+                const cleanNum = numVar.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([^\}]+)\}/g, '$2').trim();
+                if (/^\\[a-zA-Z]+$|^[a-zA-Z]$/.test(cleanNum)) {
+                    addToken(cleanNum, 'variable');
+                }
+            }
+            if (denVar) {
+                const cleanDen = denVar.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([^\}]+)\}/g, '$2').trim();
+                if (/^\\[a-zA-Z]+$|^[a-zA-Z]$/.test(cleanDen)) {
+                    addToken(cleanDen, 'variable');
+                }
+            }
+
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
+
         // 2b. Pre-scan for official database keys to keep them grouped as unified terms
         if (officialVariables) {
             for (const sym of Object.keys(officialVariables)) {
@@ -2131,19 +2303,6 @@ const EquationExplainer = {
                     text = text.replace(regex, ' ');
                 }
             }
-        }
-
-
-
-        // Check for partial derivatives: \frac{\partial \Psi}{\partial t}
-        const partialRegex = /\\frac\{\\partial\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{\\partial\s*([a-zA-Z\\]+)\}/g;
-        let partMatch;
-        while ((partMatch = partialRegex.exec(text)) !== null) {
-            const fullMatch = partMatch[0];
-            addToken(fullMatch, 'operator');
-            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            const regex = new RegExp(escaped, 'g');
-            text = text.replace(regex, ' ');
         }
 
         // Check for dot derivatives: \dot{q} or \dot q

@@ -574,8 +574,26 @@ const EquationExplainer = {
         '\\iota': { name: 'Unit Vector Index', type: 'variable', unit: 'dimensionless', desc: 'A general vector component index.' },
         '\\kappa': { name: 'Curvature / Thermal Conductivity', type: 'variable', unit: 'm⁻¹ or W/(m·K)', desc: 'The rate of deviation from a straight line, or heat transmission coefficient.' },
         '\\lambda': { name: 'Wavelength / Linear Density', type: 'variable', unit: 'm or kg/m', desc: 'The distance between consecutive identical crests of a wave, or mass per unit length.' },
-        '\\mu': { name: 'Reduced Mass / Permeability / Friction Coefficient', type: 'variable', unit: 'kg or H/m or dimensionless', desc: 'Effective inertial mass in two-body problems, magnetic field capability, or surface grip factor.' },
-        '\\nu': { name: 'Frequency / Kinematic Viscosity', type: 'variable', unit: 'Hz or m²/s', desc: 'The wave frequency, or ratio of dynamic viscosity to density.' },
+        '\\mu': {
+            name: 'Reduced Mass / Permeability / Friction Coefficient',
+            type: 'variable',
+            unit: 'kg or H/m or dimensionless',
+            desc: 'Effective inertial mass in two-body problems, magnetic field capability, or surface grip factor.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Lorentz Index / Spacetime Index', type: 'modifier', unit: 'modifier', desc: 'A coordinate index in Minkowski space representing components of a four-vector (taking values 0, 1, 2, 3).', domain: 'quantum_mechanics' }
+            ]
+        },
+        '\\nu': {
+            name: 'Frequency / Kinematic Viscosity',
+            type: 'variable',
+            unit: 'Hz or m²/s',
+            desc: 'The wave frequency, or ratio of dynamic viscosity to density.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Lorentz Index / Spacetime Index', type: 'modifier', unit: 'modifier', desc: 'A coordinate index in Minkowski space representing components of a four-vector (taking values 0, 1, 2, 3).', domain: 'quantum_mechanics' }
+            ]
+        },
         '\\xi': { name: 'Dimensionless Variable / Partition Function', type: 'variable', unit: 'dimensionless', desc: 'General scaled displacement, or grand canonical partition function.' },
         '\\pi': { name: 'Pi constant', type: 'constant', unit: 'dimensionless', desc: 'The ratio of a circle\'s circumference to its diameter (approx. 3.14159).' },
         '\\rho': {
@@ -602,7 +620,16 @@ const EquationExplainer = {
             ]
         },
         '\\upsilon': { name: 'Upsilon Meson', type: 'variable', unit: 'dimensionless', desc: 'A bottom-antibottom quark state.' },
-        '\\phi': { name: 'Azimuth Angle / Scalar Potential', type: 'variable', unit: 'rad or V', desc: 'The horizontal coordinate angle, or electrostatic scalar potential.' },
+        '\\phi': {
+            name: 'Azimuth Angle / Scalar Potential',
+            type: 'variable',
+            unit: 'rad or V',
+            desc: 'The horizontal coordinate angle, or electrostatic scalar potential.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Scalar Field', type: 'variable', unit: 'varies', desc: 'A scalar field representing spin-0 particles (such as the Higgs boson or pions) in quantum field theory.', domain: 'quantum_mechanics' }
+            ]
+        },
         '\\chi': { name: 'Magnetic or Electric Susceptibility', type: 'variable', unit: 'dimensionless', desc: 'The degree of polarization or magnetization in response to an applied field.' },
         '\\psi': { name: 'Quantum Wavefunction', type: 'variable', unit: 'dimensionless', desc: 'The complex probability amplitude vector representing a quantum state.' },
         '\\omega': { name: 'Angular Frequency / Velocity', type: 'variable', unit: 'rad/s', desc: 'Phase progression rate, or speed of rotation.' },
@@ -1849,6 +1876,17 @@ const EquationExplainer = {
                     unit: 'dimensionless',
                     source: 'heuristic'
                 };
+            } else if (tok.type === 'spacetime_derivative') {
+                const isContravariant = symbol.includes('^');
+                info = {
+                    name: isContravariant ? 'Contravariant Spacetime Derivative' : 'Covariant Spacetime Derivative',
+                    type: 'operator',
+                    description: isContravariant 
+                        ? 'Partial derivative with respect to a contravariant coordinate index, raising the coordinate index in tensor calculus.' 
+                        : 'Partial derivative with respect to a covariant coordinate index, lowering the coordinate index in tensor calculus.',
+                    unit: 'operator',
+                    source: 'heuristic'
+                };
             } else if (tok.type === 'differential_operator') {
                 info = {
                     name: 'Differential Operator',
@@ -2352,6 +2390,19 @@ const EquationExplainer = {
             const regex = new RegExp(escaped, 'g');
             text = text.replace(regex, ' ');
         }
+
+        // Check for spacetime derivatives: \partial_\mu, \partial^\mu, \partial_\nu, \partial^\nu
+        const spacetimeDerivRegex = /\\partial_(?:\\mu|\\nu|\\alpha|\\beta|[a-zA-Z0-9])|\\partial\^(?:\\mu|\\nu|\\alpha|\\beta|[a-zA-Z0-9])/g;
+        const spaceMatches = [...text.matchAll(spacetimeDerivRegex)];
+        for (const spaceMatch of spaceMatches) {
+            const fullMatch = spaceMatch[0];
+            addToken(fullMatch, 'spacetime_derivative');
+            const idxVar = fullMatch.includes('_') ? fullMatch.split('_')[1] : fullMatch.split('^')[1];
+            if (idxVar) {
+                addToken(idxVar, 'variable');
+            }
+        }
+        text = text.replace(spacetimeDerivRegex, ' ');
 
         // Check for partial derivatives: \frac{\partial \Psi}{\partial t}
         const partialRegex = /\\frac\{\\partial\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{\\partial\s*([a-zA-Z\\]+)\}/g;

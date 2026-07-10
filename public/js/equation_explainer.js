@@ -1237,10 +1237,10 @@ const EquationExplainer = {
     getCleanLatexFromEq(eqStr) {
         if (eqStr.includes('data-tex=')) {
             const match = eqStr.match(/data-tex="([^"]+)"/);
-            if (match) return this.decodeHtmlEntities(match[1]);
+            if (match) return this.decodeHtmlEntities(match[1]).replace(/\\par\b/g, ' ');
         }
         // Remove math wrappers if string looks raw
-        return eqStr.replace(/^\\\[/, '').replace(/\\\]$/, '').trim();
+        return eqStr.replace(/^\\\[/, '').replace(/\\\]$/, '').trim().replace(/\\par\b/g, ' ');
     },
 
     decodeHtmlEntities(str) {
@@ -1276,9 +1276,9 @@ const EquationExplainer = {
 
     compileMathJax(latex) {
         // Enforce equation delimiters
-        let mathMarkup = latex;
+        let mathMarkup = latex.replace(/\\par\b/g, ' ');
         if (!latex.startsWith('\\[') && !latex.startsWith('\\(') && !latex.startsWith('$$') && !latex.startsWith('$')) {
-            mathMarkup = '\\[ ' + latex + ' \\]';
+            mathMarkup = '\\[ ' + latex.replace(/\\par\b/g, ' ') + ' \\]';
         }
 
         this.mathRenderTarget.innerHTML = mathMarkup;
@@ -2009,6 +2009,7 @@ const EquationExplainer = {
 
     extractAllMathTokens(latex, officialVariables = {}) {
         if (!latex) return [];
+        latex = latex.replace(/\\par\b/g, ' ');
 
         const found = [];
         const seen = new Set();
@@ -2399,7 +2400,7 @@ const EquationExplainer = {
     latexToPlainText(latex) {
         if (!latex) return '';
         
-        let text = latex.trim();
+        let text = latex.trim().replace(/\\par\b/g, ' ');
 
         // 1. Strip delimiters if present
         text = text.replace(/^\\\(/, '').replace(/\\\)$/, '');
@@ -2538,7 +2539,7 @@ const EquationExplainer = {
         
         // Protect existing math blocks by temporarily replacing them with placeholders
         const placeholders = [];
-        let tempText = text;
+        let tempText = text.replace(/\\par\b/g, ' ');
         
         tempText = tempText.replace(/\$\$[\s\S]*?\$\$/g, match => {
             placeholders.push(match);

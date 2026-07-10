@@ -483,13 +483,42 @@ const EquationExplainer = {
             domain: 'classical_mechanics',
             alternatives: [
                 { name: 'Enthalpy', type: 'variable', unit: 'J', desc: 'A thermodynamic quantity equivalent to the total heat content of a system.', domain: 'thermodynamics' },
-                { name: 'Hamiltonian', type: 'operator', unit: 'J', desc: 'The operator representing the total energy of a quantum system.', domain: 'quantum_mechanics' }
+                { name: 'Hamiltonian', type: 'operator', unit: 'J', desc: 'The operator representing the total energy of a quantum system.', domain: 'quantum_mechanics' },
+                { name: 'Magnetic Field Strength', type: 'variable', unit: 'A/m', desc: 'The auxiliary magnetic field vector representing magnetization effects in media.', domain: 'electromagnetism' }
             ]
+        },
+        '\\mathcal{H}': {
+            name: 'Hamiltonian Density',
+            type: 'variable',
+            unit: 'J/m³',
+            desc: 'The Hamiltonian per unit volume in field theories.',
+            domain: 'quantum_mechanics'
         },
         'I': { name: 'Electric Current / Moment of Inertia', type: 'variable', unit: 'A or kg·m²', desc: 'The rate of flow of electric charge, or resistance to rotational acceleration.' },
         'J': { name: 'Angular Momentum / Current Density', type: 'variable', unit: 'kg·m²/s or A/m²', desc: 'Rotational momentum vector, or flow of electric charge per unit area.' },
         'K': { name: 'Kinetic Energy / Bulk Modulus', type: 'variable', unit: 'J or Pa', desc: 'Energy possessed by an object due to its motion, or resistance to uniform compression.' },
-        'L': { name: 'Angular Momentum / Lagrangian', type: 'variable', unit: 'kg·m²/s or J', desc: 'Orbital momentum, or kinetic energy minus potential energy in mechanics.' },
+        'L': {
+            name: 'Angular Momentum',
+            type: 'variable',
+            unit: 'kg·m²/s',
+            desc: 'The rotational analog of linear momentum, representing the quantity of rotation.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Self-Inductance', type: 'variable', unit: 'H', desc: 'The property of a conductor by which a change in current induces an electromotive force.', domain: 'electromagnetism' },
+                { name: 'Luminosity', type: 'variable', unit: 'W', desc: 'The total radiant power emitted by a star, galaxy, or other astronomical object.', domain: 'optics' },
+                { name: 'Luminosity', type: 'variable', unit: 'W', desc: 'The total radiant power emitted by an object.', domain: 'thermodynamics' }
+            ]
+        },
+        '\\mathcal{L}': {
+            name: 'Lagrangian',
+            type: 'variable',
+            unit: 'J',
+            desc: 'A function describing the state of a dynamic system, equal to kinetic energy minus potential energy (L = T - V).',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Lagrangian Density', type: 'variable', unit: 'J/m³', desc: 'The Lagrangian per unit volume in field theories.', domain: 'quantum_mechanics' }
+            ]
+        },
         'M': { name: 'Total Mass / Magnetization', type: 'variable', unit: 'kg or A/m', desc: 'The total inertial mass of a system, or net magnetic dipole moment density.' },
         'N': { name: 'Number of Particles / Normal Force', type: 'variable', unit: 'dimensionless or N', desc: 'The total count of atoms/molecules, or perpendicular contact force.' },
         'O': { name: 'Operator / Big O Notation', type: 'variable', unit: 'dimensionless', desc: 'A mathematical action performed on a state vector, or asymptotic growth boundary.' },
@@ -1947,7 +1976,7 @@ const EquationExplainer = {
                 const isTotal = symbol.includes('\\frac{d');
                 
                 if (isPartial || isTotal) {
-                    const cleanSym = symbol.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)/g, '');
+                    const cleanSym = symbol.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|vec|hat|bar|tilde|dot|ddot|underline)/g, '');
                     const match = cleanSym.match(/\\frac\{(?:\\partial|d)\^?[0-9]*\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)?\}\{(?:\\partial|d)\s*([a-zA-Z\\]+)\^?[0-9]*\}/);
                     
                     let name = isPartial ? 'Partial Derivative' : 'Ordinary Derivative';
@@ -2466,6 +2495,17 @@ const EquationExplainer = {
             }
             return ' ';
         });
+
+        // Pre-scan for mathcal variables: \mathcal{L} or \mathcal{H}
+        const mathcalRegex = /\\mathcal\{([a-zA-Z])\}/g;
+        let mathcalMatch;
+        while ((mathcalMatch = mathcalRegex.exec(text)) !== null) {
+            const fullMatch = mathcalMatch[0];
+            addToken(fullMatch, 'variable');
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
 
         // 2. Strip visual modifiers: \hat{H} -> H, \mathbf{p} -> p
         let hasStyles = true;

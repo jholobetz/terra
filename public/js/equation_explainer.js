@@ -1916,6 +1916,72 @@ const EquationExplainer = {
             }
         });
         
+        // Helper to check if a specific symbol is present in the LaTeX string
+        const hasSymbol = (sym) => {
+            const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const pattern = /^[a-zA-Z0-9]+$/.test(sym) 
+                ? new RegExp('\\b' + escaped + '\\b')
+                : new RegExp(escaped);
+            return pattern.test(latex);
+        };
+
+        // Apply co-occurrence multipliers (Tier 2 HCR)
+        
+        // Classical Mechanics:
+        if (hasSymbol('T') && hasSymbol('V') && (hasSymbol('L') || hasSymbol('\\mathcal{L}'))) {
+            counts.classical_mechanics += 3.0; // Lagrangian system indicators
+        }
+        if (hasSymbol('F') && hasSymbol('m') && hasSymbol('a')) {
+            counts.classical_mechanics += 2.0; // Newton's Second Law indicators
+        }
+        if (hasSymbol('r') && hasSymbol('p') && (hasSymbol('L') || hasSymbol('I'))) {
+            counts.classical_mechanics += 2.0; // Angular momentum indicators
+        }
+        
+        // Thermodynamics:
+        if (hasSymbol('P') && hasSymbol('V') && hasSymbol('T')) {
+            counts.thermodynamics += 3.0; // Ideal gas law / EOS indicators
+        }
+        if (hasSymbol('k_B') && hasSymbol('T')) {
+            counts.thermodynamics += 2.0; // Thermal energy indicators
+        }
+        if (hasSymbol('U') && hasSymbol('S') && hasSymbol('T')) {
+            counts.thermodynamics += 2.5; // Thermodynamic potentials indicators
+        }
+        if (hasSymbol('S') && hasSymbol('Q') && hasSymbol('T')) {
+            counts.thermodynamics += 3.0; // Second law indicators
+        }
+        
+        // Electromagnetism:
+        if (hasSymbol('\\epsilon_0') && hasSymbol('\\mu_0')) {
+            counts.electromagnetism += 3.0; // Maxwell speed of light indicators
+        }
+        if (hasSymbol('\\mathbf{E}') && hasSymbol('\\mathbf{B}')) {
+            counts.electromagnetism += 2.5; // Electromagnetic fields co-occurrence
+        }
+        if (hasSymbol('q') && (hasSymbol('\\mathbf{E}') || hasSymbol('\\mathbf{B}'))) {
+            counts.electromagnetism += 2.0; // Lorentz force components
+        }
+        
+        // Quantum Mechanics:
+        if (hasSymbol('\\hbar') && (hasSymbol('\\psi') || hasSymbol('\\Psi'))) {
+            counts.quantum_mechanics += 3.0; // Schrodinger equation components
+        }
+        if (hasSymbol('i') && hasSymbol('\\hbar') && hasSymbol('\\partial')) {
+            counts.quantum_mechanics += 2.5; // Quantum time evolution indicator
+        }
+        if (hasSymbol('\\hat{H}') && hasSymbol('E')) {
+            counts.quantum_mechanics += 2.0; // Eigenvalue equation indicator
+        }
+        
+        // Optics:
+        if (hasSymbol('n') && hasSymbol('\\lambda')) {
+            counts.optics += 2.0; // Wavelength index dependence
+        }
+        if (hasSymbol('\\omega') && hasSymbol('k')) {
+            counts.optics += 2.0; // Dispersion relation components
+        }
+        
         let bestDomain = null;
         let maxCount = 0;
         for (const [domain, count] of Object.entries(counts)) {

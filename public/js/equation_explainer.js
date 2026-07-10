@@ -1859,7 +1859,11 @@ const EquationExplainer = {
         }
 
         // Wrap badge symbol in MathJax delimiters so it renders as a mathematical character
-        const mathjaxSymbol = `$${symbol}$`;
+        let displaySymbol = symbol;
+        if (symbol === '\\sqrt') {
+            displaySymbol = '\\sqrt{\\phantom{x}}';
+        }
+        const mathjaxSymbol = `$${displaySymbol}$`;
 
         // Build name link or strong label
         let nameHtml = `<span class="var-name-lbl" style="color: var(--accent-default, #64ffda); text-decoration: none; font-size: 0.92rem; font-weight: 600; cursor: pointer; border-bottom: 1px dashed rgba(100,255,218,0.3); transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-default)'" onmouseout="this.style.borderColor='rgba(100,255,218,0.3)'">${info.name}</span>`;

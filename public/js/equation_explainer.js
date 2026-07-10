@@ -735,6 +735,7 @@ const EquationExplainer = {
             desc: 'Rotational force, relativistic invariant proper duration, or sliding drag force.',
             domain: 'classical_mechanics',
             alternatives: [
+                { name: 'Infinitesimal Volume Element', type: 'variable', unit: 'm³', desc: 'An infinitesimal region of space over which a volume integration is performed.', domain: 'electromagnetism' },
                 { name: 'Pauli Matrices / SU(2) Generator', type: 'operator', unit: 'dimensionless', desc: 'Generators of the SU(2) weak isospin gauge group (Pauli spin matrices).', domain: 'quantum_mechanics' }
             ]
         },
@@ -1833,6 +1834,13 @@ const EquationExplainer = {
      */
     detectDomainFromLatex(latex) {
         if (!latex) return null;
+        latex = latex.replace(/\\par\b/g, ' ')
+                     .replace(/\\varepsilon(?![a-zA-Z])/g, '\\epsilon')
+                     .replace(/\\vartheta(?![a-zA-Z])/g, '\\theta')
+                     .replace(/\\varphi(?![a-zA-Z])/g, '\\phi')
+                     .replace(/\\varrho(?![a-zA-Z])/g, '\\rho')
+                     .replace(/\\varpi(?![a-zA-Z])/g, '\\pi')
+                     .replace(/\\varsigma(?![a-zA-Z])/g, '\\sigma');
         
         // 1. Syntactic / Structural Anchor Detection (Rule-Based overrides)
         // Relativistic field theory / Gauge theory / General Relativity: D_\mu, \partial_\mu, \gamma^\mu, \Gamma^\mu, g_{\mu\nu}, R_{\mu\nu}, etc.
@@ -1842,6 +1850,9 @@ const EquationExplainer = {
         
         // Vector calculus / Stokes' / Curl / Circulation: \oint_C, \iint_S, \nabla \times
         if (/\\(oint|iint|iiint|int)_\{?[CSV]\}?/.test(latex) || /\\nabla\s*\\times/.test(latex)) {
+            if (/(?:\\mathbf\{E\}|\\mathbf\{B\}|\\mathbf\{J\}|\\epsilon_0|\\mu_0|q|e|\\Phi)/.test(latex)) {
+                return 'electromagnetism';
+            }
             return 'classical_mechanics';
         }
 
@@ -1955,6 +1966,12 @@ const EquationExplainer = {
         // Electromagnetism:
         if (hasSymbol('\\epsilon_0') && hasSymbol('\\mu_0')) {
             counts.electromagnetism += 3.0; // Maxwell speed of light indicators
+        }
+        if (hasSymbol('\\epsilon_0')) {
+            counts.electromagnetism += 1.5; // Permittivity of free space indicator
+        }
+        if (hasSymbol('\\epsilon_0') && (hasSymbol('\\mathbf{E}') || hasSymbol('E'))) {
+            counts.electromagnetism += 3.0; // Electrostatic field energy/force indicators
         }
         if (hasSymbol('\\mathbf{E}') && hasSymbol('\\mathbf{B}')) {
             counts.electromagnetism += 2.5; // Electromagnetic fields co-occurrence
@@ -2497,7 +2514,13 @@ const EquationExplainer = {
 
     extractAllMathTokens(latex, officialVariables = {}) {
         if (!latex) return [];
-        latex = latex.replace(/\\par\b/g, ' ');
+        latex = latex.replace(/\\par\b/g, ' ')
+                     .replace(/\\varepsilon(?![a-zA-Z])/g, '\\epsilon')
+                     .replace(/\\vartheta(?![a-zA-Z])/g, '\\theta')
+                     .replace(/\\varphi(?![a-zA-Z])/g, '\\phi')
+                     .replace(/\\varrho(?![a-zA-Z])/g, '\\rho')
+                     .replace(/\\varpi(?![a-zA-Z])/g, '\\pi')
+                     .replace(/\\varsigma(?![a-zA-Z])/g, '\\sigma');
 
         const found = [];
         const seen = new Set();

@@ -710,6 +710,12 @@ class PhysicsService
     private function normalizeLatex(string $latex): string
     {
         $normalized = $latex;
+        $normalized = preg_replace('/\\\\varepsilon(?![a-zA-Z])/', '\\epsilon', $normalized);
+        $normalized = preg_replace('/\\\\vartheta(?![a-zA-Z])/', '\\theta', $normalized);
+        $normalized = preg_replace('/\\\\varphi(?![a-zA-Z])/', '\\phi', $normalized);
+        $normalized = preg_replace('/\\\\varrho(?![a-zA-Z])/', '\\rho', $normalized);
+        $normalized = preg_replace('/\\\\varpi(?![a-zA-Z])/', '\\pi', $normalized);
+        $normalized = preg_replace('/\\\\varsigma(?![a-zA-Z])/', '\\sigma', $normalized);
         // Strip delimiters
         $normalized = preg_replace('/^\\\\\\(/', '', $normalized);
         $normalized = preg_replace('/\\\\\\)$/', '', $normalized);

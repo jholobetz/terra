@@ -12,6 +12,34 @@ const EquationExplainer = {
     currentFormula: null,
     currentSubtopics: [],
     navigationStack: [],
+    activeBinder: null,
+
+    fallbackBinders: [
+        {
+            signature: 'electrostatic_field_energy',
+            // Matches electrostatic field energy equations, e.g., W = \frac{\epsilon_0}{2} \int_V | \mathbf{E} |^2 d\tau or similar variants
+            matchPattern: /\\int_?(\{?V\}?)?.*E.*\^2.*d\\tau|\\int_?(\{?V\}?)?.*\\mathbf\{E\}.*\^2.*d\\tau|u_E/,
+            name: 'Electrostatic Field Energy',
+            domain: 'electromagnetism',
+            variableOverrides: {
+                'W': { name: 'Electrostatic Energy', unit: 'J', desc: 'The potential energy stored in the electric field of a distribution of charges.' },
+                'u_E': { name: 'Electric Field Energy Density', unit: 'J/m³', desc: 'The energy stored per unit volume in the electric field.' },
+                'E': { name: 'Electric Field Strength', unit: 'V/m', desc: 'The magnitude of the electric field vector.' },
+                '\\tau': { name: 'Infinitesimal Volume Element', unit: 'm³', desc: 'An infinitesimal region of space over which the volume integration is performed.' }
+            }
+        },
+        {
+            signature: 'general_relativity_geodesic',
+            // Matches geodesic equations, e.g., \frac{d^2 x^\mu}{d\tau^2} + \Gamma^\mu_{\alpha\beta} U^\alpha U^\beta = 0
+            matchPattern: /\\frac\{d\^?2\s*[a-zA-Z]+\^?\{?\\mu\}\?\}\{d\\tau\^?2\}|\\Gamma\^?\\mu_\{?\\alpha\\beta\}\?/,
+            name: 'Geodesic Equation',
+            domain: 'quantum_mechanics', // (relativistic physics domain is mapped here)
+            variableOverrides: {
+                '\\tau': { name: 'Proper Time', unit: 's', desc: 'The time interval elapsed on a clock carried along the worldline of the particle.' },
+                's': { name: 'Spacetime Interval', unit: 'm', desc: 'The invariant distance between two events in spacetime.' }
+            }
+        }
+    ],
 
     variableDictionary: {
         'm': {
@@ -1074,6 +1102,20 @@ const EquationExplainer = {
     resolveSymbolInfo(symbol, type = null) {
         let cleanSymbol = symbol.trim().replace(/^\\(mathbf|vec|hat|bar|dot|ddot|tilde|boldsymbol)\{([a-zA-Z\\]+)\}$/, '$2').replace(/[\{\}]/g, '');
         
+        // 0. Check active fallback binder overrides
+        if (this.activeBinder && this.activeBinder.variableOverrides) {
+            const override = this.activeBinder.variableOverrides[symbol] || this.activeBinder.variableOverrides[cleanSymbol];
+            if (override) {
+                return {
+                    name: override.name,
+                    type: override.type || 'variable',
+                    description: override.desc || override.description,
+                    unit: override.unit || 'dimensionless',
+                    featuredEquations: []
+                };
+            }
+        }
+
         // 1. Check integration boundary overrides
         if (type === 'integration_boundary') {
             if (symbol === 'C') {
@@ -1897,7 +1939,7 @@ const EquationExplainer = {
         this.topologicalBridges.style.display = 'none';
 
         // Title and Badge
-        this.formulaTitle.textContent = 'Custom Physics Formula';
+        this.formulaTitle.textContent = this.activeBinder ? this.activeBinder.name : 'Custom Physics Formula';
         if (this.formulaBadge) {
             this.formulaBadge.className = 'badge-status badge-unregistered';
             this.formulaBadge.textContent = 'Live Analysis';
@@ -2139,6 +2181,24 @@ const EquationExplainer = {
                                     .replace(/\$/, '')
                                     .trim();
                 this.officialVariables[cleanKey] = val;
+            }
+        }
+        
+        // Match fallback binders if present
+        this.activeBinder = null;
+        if (latex) {
+            for (const binder of this.fallbackBinders) {
+                if (binder.matchPattern.test(latex)) {
+                    this.activeBinder = binder;
+                    if (!this.activeDomain) {
+                        this.activeDomain = binder.domain;
+                        if (this.activeDomainSelect) {
+                            this.activeDomainSelect.value = binder.domain;
+                        }
+                    }
+                    console.log(`Matched fallback binder: ${binder.name}`);
+                    break;
+                }
             }
         }
         

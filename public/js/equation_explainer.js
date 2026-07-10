@@ -2527,19 +2527,19 @@ const EquationExplainer = {
         const placeholders = [];
         let tempText = text;
         
-        tempText = tempText.replace(/\$\$.*?\$\$/g, match => {
+        tempText = tempText.replace(/\$\$[\s\S]*?\$\$/g, match => {
             placeholders.push(match);
             return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
         });
-        tempText = tempText.replace(/\$.*?\$/g, match => {
+        tempText = tempText.replace(/\$[\s\S]*?\$/g, match => {
             placeholders.push(match);
             return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
         });
-        tempText = tempText.replace(/\\\(.*?\\\)/g, match => {
+        tempText = tempText.replace(/\\\([\s\S]*?\\\)/g, match => {
             placeholders.push(match);
             return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
         });
-        tempText = tempText.replace(/\\\[.*?\\\]/g, match => {
+        tempText = tempText.replace(/\\\[[\s\S]*?\\\]/g, match => {
             placeholders.push(match);
             return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
         });

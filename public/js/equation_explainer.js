@@ -1891,6 +1891,41 @@ const EquationExplainer = {
                     unit: 'dimensionless',
                     source: 'heuristic'
                 };
+            } else if (tok.type === 'operator' && symbol.includes('\\frac{')) {
+                const isPartial = symbol.includes('\\partial');
+                const isTotal = symbol.includes('\\frac{d');
+                
+                if (isPartial || isTotal) {
+                    const cleanSym = symbol.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)/g, '');
+                    const match = cleanSym.match(/\\frac\{(?:\\partial|d)\^?[0-9]*\s*([a-zA-Z\\]+(?:_[a-zA-Z0-9]+|\{[^\}]+\})*)\}\{(?:\\partial|d)\s*([a-zA-Z\\]+)\^?[0-9]*\}/);
+                    
+                    let name = isPartial ? 'Partial Derivative' : 'Ordinary Derivative';
+                    let desc = isPartial 
+                        ? 'Represents the rate of change of a multi-variable function with respect to one variable, holding other variables constant.' 
+                        : 'Represents the instantaneous rate of change of a dependent variable with respect to an independent variable.';
+                    
+                    if (match) {
+                        const num = match[1];
+                        const den = match[2];
+                        
+                        const numEntry = this.officialVariables[num] || this.physicsDictionary[num];
+                        const denEntry = this.officialVariables[den] || this.physicsDictionary[den];
+                        
+                        const numName = numEntry ? numEntry.name.split('/')[0].trim() : num;
+                        const denName = denEntry ? denEntry.name.split('/')[0].trim() : den;
+                        
+                        name = `${isPartial ? 'Partial' : 'Total'} Derivative of ${numName} with respect to ${denName}`;
+                        desc = `Represents how the quantity ${numName.toLowerCase()} changes with respect to the variable ${denName.toLowerCase()}.`;
+                    }
+                    
+                    info = {
+                        name: name,
+                        type: 'operator',
+                        description: desc,
+                        unit: 'operator',
+                        source: 'heuristic'
+                    };
+                }
             } else if (tok.type === 'spacetime_derivative') {
                 const isContravariant = symbol.includes('^');
                 info = {
@@ -2385,28 +2420,6 @@ const EquationExplainer = {
         text = text.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\[a-zA-Z]+|[a-zA-Z0-9])/g, '$2');
 
 
-
-        // Check for integration differentials: d\mathbf{l}, d\mathbf{S}, d\vec{r}, dx, dy, dt, dm, dV, dA
-        const differentialRegex = /\bd(?:\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([a-zA-Z])\}|([a-zA-Z]))\b/g;
-        let diffMatch;
-        while ((diffMatch = differentialRegex.exec(text)) !== null) {
-            const fullMatch = diffMatch[0];
-            const baseVar = diffMatch[2] || diffMatch[3];
-            
-            // Add 'd' as differential operator
-            addToken('d', 'differential_operator');
-            
-            // Add base variable
-            if (baseVar) {
-                addToken(baseVar, 'variable');
-            }
-            
-            // Replace the full match to avoid standalone 'd' or baseVar from matching later
-            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            const regex = new RegExp(escaped, 'g');
-            text = text.replace(regex, ' ');
-        }
-
         // Check for spacetime derivatives: \partial_\mu, \partial^\mu, \partial_\nu, \partial^\nu
         const spacetimeDerivRegex = /\\partial_(?:\\mu|\\nu|\\alpha|\\beta|[a-zA-Z0-9])|\\partial\^(?:\\mu|\\nu|\\alpha|\\beta|[a-zA-Z0-9])/g;
         const spaceMatches = [...text.matchAll(spacetimeDerivRegex)];
@@ -2471,6 +2484,27 @@ const EquationExplainer = {
                 }
             }
 
+            const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escaped, 'g');
+            text = text.replace(regex, ' ');
+        }
+
+        // Check for integration differentials: d\mathbf{l}, d\mathbf{S}, d\vec{r}, dx, dy, dt, dm, dV, dA
+        const differentialRegex = /\bd(?:\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([a-zA-Z])\}|([a-zA-Z]))\b/g;
+        let diffMatch;
+        while ((diffMatch = differentialRegex.exec(text)) !== null) {
+            const fullMatch = diffMatch[0];
+            const baseVar = diffMatch[2] || diffMatch[3];
+            
+            // Add 'd' as differential operator
+            addToken('d', 'differential_operator');
+            
+            // Add base variable
+            if (baseVar) {
+                addToken(baseVar, 'variable');
+            }
+            
+            // Replace the full match to avoid standalone 'd' or baseVar from matching later
             const escaped = fullMatch.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             const regex = new RegExp(escaped, 'g');
             text = text.replace(regex, ' ');

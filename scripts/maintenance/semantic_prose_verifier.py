@@ -23,10 +23,11 @@ try:
 except ImportError:
     HAS_SKLEARN = False
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+
 # Configure NLTK data path for the local virtual environment folder
 if HAS_NLTK:
-    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
     NLTK_DATA_PATH = os.path.join(PROJECT_ROOT, ".venv", "nltk_data")
     if os.path.exists(NLTK_DATA_PATH):
         nltk.data.path.append(os.path.abspath(NLTK_DATA_PATH))
@@ -73,13 +74,17 @@ def tokenize_and_lemmatize(text):
     except Exception:
         stop_words = set()
         
-    lemmatizer = WordNetLemmatizer()
+    try:
+        lemmatizer = WordNetLemmatizer()
+    except Exception:
+        lemmatizer = None
+        
     cleaned_tokens = []
     for t in tokens:
         t_clean = ''.join(c for c in t if c.isalnum())
         if t_clean and t_clean not in stop_words:
             try:
-                lemma = lemmatizer.lemmatize(t_clean)
+                lemma = lemmatizer.lemmatize(t_clean) if lemmatizer else t_clean
             except Exception:
                 lemma = t_clean
             cleaned_tokens.append(lemma)
@@ -137,7 +142,10 @@ def check_keywords(cms_text, keywords):
     """
     cms_clean = preprocess_html(cms_text)
     cms_tokens = set(tokenize_and_lemmatize(cms_clean))
-    lemmatizer = WordNetLemmatizer()
+    try:
+        lemmatizer = WordNetLemmatizer()
+    except Exception:
+        lemmatizer = None
     
     missing = []
     found = []
@@ -148,7 +156,7 @@ def check_keywords(cms_text, keywords):
         
         if len(kw_parts) == 1:
             try:
-                kw_lemma = lemmatizer.lemmatize(kw_parts[0])
+                kw_lemma = lemmatizer.lemmatize(kw_parts[0]) if lemmatizer else kw_parts[0]
             except Exception:
                 kw_lemma = kw_parts[0]
                 

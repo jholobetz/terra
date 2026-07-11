@@ -1938,6 +1938,9 @@ const EquationExplainer = {
         this.symbolsBreakdown.style.display = 'block';
         this.topologicalBridges.style.display = 'none';
 
+        // Deconstruct EVERY element in the custom LaTeX string first to populate activeBinder
+        this.renderElementsBreakdown(latex, {});
+
         // Title and Badge
         this.formulaTitle.textContent = this.activeBinder ? this.activeBinder.name : 'Custom Physics Formula';
         if (this.formulaBadge) {
@@ -1966,9 +1969,6 @@ const EquationExplainer = {
 
         // Render AI scenarios
         this.renderAIScenariosSection(synthesis.scenarios);
-
-        // Deconstruct EVERY element in the custom LaTeX string
-        this.renderElementsBreakdown(latex, {});
 
         // Setup Dimensional Solver Link
         this.setupSolverLink(latex);

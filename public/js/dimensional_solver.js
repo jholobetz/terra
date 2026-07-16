@@ -823,11 +823,17 @@ function typesetMath(elements = null) {
  */
 function analyzeFormula(rawFormula = '') {
     if (!rawFormula) {
-        rawFormula = document.getElementById('formula-input').value.trim();
+        const inputEl = document.getElementById('formula-input');
+        if (inputEl) {
+            rawFormula = inputEl.value.trim();
+        }
     }
     
     if (!rawFormula) {
-        showError("Please enter a physical formula (e.g. G * M / c^2) to analyze.");
+        const outputPanel = document.getElementById('output-panel');
+        if (outputPanel) outputPanel.style.display = 'none';
+        const errorPanel = document.getElementById('error-panel');
+        if (errorPanel) errorPanel.style.display = 'none';
         return;
     }
     
@@ -1035,11 +1041,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // 5. Enter key triggers analysis in input box
-    document.getElementById('formula-input').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            analyzeFormula();
-        }
-    });
+    const formulaInput = document.getElementById('formula-input');
+    if (formulaInput) {
+        formulaInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                analyzeFormula();
+            }
+        });
+        
+        let debounceTimeout = null;
+        formulaInput.addEventListener('input', () => {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(() => {
+                analyzeFormula();
+            }, 150); // 150ms debounce
+        });
+    }
     
     // 6. Sidebar search query listener
     const searchInput = document.getElementById('registry-search');

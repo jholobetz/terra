@@ -50,6 +50,104 @@ const RESOLVED_SYMBOL_MAP = {};
 // Initialize RESOLVED_SYMBOL_MAP with predefined SYMBOL_MAP
 Object.assign(RESOLVED_SYMBOL_MAP, SYMBOL_MAP);
 
+const FORMULA_LIBRARY = [
+    // Classical Mechanics
+    { name: "Newton's Second Law", formula: "m * a", category: "Mechanics", latex: "F = m \\cdot a", desc: "Fundamental relation between force, mass, and acceleration." },
+    { name: "Kinetic Energy", formula: "0.5 * m * v^2", category: "Mechanics", latex: "E_k = \\frac{1}{2}mv^2", desc: "Mechanical energy possessed by an object due to its motion." },
+    { name: "Gravitational Potential Energy", formula: "m * G * M / r", category: "Mechanics", latex: "U_g = -\\frac{GMm}{r}", desc: "Potential energy of a mass in a gravitational field." },
+    { name: "Newtonian Gravitational Force", formula: "G * M * m / r^2", category: "Mechanics", latex: "F_g = \\frac{GMm}{r^2}", desc: "Gravitational attraction between two spherical masses." },
+    { name: "Centripetal Acceleration", formula: "v^2 / r", category: "Mechanics", latex: "a_c = \\frac{v^2}{r}", desc: "Acceleration pointing toward the center of a circular path." },
+    { name: "Escape Velocity", formula: "(2 * G * M / r)^0.5", category: "Mechanics", latex: "v_e = \\sqrt{\\frac{2GM}{r}}", desc: "Minimum speed needed for a body to escape a gravitational field." },
+    { name: "Pendulum Angular Frequency", formula: "(G / L)^0.5", category: "Mechanics", latex: "\\omega = \\sqrt{\\frac{G}{L}}", desc: "Oscillation frequency of a simple pendulum." },
+
+    // Electromagnetism
+    { name: "Coulomb's Law", formula: "q^2 / (4 * pi * eps0 * r^2)", category: "Electromagnetism", latex: "F_e = \\frac{q^2}{4\\pi\\epsilon_0 r^2}", desc: "Electrostatic force between two point charges." },
+    { name: "Electric Potential (Voltage)", formula: "q / (4 * pi * eps0 * r)", category: "Electromagnetism", latex: "V = \\frac{q}{4\\pi\\epsilon_0 r}", desc: "Work required to move a unit charge in an electric field." },
+    { name: "Speed of Light (EM Wave)", formula: "1 / (eps0 * mu0)^0.5", category: "Electromagnetism", latex: "c = \\frac{1}{\\sqrt{\\epsilon_0\\mu_0}}", desc: "Propagation speed of electromagnetic radiation." },
+    { name: "Fine-structure Constant", formula: "e^2 / (4 * pi * eps0 * hbar * c)", category: "Electromagnetism", latex: "\\alpha = \\frac{e^2}{4\\pi\\epsilon_0\\hbar c}", desc: "Dimensionless coupling constant of the electromagnetic interaction." },
+
+    // Quantum Mechanics
+    { name: "De Broglie Wavelength", formula: "h / p", category: "Quantum", latex: "\\lambda = \\frac{h}{p}", desc: "Wavelength associated with a moving quantum particle." },
+    { name: "Energy of a Photon", formula: "h * f", category: "Quantum", latex: "E = h\\nu", desc: "Energy quantum of electromagnetic radiation." },
+    { name: "Bohr Radius", formula: "hbar^2 / (m_e * e^2 * (4 * pi * eps0))", category: "Quantum", latex: "a_0 = \\frac{\\hbar^2}{m_e e^2 (4\\pi\\epsilon_0)}", desc: "Most probable distance between proton and electron in ground state." },
+    { name: "Rydberg Energy", formula: "m_e * e^4 / (8 * eps0^2 * h^2)", category: "Quantum", latex: "R_\\infty = \\frac{m_e e^4}{8\\epsilon_0^2 h^2}", desc: "Binding energy of the ground-state electron in hydrogen." },
+    { name: "Compton Wavelength", formula: "hbar / (m_e * c)", category: "Quantum", latex: "\\lambda_c = \\frac{\\hbar}{m_e c}", desc: "Quantum scaling limit for the localization of a particle." },
+    { name: "Planck Length", formula: "(hbar * G / c^3)^0.5", category: "Quantum", latex: "\\ell_P = \\sqrt{\\frac{\\hbar G}{c^3}}", desc: "Scale below which spacetime structure is dominated by quantum gravity." },
+    { name: "Planck Mass", formula: "(hbar * c / G)^0.5", category: "Quantum", latex: "m_P = \\sqrt{\\frac{\\hbar c}{G}}", desc: "Mass scale at which the Schwarzschild radius equals the Compton wavelength." },
+    { name: "Planck Time", formula: "(hbar * G / c^5)^0.5", category: "Quantum", latex: "t_P = \\sqrt{\\frac{\\hbar G}{c^5}}", desc: "Time required for light to travel one Planck length." },
+
+    // Relativity
+    { name: "Einstein's Mass-Energy", formula: "m * c^2", category: "Relativity", latex: "E = mc^2", desc: "Equivalence of mass and energy." },
+    { name: "Schwarzschild Radius", formula: "2 * G * M / c^2", category: "Relativity", latex: "r_s = \\frac{2GM}{c^2}", desc: "Radius defining the event horizon of a non-rotating black hole." },
+    { name: "Relativistic Momentum", formula: "m * v / (1 - v^2/c^2)^0.5", category: "Relativity", latex: "p = \\gamma m v", desc: "Momentum adjusted for relativistic velocities." },
+    { name: "Cosmological Constant Pressure", formula: "Lambda * c^4 / G", category: "Relativity", latex: "P_\\Lambda = \\frac{\\Lambda c^4}{G}", desc: "Equivalent dark energy vacuum pressure in general relativity." },
+    { name: "Gravitational Redshift Ratio", formula: "G * M / (r * c^2)", category: "Relativity", latex: "z \\approx \\frac{GM}{rc^2}", desc: "Dimensionless shift in light frequency due to gravity." },
+
+    // Thermodynamics
+    { name: "Thermal Energy", formula: "k_B * T", category: "Thermodynamics", latex: "E_{th} = k_B T", desc: "Average thermal energy associated with a microscopic degree of freedom." },
+    { name: "Thermal De Broglie Wavelength", formula: "h / (2 * pi * m * k_B * T)^0.5", category: "Thermodynamics", latex: "\\lambda_{th} = \\frac{h}{\\sqrt{2\\pi m k_B T}}", desc: "Average de Broglie wavelength of gas particles at a given temperature." },
+    { name: "Hawking Entropy", formula: "4 * pi * k_B * G * M^2 / (hbar * c)", category: "Thermodynamics", latex: "S_{BH} = \\frac{4\\pi k_B G M^2}{\\hbar c}", desc: "Thermodynamic entropy of a Schwarzschild black hole." },
+    { name: "Stefan-Boltzmann Radiation Flux", formula: "sigma * T^4", category: "Thermodynamics", latex: "j^* = \\sigma T^4", desc: "Total energy radiated per unit surface area of a black body." }
+];
+
+function populateLibrary() {
+    const listContainer = document.getElementById('library-list');
+    if (!listContainer) return;
+    
+    const query = (document.getElementById('library-search')?.value || '').toLowerCase().trim();
+    const activePill = document.querySelector('.pill-filter.active');
+    const activeCategory = activePill ? activePill.getAttribute('data-category') : 'All';
+    
+    listContainer.innerHTML = '';
+    
+    let matchesCount = 0;
+    
+    FORMULA_LIBRARY.forEach(item => {
+        // Apply category filter
+        if (activeCategory !== 'All' && item.category !== activeCategory) {
+            return;
+        }
+        
+        // Apply search query filter
+        const searchText = `${item.name} ${item.formula} ${item.category} ${item.desc}`.toLowerCase();
+        if (query && !searchText.includes(query)) {
+            return;
+        }
+        
+        matchesCount++;
+        
+        const div = document.createElement('div');
+        div.className = 'library-item';
+        div.innerHTML = `
+            <div class="item-meta">
+                <span class="item-title">${item.name}</span>
+                <span class="item-desc">${item.desc}</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
+                <span class="item-cat-badge">${item.category === 'Electromagnetism' ? 'E&M' : (item.category === 'Thermodynamics' ? 'Thermal' : item.category)}</span>
+                <div class="item-math">\\(${item.latex}\\)</div>
+            </div>
+        `;
+        
+        div.addEventListener('click', () => {
+            const input = document.getElementById('formula-input');
+            if (input) {
+                input.value = item.formula;
+                analyzeFormula(item.formula);
+            }
+        });
+        
+        listContainer.appendChild(div);
+    });
+    
+    const countBadge = document.getElementById('library-count');
+    if (countBadge) {
+        countBadge.textContent = `${matchesCount} Equation${matchesCount !== 1 ? 's' : ''}`;
+    }
+    
+    typesetMath(listContainer);
+}
+
 class DimensionalAnalysisError extends Error {
     constructor(message, suggestions = []) {
         super(message);
@@ -1080,12 +1178,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Populate sidebar registry
     populateRegistry();
     
-    // 3. Register click triggers for Quick Load Examples
-    document.querySelectorAll('.example-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const formula = btn.getAttribute('data-formula');
-            document.getElementById('formula-input').value = formula;
-            analyzeFormula(formula);
+    // 3. Populate and wire up Formula Library
+    populateLibrary();
+    
+    const libSearch = document.getElementById('library-search');
+    if (libSearch) {
+        libSearch.addEventListener('input', () => {
+            populateLibrary();
+        });
+    }
+    
+    document.querySelectorAll('.pill-filter').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('.pill-filter').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            populateLibrary();
         });
     });
     

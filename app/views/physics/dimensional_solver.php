@@ -35,17 +35,31 @@
                     <button class="keyboard-btn" data-val="exp(">exp</button>
                 </div>
 
-                <div class="examples-section">
-                    <h4>Quick Load Examples:</h4>
-                    <div class="examples-grid">
-                        <button class="example-btn" data-formula="G * M / c^2">Schwarzschild Radius</button>
-                        <button class="example-btn" data-formula="hbar / (m_e * c)">Compton Wavelength</button>
-                        <button class="example-btn" data-formula="m * c^2">Mass-Energy Equivalence</button>
-                        <button class="example-btn" data-formula="hbar^2 / (m_e * e^2 * (4 * pi * eps0))">Bohr Radius</button>
-                        <button class="example-btn" data-formula="(hbar * G / c^3)^0.5">Planck Length</button>
-                        <button class="example-btn" data-formula="e^2 / (4 * pi * eps0 * hbar * c)">Fine-structure Constant</button>
-                        <button class="example-btn" data-formula="k_B * T / hbar">Thermal Frequency</button>
-                        <button class="example-btn" data-formula="G * M * m / r^2">Newtonian Gravitational Force</button>
+                <!-- Formula Library Section -->
+                <div class="library-card glass-card" style="margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: #ffffff;">Formula Library</h4>
+                        <span id="library-count" class="concept-badge badge-derived" style="font-size: 0.72rem; padding: 2px 8px;">0 Equations</span>
+                    </div>
+                    
+                    <!-- Search Input -->
+                    <div style="margin-bottom: 12px;">
+                        <input type="text" id="library-search" placeholder="Search library by name, symbol, or concept..." autocomplete="off" style="width: 100%; height: 38px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 0 12px; color: #ffffff; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+                    </div>
+
+                    <!-- Category Filters -->
+                    <div id="library-filters" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+                        <button class="pill-filter active" data-category="All">All</button>
+                        <button class="pill-filter" data-category="Mechanics">Mechanics</button>
+                        <button class="pill-filter" data-category="Electromagnetism">E&amp;M</button>
+                        <button class="pill-filter" data-category="Quantum">Quantum</button>
+                        <button class="pill-filter" data-category="Relativity">Relativity</button>
+                        <button class="pill-filter" data-category="Thermodynamics">Thermal</button>
+                    </div>
+
+                    <!-- Scrollable List -->
+                    <div id="library-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; box-sizing: border-box;">
+                        <!-- JS populated -->
                     </div>
                 </div>
 
@@ -559,6 +573,88 @@
 
 .keyboard-btn:active {
     transform: translateY(0);
+}
+
+/* Library Pill Filters */
+.pill-filter {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--text-muted, #94a3b8);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.pill-filter:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+}
+
+.pill-filter.active {
+    background: rgba(100, 255, 218, 0.1);
+    border-color: rgba(100, 255, 218, 0.3);
+    color: var(--accent-color, #64ffda);
+}
+
+/* Library Scroll List Items */
+.library-item {
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.library-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: translateX(2px);
+}
+
+.library-item .item-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.library-item .item-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: left;
+}
+
+.library-item .item-desc {
+    font-size: 0.74rem;
+    color: #94a3b8;
+    line-height: 1.2;
+    text-align: left;
+}
+
+.library-item .item-math {
+    font-size: 0.82rem;
+    color: var(--accent-color, #64ffda);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.library-item .item-cat-badge {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #fdba74;
+    font-weight: bold;
+    text-align: right;
 }
 </style>
 

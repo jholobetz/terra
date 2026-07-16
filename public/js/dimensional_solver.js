@@ -50,6 +50,54 @@ const RESOLVED_SYMBOL_MAP = {};
 // Initialize RESOLVED_SYMBOL_MAP with predefined SYMBOL_MAP
 Object.assign(RESOLVED_SYMBOL_MAP, SYMBOL_MAP);
 
+class DimensionalAnalysisError extends Error {
+    constructor(message, suggestions = []) {
+        super(message);
+        this.name = 'DimensionalAnalysisError';
+        this.suggestions = suggestions;
+    }
+}
+
+function getSuggestionsForMismatch(vA, vB, labelA, labelB) {
+    const diff = [];
+    const negDiff = [];
+    for (let i = 0; i < 5; i++) {
+        diff.push(vA[i] - vB[i]);
+        negDiff.push(vB[i] - vA[i]);
+    }
+    
+    const suggestions = [];
+    
+    for (const [key, item] of Object.entries(RESOLVED_SYMBOL_MAP)) {
+        if (vectorsEqual(item.vector, diff) && !vectorsEqual(item.vector, [0, 0, 0, 0, 0])) {
+            suggestions.push(`Multiply <code>${labelB}</code> by <code>${key}</code> (\\(${item.symbol}\\)) or divide <code>${labelA}</code> by <code>${key}</code> (\\(${item.symbol}\\))`);
+        }
+        if (vectorsEqual(item.vector, negDiff) && !vectorsEqual(item.vector, [0, 0, 0, 0, 0])) {
+            suggestions.push(`Multiply <code>${labelA}</code> by <code>${key}</code> (\\(${item.symbol}\\)) or divide <code>${labelB}</code> by <code>${key}</code> (\\(${item.symbol}\\))`);
+        }
+    }
+    
+    return suggestions.slice(0, 4);
+}
+
+function getSuggestionsForDimensionless(vA, labelA) {
+    const target = [0, 0, 0, 0, 0];
+    const negVec = vA.map(x => -x);
+    
+    const suggestions = [];
+    
+    for (const [key, item] of Object.entries(RESOLVED_SYMBOL_MAP)) {
+        if (vectorsEqual(item.vector, vA) && !vectorsEqual(item.vector, target)) {
+            suggestions.push(`Divide <code>${labelA}</code> by <code>${key}</code> (\\(${item.symbol}\\))`);
+        }
+        if (vectorsEqual(item.vector, negVec) && !vectorsEqual(item.vector, target)) {
+            suggestions.push(`Multiply <code>${labelA}</code> by <code>${key}</code> (\\(${item.symbol}\\))`);
+        }
+    }
+    
+    return suggestions.slice(0, 4);
+}
+
 /**
  * Initializes the symbol map with notation data.
  */
@@ -588,9 +636,11 @@ function evaluateRPN(rpnQueue, steps) {
             
             // Verify argument is dimensionless
             if (!vectorsEqual(A.vector, [0, 0, 0, 0, 0])) {
-                throw new Error(
+                const suggestions = getSuggestionsForDimensionless(A.vector, A.latex);
+                throw new DimensionalAnalysisError(
                     `Dimensional Error: Argument of function ${token.value}() must be dimensionless. ` +
-                    `Found argument \\(${A.latex}\\) with dimensions \\(${formatVectorToLaTeX(A.vector)}\\).`
+                    `Found argument \\(${A.latex}\\) with dimensions \\(${formatVectorToLaTeX(A.vector)}\\).`,
+                    suggestions
                 );
             }
             
@@ -624,10 +674,12 @@ function evaluateRPN(rpnQueue, steps) {
             if (op === '+' || op === '-') {
                 // Verify algebraic consistency (operands must have matching dimensions)
                 if (!vectorsEqual(A.vector, B.vector)) {
-                    throw new Error(
+                    const suggestions = getSuggestionsForMismatch(A.vector, B.vector, A.latex, B.latex);
+                    throw new DimensionalAnalysisError(
                         `Dimensional Clash Error: Cannot ${op === '+' ? 'add' : 'subtract'} incompatible dimensions: ` +
                         `\\(${A.latex}\\) which is \\(${formatVectorToLaTeX(A.vector)}\\) and ` +
-                        `\\(${B.latex}\\) which is \\(${formatVectorToLaTeX(B.vector)}\\)`
+                        `\\(${B.latex}\\) which is \\(${formatVectorToLaTeX(B.vector)}\\)`,
+                        suggestions
                     );
                 }
                 
@@ -686,9 +738,11 @@ function evaluateRPN(rpnQueue, steps) {
             } else if (op === '^') {
                 // Exponent must be dimensionless
                 if (!vectorsEqual(B.vector, [0, 0, 0, 0, 0])) {
-                    throw new Error(
+                    const suggestions = getSuggestionsForDimensionless(B.vector, B.latex);
+                    throw new DimensionalAnalysisError(
                         `Dimensional Error: Exponent must be dimensionless. Found exponent \\(${B.latex}\\) ` +
-                        `with dimensions \\(${formatVectorToLaTeX(B.vector)}\\)`
+                        `with dimensions \\(${formatVectorToLaTeX(B.vector)}\\)`,
+                        suggestions
                     );
                 }
                 
@@ -829,7 +883,7 @@ function analyzeFormula(rawFormula = '') {
         typesetMath();
         
     } catch (error) {
-        showError(error.message);
+        showError(error);
     }
 }
 
@@ -844,11 +898,29 @@ function showOutput() {
 /**
  * Helper to display the error panel and hide output.
  */
-function showError(msg) {
+function showError(err) {
     document.getElementById('output-panel').style.display = 'none';
     const errPanel = document.getElementById('error-panel');
     errPanel.style.display = 'flex';
-    document.getElementById('error-message').textContent = msg;
+    
+    const errMessage = document.getElementById('error-message');
+    
+    if (err && err.name === 'DimensionalAnalysisError') {
+        let html = `<div style="font-weight: 600; margin-bottom: 6px;">${err.message}</div>`;
+        if (err.suggestions && err.suggestions.length > 0) {
+            html += `<div class="dimensional-suggestions" style="margin-top: 12px; border-top: 1px solid rgba(239, 68, 68, 0.2); padding-top: 10px;">`;
+            html += `<div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #fdba74; margin-bottom: 6px; font-weight: bold;">Suggested Dimensional Adjustments:</div>`;
+            html += `<ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: #fecaca;">`;
+            err.suggestions.forEach(s => {
+                html += `<li>${s}</li>`;
+            });
+            html += `</ul></div>`;
+        }
+        errMessage.innerHTML = html;
+        typesetMath(errMessage);
+    } else {
+        errMessage.textContent = err ? (err.message || err) : 'An unknown error occurred.';
+    }
 }
 
 /**

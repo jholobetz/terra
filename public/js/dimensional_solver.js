@@ -1058,6 +1058,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // 5a. Register click triggers for math keyboard operators
+    document.querySelectorAll('.operator-keyboard .keyboard-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const input = document.getElementById('formula-input');
+            if (input) {
+                const val = btn.getAttribute('data-val');
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                const text = input.value;
+                const before = text.substring(0, start);
+                const after = text.substring(end, text.length);
+                
+                input.value = before + val + after;
+                input.selectionStart = input.selectionEnd = start + val.length;
+                input.focus();
+                
+                // Immediately update analysis
+                analyzeFormula(input.value);
+            }
+        });
+    });
+    
     // 6. Sidebar search query listener
     const searchInput = document.getElementById('registry-search');
     if (searchInput) {

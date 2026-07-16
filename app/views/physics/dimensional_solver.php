@@ -20,6 +20,21 @@
                     </div>
                 </div>
 
+                <div class="operator-keyboard" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; margin-bottom: 25px;">
+                    <button class="keyboard-btn" data-val=" + ">+</button>
+                    <button class="keyboard-btn" data-val=" - ">-</button>
+                    <button class="keyboard-btn" data-val=" * ">*</button>
+                    <button class="keyboard-btn" data-val=" / ">/</button>
+                    <button class="keyboard-btn" data-val="^">^</button>
+                    <button class="keyboard-btn" data-val="^2">x²</button>
+                    <button class="keyboard-btn" data-val="^0.5">√x</button>
+                    <button class="keyboard-btn" data-val="(">(</button>
+                    <button class="keyboard-btn" data-val=")">)</button>
+                    <button class="keyboard-btn" data-val="sin(">sin</button>
+                    <button class="keyboard-btn" data-val="cos(">cos</button>
+                    <button class="keyboard-btn" data-val="exp(">exp</button>
+                </div>
+
                 <div class="examples-section">
                     <h4>Quick Load Examples:</h4>
                     <div class="examples-grid">
@@ -500,6 +515,36 @@
 .math-color-error { color: #ef4444 !important; }
 .math-color-dimensionless { color: #c084fc !important; }
 .math-color-derived { color: #64ffda !important; }
+
+/* Operator Keyboard Styles */
+.keyboard-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--accent-color, #64ffda);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Fira Code', monospace;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+.keyboard-btn:hover {
+    background: rgba(100, 255, 218, 0.08);
+    border-color: rgba(100, 255, 218, 0.3);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(100, 255, 218, 0.1);
+}
+
+.keyboard-btn:active {
+    transform: translateY(0);
+}
 </style>
 
 <!-- Pass variables list from PHP registry to JS -->

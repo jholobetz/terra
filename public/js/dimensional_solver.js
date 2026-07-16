@@ -899,6 +899,8 @@ function analyzeFormula(rawFormula = '') {
         if (outputPanel) outputPanel.style.display = 'none';
         const errorPanel = document.getElementById('error-panel');
         if (errorPanel) errorPanel.style.display = 'none';
+        const inspectorCard = document.getElementById('inspector-card');
+        if (inspectorCard) inspectorCard.style.display = 'none';
         return;
     }
     
@@ -978,6 +980,8 @@ function analyzeFormula(rawFormula = '') {
 function showOutput() {
     document.getElementById('output-panel').style.display = 'block';
     document.getElementById('error-panel').style.display = 'none';
+    const inspectorCard = document.getElementById('inspector-card');
+    if (inspectorCard) inspectorCard.style.display = 'block';
 }
 
 /**
@@ -987,6 +991,9 @@ function showError(err) {
     document.getElementById('output-panel').style.display = 'none';
     const errPanel = document.getElementById('error-panel');
     errPanel.style.display = 'flex';
+    
+    const inspectorCard = document.getElementById('inspector-card');
+    if (inspectorCard) inspectorCard.style.display = 'none';
     
     const errMessage = document.getElementById('error-message');
     
@@ -1115,6 +1122,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const errorPanel = document.getElementById('error-panel');
             if (errorPanel) {
                 errorPanel.style.display = 'none';
+            }
+            const inspectorCard = document.getElementById('inspector-card');
+            if (inspectorCard) {
+                inspectorCard.style.display = 'none';
             }
         });
     }

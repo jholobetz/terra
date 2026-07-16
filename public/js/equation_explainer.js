@@ -3048,7 +3048,23 @@ const EquationExplainer = {
             return clean;
         };
 
+        const cleanStylesForSorting = (str) => {
+            let res = str;
+            let hasStyles = true;
+            while (hasStyles) {
+                const next = res.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{((?:[^{}]|\{[^{}]*\})*)\}/g, '$2');
+                if (next === res) {
+                    hasStyles = false;
+                } else {
+                    res = next;
+                }
+            }
+            res = res.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\[a-zA-Z]+|[a-zA-Z0-9])/g, '$2');
+            return res;
+        };
+
         const cleanSearch = getCleanSearchString(latex);
+        const cleanLatex = cleanStylesForSorting(latex);
 
         found.sort((a, b) => {
             let indexA = -1;
@@ -3059,7 +3075,7 @@ const EquationExplainer = {
                 indexA = match ? match.index : latex.indexOf(a.symbol);
             } else {
                 const hasStructuralA = /\\(frac|mathbf|mathrm|text|vec|hat|bar|tilde|dot|ddot|underline)/.test(a.symbol);
-                indexA = hasStructuralA ? latex.indexOf(a.symbol) : cleanSearch.indexOf(a.symbol);
+                indexA = hasStructuralA ? cleanLatex.indexOf(a.symbol) : cleanSearch.indexOf(a.symbol);
             }
             
             let indexB = -1;
@@ -3070,7 +3086,7 @@ const EquationExplainer = {
                 indexB = match ? match.index : latex.indexOf(b.symbol);
             } else {
                 const hasStructuralB = /\\(frac|mathbf|mathrm|text|vec|hat|bar|tilde|dot|ddot|underline)/.test(b.symbol);
-                indexB = hasStructuralB ? latex.indexOf(b.symbol) : cleanSearch.indexOf(b.symbol);
+                indexB = hasStructuralB ? cleanLatex.indexOf(b.symbol) : cleanSearch.indexOf(b.symbol);
             }
             
             return indexA - indexB;

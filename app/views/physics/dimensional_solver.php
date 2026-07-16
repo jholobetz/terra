@@ -80,7 +80,7 @@
                     </div>
 
                     <div class="steps-section" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
-                        <h4 style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 12px;" onclick="toggleInspector()">
+                        <h4 id="inspector-toggle-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 12px;">
                             <span>Parser Inspector &amp; Token Audit</span>
                             <span id="inspector-toggle-icon" style="font-size: 0.8rem; opacity: 0.7; font-weight: 500;">[Show Details]</span>
                         </h4>

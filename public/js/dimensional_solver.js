@@ -1172,6 +1172,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+    
+    // 7. Parser inspector toggle listener
+    const inspectorHeader = document.getElementById('inspector-toggle-header');
+    if (inspectorHeader) {
+        inspectorHeader.addEventListener('click', toggleInspector);
+    }
 });
 
 // Run registry mappings pre-computation

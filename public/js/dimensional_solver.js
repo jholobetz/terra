@@ -869,19 +869,7 @@ function renderRPNPill(token) {
     return `<div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); color: ${color}; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-family: 'Fira Code', monospace; font-size: 0.8rem;">${token.value}</div>`;
 }
 
-function toggleInspector() {
-    const panel = document.getElementById('inspector-panel');
-    const icon = document.getElementById('inspector-toggle-icon');
-    if (!panel || !icon) return;
-    if (panel.style.display === 'none') {
-        panel.style.display = 'flex';
-        icon.textContent = '[Hide Details]';
-    } else {
-        panel.style.display = 'none';
-        icon.textContent = '[Show Details]';
-    }
-}
-window.toggleInspector = toggleInspector;
+// Toggle logic removed, contents now display directly when inspector-card is visible.
 
 /**
  * Main analysis routine.
@@ -1184,11 +1172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // 7. Parser inspector toggle listener
-    const inspectorHeader = document.getElementById('inspector-toggle-header');
-    if (inspectorHeader) {
-        inspectorHeader.addEventListener('click', toggleInspector);
-    }
+    // Parser inspector toggler removed (displayed directly)
 });
 
 // Run registry mappings pre-computation

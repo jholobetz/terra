@@ -113,11 +113,8 @@
 
             <!-- Parser Inspector Card -->
             <div id="inspector-card" class="glass-card" style="margin-top: 20px; display: none;">
-                <h3 style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin: 0;" id="inspector-toggle-header">
-                    <span>Parser Inspector &amp; Token Audit</span>
-                    <span id="inspector-toggle-icon" style="font-size: 0.8rem; opacity: 0.7; font-weight: 500;">[Show Details]</span>
-                </h3>
-                <div id="inspector-panel" style="display: none; flex-direction: column; gap: 16px; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
+                <h3 style="margin: 0; margin-bottom: 15px;">Parser Inspector &amp; Token Audit</h3>
+                <div id="inspector-panel" style="display: flex; flex-direction: column; gap: 16px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
                     <div>
                         <span class="metric-title" style="display: block; margin-bottom: 8px; font-size: 0.78rem; text-transform: uppercase; color: var(--accent-color); font-weight: bold; letter-spacing: 0.5px;">1. Tokenized Stream</span>
                         <div id="token-stream-container" style="display: flex; flex-wrap: wrap; gap: 8px; font-family: monospace;"></div>

@@ -70,10 +70,10 @@ function getSuggestionsForMismatch(vA, vB, labelA, labelB) {
     
     for (const [key, item] of Object.entries(RESOLVED_SYMBOL_MAP)) {
         if (vectorsEqual(item.vector, diff) && !vectorsEqual(item.vector, [0, 0, 0, 0, 0])) {
-            suggestions.push(`Multiply <code>${labelB}</code> by <code>${key}</code> (\\(${item.symbol}\\)) or divide <code>${labelA}</code> by <code>${key}</code> (\\(${item.symbol}\\))`);
+            suggestions.push(`Multiply \\(${labelB}\\) by <code>${key}</code> (\\(${item.symbol}\\)) or divide \\(${labelA}\\) by <code>${key}</code> (\\(${item.symbol}\\))`);
         }
         if (vectorsEqual(item.vector, negDiff) && !vectorsEqual(item.vector, [0, 0, 0, 0, 0])) {
-            suggestions.push(`Multiply <code>${labelA}</code> by <code>${key}</code> (\\(${item.symbol}\\)) or divide <code>${labelB}</code> by <code>${key}</code> (\\(${item.symbol}\\))`);
+            suggestions.push(`Multiply \\(${labelA}\\) by <code>${key}</code> (\\(${item.symbol}\\)) or divide \\(${labelB}\\) by <code>${key}</code> (\\(${item.symbol}\\))`);
         }
     }
     
@@ -88,10 +88,10 @@ function getSuggestionsForDimensionless(vA, labelA) {
     
     for (const [key, item] of Object.entries(RESOLVED_SYMBOL_MAP)) {
         if (vectorsEqual(item.vector, vA) && !vectorsEqual(item.vector, target)) {
-            suggestions.push(`Divide <code>${labelA}</code> by <code>${key}</code> (\\(${item.symbol}\\))`);
+            suggestions.push(`Divide \\(${labelA}\\) by <code>${key}</code> (\\(${item.symbol}\\))`);
         }
         if (vectorsEqual(item.vector, negVec) && !vectorsEqual(item.vector, target)) {
-            suggestions.push(`Multiply <code>${labelA}</code> by <code>${key}</code> (\\(${item.symbol}\\))`);
+            suggestions.push(`Multiply \\(${labelA}\\) by <code>${key}</code> (\\(${item.symbol}\\))`);
         }
     }
     

@@ -76,3 +76,21 @@ Trigonometric, logarithmic, and exponential functions are currently parsed as pl
 * **Function Recognition**: Update tokenization to identify functions like `sin()`, `cos()`, `tan()`, `exp()`, `log()`, and `ln()`.
 * **Argument Dimension Validation**: Automatically verify that the argument of any transcendental function is strictly **dimensionless** ($[0,0,0,0,0]$). 
   * If a user types `sin(t)`, flag: *"Dimensional error: The argument of trigonometric function sin() must be dimensionless. Found 't' with dimension [Time]."*
+
+---
+
+## 6. Logical Implementation Roadmap
+
+The most structured implementation order follows a dependency-driven, "core-outward" path:
+
+1. **Step 1: Transcendental Function Checking (Option 5)**
+   * *Rationale*: Establishes the mathematical parser foundation needed to tokenize and evaluate non-monomial real-world equations.
+2. **Step 2: Intelligent Dimensional Synthesis (Option 4)**
+   * *Rationale*: Extends the parser core's error reporting to output rich suggestion objects ($\Delta \mathbf{d}$) on mismatches, supplying details for subsequent UI features.
+3. **Step 3: Real-Time "As-You-Type" Validation & Linting (Option 1)**
+   * *Rationale*: Converts the static calculator to a debounced reactive loop, dynamically serving the recommendations and validation updates as the user types.
+4. **Step 4: Interactive Operator Keyboard / Formula Builder (Option 2)**
+   * *Rationale*: Layers buttons for math operators on top of the real-time validator, automatically benefiting from debounced checks and recommendations.
+5. **Step 5: Visual Parse Tree Hierarchy (Option 3)**
+   * *Rationale*: Renders the parsed mathematical terms as a visual tree graph. This is visually complex and depends on a fully functional, function-aware parser.
+

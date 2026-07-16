@@ -383,11 +383,17 @@ function tokenize(str) {
             continue;
         }
         
-        // Match identifiers (variable names, letters, constants)
+        // Match identifiers (variable names, letters, constants, or functions)
         const idMatch = str.substring(i).match(/^[a-zA-Z_][a-zA-Z0-9_]*/);
         if (idMatch) {
-            tokens.push({ type: 'IDENTIFIER', value: idMatch[0] });
-            i += idMatch[0].length;
+            const val = idMatch[0];
+            const knownFunctions = ['sin', 'cos', 'tan', 'exp', 'log', 'ln'];
+            if (knownFunctions.includes(val)) {
+                tokens.push({ type: 'FUNCTION', value: val });
+            } else {
+                tokens.push({ type: 'IDENTIFIER', value: val });
+            }
+            i += val.length;
             continue;
         }
         
@@ -431,6 +437,8 @@ function infixToRPN(tokens) {
     tokens.forEach(token => {
         if (token.type === 'NUMBER' || token.type === 'IDENTIFIER') {
             outputQueue.push(token);
+        } else if (token.type === 'FUNCTION') {
+            operatorStack.push(token);
         } else if (token.type === 'UNARY_OPERATOR') {
             operatorStack.push(token);
         } else if (token.type === 'OPERATOR') {
@@ -459,6 +467,12 @@ function infixToRPN(tokens) {
                 throw new Error("Mismatched parentheses (extra right parenthesis).");
             }
             operatorStack.pop(); // Remove '('
+            
+            // Pop function if present
+            const newTop = operatorStack[operatorStack.length - 1];
+            if (newTop && newTop.type === 'FUNCTION') {
+                outputQueue.push(operatorStack.pop());
+            }
         }
     });
     
@@ -567,6 +581,32 @@ function evaluateRPN(rpnQueue, steps) {
                 vector: [...A.vector],
                 latex: `-${wrappedA}`,
                 precedence: 4
+            });
+        } else if (token.type === 'FUNCTION') {
+            const A = stack.pop();
+            if (!A) throw new Error(`Invalid expression structure (stack empty for function '${token.value}').`);
+            
+            // Verify argument is dimensionless
+            if (!vectorsEqual(A.vector, [0, 0, 0, 0, 0])) {
+                throw new Error(
+                    `Dimensional Error: Argument of function ${token.value}() must be dimensionless. ` +
+                    `Found argument \\(${A.latex}\\) with dimensions \\(${formatVectorToLaTeX(A.vector)}\\).`
+                );
+            }
+            
+            const latexFn = `\\${token.value}`;
+            
+            steps.push({
+                description: `Evaluated function <code>${token.value}</code> with dimensionless argument \\(${A.latex}\\) \\(\\rightarrow\\) result is dimensionless`,
+                latex: `${latexFn}\\left( ${A.latex} \\right)`,
+                vector: [0, 0, 0, 0, 0]
+            });
+            
+            stack.push({
+                type: 'expression',
+                vector: [0, 0, 0, 0, 0],
+                latex: `${latexFn}\\left( ${A.latex} \\right)`,
+                precedence: 99
             });
         } else if (token.type === 'OPERATOR') {
             const op = token.value;

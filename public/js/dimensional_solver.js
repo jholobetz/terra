@@ -818,6 +818,71 @@ function typesetMath(elements = null) {
     }
 }
 
+function renderTokenPill(token) {
+    let bg, border, color;
+    switch (token.type) {
+        case 'NUMBER':
+            bg = 'rgba(52, 211, 153, 0.08)';
+            border = 'rgba(52, 211, 153, 0.2)';
+            color = '#34d399';
+            break;
+        case 'IDENTIFIER':
+            bg = 'rgba(96, 165, 250, 0.08)';
+            border = 'rgba(96, 165, 250, 0.2)';
+            color = '#60a5fa';
+            break;
+        case 'FUNCTION':
+            bg = 'rgba(192, 132, 252, 0.08)';
+            border = 'rgba(192, 132, 252, 0.2)';
+            color = '#c084fc';
+            break;
+        case 'OPERATOR':
+        case 'UNARY_OPERATOR':
+            bg = 'rgba(251, 191, 36, 0.08)';
+            border = 'rgba(251, 191, 36, 0.2)';
+            color = '#fbbf24';
+            break;
+        case 'PAREN':
+            bg = 'rgba(156, 163, 175, 0.08)';
+            border = 'rgba(156, 163, 175, 0.2)';
+            color = '#9ca3af';
+            break;
+        default:
+            bg = 'rgba(255, 255, 255, 0.05)';
+            border = 'rgba(255, 255, 255, 0.1)';
+            color = '#ffffff';
+    }
+    
+    return `<div style="background: ${bg}; border: 1px solid ${border}; color: ${color}; padding: 4px 10px; border-radius: 6px; font-size: 0.76rem; display: flex; flex-direction: column; align-items: center; gap: 2px;">` +
+           `<span style="font-weight: bold; font-family: 'Fira Code', monospace;">${token.value}</span>` +
+           `<span style="font-size: 0.58rem; opacity: 0.6; text-transform: uppercase;">${token.type}</span>` +
+           `</div>`;
+}
+
+function renderRPNPill(token) {
+    let color = '#ffffff';
+    if (token.type === 'IDENTIFIER') color = '#60a5fa';
+    if (token.type === 'FUNCTION') color = '#c084fc';
+    if (token.type === 'OPERATOR' || token.type === 'UNARY_OPERATOR') color = '#fbbf24';
+    if (token.type === 'NUMBER') color = '#34d399';
+    
+    return `<div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); color: ${color}; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-family: 'Fira Code', monospace; font-size: 0.8rem;">${token.value}</div>`;
+}
+
+function toggleInspector() {
+    const panel = document.getElementById('inspector-panel');
+    const icon = document.getElementById('inspector-toggle-icon');
+    if (!panel || !icon) return;
+    if (panel.style.display === 'none') {
+        panel.style.display = 'flex';
+        icon.textContent = '[Hide Details]';
+    } else {
+        panel.style.display = 'none';
+        icon.textContent = '[Show Details]';
+    }
+}
+window.toggleInspector = toggleInspector;
+
 /**
  * Main analysis routine.
  */
@@ -843,11 +908,25 @@ function analyzeFormula(rawFormula = '') {
         // 1. Tokenize & clean
         const tokens = tokenize(rawFormula);
         
+        // Render Token Stream
+        const tokenContainer = document.getElementById('token-stream-container');
+        if (tokenContainer) {
+            tokenContainer.innerHTML = tokens.map(t => renderTokenPill(t)).join('');
+        }
+        
         // 2. Identify unary operations
         const processedTokens = identifyUnaryOperators(tokens);
         
         // 3. Shunting-Yard RPN Conversion
         const rpn = infixToRPN(processedTokens);
+        
+        // Render RPN Queue
+        const rpnContainer = document.getElementById('rpn-queue-container');
+        if (rpnContainer) {
+            const pills = rpn.map(t => renderRPNPill(t));
+            const divider = `<div style="display: flex; align-items: center; color: rgba(255,255,255,0.2); font-weight: bold; margin: 0 4px;">&rarr;</div>`;
+            rpnContainer.innerHTML = pills.join(divider);
+        }
         
         // 4. Evaluate stack
         const result = evaluateRPN(rpn, steps);

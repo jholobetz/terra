@@ -78,6 +78,23 @@
                             <!-- JS populated -->
                         </ul>
                     </div>
+
+                    <div class="steps-section" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
+                        <h4 style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 12px;" onclick="toggleInspector()">
+                            <span>Parser Inspector &amp; Token Audit</span>
+                            <span id="inspector-toggle-icon" style="font-size: 0.8rem; opacity: 0.7; font-weight: 500;">[Show Details]</span>
+                        </h4>
+                        <div id="inspector-panel" style="display: none; flex-direction: column; gap: 16px; margin-top: 15px;">
+                            <div>
+                                <span class="metric-title" style="display: block; margin-bottom: 8px; font-size: 0.78rem; text-transform: uppercase; color: var(--accent-color); font-weight: bold; letter-spacing: 0.5px;">1. Tokenized Stream</span>
+                                <div id="token-stream-container" style="display: flex; flex-wrap: wrap; gap: 8px; font-family: monospace;"></div>
+                            </div>
+                            <div>
+                                <span class="metric-title" style="display: block; margin-bottom: 8px; font-size: 0.78rem; text-transform: uppercase; color: var(--accent-color); font-weight: bold; letter-spacing: 0.5px;">2. Reverse Polish Notation (RPN) Queue</span>
+                                <div id="rpn-queue-container" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: monospace;"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="error-panel" class="error-panel" style="display: none;">

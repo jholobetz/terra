@@ -5,6 +5,7 @@ import subprocess
 import shutil
 import hashlib
 import sys
+import html
 from multiprocessing import Pool, cpu_count
 
 class AhoCorasickNode:
@@ -776,9 +777,9 @@ class PhysicsOrchestrator:
                     print(f"SVG Fallback Error for [{clean_latex}]: {str(e)}")
 
         if svg_code:
-            if svg_code.startswith("<svg ") and 'data-tex="' not in svg_code:
+            if svg_code.startswith("<svg") and 'data-tex="' not in svg_code:
                 escaped_latex = html.escape(clean_latex)
-                svg_code = svg_code.replace("<svg ", f'<svg data-tex="{escaped_latex}" ', 1)
+                svg_code = svg_code.replace("<svg", f'<svg data-tex="{escaped_latex}"', 1)
             return svg_code
         
         return clean_latex
@@ -969,8 +970,10 @@ class PhysicsOrchestrator:
                 formula["equation"] = eqn.replace('color: #64ffda', f'color: {color}').replace('color: #64FFDA', f'color: {color}')
                 continue
             
+            clean_latex = re.sub(r'^\\{1,2}\[|^\\{1,2}\(|\\{1,2}\]$|\\{1,2}\)$', '', eqn).strip()
+            clean_latex = re.sub(r'\\{2,}([a-zA-Z])', r'\\\1', clean_latex)
             cache_key = f"REG_{f_id}_{color}"
-            rendering_queue[cache_key] = {"latex": eqn, "is_display": True, "color": color}
+            rendering_queue[cache_key] = {"latex": clean_latex, "is_display": True, "color": color}
             
         if rendering_queue:
             print(f"  -> Batching {len(rendering_queue)} formulas...")
@@ -980,7 +983,15 @@ class PhysicsOrchestrator:
             for f_id, formula in self.data["formula_registry"].items():
                 cache_key = f"REG_{f_id}_{color}"
                 if cache_key in self.svg_cache:
-                    formula["equation"] = self.svg_cache[cache_key]
+                    eqn = formula.get("equation", "")
+                    clean_latex = re.sub(r'^\\{1,2}\[|^\\{1,2}\(|\\{1,2}\]$|\\{1,2}\)$', '', eqn).strip()
+                    clean_latex = re.sub(r'\\{2,}([a-zA-Z])', r'\\\1', clean_latex)
+                    
+                    svg_code = self.svg_cache[cache_key]
+                    if svg_code.startswith("<svg") and 'data-tex="' not in svg_code:
+                        escaped_latex = html.escape(clean_latex)
+                        svg_code = svg_code.replace("<svg", f'<svg data-tex="{escaped_latex}"', 1)
+                    formula["equation"] = svg_code
             
             print("  -> Registry pre-rendered and updated.")
 

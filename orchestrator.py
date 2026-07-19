@@ -982,7 +982,7 @@ class PhysicsOrchestrator:
             # Update registry
             for f_id, formula in self.data["formula_registry"].items():
                 cache_key = f"REG_{f_id}_{color}"
-                if cache_key in self.svg_cache:
+                if cache_key in rendering_queue and cache_key in self.svg_cache:
                     eqn = formula.get("equation", "")
                     clean_latex = re.sub(r'^\\{1,2}\[|^\\{1,2}\(|\\{1,2}\]$|\\{1,2}\)$', '', eqn).strip()
                     clean_latex = re.sub(r'\\{2,}([a-zA-Z])', r'\\\1', clean_latex)

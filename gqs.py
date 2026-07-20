@@ -562,12 +562,40 @@ def ingest_formulas():
         
     print(f"\n✓ SUCCESS: Ingested drafts and updated {len(shards_updated)} shard files.")
     
+    print("\n🎨 Pre-rendering formulas into SVGs...")
+    try:
+        subprocess.run(["python3", "scratch/compile_formulas.py"])
+        print("✓ Formulas compiled to SVG.")
+    except Exception as e:
+        print(f"  ⚠️ Compilation failed: {e}")
+
     print("\n🔄 Synchronizing database tables...")
     try:
         subprocess.run(["php", "cli_sync.php"])
         print("✓ Database table sync completed.")
     except Exception as e:
         print(f"  ⚠️ Database sync failed: {e}")
+
+class FormulaNaming(BaseModel):
+    latex: str = Field(description="The input LaTeX equation.")
+    title: str = Field(description="Standard physical title of the formula.")
+    id: str = Field(description="Clean lowercase alphanumeric slug/ID for the formula using hyphens (e.g. fundamental-thermodynamic-relation).")
+
+class FormulaNamingList(BaseModel):
+    namings: list[FormulaNaming]
+
+def clean_latex(latex_str):
+    import re, html
+    val = latex_str.strip()
+    val = html.unescape(val)
+    val = re.sub(r"^(\\\[|\\\(|\$\$|\$)", "", val)
+    val = re.sub(r"(\\\]|\\\)||\$\$|\$)$", "", val)
+    val = re.sub(r"\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([^}]+)\}", r"\2", val)
+    val = re.sub(r"\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\[a-zA-Z]+|[a-zA-Z0-9])", r"\2", val)
+    val = re.sub(r"_\{[^}]+\}", "", val)
+    val = re.sub(r"_[a-zA-Z0-9]", "", val)
+    val = re.sub(r"[^a-zA-Z0-9_\^\\=+\/\*\(\)\[\]<>\.,;?-]", "", val)
+    return val.lower().strip()
 
 # Define Pydantic Schema for Structured Output at Global Scope
 class SemanticVariable(BaseModel):
@@ -970,6 +998,194 @@ def link_formula_to_subtopic(formula_id: str, subtopic_slug: str):
         return True
     return False
 
+def formula_auto_seed(limit=5, rate_tier="free"):
+    """Scans subtopic contents for unregistered formulas, uses Gemini to generate titles/IDs,
+    registers placeholders in shards, auto-seeds them, compiles them to SVGs, and syncs to database.
+    """
+    import glob
+    import re
+    import html
+    import hashlib
+    import time
+    import keyring
+    import os
+    import tempfile
+    import socket
+    
+    # 1. Configure the Gemini client
+    try:
+        from google import genai
+        from google.genai import types
+        from google.genai.errors import APIError
+    except ImportError:
+        print("Error: The 'google-genai' package is not installed.")
+        return
+
+    api_key = os.environ.get("GEMINI_API_KEY") or keyring.get_password("physics_lab", "gemini_api_key")
+    gcp_project = os.environ.get("GCP_PROJECT_ID")
+    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    is_vertex = bool(gcp_project and credentials_path)
+
+    if is_vertex:
+        print(f"Initializing Vertex AI client for project: {gcp_project}", flush=True)
+        client = genai.Client(
+            vertexai=True,
+            project=gcp_project,
+            location="us-central1",
+            http_options=types.HttpOptions(timeout=30_000)
+        )
+        MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash-lite")
+    else:
+        if not api_key:
+            print("Error: No GEMINI_API_KEY found in environment or keyring.")
+            return
+        if api_key.startswith("AQ.") or api_key.startswith("ya29."):
+            from google.oauth2.credentials import Credentials
+            client = genai.Client(credentials=Credentials(token=api_key), http_options=types.HttpOptions(timeout=30_000))
+        else:
+            client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
+        MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-flash-latest")
+    print(f"Using Model: {MODEL_NAME}", flush=True)
+
+    # 2. Audit to find unregistered formulas
+    print("🛡️ Scanning subtopics for unregistered equations...")
+    registered_latex = set()
+    shards_dir = "app/config/content/formulas"
+    for shard_path in glob.glob(os.path.join(shards_dir, "shard_*.json")):
+        with open(shard_path, 'r', encoding='utf-8') as f:
+            try:
+                shard_data = json.load(f)
+                for f_id, formula in shard_data.items():
+                    eqn = formula.get("equation", "")
+                    if eqn:
+                        if "data-tex=" in eqn:
+                            match = re.search(r'data-tex="([^"]+)"', eqn)
+                            if match:
+                                latex = html.unescape(match.group(1))
+                                registered_latex.add(clean_latex(latex))
+                        else:
+                            registered_latex.add(clean_latex(eqn))
+            except Exception:
+                pass
+
+    subtopics_dir = "app/config/content/"
+    unregistered = {}
+    relation_operators = ["=", "\\propto", "\\approx", "\\le", "\\ge", "<", ">", "\\to", "\\implies"]
+
+    for filepath in glob.glob(os.path.join(subtopics_dir, "*.json")):
+        basename = os.path.basename(filepath)
+        if basename in ["categories.json", "search_index.json", "constants.json", "entities.json", "particles.json", "compiled_trie_regex.json", "formula_aliases.json"]:
+            continue
+            
+        with open(filepath, 'r', encoding='utf-8') as f:
+            try:
+                data = json.load(f)
+                for subtopic_slug, subtopic in data.items():
+                    if not isinstance(subtopic, dict):
+                        continue
+                    content = subtopic.get("content", "")
+                    matches = re.findall(r'data-tex="([^"]+)"', content)
+                    for raw_latex in matches:
+                        latex = html.unescape(raw_latex)
+                        if not any(op in latex for op in relation_operators):
+                            continue
+                        norm = clean_latex(latex)
+                        if norm and norm not in registered_latex:
+                            if latex not in unregistered:
+                                unregistered[latex] = []
+                            if subtopic_slug not in unregistered[latex]:
+                                unregistered[latex].append(subtopic_slug)
+            except Exception:
+                pass
+
+    if not unregistered:
+        print("✓ All equations in subtopic articles are already registered in the database!")
+        return
+
+    # Sort unregistered formulas by reference frequency
+    sorted_unregistered = sorted(unregistered.items(), key=lambda x: len(x[1]), reverse=True)
+    target_unregistered = sorted_unregistered[:limit]
+
+    print(f"Found {len(unregistered)} unregistered formulas. Target limit is {limit}.")
+    print("Top candidates selected for registration and seeding:")
+    for latex, subtopics in target_unregistered:
+        print(f"  * {latex} (used in {len(subtopics)} subtopic(s))")
+
+    # 3. Generate Naming and IDs via Gemini API
+    print("\n🤖 Calling Gemini API to structure titles and slugs...")
+    prompt = (
+        "You are an expert physics editor. Given the following LaTeX equations, "
+        "provide the standard physical title and a clean lowercase alphanumeric ID/slug using hyphens for each. "
+        "Make sure the ID is descriptive (e.g. 'fundamental-thermodynamic-relation' for 'dU = T dS - P dV + ...').\n\n"
+    )
+    for i, (latex, _) in enumerate(target_unregistered):
+        prompt += f"{i+1}. LaTeX: {latex}\n"
+
+    try:
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=FormulaNamingList
+            )
+        )
+        namings = json.loads(response.text).get("namings", [])
+    except Exception as e:
+        print(f"API Error generating names: {e}")
+        return
+
+    # 4. Create formula placeholders and links in shards
+    created_formulas = []
+    for naming in namings:
+        latex = naming.get("latex", "")
+        title = naming.get("title", "")
+        fid = naming.get("id", "").strip().lower()
+        
+        # Find original subtopics references
+        orig_latex = None
+        for k, v in target_unregistered:
+            if clean_latex(k) == clean_latex(latex):
+                orig_latex = k
+                break
+        if not orig_latex:
+            continue
+            
+        subtopics = unregistered[orig_latex]
+        first_subtopic = subtopics[0]
+        
+        print(f"\nCreating placeholder formula '{fid}' (Title: '{title}'):")
+        if create_formula_entry(fid, title, orig_latex, first_subtopic):
+            for subtopic_slug in subtopics[1:]:
+                link_formula_to_subtopic(fid, subtopic_slug)
+            created_formulas.append(fid)
+
+    if not created_formulas:
+        print("\nNo formulas were created.")
+        return
+
+    # 5. Run standard GQS seed to enrich the newly created placeholders
+    print("\n🌱 Seeding contents & explanations for the new formulas...")
+    seed(rate_tier)
+
+    # 6. Pre-render MathJax SVGs via orchestrator compiler
+    print("\n🎨 Pre-rendering formulas into SVGs...")
+    try:
+        subprocess.run(["python3", "scratch/compile_formulas.py"])
+        print("✓ Formulas compiled to SVG.")
+    except Exception as e:
+        print(f"  ⚠️ Compilation failed: {e}")
+
+    # 7. Run database CLI synchronization to push to MariaDB
+    print("\n🔄 Synchronizing database tables...")
+    try:
+        subprocess.run(["php", "cli_sync.php"])
+        print("✓ Database table sync completed.")
+    except Exception as e:
+        print(f"  ⚠️ Database sync failed: {e}")
+
+    print("\n🚀 SUCCESS: Auto-registration, seeding, rendering, and database sync complete!")
+
 def main():
     if len(sys.argv) < 2:
         show_status()
@@ -1033,6 +1249,15 @@ def main():
         fid = sys.argv[2]
         slug = sys.argv[3]
         link_formula_to_subtopic(fid, slug)
+    elif cmd == "formula-auto-seed":
+        limit = 5
+        if len(sys.argv) > 2:
+            try:
+                limit = int(sys.argv[2])
+            except ValueError:
+                pass
+        rate_tier = sys.argv[3] if len(sys.argv) > 3 else "free"
+        formula_auto_seed(limit, rate_tier)
     else:
         print(f"Unknown command '{cmd}'. Available commands:")
         print("  status            Display database status and next stack queue items (Default)")
@@ -1046,6 +1271,7 @@ def main():
         print("  formula-ingest    Graduate completed formula drafts from subfiles/formula_payload.json")
         print("  formula-create    Create a brand new formula and scaffold it for seeding")
         print("  formula-link      Link an existing formula to a subtopic")
+        print("  formula-auto-seed Auto-register and AI-seed N missing equations from subtopic articles")
         sys.exit(1)
 
 if __name__ == "__main__":

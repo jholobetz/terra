@@ -299,6 +299,11 @@ The client-side Equation Explainer frontend implements an advanced parser and na
 * **Workflow Runners**: CI builds run under Node.js 24 and Python 3.14 on macOS and Linux environments.
 * **Deprecation Safety**: Workflows defined in `.github/workflows/tests.yml` must target modern actions version packages (`actions/checkout@v6` and `actions/setup-python@v6`) to ensure warnings-free runs.
 
+### M. API Concurrency & Rate-Limiting Policy
+Whenever implementing or executing scripting components that invoke external LLM APIs (especially Vertex AI / Google AI Studio paid tiers), developers must respect the default platform rate limits (e.g., 200,000 TPM / 300 RPM ceilings) to prevent `ResourceExhausted` blocks:
+1. **Concurrency Cap**: Thread pool limits must not exceed **3 concurrent workers** under heavy loads.
+2. **Polite Staggering**: Implement a mandatory staggered cooldown delay (minimum **1.0 seconds**) between requests to prevent concurrent socket bursts and smooth out the rate distribution.
+
 ---
 
 ## 🏆 4. Session Progress & Tracking

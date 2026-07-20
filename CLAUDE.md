@@ -29,6 +29,10 @@ Our unified developer CLI manages the entire GQS pipeline lifecycle, offering au
 
 # Replenish the pre-resolved GQS stack depth and sync the active sprint
 .venv/bin/python3 gqs.py refill [N]
+
+# Automatically scan, register, AI-seed, render, and sync missing equations
+# rate_tier: "free" (default, uses AI Studio key with 5s delay) or "vertex" (uses GCP Vertex AI in parallel)
+.venv/bin/python3 gqs.py formula-auto-seed <limit> [rate_tier]
 ```
 
 ### 🛡️ Guarded Sprint Orchestrator (Token-Saver & Zero-Interruption)

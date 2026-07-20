@@ -14,7 +14,8 @@ from pydantic import BaseModel, Field
 # Load environment variables from .env if present
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+    load_dotenv(dotenv_path=env_path)
 except ImportError:
     pass
 
@@ -655,7 +656,7 @@ def seed(rate_tier="free"):
     api_key = os.environ.get("GEMINI_API_KEY") or keyring.get_password("physics_lab", "gemini_api_key")
     gcp_project = os.environ.get("GCP_PROJECT_ID")
     credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-    is_vertex = bool(gcp_project and credentials_path)
+    is_vertex = bool(gcp_project and credentials_path and rate_tier == "vertex")
 
     if is_vertex:
         print(f"Initializing Vertex AI client for project: {gcp_project}", flush=True)
@@ -1024,7 +1025,7 @@ def formula_auto_seed(limit=5, rate_tier="free"):
     api_key = os.environ.get("GEMINI_API_KEY") or keyring.get_password("physics_lab", "gemini_api_key")
     gcp_project = os.environ.get("GCP_PROJECT_ID")
     credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-    is_vertex = bool(gcp_project and credentials_path)
+    is_vertex = bool(gcp_project and credentials_path and rate_tier == "vertex")
 
     if is_vertex:
         print(f"Initializing Vertex AI client for project: {gcp_project}", flush=True)

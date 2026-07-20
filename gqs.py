@@ -1112,29 +1112,63 @@ def formula_auto_seed(limit=5, rate_tier="free"):
     for latex, subtopics in target_unregistered:
         print(f"  * {latex} (used in {len(subtopics)} subtopic(s))")
 
-    # 3. Generate Naming and IDs via Gemini API
+    # 3. Generate Naming and IDs via Gemini API (in batches to avoid rate limits & output limits)
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
     print("\n🤖 Calling Gemini API to structure titles and slugs...")
-    prompt = (
-        "You are an expert physics editor. Given the following LaTeX equations, "
-        "provide the standard physical title and a clean lowercase alphanumeric ID/slug using hyphens for each. "
-        "Make sure the ID is descriptive (e.g. 'fundamental-thermodynamic-relation' for 'dU = T dS - P dV + ...').\n\n"
-    )
-    for i, (latex, _) in enumerate(target_unregistered):
-        prompt += f"{i+1}. LaTeX: {latex}\n"
-
+    batch_size = 100
+    batches = [target_unregistered[i:i + batch_size] for i in range(0, len(target_unregistered), batch_size)]
+    print(f"Naming {len(target_unregistered)} formulas in {len(batches)} batches of {batch_size}...")
+    
+    # Parse rate tier or custom cooldown
+    cooldown = 5.0
     try:
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=FormulaNamingList
-            )
+        cooldown = float(rate_tier)
+    except ValueError:
+        if rate_tier in ["paid", "pay", "unlimited"]:
+            cooldown = 0.2
+
+    def process_naming_batch(batch):
+        prompt = (
+            "You are an expert physics editor. Given the following LaTeX equations, "
+            "provide the standard physical title and a clean lowercase alphanumeric ID/slug using hyphens for each. "
+            "Make sure the ID is descriptive (e.g. 'fundamental-thermodynamic-relation' for 'dU = T dS - P dV + ...').\n\n"
         )
-        namings = json.loads(response.text).get("namings", [])
-    except Exception as e:
-        print(f"API Error generating names: {e}")
-        return
+        for i, (latex, _) in enumerate(batch):
+            prompt += f"{i+1}. LaTeX: {latex}\n"
+            
+        for attempt in range(3):
+            try:
+                response = client.models.generate_content(
+                    model=MODEL_NAME,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=FormulaNamingList
+                    )
+                )
+                return json.loads(response.text).get("namings", [])
+            except Exception as e:
+                if "429" in str(e) or "Resource" in str(e) or "exhausted" in str(e).lower():
+                    sleep_time = (attempt + 1) * 10
+                    print(f"  ⚠️ Naming API rate limited for batch. Retrying in {sleep_time}s... Error: {e}")
+                    time.sleep(sleep_time)
+                else:
+                    print(f"  ⚠️ Naming API call error: {e}")
+                    break
+        return []
+
+    namings = []
+    if is_vertex or rate_tier in ["paid", "pay", "unlimited", "vertex"]:
+        print(f"Using parallel naming with 5 workers.")
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = [executor.submit(process_naming_batch, b) for b in batches]
+            for future in as_completed(futures):
+                namings.extend(future.result())
+    else:
+        for b in batches:
+            namings.extend(process_naming_batch(b))
+            time.sleep(cooldown)
 
     # 4. Create formula placeholders and links in shards
     created_formulas = []

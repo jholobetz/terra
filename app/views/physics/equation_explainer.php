@@ -13,6 +13,23 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
         </p>
     </div>
 
+    <!-- Math Rendering Box (Full-Width Top Panel) -->
+    <div class="glass-card math-preview-fullwidth" style="margin-bottom: 30px; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); font-family: 'Space Grotesk', sans-serif; font-weight: 600;">MathJax Render</span>
+            <span id="compiler-status" style="font-size: 0.78rem; color: #10b981; display: flex; align-items: center; gap: 4px; font-family: 'Space Grotesk', sans-serif; font-weight: 500;">
+                <span style="width: 6px; height: 6px; background: currentColor; border-radius: 50%; display: inline-block;"></span>
+                Ready
+            </span>
+        </div>
+        <div id="math-preview-box" 
+             style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 0.8) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 40px 24px; min-height: 110px; display: flex; align-items: center; justify-content: flex-start; box-sizing: border-box; position: relative; overflow-x: auto; max-width: 100%; width: 100%; min-width: 0;">
+            <div id="math-render-target" style="font-size: 1.8rem; color: #ffd700; transition: color 0.2s; margin: 0 auto; line-height: 1.4;">
+                <!-- LaTeX rendered here -->
+            </div>
+        </div>
+    </div>
+
     <div class="explainer-grid">
         <!-- Left Column: LaTeX Compiler and Sandbox -->
         <div class="explainer-panel-left">
@@ -49,22 +66,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     </div>
                 </div>
 
-                <!-- Math Rendering Box -->
-                <div class="math-preview-container" style="margin-bottom: 25px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8);">MathJax Render</span>
-                        <span id="compiler-status" style="font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 4px;">
-                            <span style="width: 6px; height: 6px; background: currentColor; border-radius: 50%; display: inline-block;"></span>
-                            Ready
-                        </span>
-                    </div>
-                    <div id="math-preview-box" 
-                          style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 0.8) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 35px 20px; min-height: 100px; display: flex; align-items: center; justify-content: flex-start; box-sizing: border-box; position: relative; overflow-x: auto; max-width: 100%; width: 100%; min-width: 0;">
-                        <div id="math-render-target" style="font-size: 1.6rem; color: #ffd700; transition: color 0.2s; margin: 0 auto;">
-                            <!-- LaTeX rendered here -->
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Tokenized Symbols Breakdown Section -->
                 <div id="symbols-breakdown" style="display: none; margin-bottom: 25px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px;">

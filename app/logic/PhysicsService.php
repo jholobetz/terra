@@ -473,12 +473,15 @@ class PhysicsService
 
     /**
      * Synchronizes all subtopic shards and topic hubs into the database.
+     * Supports differential delta syncing based on file modification timestamps.
      */
-    public function performSync(): void
+    public function performSync(bool $force = false): void
     {
         $this->loadAllShards();
         $data = $this->getPhysicsContent();
         $db = $this->app->db();
+        $syncLock = PROJECT_ROOT . '/app/config/.last_sync';
+        $lastSyncTime = file_exists($syncLock) ? filemtime($syncLock) : 0;
 
         // 1. Auto-provision the formulas table if it does not exist
         $db->runQuery("CREATE TABLE IF NOT EXISTS formulas (
@@ -518,61 +521,75 @@ class PhysicsService
             $this->syncIndividualSubtopic($slug, $st);
         }
 
-        // 4. Sync Formulas (Grouped Transactionally for Performance)
+        // 4. Sync Formulas (Grouped Transactionally & Differentially)
         $formulasDir = PROJECT_ROOT . '/app/config/content/formulas/';
         $formulaFiles = glob($formulasDir . 'shard_*.json');
         
         $db->runQuery("START TRANSACTION");
         try {
             $diskFormulaIds = [];
+            $syncedShards = 0;
+            $skippedShards = 0;
+
             foreach ($formulaFiles as $file) {
+                $isModified = $force || (filemtime($file) > $lastSyncTime);
                 $content = json_decode(file_get_contents($file), true) ?: [];
+
                 foreach ($content as $fId => $fData) {
                     $diskFormulaIds[] = $fId;
-                    $eq = $fData['equation'] ?? '';
-                    $cleanEq = $eq;
-                    $eqSvg = $fData['equation_svg'] ?? null;
 
-                    if (strpos($eq, '<svg') === 0) {
-                        $eqSvg = $eq;
-                        if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
-                            $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
+                    if ($isModified) {
+                        $eq = $fData['equation'] ?? '';
+                        $cleanEq = $eq;
+                        $eqSvg = $fData['equation_svg'] ?? null;
+
+                        if (strpos($eq, '<svg') === 0) {
+                            $eqSvg = $eq;
+                            if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
+                                $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
+                            }
                         }
-                    }
 
-                    $db->runQuery(
-                        "INSERT INTO formulas (
-                            id, title, equation, equation_svg, conceptual_definition, intuitive_summary, 
-                            interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
-                            unit_system, status
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        ON DUPLICATE KEY UPDATE 
-                            title = VALUES(title),
-                            equation = VALUES(equation),
-                            equation_svg = VALUES(equation_svg),
-                            conceptual_definition = VALUES(conceptual_definition),
-                            intuitive_summary = VALUES(intuitive_summary),
-                            interpretation = VALUES(interpretation),
-                            symmetry_origin = VALUES(symmetry_origin),
-                            limits_and_boundary = VALUES(limits_and_boundary),
-                            semantic_variables = VALUES(semantic_variables),
-                            unit_system = VALUES(unit_system),
-                            status = VALUES(status)",
-                        [
-                            $fId,
-                            $fData['title'],
-                            $cleanEq,
-                            $eqSvg,
-                            $fData['conceptual_definition'] ?? null,
-                            $fData['intuitive_summary'] ?? null,
-                            $fData['interpretation'] ?? null,
-                            $fData['symmetry_origin'] ?? null,
-                            $fData['limits_and_boundary'] ?? null,
-                            isset($fData['semantic_variables']) ? json_encode($fData['semantic_variables']) : null,
-                            $fData['unit_system'] ?? 'SI',
-                            $fData['status'] ?? 'published'
-                        ]
-                    );
+                        $db->runQuery(
+                            "INSERT INTO formulas (
+                                id, title, equation, equation_svg, conceptual_definition, intuitive_summary, 
+                                interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
+                                unit_system, status
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            ON DUPLICATE KEY UPDATE 
+                                title = VALUES(title),
+                                equation = VALUES(equation),
+                                equation_svg = VALUES(equation_svg),
+                                conceptual_definition = VALUES(conceptual_definition),
+                                intuitive_summary = VALUES(intuitive_summary),
+                                interpretation = VALUES(interpretation),
+                                symmetry_origin = VALUES(symmetry_origin),
+                                limits_and_boundary = VALUES(limits_and_boundary),
+                                semantic_variables = VALUES(semantic_variables),
+                                unit_system = VALUES(unit_system),
+                                status = VALUES(status)",
+                            [
+                                $fId,
+                                $fData['title'],
+                                $cleanEq,
+                                $eqSvg,
+                                $fData['conceptual_definition'] ?? null,
+                                $fData['intuitive_summary'] ?? null,
+                                $fData['interpretation'] ?? null,
+                                $fData['symmetry_origin'] ?? null,
+                                $fData['limits_and_boundary'] ?? null,
+                                isset($fData['semantic_variables']) ? json_encode($fData['semantic_variables']) : null,
+                                $fData['unit_system'] ?? 'SI',
+                                $fData['status'] ?? 'published'
+                            ]
+                        );
+                    }
+                }
+
+                if ($isModified) {
+                    $syncedShards++;
+                } else {
+                    $skippedShards++;
                 }
             }
             

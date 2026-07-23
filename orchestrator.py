@@ -213,6 +213,24 @@ class PhysicsOrchestrator:
             hasher.update(buf)
         return hasher.hexdigest()
 
+    def _write_if_changed(self, filepath, data, indent=4):
+        """Writes JSON or text data to filepath ONLY if the SHA-256 content hash has changed."""
+        if isinstance(data, (dict, list)):
+            new_bytes = json.dumps(data, indent=indent, ensure_ascii=False).encode('utf-8')
+        else:
+            new_bytes = data if isinstance(data, bytes) else str(data).encode('utf-8')
+
+        if os.path.exists(filepath):
+            with open(filepath, 'rb') as f:
+                old_bytes = f.read()
+            if hashlib.sha256(old_bytes).hexdigest() == hashlib.sha256(new_bytes).hexdigest():
+                return False
+
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, 'wb') as f:
+            f.write(new_bytes)
+        return True
+
     def _tokenize(self, text):
         """Tokenize content by stripping HTML tags, removing stop words, and keeping words >= 3 chars."""
         if not text:
@@ -1007,12 +1025,16 @@ class PhysicsOrchestrator:
             prefix = hashlib.md5(f_id.encode("utf-8")).hexdigest()[:2]
             sharded_formulas[prefix][f_id] = data
             
-        # Write each shard to disk
+        # Write each shard to disk only if content hash has changed
+        saved_count = 0
         for prefix, shard_data in sharded_formulas.items():
             shard_path = os.path.join(formulas_dir, f"shard_{prefix}.json")
-            with open(shard_path, "w") as f:
-                json.dump(shard_data, f, indent=4)
-        print(f"SAVED: Sharded formula registry (256 shards) to {formulas_dir}")
+            if self._write_if_changed(shard_path, shard_data):
+                saved_count += 1
+        if saved_count > 0:
+            print(f"SAVED: {saved_count}/256 formula shards modified and saved to {formulas_dir}")
+        else:
+            print(f"UNCHANGED: All 256 formula shards are up to date.")
 
     def save(self, auto_commit=True, commit_msg=None, unlock_protected=False, force_full=False, target_slugs=None):
         """Saves all modified shards and registries and optionally commits to Git."""
@@ -1076,13 +1098,10 @@ class PhysicsOrchestrator:
                 "shard": meta.get("shard", f"topics/{slug}.json")
             }
 
-        with open(os.path.join(self.content_dir, "categories.json"), "w") as f:
-            json.dump(clean_topics, f, indent=4)
+        self._write_if_changed(os.path.join(self.content_dir, "categories.json"), clean_topics)
         self.save_formula_registry()
-        with open(os.path.join(self.content_dir, "constants.json"), "w") as f:
-            json.dump(self.data["constants"], f, indent=4)
-        with open(os.path.join(self.content_dir, "entities.json"), "w") as f:
-            json.dump(self.data["entities"], f, indent=4)
+        self._write_if_changed(os.path.join(self.content_dir, "constants.json"), self.data["constants"])
+        self._write_if_changed(os.path.join(self.content_dir, "entities.json"), self.data["entities"])
         
         # 3. Save Topic Shards (Protected)
         for slug, content in self.topic_shards.items():
@@ -1101,8 +1120,7 @@ class PhysicsOrchestrator:
                     print(f"SAFEGUARD: Skipping save for PROTECTED topic shard [{slug}]. Use unlock_protected=True to override.")
                     continue
             
-            with open(path, "w") as f:
-                json.dump(content, f, indent=4)
+            self._write_if_changed(path, content)
             # Record shard hash
             self.build_manifest[f"shard_topic_{slug}"] = self.get_file_hash(path)
 
@@ -1150,8 +1168,7 @@ class PhysicsOrchestrator:
         for shard_name in shards_to_write:
             if shard_name not in self.shards: continue
             path = os.path.join(self.content_dir, shard_name)
-            with open(path, "w") as f:
-                json.dump(self.shards[shard_name], f, indent=4)
+            self._write_if_changed(path, self.shards[shard_name])
             # Record shard hash
             self.build_manifest[f"shard_{shard_name}"] = self.get_file_hash(path)
 

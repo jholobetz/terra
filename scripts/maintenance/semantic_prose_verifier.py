@@ -152,7 +152,13 @@ def check_keywords(cms_text, keywords):
     
     for kw in keywords:
         kw_clean = kw.lower().strip()
-        kw_parts = kw_clean.split()
+        
+        # Check raw text substring match first (handles hyphenated terms & multi-word terms)
+        if kw_clean in cms_clean or kw_clean.replace('-', ' ') in cms_clean or kw_clean.replace(' ', '-') in cms_clean:
+            found.append(kw)
+            continue
+
+        kw_parts = re.split(r'[\s\-]+', kw_clean)
         
         if len(kw_parts) == 1:
             try:
@@ -165,24 +171,20 @@ def check_keywords(cms_text, keywords):
             else:
                 missing.append(kw)
         else:
-            # Multi-word keyword search
-            if kw_clean in cms_clean:
+            # Multi-word/hyphenated fallback: check if all individual components exist
+            parts_found = True
+            for part in kw_parts:
+                try:
+                    part_lemma = lemmatizer.lemmatize(part) if lemmatizer else part
+                except Exception:
+                    part_lemma = part
+                if part_lemma not in cms_tokens and part not in cms_tokens and part not in cms_clean:
+                    parts_found = False
+                    break
+            if parts_found:
                 found.append(kw)
             else:
-                # Fallback: check if all individual components exist
-                parts_found = True
-                for part in kw_parts:
-                    try:
-                        part_lemma = lemmatizer.lemmatize(part)
-                    except Exception:
-                        part_lemma = part
-                    if part_lemma not in cms_tokens and part not in cms_tokens:
-                        parts_found = False
-                        break
-                if parts_found:
-                    found.append(kw)
-                else:
-                    missing.append(kw)
+                missing.append(kw)
                     
     return missing, found
 

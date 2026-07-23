@@ -2,6 +2,9 @@
 
 Physics Lab is a university-level digital physics encyclopedia designed to deliver mathematically rigorous, topologically dense academic articles. The web frontend is built on a streamlined **FlightPHP** MVC framework, while the underlying database is a sharded, flat-file relational JSON structure on disk. Content transitions and style gates are governed by a transactional **Python Content-Graduation Pipeline** that enforces the **Organic Platinum Standard (OPS)**.
 
+> [!NOTE]
+> **Project Terra Blueprint & Deployment Model:** Physics Lab is the flagship domain module of **Project Terra**, an overarching scientific laboratory and reference ecosystem. The project is currently developed locally on macOS (`http://localhost:8000`), tracked with local Git repositories, and designed to be deployed to an independent production LAMP stack. Additional scientific domain modules (e.g., Chemistry Lab, Biology Lab) will be integrated into this shared core engine. For details, see [docs/terra_project_blueprint.md](file:///Users/holobetj/code/gemini/terra/docs/terra_project_blueprint.md).
+
 ---
 
 ## 🚀 1. Quickstart & Commands

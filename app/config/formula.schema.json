@@ -1,0 +1,52 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Physics Formula Shard Schema",
+    "description": "Schema for sharded formula files in the Physics Lab project.",
+    "type": "object",
+    "additionalProperties": {
+        "type": "object",
+        "required": ["title", "equation", "status"],
+        "properties": {
+            "title": {
+                "type": "string",
+                "description": "The display title of the formula."
+            },
+            "equation": {
+                "type": "string",
+                "description": "The compiled SVG string containing the data-tex LaTeX attribute."
+            },
+            "semantic_variables": {
+                "type": "object",
+                "description": "Explicit mappings of LaTeX symbols to constants or concepts.",
+                "additionalProperties": {
+                    "anyOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "ref": { "type": "string" },
+                                "type": { "type": "string" },
+                                "name": { "type": "string" }
+                            }
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "interpretation": { "type": "string" },
+            "symmetry_origin": { "type": "string" },
+            "limits_and_boundary": { "type": "string" },
+            "status": {
+                "type": "string",
+                "enum": ["platinum", "platinum-draft", "draft", "published"]
+            },
+            "unit_system": {
+                "type": "string",
+                "enum": ["SI", "natural", "gaussian", "cgs", "heaviside-lorentz"],
+                "default": "SI",
+                "description": "The dimensional unit system profile used to evaluate this formula (simplifies base dimensions dynamically)."
+            }
+        }
+    }
+}

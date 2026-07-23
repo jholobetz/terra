@@ -1,0 +1,407 @@
+import json
+import re
+import os
+import sys
+
+from scripts.maintenance.generate_system_health import is_node_subjective
+from scripts.maintenance.nist_constants_verifier import audit_constants
+from scripts.maintenance.pdg_particle_verifier import audit_particles
+from scripts.maintenance.semantic_prose_verifier import audit_semantic_prose
+
+# Attempt to import jsonschema, fallback to basic check if not available
+try:
+    from jsonschema import Draft7Validator
+    HAS_JSONSCHEMA = True
+except ImportError:
+    HAS_JSONSCHEMA = False
+
+class IntegrityShield:
+    def __init__(self, content_dir="app/config/content", schema_path="app/config/subtopic.schema.json", formula_schema_path="app/config/formula.schema.json", target_slug=None):
+        self.content_dir = content_dir
+        self.schema_path = schema_path
+        self.formula_schema_path = formula_schema_path
+        self.target_slug = target_slug
+        self.errors = []
+        self.warnings = []
+        self.stats = {"links": 0, "formulas": 0, "topics": 0, "shards": 0}
+        self.load_schema()
+        self.load_data()
+
+    def load_schema(self):
+        if os.path.exists(self.schema_path):
+            with open(self.schema_path, "r") as f:
+                self.schema = json.load(f)
+        else:
+            self.schema = None
+
+        if os.path.exists(self.formula_schema_path):
+            with open(self.formula_schema_path, "r") as f:
+                self.formula_schema = json.load(f)
+        else:
+            self.formula_schema = None
+
+    def load_data(self):
+        search_index_path = os.path.join(self.content_dir, "search_index.json")
+        entities_path = os.path.join(self.content_dir, "entities.json")
+        categories_path = os.path.join(self.content_dir, "categories.json")
+        
+        with open(search_index_path, "r") as f:
+            search_index = json.load(f)
+            
+        self.slug_to_cat = {}
+        for s_slug, entry in search_index.items():
+            shard_name = entry.get("s") if isinstance(entry, dict) else entry
+            if shard_name:
+                self.slug_to_cat[s_slug] = shard_name.replace(".json", "")
+            
+        # Load sharded formulas
+        formulas_dir = os.path.join(self.content_dir, "formulas")
+        self.formula_registry = {}
+        if os.path.exists(formulas_dir):
+            for file in os.listdir(formulas_dir):
+                if file.startswith("shard_") and file.endswith(".json"):
+                    with open(os.path.join(formulas_dir, file), "r") as f:
+                        self.formula_registry.update(json.load(f))
+        else:
+            # Fallback to monolithic formulas.json
+            formulas_path = os.path.join(self.content_dir, "formulas.json")
+            if os.path.exists(formulas_path):
+                with open(formulas_path, "r") as f:
+                    self.formula_registry = json.load(f)
+                    
+        with open(entities_path, "r") as f:
+            self.entities = json.load(f)
+        with open(categories_path, "r") as f:
+            self.topics = json.load(f)
+            
+        self.target_shard = None
+        if self.target_slug:
+            entry = search_index.get(self.target_slug)
+            if entry and isinstance(entry, dict):
+                self.target_shard = entry.get("s")
+            elif isinstance(entry, str):
+                self.target_shard = entry
+            
+        if self.target_slug and self.target_shard:
+            # OPTIMIZED single-target path
+            shard_path = os.path.join(self.content_dir, self.target_shard)
+            with open(shard_path, "r") as f:
+                shard_data = json.load(f)
+            self.all_subtopics = {self.target_slug: shard_data.get(self.target_slug, {})}
+            self.all_slugs = set(search_index.keys()).union(set(self.topics.keys()))
+            self.stats["topics"] = 1
+            self.stats["shards"] = 1
+            
+            class MockOrchestrator:
+                def __init__(self, registry, protected_topics):
+                    self.registry = registry
+                    self.PROTECTED_TOPICS = protected_topics
+            protected_topics = {
+                "classical-mechanics", "electromagnetism", "relativity", "quantum-physics",
+                "standard-model", "astrophysics", "theoretical-physics", "thermodynamics-statistical-mechanics"
+            }
+            registry_path = "global_slug_registry.json"
+            registry = {}
+            if os.path.exists(registry_path):
+                with open(registry_path, "r") as f:
+                    registry = json.load(f)
+            self.orch = MockOrchestrator(registry, protected_topics)
+        else:
+            # Standard full crawl path
+            from orchestrator import PhysicsOrchestrator
+            self.orch = PhysicsOrchestrator(content_dir=self.content_dir)
+            self.all_subtopics = self.orch.data["subtopics"]
+            self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
+            self.stats["topics"] = len(self.all_subtopics)
+            self.stats["shards"] = len(self.orch.shards)
+
+        if HAS_JSONSCHEMA:
+            if self.schema:
+                validator = Draft7Validator(self.schema)
+                files_to_validate = [self.target_shard] if self.target_shard else os.listdir(self.content_dir)
+                for file in files_to_validate:
+                    if not file: continue
+                    if file.endswith(".json") and file not in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json", "particles.json", "pillar_profiles.json", "formula_aliases.json"]:
+                        path = os.path.join(self.content_dir, file)
+                        with open(path, "r") as f:
+                            content = json.load(f)
+                        for err in validator.iter_errors(content):
+                            slug = err.path[0] if err.path else "<root>"
+                            if self.target_slug and slug != self.target_slug:
+                                continue
+                            self.errors.append(f"Schema Violation in {file} :: {slug}: {err.message}")
+
+            if self.formula_schema:
+                formula_validator = Draft7Validator(self.formula_schema)
+                formulas_dir = os.path.join(self.content_dir, "formulas")
+                if os.path.exists(formulas_dir):
+                    for file in os.listdir(formulas_dir):
+                        if file.startswith("shard_") and file.endswith(".json"):
+                            path = os.path.join(formulas_dir, file)
+                            with open(path, "r") as f:
+                                content = json.load(f)
+                            for err in formula_validator.iter_errors(content):
+                                f_id = err.path[0] if err.path else "<root>"
+                                self.errors.append(f"Formula Schema Violation in formulas/{file} :: {f_id}: {err.message}")
+
+        if not self.target_slug:
+            self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))
+            self.stats["topics"] = len(self.all_subtopics)
+            self.stats["shards"] = len(self.orch.shards)
+
+    def check_formulas(self):
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub: continue
+            for f_id in sub.get("formula_ids", []):
+                self.stats["formulas"] += 1
+                if f_id not in self.formula_registry:
+                    self.errors.append(f"Broken Formula: [{slug}] refs unknown ID '{f_id}'")
+                else:
+                    eq = self.formula_registry[f_id].get("equation", "")
+                    if "merror" in eq or "mjx-error" in eq or "math-error" in eq or re.search(r'(fill|stroke)=[\\"\']?red[\\"\']?', eq):
+                        self.errors.append(
+                            f"MathJax Rendering Error: [{slug}] refs formula '{f_id}' "
+                            f"which contains MathJax compilation errors (red-text markup or math-error)."
+                        )
+                    if "math-path-" in eq:
+                        self.errors.append(
+                            f"SPRITIFIED FORMULA DETECTED: [{slug}] refs formula '{f_id}' "
+                            f"which contains spritified math references ('math-path-'). Only fully-inlined SVGs are allowed."
+                        )
+
+    def check_duplicates(self):
+        """Ensures every subtopic slug exists in exactly one shard and no protected slugs in subtopic shards."""
+        slug_map = {}
+        protected_topics = self.orch.PROTECTED_TOPICS
+
+        for file in os.listdir(self.content_dir):
+            if not file.endswith(".json") or file in ["categories.json", "formulas.json", "constants.json", "entities.json", "search_index.json", "compiled_trie_regex.json", "notation.json", "particles.json", "pillar_profiles.json", "formula_aliases.json"]:
+                continue
+
+            # Skip the topics directory as it's handled separately or contains the protected ones
+            if "topics/" in file: continue 
+
+            path = os.path.join(self.content_dir, file)
+            with open(path, "r") as f:
+                shard_content = json.load(f)
+                if self.target_slug:
+                    if self.target_slug in shard_content:
+                        if self.target_slug in protected_topics:
+                            self.errors.append(f"PROTECTED SLUG VIOLATION: [{self.target_slug}] found in subtopic shard {file}")
+                        if self.target_slug in slug_map:
+                            self.errors.append(f"CRITICAL DUPLICATE: [{self.target_slug}] exists in both {slug_map[self.target_slug]} and {file}")
+                        slug_map[self.target_slug] = file
+                else:
+                    for slug in shard_content:
+                        if slug in protected_topics:
+                            self.errors.append(f"PROTECTED SLUG VIOLATION: [{slug}] found in subtopic shard {file}")
+
+                        if slug in slug_map:
+                            self.errors.append(f"CRITICAL DUPLICATE: [{slug}] exists in both {slug_map[slug]} and {file}")
+                        slug_map[slug] = file
+
+    def check_technical_density(self):
+        tech_terms = ["manifold", "operator", "unitary", "tensor", "symmetry", "conservation", "variational", "hamiltonian", "lagrangian", "eigenvalue", "generator"]
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub or "content" not in sub: continue
+            content = sub["content"]
+            content_no_svg = re.sub(r'<svg.*?</svg>', '', content, flags=re.DOTALL)
+            latex_count = len(re.findall(r'\\\(|\\\[', content)) + content.count("<svg")
+            term_score = sum(5 for term in tech_terms if term in content_no_svg.lower())
+            words = len(re.findall(r'\w+', content_no_svg))
+            total_score = (latex_count * 15) + term_score
+            
+            # Subjective vs Objective weighting
+            cat = self.slug_to_cat.get(slug)
+            is_subjective = is_node_subjective(slug, sub, category=cat)
+            density_target = 30 if is_subjective else 60
+            word_target = 500 if is_subjective else 650
+            
+            if words < word_target:
+                self.warnings.append(f"Low Depth: [{slug}] word count too low ({words}).")
+            if total_score < density_target:
+                self.warnings.append(f"Non-Technical: [{slug}] density too low (Score: {total_score}, Target: {density_target}).")
+
+    def check_entities(self):
+        """Finds entity names in text that are NOT yet linked."""
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for e_id, e_data in self.entities.items():
+            name = e_data["name"]
+            # Match name not preceded by > or = and not followed by <
+            pattern = re.compile(rf'(?<![=">])\b{re.escape(name)}\b(?![<])')
+            for slug in subtopics_to_check:
+                sub = self.all_subtopics.get(slug)
+                if not sub or "content" not in sub: continue
+                if pattern.search(sub["content"]):
+                    self.warnings.append(f"Unlinked Entity: [{slug}] mentions '{name}'. Auto-link recommended.")
+
+    def check_registry(self):
+        """Ensures all protected topics are pinned in the registry."""
+        if self.target_slug and self.target_slug not in self.orch.PROTECTED_TOPICS:
+            return
+        registry_reverse = {v: k for k, v in self.orch.registry.items()}
+        for slug in self.orch.PROTECTED_TOPICS:
+            if self.target_slug and slug != self.target_slug:
+                continue
+            if slug not in registry_reverse:
+                self.errors.append(f"REGISTRY MISSING: Protected topic [{slug}] not found in global registry.")
+
+    def check_links(self):
+        link_pattern = re.compile(r'href=[\\"]+/physics/(subtopic|topic)/([^\\"]+)[\\"]+')
+        def scan(text, source):
+            matches = link_pattern.findall(text)
+            for _, target in matches:
+                self.stats["links"] += 1
+                if target not in self.all_slugs:
+                    self.errors.append(f"Broken Link: [{source}] -> '{target}'")
+
+        if self.target_slug:
+            sub = self.all_subtopics.get(self.target_slug)
+            if sub and "content" in sub:
+                scan(sub["content"], self.target_slug)
+            topic = self.topics.get(self.target_slug)
+            if topic and "content" in topic:
+                scan(topic["content"], self.target_slug)
+        else:
+            for slug, sub in self.all_subtopics.items():
+                if "content" in sub:
+                    scan(sub["content"], slug)
+            for slug, topic in self.topics.items():
+                if "content" in topic:
+                    scan(topic["content"], slug)
+
+    def check_latex_formatting(self):
+        """Ensures Platinum subtopics do not contain raw LaTeX delimiters."""
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub: continue
+            if sub.get("standard") == "platinum":
+                content = sub.get("content", "")
+                # Pattern for \( or \[ or \) or \]
+                if re.search(r'\\{1,2}\[|\\{1,2}\(|\\{1,2}\]|\\{1,2}\)', content):
+                    self.errors.append(f"SSR VIOLATION: [{slug}] is Platinum but contains raw LaTeX delimiters. Pre-rendering required.")
+
+    def check_math_rendering(self):
+        """Ensures all display math blocks in Platinum subtopics are fully compiled to SVGs."""
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub: continue
+            if sub.get("standard") == "platinum":
+                content = sub.get("content", "")
+                # Ensure all display math blocks contain <svg> tags and do not leak raw LaTeX
+                math_displays = re.findall(r'<div class="math-display"[^>]*>(.*?)</div>', content, re.DOTALL)
+                for i, display in enumerate(math_displays):
+                    if "<svg" not in display:
+                        self.errors.append(f"MATH RENDERING VIOLATION: [{slug}] is Platinum but has a raw LaTeX display math equation (missing SVG): '{display[:80]}...'")
+
+    def check_spritified_references(self):
+        """Ensures all subtopics do not contain spritified SVG math references."""
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub: continue
+            content = sub.get("content", "")
+            if "math-path-" in content:
+                self.errors.append(f"SPRITIFIED MATH DETECTED: [{slug}] contains spritified math references ('math-path-'). Only fully-inlined self-contained SVGs are allowed.")
+
+    def check_constants(self):
+        if not self.target_slug:
+            success = audit_constants(
+                constants_path=os.path.join(self.content_dir, "constants.json"),
+                ref_path="app/config/ref_data/codata_2022.json"
+            )
+            if not success:
+                self.errors.append("NIST CODATA Constants Alignment Check failed.")
+
+    def check_particles(self):
+        if not self.target_slug:
+            success = audit_particles(
+                particles_path=os.path.join(self.content_dir, "particles.json"),
+                ref_path="app/config/ref_data/pdg_2024.json"
+            )
+            if not success:
+                self.errors.append("PDG Particle Properties Alignment Check failed.")
+
+    def check_semantic_prose(self):
+        ref_path = "app/config/ref_data/semantic_references.json"
+        if not os.path.exists(ref_path):
+            return
+        success = audit_semantic_prose(
+            content_dir=self.content_dir,
+            ref_path=ref_path,
+            target_slug=self.target_slug
+        )
+        if not success:
+            self.errors.append("Semantic Prose Validation failed (possible semantic drift or critical keyword omission).")
+
+    def check_ambiguity(self):
+        import subprocess
+        print("🛡️ Auditing formula variable ambiguity...")
+        try:
+            cmd = ["node", "scripts/maintenance/audit_ambiguity.js"]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                lines = result.stdout.split('\n')
+                for line in lines:
+                    if line.strip() and "🔍" not in line and "⚠️" not in line:
+                        self.errors.append(f"Formula Ambiguity Check failed: {line.strip()}")
+        except Exception as e:
+            self.warnings.append(f"Could not run Node.js ambiguity audit: {str(e)}")
+
+    def run(self):
+        print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
+        print(f"Directory: {self.content_dir}")
+        if self.target_slug:
+            print(f"Status: Targeted audit on slug '{self.target_slug}' in shard '{self.target_shard}'")
+        else:
+            print(f"Status: {self.stats['shards']} shards, {self.stats['topics']} topics.")
+        
+        self.check_duplicates()
+        self.check_formulas()
+        self.check_registry()
+        self.check_technical_density()
+        self.check_entities()
+        self.check_links()
+        self.check_latex_formatting()
+        self.check_math_rendering()
+        self.check_spritified_references()
+        self.check_constants()
+        self.check_particles()
+        self.check_semantic_prose()
+        self.check_ambiguity()
+
+        
+        print(f"Stats:  {self.stats['links']} links, {self.stats['formulas']} formula refs.")
+        
+        if not HAS_JSONSCHEMA:
+            print("\033[93mNOTE: 'jsonschema' library not found. Skipping structural validation.\033[0m")
+
+        if self.errors:
+            print(f"\n\033[91mERRORS FOUND ({len(self.errors)}):\033[0m")
+            for err in self.errors[:15]:
+                print(f"  - {err}")
+            if len(self.errors) > 15:
+                print(f"  ... and {len(self.errors)-15} more.")
+            return False
+        
+        if self.warnings:
+            print(f"\n\033[93mWARNINGS ({len(self.warnings)}):\033[0m")
+            for warn in self.warnings[:5]:
+                print(f"  - {warn}")
+            if len(self.warnings) > 5:
+                print(f"  ... and {len(self.warnings)-5} more.")
+
+        print("\n\033[92m✓ SHIELD SECURE: All shards are valid and linked.\033[0m")
+        return True
+
+if __name__ == "__main__":
+    target = sys.argv[1] if len(sys.argv) > 1 else None
+    shield = IntegrityShield(target_slug=target)
+    success = shield.run()
+    sys.exit(0 if success else 1)

@@ -354,6 +354,16 @@ class IntegrityShield:
         except Exception as e:
             self.warnings.append(f"Could not run Node.js ambiguity audit: {str(e)}")
 
+    def check_forbidden_headers(self):
+        """Ensures all subtopics do not contain forbidden HTML header tags (<h1-h6>). Only continuous <p> prose is allowed."""
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub: continue
+            content = sub.get("content", "")
+            if re.search(r'<h[1-6][^>]*>', content, re.IGNORECASE):
+                self.errors.append(f"FORMATTING VIOLATION: [{slug}] contains forbidden HTML header tags (<h1-h6>). Only continuous <p> prose is allowed.")
+
     def run(self):
         print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
         print(f"Directory: {self.content_dir}")
@@ -371,6 +381,7 @@ class IntegrityShield:
         self.check_latex_formatting()
         self.check_math_rendering()
         self.check_spritified_references()
+        self.check_forbidden_headers()
         self.check_constants()
         self.check_particles()
         self.check_semantic_prose()

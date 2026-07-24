@@ -306,6 +306,16 @@ class PhysicsService
                             ? (json_decode($formula['semantic_variables'], true) ?: [])
                             : $formula['semantic_variables'];
                     }
+                    if (isset($formula['constraints'])) {
+                        $formula['constraints'] = is_string($formula['constraints'])
+                            ? (json_decode($formula['constraints'], true) ?: [])
+                            : $formula['constraints'];
+                    }
+                    if (isset($formula['related_formula_ids'])) {
+                        $formula['related_formula_ids'] = is_string($formula['related_formula_ids'])
+                            ? (json_decode($formula['related_formula_ids'], true) ?: [])
+                            : $formula['related_formula_ids'];
+                    }
                     if (!empty($formula['equation_svg'])) {
                         $formula['equation'] = $formula['equation_svg'];
                     }
@@ -340,6 +350,73 @@ class PhysicsService
         }
 
         return null;
+    }
+
+    /**
+     * Traverses the Science Knowledge Graph for a given formula ID.
+     * Returns the target node, parent formula node (if derived), child derivative nodes,
+     * and related formula nodes.
+     */
+    public function getFormulaGraph(string $formulaId): array
+    {
+        $formula = $this->loadFormula($formulaId);
+        if (!$formula) {
+            return ['node' => null, 'parent' => null, 'children' => [], 'related' => []];
+        }
+
+        $formula['id'] = $formulaId;
+        $db = $this->app->db();
+
+        $parent = null;
+        if (!empty($formula['parent_formula_id'])) {
+            $parent = $this->loadFormula($formula['parent_formula_id']);
+            if ($parent) {
+                $parent['id'] = $formula['parent_formula_id'];
+            }
+        }
+
+        $children = [];
+        try {
+            $childRows = $db->fetchAll(
+                "SELECT id, title, equation, derivation_type, constraints 
+                 FROM formulas 
+                 WHERE parent_formula_id = ?",
+                [$formulaId]
+            );
+            foreach ($childRows as $row) {
+                $children[] = [
+                    'id' => $row['id'],
+                    'title' => $row['title'],
+                    'equation' => $row['equation'],
+                    'derivation_type' => $row['derivation_type'],
+                    'constraints' => !empty($row['constraints']) ? json_decode($row['constraints'], true) : null
+                ];
+            }
+        } catch (\Exception $e) {
+            // DB fallback
+        }
+
+        $related = [];
+        $relatedIds = $formula['related_formula_ids'] ?? [];
+        if (!empty($relatedIds)) {
+            foreach ($relatedIds as $relId) {
+                $relNode = $this->loadFormula($relId);
+                if ($relNode) {
+                    $related[] = [
+                        'id' => $relId,
+                        'title' => $relNode['title'],
+                        'equation' => $relNode['equation'] ?? ''
+                    ];
+                }
+            }
+        }
+
+        return [
+            'node' => $formula,
+            'parent' => $parent,
+            'children' => $children,
+            'related' => $related
+        ];
     }
 
     /**
@@ -516,6 +593,10 @@ class PhysicsService
 
         $db->runQuery("CREATE TABLE IF NOT EXISTS formulas (
             id VARCHAR(255) PRIMARY KEY,
+            parent_formula_id VARCHAR(255),
+            derivation_type VARCHAR(50),
+            constraints JSON,
+            related_formula_ids JSON,
             title VARCHAR(255) NOT NULL,
             equation MEDIUMTEXT NOT NULL,
             equation_svg MEDIUMTEXT,
@@ -531,6 +612,26 @@ class PhysicsService
 
         try {
             $db->runQuery("ALTER TABLE formulas ADD COLUMN equation_svg MEDIUMTEXT AFTER equation;");
+        } catch (\Exception $e) {
+            // Column already exists, ignore
+        }
+        try {
+            $db->runQuery("ALTER TABLE formulas ADD COLUMN parent_formula_id VARCHAR(255) AFTER id;");
+        } catch (\Exception $e) {
+            // Column already exists, ignore
+        }
+        try {
+            $db->runQuery("ALTER TABLE formulas ADD COLUMN derivation_type VARCHAR(50) AFTER parent_formula_id;");
+        } catch (\Exception $e) {
+            // Column already exists, ignore
+        }
+        try {
+            $db->runQuery("ALTER TABLE formulas ADD COLUMN constraints JSON AFTER derivation_type;");
+        } catch (\Exception $e) {
+            // Column already exists, ignore
+        }
+        try {
+            $db->runQuery("ALTER TABLE formulas ADD COLUMN related_formula_ids JSON AFTER constraints;");
         } catch (\Exception $e) {
             // Column already exists, ignore
         }
@@ -594,11 +695,16 @@ class PhysicsService
 
                         $db->runQuery(
                             "INSERT INTO formulas (
-                                id, title, equation, equation_svg, conceptual_definition, intuitive_summary, 
+                                id, parent_formula_id, derivation_type, constraints, related_formula_ids,
+                                title, equation, equation_svg, conceptual_definition, intuitive_summary, 
                                 interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
                                 unit_system, status
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                             ON DUPLICATE KEY UPDATE 
+                                parent_formula_id = VALUES(parent_formula_id),
+                                derivation_type = VALUES(derivation_type),
+                                constraints = VALUES(constraints),
+                                related_formula_ids = VALUES(related_formula_ids),
                                 title = VALUES(title),
                                 equation = VALUES(equation),
                                 equation_svg = VALUES(equation_svg),
@@ -612,6 +718,10 @@ class PhysicsService
                                 status = VALUES(status)",
                             [
                                 $fId,
+                                $fData['parent_formula_id'] ?? null,
+                                $fData['derivation_type'] ?? null,
+                                !empty($fData['constraints']) ? json_encode($fData['constraints']) : null,
+                                !empty($fData['related_formula_ids']) ? json_encode($fData['related_formula_ids']) : null,
                                 $fData['title'],
                                 $cleanEq,
                                 $eqSvg,

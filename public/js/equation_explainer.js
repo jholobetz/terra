@@ -1915,6 +1915,9 @@ const EquationExplainer = {
         }
         this.renderAIScenariosSection(scenarios);
 
+        // Render Knowledge Graph Ancestry card
+        this.renderKnowledgeGraphCard(formula);
+
         // Deconstruct EVERY element in the LaTeX string, merging database semantic definitions for left panel hover list
         this.renderElementsBreakdown(this.currentLatex, formula.semantic_variables || {});
 
@@ -1926,6 +1929,35 @@ const EquationExplainer = {
 
         // Initialize sandbox simulator
         this.initSandbox(this.currentLatex, formula.semantic_variables || {});
+    },
+
+    renderKnowledgeGraphCard(formula) {
+        const card = document.getElementById('knowledge-graph-card');
+        const details = document.getElementById('knowledge-graph-details');
+        if (!card || !details) return;
+
+        if (!formula || (!formula.parent_formula_id && !formula.derivation_type && !formula.related_formula_ids)) {
+            card.style.display = 'none';
+            return;
+        }
+
+        card.style.display = 'flex';
+        let html = '';
+        if (formula.derivation_type) {
+            html += `<div style="margin-bottom: 6px;"><strong>Derivation Relationship:</strong> <span class="badge-status badge-platinum" style="font-size: 0.72rem; padding: 2px 6px; background: rgba(100,255,218,0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100,255,218,0.3); border-radius: 4px;">${formula.derivation_type}</span></div>`;
+        }
+        if (formula.parent_formula_id) {
+            const parentUrl = `/physics/equation-explainer?id=${encodeURIComponent(formula.parent_formula_id)}`;
+            html += `<div style="margin-bottom: 6px;"><strong>Master Parent Law:</strong> <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; border-bottom: 1px dashed rgba(100,255,218,0.4); font-weight: 600;">${formula.parent_formula_id}</a></div>`;
+        }
+        if (formula.constraints) {
+            try {
+                const c = typeof formula.constraints === 'string' ? JSON.parse(formula.constraints) : formula.constraints;
+                html += `<div style="margin-bottom: 6px;"><strong>Active Physical Constraints:</strong> <code style="font-family: monospace; color: #a855f7; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${JSON.stringify(c)}</code></div>`;
+            } catch(e) {}
+        }
+        details.innerHTML = html;
+        this.triggerTypeset([details]);
     },
 
     renderCustomExplanation(latex) {

@@ -182,6 +182,16 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         </div>
                     </div>
 
+                    <!-- Knowledge Graph Ancestry Card -->
+                    <div id="knowledge-graph-card" style="display: none; background: rgba(100, 255, 218, 0.03); border: 1px solid rgba(100, 255, 218, 0.15); border-radius: 12px; padding: 20px; flex-direction: column; gap: 12px;">
+                        <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                            🕸️ Knowledge Graph Ancestry &amp; Relational Edges
+                        </h4>
+                        <div id="knowledge-graph-details" style="font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
+                            <!-- JS populated -->
+                        </div>
+                    </div>
+
                     <!-- Section 4: Live Simulation Sandbox -->
                     <div id="ai-simulation-card" style="display: none !important; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 20px; flex-direction: column; gap: 15px; margin-top: 10px;">
                         <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">

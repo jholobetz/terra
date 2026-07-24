@@ -235,20 +235,27 @@ const MathJaxInspector = {
 
     setupListeners() {
         const findEquationContainer = (target) => {
-            return target.closest('svg[data-tex], .MathJax, mjx-container');
+            return target.closest('svg[data-tex], [data-tex], .MathJax, mjx-container, .math-content, .formula-math-display, .explainer-link-btn, a[href*="equation-explainer"]');
         };
 
-        // Redirect or open in-context drawer on click
-        document.body.addEventListener('click', (e) => {
+        // Intercept equation clicks globally to open FormulaInspector drawer
+        document.addEventListener('click', (e) => {
             const container = findEquationContainer(e.target);
             if (container) {
-                e.preventDefault();
-                e.stopPropagation();
-
                 const latex = this.getLatexForElement(container);
                 if (latex) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
                     const formulaContainer = container.closest('[data-formula-id]');
-                    const formulaId = formulaContainer ? formulaContainer.getAttribute('data-formula-id') : null;
+                    let formulaId = formulaContainer ? formulaContainer.getAttribute('data-formula-id') : null;
+
+                    if (!formulaId && container.href) {
+                        try {
+                            const u = new URL(container.href, window.location.origin);
+                            formulaId = u.searchParams.get('id');
+                        } catch (err) {}
+                    }
                     
                     if (window.FormulaInspector) {
                         window.FormulaInspector.open(latex, formulaId);
@@ -260,19 +267,33 @@ const MathJaxInspector = {
                         }
                         window.location.href = url;
                     }
+                }
             }
-        });
+        }, true);
     },
 
     getLatexForElement(el) {
-        // 1. Direct or ancestor data-tex attribute (covers pre-rendered SVGs)
-        const svgEl = el.closest('svg[data-tex], [data-tex]');
-        if (svgEl && svgEl.getAttribute('data-tex')) {
-            return svgEl.getAttribute('data-tex');
+        if (!el) return null;
+
+        // 0. Check link URL query parameters (for explainer links)
+        const linkEl = el.closest('a[href*="equation-explainer"]');
+        if (linkEl && linkEl.href) {
+            try {
+                const u = new URL(linkEl.href, window.location.origin);
+                const l = u.searchParams.get('latex');
+                if (l) return l;
+            } catch (err) {}
+        }
+
+        // 1. Direct or ancestor data-tex or data-latex attribute
+        const texEl = el.closest('svg[data-tex], [data-tex], [data-latex]');
+        if (texEl) {
+            const attr = texEl.getAttribute('data-tex') || texEl.getAttribute('data-latex');
+            if (attr) return attr;
         }
 
         // 2. MathJax 3 CHTML container check
-        const mathJaxContainer = el.closest('.MathJax, mjx-container, .math-content');
+        const mathJaxContainer = el.closest('.MathJax, mjx-container, .math-content, .formula-math-display');
         if (mathJaxContainer && window.MathJax && window.MathJax.startup && window.MathJax.startup.document && window.MathJax.startup.document.math) {
             try {
                 for (const mathItem of window.MathJax.startup.document.math) {
@@ -289,10 +310,25 @@ const MathJaxInspector = {
             }
         }
 
-        // 3. Fallback check for any sub-tags or attributes or assistive MathML
-        const mmlAnnotation = el.closest('.MathJax, mjx-container')?.querySelector('annotation[encoding="application/x-tex"]');
+        // 3. Inner SVG check inside math container
+        const innerSvg = mathJaxContainer?.querySelector('svg[data-tex], [data-tex]');
+        if (innerSvg && innerSvg.getAttribute('data-tex')) {
+            return innerSvg.getAttribute('data-tex');
+        }
+
+        // 4. Fallback check for MathML annotation
+        const mmlAnnotation = mathJaxContainer?.querySelector('annotation[encoding="application/x-tex"]');
         if (mmlAnnotation) {
             return mmlAnnotation.textContent.trim();
+        }
+
+        // 5. Fallback text content extraction
+        if (mathJaxContainer) {
+            const text = mathJaxContainer.textContent.trim();
+            const clean = text.replace(/^\\\[/, '').replace(/\\\]$/, '').replace(/^\$\$/, '').replace(/\$\$$/, '').replace(/^\$/, '').replace(/\$/, '').trim();
+            if (clean.length > 0) {
+                return clean;
+            }
         }
 
         return null;

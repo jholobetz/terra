@@ -162,6 +162,11 @@ class PhysicsController
             }
         }
         
+        if (($this->app->request()->query['format'] ?? '') === 'json') {
+            $this->apiExplain();
+            return;
+        }
+
         $this->renderWithLayout('physics/equation_explainer', [
             'title' => 'Interactive Equation Explainer',
             'id' => $id,
@@ -188,11 +193,11 @@ class PhysicsController
         }
         
         $formula = $this->service()->searchFormulaByLatex($latex);
-        if ($formula) {
-            echo json_encode(['success' => true, 'formula' => $formula]);
-        } else {
-            echo json_encode(['success' => false, 'error' => 'No matching formula found in shards.']);
+        if (!$formula) {
+            $formula = $this->service()->synthesizeFormulaExplanation($latex);
         }
+
+        echo json_encode(['success' => true, 'formula' => $formula]);
     }
 
     /**

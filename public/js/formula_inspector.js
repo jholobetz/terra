@@ -251,7 +251,8 @@ const FormulaInspector = {
         }
 
         // Fetch formula data & graph from API
-        fetch(`/physics/equation-explainer?latex=${encodeURIComponent(latex)}&format=json`)
+        const apiUrl = `/physics/equation-explainer?format=json${formulaId ? '&id=' + encodeURIComponent(formulaId) : ''}${latex ? '&latex=' + encodeURIComponent(latex) : ''}`;
+        fetch(apiUrl)
             .then(res => res.json())
             .catch(() => null)
             .then(data => {

@@ -130,6 +130,7 @@
     </div>
 
     <script src="/js/search_engine.js" defer></script>
+    <script src="/js/formula_inspector.js" defer></script>
     <script src="/js/mathjax_inspector.js" defer></script>
     <script src="/js/derivation_accordions.js" defer></script>
 </body>

@@ -217,13 +217,18 @@ const MathJaxInspector = {
             if (latex) {
                 const container = this.activeElement.closest('[data-formula-id]');
                 const formulaId = container ? container.getAttribute('data-formula-id') : null;
-                const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
                 
-                let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
-                if (formulaId) {
-                    url += '&id=' + encodeURIComponent(formulaId);
+                if (window.FormulaInspector) {
+                    this.hide();
+                    window.FormulaInspector.open(latex, formulaId);
+                } else {
+                    const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
+                    let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+                    if (formulaId) {
+                        url += '&id=' + encodeURIComponent(formulaId);
+                    }
+                    window.location.href = url;
                 }
-                window.location.href = url;
             }
         });
     },
@@ -233,7 +238,7 @@ const MathJaxInspector = {
             return target.closest('svg[data-tex], .MathJax, mjx-container');
         };
 
-        // Redirect directly to the equation explainer on click
+        // Redirect or open in-context drawer on click
         document.body.addEventListener('click', (e) => {
             const container = findEquationContainer(e.target);
             if (container) {
@@ -244,14 +249,17 @@ const MathJaxInspector = {
                 if (latex) {
                     const formulaContainer = container.closest('[data-formula-id]');
                     const formulaId = formulaContainer ? formulaContainer.getAttribute('data-formula-id') : null;
-                    const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
                     
-                    let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
-                    if (formulaId) {
-                        url += '&id=' + encodeURIComponent(formulaId);
+                    if (window.FormulaInspector) {
+                        window.FormulaInspector.open(latex, formulaId);
+                    } else {
+                        const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
+                        let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+                        if (formulaId) {
+                            url += '&id=' + encodeURIComponent(formulaId);
+                        }
+                        window.location.href = url;
                     }
-                    window.location.href = url;
-                }
             }
         });
     },

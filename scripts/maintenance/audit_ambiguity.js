@@ -22,8 +22,11 @@ global.localStorage = {
     getItem: () => null
 };
 
-// Load actual frontend script
-const jsPath = path.resolve(__dirname, '../../public/js/equation_explainer.js');
+// Load actual frontend script (prefer compiled dist bundle)
+let jsPath = path.resolve(__dirname, '../../public/js/dist/equation_explainer.bundle.js');
+if (!fs.existsSync(jsPath)) {
+    jsPath = path.resolve(__dirname, '../../public/js/equation_explainer.js');
+}
 let jsCode;
 try {
     jsCode = fs.readFileSync(jsPath, 'utf8');

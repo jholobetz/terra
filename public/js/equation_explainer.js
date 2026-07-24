@@ -1941,15 +1941,15 @@ const EquationExplainer = {
         // Deconstruct EVERY element in the custom LaTeX string first to populate activeBinder
         this.renderElementsBreakdown(latex, {});
 
+        // Synthesize dynamic AI Overview
+        const synthesis = this.synthesizeCustomOverview(latex);
+
         // Title and Badge
-        this.formulaTitle.textContent = this.activeBinder ? this.activeBinder.name : 'Custom Physics Formula';
+        this.formulaTitle.textContent = this.activeBinder ? this.activeBinder.name : (synthesis.title || 'Custom Physics Formula');
         if (this.formulaBadge) {
             this.formulaBadge.className = 'badge-status badge-unregistered';
             this.formulaBadge.textContent = 'Live Analysis';
         }
-
-        // Synthesize dynamic AI Overview
-        const synthesis = this.synthesizeCustomOverview(latex);
 
         if (this.conceptualIntroCard) {
             this.conceptualIntroCard.style.display = 'flex';
@@ -3411,12 +3411,34 @@ const EquationExplainer = {
     },
 
     synthesizeCustomOverview(latex) {
+        let title = "Custom Physics Relation";
         let intro = "This mathematical expression represents a physical relation between variables.";
         let summary = "It is used to calculate the relative dynamics of the physical system.";
         let scenarios = [];
 
+        // 0. Detect Static Limits of Maxwell's Equations
+        if ((latex.includes('\\nabla \\times') || latex.includes('curl')) && (latex.includes('\\to 0') || latex.includes('=0') || latex.includes('\\to\\mathbf{0}')) && (latex.includes('\\mathbf{B}') || latex.includes('B'))) {
+            title = "Static Limits of Maxwell's Equations";
+            intro = "The steady-state or static limits of Maxwell's equations govern electromagnetic phenomena when charge distributions and currents are non-varying in time.";
+            summary = "Under static conditions where fields do not change over time, the electric field is irrotational (curl-free), while magnetic fields are generated purely by steady electric current density.";
+            scenarios = [
+                {
+                    condition: "Interpretation (Local Identity)",
+                    implication: "In the static limit, the induced electric field from changing magnetic fields vanishes (\\nabla \\times \\mathbf{E} = 0), allowing the electric field to be represented as the gradient of a scalar electrostatic potential (\\mathbf{E} = -\\nabla V). Simultaneously, the displacement current term vanishes, causing the curl of the magnetic field to depend exclusively on static current density (\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J})."
+                },
+                {
+                    condition: "Symmetry & Coordinate Invariance",
+                    implication: "Originates from time-translation invariance (\\partial / \\partial t = 0) and local gauge symmetry under steady current distributions."
+                },
+                {
+                    condition: "Limiting Cases & Boundaries",
+                    implication: "Valid in non-radiating, low-frequency, or zero-frequency steady-state electrodynamics where inductive and displacement currents are negligible."
+                }
+            ];
+        }
         // 1. Detect Gauss's Law / Divergence
-        if (latex.includes('\\nabla \\cdot') || latex.includes('\\text{div}')) {
+        else if (latex.includes('\\nabla \\cdot') || latex.includes('\\text{div}')) {
+            title = "Vector Field Divergence Relation";
             let fieldSymbol = 'E';
             const match = latex.match(/\\nabla\s*\\cdot\s*(\\mathbf\{[A-Z]\}|[A-Za-z])/);
             if (match) {
@@ -3441,6 +3463,7 @@ const EquationExplainer = {
         }
         // 2. Detect Maxwell-Faraday / Curl
         else if (latex.includes('\\nabla \\times') || latex.includes('\\text{curl}')) {
+            title = "Vector Field Curl Relation";
             let fieldSymbol = 'E';
             const match = latex.match(/\\nabla\s*\\times\s*(\\mathbf\{[A-Z]\}|[A-Za-z])/);
             if (match) {
@@ -3461,6 +3484,7 @@ const EquationExplainer = {
         }
         // 3. Detect Schrödinger / Time-dependent Rate equation
         else if (latex.includes('\\partial') && latex.includes('\\partial t') || latex.includes('\\dot') || latex.includes('\\frac{d}{dt}') || latex.includes('\\ddot')) {
+            title = "Time-Dependent Evolution Relation";
             intro = "This formula defines the <strong>temporal evolution</strong> (dynamics) of a physical system. It establishes how the state vector or physical quantities change with time.";
             summary = "It maps the rate of change of the system variables directly to the governing operator forces or energies.";
             scenarios = [
@@ -3536,7 +3560,7 @@ const EquationExplainer = {
             ];
         }
 
-        return { intro, summary, scenarios };
+        return { title, intro, summary, scenarios };
     },
 
     initSandbox(latex, variables) {

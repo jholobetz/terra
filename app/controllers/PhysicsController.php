@@ -150,6 +150,8 @@ class PhysicsController
             $formula = $this->service()->searchFormulaByLatex($latex);
             if ($formula) {
                 $subtopics = $this->service()->getSubtopicsByFormula($formula['id']);
+            } else {
+                $formula = $this->service()->synthesizeFormulaExplanation($latex);
             }
         }
         

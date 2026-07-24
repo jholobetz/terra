@@ -1944,20 +1944,43 @@ const EquationExplainer = {
         card.style.display = 'flex';
         let html = '';
         if (formula.derivation_type) {
-            html += `<div style="margin-bottom: 6px;"><strong>Derivation Relationship:</strong> <span class="badge-status badge-platinum" style="font-size: 0.72rem; padding: 2px 6px; background: rgba(100,255,218,0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100,255,218,0.3); border-radius: 4px;">${formula.derivation_type}</span></div>`;
+            html += `<div style="margin-bottom: 8px;"><strong>Derivation Relationship:</strong> <span class="badge-status badge-platinum" style="font-size: 0.72rem; padding: 2px 6px; background: rgba(100,255,218,0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100,255,218,0.3); border-radius: 4px;">${formula.derivation_type}</span></div>`;
         }
         if (formula.parent_formula_id) {
             const parentUrl = `/physics/equation-explainer?id=${encodeURIComponent(formula.parent_formula_id)}`;
-            html += `<div style="margin-bottom: 6px;"><strong>Master Parent Law:</strong> <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; border-bottom: 1px dashed rgba(100,255,218,0.4); font-weight: 600;">${formula.parent_formula_id}</a></div>`;
+            const parentName = formula.parent_formula_id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            html += `<div style="margin-bottom: 8px;"><strong>Master Parent Law:</strong> <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; border-bottom: 1px dashed rgba(100,255,218,0.4); font-weight: 600;">${parentName}</a></div>`;
         }
         if (formula.constraints) {
             try {
                 const c = typeof formula.constraints === 'string' ? JSON.parse(formula.constraints) : formula.constraints;
-                html += `<div style="margin-bottom: 6px;"><strong>Active Physical Constraints:</strong> <code style="font-family: monospace; color: #a855f7; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${JSON.stringify(c)}</code></div>`;
+                const pills = this.formatConstraintsToPills(c);
+                if (pills) {
+                    html += `<div style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><strong>Active Physical Constraints:</strong> ${pills}</div>`;
+                }
             } catch(e) {}
         }
         details.innerHTML = html;
         this.triggerTypeset([details]);
+    },
+
+    formatConstraintsToPills(c) {
+        if (!c || typeof c !== 'object') return '';
+        const pills = [];
+        for (const [key, val] of Object.entries(c)) {
+            let label = `${key}: ${val}`;
+            if (key === 'partial_t' && (val === 0 || val === '0')) {
+                label = 'Time-Independent (\\( \\frac{\\partial}{\\partial t} = 0 \\))';
+            } else if (key === 'regime') {
+                label = `Regime: ${String(val).replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
+            } else if (key === 'v_c') {
+                label = `Relativistic Limit (\\(v \\to c\\))`;
+            } else if (key === 'hbar_0') {
+                label = `Classical Limit (\\(\\hbar \\to 0\\))`;
+            }
+            pills.push(`<span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 0.78rem; background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); font-weight: 500;">${label}</span>`);
+        }
+        return pills.join(' ');
     },
 
     renderCustomExplanation(latex) {

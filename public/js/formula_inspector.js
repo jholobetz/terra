@@ -262,12 +262,30 @@ const FormulaInspector = {
                     conceptText.innerHTML = f.conceptual_definition || 'Physical relationship between operators and fields.';
                     summaryText.innerHTML = f.intuitive_summary || 'Calculates the relative dynamics of the system.';
 
-                    if (f.parent_formula_id || f.derivation_type) {
+                    if (f.parent_formula_id || f.derivation_type || f.constraints) {
                         graphCard.style.display = 'block';
-                        graphContent.innerHTML = `
-                            <div><strong>Derivation Type:</strong> <span style="color: var(--accent-default, #64ffda);">${f.derivation_type || 'Derived'}</span></div>
-                            ${f.parent_formula_id ? `<div style="margin-top: 4px;"><strong>Parent Law:</strong> ${f.parent_formula_id}</div>` : ''}
-                        `;
+                        let html = '';
+                        if (f.derivation_type) {
+                            html += `<div style="margin-bottom: 6px;"><strong>Derivation Type:</strong> <span style="color: var(--accent-default, #64ffda); font-weight: 600;">${f.derivation_type}</span></div>`;
+                        }
+                        if (f.parent_formula_id) {
+                            const pName = f.parent_formula_id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            html += `<div style="margin-bottom: 6px;"><strong>Master Parent Law:</strong> <a href="/physics/equation-explainer?id=${encodeURIComponent(f.parent_formula_id)}" style="color: var(--accent-default, #64ffda); text-decoration: none; border-bottom: 1px dashed rgba(100,255,218,0.4); font-weight: 600;">${pName}</a></div>`;
+                        }
+                        if (f.constraints) {
+                            try {
+                                const c = typeof f.constraints === 'string' ? JSON.parse(f.constraints) : f.constraints;
+                                const pills = [];
+                                for (const [k, v] of Object.entries(c)) {
+                                    let lbl = `${k}: ${v}`;
+                                    if (k === 'partial_t' && (v === 0 || v === '0')) lbl = 'Time-Independent (\\(\\partial/\\partial t = 0\\))';
+                                    else if (k === 'regime') lbl = `Regime: ${String(v).replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
+                                    pills.push(`<span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.76rem; background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); margin-top: 4px;">${lbl}</span>`);
+                                }
+                                html += `<div style="margin-top: 6px;"><strong>Physical Constraints:</strong><br>${pills.join(' ')}</div>`;
+                            } catch(e) {}
+                        }
+                        graphContent.innerHTML = html;
                     }
                 } else {
                     titleEl.textContent = 'Custom Physics Identity';

@@ -167,6 +167,101 @@ export function detectDomainFromLatex(latex) {
     return maxCount > 0 ? maxDomain : 'classical_mechanics';
 }
 
+export function canonicalizeTex(latex) {
+    if (!latex) return '';
+    let clean = latex.replace(/\\par\b/g, ' ')
+                     .replace(/\\left|\\right/g, '')
+                     .replace(/\\quad|\\qquad|\\,/g, ' ')
+                     .replace(/\\varepsilon(?![a-zA-Z])/g, '\\epsilon')
+                     .replace(/\\vartheta(?![a-zA-Z])/g, '\\theta')
+                     .replace(/\\varphi(?![a-zA-Z])/g, '\\phi')
+                     .replace(/\\varrho(?![a-zA-Z])/g, '\\rho')
+                     .replace(/\\varpi(?![a-zA-Z])/g, '\\pi')
+                     .replace(/\\varsigma(?![a-zA-Z])/g, '\\sigma');
+
+    // Strip visual styling commands
+    clean = clean.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([^}]+)\}/g, '$2');
+    clean = clean.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\[a-zA-Z]+|[a-zA-Z0-9])/g, '$2');
+    clean = clean.replace(/\\cssId\{[^}]+\}\{([^}]+)\}/g, '$1');
+
+    // Canonicalize fractions: \frac{A}{B} -> (A)/(B)
+    let hasFraction = true;
+    while (hasFraction) {
+        let next = clean.replace(/\\frac\{((?:[^{}]|\{[^{}]*\})*)\}\{((?:[^{}]|\{[^{}]*\})*)\}/g, '($1)/($2)');
+        if (next === clean) {
+            hasFraction = false;
+        } else {
+            clean = next;
+        }
+    }
+
+    // Canonicalize vector operators
+    clean = clean.replace(/\\nabla\s*\\times/g, 'curl')
+                 .replace(/\\nabla\s*\\cdot/g, 'div')
+                 .replace(/\\nabla\^2/g, 'laplacian')
+                 .replace(/\\nabla/g, 'grad');
+
+    // Canonicalize limits: \to 0 -> =0
+    clean = clean.replace(/\\to\s*0/g, '=0')
+                 .replace(/\\rightarrow\s*0/g, '=0');
+
+    // Strip whitespace, brackets, commas
+    clean = clean.replace(/\s+/g, '').replace(/,/g, '');
+    clean = clean.toLowerCase();
+
+    return clean;
+}
+
+export function parseTexToAST(latex) {
+    if (!latex) {
+        return { raw: '', canonical: '', operators: [], fields: [], relation: null, limits: [] };
+    }
+
+    const canonical = canonicalizeTex(latex);
+    const tokens = extractAllMathTokens(latex);
+
+    const operators = [];
+    const fields = [];
+    const limits = [];
+
+    // Operator detection
+    if (/\\nabla\s*\\times|curl/.test(latex) || canonical.includes('curl')) operators.push('curl');
+    if (/\\nabla\s*\\cdot|div/.test(latex) || canonical.includes('div')) operators.push('div');
+    if (/\\nabla\^2|laplacian/.test(latex) || canonical.includes('laplacian')) operators.push('laplacian');
+    if (/\\partial/.test(latex)) operators.push('partial');
+    if (/\\int|\\oint/.test(latex)) operators.push('integral');
+
+    // Field / Variable detection
+    if (/\\mathbf\{E\}|\\vec\{E\}|E/.test(latex)) fields.push('E_electric');
+    if (/\\mathbf\{B\}|\\vec\{B\}|B/.test(latex)) fields.push('B_magnetic');
+    if (/\\mathbf\{J\}|\\vec\{J\}|J/.test(latex)) fields.push('J_current');
+    if (/\\mathbf\{A\}|\\vec\{A\}|A/.test(latex)) fields.push('A_potential');
+    if (/\bm\b/.test(latex)) fields.push('m_mass');
+    if (/\bc\b/.test(latex)) fields.push('c_light');
+    if (/\b\hbar\b/.test(latex)) fields.push('hbar');
+
+    // Relation detection
+    let relation = null;
+    if (latex.includes('=')) relation = '=';
+    else if (latex.includes('\\to') || latex.includes('\\rightarrow')) relation = '\\to';
+
+    // Limit detection
+    if (/\\to\s*0|\\rightarrow\s*0|=0/.test(latex)) {
+        limits.push({ type: 'static_limit', target: 'time_derivative', value: 0 });
+    }
+
+    return {
+        raw: latex,
+        canonical: canonical,
+        domain: detectDomainFromLatex(latex),
+        operators: operators,
+        fields: fields,
+        relation: relation,
+        limits: limits,
+        tokens: tokens
+    };
+}
+
 export function extractAllMathTokens(latex) {
     if (!latex) return [];
     
@@ -189,3 +284,4 @@ export function extractAllMathTokens(latex) {
 
     return Array.from(tokens);
 }
+

@@ -871,29 +871,80 @@ class PhysicsService
             }
         }
 
-        // Fallback to disk scan if index doesn't exist or doesn't match
+        // Secondary Fallback: Match by AST Canonical Signature
         $baseDir = PROJECT_ROOT . '/app/config/content/formulas/';
-        $files = glob($baseDir . 'shard_*.json');
-        
-        foreach ($files as $file) {
-            $content = json_decode(file_get_contents($file), true) ?: [];
-            foreach ($content as $fId => $formula) {
-                $eq = $formula['equation'] ?? '';
-                $cleanEq = $eq;
-                if (strpos($eq, '<svg') === 0) {
-                    if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
-                        $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
+        $files = glob($baseDir . 'shard_*.json') ?: [];
+
+        $targetCanonical = $this->canonicalizeLatex($latex);
+        if (!empty($targetCanonical)) {
+            foreach ($files as $file) {
+                $content = json_decode(file_get_contents($file), true) ?: [];
+                foreach ($content as $fId => $formula) {
+                    $eq = $formula['equation'] ?? '';
+                    $cleanEq = $eq;
+                    if (strpos($eq, '<svg') === 0) {
+                        if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
+                            $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
+                        }
                     }
-                }
-                
-                if ($this->normalizeLatex($cleanEq) === $targetLatex) {
-                    $formula['id'] = $fId;
-                    return $formula;
+                    
+                    if ($this->canonicalizeLatex($cleanEq) === $targetCanonical) {
+                        $formula['id'] = $fId;
+                        return $formula;
+                    }
                 }
             }
         }
         
         return null;
+    }
+
+    /**
+     * Canonicalizes LaTeX mathematical strings to AST-level algebraic signatures.
+     */
+    public function canonicalizeLatex(string $latex): string
+    {
+        if (empty($latex)) return '';
+        $clean = preg_replace('/\\\\par\b/', ' ', $latex);
+        $clean = preg_replace('/\\\\left|\\\\right/', '', $clean);
+        $clean = preg_replace('/\\\\quad|\\\\qquad|\\\\,/', ' ', $clean);
+        $clean = preg_replace('/\\\\varepsilon(?![a-zA-Z])/', '\\epsilon', $clean);
+        $clean = preg_replace('/\\\\vartheta(?![a-zA-Z])/', '\\theta', $clean);
+        $clean = preg_replace('/\\\\varphi(?![a-zA-Z])/', '\\phi', $clean);
+        $clean = preg_replace('/\\\\varrho(?![a-zA-Z])/', '\\rho', $clean);
+        $clean = preg_replace('/\\\\varpi(?![a-zA-Z])/', '\\pi', $clean);
+        $clean = preg_replace('/\\\\varsigma(?![a-zA-Z])/', '\\sigma', $clean);
+
+        // Strip visual styling commands
+        $clean = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\\{([^}]+)\\}/', '$2', $clean);
+        $clean = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\\\[a-zA-Z]+|[a-zA-Z0-9])/', '$2', $clean);
+        $clean = preg_replace('/\\\\cssId\\{[^}]+\\}\\{([^}]+)\\}/', '$1', $clean);
+
+        // Canonicalize fractions
+        $hasFraction = true;
+        while ($hasFraction) {
+            $next = preg_replace('/\\\\frac\{((?:[^{}]|\{[^{}]*\})*)\}\{((?:[^{}]|\{[^{}]*\})*\}/', '($1)/($2)', $clean);
+            if ($next === $clean) {
+                $hasFraction = false;
+            } else {
+                $clean = $next;
+            }
+        }
+
+        // Canonicalize vector operators
+        $clean = preg_replace('/\\\\nabla\s*\\\\times/', 'curl', $clean);
+        $clean = preg_replace('/\\\\nabla\s*\\\\cdot/', 'div', $clean);
+        $clean = preg_replace('/\\\\nabla\^2/', 'laplacian', $clean);
+        $clean = preg_replace('/\\\\nabla/', 'grad', $clean);
+
+        // Canonicalize limits: \to 0 -> =0
+        $clean = preg_replace('/\\\\to\s*0/', '=0', $clean);
+        $clean = preg_replace('/\\\\rightarrow\s*0/', '=0', $clean);
+
+        // Strip whitespace and commas
+        $clean = preg_replace('/\s+/', '', $clean);
+        $clean = str_replace(',', '', $clean);
+        return strtolower($clean);
     }
 
     /**

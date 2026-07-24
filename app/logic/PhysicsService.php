@@ -483,7 +483,37 @@ class PhysicsService
         $syncLock = PROJECT_ROOT . '/app/config/.last_sync';
         $lastSyncTime = file_exists($syncLock) ? filemtime($syncLock) : 0;
 
-        // 1. Auto-provision the formulas table if it does not exist
+        // 1. Auto-provision the database tables if they do not exist
+        $db->runQuery("CREATE TABLE IF NOT EXISTS topics (
+            slug VARCHAR(255) PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            content MEDIUMTEXT,
+            pillars JSON,
+            intro TEXT,
+            bridges JSON,
+            field VARCHAR(255),
+            density VARCHAR(50),
+            equations JSON,
+            breakdowns JSON,
+            formula_data JSON
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        $db->runQuery("CREATE TABLE IF NOT EXISTS subtopics (
+            slug VARCHAR(255) PRIMARY KEY,
+            parent_topic VARCHAR(255),
+            title VARCHAR(255) NOT NULL,
+            content MEDIUMTEXT NOT NULL,
+            snippet TEXT,
+            snippet_svg MEDIUMTEXT,
+            hero_math TEXT,
+            equations JSON,
+            breakdowns JSON,
+            formula_data JSON,
+            parents JSON,
+            standard VARCHAR(50) DEFAULT 'legacy',
+            verification JSON
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
         $db->runQuery("CREATE TABLE IF NOT EXISTS formulas (
             id VARCHAR(255) PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
@@ -503,6 +533,18 @@ class PhysicsService
             $db->runQuery("ALTER TABLE formulas ADD COLUMN equation_svg MEDIUMTEXT AFTER equation;");
         } catch (\Exception $e) {
             // Column already exists, ignore
+        }
+
+        // Provision FULLTEXT search indexes
+        try {
+            $db->runQuery("ALTER TABLE subtopics ADD FULLTEXT INDEX ft_subtopics (title, content);");
+        } catch (\Exception $e) {
+            // Index already exists, ignore
+        }
+        try {
+            $db->runQuery("ALTER TABLE formulas ADD FULLTEXT INDEX ft_formulas (title, conceptual_definition, equation);");
+        } catch (\Exception $e) {
+            // Index already exists, ignore
         }
 
         // 2. Sync Topics
@@ -892,6 +934,116 @@ class PhysicsService
         }
         
         return implode('=', $normalizedParts);
+    }
+
+    /**
+     * High-Performance Search Endpoint utilizing MariaDB FULLTEXT Indexing
+     * with fallback fuzzy LIKE queries and snippet highlighting.
+     */
+    public function searchContent(string $query, int $limit = 10): array
+    {
+        $cleanQuery = trim($query);
+        if (empty($cleanQuery)) {
+            return ['query' => '', 'total' => 0, 'results' => []];
+        }
+
+        $db = $this->app->db();
+        $results = [];
+
+        // 1. Search Subtopics via MariaDB FULLTEXT / LIKE
+        try {
+            $maxLimit = (int)$limit;
+            $rows = $db->runQuery(
+                "SELECT slug, title, content, 
+                        MATCH(title, content) AGAINST(? IN NATURAL LANGUAGE MODE) AS score
+                 FROM subtopics 
+                 WHERE MATCH(title, content) AGAINST(? IN NATURAL LANGUAGE MODE)
+                 ORDER BY score DESC 
+                 LIMIT {$maxLimit}",
+                [$cleanQuery, $cleanQuery]
+            );
+
+            if (empty($rows)) {
+                $likeParam = '%' . $cleanQuery . '%';
+                $rows = $db->runQuery(
+                    "SELECT slug, title, content, 1.0 AS score
+                     FROM subtopics
+                     WHERE title LIKE ? OR content LIKE ?
+                     LIMIT {$maxLimit}",
+                    [$likeParam, $likeParam]
+                );
+            }
+
+            foreach ($rows as $row) {
+                $plainContent = strip_tags($row['content'] ?? '');
+                $snippet = '';
+                
+                $pos = stripos($plainContent, $cleanQuery);
+                if ($pos !== false) {
+                    $start = max(0, $pos - 40);
+                    $snippet = '...' . substr($plainContent, $start, 120) . '...';
+                } else {
+                    $snippet = substr($plainContent, 0, 120) . '...';
+                }
+
+                $results[] = [
+                    'type' => 'subtopic',
+                    'slug' => $row['slug'],
+                    'title' => $row['title'],
+                    'snippet' => $snippet,
+                    'url' => '/physics/subtopic/' . $row['slug']
+                ];
+            }
+        } catch (\Exception $e) {
+            // Fallback for in-memory file-system mode
+            $this->loadAllShards();
+            $content = $this->getPhysicsContent();
+            $allSubtopics = $content['subtopics'] ?? [];
+            foreach ($allSubtopics as $slug => $st) {
+                if (count($results) >= $limit) break;
+                if (stripos($st['title'] ?? '', $cleanQuery) !== false || stripos($st['content'] ?? '', $cleanQuery) !== false) {
+                    $results[] = [
+                        'type' => 'subtopic',
+                        'slug' => $slug,
+                        'title' => $st['title'] ?? $slug,
+                        'snippet' => substr(strip_tags($st['content'] ?? ''), 0, 120) . '...',
+                        'url' => '/physics/subtopic/' . $slug
+                    ];
+                }
+            }
+        }
+
+        // 2. Search Formulas if room available
+        if (count($results) < $limit) {
+            $remaining = $limit - count($results);
+            try {
+                $formulaRows = $db->runQuery(
+                    "SELECT id, title, conceptual_definition 
+                     FROM formulas 
+                     WHERE title LIKE ? OR id LIKE ? OR conceptual_definition LIKE ?
+                     LIMIT ?",
+                    ['%' . $cleanQuery . '%', '%' . $cleanQuery . '%', '%' . $cleanQuery . '%', $remaining]
+                );
+
+                foreach ($formulaRows as $f) {
+                    $results[] = [
+                        'type' => 'formula',
+                        'slug' => $f['id'],
+                        'title' => $f['title'],
+                        'snippet' => substr(strip_tags($f['conceptual_definition'] ?? ''), 0, 120) . '...',
+                        'url' => '/physics/equation-explainer?id=' . $f['id']
+                    ];
+                }
+            } catch (\Exception $e) {
+                // Ignore formula fallback errors
+            }
+        }
+
+        return [
+            'query' => $cleanQuery,
+            'total' => count($results),
+            'results' => $results
+        ];
     }
 }
 

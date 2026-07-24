@@ -214,6 +214,19 @@ class PhysicsController
     }
 
     /**
+     * API action serving high-performance MariaDB FULLTEXT search results.
+     */
+    public function apiSearch()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $query = $_GET['q'] ?? '';
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        
+        $results = $this->service()->searchContent($query, $limit);
+        echo json_encode($results);
+    }
+
+    /**
      * View action rendering the interactive Noether's Vault (Symmetry-to-Conservation Mapping).
      */
     public function noethersVault()

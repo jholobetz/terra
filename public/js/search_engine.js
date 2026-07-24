@@ -117,13 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Input Searching logic
-    input.addEventListener('input', (e) => {
-        if (!searchData) return;
-        
-        const query = e.target.value.toLowerCase().trim();
-        const cleanQuery = query.replace(/[''s]/g, ''); 
-        
+    let debounceTimer = null;
+
+    // Perform API search request
+    async function performSearch(query) {
         if (query.length < 2) {
             resetResultsPlaceholder();
             resultItems = [];
@@ -131,61 +128,47 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const scoredMatches = [];
-        for (const [slug, data] of Object.entries(searchData)) {
-            let score = 0;
-            const title = data.t.toLowerCase();
-            const cleanTitle = title.replace(/[''s]/g, '');
+        try {
+            const response = await fetch(`/physics/api/search?q=${encodeURIComponent(query)}&limit=10`);
+            if (!response.ok) throw new Error('API search failed');
+            const data = await response.json();
+            
+            if (data.results && data.results.length > 0) {
+                results.innerHTML = data.results.map(m => `
+                    <a href="${m.url}" class="modal-search-item">
+                        <div class="modal-search-item-header">
+                            <span class="modal-search-item-title">${m.title}</span>
+                            <span class="modal-search-item-badge">${m.type}</span>
+                        </div>
+                        <div class="modal-search-item-path">
+                            <span>${m.snippet}</span>
+                        </div>
+                    </a>
+                `).join('');
 
-            // 1. Base Score (Title matching)
-            if (title === query || cleanTitle === cleanQuery) score += 1000;
-            else if (title.startsWith(query) || cleanTitle.startsWith(cleanQuery)) score += 800;
-            else if (title.includes(query) || cleanTitle.includes(cleanQuery)) score += 500;
-            else if (data.k && data.k.some(k => k.toLowerCase().includes(query))) score += 200;
+                resultItems = Array.from(results.querySelectorAll('.modal-search-item'));
+                highlightedIndex = 0;
+                updateHighlight();
 
-            if (score > 0) {
-                // 2. Density weight bonus
-                score += (data.w || 0) * 0.5;
-
-                // 3. Platinum Standard Bonus
-                if (data.pl) score *= 1.2;
-
-                scoredMatches.push({ slug, score, ...data });
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
+                }
+            } else {
+                results.innerHTML = '<div class="search-placeholder"><p>No matches in the manifold...</p><small>Try searching another physical concept or symbol.</small></div>';
+                resultItems = [];
+                highlightedIndex = -1;
             }
+        } catch (err) {
+            console.warn('API search failed, attempting fallback index...', err);
+            performFallbackSearch(query);
         }
+    }
 
-        // Sort by score descending, then by title length
-        scoredMatches.sort((a, b) => b.score - a.score || a.t.length - b.t.length);
-
-        if (scoredMatches.length > 0) {
-            const limited = scoredMatches.slice(0, 10);
-            results.innerHTML = limited.map(m => `
-                <a href="/physics/subtopic/${m.slug}" class="modal-search-item">
-                    <div class="modal-search-item-header">
-                        <span class="modal-search-item-title">${m.t}</span>
-                        ${m.pl ? '<span class="modal-search-item-badge">Platinum</span>' : ''}
-                    </div>
-                    <div class="modal-search-item-path">
-                        <span>${formatPath(m.p)}</span>
-                        ${m.s ? `<span style="opacity:0.4;">&bull; ${m.s.replace('.json', '')}</span>` : ''}
-                    </div>
-                </a>
-            `).join('');
-
-            // Collect items for arrow navigation
-            resultItems = Array.from(results.querySelectorAll('.modal-search-item'));
-            highlightedIndex = 0;
-            updateHighlight();
-
-            // Render MathJax equations in search results dynamically!
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
-            }
-        } else {
-            results.innerHTML = '<div class="search-placeholder"><p>No matches in the manifold...</p><small>Try searching another physical concept or symbol.</small></div>';
-            resultItems = [];
-            highlightedIndex = -1;
-        }
+    // Input Searching logic with 250ms debounce
+    input.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => performSearch(query), 250);
     });
 
     // Handle background search query parameter pre-fill

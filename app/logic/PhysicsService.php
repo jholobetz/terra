@@ -923,7 +923,7 @@ class PhysicsService
         // Canonicalize fractions
         $hasFraction = true;
         while ($hasFraction) {
-            $next = preg_replace('/\\\\frac\{((?:[^{}]|\{[^{}]*\})*)\}\{((?:[^{}]|\{[^{}]*\})*\}/', '($1)/($2)', $clean);
+            $next = preg_replace('/\\\\frac\{((?:[^{}]|\{[^{}]*\})*)\}\{((?:[^{}]|\{[^{}]*\})*)\}/', '($1)/($2)', $clean);
             if ($next === $clean) {
                 $hasFraction = false;
             } else {

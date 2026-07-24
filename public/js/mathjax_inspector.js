@@ -257,16 +257,12 @@ const MathJaxInspector = {
                         } catch (err) {}
                     }
                     
-                    if (window.FormulaInspector) {
-                        window.FormulaInspector.open(latex, formulaId);
-                    } else {
-                        const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
-                        let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
-                        if (formulaId) {
-                            url += '&id=' + encodeURIComponent(formulaId);
-                        }
-                        window.location.href = url;
+                    const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
+                    let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+                    if (formulaId) {
+                        url += '&id=' + encodeURIComponent(formulaId);
                     }
+                    window.location.href = url;
                 }
             }
         }, true);

@@ -3565,37 +3565,37 @@ const EquationExplainer = {
         const placeholders = [];
         let tempText = text.replace(/\\par\b/g, ' ');
         
-        tempText = tempText.replace(/\$\$[\s\S]*?\$\$/g, match => {
+        function protect(match) {
             placeholders.push(match);
             return `\uE000MATH_${placeholders.length - 1}\uE000`;
-        });
-        tempText = tempText.replace(/\$[\s\S]*?\$/g, match => {
-            placeholders.push(match);
-            return `\uE000MATH_${placeholders.length - 1}\uE000`;
-        });
-        tempText = tempText.replace(/\\\([\s\S]*?\\\)/g, match => {
-            placeholders.push(match);
-            return `\uE000MATH_${placeholders.length - 1}\uE000`;
-        });
-        tempText = tempText.replace(/\\\[[\s\S]*?\\\]/g, match => {
-            placeholders.push(match);
-            return `\uE000MATH_${placeholders.length - 1}\uE000`;
-        });
+        }
+
+        // 1. Protect existing MathJax delimiters ($$, $, \(\), \[\])
+        tempText = tempText.replace(/\$\$[\s\S]*?\$\$/g, protect);
+        tempText = tempText.replace(/\$[^\$]+\$/g, protect);
+        tempText = tempText.replace(/\\\([\s\S]*?\\\)/g, protect);
+        tempText = tempText.replace(/\\\[[\s\S]*?\\\]/g, protect);
         
-        tempText = tempText.replace(/(?:\S*\\\S+|[\+\-\*\/\=\<\>]+|\b[a-zA-Z0-9]\b)(?:\s+(?:\S*\\\S+|[\+\-\*\/\=\<\>]+|\b[a-zA-Z0-9]\b))*/g, match => {
-            if (!match.includes('\\') || match.includes('\uE000')) {
-                return match;
-            }
-            
+        // 2. Wrap unwrapped LaTeX expressions containing backslashes
+        tempText = tempText.replace(/(?:[^\s,\.;:]*\\(?:[a-zA-Z]+|[^a-zA-Z0-9\s])[\s\S]*?)(?=\s+(?:is|represents|quantifies|originates|reduces|becomes|causes|explains|corresponds|states|meaning|demonstrating|where|when|as|in|for|and|with|or|by|under|derived|from|using|approaches|leading|accounting|showing|indicating|yielding|provided|which|that|\.|\,|\)|$))/gi, match => {
+            if (match.includes('\uE000') || !match.includes('\\')) return match;
             let trimmed = match.trim();
+            if (!trimmed) return match;
             let trailingPunct = '';
-            const punctMatch = trimmed.match(/[,.;:]+$/);
+            const punctMatch = trimmed.match(/[,.;:\)]+$/);
             if (punctMatch) {
                 trailingPunct = punctMatch[0];
                 trimmed = trimmed.substring(0, trimmed.length - trailingPunct.length);
             }
-            
-            return `\\(${trimmed}\\)${trailingPunct}`;
+            const wrapped = `\\(${trimmed}\\)${trailingPunct}`;
+            return protect(wrapped);
+        });
+
+        // 3. Fallback wrap any remaining isolated \command symbols (e.g. \nu, \rho, \pi)
+        tempText = tempText.replace(/(?<!\\)\\([a-zA-Z]+)(?![a-zA-Z])/g, (match, cmd) => {
+            if (match.includes('\uE000')) return match;
+            const wrapped = `\\(${match}\\)`;
+            return protect(wrapped);
         });
         
         for (let i = 0; i < placeholders.length; i++) {

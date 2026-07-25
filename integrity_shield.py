@@ -171,6 +171,19 @@ class IntegrityShield:
                             f"which contains spritified math references ('math-path-'). Only fully-inlined SVGs are allowed."
                         )
 
+    def check_formula_hierarchy(self):
+        """Verifies referential integrity of parent_formula_id and subcomponents across all formulas."""
+        for f_id, f_data in self.formula_registry.items():
+            parent_id = f_data.get("parent_formula_id")
+            if parent_id and parent_id not in self.formula_registry and parent_id not in self.all_slugs:
+                self.errors.append(f"Broken Formula Parent Link: Formula '{f_id}' refs unknown parent_formula_id/slug '{parent_id}'")
+
+            subcomponents = f_data.get("subcomponents", [])
+            if isinstance(subcomponents, list):
+                for child_id in subcomponents:
+                    if child_id not in self.formula_registry and child_id not in self.all_slugs:
+                        self.errors.append(f"Broken Formula Subcomponent Link: Formula '{f_id}' refs unknown subcomponent '{child_id}'")
+
     def check_duplicates(self):
         """Ensures every subtopic slug exists in exactly one shard and no protected slugs in subtopic shards."""
         slug_map = {}
@@ -374,6 +387,7 @@ class IntegrityShield:
         
         self.check_duplicates()
         self.check_formulas()
+        self.check_formula_hierarchy()
         self.check_registry()
         self.check_technical_density()
         self.check_entities()

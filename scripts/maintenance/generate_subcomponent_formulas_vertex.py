@@ -214,6 +214,11 @@ Return ONLY valid JSON matching this exact schema:
                 data["parent_formula_id"] = primary_master["formula_id"]
                 data["subcomponents"] = []
 
+                # Normalize unit system to valid schema enum
+                valid_units = {'SI', 'natural', 'gaussian', 'cgs', 'heaviside-lorentz'}
+                if data.get("unit_system") not in valid_units:
+                    data["unit_system"] = "SI"
+
                 # Create ID
                 title_slug = slugify(data.get("title", raw_tex))
                 tex_hash = hashlib.md5(raw_tex.encode('utf-8')).hexdigest()[:8]
@@ -226,25 +231,34 @@ Return ONLY valid JSON matching this exact schema:
                     return None
                 await asyncio.sleep((2 ** attempt) + random.uniform(0.1, 1.0))
 
-def save_formula_to_shard(formula_data: Dict[str, Any]):
-    f_id = formula_data["id"]
-    prefix = get_shard_prefix(f_id)
-    subdir = os.path.join(FORMULAS_DIR, prefix)
-    os.makedirs(subdir, exist_ok=True)
-    shard_file = os.path.join(subdir, f"shard_{prefix}.json")
+def save_formulas_batch_to_shards(formulas: List[Dict[str, Any]]):
+    """Bulk updates formula shards by grouping generated items by hex prefix."""
+    grouped = {}
+    for formula in formulas:
+        f_id = formula["id"]
+        prefix = get_shard_prefix(f_id)
+        if prefix not in grouped:
+            grouped[prefix] = []
+        grouped[prefix].append(formula)
 
-    shard_data = {}
-    if os.path.exists(shard_file):
-        with open(shard_file, "r", encoding="utf-8") as f:
-            try:
-                shard_data = json.load(f)
-            except Exception:
-                pass
+    for prefix, formula_list in grouped.items():
+        subdir = os.path.join(FORMULAS_DIR, prefix)
+        os.makedirs(subdir, exist_ok=True)
+        shard_file = os.path.join(subdir, f"shard_{prefix}.json")
 
-    shard_data[f_id] = formula_data
+        shard_data = {}
+        if os.path.exists(shard_file):
+            with open(shard_file, "r", encoding="utf-8") as f:
+                try:
+                    shard_data = json.load(f)
+                except Exception:
+                    pass
 
-    with open(shard_file, "w", encoding="utf-8") as f:
-        json.dump(shard_data, f, indent=4, ensure_ascii=False)
+        for formula in formula_list:
+            shard_data[formula["id"]] = formula
+
+        with open(shard_file, "w", encoding="utf-8") as f:
+            json.dump(shard_data, f, indent=4, ensure_ascii=False)
 
 def link_subcomponents_to_masters(generated_formulas: List[Dict[str, Any]], queue_map: Dict[str, Dict[str, Any]]):
     """Appends child formula IDs to master equations' subcomponents array."""
@@ -288,17 +302,28 @@ def update_latex_index(generated_formulas: List[Dict[str, Any]]):
         json.dump(latex_index, f, indent=4, ensure_ascii=False)
     print(f"  - Updated LaTeX index (`formulas_latex_index.json`) with {len(generated_formulas)} new mappings.")
 
-async def main_async(limit: int = 100):
+async def main_async(limit: int = 0, chunk_size: int = 250):
     if not GENAI_AVAILABLE:
         print("❌ Error: `google.genai` SDK is not installed.")
         sys.exit(1)
 
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        print("❌ Error: GEMINI_API_KEY is missing from environment.")
-        sys.exit(1)
-
-    client = genai.Client(api_key=api_key)
+    project_id = os.getenv("GCP_PROJECT_ID")
+    if project_id:
+        # Guarantee pure Vertex AI ADC authentication using GCP Service Account credits
+        os.environ.pop("GEMINI_API_KEY", None)
+        os.environ.pop("GOOGLE_API_KEY", None)
+        cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+        print(f"  - Initializing Vertex AI Client via GCP ADC:")
+        print(f"    • Project ID: {project_id}")
+        print(f"    • Credentials Path: {cred_path}")
+        print(f"    • Location: us-central1")
+        client = genai.Client(vertexai=True, project=project_id, location="us-central1")
+    else:
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            print("❌ Error: Neither GCP_PROJECT_ID nor GEMINI_API_KEY is configured in environment.")
+            sys.exit(1)
+        client = genai.Client(api_key=api_key)
     checkpoint = load_checkpoint()
     completed_norms = set(checkpoint.get("completed_subcomponents", []))
 
@@ -308,40 +333,59 @@ async def main_async(limit: int = 100):
     if limit > 0:
         unprocessed_queue = unprocessed_queue[:limit]
 
-    print(f"🚀 Starting Phase 3 Subcomponent Ingestion for {len(unprocessed_queue)} candidate equations...")
+    total_candidates = len(unprocessed_queue)
+    print(f"🚀 Starting Full Ingestion Loop for {total_candidates} candidate sub-equations...")
     print(f"  - Concurrency: {CONCURRENCY_LIMIT} parallel async workers via Gemini 2.5 Flash")
+    print(f"  - Chunk Size: {chunk_size} items per sliding flush")
 
     semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
-    queue_map = {item["normalized_tex"]: item for item in unprocessed_queue}
+    total_generated = 0
 
-    tasks = [
-        generate_formula_object(client, sub, semaphore)
-        for sub in unprocessed_queue
-    ]
+    # Stream queue in chunks
+    for i in range(0, total_candidates, chunk_size):
+        chunk = unprocessed_queue[i : i + chunk_size]
+        chunk_num = (i // chunk_size) + 1
+        total_chunks = (total_candidates + chunk_size - 1) // chunk_size
 
-    results = await asyncio.gather(*tasks)
+        print(f"\n📦 Processing Chunk {chunk_num}/{total_chunks} ({len(chunk)} subcomponents)...")
+        queue_map = {item["normalized_tex"]: item for item in chunk}
 
-    valid_results = [r for r in results if r is not None]
-    print(f"  - Generated {len(valid_results)} valid schema-compliant subcomponent formula objects.")
+        tasks = [
+            generate_formula_object(client, sub, semaphore)
+            for sub in chunk
+        ]
 
-    for formula in valid_results:
-        save_formula_to_shard(formula)
-        norm = normalize_latex(formula["equation"])
-        checkpoint["completed_subcomponents"].append(norm)
-        checkpoint["generated_formula_ids"].append(formula["id"])
+        results = await asyncio.gather(*tasks)
+        valid_results = [r for r in results if r is not None]
 
-    save_checkpoint(checkpoint)
-    link_subcomponents_to_masters(valid_results, queue_map)
-    update_latex_index(valid_results)
+        print(f"  - Chunk {chunk_num} complete: Generated {len(valid_results)} valid subcomponent formulas.")
 
-    print("✅ Batch Ingestion Complete!")
+        # Bulk save chunk results to shards
+        save_formulas_batch_to_shards(valid_results)
+
+        # Update checkpoint state
+        for formula in valid_results:
+            norm = normalize_latex(formula["equation"])
+            checkpoint["completed_subcomponents"].append(norm)
+            checkpoint["generated_formula_ids"].append(formula["id"])
+        save_checkpoint(checkpoint)
+
+        # Link subcomponents and update LaTeX index
+        link_subcomponents_to_masters(valid_results, queue_map)
+        update_latex_index(valid_results)
+
+        total_generated += len(valid_results)
+        print(f"  ✓ Progress: {total_generated}/{total_candidates} formulas generated & saved.")
+
+    print(f"\n✅ Full Ingestion Loop Complete! Generated {total_generated} subcomponents.")
 
 def main():
     parser = argparse.ArgumentParser(description="Phase 3 Subcomponent Ingestion Pipeline")
-    parser.add_argument("--limit", type=int, default=100, help="Maximum number of subcomponents to process (default: 100, 0 for all)")
+    parser.add_argument("--limit", type=int, default=0, help="Maximum number of subcomponents to process (default: 0 for all remaining)")
+    parser.add_argument("--chunk-size", type=int, default=250, help="Number of items per sliding chunk flush (default: 250)")
     args = parser.parse_args()
 
-    asyncio.run(main_async(limit=args.limit))
+    asyncio.run(main_async(limit=args.limit, chunk_size=args.chunk_size))
 
 if __name__ == "__main__":
     main()

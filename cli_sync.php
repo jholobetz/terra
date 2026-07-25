@@ -23,7 +23,7 @@ try {
     }
 
     echo "Performing database sync and pruning...\n";
-    $service->performSync();
+    $service->performSync(true);
 
     $syncLock = __DIR__ . '/app/config/.last_sync';
     touch($syncLock);

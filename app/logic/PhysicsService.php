@@ -316,6 +316,11 @@ class PhysicsService
                             ? (json_decode($formula['related_formula_ids'], true) ?: [])
                             : $formula['related_formula_ids'];
                     }
+                    if (isset($formula['subcomponents'])) {
+                        $formula['subcomponents'] = is_string($formula['subcomponents'])
+                            ? (json_decode($formula['subcomponents'], true) ?: [])
+                            : $formula['subcomponents'];
+                    }
                     if (!empty($formula['equation_svg'])) {
                         $formula['equation'] = $formula['equation_svg'];
                     }
@@ -679,6 +684,7 @@ class PhysicsService
             derivation_type VARCHAR(50),
             constraints JSON,
             related_formula_ids JSON,
+            subcomponents JSON,
             title VARCHAR(255) NOT NULL,
             equation MEDIUMTEXT NOT NULL,
             equation_svg MEDIUMTEXT,
@@ -714,6 +720,11 @@ class PhysicsService
         }
         try {
             $db->runQuery("ALTER TABLE formulas ADD COLUMN related_formula_ids JSON AFTER constraints;");
+        } catch (\Exception $e) {
+            // Column already exists, ignore
+        }
+        try {
+            $db->runQuery("ALTER TABLE formulas ADD COLUMN subcomponents JSON AFTER related_formula_ids;");
         } catch (\Exception $e) {
             // Column already exists, ignore
         }
@@ -777,16 +788,17 @@ class PhysicsService
 
                         $db->runQuery(
                             "INSERT INTO formulas (
-                                id, parent_formula_id, derivation_type, constraints, related_formula_ids,
+                                id, parent_formula_id, derivation_type, constraints, related_formula_ids, subcomponents,
                                 title, equation, equation_svg, conceptual_definition, intuitive_summary, 
                                 interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
                                 unit_system, status
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                             ON DUPLICATE KEY UPDATE 
                                 parent_formula_id = VALUES(parent_formula_id),
                                 derivation_type = VALUES(derivation_type),
                                 constraints = VALUES(constraints),
                                 related_formula_ids = VALUES(related_formula_ids),
+                                subcomponents = VALUES(subcomponents),
                                 title = VALUES(title),
                                 equation = VALUES(equation),
                                 equation_svg = VALUES(equation_svg),
@@ -804,6 +816,7 @@ class PhysicsService
                                 $fData['derivation_type'] ?? null,
                                 !empty($fData['constraints']) ? json_encode($fData['constraints']) : null,
                                 !empty($fData['related_formula_ids']) ? json_encode($fData['related_formula_ids']) : null,
+                                !empty($fData['subcomponents']) ? json_encode($fData['subcomponents']) : null,
                                 $fData['title'],
                                 $cleanEq,
                                 $eqSvg,

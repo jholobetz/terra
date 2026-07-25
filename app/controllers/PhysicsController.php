@@ -206,6 +206,7 @@ class PhysicsController
     public function apiDefineFormula()
     {
         header('Content-Type: application/json; charset=utf-8');
+        set_time_limit(120);
 
         // Security check for production environments
         $appEnv = getenv('APP_ENV') ?: 'development';
@@ -219,36 +220,66 @@ class PhysicsController
             }
         }
 
-        $input = json_decode(file_get_contents('php://input'), true);
-        $latex = $input['latex'] ?? $this->app->request()->post['latex'] ?? $this->app->request()->query['latex'] ?? '';
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            $latex = $input['latex'] ?? $this->app->request()->post['latex'] ?? $this->app->request()->query['latex'] ?? '';
 
-        if (empty($latex)) {
-            echo json_encode(['success' => false, 'error' => 'No LaTeX equation provided.']);
-            return;
+            if (empty($latex)) {
+                echo json_encode(['success' => false, 'error' => 'No LaTeX equation provided.']);
+                return;
+            }
+
+            // Run python generator script
+            $python = __DIR__ . '/../../.venv/bin/python3';
+            if (!file_exists($python)) {
+                $python = 'python3';
+            }
+            $script = __DIR__ . '/../../scripts/maintenance/generate_gemini_formula.py';
+            
+            $command = [$python, $script, '--latex', $latex];
+            $descriptorspec = [
+                0 => ["pipe", "r"],
+                1 => ["pipe", "w"],
+                2 => ["pipe", "w"]
+            ];
+
+            $process = proc_open($command, $descriptorspec, $pipes);
+            if (!is_resource($process)) {
+                echo json_encode(['success' => false, 'error' => 'Failed to initialize process for formula generator.']);
+                return;
+            }
+
+            fclose($pipes[0]);
+            $output = stream_get_contents($pipes[1]);
+            fclose($pipes[1]);
+            $stderr = stream_get_contents($pipes[2]);
+            fclose($pipes[2]);
+            $returnCode = proc_close($process);
+
+            if (empty($output)) {
+                echo json_encode([
+                    'success' => false, 
+                    'error' => 'Failed to execute Gemini formula generator script: ' . ($stderr ?: 'Empty output')
+                ]);
+                return;
+            }
+
+            $res = json_decode(trim($output), true);
+            if (!$res) {
+                echo json_encode([
+                    'success' => false, 
+                    'error' => 'Invalid response from formula generator: ' . $output . ($stderr ? ' (stderr: ' . $stderr . ')' : '')
+                ]);
+                return;
+            }
+
+            echo json_encode($res);
+        } catch (\Throwable $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Server error while defining formula: ' . $e->getMessage()
+            ]);
         }
-
-        // Run python generator script
-        $python = __DIR__ . '/../../.venv/bin/python3';
-        if (!file_exists($python)) {
-            $python = 'python3';
-        }
-        $script = __DIR__ . '/../../scripts/maintenance/generate_gemini_formula.py';
-        
-        $cmd = escapeshellcmd($python) . ' ' . escapeshellarg($script) . ' --latex ' . escapeshellarg($latex);
-        $output = shell_exec($cmd);
-
-        if (!$output) {
-            echo json_encode(['success' => false, 'error' => 'Failed to execute Gemini formula generator script.']);
-            return;
-        }
-
-        $res = json_decode($output, true);
-        if (!$res) {
-            echo json_encode(['success' => false, 'error' => 'Invalid response from formula generator: ' . $output]);
-            return;
-        }
-
-        echo json_encode($res);
     }
 
     /**

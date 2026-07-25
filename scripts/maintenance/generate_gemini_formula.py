@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 ⚡ Gemini Formula Generator
-Takes a raw LaTeX string, calls Gemini AI to synthesize a complete Platinum Formula Definition,
-saves it to the active shard JSON file, and synchronizes MariaDB + search indexes.
+Takes a raw LaTeX string, calls Gemini AI (via Vertex AI or Google AI Studio) to synthesize a complete
+Platinum Formula Definition, saves it to the active shard JSON file, and synchronizes MariaDB + search indexes.
 
 Usage:
     python3 scripts/maintenance/generate_gemini_formula.py --latex "G(\\mathbf{r}, \\mathbf{r}')"
@@ -14,13 +14,12 @@ import json
 import re
 import argparse
 import subprocess
-import html
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FORMULAS_DIR = os.path.join(PROJECT_ROOT, 'app', 'config', 'content', 'formulas')
-VENV_PYTHON = os.path.join(PROJECT_ROOT, '.venv', 'bin', 'python3')
+GCP_CREDS_PATH = os.path.join(PROJECT_ROOT, 'gcp-credentials.json')
 
-# Try importing google.genai or google.generativeai
+# Import google.genai SDK
 try:
     from google import genai
     from google.genai import types
@@ -33,18 +32,44 @@ try:
 except ImportError:
     keyring = None
 
-def get_api_key():
-    key = os.environ.get('GEMINI_API_KEY')
-    if key:
-        return key
-    if keyring:
+def get_gemini_client():
+    # 1. Check if GCP Service Account Credentials file exists (Vertex AI mode)
+    if os.path.exists(GCP_CREDS_PATH):
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GCP_CREDS_PATH
+        try:
+            with open(GCP_CREDS_PATH, 'r', encoding='utf-8') as f:
+                creds_data = json.load(f)
+                project_id = creds_data.get('project_id', 'gen-lang-client-0170965498')
+        except Exception:
+            project_id = 'gen-lang-client-0170965498'
+
+        client = genai.Client(vertexai=True, project=project_id, location='us-central1')
+        return client, 'gemini-2.5-flash'
+
+    # 2. Check for standard GEMINI_API_KEY environment variable or .env
+    api_key = os.environ.get('GEMINI_API_KEY')
+    if not api_key:
+        dotenv_path = os.path.join(PROJECT_ROOT, '.env')
+        if os.path.exists(dotenv_path):
+            with open(dotenv_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    if line.startswith('GEMINI_API_KEY='):
+                        api_key = line.split('=', 1)[1].strip().strip('"').strip("'")
+                        break
+
+    if not api_key and keyring:
         try:
             key = keyring.get_password("physics_lab", "gemini_api_key")
-            if key:
-                return key
+            if key and key.startswith('AIzaSy'):
+                api_key = key
         except Exception:
             pass
-    return None
+
+    if api_key and api_key.startswith('AIzaSy'):
+        client = genai.Client(api_key=api_key)
+        return client, 'gemini-2.0-flash'
+
+    raise ValueError("No valid Gemini authentication found (missing gcp-credentials.json or AIzaSy GEMINI_API_KEY).")
 
 def get_target_shard_file():
     existing_shards = sorted([
@@ -64,15 +89,7 @@ def get_target_shard_file():
     except Exception:
         pass
 
-    # Create next shard
-    last_name = existing_shards[-1].replace('.json', '')
-    next_idx = 52
-    if '_' in last_name:
-        try:
-            next_idx = int(last_name.split('_')[1], 16 if 'a' in last_name else 10) + 1
-        except Exception:
-            next_idx = len(existing_shards) + 1
-    return os.path.join(FORMULAS_DIR, f'shard_{next_idx}.json')
+    return os.path.join(FORMULAS_DIR, 'shard_52.json')
 
 def slugify(title):
     slug = title.lower()
@@ -94,9 +111,9 @@ REQUIREMENTS:
 7. "parent_formula_id": Slug ID of master parent law if derived (e.g. "poisson-equation-electrostatics", "schrodinger-equation", "maxwell-equations", "einstein-field-equations", or empty string "").
 8. "derivation_type": One of ["DERIVED_FROM", "LIMIT_CASE", "EQUIVALENT_FORM", "SPECIAL_CASE", ""].
 9. "semantic_variables": Object mapping variable symbols to {"name": "...", "unit": "SI Unit", "description": "..."}.
-10. All LaTeX in text fields MUST use valid LaTeX delimiters like $...$ or \\(...\\) for math math terms.
+10. All LaTeX in text fields MUST use valid LaTeX math delimiters like $...$ for inline math expressions.
 
-Output ONLY valid JSON matching this structure:
+Output ONLY valid raw JSON matching this structure:
 {
   "title": "...",
   "conceptual_definition": "...",
@@ -113,15 +130,11 @@ Output ONLY valid JSON matching this structure:
 """
 
 def generate_definition(latex_str):
-    api_key = get_api_key()
-    if not api_key:
-        raise ValueError("Gemini API key not found in environment or OS Keychain.")
-
-    client = genai.Client(api_key=api_key)
+    client, model_name = get_gemini_client()
     prompt = f"{SYSTEM_PROMPT}\n\nLaTeX Equation to Analyze: {latex_str}"
 
     response = client.models.generate_content(
-        model='gemini-2.0-flash',
+        model=model_name,
         contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
@@ -130,14 +143,29 @@ def generate_definition(latex_str):
     )
 
     raw_text = response.text.strip()
-    # Strip any accidental markdown formatting
     if raw_text.startswith('```json'):
         raw_text = raw_text[7:]
     if raw_text.endswith('```'):
         raw_text = raw_text[:-3]
     raw_text = raw_text.strip()
 
-    data = json.loads(raw_text)
+    # Clean unescaped LaTeX backslashes in JSON output
+    clean_json = re.sub(r'\\(?![/"\\bfnrt]|u[0-9a-fA-F]{4})', r'\\\\', raw_text)
+
+    try:
+        data = json.loads(clean_json)
+    except Exception:
+        data = json.loads(raw_text)
+
+    while isinstance(data, str):
+        try:
+            data = json.loads(data)
+        except Exception:
+            data = {}
+            break
+
+    if not isinstance(data, dict):
+        data = {}
 
     title = data.get('title', 'Custom Physical Relation')
     slug_id = slugify(title)
@@ -201,7 +229,6 @@ def main():
     try:
         formula_obj = generate_definition(args.latex)
         target_shard = save_and_sync(formula_obj)
-        # Return clean JSON result to stdout for controller consumption
         result = {
             "success": True,
             "shard_file": os.path.basename(target_shard),

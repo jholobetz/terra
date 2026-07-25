@@ -330,13 +330,18 @@ class PhysicsService
         // Development/Fallback Mode: Load from local JSON shards
         $baseDir = PROJECT_ROOT . '/app/config/content/';
         $hexPrefix = substr(md5($fId), 0, 2);
-        $shardPath = $baseDir . 'formulas/shard_' . $hexPrefix . '.json';
+        $shardPaths = [
+            $baseDir . 'formulas/' . $hexPrefix . '/shard_' . $hexPrefix . '.json',
+            $baseDir . 'formulas/shard_' . $hexPrefix . '.json'
+        ];
 
-        if (file_exists($shardPath)) {
-            $shardContent = json_decode(file_get_contents($shardPath), true) ?: [];
-            if (isset($shardContent[$fId])) {
-                $this->physicsContent['formula_registry'][$fId] = $shardContent[$fId];
-                return $shardContent[$fId];
+        foreach ($shardPaths as $shardPath) {
+            if (file_exists($shardPath)) {
+                $shardContent = json_decode(file_get_contents($shardPath), true) ?: [];
+                if (isset($shardContent[$fId])) {
+                    $this->physicsContent['formula_registry'][$fId] = $shardContent[$fId];
+                    return $shardContent[$fId];
+                }
             }
         }
 
@@ -350,6 +355,67 @@ class PhysicsService
         }
 
         return null;
+    }
+
+    /**
+     * Resolves a formula with its full parent/child hierarchy objects attached.
+     */
+    public function getFormulaWithHierarchy(string $fId): ?array
+    {
+        $formula = $this->loadFormula($fId);
+        if (!$formula) {
+            return null;
+        }
+
+        $formula['id'] = $fId;
+
+        // 1. Resolve Parent Formula if present
+        if (!empty($formula['parent_formula_id'])) {
+            $parentId = $formula['parent_formula_id'];
+            $parentObj = $this->loadFormula($parentId);
+            if ($parentObj) {
+                $formula['parent_formula'] = [
+                    'id' => $parentId,
+                    'title' => $parentObj['title'] ?? 'Parent Formula',
+                    'equation' => $parentObj['equation'] ?? '',
+                    'url' => '/physics/equation-explainer?id=' . urlencode($parentId)
+                ];
+            }
+        }
+
+        // 2. Resolve Subcomponents if present
+        if (!empty($formula['subcomponents']) && is_array($formula['subcomponents'])) {
+            $resolvedChildren = [];
+            foreach ($formula['subcomponents'] as $childId) {
+                if (is_string($childId)) {
+                    $childObj = $this->loadFormula($childId);
+                    if ($childObj) {
+                        $resolvedChildren[] = [
+                            'id' => $childId,
+                            'title' => $childObj['title'] ?? 'Subcomponent Equation',
+                            'equation' => $childObj['equation'] ?? '',
+                            'url' => '/physics/equation-explainer?id=' . urlencode($childId)
+                        ];
+                    }
+                } elseif (is_array($childId) && !empty($childId['id'])) {
+                    $childIdStr = $childId['id'];
+                    $childObj = $this->loadFormula($childIdStr);
+                    if ($childObj) {
+                        $resolvedChildren[] = [
+                            'id' => $childIdStr,
+                            'title' => $childObj['title'] ?? ($childId['title'] ?? 'Subcomponent Equation'),
+                            'equation' => $childObj['equation'] ?? ($childId['equation'] ?? ''),
+                            'url' => '/physics/equation-explainer?id=' . urlencode($childIdStr)
+                        ];
+                    }
+                }
+            }
+            $formula['subcomponents'] = $resolvedChildren;
+        } else {
+            $formula['subcomponents'] = [];
+        }
+
+        return $formula;
     }
 
     /**

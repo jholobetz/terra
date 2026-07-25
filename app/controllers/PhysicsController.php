@@ -139,18 +139,18 @@ class PhysicsController
         $subtopicVariables = [];
         
         if (!empty($id)) {
-            $formula = $this->service()->loadFormula($id);
+            $formula = $this->service()->getFormulaWithHierarchy($id);
             if ($formula) {
-                $formula['id'] = $id;
                 $subtopics = $this->service()->getSubtopicsByFormula($id);
             }
         }
         
         if (!$formula && !empty($latex)) {
             $formula = $this->service()->searchFormulaByLatex($latex);
-            if ($formula) {
+            if ($formula && !empty($formula['id'])) {
+                $formula = $this->service()->getFormulaWithHierarchy($formula['id']);
                 $subtopics = $this->service()->getSubtopicsByFormula($formula['id']);
-            } else {
+            } else if (!$formula) {
                 $formula = $this->service()->synthesizeFormulaExplanation($latex);
             }
         }
@@ -180,20 +180,32 @@ class PhysicsController
     }
 
     /**
-     * REST Action matching user-submitted raw LaTeX to a database formula.
+     * REST Action matching user-submitted raw LaTeX or ID to a database formula with full parent/child hierarchy.
      */
     public function apiExplain()
     {
         header('Content-Type: application/json; charset=utf-8');
         
+        $id = $this->app->request()->query['id'] ?? '';
         $latex = $this->app->request()->query['latex'] ?? '';
+
+        if (!empty($id)) {
+            $formula = $this->service()->getFormulaWithHierarchy($id);
+            if ($formula) {
+                echo json_encode(['success' => true, 'formula' => $formula]);
+                return;
+            }
+        }
+        
         if (empty($latex)) {
-            echo json_encode(['success' => false, 'error' => 'No LaTeX provided.']);
+            echo json_encode(['success' => false, 'error' => 'No formula ID or LaTeX provided.']);
             return;
         }
         
         $formula = $this->service()->searchFormulaByLatex($latex);
-        if (!$formula) {
+        if ($formula && !empty($formula['id'])) {
+            $formula = $this->service()->getFormulaWithHierarchy($formula['id']);
+        } else if (!$formula) {
             $formula = $this->service()->synthesizeFormulaExplanation($latex);
         }
 

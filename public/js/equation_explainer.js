@@ -2812,22 +2812,58 @@ const EquationExplainer = {
 
         const found = [];
         const seen = new Set();
+        const consumedSubtokens = new Set();
 
         const addToken = (symbol, type) => {
-            if (seen.has(symbol)) return;
+            if (!symbol || seen.has(symbol)) return;
             seen.add(symbol);
             found.push({ symbol, type });
         };
+
+        // Structural LaTeX commands and delimiters to suppress from fallback variable lookup
+        const structuralDelimiters = [
+            '\\rangle', '\\langle', '\\mid', '|', '(', ')', '[', ']', '{', '}', '+', '-', '=', '/', 
+            '\\sum', '\\prod', '\\int', '\\oint', '\\iint', '\\iiint', '\\cdot', '\\times',
+            '\\sqrt', '\\frac', '\\partial', '\\text', '\\mathrm', '\\mathsf', '\\left', '\\right'
+        ];
+        structuralDelimiters.forEach(d => {
+            consumedSubtokens.add(d);
+            consumedSubtokens.add(d.replace(/^\\/, ''));
+        });
+
+        // Priority 1: Match against officialVariables from formula database
+        if (officialVariables && typeof officialVariables === 'object') {
+            const sortedOfficialKeys = Object.keys(officialVariables).sort((a, b) => b.length - a.length);
+            sortedOfficialKeys.forEach(key => {
+                if (!key || consumedSubtokens.has(key) || consumedSubtokens.has(key.replace(/^\\/, ''))) return;
+                const escaped = key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                const regex = new RegExp(escaped, 'g');
+                if (regex.test(latex)) {
+                    const offObj = officialVariables[key];
+                    const type = (offObj && offObj.type) ? offObj.type : (key.startsWith('\\hat') || key.includes('\\partial') ? 'operator' : 'variable');
+                    addToken(key, type);
+
+                    // Track sub-tokens to consume
+                    const subParts = key.match(/\\[a-zA-Z]+|[a-zA-Z]/g) || [];
+                    subParts.forEach(part => {
+                        const cleanPart = part.replace(/^\\/, '');
+                        if (cleanPart.length > 0) {
+                            consumedSubtokens.add(cleanPart);
+                            consumedSubtokens.add(part);
+                            consumedSubtokens.add('\\' + cleanPart);
+                        }
+                    });
+                }
+            });
+        }
 
         // Extract subscripts as modifiers from original raw latex
         const subscriptModRegex = /_\{([^\}]+)\}|_([a-zA-Z\\]+)/g;
         let subModMatch;
         while ((subModMatch = subscriptModRegex.exec(latex)) !== null) {
             let content = subModMatch[1] || subModMatch[2];
-            // Clean text/mathrm wrapping: \text{ext} -> ext
             content = content.replace(/\\(text|mathrm|mathsf|mathrm)\{([^\}]+)\}/g, '$2').trim();
-            // If the cleaned content is a word of length >= 2 or in modifierGlossary, it's a modifier
-            if (/^[a-zA-Z]{2,}$/.test(content) || this.modifierGlossary[content]) {
+            if ((/^[a-zA-Z]{2,}$/.test(content) || this.modifierGlossary[content]) && !consumedSubtokens.has(content)) {
                 addToken(content, 'modifier');
             }
         }
@@ -3123,14 +3159,13 @@ const EquationExplainer = {
         let match;
         while ((match = greekPattern.exec(text)) !== null) {
             const sym = match[0];
-            // Skip structural and formatting LaTeX commands
             const structuralCmds = new Set([
                 '\\frac', '\\left', '\\right', '\\cdot', '\\times', '\\div', 
                 '\\iff', '\\implies', '\\ge', '\\le', '\\ast', '\\star',
                 '\\boldsymbol', '\\mathbf', '\\mathsf', '\\mathrm', '\\text', '\\mathcal', 
                 '\\vec', '\\hat', '\\bar', '\\tilde', '\\dot', '\\ddot', '\\underline'
             ]);
-            if (structuralCmds.has(sym)) continue;
+            if (structuralCmds.has(sym) || consumedSubtokens.has(sym) || consumedSubtokens.has(sym.replace(/^\\/, ''))) continue;
             
             const isOperator = this.physicsDictionary[sym] && this.physicsDictionary[sym].type === 'operator';
             addToken(sym, isOperator ? 'operator' : 'variable');
@@ -3139,7 +3174,7 @@ const EquationExplainer = {
         // 7. Scan for explicit mathematical operators (filtering out basic arithmetic operators)
         const standardOperators = ['\\int', '\\oint', '\\sum', '\\partial', '\\nabla', '\\Delta'];
         standardOperators.forEach(op => {
-            if (this.latexContainsSymbol(text, op)) {
+            if (!consumedSubtokens.has(op) && this.latexContainsSymbol(text, op)) {
                 addToken(op, 'operator');
             }
         });
@@ -3148,7 +3183,7 @@ const EquationExplainer = {
         const romanPattern = /[a-zA-Z]/g;
         while ((match = romanPattern.exec(text)) !== null) {
             const sym = match[0];
-            if (this.latexContainsSymbol(text, sym)) {
+            if (!consumedSubtokens.has(sym) && this.latexContainsSymbol(text, sym)) {
                 addToken(sym, 'variable');
             }
         }
@@ -3482,36 +3517,32 @@ const EquationExplainer = {
     wrapTextMathDelimiters(text) {
         if (typeof text !== 'string') return text;
         
-        // Protect existing math blocks by temporarily replacing them with placeholders
         const placeholders = [];
         let tempText = text.replace(/\\par\b/g, ' ');
         
         tempText = tempText.replace(/\$\$[\s\S]*?\$\$/g, match => {
             placeholders.push(match);
-            return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
+            return `\uE000MATH_${placeholders.length - 1}\uE000`;
         });
         tempText = tempText.replace(/\$[\s\S]*?\$/g, match => {
             placeholders.push(match);
-            return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
+            return `\uE000MATH_${placeholders.length - 1}\uE000`;
         });
         tempText = tempText.replace(/\\\([\s\S]*?\\\)/g, match => {
             placeholders.push(match);
-            return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
+            return `\uE000MATH_${placeholders.length - 1}\uE000`;
         });
         tempText = tempText.replace(/\\\[[\s\S]*?\\\]/g, match => {
             placeholders.push(match);
-            return `__MATH_PLACEHOLDER_${placeholders.length - 1}__`;
+            return `\uE000MATH_${placeholders.length - 1}\uE000`;
         });
         
-        // Match raw math blocks composed of backslash tokens, operators, and single variables/constants
         tempText = tempText.replace(/(?:\S*\\\S+|[\+\-\*\/\=\<\>]+|\b[a-zA-Z0-9]\b)(?:\s+(?:\S*\\\S+|[\+\-\*\/\=\<\>]+|\b[a-zA-Z0-9]\b))*/g, match => {
-            if (!match.includes('\\')) {
-                return match; // Only wrap if it contains a LaTeX command/backslash
+            if (!match.includes('\\') || match.includes('\uE000')) {
+                return match;
             }
             
             let trimmed = match.trim();
-            
-            // Extract trailing punctuation
             let trailingPunct = '';
             const punctMatch = trimmed.match(/[,.;:]+$/);
             if (punctMatch) {
@@ -3522,9 +3553,12 @@ const EquationExplainer = {
             return `\\(${trimmed}\\)${trailingPunct}`;
         });
         
-        // Restore placeholders using a callback function to prevent JS replacement string gotchas
         for (let i = 0; i < placeholders.length; i++) {
-            tempText = tempText.replace(`__MATH_PLACEHOLDER_${i}__`, () => placeholders[i]);
+            let p = placeholders[i];
+            if (p.startsWith('$') && !p.startsWith('$$') && p.endsWith('$')) {
+                p = `\\(${p.slice(1, -1)}\\)`;
+            }
+            tempText = tempText.replace(`\uE000MATH_${i}\uE000`, () => p);
         }
         
         return tempText;

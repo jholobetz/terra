@@ -412,7 +412,7 @@ class PhysicsOrchestrator:
 
                 if rel_path == "formulas.json":
                     self.data["formula_registry"] = content
-                elif rel_path.startswith("formulas/shard_") and rel_path.endswith(".json"):
+                elif rel_path.startswith("formulas/") or rel_path.startswith("formulas\\") or "formulas" in rel_path.split(os.sep):
                     self.data["formula_registry"].update(content)
                 elif rel_path == "constants.json":
                     self.data["constants"] = content
@@ -424,7 +424,7 @@ class PhysicsOrchestrator:
                     pass
                 elif rel_path == "compiled_trie_regex.json":
                     pass
-                elif rel_path in ["notation.json", "particles.json", "pillar_profiles.json", "formula_aliases.json"]:
+                elif rel_path in ["notation.json", "particles.json", "pillar_profiles.json", "formula_aliases.json", "formulas_latex_index.json", "unindexed_subcomponents.json", "subcomponents_checkpoint.json"]:
                     pass
                 elif rel_path.startswith("topics/"):
                     slug = file.replace(".json", "")

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-⚡ Repair Corrupted Formula Shards
+⚡ Repair Corrupted Formula Shards & Fix Angle-Bracket Math Expressions
 Scans all 256 formula shards, repairs corrupted TeX symbols (e.g. 4̀, 4$\gamma$̀, \u0001, \u0002, ̀, ́, ̅, ̄, ͆, ̰),
+converts angle-bracket math (<rho>, <I_{ij}>, <math>...</math>, <latex>...</latex>) to standard LaTeX ($...$),
 and synchronizes MariaDB + client search indexes.
 
 Usage:
@@ -36,6 +37,26 @@ def get_gemini_client():
             return None
     return None
 
+def fix_angle_bracket_math(text):
+    if not isinstance(text, str):
+        return text
+
+    text = re.sub(r'<latex>(.*?)</latex>', r'$\1$', text, flags=re.DOTALL)
+    text = re.sub(r'<math>(.*?)</math>', r'$\1$', text, flags=re.DOTALL)
+
+    html_exact = {"b", "/b", "/i", "ul", "/ul", "li", "/li", "br", "p", "/p", "sub", "/sub", "sup", "/sup", "span", "/span", "div", "/div"}
+
+    def replace_angle(match):
+        inner = match.group(1).strip()
+        if inner in html_exact:
+            return match.group(0)
+        if inner == "i" and "</i>" not in text:
+            return "$i$"
+        return f"${inner}$"
+
+    text = re.sub(r'<([^<>\n]+)>', replace_angle, text)
+    return text
+
 def clean_formula_json_string(text):
     if not isinstance(text, str):
         return text
@@ -58,6 +79,9 @@ def clean_formula_json_string(text):
     # Remove isolated combining characters
     text = re.sub(r'[\u0300\u0301\u0304\u0305\u0346\u0330]', '', text)
 
+    # Fix angle bracket math tags (<rho>, <I_{ij}>, <dV>, etc.)
+    text = fix_angle_bracket_math(text)
+
     return text
 
 def clean_formula_obj(obj):
@@ -75,43 +99,8 @@ def clean_formula_obj(obj):
         return clean_formula_json_string(obj)
     return obj
 
-def gemini_repair_obj(client, formula_id, formula_obj):
-    prompt = f"""
-You are an expert theoretical physics knowledge architect for Project Terra.
-The formula definition for "{formula_id}" (Equation: {formula_obj.get("equation", "")}) has corrupted text characters.
-
-Original Corrupted Object:
-{json.dumps(formula_obj, indent=2, ensure_ascii=False)}
-
-TASK: Clean and repair all prose fields ("conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary") and "semantic_variables".
-Ensure:
-1. All math expressions in text fields use clean LaTeX delimiters like $...$ or \\(...\\).
-2. All corrupted symbols are replaced with proper LaTeX math symbols (e.g. \\pi, r, m, \\omega_0, \\hbar).
-3. "semantic_variables" keys are valid variable symbols (e.g. "A", "\\pi", "r").
-4. Retain the exact same "id", "title", "equation", "unit_system", "parent_formula_id", "derivation_type", and "status".
-
-Output ONLY valid JSON for the repaired formula object.
-"""
-    try:
-        res = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                temperature=0.1
-            )
-        )
-        raw = res.text.strip()
-        if raw.startswith("```json"): raw = raw[7:]
-        if raw.endswith("```"): raw = raw[:-3]
-        return json.loads(raw.strip())
-    except Exception as e:
-        print(f"    ⚠️ Gemini AI repair failed for {formula_id}: {e}")
-        return formula_obj
-
 def main():
-    print("⚡ Starting Formula Shard Repair Audit...")
-    client = get_gemini_client()
+    print("⚡ Starting Formula Shard Repair & Angle-Bracket Cleaning...")
 
     corrupted_pattern = re.compile(r'[\u0001\u0002\u0300\u0301\u0304\u0305\u0346\u0330]')
     repaired_shards_count = 0
@@ -125,9 +114,6 @@ def main():
         with open(filepath, 'r', encoding='utf-8') as f:
             raw_content = f.read()
 
-        if not corrupted_pattern.search(raw_content) and "4̀" not in raw_content:
-            continue
-
         try:
             shard_data = json.loads(raw_content)
         except Exception:
@@ -137,19 +123,14 @@ def main():
 
         for fid, fobj in shard_data.items():
             fstr = json.dumps(fobj, ensure_ascii=False)
-            if corrupted_pattern.search(fstr) or "4̀" in fstr:
-                # 1. Apply regex cleaner first
+            if corrupted_pattern.search(fstr) or "4̀" in fstr or "<" in fstr:
                 cleaned = clean_formula_obj(fobj)
                 cleaned_str = json.dumps(cleaned, ensure_ascii=False)
 
-                # 2. If corruptions remain and Gemini is available, use Gemini AI
-                if (corrupted_pattern.search(cleaned_str) or "4̀" in cleaned_str) and client:
-                    print(f"  ✨ Calling Gemini AI to repair [{fid}] in {filename}...")
-                    cleaned = gemini_repair_obj(client, fid, cleaned)
-
-                shard_data[fid] = cleaned
-                shard_updated = True
-                repaired_formulas_count += 1
+                if cleaned_str != fstr:
+                    shard_data[fid] = cleaned
+                    shard_updated = True
+                    repaired_formulas_count += 1
 
         if shard_updated:
             with open(filepath, 'w', encoding='utf-8') as f:

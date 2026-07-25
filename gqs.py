@@ -361,7 +361,7 @@ def is_formula_pending(formula):
 def formula_status():
     import glob
     shards_dir = "app/config/content/formulas"
-    shard_files = glob.glob(os.path.join(shards_dir, "shard_*.json"))
+    shard_files = glob.glob(os.path.join(shards_dir, "**/shard_*.json"), recursive=True)
     shard_files.sort()
     
     total = 0
@@ -405,7 +405,7 @@ def formula_status():
 def generate_formula_template(num_items=5):
     import glob
     shards_dir = "app/config/content/formulas"
-    shard_files = glob.glob(os.path.join(shards_dir, "shard_*.json"))
+    shard_files = glob.glob(os.path.join(shards_dir, "**/shard_*.json"), recursive=True)
     shard_files.sort()
     
     pending = []
@@ -845,7 +845,7 @@ def seed(rate_tier="free"):
                 seed_formula(fid, f)
 
     # Find all shards
-    shard_files = glob.glob(os.path.join(SHARDS_DIR, "shard_*.json"))
+    shard_files = glob.glob(os.path.join(SHARDS_DIR, "**/shard_*.json"), recursive=True)
     shard_files.sort()
 
     if not shard_files:
@@ -1052,7 +1052,7 @@ def formula_auto_seed(limit=5, rate_tier="free"):
     print("🛡️ Scanning subtopics for unregistered equations...")
     registered_latex = set()
     shards_dir = "app/config/content/formulas"
-    for shard_path in glob.glob(os.path.join(shards_dir, "shard_*.json")):
+    for shard_path in glob.glob(os.path.join(shards_dir, "**/shard_*.json"), recursive=True):
         with open(shard_path, 'r', encoding='utf-8') as f:
             try:
                 shard_data = json.load(f)

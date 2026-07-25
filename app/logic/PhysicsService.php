@@ -666,7 +666,7 @@ class PhysicsService
 
         // 4. Sync Formulas (Grouped Transactionally & Differentially)
         $formulasDir = PROJECT_ROOT . '/app/config/content/formulas/';
-        $formulaFiles = glob($formulasDir . 'shard_*.json');
+        $formulaFiles = array_merge(glob($formulasDir . 'shard_*.json') ?: [], glob($formulasDir . '*/shard_*.json') ?: []);
         
         $db->runQuery("START TRANSACTION");
         try {
@@ -873,7 +873,7 @@ class PhysicsService
 
         // Secondary Fallback: Match by AST Canonical Signature
         $baseDir = PROJECT_ROOT . '/app/config/content/formulas/';
-        $files = glob($baseDir . 'shard_*.json') ?: [];
+        $files = array_merge(glob($baseDir . 'shard_*.json') ?: [], glob($baseDir . '*/shard_*.json') ?: []);
 
         $targetCanonical = $this->canonicalizeLatex($latex);
         if (!empty($targetCanonical)) {

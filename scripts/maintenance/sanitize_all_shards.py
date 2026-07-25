@@ -152,7 +152,7 @@ def sanitize_shard(filepath):
     return modified, repaired_formulas
 
 def main():
-    shard_files = sorted(glob.glob(os.path.join(FORMULAS_DIR, "shard_*.json")))
+    shard_files = sorted(glob.glob(os.path.join(FORMULAS_DIR, "**/shard_*.json"), recursive=True))
     print(f"🧹 Starting Full-Shard Formula Sanitization across {len(shard_files)} shards...")
 
     total_modified_shards = 0

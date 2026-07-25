@@ -58,10 +58,11 @@ class IntegrityShield:
         formulas_dir = os.path.join(self.content_dir, "formulas")
         self.formula_registry = {}
         if os.path.exists(formulas_dir):
-            for file in os.listdir(formulas_dir):
-                if file.startswith("shard_") and file.endswith(".json"):
-                    with open(os.path.join(formulas_dir, file), "r") as f:
-                        self.formula_registry.update(json.load(f))
+            for root, _, files in os.walk(formulas_dir):
+                for file in files:
+                    if file.startswith("shard_") and file.endswith(".json"):
+                        with open(os.path.join(root, file), "r") as f:
+                            self.formula_registry.update(json.load(f))
         else:
             # Fallback to monolithic formulas.json
             formulas_path = os.path.join(self.content_dir, "formulas.json")
@@ -135,14 +136,15 @@ class IntegrityShield:
                 formula_validator = Draft7Validator(self.formula_schema)
                 formulas_dir = os.path.join(self.content_dir, "formulas")
                 if os.path.exists(formulas_dir):
-                    for file in os.listdir(formulas_dir):
-                        if file.startswith("shard_") and file.endswith(".json"):
-                            path = os.path.join(formulas_dir, file)
-                            with open(path, "r") as f:
-                                content = json.load(f)
-                            for err in formula_validator.iter_errors(content):
-                                f_id = err.path[0] if err.path else "<root>"
-                                self.errors.append(f"Formula Schema Violation in formulas/{file} :: {f_id}: {err.message}")
+                    for root, _, files in os.walk(formulas_dir):
+                        for file in files:
+                            if file.startswith("shard_") and file.endswith(".json"):
+                                path = os.path.join(root, file)
+                                with open(path, "r") as f:
+                                    content = json.load(f)
+                                for err in formula_validator.iter_errors(content):
+                                    f_id = err.path[0] if err.path else "<root>"
+                                    self.errors.append(f"Formula Schema Violation in formulas/{file} :: {f_id}: {err.message}")
 
         if not self.target_slug:
             self.all_slugs = set(self.all_subtopics.keys()).union(set(self.topics.keys()))

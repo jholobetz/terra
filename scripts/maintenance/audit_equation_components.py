@@ -138,7 +138,7 @@ def main():
 
     indexed_normalized = set(latex_index.keys())
 
-    shard_files = sorted(glob.glob(os.path.join(FORMULAS_DIR, "shard_*.json")))
+    shard_files = sorted(glob.glob(os.path.join(FORMULAS_DIR, "**/shard_*.json"), recursive=True))
     print(f"  - Loaded {len(latex_index)} indexed formulas across {len(shard_files)} shards.")
 
     total_formulas = 0

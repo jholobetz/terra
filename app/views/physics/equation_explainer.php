@@ -115,7 +115,12 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                                 Selecting Equation...
                             </h2>
                         </div>
-                        <span id="formula-badge" style="display: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;"></span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button id="btn-define-formula" style="display: none; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.1); color: #64ffda; border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease;">
+                                ✨ Define
+                            </button>
+                            <span id="formula-badge" style="display: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;"></span>
+                        </div>
                     </div>
                 </div>
 

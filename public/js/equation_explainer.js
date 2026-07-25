@@ -1817,6 +1817,57 @@ const EquationExplainer = {
             });
     },
 
+    triggerGeminiDefineFormula(btnDefine) {
+        if (!this.currentLatex) return;
+
+        const originalHtml = btnDefine.innerHTML;
+        btnDefine.disabled = true;
+        btnDefine.style.opacity = '0.7';
+        btnDefine.innerHTML = `<span style="display:inline-block; width:10px; height:10px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:explainer-spin 0.8s linear infinite; margin-right:5px;"></span> ✨ Researching...`;
+
+        // Inject spin keyframe if not present
+        if (!document.getElementById('explainer-spin-style')) {
+            const style = document.createElement('style');
+            style.id = 'explainer-spin-style';
+            style.textContent = `@keyframes explainer-spin { 100% { transform: rotate(360deg); } }`;
+            document.head.appendChild(style);
+        }
+
+        const adminKey = localStorage.getItem('terra_admin_key') || '';
+
+        fetch(`${BASE_URL}/physics/api/define-formula`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Terra-Admin-Key': adminKey
+            },
+            body: JSON.stringify({ latex: this.currentLatex })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btnDefine.disabled = false;
+            btnDefine.style.opacity = '1';
+            btnDefine.innerHTML = originalHtml;
+
+            if (data.success && data.formula) {
+                // Live update page with official Gemini-defined formula!
+                this.currentId = data.formula.id;
+                this.fetchSubtopicsForFormula(data.formula.id).then(subtopics => {
+                    this.renderFormula(data.formula, subtopics);
+                });
+            } else {
+                alert('Gemini Definition Error: ' + (data.error || 'Unknown error occurred.'));
+            }
+        })
+        .catch(err => {
+            btnDefine.disabled = false;
+            btnDefine.style.opacity = '1';
+            btnDefine.innerHTML = originalHtml;
+            console.error('Gemini definition request failed:', err);
+            alert('Request failed: ' + err.message);
+        });
+    },
+
     fetchSubtopicsForFormula(id) {
         return fetch(`${BASE_URL}/physics/search-index`)
             .then(res => res.json())
@@ -1858,8 +1909,22 @@ const EquationExplainer = {
         // Status formatting
         const status = formula.status || 'platinum-draft';
         if (this.formulaBadge) {
-            this.formulaBadge.className = 'badge-status ' + (status.includes('draft') ? 'badge-draft' : 'badge-platinum');
+            this.formulaBadge.className = 'badge-status ' + (status.includes('draft') || status.includes('synthesized') ? 'badge-draft' : 'badge-platinum');
             this.formulaBadge.textContent = status.replace('-', ' ').toUpperCase();
+        }
+
+        // Show Define button for unregistered/synthesized formulas
+        const btnDefine = document.getElementById('btn-define-formula');
+        if (btnDefine) {
+            const isSynthesized = formula.status === 'synthesized-ast' || formula.title === 'Custom Physical Relation' || formula.is_synthesized;
+            btnDefine.style.display = isSynthesized ? 'inline-flex' : 'none';
+
+            if (!btnDefine.getAttribute('data-bound')) {
+                btnDefine.setAttribute('data-bound', 'true');
+                btnDefine.addEventListener('click', () => {
+                    this.triggerGeminiDefineFormula(btnDefine);
+                });
+            }
         }
 
         const synthesis = this.synthesizeCustomOverview(this.currentLatex);

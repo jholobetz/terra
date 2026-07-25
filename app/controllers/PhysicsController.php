@@ -201,6 +201,57 @@ class PhysicsController
     }
 
     /**
+     * REST Action to define an unregistered LaTeX formula via Gemini AI and save to database.
+     */
+    public function apiDefineFormula()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        // Security check for production environments
+        $appEnv = getenv('APP_ENV') ?: 'development';
+        if ($appEnv === 'production') {
+            $adminKeyHeader = $_SERVER['HTTP_X_TERRA_ADMIN_KEY'] ?? '';
+            $expectedKey = getenv('TERRA_ADMIN_KEY') ?: 'terra_admin_secret_key_123';
+            if ($adminKeyHeader !== $expectedKey) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => '403 Forbidden: Invalid Security Token']);
+                return;
+            }
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $latex = $input['latex'] ?? $this->app->request()->post['latex'] ?? $this->app->request()->query['latex'] ?? '';
+
+        if (empty($latex)) {
+            echo json_encode(['success' => false, 'error' => 'No LaTeX equation provided.']);
+            return;
+        }
+
+        // Run python generator script
+        $python = __DIR__ . '/../../.venv/bin/python3';
+        if (!file_exists($python)) {
+            $python = 'python3';
+        }
+        $script = __DIR__ . '/../../scripts/maintenance/generate_gemini_formula.py';
+        
+        $cmd = escapeshellcmd($python) . ' ' . escapeshellarg($script) . ' --latex ' . escapeshellarg($latex);
+        $output = shell_exec($cmd);
+
+        if (!$output) {
+            echo json_encode(['success' => false, 'error' => 'Failed to execute Gemini formula generator script.']);
+            return;
+        }
+
+        $res = json_decode($output, true);
+        if (!$res) {
+            echo json_encode(['success' => false, 'error' => 'Invalid response from formula generator: ' . $output]);
+            return;
+        }
+
+        echo json_encode($res);
+    }
+
+    /**
      * REST Action to load subtopic variables dynamically (for referrer-based overrides).
      */
     public function apiGetSubtopicVariables(string $slug)

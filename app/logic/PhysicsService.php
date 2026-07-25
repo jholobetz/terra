@@ -373,6 +373,22 @@ class PhysicsService
         if (!empty($formula['parent_formula_id'])) {
             $parentId = $formula['parent_formula_id'];
             $parentObj = $this->loadFormula($parentId);
+
+            if (!$parentObj) {
+                $fallbackMap = [
+                    'gauss-law-electrostatics' => 'gausss-law',
+                    'schrodinger-equation' => 'time-dependent-schrodinger-equation',
+                    'coulombs-law' => 'coulombs-law-vector-form-cf57b988',
+                    'poissons-equation' => 'poisson-equation-for-electrostatics',
+                    'maxwells-equations' => 'maxwells-equations-differential-forms-1349f485',
+                    'lorentz-transformations' => 'lorentz-transformation-matrix'
+                ];
+                if (isset($fallbackMap[$parentId])) {
+                    $parentId = $fallbackMap[$parentId];
+                    $parentObj = $this->loadFormula($parentId);
+                }
+            }
+
             if ($parentObj) {
                 $formula['parent_formula'] = [
                     'id' => $parentId,

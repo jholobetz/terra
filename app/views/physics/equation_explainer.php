@@ -147,6 +147,16 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         <!-- JS populated -->
                     </div>
 
+                    <!-- Knowledge Graph Ancestry & Family Tree Card -->
+                    <div id="knowledge-graph-card" style="display: none; background: rgba(100, 255, 218, 0.04); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 12px; padding: 20px; flex-direction: column; gap: 12px;">
+                        <h4 style="font-size: 0.82rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                            🕸️ Formula Family Tree &amp; Structural Components
+                        </h4>
+                        <div id="knowledge-graph-details" style="font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
+                            <!-- JS populated -->
+                        </div>
+                    </div>
+
                     <!-- Section 3: Physical Meaning & Scenarios -->
                     <div id="ai-scenarios-section" style="display: none; flex-direction: column; gap: 12px;">
                         <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px;">
@@ -184,16 +194,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                             <p id="limits-boundary" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
                                 --
                             </p>
-                        </div>
-                    </div>
-
-                    <!-- Knowledge Graph Ancestry Card -->
-                    <div id="knowledge-graph-card" style="display: none; background: rgba(100, 255, 218, 0.03); border: 1px solid rgba(100, 255, 218, 0.15); border-radius: 12px; padding: 20px; flex-direction: column; gap: 12px;">
-                        <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
-                            🕸️ Knowledge Graph Ancestry &amp; Relational Edges
-                        </h4>
-                        <div id="knowledge-graph-details" style="font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
-                            <!-- JS populated -->
                         </div>
                     </div>
 

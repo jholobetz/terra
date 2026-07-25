@@ -84,6 +84,22 @@ def save_checkpoint(checkpoint: Dict[str, Any]):
     with open(CHECKPOINT_FILE, "w", encoding="utf-8") as f:
         json.dump(checkpoint, f, indent=4)
 
+def is_valid_subequation_component(sub_tex: str) -> bool:
+    clean = sub_tex.strip()
+    if re.match(r'^\\[a-zA-Z]+$', clean) and clean in [
+        '\\alpha', '\\beta', '\\gamma', '\\delta', '\\epsilon', '\\theta', '\\pi', '\\mu', '\\sigma',
+        '\\hbar', '\\lambda', '\\omega', '\\phi', '\\psi', '\\rho', '\\tau', '\\chi', '\\xi', '\\eta',
+        '\\zeta', '\\nu', '\\kappa', '\\infty', '\\Omega', '\\Delta', '\\nabla'
+    ]:
+        return False
+    if re.match(r'^[a-zA-Z0-9]$', clean):
+        return False
+    if clean in ['1/2', '\\frac{1}{2}', '0', '1', '2', '3', '4', '5', '\\pi', '\\hbar', 'c', 'e', 'm', 'k', 'h', 'G', 'k_B']:
+        return False
+    if len(clean) < 3:
+        return False
+    return True
+
 def prepare_subcomponent_queue() -> List[Dict[str, Any]]:
     with open(INPUT_CATALOG, "r", encoding="utf-8") as f:
         catalog = json.load(f)
@@ -99,6 +115,8 @@ def prepare_subcomponent_queue() -> List[Dict[str, Any]]:
         m_eq = master["master_equation"]
 
         for sub_tex in master.get("missing_subcomponents", []):
+            if not is_valid_subequation_component(sub_tex):
+                continue
             norm = normalize_latex(sub_tex)
             if not norm or len(norm) < 2:
                 continue

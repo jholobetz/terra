@@ -2001,27 +2001,72 @@ const EquationExplainer = {
         const details = document.getElementById('knowledge-graph-details');
         if (!card || !details) return;
 
-        if (!formula || (!formula.parent_formula_id && !formula.derivation_type && !formula.related_formula_ids)) {
+        const hasParent = formula && (formula.parent_formula || formula.parent_formula_id);
+        const hasSubcomponents = formula && Array.isArray(formula.subcomponents) && formula.subcomponents.length > 0;
+        const hasOtherMetadata = formula && (formula.derivation_type || formula.constraints);
+
+        if (!hasParent && !hasSubcomponents && !hasOtherMetadata) {
             card.style.display = 'none';
             return;
         }
 
         card.style.display = 'flex';
         let html = '';
+
         if (formula.derivation_type) {
-            html += `<div style="margin-bottom: 8px;"><strong>Derivation Relationship:</strong> <span class="badge-status badge-platinum" style="font-size: 0.72rem; padding: 2px 6px; background: rgba(100,255,218,0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100,255,218,0.3); border-radius: 4px;">${formula.derivation_type}</span></div>`;
+            html += `<div style="margin-bottom: 10px;"><strong>Derivation Relationship:</strong> <span class="badge-status badge-platinum" style="font-size: 0.72rem; padding: 2px 6px; background: rgba(100,255,218,0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100,255,218,0.3); border-radius: 4px;">${formula.derivation_type}</span></div>`;
         }
-        if (formula.parent_formula_id) {
+
+        // 1. Parent Master Equation Link
+        if (formula.parent_formula && formula.parent_formula.id) {
+            const p = formula.parent_formula;
+            const parentUrl = p.url || `/physics/equation-explainer?id=${encodeURIComponent(p.id)}`;
+            html += `
+                <div style="margin-bottom: 14px; background: rgba(100, 255, 218, 0.05); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 8px; padding: 12px;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted, #94a3b8); margin-bottom: 4px; font-weight: 600;">⬆ Parent Master Equation</div>
+                    <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; font-weight: 600; font-size: 1.05rem; display: inline-flex; align-items: center; gap: 8px;">
+                        <span>${p.title}</span>
+                        <span style="color: #ffd700; font-family: monospace;">($\\;${p.equation}\\;$)</span>
+                    </a>
+                </div>
+            `;
+        } else if (formula.parent_formula_id) {
             const parentUrl = `/physics/equation-explainer?id=${encodeURIComponent(formula.parent_formula_id)}`;
             const parentName = formula.parent_formula_id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            html += `<div style="margin-bottom: 8px;"><strong>Master Parent Law:</strong> <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; border-bottom: 1px dashed rgba(100,255,218,0.4); font-weight: 600;">${parentName}</a></div>`;
+            html += `<div style="margin-bottom: 10px;"><strong>Master Parent Law:</strong> <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; border-bottom: 1px dashed rgba(100,255,218,0.4); font-weight: 600;">${parentName}</a></div>`;
         }
+
+        // 2. Child Subcomponents Grid
+        if (hasSubcomponents) {
+            html += `
+                <div style="margin-top: 10px;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted, #94a3b8); margin-bottom: 8px; font-weight: 600;">⬇ Formula Component Sub-equations (${formula.subcomponents.length})</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;">
+            `;
+            formula.subcomponents.forEach(child => {
+                const childId = typeof child === 'string' ? child : child.id;
+                const childTitle = typeof child === 'string' ? childId.replace(/-/g, ' ') : child.title;
+                const childEq = (typeof child === 'object' && child.equation) ? child.equation : childId;
+                const childUrl = `/physics/equation-explainer?id=${encodeURIComponent(childId)}`;
+                html += `
+                    <a href="${childUrl}" style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(100,255,218,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+                        <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${childTitle}</span>
+                        <span style="font-size: 0.9rem; color: #ffd700;">($\\;${childEq}\\;$)</span>
+                    </a>
+                `;
+            });
+            html += `
+                    </div>
+                </div>
+            `;
+        }
+
         if (formula.constraints) {
             try {
                 const c = typeof formula.constraints === 'string' ? JSON.parse(formula.constraints) : formula.constraints;
                 const pills = this.formatConstraintsToPills(c);
                 if (pills) {
-                    html += `<div style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><strong>Active Physical Constraints:</strong> ${pills}</div>`;
+                    html += `<div style="margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><strong>Active Physical Constraints:</strong> ${pills}</div>`;
                 }
             } catch(e) {}
         }

@@ -191,25 +191,23 @@ def generate_definition(latex_str):
     return formula_obj
 
 def save_and_sync(formula_obj):
-    target_shard = get_target_shard_file()
+    formula_id = formula_obj['id']
+    import hashlib
+    hex_hash = hashlib.md5(formula_id.encode('utf-8')).hexdigest()[:2]
+    target_shard = os.path.join(FORMULAS_DIR, f"shard_{hex_hash}.json")
 
-    shard_data = []
+    shard_data = {}
     if os.path.exists(target_shard):
         try:
             with open(target_shard, 'r', encoding='utf-8') as f:
                 shard_data = json.load(f)
         except Exception:
-            shard_data = []
+            shard_data = {}
 
-    # Overwrite if exists, otherwise append
-    updated = False
-    for i, item in enumerate(shard_data):
-        if item.get('id') == formula_obj['id'] or item.get('equation') == formula_obj['equation']:
-            shard_data[i] = formula_obj
-            updated = True
-            break
-    if not updated:
-        shard_data.append(formula_obj)
+    if not isinstance(shard_data, dict):
+        shard_data = {}
+
+    shard_data[formula_id] = formula_obj
 
     with open(target_shard, 'w', encoding='utf-8') as f:
         json.dump(shard_data, f, indent=4, ensure_ascii=False)
@@ -217,7 +215,7 @@ def save_and_sync(formula_obj):
     # Sync to MariaDB & rebuild search index
     cli_sync_path = os.path.join(PROJECT_ROOT, 'cli_sync.php')
     sync_cmd = ['php', cli_sync_path]
-    res = subprocess.run(sync_cmd, capture_output=True, text=True)
+    subprocess.run(sync_cmd, capture_output=True, text=True)
 
     return target_shard
 

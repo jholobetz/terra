@@ -129,13 +129,13 @@
                 "name": "Radiative Temperature Gradient",
                 "type": "variable",
                 "unit": "1",
-                "description": "The logarithmic temperature gradient with respect to pressure due to radiative energy transport. It is defined as $\\frac{d $ext{log} T}{d $ext{log} P}$."
+                "description": "The logarithmic temperature gradient with respect to pressure due to radiative energy transport. It is defined as $\\frac{d \\text{log} T}{d \\text{log} P}$."
             },
             "$\\nabla_{ad}$": {
                 "name": "Adiabatic Temperature Gradient",
                 "type": "variable",
                 "unit": "1",
-                "description": "The logarithmic temperature gradient with respect to pressure that a parcel of gas would maintain if it moved adiabatically. It is defined as $\\frac{d $ext{log} T}{d $ext{log} P}|_{ad}$ and depends on the adiabatic index of the gas."
+                "description": "The logarithmic temperature gradient with respect to pressure that a parcel of gas would maintain if it moved adiabatically. It is defined as $\\frac{d \\text{log} T}{d \\text{log} P}|_{ad}$ and depends on the adiabatic index of the gas."
             },
             "T": {
                 "name": "Temperature",
@@ -1833,5 +1833,91 @@
         "parent_formula_id": "convection-trigger-8b715f27",
         "subcomponents": [],
         "id": "schwarzschild-convection-criterion-09ff201a"
+    },
+    "high-temperature-phonon-occupancy-approximation-31b1ad24": {
+        "title": "High-Temperature Phonon Occupancy Approximation",
+        "description": "This equation approximates the average number of phonons in a given mode at high temperatures, where thermal energy significantly exceeds the phonon energy.",
+        "conceptual_definition": "Phonon occupancy refers to the average number of phonons, quanta of lattice vibrations, present in a specific vibrational mode of a solid. This equation represents the classical limit of the Bose-Einstein distribution for phonons, valid when the thermal energy $k_B T$ is much greater than the characteristic energy $\\hbar \\omega$ of the phonon mode. In this regime, the quantum nature of phonons becomes less significant, and their behavior approaches that of classical harmonic oscillators.",
+        "interpretation": "This approximation indicates that at sufficiently high temperatures, the average number of phonons in a mode is directly proportional to the absolute temperature and inversely proportional to the phonon's energy. This result is consistent with the classical equipartition theorem, which states that each quadratic degree of freedom of a classical system in thermal equilibrium has an average energy of $\\frac{1}{2}k_B T$. For a one-dimensional harmonic oscillator, this implies an average total energy of $k_B T$, which when divided by the energy per phonon ($\\hbar \\omega$), yields the average number of phonons.",
+        "limits_and_boundary": "This approximation is valid in the high-temperature limit, specifically when $k_B T \\gg \\hbar \\omega$. Under this condition, the exponential term in the full Bose-Einstein distribution, $\\exp\\left( \\frac{\\hbar \\omega}{k_B T} \\right)$, can be approximated as $1 + \\frac{\\hbar \\omega}{k_B T}$ using the Taylor expansion $e^x \\approx 1+x$ for small $x$.",
+        "symmetry_origin": "This approximation arises from considering the high-temperature, classical limit of the Bose-Einstein statistics, which describes indistinguishable bosons. While not directly a symmetry, the underlying indistinguishability of phonons is crucial for the Bose-Einstein distribution. The approximation itself reflects the transition from quantum statistical behavior to classical statistical behavior, where the system's energy levels are effectively continuous.",
+        "unit_system": "SI",
+        "derivation_type": "DERIVED_FROM",
+        "equation_family": "statistical-mechanics",
+        "semantic_variables": {
+            "n": "Average number of phonons in a given mode (dimensionless)",
+            "k_B": "Boltzmann constant (J/K)",
+            "T": "Absolute temperature (K)",
+            "hbar": "Reduced Planck constant (J·s)",
+            "omega": "Angular frequency of the phonon mode (rad/s)"
+        },
+        "equation": "\\langle n \\rangle \\approx \\frac{k_B T}{\\hbar \\omega}",
+        "status": "published",
+        "parent_formula_id": "phonon-bose-einstein-occupancy-996345f3",
+        "subcomponents": [],
+        "id": "high-temperature-phonon-occupancy-approximation-31b1ad24"
+    },
+    "invariant-momentum-transfer-squared-6552e560": {
+        "title": "Invariant Momentum Transfer Squared",
+        "description": "Defines the squared four-momentum transfer in terms of its energy and three-momentum components, a fundamental Lorentz invariant.",
+        "conceptual_definition": "In relativistic quantum field theory, the four-momentum transfer, denoted by $q^\\mu$, describes the momentum and energy exchanged between interacting particles. Its squared magnitude, $q^2$, is a Lorentz invariant quantity, meaning its value is the same in all inertial reference frames. This invariant is crucial for characterizing the nature of the interaction, particularly in scattering processes, and is often interpreted as the invariant mass squared of the virtual particle mediating the interaction.",
+        "interpretation": "This equation represents the square of the four-momentum transfer, $q^2$, which is a fundamental Lorentz invariant in particle physics. It is calculated from the square of the energy transfer ($E_q/c$) and the square of the magnitude of the three-momentum transfer ($|\\boldsymbol{q}|$). For a real particle, $q^2$ would be its invariant mass squared ($m^2c^2$). However, for a virtual particle mediating an interaction, $q^2$ can be positive (spacelike), negative (timelike), or zero (lightlike), indicating whether the interaction is mediated by a virtual particle with real mass, imaginary mass, or is massless, respectively.",
+        "limits_and_boundary": "In the context of the master formula '$q^2 \\to 0$', this equation implies that the energy transfer $E_q$ and the magnitude of the three-momentum transfer $|\\boldsymbol{q}|$ become equal (i.e., $E_q/c = |\\boldsymbol{q}|$). This condition corresponds to a massless exchange particle or a very long-range interaction. For a real particle, $q^2 = m^2c^2 \\ge 0$. For virtual particles, $q^2$ can be negative (timelike) or positive (spacelike).",
+        "symmetry_origin": "This equation is a direct consequence of Lorentz invariance, a fundamental symmetry of spacetime in special relativity. The four-momentum $q^\\mu = (E_q/c, \\boldsymbol{q})$ transforms as a four-vector, and its squared magnitude $q^\\mu q_\\mu$ is a scalar under Lorentz transformations. This invariance reflects the homogeneity and isotropy of spacetime.",
+        "unit_system": "SI",
+        "derivation_type": "DERIVED_FROM",
+        "equation_family": "relativistic-kinematics",
+        "semantic_variables": {
+            "q^2": "Squared four-momentum transfer (units of energy squared divided by speed of light squared, e.g., GeV^2/c^2, or mass squared, kg^2). It is a Lorentz invariant scalar quantity.",
+            "E_q": "Energy transfer (Joules, J, or electronvolts, eV).",
+            "c": "Speed of light in vacuum (meters per second, m/s).",
+            "|\\boldsymbol{q}|": "Magnitude of the three-momentum transfer (units of momentum, e.g., kg\\cdot m/s, or GeV/c)."
+        },
+        "equation": "q^2 = (E_q/c)^2 - |\\boldsymbol{q}|^2",
+        "status": "published",
+        "parent_formula_id": "momentum-transfer-goes-zero",
+        "subcomponents": [],
+        "id": "invariant-momentum-transfer-squared-6552e560"
+    },
+    "renormalization-group-fixed-point-condition-19eac290": {
+        "title": "Renormalization Group Fixed Point Condition",
+        "description": "This equation defines a fixed point of the renormalization group beta function, where the running coupling constant becomes scale-invariant.",
+        "conceptual_definition": "In quantum field theory, the beta function describes how a coupling constant changes with the energy scale. A fixed point, denoted by \\(g_*\\), is a specific value of the coupling constant where the beta function vanishes. At such a point, the system's behavior becomes scale-invariant, meaning its physical properties do not change under a change of observation scale.",
+        "interpretation": "Physically, \\(\\beta(g_*) = 0\\) signifies a state where the quantum field theory exhibits scale invariance or even conformal invariance. If such a fixed point is attractive (IR stable), the theory flows towards it at low energies, describing a conformal field theory. If it's repulsive (UV stable), the theory flows away from it at high energies, potentially describing asymptotic freedom or triviality.",
+        "limits_and_boundary": "Fixed points can be classified as ultraviolet (UV) stable or infrared (IR) stable, depending on the sign of the derivative of the beta function at the fixed point. A UV stable fixed point implies the theory flows towards it at high energies, while an IR stable fixed point implies flow towards it at low energies. The existence and nature of these fixed points are crucial for understanding the long-distance and short-distance behavior of quantum field theories.",
+        "symmetry_origin": "The vanishing of the beta function at a fixed point implies scale invariance. If the theory is also Lorentz invariant and satisfies certain regularity conditions, this scale invariance often extends to full conformal invariance, which includes special conformal transformations.",
+        "unit_system": "SI",
+        "derivation_type": "DERIVED_FROM",
+        "equation_family": "renormalization-group-theory",
+        "semantic_variables": {
+            "beta(g_*)": "The beta function evaluated at the fixed point coupling \\(g_*\\). It represents the rate of change of the coupling constant with respect to the logarithm of the energy scale. Units: Dimensionless.",
+            "g_*": "The fixed point value of the coupling constant. At this specific value, the beta function is zero, indicating that the coupling constant does not run with energy scale. Units: Dimensionless (for a dimensionless coupling constant)."
+        },
+        "equation": "\\beta(g_*) = 0",
+        "status": "published",
+        "parent_formula_id": "the-scale-law-36288521",
+        "subcomponents": [],
+        "id": "renormalization-group-fixed-point-condition-19eac290"
+    },
+    "time-time-component-of-flrw-metric-63b7d78e": {
+        "title": "Time-Time Component of FLRW Metric",
+        "description": "This equation defines the time-time component of the Friedmann-Lema\\^itre-Robertson-Walker (FLRW) metric, which describes a homogeneous and isotropic expanding universe.",
+        "conceptual_definition": "In general relativity, the metric tensor $g_{\\mu\\nu}$ describes the geometry of spacetime. The $g_{00}$ component specifically relates to the time-like interval and the gravitational potential. For the FLRW metric, it quantifies how proper time intervals are affected by the expansion of the universe, scaled by the square of the cosmic scale factor.",
+        "interpretation": "The $g_{00}$ component determines the rate at which clocks tick in a given gravitational field. In the FLRW metric, the negative sign indicates that it is a time-like component, consistent with a Lorentzian signature. The presence of the scale factor $a(t)$ signifies that the passage of time, as measured by an observer, is intrinsically linked to the expansion or contraction of the universe. As $a(t)$ changes, the effective 'strength' of the time component of the metric changes, influencing time dilation effects across cosmic distances.",
+        "limits_and_boundary": "This equation is valid under the assumptions of the FLRW metric: a spatially homogeneous and isotropic universe. It applies to large cosmological scales where matter and energy are smoothly distributed. The scale factor $a(t)$ must be positive, $a(t) > 0$, and its evolution is governed by the Friedmann equations. At very early times (e.g., Big Bang singularity), $a(t) \\to 0$, leading to a breakdown of the classical description.",
+        "symmetry_origin": "The FLRW metric, and thus this component, arises from the fundamental cosmological principles of homogeneity and isotropy of the universe on large scales. These symmetries imply that spacetime looks the same at every point (homogeneity) and in every direction (isotropy), leading to a simplified form of the metric tensor.",
+        "unit_system": "SI",
+        "derivation_type": "DERIVED_FROM",
+        "equation_family": "cosmology",
+        "semantic_variables": {
+            "g_{00}": "The time-time component of the metric tensor (dimensionless). It represents the coefficient of the $dt^2$ term in the spacetime interval, indicating how time intervals are measured in the given spacetime geometry.",
+            "a(t)": "The cosmic scale factor (dimensionless). A function of cosmic time $t$, it describes the relative expansion or contraction of the universe. By convention, $a(t_0) = 1$ at the present epoch $t_0$.",
+            "t": "Cosmic time (seconds). A global time coordinate that is uniform throughout the universe for comoving observers."
+        },
+        "equation": "g_{00} = -a(t)^2",
+        "status": "published",
+        "parent_formula_id": "spatial-metric-tensor-flrw",
+        "subcomponents": [],
+        "id": "time-time-component-of-flrw-metric-63b7d78e"
     }
 }

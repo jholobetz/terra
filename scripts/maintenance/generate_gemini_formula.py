@@ -129,6 +129,40 @@ Output ONLY valid raw JSON matching this structure:
 }
 """
 
+def sanitize_gemini_latex_json(raw_text):
+    result = []
+    in_string = False
+    i = 0
+    length = len(raw_text)
+    while i < length:
+        char = raw_text[i]
+        if char == '"' and (i == 0 or raw_text[i - 1] != '\\'):
+            in_string = not in_string
+            result.append(char)
+            i += 1
+            continue
+        if in_string and char == '\\':
+            if i + 1 < length:
+                next_char = raw_text[i + 1]
+                if next_char in ('"', '\\', '/'):
+                    result.append('\\' + next_char)
+                    i += 2
+                    continue
+                elif next_char == 'u' and i + 5 < length and all(c in '0123456789abcdefABCDEF' for c in raw_text[i+2:i+6]):
+                    result.append(raw_text[i:i+6])
+                    i += 6
+                    continue
+                result.append('\\\\')
+                i += 1
+                continue
+            else:
+                result.append('\\\\')
+                i += 1
+                continue
+        result.append(char)
+        i += 1
+    return "".join(result)
+
 def generate_definition(latex_str):
     client, model_name = get_gemini_client()
     prompt = f"{SYSTEM_PROMPT}\n\nLaTeX Equation to Analyze: {latex_str}"
@@ -149,13 +183,15 @@ def generate_definition(latex_str):
         raw_text = raw_text[:-3]
     raw_text = raw_text.strip()
 
-    # Clean unescaped LaTeX backslashes in JSON output
-    clean_json = re.sub(r'\\(?![/"\\bfnrt]|u[0-9a-fA-F]{4})', r'\\\\', raw_text)
+    clean_json = sanitize_gemini_latex_json(raw_text)
 
     try:
         data = json.loads(clean_json)
     except Exception:
-        data = json.loads(raw_text)
+        try:
+            data = json.loads(raw_text)
+        except Exception:
+            data = {}
 
     while isinstance(data, str):
         try:

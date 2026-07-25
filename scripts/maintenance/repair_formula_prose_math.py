@@ -16,10 +16,37 @@ def clean_prose_text(text):
     if not isinstance(text, str) or not text:
         return text
 
-    # 1. Fix combining acute accent U+0301 -> \gamma
-    cleaned = text.replace('\u0301', '\\gamma ')
-    
-    # 2. Fix common unicode subscripts and powers
+    cleaned = text
+
+    # Step 1: Full multi-token equation replacements (Exact matches)
+    cleaned = cleaned.replace('L = L₀ / ́ = L₀ √(1 - v²/c²)', '$L = \\frac{L_0}{\\gamma} = L_0 \\sqrt{1 - \\frac{v^2}{c^2}}$')
+    cleaned = cleaned.replace('́ = 1 / √(1 - v²/c²)', '$\\gamma = \\frac{1}{\\sqrt{1 - \\frac{v^2}{c^2}}}$')
+    cleaned = cleaned.replace('L = -mc²√(1 - v²/c²)', '$L = -mc^2 \\sqrt{1 - \\frac{v^2}{c^2}}$')
+    cleaned = cleaned.replace('E = mc²/√(1 - v²/c²)', '$E = \\frac{mc^2}{\\sqrt{1 - \\frac{v^2}{c^2}}}$')
+    cleaned = cleaned.replace('p = mv/√(1 - v²/c²)', '$p = \\frac{mv}{\\sqrt{1 - \\frac{v^2}{c^2}}}$')
+    cleaned = cleaned.replace('L = L₀ √(1 - v²/c²)', '$L = L_0 \\sqrt{1 - \\frac{v^2}{c^2}}$')
+    cleaned = cleaned.replace('E = ́mc²', '$E = \\gamma mc^2$')
+    cleaned = cleaned.replace('p = ́mv', '$p = \\gamma mv$')
+    cleaned = cleaned.replace('L = T - V', '$L = T - V$')
+    cleaned = cleaned.replace('S = ∫ L dt', '$S = \\int L dt$')
+
+    # Step 2: Parenthesized limits and arrow expressions
+    cleaned = cleaned.replace('(ν ← 0)', '($v \\to 0$)')
+    cleaned = cleaned.replace('(ν ← c)', '($v \\to c$)')
+    cleaned = cleaned.replace('(́ ← 1)', '($\\gamma \\to 1$)')
+    cleaned = cleaned.replace('(́ ← ∞)', '($\\gamma \\to \\infty$)')
+    cleaned = cleaned.replace('(L ← L₀)', '($L \\to L_0$)')
+    cleaned = cleaned.replace('(L ← 0)', '($L \\to 0$)')
+
+    # Step 3: Fractional & square root terms
+    cleaned = cleaned.replace('√(1 - v²/c²)', '$\\sqrt{1 - \\frac{v^2}{c^2}}$')
+    cleaned = cleaned.replace('(1 - v²/c²)', '$(1 - v^2/c^2)$')
+    cleaned = cleaned.replace('(1 - ν²/c²)', '$(1 - v^2/c^2)$')
+    cleaned = cleaned.replace('v²/c²', '$v^2/c^2$')
+    cleaned = cleaned.replace('ν²/c²', '$v^2/c^2$')
+
+    # Step 4: Individual symbol replacements
+    cleaned = cleaned.replace('\u0301', '$\\gamma$')
     cleaned = cleaned.replace('L₀', '$L_0$')
     cleaned = cleaned.replace('L₁', '$L_1$')
     cleaned = cleaned.replace('E₀', '$E_0$')
@@ -27,47 +54,18 @@ def clean_prose_text(text):
     cleaned = cleaned.replace('P₀', '$P_0$')
     cleaned = cleaned.replace('V₀', '$V_0$')
     cleaned = cleaned.replace('T₀', '$T_0$')
-
+    cleaned = cleaned.replace('mc²', '$mc^2$')
     cleaned = cleaned.replace('v²', '$v^2$')
     cleaned = cleaned.replace('c²', '$c^2$')
     cleaned = cleaned.replace('x²', '$x^2$')
     cleaned = cleaned.replace('t²', '$t^2$')
     cleaned = cleaned.replace('r²', '$r^2$')
-    cleaned = cleaned.replace('v²/c²', '$v^2/c^2$')
 
-    cleaned = cleaned.replace('√(', '\\sqrt{')
-    cleaned = re.sub(r'√([a-zA-Z0-9_]+)', r'\\sqrt{\1}', cleaned)
-
-    cleaned = cleaned.replace('(ν ← c)', '($v \\to c$)')
-    cleaned = cleaned.replace('(ν ← 0)', '($v \\to 0$)')
-    cleaned = cleaned.replace('(́ ← 1)', '($\\gamma \\to 1$)')
-    cleaned = cleaned.replace('(́ ← ∞)', '($\\gamma \\to \\infty$)')
-    cleaned = cleaned.replace('ν²', '$v^2$')
-
-    # Fix space around \gamma
-    cleaned = re.sub(r'\\gamma([a-zA-Z])', r'\\gamma \1', cleaned)
-
-    # 3. Auto-wrap unwrapped math expressions like L = L_0 / \gamma or E = \gamma mc^2
-    def wrap_math_match(m):
-        val = m.group(0).strip()
-        if re.search(r'^(the|a|an|in|is|of|to|and|or|as|by|if|at|on|for|it|where)$', val, re.IGNORECASE):
-            return val
-        if '\\' in val or '_' in val or '^' in val or '=' in val:
-            # Check trailing punct
-            punct = ''
-            if val.endswith('.') or val.endswith(',') or val.endswith(';'):
-                punct = val[-1]
-                val = val[:-1]
-            return f"${val}${punct}"
-        return m.group(0)
-
-    # Wrap unwrapped math terms containing \gamma, \sqrt, _, ^
-    cleaned = re.sub(r'\b[a-zA-Z0-9_\^\\\=\+\-\*\/]+\b(?:\s*[\=\+\-\*\/]\s*[a-zA-Z0-9_\^\\\=\+\-\*\/]+)+', wrap_math_match, cleaned)
-
-    # Clean double dollars or nested math delimiters
+    # Step 5: Clean up any double-wrapped math delimiters
     cleaned = cleaned.replace('$$', '$')
     cleaned = re.sub(r'\$\s*\$', '', cleaned)
-    
+    cleaned = re.sub(r'\$\(\$([^\$]+)\$\)\$', r'(\$\1\$)', cleaned)
+
     return cleaned
 
 def process_file(filepath):

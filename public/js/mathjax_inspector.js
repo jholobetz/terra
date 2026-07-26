@@ -276,8 +276,15 @@ const MathJaxInspector = {
         if (linkEl && linkEl.href) {
             try {
                 const u = new URL(linkEl.href, window.location.origin);
-                const l = u.searchParams.get('latex');
-                if (l) return l;
+                let l = u.searchParams.get('latex');
+                if (l) {
+                    l = l.replace(/^['"\s]+|['"\s]+$/g, '');
+                    const quoteIdx = l.indexOf("'");
+                    if (quoteIdx > 0 && /\s+[a-zA-Z]{2,}/.test(l.slice(quoteIdx))) {
+                        l = l.substring(0, quoteIdx).trim();
+                    }
+                    return l;
+                }
             } catch (err) {}
         }
 

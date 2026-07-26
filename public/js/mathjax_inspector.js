@@ -280,7 +280,7 @@ const MathJaxInspector = {
                 if (l) {
                     l = l.replace(/^['"\s]+|['"\s]+$/g, '');
                     const quoteIdx = l.indexOf("'");
-                    if (quoteIdx > 0 && /\s+[a-zA-Z]{2,}/.test(l.slice(quoteIdx))) {
+                    if (quoteIdx > 0 && /'\s*(?:\\text|\\mathrm|\\mathbf|[a-zA-Z]{2,})/.test(l.slice(quoteIdx))) {
                         l = l.substring(0, quoteIdx).trim();
                     }
                     return l;

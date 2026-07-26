@@ -1667,7 +1667,7 @@ const EquationExplainer = {
             // Just raw LaTeX passed
             let rawLatex = (window.INITIAL_LATEX || '').trim().replace(/^['"\s]+|['"\s]+$/g, '');
             const quotePos = rawLatex.indexOf("'");
-            if (quotePos > 0 && /\s+[a-zA-Z]{2,}/.test(rawLatex.slice(quotePos))) {
+            if (quotePos > 0 && /'\s*(?:\\text|\\mathrm|\\mathbf|[a-zA-Z]{2,})/.test(rawLatex.slice(quotePos))) {
                 rawLatex = rawLatex.substring(0, quotePos).trim();
             }
             this.latexInput.value = rawLatex;
@@ -1696,7 +1696,7 @@ const EquationExplainer = {
     handleInputChange() {
         let latex = (this.latexInput ? this.latexInput.value : '').trim().replace(/^['"\s]+|['"\s]+$/g, '');
         const quotePos = latex.indexOf("'");
-        if (quotePos > 0 && /\s+[a-zA-Z]{2,}/.test(latex.slice(quotePos))) {
+        if (quotePos > 0 && /'\s*(?:\\text|\\mathrm|\\mathbf|[a-zA-Z]{2,})/.test(latex.slice(quotePos))) {
             latex = latex.substring(0, quotePos).trim();
             if (this.latexInput) this.latexInput.value = latex;
         }
@@ -3681,7 +3681,7 @@ const EquationExplainer = {
         });
 
         // 6. Wrap remaining un-delimited LaTeX backslash tokens (e.g. \frac{A}{B}, \rho, \nu, \to, \infty)
-        tempText = tempText.replace(/(?:(?<!\\)\\([a-zA-Z]+)(?:\{[^{}]*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^])*)/g, match => {
+        tempText = tempText.replace(/(?:(?<!\\)\\([a-zA-Z]+)(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^])*)/g, match => {
             if (match.includes('\uE000')) return match;
             let trimmed = match.trim();
             if (!trimmed) return match;

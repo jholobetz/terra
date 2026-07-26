@@ -137,7 +137,7 @@ class PhysicsController
         if (!empty($latex)) {
             $latex = trim($latex, " '\t\n\r\0\x0B\"");
             $quotePos = strpos($latex, "'");
-            if ($quotePos !== false && preg_match('/\s+[a-zA-Z]{2,}/', substr($latex, $quotePos))) {
+            if ($quotePos !== false && preg_match('/\'\s*(?:\\\\text|\\\\mathrm|\\\\mathbf|[a-zA-Z]{2,})/', substr($latex, $quotePos))) {
                 $latex = trim(substr($latex, 0, $quotePos));
             }
         }
@@ -200,7 +200,7 @@ class PhysicsController
         if (!empty($latex)) {
             $latex = trim($latex, " '\t\n\r\0\x0B\"");
             $quotePos = strpos($latex, "'");
-            if ($quotePos !== false && preg_match('/\s+[a-zA-Z]{2,}/', substr($latex, $quotePos))) {
+            if ($quotePos !== false && preg_match('/\'\s*(?:\\\\text|\\\\mathrm|\\\\mathbf|[a-zA-Z]{2,})/', substr($latex, $quotePos))) {
                 $latex = trim(substr($latex, 0, $quotePos));
             }
         }

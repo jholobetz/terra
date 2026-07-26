@@ -3706,7 +3706,12 @@ const EquationExplainer = {
             }
             tempText = tempText.replace(`\uE000MATH_${i}\uE000`, () => p);
         }
-        
+
+        // Parse Markdown formatting (bold, italic, numbered list breaks)
+        tempText = tempText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        tempText = tempText.replace(/(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+        tempText = tempText.replace(/(?:\r?\n|\s)+(?=\d+\.\s+<strong>)/g, '<br><br>');
+
         return tempText;
     },
 

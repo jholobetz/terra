@@ -3576,9 +3576,9 @@ const EquationExplainer = {
         tempText = tempText.replace(/\\\([\s\S]*?\\\)/g, protect);
         tempText = tempText.replace(/\\\[[\s\S]*?\\\]/g, protect);
         
-        // 2. Wrap unwrapped LaTeX expressions containing backslashes
-        tempText = tempText.replace(/(?:[^\s,\.;:]*\\(?:[a-zA-Z]+|[^a-zA-Z0-9\s])[\s\S]*?)(?=\s+(?:is|represents|quantifies|originates|reduces|becomes|causes|explains|corresponds|states|meaning|demonstrating|where|when|as|in|for|and|with|or|by|under|derived|from|using|approaches|leading|accounting|showing|indicating|yielding|provided|which|that|\.|\,|\)|$))/gi, match => {
-            if (match.includes('\uE000') || !match.includes('\\')) return match;
+        // 2. Safely wrap single contiguous un-delimited LaTeX backslash tokens (e.g., \frac{A}{B}, \rho, \nu, \to, \infty) without spanning sentences
+        tempText = tempText.replace(/(?:(?<!\\)\\([a-zA-Z]+)(?:\{[^{}]*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^])*)/g, match => {
+            if (match.includes('\uE000')) return match;
             let trimmed = match.trim();
             if (!trimmed) return match;
             let trailingPunct = '';
@@ -3588,13 +3588,6 @@ const EquationExplainer = {
                 trimmed = trimmed.substring(0, trimmed.length - trailingPunct.length);
             }
             const wrapped = `\\(${trimmed}\\)${trailingPunct}`;
-            return protect(wrapped);
-        });
-
-        // 3. Fallback wrap any remaining isolated \command symbols (e.g. \nu, \rho, \pi)
-        tempText = tempText.replace(/(?<!\\)\\([a-zA-Z]+)(?![a-zA-Z])/g, (match, cmd) => {
-            if (match.includes('\uE000')) return match;
-            const wrapped = `\\(${match}\\)`;
             return protect(wrapped);
         });
         

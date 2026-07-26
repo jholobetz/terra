@@ -1714,10 +1714,37 @@ const EquationExplainer = {
     },
 
     compileMathJax(latex) {
+        if (typeof latex !== 'string' || !latex) return;
+        
+        let cleanedLatex = latex.replace(/\\par\b/g, ' ').trim();
+        
+        const knownTexCmds = new Set([
+            'delta', 'alpha', 'beta', 'gamma', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa',
+            'lambda', 'mu', 'nu', 'xi', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega',
+            'Gamma', 'Delta', 'Theta', 'Lambda', 'Xi', 'Pi', 'Sigma', 'Upsilon', 'Phi', 'Psi', 'Omega',
+            'frac', 'sqrt', 'left', 'right', 'partial', 'infty', 'approx', 'to', 'le', 'ge', 'ne', 'equiv',
+            'sim', 'simeq', 'propto', 'nabla', 'cdot', 'times', 'div', 'pm', 'mp', 'ast', 'star',
+            'sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'log', 'ln', 'exp', 'lim', 'max', 'min', 'sum', 'int', 'prod',
+            'text', 'mathrm', 'mathbf', 'mathcal', 'mathbb', 'quad', 'qquad', 'vec', 'hat', 'bar', 'dot', 'ddot'
+        ]);
+
+        const parts = cleanedLatex.split(/(\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname)\{[^{}]*\})/g);
+        for (let i = 0; i < parts.length; i++) {
+            if (i % 2 === 0) {
+                parts[i] = parts[i].replace(/(?<!\\)\b([a-zA-Z]{2,})\b/g, (match) => {
+                    if (knownTexCmds.has(match) || knownTexCmds.has(match.toLowerCase())) {
+                        return `\\${match}`;
+                    }
+                    return `\\text{${match}}`;
+                });
+            }
+        }
+        let formattedLatex = parts.join('');
+
         // Enforce equation delimiters
-        let mathMarkup = latex.replace(/\\par\b/g, ' ');
-        if (!latex.startsWith('\\[') && !latex.startsWith('\\(') && !latex.startsWith('$$') && !latex.startsWith('$')) {
-            mathMarkup = '\\[ ' + latex.replace(/\\par\b/g, ' ') + ' \\]';
+        let mathMarkup = formattedLatex;
+        if (!formattedLatex.startsWith('\\[') && !formattedLatex.startsWith('\\(') && !formattedLatex.startsWith('$$') && !formattedLatex.startsWith('$')) {
+            mathMarkup = '\\[ ' + formattedLatex + ' \\]';
         }
 
         this.mathRenderTarget.innerHTML = mathMarkup;
@@ -1957,19 +1984,19 @@ const EquationExplainer = {
             if (formula.interpretation && formula.interpretation !== 'No interpretation provided.') {
                 scenarios.push({
                     condition: 'Interpretation (Local Identity)',
-                    implication: formula.interpretation.replace(/<\/?[a-zA-Z][^>]*>/g, '') // Strip HTML tags for clean text
+                    implication: formula.interpretation
                 });
             }
             if (formula.symmetry_origin && formula.symmetry_origin !== 'Symmetry derivations pending.') {
                 scenarios.push({
                     condition: 'Symmetry & Coordinate Invariance',
-                    implication: formula.symmetry_origin.replace(/<\/?[a-zA-Z][^>]*>/g, '')
+                    implication: formula.symmetry_origin
                 });
             }
             if (formula.limits_and_boundary && formula.limits_and_boundary !== 'Boundary analysis pending.') {
                 scenarios.push({
                     condition: 'Limiting Cases & Boundaries',
-                    implication: formula.limits_and_boundary.replace(/<\/?[a-zA-Z][^>]*>/g, '')
+                    implication: formula.limits_and_boundary
                 });
             }
 
@@ -2046,12 +2073,17 @@ const EquationExplainer = {
             formula.subcomponents.forEach(child => {
                 const childId = typeof child === 'string' ? child : child.id;
                 const childTitle = typeof child === 'string' ? childId.replace(/-/g, ' ') : child.title;
-                const childEq = (typeof child === 'object' && child.equation) ? child.equation : childId;
+                let childEq = (typeof child === 'object' && child.equation) ? child.equation : '';
+                // Filter out non-TeX prose strings mistakenly stored as child.equation
+                if (childEq && (childEq.includes(' ') && !childEq.includes('\\') && !childEq.includes('=') && !childEq.includes('+') && !childEq.includes('-'))) {
+                    childEq = '';
+                }
                 const childUrl = `/physics/equation-explainer?id=${encodeURIComponent(childId)}`;
+                const mathPart = childEq ? `<span style="font-size: 0.9rem; color: #ffd700;">\\(${childEq}\\)</span>` : '';
                 html += `
                     <a href="${childUrl}" style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(100,255,218,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
                         <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${childTitle}</span>
-                        <span style="font-size: 0.9rem; color: #ffd700;">($\\;${childEq}\\;$)</span>
+                        ${mathPart}
                     </a>
                 `;
             });
@@ -3560,7 +3592,7 @@ const EquationExplainer = {
     },
 
     wrapTextMathDelimiters(text) {
-        if (typeof text !== 'string') return text;
+        if (typeof text !== 'string' || !text) return text;
         
         const placeholders = [];
         let tempText = text.replace(/\\par\b/g, ' ');
@@ -3570,13 +3602,75 @@ const EquationExplainer = {
             return `\uE000MATH_${placeholders.length - 1}\uE000`;
         }
 
-        // 1. Protect existing MathJax delimiters ($$, $, \(\), \[\])
+        const greekMap = {
+            'Γ': '\\Gamma', 'α': '\\alpha', 'β': '\\beta', 'γ': '\\gamma', 'δ': '\\delta',
+            'ε': '\\epsilon', 'θ': '\\theta', 'λ': '\\lambda', 'μ': '\\mu', 'ν': '\\nu',
+            'π': '\\pi', 'ρ': '\\rho', 'σ': '\\sigma', 'τ': '\\tau', 'φ': '\\phi',
+            'ψ': '\\psi', 'ω': '\\omega', 'Ω': '\\Omega', 'Δ': '\\Delta'
+        };
+
+        // 1. Protect existing MathJax delimiters ($$, $, \(\), \[\]) FIRST
         tempText = tempText.replace(/\$\$[\s\S]*?\$\$/g, protect);
         tempText = tempText.replace(/\$[^\$]+\$/g, protect);
         tempText = tempText.replace(/\\\([\s\S]*?\\\)/g, protect);
         tempText = tempText.replace(/\\\[[\s\S]*?\\\]/g, protect);
-        
-        // 2. Safely wrap single contiguous un-delimited LaTeX backslash tokens (e.g., \frac{A}{B}, \rho, \nu, \to, \infty) without spanning sentences
+
+        // 2. Fix un-delimited equation patterns like "Γ = \frac..." or "var = \frac..."
+        tempText = tempText.replace(/([A-Za-z\u0370-\u03FF]+)\s*=\s*(\\[a-zA-Z]+(?:\{[^{}]*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^\/\*\+\-])+)/g, (match, lhs, rhs) => {
+            if (match.includes('\uE000')) return match;
+            let cleanLhs = lhs.trim();
+            if (greekMap[cleanLhs]) cleanLhs = greekMap[cleanLhs];
+            return protect(`\\(${cleanLhs} = ${rhs.trim()}\\)`);
+        });
+
+        // 3. Convert limiting case phrases like "(T) approaches zero" or "Γ approaches infinity"
+        tempText = tempText.replace(/(\([a-zA-Z0-9_\^ ]+\)|[A-Za-z\u0370-\u03FF]+)\s+approaches\s+(zero|infinity|0|\\infty)/gi, (match, sym, target) => {
+            if (match.includes('\uE000')) return match;
+            let cleanSym = sym.replace(/^\(|\)$/g, '').trim();
+            if (greekMap[cleanSym]) cleanSym = greekMap[cleanSym];
+            const texTarget = (target.toLowerCase() === 'infinity') ? '\\infty' : '0';
+            return protect(`\\(${cleanSym} \\to ${texTarget}\\)`);
+        });
+
+        // Helper for checking if text in parens is a math variable vs English prose
+        function isMathParen(innerStr) {
+            const s = innerStr.trim();
+            if (!s) return false;
+            if (s.includes(',') || s.includes(';')) return false;
+            if (/\b(or|in|and|of|for|at|to|is|with|where|if|not|by|on|the|an|e\.g\.|i\.e\.|eigenfunctions?|eigenvalues?)\b/i.test(s)) return false;
+            // Single English words (3+ letters with no math operators, backslashes, or digits) are prose labels, not math variables
+            if (/^[a-zA-Z]{3,}$/.test(s)) return false;
+            const units = ['C', 'J', 'K', 's', 'V', 'W', 'Pa', 'Hz', 'N', 'rad', 'mol'];
+            if (units.includes(s)) return false;
+            const words = s.split(/\s+/);
+            if (words.length > 1) {
+                const allMath = words.every(w => /^[a-zA-Z0-9_\^\\]+$/.test(w) && !/^[a-zA-Z]{3,}$/.test(w));
+                if (!allMath) return false;
+            }
+            return true;
+        }
+
+        // 4. Convert parenthesized variable notations in prose like (Ze)^2, (k_B T), (Z), (e), (a), (k_B), (T)
+        tempText = tempText.replace(/\((?:[a-zA-Z0-9_\^\s]|\\_[a-zA-Z0-9]+)+\)(?:\^[0-9a-zA-Z{}]+)?/g, (match) => {
+            if (match.includes('\uE000')) return match;
+            const innerStr = match.slice(1, match.indexOf(')')).trim();
+            if (!isMathParen(innerStr)) return match;
+            if (match.includes('^')) {
+                const exp = match.slice(match.indexOf(')') + 1);
+                return protect(`\\((${innerStr})${exp}\\)`);
+            } else {
+                return protect(`\\(${innerStr}\\)`);
+            }
+        });
+
+        // 5. Convert standalone Greek letters in prose to LaTeX (e.g. Γ -> \(\Gamma\))
+        tempText = tempText.replace(/([ΓαβγδεθλμνπρστφψωΩΔ])/g, (match) => {
+            if (match.includes('\uE000')) return match;
+            const tex = greekMap[match] || match;
+            return protect(`\\(${tex}\\)`);
+        });
+
+        // 6. Wrap remaining un-delimited LaTeX backslash tokens (e.g. \frac{A}{B}, \rho, \nu, \to, \infty)
         tempText = tempText.replace(/(?:(?<!\\)\\([a-zA-Z]+)(?:\{[^{}]*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^])*)/g, match => {
             if (match.includes('\uE000')) return match;
             let trimmed = match.trim();
@@ -3590,11 +3684,15 @@ const EquationExplainer = {
             const wrapped = `\\(${trimmed}\\)${trailingPunct}`;
             return protect(wrapped);
         });
-        
+
+        // Restore placeholders and escape angle brackets inside math delimiters
         for (let i = 0; i < placeholders.length; i++) {
             let p = placeholders[i];
             if (p.startsWith('$') && !p.startsWith('$$') && p.endsWith('$')) {
                 p = `\\(${p.slice(1, -1)}\\)`;
+            }
+            if (p.startsWith('\\(') && p.endsWith('\\)')) {
+                p = p.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             }
             tempText = tempText.replace(`\uE000MATH_${i}\uE000`, () => p);
         }

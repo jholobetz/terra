@@ -25,6 +25,78 @@ class PhysicsService
     }
 
     /**
+     * Fast, hash-based synchronization of modified JSON formula shards to MariaDB.
+     */
+    public function syncFormulasToDatabase(): array
+    {
+        $registryPath = PROJECT_ROOT . '/app/config/formulas_hash_registry.json';
+        $hashRegistry = [];
+
+        if (file_exists($registryPath)) {
+            $rawRegistry = file_get_contents($registryPath);
+            $hashRegistry = json_decode($rawRegistry, true) ?: [];
+        }
+
+        $shardFiles = glob(PROJECT_ROOT . '/app/config/content/formulas/*/*.json');
+        $shardFiles = array_merge($shardFiles, glob(PROJECT_ROOT . '/app/config/content/formulas/*.json'));
+
+        $shardsUpdated = 0;
+        $formulasSynced = 0;
+        $newRegistry = [];
+
+        foreach ($shardFiles as $filePath) {
+            $relativePath = str_replace(PROJECT_ROOT . '/', '', $filePath);
+            $fileContent = file_get_contents($filePath);
+            $currentHash = hash('sha256', $fileContent);
+
+            $newRegistry[$relativePath] = $currentHash;
+
+            if (isset($hashRegistry[$relativePath]) && $hashRegistry[$relativePath] === $currentHash) {
+                continue;
+            }
+
+            $shardsUpdated++;
+            $data = json_decode($fileContent, true);
+            if (!is_array($data)) {
+                continue;
+            }
+
+            foreach ($data as $formulaId => $formula) {
+                if (!is_array($formula)) {
+                    continue;
+                }
+
+                try {
+                    $this->app->db()->runQuery(
+                        "UPDATE formulas SET title = ?, equation = ?, interpretation = ?, limits_and_boundary = ?, conceptual_definition = ?, intuitive_summary = ?, symmetry_origin = ? WHERE id = ?",
+                        [
+                            $formula['title'] ?? '',
+                            $formula['equation'] ?? '',
+                            $formula['interpretation'] ?? '',
+                            $formula['limits_and_boundary'] ?? '',
+                            $formula['conceptual_definition'] ?? '',
+                            $formula['intuitive_summary'] ?? '',
+                            $formula['symmetry_origin'] ?? '',
+                            $formulaId
+                        ]
+                    );
+                    $formulasSynced++;
+                } catch (\Throwable $e) {
+                    // Ignore missing database rows
+                }
+            }
+        }
+
+        file_put_contents($registryPath, json_encode($newRegistry, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        return [
+            'shards_checked' => count($shardFiles),
+            'shards_changed' => $shardsUpdated,
+            'formulas_synced' => $formulasSynced
+        ];
+    }
+
+    /**
      * Toggles or queries the active preview state.
      */
     public function isPreviewActive(): bool
@@ -1087,14 +1159,25 @@ class PhysicsService
                 $symmetry = "Preserves gauge symmetry under electromagnetic gauge transformations.";
                 $limits = "In vacuum with zero current density (\\mathbf{J}=0, \\partial \\mathbf{E}/\\partial t = 0), the curl vanishes.";
             }
-        } elseif (strpos($canonical, 'partial') !== false || strpos($canonical, 'd/dt') !== false) {
-            $domain = "quantum_mechanics";
-            $title = "Time-Dependent Evolution Identity";
-            $intro = "Describes the rate of change of a physical state vector or field quantity over time.";
-            $summary = "Maps temporal derivative operators directly to energy operators or generalized force gradients.";
-            $interpretation = "The partial derivative \\partial / \\partial t quantifies how the state magnitude evolves at a fixed spatial coordinate.";
-            $symmetry = "Linked to time-translation symmetry via Noether's theorem, guaranteeing energy conservation in autonomous systems.";
-            $limits = "When \\partial / \\partial t = 0, the system collapses into a stationary or equilibrium state.";
+        } elseif (strpos($canonical, 'delta') !== false || strpos($canonical, '\delta') !== false || strpos($latex, '\delta') !== false || strpos(strtolower($latex), 'bounded') !== false || strpos(strtolower($latex), 'field') !== false) {
+            $isField = (strpos(strtolower($latex), 'field') !== false || strpos($canonical, 'phi') !== false || strpos($canonical, 'psi') !== false);
+            $domain = "field_theory";
+            $title = $isField ? 'Second Variation of Action in Field Theory ($\delta^2 S_{\text{field}}$)' : 'Second Variation of Action / Entropy Stability ($\delta^2 S\text{ Bounded}$)';
+            $intro = $isField
+                ? 'The second variation of action in field theory, denoted as $\delta^2 S_{\text{field}}[\phi]$, represents the second-order functional derivative operator $\frac{\delta^2 S}{\delta \phi(x) \delta \phi(y)}$ acting on field perturbations $\delta \phi(x)$. It governs the local stability of classical vacuum states, soliton solutions, and cosmological background fields.'
+                : 'Represents the second-order variation of action or thermodynamic entropy ($\delta^2 S$), used to establish local stability, convexity of thermodynamic potentials, and bounded oscillation modes in physical systems.';
+            $summary = $isField
+                ? 'The second variation of field action determines whether small field perturbations oscillate harmonically around a stable vacuum or grow exponentially due to tachyonic instability.'
+                : 'A bounded second variation ($\delta^2 S \le 0$ or $|\delta^2 S| < \infty$) guarantees that small fluctuations around an equilibrium path or thermodynamic state remain stable and bounded over time.';
+            $interpretation = $isField
+                ? 'While setting the first variation to zero ($\delta S[\phi] = 0$) yields the classical field equations of motion (e.g., Klein-Gordon, Maxwell, or Einstein field equations), the second variation $\delta^2 S_{\text{field}}$ defines the fluctuation Hessian operator. A positive-definite second variation ($\delta^2 S_{\text{field}} > 0$) guarantees vacuum stability, whereas a negative eigenvalue ($\delta^2 S_{\text{field}} < 0$) signals a tachyonic mode leading to spontaneous symmetry breaking or vacuum decay. In quantum field theory, $\delta^2 S_{\text{field}}$ forms the inverse propagator kernel $\mathcal{D}^{-1}(x,y)$ for path-integral 1-loop quantum corrections.'
+                : 'While the first variation ($\delta S = 0$) identifies stationary solutions (equations of motion or equilibrium states), the second variation ($\delta^2 S$) dictates system stability. A bounded or negative-definite second variation ensures that perturbation energies remain localized without exponential growth.';
+            $symmetry = $isField
+                ? 'Stemming from Hamilton\'s Principle of Stationary Action extended to continuous field degrees of freedom ($S[\phi] = \int \mathcal{L}(\phi, \partial_\mu \phi) \, d^4x$), the second variation operator preserves Poincaré spacetime invariance and gauge symmetries of the field Lagrangian.'
+                : 'Derived from Hamilton\'s Principle of Least Action and the Second Law of Thermodynamics under variational field transformations.';
+            $limits = $isField
+                ? 'In the weak-field or linear perturbation regime ($\delta \phi \to 0$), higher-order functional derivatives $\mathcal{O}(\delta \phi^3)$ are negligible, reducing field dynamics to linear wave propagation. Under infinite spatial boundaries, field perturbations $\delta \phi(x)$ are required to satisfy square-integrable asymptotic fall-off conditions ($\delta \phi \to 0$ as $|x| \to \infty$).'
+                : 'In the linear perturbation limit ($\delta S \to 0$), higher-order non-linear terms are negligible, reducing the variation to harmonic stability analysis.';
         }
 
         return [

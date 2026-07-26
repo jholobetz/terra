@@ -155,7 +155,7 @@ class IntegrityShield:
         subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
         for slug in subtopics_to_check:
             sub = self.all_subtopics.get(slug)
-            if not sub: continue
+            if not sub or not isinstance(sub, dict): continue
             for f_id in sub.get("formula_ids", []):
                 self.stats["formulas"] += 1
                 if f_id not in self.formula_registry:
@@ -294,7 +294,7 @@ class IntegrityShield:
         subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
         for slug in subtopics_to_check:
             sub = self.all_subtopics.get(slug)
-            if not sub: continue
+            if not sub or not isinstance(sub, dict): continue
             if sub.get("standard") == "platinum":
                 content = sub.get("content", "")
                 # Pattern for \( or \[ or \) or \]
@@ -306,7 +306,7 @@ class IntegrityShield:
         subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
         for slug in subtopics_to_check:
             sub = self.all_subtopics.get(slug)
-            if not sub: continue
+            if not sub or not isinstance(sub, dict): continue
             if sub.get("standard") == "platinum":
                 content = sub.get("content", "")
                 # Ensure all display math blocks contain <svg> tags and do not leak raw LaTeX
@@ -320,7 +320,7 @@ class IntegrityShield:
         subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
         for slug in subtopics_to_check:
             sub = self.all_subtopics.get(slug)
-            if not sub: continue
+            if not sub or not isinstance(sub, dict): continue
             content = sub.get("content", "")
             if "math-path-" in content:
                 self.errors.append(f"SPRITIFIED MATH DETECTED: [{slug}] contains spritified math references ('math-path-'). Only fully-inlined self-contained SVGs are allowed.")
@@ -374,7 +374,7 @@ class IntegrityShield:
         subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
         for slug in subtopics_to_check:
             sub = self.all_subtopics.get(slug)
-            if not sub: continue
+            if not sub or not isinstance(sub, dict): continue
             content = sub.get("content", "")
             if re.search(r'<h[1-6][^>]*>', content, re.IGNORECASE):
                 self.errors.append(f"FORMATTING VIOLATION: [{slug}] contains forbidden HTML header tags (<h1-h6>). Only continuous <p> prose is allowed.")

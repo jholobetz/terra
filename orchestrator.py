@@ -267,7 +267,7 @@ class PhysicsOrchestrator:
         # 1. Collect all Platinum subtopics
         platinum_subs = {}
         for slug, sub in self.data.get("subtopics", {}).items():
-            if sub.get("standard") == "platinum":
+            if isinstance(sub, dict) and sub.get("standard") == "platinum":
                 platinum_subs[slug] = sub
                 
         num_platinum = len(platinum_subs)

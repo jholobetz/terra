@@ -23,44 +23,78 @@ def wrap_math_in_prose(text: str) -> str:
         return text
 
     placeholders = []
-    def save_math(m):
-        placeholders.append(m.group(0))
+    def save_math(val_str):
+        placeholders.append(val_str)
         return f"___MATH_{len(placeholders)-1}___"
+
+    greek_map = {
+        "Γ": "\\Gamma", "α": "\\alpha", "β": "\\beta", "γ": "\\gamma", "δ": "\\delta",
+        "ε": "\\epsilon", "θ": "\\theta", "λ": "\\lambda", "μ": "\\mu", "ν": "\\nu",
+        "π": "\\pi", "ρ": "\\rho", "σ": "\\sigma", "τ": "\\tau", "φ": "\\phi",
+        "ψ": "\\psi", "ω": "\\omega", "Ω": "\\Omega", "Δ": "\\Delta"
+    }
+
+    t = text
+
+    # Step 0: Fix un-delimited equation patterns like "Γ = $\frac..." or "var = $\frac..."
+    def full_eq_fix(m):
+        lhs = m.group(1).strip()
+        rhs = m.group(2).strip()
+        if lhs in greek_map:
+            lhs = greek_map[lhs]
+        return f"${lhs} = {rhs}$"
+
+    t = re.sub(r"([A-Za-z\u0370-\u03FF]+)\s*=\s*\$([^\$]+)\$", full_eq_fix, t)
 
     # 1. Protect existing math delimiters
-    t = re.sub(r"\$\$[\s\S]*?\$\$", save_math, text)
-    t = re.sub(r"\$[^\$]+\$", save_math, t)
-    t = re.sub(r"\\\([\s\S]*?\\\)", save_math, t)
-    t = re.sub(r"\\\[[\s\S]*?\\\]", save_math, t)
+    t = re.sub(r"\$\$[\s\S]*?\$\$", lambda m: save_math(m.group(0)), t)
+    t = re.sub(r"\$[^\$]+\$", lambda m: save_math(m.group(0)), t)
+    t = re.sub(r"\\\([\s\S]*?\\\)", lambda m: save_math(m.group(0)), t)
+    t = re.sub(r"\\\[[\s\S]*?\\\]", lambda m: save_math(m.group(0)), t)
 
-    def protect_and_wrap(m):
+    # 2. Limiting cases like "(T) approaches zero" or "Γ approaches infinity"
+    def limit_repl(m):
+        sym = m.group(1).strip("() ").strip()
+        target = m.group(2).strip().lower()
+        if sym in greek_map:
+            sym = greek_map[sym]
+        tex_target = "\\infty" if target == "infinity" else "0"
+        return save_math(f"${sym} \\to {tex_target}$")
+
+    t = re.sub(r"(\([a-zA-Z0-9_\^ ]+\)|[A-Za-z\u0370-\u03FF]+)\s+approaches\s+(zero|infinity|0|\\infty)", limit_repl, t, flags=re.IGNORECASE)
+
+    # 3. Parenthesized variables like (Ze)^2, (k_B T), (Z), (e), (a), (k_B), (T)
+    def paren_var_repl(m):
+        matched = m.group(0)
+        inner = re.sub(r"^\(|\)$", "", matched.split("^")[0]).strip()
+        if "," in inner or len(inner.split()) > 2 or inner in ["C", "J", "K", "m", "s", "V", "W", "Pa", "Hz", "N", "T", "rad", "mol"]:
+            return matched
+        if "^" in matched:
+            exp = matched[matched.index("^"):]
+            val = f"$({inner}){exp}$"
+        else:
+            val = f"${inner}$"
+        return save_math(val)
+
+    t = re.sub(r"\((?:[a-zA-Z0-9_\^\s]|\\_[a-zA-Z0-9]+)+\)(?:\^[0-9a-zA-Z{}]+)?", paren_var_repl, t)
+
+    # 4. Standalone Greek letters in prose
+    def greek_repl(m):
+        g = m.group(0)
+        return save_math(f"${greek_map[g]}$")
+
+    t = re.sub(r"([ΓαβγδεθλμνπρστφψωΩΔ])", greek_repl, t)
+
+    # 5. Isolated LaTeX commands
+    def tex_cmd_repl(m):
         val = m.group(0).strip()
-        if not val or "___MATH_" in val:
-            return m.group(0)
         punct = ""
-        if val[-1] in ".,;:?":
+        if val and val[-1] in ".,;:?":
             punct = val[-1]
             val = val[:-1].strip()
-        if val.endswith(")") and val.count("(") < val.count(")"):
-            punct = ")" + punct
-            val = val[:-1].strip()
-        wrapped = f"${val}${punct}"
-        placeholders.append(wrapped)
-        return f"___MATH_{len(placeholders)-1}___"
+        return save_math(f"${val}$") + punct
 
-    # Step A: Match equation blocks starting with a LaTeX command up to sentence punctuation or prose words
-    t = re.sub(
-        r"\\(?:rho|nu|frac|pi|theta|phi|sigma|omega|mu|lambda|epsilon|delta|hbar|partial)\b[^\n\.\,;:!\?]*?(?=\s+(?:quantifies|represents|is|derived|where|as|in|for|and|with|by|\.|\,|$))",
-        protect_and_wrap,
-        t
-    )
-
-    # Step B: Match remaining isolated LaTeX commands (e.g. \nu, \rho, \frac{h\nu}{k_B T})
-    t = re.sub(
-        r"\\(?:rho|nu|frac|pi|theta|phi|sigma|omega|mu|lambda|epsilon|delta|hbar|partial|to|approx|infty)\b(?:\{[^{}]*\}|\([^)]*\)|[a-zA-Z0-9_\^])*",
-        protect_and_wrap,
-        t
-    )
+    t = re.sub(r"\\(?:rho|nu|frac|pi|theta|phi|sigma|omega|mu|lambda|epsilon|delta|hbar|partial|to|approx|infty)\b(?:\{[^{}]*\}|\([^)]*\)|[a-zA-Z0-9_\^])*", tex_cmd_repl, t)
 
     # Restore placeholders
     for i, p in enumerate(placeholders):

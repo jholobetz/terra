@@ -246,10 +246,10 @@ class TerraLexer:
         if not isinstance(text, str) or not text:
             return text
 
-        # Clean misplaced $ inside \frac{...}
+        # 1. Pre-clean misplaced $ inside \frac{...}
         text = re.sub(r'\\frac\{([^}]*)\$([^}]*)\}\{([^}]*)\$([^}]*)\}', r'\\frac{\1\2}{\3\4}', text)
 
-        # If a single math expression is wrapped in broken outer/inner $, un-nest inner $
+        # 2. Un-nest inner $ if whole text is bounded by $...$ and has extra inner $
         if text.startswith('$') and text.endswith('$') and text.count('$') > 2:
             inner_math = text[1:-1].replace('$', '')
             text = f'${inner_math}$'

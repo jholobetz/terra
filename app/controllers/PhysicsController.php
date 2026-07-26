@@ -134,6 +134,14 @@ class PhysicsController
         $subtopicSlug = $this->app->request()->query['subtopic'] ?? '';
         $domain = $this->app->request()->query['domain'] ?? '';
         
+        if (!empty($latex)) {
+            $latex = trim($latex, " '\t\n\r\0\x0B\"");
+            $quotePos = strpos($latex, "'");
+            if ($quotePos !== false && preg_match('/\s+[a-zA-Z]{2,}/', substr($latex, $quotePos))) {
+                $latex = trim(substr($latex, 0, $quotePos));
+            }
+        }
+        
         $formula = null;
         $subtopics = [];
         $subtopicVariables = [];
@@ -188,6 +196,14 @@ class PhysicsController
         
         $id = $this->app->request()->query['id'] ?? '';
         $latex = $this->app->request()->query['latex'] ?? '';
+
+        if (!empty($latex)) {
+            $latex = trim($latex, " '\t\n\r\0\x0B\"");
+            $quotePos = strpos($latex, "'");
+            if ($quotePos !== false && preg_match('/\s+[a-zA-Z]{2,}/', substr($latex, $quotePos))) {
+                $latex = trim(substr($latex, 0, $quotePos));
+            }
+        }
 
         if (!empty($id)) {
             $formula = $this->service()->getFormulaWithHierarchy($id);

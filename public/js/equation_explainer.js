@@ -1665,7 +1665,12 @@ const EquationExplainer = {
             this.renderFormula(formula, window.INITIAL_SUBTOPICS || []);
         } else if (window.INITIAL_LATEX) {
             // Just raw LaTeX passed
-            this.latexInput.value = window.INITIAL_LATEX;
+            let rawLatex = (window.INITIAL_LATEX || '').trim().replace(/^['"\s]+|['"\s]+$/g, '');
+            const quotePos = rawLatex.indexOf("'");
+            if (quotePos > 0 && /\s+[a-zA-Z]{2,}/.test(rawLatex.slice(quotePos))) {
+                rawLatex = rawLatex.substring(0, quotePos).trim();
+            }
+            this.latexInput.value = rawLatex;
             this.handleInputChange();
         } else {
             // Set defaults or display placeholder
@@ -1689,7 +1694,12 @@ const EquationExplainer = {
     },
 
     handleInputChange() {
-        const latex = this.latexInput.value.trim();
+        let latex = (this.latexInput ? this.latexInput.value : '').trim().replace(/^['"\s]+|['"\s]+$/g, '');
+        const quotePos = latex.indexOf("'");
+        if (quotePos > 0 && /\s+[a-zA-Z]{2,}/.test(latex.slice(quotePos))) {
+            latex = latex.substring(0, quotePos).trim();
+            if (this.latexInput) this.latexInput.value = latex;
+        }
         this.currentLatex = latex;
         this.currentId = null; // Typing custom formula clears registered ID
 

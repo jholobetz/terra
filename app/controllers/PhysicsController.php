@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use flight\Engine;
 
+require_once PROJECT_ROOT . '/app/logic/VariableAggregator.php';
+
 class PhysicsController
 {
     protected Engine $app;
@@ -563,6 +565,7 @@ class PhysicsController
 
         $breadcrumbs = $this->service()->resolveBreadcrumbs(!empty($subtopic['parents']) ? (array)$subtopic['parents'] : []);
         $related = $this->service()->getRelatedTopics($slug);
+        $subtopicVariables = \App\Logic\VariableAggregator::buildSubtopicVariables($subtopic);
 
         $this->renderWithLayout('physics/subtopic', array_merge($subtopic, [
             'breadcrumbs' => $breadcrumbs,
@@ -571,7 +574,8 @@ class PhysicsController
             'content' => $subtopic['content'],
             'equations' => $subtopic['equations'] ?? [],
             'breakdowns' => $subtopic['breakdowns'] ?? [],
-            'formulas' => $subtopic['formulas'] ?? []
+            'formulas' => $subtopic['formulas'] ?? [],
+            'subtopicVariables' => $subtopicVariables
         ]), $cachePath);
     }
 

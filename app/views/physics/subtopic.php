@@ -191,19 +191,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardDesc = document.getElementById('var-card-desc');
     const cardEqsList = document.getElementById('var-card-eqs-list');
 
-    // Option A: Tokenize single-letter variables in main prose
+    // Option A: DOM-Safe Text Node Tokenizer for single-letter variables
     const mainProse = document.getElementById('subtopic-main-prose');
-    if (mainProse) {
-        const ps = mainProse.querySelectorAll('p');
-        ps.forEach(p => {
-            let html = p.innerHTML;
-            Object.keys(vars).forEach(sym => {
-                const escapedSym = sym.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                // Match standalone single letters or math tokens
-                const regex = new RegExp(`\\b(${escapedSym})\\b(?![^<]*>)`, 'g');
-                html = html.replace(regex, `<span class="var-token" data-sym="${sym}" style="border-bottom: 1.5px dotted #64ffda; color: #64ffda; font-weight: 600; cursor: pointer; padding: 0 2px;">$1</span>`);
-            });
-            p.innerHTML = html;
+    const symKeys = Object.keys(vars);
+    if (mainProse && symKeys.length > 0) {
+        const ignoredTags = new Set(['A', 'SVG', 'PATH', 'SCRIPT', 'STYLE', 'CODE', 'PRE', 'BUTTON', 'INPUT']);
+
+        const textNodes = [];
+        const walker = document.createTreeWalker(mainProse, NodeFilter.SHOW_TEXT, {
+            acceptNode(node) {
+                let parent = node.parentElement;
+                while (parent && parent !== mainProse) {
+                    if (ignoredTags.has(parent.tagName) || parent.classList.contains('var-token') || parent.classList.contains('MathJax')) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    parent = parent.parentElement;
+                }
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+
+        while (walker.nextNode()) {
+            textNodes.push(walker.currentNode);
+        }
+
+        const sortedSyms = symKeys.sort((a, b) => b.length - a.length);
+        const combinedPattern = new RegExp(`\\b(${sortedSyms.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'g');
+
+        textNodes.forEach(node => {
+            const text = node.nodeValue;
+            if (!text || !text.trim()) return;
+
+            combinedPattern.lastIndex = 0;
+            if (!combinedPattern.test(text)) return;
+
+            combinedPattern.lastIndex = 0;
+            const fragment = document.createDocumentFragment();
+            let lastIdx = 0;
+            let match;
+
+            while ((match = combinedPattern.exec(text)) !== null) {
+                if (match.index > lastIdx) {
+                    fragment.appendChild(document.createTextNode(text.substring(lastIdx, match.index)));
+                }
+                const sym = match[0];
+                const span = document.createElement('span');
+                span.className = 'var-token';
+                span.setAttribute('data-sym', sym);
+                span.style.cssText = 'border-bottom: 1.5px dotted #64ffda; color: #64ffda; font-weight: 600; cursor: pointer; padding: 0 2px;';
+                span.textContent = sym;
+                fragment.appendChild(span);
+                lastIdx = combinedPattern.lastIndex;
+            }
+
+            if (lastIdx < text.length) {
+                fragment.appendChild(document.createTextNode(text.substring(lastIdx)));
+            }
+
+            if (node.parentNode) {
+                node.parentNode.replaceChild(fragment, node);
+            }
         });
     }
 

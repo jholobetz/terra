@@ -191,79 +191,96 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardDesc = document.getElementById('var-card-desc');
     const cardEqsList = document.getElementById('var-card-eqs-list');
 
-    // Option A: DOM-Safe Text Node Tokenizer for single-letter variables
+    // Helper: Clean TeX string to extract core variable symbol key
+    function getSymbolKeyFromTex(tex) {
+        if (!tex) return null;
+        let clean = tex.trim();
+        clean = clean.replace(/\\(mathbf|vec|hat|tilde|mathrm|boldsymbol)\{([^}]+)\}/g, '$2');
+        clean = clean.replace(/[\$\\{\}]/g, '').trim();
+        
+        if (vars[clean]) return clean;
+        const base = clean.split('_')[0].trim();
+        if (vars[base]) return base;
+
+        return null;
+    }
+
     const mainProse = document.getElementById('subtopic-main-prose');
-    const symKeys = Object.keys(vars);
-    if (mainProse && symKeys.length > 0) {
-        const ignoredTags = new Set(['A', 'SVG', 'PATH', 'SCRIPT', 'STYLE', 'CODE', 'PRE', 'BUTTON', 'INPUT']);
+    if (mainProse) {
+        // Query all inline math SVGs or data-tex containers in subtopic prose
+        const mathNodes = mainProse.querySelectorAll('svg[data-tex], [data-tex]');
+        
+        mathNodes.forEach(node => {
+            const tex = node.getAttribute('data-tex');
+            const symKey = getSymbolKeyFromTex(tex);
+            
+            if (symKey && vars[symKey]) {
+                // Style as interactive variable token
+                node.classList.add('var-math-token');
+                node.setAttribute('data-sym', symKey);
+                node.style.cursor = 'pointer';
+                node.style.borderBottom = '1.5px dotted #64ffda';
+                node.style.borderRadius = '2px';
+                node.style.transition = 'all 0.2s';
 
-        const textNodes = [];
-        const walker = document.createTreeWalker(mainProse, NodeFilter.SHOW_TEXT, {
-            acceptNode(node) {
-                let parent = node.parentElement;
-                while (parent && parent !== mainProse) {
-                    if (ignoredTags.has(parent.tagName) || parent.classList.contains('var-token') || parent.classList.contains('MathJax')) {
-                        return NodeFilter.FILTER_REJECT;
+                // Option A Hover Card Listener
+                node.addEventListener('mouseenter', (e) => {
+                    const data = vars[symKey];
+                    if (!data) return;
+
+                    cardSym.textContent = data.display_symbol || data.symbol || symKey;
+                    cardUnit.textContent = data.unit ? `[${data.unit}]` : '';
+                    cardName.textContent = data.name || symKey;
+                    cardDesc.textContent = data.description || '';
+
+                    cardEqsList.innerHTML = '';
+                    if (data.equations && data.equations.length > 0) {
+                        data.equations.forEach(eq => {
+                            const d = document.createElement('div');
+                            d.style.cssText = 'background: rgba(255,255,255,0.05); padding: 3px 6px; border-radius: 3px; margin-top: 2px;';
+                            d.textContent = `${eq.title}: ${eq.equation}`;
+                            cardEqsList.appendChild(d);
+                        });
+                    } else {
+                        cardEqsList.innerHTML = '<span style="opacity: 0.6; font-style: italic;">No specific formulas listed</span>';
                     }
-                    parent = parent.parentElement;
-                }
-                return NodeFilter.FILTER_ACCEPT;
-            }
-        });
 
-        while (walker.nextNode()) {
-            textNodes.push(walker.currentNode);
-        }
+                    hoverCard.style.display = 'block';
+                    const rect = node.getBoundingClientRect();
+                    hoverCard.style.left = `${rect.left + window.scrollX}px`;
+                    hoverCard.style.top = `${rect.bottom + window.scrollY + 8}px`;
 
-        const sortedSyms = symKeys.sort((a, b) => b.length - a.length);
-        const combinedPattern = new RegExp(`\\b(${sortedSyms.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'g');
+                    // Option B Bidirectional Sync: Highlight sidebar badge
+                    const sidebarItem = document.querySelector(`.var-legend-item[data-sym="${symKey}"]`);
+                    if (sidebarItem) {
+                        sidebarItem.style.background = 'rgba(100, 255, 218, 0.16)';
+                        sidebarItem.style.borderColor = 'rgba(100, 255, 218, 0.5)';
+                    }
+                });
 
-        textNodes.forEach(node => {
-            const text = node.nodeValue;
-            if (!text || !text.trim()) return;
-
-            combinedPattern.lastIndex = 0;
-            if (!combinedPattern.test(text)) return;
-
-            combinedPattern.lastIndex = 0;
-            const fragment = document.createDocumentFragment();
-            let lastIdx = 0;
-            let match;
-
-            while ((match = combinedPattern.exec(text)) !== null) {
-                if (match.index > lastIdx) {
-                    fragment.appendChild(document.createTextNode(text.substring(lastIdx, match.index)));
-                }
-                const sym = match[0];
-                const span = document.createElement('span');
-                span.className = 'var-token';
-                span.setAttribute('data-sym', sym);
-                span.style.cssText = 'border-bottom: 1.5px dotted #64ffda; color: #64ffda; font-weight: 600; cursor: pointer; padding: 0 2px;';
-                span.textContent = sym;
-                fragment.appendChild(span);
-                lastIdx = combinedPattern.lastIndex;
-            }
-
-            if (lastIdx < text.length) {
-                fragment.appendChild(document.createTextNode(text.substring(lastIdx)));
-            }
-
-            if (node.parentNode) {
-                node.parentNode.replaceChild(fragment, node);
+                node.addEventListener('mouseleave', () => {
+                    hoverCard.style.display = 'none';
+                    const sidebarItem = document.querySelector(`.var-legend-item[data-sym="${symKey}"]`);
+                    if (sidebarItem) {
+                        sidebarItem.style.background = 'rgba(255, 255, 255, 0.03)';
+                        sidebarItem.style.borderColor = 'rgba(255, 255, 255, 0.06)';
+                    }
+                });
             }
         });
     }
 
-    // Bind Option A Hover Card Events
-    document.querySelectorAll('.var-token, .var-legend-item').forEach(el => {
-        el.addEventListener('mouseenter', (e) => {
-            const sym = el.getAttribute('data-sym');
-            const data = vars[sym];
+    // Option B Sidebar Legend Hover Events (Bidirectional Sync to Prose SVGs)
+    document.querySelectorAll('.var-legend-item').forEach(item => {
+        const symKey = item.getAttribute('data-sym');
+        
+        item.addEventListener('mouseenter', () => {
+            const data = vars[symKey];
             if (!data) return;
 
-            cardSym.textContent = data.display_symbol || data.symbol || sym;
+            cardSym.textContent = data.display_symbol || data.symbol || symKey;
             cardUnit.textContent = data.unit ? `[${data.unit}]` : '';
-            cardName.textContent = data.name || sym;
+            cardName.textContent = data.name || symKey;
             cardDesc.textContent = data.description || '';
 
             cardEqsList.innerHTML = '';
@@ -274,18 +291,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     d.textContent = `${eq.title}: ${eq.equation}`;
                     cardEqsList.appendChild(d);
                 });
-            } else {
-                cardEqsList.innerHTML = '<span style="opacity: 0.6; font-style: italic;">No specific formulas listed</span>';
             }
 
             hoverCard.style.display = 'block';
-            const rect = el.getBoundingClientRect();
-            hoverCard.style.left = `${rect.left + window.scrollX}px`;
-            hoverCard.style.top = `${rect.bottom + window.scrollY + 8}px`;
+            const rect = item.getBoundingClientRect();
+            hoverCard.style.left = `${rect.left + window.scrollX - 290}px`;
+            hoverCard.style.top = `${rect.top + window.scrollY}px`;
+
+            // Highlight all matching math SVGs in prose
+            if (mainProse) {
+                mainProse.querySelectorAll(`.var-math-token[data-sym="${symKey}"]`).forEach(n => {
+                    n.style.background = 'rgba(100, 255, 218, 0.2)';
+                    n.style.boxShadow = '0 0 8px rgba(100, 255, 218, 0.5)';
+                });
+            }
         });
 
-        el.addEventListener('mouseleave', () => {
+        item.addEventListener('mouseleave', () => {
             hoverCard.style.display = 'none';
+            if (mainProse) {
+                mainProse.querySelectorAll(`.var-math-token[data-sym="${symKey}"]`).forEach(n => {
+                    n.style.background = 'transparent';
+                    n.style.boxShadow = 'none';
+                });
+            }
         });
     });
 });

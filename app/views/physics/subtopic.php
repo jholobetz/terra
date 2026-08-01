@@ -205,6 +205,34 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
+    // Helper to populate and typeset hover card content with MathJax
+    function populateHoverCard(data, symKey) {
+        const rawSym = data.symbol || data.display_symbol || symKey;
+        const formattedSym = (rawSym.indexOf('\\(') !== -1 || rawSym.indexOf('$') !== -1) ? rawSym : `\\(${rawSym}\\)`;
+        cardSym.innerHTML = formattedSym;
+        cardUnit.textContent = data.unit ? `[${data.unit}]` : '';
+        cardName.textContent = data.name || symKey;
+        cardDesc.textContent = data.description || '';
+
+        cardEqsList.innerHTML = '';
+        if (data.equations && data.equations.length > 0) {
+            data.equations.forEach(eq => {
+                const d = document.createElement('div');
+                d.style.cssText = 'background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px; margin-top: 4px; border-left: 2px solid #64ffda;';
+                const rawEq = eq.equation || '';
+                const formattedEq = (rawEq.indexOf('\\(') !== -1 || rawEq.indexOf('$') !== -1) ? rawEq : `\\(${rawEq}\\)`;
+                d.innerHTML = `<span style="font-weight:600; color:#e2e8f0; font-size:0.75rem;">${eq.title}:</span> <span style="color:#64ffda;">${formattedEq}</span>`;
+                cardEqsList.appendChild(d);
+            });
+        } else {
+            cardEqsList.innerHTML = '<span style="opacity: 0.6; font-style: italic;">No specific formulas listed</span>';
+        }
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise([cardSym, cardEqsList]).catch(err => console.warn('MathJax hover card typeset warning:', err));
+        }
+    }
+
     const mainProse = document.getElementById('subtopic-main-prose');
     if (mainProse) {
         // Query all inline math SVGs or data-tex containers in subtopic prose
@@ -228,22 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = vars[symKey];
                     if (!data) return;
 
-                    cardSym.textContent = data.display_symbol || data.symbol || symKey;
-                    cardUnit.textContent = data.unit ? `[${data.unit}]` : '';
-                    cardName.textContent = data.name || symKey;
-                    cardDesc.textContent = data.description || '';
-
-                    cardEqsList.innerHTML = '';
-                    if (data.equations && data.equations.length > 0) {
-                        data.equations.forEach(eq => {
-                            const d = document.createElement('div');
-                            d.style.cssText = 'background: rgba(255,255,255,0.05); padding: 3px 6px; border-radius: 3px; margin-top: 2px;';
-                            d.textContent = `${eq.title}: ${eq.equation}`;
-                            cardEqsList.appendChild(d);
-                        });
-                    } else {
-                        cardEqsList.innerHTML = '<span style="opacity: 0.6; font-style: italic;">No specific formulas listed</span>';
-                    }
+                    populateHoverCard(data, symKey);
 
                     hoverCard.style.display = 'block';
                     const rect = node.getBoundingClientRect();
@@ -278,20 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = vars[symKey];
             if (!data) return;
 
-            cardSym.textContent = data.display_symbol || data.symbol || symKey;
-            cardUnit.textContent = data.unit ? `[${data.unit}]` : '';
-            cardName.textContent = data.name || symKey;
-            cardDesc.textContent = data.description || '';
-
-            cardEqsList.innerHTML = '';
-            if (data.equations && data.equations.length > 0) {
-                data.equations.forEach(eq => {
-                    const d = document.createElement('div');
-                    d.style.cssText = 'background: rgba(255,255,255,0.05); padding: 3px 6px; border-radius: 3px; margin-top: 2px;';
-                    d.textContent = `${eq.title}: ${eq.equation}`;
-                    cardEqsList.appendChild(d);
-                });
-            }
+            populateHoverCard(data, symKey);
 
             hoverCard.style.display = 'block';
             const rect = item.getBoundingClientRect();

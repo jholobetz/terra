@@ -91,11 +91,20 @@ class VariableAggregator
                         }
                     }
 
-                    // Attach equation reference
+                    // Attach equation reference with deduplication
                     if (!isset($symbolMap[$cleanSym]['equations'])) {
                         $symbolMap[$cleanSym]['equations'] = [];
                     }
-                    if (\count($symbolMap[$cleanSym]['equations']) < 4) {
+
+                    $alreadyAdded = false;
+                    foreach ($symbolMap[$cleanSym]['equations'] as $existingEq) {
+                        if (($existingEq['title'] ?? '') === $fTitle || ($existingEq['equation'] ?? '') === $fEq) {
+                            $alreadyAdded = true;
+                            break;
+                        }
+                    }
+
+                    if (!$alreadyAdded && \count($symbolMap[$cleanSym]['equations']) < 4) {
                         $symbolMap[$cleanSym]['equations'][] = [
                             'id' => $fId,
                             'title' => $fTitle,

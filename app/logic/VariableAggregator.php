@@ -24,32 +24,36 @@ class VariableAggregator
     }
 
     /**
+     * Clean raw TeX symbol to extract base variable key
+     */
+    public static function cleanSymbol(string $sym): string
+    {
+        $clean = \trim(\str_replace(['$', '\\mathbf{', '\\vec{', '\\mathrm{', '\\boldsymbol{', '}', '\\'], '', $sym));
+        $parts = \explode('_', $clean);
+        return $parts[0];
+    }
+
+    /**
      * Build aggregated subtopic variable payload for Option A & Option B UI components
      */
     public static function buildSubtopicVariables(array $subtopicData): array
     {
         $registry = self::getRegistry();
-        $subtopicVars = [];
-
-        // 1. Gather formulas linked to this subtopic
-        $formulas = $subtopicData['formulas'] ?? [];
-        $equations = $subtopicData['equations'] ?? [];
-
-        // 2. Identify key single-letter symbols used in this subtopic
         $symbolMap = [];
 
-        // Seed with explicit key_variables from subtopic metadata if present
+        // 1. Seed with explicit key_variables from subtopic metadata if present
         if (!empty($subtopicData['key_variables']) && \is_array($subtopicData['key_variables'])) {
             foreach ($subtopicData['key_variables'] as $varKey) {
                 if (isset($registry[$varKey])) {
                     $item = $registry[$varKey];
-                    $symKey = $item['display_symbol'] ?? $item['symbol'];
+                    $symKey = $item['display_symbol'] ?? self::cleanSymbol($item['symbol']);
                     $symbolMap[$symKey] = $item;
                 }
             }
         }
 
-        // Process formulas to map symbols to equations
+        // 2. Process formulas linked to this subtopic
+        $formulas = $subtopicData['formulas'] ?? [];
         foreach ($formulas as $fId => $formula) {
             if (!\is_array($formula)) continue;
             $fTitle = $formula['title'] ?? $fId;
@@ -58,13 +62,16 @@ class VariableAggregator
 
             foreach ($semVars as $vSym => $vDef) {
                 if (!\is_array($vDef)) continue;
-                $cleanSym = \trim(\str_replace(['$', '\\mathbf{', '}', '\\'], '', $vSym));
+                $cleanSym = self::cleanSymbol($vSym);
+                
                 if (\strlen($cleanSym) === 1 || \in_array($vSym, ['\\hbar', 'k_B', '\\rho', '\\nu', '\\nabla'])) {
                     if (!isset($symbolMap[$cleanSym])) {
-                        // Find match in registry or construct from formula semantic_variable
+                        // Exact symbol matching against registry
                         $matchedRegistry = null;
                         foreach ($registry as $rKey => $rVal) {
-                            if (($rVal['display_symbol'] ?? '') === $cleanSym || \strpos($rVal['symbol'] ?? '', $cleanSym) !== false) {
+                            $rClean = self::cleanSymbol($rVal['symbol'] ?? '');
+                            $rDisp = $rVal['display_symbol'] ?? '';
+                            if ($rClean === $cleanSym || $rDisp === $cleanSym) {
                                 $matchedRegistry = $rVal;
                                 break;
                             }
@@ -99,7 +106,7 @@ class VariableAggregator
             }
         }
 
-        // Fallback: If symbolMap is empty, populate default fundamental mechanics variables
+        // 3. Fallback: If symbolMap is empty, populate default fundamental mechanics variables
         if (empty($symbolMap)) {
             $defaultKeys = ['v_velocity', 'm_mass', 'F_force', 'p_momentum', 'E_energy', 'a_acceleration', 't_time'];
             foreach ($defaultKeys as $dKey) {

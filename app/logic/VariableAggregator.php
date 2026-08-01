@@ -64,7 +64,7 @@ class VariableAggregator
                 if (!\is_array($vDef)) continue;
                 $cleanSym = self::cleanSymbol($vSym);
                 
-                if (\strlen($cleanSym) === 1 || \in_array($vSym, ['\\hbar', 'k_B', '\\rho', '\\nu', '\\nabla'])) {
+                if (\strlen($cleanSym) === 1 || \in_array($vSym, ['\\hbar', 'k_B', '\\rho', '\\nu', '\\nabla', '\\omega'])) {
                     if (!isset($symbolMap[$cleanSym])) {
                         // Exact symbol matching against registry
                         $matchedRegistry = null;
@@ -115,7 +115,28 @@ class VariableAggregator
             }
         }
 
-        // 3. Fallback: If symbolMap is empty, populate default fundamental mechanics variables
+        // 3. Scan subtopic content prose for any embedded data-tex symbols (e.g. k, \omega)
+        $prose = $subtopicData['content'] ?? '';
+        if (!empty($prose)) {
+            \preg_match_all('/data-tex=["\']([^"\']+)["\']/i', $prose, $texMatches);
+            if (!empty($texMatches[1])) {
+                foreach ($texMatches[1] as $tex) {
+                    $cleanSym = self::cleanSymbol($tex);
+                    if ((\strlen($cleanSym) === 1 || \in_array($tex, ['\\hbar', 'k_B', '\\rho', '\\nu', '\\nabla', '\\omega'])) && !isset($symbolMap[$cleanSym])) {
+                        foreach ($registry as $rKey => $rVal) {
+                            $rClean = self::cleanSymbol($rVal['symbol'] ?? '');
+                            $rDisp = $rVal['display_symbol'] ?? '';
+                            if ($rClean === $cleanSym || $rDisp === $cleanSym) {
+                                $symbolMap[$cleanSym] = $rVal;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 4. Fallback: If symbolMap is empty, populate default fundamental mechanics variables
         if (empty($symbolMap)) {
             $defaultKeys = ['v_velocity', 'm_mass', 'F_force', 'p_momentum', 'E_energy', 'a_acceleration', 't_time'];
             foreach ($defaultKeys as $dKey) {

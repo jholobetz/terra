@@ -217,4 +217,111 @@ document.addEventListener('DOMContentLoaded', function() {
             el.classList.remove('highlighted-term');
         });
     });
+
+    // 5. Topic Abstract Single-Letter Variable Hover-Card Logic
+    let topicVarMap = {};
+    const mapScript = document.getElementById('topic-var-map');
+    if (mapScript) {
+        try {
+            topicVarMap = JSON.parse(mapScript.textContent || '{}');
+        } catch (e) {
+            console.warn('Failed to parse topic-var-map JSON:', e);
+        }
+    }
+
+    let hoverPopover = null;
+    let hideTimer = null;
+
+    function getOrCreatePopover() {
+        if (!hoverPopover) {
+            hoverPopover = document.createElement('div');
+            hoverPopover.id = 'variable-hover-card-popover';
+            hoverPopover.className = 'variable-hover-popover';
+            document.body.appendChild(hoverPopover);
+
+            hoverPopover.addEventListener('mouseenter', () => {
+                if (hideTimer) clearTimeout(hideTimer);
+            });
+
+            hoverPopover.addEventListener('mouseleave', () => {
+                hidePopover();
+            });
+        }
+        return hoverPopover;
+    }
+
+    function showPopover(trigger, symbol) {
+        const data = topicVarMap[symbol] || topicVarMap[symbol.toUpperCase()] || topicVarMap[symbol.toLowerCase()];
+        if (!data) return;
+
+        const popover = getOrCreatePopover();
+        if (hideTimer) clearTimeout(hideTimer);
+
+        const title = data.name || symbol;
+        const unit = data.unit && data.unit !== 'dimensionless' ? `<span class="popover-unit-badge">${data.unit}</span>` : '';
+        const desc = data.description ? `<p class="popover-desc">${data.description}</p>` : '';
+        
+        let formulasHtml = '';
+        if (data.formulas && data.formulas.length > 0) {
+            const chips = data.formulas.map(f => `<span class="popover-formula-chip">${f}</span>`).join('');
+            formulasHtml = `<div class="popover-formulas-label">Appears in:</div><div class="popover-formulas">${chips}</div>`;
+        }
+
+        popover.innerHTML = `
+            <div class="popover-header">
+                <span class="popover-symbol">${symbol}</span>
+                <span class="popover-title">${title}</span>
+                ${unit}
+            </div>
+            ${desc}
+            ${formulasHtml}
+        `;
+
+        // Position calculation with boundary safety
+        const rect = trigger.getBoundingClientRect();
+        const popWidth = 320;
+        let left = rect.left + window.scrollX;
+        let top = rect.bottom + window.scrollY + 8;
+
+        // Viewport right edge overflow check
+        if (rect.left + popWidth > window.innerWidth - 20) {
+            left = Math.max(10, window.innerWidth - popWidth - 20) + window.scrollX;
+        }
+
+        // Viewport bottom overflow check
+        if (rect.bottom + 200 > window.innerHeight) {
+            top = rect.top + window.scrollY - 180;
+        }
+
+        popover.style.left = `${left}px`;
+        popover.style.top = `${top}px`;
+        popover.classList.add('is-visible');
+    }
+
+    function hidePopover() {
+        hideTimer = setTimeout(() => {
+            if (hoverPopover) {
+                hoverPopover.classList.remove('is-visible');
+            }
+        }, 150);
+    }
+
+    // Scoped Event Delegation for Topic Beginning Abstract & Subtopic Cards
+    document.addEventListener('mouseover', function(e) {
+        const trigger = e.target.closest('#topic-beginning-abstract .variable-hover-trigger, .subtopic-card-abstract .variable-hover-trigger');
+        if (!trigger) return;
+
+        const symbol = trigger.getAttribute('data-symbol');
+        if (symbol) {
+            showPopover(trigger, symbol);
+        }
+    });
+
+    document.addEventListener('mouseout', function(e) {
+        const trigger = e.target.closest('#topic-beginning-abstract .variable-hover-trigger, .subtopic-card-abstract .variable-hover-trigger');
+        if (!trigger) return;
+
+        hidePopover();
+    });
 });
+

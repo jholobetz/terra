@@ -40,24 +40,22 @@ if (!function_exists('getConceptLevel')) {
             <div class="overview-link-container" style="margin: 0 0 20px 0; font-size: 0.95rem;">
                 <a href="/physics/subtopic/<?= $slug ?>-overview" class="subtopic-link" style="font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px;">Explore Overview &rarr;</a>
             </div>
-            <p class="pillar-narrative" style="font-size: 1.15rem; margin-bottom: 40px;"><?= $intro ?? 'Accessing the deep mathematical structure of the physical manifold.' ?></p>
-
-
+            <p class="pillar-narrative" id="topic-beginning-abstract" style="font-size: 1.15rem; margin-bottom: 40px;"><?= $intro ?? 'Accessing the deep mathematical structure of the physical manifold.' ?></p>
 
             <?php foreach ($pillars as $pillar): ?>
                 <section class="concept-pillar">
                     <h3 class="pillar-header"><?= $pillar['title'] ?></h3>
                     <p class="pillar-narrative"><?= $pillar['narrative'] ?></p>
                     <div class="concept-grid">
-                        <?php foreach ($pillar['slugs'] as $slug): 
-                            $sub = $subtopics_map[$slug] ?? null;
+                        <?php foreach ($pillar['slugs'] as $slugItem): 
+                            $sub = $subtopics_map[$slugItem] ?? null;
                             if (!$sub) continue;
-                            $level = getConceptLevel($slug, $sub['title']);
+                            $level = getConceptLevel($slugItem, $sub['title']);
                         ?>
                             <div class="concept-card">
                                 <div class="concept-anchor">
                                     <span class="level-tag level-<?= strtolower($level) ?>"><?= $level ?></span>
-                                    <h4><strong><a href="/physics/subtopic/<?= $slug ?>" class="subtopic-link"><?= str_replace('\\\\', '\\', $sub['title']) ?></a></strong></h4>
+                                    <h4><strong><a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link"><?= str_replace('\\\\', '\\', $sub['title']) ?></a></strong></h4>
                                 </div>
                                 
                                 <?php if (!empty($sub['hero_math'])): ?>
@@ -66,7 +64,7 @@ if (!function_exists('getConceptLevel')) {
                                     </div>
                                 <?php endif; ?>
 
-                                <div class="concept-detail">
+                                <div class="concept-detail subtopic-card-abstract">
                                     <p><?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?></p>
                                 </div>
                             </div>
@@ -106,6 +104,10 @@ if (!function_exists('getConceptLevel')) {
         'nonce' => $nonce,
         'domain' => $slug
     ]); ?>
+
+    <script id="topic-var-map" type="application/json">
+    <?= json_encode($topicVariableMap ?? [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>
+    </script>
 
     <footer class="topic-footer">
         <a href="/physics" class="btn btn-secondary">&larr; Back to Home</a>

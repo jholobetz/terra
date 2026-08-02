@@ -240,8 +240,12 @@ const MathJaxInspector = {
 
         // Intercept equation clicks globally to open FormulaInspector drawer
         document.addEventListener('click', (e) => {
+            if (e.defaultPrevented) return;
             const container = findEquationContainer(e.target);
             if (container) {
+                if (container.classList && (container.classList.contains('var-math-token') || container.closest('.var-math-token'))) {
+                    return;
+                }
                 const latex = this.getLatexForElement(container);
                 if (latex) {
                     e.preventDefault();

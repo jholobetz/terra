@@ -166,7 +166,8 @@ $theme = $meta['theme'] ?? 'default';
 </article>
 
 <!-- Floating Glassmorphic Hover Card Container for Option A -->
-<div id="var-hover-card" style="display: none; position: absolute; z-index: 9999; width: 280px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(100, 255, 218, 0.3); border-radius: 8px; padding: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(12px); pointer-events: none;">
+<!-- Floating Glassmorphic Hover Card Container for Option A -->
+<div id="var-hover-card" style="display: none; position: absolute; z-index: 9999; width: 300px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(100, 255, 218, 0.3); border-radius: 8px; padding: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(12px); pointer-events: auto;">
     <div id="var-card-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px; margin-bottom: 8px;">
         <span id="var-card-symbol" style="font-size: 1.1rem; font-weight: 700; color: #64ffda; font-family: 'Fira Code', monospace;"></span>
         <span id="var-card-unit" style="font-size: 0.75rem; color: #8892b0; font-family: monospace;"></span>
@@ -174,7 +175,7 @@ $theme = $meta['theme'] ?? 'default';
     <div id="var-card-name" style="font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin-bottom: 6px;"></div>
     <div id="var-card-desc" style="font-size: 0.8rem; color: #94a3b8; line-height: 1.4; margin-bottom: 10px;"></div>
     <div id="var-card-eqs-title" style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64ffda; margin-bottom: 4px;">Subtopic Formulas</div>
-    <div id="var-card-eqs-list" style="display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem; color: #cbd5e1;"></div>
+    <div id="var-card-eqs-list" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.75rem; color: #cbd5e1;"></div>
 </div>
 
 <script<?= $nonce ? ' nonce="' . $nonce . '"' : '' ?>>
@@ -190,6 +191,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardName = document.getElementById('var-card-name');
     const cardDesc = document.getElementById('var-card-desc');
     const cardEqsList = document.getElementById('var-card-eqs-list');
+
+    let isOverNode = false;
+    let isOverCard = false;
+
+    function updateCardVisibility() {
+        if (isOverNode || isOverCard) {
+            hoverCard.style.display = 'block';
+        } else {
+            hoverCard.style.display = 'none';
+        }
+    }
+
+    hoverCard.addEventListener('mouseenter', () => {
+        isOverCard = true;
+        updateCardVisibility();
+    });
+
+    hoverCard.addEventListener('mouseleave', () => {
+        isOverCard = false;
+        updateCardVisibility();
+    });
 
     // Helper: Clean TeX string to extract core variable symbol key
     function getSymbolKeyFromTex(tex) {
@@ -218,10 +240,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.equations && data.equations.length > 0) {
             data.equations.forEach(eq => {
                 const d = document.createElement('div');
-                d.style.cssText = 'background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px; margin-top: 4px; border-left: 2px solid #64ffda;';
+                d.style.cssText = 'background: rgba(255,255,255,0.05); padding: 6px 8px; border-radius: 4px; border-left: 2px solid #64ffda; display: flex; flex-direction: column; gap: 4px;';
                 const rawEq = eq.equation || '';
                 const formattedEq = (rawEq.indexOf('\\(') !== -1 || rawEq.indexOf('$') !== -1) ? rawEq : `\\(${rawEq}\\)`;
-                d.innerHTML = `<span style="font-weight:600; color:#e2e8f0; font-size:0.75rem;">${eq.title}:</span> <span style="color:#64ffda;">${formattedEq}</span>`;
+                const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
+                const explainerUrl = baseUrl + `/physics/equation-explainer?latex=${encodeURIComponent(rawEq)}${eq.id ? '&id=' + encodeURIComponent(eq.id) : ''}`;
+                d.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <span style="font-weight:600; color:#e2e8f0; font-size:0.75rem;">${eq.title}:</span>
+                        <a href="${explainerUrl}" class="explainer-link-btn" style="font-size: 0.68rem; font-weight: 600; color: #64ffda; text-decoration: none; border: 1px solid rgba(100, 255, 218, 0.3); padding: 1px 6px; border-radius: 4px; background: rgba(100, 255, 218, 0.08); transition: all 0.2s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.2)'" onmouseout="this.style.background='rgba(100, 255, 218, 0.08)'">Analyze &rarr;</a>
+                    </div>
+                    <div style="color:#64ffda; font-size:0.8rem;">${formattedEq}</div>
+                `;
                 cardEqsList.appendChild(d);
             });
         } else {
@@ -258,7 +288,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     populateHoverCard(data, symKey);
 
-                    hoverCard.style.display = 'block';
+                    isOverNode = true;
+                    updateCardVisibility();
+
                     const rect = node.getBoundingClientRect();
                     hoverCard.style.left = `${rect.left + window.scrollX}px`;
                     hoverCard.style.top = `${rect.bottom + window.scrollY + 8}px`;
@@ -272,12 +304,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 node.addEventListener('mouseleave', () => {
-                    hoverCard.style.display = 'none';
+                    isOverNode = false;
+                    setTimeout(() => { updateCardVisibility(); }, 150);
+
                     const sidebarItem = document.querySelector(`.var-legend-item[data-sym="${symKey}"]`);
                     if (sidebarItem) {
                         sidebarItem.style.background = 'rgba(255, 255, 255, 0.03)';
                         sidebarItem.style.borderColor = 'rgba(255, 255, 255, 0.06)';
                     }
+                });
+
+                // Prevent accidental page redirects on single-letter variable clicks
+                node.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const data = vars[symKey];
+                    if (!data) return;
+
+                    populateHoverCard(data, symKey);
+                    isOverNode = true;
+                    updateCardVisibility();
+
+                    const rect = node.getBoundingClientRect();
+                    hoverCard.style.left = `${rect.left + window.scrollX}px`;
+                    hoverCard.style.top = `${rect.bottom + window.scrollY + 8}px`;
                 });
             }
         });
@@ -293,9 +343,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             populateHoverCard(data, symKey);
 
-            hoverCard.style.display = 'block';
+            isOverNode = true;
+            updateCardVisibility();
+
             const rect = item.getBoundingClientRect();
-            hoverCard.style.left = `${rect.left + window.scrollX - 290}px`;
+            hoverCard.style.left = `${rect.left + window.scrollX - 310}px`;
             hoverCard.style.top = `${rect.top + window.scrollY}px`;
 
             // Highlight all matching math SVGs in prose
@@ -308,7 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         item.addEventListener('mouseleave', () => {
-            hoverCard.style.display = 'none';
+            isOverNode = false;
+            setTimeout(() => { updateCardVisibility(); }, 150);
+
             if (mainProse) {
                 mainProse.querySelectorAll(`.var-math-token[data-sym="${symKey}"]`).forEach(n => {
                     n.style.background = 'transparent';

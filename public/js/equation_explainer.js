@@ -2536,14 +2536,42 @@ const EquationExplainer = {
                 };
             } else if (this.officialVariables[symbol]) {
                 const official = this.officialVariables[symbol];
-                info = {
-                    name: official.name || symbol,
-                    type: official.type || tok.type,
-                    description: official.description || 'Sharded variable reference.',
-                    unit: official.unit || 'dimensionless',
-                    ref: official.ref || null,
-                    source: 'database'
-                };
+                if (typeof official === 'string') {
+                    const firstCommaIndex = official.indexOf(',');
+                    let name = symbol;
+                    let desc = official;
+                    let unit = 'dimensionless';
+                    if (firstCommaIndex !== -1) {
+                        name = official.substring(0, firstCommaIndex).trim();
+                        desc = official.substring(firstCommaIndex + 1).trim();
+                        desc = desc.charAt(0).toUpperCase() + desc.slice(1);
+                    } else {
+                        name = official;
+                    }
+                    const unitMatch = official.match(/measured in ([^.]+)/i);
+                    if (unitMatch) {
+                        unit = unitMatch[1].trim();
+                    }
+                    const isOperator = /operator/i.test(official) || symbol.startsWith('\\partial') || symbol.startsWith('\\nabla') || symbol.startsWith('\\hat');
+                    const isConstant = /constant/i.test(official);
+                    info = {
+                        name: name,
+                        type: isOperator ? 'operator' : (isConstant ? 'constant' : (tok.type || 'variable')),
+                        description: desc,
+                        unit: unit,
+                        ref: null,
+                        source: 'database'
+                    };
+                } else {
+                    info = {
+                        name: official.name || symbol,
+                        type: official.type || tok.type,
+                        description: official.description || 'Sharded variable reference.',
+                        unit: official.unit || 'dimensionless',
+                        ref: official.ref || null,
+                        source: 'database'
+                    };
+                }
             } else if (tok.type === 'modifier' && this.modifierGlossary[symbol]) {
                 const glossaryEntry = this.modifierGlossary[symbol];
                 info = {
@@ -2758,7 +2786,8 @@ const EquationExplainer = {
         const mathjaxSymbol = `$${displaySymbol}$`;
 
         // Build name link or strong label
-        let nameHtml = `<span class="var-name-lbl" style="color: var(--accent-default, #64ffda); text-decoration: none; font-size: 0.92rem; font-weight: 600; cursor: pointer; border-bottom: 1px dashed rgba(100,255,218,0.3); transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-default)'" onmouseout="this.style.borderColor='rgba(100,255,218,0.3)'">${info.name}</span>`;
+        const displayName = (info.name && /[\\[\]_{}^]/.test(info.name) && !info.name.includes('<')) ? `$${info.name}$` : (info.name || symbol);
+        let nameHtml = `<span class="var-name-lbl" style="color: var(--accent-default, #64ffda); text-decoration: none; font-size: 0.92rem; font-weight: 600; cursor: pointer; border-bottom: 1px dashed rgba(100,255,218,0.3); transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-default)'" onmouseout="this.style.borderColor='rgba(100,255,218,0.3)'">${displayName}</span>`;
 
         let disambigHtml = '';
         const dictEntry = this.physicsDictionary[symbol];

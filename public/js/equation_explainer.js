@@ -3680,6 +3680,12 @@ const EquationExplainer = {
             return protect(`\\(${tex}\\)`);
         });
 
+        // 5.5. Wrap un-delimited function-like TeX expressions (e.g. G(\mathbf{r}, \mathbf{r}'), \delta(\mathbf{r} - \mathbf{r}'), |\mathbf{r} - \mathbf{r}'|)
+        tempText = tempText.replace(/(?:[a-zA-Z]*\\(?:hat|vec|mathbf|mathrm|text|tilde|bar)\{[^}]+\}[a-zA-Z0-9_\^']*(?:\([^)]+\))?|[a-zA-Z]+\(\\[a-zA-Z]+\{[^}]+\}[^)]*\)|\|(?:\\[a-zA-Z]+\{[^}]+\}|[a-zA-Z0-9_\^'\s\-\+\\to\format])+\|)/g, match => {
+            if (match.includes('\uE000')) return match;
+            return protect(`\\(${match.trim()}\\)`);
+        });
+
         // 6. Wrap remaining un-delimited LaTeX backslash tokens (e.g. \frac{A}{B}, \rho, \nu, \to, \infty)
         tempText = tempText.replace(/(?:(?<!\\)\\([a-zA-Z]+)(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^])*)/g, match => {
             if (match.includes('\uE000')) return match;

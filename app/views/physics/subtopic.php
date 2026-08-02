@@ -186,10 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCardVisibility();
     });
 
-    // Helper: Clean TeX string to extract core variable symbol key
+    // Helper: Clean TeX string to extract core variable symbol key (single variable tokens only)
     function getSymbolKeyFromTex(tex) {
         if (!tex) return null;
         let clean = tex.trim();
+        // Skip equations or complex relational expressions
+        if (clean.includes('=') || clean.includes('\\int') || clean.includes('\\sum') || clean.includes('\\prod') || clean.includes('\\frac')) {
+            return null;
+        }
         clean = clean.replace(/\\(mathbf|vec|hat|tilde|mathrm|boldsymbol)\{([^}]+)\}/g, '$2');
         clean = clean.replace(/[\$\\{\}]/g, '').trim();
         
@@ -242,6 +246,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const mathNodes = mainProse.querySelectorAll('svg[data-tex], [data-tex]');
         
         mathNodes.forEach(node => {
+            // Option 2: Skip nodes inside standalone display equation cards/containers
+            if (node.closest('.formula-card, .equation-card, .display-math, [display="true"]')) {
+                return;
+            }
+
             const tex = node.getAttribute('data-tex');
             const symKey = getSymbolKeyFromTex(tex);
             

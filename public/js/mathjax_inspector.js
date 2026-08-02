@@ -258,7 +258,7 @@ const MathJaxInspector = {
                 const latex = this.getLatexForElement(container);
                 if (latex) {
                     const cleanLatex = latex.trim().replace(/^\\\(|^\\\[|^\$+|\\\)$|\\\]$|\$+$/g, '').trim();
-                    if (!cleanLatex || /^-?\d+(\.\d+)?$/.test(cleanLatex) || /^\{-?\d+\}$/.test(cleanLatex) || /<[a-z][\s\S]*>/i.test(cleanLatex) || cleanLatex.includes('<a ') || cleanLatex.includes('href=')) {
+                    if (!cleanLatex || /^-?\d+(\.\d+)?$/.test(cleanLatex) || /^\{-?\d+\}$/.test(cleanLatex) || /<[a-z][\s\S]*>/i.test(cleanLatex) || cleanLatex.includes('<a ') || cleanLatex.includes('href=') || this.isSingleVariableToken(cleanLatex)) {
                         return;
                     }
                     e.preventDefault();
@@ -283,6 +283,30 @@ const MathJaxInspector = {
                 }
             }
         }, true);
+    },
+
+    isSingleVariableToken(latex) {
+        if (!latex) return false;
+        const clean = latex.trim().replace(/^\\\(|^\\\[|^\$+|\\\)$|\\\]$|\$+$/g, '').trim();
+        if (!clean) return false;
+
+        // 1. Single Latin letter (e.g. m, v, F, E, t, T, r, q, W, C, e, n, s, u, x, y, z)
+        if (/^[a-zA-Z]$/.test(clean)) return true;
+
+        // 2. Single formatted letter macro (e.g. \mathbf{F}, \vec{F}, \mathbf{v}, \mathcal{L}, \hat{H})
+        if (/^\\[a-zA-Z]+\{[a-zA-Z]\}$/.test(clean)) return true;
+
+        // 3. Single Greek letter or standalone TeX symbol (e.g. \phi, \psi, \rho, \hbar, \partial, \omega)
+        if (/^\\[a-zA-Z]+$/.test(clean)) return true;
+
+        // 4. Single variable symbol with simple subscript/superscript (e.g. v_0, x_i, r_1, I_\nu, j_\nu, \alpha_\nu, S_\nu)
+        if (/^(\\?[a-zA-Z]|\\(mathbf|vec|mathcal|hat|mathbb)\{[a-zA-Z]\})+(_?\{?[a-zA-Z0-9\nu\mu\text]+\}?|\^?\{?[0-9a-zA-Z]+\}?)*$/.test(clean)) {
+            if (!/(=|\+|-|\\times|\\int|\\sum|\\frac|\\partial|\\cdot|\\to|\\approx|\\leq|\\geq)/.test(clean)) {
+                return true;
+            }
+        }
+
+        return false;
     },
 
     getLatexForElement(el) {

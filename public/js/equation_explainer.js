@@ -2927,7 +2927,7 @@ const EquationExplainer = {
                 const regex = new RegExp(escaped, 'g');
                 if (regex.test(latex)) {
                     const offObj = officialVariables[key];
-                    const type = (offObj && offObj.type) ? offObj.type : (key.startsWith('\\hat') || key.includes('\\partial') ? 'operator' : 'variable');
+                    const type = (offObj && typeof offObj === 'object' && offObj.type) ? offObj.type : ((typeof offObj === 'string' && /operator/i.test(offObj)) || key.startsWith('\\hat') || key.includes('\\partial') || key.includes('\\nabla') ? 'operator' : 'variable');
                     addToken(key, type);
 
                     // Track sub-tokens to consume
@@ -3267,6 +3267,7 @@ const EquationExplainer = {
         });
 
         // 8. Scan for single Roman letters (a-z, A-Z)
+        text = text.replace(/\\[a-zA-Z]+/g, ' ');
         const romanPattern = /[a-zA-Z]/g;
         while ((match = romanPattern.exec(text)) !== null) {
             const sym = match[0];

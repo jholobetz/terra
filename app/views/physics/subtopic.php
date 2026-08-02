@@ -44,35 +44,8 @@ $theme = $meta['theme'] ?? 'default';
         <?php endif; ?>
     </header>
     
-    <div class="subtopic-layout-grid" style="display: grid; grid-template-columns: 1fr 300px; gap: 35px; align-items: start; margin-top: 25px;">
-        <div class="content-body" id="subtopic-main-prose">
-            <?= $content ?? '<p>No content available for this subtopic.</p>' ?>
-        </div>
-
-        <?php if (!empty($subtopicVariables)): ?>
-            <!-- Option B: Subtopic Key Quantities & Symbols Legend Sidebar -->
-            <aside class="subtopic-variables-legend-card" style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(100, 255, 218, 0.15); border-radius: 10px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(10px); position: sticky; top: 100px;">
-                <h3 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent-color, #64ffda); margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                    Key Quantities & Symbols
-                </h3>
-                <div class="legend-badge-list" style="display: flex; flex-direction: column; gap: 8px;">
-                    <?php foreach ($subtopicVariables as $symKey => $vDef): ?>
-                        <div class="var-legend-item" data-sym="<?= htmlspecialchars($symKey) ?>" style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.08)'; this.style.borderColor='rgba(100, 255, 218, 0.3)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.borderColor='rgba(255, 255, 255, 0.06)';">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span class="sym-badge" style="font-weight: 700; color: #64ffda; font-family: 'Fira Code', monospace; font-size: 0.95rem; min-width: 24px; text-align: center; background: rgba(100, 255, 218, 0.1); padding: 2px 6px; border-radius: 4px;">
-                                    <?= htmlspecialchars($vDef['display_symbol'] ?? $vDef['symbol'] ?? $symKey) ?>
-                                </span>
-                                <span style="font-size: 0.88rem; color: #ccd6f6; font-weight: 500;"><?= htmlspecialchars($vDef['name'] ?? $symKey) ?></span>
-                            </div>
-                            <?php if (!empty($vDef['unit'])): ?>
-                                <span style="font-size: 0.75rem; color: #8892b0; font-family: monospace; opacity: 0.8;"><?= htmlspecialchars($vDef['unit']) ?></span>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </aside>
-        <?php endif; ?>
+    <div class="content-body" id="subtopic-main-prose" style="margin-top: 25px;">
+        <?= $content ?? '<p>No content available for this subtopic.</p>' ?>
     </div>
 
     <?php $this->render('physics/_equations_partial', [

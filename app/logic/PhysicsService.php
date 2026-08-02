@@ -396,6 +396,7 @@ class PhysicsService
                     if (!empty($formula['equation_svg'])) {
                         $formula['equation'] = $formula['equation_svg'];
                     }
+                    $formula = $this->sanitizeFormulaText($formula);
                     $this->physicsContent['formula_registry'][$fId] = $formula;
                     return $formula;
                 }
@@ -416,8 +417,9 @@ class PhysicsService
             if (file_exists($shardPath)) {
                 $shardContent = json_decode(file_get_contents($shardPath), true) ?: [];
                 if (isset($shardContent[$fId])) {
-                    $this->physicsContent['formula_registry'][$fId] = $shardContent[$fId];
-                    return $shardContent[$fId];
+                    $formula = $this->sanitizeFormulaText($shardContent[$fId]);
+                    $this->physicsContent['formula_registry'][$fId] = $formula;
+                    return $formula;
                 }
             }
         }
@@ -426,12 +428,32 @@ class PhysicsService
         if (file_exists($baseDir . 'formulas.json')) {
             $monolithic = json_decode(file_get_contents($baseDir . 'formulas.json'), true) ?: [];
             if (isset($monolithic[$fId])) {
-                $this->physicsContent['formula_registry'][$fId] = $monolithic[$fId];
-                return $monolithic[$fId];
+                $formula = $this->sanitizeFormulaText($monolithic[$fId]);
+                $this->physicsContent['formula_registry'][$fId] = $formula;
+                return $formula;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Sanitizes malformed TeX escape sequences in formula prose fields.
+     */
+    private function sanitizeFormulaText(array $formula): array
+    {
+        $fields = ['interpretation', 'limits_and_boundary', 'symmetry_origin', 'conceptual_definition', 'intuitive_summary'];
+        foreach ($fields as $field) {
+            if (!empty($formula[$field]) && is_string($formula[$field])) {
+                $txt = $formula[$field];
+                $txt = preg_replace('/\\\\b\\\\backslash\s*/', '\\\\', $txt);
+                $txt = preg_replace('/\\\\b\\\\text\{\s*\}\s*/', ' ', $txt);
+                $txt = str_replace('\\backslash)', ')', $txt);
+                $txt = str_replace('\\backslash', '\\', $txt);
+                $formula[$field] = $txt;
+            }
+        }
+        return $formula;
     }
 
     /**

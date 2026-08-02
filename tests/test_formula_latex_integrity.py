@@ -98,3 +98,41 @@ def test_no_html_inside_subtopic_svg_data_tex():
                         corrupted_svgs.append((file_name, tex[:80]))
     assert len(corrupted_svgs) == 0, f"Found HTML tags embedded inside SVG data-tex attributes: {corrupted_svgs}"
 
+def test_formula_narrative_math_delimiters():
+    corrupted_formulas = []
+    fields_to_check = ["conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary"]
+    
+    for f in ALL_FORMULAS:
+        formula_id = f.get("_id")
+        for key in fields_to_check:
+            text = f.get(key, "")
+            if not text or not isinstance(text, str):
+                continue
+            
+            # Check 1: Unbalanced dollar signs
+            dollar_count = text.count("$")
+            if dollar_count % 2 != 0:
+                corrupted_formulas.append((formula_id, key, f"Unbalanced '$' count ({dollar_count}): {text[:100]}..."))
+                continue
+                
+            # Check 2: Inverted or misplaced delimiters
+            if re.search(r"=\$\s*\\frac|\}\$\{\\frac|\$\s*=\s*\$\\frac|is\$\s*\\frac", text):
+                corrupted_formulas.append((formula_id, key, f"Misplaced '$' around fraction/equals: {text[:100]}..."))
+                continue
+
+            # Check 3: Trailing isolated dollar sign at paragraph end
+            if text.endswith(".$") or text.endswith(" $"):
+                corrupted_formulas.append((formula_id, key, f"Trailing isolated '$': {text[-60:]}"))
+                continue
+                
+            # Check 4: Unwrapped TeX macros outside dollar signs
+            parts = text.split("$")
+            for i in range(0, len(parts), 2): # Outside math mode
+                outside_text = parts[i]
+                if re.search(r"\\(mathbf|vec|hat|mathcal|bar|dot|ddot|frac)\{[^}]+\}", outside_text):
+                    corrupted_formulas.append((formula_id, key, f"Unwrapped TeX macro outside '$': {outside_text[:100]}..."))
+                    break
+
+    assert len(corrupted_formulas) == 0, f"Found {len(corrupted_formulas)} formula narrative delimiter errors: {corrupted_formulas[:10]}"
+
+

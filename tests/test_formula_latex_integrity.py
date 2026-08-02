@@ -75,3 +75,26 @@ def test_no_raw_unwrapped_tex_macros():
                     unwrapped.append((f.get("_id"), match.group(0)))
                     break
     assert len(unwrapped) == 0, f"Found unwrapped TeX macros in prose: {unwrapped}"
+
+def test_no_html_markup_in_formula_equations():
+    corrupted = []
+    for f in ALL_FORMULAS:
+        eq = f.get("equation", "")
+        if re.search(r"<\/?(a|strong|em|code|div|span|p)\b", eq, re.IGNORECASE) or "href=" in eq or "subtopic-link" in eq or "latex.codecogs" in eq:
+            corrupted.append((f.get("_id"), eq))
+    assert len(corrupted) == 0, f"Found HTML markup or raw image links in formula equation fields: {corrupted}"
+
+def test_no_html_inside_subtopic_svg_data_tex():
+    content_dir = os.path.join(PROJECT_ROOT, "app", "config", "content")
+    corrupted_svgs = []
+    for file_name in os.listdir(content_dir):
+        if file_name.endswith(".json") and file_name != "search_index.json":
+            file_path = os.path.join(content_dir, file_name)
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+                matches = re.findall(r'<svg\s+[^>]*data-tex=["\']([^"\']*)["\']', content, re.IGNORECASE)
+                for tex in matches:
+                    if "href=" in tex or "<a" in tex or "&lt;a" in tex or "subtopic-link" in tex:
+                        corrupted_svgs.append((file_name, tex[:80]))
+    assert len(corrupted_svgs) == 0, f"Found HTML tags embedded inside SVG data-tex attributes: {corrupted_svgs}"
+

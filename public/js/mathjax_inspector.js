@@ -246,8 +246,15 @@ const MathJaxInspector = {
                 if (container.classList && (container.classList.contains('var-math-token') || container.closest('.var-math-token'))) {
                     return;
                 }
+                if (container.closest('.var-desc-lbl, .var-unit-lbl, .symbol-badge, .symbol-row, .edit-var-form, .no-inspect')) {
+                    return;
+                }
                 const latex = this.getLatexForElement(container);
                 if (latex) {
+                    const cleanLatex = latex.trim().replace(/^\\\(|^\\\[|^\$+|\\\)$|\\\]$|\$+$/g, '').trim();
+                    if (!cleanLatex || /^-?\d+(\.\d+)?$/.test(cleanLatex) || /^\{-?\d+\}$/.test(cleanLatex)) {
+                        return;
+                    }
                     e.preventDefault();
                     e.stopPropagation();
 

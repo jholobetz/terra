@@ -196,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         clean = clean.replace(/\\(mathbf|vec|hat|tilde|mathrm|boldsymbol)\{([^}]+)\}/g, '$2');
         clean = clean.replace(/[\$\\{\}]/g, '').trim();
+        if (/^-?\d+(\.\d+)?$/.test(clean)) return null;
         
         if (vars[clean]) return clean;
         const base = clean.split('_')[0].trim();

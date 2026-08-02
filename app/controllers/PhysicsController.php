@@ -483,10 +483,32 @@ class PhysicsController
             if (empty($html)) return $html;
             return preg_replace_callback('/<svg\s+[^>]*data-tex="([^"]+)"[^>]*>.*?<\/svg>/is', function($match) {
                 $fullSvg = $match[0];
-                $tex = $match[1];
-                if (preg_match('/\\\\?(?:mathbf|vec|hat|mathcal|bar|dot|ddot|tilde)?\\{?([a-zA-Z])\\}?/i', $tex, $symbolMatch)) {
+                $rawTex = $match[1];
+                while (strpos($rawTex, '&') !== false) {
+                    $prev = $rawTex;
+                    $rawTex = html_entity_decode($rawTex, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    if ($rawTex === $prev) break;
+                }
+                $tex = trim($rawTex);
+
+                // Reject any math string > 15 chars or containing operators / punctuation / subscripts
+                if (strlen($tex) > 15 || strpbrk($tex, "=+-*/^()[]<>:;!,.&~`\"'") !== false) {
+                    return $fullSvg;
+                }
+
+                // Check allowed TeX macros
+                if (preg_match('/\\\\[a-zA-Z]+/i', $tex, $m)) {
+                    $cmd = strtolower($m[0]);
+                    $allowed = ['\\mathbf', '\\vec', '\\hat', '\\bar', '\\dot', '\\ddot', '\\tilde', '\\mathcal'];
+                    if (!in_array($cmd, $allowed)) {
+                        return $fullSvg;
+                    }
+                }
+
+                // Strictly anchored regex matching standalone single-letter variables (e.g. "E", "\mathbf{E}", "q", "\hat{p}")
+                if (preg_match('/^\s*(?:\\\\(?:mathbf|vec|hat|mathcal|bar|dot|ddot|tilde))?\\{?([a-zA-Z])\\}?\s*$/i', $tex, $symbolMatch)) {
                     $symbol = $symbolMatch[1];
-                    return '<span class="variable-hover-trigger" data-symbol="' . htmlspecialchars($symbol) . '" data-tex="' . htmlspecialchars($tex) . '">' . $fullSvg . '</span>';
+                    return '<span class="variable-hover-trigger" data-symbol="' . htmlspecialchars($symbol) . '" data-tex="' . htmlspecialchars($match[1]) . '">' . $fullSvg . '</span>';
                 }
                 return $fullSvg;
             }, $html);

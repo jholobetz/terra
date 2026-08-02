@@ -37,3 +37,14 @@ def test_css_has_variable_hover_styles():
 
     assert ".variable-hover-trigger" in content, "physics.css missing .variable-hover-trigger styles"
     assert ".variable-hover-popover" in content, "physics.css missing .variable-hover-popover styles"
+
+def test_equation_not_wrapped_as_variable_hover_trigger():
+    controller_file = os.path.join(PROJECT_ROOT, "app", "controllers", "PhysicsController.php")
+    with open(controller_file, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "strlen($tex) > 15" in content, "PhysicsController missing length limit for standalone variables"
+    assert "strpbrk($tex," in content, "PhysicsController missing operator exclusion filter"
+
+
+

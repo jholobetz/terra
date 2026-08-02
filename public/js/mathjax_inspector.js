@@ -235,6 +235,9 @@ const MathJaxInspector = {
 
     setupListeners() {
         const findEquationContainer = (target) => {
+            if (target.closest('.subtopic-link, a[href*="/subtopic/"], a[href*="/physics/subtopic/"]')) {
+                return null;
+            }
             return target.closest('svg[data-tex], [data-tex], .MathJax, mjx-container, .math-content, .formula-math-display, .explainer-link-btn, a[href*="equation-explainer"]');
         };
 
@@ -243,6 +246,9 @@ const MathJaxInspector = {
             if (e.defaultPrevented) return;
             const container = findEquationContainer(e.target);
             if (container) {
+                if (container.closest('.subtopic-link, a[href*="/subtopic/"], a[href*="/physics/subtopic/"]')) {
+                    return;
+                }
                 if (container.classList && (container.classList.contains('var-math-token') || container.closest('.var-math-token'))) {
                     return;
                 }
@@ -252,7 +258,7 @@ const MathJaxInspector = {
                 const latex = this.getLatexForElement(container);
                 if (latex) {
                     const cleanLatex = latex.trim().replace(/^\\\(|^\\\[|^\$+|\\\)$|\\\]$|\$+$/g, '').trim();
-                    if (!cleanLatex || /^-?\d+(\.\d+)?$/.test(cleanLatex) || /^\{-?\d+\}$/.test(cleanLatex)) {
+                    if (!cleanLatex || /^-?\d+(\.\d+)?$/.test(cleanLatex) || /^\{-?\d+\}$/.test(cleanLatex) || /<[a-z][\s\S]*>/i.test(cleanLatex) || cleanLatex.includes('<a ') || cleanLatex.includes('href=')) {
                         return;
                     }
                     e.preventDefault();
@@ -294,6 +300,7 @@ const MathJaxInspector = {
                     if (quoteIdx > 0 && /'\s*(?:\\text|\\mathrm|\\mathbf|[a-zA-Z]{2,})/.test(l.slice(quoteIdx))) {
                         l = l.substring(0, quoteIdx).trim();
                     }
+                    if (l.includes('<a ') || l.includes('<strong') || l.includes('subtopic-link')) return null;
                     return l;
                 }
             } catch (err) {}
@@ -303,7 +310,10 @@ const MathJaxInspector = {
         const texEl = el.closest('svg[data-tex], [data-tex], [data-latex]');
         if (texEl) {
             const attr = texEl.getAttribute('data-tex') || texEl.getAttribute('data-latex');
-            if (attr) return attr;
+            if (attr) {
+                if (attr.includes('<a ') || attr.includes('<strong') || attr.includes('subtopic-link')) return null;
+                return attr;
+            }
         }
 
         // 2. MathJax 3 CHTML container check

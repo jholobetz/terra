@@ -1736,14 +1736,14 @@ const EquationExplainer = {
             'sim', 'simeq', 'propto', 'nabla', 'cdot', 'times', 'div', 'pm', 'mp', 'ast', 'star',
             'sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'log', 'ln', 'exp', 'lim', 'max', 'min', 'sum', 'int', 'prod',
             'lozenge', 'iff', 'exists', 'in', 'vDash', 'vdash', 'models', 'forall', 'subset', 'supset',
-            'cup', 'cap', 'implies', 'Rightarrow', 'Leftarrow', 'Leftrightarrow', 'coprod', 'oint',
+            'cup', 'cap', 'implies', 'Rightarrow', 'Leftarrow', 'Leftrightarrow', 'coprod', 'oint', 'iint', 'iiint',
             'dim', 'det', 'ker', 'tr', 'diag', 'rank', 'supp', 'span', 'bra', 'ket', 'braket',
             'text', 'mathrm', 'mathbf', 'mathcal', 'mathbb', 'operatorname', 'quad', 'qquad', 'vec', 'hat', 'bar', 'dot', 'ddot'
         ]);
 
-        // 1. Protect existing backslashed LaTeX macros (e.g. \lozenge, \psi, \mathbf{v}_d)
+        // 1. Protect existing backslashed LaTeX macros and macro environments (e.g. \text{enc}, \mathbf{v}_d)
         const macroPlaceholders = [];
-        let tempLatex = cleanedLatex.replace(/\\([a-zA-Z]+|\S)/g, (match) => {
+        let tempLatex = cleanedLatex.replace(/(?:\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname|vec|hat|bar|dot|ddot|tilde|frac|sqrt)\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}|\\([a-zA-Z]+|\S))/g, (match) => {
             macroPlaceholders.push(match);
             return `\uE000TEXMACRO_${macroPlaceholders.length - 1}\uE000`;
         });

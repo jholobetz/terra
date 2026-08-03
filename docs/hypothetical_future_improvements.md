@@ -25,17 +25,14 @@ Because these three views use different data aggregation paths and frontend Java
 
 ## Proposed Future Improvements
 
-### 1. Unify Variable Resolution in `VariableAggregator` (Single Backend Source of Truth)
+### 1. Unify Variable Resolution in `VariableAggregator` (Single Backend Source of Truth) **[Status: Implemented]**
 
-- **Problem**: `PhysicsController::topic()` executes its own ad-hoc SQL query (`SELECT title, semantic_variables FROM formulas`) across all formulas in the database, bypassing the domain-aware `VariableAggregator` logic used by subtopics.
-- **Proposed Architecture**: Create a unified backend method:
-  ```php
-  VariableAggregator::buildTopicVariables(string $topicSlug, array $subtopicSlugs): array
-  ```
+- **Problem**: `PhysicsController::topic()` executed its own ad-hoc SQL query (`SELECT title, semantic_variables FROM formulas`) across all formulas in the database, bypassing the domain-aware `VariableAggregator` logic used by subtopics.
+- **Implemented Architecture**: Created unified backend method `VariableAggregator::buildTopicVariables(string $topicSlug, array $topicData, array $allSubtopics, ?callable $fetchSubtopicFunc = null): array`.
 - **Mechanism**:
-  1. Collect all subtopic slugs belonging to the target topic (e.g., `classical-mechanics` $\to$ `classical-mechanics-overview`, `lagrangian-mechanics`, `hamiltonian-mechanics`, etc.).
-  2. Aggregate variable definitions **strictly from formulas linked within those subtopics**, rather than querying the entire database globally.
-  3. Guarantee that single-letter symbols on topic pages (such as $F$ on `/physics/topic/classical-mechanics`) resolve to their domain-correct definitions (e.g., **Force Vector**).
+  1. Collects all subtopic slugs belonging to the target topic (overview subtopic, pillar subtopics, and subtopics referencing `parent_topic` or `parents`).
+  2. Aggregates variable definitions **strictly from formulas linked within those subtopics**, rather than querying the entire database globally.
+  3. Guarantees that single-letter symbols on topic pages (such as $F$ on `/physics/topic/classical-mechanics`) resolve to their domain-correct definitions (e.g., **Force Vector**).
 
 ---
 
@@ -70,6 +67,17 @@ Because these three views use different data aggregation paths and frontend Java
     }
   }
   ```
+
+- **Pros (Advantages & Benefits)**:
+  1. **Eliminates Scientific Contradictions**: Prevents displaying incorrect physical dimensions or units (e.g., $F$ as "Force Vector ($N$)" on Thermodynamics pages where $F$ is "Helmholtz Free Energy ($J$)").
+  2. **Centralized Source of Truth**: Consolidates symbol overrides in `variable_registry.json` instead of scattering `if/else` checks across controllers and JS files.
+  3. **100% Backward Compatible**: Tiered lookup ($\text{Local Formula } \texttt{semantic\_variables} \to \text{Domain Override} \to \text{Default}$) ensures graceful fallbacks.
+  4. **High Educational Rigor**: Students and researchers receive contextually precise descriptions across physics branches.
+
+- **Cons (Drawbacks & Risks)**:
+  1. **Maintenance Overhead**: Requires manual curation and schema restructuring of ~20 core overloaded symbols ($A, B, C, D, E, F, H, I, K, L, M, N, P, Q, R, S, T, U, V, W$).
+  2. **Cross-Disciplinary Ambiguity**: Hybrid subfields (e.g., Magnetohydrodynamics or Quantum Field Theory) fusing Electromagnetism and Thermodynamics could fall back to the primary topic domain if a symbol is missing in local formula metadata.
+  3. **Test Suite Refactoring**: Requires updating Python/PHP test suites that validate registry JSON structure.
 
 ---
 

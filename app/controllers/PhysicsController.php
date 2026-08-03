@@ -712,14 +712,33 @@ class PhysicsController
     private function isHubCacheStale(string $slug, string $cachePath): bool
     {
         if (!file_exists($cachePath)) return true;
+        $cacheMtime = filemtime($cachePath);
+
+        $aggregatorPath = PROJECT_ROOT . '/app/logic/VariableAggregator.php';
+        if (file_exists($aggregatorPath) && filemtime($aggregatorPath) > $cacheMtime) {
+            return true;
+        }
+
+        $registryPath = PROJECT_ROOT . '/app/config/variable_registry.json';
+        if (file_exists($registryPath) && filemtime($registryPath) > $cacheMtime) {
+            return true;
+        }
+
         $manifestPath = PROJECT_ROOT . "/hub_manifests/{$slug}.json";
         if (!file_exists($manifestPath)) return false;
-        return filemtime($manifestPath) > filemtime($cachePath);
+        return filemtime($manifestPath) > $cacheMtime;
     }
 
     private function isCacheStale(string $slug, string $cachePath): bool
     {
         if (!file_exists($cachePath)) return true;
+        $cacheMtime = filemtime($cachePath);
+
+        $aggregatorPath = PROJECT_ROOT . '/app/logic/VariableAggregator.php';
+        if (file_exists($aggregatorPath) && filemtime($aggregatorPath) > $cacheMtime) {
+            return true;
+        }
+
         $content = $this->service()->getPhysicsContent($slug);
         $shardFile = $content['search_index'][$slug]['s'] ?? null;
         if (!$shardFile) return false;
@@ -727,7 +746,7 @@ class PhysicsController
         $shardPath = PROJECT_ROOT . '/app/config/content/' . $shardFile;
         if (!file_exists($shardPath)) return false;
 
-        return filemtime($shardPath) > filemtime($cachePath);
+        return filemtime($shardPath) > $cacheMtime;
     }
 
     private function getFirstSentences(string $html, int $count = 3): string

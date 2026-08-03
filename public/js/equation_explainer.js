@@ -1735,21 +1735,33 @@ const EquationExplainer = {
             'frac', 'sqrt', 'left', 'right', 'partial', 'infty', 'approx', 'to', 'le', 'ge', 'ne', 'equiv',
             'sim', 'simeq', 'propto', 'nabla', 'cdot', 'times', 'div', 'pm', 'mp', 'ast', 'star',
             'sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'log', 'ln', 'exp', 'lim', 'max', 'min', 'sum', 'int', 'prod',
-            'text', 'mathrm', 'mathbf', 'mathcal', 'mathbb', 'quad', 'qquad', 'vec', 'hat', 'bar', 'dot', 'ddot'
+            'lozenge', 'iff', 'exists', 'in', 'vDash', 'vdash', 'models', 'forall', 'subset', 'supset',
+            'cup', 'cap', 'implies', 'Rightarrow', 'Leftarrow', 'Leftrightarrow', 'coprod', 'oint',
+            'dim', 'det', 'ker', 'tr', 'diag', 'rank', 'supp', 'span', 'bra', 'ket', 'braket',
+            'text', 'mathrm', 'mathbf', 'mathcal', 'mathbb', 'operatorname', 'quad', 'qquad', 'vec', 'hat', 'bar', 'dot', 'ddot'
         ]);
 
-        const parts = cleanedLatex.split(/(\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname)\{[^{}]*\})/g);
-        for (let i = 0; i < parts.length; i++) {
-            if (i % 2 === 0) {
-                parts[i] = parts[i].replace(/(?<!\\)\b([a-zA-Z]{2,})\b/g, (match) => {
-                    if (knownTexCmds.has(match) || knownTexCmds.has(match.toLowerCase())) {
-                        return `\\${match}`;
-                    }
-                    return `\\text{${match}}`;
-                });
+        // 1. Protect existing backslashed LaTeX macros (e.g. \lozenge, \psi, \mathbf{v}_d)
+        const macroPlaceholders = [];
+        let tempLatex = cleanedLatex.replace(/\\([a-zA-Z]+|\S)/g, (match) => {
+            macroPlaceholders.push(match);
+            return `\uE000TEXMACRO_${macroPlaceholders.length - 1}\uE000`;
+        });
+
+        // 2. Wrap un-escaped Multi-Letter variables/words in \text{} unless known TeX commands
+        tempLatex = tempLatex.replace(/\b([a-zA-Z]{2,})\b/g, (match) => {
+            if (knownTexCmds.has(match) || knownTexCmds.has(match.toLowerCase())) {
+                return `\\${match}`;
             }
+            return `\\text{${match}}`;
+        });
+
+        // 3. Restore backslashed LaTeX macros
+        for (let i = 0; i < macroPlaceholders.length; i++) {
+            tempLatex = tempLatex.replace(`\uE000TEXMACRO_${i}\uE000`, () => macroPlaceholders[i]);
         }
-        let formattedLatex = parts.join('');
+
+        let formattedLatex = tempLatex;
 
         // Enforce equation delimiters
         let mathMarkup = formattedLatex;
@@ -3654,11 +3666,11 @@ const EquationExplainer = {
             'ψ': '\\psi', 'ω': '\\omega', 'Ω': '\\Omega', 'Δ': '\\Delta'
         };
 
-        // 1. Protect existing MathJax delimiters ($$, $, \(\), \[\]) FIRST
-        tempText = tempText.replace(/\$\$[\s\S]*?\$\$/g, protect);
-        tempText = tempText.replace(/\$[^\$]+\$/g, protect);
-        tempText = tempText.replace(/\\\([\s\S]*?\\\)/g, protect);
+        // 1. Protect existing MathJax delimiters ($$, $, \(\), \[\]) NON-GREEDILY FIRST
         tempText = tempText.replace(/\\\[[\s\S]*?\\\]/g, protect);
+        tempText = tempText.replace(/\\\([\s\S]*?\\\)/g, protect);
+        tempText = tempText.replace(/\$\$[\s\S]*?\$\$/g, protect);
+        tempText = tempText.replace(/\$([^\$\n]+?)\$/g, protect);
 
         // 2. Fix un-delimited equation patterns like "Γ = \frac..." or "var = \frac..."
         tempText = tempText.replace(/([A-Za-z\u0370-\u03FF]+)\s*=\s*(\\[a-zA-Z]+(?:\{[^{}]*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^\/\*\+\-])+)/g, (match, lhs, rhs) => {
@@ -3683,7 +3695,6 @@ const EquationExplainer = {
             if (!s) return false;
             if (s.includes(',') || s.includes(';')) return false;
             if (/\b(or|in|and|of|for|at|to|is|with|where|if|not|by|on|the|an|e\.g\.|i\.e\.|eigenfunctions?|eigenvalues?)\b/i.test(s)) return false;
-            // Single English words (3+ letters with no math operators, backslashes, or digits) are prose labels, not math variables
             if (/^[a-zA-Z]{3,}$/.test(s)) return false;
             const units = ['C', 'J', 'K', 's', 'V', 'W', 'Pa', 'Hz', 'N', 'rad', 'mol'];
             if (units.includes(s)) return false;
@@ -3715,13 +3726,13 @@ const EquationExplainer = {
             return protect(`\\(${tex}\\)`);
         });
 
-        // 5.5. Wrap un-delimited function-like TeX expressions (e.g. G(\mathbf{r}, \mathbf{r}'), \delta(\mathbf{r} - \mathbf{r}'), |\mathbf{r} - \mathbf{r}'|)
-        tempText = tempText.replace(/(?:[a-zA-Z]*\\(?:hat|vec|mathbf|mathrm|text|tilde|bar)\{[^}]+\}[a-zA-Z0-9_\^']*(?:\([^)]+\))?|[a-zA-Z]+\(\\[a-zA-Z]+\{[^}]+\}[^)]*\)|\|(?:\\[a-zA-Z]+\{[^}]+\}|[a-zA-Z0-9_\^'\s\-\+\\to\format])+\|)/g, match => {
+        // 5.5. Wrap complete un-delimited fraction and vector LaTeX expressions (e.g. \frac{d^2 \mathbf{r}}{dt^2})
+        tempText = tempText.replace(/\\(?:frac|sqrt)\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})*|(?:[a-zA-Z]*\\(?:hat|vec|mathbf|mathrm|text|tilde|bar)\{[^}]+\}[a-zA-Z0-9_\^']*(?:\([^)]+\))?|[a-zA-Z]+\(\\[a-zA-Z]+\{[^}]+\}[^)]*\)|\|(?:\\[a-zA-Z]+\{[^}]+\}|[a-zA-Z0-9_\^'\s\-\+\\to\format])+\|)/g, match => {
             if (match.includes('\uE000')) return match;
             return protect(`\\(${match.trim()}\\)`);
         });
 
-        // 6. Wrap remaining un-delimited LaTeX backslash tokens (e.g. \frac{A}{B}, \rho, \nu, \to, \infty)
+        // 6. Wrap remaining un-delimited LaTeX backslash tokens
         tempText = tempText.replace(/(?:(?<!\\)\\([a-zA-Z]+)(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^])*)/g, match => {
             if (match.includes('\uE000')) return match;
             let trimmed = match.trim();
@@ -3736,22 +3747,19 @@ const EquationExplainer = {
             return protect(wrapped);
         });
 
-        // Restore placeholders and escape angle brackets inside math delimiters
+        // 7. Parse Markdown formatting (bold, italic, numbered list breaks) BEFORE restoring math placeholders
+        tempText = tempText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        tempText = tempText.replace(/(?<!\*)\*(?!\*)([^*]+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+        tempText = tempText.replace(/(?:\r?\n|\s)+(?=\d+\.\s+<strong>)/g, '<br><br>');
+
+        // 8. Restore protected math placeholders safely
         for (let i = 0; i < placeholders.length; i++) {
             let p = placeholders[i];
             if (p.startsWith('$') && !p.startsWith('$$') && p.endsWith('$')) {
-                p = `\\(${p.slice(1, -1)}\\)`;
-            }
-            if (p.startsWith('\\(') && p.endsWith('\\)')) {
-                p = p.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                p = `\\(${p.slice(1, -1).trim()}\\)`;
             }
             tempText = tempText.replace(`\uE000MATH_${i}\uE000`, () => p);
         }
-
-        // Parse Markdown formatting (bold, italic, numbered list breaks)
-        tempText = tempText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        tempText = tempText.replace(/(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
-        tempText = tempText.replace(/(?:\r?\n|\s)+(?=\d+\.\s+<strong>)/g, '<br><br>');
 
         return tempText;
     },

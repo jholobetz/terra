@@ -883,78 +883,50 @@
     "poiseuille-velocity-profile-ident-4403c1b0": {
         "title": "Poiseuille Velocity Profile",
         "equation": "v(r) = \\frac{\\Delta P}{4 \\mu L} (R^2 - r^2)",
-        "interpretation": "The equation for the Poiseuille velocity profile, $v(r) = \\frac{\\Delta P}{4 \\mu L}$ (R^2 - r^2) $, quantifies the velocity$ v(r) $of a Newtonian fluid at a radial distance$ r  from  the central axis of a cylindrical pipe. The term$ \\Delta P  represents the pressure drop across the length of the pipe, indicating the driving force for the flow$. $\\mu$  is the dynamic viscosity of the fluid, a measure of its resistance to flow; a higher viscosity leads to lower velocities$. L  is the length of the pipe segment over which the pressure drop occurs$. R  is the inner radius of the pipe. The term$ R^2 - r^2 $shows that the velocity is dependent on the square of the radial position, being zero at the pipe wall (where$ r = R $) and maximal at the center (where$ r = 0 $). The entire term $\\frac{\\Delta$ P}{4 $\\mu$ L} acts$ as a$ proportionality constant that scales the parabolic profile based on the driving pressure, fluid properties, and pipe geometry.",
-        "symmetry_origin": "This formula is derived from the Navier-Stokes equations under the assumptions of steady, incompressible, laminar flow in a long cylindrical pipe. The key is the radial symmetry of the problem: the flow velocity only depends on the radial distance $r$ from the center, not on the angular position or the axial position along the pipe (except for the overall pressure drop $\\Delta P$ which is assumed constant over $L$). The derivation typically involves applying cylindrical coordinates, balancing the pressure gradient force with the viscous shear forces, and integrating with respect to $r$, while using the no-slip boundary condition at the pipe wall ($v(R) = 0$).",
-        "limits_and_boundary": "As the radial distance $r$ approaches the pipe radius $R$ (i.e., $r \\to$ R$), the velocity $v(r)$ approaches zero, $v(R) = $\\frac{\\Delta$ P}{4 $\\mu$ L}$ (R^2 - R^2) = 0 $, which is the no-slip boundary condition for a viscous fluid adhering to the pipe wall. As the radial distance$ r  approaches  zero (i.e.,$ r $\\to$ 0 $), the velocity reaches its maximum value,$ v(0) = $\\frac{\\Delta$ P R^2}{4 $\\mu$ L}$, at the center of the pipe. If the pressure drop  \\Delta  P$ is zero, the velocity $v(r)$ is zero everywhere, as expected for no driving force. If the viscosity $\\mu$ or length $L$ approach infinity, the velocity approaches zero, indicating that a very viscous fluid or a very long pipe (for a given pressure drop) will result in negligible flow.",
+        "interpretation": "The equation for the Poiseuille velocity profile, $v(r) = \\frac{\\Delta P}{4 \\mu L} (R^2 - r^2)$, quantifies the velocity $v(r)$ of a Newtonian fluid at a radial distance $r$ from the central axis of a cylindrical pipe. The term $\\Delta P$ represents the pressure drop across the pipe length $L$, which acts as the driving force for viscous flow. The parameter $\\mu$ is the dynamic viscosity of the fluid, $L$ is the pipe length, and $R$ is the inner pipe radius. The quadratic term $(R^2 - r^2)$ produces a parabolic velocity profile that reaches zero at the pipe wall ($r = R$) due to the no-slip condition and peaks at the centerline ($r = 0$).",
+        "symmetry_origin": "Derived from the Navier-Stokes equations for steady, incompressible, laminar flow in a cylindrical pipe. Axisymmetry dictates that the velocity field depends solely on radial distance $r$ from the centerline, balancing viscous drag against pressure gradient forces.",
+        "limits_and_boundary": "At the pipe wall ($r = R$), the velocity vanishes $v(R) = 0$ in accordance with the viscous no-slip boundary condition. At the centerline ($r = 0$), the flow reaches its maximum velocity $v_{\\text{max}} = \\frac{\\Delta P R^2}{4 \\mu L}$. If the pressure drop $\\Delta P \\to 0$ or fluid viscosity $\\mu \\to \\infty$, the velocity throughout the pipe vanishes.",
         "semantic_variables": {
-            "$v(r)\n)": {
+            "v(r)": {
                 "name": "Velocity Profile",
                 "type": "variable",
                 "unit": "m/s",
                 "description": "The velocity of the fluid at a radial distance $r$ from the center of the pipe."
             },
-            "$\\Delta P\n)": {
+            "\\Delta P": {
                 "name": "Pressure Drop",
                 "type": "variable",
                 "unit": "Pa",
                 "description": "The difference in pressure between the two ends of the pipe segment of length $L$."
             },
-            "$\\mu\n)": {
+            "\\mu": {
                 "name": "Dynamic Viscosity",
                 "type": "variable",
                 "unit": "Pa·s",
-                "description": "A measure of the fluid's internal resistance to flow. It quantifies the shear stress within the fluid."
+                "description": "A measure of the fluid's internal resistance to shear flow."
             },
-            "$L\n)": {
+            "L": {
                 "name": "Pipe Length",
                 "type": "variable",
                 "unit": "m",
-                "description": "The length of the cylindrical pipe segment over which the pressure drop $\\Delta P$ occurs."
+                "description": "The length of the cylindrical pipe segment over which the pressure drop occurs."
             },
-            "$R\n)": {
+            "R": {
                 "name": "Pipe Radius",
                 "type": "variable",
                 "unit": "m",
                 "description": "The inner radius of the cylindrical pipe."
             },
-            "$r\n)": {
+            "r": {
                 "name": "Radial Distance",
                 "type": "variable",
                 "unit": "m",
-                "description": "The distance of a point within the fluid from the central axis of the pipe. $0 \\leq r \\leq R$."
-            },
-            "v": {
-                "name": "Speed / Velocity Magnitude",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The rate of change of position with respect to time, representing the speed of a particle."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "\\Delta": {
-                "name": "Laplacian / Change Operator",
-                "type": "operator",
-                "unit": "operator",
-                "description": "Represents spatial second derivatives, or finite difference increment."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
+                "description": "Distance from the central axis of the pipe ($0 \\leq r \\leq R$)."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Poiseuille velocity profile describes the velocity of a viscous fluid flowing through a cylindrical pipe under a constant pressure gradient. It specifically details how the fluid's velocity varies radially from the center of the pipe to the walls. The formula reveals that the velocity is maximum at the center and decreases quadratically as the distance from the center increases, reaching zero at the pipe walls.",
-        "intuitive_summary": "The velocity of a fluid in a pipe is highest at the center and decreases parabolically towards the walls due to viscous drag.",
-        "subcomponents": [
-            "central-radial-boundary-condition-fc1c2bb3",
-            "constant-radial-coordinate-definition-355a505a"
-        ]
+        "conceptual_definition": "The Poiseuille Velocity Profile describes the laminar velocity distribution of a viscous fluid flowing through a circular pipe under a pressure gradient.",
+        "intuitive_summary": "Fluid flows fastest along the central axis of a pipe and slows down to zero at the walls due to friction."
     },
     "infinite-dimensional-identity-1-c11097b8-0d1e10ff": {
         "title": "Resolution of the Identity (Infinite-Dimensional Hilbert Space)",

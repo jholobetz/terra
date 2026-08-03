@@ -1159,8 +1159,18 @@ class PhysicsService
         $symmetry = "Formulated in coordinate-free tensor or vector notation, maintaining spatial rotation and translation invariance.";
         $limits = "Subject to boundary constraints where field quantities decay or approach stationary states.";
 
-        // 1. Electromagnetism & Curl / Maxwell Limits
-        if (strpos($canonical, 'curl') !== false || strpos($canonical, 'div') !== false) {
+        // 1. Classical Mechanics & Force / Acceleration / Newton's Second Law
+        if (strpos($canonical, 'f=m') !== false || strpos($canonical, 'f=ma') !== false || (strpos($canonical, 'f=') !== false && (strpos($canonical, 'd^2') !== false || strpos($canonical, 'dt^2') !== false))) {
+            $domain = "classical_mechanics";
+            $title = "Newton's Second Law of Motion (Differential Form)";
+            $intro = "Relates the net vector force acting on a particle to its mass and the second time derivative of position (acceleration).";
+            $summary = "The net vector force equals mass times instantaneous acceleration: \\mathbf{F} = m \\frac{d^2 \\mathbf{r}}{dt^2}.";
+            $interpretation = "The differential operator \\frac{d^2 \\mathbf{r}}{dt^2} represents the instantaneous acceleration vector \\mathbf{a}. Multiplying by inertial mass $m$ determines the net force required to change the particle's state of motion.";
+            $symmetry = "Galilean-invariant under constant velocity transformations; invariant under 3D spatial rotations and translations.";
+            $limits = "Valid for constant-mass particles at non-relativistic speeds ($v \\ll c$) in inertial reference frames.";
+        }
+        // 2. Electromagnetism & Curl / Maxwell Limits
+        elseif (strpos($canonical, 'curl') !== false || strpos($canonical, 'div') !== false) {
             $domain = "electromagnetism";
             if ((strpos($canonical, 'curle=0') !== false || strpos($canonical, 'curl=0') !== false) || (strpos($canonical, 'curle') !== false && strpos($canonical, 'curlb') !== false)) {
                 $title = "Static Limits of Maxwell's Equations";
@@ -1187,7 +1197,7 @@ class PhysicsService
         } elseif (strpos($canonical, 'delta') !== false || strpos($canonical, '\delta') !== false || strpos($latex, '\delta') !== false || strpos(strtolower($latex), 'bounded') !== false || strpos(strtolower($latex), 'field') !== false) {
             $isField = (strpos(strtolower($latex), 'field') !== false || strpos($canonical, 'phi') !== false || strpos($canonical, 'psi') !== false);
             $domain = "field_theory";
-            $title = $isField ? 'Second Variation of Action in Field Theory ($\delta^2 S_{\text{field}}$)' : 'Second Variation of Action / Entropy Stability ($\delta^2 S\text{ Bounded}$)';
+            $title = $isField ? 'Second Variation of Action in Field Theory ($\delta^2 S_{\text{field}}$)' : 'Second Variation of Action / Entropy Stability ($\delta^2 S_{\text{bounded}}$)';
             $intro = $isField
                 ? 'The second variation of action in field theory, denoted as $\delta^2 S_{\text{field}}[\phi]$, represents the second-order functional derivative operator $\frac{\delta^2 S}{\delta \phi(x) \delta \phi(y)}$ acting on field perturbations $\delta \phi(x)$. It governs the local stability of classical vacuum states, soliton solutions, and cosmological background fields.'
                 : 'Represents the second-order variation of action or thermodynamic entropy ($\delta^2 S$), used to establish local stability, convexity of thermodynamic potentials, and bounded oscillation modes in physical systems.';

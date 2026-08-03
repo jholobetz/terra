@@ -52,8 +52,9 @@ foreach ($shardFiles as $filePath) {
         }
 
         try {
+            $semVarsJson = isset($formula['semantic_variables']) ? json_encode($formula['semantic_variables'], JSON_UNESCAPED_UNICODE) : null;
             $db->runQuery(
-                "UPDATE formulas SET title = ?, equation = ?, interpretation = ?, limits_and_boundary = ?, conceptual_definition = ?, intuitive_summary = ?, symmetry_origin = ? WHERE id = ?",
+                "UPDATE formulas SET title = ?, equation = ?, interpretation = ?, limits_and_boundary = ?, conceptual_definition = ?, intuitive_summary = ?, symmetry_origin = ?, semantic_variables = ? WHERE id = ?",
                 [
                     $formula['title'] ?? '',
                     $formula['equation'] ?? '',
@@ -62,6 +63,7 @@ foreach ($shardFiles as $filePath) {
                     $formula['conceptual_definition'] ?? '',
                     $formula['intuitive_summary'] ?? '',
                     $formula['symmetry_origin'] ?? '',
+                    $semVarsJson,
                     $formulaId
                 ]
             );

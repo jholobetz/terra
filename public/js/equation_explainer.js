@@ -3034,6 +3034,30 @@ const EquationExplainer = {
         // 1. Strip LaTeX structure environments
         text = text.replace(/\\begin\{[a-zA-Z]+\}/g, ' ').replace(/\\end\{[a-zA-Z]+\}/g, ' ');
 
+        // 1.1. Pre-scan for official database keys to keep them grouped as unified terms
+        if (officialVariables) {
+            const sortedOfficialKeys = Object.keys(officialVariables).sort((a, b) => b.length - a.length);
+            for (const sym of sortedOfficialKeys) {
+                if (this.latexContainsSymbol(text, sym)) {
+                    const isOperator = this.physicsDictionary[sym] && this.physicsDictionary[sym].type === 'operator';
+                    addToken(sym, isOperator ? 'operator' : 'variable');
+                    
+                    // Replace matched symbol in text to avoid partial matching later
+                    let pattern;
+                    const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                    if (sym.startsWith('\\')) {
+                        pattern = escaped + '(?![a-zA-Z])';
+                    } else if (/^[a-zA-Z0-9_\{\}\^\dagger]+$/.test(sym)) {
+                        pattern = '\\b' + escaped + '\\b';
+                    } else {
+                        pattern = escaped;
+                    }
+                    const regex = new RegExp(pattern, 'g');
+                    text = text.replace(regex, ' ');
+                }
+            }
+        }
+
         // 1.5. Parse subscripts BEFORE stripping visual modifiers to detect \text{...} wrappers
         text = text.replace(/_\{([^\}]+)\}/g, (match, content) => {
             // Strip text labels inside \text{...} or \mathrm{...}
@@ -3188,28 +3212,6 @@ const EquationExplainer = {
             text = text.replace(regex, ' ');
         }
 
-        // 2b. Pre-scan for official database keys to keep them grouped as unified terms
-        if (officialVariables) {
-            for (const sym of Object.keys(officialVariables)) {
-                if (this.latexContainsSymbol(text, sym)) {
-                    const isOperator = this.physicsDictionary[sym] && this.physicsDictionary[sym].type === 'operator';
-                    addToken(sym, isOperator ? 'operator' : 'variable');
-                    
-                    // Replace matched symbol in text to avoid partial matching later
-                    let pattern;
-                    const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                    if (sym.startsWith('\\')) {
-                        pattern = escaped + '(?![a-zA-Z])';
-                    } else if (/^[a-zA-Z0-9_\{\}]+$/.test(sym)) {
-                        pattern = '\\b' + escaped + '\\b';
-                    } else {
-                        pattern = escaped;
-                    }
-                    const regex = new RegExp(pattern, 'g');
-                    text = text.replace(regex, ' ');
-                }
-            }
-        }
 
         // Check for dot derivatives: \dot{q} or \dot q
         const dotRegex = /\\(dot|ddot)\{([a-zA-Z\\]+)\}|\\(dot|ddot)\s*([a-zA-Z])/g;
@@ -3636,6 +3638,9 @@ const EquationExplainer = {
         
         const placeholders = [];
         let tempText = text.replace(/\\par\b/g, ' ');
+        tempText = tempText.replace(/\\b\{([^\}]+)\}/g, '\\mathbf{$1}');
+        tempText = tempText.replace(/\\b\$([^\$]+)\$/g, '$\\mathbf{$1}$');
+        tempText = tempText.replace(/\\b\$/g, '$');
         
         function protect(match) {
             placeholders.push(match);

@@ -66,28 +66,42 @@ class VariableAggregator
                 
                 if (\strlen($cleanSym) === 1 || \in_array($vSym, ['\\hbar', 'k_B', '\\rho', '\\nu', '\\nabla', '\\omega'])) {
                     if (!isset($symbolMap[$cleanSym])) {
-                        // Exact symbol matching against registry
-                        $matchedRegistry = null;
-                        foreach ($registry as $rKey => $rVal) {
-                            $rClean = self::cleanSymbol($rVal['symbol'] ?? '');
-                            $rDisp = $rVal['display_symbol'] ?? '';
-                            if ($rClean === $cleanSym || $rDisp === $cleanSym) {
-                                $matchedRegistry = $rVal;
-                                break;
-                            }
-                        }
+                        $vName = $vDef['name'] ?? '';
+                        $isGeneric = empty($vName) || \preg_match('/^\\\\?[a-zA-Z\\s]+ Parameter$/i', $vName);
 
-                        if ($matchedRegistry) {
-                            $symbolMap[$cleanSym] = $matchedRegistry;
-                        } else {
+                        if (!$isGeneric) {
                             $symbolMap[$cleanSym] = [
                                 'symbol' => $vSym,
                                 'display_symbol' => $cleanSym,
-                                'name' => $vDef['name'] ?? $cleanSym,
+                                'name' => $vDef['name'],
                                 'unit' => $vDef['unit'] ?? '',
-                                'domain' => 'General Physics',
+                                'domain' => $vDef['domain'] ?? 'General Physics',
                                 'description' => $vDef['description'] ?? ''
                             ];
+                        } else {
+                            // Exact symbol matching against registry fallback
+                            $matchedRegistry = null;
+                            foreach ($registry as $rKey => $rVal) {
+                                $rClean = self::cleanSymbol($rVal['symbol'] ?? '');
+                                $rDisp = $rVal['display_symbol'] ?? '';
+                                if ($rClean === $cleanSym || $rDisp === $cleanSym) {
+                                    $matchedRegistry = $rVal;
+                                    break;
+                                }
+                            }
+
+                            if ($matchedRegistry) {
+                                $symbolMap[$cleanSym] = $matchedRegistry;
+                            } else {
+                                $symbolMap[$cleanSym] = [
+                                    'symbol' => $vSym,
+                                    'display_symbol' => $cleanSym,
+                                    'name' => $vDef['name'] ?? $cleanSym,
+                                    'unit' => $vDef['unit'] ?? '',
+                                    'domain' => 'General Physics',
+                                    'description' => $vDef['description'] ?? ''
+                                ];
+                            }
                         }
                     }
 

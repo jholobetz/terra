@@ -557,36 +557,11 @@ class PhysicsController
             }
         }
 
-        // Build topic variable metadata dictionary for single-letter hovers
-        $topicVariableMap = [];
-        $db = $this->app->db();
-        if ($db) {
-            $stmt = $db->query("SELECT title, semantic_variables FROM formulas WHERE semantic_variables IS NOT NULL AND semantic_variables != ''");
-            if ($stmt) {
-                while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                    $sem = json_decode($row['semantic_variables'], true);
-                    if (is_array($sem)) {
-                        foreach ($sem as $varKey => $varData) {
-                            if (preg_match('/\\\\?(?:mathbf|vec|hat|mathcal|bar|dot|ddot|tilde)?\\{?([a-zA-Z])\\}?/i', $varKey, $sMatch)) {
-                                $sym = $sMatch[1];
-                                if (!isset($topicVariableMap[$sym])) {
-                                    $topicVariableMap[$sym] = [
-                                        'name' => $varData['name'] ?? $sym,
-                                        'unit' => $varData['unit'] ?? 'dimensionless',
-                                        'description' => $varData['description'] ?? '',
-                                        'formulas' => !empty($row['title']) ? [$row['title']] : []
-                                    ];
-                                } else {
-                                    if (!empty($row['title']) && count($topicVariableMap[$sym]['formulas']) < 3 && !in_array($row['title'], $topicVariableMap[$sym]['formulas'])) {
-                                        $topicVariableMap[$sym]['formulas'][] = $row['title'];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // Build topic variable metadata dictionary using unified VariableAggregator scoped to topic subtopics
+        $fetchSubtopicFunc = function(string $sSlug) {
+            return $this->service()->fetchAndPrepare('subtopics', $sSlug);
+        };
+        $topicVariableMap = \App\Logic\VariableAggregator::buildTopicVariables($slug, $topic, $content['subtopics'] ?? [], $fetchSubtopicFunc);
 
         $this->renderWithLayout('physics/topic', array_merge($topic, [
             'topic' => $topic,

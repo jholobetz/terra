@@ -150,4 +150,77 @@ class VariableAggregator
 
         return $symbolMap;
     }
+
+    /**
+     * Build aggregated topic variable payload by scanning subtopics belonging to the specified topic
+     */
+    public static function buildTopicVariables(string $topicSlug, array $topicData, array $allSubtopics, ?callable $fetchSubtopicFunc = null): array
+    {
+        $topicSubSlugs = [];
+
+        // 1. Add overview subtopic
+        $overviewSlug = $topicSlug . '-overview';
+        $topicSubSlugs[$overviewSlug] = true;
+
+        // 2. Add subtopics listed in topic pillars
+        $pillars = $topicData['pillars'] ?? [];
+        if (\is_string($pillars)) {
+            $pillars = \json_decode($pillars, true) ?: [];
+        }
+        if (!empty($pillars) && \is_array($pillars)) {
+            foreach ($pillars as $pillar) {
+                if (!empty($pillar['slugs']) && \is_array($pillar['slugs'])) {
+                    foreach ($pillar['slugs'] as $sSlug) {
+                        $topicSubSlugs[$sSlug] = true;
+                    }
+                }
+            }
+        }
+
+        // 3. Add subtopics referencing parent_topic or parents
+        foreach ($allSubtopics as $sSlug => $sub) {
+            if (!\is_array($sub)) continue;
+            $parentTopic = $sub['parent_topic'] ?? '';
+            $parents = (array)($sub['parents'] ?? []);
+            if ($parentTopic === $topicSlug || \in_array($topicSlug, $parents, true)) {
+                $topicSubSlugs[$sSlug] = true;
+            }
+        }
+
+        // 4. Aggregate variables across all matched topic subtopics
+        $topicVariableMap = [];
+        foreach (\array_keys($topicSubSlugs) as $sSlug) {
+            $subData = null;
+            if ($fetchSubtopicFunc !== null) {
+                $subData = $fetchSubtopicFunc($sSlug);
+            } elseif (isset($allSubtopics[$sSlug]) && \is_array($allSubtopics[$sSlug])) {
+                $subData = $allSubtopics[$sSlug];
+            }
+
+            if (empty($subData) || !\is_array($subData)) continue;
+
+            $subVars = self::buildSubtopicVariables($subData);
+            foreach ($subVars as $sym => $varData) {
+                if (!isset($topicVariableMap[$sym])) {
+                    $topicVariableMap[$sym] = [
+                        'name' => $varData['name'] ?? $sym,
+                        'unit' => $varData['unit'] ?? 'dimensionless',
+                        'description' => $varData['description'] ?? '',
+                        'formulas' => []
+                    ];
+                }
+
+                if (!empty($varData['equations']) && \is_array($varData['equations'])) {
+                    foreach ($varData['equations'] as $eq) {
+                        $eqTitle = $eq['title'] ?? '';
+                        if (!empty($eqTitle) && \count($topicVariableMap[$sym]['formulas']) < 3 && !\in_array($eqTitle, $topicVariableMap[$sym]['formulas'], true)) {
+                            $topicVariableMap[$sym]['formulas'][] = $eqTitle;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $topicVariableMap;
+    }
 }

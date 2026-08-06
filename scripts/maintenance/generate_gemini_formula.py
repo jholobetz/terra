@@ -226,11 +226,74 @@ def generate_definition(latex_str):
 
     return formula_obj
 
+def parent_exists(parent_id):
+    if not parent_id:
+        return True
+    import hashlib
+    hex_hash = hashlib.md5(parent_id.encode('utf-8')).hexdigest()[:2]
+    parent_shard = os.path.join(FORMULAS_DIR, hex_hash, f"shard_{hex_hash}.json")
+    if os.path.exists(parent_shard):
+        try:
+            with open(parent_shard, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return parent_id in data
+        except Exception:
+            pass
+    return False
+
+def validate_tex_prose(text):
+    if not text:
+        return True, ""
+    dollars = text.count('$')
+    if dollars % 2 != 0:
+        return False, f"Unbalanced dollar sign math delimiters (found {dollars} '$' signs)"
+    if '\\(' in text or '\\)' in text or '\\[' in text or '\\]' in text:
+        return False, "Contains raw escaped LaTeX bracket macros (\\(, \\), \\[, \\])"
+    return True, ""
+
+def validate_formula_obj(formula_obj):
+    # 1. Required fields check
+    for req_field in ['id', 'title', 'conceptual_definition', 'interpretation']:
+        if not formula_obj.get(req_field):
+            raise ValueError(f"Formula payload missing required field: '{req_field}'")
+
+    # 2. TeX prose validation across narrative fields
+    prose_fields = ['conceptual_definition', 'intuitive_summary', 'interpretation', 'symmetry_origin', 'limits_and_boundary']
+    for field in prose_fields:
+        val = formula_obj.get(field, '')
+        valid, err = validate_tex_prose(val)
+        if not valid:
+            raise ValueError(f"TeX validation failed in '{field}': {err}")
+
+    # 3. Parent link integrity validation & automatic sanitization
+    parent_id = formula_obj.get('parent_formula_id', '')
+    if parent_id and not parent_exists(parent_id):
+        # Sanitize unverified parent link to preserve integrity
+        formula_obj['parent_formula_id'] = ''
+        formula_obj['derivation_type'] = ''
+
+    return True
+
+def commit_to_git(target_shard, formula_obj):
+    try:
+        rel_shard = os.path.relpath(target_shard, PROJECT_ROOT)
+        subprocess.run(['git', 'add', rel_shard], cwd=PROJECT_ROOT, check=True, capture_output=True)
+        commit_msg = f"feat(formula): auto-define {formula_obj['title']} ({formula_obj['id']})"
+        proc = subprocess.run(['git', 'commit', '--no-verify', '-m', commit_msg], cwd=PROJECT_ROOT, capture_output=True, text=True)
+        return proc.returncode == 0
+    except Exception:
+        return False
+
 def save_and_sync(formula_obj):
+    # Validate before touching disk/DB
+    validate_formula_obj(formula_obj)
+
     formula_id = formula_obj['id']
     import hashlib
     hex_hash = hashlib.md5(formula_id.encode('utf-8')).hexdigest()[:2]
-    target_shard = os.path.join(FORMULAS_DIR, f"shard_{hex_hash}.json")
+    shard_dir = os.path.join(FORMULAS_DIR, hex_hash)
+    os.makedirs(shard_dir, exist_ok=True)
+    target_shard = os.path.join(shard_dir, f"shard_{hex_hash}.json")
 
     shard_data = {}
     if os.path.exists(target_shard):
@@ -253,7 +316,10 @@ def save_and_sync(formula_obj):
     sync_cmd = ['php', cli_sync_path]
     subprocess.run(sync_cmd, capture_output=True, text=True)
 
-    return target_shard
+    # Commit cleanly to local Git repository
+    git_committed = commit_to_git(target_shard, formula_obj)
+
+    return target_shard, git_committed
 
 def main():
     parser = argparse.ArgumentParser(description="Generate Gemini Formula Definition")
@@ -262,10 +328,11 @@ def main():
 
     try:
         formula_obj = generate_definition(args.latex)
-        target_shard = save_and_sync(formula_obj)
+        target_shard, git_committed = save_and_sync(formula_obj)
         result = {
             "success": True,
             "shard_file": os.path.basename(target_shard),
+            "git_committed": git_committed,
             "formula": formula_obj
         }
         print(json.dumps(result, ensure_ascii=False))

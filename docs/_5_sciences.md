@@ -1,43 +1,29 @@
-# Project Terra: The 5 Core Sciences Architecture & Gateway Vision
+# Project Terra: The 5 Core Sciences Department Architecture
 **Date**: August 5, 2026  
 **File**: `docs/_5_sciences.md`  
-**Purpose**: Architectural design document and department specifications for expanding Project Terra from a single-domain application ("The Physics Lab") into a multi-department 5-science engine.
+**Purpose**: Architectural design document specifying the 5 primary scientific faculties, URL routing, theme accents, foundational models, and interactive sandboxes.
 
 ---
 
-## 🏛️ Executive Summary & Central Gateway Concept
+## 🏛️ Executive Scope
 
-As Project Terra expands beyond **The Physics Lab**, the root domain (`/`) will transition into **The Central Science Gateway**. This portal serves as the unified entry point connecting 5 primary faculties of natural and mathematical sciences:
+Project Terra's multidisciplinary engine is structured into **5 Primary Scientific Departments**. Each department operates with its own distinct visual theme, equation catalog, topic abstracts, and specialized interactive sandboxes, while remaining interconnected through shared mathematical derivation edges.
 
 ```
-                      [ 🌐 PROJECT TERRA ]
-                  Central Science Gateway (/)
-                               │
-   ┌───────────────┬───────────┼───────────┬───────────────┐
-   ▼               ▼           ▼           ▼               ▼
-[ ⚛️ Physics ]  [ 🧪 Chem ]  [ 🧬 Bio ]  [ 🌍 Earth ]  [ 📐 Math ]
- (/physics)      (/chemistry) (/biology)   (/earth)     (/math)
+                                [ 🌐 PROJECT TERRA ]
+                                 Multi-Science Engine
+                                          │
+   ┌───────────────┬──────────────┼──────────────┬───────────────┐
+   ▼               ▼              ▼              ▼               ▼
+[ ⚛️ Physics ]  [ 🧪 Chem ]     [ 🧬 Bio ]     [ 🌍 Earth ]     [ 📐 Math ]
+ (/physics)      (/chemistry)    (/biology)      (/earth)        (/math)
 ```
 
 ---
 
-## 🎨 Layout & Gateway Architecture Options
+## 🌐 Department Directory & URL Routing Hierarchy
 
-### Option 1: "The Grand Academy Gateway" (Recommended)
-- **Central Search Bar**: A unified glassmorphic search bar at `/` querying across all 5 departments simultaneously (e.g., searching `"Entropy"` displays results from Physics Thermodynamics, Chemical Equilibrium, and Biological Information Theory).
-- **Department Visual Cards**: Dedicated cards for each department with distinct color accents, featured sandboxes, and topic highlights.
-- **The Interdisciplinary Bridge**: Dedicated landing page sections highlighting cross-departmental derivation edges (e.g., *Quantum Mechanics $\leftrightarrow$ Chemical Bonding* or *Statistical Physics $\leftrightarrow$ Gibbs Free Energy*).
-
-### Option 2: "The Scientific IDE & Department Switcher"
-- **Global Header Bar**:
-  - `[ 🌐 Terra Hub ]` $\mid$ Department Switcher Dropdown: `[ ⚛️ Physics ▾ ]` (`Physics`, `Chemistry`, `Biology`, `Earth Sciences`, `Mathematics`).
-  - `[ 🧰 Sandbox Directory ]`: Dropdown listing all interactive tools categorized by department.
-
----
-
-## 🌐 Department Directory & URL Routing
-
-| Department | Route | Accent Theme Color | Focus Areas |
+| Department | Route | Accent Theme Color | Primary Focus Areas |
 | :--- | :--- | :--- | :--- |
 | **Physics** | `/physics` | Cyber Cyan (`#64ffda`) | Classical Mechanics, Quantum Mechanics, Relativity, Field Theory, Thermodynamics |
 | **Chemistry** | `/chemistry` | Emerald Green (`#00e676`) | Physical Chemistry, Chemical Kinetics, Electrochemistry, Orbital Theory, Thermodynamics |
@@ -49,7 +35,7 @@ As Project Terra expands beyond **The Physics Lab**, the root domain (`/`) will 
 
 ## 🔬 Department Specifications & Interactive Sandboxes
 
-### 1. ⚛️ Department of Physics (`/physics`)
+### 1. ⚛️ Department of Physical Sciences (`/physics`)
 - **Foundational Models**: Einstein Field Equations, Schrödinger Equation, Maxwell's Equations, Hamilton-Jacobi PDE, First Law of Black Hole Mechanics.
 - **Interactive Sandboxes**:
   - **Equation Explainer**: Term-by-term breakdown, semantic variables, limit toggles, and Web Audio API sonification.
@@ -59,7 +45,7 @@ As Project Terra expands beyond **The Physics Lab**, the root domain (`/`) will 
 
 ---
 
-### 2. 🧪 Department of Chemistry (`/chemistry`)
+### 2. 🧪 Department of Chemical Sciences (`/chemistry`)
 - **Foundational Models**: Nernst Equation, Arrhenius Reaction Rate, van 't Hoff Equilibrium Equation, Gibbs Free Energy ($\Delta G = \Delta H - T\Delta S$), Schrödinger Molecular Orbital Theory.
 - **Interactive Sandboxes**:
   - **🔄 Reaction & Equilibrium Explorer (Chemical Equation Explainer)**: Term breakdown, stoichiometric balancing, and interactive **Le Chatelier sliders** for temperature, pressure, and concentration.
@@ -89,9 +75,19 @@ As Project Terra expands beyond **The Physics Lab**, the root domain (`/`) will 
 
 ---
 
-### 5. 📐 Department of Mathematics (`/math`)
+### 5. 📐 Department of Mathematical Sciences (`/math`)
 - **Foundational Models**: Fourier Transform, Taylor Series Expansion, Navier-Stokes Existence & Smoothness, Gauss-Bonnet Theorem, Matrix Eigenvalue Decomposition.
 - **Interactive Sandboxes**:
   - **📐 Dimensional Solver & Unit Reduction Engine**: Interactive dimensional analysis and unit balance verification.
   - **📈 Fourier Series & Wavelet Synthesizer**: Deconstructs arbitrary periodic functions into harmonic sine/cosine spectrums.
   - **🧩 Vector Calculus & Field Visualizer**: Interactive 2D/3D vector field visualizer showing Gradient, Divergence, and Curl ($ \nabla f, \nabla \cdot \mathbf{F}, \nabla \times \mathbf{F} $).
+
+---
+
+## 🌐 Interdisciplinary Knowledge Graph (Derivation Edges)
+
+Connecting the 5 departments via shared mathematical derivation edges:
+- **Statistical Mechanics (Physics) $\rightarrow$ Thermodynamics (Chemistry)**: Partition functions ($Z, q$) linking directly to Gibbs Free Energy ($\Delta G = -RT \ln K$).
+- **Quantum Mechanics (Physics) $\rightarrow$ Chemical Bonding (Chemistry)**: Atomic wavefunctions ($\psi$) connecting directly to hybridization ($sp^3, sp^2, sp$) and valence bond theory.
+- **Electromagnetism (Physics) $\rightarrow$ Electrochemistry (Chemistry) $\rightarrow$ Biophysics (Biology)**: Electric potential ($V$) connecting to cell EMF ($E^\circ_{cell}$) and nerve action potentials (Hodgkin-Huxley).
+- **Fluid Dynamics (Physics) $\rightarrow$ Atmospheric Dynamics (Earth)**: Navier-Stokes equations connecting directly to planetary Coriolis forces and Geostrophic balance.

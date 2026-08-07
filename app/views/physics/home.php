@@ -96,7 +96,8 @@ $topicCubes = [
                 $cube = $topicCubes[$slug] ?? [];
                 $themeColor = $cube['theme'] ?? 'var(--accent-color)';
             ?>
-                <div class="glass-cube" style="--cube-accent: <?= $themeColor ?>;" data-slug="<?= htmlspecialchars($slug) ?>">
+                <!-- Entire 3D Glass Cube is a Clickable Anchor -->
+                <a href="/physics/topic/<?= htmlspecialchars($slug) ?>" class="glass-cube" style="--cube-accent: <?= $themeColor ?>;" data-slug="<?= htmlspecialchars($slug) ?>">
                     <!-- 6 Glass Cube Faces -->
                     <div class="cube-face cube-face-front">
                         <div class="cube-badge" style="border-color: <?= $themeColor ?>; color: <?= $themeColor ?>;"><?= $cube['badge'] ?? 'PHYSICS' ?></div>
@@ -107,14 +108,14 @@ $topicCubes = [
                                 <span>$$<?= $cube['equation'] ?>$$</span>
                             </div>
                         <?php endif; ?>
-                        <a href="/physics/topic/<?= htmlspecialchars($slug) ?>" class="cube-link">Explore Hub &rarr;</a>
+                        <span class="cube-link">Explore Hub &rarr;</span>
                     </div>
                     <div class="cube-face cube-face-back"></div>
                     <div class="cube-face cube-face-left"></div>
                     <div class="cube-face cube-face-right"></div>
                     <div class="cube-face cube-face-top"></div>
                     <div class="cube-face cube-face-bottom"></div>
-                </div>
+                </a>
             <?php endforeach; ?>
         </div>
     </div>
@@ -130,6 +131,10 @@ $topicCubes = [
     margin-top: -100px;
     transform-style: preserve-3d;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    cursor: pointer;
 }
 
 .cube-face {

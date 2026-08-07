@@ -235,7 +235,7 @@ const MathJaxInspector = {
 
     setupListeners() {
         const findEquationContainer = (target) => {
-            if (target.closest('.subtopic-link, a[href*="/subtopic/"], a[href*="/physics/subtopic/"]')) {
+            if (target.closest('.glass-cube, .subtopic-link, a[href*="/topic/"], a[href*="/physics/topic/"], a[href*="/subtopic/"], a[href*="/physics/subtopic/"]')) {
                 return null;
             }
             return target.closest('svg[data-tex], [data-tex], .MathJax, mjx-container, .math-content, .formula-math-display, .explainer-link-btn, a[href*="equation-explainer"]');
@@ -246,7 +246,7 @@ const MathJaxInspector = {
             if (e.defaultPrevented) return;
             const container = findEquationContainer(e.target);
             if (container) {
-                if (container.closest('.subtopic-link, a[href*="/subtopic/"], a[href*="/physics/subtopic/"]')) {
+                if (container.closest('.glass-cube, .subtopic-link, a[href*="/topic/"], a[href*="/physics/topic/"], a[href*="/subtopic/"], a[href*="/physics/subtopic/"]')) {
                     return;
                 }
                 if (container.classList && (container.classList.contains('var-math-token') || container.closest('.var-math-token'))) {

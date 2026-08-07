@@ -1,6 +1,6 @@
 /**
- * Project Terra - 3D Translucent Cubes Halo Orbit Engine (Option A)
- * Lightweight 60 FPS orbital physics engine using native CSS 3D transforms.
+ * Project Terra - 3D Translucent Cubes Halo Orbit Engine (Option A - Dynamic Orbital Tracking)
+ * Continuous background orbital rotation where focused card glides along the track in sync.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,18 +12,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cubes.length === 0) return;
 
     let baseAngle = 0;
-    let speed = 0.0015; // Slow ambient drift
+    let speed = 0.0015; // Continuous ambient drift
     let isHovered = false;
     let hoveredCube = null;
     let isDragging = false;
     let startX = 0;
 
     // Orbit Radii (Ellipse)
-    const radiusX = 420; // Horizontal width
-    const radiusY = 120; // Vertical depth (tilted 3D perspective)
+    const radiusX = 440; // Horizontal width
+    const radiusY = 130; // Vertical depth (tilted 3D perspective)
+
+    // Pre-render MathJax equations once on load
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([wrapper]);
+    }
 
     function updateOrbit() {
-        if (!isHovered && !isDragging) {
+        // Continuous orbital rotation even when a card is selected (Option A)
+        if (!isDragging) {
             baseAngle += speed;
         }
 
@@ -31,19 +37,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const angleStep = (Math.PI * 2) / count;
 
         cubes.forEach((cube, i) => {
-            if (cube === hoveredCube) return; // Hovered cube stays facing viewer
-
             const angle = baseAngle + i * angleStep;
             const x = Math.cos(angle) * radiusX;
             const y = Math.sin(angle) * radiusY;
+            const depth = Math.sin(angle); // Normalized depth (-1 back to +1 front)
+            const zVal = depth * 80;
 
-            // Normalized depth (-1 back to +1 front)
-            const depth = Math.sin(angle);
+            // Store current computed 3D coordinates
+            cube._x = x;
+            cube._y = y;
+            cube._z = zVal;
+
+            if (cube === hoveredCube) {
+                // Option A: Focused card glides along the track while elevated & face-forward
+                cube.style.transition = 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s';
+                cube.style.transform = `translate3d(${x}px, ${y}px, ${zVal + 120}px) scale(1.25) rotateX(0deg)`;
+                cube.style.opacity = '1.0';
+                cube.style.zIndex = '999';
+                return;
+            }
+
             const scale = 0.72 + (depth + 1) * 0.22; // 0.72x back to 1.16x front
             const opacity = 0.4 + (depth + 1) * 0.3;  // 0.4 back to 1.0 front
             const zIndex = Math.round((depth + 1) * 100);
 
-            cube.style.transform = `translate3d(${x}px, ${y}px, ${depth * 80}px) scale(${scale})`;
+            // Turn off CSS transition during continuous RAF drift for non-hovered cubes
+            cube.style.transition = 'none';
+            cube.style.transform = `translate3d(${x}px, ${y}px, ${zVal}px) scale(${scale})`;
             cube.style.opacity = opacity;
             cube.style.zIndex = zIndex;
         });
@@ -51,26 +71,30 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(updateOrbit);
     }
 
-    // Interactive Hover & Focus
+    // Option A Dynamic Orbital Tracking Interaction
     cubes.forEach(cube => {
         cube.addEventListener('mouseenter', () => {
             isHovered = true;
             hoveredCube = cube;
             cube.classList.add('focused');
-            cube.style.transform = `translate3d(${cube.offsetLeft}px, ${cube.offsetTop}px, 140px) scale(1.25) rotateX(0deg)`;
-            cube.style.opacity = '1.0';
-            cube.style.zIndex = '999';
 
-            // Typeset MathJax if needed
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise([cube]);
-            }
+            // Shield background cubes from stealing focus
+            cubes.forEach(c => {
+                if (c !== cube) {
+                    c.style.pointerEvents = 'none';
+                }
+            });
         });
 
         cube.addEventListener('mouseleave', () => {
             isHovered = false;
             hoveredCube = null;
             cube.classList.remove('focused');
+
+            // Restore pointer events to all cubes
+            cubes.forEach(c => {
+                c.style.pointerEvents = 'auto';
+            });
         });
     });
 

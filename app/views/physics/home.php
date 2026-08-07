@@ -73,19 +73,8 @@ $topicCubes = [
         <h1><?= htmlspecialchars($title) ?></h1>
         <p class="subtitle"><?= htmlspecialchars($subtitle) ?></p>
 
-        <!-- Glassmorphic Spotlight Search Bar -->
-        <div style="max-width: 580px; margin: 24px auto 28px;">
-            <button id="hero-search-trigger" onclick="document.getElementById('search-modal-trigger').click()" class="search-modal-trigger" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(14px); border: 1px solid rgba(100, 255, 218, 0.35); border-radius: 14px; color: var(--text-color); font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="#64ffda" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <span style="color: var(--text-muted);">Search 3,000+ physics equations, physical constants, or subtopics...</span>
-                </div>
-                <kbd class="shortcut">⌘K</kbd>
-            </button>
-        </div>
-
-        <div class="hero-cta">
-            <a href="/physics/topic/classical-mechanics" class="btn btn-secondary">Start Exploring</a>
+        <div class="hero-cta" style="margin-top: 24px;">
+            <a href="/physics/random" class="btn btn-secondary">🎲 Start Exploring</a>
             <a href="/physics/lab-tools" class="btn btn-primary">Lab Tools</a>
         </div>
     </div>

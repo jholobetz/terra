@@ -28,6 +28,7 @@ $router->group('', function(Router $router) use ($app) {
 
 	$router->group('/physics', function() use ($router, $app) {
 		$router->get('/', [ $app->physicsController(), 'index' ]);
+		$router->get('/random', [ $app->physicsController(), 'randomSubtopic' ]);
 		$router->get('/install', [ $app->physicsController(), 'install' ]); // New route for database initialization
 		$router->get('/sync', [ $app->physicsController(), 'sync' ]);
 		$router->get('/simulations', [ $app->physicsController(), 'simulations' ]);

@@ -48,6 +48,47 @@ class PhysicsController
     }
 
     /**
+     * Action redirecting to a randomly selected physics subtopic.
+     */
+    public function randomSubtopic(): void
+    {
+        // 1. Try querying database for random subtopic slug
+        try {
+            $pdo = $this->app->db();
+            $stmt = $pdo->query("SELECT slug FROM subtopics ORDER BY RAND() LIMIT 1");
+            $slug = $stmt ? $stmt->fetchColumn() : null;
+
+            if ($slug) {
+                $this->app->redirect('/physics/subtopic/' . $slug);
+                return;
+            }
+        } catch (\Throwable $e) {
+            // DB query uninitialized, fall through to search index
+        }
+
+        // 2. Fallback using search index
+        try {
+            $content = $this->service()->getPhysicsContent();
+            $searchIndex = $content['search_index'] ?? [];
+            $subtopicSlugs = [];
+            foreach ($searchIndex as $item) {
+                if (($item['type'] ?? '') === 'subtopic' && !empty($item['slug'])) {
+                    $subtopicSlugs[] = $item['slug'];
+                }
+            }
+            if (!empty($subtopicSlugs)) {
+                $randomSlug = $subtopicSlugs[array_rand($subtopicSlugs)];
+                $this->app->redirect('/physics/subtopic/' . $randomSlug);
+                return;
+            }
+        } catch (\Throwable $e) {
+            // Fallback to classical mechanics if all else fails
+        }
+
+        $this->app->redirect('/physics/topic/classical-mechanics');
+    }
+
+    /**
      * View action rendering physical constants.
      */
     public function constants()

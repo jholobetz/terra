@@ -1235,7 +1235,7 @@ class PhysicsService
     /**
      * Normalizes LaTeX mathematical strings to ignore white spaces, styles, and braces.
      */
-    private function normalizeLatex(string $latex): string
+    public function normalizeLatex(string $latex): string
     {
         $normalized = $latex;
         $normalized = preg_replace('/\\\\varepsilon(?![a-zA-Z])/', '\\epsilon', $normalized);

@@ -15,6 +15,8 @@ if (php_sapi_name() !== 'cli') {
     die("This script can only be run from the command line.\n");
 }
 
+require_once __DIR__ . '/../app/config/bootstrap.php';
+
 $input = $argv[1] ?? '';
 if (empty($input)) {
     echo "Usage: php scripts/fix_equation_by_url.php <URL|ID|LaTeX>\n";
@@ -126,9 +128,9 @@ $repairsMade = [];
 
 // Clean LaTeX Equation
 $cleanEq = $originalEq;
-if (!empty($targetLatex) && ($cleanEq === '' || strpos($cleanEq, '<svg') === 0 || strpos($cleanEq, '<div') === 0)) {
+if (!empty($targetLatex) && $cleanEq !== $targetLatex) {
     $cleanEq = $targetLatex;
-    $repairsMade[] = "Restored raw LaTeX equation from query: {$cleanEq}";
+    $repairsMade[] = "Updated LaTeX equation from target input: {$cleanEq}";
 } else if (strpos($cleanEq, 'dp^') !== false && strpos($cleanEq, '\frac') === false) {
     // Convert slash derivative to fraction
     $cleanEq = preg_replace('/dp\^?\\\\?([a-zA-Z]+)\/d\\\\?([a-zA-Z]+)/', '\frac{dp^\1}{d\\\2}', $cleanEq);
@@ -198,6 +200,20 @@ $stmt->execute([
     $formulaId
 ]);
 echo "[OK] Updated MariaDB formulas table record (equation_svg set to NULL).\n";
+
+// 8. Update formulas_latex_index.json
+$latexIndexFile = __DIR__ . '/../app/config/formulas_latex_index.json';
+if (file_exists($latexIndexFile)) {
+    $indexData = json_decode(file_get_contents($latexIndexFile), true) ?: [];
+    $app = Flight::app();
+    $service = $app->physicsService();
+    $normLatex = $service->normalizeLatex($cleanEq);
+    if (!empty($normLatex)) {
+        $indexData[$normLatex] = $formulaId;
+        file_put_contents($latexIndexFile, json_encode($indexData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        echo "[OK] Updated formulas_latex_index.json mapping for: {$normLatex} -> {$formulaId}\n";
+    }
+}
 
 if (!empty($repairsMade)) {
     echo "\nSummary of Repairs Applied:\n";

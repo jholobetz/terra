@@ -17,34 +17,44 @@ $theme = $meta['theme'] ?? 'default';
 ?>
 
 <article class="subtopic-content" style="--accent-color: var(--accent-<?= $theme ?>);">
-    <nav class="breadcrumb">
-        <a href="/physics">Home</a>
-        <?php foreach ($breadcrumbs as $crumb): ?>
-            <span>&rsaquo;</span>
-            <?php if (isset($crumb['is_multi'])): ?>
-                <?php foreach ($crumb['links'] as $index => $link): ?>
-                    <?= $index > 0 ? ' | ' : '' ?>
-                    <a href="<?= htmlspecialchars($link['url']) ?>"><?= $link['title'] ?></a>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <a href="<?= htmlspecialchars($crumb['url']) ?>"><?= $crumb['title'] ?></a>
-            <?php endif; ?>
-        <?php endforeach; ?>
-        <span>&rsaquo;</span>
-        <span style="opacity: 1; color: #8892b0;"><?= $title ?></span>
-    </nav>
+    
+    <!-- Cosmic Command Header (Uniform with Topic Hub) -->
+    <header class="topic-command-header subtopic-command-header">
+        <div class="topic-header-watermark">
+            <?= $meta['svg'] ?>
+        </div>
 
-    <header class="subtopic-header">
-        <h1><?= $title ?? 'Subtopic' ?></h1>
+        <nav class="breadcrumb subtopic-glass-breadcrumb">
+            <a href="/physics">Home</a>
+            <?php foreach ($breadcrumbs as $crumb): ?>
+                <span>&rsaquo;</span>
+                <?php if (isset($crumb['is_multi'])): ?>
+                    <?php foreach ($crumb['links'] as $index => $link): ?>
+                        <?= $index > 0 ? ' | ' : '' ?>
+                        <a href="<?= htmlspecialchars($link['url']) ?>"><?= $link['title'] ?></a>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <a href="<?= htmlspecialchars($crumb['url']) ?>"><?= $crumb['title'] ?></a>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <span>&rsaquo;</span>
+            <span style="opacity: 1; color: var(--accent-color, #64ffda); font-weight: 500;"><?= htmlspecialchars($title) ?></span>
+        </nav>
+
+        <div class="header-badge-tag">FACULTY OF <?= strtoupper(str_replace('-', ' ', $theme)) ?> // MANIFOLD SUBTOPIC</div>
+        <h1 class="topic-title"><?= htmlspecialchars($title ?? 'Subtopic') ?></h1>
+
         <?php if (!empty($verification)): ?>
-            <a href="#literature-consensus" class="verification-badge" style="cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 12px; background: rgba(100, 255, 218, 0.08); border: 1px solid var(--accent-color); border-radius: 4px; font-size: 0.85rem; color: var(--accent-color); font-weight: 500; transition: all 0.2s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.16)'" onmouseout="this.style.background='rgba(100, 255, 218, 0.08)'">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                <span>Academic Consensus Verified</span>
-            </a>
+            <div class="topic-actions-row" style="margin-top: 14px;">
+                <a href="#literature-consensus" class="verification-badge" style="cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(100, 255, 218, 0.08); border: 1px solid var(--accent-color); border-radius: 20px; font-size: 0.8rem; color: var(--accent-color); font-weight: 600; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.05em; transition: all 0.25s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.2)'; this.style.boxShadow='0 0 12px rgba(100, 255, 218, 0.3)'" onmouseout="this.style.background='rgba(100, 255, 218, 0.08)'; this.style.boxShadow='none'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <span>Academic Consensus Verified (<?= number_format(($verification['consensus_score'] ?? 1.0) * 100, 0) ?>%)</span>
+                </a>
+            </div>
         <?php endif; ?>
     </header>
     
-    <div class="content-body" id="subtopic-main-prose" style="margin-top: 25px;">
+    <div class="content-body subtopic-prose-card" id="subtopic-main-prose">
         <?= $content ?? '<p>No content available for this subtopic.</p>' ?>
     </div>
 
@@ -58,17 +68,17 @@ $theme = $meta['theme'] ?? 'default';
     ]); ?>
 
     <?php if (!empty($verification)): ?>
-        <section id="literature-consensus" class="verification-section" style="margin-top: 50px; padding: 25px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.45) 0%, rgba(3, 7, 18, 0.6) 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 4px solid var(--accent-color); border-radius: 8px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">
-            <h3 style="color: #ccd6f6; margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif;">
+        <section id="literature-consensus" class="verification-section" style="margin-top: 50px; padding: 28px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(3, 7, 18, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-left: 4px solid var(--accent-color); border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); backdrop-filter: blur(12px);">
+            <h3 style="color: #ccd6f6; margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px var(--accent-color));"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 <span style="background: linear-gradient(90deg, #f1f5f9 0%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Scientific Accreditation & Literature Consensus</span>
             </h3>
             
             <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">
-                This topic has been audited and stamped by the automated physics-lab multi-agent verification system. The contents match the consensus of peer-reviewed academic literature with an alignment score of <strong><?= number_format($verification['consensus_score'] * 100, 0) ?>%</strong>.
+                This topic has been audited and stamped by the automated physics-lab multi-agent verification system. The contents match the consensus of peer-reviewed academic literature with an alignment score of <strong style="color: var(--accent-color);"><?= number_format($verification['consensus_score'] * 100, 0) ?>%</strong>.
             </p>
             
-            <div class="verification-meta" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted);">
+            <div class="verification-meta" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.85rem; color: var(--text-muted);">
                 <div>
                     <strong style="color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Verification Date</strong>
                     <div style="color: #ccd6f6; margin-top: 3px; font-weight: 500;"><?= htmlspecialchars($verification['verified_date']) ?></div>
@@ -88,7 +98,7 @@ $theme = $meta['theme'] ?? 'default';
             </div>
 
             <?php if (!empty($verification['citations'])): ?>
-                <h4 style="color: var(--accent-color); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0; margin-bottom: 16px; font-weight: 600;">Verified References</h4>
+                <h4 style="color: var(--accent-color); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0; margin-bottom: 16px; font-weight: 600; font-family: 'Space Grotesk', sans-serif;">Verified References</h4>
                 <ul class="citation-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
                     <?php foreach ($verification['citations'] as $cit): ?>
                         <li style="position: relative; padding-left: 24px; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='none'">
@@ -116,25 +126,40 @@ $theme = $meta['theme'] ?? 'default';
     <?php endif; ?>
 
     <?php if (!empty($related_topics)): ?>
-        <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #233554;">
-            <h3 style="color: #ccd6f6; margin-bottom: 20px;">Further Exploration</h3>
-            <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+        <section class="related-topics" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                <h3 style="color: #ffffff; font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--accent-color, #64ffda);">◈</span> Further Manifold Exploration
+                </h3>
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace; letter-spacing: 0.1em;">CONNECTED SUBTOPICS</span>
+            </div>
+            <div class="concept-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
                 <?php foreach ($related_topics as $rel): ?>
-                    <a href="/physics/subtopic/<?= $rel['slug'] ?>" class="related-card">
-                        <strong><?= $rel['title'] ?></strong>
-                        <span>Dive deeper into the related theoretical framework.</span>
-                    </a>
+                    <div class="concept-card related-concept-card" data-subtopic-slug="<?= htmlspecialchars($rel['slug']) ?>" style="cursor: pointer;" onclick="window.location.href='/physics/subtopic/<?= htmlspecialchars($rel['slug']) ?>'">
+                        <div class="card-glass-sheen"></div>
+                        <div class="concept-anchor">
+                            <span class="level-tag level-analytical">Analytical</span>
+                            <h4><strong><a href="/physics/subtopic/<?= htmlspecialchars($rel['slug']) ?>" class="subtopic-link"><?= htmlspecialchars($rel['title']) ?></a></strong></h4>
+                        </div>
+                        <div class="concept-detail subtopic-card-abstract">
+                            <p>Explore theoretical mechanics, governing equations, and derivation bridges.</p>
+                        </div>
+                        <div class="concept-card-footer">
+                            <span class="explore-subtopic-btn">Explore Deep Dive &rarr;</span>
+                        </div>
+                    </div>
                 <?php endforeach; ?>
             </div>
         </section>
     <?php endif; ?>
 
-    <footer class="subtopic-footer" style="margin-top: 40px;">
+    <footer class="subtopic-footer" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
         <?php if (!empty($breadcrumbs)): 
             $lastCrumb = end($breadcrumbs);
         ?>
-            <a href="<?= htmlspecialchars($lastCrumb['url']) ?>" class="btn btn-secondary">&larr; Back to <?= $lastCrumb['title'] ?></a>
+            <a href="<?= htmlspecialchars($lastCrumb['url']) ?>" class="btn btn-secondary" style="font-family: 'Space Grotesk', sans-serif;">&larr; Back to <?= $lastCrumb['title'] ?></a>
         <?php endif; ?>
+        <a href="/physics/random" class="btn btn-secondary" style="font-family: 'Space Grotesk', sans-serif; color: #64ffda; border-color: rgba(100, 255, 218, 0.3);">🎲 Discover Random Subtopic</a>
     </footer>
 </article>
 
@@ -356,3 +381,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
+<!-- Interactive 3D Parallax Tilt & Subtopic Styling -->
+<script nonce="<?= $nonce ?>">
+(function() {
+    document.querySelectorAll('.related-concept-card').forEach(card => {
+        let bounds;
+        function rotateToMouse(e) {
+            if (!bounds) bounds = card.getBoundingClientRect();
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const leftX = mouseX - bounds.left;
+            const topY = mouseY - bounds.top;
+            const center = {
+                x: leftX - bounds.width / 2,
+                y: topY - bounds.height / 2
+            };
+            const tiltX = (center.y / (bounds.height / 2)) * -6;
+            const tiltY = (center.x / (bounds.width / 2)) * 6;
+            card.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+        }
+
+        card.addEventListener('mouseenter', () => {
+            bounds = card.getBoundingClientRect();
+            card.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease';
+        });
+        card.addEventListener('mousemove', rotateToMouse);
+        card.addEventListener('mouseleave', () => {
+            card.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease';
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        });
+    });
+})();
+</script>
+
+<style>
+.subtopic-command-header {
+    margin-bottom: 24px;
+}
+
+.subtopic-glass-breadcrumb {
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+}
+
+.subtopic-prose-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 0.7) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-left: 3px solid var(--accent-color, #64ffda);
+    border-radius: 12px;
+    padding: 28px 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+}
+</style>

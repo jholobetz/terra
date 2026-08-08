@@ -393,6 +393,9 @@ class PhysicsService
                             ? (json_decode($formula['subcomponents'], true) ?: [])
                             : $formula['subcomponents'];
                     }
+                    if (!empty($formula['equation'])) {
+                        $formula['latex_source'] = $formula['equation'];
+                    }
                     if (!empty($formula['equation_svg'])) {
                         $formula['equation'] = $formula['equation_svg'];
                     }

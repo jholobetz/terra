@@ -32,6 +32,31 @@ document.addEventListener('DOMContentLoaded', function() {
         window.MathJax.typesetPromise();
     }
 
+    // 2b. Pillar Navigator Tabs Handler
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.pillar-tab-btn');
+        if (!btn) return;
+
+        const targetIdx = btn.getAttribute('data-pillar-idx');
+        const container = btn.closest('.topic-content');
+        if (!container) return;
+
+        const tabBtns = container.querySelectorAll('.pillar-tab-btn');
+        const pillars = container.querySelectorAll('.concept-pillar');
+
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        pillars.forEach(pillar => {
+            const pillarIdx = pillar.getAttribute('data-pillar-idx');
+            if (targetIdx === 'all' || targetIdx === pillarIdx) {
+                pillar.style.display = 'block';
+            } else {
+                pillar.style.display = 'none';
+            }
+        });
+    });
+
     // 3. Helper: Parse LaTeX Variable Symbols to Candidate MathJax Hex Suffixes
     function getCandidateHexCodes(symbol) {
         if (!symbol) return [];

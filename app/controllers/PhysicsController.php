@@ -755,6 +755,11 @@ class PhysicsController
         if (!file_exists($cachePath)) return true;
         $cacheMtime = filemtime($cachePath);
 
+        $viewPath = PROJECT_ROOT . '/app/views/physics/topic.php';
+        if (file_exists($viewPath) && filemtime($viewPath) > $cacheMtime) {
+            return true;
+        }
+
         $aggregatorPath = PROJECT_ROOT . '/app/logic/VariableAggregator.php';
         if (file_exists($aggregatorPath) && filemtime($aggregatorPath) > $cacheMtime) {
             return true;

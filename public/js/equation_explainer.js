@@ -1679,11 +1679,14 @@ const EquationExplainer = {
     },
 
     getCleanLatexFromEq(eqStr) {
+        if (!eqStr) return '';
         if (eqStr.includes('data-tex=')) {
             const match = eqStr.match(/data-tex="([^"]+)"/);
             if (match) return this.decodeHtmlEntities(match[1]).replace(/\\par\b/g, ' ');
         }
-        // Remove math wrappers if string looks raw
+        if (eqStr.trim().startsWith('<svg') || eqStr.trim().startsWith('<div') || eqStr.trim().startsWith('<g')) {
+            return '';
+        }
         return eqStr.replace(/^\\\[/, '').replace(/\\\]$/, '').trim().replace(/\\par\b/g, ' ');
     },
 
@@ -1743,9 +1746,9 @@ const EquationExplainer = {
 
         // 1. Protect existing backslashed LaTeX macros and macro environments (e.g. \text{enc}, \mathbf{v}_d)
         const macroPlaceholders = [];
-        let tempLatex = cleanedLatex.replace(/(?:\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname|vec|hat|bar|dot|ddot|tilde|frac|sqrt)\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}|\\([a-zA-Z]+|\S))/g, (match) => {
+        let tempLatex = cleanedLatex.replace(/(?:\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname|vec|hat|bar|dot|ddot|tilde|frac|sqrt)\{(?:[^{}]|\{[^{}]*\})*\}|\\[a-zA-Z]+|\\[^a-zA-Z])/g, (match) => {
             macroPlaceholders.push(match);
-            return `\uE000TEXMACRO_${macroPlaceholders.length - 1}\uE000`;
+            return `___TEXMACRO_${macroPlaceholders.length - 1}___`;
         });
 
         // 2. Wrap un-escaped Multi-Letter variables/words in \text{} unless known TeX commands
@@ -1758,7 +1761,7 @@ const EquationExplainer = {
 
         // 3. Restore backslashed LaTeX macros
         for (let i = 0; i < macroPlaceholders.length; i++) {
-            tempLatex = tempLatex.replace(`\uE000TEXMACRO_${i}\uE000`, () => macroPlaceholders[i]);
+            tempLatex = tempLatex.replace(`___TEXMACRO_${i}___`, () => macroPlaceholders[i]);
         }
 
         let formattedLatex = tempLatex;

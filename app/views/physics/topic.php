@@ -54,7 +54,10 @@ if (!function_exists('getConceptLevel')) {
             <!-- DATA-DRIVEN PLATINUM HUB -->
             <?php foreach ($pillars as $idx => $pillar): ?>
                 <section class="concept-pillar" data-pillar-idx="<?= $idx ?>">
-                    <h3 class="pillar-header"><?= $pillar['title'] ?></h3>
+                    <div class="pillar-header-group">
+                        <span class="pillar-index-badge">PILLAR 0<?= ($idx + 1) ?> // MANIFOLD DOMAIN</span>
+                        <h3 class="pillar-header"><?= htmlspecialchars($pillar['title']) ?></h3>
+                    </div>
                     <p class="pillar-narrative"><?= $pillar['narrative'] ?></p>
                     <div class="concept-grid">
                         <?php foreach ($pillar['slugs'] as $slugItem): 
@@ -62,20 +65,24 @@ if (!function_exists('getConceptLevel')) {
                             if (!$sub) continue;
                             $level = getConceptLevel($slugItem, $sub['title']);
                         ?>
-                            <div class="concept-card">
+                            <div class="concept-card" data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>">
+                                <div class="card-glass-sheen"></div>
                                 <div class="concept-anchor">
                                     <span class="level-tag level-<?= strtolower($level) ?>"><?= $level ?></span>
                                     <h4><strong><a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link"><?= str_replace('\\\\', '\\', $sub['title']) ?></a></strong></h4>
                                 </div>
                                 
                                 <?php if (!empty($sub['hero_math'])): ?>
-                                    <div class="hero-math-badge" style="margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 4px; text-align: center;">
+                                    <div class="hero-math-badge">
                                         <?= $sub['hero_math'] ?>
                                     </div>
                                 <?php endif; ?>
 
                                 <div class="concept-detail subtopic-card-abstract">
                                     <p><?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?></p>
+                                </div>
+                                <div class="concept-card-footer">
+                                    <span class="explore-subtopic-btn">Explore Deep Dive &rarr;</span>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -85,19 +92,24 @@ if (!function_exists('getConceptLevel')) {
 
             <?php if (!empty($bridges)): ?>
                 <div class="bridge-matrix">
-                    <h3>Cross-Disciplinary Bridges</h3>
-                    <?php foreach ($bridges as $b): ?>
-                        <div class="bridge-item">
-                            <strong>
-                                <?php if (!empty($b['slug'])): ?>
-                                    <a href="/physics/topic/<?= $b['slug'] ?>" class="topic-link"><?= $b['title'] ?></a>
-                                <?php else: ?>
-                                    <?= $b['title'] ?>
-                                <?php endif; ?>:
-                            </strong>
-                            <p><?= $b['description'] ?></p>
-                        </div>
-                    <?php endforeach; ?>
+                    <div class="bridge-matrix-header">
+                        <span class="bridge-badge">INTERDISCIPLINARY</span>
+                        <h3>Cross-Disciplinary Bridges</h3>
+                    </div>
+                    <div class="bridge-grid">
+                        <?php foreach ($bridges as $b): ?>
+                            <div class="bridge-item">
+                                <div class="bridge-item-title">
+                                    <?php if (!empty($b['slug'])): ?>
+                                        <a href="/physics/topic/<?= $b['slug'] ?>" class="topic-link"><?= htmlspecialchars($b['title']) ?></a>
+                                    <?php else: ?>
+                                        <?= htmlspecialchars($b['title']) ?>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="bridge-item-desc"><?= htmlspecialchars($b['description']) ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             <?php endif; ?>
 
@@ -127,7 +139,7 @@ if (!function_exists('getConceptLevel')) {
     </footer>
 </article>
 
-<!-- Proposal 2 Pillar Navigator Tabs Script -->
+<!-- Proposal 2 Pillar Navigator & Interactive 3D Card Tilt Script -->
 <script nonce="<?= $nonce ?>">
 (function() {
     function handlePillarClick(e) {
@@ -155,6 +167,42 @@ if (!function_exists('getConceptLevel')) {
     }
 
     document.addEventListener('click', handlePillarClick);
+
+    // Interactive 3D Parallax Tilt for Glassmorphic Concept Cards
+    const cards = document.querySelectorAll('.concept-card');
+    cards.forEach(card => {
+        let bounds;
+
+        function rotateToMouse(e) {
+            if (!bounds) bounds = card.getBoundingClientRect();
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const leftX = mouseX - bounds.left;
+            const topY = mouseY - bounds.top;
+            const center = {
+                x: leftX - bounds.width / 2,
+                y: topY - bounds.height / 2
+            };
+            
+            // Max 7 deg tilt
+            const tiltX = (center.y / (bounds.height / 2)) * -7;
+            const tiltY = (center.x / (bounds.width / 2)) * 7;
+
+            card.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+        }
+
+        card.addEventListener('mouseenter', () => {
+            bounds = card.getBoundingClientRect();
+            card.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease';
+        });
+
+        card.addEventListener('mousemove', rotateToMouse);
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease';
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        });
+    });
 })();
 </script>
 

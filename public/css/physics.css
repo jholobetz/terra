@@ -847,40 +847,85 @@ nav .btn:hover {
 }
 
 /* Pillar Content Subtopics */
+/* Pillar Content & Glassmorphic Concept Grid */
+.concept-pillar {
+    position: relative;
+    margin-bottom: 48px;
+    padding: 36px 32px;
+    background: linear-gradient(135deg, rgba(13, 17, 26, 0.75), rgba(8, 11, 18, 0.85));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.pillar-header-group {
+    margin-bottom: 10px;
+}
+
+.pillar-index-badge {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--accent-color, #64ffda);
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.pillar-narrative {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: #cbd5e1;
+    margin-bottom: 28px;
+    max-width: 860px;
+}
+
 .concept-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 24px;
+    perspective: 1000px;
 }
 
 .concept-card {
     display: flex;
     flex-direction: column;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 24px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 26px;
     height: 100%;
     box-sizing: border-box;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
     position: relative;
-    overflow: visible !important;
-    min-width: 0 !important;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease-out;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+
+.card-glass-sheen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    pointer-events: none;
 }
 
 .concept-card:hover {
-    background: var(--card-hover-bg);
-    border-color: color-mix(in srgb, var(--accent-color) 50%, transparent);
-    transform: translateY(-5px);
-    box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--accent-color) 30%, transparent), 0 0 25px color-mix(in srgb, var(--accent-color) 10%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color, #64ffda) 60%, rgba(255, 255, 255, 0.4));
+    box-shadow: 0 22px 50px -10px color-mix(in srgb, var(--accent-color, #64ffda) 35%, transparent), 0 0 35px 0 color-mix(in srgb, var(--accent-color, #64ffda) 15%, transparent), inset 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .concept-anchor {
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -896,14 +941,15 @@ nav .btn:hover {
 }
 
 .concept-card:hover h4 {
-    color: var(--accent-color);
+    color: var(--accent-color, #64ffda);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--accent-color, #64ffda) 40%, transparent);
 }
 
 .concept-card p {
     margin: 0;
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    line-height: 1.55;
+    font-size: 0.9rem;
+    color: var(--text-muted, #94a3b8);
+    line-height: 1.6;
     position: relative;
     z-index: 2;
 }
@@ -914,16 +960,18 @@ nav .btn:hover {
     z-index: 2;
 }
 
+/* Holographic Math Window (Quantum Inset Pane) */
 .hero-math-badge {
-    margin: 15px 0;
-    padding: 12px;
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.03);
-    border-radius: 6px;
+    margin: 18px 0;
+    padding: 14px 16px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
     text-align: center;
-    transition: all 0.25s;
     position: relative;
     z-index: 2;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+    transition: all 0.3s ease;
 }
 
 .hero-math-badge svg {
@@ -932,54 +980,88 @@ nav .btn:hover {
     height: auto !important;
     display: inline-block;
     vertical-align: middle;
+    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.3));
+    transition: filter 0.3s ease, transform 0.3s ease;
 }
 
 .concept-card:hover .hero-math-badge {
-    background: rgba(0, 0, 0, 0.4);
-    border-color: color-mix(in srgb, var(--accent-color) 15%, transparent);
+    background: rgba(0, 0, 0, 0.65);
+    border-color: color-mix(in srgb, var(--accent-color, #64ffda) 35%, transparent);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 20px color-mix(in srgb, var(--accent-color, #64ffda) 25%, transparent);
 }
 
+.concept-card:hover .hero-math-badge svg {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
+    transform: scale(1.03);
+}
+
+/* Level Tags */
 .level-tag {
-    display: inline-block;
-    font-family: monospace;
-    font-size: 0.65rem;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 4px;
-    margin-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.08em;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
 }
 
 .level-foundational { 
-    background: rgba(148, 163, 184, 0.1); 
-    color: #94a3b8; 
-    border: 1px solid rgba(148, 163, 184, 0.15);
+    background: rgba(16, 185, 129, 0.12); 
+    color: #34d399; 
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    box-shadow: 0 0 12px rgba(52, 211, 153, 0.18);
 }
 .level-analytical { 
-    background: color-mix(in srgb, var(--accent-color) 10%, transparent); 
-    color: var(--accent-color); 
-    border: 1px solid color-mix(in srgb, var(--accent-color) 20%, transparent);
+    background: color-mix(in srgb, var(--accent-color, #64ffda) 12%, transparent); 
+    color: var(--accent-color, #64ffda); 
+    border: 1px solid color-mix(in srgb, var(--accent-color, #64ffda) 35%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color, #64ffda) 22%, transparent);
 }
 .level-frontier { 
-    background: rgba(239, 68, 68, 0.1); 
-    color: #f87171; 
-    border: 1px solid rgba(239, 68, 68, 0.18);
+    background: rgba(236, 72, 153, 0.12); 
+    color: #f472b6; 
+    border: 1px solid rgba(244, 114, 182, 0.35);
+    box-shadow: 0 0 12px rgba(244, 114, 182, 0.22);
+}
+
+.concept-card-footer {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    z-index: 2;
+}
+
+.explore-subtopic-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted, #94a3b8);
+    transition: all 0.25s ease;
+}
+
+.concept-card:hover .explore-subtopic-btn {
+    color: var(--accent-color, #64ffda);
+    transform: translateX(4px);
 }
 
 /* Subtopic details links */
 .subtopic-link, .topic-link {
-    color: #b485ff;
+    color: #ffffff;
     text-decoration: none;
-    border-bottom: 1px dotted rgba(180, 133, 255, 0.45);
     transition: all 0.25s ease;
 }
 
 .subtopic-link:hover, .topic-link:hover {
-    color: #ffffff;
-    border-bottom-style: solid;
-    border-bottom-color: #b485ff;
-    text-shadow: 0 0 10px rgba(180, 133, 255, 0.55);
+    color: var(--accent-color, #64ffda);
 }
 
 /* Breadcrumbs */
@@ -1005,46 +1087,73 @@ nav .btn:hover {
     opacity: 0.5;
 }
 
-/* Bridge Matrix */
+/* Interdisciplinary Bridge Matrix */
 .bridge-matrix {
-    margin-top: 80px;
-    padding: 36px;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.55), color-mix(in srgb, var(--accent-color) 3.5%, transparent));
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 14px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    margin-top: 60px;
+    padding: 40px 36px;
+    background: linear-gradient(135deg, rgba(13, 17, 26, 0.8), rgba(8, 11, 18, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.bridge-matrix-header {
+    margin-bottom: 24px;
+}
+
+.bridge-badge {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--accent-color, #64ffda);
+    display: inline-block;
+    margin-bottom: 4px;
 }
 
 .bridge-matrix h3 {
-    color: var(--accent-color);
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-    font-size: 0.95rem;
-    margin-top: 0;
-    margin-bottom: 24px;
+    color: #ffffff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.bridge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
 }
 
 .bridge-item {
-    margin-bottom: 24px;
-    padding-left: 20px;
-    border-left: 2px dashed color-mix(in srgb, var(--accent-color) 25%, transparent);
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 22px;
+    transition: all 0.3s ease;
 }
 
-.bridge-item:last-child {
-    margin-bottom: 0;
+.bridge-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: color-mix(in srgb, var(--accent-color, #64ffda) 40%, transparent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px color-mix(in srgb, var(--accent-color, #64ffda) 12%, transparent);
 }
 
-.bridge-item strong {
-    display: block;
-    margin-bottom: 4px;
-    color: #ffffff;
+.bridge-item-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 8px;
 }
 
-.bridge-item p {
+.bridge-item-desc {
     font-size: 0.88rem;
     margin: 0;
-    color: var(--text-muted);
+    color: var(--text-muted, #94a3b8);
+    line-height: 1.55;
 }
 
 /* Equation Render Styling */

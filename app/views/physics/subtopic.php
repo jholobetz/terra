@@ -434,4 +434,22 @@ document.addEventListener('DOMContentLoaded', () => {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(12px);
 }
+
+.subtopic-prose-card a:not(.btn):not(.concept-card):not(.verification-badge):not(.explainer-link-btn),
+.content-body a:not(.btn):not(.concept-card):not(.verification-badge):not(.explainer-link-btn) {
+    color: var(--accent-color, #64ffda);
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(100, 255, 218, 0.45);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding-bottom: 1px;
+}
+
+.subtopic-prose-card a:not(.btn):not(.concept-card):not(.verification-badge):not(.explainer-link-btn):hover,
+.content-body a:not(.btn):not(.concept-card):not(.verification-badge):not(.explainer-link-btn):hover {
+    color: #ffffff;
+    border-bottom-style: solid;
+    border-bottom-color: var(--accent-color, #64ffda);
+    text-shadow: 0 0 8px rgba(100, 255, 218, 0.4);
+}
 </style>

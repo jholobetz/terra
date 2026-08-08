@@ -116,7 +116,7 @@ if ($hasFormulas): ?>
                                     <div class="var-tag" data-symbol="<?= htmlspecialchars($symbol) ?>">
                                         <span style="color: var(--accent-color); font-weight: 700;">\( <?= $symbol ?> \):</span> 
                                         <?php if ($url): ?>
-                                            <a href="<?= $url ?>" class="subtopic-link" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dotted #8892b0;"><strong><?= $varName ?></strong></a>
+                                            <a href="<?= $url ?>" class="subtopic-link"><strong><?= $varName ?></strong></a>
                                         <?php else: ?>
                                             <span style="color: #ccd6f6;"><?= $varName ?></span>
                                         <?php endif; ?>

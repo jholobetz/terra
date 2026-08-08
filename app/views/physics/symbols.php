@@ -78,7 +78,7 @@ foreach ($notation as $item) {
                 <?php if ($originUrl): ?>
                     <div style="font-size: 0.82rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 12px; margin-top: 10px;">
                         <span style="color: #8892b0;">Origin: </span>
-                        <a href="<?= $originUrl ?>" class="subtopic-link" style="color: var(--accent-color); text-decoration: none; font-weight: bold;"><strong><?= htmlspecialchars(ucwords(str_replace('-', ' ', $originSlug))) ?></strong></a>
+                        <a href="<?= $originUrl ?>" class="subtopic-link"><strong><?= htmlspecialchars(ucwords(str_replace('-', ' ', $originSlug))) ?></strong></a>
                     </div>
                 <?php endif; ?>
             </section>

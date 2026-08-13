@@ -189,5 +189,20 @@ def test_disk_to_database_integrity():
 
     assert len(mismatches) == 0, f"Found {len(mismatches)} desynchronizations between disk shards and MariaDB: {mismatches[:10]}"
 
+def test_semantic_variables_schema_strict():
+    """Asserts that all formula records across all 256 shards have valid semantic_variables objects without corrupt key names or invalid types."""
+    invalid_schema = []
 
+    for f in ALL_FORMULAS:
+        formula_id = f.get("_id") or f.get("id", "unknown")
+        sem_vars = f.get("semantic_variables")
 
+        if not isinstance(sem_vars, dict):
+            invalid_schema.append(f"{formula_id}: type is {type(sem_vars).__name__}, expected dict")
+            continue
+
+        for key in sem_vars.keys():
+            if "$" in key:
+                invalid_schema.append(f"{formula_id}: variable key contains raw '$' delimiter: '{key}'")
+
+    assert len(invalid_schema) == 0, f"Found {len(invalid_schema)} semantic_variables schema violations: {invalid_schema[:10]}"

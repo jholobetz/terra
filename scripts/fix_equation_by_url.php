@@ -333,6 +333,19 @@ foreach ($targets as $input) {
         }
     }
 
+    // Sanitize semantic_variables schema type & key names
+    $semVars = $formulaData['semantic_variables'] ?? [];
+    if (!is_array($semVars) || empty($semVars)) {
+        $formulaData['semantic_variables'] = (object)[];
+    } else {
+        $cleanSemVars = [];
+        foreach ($semVars as $k => $v) {
+            $cleanK = str_replace('$', '', trim($k));
+            $cleanSemVars[$cleanK] = $v;
+        }
+        $formulaData['semantic_variables'] = $cleanSemVars;
+    }
+
     $formulaData['equation'] = $cleanEq;
     $shardData[$formulaId] = $formulaData;
     $targetResult['clean_equation'] = $cleanEq;

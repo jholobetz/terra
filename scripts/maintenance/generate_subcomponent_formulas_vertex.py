@@ -27,7 +27,7 @@ load_dotenv(os.path.join(PROJECT_ROOT, ".env"))
 
 INPUT_CATALOG = os.path.join(PROJECT_ROOT, "app/config/unindexed_subcomponents.json")
 FORMULAS_DIR = os.path.join(PROJECT_ROOT, "app/config/content/formulas")
-LATEX_INDEX_FILE = os.path.join(PROJECT_ROOT, "app/config/content/formulas_latex_index.json")
+LATEX_INDEX_FILE = os.path.join(PROJECT_ROOT, "app/config/formulas_latex_index.json")
 CHECKPOINT_FILE = os.path.join(PROJECT_ROOT, "app/config/subcomponents_checkpoint.json")
 
 CONCURRENCY_LIMIT = 25

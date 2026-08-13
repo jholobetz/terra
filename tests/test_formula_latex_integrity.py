@@ -2,6 +2,7 @@ import glob
 import json
 import os
 import re
+import subprocess
 import pytest
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -134,5 +135,59 @@ def test_formula_narrative_math_delimiters():
                     break
 
     assert len(corrupted_formulas) == 0, f"Found {len(corrupted_formulas)} formula narrative delimiter errors: {corrupted_formulas[:10]}"
+
+
+def fetch_mariadb_formulas():
+    autoload_path = os.path.join(PROJECT_ROOT, "vendor", "autoload.php")
+    config_path = os.path.join(PROJECT_ROOT, "app", "config", "config.php")
+    
+    php_code = f'''
+    require '{autoload_path}';
+    $config = require '{config_path}';
+    $dbConfig = $config['database'] ?? [];
+    $dsn = 'mysql:host=' . ($dbConfig['host'] ?? '127.0.0.1') . ';dbname=' . ($dbConfig['dbname'] ?? 'physicslab') . ';charset=utf8mb4';
+    try {{
+        $pdo = new PDO($dsn, $dbConfig['user'] ?? 'doc', $dbConfig['password'] ?? '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $stmt = $pdo->query('SELECT id, equation, interpretation, symmetry_origin, limits_and_boundary FROM formulas');
+        $data = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {{
+            $data[$row['id']] = $row;
+        }}
+        echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }} catch (\\Throwable $e) {{
+        echo json_encode(null);
+    }}
+    '''
+    res = subprocess.run(["php", "-r", php_code], capture_output=True, text=True, cwd=PROJECT_ROOT)
+    if res.returncode == 0 and res.stdout.strip():
+        try:
+            return json.loads(res.stdout.strip())
+        except Exception:
+            return None
+    return None
+
+
+def test_disk_to_database_integrity():
+    db_map = fetch_mariadb_formulas()
+    if db_map is None:
+        pytest.skip("MariaDB database is offline or unreachable.")
+
+    mismatches = []
+    fields_to_compare = ["interpretation", "symmetry_origin", "limits_and_boundary"]
+
+    for f in ALL_FORMULAS:
+        formula_id = f.get("_id")
+        if not formula_id or formula_id not in db_map:
+            continue
+
+        db_row = db_map[formula_id]
+        for key in fields_to_compare:
+            shard_val = (f.get(key) or "").strip()
+            db_val = (db_row.get(key) or "").strip()
+            if shard_val != db_val:
+                mismatches.append((formula_id, key, f"Shard: '{shard_val[:30]}...' != MariaDB: '{db_val[:30]}...'"))
+
+    assert len(mismatches) == 0, f"Found {len(mismatches)} desynchronizations between disk shards and MariaDB: {mismatches[:10]}"
+
 
 

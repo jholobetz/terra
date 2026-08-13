@@ -50,10 +50,23 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   ```bash
   .venv/bin/python3 scripts/maintenance/retrieve_concept.py <subtopic-slug>
   ```
+* **Fix Equation by URL / ID (`fixlatex`)**: Audits, decorrupts, and repairs LaTeX equations, SVG rendering, and database/shard consistency given a URL, Formula ID, or raw LaTeX:
+  ```bash
+  scripts/fixlatex "<URL|ID|LaTeX>"
+  # Supports options: --dry-run, --json, --file=<path>
+  ```
 * **Synchronize MariaDB Database (Manual)**: Synchronizes the physical JSON shards on disk with the active SQL database:
   ```bash
   php scripts/maintenance/sync_node.php <subtopic-slug>
   ```
+
+### 🧮 Direct URL Equation Repair Protocol (AI Agent Directive)
+Whenever the user provides a local `equation-explainer` URL (e.g., `http://localhost:8000/physics/equation-explainer?latex=...` or `?id=...`) or a formula ID in the chat prompt:
+1. **Recognize Intent**: Immediately classify the request as an Equation Repair / TeX Decorruption task.
+2. **Execute Repair**: Automatically execute `scripts/fixlatex "<URL>"` via command execution.
+3. **Verify Output**: Confirm that the target JSON shard is updated, `equation_svg` is cleared to `NULL` for clean dynamic MathJax rendering, and index mappings in `formulas_latex_index.json` are synced.
+4. **Report Clean State**: Present the resolved Formula ID, canonical shard path, clean LaTeX equation, and a summary of any TeX sanitizations applied.
+
 
 ### 🔄 Substandard Subtopic Upgrade Pipeline
 For existing subtopics that are already flagged as platinum on disk but fail depth (< 650 words) or density (< 60) quality gates, use this high-efficiency upgrade pipeline:

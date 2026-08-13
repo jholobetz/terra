@@ -33,7 +33,7 @@ if (!function_exists('getConceptLevel')) {
 
         <div class="header-badge-tag">FACULTY OF <?= strtoupper(str_replace('-', ' ', $theme)) ?></div>
         <h1 class="topic-title"><?= htmlspecialchars($title ?? 'Physics Hub') ?></h1>
-        <p class="topic-subtitle"><?= $intro ?? 'Accessing the deep mathematical structure of the physical manifold.' ?></p>
+        <p id="topic-beginning-abstract" class="topic-subtitle"><?= $intro ?? 'Accessing the deep mathematical structure of the physical manifold.' ?></p>
 
         <!-- Action Bar -->
         <div class="topic-actions-row">

@@ -348,6 +348,18 @@ foreach ($targets as $input) {
 
     $formulaData['equation'] = $cleanEq;
     $shardData[$formulaId] = $formulaData;
+
+    // Sanitize all formulas in shardData to guarantee no neighbor formula re-introduces [] array
+    foreach ($shardData as $fKey => &$fVal) {
+        if (is_array($fVal)) {
+            $sVars = $fVal['semantic_variables'] ?? [];
+            if (!is_array($sVars) || empty($sVars)) {
+                $fVal['semantic_variables'] = (object)[];
+            }
+        }
+    }
+    unset($fVal);
+
     $targetResult['clean_equation'] = $cleanEq;
     $targetResult['repairs_made'] = $repairsMade;
 

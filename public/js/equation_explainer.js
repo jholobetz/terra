@@ -2561,7 +2561,7 @@ const EquationExplainer = {
                         desc = official.substring(firstCommaIndex + 1).trim();
                         desc = desc.charAt(0).toUpperCase() + desc.slice(1);
                     } else {
-                        name = official;
+                        name = symbol;
                     }
                     const unitMatch = official.match(/measured in ([^.]+)/i);
                     if (unitMatch) {

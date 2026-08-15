@@ -1445,7 +1445,7 @@ const EquationExplainer = {
             const currentLabel = document.createElement('span');
             currentLabel.style.color = '#ffffff';
             currentLabel.style.fontWeight = '500';
-            currentLabel.innerHTML = '\\( ' + (this.latexInput ? this.latexInput.value : '') + ' \\)';
+            currentLabel.textContent = '\\( ' + (this.latexInput ? this.latexInput.value : '') + ' \\)';
             container.appendChild(currentLabel);
             
             this.triggerTypeset([container]);
@@ -1851,7 +1851,7 @@ const EquationExplainer = {
             mathMarkup = '\\[ ' + formattedLatex + ' \\]';
         }
 
-        this.mathRenderTarget.innerHTML = mathMarkup;
+        this.mathRenderTarget.textContent = mathMarkup;
 
         if (window.MathJax) {
             if (window.MathJax.typesetPromise) {
@@ -3920,6 +3920,7 @@ const EquationExplainer = {
             if (p.startsWith('$') && !p.startsWith('$$') && p.endsWith('$')) {
                 p = `\\(${p.slice(1, -1).trim()}\\)`;
             }
+            p = p.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             tempText = tempText.replace(`\uE000MATH_${i}\uE000`, () => p);
         }
 
@@ -4605,7 +4606,11 @@ const EquationExplainer = {
         const limits = this.drawerFieldLimits ? this.drawerFieldLimits.value.trim() : '';
 
         if (this.drawerPreviewEquation) {
-            this.drawerPreviewEquation.innerHTML = latex ? `\\[ ${latex} \\]` : '<span style="opacity:0.5;">No equation entered</span>';
+            if (latex) {
+                this.drawerPreviewEquation.textContent = `\\[ ${latex} \\]`;
+            } else {
+                this.drawerPreviewEquation.innerHTML = '<span style="opacity:0.5;">No equation entered</span>';
+            }
         }
 
         if (this.drawerPreviewLimits) {

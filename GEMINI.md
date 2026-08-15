@@ -6,12 +6,12 @@ This file contains automated directives and workflow protocols for AI assistants
 
 ## 🧮 Direct URL Equation Repair Protocol
 
-Whenever the user provides a local `equation-explainer` URL (matching `http://localhost:8000/physics/equation-explainer...`) or a formula ID/LaTeX snippet in the prompt:
+Whenever the user provides a local `equation-explainer` URL (matching `http://localhost:8000/physics/equation-explainer...`) or a formula ID/LaTeX snippet in the prompt, with or without an accompanying hint or reference text:
 
 1. **Automatic Intent Recognition**: Classify the input immediately as an Equation Repair / TeX Decorruption task.
-2. **Execute Repair Engine**: Run the repair tool instantly using terminal commands:
+2. **Execute Repair Engine**: Run the repair tool instantly using terminal commands (passing hint/text if provided):
    ```bash
-   scripts/fixlatex "<URL|ID|LaTeX>"
+   scripts/fixlatex "<URL|ID|LaTeX>" ["<hint or reference text>"]
    ```
 3. **Verify Integrity**: Confirm that:
    - The formula definition in `app/config/content/formulas/[xx]/shard_[xx].json` is updated.
@@ -22,4 +22,4 @@ Whenever the user provides a local `equation-explainer` URL (matching `http://lo
    - Resolved Formula ID
    - Target Shard Path
    - Cleaned LaTeX equation
-   - Summary of applied prose decorruptions
+   - Summary of applied prose decorruptions and hint updates

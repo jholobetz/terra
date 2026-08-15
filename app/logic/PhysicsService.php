@@ -449,11 +449,6 @@ class PhysicsService
         foreach ($fields as $field) {
             if (!empty($formula[$field]) && is_string($formula[$field])) {
                 $txt = $formula[$field];
-                $txt = preg_replace('/\\\\b\{([^}]+)\}/', '\\mathbf{$1}', $txt);
-                $txt = preg_replace('/\\\\b\$([^\$]+)\$/', '$\\mathbf{$1}$', $txt);
-                $txt = preg_replace('/\\\\b\$/', '$', $txt);
-                $txt = preg_replace('/\\\\b\\\\backslash\s*/', '\\\\', $txt);
-                $txt = preg_replace('/\\\\b\\\\text\{\s*\}\s*/', ' ', $txt);
                 $txt = str_replace('\\backslash)', ')', $txt);
                 $txt = str_replace('\\backslash', '\\', $txt);
                 $formula[$field] = $txt;

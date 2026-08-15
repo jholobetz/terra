@@ -27,29 +27,44 @@ if (class_exists('\Tracy\Debugger')) {
 
 // Parse CLI options and flags
 $shortopts = "h";
-$longopts = ["dry-run", "json", "file:", "help"];
+$longopts = ["dry-run", "json", "file:", "hint:", "ref:", "ref-file:", "eq:", "help"];
 $options = getopt($shortopts, $longopts);
 
 $isDryRun = isset($options['dry-run']);
 $isJson = isset($options['json']);
 $fileInput = $options['file'] ?? null;
+$cliHint = $options['hint'] ?? ($options['ref'] ?? null);
+$refFileInput = $options['ref-file'] ?? null;
+$eqOverride = $options['eq'] ?? null;
 $showHelp = isset($options['h']) || isset($options['help']);
 
-// Extract positional arguments (excluding flag strings)
+if (!empty($refFileInput) && file_exists($refFileInput)) {
+    $cliHint = file_get_contents($refFileInput);
+}
+
+// Extract positional arguments (excluding flag strings and their values)
 $positionals = [];
+$skipNext = false;
 for ($i = 1; $i < count($argv); $i++) {
     $arg = $argv[$i];
-    if (strpos($arg, '--') === 0 || (strpos($arg, '-') === 0 && strlen($arg) === 2)) {
+    if ($skipNext) {
+        $skipNext = false;
         continue;
     }
-    if ($i > 1 && ($argv[$i - 1] === '--file' || $argv[$i - 1] === '-f')) {
+    if ($arg === '--file' || $arg === '-f' || $arg === '--hint' || $arg === '--ref' || $arg === '--ref-file' || $arg === '--eq') {
+        $skipNext = true;
+        continue;
+    }
+    if (strpos($arg, '--') === 0 || (strpos($arg, '-') === 0 && strlen($arg) === 2)) {
         continue;
     }
     $positionals[] = $arg;
 }
 
-// Collect target inputs
+// Support natural syntax: fixlatex <url> <hint/text>
 $targets = [];
+$positionalHint = null;
+
 if (!empty($fileInput)) {
     if (!file_exists($fileInput)) {
         echo "[ERROR] Specified target file not found: {$fileInput}\n";
@@ -62,30 +77,35 @@ if (!empty($fileInput)) {
             $targets[] = $trimmed;
         }
     }
+} else if (count($positionals) >= 2) {
+    $targets[] = trim($positionals[0]);
+    // The second positional argument (and any subsequent) is treated as the hint / reference text
+    $positionalHint = trim(implode(' ', array_slice($positionals, 1)));
+} else if (count($positionals) === 1) {
+    $targets[] = trim($positionals[0]);
 }
 
-foreach ($positionals as $pos) {
-    $trimmed = trim($pos);
-    if (!empty($trimmed) && !in_array($trimmed, $targets, true)) {
-        $targets[] = $trimmed;
-    }
-}
+$globalHint = !empty($cliHint) ? trim($cliHint) : $positionalHint;
 
 if ($showHelp || empty($targets)) {
     echo "=======================================================\n";
-    echo "Terra Equation Repair Engine v2 (CLI Flags Edition)\n";
+    echo "Terra Equation Repair Engine v2 (CLI Flags & Hint Edition)\n";
     echo "=======================================================\n";
     echo "Usage:\n";
-    echo "  php scripts/fix_equation_by_url.php [options] <URL|ID|LaTeX> [target2 ...]\n\n";
+    echo "  php scripts/fix_equation_by_url.php [options] <URL|ID|LaTeX> [hint/text]\n\n";
     echo "Options:\n";
-    echo "  --dry-run       Preview decorruption changes without updating disk shards or MariaDB\n";
-    echo "  --json          Output repair results as a structured JSON object\n";
-    echo "  --file=<path>   Read line-separated targets from a file\n";
-    echo "  -h, --help      Show this help message\n\n";
+    echo "  --hint=<text>    Supply guidance, physical context, or replacement prose\n";
+    echo "  --ref=<text>     Alias for --hint\n";
+    echo "  --ref-file=<path>Read multiline hint/reference text from a file\n";
+    echo "  --eq=<latex>     Explicitly override the LaTeX equation\n";
+    echo "  --dry-run        Preview changes without updating disk shards or MariaDB\n";
+    echo "  --json           Output repair results as a structured JSON object\n";
+    echo "  --file=<path>    Read line-separated targets from a file\n";
+    echo "  -h, --help       Show this help message\n\n";
     echo "Examples:\n";
-    echo "  php scripts/fix_equation_by_url.php \"http://localhost:8000/physics/equation-explainer?id=meissner-flux-expulsion-ident-3440877a\"\n";
-    echo "  php scripts/fix_equation_by_url.php --dry-run \"meissner-flux-expulsion-ident-3440877a\"\n";
-    echo "  php scripts/fix_equation_by_url.php --file=broken_urls.txt --json\n";
+    echo "  php scripts/fix_equation_by_url.php \"http://localhost:8000/physics/equation-explainer?latex=...\" \"use SI units and clean Laplacian\"\n";
+    echo "  php scripts/fix_equation_by_url.php \"poisson-equation\" --hint=\"use \frac{\rho}{\epsilon_0}\"\n";
+    echo "  php scripts/fix_equation_by_url.php \"euler-lagrange\" --ref-file=snippet.txt\n";
     exit($showHelp ? 0 : 1);
 }
 
@@ -94,23 +114,36 @@ function sanitizeProseTeX(string $text): string {
     if (empty($text)) return '';
 
     // Fast-path early exit for clean prose containing no LaTeX or special TeX characters
-    if (strpos($text, '$') === false && strpos($text, '\\') === false && !preg_match('/[χμ⟨]/u', $text)) {
+    if (strpos($text, '$') === false && strpos($text, '\\') === false && !preg_match('/[χμ⟨∇]/u', $text)) {
         return $text;
     }
 
-    // 1. Optimized symbol lookup table
+    $originalInput = $text;
+
+    // 1. Optimized symbol lookup table & unescaped character corruptions
     $text = strtr($text, [
         'χ_m' => '$\\chi_m$',
         'μ_0' => '$\\mu_0$',
         '4π'  => '$4\\pi$',
         'dau' => '\\tau',
         'extbf' => '\\mathbf',
+        '\\text{\\} \\text{' => '$\\epsilon_0$',
+        '\\text{\\} \\text$' => '$\\epsilon_0$',
+        '\\text{\\}' => '$\\epsilon_0$',
     ]);
+
+    // Replace orphaned 'abla' or '\\n\\nabla' that resulted from corrupted '\nabla'
+    $text = preg_replace('/(?<![a-zA-Z])abla\b/u', '\\nabla', $text);
+    $text = preg_replace('/\\\\n\\\\nabla/u', '\\nabla', $text);
+    $text = preg_replace('/\\\\n\s*\\\\nabla/u', '\\nabla', $text);
+    $text = preg_replace('/\\$\\s*\\\\n\\s*\\$\\s*\\\\nabla/u', '$\\nabla', $text);
 
     // 2. Fix specific legacy corrupted TeX patterns
     $text = preg_replace('/[χ\chi]_[m]\s*=\s*-\s*\$\s*\\\\frac\{[^}]+\}\{[^}]+\}\s*\$\s*[⟨<]\s*r\^2\s*[⟩>]/u', '$\\chi_m = -\\frac{\\mu_0 N Z e^2}{6m_e} \\langle r^2 \\rangle$', $text);
+    $text = preg_replace('/-\$\s*\\\\frac\{\\\\rho\}\{"\}\s*\$/u', '$-\\frac{\\rho}{\\epsilon_0}$', $text);
+    $text = preg_replace('/\\\\frac\{\\\\rho\}\{"\}/u', '\\frac{\\rho}{\\epsilon_0}', $text);
 
-    // 3. Fix fragmented math delimiters in continuity equation
+    // 3. Fix fragmented math delimiters in continuity and electrostatics equations
     $text = str_replace('$\\frac{\\partial \\rho}{\\partial t}$ +$\\nabla \\cdot (\\rho \\mathbf{u})$ = 0$', '$\\frac{\\partial \\rho}{\\partial t} + \\nabla \\cdot (\\rho \\mathbf{u}) = 0$', $text);
     $text = str_replace('$\\frac{\\partial \\rho}{\\partial t}$ + $\\nabla \\cdot$ ($\\rho \\mathbf{u}$) = 0$', '$\\frac{\\partial \\rho}{\\partial t} + \\nabla \\cdot (\\rho \\mathbf{u}) = 0$', $text);
     $text = str_replace('$\\frac{\\partial \\rho}{\\partial t}$ > 0$', '$\\frac{\\partial \\rho}{\\partial t} > 0$', $text);
@@ -120,6 +153,24 @@ function sanitizeProseTeX(string $text): string {
     $text = str_replace('$\\frac{\\partial \\rho}{\\partial t}$ = 0$', '$\\frac{\\partial \\rho}{\\partial t} = 0$', $text);
     $text = str_replace('$\\nabla \\cdot (\\rho \\mathbf{u})$ = 0$', '$\\nabla \\cdot (\\rho \\mathbf{u}) = 0$', $text);
     $text = str_replace('solenoidality of velocity field \\nabla \\cdot \\mathbf{u} = 0.', 'solenoidality of velocity field $\\nabla \\cdot \\mathbf{u} = 0$.', $text);
+
+    // Fix Poisson/Laplace corruptions
+    $text = preg_replace('/\\\\nabla\s+imes\s+E\s*=\s*0/u', '$\\nabla \\times \\mathbf{E} = 0$', $text);
+    $text = preg_replace('/\\\\nabla\s+\\\\bullet\s+E\s*=\s*\\$?\\\\[fF]rac\{\\\\rho\}\{[^}]+\}\$?/u', '$\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\epsilon_0}$', $text);
+    $text = preg_replace('/E\s*=\s*-\s*\\\\nabla\s+V/u', '$\\mathbf{E} = -\\nabla V$', $text);
+    $text = preg_replace('/\\\\nabla\s+\\\\bullet\s+\(-\s*\\\\nabla\s+V\)\s*=\s*\\$?\\\\[fF]rac\{\\\\rho\}\{[^}]+\}\$?/u', '$\\nabla \\cdot (-\\nabla V) = \\frac{\\rho}{\\epsilon_0}$', $text);
+    $text = preg_replace('/\\\\nabla\^2\s+V\s*=\s*-\s*\\$?\\\\[fF]rac\{\\\\rho\}\{[^}]+\}\$?/u', '$\\nabla^2 V = -\\frac{\\rho}{\\epsilon_0}$', $text);
+    $text = preg_replace('/\\\\nabla\^2\s+V\s*=\s*0/u', '$\\nabla^2 V = 0$', $text);
+    $text = str_replace('$\\bullet$', '$\\cdot$', $text);
+    $text = preg_replace('/r\s*\$o\s*\\\\text\{\s*infinity,\s*\}\s*\$\s*V\s*\\$\\to\\\$\s*0/u', '$r \\to \\infty$, $V \\to 0$', $text);
+
+    // Fix broken ext{ / $\rho ext{$ patterns
+    $text = preg_replace('/([a-zA-Z0-9_\-\\\\]+)\s+ext\{\s*([^}]+)\s*\}/u', '$\1$ \\2', $text);
+    $text = preg_replace('/\\$\\s*\\\\rho\s+ext\\{\\s*\\$/u', '$\\rho$', $text);
+    $text = preg_replace('/\\$\\s*\\\\rho\\s*\\$/u', '$\\rho$', $text);
+    $text = preg_replace('/\\}\s*\\$\\s*\\\\rho\\s*\\$\s*ext\\{/u', '$\\rho$', $text);
+    $text = preg_replace('/\\}\s*V\s*ext\\{/u', '$V$', $text);
+    $text = preg_replace('/\\\\nabla\^2\s+V\s+ext\{/u', '$\\nabla^2 V$', $text);
 
     // 4. General fraction and operator fixes
     $text = preg_replace('/\\\\[fF]rac\{\s*\\\\partial\s*([a-zA-Z0-9_\-\\\\]+)\s*\$\s*\}\{\s*\$?\\\\partial\s*\$?\s*([a-zA-Z0-9_\-\\\\]+)\s*\}\$?/u', '$\\frac{\\partial $1}{\\partial $2}$', $text);
@@ -139,7 +190,6 @@ function sanitizeProseTeX(string $text): string {
     $text = preg_replace('/You_\s*\$\s*u\s*\$to\$/i', 'four-velocity $U_\\mu$ to', $text);
 
     // 8. Fix fragmented sums, vector displacement, and absolute bounds
-    $originalInput = $text;
     $text = str_replace("'V($\\mathbf{r}_i$ - $\\mathbf{R}_I$)'", "'$V(\\mathbf{r}_i - \\mathbf{R}_I)$'", $text);
     $text = str_replace("'(\\mathbf{r}_i - \\mathbf{R}_I)$'", "'$V(\\mathbf{r}_i - \\mathbf{R}_I)$'", $text);
     $text = str_replace("'($\\mathbf{r}_i$ - $\\mathbf{R}_I$)'", "'$\\mathbf{r}_i - \\mathbf{R}_I$'", $text);
@@ -148,7 +198,6 @@ function sanitizeProseTeX(string $text): string {
     $text = str_replace("'|$\\mathbf{r}_i$ - $\\mathbf{R}_I$| $\\to\\infty$'", "'$|\\mathbf{r}_i - \\mathbf{R}_I| \\to \\infty$'", $text);
     $text = str_replace("'|$\\mathbf{r}_i$ - $\\mathbf{R}_I$| $\\to$ 0'", "'$|\\mathbf{r}_i - \\mathbf{R}_I| \\to 0$'", $text);
 
-    // Regex fallbacks for vector displacement with correct variable backreferences ($1, $2, etc.)
     $res = preg_replace('/\'?V\(\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\)\'?/u', '\'$V(\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4})$\'', $text);
     if (!empty($res)) $text = $res;
 
@@ -158,9 +207,100 @@ function sanitizeProseTeX(string $text): string {
     $res = preg_replace('/\'?\|\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\|\s*\\$\\to\\\$\s*0\'?/u', '\'$|\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4}| \\to 0$\'', $text);
     if (!empty($res)) $text = $res;
 
-    // 9. General cleanup of multiple spaces
+    // 9. Precision Math Delimiter Sanitizer
+    // Wraps known mathematical expressions outside math mode without corrupting English prose
+    $parts = explode('$', $text);
+    for ($i = 0; $i < count($parts); $i += 2) {
+        $segment = $parts[$i];
+        
+        // Wrap fraction equations: e.g. F_i = -\frac{\partial V}{\partial q_i} or \frac{\partial L}{\partial q_i} = 0
+        $segment = preg_replace_callback('/(?<![a-zA-Z0-9$\\\\])((?:[A-Za-z](?:_[a-zA-Z0-9]+)?\s*=\s*)?(?:-\\s*)?\\\\frac\{[^{}]+\}\{[^{}]+\}(?:\s*=\s*0)?)(?![a-zA-Z0-9$])/u', function($m) {
+            return '$' . trim($m[1]) . '$';
+        }, $segment);
+
+        // Wrap Euler-Lagrange differential form: \frac{d}{dt}\left(\frac{\partial L}{\partial \dot{q}_i}\right) - \frac{\partial L}{\partial q_i} = Q_i^{nc}
+        $segment = preg_replace_callback('/(?<![a-zA-Z0-9$\\\\])(\\\\frac\{d\}\{dt\}\\\\left\(\\\\frac\{\\\\partial L\}\{\\\\partial \\\\dot\{q\}_i\}\\\\right\)\s*-\s*\\\\frac\{\\\\partial L\}\{\\\\partial q_i\}\s*=\s*Q_i(?:\^\{?\\\\?text\{nc\}|nc\}?|\^\{nc\}))(?![a-zA-Z0-9$])/u', function($m) {
+            $math = str_replace('Q_i^{nc}', 'Q_i^{\\text{nc}}', $m[1]);
+            $math = str_replace('Q_i^nc', 'Q_i^{\\text{nc}}', $math);
+            return '$' . trim($math) . '$';
+        }, $segment);
+
+        // Wrap common isolated relations: L = T - V, p_i = \frac{\partial L}{\partial \dot{q}_i}
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])L\s*=\s*T\s*-\s*V(?![a-zA-Z0-9$])/u', '$L = T - V$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])p_i\s*=\s*\\\\frac\{\\\\partial L\}\{\\\\partial \\\\dot\{q\}_i\}(?![a-zA-Z0-9$])/u', '$p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])Q_i\^?\{?nc\}?(?![a-zA-Z0-9$])/u', '$Q_i^{\\text{nc}}$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([Fqp]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+        
+        $parts[$i] = $segment;
+    }
+    $text = implode('$', $parts);
+
+    // 10. Clean duplicate dollars and normalize spacing
+    $text = preg_replace('/\$+/', '$', $text);
+    $text = preg_replace('/\$\s*\$/', '', $text);
     $cleaned = trim(preg_replace('/\s+/', ' ', $text));
     return !empty($cleaned) ? $cleaned : $originalInput;
+}
+
+// Apply Reference Text / Hint to Formula Data
+function applyHintToFormulaData(array &$formulaData, string &$cleanEq, string $hint, array &$repairsMade): void {
+    if (empty($hint)) return;
+
+    $hint = trim($hint);
+
+    // 1. Check for explicit equation override in hint
+    if (preg_match('/(?:^|\n)\s*(?:equation|formula|latex)\s*:\s*([^\n]+)/i', $hint, $m)) {
+        $cleanEq = trim($m[1]);
+        $repairsMade[] = "Overrode LaTeX equation from reference hint: {$cleanEq}";
+    }
+
+    // 2. Section Header Splitting
+    $sections = [
+        'limits_and_boundary' => '/(?:^|\n)\s*(?:###?\s*)?(?:limits?\s*(?:and|&)\s*boundary|limiting\s*cases?(?:\s*(?:and|&)\s*boundaries)?)\s*[:\n\-]?\s*/i',
+        'interpretation' => '/(?:^|\n)\s*(?:###?\s*)?(?:interpretation|physical\s*interpretation)\s*[:\n\-]?\s*/i',
+        'symmetry_origin' => '/(?:^|\n)\s*(?:###?\s*)?(?:symmetry\s*(?:and|&)?\s*origin|origin\s*(?:and|&)?\s*symmetry|derivation)\s*[:\n\-]?\s*/i',
+        'conceptual_definition' => '/(?:^|\n)\s*(?:###?\s*)?(?:conceptual\s*definition|definition)\s*[:\n\-]?\s*/i',
+        'intuitive_summary' => '/(?:^|\n)\s*(?:###?\s*)?(?:intuitive\s*summary|summary)\s*[:\n\-]?\s*/i',
+    ];
+
+    $matchedSections = [];
+    foreach ($sections as $field => $pattern) {
+        if (preg_match($pattern, $hint, $m, PREG_OFFSET_CAPTURE)) {
+            $matchedSections[$field] = [
+                'start' => $m[0][1],
+                'content_start' => $m[0][1] + strlen($m[0][0])
+            ];
+        }
+    }
+
+    if (!empty($matchedSections)) {
+        uasort($matchedSections, function($a, $b) {
+            return $a['start'] <=> $b['start'];
+        });
+
+        $fieldKeys = array_keys($matchedSections);
+        for ($i = 0; $i < count($fieldKeys); $i++) {
+            $curField = $fieldKeys[$i];
+            $startPos = $matchedSections[$curField]['content_start'];
+            $endPos = ($i + 1 < count($fieldKeys)) ? $matchedSections[$fieldKeys[$i + 1]]['start'] : strlen($hint);
+            $sectionContent = trim(substr($hint, $startPos, $endPos - $startPos));
+
+            if (!empty($sectionContent)) {
+                $sanitized = sanitizeProseTeX($sectionContent);
+                $formulaData[$curField] = $sanitized;
+                $repairsMade[] = "Updated '{$curField}' from reference text section";
+            }
+        }
+    } else {
+        // Direct field replacement or general guidance hint
+        if (stripos($hint, 'conservative system') !== false || stripos($hint, 'cyclic coordinate') !== false || stripos($hint, 'non-conservative force') !== false) {
+            $sanitized = sanitizeProseTeX($hint);
+            $formulaData['limits_and_boundary'] = $sanitized;
+            $repairsMade[] = "Updated 'limits_and_boundary' from provided reference text";
+        } else {
+            $repairsMade[] = "Applied guidance hint: " . (strlen($hint) > 60 ? substr($hint, 0, 57) . '...' : $hint);
+        }
+    }
 }
 
 // Connect to MariaDB (Dynamic & Graceful Fallback)
@@ -309,11 +449,14 @@ foreach ($targets as $input) {
 
     $formulaData = $shardData[$formulaId];
     $originalEq = $formulaData['equation'] ?? '';
+    $cleanEq = $originalEq;
     $repairsMade = [];
 
-    // Clean LaTeX Equation
-    $cleanEq = $originalEq;
-    if (!empty($targetLatex) && $cleanEq !== $targetLatex) {
+    // Explicit equation override or cleaning
+    if (!empty($eqOverride)) {
+        $cleanEq = $eqOverride;
+        $repairsMade[] = "Explicitly overrode LaTeX equation: {$cleanEq}";
+    } else if (!empty($targetLatex) && $cleanEq !== $targetLatex) {
         $cleanEq = $targetLatex;
         $repairsMade[] = "Updated LaTeX equation from target input: {$cleanEq}";
     } else if (strpos($cleanEq, 'dp^') !== false && strpos($cleanEq, '\frac') === false) {
@@ -321,7 +464,12 @@ foreach ($targets as $input) {
         $repairsMade[] = "Converted slash derivative to fraction notation: {$cleanEq}";
     }
 
-    // Audit Prose Fields
+    // Apply Reference Text / Hint if provided
+    if (!empty($globalHint)) {
+        applyHintToFormulaData($formulaData, $cleanEq, $globalHint, $repairsMade);
+    }
+
+    // Audit and Sanitize Prose Fields
     $proseFields = ['description', 'conceptual_definition', 'intuitive_summary', 'interpretation', 'symmetry_origin', 'limits_and_boundary'];
     foreach ($proseFields as $field) {
         if (isset($formulaData[$field]) && is_string($formulaData[$field])) {
@@ -370,9 +518,12 @@ foreach ($targets as $input) {
 
         if ($pdo) {
             try {
-                $stmt = $pdo->prepare("UPDATE formulas SET equation = ?, equation_svg = NULL, interpretation = ?, symmetry_origin = ?, limits_and_boundary = ?, semantic_variables = ? WHERE id = ?");
+                $stmt = $pdo->prepare("UPDATE formulas SET title = ?, equation = ?, equation_svg = NULL, conceptual_definition = ?, intuitive_summary = ?, interpretation = ?, symmetry_origin = ?, limits_and_boundary = ?, semantic_variables = ? WHERE id = ?");
                 $stmt->execute([
+                    $formulaData['title'] ?? null,
                     $cleanEq,
+                    $formulaData['conceptual_definition'] ?? null,
+                    $formulaData['intuitive_summary'] ?? null,
                     $formulaData['interpretation'] ?? null,
                     $formulaData['symmetry_origin'] ?? null,
                     $formulaData['limits_and_boundary'] ?? null,

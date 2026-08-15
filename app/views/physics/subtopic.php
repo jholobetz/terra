@@ -211,6 +211,72 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCardVisibility();
     });
 
+    const CONTEXTUAL_PHYSICS_TERMS = {
+        'M_SUSY': {
+            symbol: 'M_{\\text{SUSY}}',
+            display_symbol: 'M_SUSY',
+            name: 'Supersymmetry Breaking Scale',
+            unit: 'GeV',
+            description: 'The mass-energy scale at which supersymmetry is spontaneously broken, governing superpartner mass splittings and gravitino coupling in MSSM and supergravity.'
+        },
+        'tau_G': {
+            symbol: '\\tau_G',
+            display_symbol: '\\tau_G',
+            name: 'Diósi-Penrose Collapse Time',
+            unit: 's',
+            description: 'The characteristic timescale (\\tau_G \\approx \\hbar / \\Delta E_G) for gravitational self-energy instability to induce spontaneous, objective wave function reduction.'
+        },
+        'Delta_E_G': {
+            symbol: '\\Delta E_G',
+            display_symbol: '\\Delta E_G',
+            name: 'Gravitational Self-Energy Difference',
+            unit: 'J',
+            description: 'The difference in gravitational self-energy between superposed spatial mass distributions driving objective wave function collapse.'
+        },
+        'R_0': {
+            symbol: 'R_0',
+            display_symbol: 'R_0',
+            name: 'Regularization Cutoff Parameter',
+            unit: 'm',
+            description: 'Spatial cutoff radius (typically nucleon size) regularizing the continuous mass density operator to prevent ultraviolet self-energy divergence.'
+        },
+        'g_ij': {
+            symbol: 'g_{i\\bar{j}}',
+            display_symbol: 'g_{i\\bar{j}}',
+            name: 'Kähler Metric Tensor',
+            unit: 'dimensionless',
+            description: 'Hermitian metric tensor on the complex projective Hilbert manifold defining quantum state distances and symplectic Kähler geometry.'
+        },
+        'g_munu': {
+            symbol: 'g_{\\mu\\nu}',
+            display_symbol: 'g_{\\mu\\nu}',
+            name: 'Spacetime Metric Tensor',
+            unit: 'dimensionless',
+            description: 'The fundamental rank-2 symmetric metric tensor of general relativity defining spacetime curvature, proper intervals, and gravitational field geometry.'
+        },
+        'kappa': {
+            symbol: '\\kappa',
+            display_symbol: '\\kappa',
+            name: 'Gravitational Coupling Constant',
+            unit: 'm / sqrt(kg·s²)',
+            description: 'Coupling parameter governing gravitational interactions with supergravity fields and the gravitino.'
+        },
+        'A_mu': {
+            symbol: 'A_\\mu',
+            display_symbol: 'A_\\mu',
+            name: 'Gauge Connection 1-Form',
+            unit: 'V·s/m',
+            description: 'Gauge potential 1-form mediating local gauge interactions across principal fiber bundles in Maxwell and Yang-Mills theories.'
+        },
+        'F_munu': {
+            symbol: 'F_{\\mu\\nu}',
+            display_symbol: 'F_{\\mu\\nu}',
+            name: 'Field Strength Curvature Tensor',
+            unit: 'V/m or T',
+            description: 'The curvature 2-form of the gauge connection representing the field strength tensor in electrodynamics and gauge theories.'
+        }
+    };
+
     // Helper: Clean TeX string to extract core variable symbol key (single variable tokens only)
     function getSymbolKeyFromTex(tex) {
         if (!tex) return null;
@@ -219,13 +285,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (clean.includes('=') || clean.includes('\\int') || clean.includes('\\sum') || clean.includes('\\prod') || clean.includes('\\frac')) {
             return null;
         }
+
+        // Direct matching for known contextual physics terms
+        if (tex.includes('M_{\\text{SUSY}}') || tex.includes('M_{\\mathrm{SUSY}}') || tex.includes('M_{SUSY}') || tex.includes('M_{\\text{susy}}')) return 'M_SUSY';
+        if (tex.includes('\\tau_G') || tex.includes('\\tau_g') || tex.includes('\\tau_{G}')) return 'tau_G';
+        if (tex.includes('\\Delta E_G') || tex.includes('\\Delta E_{G}')) return 'Delta_E_G';
+        if (tex.includes('R_0') || tex.includes('R_{0}')) return 'R_0';
+        if (tex.includes('g_{i\\bar{j}}') || tex.includes('g_{i\\bar{j}') || tex.includes('g_{ij}')) return 'g_ij';
+        if (tex.includes('g_{\\mu\\nu}') || tex.includes('g_{\\mu \\nu}')) return 'g_munu';
+        if (tex.includes('A_\\mu') || tex.includes('A_{\\mu}')) return 'A_mu';
+        if (tex.includes('F_{\\mu\\nu}') || tex.includes('F_{\\mu \\nu}')) return 'F_munu';
+        if (clean === '\\kappa' || clean === 'kappa') return 'kappa';
+
         clean = clean.replace(/\\(mathbf|vec|hat|tilde|mathrm|boldsymbol)\{([^}]+)\}/g, '$2');
         clean = clean.replace(/[\$\\{\}]/g, '').trim();
         if (/^-?\d+(\.\d+)?$/.test(clean)) return null;
         
         if (vars[clean]) return clean;
-        const base = clean.split('_')[0].trim();
-        if (vars[base]) return base;
+        if (CONTEXTUAL_PHYSICS_TERMS[clean]) return clean;
+
+        // Subscript protection: DO NOT strip subscripts if subscript is a semantic qualifier (e.g. SUSY, CMB, eff, ext, vac, G)
+        if (clean.includes('_')) {
+            const [base, sub] = clean.split('_');
+            // Only allow single-character coordinate/tensor indices to strip to base (e.g. x_i -> x, v_x -> v)
+            if (/^[ijkxyz123]$/i.test(sub)) {
+                if (vars[base]) return base;
+            }
+        }
 
         return null;
     }
@@ -279,8 +365,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const tex = node.getAttribute('data-tex');
             const symKey = getSymbolKeyFromTex(tex);
+            const varData = (symKey && vars[symKey]) ? vars[symKey] : (symKey && CONTEXTUAL_PHYSICS_TERMS[symKey] ? CONTEXTUAL_PHYSICS_TERMS[symKey] : null);
             
-            if (symKey && vars[symKey]) {
+            if (symKey && varData) {
                 // Style as interactive variable token
                 node.classList.add('var-math-token');
                 node.setAttribute('data-sym', symKey);
@@ -291,10 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Option A Hover Card Listener
                 node.addEventListener('mouseenter', (e) => {
-                    const data = vars[symKey];
-                    if (!data) return;
-
-                    populateHoverCard(data, symKey);
+                    populateHoverCard(varData, symKey);
 
                     isOverNode = true;
                     updateCardVisibility();
@@ -326,10 +410,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 node.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    const data = vars[symKey];
-                    if (!data) return;
 
-                    populateHoverCard(data, symKey);
+                    populateHoverCard(varData, symKey);
                     isOverNode = true;
                     updateCardVisibility();
 

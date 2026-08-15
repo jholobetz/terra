@@ -1775,6 +1775,11 @@ const EquationExplainer = {
         return txt.value;
     },
 
+    escapeMathForHtml(str) {
+        if (typeof str !== 'string' || !str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    },
+
     handleInputChange() {
         let latex = (this.latexInput ? this.latexInput.value : '').trim().replace(/^['"\s]+|['"\s]+$/g, '');
         const quotePos = latex.indexOf("'");
@@ -2170,12 +2175,13 @@ const EquationExplainer = {
         if (formula.parent_formula && formula.parent_formula.id) {
             const p = formula.parent_formula;
             const parentUrl = p.url || `/physics/equation-explainer?id=${encodeURIComponent(p.id)}`;
+            const safeParentEq = this.escapeMathForHtml(p.equation || '');
             html += `
                 <div style="margin-bottom: 14px; background: rgba(100, 255, 218, 0.05); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 8px; padding: 12px;">
                     <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted, #94a3b8); margin-bottom: 4px; font-weight: 600;">⬆ Parent Master Equation</div>
                     <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; font-weight: 600; font-size: 1.05rem; display: inline-flex; align-items: center; gap: 8px;">
                         <span>${p.title}</span>
-                        <span style="color: #ffd700; font-family: monospace;">($\\;${p.equation}\\;$)</span>
+                        ${safeParentEq ? `<span style="color: #ffd700; font-family: monospace;">($\\;${safeParentEq}\\;$)</span>` : ''}
                     </a>
                 </div>
             `;
@@ -2200,8 +2206,9 @@ const EquationExplainer = {
                 if (childEq && (childEq.includes(' ') && !childEq.includes('\\') && !childEq.includes('=') && !childEq.includes('+') && !childEq.includes('-'))) {
                     childEq = '';
                 }
+                const safeChildEq = this.escapeMathForHtml(childEq);
                 const childUrl = `/physics/equation-explainer?id=${encodeURIComponent(childId)}`;
-                const mathPart = childEq ? `<span style="font-size: 0.9rem; color: #ffd700;">\\(${childEq}\\)</span>` : '';
+                const mathPart = safeChildEq ? `<span style="font-size: 0.9rem; color: #ffd700;">\\(${safeChildEq}\\)</span>` : '';
                 html += `
                     <a href="${childUrl}" style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(100,255,218,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
                         <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${childTitle}</span>

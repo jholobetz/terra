@@ -435,18 +435,69 @@ const EquationExplainer = {
     
     // Comprehensive physics dictionary mapping standard variables, constants, and operators
     physicsDictionary: {
-        // Operators
+        // Core Operators & Differentials
         '\\partial': { name: 'Partial Derivative', type: 'operator', unit: 'operator', desc: 'Represents differentiation with respect to a single variable in multi-variable calculus.' },
         '\\nabla': { name: 'Del / Gradient Operator', type: 'operator', unit: 'operator', desc: 'The vector differential operator representing gradient, divergence, or curl.' },
         '\\Delta': { name: 'Laplacian / Change Operator', type: 'operator', unit: 'operator', desc: 'Denotes either a difference/change in a variable, or the second-order spatial derivative operator.' },
         '\\int': { name: 'Integral Operator', type: 'operator', unit: 'operator', desc: 'Represents continuous summation or the area under a curve.' },
         '\\oint': { name: 'Closed Loop Integral', type: 'operator', unit: 'operator', desc: 'Represents line or surface integration over a closed boundary.' },
         '\\sum': { name: 'Summation Operator', type: 'operator', unit: 'operator', desc: 'Represents discrete addition of a sequence of terms.' },
+        '\\prod': { name: 'Product Operator', type: 'operator', unit: 'operator', desc: 'Represents discrete multiplication of a sequence of terms.' },
         '\\sqrt': { name: 'Square Root Operator', type: 'operator', unit: 'operator', desc: 'Represents the principal square root function, returning a number that, when multiplied by itself, yields the operand.' },
         '+': { name: 'Addition Operator', type: 'operator', unit: 'operator', desc: 'Adds mathematical values together.' },
         '-': { name: 'Subtraction Operator', type: 'operator', unit: 'operator', desc: 'Subtracts one mathematical value from another.' },
         '=': { name: 'Equality Relation', type: 'operator', unit: 'operator', desc: 'Asserts that two expressions have the exact same value.' },
         '/': { name: 'Division Operator', type: 'operator', unit: 'operator', desc: 'Denotes division or ratio between two values.' },
+
+        // Logical & Set-Theoretic Operators
+        '\\forall': { name: 'Universal Quantifier', type: 'operator', unit: 'logic', desc: 'Asserts that a predicate holds for all elements of a specified domain or set.' },
+        '\\exists': { name: 'Existential Quantifier', type: 'operator', unit: 'logic', desc: 'Asserts that there exists at least one element in the domain satisfying the given predicate.' },
+        '\\nexists': { name: 'Non-Existence Quantifier', type: 'operator', unit: 'logic', desc: 'Asserts that no element exists in the domain satisfying the given predicate.' },
+        '\\in': { name: 'Set Membership', type: 'operator', unit: 'logic', desc: 'Denotes that an element belongs to or is contained within a specified set.' },
+        '\\notin': { name: 'Set Non-Membership', type: 'operator', unit: 'logic', desc: 'Denotes that an element does not belong to a specified set.' },
+        '\\ni': { name: 'Contains as Member', type: 'operator', unit: 'logic', desc: 'Denotes that a set contains a given element (reversed set membership).' },
+        '\\subset': { name: 'Strict Subset', type: 'operator', unit: 'logic', desc: 'Denotes that a set is strictly contained within another set without being identical.' },
+        '\\subseteq': { name: 'Subset or Equal', type: 'operator', unit: 'logic', desc: 'Denotes that a set is a subset of or equal to another set.' },
+        '\\supset': { name: 'Strict Superset', type: 'operator', unit: 'logic', desc: 'Denotes that a set strictly contains another set.' },
+        '\\supseteq': { name: 'Superset or Equal', type: 'operator', unit: 'logic', desc: 'Denotes that a set is a superset of or equal to another set.' },
+        '\\cup': { name: 'Set Union', type: 'operator', unit: 'logic', desc: 'Combines all elements belonging to either or both sets.' },
+        '\\cap': { name: 'Set Intersection', type: 'operator', unit: 'logic', desc: 'Selects elements that belong simultaneously to both sets.' },
+        '\\setminus': { name: 'Set Difference', type: 'operator', unit: 'logic', desc: 'Removes all elements of one set from another set.' },
+        '\\emptyset': { name: 'Empty Set', type: 'constant', unit: 'dimensionless', desc: 'The unique set containing no elements, denoted by ∅.' },
+        '\\varnothing': { name: 'Empty Set', type: 'constant', unit: 'dimensionless', desc: 'The unique set containing no elements, denoted by ∅.' },
+        '\\vdash': { name: 'Syntactic Entailment / Provability', type: 'operator', unit: 'logic', desc: 'Denotes that a formula is provable from a theory or set of axioms within a formal deductive system.' },
+        '\\dashv': { name: 'Dual Turnstile', type: 'operator', unit: 'logic', desc: 'Relational logic turnstile representing reverse entailment or adjoint derivation.' },
+        '\\models': { name: 'Semantic Entailment / Satisfaction', type: 'operator', unit: 'logic', desc: 'Denotes that every interpretation or model satisfying the premise also satisfies the conclusion.' },
+        '\\vDash': { name: 'Double Turnstile / Model Satisfaction', type: 'operator', unit: 'logic', desc: 'Denotes semantic entailment where a model satisfies a formal proposition.' },
+        '\\iff': { name: 'Material Biconditional (If and Only If)', type: 'operator', unit: 'logic', desc: 'Logical equivalence asserting that both propositions share the exact same truth value.' },
+        '\\implies': { name: 'Material Implication', type: 'operator', unit: 'logic', desc: 'Logical conditional asserting that the truth of the antecedent entails the truth of the consequent.' },
+        '\\Rightarrow': { name: 'Implication Arrow', type: 'operator', unit: 'logic', desc: 'Symbolic implication connecting antecedent and consequent.' },
+        '\\Leftarrow': { name: 'Left Implication Arrow', type: 'operator', unit: 'logic', desc: 'Symbolic implication from right to left.' },
+        '\\Leftrightarrow': { name: 'Equivalence Arrow', type: 'operator', unit: 'logic', desc: 'Symbolic biconditional connecting logically equivalent statements.' },
+        '\\land': { name: 'Logical Conjunction (AND)', type: 'operator', unit: 'logic', desc: 'Logical operation that evaluates to true only if both operands are true.' },
+        '\\lor': { name: 'Logical Disjunction (OR)', type: 'operator', unit: 'logic', desc: 'Logical operation that evaluates to true if at least one operand is true.' },
+        '\\neg': { name: 'Logical Negation (NOT)', type: 'operator', unit: 'logic', desc: 'Inverts the truth value of a proposition.' },
+        '\\lnot': { name: 'Logical Negation (NOT)', type: 'operator', unit: 'logic', desc: 'Inverts the truth value of a proposition.' },
+        '\\equiv': { name: 'Equivalence Relation / Definition', type: 'operator', unit: 'operator', desc: 'Asserts identical mathematical equivalence, congruency, or definitional equality.' },
+        '\\approx': { name: 'Approximation Relation', type: 'operator', unit: 'operator', desc: 'Denotes that two physical or mathematical quantities are approximately equal within acceptable tolerance.' },
+        '\\propto': { name: 'Proportionality Relation', type: 'operator', unit: 'operator', desc: 'Denotes that two quantities vary in direct proportion to one another.' },
+        '\\sim': { name: 'Asymptotic / Order of Magnitude Relation', type: 'operator', unit: 'operator', desc: 'Indicates asymptotic similarity, order-of-magnitude equivalence, or equivalence relation.' },
+        '\\simeq': { name: 'Asymptotically Equal', type: 'operator', unit: 'operator', desc: 'Denotes asymptotic equality or isomorphism between mathematical objects.' },
+        '\\cong': { name: 'Congruence / Isomorphism', type: 'operator', unit: 'operator', desc: 'Asserts geometric congruence or algebraic isomorphism.' },
+        '\\le': { name: 'Less Than or Equal', type: 'operator', unit: 'operator', desc: 'Inequality relation asserting that the left operand is less than or equal to the right operand.' },
+        '\\ge': { name: 'Greater Than or Equal', type: 'operator', unit: 'operator', desc: 'Inequality relation asserting that the left operand is greater than or equal to the right operand.' },
+        '\\leq': { name: 'Less Than or Equal', type: 'operator', unit: 'operator', desc: 'Inequality relation asserting that the left operand is less than or equal to the right operand.' },
+        '\\geq': { name: 'Greater Than or Equal', type: 'operator', unit: 'operator', desc: 'Inequality relation asserting that the left operand is greater than or equal to the right operand.' },
+        '\\ne': { name: 'Inequality (Not Equal)', type: 'operator', unit: 'operator', desc: 'Asserts that two expressions are not equal.' },
+        '\\neq': { name: 'Inequality (Not Equal)', type: 'operator', unit: 'operator', desc: 'Asserts that two expressions are not equal.' },
+        '\\ll': { name: 'Much Less Than', type: 'operator', unit: 'operator', desc: 'Asymptotic inequality asserting that the left quantity is negligibly small compared to the right.' },
+        '\\gg': { name: 'Much Greater Than', type: 'operator', unit: 'operator', desc: 'Asymptotic inequality asserting that the left quantity is orders of magnitude larger than the right.' },
+        '\\pm': { name: 'Plus-Minus Operator', type: 'operator', unit: 'operator', desc: 'Indicates a dual solution or statistical uncertainty interval.' },
+        '\\mp': { name: 'Minus-Plus Operator', type: 'operator', unit: 'operator', desc: 'Complementary dual solution symbol paired with plus-minus.' },
+        '\\to': { name: 'Mapping / Limit Arrow', type: 'operator', unit: 'operator', desc: 'Denotes function mapping, state transition, or limiting convergence.' },
+        '\\mapsto': { name: 'Maps To Element Relation', type: 'operator', unit: 'operator', desc: 'Denotes rule-based assignment from an element to its image.' },
+        '\\Tr': { name: 'Trace Operator', type: 'operator', unit: 'operator', desc: 'The sum of the diagonal elements of a linear operator or density matrix.' },
+        '\\det': { name: 'Determinant', type: 'operator', unit: 'operator', desc: 'A scalar value representing the scaling factor of the transformation described by a matrix.' },
 
         // Lowercase Roman Letters
         'a': {
@@ -511,7 +562,16 @@ const EquationExplainer = {
         'l': { name: 'Length / Angular Quantum Number', type: 'variable', unit: 'm', desc: 'The physical size of an object, or orbital angular momentum quantum number.' },
         'm': { name: 'Mass', type: 'variable', unit: 'kg', desc: 'A fundamental measure of the amount of matter in a body and its resistance to acceleration.' },
         'n': { name: 'Refractive Index / Particle Density', type: 'variable', unit: 'dimensionless or m⁻³', desc: 'The ratio of speed of light in vacuum to that in a medium, or particles per unit volume.' },
-        'o': { name: 'Origin / Offset', type: 'variable', unit: 'dimensionless', desc: 'The starting point of a coordinate system, or baseline shift.' },
+        'o': {
+            name: 'Origin / Offset',
+            type: 'variable',
+            unit: 'dimensionless',
+            desc: 'The starting point of a coordinate system, or baseline shift.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Observation / Empirical Statement', type: 'variable', unit: 'event', desc: 'An individual observational sentence, proposition, or experimental measurement outcome.', domain: 'philosophy_of_physics' }
+            ]
+        },
         'p': {
             name: 'Linear Momentum',
             type: 'variable',
@@ -575,6 +635,7 @@ const EquationExplainer = {
             desc: 'The total kinetic and potential capacity of a physical system.',
             domain: 'classical_mechanics',
             alternatives: [
+                { name: 'Empirical Evidence Set', type: 'variable', unit: 'empirical_space', desc: 'The collection of verified empirical observations and experimental data supporting or falsifying a theoretical model.', domain: 'philosophy_of_physics' },
                 { name: 'Electric Field Strength', type: 'variable', unit: 'V/m', desc: 'The force per unit charge exerted on a test charge in an electric field.', domain: 'electromagnetism' },
                 { name: 'Total Energy', type: 'variable', unit: 'J', desc: 'The energy eigenvalue or total energy of a quantum state.', domain: 'quantum_mechanics' }
             ]
@@ -646,7 +707,16 @@ const EquationExplainer = {
         },
         'M': { name: 'Total Mass / Magnetization', type: 'variable', unit: 'kg or A/m', desc: 'The total inertial mass of a system, or net magnetic dipole moment density.' },
         'N': { name: 'Number of Particles / Normal Force', type: 'variable', unit: 'dimensionless or N', desc: 'The total count of atoms/molecules, or perpendicular contact force.' },
-        'O': { name: 'Operator / Big O Notation', type: 'variable', unit: 'dimensionless', desc: 'A mathematical action performed on a state vector, or asymptotic growth boundary.' },
+        'O': {
+            name: 'Operator / Big O Notation',
+            type: 'variable',
+            unit: 'dimensionless',
+            desc: 'A mathematical action performed on a state vector, or asymptotic growth boundary.',
+            domain: 'classical_mechanics',
+            alternatives: [
+                { name: 'Observation Space / Observables Set', type: 'variable', unit: 'empirical_space', desc: 'The set of all possible empirical observation sentences or observable events.', domain: 'philosophy_of_physics' }
+            ]
+        },
         'P': {
             name: 'Pressure',
             type: 'variable',
@@ -689,6 +759,7 @@ const EquationExplainer = {
             desc: 'Thermodynamic temperature scale measuring the average kinetic energy of the particles.',
             domain: 'thermodynamics',
             alternatives: [
+                { name: 'Formal Theory / Axiom System', type: 'variable', unit: 'theoretical_structure', desc: 'A formal set of physical axioms and theoretical laws representing a physical paradigm.', domain: 'philosophy_of_physics' },
                 { name: 'Time Period', type: 'variable', unit: 's', desc: 'The duration of one complete cycle of a repeating wave or oscillation.', domain: 'optics' },
                 { name: 'Tension', type: 'variable', unit: 'N', desc: 'Axial pulling force transmitted through a string, rope, or chain.', domain: 'classical_mechanics' },
                 { name: 'SU(3) Gauge Generator', type: 'variable', unit: 'dimensionless', desc: 'Generators of the SU(3) color gauge group in quantum chromodynamics, typically represented by the Gell-Mann matrices.', domain: 'quantum_mechanics' }
@@ -1234,10 +1305,12 @@ const EquationExplainer = {
         }
         
         // 5. Fallback
+        const cleanName = symbol.replace(/^\\/, '');
+        const formattedName = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
         return {
-            name: symbol.startsWith('\\') ? symbol.substring(1).charAt(0).toUpperCase() + symbol.substring(2) + ' Parameter' : symbol + ' Variable',
+            name: formattedName + ' Variable',
             type: 'variable',
-            description: 'This symbol represents a variable or parameter within the current physical equation.',
+            description: 'This symbol represents a variable or quantity within the current physical equation.',
             unit: 'dimensionless',
             featuredEquations: []
         };
@@ -1545,6 +1618,8 @@ const EquationExplainer = {
         this.officialBreakdown = document.getElementById('official-breakdown');
         this.symbolsBreakdown = document.getElementById('symbols-breakdown');
         this.symbolsList = document.getElementById('symbols-list');
+        this.operatorsSection = document.getElementById('operators-section');
+        this.operatorsList = document.getElementById('operators-list');
         this.modifiersSection = document.getElementById('modifiers-section');
         this.modifiersList = document.getElementById('modifiers-list');
         this.topologicalBridges = document.getElementById('topological-bridges');
@@ -2259,6 +2334,11 @@ const EquationExplainer = {
             return 'quantum_mechanics';
         }
         
+        // Mathematical Logic & Philosophy of Physics notation: \forall, \exists, \vdash, \models, \iff, \subset, \in, \cup, \cap
+        if (/\\(forall|exists|nexists|vdash|dashv|models|vDash|Vdash|nVdash|nvdash|iff|implies|impliedby|subset|subseteq|supset|supseteq|cap|cup|in|notin|ni|setminus|emptyset|varnothing)\b/.test(latex)) {
+            return 'philosophy_of_physics';
+        }
+
         // Thermodynamic differentials: dU, dS, dV, dH, dG, dQ
         if (/\b(dU|dS|dV|dH|dG|dQ|dW)\b/.test(latex)) {
             return 'thermodynamics';
@@ -2267,6 +2347,10 @@ const EquationExplainer = {
         // 2. Co-occurrence / Match Counts
         // Define anchor symbols for each domain
         const ANCHORS = {
+            philosophy_of_physics: [
+                '\\forall', '\\exists', '\\vdash', '\\models', '\\iff', '\\implies', '\\in', 'T', 'O', 'E', 'o',
+                '\\subset', '\\subseteq', '\\cup', '\\cap', '\\equiv', '\\models'
+            ],
             thermodynamics: [
                 'T', 'S', 'Q', 'U', 'H', '\\Omega', '\\ln', 'k_B', 'R', 'P', 'V',
                 '\\beta', '\\mu', 'N_A'
@@ -2406,12 +2490,22 @@ const EquationExplainer = {
 
     renderElementsBreakdown(latex, officialVariables) {
         this.symbolsList.innerHTML = '';
+        if (this.operatorsList) {
+            this.operatorsList.innerHTML = '';
+        }
         if (this.modifiersList) {
             this.modifiersList.innerHTML = '';
         }
         
-        // Save officialVariables for redraw on domain change, normalizing keys to strip delimiters
+        // Save officialVariables for redraw on domain change, normalizing keys and filtering out corrupted operator/delimiter tokens
         this.officialVariables = {};
+        const structuralBlacklist = new Set([
+            '\\rangle', '\\langle', '\\mid', '|', '(', ')', '[', ']', '{', '}', '+', '-', '=', '/', 
+            '\\cdot', '\\times', '\\div', '\\left', '\\right', '\\text', '\\mathrm', '\\mathsf',
+            '\\colon', '\\quad', '\\qquad', '\\dots', '\\cdots', '\\ldots', '\\ddots', '\\vdots',
+            '\\circ', '\\bullet'
+        ]);
+
         if (officialVariables) {
             for (const [key, val] of Object.entries(officialVariables)) {
                 const cleanKey = key.trim()
@@ -2424,6 +2518,16 @@ const EquationExplainer = {
                                     .replace(/^\$/, '')
                                     .replace(/\$/, '')
                                     .trim();
+
+                // Skip structural delimiters or placeholder corrupted parameters
+                if (structuralBlacklist.has(cleanKey) || structuralBlacklist.has('\\' + cleanKey)) {
+                    continue;
+                }
+                if (typeof val === 'object' && val !== null) {
+                    if (val.description === 'Physics variable or parameter.' && (val.name || '').endsWith(' Parameter')) {
+                        continue;
+                    }
+                }
                 this.officialVariables[cleanKey] = val;
             }
         }
@@ -2462,6 +2566,9 @@ const EquationExplainer = {
         
         if (tokens.length === 0) {
             this.symbolsList.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">No math variables, constants, or operators detected.</div>';
+            if (this.operatorsSection) {
+                this.operatorsSection.style.display = 'none';
+            }
             if (this.modifiersSection) {
                 this.modifiersSection.style.display = 'none';
             }
@@ -2470,6 +2577,7 @@ const EquationExplainer = {
 
         const dynamicOverrides = this.getDynamicOverrides(latex);
         let hasModifiers = false;
+        let hasOperators = false;
 
         tokens.forEach(tok => {
             const symbol = tok.symbol;
@@ -2702,11 +2810,13 @@ const EquationExplainer = {
                         source: 'dictionary'
                     };
                 } else {
+                    const cleanName = symbol.replace(/^\\/, '');
+                    const formattedName = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
                     info = {
-                        name: symbol.startsWith('\\') ? symbol.substring(1) + (tok.type === 'modifier' ? ' Modifier' : ' Parameter') : symbol + (tok.type === 'modifier' ? ' Subscript/Modifier' : ' Variable'),
+                        name: formattedName + (tok.type === 'modifier' ? ' Modifier' : (tok.type === 'operator' ? ' Operator' : ' Variable')),
                         type: tok.type,
-                        description: tok.type === 'modifier' ? 'Custom modifier constraint. Click Edit to customize definition.' : 'Custom parameter. Click Edit to customize name, unit, and definition.',
-                        unit: tok.type === 'modifier' ? 'modifier' : 'dimensionless',
+                        description: tok.type === 'modifier' ? 'Custom modifier constraint. Click Edit to customize definition.' : (tok.type === 'operator' ? 'Mathematical or logical operator.' : 'Custom variable. Click Edit to customize name, unit, and definition.'),
+                        unit: tok.type === 'modifier' ? 'modifier' : (tok.type === 'operator' ? 'operator' : 'dimensionless'),
                         source: 'fallback'
                     };
                 }
@@ -2714,16 +2824,25 @@ const EquationExplainer = {
 
             if (info && info.type === 'modifier') {
                 hasModifiers = true;
+            } else if (info && info.type === 'operator') {
+                hasOperators = true;
             }
 
             this.renderVariableRow(symbol, info);
         });
+
+        if (this.operatorsSection) {
+            this.operatorsSection.style.display = hasOperators ? 'block' : 'none';
+        }
 
         if (this.modifiersSection) {
             this.modifiersSection.style.display = hasModifiers ? 'block' : 'none';
         }
 
         const typesetTargets = [this.symbolsList];
+        if (hasOperators && this.operatorsList) {
+            typesetTargets.push(this.operatorsList);
+        }
         if (hasModifiers && this.modifiersList) {
             typesetTargets.push(this.modifiersList);
         }
@@ -2888,7 +3007,10 @@ const EquationExplainer = {
 
         if (!existingRow) {
             if (info.type === 'modifier') {
-                this.modifiersList.appendChild(row);
+                if (this.modifiersList) this.modifiersList.appendChild(row);
+            } else if (info.type === 'operator') {
+                if (this.operatorsList) this.operatorsList.appendChild(row);
+                else this.symbolsList.appendChild(row);
             } else {
                 this.symbolsList.appendChild(row);
             }
@@ -2973,13 +3095,14 @@ const EquationExplainer = {
             found.push({ symbol, type });
         };
 
-        // Structural LaTeX commands and delimiters to suppress from fallback variable lookup
-        const structuralDelimiters = [
+        // Pure structural formatting commands and delimiters to completely ignore
+        const pureSyntaxDelimiters = [
             '\\rangle', '\\langle', '\\mid', '|', '(', ')', '[', ']', '{', '}', '+', '-', '=', '/', 
-            '\\sum', '\\prod', '\\int', '\\oint', '\\iint', '\\iiint', '\\cdot', '\\times',
-            '\\sqrt', '\\frac', '\\partial', '\\text', '\\mathrm', '\\mathsf', '\\left', '\\right'
+            '\\cdot', '\\times', '\\div', '\\left', '\\right', '\\text', '\\mathrm', '\\mathsf',
+            '\\colon', '\\quad', '\\qquad', '\\dots', '\\cdots', '\\ldots', '\\ddots', '\\vdots',
+            '\\circ', '\\bullet'
         ];
-        structuralDelimiters.forEach(d => {
+        pureSyntaxDelimiters.forEach(d => {
             consumedSubtokens.add(d);
             consumedSubtokens.add(d.replace(/^\\/, ''));
         });
@@ -3294,8 +3417,8 @@ const EquationExplainer = {
             }
         }
 
-        // 5. Strip braces
-        text = text.replace(/[\{\}]/g, ' ');
+        // 5. Strip braces, colons, semicolons, and commas
+        text = text.replace(/[\{\}:;,]/g, ' ');
 
         // 5b. Split adjacent plain Roman letters (Strategy A)
         // E.g., F = \frac d dt (mv) -> F = \frac d d t (m v)
@@ -3309,30 +3432,44 @@ const EquationExplainer = {
             return plainWord;
         });
 
-        // 6. Scan for multi-character LaTeX Greek letters & symbols
+        // 6. Scan for explicit standard mathematical and logical operators
+        const standardOperators = [
+            '\\forall', '\\exists', '\\nexists', '\\in', '\\notin', '\\ni', '\\owns',
+            '\\subset', '\\subseteq', '\\supset', '\\supseteq', '\\cap', '\\cup', '\\setminus',
+            '\\vdash', '\\dashv', '\\models', '\\vDash', '\\Vdash', '\\nVdash', '\\nvdash',
+            '\\iff', '\\implies', '\\impliedby', '\\Rightarrow', '\\Leftarrow', '\\Leftrightarrow',
+            '\\land', '\\lor', '\\neg', '\\lnot', '\\top', '\\bot',
+            '\\int', '\\oint', '\\iint', '\\iiint', '\\sum', '\\prod', '\\partial', '\\nabla', '\\Delta',
+            '\\sqrt', '\\Tr', '\\det',
+            '\\approx', '\\equiv', '\\sim', '\\simeq', '\\cong', '\\propto', '\\asymp', '\\doteq',
+            '\\le', '\\ge', '\\leq', '\\geq', '\\ne', '\\neq', '\\ll', '\\gg', '\\pm', '\\mp', '\\to', '\\mapsto'
+        ];
+
+        standardOperators.forEach(op => {
+            if (!consumedSubtokens.has(op) && this.latexContainsSymbol(text, op)) {
+                addToken(op, 'operator');
+                consumedSubtokens.add(op);
+                consumedSubtokens.add(op.replace(/^\\/, ''));
+            }
+        });
+
+        // 7. Scan for multi-character LaTeX Greek letters & variables
         const greekPattern = /\\[a-zA-Z]+/g;
         let match;
         while ((match = greekPattern.exec(text)) !== null) {
             const sym = match[0];
-            const structuralCmds = new Set([
+            const ignoredCmds = new Set([
                 '\\frac', '\\left', '\\right', '\\cdot', '\\times', '\\div', 
-                '\\iff', '\\implies', '\\ge', '\\le', '\\ast', '\\star',
+                '\\colon', '\\quad', '\\qquad', '\\dots', '\\cdots', '\\ldots', '\\ddots', '\\vdots',
+                '\\circ', '\\bullet', '\\ast', '\\star',
                 '\\boldsymbol', '\\mathbf', '\\mathsf', '\\mathrm', '\\text', '\\mathcal', 
                 '\\vec', '\\hat', '\\bar', '\\tilde', '\\dot', '\\ddot', '\\underline'
             ]);
-            if (structuralCmds.has(sym) || consumedSubtokens.has(sym) || consumedSubtokens.has(sym.replace(/^\\/, ''))) continue;
+            if (ignoredCmds.has(sym) || consumedSubtokens.has(sym) || consumedSubtokens.has(sym.replace(/^\\/, ''))) continue;
             
             const isOperator = this.physicsDictionary[sym] && this.physicsDictionary[sym].type === 'operator';
             addToken(sym, isOperator ? 'operator' : 'variable');
         }
-
-        // 7. Scan for explicit mathematical operators (filtering out basic arithmetic operators)
-        const standardOperators = ['\\int', '\\oint', '\\sum', '\\partial', '\\nabla', '\\Delta'];
-        standardOperators.forEach(op => {
-            if (!consumedSubtokens.has(op) && this.latexContainsSymbol(text, op)) {
-                addToken(op, 'operator');
-            }
-        });
 
         // 8. Scan for single Roman letters (a-z, A-Z)
         text = text.replace(/\\[a-zA-Z]+/g, ' ');
@@ -3351,7 +3488,7 @@ const EquationExplainer = {
             // 1. Replace \text{...} and \mathrm{...} environments with spaces
             clean = clean.replace(/\\(text|mathrm|mathsf)\{([^\}]+)\}/g, match => ' '.repeat(match.length));
             // 2. Replace structural/formatting commands with spaces
-            const structuralRegex = /\\(frac|left|right|sqrt|cdot|times|div|iff|implies|ge|le|ast|star|boldsymbol|mathbf|mathsf|mathrm|text|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\b/g;
+            const structuralRegex = /\\(frac|left|right|sqrt|cdot|times|div|iff|implies|impliedby|forall|exists|nexists|in|notin|ni|subset|subseteq|supset|supseteq|cap|cup|setminus|emptyset|vdash|dashv|models|vDash|Vdash|nVdash|nvdash|Rightarrow|Leftarrow|Leftrightarrow|rightarrow|leftarrow|leftrightarrow|to|mapsto|land|lor|neg|lnot|top|bot|approx|equiv|sim|simeq|cong|propto|asymp|doteq|ge|le|geq|leq|ne|neq|ll|gg|pm|mp|colon|quad|qquad|dots|cdots|ldots|circ|bullet|ast|star|boldsymbol|mathbf|mathsf|mathrm|text|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\b/g;
             clean = clean.replace(structuralRegex, match => ' '.repeat(match.length));
             // 3. Replace word-like subscripts of 3+ letters (e.g. _{ext}, _ext) with spaces
             clean = clean.replace(/_\{[a-zA-Z]{3,\}\}/g, match => ' '.repeat(match.length));

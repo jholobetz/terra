@@ -76,12 +76,14 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     <!-- Dynamic Domain Selector -->
                     <div id="domain-selector-wrapper" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 8px;">
                         <span style="font-size: 0.76rem; color: var(--text-muted, #94a3b8); font-family: 'Space Grotesk', sans-serif; font-weight: 500;">Active Physics Domain</span>
-                        <select id="active-domain-select" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(100, 255, 218, 0.15); color: var(--accent-default, #64ffda); border-radius: 6px; padding: 4px 10px; font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; font-weight: 500; cursor: pointer; outline: none; transition: all 0.2s;" onfocus="this.style.borderColor='var(--accent-default)'" onblur="this.style.borderColor='rgba(100, 255, 218, 0.15)'">
+                        <select id="active-domain-select" style="padding: 6px 12px; background: rgba(3, 7, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #64ffda; font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; outline: none; cursor: pointer;">
+                            <option value="">Auto-Detect Domain</option>
                             <option value="classical_mechanics">Classical Mechanics</option>
                             <option value="thermodynamics">Thermodynamics</option>
                             <option value="electromagnetism">Electromagnetism</option>
-                            <option value="quantum_mechanics">Quantum & Particle Physics</option>
-                            <option value="optics">Optics & Wave Physics</option>
+                            <option value="quantum_mechanics">Quantum &amp; Particle Physics</option>
+                            <option value="optics">Optics &amp; Wave Physics</option>
+                            <option value="philosophy_of_physics">Philosophy &amp; Mathematical Foundations</option>
                         </select>
                     </div>
                     
@@ -92,8 +94,15 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         </div>
                     </div>
 
+                    <div id="operators-section" style="display: none; border-top: 1px dashed rgba(255, 255, 255, 0.08); padding-top: 15px; margin-top: 15px; margin-bottom: 20px;">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #38bdf8; margin-bottom: 8px; font-weight: 600;">Mathematical &amp; Logical Operators</div>
+                        <div id="operators-list" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- JS populated -->
+                        </div>
+                    </div>
+
                     <div id="modifiers-section" style="display: none; border-top: 1px dashed rgba(255, 255, 255, 0.08); padding-top: 15px; margin-top: 15px;">
-                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #a855f7; margin-bottom: 8px; font-weight: 600;">Subscripts, Superscripts & Modifiers</div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #a855f7; margin-bottom: 8px; font-weight: 600;">Subscripts, Superscripts &amp; Modifiers</div>
                         <div id="modifiers-list" style="display: flex; flex-direction: column; gap: 8px;">
                             <!-- JS populated -->
                         </div>

@@ -98,6 +98,8 @@ $app->register('db', $pdoClass, [$dsn, $config['database']['user'] ?? null, $con
 // $app->register('redis', Redis::class, [ $config['redis']['host'], $config['redis']['port'] ]);
 
 $app->register('physicsService', \app\logic\PhysicsService::class, [ $app ]);
+$app->register('authService', \app\logic\AuthService::class, []);
+$app->register('formulaReviewService', \app\logic\FormulaReviewService::class, []);
 $app->register('physicsController', \app\controllers\PhysicsController::class, [ $app ]);
 $app->register('apiExampleController', \app\controllers\ApiExampleController::class, [ $app ]);
 

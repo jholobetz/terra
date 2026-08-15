@@ -1,0 +1,405 @@
+<?php
+
+namespace app\logic;
+
+use Flight;
+use PDO;
+
+class FormulaReviewService
+{
+    protected ?PhysicsService $physicsService = null;
+
+    public function __construct()
+    {
+        $this->physicsService = Flight::physicsService();
+    }
+
+    /**
+     * Resolves the canonical JSON shard path for a given formula ID.
+     */
+    public function getShardPathForFormula(string $formulaId): ?string
+    {
+        $hash = substr(md5($formulaId), 0, 2);
+        $shardPath = PROJECT_ROOT . "/app/config/content/formulas/{$hash}/shard_{$hash}.json";
+        if (file_exists($shardPath)) {
+            $data = json_decode(file_get_contents($shardPath), true);
+            if (isset($data[$formulaId])) {
+                return $shardPath;
+            }
+        }
+
+        // Fallback: search all 256 shards
+        $baseDir = PROJECT_ROOT . '/app/config/content/formulas';
+        $shards = glob("{$baseDir}/*/shard_*.json");
+        foreach ($shards as $file) {
+            $data = json_decode(file_get_contents($file), true);
+            if (is_array($data) && isset($data[$formulaId])) {
+                return $file;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolves an existing shard or creates a canonical shard path for new formulas.
+     */
+    public function getOrCreateShardPathForFormula(string &$formulaId, string $defaultTitle = ''): string
+    {
+        $existing = $this->getShardPathForFormula($formulaId);
+        if ($existing) {
+            return $existing;
+        }
+
+        // If it's a synthesized or temporary ID, generate a clean slug ID
+        if (empty($formulaId) || str_starts_with($formulaId, 'synthesized-')) {
+            $slug = !empty($defaultTitle) ? strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $defaultTitle), '-')) : 'custom-relation';
+            if (empty($slug)) $slug = 'custom-relation';
+            $formulaId = $slug . '-' . substr(md5(uniqid((string)mt_rand(), true)), 0, 8);
+        }
+
+        $hash = substr(md5($formulaId), 0, 2);
+        $shardDir = PROJECT_ROOT . "/app/config/content/formulas/{$hash}";
+        if (!is_dir($shardDir)) {
+            mkdir($shardDir, 0755, true);
+        }
+
+        return "{$shardDir}/shard_{$hash}.json";
+    }
+
+    /**
+     * Creates a staged review suggestion (Contributor Tier).
+     */
+    public function createSuggestion(int $userId, string $formulaId, ?string $proposedLatex, ?array $proposedProse, ?string $hintText): int
+    {
+        $pdo = Flight::db();
+        $stmt = $pdo->prepare("
+            INSERT INTO formula_reviews (formula_id, user_id, proposed_latex, proposed_prose, hint_text, status)
+            VALUES (?, ?, ?, ?, ?, 'pending')
+        ");
+
+        $proseJson = !empty($proposedProse) ? json_encode($proposedProse, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null;
+        $stmt->execute([
+            $formulaId,
+            $userId,
+            $proposedLatex,
+            $proseJson,
+            $hintText
+        ]);
+
+        return (int)$pdo->lastInsertId();
+    }
+
+    /**
+     * Fetches reviews filtered by status or formulaId.
+     */
+    public function getReviews(string $status = 'pending', ?string $formulaId = null): array
+    {
+        $pdo = Flight::db();
+        $sql = "
+            SELECT r.*, u.display_name AS author_name, u.role AS author_role, u.avatar_url AS author_avatar,
+                   rev.display_name AS reviewer_name
+            FROM formula_reviews r
+            JOIN users u ON r.user_id = u.id
+            LEFT JOIN users rev ON r.reviewed_by = rev.id
+            WHERE 1=1
+        ";
+        $params = [];
+
+        if ($status !== 'all') {
+            $sql .= " AND r.status = ?";
+            $params[] = $status;
+        }
+        if (!empty($formulaId)) {
+            $sql .= " AND r.formula_id = ?";
+            $params[] = $formulaId;
+        }
+
+        $sql .= " ORDER BY r.created_at DESC LIMIT 100";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($results as &$row) {
+            if (!empty($row['proposed_prose'])) {
+                $row['proposed_prose'] = json_decode($row['proposed_prose'], true);
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Approves a review and executes the repair pipeline (Curator / Admin Tier).
+     */
+    public function approveReview(int $reviewId, int $reviewerId): array
+    {
+        $pdo = Flight::db();
+        $stmt = $pdo->prepare("SELECT * FROM formula_reviews WHERE id = ? AND status = 'pending'");
+        $stmt->execute([$reviewId]);
+        $review = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$review) {
+            throw new \InvalidArgumentException("Pending review #{$reviewId} not found.");
+        }
+
+        $formulaId = $review['formula_id'];
+        $proposedLatex = $review['proposed_latex'];
+        $proposedProse = !empty($review['proposed_prose']) ? json_decode($review['proposed_prose'], true) : [];
+        $hintText = $review['hint_text'];
+
+        // Execute direct repair / registration
+        $result = $this->directRepair($reviewerId, $formulaId, $proposedLatex, $proposedProse, $hintText, 'approved_review');
+
+        // Update review status
+        $updateStmt = $pdo->prepare("UPDATE formula_reviews SET status = 'approved', reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP WHERE id = ?");
+        $updateStmt->execute([$reviewerId, $reviewId]);
+
+        return $result;
+    }
+
+    /**
+     * Rejects a review suggestion with notes.
+     */
+    public function rejectReview(int $reviewId, int $reviewerId, ?string $notes = null): bool
+    {
+        $pdo = Flight::db();
+        $stmt = $pdo->prepare("UPDATE formula_reviews SET status = 'rejected', reviewed_by = ?, review_notes = ?, reviewed_at = CURRENT_TIMESTAMP WHERE id = ?");
+        return $stmt->execute([$reviewerId, $notes, $reviewId]);
+    }
+
+    /**
+     * Executes direct equation and prose repair / creation on shard, MariaDB, and index (Curator / Admin Tier).
+     */
+    public function directRepair(int $userId, string $formulaId, ?string $latex = null, ?array $prose = null, ?string $hint = null, string $action = 'direct_repair'): array
+    {
+        $defaultTitle = $prose['title'] ?? 'Custom Physical Relation';
+        $shardFile = $this->getOrCreateShardPathForFormula($formulaId, $defaultTitle);
+        $shardData = file_exists($shardFile) ? (json_decode(file_get_contents($shardFile), true) ?: []) : [];
+
+        $isNew = !isset($shardData[$formulaId]);
+        $repairsMade = [];
+
+        if ($isNew) {
+            $formulaData = [
+                'id' => $formulaId,
+                'title' => $prose['title'] ?? 'Custom Physical Relation',
+                'equation' => $latex ?? '',
+                'conceptual_definition' => $prose['conceptual_definition'] ?? '',
+                'intuitive_summary' => $prose['intuitive_summary'] ?? '',
+                'interpretation' => $prose['interpretation'] ?? '',
+                'symmetry_origin' => $prose['symmetry_origin'] ?? '',
+                'limits_and_boundary' => $prose['limits_and_boundary'] ?? '',
+                'unit_system' => 'SI',
+                'status' => 'published',
+                'semantic_variables' => (object)[]
+            ];
+            $beforeSnapshot = [];
+            $repairsMade[] = "Registered new formula '{$formulaId}' into shard " . basename($shardFile);
+        } else {
+            $formulaData = $shardData[$formulaId];
+            $beforeSnapshot = $formulaData;
+        }
+
+        // 1. Update LaTeX equation if provided
+        $cleanEq = $formulaData['equation'] ?? '';
+        if (!empty($latex) && $latex !== $cleanEq) {
+            $cleanEq = $latex;
+            $repairsMade[] = "Updated LaTeX equation: {$cleanEq}";
+        }
+
+        // 2. Merge prose overrides if provided
+        if (!empty($prose) && is_array($prose)) {
+            foreach ($prose as $field => $val) {
+                if (is_string($val) && (!isset($formulaData[$field]) || $formulaData[$field] !== $val)) {
+                    $formulaData[$field] = $val;
+                    $repairsMade[] = "Updated narrative field: '{$field}'";
+                }
+            }
+        }
+
+        // 3. Apply hint / reference text parser if provided
+        if (!empty($hint)) {
+            $this->applyHintText($formulaData, $cleanEq, $hint, $repairsMade);
+        }
+
+        // 4. Sanitize prose fields
+        $proseFields = ['description', 'conceptual_definition', 'intuitive_summary', 'interpretation', 'symmetry_origin', 'limits_and_boundary'];
+        foreach ($proseFields as $f) {
+            if (isset($formulaData[$f]) && is_string($formulaData[$f])) {
+                $sanitized = $this->sanitizeProse($formulaData[$f]);
+                if ($sanitized !== $formulaData[$f]) {
+                    $formulaData[$f] = $sanitized;
+                    $repairsMade[] = "Sanitized math delimiters in '{$f}'";
+                }
+            }
+        }
+
+        // 5. Commit to Shard File
+        $formulaData['equation'] = $cleanEq;
+        $shardData[$formulaId] = $formulaData;
+
+        // Clean neighbor formula semantic_variables format
+        foreach ($shardData as $fKey => &$fVal) {
+            if (is_array($fVal)) {
+                $sVars = $fVal['semantic_variables'] ?? [];
+                if (!is_array($sVars) || empty($sVars)) {
+                    $fVal['semantic_variables'] = (object)[];
+                }
+            }
+        }
+        unset($fVal);
+
+        file_put_contents($shardFile, json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), LOCK_EX);
+
+        // 6. Commit to MariaDB (INSERT or UPDATE with equation_svg = NULL for clean client MathJax)
+        $pdo = Flight::db();
+        $dbStmt = $pdo->prepare("
+            INSERT INTO formulas (id, title, equation, equation_svg, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, status)
+            VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'published')
+            ON DUPLICATE KEY UPDATE
+                title = VALUES(title),
+                equation = VALUES(equation),
+                equation_svg = NULL,
+                conceptual_definition = VALUES(conceptual_definition),
+                intuitive_summary = VALUES(intuitive_summary),
+                interpretation = VALUES(interpretation),
+                symmetry_origin = VALUES(symmetry_origin),
+                limits_and_boundary = VALUES(limits_and_boundary),
+                semantic_variables = VALUES(semantic_variables),
+                status = 'published'
+        ");
+
+        $dbStmt->execute([
+            $formulaId,
+            $formulaData['title'] ?? 'Custom Physical Relation',
+            $cleanEq,
+            $formulaData['conceptual_definition'] ?? null,
+            $formulaData['intuitive_summary'] ?? null,
+            $formulaData['interpretation'] ?? null,
+            $formulaData['symmetry_origin'] ?? null,
+            $formulaData['limits_and_boundary'] ?? null,
+            isset($formulaData['semantic_variables']) ? json_encode($formulaData['semantic_variables'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null
+        ]);
+
+        // 7. Synchronize formulas_latex_index.json
+        $latexIndexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
+        if (file_exists($latexIndexFile)) {
+            $indexData = json_decode(file_get_contents($latexIndexFile), true) ?: [];
+            $normLatex = $this->physicsService->normalizeLatex($cleanEq);
+            if (!empty($normLatex)) {
+                $indexData[$normLatex] = $formulaId;
+                file_put_contents($latexIndexFile, json_encode($indexData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), LOCK_EX);
+            }
+        }
+
+        $afterSnapshot = $formulaData;
+
+        // 8. Record Audit Log
+        $auditStmt = $pdo->prepare("
+            INSERT INTO formula_audit_logs (formula_id, user_id, action, before_snapshot, after_snapshot, applied_diff, ip_address)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        $auditStmt->execute([
+            $formulaId,
+            $userId,
+            $action,
+            json_encode($beforeSnapshot, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            json_encode($afterSnapshot, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            implode("; ", $repairsMade),
+            $ip
+        ]);
+
+        return [
+            'formula_id' => $formulaId,
+            'shard_file' => $shardFile,
+            'clean_equation' => $cleanEq,
+            'repairs_made' => $repairsMade,
+            'formula' => $formulaData
+        ];
+    }
+
+    /**
+     * Sanitizes prose strings with precision math delimiter boundaries.
+     */
+    public function sanitizeProse(string $text): string
+    {
+        if (empty($text)) return '';
+
+        $text = strtr($text, [
+            'χ_m' => '$\\chi_m$',
+            'μ_0' => '$\\mu_0$',
+            '4π'  => '$4\\pi$',
+            'dau' => '\\tau',
+            'extbf' => '\\mathbf',
+            '\\text{\\} \\text{' => '$\\epsilon_0$',
+            '\\text{\\} \\text$' => '$\\epsilon_0$',
+            '\\text{\\}' => '$\\epsilon_0$',
+        ]);
+
+        $text = preg_replace('/(?<![a-zA-Z])abla\b/u', '\\nabla', $text);
+        $text = preg_replace('/\\\\n\\\\nabla/u', '\\nabla', $text);
+        $text = preg_replace('/\\\\n\s*\\\\nabla/u', '\\nabla', $text);
+
+        // Wrap known fraction formulas outside math mode
+        $parts = explode('$', $text);
+        for ($i = 0; $i < count($parts); $i += 2) {
+            $segment = $parts[$i];
+            $segment = preg_replace_callback('/(?<![a-zA-Z0-9$\\\\])((?:[A-Za-z](?:_[a-zA-Z0-9]+)?\s*=\s*)?(?:-\\s*)?\\\\frac\{[^{}]+\}\{[^{}]+\}(?:\s*=\s*0)?)(?![a-zA-Z0-9$])/u', function($m) {
+                return '$' . trim($m[1]) . '$';
+            }, $segment);
+
+            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])L\s*=\s*T\s*-\s*V(?![a-zA-Z0-9$])/u', '$L = T - V$', $segment);
+            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])Q_i\^?\{?nc\}?(?![a-zA-Z0-9$])/u', '$Q_i^{\\text{nc}}$', $segment);
+            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([Fqp]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+            $parts[$i] = $segment;
+        }
+        $text = implode('$', $parts);
+        $text = preg_replace('/\$+/', '$', $text);
+        $text = preg_replace('/\$\s*\$/', '', $text);
+
+        return trim(preg_replace('/\s+/', ' ', $text));
+    }
+
+    /**
+     * Parses free-form reference text with headings into targeted formula fields.
+     */
+    protected function applyHintText(array &$formulaData, string &$cleanEq, string $hintText, array &$repairsMade): void
+    {
+        $normalized = str_replace(["\r\n", "\r"], "\n", $hintText);
+        $headingPatterns = [
+            'limits_and_boundary' => '/(?:^|\n)(?:#{1,4}\s*)?(?:3\.\s*Foundational\s*Anchor:\s*Limits|Limiting\s*Cases\s*&?\s*Boundaries|Limits\s*&?\s*Boundaries|Limiting\s*Cases)[:\s]*(.*?)(?=(?:\n(?:#{1,4}\s*)?(?:Interpretation|Symmetry|Conceptual|Intuitive|Equation|$)))/is',
+            'interpretation'      => '/(?:^|\n)(?:#{1,4}\s*)?(?:1\.\s*Constitutive\s*Identity:\s*Interpretation|Interpretation\s*\(Local\s*Identity\)|Interpretation)[:\s]*(.*?)(?=(?:\n(?:#{1,4}\s*)?(?:Symmetry|Limiting|Limits|Conceptual|Intuitive|Equation|$)))/is',
+            'symmetry_origin'     => '/(?:^|\n)(?:#{1,4}\s*)?(?:2\.\s*Invariance\s*Vector:\s*Symmetry|Symmetry\s*&?\s*Coordinate\s*Invariance|Symmetry\s*Origin|Symmetry)[:\s]*(.*?)(?=(?:\n(?:#{1,4}\s*)?(?:Interpretation|Limiting|Limits|Conceptual|Intuitive|Equation|$)))/is',
+            'conceptual_definition' => '/(?:^|\n)(?:#{1,4}\s*)?(?:Conceptual\s*Definition|Definition)[:\s]*(.*?)(?=(?:\n(?:#{1,4}\s*)?(?:Interpretation|Symmetry|Limiting|Limits|Intuitive|Equation|$)))/is',
+            'intuitive_summary'   => '/(?:^|\n)(?:#{1,4}\s*)?(?:Intuitive\s*Summary|Summary)[:\s]*(.*?)(?=(?:\n(?:#{1,4}\s*)?(?:Interpretation|Symmetry|Limiting|Limits|Conceptual|Equation|$)))/is',
+            'equation'            => '/(?:^|\n)(?:#{1,4}\s*)?(?:Equation|Formula\s*LaTeX|LaTeX)[:\s]*(.*?)(?=(?:\n(?:#{1,4}\s*)?(?:Interpretation|Symmetry|Limiting|Limits|Conceptual|Intuitive|$)))/is',
+        ];
+
+        $matchedAny = false;
+        foreach ($headingPatterns as $field => $pattern) {
+            if (preg_match($pattern, $normalized, $matches)) {
+                $content = trim($matches[1]);
+                if (!empty($content)) {
+                    $matchedAny = true;
+                    if ($field === 'equation') {
+                        $cleanEq = $content;
+                        $repairsMade[] = "Overrode LaTeX equation from reference section: {$cleanEq}";
+                    } else {
+                        $formulaData[$field] = $this->sanitizeProse($content);
+                        $repairsMade[] = "Updated '{$field}' from reference text section";
+                    }
+                }
+            }
+        }
+
+        // If no specific headings matched, append/update limits_and_boundary or general hint
+        if (!$matchedAny && strlen($hintText) > 10) {
+            if (stripos($hintText, 'limit') !== false || stripos($hintText, 'boundary') !== false) {
+                $formulaData['limits_and_boundary'] = $this->sanitizeProse($hintText);
+                $repairsMade[] = "Updated 'limits_and_boundary' from plain reference text";
+            }
+        }
+    }
+}

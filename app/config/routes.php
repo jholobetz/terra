@@ -52,6 +52,15 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/api/search', [ $app->physicsController(), 'apiSearch' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 
+		// Multi-Tier Auth & Formula Review API Routes
+		$router->get('/api/auth/me', [ $app->physicsController(), 'apiGetCurrentUser' ]);
+		$router->post('/api/auth/switch-role', [ $app->physicsController(), 'apiSwitchDevRole' ]);
+		$router->post('/api/suggest-repair', [ $app->physicsController(), 'apiSuggestRepair' ]);
+		$router->post('/api/apply-repair', [ $app->physicsController(), 'apiApplyRepair' ]);
+		$router->get('/api/reviews', [ $app->physicsController(), 'apiGetReviews' ]);
+		$router->post('/api/reviews/approve', [ $app->physicsController(), 'apiApproveReview' ]);
+		$router->post('/api/reviews/reject', [ $app->physicsController(), 'apiRejectReview' ]);
+
 		// Admin & Developer Control Panel Routes
 		$router->get('/admin/dashboard', [ $app->physicsController(), 'adminDashboard' ]);
 		$router->get('/admin/editor', [ $app->physicsController(), 'wysiwygEditor' ]);

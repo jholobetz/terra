@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use flight\Engine;
+use Flight;
 
 require_once PROJECT_ROOT . '/app/logic/VariableAggregator.php';
 
@@ -218,6 +219,8 @@ class PhysicsController
             return;
         }
 
+        $currentUser = Flight::authService()->getCurrentUser();
+
         $this->renderWithLayout('physics/equation_explainer', [
             'title' => 'Interactive Equation Explainer',
             'id' => $id,
@@ -226,7 +229,8 @@ class PhysicsController
             'subtopics' => $subtopics,
             'subtopicSlug' => $subtopicSlug,
             'subtopicVariables' => $subtopicVariables,
-            'domain' => $domain
+            'domain' => $domain,
+            'currentUser' => $currentUser
         ]);
     }
 
@@ -1328,4 +1332,253 @@ class PhysicsController
         ]);
         exit;
     }
+
+    /**
+     * REST Endpoint: Get Current Authenticated User & Role
+     */
+    public function apiGetCurrentUser()
+    {
+        $auth = Flight::authService();
+        $user = $auth->getCurrentUser();
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'user' => [
+                'id' => $user->id ?? 0,
+                'display_name' => $user->display_name ?? 'Anonymous Visitor',
+                'email' => $user->email ?? '',
+                'role' => $user->role ?? 'guest',
+                'avatar_url' => $user->avatar_url ?? null
+            ]
+        ]);
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Switch Dev Mock Role (Development Mode Only)
+     */
+    public function apiSwitchDevRole()
+    {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $role = $input['role'] ?? 'guest';
+
+        $auth = Flight::authService();
+        $success = $auth->switchDevRole($role);
+        $user = $auth->getCurrentUser();
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => $success,
+            'user' => [
+                'id' => $user->id ?? 0,
+                'display_name' => $user->display_name ?? 'Anonymous Visitor',
+                'email' => $user->email ?? '',
+                'role' => $user->role ?? 'guest',
+                'avatar_url' => $user->avatar_url ?? null
+            ]
+        ]);
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Submit Formula Repair Suggestion (Contributor Tier)
+     */
+    public function apiSuggestRepair()
+    {
+        $auth = Flight::authService();
+        $user = $auth->getCurrentUser();
+
+        if (!$auth->hasRole('contributor', $user)) {
+            header('Content-Type: application/json');
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Permission denied: Contributor privileges required.']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $formulaId = $input['formula_id'] ?? '';
+        $latex = $input['latex'] ?? null;
+        $prose = $input['prose'] ?? null;
+        $hint = $input['hint'] ?? null;
+
+        if (empty($formulaId)) {
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Formula ID is required.']);
+            exit;
+        }
+
+        try {
+            $reviewService = Flight::formulaReviewService();
+            $reviewId = $reviewService->createSuggestion($user->id, $formulaId, $latex, $prose, $hint);
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Your suggestion has been submitted for review.',
+                'review_id' => $reviewId
+            ]);
+        } catch (\Throwable $e) {
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Direct Formula Repair (Curator / Admin Tier)
+     */
+    public function apiApplyRepair()
+    {
+        $auth = Flight::authService();
+        $user = $auth->getCurrentUser();
+
+        if (!$auth->hasRole('curator', $user)) {
+            header('Content-Type: application/json');
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $formulaId = $input['formula_id'] ?? '';
+        $latex = $input['latex'] ?? null;
+        $prose = $input['prose'] ?? null;
+        $hint = $input['hint'] ?? null;
+
+        if (empty($formulaId)) {
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Formula ID is required.']);
+            exit;
+        }
+
+        try {
+            $reviewService = Flight::formulaReviewService();
+            $result = $reviewService->directRepair($user->id, $formulaId, $latex, $prose, $hint, 'direct_repair');
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Formula updated and synchronized successfully!',
+                'data' => $result
+            ]);
+        } catch (\Throwable $e) {
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Get Review Queue
+     */
+    public function apiGetReviews()
+    {
+        $status = $_GET['status'] ?? 'pending';
+        $formulaId = $_GET['formula_id'] ?? null;
+
+        try {
+            $reviewService = Flight::formulaReviewService();
+            $reviews = $reviewService->getReviews($status, $formulaId);
+
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'reviews' => $reviews]);
+        } catch (\Throwable $e) {
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Approve Review Suggestion (Curator / Admin Tier)
+     */
+    public function apiApproveReview()
+    {
+        $auth = Flight::authService();
+        $user = $auth->getCurrentUser();
+
+        if (!$auth->hasRole('curator', $user)) {
+            header('Content-Type: application/json');
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $reviewId = (int)($input['review_id'] ?? 0);
+
+        if ($reviewId <= 0) {
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Valid review ID is required.']);
+            exit;
+        }
+
+        try {
+            $reviewService = Flight::formulaReviewService();
+            $result = $reviewService->approveReview($reviewId, $user->id);
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Review approved and changes committed to shard & database!',
+                'data' => $result
+            ]);
+        } catch (\Throwable $e) {
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Reject Review Suggestion (Curator / Admin Tier)
+     */
+    public function apiRejectReview()
+    {
+        $auth = Flight::authService();
+        $user = $auth->getCurrentUser();
+
+        if (!$auth->hasRole('curator', $user)) {
+            header('Content-Type: application/json');
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $reviewId = (int)($input['review_id'] ?? 0);
+        $notes = $input['notes'] ?? null;
+
+        if ($reviewId <= 0) {
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Valid review ID is required.']);
+            exit;
+        }
+
+        try {
+            $reviewService = Flight::formulaReviewService();
+            $reviewService->rejectReview($reviewId, $user->id, $notes);
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Review rejected.'
+            ]);
+        } catch (\Throwable $e) {
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
 }
+

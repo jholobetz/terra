@@ -116,8 +116,9 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                             </h2>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <button id="btn-define-formula" style="display: none; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.1); color: #64ffda; border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease;">
-                                ✨ Define
+                            <button id="btn-open-curator-drawer" style="padding: 5px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.08); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                <span id="btn-curator-label">Curate / Suggest Fix</span>
                             </button>
                             <span id="formula-badge" style="display: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;"></span>
                         </div>
@@ -373,6 +374,155 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 }
 </style>
 
+<!-- Curator Slide-Over Drawer Modal -->
+<div id="curator-drawer-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 9998; transition: opacity 0.3s ease;"></div>
+<div id="curator-drawer" style="position: fixed; top: 0; right: -560px; width: 540px; max-width: 95vw; height: 100vh; background: #0b1329; border-left: 1px solid rgba(100, 255, 218, 0.2); z-index: 9999; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.8); transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1); box-sizing: border-box;">
+    
+    <!-- Drawer Header -->
+    <div style="padding: 18px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; background: rgba(15, 23, 42, 0.6);">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <h3 style="margin: 0; font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; font-weight: 600;">Equation Curation Workspace</h3>
+                <span id="drawer-user-role-badge" style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; background: rgba(100,255,218,0.12); color: var(--accent-default, #64ffda); border: 1px solid rgba(100,255,218,0.3);"></span>
+            </div>
+            <p id="drawer-formula-id-label" style="margin: 3px 0 0 0; font-size: 0.78rem; color: var(--text-muted, #94a3b8); font-family: 'Fira Code', monospace;">--</p>
+        </div>
+        <button id="btn-close-curator-drawer" style="background: transparent; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: color 0.2s;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#94a3b8'">&times;</button>
+    </div>
+
+    <!-- Drawer Navigation Tabs -->
+    <div style="display: flex; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(3, 7, 18, 0.4);">
+        <button class="drawer-tab active" data-tab="edit" style="flex: 1; padding: 10px 12px; background: transparent; border: none; border-bottom: 2px solid var(--accent-default, #64ffda); color: var(--accent-default, #64ffda); font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+            ✏️ Edit &amp; Reference
+        </button>
+        <button class="drawer-tab" data-tab="preview" style="flex: 1; padding: 10px 12px; background: transparent; border: none; border-bottom: 2px solid transparent; color: #94a3b8; font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+            👁️ Live Preview
+        </button>
+        <button class="drawer-tab" data-tab="reviews" style="flex: 1; padding: 10px 12px; background: transparent; border: none; border-bottom: 2px solid transparent; color: #94a3b8; font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <span>📋 Staged Queue</span>
+            <span id="drawer-staged-count-badge" style="font-size: 0.65rem; padding: 1px 5px; border-radius: 10px; background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">0</span>
+        </button>
+    </div>
+
+    <!-- Drawer Tab Contents (Scrollable) -->
+    <div style="flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 18px;">
+        
+        <!-- Tab 1: Edit & Reference -->
+        <div id="drawer-tab-content-edit" class="drawer-tab-pane" style="display: flex; flex-direction: column; gap: 16px;">
+            <div>
+                <label style="display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; font-family: 'Space Grotesk', sans-serif;">
+                    Formula Title / Identifier
+                </label>
+                <input id="drawer-field-title" type="text" placeholder="e.g. Poisson's Equation for Electrostatic Potential" style="width: 100%; padding: 8px 12px; background: rgba(3, 7, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; color: #ffffff; font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; box-sizing: border-box; outline: none;">
+            </div>
+
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <label style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: #cbd5e1; font-family: 'Space Grotesk', sans-serif;">
+                        LaTeX Equation
+                    </label>
+                    <button id="drawer-btn-autodraft" type="button" style="padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 5px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        <span>Auto-Draft</span>
+                    </button>
+                </div>
+                <textarea id="drawer-latex-input" rows="2" style="width: 100%; padding: 10px 12px; background: rgba(3, 7, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; color: #64ffda; font-family: 'Fira Code', monospace; font-size: 0.9rem; box-sizing: border-box; outline: none;"></textarea>
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; font-family: 'Space Grotesk', sans-serif;">
+                    Pasted Reference Text / Hint
+                </label>
+                <textarea id="drawer-hint-input" rows="5" placeholder="Paste textbook excerpts, limits analysis, or hints with section headings..." style="width: 100%; padding: 10px 12px; background: rgba(3, 7, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; color: #f1f5f9; font-family: sans-serif; font-size: 0.88rem; line-height: 1.4; box-sizing: border-box; outline: none;"></textarea>
+                <small style="display: block; font-size: 0.72rem; color: var(--text-muted, #94a3b8); margin-top: 4px;">Supports headers like 'Limiting Cases &amp; Boundaries:', 'Interpretation:', 'Symmetry Origin:'.</small>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 14px;">
+                <details style="cursor: pointer;">
+                    <summary style="font-size: 0.8rem; font-weight: 600; color: var(--accent-default, #64ffda); font-family: 'Space Grotesk', sans-serif; outline: none;">
+                        Advanced: Direct Field Overrides
+                    </summary>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+                        <div>
+                            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Interpretation</label>
+                            <textarea id="drawer-field-interpretation" rows="3" style="width: 100%; padding: 8px; background: rgba(3,7,18,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #e2e8f0; font-size: 0.85rem; box-sizing: border-box;"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Symmetry Origin</label>
+                            <textarea id="drawer-field-symmetry" rows="3" style="width: 100%; padding: 8px; background: rgba(3,7,18,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #e2e8f0; font-size: 0.85rem; box-sizing: border-box;"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Limiting Cases &amp; Boundaries</label>
+                            <textarea id="drawer-field-limits" rows="3" style="width: 100%; padding: 8px; background: rgba(3,7,18,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #e2e8f0; font-size: 0.85rem; box-sizing: border-box;"></textarea>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Tab 2: Live Preview -->
+        <div id="drawer-tab-content-preview" class="drawer-tab-pane" style="display: none; flex-direction: column; gap: 16px;">
+            <div style="background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(100, 255, 218, 0.15); border-radius: 8px; padding: 15px;">
+                <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-default, #64ffda); margin-bottom: 8px; font-weight: 600;">Rendered Equation</div>
+                <div id="drawer-preview-equation" style="font-size: 1.2rem; min-height: 40px; display: flex; align-items: center; justify-content: center; overflow-x: auto; color: #ffffff;">--</div>
+            </div>
+
+            <div style="background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 15px;">
+                <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin-bottom: 8px; font-weight: 600;">Rendered Limiting Cases &amp; Boundaries</div>
+                <div id="drawer-preview-limits" style="font-size: 0.88rem; line-height: 1.5; color: #cbd5e1;">--</div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Staged Queue -->
+        <div id="drawer-tab-content-reviews" class="drawer-tab-pane" style="display: none; flex-direction: column; gap: 14px;">
+            <div id="drawer-reviews-container" style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="text-align: center; padding: 30px 10px; color: var(--text-muted, #94a3b8); font-size: 0.85rem;">
+                    Loading review queue...
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Drawer Footer Actions -->
+    <div style="padding: 16px 24px; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(15, 23, 42, 0.8); display: flex; flex-direction: column; gap: 10px;">
+        <div id="drawer-status-alert" style="display: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem;"></div>
+        
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+            <button id="drawer-btn-suggest" style="padding: 8px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(255, 255, 255, 0.05); color: #f1f5f9; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; transition: all 0.2s;">
+                Submit for Review
+            </button>
+            <button id="drawer-btn-apply-direct" style="padding: 8px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.15); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.4); cursor: pointer; transition: all 0.2s;">
+                ⚡ Apply &amp; Sync Directly
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Dev Role Switcher Toolbar (Development Mode) -->
+<div id="dev-role-switcher-bar" style="position: fixed; bottom: 20px; left: 20px; z-index: 9990; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(100, 255, 218, 0.25); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 30px; padding: 6px 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+    <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--accent-default, #64ffda); font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 4px;">
+        <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981;"></span>
+        Role:
+    </span>
+    <select id="dev-role-select" style="background: rgba(3, 7, 18, 0.8); border: 1px solid rgba(100, 255, 218, 0.2); color: #ffffff; border-radius: 15px; padding: 3px 10px; font-size: 0.74rem; font-family: 'Space Grotesk', sans-serif; font-weight: 600; cursor: pointer; outline: none;">
+        <option value="admin">Admin (Core Maintainer)</option>
+        <option value="curator">Curator (Physicist)</option>
+        <option value="contributor">Contributor (Student)</option>
+        <option value="guest">Anonymous Guest</option>
+    </select>
+</div>
+
+<style>
+.drawer-tab:hover {
+    color: #ffffff !important;
+}
+.drawer-tab.active {
+    border-bottom-color: var(--accent-default, #64ffda) !important;
+    color: var(--accent-default, #64ffda) !important;
+}
+</style>
+
 <!-- Inject state from PHP to JS -->
 <script nonce="<?= $nonce ?>">
 window.INITIAL_ID = <?= json_encode($id) ?>;
@@ -383,6 +533,8 @@ window.PHYSICS_CONSTANTS = <?= $constantsJson ?>;
 window.SUBTOPIC_SLUG = <?= json_encode($subtopicSlug) ?>;
 window.SUBTOPIC_VARIABLES = <?= json_encode($subtopicVariables) ?>;
 window.INITIAL_DOMAIN = <?= json_encode($domain) ?>;
+window.CURRENT_USER = <?= json_encode($currentUser ?? (object)['role' => 'guest', 'display_name' => 'Guest']) ?>;
 </script>
 
 <script src="/js/equation_explainer.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/equation_explainer.js') ?>" defer></script>
+

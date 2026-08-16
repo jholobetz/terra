@@ -225,11 +225,23 @@ function sanitizeProseTeX(string $text): string {
             return '$' . trim($math) . '$';
         }, $segment);
 
+        // Wrap logic quantifiers and ontological predicates
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(\\\\exists\s+[a-zA-Z0-9]+(?:\s*:\s*[PQR]\([a-zA-Z0-9]+\))?(?:\s*(?:\\\\implies|\\\\iff|→)\s*(?:\\\\text\{Ont\}|Ont)\([a-zA-Z0-9]+\))?)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(\\\\exists\s+[a-zA-Z0-9]+|\\\\forall\s+[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([PQR]\([a-zA-Z0-9]+\))(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(?:\\\\text\{Ont\}|Ont)\(([a-zA-Z0-9]+)\)(?![a-zA-Z0-9$])/u', '$\\text{Ont}($1)$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(\\\\implies|\\\\iff)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+
+        // Wrap sub-indexed thermodynamic and physical variables (e.g. B_i - B_j, k_B T, B_i, B_j)
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([A-Za-z]_[a-zA-Z0-9]+\s*[-+><=]\s*[A-Za-z]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(k_B\s*T|k_B)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(T\s*\\\\to\s*0(?:\s*\\\\text\{K\}|K)?|T\s*\\\\to\s*\\\\infty|v\s*\\\\to\s*c|\\\\hbar\s*\\\\to\s*0)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+
         // Wrap common isolated relations: L = T - V, p_i = \frac{\partial L}{\partial \dot{q}_i}
         $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])L\s*=\s*T\s*-\s*V(?![a-zA-Z0-9$])/u', '$L = T - V$', $segment);
         $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])p_i\s*=\s*\\\\frac\{\\\\partial L\}\{\\\\partial \\\\dot\{q\}_i\}(?![a-zA-Z0-9$])/u', '$p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$', $segment);
         $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])Q_i\^?\{?nc\}?(?![a-zA-Z0-9$])/u', '$Q_i^{\\text{nc}}$', $segment);
-        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([Fqp]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+        $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([FqpB]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
         
         $parts[$i] = $segment;
     }

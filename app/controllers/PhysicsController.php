@@ -1454,12 +1454,12 @@ class PhysicsController
         $prose = $input['prose'] ?? null;
         $hint = $input['hint'] ?? null;
 
-        // 1. Resolve Target (URL, ID, or LaTeX)
+        // 1. Resolve Target (Formula ID takes precedence if valid, then URL query, then LaTeX)
         $target = '';
-        if (!empty($url) && (strpos($url, 'id=') !== false || strpos($url, 'latex=') !== false)) {
-            $target = $url;
-        } else if (!empty($formulaId) && $formulaId !== 'synthesized-custom') {
+        if (!empty($formulaId) && $formulaId !== 'synthesized-custom' && !str_starts_with($formulaId, 'synthesized-')) {
             $target = $formulaId;
+        } else if (!empty($url) && (strpos($url, 'id=') !== false || strpos($url, 'latex=') !== false)) {
+            $target = $url;
         } else if (!empty($latex)) {
             $target = $latex;
         }

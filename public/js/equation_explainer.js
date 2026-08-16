@@ -2135,7 +2135,8 @@ const EquationExplainer = {
                 this.currentId = f.id;
                 this.currentLatex = data.data.clean_equation || f.equation;
 
-                // Update drawer form fields
+                // Synchronize top main formula bar and drawer inputs
+                if (this.latexInput) this.latexInput.value = this.currentLatex;
                 if (this.drawerLatexInput) this.drawerLatexInput.value = this.currentLatex;
                 if (this.drawerFieldTitle) this.drawerFieldTitle.value = f.title || '';
                 if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = f.interpretation || '';
@@ -2146,10 +2147,21 @@ const EquationExplainer = {
                     this.drawerFormulaIdLabel.textContent = `Formula ID: ${f.id}`;
                 }
 
-                // Render main UI and update MathJax
+                // Render main UI, recompile MathJax equation and scenarios
                 this.renderFormula(f, this.currentSubtopics || []);
                 this.compileMathJax(this.currentLatex);
                 this.updateDrawerLivePreview();
+
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    const targets = [];
+                    if (this.mathRenderTarget) targets.push(this.mathRenderTarget);
+                    if (this.conceptualIntroCard) targets.push(this.conceptualIntroCard);
+                    if (this.aiScenariosList) targets.push(this.aiScenariosList);
+                    if (this.drawerPreviewTarget) targets.push(this.drawerPreviewTarget);
+                    if (targets.length > 0) {
+                        window.MathJax.typesetPromise(targets).catch(e => console.warn('MathJax typeset:', e));
+                    }
+                }
 
                 this.showDrawerAlert('✓ LaTeX decorrupted, hint applied, and shard/database synchronized!');
 

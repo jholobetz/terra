@@ -250,19 +250,26 @@ class FormulaReviewService
             $beforeSnapshot = $formulaData;
         }
 
-        // 1. Update LaTeX equation if provided
+        // 1. Update & Decorrupt LaTeX equation
         $cleanEq = $formulaData['equation'] ?? '';
-        if (!empty($latex) && $latex !== $cleanEq) {
+        if (!empty($latex)) {
             $cleanEq = $latex;
-            $repairsMade[] = "Updated LaTeX equation: {$cleanEq}";
+        }
+        $decorruptedEq = $this->decorruptLatex($cleanEq);
+        if ($decorruptedEq !== $cleanEq) {
+            $cleanEq = $decorruptedEq;
+            $repairsMade[] = "Decorrupted LaTeX equation: {$cleanEq}";
         }
 
         // 2. Merge prose overrides if provided
         if (!empty($prose) && is_array($prose)) {
             foreach ($prose as $field => $val) {
                 if (is_string($val) && ($isNew || trim($val) !== '') && (!isset($formulaData[$field]) || $formulaData[$field] !== $val)) {
-                    $formulaData[$field] = $val;
-                    $repairsMade[] = "Updated narrative field: '{$field}'";
+                    $sanitizedVal = $this->sanitizeProse($val);
+                    if ($isNew || $sanitizedVal !== ($formulaData[$field] ?? '')) {
+                        $formulaData[$field] = $sanitizedVal;
+                        $repairsMade[] = "Updated narrative field: '{$field}'";
+                    }
                 }
             }
         }
@@ -284,7 +291,20 @@ class FormulaReviewService
             }
         }
 
-        // 5. Commit to Shard File
+        // 5. Sanitize semantic variables
+        $semVars = $formulaData['semantic_variables'] ?? [];
+        if (!is_array($semVars) || empty($semVars)) {
+            $formulaData['semantic_variables'] = (object)[];
+        } else {
+            $cleanSemVars = [];
+            foreach ($semVars as $k => $v) {
+                $cleanK = str_replace('$', '', trim($k));
+                $cleanSemVars[$cleanK] = $v;
+            }
+            $formulaData['semantic_variables'] = $cleanSemVars;
+        }
+
+        // 6. Commit to Shard File
         $formulaData['equation'] = $cleanEq;
         $shardData[$formulaId] = $formulaData;
 
@@ -301,7 +321,7 @@ class FormulaReviewService
 
         file_put_contents($shardFile, json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), LOCK_EX);
 
-        // 6. Commit to MariaDB (INSERT or UPDATE with equation_svg = NULL for clean client MathJax)
+        // 7. Commit to MariaDB (INSERT or UPDATE with equation_svg = NULL for clean client MathJax)
         $pdo = Flight::db();
         $dbStmt = $pdo->prepare("
             INSERT INTO formulas (id, title, equation, equation_svg, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, status)
@@ -331,7 +351,7 @@ class FormulaReviewService
             isset($formulaData['semantic_variables']) ? json_encode($formulaData['semantic_variables'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null
         ]);
 
-        // 7. Synchronize formulas_latex_index.json
+        // 8. Synchronize formulas_latex_index.json
         $latexIndexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
         if (file_exists($latexIndexFile)) {
             $indexData = json_decode(file_get_contents($latexIndexFile), true) ?: [];
@@ -344,7 +364,7 @@ class FormulaReviewService
 
         $afterSnapshot = $formulaData;
 
-        // 8. Record Audit Log
+        // 9. Record Audit Log
         $auditStmt = $pdo->prepare("
             INSERT INTO formula_audit_logs (formula_id, user_id, action, before_snapshot, after_snapshot, applied_diff, ip_address)
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -370,12 +390,41 @@ class FormulaReviewService
     }
 
     /**
-     * Sanitizes prose strings with precision math delimiter boundaries.
+     * Decorrupts LaTeX equation strings (e.g. converting slash derivatives and restoring math operators).
+     */
+    public function decorruptLatex(string $latex): string
+    {
+        $clean = trim($latex);
+        if (empty($clean)) return '';
+
+        // Slash derivative conversion: dp^u/dtau -> \frac{dp^\mu}{d\tau}
+        if (strpos($clean, 'dp^') !== false && strpos($clean, '\frac') === false) {
+            $clean = preg_replace('/dp\^?\\\\?([a-zA-Z]+)\/d\\\\?([a-zA-Z]+)/', '\frac{dp^\1}{d\\\2}', $clean);
+        }
+
+        $clean = strtr($clean, [
+            'dau' => '\\tau',
+            'extbf' => '\\mathbf',
+        ]);
+
+        return $clean;
+    }
+
+    /**
+     * Sanitizes prose strings with precision math delimiter boundaries and paragraph preservation.
      */
     public function sanitizeProse(string $text): string
     {
         if (empty($text)) return '';
 
+        // Fast-path early exit for clean prose containing no LaTeX or special TeX characters
+        if (strpos($text, '$') === false && strpos($text, '\\') === false && !preg_match('/[χμ⟨∇]/u', $text)) {
+            return $text;
+        }
+
+        $originalInput = $text;
+
+        // 1. Optimized symbol lookup table & unescaped character corruptions
         $text = strtr($text, [
             'χ_m' => '$\\chi_m$',
             'μ_0' => '$\\mu_0$',
@@ -387,28 +436,117 @@ class FormulaReviewService
             '\\text{\\}' => '$\\epsilon_0$',
         ]);
 
+        // Replace orphaned 'abla' or '\\n\\nabla' that resulted from corrupted '\nabla'
         $text = preg_replace('/(?<![a-zA-Z])abla\b/u', '\\nabla', $text);
         $text = preg_replace('/\\\\n\\\\nabla/u', '\\nabla', $text);
         $text = preg_replace('/\\\\n\s*\\\\nabla/u', '\\nabla', $text);
+        $text = preg_replace('/\\$\\s*\\\\n\\s*\\$\\s*\\\\nabla/u', '$\\nabla', $text);
 
-        // Wrap known fraction formulas outside math mode
+        // 2. Fix specific legacy corrupted TeX patterns
+        $text = preg_replace('/[χ\chi]_[m]\s*=\s*-\s*\$\s*\\\\frac\{[^}]+\}\{[^}]+\}\s*\$\s*[⟨<]\s*r\^2\s*[⟩>]/u', '$\\chi_m = -\\frac{\\mu_0 N Z e^2}{6m_e} \\langle r^2 \\rangle$', $text);
+        $text = preg_replace('/-\$\s*\\\\frac\{\\\\rho\}\{"\}\s*\$/u', '$-\\frac{\\rho}{\\epsilon_0}$', $text);
+        $text = preg_replace('/\\\\frac\{\\\\rho\}\{"\}/u', '\\frac{\\rho}{\\epsilon_0}', $text);
+
+        // 3. Fix fragmented math delimiters in continuity and electrostatics equations
+        $text = str_replace('$\\frac{\\partial \\rho}{\\partial t}$ +$\\nabla \\cdot (\\rho \\mathbf{u})$ = 0$', '$\\frac{\\partial \\rho}{\\partial t} + \\nabla \\cdot (\\rho \\mathbf{u}) = 0$', $text);
+        $text = str_replace('$\\frac{\\partial \\rho}{\\partial t}$ + $\\nabla \\cdot$ ($\\rho \\mathbf{u}$) = 0$', '$\\frac{\\partial \\rho}{\\partial t} + \\nabla \\cdot (\\rho \\mathbf{u}) = 0$', $text);
+        $text = str_replace('$\\frac{\\partial \\rho}{\\partial t}$ > 0$', '$\\frac{\\partial \\rho}{\\partial t} > 0$', $text);
+        $text = str_replace('$\\nabla \\cdot (\\rho \\mathbf{u})$ < 0$', '$\\nabla \\cdot (\\rho \\mathbf{u}) < 0$', $text);
+        $text = str_replace('$\\frac{\\partial \\rho}{\\partial t}$ < 0$', '$\\frac{\\partial \\rho}{\\partial t} < 0$', $text);
+        $text = str_replace('$\\nabla \\cdot (\\rho \\mathbf{u})$ > 0$', '$\\nabla \\cdot (\\rho \\mathbf{u}) > 0$', $text);
+        $text = str_replace('$\\frac{\\partial \\rho}{\\partial t}$ = 0$', '$\\frac{\\partial \\rho}{\\partial t} = 0$', $text);
+        $text = str_replace('$\\nabla \\cdot (\\rho \\mathbf{u})$ = 0$', '$\\nabla \\cdot (\\rho \\mathbf{u}) = 0$', $text);
+        $text = str_replace('solenoidality of velocity field \\nabla \\cdot \\mathbf{u} = 0.', 'solenoidality of velocity field $\\nabla \\cdot \\mathbf{u} = 0$.', $text);
+
+        // Fix Poisson/Laplace corruptions
+        $text = preg_replace('/\\\\nabla\s+imes\s+E\s*=\s*0/u', '$\\nabla \\times \\mathbf{E} = 0$', $text);
+        $text = preg_replace('/\\\\nabla\s+\\\\bullet\s+E\s*=\s*\\$?\\\\[fF]rac\{\\\\rho\}\{[^}]+\}\$?/u', '$\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\epsilon_0}$', $text);
+        $text = preg_replace('/E\s*=\s*-\s*\\\\nabla\s+V/u', '$\\mathbf{E} = -\\nabla V$', $text);
+        $text = preg_replace('/\\\\nabla\s+\\\\bullet\s+\(-\s*\\\\nabla\s+V\)\s*=\s*\\$?\\\\[fF]rac\{\\\\rho\}\{[^}]+\}\$?/u', '$\\nabla \\cdot (-\\nabla V) = \\frac{\\rho}{\\epsilon_0}$', $text);
+        $text = preg_replace('/\\\\nabla\^2\s+V\s*=\s*-\s*\\$?\\\\[fF]rac\{\\\\rho\}\{[^}]+\}\$?/u', '$\\nabla^2 V = -\\frac{\\rho}{\\epsilon_0}$', $text);
+        $text = preg_replace('/\\\\nabla\^2\s+V\s*=\s*0/u', '$\\nabla^2 V = 0$', $text);
+        $text = str_replace('$\\bullet$', '$\\cdot$', $text);
+        $text = preg_replace('/r\s*\$o\s*\\\\text\{\s*infinity,\s*\}\s*\$\s*V\s*\\$\\to\\\$\s*0/u', '$r \\to \\infty$, $V \\to 0$', $text);
+
+        // Fix broken ext{ / $\rho ext{$ patterns
+        $text = preg_replace('/([a-zA-Z0-9_\-\\\\]+)\s+ext\{\s*([^}]+)\s*\}/u', '$\1$ \\2', $text);
+        $text = preg_replace('/\\$\\s*\\\\rho\s+ext\\{\\s*\\$/u', '$\\rho$', $text);
+        $text = preg_replace('/\\$\\s*\\\\rho\\s*\\$/u', '$\\rho$', $text);
+        $text = preg_replace('/\\}\s*\\$\\s*\\\\rho\\s*\\$\s*ext\\{/u', '$\\rho$', $text);
+        $text = preg_replace('/\\}\s*V\s*ext\\{/u', '$V$', $text);
+        $text = preg_replace('/\\\\nabla\^2\s+V\s+ext\{/u', '$\\nabla^2 V$', $text);
+
+        // 4. General fraction and operator fixes
+        $text = preg_replace('/\\\\[fF]rac\{\s*\\\\partial\s*([a-zA-Z0-9_\-\\\\]+)\s*\$\s*\}\{\s*\$?\\\\partial\s*\$?\s*([a-zA-Z0-9_\-\\\\]+)\s*\}\$?/u', '$\\frac{\\partial $1}{\\partial $2}$', $text);
+
+        // 5. Additional symbol replacements
+        $text = preg_replace('/(?<!\\\\|\{)m_e(?!\})/u', '$m_e$', $text);
+        $text = preg_replace('/[⟨<]\s*r\^2\s*[⟩>]/u', '$\\langle r^2 \\rangle$', $text);
+
+        // 6. Clean up double $$
+        $text = preg_replace('/\$\$+/', '$', $text);
+
+        // 7. Standard TeX fixes
+        $text = preg_replace('/\\\\frac\{dp\^\$\s*u\}\{dau\}/i', '\\frac{dp^\\mu}{d\\tau}', $text);
+        $text = preg_replace('/F\^\{u\$\\\\rho\$\}/i', 'F^{\\mu\\rho}', $text);
+        $text = preg_replace('/F\^\{\$u\$\\\\rho\$\}/i', 'F^{\\mu\\rho}', $text);
+        $text = preg_replace('/U_\$\\rho/i', 'U_\\rho', $text);
+        $text = preg_replace('/You_\s*\$\s*u\s*\$to\$/i', 'four-velocity $U_\\mu$ to', $text);
+
+        // 8. Fix fragmented sums, vector displacement, and absolute bounds
+        $text = str_replace("'V($\\mathbf{r}_i$ - $\\mathbf{R}_I$)'", "'$V(\\mathbf{r}_i - \\mathbf{R}_I)$'", $text);
+        $text = str_replace("'(\\mathbf{r}_i - \\mathbf{R}_I)$'", "'$V(\\mathbf{r}_i - \\mathbf{R}_I)$'", $text);
+        $text = str_replace("'($\\mathbf{r}_i$ - $\\mathbf{R}_I$)'", "'$\\mathbf{r}_i - \\mathbf{R}_I$'", $text);
+        $text = str_replace("'$\\sum_{i$, I}'", "'$\\sum_{i, I}$'", $text);
+        $text = str_replace("$\\sum_{i$, I}", "$\\sum_{i, I}$", $text);
+        $text = str_replace("'|$\\mathbf{r}_i$ - $\\mathbf{R}_I$| $\\to\\infty$'", "'$|\\mathbf{r}_i - \\mathbf{R}_I| \\to \\infty$'", $text);
+        $text = str_replace("'|$\\mathbf{r}_i$ - $\\mathbf{R}_I$| $\\to$ 0'", "'$|\\mathbf{r}_i - \\mathbf{R}_I| \\to 0$'", $text);
+
+        $res = preg_replace('/\'?V\(\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\)\'?/u', '\'$V(\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4})$\'', $text);
+        if (!empty($res)) $text = $res;
+
+        $res = preg_replace('/\'?\|\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\|\s*\\$\\to\\\\infty\$\'?/u', '\'$|\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4}| \\to \\infty$\'', $text);
+        if (!empty($res)) $text = $res;
+
+        $res = preg_replace('/\'?\|\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\|\s*\\$\\to\\\$\s*0\'?/u', '\'$|\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4}| \\to 0$\'', $text);
+        if (!empty($res)) $text = $res;
+
+        // 9. Precision Math Delimiter Sanitizer
         $parts = explode('$', $text);
         for ($i = 0; $i < count($parts); $i += 2) {
             $segment = $parts[$i];
+            
+            // Wrap fraction equations: e.g. F_i = -\frac{\partial V}{\partial q_i}
             $segment = preg_replace_callback('/(?<![a-zA-Z0-9$\\\\])((?:[A-Za-z](?:_[a-zA-Z0-9]+)?\s*=\s*)?(?:-\\s*)?\\\\frac\{[^{}]+\}\{[^{}]+\}(?:\s*=\s*0)?)(?![a-zA-Z0-9$])/u', function($m) {
                 return '$' . trim($m[1]) . '$';
             }, $segment);
 
+            // Wrap Euler-Lagrange differential form
+            $segment = preg_replace_callback('/(?<![a-zA-Z0-9$\\\\])(\\\\frac\{d\}\{dt\}\\\\left\(\\\\frac\{\\\\partial L\}\{\\\\partial \\\\dot\{q\}_i\}\\\\right\)\s*-\s*\\\\frac\{\\\\partial L\}\{\\\\partial q_i\}\s*=\s*Q_i(?:\^\{?\\\\?text\{nc\}|nc\}?|\^\{nc\}))(?![a-zA-Z0-9$])/u', function($m) {
+                $math = str_replace('Q_i^{nc}', 'Q_i^{\\text{nc}}', $m[1]);
+                $math = str_replace('Q_i^nc', 'Q_i^{\\text{nc}}', $math);
+                return '$' . trim($math) . '$';
+            }, $segment);
+
+            // Wrap common isolated relations
             $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])L\s*=\s*T\s*-\s*V(?![a-zA-Z0-9$])/u', '$L = T - V$', $segment);
+            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])p_i\s*=\s*\\\\frac\{\\\\partial L\}\{\\\\partial \\\\dot\{q\}_i\}(?![a-zA-Z0-9$])/u', '$p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$', $segment);
             $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])Q_i\^?\{?nc\}?(?![a-zA-Z0-9$])/u', '$Q_i^{\\text{nc}}$', $segment);
             $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([Fqp]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+            
             $parts[$i] = $segment;
         }
         $text = implode('$', $parts);
+
+        // 10. Clean duplicate dollars and normalize spacing while preserving paragraph newlines
         $text = preg_replace('/\$+/', '$', $text);
         $text = preg_replace('/\$\s*\$/', '', $text);
-
-        return trim(preg_replace('/\s+/', ' ', $text));
+        $lines = explode("\n", $text);
+        $lines = array_map(function($line) {
+            return trim(preg_replace('/[ \t]+/', ' ', $line));
+        }, $lines);
+        $cleaned = trim(implode("\n", $lines));
+        return !empty($cleaned) ? $cleaned : $originalInput;
     }
 
     /**

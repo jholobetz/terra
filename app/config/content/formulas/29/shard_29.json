@@ -607,66 +607,39 @@
     "heisenberg-spin-hamiltonian-ident-c1b0522f": {
         "title": "Heisenberg Hamiltonian",
         "equation": "H = -2 \\sum_{i<j} J_{ij} \\mathbf{S}_i \\cdot \\mathbf{S}_j",
-        "interpretation": "The symbol $H$ represents the total energy of the system due to exchange interactions, known as the Heisenberg Hamiltonian. The sum $\\sum_{i<j}$ indicates that the interaction is calculated for every unique pair of spins $i$ and $j$ within the material, preventing double-counting. $J_{ij}$ is the exchange coupling constant between spin $i$ and spin $j$. Its sign determines the nature of the magnetic interaction: a positive $J_{ij}$ favors a ferromagnetic alignment (spins parallel), while a negative $J_{ij}$ favors an antiferromagnetic alignment (spins antiparallel). The term $\\mathbf{S}_i \\cdot \\mathbf{S}_j$ is the dot product of the quantum mechanical spin operators for the spins at sites $i$ and $j$. This dot product quantifies the degree of alignment between these two spin vectors. For example, if $\\mathbf{S}_i$ and $\\mathbf{S}_j$ are perfectly parallel, their dot product is maximal and positive; if they are perfectly antiparallel, it is maximally negative. The leading factor of $-2$ is a conventional constant often arising from specific derivations of the exchange integral, ensuring that a positive $J_{ij}$ (ferromagnetic) leads to a lower energy when spins are aligned, stabilizing the ferromagnetic state.",
-        "symmetry_origin": "The Heisenberg Hamiltonian originates from the quantum mechanical exchange interaction, a direct consequence of the Pauli exclusion principle for identical fermions (electrons). When the wavefunctions of two electrons overlap, their total electrostatic interaction energy depends on the spin state of the pair. This quantum effect effectively couples the spins. The specific form involving the dot product $\\mathbf{S}_i \\cdot \\mathbf{S}_j$ is a consequence of the rotational invariance of space, meaning that the underlying physics should not change if the entire system is rotated.",
-        "limits_and_boundary": "When the exchange coupling constant $J_{ij}$ approaches zero for all pairs, the exchange interaction vanishes, and the spins become non-interacting, leading to a system with no exchange energy $(H=0)$. This scenario typically occurs when there is negligible overlap between electron wavefunctions, often in very dilute magnetic systems or at large interatomic distances. Conversely, very large positive values of $J_{ij}$ imply strong ferromagnetic coupling, strongly favoring parallel spin alignment and a deeply negative (stable) exchange energy. Large negative values of $J_{ij}$ signify strong antiferromagnetic coupling, strongly favoring antiparallel spin alignment and also leading to a deeply negative (stable) exchange energy. At very high temperatures, thermal energy can overcome the exchange interaction, leading to a disordered paramagnetic state where spins are randomly oriented, effectively making the average $\\mathbf{S}_i \\cdot \\mathbf{S}_j$ zero. At absolute zero temperature, the system settles into its ground state, which could be ferromagnetically, antiferromagnetically, or otherwise ordered, as dictated by the signs and magnitudes of the $J_{ij}$ constants.",
+        "conceptual_definition": "The Heisenberg Spin Hamiltonian models the isotropic quantum mechanical exchange interaction between localized magnetic moments (spins $\\mathbf{S}_i, \\mathbf{S}_j$) in a crystalline lattice. Arising from electrostatic Coulomb repulsion combined with the Pauli exclusion principle, it governs quantum magnetism, spin waves (magnons), and phase transitions in ferromagnets and antiferromagnets.",
+        "intuitive_summary": "Quantifies the quantum energetic preference for neighboring electron spins to align parallel (ferromagnetism) or antiparallel (antiferromagnetism).",
+        "interpretation": "The Hamiltonian $H = -2 \\sum_{i<j} J_{ij} \\mathbf{S}_i \\cdot \\mathbf{S}_j$ sums over all unique unordered lattice pairs $(i, j)$ with $i < j$. The scalar product $\\mathbf{S}_i \\cdot \\mathbf{S}_j = S_i^x S_j^x + S_i^y S_j^y + S_i^z S_j^z$ measures the mutual angular orientation of localized spin operators. The exchange integral $J_{ij}$ dictates the ground-state ordering: $J_{ij} > 0$ energetically favors parallel spin alignment (ferromagnetism), whereas $J_{ij} < 0$ favors antiparallel alignment (antiferromagnetism). The prefactor $-2$ reflects Dirac's formulation of the pairwise orbital exchange energy.",
+        "symmetry_origin": "Possesses global $\\mathrm{SO}(3)$ spin-rotational symmetry (and $\\mathrm{SU}(2)$ invariance for spin-1/2 systems), meaning the energy is independent of the global spatial orientation of the magnetization vector. Derived from non-relativistic Coulomb interactions between overlapping multi-electron wavefunctions under antisymmetrization.",
+        "limits_and_boundary": "1. **Zero Exchange Coupling ($J_{ij} \\to 0$)**: Exchange energy vanishes ($H = 0$), recovering an uncorrelated paramagnetic ensemble. 2. **Strong Ferromagnetic Coupling ($J_{ij} \\gg k_B T, J > 0$)**: Ground state is a fully polarized ferromagnetic state with macroscopic total spin $S_{\\text{tot}} = N S$. 3. **High Temperature Limit ($T \\gg J/k_B$)**: Thermal fluctuations destroy long-range magnetic order, resulting in Curie-Weiss paramagnetic susceptibility $\\chi \\propto 1/(T - \\theta_{\\text{CW}})$. 4. **Ising Anisotropy Limit ($J_z \\gg J_x, J_y$)**: Heisenberg vector model reduces to the discrete scalar Ising model $H \\approx -2 \\sum J_{ij} S_i^z S_j^z$.",
         "semantic_variables": {
             "H": {
-                "name": "Heisenberg Hamiltonian",
-                "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The total quantum mechanical exchange energy operator of the interacting spin system."
+                "name": "Heisenberg Exchange Hamiltonian",
+                "type": "operator",
+                "unit": "J",
+                "description": "Total quantum mechanical exchange energy operator of the interacting spin lattice."
             },
             "J_{ij}": {
                 "name": "Exchange Coupling Constant",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The exchange integral quantifying the coupling strength between spins at sites $i$ and $j$. Positive values indicate ferromagnetic coupling; negative values indicate antiferromagnetic coupling."
+                "unit": "J",
+                "description": "Exchange coupling integral between lattice sites $i$ and $j$ ($J > 0$ ferromagnetic, $J < 0$ antiferromagnetic)."
             },
             "\\mathbf{S}_i": {
                 "name": "Spin Vector Operator at Site i",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "The quantum mechanical vector spin operator for the localized moment at lattice site $i$ (in units of $\\hbar$)."
+                "description": "Dimensionless quantum spin angular momentum vector operator $\\mathbf{S}_i = \\hat{\\mathbf{S}}_i / \\hbar$ at lattice site $i$."
             },
             "\\mathbf{S}_j": {
                 "name": "Spin Vector Operator at Site j",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "The quantum mechanical vector spin operator for the localized moment at lattice site $j$ (in units of $\\hbar$)."
-            },
-            "\\sum": {
-                "name": "Pairwise Summation Operator",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Summation over all distinct pairs of lattice sites satisfying the ordered condition $i < j$."
-            },
-            "\\cdot": {
-                "name": "Vector Dot Product Operator",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Scalar dot product between the spin vector operators $\\mathbf{S}_i$ and $\\mathbf{S}_j$."
-            },
-            "i": {
-                "name": "Lattice Site Index i",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Index identifying the $i$-th spin site in the crystal lattice."
-            },
-            "j": {
-                "name": "Lattice Site Index j",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Index identifying the $j$-th spin site in the crystal lattice."
+                "description": "Dimensionless quantum spin angular momentum vector operator $\\mathbf{S}_j = \\hat{\\mathbf{S}}_j / \\hbar$ at lattice site $j$."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Heisenberg Hamiltonian is a fundamental model in condensed matter physics that describes the quantum mechanical exchange interaction between localized magnetic moments (spins) in a material. It is crucial for understanding the microscopic origins of magnetic ordering phenomena such as ferromagnetism, antiferromagnetism, and ferrimagnetism by quantifying the energy associated with spin orientations.",
-        "intuitive_summary": "This equation models the energetic preference for parallel or antiparallel alignment of neighboring electron spins, which dictates a material's magnetic behavior.",
         "subcomponents": [
-            "force-on-the-i-th-particle-826b061f",
-            "zero-hubble-parameter-condition-cac0e02c",
-            "position-vector-of-particle-j-27445841",
             "scalar-product-of-quantum-spin-operators-234f2b59",
             "pairwise-summation-operator-0bb137ee",
             "exchange-coupling-constant-d6938b7c"

@@ -3818,7 +3818,9 @@ const EquationExplainer = {
         if (typeof text !== 'string' || !text) return text;
         
         const placeholders = [];
-        let tempText = text.replace(/\\par\b/g, ' ');
+        // Convert literal escaped newlines/tabs that are NOT LaTeX commands (e.g. \n2., \n*, \n\n) into real newlines
+        let tempText = text.replace(/\\r\\n|\\r(?![a-zA-Z])|\\n(?![a-zA-Z])/g, '\n').replace(/\\t(?![a-zA-Z])/g, ' ');
+        tempText = tempText.replace(/\\par\b/g, ' ');
         tempText = tempText.replace(/\\b\{([^\}]+)\}/g, '\\mathbf{$1}');
         tempText = tempText.replace(/\\b\$([^\$]+)\$/g, '$\\mathbf{$1}$');
         tempText = tempText.replace(/\\b\$/g, '$');
@@ -3901,11 +3903,11 @@ const EquationExplainer = {
             return protect(`\\(${match.trim()}\\)`);
         });
 
-        // 6. Wrap remaining un-delimited LaTeX backslash tokens
+        // 6. Wrap remaining un-delimited LaTeX backslash tokens (excluding control whitespace)
         tempText = tempText.replace(/(?:(?<!\\)\\([a-zA-Z]+)(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^])*)/g, match => {
             if (match.includes('\uE000')) return match;
             let trimmed = match.trim();
-            if (!trimmed) return match;
+            if (!trimmed || trimmed === '\\') return match;
             let trailingPunct = '';
             const punctMatch = trimmed.match(/[,.;:\)]+$/);
             if (punctMatch) {
@@ -3919,7 +3921,8 @@ const EquationExplainer = {
         // 7. Parse Markdown formatting (bold, italic, numbered list breaks) BEFORE restoring math placeholders
         tempText = tempText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         tempText = tempText.replace(/(?<!\*)\*(?!\*)([^*]+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
-        tempText = tempText.replace(/(?:\r?\n|\s)+(?=\d+\.\s+<strong>)/g, '<br><br>');
+        tempText = tempText.replace(/(?:\r?\n)+(?=\d+\.\s+)/g, '<br><br>');
+        tempText = tempText.replace(/\r?\n/g, '<br>');
 
         // 8. Restore protected math placeholders safely
         for (let i = 0; i < placeholders.length; i++) {

@@ -1756,75 +1756,57 @@
     "maximum-proper-time-identity-1-c4b38382-27bebbe7": {
         "title": "Proper Time Integral and Extremum Condition",
         "equation": "\\tau = \\int_{\\lambda_1}^{\\lambda_2} \\sqrt{-g_{\\mu\\nu} \\frac{dx^\\mu}{d\\lambda} \\frac{dx^\\nu}{d\\lambda}} \\, d\\lambda",
-        "interpretation": "The equation  is the proper time elapsed along a path (worldline) parameterized by$ (often an affine parameter). The term under the square root, , represents the infinitesimal spacetime interval, which is invariant under coordinate transformations. is the metric tensor, which describes the geometry of spacetime.  and  are the components of the tangent vector to the worldline, representing the rate of change of coordinates with respect to the parameter . The integral sums these infinitesimal proper time contributions along the path from $to$. In the context of relativistic mechanics, this integral is often extremized (minimized for massive particles, maximized for massless particles) to find the geodesics, which represent the paths of freely falling objects$.",
-        "symmetry_origin": "The origin of this formula lies in the principle of general covariance, which states that the laws of physics should be independent of the observer's coordinate system. The invariance of the spacetime interval under coordinate transformations ensures that the proper time is a physically meaningful quantity. It can also be derived from the principle of least action, where the proper time is the quantity to be extremized for a free particle's trajectory (geodesic).",
-        "limits_and_boundary": "As the parameter range approaches zero, the proper time also approaches zero, indicating no elapsed time for a zero-length path. In the limit of a static spacetime (), the formula simplifies to the integral of the proper time measured by a stationary observer. For very short paths, $approaches the infinitesimal spacetime interval$.",
+        "interpretation": "The equation computes the invariant proper time $\\tau$ elapsed along a timelike worldline parameterized by $\\lambda$ (such as coordinate time or an affine parameter). The integrand $\\sqrt{-g_{\\mu\\nu} \\frac{dx^\\mu}{d\\lambda} \\frac{dx^\\nu}{d\\lambda}}$ represents the invariant spacetime line element $d\\tau/d\\lambda$. Here $g_{\\mu\\nu}$ is the metric tensor encoding spacetime curvature, while $\\frac{dx^\\mu}{d\\lambda}$ and $\\frac{dx^\\nu}{d\\lambda}$ denote the four-velocity tangent vectors along the trajectory. Integrating between initial parameter $\\lambda_1$ and final parameter $\\lambda_2$ sums the infinitesimal proper time intervals, which free-falling test particles extremize (maximize) along timelike geodesics.",
+        "symmetry_origin": "The proper time integral is a manifest scalar under general coordinate transformations (diffeomorphism invariance and general covariance). It arises directly from the spacetime line element $d\\tau = \\sqrt{-ds^2}/c$ in Lorentzian manifolds with metric signature $(-, +, +, +)$ or $(+, -, -, -)$, embodying the geometric foundation of Einstein's General Relativity.",
+        "limits_and_boundary": "In flat Minkowski spacetime with metric $\\eta_{\\mu\\nu} = \\text{diag}(-c^2, 1, 1, 1)$, the formula reduces to the special relativistic time dilation relation $\\tau = \\int_{t_1}^{t_2} \\sqrt{1 - \\frac{v^2(t)}{c^2}} \\, dt$. For null (lightlike) trajectories where $ds^2 = 0$, the proper time identically vanishes ($\\Delta \\tau = 0$).",
         "semantic_variables": {
             "\\tau": {
                 "name": "Proper Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The time interval measured by an observer moving along the given worldline. It is an invariant quantity."
+                "description": "The elapsed invariant time measured by a clock traversing the specific timelike worldline in curved spacetime."
             },
             "\\lambda": {
-                "name": "Parameter",
+                "name": "Worldline Parameter",
                 "type": "variable",
-                "unit": "1",
-                "description": "An arbitrary parameter that is used to trace the worldline through spacetime. Often chosen as an affine parameter for geodesics."
+                "unit": "dimensionless",
+                "description": "The arbitrary scalar parameter tracing position coordinates along the worldline."
             },
             "\\lambda_1": {
-                "name": "Starting Parameter Value",
+                "name": "Initial Parameter Value",
                 "type": "variable",
-                "unit": "1",
-                "description": "The value of the parameter at the starting point of the worldline segment."
+                "unit": "dimensionless",
+                "description": "The parameter value at the start of the integration trajectory."
             },
             "\\lambda_2": {
-                "name": "Ending Parameter Value",
+                "name": "Final Parameter Value",
                 "type": "variable",
-                "unit": "1",
-                "description": "The value of the parameter at the ending point of the worldline segment."
+                "unit": "dimensionless",
+                "description": "The parameter value at the end of the integration trajectory."
             },
             "g_{\\mu\\nu}": {
-                "name": "Metric Tensor",
-                "type": "constant",
-                "unit": "1",
-                "description": "The spacetime metric tensor, which defines the geometry of spacetime and how distances and time intervals are measured. Its components are coordinate-dependent but its invariant interval is not."
+                "name": "Spacetime Metric Tensor",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The symmetric rank-2 metric tensor describing spacetime geometry and gravitational curvature."
             },
-            "dx^\\mu": {
-                "name": "Infinitesimal Coordinate Displacement",
+            "\\frac{dx^\\mu}{d\\lambda}": {
+                "name": "Four-Velocity Tangent Vector",
                 "type": "variable",
-                "unit": "m",
-                "description": "The infinitesimal change in the spacetime coordinate \\t along the worldline."
+                "unit": "m/s",
+                "description": "The tangent four-vector component representing coordinate change rate with respect to parameter $\\lambda$."
+            },
+            "\\frac{dx^\\nu}{d\\lambda}": {
+                "name": "Four-Velocity Tangent Vector",
+                "type": "variable",
+                "unit": "m/s",
+                "description": "The contravariant tangent four-vector component for index $\\nu$."
             },
             "d\\lambda": {
-                "name": "Infinitesimal Parameter Change",
-                "type": "variable",
-                "unit": "1",
-                "description": "The infinitesimal change in the parameter \\t along the worldline."
-            },
-            "\\frac{dx^\\mu}{d}": {
-                "name": "Four-Velocity Component",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The component of the four-velocity vector, representing the rate of change of the coordinate \\t with respect to the parameter \\t."
-            },
-            "\\frac{dx^\\nu}{d}": {
-                "name": "Four-Velocity Component",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The component of the four-velocity vector, representing the rate of change of the coordinate u with respect to the parameter \\t."
-            },
-            "g": {
-                "name": "Gravitational Acceleration",
-                "type": "constant",
-                "unit": "m/s²",
-                "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
-            },
-            "\\nu": {
-                "name": "Kinematic Viscosity",
-                "type": "variable",
-                "unit": "m²/s",
-                "description": "The ratio of dynamic viscosity to density, representing a fluid's resistance to shear flow under gravity."
+                "name": "Differential Parameter",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The infinitesimal integration measure along the worldline parameter."
             }
         },
         "status": "platinum",

@@ -1628,6 +1628,7 @@ const EquationExplainer = {
         this.solverRedirectContainer = document.getElementById('solver-redirect-container');
         this.solverRedirectLink = document.getElementById('solver-redirect-link');
         this.activeDomainSelect = document.getElementById('active-domain-select');
+        this.autocompleteDropdown = document.getElementById('latex-autocomplete-dropdown');
     },
 
     bindEvents() {
@@ -1639,6 +1640,13 @@ const EquationExplainer = {
                 }
             });
         }
+
+        // Close autocomplete when clicking outside
+        document.addEventListener('click', (e) => {
+            if (this.autocompleteDropdown && this.latexInput && !this.latexInput.contains(e.target) && !this.autocompleteDropdown.contains(e.target)) {
+                this.autocompleteDropdown.style.display = 'none';
+            }
+        });
 
         // Handle browser back/forward buttons natively
         window.addEventListener('popstate', () => {
@@ -1675,18 +1683,24 @@ const EquationExplainer = {
             }
         });
 
-        // Debounced input compiling
+        // Debounced input compiling and autocomplete
         this.latexInput.addEventListener('input', () => {
             this.setCompilerStatus('Compiling...', '#fbbf24');
             clearTimeout(this.debounceTimer);
             this.debounceTimer = setTimeout(() => {
                 this.handleInputChange();
-            }, 400);
+                if (this.latexInput && this.latexInput.value.trim()) {
+                    this.fetchAutocompleteSuggestions(this.latexInput.value.trim());
+                } else if (this.autocompleteDropdown) {
+                    this.autocompleteDropdown.style.display = 'none';
+                }
+            }, 300);
         });
 
         // Clear button
         this.clearBtn.addEventListener('click', () => {
             this.latexInput.value = '';
+            if (this.autocompleteDropdown) this.autocompleteDropdown.style.display = 'none';
             this.handleInputChange();
             this.latexInput.focus();
         });
@@ -1808,6 +1822,80 @@ const EquationExplainer = {
 
         // 3. Perform database lookup
         this.lookupFormulaByLatex(latex);
+    },
+
+    async fetchAutocompleteSuggestions(query) {
+        if (!this.autocompleteDropdown) return;
+        const clean = (query || '').trim();
+        if (clean.length < 2) {
+            this.autocompleteDropdown.style.display = 'none';
+            return;
+        }
+
+        try {
+            // Query search API (matches both keywords, formula titles, and semantic concepts)
+            let res = await fetch(`${BASE_URL}/physics/api/search?q=${encodeURIComponent(clean)}&limit=6`);
+            let data = await res.json();
+            let items = (data.results || []).filter(r => r.type === 'formula' && r.equation);
+
+            // If few formula matches, try semantic search
+            if (items.length < 2) {
+                const semRes = await fetch(`${BASE_URL}/physics/api/semantic-search?q=${encodeURIComponent(clean)}&limit=5`);
+                if (semRes.ok) {
+                    const semData = await semRes.json();
+                    if (semData.results && semData.results.length > 0) {
+                        const existingIds = new Set(items.map(i => i.id));
+                        for (const sr of semData.results) {
+                            if (!existingIds.has(sr.id)) {
+                                items.push({
+                                    type: 'formula',
+                                    id: sr.id,
+                                    title: sr.title,
+                                    equation: sr.equation,
+                                    confidence: sr.confidence
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (items.length === 0) {
+                this.autocompleteDropdown.style.display = 'none';
+                return;
+            }
+
+            this.autocompleteDropdown.innerHTML = items.map(item => `
+                <div class="latex-suggestion-item" data-eq="${encodeURIComponent(item.equation)}" style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 600; color: #ffffff;">${item.title}</span>
+                        ${item.confidence ? `<span style="font-size: 0.7rem; color: #10b981; background: rgba(16, 185, 129, 0.15); padding: 1px 6px; border-radius: 4px;">✨ ${item.confidence} Match</span>` : ''}
+                    </div>
+                    <div style="font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #64ffda; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        \\(${item.equation}\\)
+                    </div>
+                </div>
+            `).join('');
+
+            this.autocompleteDropdown.querySelectorAll('.latex-suggestion-item').forEach(el => {
+                el.addEventListener('mouseenter', () => el.style.background = 'rgba(100, 255, 218, 0.12)');
+                el.addEventListener('mouseleave', () => el.style.background = 'transparent');
+                el.addEventListener('click', (e) => {
+                    const eq = decodeURIComponent(el.getAttribute('data-eq'));
+                    this.latexInput.value = eq;
+                    this.autocompleteDropdown.style.display = 'none';
+                    this.handleInputChange();
+                });
+            });
+
+            this.autocompleteDropdown.style.display = 'block';
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([this.autocompleteDropdown]).catch(e => {});
+            }
+        } catch (e) {
+            console.warn('Autocomplete fetch failed:', e);
+        }
     },
 
     compileMathJax(latex) {

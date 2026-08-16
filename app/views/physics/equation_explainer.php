@@ -53,7 +53,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     </div>
                     <div style="position: relative;">
                         <textarea id="latex-input" 
-                                  placeholder="e.g. i \hbar \frac{\partial}{\partial t}\Psi = \hat{H}\Psi" 
+                                  placeholder="e.g. i \hbar \frac{\partial}{\partial t}\Psi = \hat{H}\Psi, or search a concept like 'Cooper pairs'..." 
                                   autocomplete="off" 
                                   rows="3"
                                   style="width: 100%; padding: 12px; padding-right: 60px; background: rgba(3, 7, 18, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; color: #f1f5f9; font-family: 'Fira Code', 'Courier New', monospace; font-size: 0.95rem; line-height: 1.4; resize: vertical; box-sizing: border-box; outline: none; transition: border-color 0.2s;"></textarea>
@@ -63,6 +63,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                                 onmouseout="this.style.color='#f43f5e'">
                             Clear
                         </button>
+                        <div id="latex-autocomplete-dropdown" style="display: none; position: absolute; z-index: 100; left: 0; right: 0; top: 100%; margin-top: 6px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; max-height: 280px; overflow-y: auto; box-shadow: 0 12px 35px rgba(0,0,0,0.6);"></div>
                     </div>
                 </div>
 

@@ -1399,18 +1399,45 @@ class PhysicsService
         $db = $this->app->db();
         $results = [];
 
-        // 1. Search Subtopics via MariaDB FULLTEXT / LIKE
+        // 1. Search Formulas via MariaDB LIKE / FULLTEXT
         try {
             $maxLimit = (int)$limit;
+            $fRows = $db->runQuery(
+                "SELECT id, title, equation, conceptual_definition, interpretation
+                 FROM formulas
+                 WHERE title LIKE ? OR equation LIKE ? OR conceptual_definition LIKE ?
+                 LIMIT {$maxLimit}",
+                ['%' . $cleanQuery . '%', '%' . $cleanQuery . '%', '%' . $cleanQuery . '%']
+            )->fetchAll();
+
+            foreach ($fRows as $f) {
+                if (empty($f['title']) && empty($f['equation'])) continue;
+                $snippet = !empty($f['equation']) ? '$$' . $f['equation'] . '$$' : strip_tags($f['conceptual_definition'] ?? '');
+                $results[] = [
+                    'type' => 'formula',
+                    'id' => $f['id'],
+                    'title' => $f['title'] ?: $f['id'],
+                    'equation' => $f['equation'] ?? '',
+                    'snippet' => $snippet,
+                    'url' => '/physics/equation-explainer?latex=' . urlencode($f['equation'] ?? '')
+                ];
+            }
+        } catch (\Throwable $e) {
+            // Ignore if table unavailable
+        }
+
+        // 2. Search Subtopics via MariaDB FULLTEXT / LIKE
+        try {
+            $remaining = max(1, (int)$limit - count($results));
             $rows = $db->runQuery(
                 "SELECT slug, title, content, 
                         MATCH(title, content) AGAINST(? IN NATURAL LANGUAGE MODE) AS score
                  FROM subtopics 
                  WHERE MATCH(title, content) AGAINST(? IN NATURAL LANGUAGE MODE)
                  ORDER BY score DESC 
-                 LIMIT {$maxLimit}",
+                 LIMIT {$remaining}",
                 [$cleanQuery, $cleanQuery]
-            );
+            )->fetchAll();
 
             if (empty($rows)) {
                 $likeParam = '%' . $cleanQuery . '%';
@@ -1418,9 +1445,9 @@ class PhysicsService
                     "SELECT slug, title, content, 1.0 AS score
                      FROM subtopics
                      WHERE title LIKE ? OR content LIKE ?
-                     LIMIT {$maxLimit}",
+                     LIMIT {$remaining}",
                     [$likeParam, $likeParam]
-                );
+                )->fetchAll();
             }
 
             foreach ($rows as $row) {
@@ -1443,7 +1470,7 @@ class PhysicsService
                     'url' => '/physics/subtopic/' . $row['slug']
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback for in-memory file-system mode
             $this->loadAllShards();
             $content = $this->getPhysicsContent();

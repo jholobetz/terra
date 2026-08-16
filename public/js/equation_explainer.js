@@ -2086,6 +2086,7 @@ const EquationExplainer = {
         const hint = this.drawerHintInput ? this.drawerHintInput.value.trim() : '';
 
         const payload = {
+            url: window.location.href,
             formula_id: formulaId,
             latex: latex,
             hint: hint,

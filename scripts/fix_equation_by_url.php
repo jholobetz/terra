@@ -235,10 +235,14 @@ function sanitizeProseTeX(string $text): string {
     }
     $text = implode('$', $parts);
 
-    // 10. Clean duplicate dollars and normalize spacing
+    // 10. Clean duplicate dollars and normalize spacing while preserving paragraph newlines
     $text = preg_replace('/\$+/', '$', $text);
     $text = preg_replace('/\$\s*\$/', '', $text);
-    $cleaned = trim(preg_replace('/\s+/', ' ', $text));
+    $lines = explode("\n", $text);
+    $lines = array_map(function($line) {
+        return trim(preg_replace('/[ \t]+/', ' ', $line));
+    }, $lines);
+    $cleaned = trim(implode("\n", $lines));
     return !empty($cleaned) ? $cleaned : $originalInput;
 }
 
@@ -568,6 +572,7 @@ foreach ($targets as $input) {
     try {
         $service = Flight::physicsService();
         $formula = $service->loadFormula($formulaId);
+        $targetResult['formula'] = !empty($formula) ? $formula : $formulaData;
         if (!empty($formula)) {
             $targetResult['verified'] = true;
             $targetResult['formula_title'] = $formula['title'] ?? ($formulaData['title'] ?? 'N/A');

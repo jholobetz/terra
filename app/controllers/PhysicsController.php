@@ -1443,41 +1443,64 @@ class PhysicsController
         }
 
         $input = json_decode(file_get_contents('php://input'), true);
+        $url = $input['url'] ?? '';
         $formulaId = $input['formula_id'] ?? '';
         $latex = $input['latex'] ?? null;
         $prose = $input['prose'] ?? null;
         $hint = $input['hint'] ?? null;
 
-        if (empty($formulaId) || $formulaId === 'synthesized-custom') {
-            if (!empty($latex)) {
-                $physicsService = Flight::physicsService();
-                $matched = $physicsService->searchFormulaByLatex($latex);
-                if ($matched && !empty($matched['id'])) {
-                    $formulaId = $matched['id'];
-                } else {
-                    $title = $prose['title'] ?? 'custom-physical-relation';
-                    $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($title));
-                    $slug = trim($slug, '-');
-                    $formulaId = (!empty($slug) ? $slug : 'formula') . '-' . substr(md5($latex), 0, 8);
-                }
-            } else {
-                header('Content-Type: application/json');
-                http_response_code(400);
-                echo json_encode(['success' => false, 'error' => 'Formula ID or LaTeX equation is required.']);
-                exit;
-            }
+        // 1. Resolve Target (URL, ID, or LaTeX)
+        $target = '';
+        if (!empty($url) && (strpos($url, 'id=') !== false || strpos($url, 'latex=') !== false)) {
+            $target = $url;
+        } else if (!empty($formulaId) && $formulaId !== 'synthesized-custom') {
+            $target = $formulaId;
+        } else if (!empty($latex)) {
+            $target = $latex;
+        }
+
+        if (empty($target)) {
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Valid URL, Formula ID, or LaTeX equation is required.']);
+            exit;
         }
 
         try {
-            $reviewService = Flight::formulaReviewService();
-            $result = $reviewService->directRepair($user->id, $formulaId, $latex, $prose, $hint, 'direct_repair');
+            // Execute the canonical fixlatex engine with --json
+            $scriptPath = PROJECT_ROOT . '/scripts/fix_equation_by_url.php';
+            $cmd = 'php ' . escapeshellarg($scriptPath) . ' --json ' . escapeshellarg($target);
+            if (!empty($hint)) {
+                $cmd .= ' ' . escapeshellarg($hint);
+            }
 
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'message' => 'Formula updated and synchronized successfully!',
-                'data' => $result
-            ]);
+            $output = shell_exec($cmd);
+            $result = json_decode($output, true);
+
+            if ($result && !empty($result['success'])) {
+                // Ensure formula data is loaded
+                if (empty($result['formula']) && !empty($result['formula_id'])) {
+                    $physicsService = Flight::physicsService();
+                    $result['formula'] = $physicsService->loadFormula($result['formula_id']);
+                }
+
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Formula updated and synchronized successfully via fixlatex!',
+                    'data' => $result
+                ]);
+            } else {
+                // Fallback to internal FormulaReviewService
+                $reviewService = Flight::formulaReviewService();
+                $res = $reviewService->directRepair($user->id, $formulaId, $latex, $prose, $hint, 'direct_repair');
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Formula updated and synchronized successfully!',
+                    'data' => $res
+                ]);
+            }
         } catch (\Throwable $e) {
             header('Content-Type: application/json');
             http_response_code(500);

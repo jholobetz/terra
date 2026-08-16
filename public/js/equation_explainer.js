@@ -4078,6 +4078,13 @@ const EquationExplainer = {
             return protect(`\\(${tex}\\)`);
         });
 
+        // 5.2. Convert un-delimited subscripted variables or operations (e.g. B_i - B_j, B_i > B_j, k_B T, B_i, B_j)
+        tempText = tempText.replace(/\b([A-Za-z](?:_[a-zA-Z0-9]+|\^[a-zA-Z0-9]+)(?:\s*[-+><=]\s*[A-Za-z](?:_[a-zA-Z0-9]+|\^[a-zA-Z0-9]+))*(?:\s+[A-Za-z](?:_[a-zA-Z0-9]+|\^[a-zA-Z0-9]+))?)\b/g, (match) => {
+            if (match.includes('\uE000')) return match;
+            if (/^[a-zA-Z]{3,}$/.test(match)) return match;
+            return protect(`\\(${match}\\)`);
+        });
+
         // 5.5. Wrap complete un-delimited fraction and vector LaTeX expressions (e.g. \frac{d^2 \mathbf{r}}{dt^2})
         tempText = tempText.replace(/\\(?:frac|sqrt)\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})*|(?:[a-zA-Z]*\\(?:hat|vec|mathbf|mathrm|text|tilde|bar)\{[^}]+\}[a-zA-Z0-9_\^']*(?:\([^)]+\))?|[a-zA-Z]+\(\\[a-zA-Z]+\{[^}]+\}[^)]*\)|\|(?:\\[a-zA-Z]+\{[^}]+\}|[a-zA-Z0-9_\^'\s\-\+\\to\format])+\|)/g, match => {
             if (match.includes('\uE000')) return match;

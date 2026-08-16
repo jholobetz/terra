@@ -1846,42 +1846,43 @@
     },
     "boltzmann-factor-for-nuclear-binding-energy-4c8015c1": {
         "title": "Boltzmann Factor for Nuclear Binding Energy",
-        "description": "This exponential term quantifies the relative probability of two nuclear species based on their binding energy difference and the system's temperature. It is a key component in determining relative abundances in nuclear statistical equilibrium.",
-        "conceptual_definition": "In a system in thermodynamic equilibrium, the relative population of two states with different energies is governed by the Boltzmann distribution. This term specifically applies this principle to nuclear species, where B_i and B_j represent the total binding energies of nuclei i and j, respectively. The difference B_i - B_j represents the energy difference between forming nucleus i versus nucleus j from their constituent nucleons.",
-        "interpretation": "This exponential factor directly reflects the energetic favorability of one nuclear species over another at a given temperature. A larger positive value of B_i - B_j (meaning nucleus i is more tightly bound than nucleus j) leads to a larger exponential factor, indicating a higher relative abundance of nucleus i. Conversely, if nucleus j is more tightly bound, the exponent becomes negative, reducing the relative abundance of nucleus i. The temperature T acts as a scale factor: at very high temperatures, the exponential term approaches 1, meaning energy differences become less important, and abundances are more evenly distributed. At low temperatures, even small energy differences lead to large differences in relative abundance, strongly favoring the more tightly bound nuclei.",
-        "limits_and_boundary": "As T approaches 0 K, the term approaches infinity if B_i > B_j (favoring the more bound state) or 0 if B_i < B_j, implying only the most tightly bound species would exist. As T approaches infinity, the term approaches 1, indicating that binding energy differences become negligible compared to the thermal energy k_B T, and abundances are not significantly influenced by binding energies. The binding energies B_i and B_j are typically positive values, representing the energy released when forming the nucleus from its constituent nucleons.",
-        "symmetry_origin": "This term arises from the principles of statistical mechanics and thermodynamic equilibrium, specifically the Boltzmann distribution. It reflects the statistical nature of energy distribution among microscopic states in a system at a given temperature, which is a consequence of the second law of thermodynamics and the tendency towards maximum entropy for an isolated system in equilibrium.",
+        "description": "This exponential term $\\exp\\left(\\frac{B_i - B_j}{k_B T}\\right)$ quantifies the relative probability of two nuclear species based on their binding energy difference $B_i - B_j$ and the system temperature $T$. It is a key component in determining relative abundances in nuclear statistical equilibrium (NSE).",
+        "conceptual_definition": "In a nuclear system in thermodynamic equilibrium, the relative population of two nuclear states with different binding energies is governed by the Boltzmann distribution $\\exp\\left(\\frac{\\Delta B}{k_B T}\\right)$. Here, $B_i$ and $B_j$ represent the total nuclear binding energies of nuclei $i$ and $j$, respectively. The difference $B_i - B_j$ defines the net energetic advantage in forming nucleus $i$ versus nucleus $j$ from free nucleons at temperature $T$.",
+        "intuitive_summary": "An exponential statistical weighting factor favoring nuclei with higher binding energies per nucleon at lower temperatures, while approaching uniform distribution at extreme temperatures.",
+        "interpretation": "The exponential factor $\\exp\\left(\\frac{B_i - B_j}{k_B T}\\right)$ directly measures the statistical and energetic preference of nuclear species $i$ over species $j$ in a stellar plasma at temperature $T$. When nucleus $i$ is more tightly bound than nucleus $j$ ($B_i - B_j > 0$), the factor exceeds unity, exponentially increasing the relative equilibrium abundance of species $i$. Conversely, if nucleus $j$ possesses greater binding energy ($B_i - B_j < 0$), the exponent is negative, suppressing the abundance of species $i$. The thermal energy scale $k_B T$ modulates this selectivity: at ultra-high temperatures ($k_B T \\gg |B_i - B_j|$), the exponential factor approaches $1$, distributing abundances across diverse isotopes; at low temperatures ($k_B T \\ll |B_i - B_j|$), small differences in binding energy lead to exponential dominance of the most tightly bound iron-peak nuclides (such as $^{56}\\text{Ni}$ and $^{56}\\text{Fe}$).",
+        "limits_and_boundary": "1. **Zero-Temperature Limit ($T \\to 0\\text{ K}$)**: If $B_i > B_j$, $\\lim_{T \\to 0} \\exp\\left(\\frac{B_i - B_j}{k_B T}\\right) \\to \\infty$, causing absolute statistical dominance of the ground-state nucleus with maximal binding energy. If $B_i < B_j$, the factor vanishes ($0$). 2. **High-Temperature Limit ($T \\to \\infty$)**: Thermal fluctuations wash out binding energy advantages $\\lim_{T \\to \\infty} \\exp\\left(\\frac{B_i - B_j}{k_B T}\\right) = 1$, making relative nuclear population dependent solely on spin degeneracy, partition functions, and chemical potentials. 3. **Degenerate / High-Density Limits**: In extreme electron-degenerate environments (e.g. collapsing stellar cores), electron chemical potential shifts $\\mu_e$ modify the effective binding energies via nuclear symmetry energy contributions.",
+        "symmetry_origin": "Originates from maximum entropy principles and canonical ensemble statistical mechanics. Under thermodynamic equilibrium where microstates are populated according to the Boltzmann factor $e^{-E/k_B T}$, the net energy change $\\Delta E = -(B_i - B_j)$ directly determines the relative grand partition function ratios for nuclear statistical equilibrium.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "nuclear-astrophysics, statistical-mechanics, thermodynamic-equilibrium",
         "semantic_variables": {
             "B_i": {
-                "name": "B_i",
+                "name": "Binding Energy of Species i",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Binding energy of nuclear species i (Joules, J). This is the energy required to disassemble nucleus i into its constituent protons and neutrons."
+                "unit": "J",
+                "description": "Total nuclear binding energy of species $i$, equal to the energy required to disassemble the nucleus into free protons and neutrons."
             },
             "B_j": {
-                "name": "B_j",
+                "name": "Binding Energy of Species j",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Binding energy of nuclear species j (Joules, J). This is the energy required to disassemble nucleus j into its constituent protons and neutrons."
+                "unit": "J",
+                "description": "Total nuclear binding energy of species $j$."
             },
             "k_B": {
-                "name": "k_B",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Boltzmann constant (Joules per Kelvin, J/K). A fundamental physical constant relating the average kinetic energy of particles in a gas with the thermodynamic temperature of the gas."
+                "name": "Boltzmann Constant",
+                "type": "constant",
+                "unit": "J/K",
+                "description": "Fundamental constant $k_B \\approx 1.380649 \\times 10^{-23}\\text{ J/K}$ relating thermal energy to temperature."
             },
             "T": {
-                "name": "T",
+                "name": "Thermodynamic Temperature",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Temperature (Kelvin, K). The absolute temperature of the system in which the nuclear reactions are occurring."
+                "unit": "K",
+                "description": "Absolute temperature of the stellar or cosmological plasma."
             }
         },
-        "equation": "\\exp\n\\left( \\frac{B_i - B_j}{k_B T} \\right)",
-        "status": "published",
+        "equation": "\\exp\\left(\\frac{B_i - B_j}{k_B T}\\right)",
+        "status": "platinum",
         "parent_formula_id": "nse-relative-abundance-ratio-ef8f406a",
         "subcomponents": [],
         "id": "boltzmann-factor-for-nuclear-binding-energy-4c8015c1"

@@ -154,6 +154,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
                 }
             } else {
+                // Try AI Semantic Vector Search Fallback
+                try {
+                    const semRes = await fetch(`/physics/api/semantic-search?q=${encodeURIComponent(query)}&limit=10`);
+                    if (semRes.ok) {
+                        const semData = await semRes.json();
+                        if (semData.results && semData.results.length > 0) {
+                            results.innerHTML = semData.results.map(m => `
+                                <a href="/physics/equation-explainer?latex=${encodeURIComponent(m.equation)}" class="modal-search-item">
+                                    <div class="modal-search-item-header">
+                                        <span class="modal-search-item-title">${m.title}</span>
+                                        <span class="modal-search-item-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">✨ ${m.confidence} AI Match</span>
+                                    </div>
+                                    <div class="modal-search-item-path">
+                                        <span>$$${m.equation}$$</span>
+                                    </div>
+                                </a>
+                            `).join('');
+
+                            resultItems = Array.from(results.querySelectorAll('.modal-search-item'));
+                            highlightedIndex = 0;
+                            updateHighlight();
+
+                            if (window.MathJax && window.MathJax.typesetPromise) {
+                                window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
+                            }
+                            return;
+                        }
+                    }
+                } catch (semErr) {
+                    console.warn('Semantic search fallback failed:', semErr);
+                }
+
                 results.innerHTML = '<div class="search-placeholder"><p>No matches in the manifold...</p><small>Try searching another physical concept or symbol.</small></div>';
                 resultItems = [];
                 highlightedIndex = -1;

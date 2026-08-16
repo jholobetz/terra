@@ -391,6 +391,34 @@ class PhysicsController
     }
 
     /**
+     * API action serving dense vector semantic search powered by Vertex AI text-embedding-004.
+     */
+    public function apiSemanticSearch()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $query = $_GET['q'] ?? '';
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        $minScore = isset($_GET['min_score']) ? (float)$_GET['min_score'] : 0.40;
+
+        try {
+            $semanticService = Flight::semanticSearchService();
+            $results = $semanticService->search($query, $limit, $minScore);
+            echo json_encode([
+                'success' => true,
+                'query' => $query,
+                'total' => count($results),
+                'results' => $results
+            ]);
+        } catch (\Throwable $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'results' => []
+            ]);
+        }
+    }
+
+    /**
      * View action rendering the interactive Noether's Vault (Symmetry-to-Conservation Mapping).
      */
     public function noethersVault()

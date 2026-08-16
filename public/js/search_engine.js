@@ -156,18 +156,18 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Try AI Semantic Vector Search Fallback
                 try {
-                    const semRes = await fetch(`/physics/api/semantic-search?q=${encodeURIComponent(query)}&limit=10`);
+                    const semRes = await fetch(`/physics/api/semantic-search?q=${encodeURIComponent(query)}&limit=8`);
                     if (semRes.ok) {
                         const semData = await semRes.json();
                         if (semData.results && semData.results.length > 0) {
                             results.innerHTML = semData.results.map(m => `
-                                <a href="/physics/equation-explainer?latex=${encodeURIComponent(m.equation)}" class="modal-search-item">
+                                <a href="${m.url}" class="modal-search-item">
                                     <div class="modal-search-item-header">
                                         <span class="modal-search-item-title">${m.title}</span>
                                         <span class="modal-search-item-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">✨ ${m.confidence} AI Match</span>
                                     </div>
                                     <div class="modal-search-item-path">
-                                        <span>$$${m.equation}$$</span>
+                                        <span>${m.snippet || ''}</span>
                                     </div>
                                 </a>
                             `).join('');

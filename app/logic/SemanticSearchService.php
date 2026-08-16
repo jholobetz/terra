@@ -167,10 +167,23 @@ class SemanticSearchService
             $sim = ($vNormSq > 0) ? ($dot / ($queryNorm * sqrt($vNormSq))) : 0.0;
 
             if ($sim >= $minScore) {
+                $subtopics = class_exists('\Flight') && \Flight::has('physicsService') 
+                    ? \Flight::physicsService()->getSubtopicsByFormula($formulaId) 
+                    : [];
+                $primarySubtopic = !empty($subtopics) ? $subtopics[0] : null;
+                $url = $primarySubtopic 
+                    ? ('/physics/subtopic/' . $primarySubtopic['slug']) 
+                    : ('/physics/equation-explainer?latex=' . urlencode($entry['equation'] ?? ''));
+                $displayTitle = $primarySubtopic ? $primarySubtopic['title'] : ($entry['title'] ?? $formulaId);
+                $snippet = $primarySubtopic ? ($entry['title'] . ' — $$' . ($entry['equation'] ?? '') . '$$') : ('$$' . ($entry['equation'] ?? '') . '$$');
+
                 $scored[] = [
                     'id' => $formulaId,
-                    'title' => $entry['title'] ?? $formulaId,
+                    'title' => $displayTitle,
+                    'formula_title' => $entry['title'] ?? '',
                     'equation' => $entry['equation'] ?? '',
+                    'snippet' => $snippet,
+                    'url' => $url,
                     'similarity' => round($sim, 4),
                     'confidence' => round($sim * 100, 1) . '%'
                 ];

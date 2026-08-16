@@ -1398,44 +1398,18 @@ class PhysicsService
 
         $db = $this->app->db();
         $results = [];
+        $seenSlugs = [];
 
-        // 1. Search Formulas via MariaDB LIKE / FULLTEXT
+        // 1. Search Subtopics (Primary Encyclopedia Articles) via MariaDB FULLTEXT / LIKE
         try {
             $maxLimit = (int)$limit;
-            $fRows = $db->runQuery(
-                "SELECT id, title, equation, conceptual_definition, interpretation
-                 FROM formulas
-                 WHERE title LIKE ? OR equation LIKE ? OR conceptual_definition LIKE ?
-                 LIMIT {$maxLimit}",
-                ['%' . $cleanQuery . '%', '%' . $cleanQuery . '%', '%' . $cleanQuery . '%']
-            )->fetchAll();
-
-            foreach ($fRows as $f) {
-                if (empty($f['title']) && empty($f['equation'])) continue;
-                $snippet = !empty($f['equation']) ? '$$' . $f['equation'] . '$$' : strip_tags($f['conceptual_definition'] ?? '');
-                $results[] = [
-                    'type' => 'formula',
-                    'id' => $f['id'],
-                    'title' => $f['title'] ?: $f['id'],
-                    'equation' => $f['equation'] ?? '',
-                    'snippet' => $snippet,
-                    'url' => '/physics/equation-explainer?latex=' . urlencode($f['equation'] ?? '')
-                ];
-            }
-        } catch (\Throwable $e) {
-            // Ignore if table unavailable
-        }
-
-        // 2. Search Subtopics via MariaDB FULLTEXT / LIKE
-        try {
-            $remaining = max(1, (int)$limit - count($results));
             $rows = $db->runQuery(
                 "SELECT slug, title, content, 
                         MATCH(title, content) AGAINST(? IN NATURAL LANGUAGE MODE) AS score
                  FROM subtopics 
                  WHERE MATCH(title, content) AGAINST(? IN NATURAL LANGUAGE MODE)
                  ORDER BY score DESC 
-                 LIMIT {$remaining}",
+                 LIMIT {$maxLimit}",
                 [$cleanQuery, $cleanQuery]
             )->fetchAll();
 
@@ -1445,12 +1419,16 @@ class PhysicsService
                     "SELECT slug, title, content, 1.0 AS score
                      FROM subtopics
                      WHERE title LIKE ? OR content LIKE ?
-                     LIMIT {$remaining}",
+                     LIMIT {$maxLimit}",
                     [$likeParam, $likeParam]
                 )->fetchAll();
             }
 
             foreach ($rows as $row) {
+                $slug = $row['slug'] ?? '';
+                if (empty($slug) || isset($seenSlugs[$slug])) continue;
+                $seenSlugs[$slug] = true;
+
                 $plainContent = strip_tags($row['content'] ?? '');
                 $snippet = '';
                 
@@ -1464,10 +1442,10 @@ class PhysicsService
 
                 $results[] = [
                     'type' => 'subtopic',
-                    'slug' => $row['slug'],
+                    'slug' => $slug,
                     'title' => $row['title'],
                     'snippet' => $snippet,
-                    'url' => '/physics/subtopic/' . $row['slug']
+                    'url' => '/physics/subtopic/' . $slug
                 ];
             }
         } catch (\Throwable $e) {
@@ -1477,7 +1455,9 @@ class PhysicsService
             $allSubtopics = $content['subtopics'] ?? [];
             foreach ($allSubtopics as $slug => $st) {
                 if (count($results) >= $limit) break;
+                if (isset($seenSlugs[$slug])) continue;
                 if (stripos($st['title'] ?? '', $cleanQuery) !== false || stripos($st['content'] ?? '', $cleanQuery) !== false) {
+                    $seenSlugs[$slug] = true;
                     $results[] = [
                         'type' => 'subtopic',
                         'slug' => $slug,
@@ -1486,6 +1466,32 @@ class PhysicsService
                         'url' => '/physics/subtopic/' . $slug
                     ];
                 }
+            }
+        }
+
+        // 2. Search Topics / Subject Hubs if space remains
+        if (count($results) < $limit) {
+            try {
+                $remaining = (int)$limit - count($results);
+                $topicRows = $db->runQuery(
+                    "SELECT slug, title, description 
+                     FROM topics 
+                     WHERE title LIKE ? OR description LIKE ?
+                     LIMIT {$remaining}",
+                    ['%' . $cleanQuery . '%', '%' . $cleanQuery . '%']
+                )->fetchAll();
+
+                foreach ($topicRows as $tr) {
+                    $results[] = [
+                        'type' => 'topic',
+                        'slug' => $tr['slug'],
+                        'title' => $tr['title'],
+                        'snippet' => substr(strip_tags($tr['description'] ?? ''), 0, 120) . '...',
+                        'url' => '/physics/topic/' . $tr['slug']
+                    ];
+                }
+            } catch (\Throwable $e) {
+                // ignore
             }
         }
 

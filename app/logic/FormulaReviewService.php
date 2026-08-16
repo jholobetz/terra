@@ -169,6 +169,55 @@ class FormulaReviewService
     }
 
     /**
+     * In-Process Equation Repair & Decorruption Engine (Matches CLI fixlatex exactly).
+     */
+    public function repairTarget(string $target, ?string $hint = null, int $userId = 1, ?array $proseOverrides = null): array
+    {
+        $targetId = null;
+        $targetLatex = null;
+
+        $target = trim($target);
+        if (strpos($target, 'http://') === 0 || strpos($target, 'https://') === 0 || strpos($target, '?') !== false || strpos($target, 'equation-explainer') !== false) {
+            $queryString = parse_url($target, PHP_URL_QUERY);
+            if (empty($queryString) && strpos($target, '?') !== false) {
+                $queryString = substr($target, strpos($target, '?') + 1);
+            }
+            if (!empty($queryString)) {
+                parse_str($queryString, $params);
+                if (!empty($params['id'])) {
+                    $targetId = trim($params['id']);
+                }
+                if (!empty($params['latex'])) {
+                    $targetLatex = trim($params['latex']);
+                }
+            }
+        } else if (preg_match('/^[a-z0-9\-_]+$/i', $target) && strpos($target, '\\') === false && strpos($target, '=') === false) {
+            $targetId = $target;
+        } else {
+            $targetLatex = $target;
+        }
+
+        // Resolve Formula ID if only LaTeX was provided
+        if (empty($targetId) && !empty($targetLatex)) {
+            $matched = $this->physicsService->searchFormulaByLatex($targetLatex);
+            if ($matched && !empty($matched['id'])) {
+                $targetId = $matched['id'];
+            } else {
+                $title = $proseOverrides['title'] ?? 'Custom Physical Relation';
+                $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($title));
+                $slug = trim($slug, '-');
+                $targetId = (!empty($slug) ? $slug : 'formula') . '-' . substr(md5($targetLatex), 0, 8);
+            }
+        }
+
+        if (empty($targetId)) {
+            $targetId = 'formula-' . substr(md5($target), 0, 8);
+        }
+
+        return $this->directRepair($userId, $targetId, $targetLatex, $proseOverrides, $hint, 'direct_repair');
+    }
+
+    /**
      * Executes direct equation and prose repair / creation on shard, MariaDB, and index (Curator / Admin Tier).
      */
     public function directRepair(int $userId, string $formulaId, ?string $latex = null, ?array $prose = null, ?string $hint = null, string $action = 'direct_repair'): array

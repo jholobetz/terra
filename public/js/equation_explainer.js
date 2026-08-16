@@ -2106,7 +2106,8 @@ const EquationExplainer = {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 20000);
 
-        fetch(`${BASE_URL}/physics/api/apply-repair`, {
+        const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
+        fetch(`${baseUrl}/physics/api/apply-repair`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),

@@ -29,7 +29,7 @@
             },
             "\\nabla P": {
                 "name": "Pressure Gradient",
-                "type": "variable",
+                "type": "operator",
                 "unit": "Pa/m",
                 "description": "The spatial rate of change of pressure, indicating the direction and magnitude of the steepest pressure increase."
             },
@@ -47,7 +47,7 @@
             },
             "\\nabla \\times \\mathbf{B}": {
                 "name": "Curl of Magnetic Field",
-                "type": "variable",
+                "type": "operator",
                 "unit": "T/m",
                 "description": "A vector operator that describes the infinitesimal rotation of the magnetic field."
             },
@@ -94,9 +94,9 @@
                 "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
             }
         },
-        "interpretation": "The left-hand side of the equation, $\\rho \\frac {D\\bold{v}}{Dt}$, represents the inertial force per unit volume. Here, $\\rho$  is the fluid density (in kg/m^3), and $\\frac{D \\bold{v} }{Dt} is the material derivative of the fluid velocity  \\bold{v}  (in m/s). The material derivative accounts for both the local acceleration of the fluid and the acceleration due to the fluid moving to a region with a different velocity, and is defined as  \\frac{D \\bold{v} }{Dt} = \\frac{$ypeof $\\bold{v}$ }{$ypeof t} + (  \\bold{v} \\boldsymbol{ \nabla}  )   \\bold{v}  . On the right-hand side, the first term, - \nabla P, represents the force per unit volume due to the pressure gradient, where P is the pressure (in Pa). This term drives fluid flow from high-pressure regions to low-pressure regions. The second term,   \\frac{1}$ { $\\boldsymbol$ {$u$}_0} (  $\\nabla \\times \\bold{B}$ )  $\\times \\bold{B}$ , is the magnetic force per unit volume, also known as the Lorentz force density, acting on the conducting fluid. Here,  $\\boldsymbol$ {$u}_0  is the permeability of free space (a constant, approximately 4  \\boldsymbol  {$u$}   \\times   10^{-7}   \\text{ T} \\boldsymbol  {$u$}  \\text{m/A}  ), and   \\bold{B}   is the magnetic field vector (in T). This term is crucial as it describes how magnetic fields can exert forces on conducting fluids, influencing their motion and vice versa. The third term,   \\rho \\bold{g}  , is the gravitational force per unit volume, where   \\bold{g}   is the gravitational acceleration (in m/s^2). This term accounts for the effect of gravity on the fluid element $.",
+        "interpretation": "The left-hand side of the equation, $\\rho \\frac {D\\bold{v}}{Dt}$, represents the inertial force per unit volume. Here, $\\rho$ is the fluid density (in kg/m^3), and $\\frac{D \\bold{v} }{Dt} is the material derivative of the fluid velocity \\bold{v} (in m/s). The material derivative accounts for both the local acceleration of the fluid and the acceleration due to the fluid moving to a region with a different velocity, and is defined as \\frac{D \\bold{v} }{Dt} = \\frac{$ypeof $\\bold{v}$ }{$ypeof t} + ( \\bold{v} \\boldsymbol{ \\nabla} ) \\bold{v} . On the right-hand side, the first term, - \\nabla P, represents the force per unit volume due to the pressure gradient, where P is the pressure (in Pa). This term drives fluid flow from high-pressure regions to low-pressure regions. The second term, \\frac{1}$ { $\\boldsymbol$ {$u$}_0} ( $\\nabla \\times \\bold{B}$ ) $\\times \\bold{B}$ , is the magnetic force per unit volume, also known as the Lorentz force density, acting on the conducting fluid. Here, $\\boldsymbol$ {$u}_0 is the permeability of free space (a constant, approximately 4 \\boldsymbol {$u$} \\times 10^{-7} \\text{ T} \\boldsymbol {$u$} \\text{m/A} ), and \\bold{B} is the magnetic field vector (in T). This term is crucial as it describes how magnetic fields can exert forces on conducting fluids, influencing their motion and vice versa. The third term, \\rho \\bold{g} , is the gravitational force per unit volume, where \\bold{g} is the gravitational acceleration (in m/s^2). This term accounts for the effect of gravity on the fluid element.",
         "symmetry_origin": "This equation is derived from fundamental principles of classical mechanics (Newton's second law) and electromagnetism (Maxwell's equations, specifically the Lorentz force law). It is a consequence of the conservation of momentum for a conducting fluid in the presence of electromagnetic fields and gravity. The equation is generally written in a covariant form, implying invariance under coordinate transformations, though specific forms might depend on the chosen coordinate system.",
-        "limits_and_boundary": "In the limit where the magnetic field $\\bold{B}$ is zero or negligible, the equation reduces to the Navier-Stokes equation for an incompressible fluid: $\\rho \\frac {D\\bold{v}}{Dt}$= - $\\nabla$ P +$\\rho \\bold {g}, which describes fluid motion under pressure gradients and gravity without magnetic effects. If the fluid is a perfect conductor (infinite conductivity), the magnetic field is 'frozen' into the fluid, leading to different dynamics. In the limit of very low density  \\rho  or very weak gravitational acceleration \\bold{g}, these terms become negligible, and the magnetic forces and pressure gradients dominate the fluid motion$.",
+        "limits_and_boundary": "In the limit where the magnetic field $\\bold{B}$ is zero or negligible, the equation reduces to the Navier-Stokes equation for an incompressible fluid: $\\rho \\frac {D\\bold{v}}{Dt}$= - $\\nabla$ P +$\\rho \\bold {g}, which describes fluid motion under pressure gradients and gravity without magnetic effects. If the fluid is a perfect conductor (infinite conductivity), the magnetic field is 'frozen' into the fluid, leading to different dynamics. In the limit of very low density \\rho or very weak gravitational acceleration \\bold{g}, these terms become negligible, and the magnetic forces and pressure gradients dominate the fluid motion$.",
         "status": "platinum",
         "conceptual_definition": "This equation, often referred to as the magnetohydrodynamic (MHD) momentum equation or the induction equation for a fluid, describes the motion of a conducting fluid under the influence of pressure gradients, magnetic forces, and gravity. It is a statement of Newton's second law applied to a fluid element, accounting for the complex interplay between fluid dynamics and electromagnetism.",
         "intuitive_summary": "The acceleration of a fluid element is driven by pressure differences, the magnetic Lorentz force acting on the fluid, and gravitational forces."
@@ -148,8 +148,8 @@
                 "description": "The rate of change of position with respect to time, representing the speed of a particle."
             }
         },
-        "interpretation": "The equation $\\dot{E}_{jet} \\sim$ B^2 r^2 v_{esc}$relates the rate of energy outflow from a hypothetical centrifugal drive, denoted by  \\dot{E}_{jet}  (in Joules per second, J/s), to several key parameters. The term $B^2  represents the square of the magnetic field strength (in Tesla squared, T²). This signifies that the energy ejection rate scales quadratically with the magnetic field, highlighting the paramount role of magnetic forces in accelerating the ejected plasma or matter. The term $r^2  is the square of a characteristic radius (in meters squared, m²) associated with the drive, perhaps related to the confinement region or the aperture through which the jet is expelled. This suggests that a larger drive system, or one with a larger interaction radius, can expel energy at a higher rate, likely due to increased volume or interaction surface for the magnetic fields. Finally, $v_{esc} is the escape velocity (in meters per second, m/s) of the ejected material from the drive's gravitational or magnetic potential well. A higher escape velocity implies that more kinetic energy is imparted to the ejected mass, thus increasing the rate of energy outflow. The proportionality symbol '$\\sim$' indicates that this is a scaling relationship, not necessarily an exact equality, and that dimensionless constants or other factors might be involved in a full derivation.",
-        "symmetry_origin": "This formula appears to be a phenomenological or derived relationship rather than stemming directly from a fundamental symmetry or conservation law in its presented form. It likely arises from considerations of magnetic confinement, plasma acceleration, and energy flux. For instance, the kinetic energy of the ejected mass is proportional to $m$ v_{esc}^2$, and if the mass ejection rate is somehow related to $B^2 r^2 v_{esc}$, this could lead to the given scaling. The dependence on $B^2  is common in magnetic phenomena, relating to energy density$(B^2 / 2\\mu_0)$. The radius dependence might relate to the volume of interaction or the area of the jet aperture.",
+        "interpretation": "The equation $\\dot{E}_{jet} \\sim$ B^2 r^2 v_{esc}$relates the rate of energy outflow from a hypothetical centrifugal drive, denoted by \\dot{E}_{jet} (in Joules per second, J/s), to several key parameters. The term$B^2 represents the square of the magnetic field strength (in Tesla squared, T²). This signifies that the energy ejection rate scales quadratically with the magnetic field, highlighting the paramount role of magnetic forces in accelerating the ejected plasma or matter. The term $r^2 is the square of a characteristic radius (in meters squared, m²) associated with the drive, perhaps related to the confinement region or the aperture through which the jet is expelled. This suggests that a larger drive system, or one with a larger interaction radius, can expel energy at a higher rate, likely due to increased volume or interaction surface for the magnetic fields. Finally,$v_{esc} is the escape velocity (in meters per second, m/s) of the ejected material from the drive's gravitational or magnetic potential well. A higher escape velocity implies that more kinetic energy is imparted to the ejected mass, thus increasing the rate of energy outflow. The proportionality symbol '$\\sim$' indicates that this is a scaling relationship, not necessarily an exact equality, and that dimensionless constants or other factors might be involved in a full derivation.",
+        "symmetry_origin": "This formula appears to be a phenomenological or derived relationship rather than stemming directly from a fundamental symmetry or conservation law in its presented form. It likely arises from considerations of magnetic confinement, plasma acceleration, and energy flux. For instance, the kinetic energy of the ejected mass is proportional to $m$ v_{esc}^2$, and if the mass ejection rate is somehow related to$B^2 r^2 v_{esc}$, this could lead to the given scaling. The dependence on$B^2 is common in magnetic phenomena, relating to energy density$(B^2 / 2\\mu_0)$. The radius dependence might relate to the volume of interaction or the area of the jet aperture.",
         "limits_and_boundary": "As the magnetic field strength $B$ approaches zero, the rate of energy ejection $\\dot{E}_{jet}$approaches zero, implying that without magnetic fields, the centrifugal drive cannot function. If the characteristic radius $r$ approaches zero, $\\dot{E}_{jet}$also approaches zero, suggesting that a drive with no spatial extent cannot expel energy. If the escape velocity $v_{esc}$approaches zero, meaning the ejected material is not accelerated significantly, then $\\dot{E}_{jet}$approaches zero, as no significant kinetic energy is carried away. If any of these parameters approach infinity (within physical constraints), the energy ejection rate would theoretically increase without bound, though practical limitations would always apply.",
         "status": "platinum",
         "conceptual_definition": "The formula describes the rate of energy outflow from a 'centrifugal drive' system, which is conceptualized as ejecting mass. This energy ejection is posited to be proportional to the square of the magnetic field strength, the square of the characteristic radius of the drive, and the escape velocity of the ejected material. This suggests a mechanism where magnetic fields are crucial for accelerating mass to high velocities, leading to energy release.",
@@ -233,7 +233,7 @@
         },
         "interpretation": "The equation is a first-order linear differential equation that describes the evolution of the specific intensity, denoted by $I_{ u}$, along a path $s$. The term $\\frac{dI_{ u}}{ds}$ represents the rate of change of specific intensity with respect to distance traversed. On the right-hand side, $j_{ u}$ is the emission coefficient, representing the radiation emitted per unit volume, solid angle, and frequency per unit time. The term $\\alpha_{ u} I_{ u}$ represents the loss of intensity due to absorption and scattering, where $\\alpha_{ u}$ is the absorption (or opacity) coefficient, which quantifies how effectively the medium absorbs or scatters radiation of frequency $u$. Therefore, the equation states that the increase in intensity due to emission is counteracted by the decrease in intensity due to absorption and scattering.",
         "symmetry_origin": "The Radiative Transfer Equation is derived from fundamental principles of energy conservation and photon propagation through a medium. It is invariant under coordinate transformations along the path of light propagation, meaning the physical process described is independent of the specific coordinate system used to track the radiation's journey. It can be seen as a statement of local energy balance for photons within the medium.",
-        "limits_and_boundary": "In the limit where the emission coefficient $j_{ u}$ is zero and the absorption coefficient $\\alpha_{$ u}$ is very small (optically thin medium), the equation simplifies to  \\frac{dI_{$ u}}{ds} = 0$, implying that the intensity remains constant along the path. In the opposite limit of a very large absorption coefficient  \\alpha_{  u}$ (optically thick medium), the term  $\\alpha_{$  u} I_{ u}$ dominates, and the equation tends towards $I_{ u} $\\approx \\frac{j_{ u}$}{$\\alpha$_{ u}}$, which in thermal equilibrium corresponds to the Planck function, indicating that the medium becomes transparent and reaches thermal equilibrium with the radiation field$.",
+        "limits_and_boundary": "In the limit where the emission coefficient $j_{ u}$ is zero and the absorption coefficient $\\alpha_{$ u}$is very small (optically thin medium), the equation simplifies to \\frac{dI_{$ u}}{ds} = 0$, implying that the intensity remains constant along the path. In the opposite limit of a very large absorption coefficient \\alpha_{ u}$ (optically thick medium), the term $\\alpha_{$ u} I_{ u}$dominates, and the equation tends towards$I_{ u} $\\approx \\frac{j_{ u}$}{$\\alpha$_{ u}}$, which in thermal equilibrium corresponds to the Planck function, indicating that the medium becomes transparent and reaches thermal equilibrium with the radiation field$.",
         "status": "platinum",
         "conceptual_definition": "The Radiative Transfer Equation (RTE) describes how the intensity of radiation changes as it propagates through a medium. It accounts for the processes of emission, absorption, and scattering of radiation by the medium's constituent particles. This equation is fundamental in astrophysics for understanding phenomena like stellar atmospheres, nebulae, and the cosmic microwave background.",
         "intuitive_summary": "The change in radiation intensity along a path is driven by the medium's ability to emit radiation and its tendency to absorb or scatter incoming radiation.",
@@ -286,11 +286,11 @@
                 "description": "The rate of change of position with respect to time, representing the speed of a particle."
             }
         },
-        "interpretation": "The adiabatic index, denoted by the Greek letter gamma ($\\gamma$), is defined as the ratio of the specific heat capacity at constant pressure ($C_p$) to the specific heat capacity at constant volume ($C_v$). Mathematically, this is expressed as $\\gamma$ = \frac{C_p}{C_v}$. The specific heat capacity at constant pressure, $C_p$, measures the heat required to raise the temperature of one unit mass of a substance by one degree Celsius (or Kelvin) while keeping the pressure constant. In this process, the gas does work on the surroundings as it expands to maintain constant pressure while absorbing heat. Therefore, $C_p  is always greater than $C_v$ because the absorbed heat must account for both the increase in internal energy and the work done. The specific heat capacity at constant volume, $C_v$, measures the heat required to raise the temperature of one unit mass of a substance by one degree Celsius (or Kelvin) while keeping the volume constant. In this case, no work is done by the gas, so all the absorbed heat goes directly into increasing the internal energy. Since $C_p$ includes the energy for work done in addition to the internal energy increase, it is always larger than $C_v$. Consequently, the adiabatic index $\\gamma$  is always greater than 1. The value of $\\gamma$ depends on the molecular structure of the gas: for monatomic gases (like Helium, Argon), $\\gamma \\approx$ 1.67$; for diatomic gases (like Nitrogen, Oxygen),  \\gamma  \\approx 1.40$; and for polyatomic gases, $\\gamma$ is typically lower, around 1.33.",
+        "interpretation": "The adiabatic index, denoted by the Greek letter gamma ( $\\gamma$), is defined as the ratio of the specific heat capacity at constant pressure ( $C_p$) to the specific heat capacity at constant volume ( $C_v$). Mathematically, this is expressed as $\\gamma$ = \frac{C_p}{C_v}$. The specific heat capacity at constant pressure,$C_p$, measures the heat required to raise the temperature of one unit mass of a substance by one degree Celsius (or Kelvin) while keeping the pressure constant. In this process, the gas does work on the surroundings as it expands to maintain constant pressure while absorbing heat. Therefore,$C_p is always greater than $C_v$ because the absorbed heat must account for both the increase in internal energy and the work done. The specific heat capacity at constant volume, $C_v$, measures the heat required to raise the temperature of one unit mass of a substance by one degree Celsius (or Kelvin) while keeping the volume constant. In this case, no work is done by the gas, so all the absorbed heat goes directly into increasing the internal energy. Since $C_p$ includes the energy for work done in addition to the internal energy increase, it is always larger than $C_v$. Consequently, the adiabatic index $\\gamma$ is always greater than 1. The value of $\\gamma$ depends on the molecular structure of the gas: for monatomic gases (like Helium, Argon), $\\gamma \\approx$ 1.67$; for diatomic gases (like Nitrogen, Oxygen), \\gamma \\approx 1.40$; and for polyatomic gases, $\\gamma$ is typically lower, around 1.33.",
         "symmetry_origin": "This formula is derived from the first law of thermodynamics, $\\Delta U = Q - W$, and the ideal gas law, $PV =$ nRT. For an ideal gas, the internal energy $U$ depends only on temperature. The relationship between $C_p$ and $C_v$ for an ideal gas is given by Mayer's relation, $C_p - C_v = R$, where $R$ is the ideal gas constant. Dividing this by $C_v$ yields $\\frac{C_p}{C_v} - 1 = \\frac{R}{C_v}$, which leads to $\\gamma = 1 + \\frac{R}{C_v}$. The values of $C_v$ are related to the degrees of freedom of the gas molecules through the equipartition theorem, which provides the basis for the different $\\gamma$ values for different types of gases.",
         "limits_and_boundary": "As the temperature of a gas approaches absolute zero (0 K), the heat capacities approach zero. However, the ratio $\\gamma$ remains a positive, finite value for ideal gases. For very high temperatures, the rotational and vibrational degrees of freedom of molecules become significant, which can slightly alter the value of $\\gamma$ from its ideal gas predictions. In the limit of a very large number of degrees of freedom (e.g., a solid which can be thought of as a collection of quantum harmonic oscillators), $\\gamma$ approaches 1. This is because, in such systems, most of the energy added goes into increasing the internal energy rather than doing work that changes volume, making $C_p$ and $C_v$ very close.",
         "status": "platinum",
-        "conceptual_definition": "The formula defines the adiabatic index, also known as the heat capacity ratio or Poisson's constant, which is a fundamental property of an ideal gas. It quantifies the relationship between the specific heat capacity at constant pressure ($C_p$) and the specific heat capacity at constant volume ($C_v$). This ratio is crucial in thermodynamics for describing processes where no heat is exchanged with the surroundings (adiabatic processes) and influences the speed of sound and other wave phenomena in gases.",
+        "conceptual_definition": "The formula defines the adiabatic index, also known as the heat capacity ratio or Poisson's constant, which is a fundamental property of an ideal gas. It quantifies the relationship between the specific heat capacity at constant pressure ( $C_p$) and the specific heat capacity at constant volume ( $C_v$). This ratio is crucial in thermodynamics for describing processes where no heat is exchanged with the surroundings (adiabatic processes) and influences the speed of sound and other wave phenomena in gases.",
         "intuitive_summary": "The adiabatic index represents how much the pressure of a gas increases relative to its temperature change during an adiabatic compression.",
         "subcomponents": [
             "coulomb-factor-cfa6a5bd",
@@ -791,7 +791,7 @@
         "symmetry_origin": "This conceptual formula can be seen as arising from principles of relational symmetry and conservation laws in physics, particularly in fields like general relativity and quantum field theory where the behavior and properties of particles and fields are often described in terms of their interactions and symmetries. For example, in gauge theories, the fundamental fields are often defined by their behavior under local symmetry transformations, highlighting their relational nature. The concept also resonates with emergent phenomena in complex systems, where macroscopic properties arise from the collective interactions of constituent parts, not solely from the parts themselves.",
         "limits_and_boundary": "In an asymptotic limit where the set of $\\text{Relations}$ becomes trivially small (e.g., an empty set or a set with only self-referential relations), the $\\text{Object}$ might become undefined or revert to a more fundamental, intrinsic description if one exists. Conversely, as the set of $\\text{Relations}$ becomes exhaustively comprehensive, encompassing all possible interactions and properties within a given framework, the $\\text{Object}$ would be fully and uniquely specified. If a relation is inherently contradictory, the intersection would be empty, implying no such $\\text{Object}$ can exist under those conditions.",
         "status": "platinum",
-        "conceptual_definition": "The formula $\\text{Object}$ = $\\bigcap \\text{Relations}$ proposes a conceptual framework where an object is defined not by its intrinsic properties alone, but by the complete set of its relational properties. It suggests that the essence of an object, represented by $\\text{Object}$, is the intersection of all possible relations in which it participates. This is a departure from a purely intrinsic definition and emphasizes the interconnectedness of entities within a system. The intersection operation ($\\bigcap$) implies that for an object to exist or be defined, it must satisfy *all* the specified relations simultaneously.",
+        "conceptual_definition": "The formula $\\text{Object} = \\bigcap \\text{Relations}$ proposes a conceptual framework where an object is defined not by its intrinsic properties alone, but by the complete set of its relational properties. It suggests that the essence of an object, represented by $\\text{Object}$, is the intersection of all possible relations in which it participates. This is a departure from a purely intrinsic definition and emphasizes the interconnectedness of entities within a system. The intersection operation ( $\\bigcap$) implies that for an object to exist or be defined, it must satisfy *all* the specified relations simultaneously.",
         "intuitive_summary": "An object is precisely defined by the totality of its relationships with other entities."
     },
     "field-integration-59cf6c60": {
@@ -847,7 +847,7 @@
                 "description": "The physical size of an object, or orbital angular momentum quantum number."
             }
         },
-        "interpretation": "In the equation hough = -∫ ⃗̇ · d⃗̇, hough denotes the electric potential difference (in Volts, V) between the two endpoints of the path of integration. The integral $\\delta \\int$ ⃗̇ · d⃗̇$ is a line integral. ⃗̇ represents the electric field vector (in Newtons per Coulomb, N/C), which is a force per unit charge. ⃗̇ is an infinitesimal displacement vector along the path of integration (in meters, m). The dot product ⃗̇ · d⃗̇ calculates the component of the electric field parallel to the displacement, and integrating this dot product along the path sums up the work done by the electric field per unit charge over that path. The negative sign indicates that the electric field does positive work when a positive charge moves to a region of lower potential, and negative work when it moves to a region of higher potential$.",
+        "interpretation": "In the equation hough = -∫ ⃗̇ · d⃗̇, hough denotes the electric potential difference (in Volts, V) between the two endpoints of the path of integration. The integral $\\delta \\int$ ⃗̇ · d⃗̇$is a line integral. ⃗̇ represents the electric field vector (in Newtons per Coulomb, N/C), which is a force per unit charge. ⃗̇ is an infinitesimal displacement vector along the path of integration (in meters, m). The dot product ⃗̇ · d⃗̇ calculates the component of the electric field parallel to the displacement, and integrating this dot product along the path sums up the work done by the electric field per unit charge over that path. The negative sign indicates that the electric field does positive work when a positive charge moves to a region of lower potential, and negative work when it moves to a region of higher potential$.",
         "symmetry_origin": "This formula is derived from the definition of the electric potential difference as the negative of the line integral of the electric field. It is a direct consequence of the conservative nature of electrostatic fields, meaning that the work done by the electric field on a charged particle moving between two points is independent of the path taken. This conservation of energy is related to the fact that the electrostatic force is a central force and can be derived from a potential energy function.",
         "limits_and_boundary": "If the electric field ⃗̇ is uniform and the path is a straight line of length L, the integral simplifies to hough = -E ⃗̇ · ⃗̇⃗̇ L, where ⃗̇⃗̇ is the unit vector in the direction of the path. If the path is closed (i.e., the start and end points are the same), the potential difference hough is zero, which is consistent with the conservative nature of the electric field (∫_{closed} ⃗̇ · d⃗̇ = 0). If the electric field is zero everywhere along the path, then the potential difference is also zero.",
         "status": "platinum",
@@ -887,15 +887,15 @@
         "symmetry_origin": "The origin of this formula lies in the symmetry properties of the wavefunction describing a system of identical particles. In quantum mechanics, the wavefunction must be either symmetric (for bosons) or antisymmetric (for fermions) under the exchange of any two identical particles. This requirement of symmetry or antisymmetry implies that physically distinct configurations can only arise from permutations that do not result in a change of the overall wavefunction state, effectively reducing the number of unique microstates by a factor of N! compared to a classical system where particles are treated as distinct.",
         "limits_and_boundary": "As the number of particles N approaches 1, N! approaches 1, and Ω_{quantum} approaches Ω_{classical}. This is expected, as with only one particle, the concept of indistinguishability is trivial. For large N, the factorial N! grows extremely rapidly, meaning that Ω_{quantum} becomes significantly smaller than Ω_{classical}, highlighting the pronounced effect of indistinguishability in macroscopic systems.",
         "status": "platinum",
-        "conceptual_definition": "The formula Ω_{quantum} = $\\frac{Ω_{classical}$}{N!}$ describes the quantum mechanical correction to the number of accessible microstates (Ω), particularly relevant in statistical mechanics for systems of identical particles. It accounts for the fact that in quantum mechanics, identical particles are indistinguishable, meaning that swapping two identical particles does not lead to a new, distinct microstate. The classical formula overcounts these states by a factor of N!, where N is the number of identical particles$.",
+        "conceptual_definition": "The formula Ω_{quantum} = \\frac{Ω_{classical}$}{N!}$ describes the quantum mechanical correction to the number of accessible microstates (Ω), particularly relevant in statistical mechanics for systems of identical particles. It accounts for the fact that in quantum mechanics, identical particles are indistinguishable, meaning that swapping two identical particles does not lead to a new, distinct microstate. The classical formula overcounts these states by a factor of N!, where N is the number of identical particles$.",
         "intuitive_summary": "Quantum mechanics reduces the number of distinct states by a factor of N! because identical particles are indistinguishable."
     },
     "leptogenesis-cp-asymmetry-decay-rate-7213c456": {
         "title": "Leptonic CP Asymmetry",
         "equation": "\\epsilon_i = \\frac{\\Gamma(N_i \\to L H) - \\Gamma(N_i \\to \\bar{L} H^\\dagger)}{\\Gamma(N_i \\to L H) + \\Gamma(N_i \\to \\bar{L} H^\\dagger)}",
-        "interpretation": "In this formula, $\\gamma psilon_i$ represents the CP asymmetry associated with the decay of the i-th heavy particle species, denoted as (N_i). The term (Γ(N_i → L H)) signifies the decay rate of the particle (N_i) into a lepton ($L$) and a Higgs boson (H). Similarly, (Γ(N_i → L H^†)) is the decay rate of the antiparticle of (N_i) into an antilepton ( L^†) and an anti-Higgs boson (H^†). The formula calculates the asymmetry by taking the difference between these two decay rates and normalizing it by their sum. A non-zero value for $\\gamma psilon_i$ indicates a violation of CP symmetry in the decay processes of (N_i). This violation is essential for models attempting to explain the observed dominance of matter over antimatter in the universe, as described by baryogenesis.",
+        "interpretation": "In this formula, $\\gamma psilon_i$ represents the CP asymmetry associated with the decay of the i-th heavy particle species, denoted as (N_i). The term (Γ(N_i → L H)) signifies the decay rate of the particle (N_i) into a lepton ( $L$) and a Higgs boson (H). Similarly, (Γ(N_i → L H^†)) is the decay rate of the antiparticle of (N_i) into an antilepton ( L^†) and an anti-Higgs boson (H^†). The formula calculates the asymmetry by taking the difference between these two decay rates and normalizing it by their sum. A non-zero value for $\\gamma psilon_i$ indicates a violation of CP symmetry in the decay processes of (N_i). This violation is essential for models attempting to explain the observed dominance of matter over antimatter in the universe, as described by baryogenesis.",
         "symmetry_origin": "The origin of this formula lies in the violation of CP (Charge-Parity) symmetry. CP symmetry is the combination of charge conjugation (C) and parity inversion (P). C flips all particle charges to their antiparticles, while P inverts spatial coordinates. If CP symmetry were conserved, the decay rates of a particle into specific final states would be identical to the decay rates of its antiparticle into the corresponding antiparticle final states. However, experimental observations, particularly in weak interactions, have shown that CP symmetry is not universally conserved. The formula $\\gamma psilon_i$ directly quantifies this violation for the specific decay channels involving heavy neutral leptons and Higgs bosons. Such violations are often introduced through complex phases in the Yukawa coupling matrices within extensions of the Standard Model, such as the seesaw mechanism for neutrino masses, which naturally involve heavy right-handed neutrinos.",
-        "limits_and_boundary": "As the difference between the decay rates (Γ(N_i → L H)) and (Γ(N_i → L H^†)) approaches zero, i.e., (Γ(N_i → L H) → Γ(N_i → L H^†)), the leptonic CP asymmetry ($\\gamma $psilon_i) approaches zero. This represents a state of perfect CP symmetry in these decay channels. Conversely, if one of the decay rates is significantly larger than the other, the asymmetry ($\\gamma $psilon_i) approaches or , indicating maximal CP violation. For instance, if (Γ(N_i → L H)) is much larger than (Γ(N_i → L H^†)), ($\\gamma $psilon_i) approaches 1. If (Γ(N_i → L H^†)) is much larger, ($\\gamma $psilon_i) approaches -1. The formula is undefined if both decay rates are exactly zero.",
+        "limits_and_boundary": "As the difference between the decay rates (Γ(N_i → L H)) and (Γ(N_i → L H^†)) approaches zero, i.e., (Γ(N_i → L H) → Γ(N_i → L H^†)), the leptonic CP asymmetry ( $\\gamma$ psilon_i) approaches zero. This represents a state of perfect CP symmetry in these decay channels. Conversely, if one of the decay rates is significantly larger than the other, the asymmetry ( $\\gamma$ psilon_i) approaches or , indicating maximal CP violation. For instance, if (Γ(N_i → L H)) is much larger than (Γ(N_i → L H^†)), ( $\\gamma$ psilon_i) approaches 1. If (Γ(N_i → L H^†)) is much larger, ( $\\gamma$ psilon_i) approaches -1. The formula is undefined if both decay rates are exactly zero.",
         "semantic_variables": {
             "psilon_i": {
                 "name": "Leptonic CP Asymmetry",
@@ -977,7 +977,7 @@
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Leptonic CP Asymmetry formula, denoted by $\\gamma $psilon_i, quantifies the difference in the decay rates of a heavy neutral lepton (or other heavy particle) (N_i) into a lepton-Higgs boson pair (L H) and its corresponding antiparticle into an antilepton-Higgs boson pair ( L H^†). CP symmetry violation is a crucial concept in particle physics, particularly for explaining the observed asymmetry between matter and antimatter in the universe. This formula provides a direct measure of CP violation in the leptonic sector, specifically related to the decays of hypothetical heavy neutral leptons (often referred to as right-handed neutrinos or sterile neutrinos) that could be involved in baryogenesis models.",
+        "conceptual_definition": "The Leptonic CP Asymmetry formula, denoted by $\\gamma$ psilon_i, quantifies the difference in the decay rates of a heavy neutral lepton (or other heavy particle) (N_i) into a lepton-Higgs boson pair (L H) and its corresponding antiparticle into an antilepton-Higgs boson pair ( L H^†). CP symmetry violation is a crucial concept in particle physics, particularly for explaining the observed asymmetry between matter and antimatter in the universe. This formula provides a direct measure of CP violation in the leptonic sector, specifically related to the decays of hypothetical heavy neutral leptons (often referred to as right-handed neutrinos or sterile neutrinos) that could be involved in baryogenesis models.",
         "intuitive_summary": "This formula measures the imbalance between a heavy particle decaying into a lepton and a Higgs, versus its antiparticle decaying into an antilepton and a Higgs."
     },
     "astrophysical-euler-momentum-ident-4051a8b9": {
@@ -1019,9 +1019,9 @@
             },
             "\\nabla": {
                 "name": "Gradient Operator",
-                "type": "constant",
+                "type": "operator",
                 "unit": "1/m",
-                "description": "The vector differential operator. In Cartesian coordinates, \nabla = ( $\\frac{\\partial}{\\partial x}$ , $\\frac{\\partial}{\\partial y}$ , $\\frac{\\partial}{\\partial z}$ ). It is used to calculate the rate of change of a scalar field or to apply divergence and curl to vector fields."
+                "description": "The vector differential operator. In Cartesian coordinates, \n\\nabla = ( $\\frac{\\partial}{\\partial x}$ , $\\frac{\\partial}{\\partial y}$ , $\\frac{\\partial}{\\partial z}$ ). It is used to calculate the rate of change of a scalar field or to apply divergence and curl to vector fields."
             },
             "v": {
                 "name": "Speed / Velocity Magnitude",
@@ -1045,13 +1045,13 @@
     "metric-determinant-divergence-ident-c1c121c0": {
         "title": "Metric-Determinant Divergence Relation",
         "equation": "\\nabla_\\mu V^\\mu = \\frac{1}{\\sqrt{-g}} \\partial_\\mu (\\sqrt{-g} V^\\mu)",
-        "interpretation": "The formula $\\n\\n\\n\\n\\nabla_\\mu V^\\mu = \\frac{1}{\\sqrt{-g}} \\partial$_$\\mu$ ($\\sqrt{-g}$ V^$\\mu$) $establishes an equivalence between the covariant divergence of a contravariant vector field$ V^$\\mu (the left-hand side,  \\n\\n\\n\\n\\nabla_\\mu$ V^$\\mu ) and an expression involving partial derivatives and the determinant of the metric tensor$ g_{$\\mu \\nu$} $(the right-hand side). The term \\sqrt{-g} , where$ g = $\\det$(g_{$\\mu \\nu$})  is the determinant of the metric tensor, represents the square root of the negative of the determinant of the metric. In curved spacetime, the volume element is proportional to$ √{-g} \\mathrm{d}^4x $. The covariant divergence $\\n\\n\\n\\n\\nabla_\\mu V^\\mu  is intrinsically coordinate-independent and represents the rate of change of the vector field's flux through an infinitesimal volume element. The right-hand side demonstrates how this coordinate-independent quantity can be computed using only partial derivatives and the metric tensor's determinant. The partial derivative \\partial$_$\\mu$  acts  on the entire term$ √{-g} V^\\mu $, effectively incorporating the effects of coordinate transformations and the curvature of spacetime into the divergence calculation.",
+        "interpretation": "The formula $\\nabla_\\mu V^\\mu = \\frac{1}{\\sqrt{-g}} \\partial _\\mu$ ($\\sqrt{-g}$ V^$\\mu$) $establishes an equivalence between the covariant divergence of a contravariant vector field$ V^$\\mu (the left-hand side, \\nabla_\\mu$ V^$\\mu ) and an expression involving partial derivatives and the determinant of the metric tensor$ g_{$\\mu \\nu$} $(the right-hand side). The term \\sqrt{-g} , where$ g = $\\det$(g_{$\\mu \\nu$}) is the determinant of the metric tensor, represents the square root of the negative of the determinant of the metric. In curved spacetime, the volume element is proportional to$√{-g} \\mathrm{d}^4x$. The covariant divergence $\\nabla_\\mu V^\\mu is intrinsically coordinate-independent and represents the rate of change of the vector field's flux through an infinitesimal volume element. The right-hand side demonstrates how this coordinate-independent quantity can be computed using only partial derivatives and the metric tensor's determinant. The partial derivative \\partial _\\mu$ acts on the entire term$√{-g} V^\\mu$, effectively incorporating the effects of coordinate transformations and the curvature of spacetime into the divergence calculation.",
         "symmetry_origin": "This relation arises directly from the definition of the covariant derivative in curved spacetime and the properties of the metric tensor. It is a consequence of the requirement that physical laws should be generally covariant, meaning they should take the same form in all coordinate systems. The divergence of a vector field is a scalar quantity, and its expression must be invariant under coordinate transformations. The factor of$√{-g} is crucial for ensuring this invariance, as it scales appropriately with coordinate transformations to cancel out changes in the partial derivative operator and the vector components, rendering the overall divergence calculation coordinate-independent$.",
-        "limits_and_boundary": "In the limit of flat spacetime, the metric tensor $g_{\\mu u}$approaches the Minkowski metric$η_{\\mu u}$, and its determinant $g \\to -1$. Consequently,$√{-g} \\to 1$. In this limit, the formula reduces to the familiar expression for the divergence of a contravariant vector in Cartesian coordinates:$\\n\\n\\n\\n\\nabla_\\mu V^\\mu \\to \\partial_\\mu V^\\mu$. This shows that the Metric-Determinant Divergence Relation is a generalization of the standard divergence formula to curved manifolds. As spacetime curvature becomes significant (i.e.,$g \\text{ deviates significantly from } -1$), the$√{-g}$term becomes important for correctly calculating the divergence.",
+        "limits_and_boundary": "In the limit of flat spacetime, the metric tensor $g_{\\mu u}$approaches the Minkowski metric$η_{\\mu u}$, and its determinant $g \\to -1$. Consequently,$√{-g} \\to 1$. In this limit, the formula reduces to the familiar expression for the divergence of a contravariant vector in Cartesian coordinates:$\\nabla_\\mu V^\\mu \\to \\partial_\\mu V^\\mu$. This shows that the Metric-Determinant Divergence Relation is a generalization of the standard divergence formula to curved manifolds. As spacetime curvature becomes significant (i.e.,$g \\text{ deviates significantly from } -1$), the$√{-g}$term becomes important for correctly calculating the divergence.",
         "semantic_variables": {
             "\\nabla_\\mu V^\\mu": {
                 "name": "Covariant Divergence",
-                "type": "variable",
+                "type": "operator",
                 "unit": "1/m",
                 "description": "The covariant divergence of the contravariant vector field $V^\\mu$. It represents the net outward flux of the vector field per unit volume, accounting for spacetime curvature. In SI units, it has units of inverse length (e.g., 1/m)."
             },
@@ -1081,7 +1081,7 @@
             },
             "\\partial_\\mu": {
                 "name": "Partial Derivative",
-                "type": "variable",
+                "type": "operator",
                 "unit": "1/m (example, depends on the index $ \\mu $)",
                 "description": "The partial derivative operator with respect to the $\\mu$-th spacetime coordinate. The units depend on the coordinate, but typically represent an inverse length for spatial coordinates (e.g., 1/m) or inverse time for temporal coordinates (e.g., 1/s)."
             },
@@ -1236,7 +1236,7 @@
     "continuous-wave-function-identity-1-22c6284c-e788763a": {
         "title": "One-Dimensional Time-Dependent Schrödinger Equation",
         "equation": "i\\hbar \\frac{\\partial \\psi}{\\partial t} = -\\frac{\\hbar^2}{2m} \\frac{\\partial^2 \\psi}{\\partial x^2} + V(x)\\psi",
-        "interpretation": "i$\\hbar \\partial \\psi$/$\\partial t$ represents the quantum energy operator. $- \\frac{\\hbar^2}{2m}  \\partial^2 \\psi / \\partial x^2$ represents the kinetic energy operator, and $V(x)$ is the potential energy.",
+        "interpretation": "i$\\hbar \\partial \\psi$/$\\partial t$ represents the quantum energy operator. $- \\frac{\\hbar^2}{2m} \\partial^2 \\psi / \\partial x^2$ represents the kinetic energy operator, and $V(x)$ is the potential energy.",
         "symmetry_origin": "Galilean invariance of non-relativistic physics and the unitary time evolution of quantum states.",
         "limits_and_boundary": "In a free-particle system ($V(x) = 0$), the solutions are plane waves. In the limit where the particle mass $m \\to \\infty$, the wave function behaves classically according to the Ehrenfest theorem.",
         "semantic_variables": {
@@ -1298,8 +1298,8 @@
         "equation": "k = 0",
         "conceptual_definition": "The equation $k = 0$ represents the condition for spacetime to be flat, meaning it has zero curvature. In the context of Einstein's theory of General Relativity, curvature is a manifestation of the presence of mass and energy. When $k = 0$, spacetime is locally indistinguishable from the Euclidean geometry of flat space. This condition simplifies many calculations and describes the behavior of gravity in regions devoid of significant gravitational sources, or in the idealized case of a universe with no matter or energy.",
         "intuitive_summary": "Spacetime is perfectly flat, like a boundless, un-warped sheet of paper, when its curvature is zero.",
-        "interpretation": "In this formula, $k$ represents the Gaussian curvature (or more generally, a scalar component of the Riemann curvature tensor in higher dimensions) which quantifies the intrinsic curvature of spacetime. The equation $k = 0$ states that this curvature is zero. In Euclidean geometry, parallel lines never meet, and the sum of angles in a triangle is always 180 degrees. Similarly, in flat spacetime, the paths of freely moving objects (geodesics) behave according to these Euclidean principles. For instance, if two initially parallel geodesic paths are followed, they will remain parallel and never converge or diverge due to the geometry of spacetime itself. The vanishing of curvature is a direct consequence of the absence of stress-energy-momentum. If the stress-energy tensor, denoted by $T_{\\mu u}$, is zero everywhere, then the Einstein field equations, $G_{\\mu u} =  \\frac{8\\pi G}{c^4}  T_{\\mu \\nu}$, imply that the Einstein tensor $G_{\\mu \\nu}$ must also be zero, which in turn means the spacetime is flat (i.e., the Riemann curvature tensor is zero).",
-        "symmetry_origin": "The condition $k = 0$ is deeply related to symmetries. A spacetime with zero curvature is maximally symmetric. In the context of Einstein's field equations, $G_{\\mu u} =  \\frac{8\\pi G}{c^4}  T_{\\mu \\nu}$, if the stress-energy tensor $T_{\\mu \\nu}$vanishes, then the Einstein tensor $G_{\\mu \\nu}$must also vanish. A vanishing Einstein tensor implies that the Riemann curvature tensor is zero, leading to a flat spacetime. This corresponds to a space where the laws of physics are invariant under translations and rotations in all directions. The coordinate system can be chosen such that the metric tensor is simply the Minkowski metric,$\\eta_{\\mu \\nu}$, and all components of the Riemann tensor, Ricci tensor, and scalar curvature are zero.",
+        "interpretation": "In this formula, $k$ represents the Gaussian curvature (or more generally, a scalar component of the Riemann curvature tensor in higher dimensions) which quantifies the intrinsic curvature of spacetime. The equation $k = 0$ states that this curvature is zero. In Euclidean geometry, parallel lines never meet, and the sum of angles in a triangle is always 180 degrees. Similarly, in flat spacetime, the paths of freely moving objects (geodesics) behave according to these Euclidean principles. For instance, if two initially parallel geodesic paths are followed, they will remain parallel and never converge or diverge due to the geometry of spacetime itself. The vanishing of curvature is a direct consequence of the absence of stress-energy-momentum. If the stress-energy tensor, denoted by $T_{\\mu u}$, is zero everywhere, then the Einstein field equations, $G_{\\mu u} = \\frac{8\\pi G}{c^4} T_{\\mu \\nu}$, imply that the Einstein tensor $G_{\\mu \\nu}$ must also be zero, which in turn means the spacetime is flat (i.e., the Riemann curvature tensor is zero).",
+        "symmetry_origin": "The condition $k = 0$ is deeply related to symmetries. A spacetime with zero curvature is maximally symmetric. In the context of Einstein's field equations, $G_{\\mu u} = \\frac{8\\pi G}{c^4} T_{\\mu \\nu}$, if the stress-energy tensor $T_{\\mu \\nu}$vanishes, then the Einstein tensor $G_{\\mu \\nu}$must also vanish. A vanishing Einstein tensor implies that the Riemann curvature tensor is zero, leading to a flat spacetime. This corresponds to a space where the laws of physics are invariant under translations and rotations in all directions. The coordinate system can be chosen such that the metric tensor is simply the Minkowski metric,$\\eta_{\\mu \\nu}$, and all components of the Riemann tensor, Ricci tensor, and scalar curvature are zero.",
         "limits_and_boundary": "When $k$ approaches zero, spacetime transitions from a curved state towards a flat state. If $k$ were to approach infinity (in certain models), it would imply extremely high curvature, such as at the singularity of a black hole or in the very early universe. The limit $k=0$ represents the most symmetric and simplest geometric configuration for spacetime, serving as a baseline against which curved spacetimes are often compared. In cosmological models, the parameter $k$ is often related to the spatial curvature of the universe; $k=0$ corresponds to a spatially flat universe, which is a key prediction of the standard cosmological model (Lambda-CDM) if the total energy density equals the critical density.",
         "status": "platinum",
         "semantic_variables": {
@@ -1351,12 +1351,6 @@
         "limits_and_boundary": "As the mass m of the particle approaches infinity, the kinetic energy term approaches zero, meaning the particle is less susceptible to quantum effects and behaves more classically. As the potential energy V() approaches zero (free particle), the Hamiltonian becomes solely the kinetic energy operator, and the particle propagates with constant momentum. If the potential energy V() approaches infinity, the particle is strongly confined, leading to quantized energy levels.",
         "status": "platinum",
         "semantic_variables": {
-            "": {
-                "name": "Laplacian Operator",
-                "type": "operator",
-                "unit": "m",
-                "description": "The second-order differential operator, defined as the divergence of the gradient. In Cartesian coordinates, it is / + / + /."
-            },
             "m": {
                 "name": "Mass of the Particle",
                 "type": "variable",
@@ -1376,7 +1370,7 @@
         "equation": "\\eta = \\frac{Z_1 Z_2 e^2}{4\\pi\\varepsilon_0 \\hbar v}",
         "conceptual_definition": "The Sommerfeld parameter, denoted by the Greek letter eta (η), is a dimensionless quantity that characterizes the strength of the Coulomb interaction between two charged particles relative to their kinetic energy. It is particularly important in the context of atomic physics and nuclear reactions, where it helps to determine the probability of interactions, especially when particles approach each other closely.",
         "intuitive_summary": "The Sommerfeld parameter quantifies the ratio of the electrostatic potential energy between two charged particles to their kinetic energy, scaled by quantum mechanical considerations.",
-        "interpretation": "The Sommerfeld parameter is defined as η = $\\frac{Z_1$ Z_2 e^2}{4πε_0 ℏ v}$. Here, $Z_1$ and $Z_2$ are the atomic numbers (dimensionless integers representing the number of protons) of the two interacting charged particles. $e$ is the elementary charge (in Coulombs, C), the fundamental unit of electric charge. $4πε_0$ is the permittivity of free space (in Farads per meter, F/m), a constant that appears in Coulomb's law. ℏ (h-bar) is the reduced Planck constant (in Joule-seconds, J∙s), a fundamental constant in quantum mechanics. Finally, $v$ is the relative velocity between the two particles (in meters per second, m/s). The term $Z_1$ Z_2 e^2 / (4πε_0)$ represents the electrostatic potential energy between the two charges at a characteristic distance related to their interaction. Dividing by ℏ v effectively compares this potential energy to the kinetic energy associated with the momentum of the particles in a quantum mechanical framework. A large value of η indicates that the Coulomb interaction is strong compared to the kinetic energy, suggesting that quantum tunneling effects or bound state formation are significant. Conversely, a small value implies that the kinetic energy dominates, and the interaction can be treated more classically.",
+        "interpretation": "The Sommerfeld parameter is defined as η = \\frac{Z_1 Z_2 e^2}{4πε_0 ℏ v}$. Here,$Z_1$and$Z_2$are the atomic numbers (dimensionless integers representing the number of protons) of the two interacting charged particles.$e$is the elementary charge (in Coulombs, C), the fundamental unit of electric charge.$4πε_0$is the permittivity of free space (in Farads per meter, F/m), a constant that appears in Coulomb's law. ℏ (h-bar) is the reduced Planck constant (in Joule-seconds, J∙s), a fundamental constant in quantum mechanics. Finally,$v$is the relative velocity between the two particles (in meters per second, m/s). The term$Z_1$Z_2 e^2 / (4πε_0)$ represents the electrostatic potential energy between the two charges at a characteristic distance related to their interaction. Dividing by ℏ v effectively compares this potential energy to the kinetic energy associated with the momentum of the particles in a quantum mechanical framework. A large value of η indicates that the Coulomb interaction is strong compared to the kinetic energy, suggesting that quantum tunneling effects or bound state formation are significant. Conversely, a small value implies that the kinetic energy dominates, and the interaction can be treated more classically.",
         "symmetry_origin": "The Sommerfeld parameter arises from the interplay between classical electrostatics and quantum mechanics. Its derivation often involves considering the Bohr model or more sophisticated quantum mechanical treatments of scattering and interactions, such as the Rutherford scattering formula modified for quantum effects. The presence of ℏ indicates its quantum mechanical nature, while the Coulomb term stems from classical electrodynamics. It is not directly derived from a fundamental symmetry principle in the same way as conserved quantities, but rather emerges from the specific dynamics of charged particle interactions.",
         "limits_and_boundary": "As the relative velocity $v$ approaches zero, the Sommerfeld parameter $η$ approaches infinity. This signifies that for very slow-moving particles, the electrostatic potential energy becomes overwhelmingly dominant compared to their kinetic energy, making quantum mechanical effects like tunneling and resonance highly probable. Conversely, as the relative velocity $v$ approaches infinity, the Sommerfeld parameter $η$ approaches zero. This indicates that for very fast-moving particles, their kinetic energy dominates the interaction, and the Coulomb force has less influence, allowing for a more classical description of their trajectory.",
         "status": "platinum",
@@ -1495,8 +1489,8 @@
         "equation": "\\mathbf{F}_{\\text{inertial}} = -m\\mathbf{A}(t)",
         "conceptual_definition": "The inertial force, often referred to as a fictitious force or pseudoforce, is a force that appears in a non-inertial (accelerating) reference frame. It arises not from an interaction between objects, but from the acceleration of the reference frame itself. Mathematically, it is defined as the negative product of an object's mass and the acceleration of the reference frame in which the object is observed.",
         "intuitive_summary": "In an accelerating frame of reference, an object seems to experience an extra force proportional to its mass and the frame's acceleration, pushing it in the direction opposite to the frame's acceleration.",
-        "interpretation": "The equation $\\mathbf{F}_{\\text{inertial}}$ = -m $\\mathbf{A}$(t)$quantifies the inertial force. Here,  \\mathbf{F} _{\\text{inertial}$}$, measured in Newtons (N), represents the inertial force experienced by an object. The symbol $m$ denotes the mass of the object, measured in kilograms (kg). The term  \\mathbf{A}$(t)$ is the acceleration vector of the non-inertial reference frame relative to an inertial frame, measured in meters per second squared (m/s²). The negative sign is crucial: it indicates that the inertial force acts in the direction *opposite* to the acceleration of the reference frame. For instance, if a reference frame is accelerating forward (positive  \\mathbf{A} ), an object within that frame will appear to be pushed backward (negative  \\mathbf{F} _{\\text{inertial}$}$) as if a force were acting on it in that direction$.",
-        "symmetry_origin": "The concept of inertial force arises from the need to apply Newton's laws of motion within non-inertial reference frames. In an inertial frame, Newton's second law is $\\mathbf{F}_{net}$ = m$\\mathbf{a}$, where $\\mathbf{a}$ is the acceleration of the object. If we attempt to use this law in a non-inertial frame accelerating with $\\mathbf{A}(t)$, the observed acceleration of the object $\\mathbf{a}_{obs}$ is related to its acceleration in an inertial frame $\\mathbf{a}_{inertial}$ by $\\mathbf{a}_{obs}$ = $\\mathbf{a}_{inertial}$ - $\\mathbf{A}$(t)$. To maintain the form of Newton's second law, we can write $m$\\mathbf{a}_{inertial}$ = m$\\mathbf{a}_{obs}$ + m$\\mathbf{A}$(t)$. The term $m$\\mathbf{A}$(t)$ is then treated as an additional 'force' acting on the object, which we define as the inertial force:  \\mathbf{F}_{\\text{inertial}}  = -m\\mathbf{A}(t)$. This formalism allows us to use Newton's laws, albeit with the inclusion of these fictitious forces, in accelerating frames.",
+        "interpretation": "The equation $\\mathbf{F}_{\\text{inertial}}$ = -m $\\mathbf{A}$(t)$quantifies the inertial force. Here, \\mathbf{F} _{\\text{inertial}$}$, measured in Newtons (N), represents the inertial force experienced by an object. The symbol$m$denotes the mass of the object, measured in kilograms (kg). The term \\mathbf{A}$(t)$is the acceleration vector of the non-inertial reference frame relative to an inertial frame, measured in meters per second squared (m/s²). The negative sign is crucial: it indicates that the inertial force acts in the direction *opposite* to the acceleration of the reference frame. For instance, if a reference frame is accelerating forward (positive \\mathbf{A} ), an object within that frame will appear to be pushed backward (negative \\mathbf{F} _{\\text{inertial}$}$) as if a force were acting on it in that direction$.",
+        "symmetry_origin": "The concept of inertial force arises from the need to apply Newton's laws of motion within non-inertial reference frames. In an inertial frame, Newton's second law is $\\mathbf{F}_{net}$ = m$\\mathbf{a}$, where $\\mathbf{a}$ is the acceleration of the object. If we attempt to use this law in a non-inertial frame accelerating with $\\mathbf{A}(t)$, the observed acceleration of the object $\\mathbf{a}_{obs}$ is related to its acceleration in an inertial frame $\\mathbf{a}_{inertial}$ by $\\mathbf{a}_{obs} = \\mathbf{a}_{inertial} - \\mathbf{A}$(t)$. To maintain the form of Newton's second law, we can write$m$\\mathbf{a}_{inertial}$ = m$\\mathbf{a}_{obs}$ + m$\\mathbf{A}$(t)$. The term$m$\\mathbf{A}$(t)$is then treated as an additional 'force' acting on the object, which we define as the inertial force: \\mathbf{F}_{\\text{inertial}} = -m\\mathbf{A}(t)$. This formalism allows us to use Newton's laws, albeit with the inclusion of these fictitious forces, in accelerating frames.",
         "limits_and_boundary": "As the acceleration of the reference frame $\\mathbf{A}(t)$ approaches zero, the inertial force $\\mathbf{F}_{\\text{inertial}}$, approaches zero. This means that as a reference frame becomes inertial, fictitious forces vanish, and only real forces due to physical interactions remain. Conversely, as the acceleration $\\mathbf{A}(t)$ becomes very large, the inertial force becomes very large, dominating over other forces and significantly affecting the apparent motion of objects within the frame. If the mass $m$ of the object is zero, the inertial force is zero, regardless of the frame's acceleration.",
         "status": "platinum",
         "semantic_variables": {
@@ -1528,11 +1522,11 @@
     "laplaces-equation-1d": {
         "title": "Laplace's equation in one dimension",
         "equation": "\\frac{d^2\\Phi}{dx^2} = 0",
-        "conceptual_definition": "Laplace's equation in one dimension, $\\frac{d^2\\Phi}{dx^2} = 0$, is a fundamental partial differential equation that describes a scalar function $\\Phi  that  is harmonic. In one dimension, this simplifies considerably. A function is harmonic if its second derivative is zero everywhere. This condition implies that the function has no local extrema (maximum or minimum) and that its rate of change is constant. This equation is a simplified version of the more general Laplace equation,  \\nabla ^2 \\Phi = 0$, which arises in various fields of physics and engineering, including electrostatics, gravitation, fluid dynamics, and heat transfer.",
+        "conceptual_definition": "Laplace's equation in one dimension, $\\frac{d^2\\Phi}{dx^2} = 0$, is a fundamental partial differential equation that describes a scalar function $\\Phi that is harmonic. In one dimension, this simplifies considerably. A function is harmonic if its second derivative is zero everywhere. This condition implies that the function has no local extrema (maximum or minimum) and that its rate of change is constant. This equation is a simplified version of the more general Laplace equation, \\nabla ^2 \\Phi = 0$, which arises in various fields of physics and engineering, including electrostatics, gravitation, fluid dynamics, and heat transfer.",
         "intuitive_summary": "In one dimension, a function satisfies Laplace's equation if its second derivative is zero, meaning its slope is constant and it represents a linear distribution.",
-        "interpretation": "In the one-dimensional Laplace's equation, $\\frac{d^2\\Phi}{dx^2} = 0$, the variable $x$ represents a position along a single axis, typically measured in meters (m). The function $\\Phi$(x)$ represents a scalar physical quantity that varies with position. The term  \\frac{d^2\\Phi}{dx^2}$ is the second derivative of $\\Phi  with  respect to $x$. Physically, the second derivative describes how the rate of change of  \\Phi (its first derivative,  \\frac{d\\Phi}{dx} ) changes. The equation  \\frac{d^2\\Phi}{dx^2}$ = 0 $states that this rate of change of the rate of change is zero. Mathematically, the solution to this differential equation is a linear function of the form  \\Phi (x)$ = Ax + B$, where $A$ and $B$ are constants. The constant $A$ represents the constant slope (or gradient) of the function  \\Phi , and $B$ represents the value of  \\Phi  $at$ x = 0$. This implies that the quantity $\\Phi$ changes linearly with position, having a constant gradient, and thus possesses no local maxima or minima.",
-        "symmetry_origin": "Laplace's equation arises from the principle of seeking solutions that are independent of direction or have a constant gradient in the absence of sources or sinks. In one dimension, this implies that the solution must be a linear function. It can be derived from the condition that the divergence of a gradient is zero, which is a statement of conservation. For example, in electrostatics, if there are no charges in a region, the electric potential $V$ satisfies Laplace's equation. In one dimension, this means the electric field $E = -dV/dx $must$ be constant in that region$.",
-        "limits_and_boundary": "As $x$ approaches infinity or negative infinity, the linear solution $\\Phi$(x) = Ax + B $will$ also approach infinity or negative infinity, unless the coefficient $A$ is zero. If $A = 0$, then $\\Phi$(x) = B$, a constant function, which trivially satisfies $d^2$\\Phi$/dx^2 = 0$. This constant solution represents a scenario where the quantity  \\Phi$  is uniform and does not change with position. The behavior of $\\Phi$(x)$at the boundaries of an interval dictates the specific values of the constants $A$ and $B.",
+        "interpretation": "In the one-dimensional Laplace's equation, $\\frac{d^2\\Phi}{dx^2} = 0$, the variable $x$ represents a position along a single axis, typically measured in meters (m). The function $\\Phi$(x)$represents a scalar physical quantity that varies with position. The term \\frac{d^2\\Phi}{dx^2}$ is the second derivative of $\\Phi with respect to$x$. Physically, the second derivative describes how the rate of change of \\Phi (its first derivative, \\frac{d\\Phi}{dx} ) changes. The equation \\frac{d^2\\Phi}{dx^2}$ = 0 $states that this rate of change of the rate of change is zero. Mathematically, the solution to this differential equation is a linear function of the form \\Phi (x)$ = Ax + B$, where$A$and$B$are constants. The constant$A$represents the constant slope (or gradient) of the function \\Phi , and$B$represents the value of \\Phi$at$x = 0$. This implies that the quantity $\\Phi$ changes linearly with position, having a constant gradient, and thus possesses no local maxima or minima.",
+        "symmetry_origin": "Laplace's equation arises from the principle of seeking solutions that are independent of direction or have a constant gradient in the absence of sources or sinks. In one dimension, this implies that the solution must be a linear function. It can be derived from the condition that the divergence of a gradient is zero, which is a statement of conservation. For example, in electrostatics, if there are no charges in a region, the electric potential $V$ satisfies Laplace's equation. In one dimension, this means the electric field $E = -dV/dx$must$be constant in that region$.",
+        "limits_and_boundary": "As $x$ approaches infinity or negative infinity, the linear solution $\\Phi$(x) = Ax + B $will$ also approach infinity or negative infinity, unless the coefficient $A$ is zero. If $A = 0$, then $\\Phi$(x) = B$, a constant function, which trivially satisfies$d^2$\\Phi$/dx^2 = 0$. This constant solution represents a scenario where the quantity \\Phi$ is uniform and does not change with position. The behavior of $\\Phi$(x)$at the boundaries of an interval dictates the specific values of the constants$A$and$B.",
         "status": "platinum",
         "semantic_variables": {
             "\\Phi": {
@@ -1580,13 +1574,18 @@
         "description": "Represents the instantaneous velocity vector of an individual particle within a system.",
         "conceptual_definition": "In classical mechanics, velocity is the rate of change of position of an object with respect to time, and it is a vector quantity. For a system of particles, $v_i$ specifically denotes the velocity vector associated with the i-th particle, distinguishing it from other particles in the system. It is defined as the time derivative of the particle's position vector, $v_i = \\frac{d\\mathbf{r}_i}{dt}$.",
         "interpretation": "This term quantifies how fast and in what direction the i-th particle is moving at any given instant. It is crucial for calculating the kinetic energy contribution of that specific particle to the total kinetic energy of the system. The magnitude of $v_i$ is the speed of the particle, and its direction indicates the instantaneous direction of motion. It is a fundamental kinematic quantity that describes the motion of a point mass.",
-        "limits_and_boundary": "In classical mechanics, $v_i$ is typically assumed to be much less than the speed of light ($c$). If $v_i$ approaches $c$, relativistic effects become significant, and the classical definition of kinetic energy would no longer be accurate. For a particle at rest, $v_i = 0$. There are no upper bounds in classical mechanics, but physical reality imposes the speed of light as an ultimate limit.",
+        "limits_and_boundary": "In classical mechanics, $v_i$ is typically assumed to be much less than the speed of light ( $c$). If $v_i$ approaches $c$, relativistic effects become significant, and the classical definition of kinetic energy would no longer be accurate. For a particle at rest, $v_i = 0$. There are no upper bounds in classical mechanics, but physical reality imposes the speed of light as an ultimate limit.",
         "symmetry_origin": "While $v_i$ itself is a kinematic quantity, its role in the kinetic energy formula is implicitly linked to time-translation invariance, which leads to the conservation of energy. The conservation of momentum, a consequence of spatial translation invariance, also directly involves the sum of individual particle momenta, each dependent on $v_i$.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "classical-kinematics",
         "semantic_variables": {
-            "v_i": "Velocity vector of the i-th particle (m/s). Represents the instantaneous rate of change of position of the i-th particle with respect to time, including both its speed and direction."
+            "v_i": {
+                "name": "v_i",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Velocity vector of the i-th particle (m/s). Represents the instantaneous rate of change of position of the i-th particle with respect to time, including both its speed and direction."
+            }
         },
         "equation": "v_i",
         "status": "published",
@@ -1599,13 +1598,18 @@
         "description": "The strong coupling constant, \\alpha_s, quantifies the strength of the strong nuclear force between quarks and gluons.",
         "conceptual_definition": "The strong coupling constant, $\\alpha_s$, is the fundamental parameter that determines the strength of the interaction between quarks and gluons, the elementary particles of quantum chromodynamics (QCD). Unlike the electromagnetic coupling constant, $\\alpha$, $\\alpha_s$ is not a constant but 'runs' with the energy scale of the interaction, a phenomenon known as asymptotic freedom. This running behavior is a crucial aspect of QCD, leading to confinement at low energies and perturbative calculations at high energies.",
         "interpretation": "Physically, $\\alpha_s$ dictates the probability and strength of interactions mediated by gluons. At high energy scales (short distances), $\\alpha_s$ becomes small, allowing for perturbative calculations of quark and gluon interactions, a property known as asymptotic freedom. Conversely, at low energy scales (long distances), $\\alpha_s$ becomes large, leading to the confinement of quarks and gluons within hadrons, making it impossible to observe free quarks or gluons. The energy dependence of $\\alpha_s$ is described by the renormalization group equations, which are central to understanding the dynamics of the strong force.",
-        "limits_and_boundary": "At very high energy scales (Q >> $\\Lambda_{QCD}$), $\\alpha_s$(Q^2) $\\to$ 0, exhibiting asymptotic freedom. At low energy scales (Q $\\sim \\Lambda_{QCD}$), $\\alpha_s$(Q^2) becomes large, indicating strong coupling and confinement. The perturbative expansion for $\\alpha_s$ breaks down at low energies.",
+        "limits_and_boundary": "At very high energy scales (Q >> $\\Lambda_{QCD}$), $\\alpha_s$(Q^2) \\to 0, exhibiting asymptotic freedom. At low energy scales (Q $\\sim \\Lambda_{QCD}$), $\\alpha_s$(Q^2) becomes large, indicating strong coupling and confinement. The perturbative expansion for $\\alpha_s$ breaks down at low energies.",
         "symmetry_origin": "The strong coupling constant arises from the local SU(3) gauge symmetry of Quantum Chromodynamics (QCD). This symmetry dictates the existence of eight gluon fields that mediate the strong force and ensures the conservation of color charge.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-chromodynamics",
         "semantic_variables": {
-            "alpha_s": "The strong coupling constant (dimensionless), quantifying the strength of the strong nuclear force."
+            "alpha_s": {
+                "name": "alpha_s",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The strong coupling constant (dimensionless), quantifying the strength of the strong nuclear force."
+            }
         },
         "equation": "\\alpha_s",
         "status": "published",
@@ -1624,8 +1628,18 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity",
         "semantic_variables": {
-            "R_{\\mu\\nu}": "Ricci curvature tensor (units: m⁻²). This tensor describes the intrinsic curvature of spacetime, representing the tidal forces experienced by objects and the local convergence or divergence of geodesics.",
-            "U^\\mu": "Four-velocity vector (units: m/s). This is a timelike vector tangent to the worldline of an observer or particle, normalized such that $U^\\mu U_\\mu = -c^2$ (using the $(-,+,+,+)$ metric signature convention)."
+            "R_{\\mu\\nu}": {
+                "name": "R_{\\mu\\nu}",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Ricci curvature tensor (units: m⁻²). This tensor describes the intrinsic curvature of spacetime, representing the tidal forces experienced by objects and the local convergence or divergence of geodesics."
+            },
+            "U^\\mu": {
+                "name": "U^\\mu",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Four-velocity vector (units: m/s). This is a timelike vector tangent to the worldline of an observer or particle, normalized such that $U^\\mu U_\\mu = -c^2$ (using the $(-,+,+,+)$ metric signature convention)."
+            }
         },
         "equation": "R_{\\mu\\nu} U^\\mu U^\\nu \\ge 0",
         "status": "published",
@@ -1644,8 +1658,18 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-mechanics-postulates",
         "semantic_variables": {
-            "c_n": "The complex probability amplitude for the quantum system to be in the basis state $|n\\rangle$. It is a dimensionless complex number.",
-            "|c_n|^2": "The probability of finding the quantum system in the specific basis state $|n\\rangle$ upon measurement. It is a dimensionless real number between 0 and 1."
+            "c_n": {
+                "name": "c_n",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The complex probability amplitude for the quantum system to be in the basis state $|n\\rangle$. It is a dimensionless complex number."
+            },
+            "|c_n|^2": {
+                "name": "|c_n|^2",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The probability of finding the quantum system in the specific basis state $|n\\rangle$ upon measurement. It is a dimensionless real number between 0 and 1."
+            }
         },
         "equation": "|c_n|^2",
         "status": "published",
@@ -1664,8 +1688,18 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-information-theory",
         "semantic_variables": {
-            "A": "A quantum mechanical observable, represented by a Hermitian operator. In the context of Bell tests, A typically represents the outcome of a measurement along a specific direction (e.g., spin or polarization) on one particle, often taking values of +1 or -1. Units depend on the specific observable.",
-            "B": "A quantum mechanical observable, represented by a Hermitian operator. In the context of Bell tests, B typically represents the outcome of a measurement along a specific direction (e.g., spin or polarization) on another particle, often taking values of +1 or -1. Units depend on the specific observable."
+            "A": {
+                "name": "A",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "A quantum mechanical observable, represented by a Hermitian operator. In the context of Bell tests, A typically represents the outcome of a measurement along a specific direction (e.g., spin or polarization) on one particle, often taking values of +1 or -1. Units depend on the specific observable."
+            },
+            "B": {
+                "name": "B",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "A quantum mechanical observable, represented by a Hermitian operator. In the context of Bell tests, B typically represents the outcome of a measurement along a specific direction (e.g., spin or polarization) on another particle, often taking values of +1 or -1. Units depend on the specific observable."
+            }
         },
         "equation": "\\langle A B \\rangle",
         "status": "published",
@@ -1684,7 +1718,12 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "blackbody-radiation",
         "semantic_variables": {
-            "lambda_max": "The peak wavelength of emitted radiation from a blackbody, measured in meters (m). It signifies the wavelength at which the spectral radiance is maximal for a given temperature."
+            "lambda_max": {
+                "name": "lambda_max",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The peak wavelength of emitted radiation from a blackbody, measured in meters (m). It signifies the wavelength at which the spectral radiance is maximal for a given temperature."
+            }
         },
         "equation": "\\lambda_{max}",
         "status": "published",
@@ -1703,9 +1742,24 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-mechanics-fundamentals",
         "semantic_variables": {
-            "B_i": "The label for the i-th basis state vector. It represents a specific quantum state within an orthonormal basis in the Hilbert space. As a state vector, it does not have direct SI units but is an element of a Hilbert space.",
-            "i": "An integer or continuous index that distinguishes between different basis states. It is dimensionless.",
-            "|\\rangle": "Dirac ket notation, representing a state vector in a Hilbert space. This notation itself is not a variable but a fundamental part of the representation."
+            "B_i": {
+                "name": "B_i",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The label for the i-th basis state vector. It represents a specific quantum state within an orthonormal basis in the Hilbert space. As a state vector, it does not have direct SI units but is an element of a Hilbert space."
+            },
+            "i": {
+                "name": "i",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "An integer or continuous index that distinguishes between different basis states. It is dimensionless."
+            },
+            "|\\rangle": {
+                "name": "|\\rangle",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Dirac ket notation, representing a state vector in a Hilbert space. This notation itself is not a variable but a fundamental part of the representation."
+            }
         },
         "equation": "|B_i \\rangle",
         "status": "published",
@@ -1716,7 +1770,7 @@
     "index-lowering-operation-for-vectors-9aafa0ec": {
         "title": "Index Lowering Operation for Vectors",
         "description": "This equation demonstrates how to lower a contravariant vector index to obtain its covariant form using the metric tensor.",
-        "conceptual_definition": "In differential geometry and general relativity, vectors can be represented in contravariant ($V^ u$) or covariant ($V_\\mu$) forms. The metric tensor, $g_{\\mu u}$, acts as a fundamental object that defines the inner product and distances within a manifold. This specific operation uses the metric tensor to transform a contravariant vector into its corresponding covariant vector, effectively mapping it from the tangent space to the cotangent space.",
+        "conceptual_definition": "In differential geometry and general relativity, vectors can be represented in contravariant ($V^ u$) or covariant ( $V_\\mu$) forms. The metric tensor, $g_{\\mu u}$, acts as a fundamental object that defines the inner product and distances within a manifold. This specific operation uses the metric tensor to transform a contravariant vector into its corresponding covariant vector, effectively mapping it from the tangent space to the cotangent space.",
         "interpretation": "Physically, a contravariant vector represents a displacement or direction in spacetime, while its covariant counterpart can be thought of as a linear functional that maps vectors to scalars, often associated with gradients or covectors. This equation provides the mechanism to convert between these two representations, which is crucial for maintaining consistency in tensor calculus, especially in curved spacetimes where the distinction between contravariant and covariant components is essential. It ensures that physical laws remain independent of the chosen coordinate system.",
         "limits_and_boundary": "This operation is universally applicable in any differentiable manifold equipped with a metric tensor, whether flat (Minkowski spacetime) or curved (general relativity). In flat spacetime, the metric tensor simplifies to the Minkowski metric $\\eta_{\\mu u}$, but the principle remains the same. There are no specific boundary conditions, as it's a local operation on vector components.",
         "symmetry_origin": "The ability to lower and raise indices using the metric tensor is a direct consequence of the underlying geometric structure of spacetime and the principle of general covariance. It reflects the coordinate independence of physical laws, allowing vectors and tensors to be expressed in different forms while preserving their intrinsic physical meaning.",
@@ -1724,9 +1778,24 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "relativistic-tensor-calculus",
         "semantic_variables": {
-            "V_\\mu": "Covariant vector component (units depend on the specific vector, e.g., meters for displacement, N for force). Represents the projection of the vector onto the basis covectors.",
-            "g_{\\mu\\nu}": "Metric tensor component (dimensionless or units of length squared, e.g., m^2). Defines the inner product and geometry of spacetime, mapping tangent vectors to cotangent vectors.",
-            "V^\\nu": "Contravariant vector component (units depend on the specific vector, e.g., meters for displacement, N for force). Represents the components of the vector along the basis vectors."
+            "V_\\mu": {
+                "name": "V_\\mu",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Covariant vector component (units depend on the specific vector, e.g., meters for displacement, N for force). Represents the projection of the vector onto the basis covectors."
+            },
+            "g_{\\mu\\nu}": {
+                "name": "g_{\\mu\\nu}",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Metric tensor component (dimensionless or units of length squared, e.g., m^2). Defines the inner product and geometry of spacetime, mapping tangent vectors to cotangent vectors."
+            },
+            "V^\\nu": {
+                "name": "V^\\nu",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Contravariant vector component (units depend on the specific vector, e.g., meters for displacement, N for force). Represents the components of the vector along the basis vectors."
+            }
         },
         "equation": "V_\\mu = g_{\\mu\\nu} V^\\nu",
         "status": "published",
@@ -1745,10 +1814,30 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity",
         "semantic_variables": {
-            "g^{\\mu\\alpha}": "Contravariant metric tensor (dimensionless, or units of length^-2 if g_{\\mu\\nu} has units of length^2). It is used to raise indices of tensors.",
-            "g_{\\alpha\\nu}": "Covariant metric tensor (dimensionless, or units of length^2). It is used to lower indices of tensors and defines the spacetime metric.",
-            "\\delta^{\\mu}_{\\nu}": "Kronecker delta (dimensionless). This is a generalized identity tensor, equal to 1 if \\mu = \\nu and 0 otherwise.",
-            "\\mu, \\alpha, \\nu": "Spacetime indices (dimensionless). These typically range from 0 to 3 in 4-dimensional spacetime, representing the components of tensors."
+            "g^{\\mu\\alpha}": {
+                "name": "g^{\\mu\\alpha}",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Contravariant metric tensor (dimensionless, or units of length^-2 if g_{\\mu\\nu} has units of length^2). It is used to raise indices of tensors."
+            },
+            "g_{\\alpha\\nu}": {
+                "name": "g_{\\alpha\\nu}",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Covariant metric tensor (dimensionless, or units of length^2). It is used to lower indices of tensors and defines the spacetime metric."
+            },
+            "\\delta^{\\mu}_{\\nu}": {
+                "name": "\\delta^{\\mu}_{\\nu}",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Kronecker delta (dimensionless). This is a generalized identity tensor, equal to 1 if \\mu = \\nu and 0 otherwise."
+            },
+            "\\mu, \\alpha, \\nu": {
+                "name": "\\mu, \\alpha, \\nu",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Spacetime indices (dimensionless). These typically range from 0 to 3 in 4-dimensional spacetime, representing the components of tensors."
+            }
         },
         "equation": "g^{\\mu\\alpha} g_{\\alpha\\nu} = \\delta^{\\mu}_{\\nu}",
         "status": "published",
@@ -1759,7 +1848,7 @@
     "zero-value-of-action-angle-variable-27b3533b": {
         "title": "Zero Value of Action-Angle Variable",
         "description": "This equation sets a specific action-angle variable to zero, indicating a particular state or boundary condition within a Hamiltonian system.",
-        "conceptual_definition": "In Hamiltonian mechanics, action-angle variables ($J_i$, $\\theta_i$) provide a canonical transformation that simplifies the Hamiltonian for integrable systems. The action variables $J_i$ are constants of motion, and the angles $\\theta_i$ evolve linearly in time. The condition $J_i = 0$ specifies a state where the corresponding degree of freedom contributes no action to the system.",
+        "conceptual_definition": "In Hamiltonian mechanics, action-angle variables ( $J_i$, $\\theta_i$) provide a canonical transformation that simplifies the Hamiltonian for integrable systems. The action variables $J_i$ are constants of motion, and the angles $\\theta_i$ evolve linearly in time. The condition $J_i = 0$ specifies a state where the corresponding degree of freedom contributes no action to the system.",
         "interpretation": "When an action-angle variable $J_i$ is equal to zero, it typically signifies a state where the motion associated with that degree of freedom is absent, trivial, or at a minimum. For instance, in a simple harmonic oscillator, $J=0$ corresponds to the particle being at rest at the equilibrium position. In systems with rotational symmetry, $J=0$ might imply no rotation or zero angular momentum for that specific mode. This condition often represents a degenerate state or a critical point in the system's phase space.",
         "limits_and_boundary": "This condition $J_i = 0$ frequently serves as a boundary condition in phase space, particularly for systems exhibiting periodic or quasi-periodic motion. It can represent the lowest energy state for a particular mode, a point of equilibrium, or a transition point between different types of motion. For example, in a pendulum, $J=0$ corresponds to the stable equilibrium at the bottom of its swing.",
         "symmetry_origin": "Action-angle variables themselves arise from the underlying symmetries of integrable Hamiltonian systems, specifically the existence of $N$ independent constants of motion. The condition $J_i=0$ does not introduce a new symmetry but rather defines a specific state or subspace within the phase space structured by these symmetries, often corresponding to a fixed point or a state of minimal action for a given degree of freedom.",
@@ -1767,7 +1856,12 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "hamiltonian-mechanics",
         "semantic_variables": {
-            "J_i": "The i-th action-angle variable, representing a constant of motion for the i-th degree of freedom in an integrable Hamiltonian system. Units: Joule-seconds (J\\cdot s)."
+            "J_i": {
+                "name": "J_i",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The i-th action-angle variable, representing a constant of motion for the i-th degree of freedom in an integrable Hamiltonian system. Units: Joule-seconds (J\\cdot s)."
+            }
         },
         "equation": "J_i = 0",
         "status": "published",
@@ -1779,15 +1873,25 @@
         "title": "Squared Unit of Speed",
         "description": "Represents the square of the SI unit for speed or velocity.",
         "conceptual_definition": "This expression denotes the square of the standard SI unit for speed or velocity, which is meters per second (m/s). It is a dimensional component found in physical quantities like kinetic energy, where the square of velocity is multiplied by mass.",
-        "interpretation": "Physically, `(m/s)^2` is not a standalone physical quantity but rather a dimensional unit. It indicates that the quantity it describes has dimensions of length squared divided by time squared. In the context of kinetic energy, when multiplied by mass (kg), it yields units of energy (Joules), as `kg $\\cdot$ (m/s)^2 = kg $\\cdot$ m^2/s^2 = J`.",
+        "interpretation": "Physically, `(m/s)^2` is not a standalone physical quantity but rather a dimensional unit. It indicates that the quantity it describes has dimensions of length squared divided by time squared. In the context of kinetic energy, when multiplied by mass (kg), it yields units of energy (Joules), as `kg \\cdot (m/s)^2 = kg \\cdot m^2/s^2 = J`.",
         "limits_and_boundary": "As a unit expression, `(m/s)^2` itself does not have physical limits. However, the physical quantity it measures, the square of speed, must always be non-negative. In classical mechanics, speed is typically much less than the speed of light, `c`, meaning `v^2 $\\ll$ c^2`.",
         "symmetry_origin": "Units themselves do not possess symmetries or conservation laws. The physical laws that utilize quantities measured in `(m/s)^2` (e.g., kinetic energy) are often derived from principles like translational and rotational symmetry of space and time, leading to conservation of momentum and angular momentum, respectively.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "classical-mechanics",
         "semantic_variables": {
-            "m": "Meter, the SI base unit of length.",
-            "s": "Second, the SI base unit of time."
+            "m": {
+                "name": "m",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Meter, the SI base unit of length."
+            },
+            "s": {
+                "name": "s",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Second, the SI base unit of time."
+            }
         },
         "equation": "(ext{m/s})^2",
         "status": "published",
@@ -1806,7 +1910,12 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "differential-geometry",
         "semantic_variables": {
-            "k": "Degree of the differential form \\(\\omega\\) or the dimension of the manifold \\(M\\) (dimensionless integer)."
+            "k": {
+                "name": "k",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Degree of the differential form $\\omega$ or the dimension of the manifold $M$ (dimensionless integer)."
+            }
         },
         "equation": "(k+1)",
         "status": "published",
@@ -1825,9 +1934,24 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity",
         "semantic_variables": {
-            "R_{\\mu\\nu}": "Ricci tensor (inverse length squared, \\(m^{-2}\\)). A symmetric tensor that describes the curvature of spacetime, specifically how the volume of a small ball of test particles changes from its flat-space value.",
-            "R": "Scalar curvature (inverse length squared, \\(m^{-2}\\)). The trace of the Ricci tensor, \\(R = g^{\\mu\\nu}R_{\\mu\\nu}\\), providing a scalar measure of the curvature of spacetime at a point.",
-            "g_{\\mu\\nu}": "Metric tensor (dimensionless). A symmetric tensor that defines the spacetime interval, dictating distances and time intervals in spacetime, and thus the geometry of the manifold."
+            "R_{\\mu\\nu}": {
+                "name": "R_{\\mu\\nu}",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Ricci tensor (inverse length squared, $m^{-2}$). A symmetric tensor that describes the curvature of spacetime, specifically how the volume of a small ball of test particles changes from its flat-space value."
+            },
+            "R": {
+                "name": "R",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Scalar curvature (inverse length squared, $m^{-2}$). The trace of the Ricci tensor, $R = g^{\\mu\\nu}R_{\\mu\\nu}$, providing a scalar measure of the curvature of spacetime at a point."
+            },
+            "g_{\\mu\\nu}": {
+                "name": "g_{\\mu\\nu}",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Metric tensor (dimensionless). A symmetric tensor that defines the spacetime interval, dictating distances and time intervals in spacetime, and thus the geometry of the manifold."
+            }
         },
         "equation": "R_{\\mu\\nu} = \\frac{1}{2}Rg_{\\mu\\nu}",
         "status": "published",
@@ -1846,10 +1970,30 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "hamiltonian-mechanics",
         "semantic_variables": {
-            "q_dot_i": "The generalized velocity for the i-th generalized coordinate, $\\dot{q}^i$. Its SI units depend on the nature of $q^i$; if $q^i$ is a position, units are meters per second (m/s); if an angle, radians per second (rad/s).",
-            "H": "The Hamiltonian function of the system, $H$. It represents the total energy of the system expressed in terms of generalized coordinates and conjugate momenta. Its SI unit is Joules (J).",
-            "p_i": "The conjugate momentum corresponding to the i-th generalized coordinate, $p_i$. Its SI units depend on the nature of $q^i$; if $q^i$ is a position, units are kilogram-meters per second (kg\\cdot m/s); if an angle, Joule-seconds (J\\cdot s).",
-            "partial_H_partial_p_i": "The partial derivative of the Hamiltonian $H$ with respect to the i-th conjugate momentum $p_i$, $\\frac{\\partial H}{\\partial p_i}$. This derivative yields the generalized velocity $\\dot{q}^i$. Its SI units are meters per second (m/s) or radians per second (rad/s), matching the units of $\\dot{q}^i$."
+            "q_dot_i": {
+                "name": "q_dot_i",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The generalized velocity for the i-th generalized coordinate, $\\dot{q}^i$. Its SI units depend on the nature of $q^i$; if $q^i$ is a position, units are meters per second (m/s); if an angle, radians per second (rad/s)."
+            },
+            "H": {
+                "name": "H",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The Hamiltonian function of the system, $H$. It represents the total energy of the system expressed in terms of generalized coordinates and conjugate momenta. Its SI unit is Joules (J)."
+            },
+            "p_i": {
+                "name": "p_i",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The conjugate momentum corresponding to the i-th generalized coordinate, $p_i$. Its SI units depend on the nature of $q^i$; if $q^i$ is a position, units are kilogram-meters per second (kg\\cdot m/s); if an angle, Joule-seconds (J\\cdot s)."
+            },
+            "partial_H_partial_p_i": {
+                "name": "partial_H_partial_p_i",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The partial derivative of the Hamiltonian $H$ with respect to the i-th conjugate momentum $p_i$, $\\frac{\\partial H}{\\partial p_i}$. This derivative yields the generalized velocity $\\dot{q}^i$. Its SI units are meters per second (m/s) or radians per second (rad/s), matching the units of $\\dot{q}^i$."
+            }
         },
         "equation": "\\dot{q}^i = \\frac{\\partial H}{\\partial p_i}",
         "status": "published",
@@ -1868,7 +2012,12 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "astrometry-observational-errors",
         "semantic_variables": {
-            "sigma_ast": "Astrometric error, representing the standard deviation of the measured angular position of a celestial object. Measured in radians (SI unit) or arcseconds (astronomical unit)."
+            "sigma_ast": {
+                "name": "sigma_ast",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Astrometric error, representing the standard deviation of the measured angular position of a celestial object. Measured in radians (SI unit) or arcseconds (astronomical unit)."
+            }
         },
         "equation": "\\sigma_{\\text{ast}}",
         "status": "published",
@@ -1879,16 +2028,26 @@
     "flat-spacetime-derivative-equivalence-8943cb96": {
         "title": "Flat Spacetime Derivative Equivalence",
         "description": "This equation indicates that in flat spacetime or when acting on scalar fields, the covariant derivative simplifies to a partial derivative.",
-        "conceptual_definition": "The covariant derivative, denoted by $\\n\\n\\n\\n\\nabla_{ u}$, is a fundamental concept in differential geometry and general relativity, extending the notion of a partial derivative to curved manifolds. It accounts for the change in a vector or tensor field not only due to its intrinsic variation but also due to the change in the basis vectors as one moves across the manifold. The equation $\\n\\n\\n\\n\\nabla_{ u} \\rightarrow \\partial_{ u}$ signifies a special case where this additional \"connection\" term, which quantifies the curvature, vanishes or becomes irrelevant, thereby simplifying the derivative operation to a standard partial derivative.",
+        "conceptual_definition": "The covariant derivative, denoted by $\\nabla_{ u}$, is a fundamental concept in differential geometry and general relativity, extending the notion of a partial derivative to curved manifolds. It accounts for the change in a vector or tensor field not only due to its intrinsic variation but also due to the change in the basis vectors as one moves across the manifold. The equation $\\nabla_{ u} \\rightarrow \\partial_{ u}$ signifies a special case where this additional \"connection\" term, which quantifies the curvature, vanishes or becomes irrelevant, thereby simplifying the derivative operation to a standard partial derivative.",
         "interpretation": "This equivalence is a cornerstone for understanding the transition between general relativistic and special relativistic physics. When spacetime is flat, such as in Minkowski spacetime, the Christoffel symbols (which represent the connection coefficients) are identically zero, causing the covariant derivative to reduce to the partial derivative. Furthermore, for scalar fields, the covariant derivative is always equal to the partial derivative, irrespective of spacetime curvature, because scalars do not transform with the coordinate basis and thus do not \"feel\" the curvature in the same way vectors or tensors do. This simplification allows for the use of simpler mathematical tools in contexts where gravitational effects are negligible.",
-        "limits_and_boundary": "This simplification is strictly valid under two primary conditions: (1) In flat spacetime (e.g., Minkowski spacetime), where all Christoffel symbols (connection coefficients) are identically zero, meaning there is no gravitational field or curvature to account for. (2) When the derivative operates on a scalar field, as scalar fields do not acquire additional terms from the connection coefficients, making $\\n\\n\\n\\n\\nabla_{ u}\\phi = \\partial_{ u}\\phi$ universally true. It serves as an approximation in regions where spacetime curvature is negligible.",
+        "limits_and_boundary": "This simplification is strictly valid under two primary conditions: (1) In flat spacetime (e.g., Minkowski spacetime), where all Christoffel symbols (connection coefficients) are identically zero, meaning there is no gravitational field or curvature to account for. (2) When the derivative operates on a scalar field, as scalar fields do not acquire additional terms from the connection coefficients, making $\\nabla_{ u}\\phi = \\partial_{ u}\\phi$ universally true. It serves as an approximation in regions where spacetime curvature is negligible.",
         "symmetry_origin": "The validity of this simplification in flat spacetime is intrinsically linked to the Poincaré symmetry (a combination of Lorentz transformations and translations) of Minkowski spacetime. In such a spacetime, the metric is constant, and there is no preferred direction or origin, leading to the vanishing of connection coefficients. This maximal symmetry implies that parallel transport of vectors does not involve any rotation or stretching due to curvature, thus making the covariant derivative equivalent to the partial derivative.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity-fundamentals",
         "semantic_variables": {
-            "\\nabla_{\\nu}": "The covariant derivative operator with respect to the \\nu-th coordinate. It accounts for changes in vector/tensor fields in curved spacetime, including effects of spacetime curvature.",
-            "\\partial_{\\nu}": "The partial derivative operator with respect to the \\nu-th coordinate. It represents the rate of change of a function with respect to one variable, holding others constant, typically used in flat spacetime or for scalar fields."
+            "\\nabla_{\\nu}": {
+                "name": "\\nabla_{\\nu}",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The covariant derivative operator with respect to the \\nu-th coordinate. It accounts for changes in vector/tensor fields in curved spacetime, including effects of spacetime curvature."
+            },
+            "\\partial_{\\nu}": {
+                "name": "\\partial_{\\nu}",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The partial derivative operator with respect to the \\nu-th coordinate. It represents the rate of change of a function with respect to one variable, holding others constant, typically used in flat spacetime or for scalar fields."
+            }
         },
         "equation": "\\nabla_{\\nu} \\rightarrow \\partial_{\\nu}",
         "status": "published",
@@ -1907,8 +2066,18 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-field-theory-entanglement",
         "semantic_variables": {
-            "d": "Spatial dimension of the system (dimensionless).",
-            "2": "A constant integer, representing the co-dimension of the entangling surface (dimensionless)."
+            "d": {
+                "name": "d",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Spatial dimension of the system (dimensionless)."
+            },
+            "2": {
+                "name": "2",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "A constant integer, representing the co-dimension of the entangling surface (dimensionless)."
+            }
         },
         "equation": "d-2",
         "status": "published",
@@ -1927,7 +2096,12 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-mechanics",
         "semantic_variables": {
-            "x_hat_i": "The quantum mechanical position operator for the i-th spatial coordinate. It is a Hermitian operator whose eigenvalues correspond to the measurable positions. In the position basis, it acts as multiplication by the coordinate \\(x_i\\). Units: meters (m)."
+            "x_hat_i": {
+                "name": "x_hat_i",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The quantum mechanical position operator for the i-th spatial coordinate. It is a Hermitian operator whose eigenvalues correspond to the measurable positions. In the position basis, it acts as multiplication by the coordinate $x_i$. Units: meters (m)."
+            }
         },
         "equation": "\\hat{x}_i",
         "status": "published",
@@ -1939,17 +2113,37 @@
         "title": "Electromagnetic Field Tensor Definition",
         "description": "This equation defines the components of the antisymmetric electromagnetic field tensor \\(F_{\\mu\\nu}\\) in terms of the electric and magnetic field components.",
         "conceptual_definition": "The electromagnetic field tensor is a fundamental object in classical electromagnetism and special relativity that unifies the electric and magnetic fields into a single, covariant mathematical entity. It is a rank-2 antisymmetric tensor that transforms predictably under Lorentz transformations, ensuring that Maxwell's equations retain their form in all inertial frames. This tensor provides a compact and elegant way to express the electromagnetic field.",
-        "interpretation": "The components of the $F_{\\mu u}$ tensor are directly related to the components of the electric field $\\mathbf{E} and magnetic field  \\mathbf{B} . The diagonal elements are zero due to its antisymmetry, while the off-diagonal elements contain the spatial components of  \\mathbf{E}$/c$ and  \\mathbf{B}$. Specifically, the time-space components $F_{0i}$ (or $F_{i0}$) relate to the electric field, and the space-space components $F_{ij}$ relate to the magnetic field. This formulation highlights the intrinsic connection and relativistic nature of electric and magnetic phenomena.",
+        "interpretation": "The components of the $F_{\\mu u}$ tensor are directly related to the components of the electric field $\\mathbf{E} and magnetic field \\mathbf{B} . The diagonal elements are zero due to its antisymmetry, while the off-diagonal elements contain the spatial components of \\mathbf{E}$/c$and \\mathbf{B}$. Specifically, the time-space components $F_{0i}$ (or $F_{i0}$) relate to the electric field, and the space-space components $F_{ij}$ relate to the magnetic field. This formulation highlights the intrinsic connection and relativistic nature of electric and magnetic phenomena.",
         "limits_and_boundary": "This definition is valid within the framework of classical electromagnetism and special relativity, where fields are treated as continuous entities and quantum effects are negligible. It applies to inertial reference frames and assumes a flat spacetime metric (Minkowski metric). The tensor components are expressed in Cartesian coordinates.",
         "symmetry_origin": "The antisymmetry of the tensor ($F_{\\mu u} = -F_{ u\\mu}$) is a crucial property, implying that the diagonal elements are zero. This tensor is a direct consequence of the Lorentz invariance of Maxwell's equations, ensuring that the laws of electromagnetism are the same for all inertial observers. It can also be derived from the four-potential, which itself is related to gauge invariance.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "relativistic-electrodynamics",
         "semantic_variables": {
-            "F_{\\mu\\nu}": "Electromagnetic field tensor, a rank-2 antisymmetric tensor combining electric and magnetic fields. Units: Tesla (T) or Volts-second per square meter (V\\cdot s/m^2).",
-            "E_x, E_y, E_z": "Components of the electric field vector \\(\\mathbf{E}\\). Units: Volts per meter (V/m).",
-            "B_x, B_y, B_z": "Components of the magnetic field vector \\(\\mathbf{B}\\). Units: Tesla (T).",
-            "c": "Speed of light in vacuum. Units: meters per second (m/s)."
+            "F_{\\mu\\nu}": {
+                "name": "F_{\\mu\\nu}",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Electromagnetic field tensor, a rank-2 antisymmetric tensor combining electric and magnetic fields. Units: Tesla (T) or Volts-second per square meter (V\\cdot s/m^2)."
+            },
+            "E_x, E_y, E_z": {
+                "name": "E_x, E_y, E_z",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Components of the electric field vector $\\mathbf{E}$. Units: Volts per meter (V/m)."
+            },
+            "B_x, B_y, B_z": {
+                "name": "B_x, B_y, B_z",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Components of the magnetic field vector $\\mathbf{B}$. Units: Tesla (T)."
+            },
+            "c": {
+                "name": "c",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Speed of light in vacuum. Units: meters per second (m/s)."
+            }
         },
         "equation": "F_{\\mu\\nu} = \\begin{pmatrix} 0 & -E_x/c & -E_y/c & -E_z/c \\\\ E_x/c & 0 & -B_z & B_y \\\\ E_y/c & B_z & 0 & -B_x \\\\ E_z/c & -B_y & B_x & 0 \\end{pmatrix}",
         "status": "published",
@@ -1968,9 +2162,24 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "gauge-theory",
         "semantic_variables": {
-            "D_\\mu": "The covariant derivative operator, which replaces the ordinary partial derivative in gauge theories to ensure local gauge invariance. It includes a term involving the gauge field A_\\mu. Its units are inverse length (m^-1).",
-            "\\phi": "A scalar field, which assigns a scalar value to each point in spacetime. For the Higgs field, it has units of energy (Joules) or mass (kg) in natural units, or V/m in SI for an electric potential, depending on the context.",
-            "\\mu": "A spacetime index, ranging from 0 to 3 (or 1 to 4), representing the components of spacetime (time and three spatial dimensions)."
+            "D_\\mu": {
+                "name": "D_\\mu",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The covariant derivative operator, which replaces the ordinary partial derivative in gauge theories to ensure local gauge invariance. It includes a term involving the gauge field A_\\mu. Its units are inverse length (m^-1)."
+            },
+            "\\phi": {
+                "name": "\\phi",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "A scalar field, which assigns a scalar value to each point in spacetime. For the Higgs field, it has units of energy (Joules) or mass (kg) in natural units, or V/m in SI for an electric potential, depending on the context."
+            },
+            "\\mu": {
+                "name": "\\mu",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "A spacetime index, ranging from 0 to 3 (or 1 to 4), representing the components of spacetime (time and three spatial dimensions)."
+            }
         },
         "equation": "D_\\mu \\phi",
         "status": "published",
@@ -1989,9 +2198,24 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-mechanics",
         "semantic_variables": {
-            "\\hat{H}": "Hamiltonian operator, representing the total energy of the quantum system (units: Joules, J).",
-            "|\\psi_E\\rangle": "Energy eigenstate, a state vector representing a quantum state with a definite energy E (dimensionless in abstract Hilbert space, or units of inverse square root of volume for position space wavefunctions).",
-            "E": "Energy eigenvalue, the specific energy value associated with the eigenstate (units: Joules, J)."
+            "\\hat{H}": {
+                "name": "\\hat{H}",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Hamiltonian operator, representing the total energy of the quantum system (units: Joules, J)."
+            },
+            "|\\psi_E\\rangle": {
+                "name": "|\\psi_E\\rangle",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Energy eigenstate, a state vector representing a quantum state with a definite energy E (dimensionless in abstract Hilbert space, or units of inverse square root of volume for position space wavefunctions)."
+            },
+            "E": {
+                "name": "E",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Energy eigenvalue, the specific energy value associated with the eigenstate (units: Joules, J)."
+            }
         },
         "equation": "\\hat{H} |\\psi_E\\rangle = E |\\psi_E\\rangle",
         "status": "published",
@@ -2010,9 +2234,24 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "relativistic-kinematics",
         "semantic_variables": {
-            "A^\\nu": "A contravariant vector, representing a physical quantity with components that transform inversely to basis vectors under coordinate changes. Units depend on the specific physical quantity it represents (e.g., meters for position, kg\\cdot m/s for momentum).",
-            "B_\\nu": "A covariant vector, representing a physical quantity with components that transform in the same way as basis vectors under coordinate changes. Units depend on the specific physical quantity it represents (e.g., 1/meter for gradient, s/kg\\cdot m for inverse momentum).",
-            "\\nu": "A dummy index indicating summation over all spacetime dimensions (typically 0, 1, 2, 3 for 4D spacetime) according to the Einstein summation convention. It has no units."
+            "A^\\nu": {
+                "name": "A^\\nu",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "A contravariant vector, representing a physical quantity with components that transform inversely to basis vectors under coordinate changes. Units depend on the specific physical quantity it represents (e.g., meters for position, kg\\cdot m/s for momentum)."
+            },
+            "B_\\nu": {
+                "name": "B_\\nu",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "A covariant vector, representing a physical quantity with components that transform in the same way as basis vectors under coordinate changes. Units depend on the specific physical quantity it represents (e.g., 1/meter for gradient, s/kg\\cdot m for inverse momentum)."
+            },
+            "\\nu": {
+                "name": "\\nu",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "A dummy index indicating summation over all spacetime dimensions (typically 0, 1, 2, 3 for 4D spacetime) according to the Einstein summation convention. It has no units."
+            }
         },
         "equation": "A^\\nu B_\\nu",
         "status": "published",
@@ -2023,7 +2262,7 @@
     "natural-angular-frequency-of-mass-spring-system-74744acd": {
         "title": "Natural Angular Frequency of Mass-Spring System",
         "description": "Calculates the natural angular frequency of a simple harmonic oscillator composed of a mass and an ideal spring.",
-        "conceptual_definition": "The natural angular frequency ($\\omega_0$) is the angular frequency at which a system oscillates when disturbed from its equilibrium position and then allowed to oscillate freely without any external driving forces or damping. For a mass-spring system, it depends solely on the mass and the spring's stiffness. It represents the intrinsic oscillation rate of the system.",
+        "conceptual_definition": "The natural angular frequency ( $\\omega_0$) is the angular frequency at which a system oscillates when disturbed from its equilibrium position and then allowed to oscillate freely without any external driving forces or damping. For a mass-spring system, it depends solely on the mass and the spring's stiffness. It represents the intrinsic oscillation rate of the system.",
         "interpretation": "This equation reveals that a stiffer spring (larger k) leads to a higher natural frequency, meaning faster oscillations. Conversely, a larger mass (larger m) leads to a lower natural frequency, resulting in slower oscillations. This intrinsic frequency is crucial for understanding resonance, as resonance occurs when an external driving frequency matches this natural frequency, leading to large amplitude oscillations. It is a fundamental characteristic of the oscillating system.",
         "limits_and_boundary": "Applicable for ideal springs obeying Hooke's Law (linear elastic response) and for systems with negligible damping and no external driving forces. Assumes the mass is concentrated and the spring itself has negligible mass compared to the attached mass. Valid for small oscillations where Hooke's Law holds.",
         "symmetry_origin": "Time-translation symmetry (for a conservative system) and the inherent properties of the restoring force (Hooke's Law) lead to simple harmonic motion, characterized by this natural frequency. The system's dynamics are invariant under time shifts, and the restoring force is proportional to displacement.",
@@ -2031,9 +2270,24 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "oscillations-and-waves",
         "semantic_variables": {
-            "\\omega_0": "Natural Angular Frequency (radians per second, rad/s)",
-            "k": "Spring Constant (Newtons per meter, N/m)",
-            "m": "Mass (kilograms, kg)"
+            "\\omega_0": {
+                "name": "\\omega_0",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Natural Angular Frequency (radians per second, rad/s)"
+            },
+            "k": {
+                "name": "k",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Spring Constant (Newtons per meter, N/m)"
+            },
+            "m": {
+                "name": "m",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Mass (kilograms, kg)"
+            }
         },
         "equation": "and the spring constant",
         "status": "published",
@@ -2052,8 +2306,18 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "momentum-conservation",
         "semantic_variables": {
-            "\\dot{\\mathbf{p}}_i": "Time derivative of the momentum of the i-th particle (vector), measured in Newtons (N) or kilograms-meter per second squared (kg\\cdot m/s^2).",
-            "\\sum_i": "Summation over all particles i in the system."
+            "\\dot{\\mathbf{p}}_i": {
+                "name": "\\dot{\\mathbf{p}}_i",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Time derivative of the momentum of the i-th particle (vector), measured in Newtons (N) or kilograms-meter per second squared (kg\\cdot m/s^2)."
+            },
+            "\\sum_i": {
+                "name": "\\sum_i",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Summation over all particles i in the system."
+            }
         },
         "equation": "\\sum_i \\dot{\\mathbf{p}}_i = 0",
         "status": "published",
@@ -2072,7 +2336,12 @@
         "derivation_type": "DERIVED_FROM",
         "equation_family": "classical-mechanics-equilibrium",
         "semantic_variables": {
-            "\\mathbf{F}_i^{(actual)}": "The actual resultant force vector acting on the i-th particle, measured in newtons (N)."
+            "\\mathbf{F}_i^{(actual)}": {
+                "name": "\\mathbf{F}_i^{(actual)}",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The actual resultant force vector acting on the i-th particle, measured in newtons (N)."
+            }
         },
         "equation": "\\mathbf{F}_i^{(actual)} = 0",
         "status": "published",

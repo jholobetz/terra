@@ -836,58 +836,58 @@
     },
     "field-action-integral-def-5bc29d8c": {
         "title": "The Field Action Integral",
-        "equation": "S[\\phi] = \\int_{\\Omega} \\mathcal{L}(\\phi, \\partial_\\mu \\phi, x^\\mu) d^4x",
-        "interpretation": "The Field Action Integral is defined as the spacetime integral of the Lagrangian density, $\\mathcal{L}$. The Lagrangian density $\\mathcal{L}$ is a scalar function that encapsulates the dynamics of the field $\\phi$ and its derivatives, $\\partial_\\mu \\phi . It depends on the field value itself, its gradient (represented by \\partial_\\mu \\phi$, where $\\mu$ is a spacetime index from 0 to 3, and $\\partial_\\mu$ denotes the four-gradient), and potentially the spacetime coordinates $x^\\mu$. The integral is taken over a four-dimensional spacetime region $\\Omega$, and $d^4x$ represents the infinitesimal spacetime volume element. The core idea is that the physical evolution of the field is such that the action is stationary (often a minimum) with respect to variations of the field. This is known as the principle of least action, a cornerstone of classical mechanics and field theory. The units of the action are typically energy times time (Joules times seconds, or J·s), which are the units of angular momentum or, more fundamentally, the quantum of action, Planck's constant $\\hbar$.",
-        "symmetry_origin": "The Field Action Integral originates from the principle of least action, which itself is deeply connected to symmetries through Noether's theorem. If the action is invariant under certain transformations (e.g., spacetime translations, rotations, Lorentz transformations, or internal symmetries), then there exists a conserved current and a corresponding conserved charge. For instance, invariance of the action under spacetime translations leads to the conservation of the energy-momentum tensor and thus energy and momentum.",
-        "limits_and_boundary": "In the context of classical field theory, the behavior of the action is primarily determined by the Lagrangian density. As the fields or their gradients approach zero, the Lagrangian density typically tends to zero, and if the integration region is finite, the action approaches zero. Conversely, if fields or their gradients become infinitely large, the action can diverge, signaling extreme physical configurations. In quantum field theory, the action appears in the path integral as $e^{iS/\\hbar}$. If the action is very large compared to $\\hbar$, the contributions from paths with large actions tend to cancel out due to rapid oscillations of the phase factor, and the path integral is dominated by configurations with stationary action (classical paths). If the action is small, quantum fluctuations become more significant. The integration over $\\Omega$ implies that boundary terms can arise from integration by parts during variational calculations, which are often handled by specifying boundary conditions on the field $\\phi$ or its derivatives at the edges of $\\Omega$.",
+        "equation": "S[\\phi] = \\int_{\\Omega} \\mathcal{L}(\\phi, \\partial_\\mu \\phi, x^\\mu) \\, d^4x",
+        "interpretation": "The Field Action Integral is defined as the four-dimensional spacetime integral of the Lagrangian density $\\mathcal{L}$. The Lagrangian density is a Lorentz-scalar function that encapsulates the dynamics of the field $\\phi$ and its spacetime derivatives $\\partial_\\mu \\phi$. It depends on the field configuration, the four-gradient $\\partial_\\mu \\phi$ (where $\\mu \\in \\{0, 1, 2, 3\\}$ is a spacetime index), and potentially the spacetime coordinates $x^\\mu$. The integral is evaluated over a designated four-dimensional spacetime region $\\Omega$, where $d^4x = dt \\, dx \\, dy \\, dz$ represents the infinitesimal spacetime volume element. By Hamilton's principle of stationary action ($\\delta S[\\phi] = 0$), requiring the functional derivative of the action to vanish yields the Euler-Lagrange field equations governing physical evolution.",
+        "symmetry_origin": "The Field Action Integral is the foundation for Noether's theorem in field theory. Continuous global and local symmetries of the action functional $S[\\phi]$ imply conserved currents $J^\\mu$ satisfying the continuity equation $\\partial_\\mu J^\\mu = 0$. For example, invariance under spacetime translations generates the conserved energy-momentum tensor $T^{\\mu\\nu}$, while internal global phase invariance generates conserved $U(1)$ electric charge.",
+        "limits_and_boundary": "1. **Classical Extremum Limit ($\\hbar \\to 0$)**: In the path integral formulation of quantum field theory $\\mathcal{Z} = \\int \\mathcal{D}\\phi \\, e^{iS[\\phi]/\\hbar}$, as $\\hbar \\to 0$ the quantum phase factor oscillates rapidly, leaving only the stationary configurations $\\delta S[\\phi] = 0$ (classical field trajectories).\n\n2. **Boundary Terms & Integration by Parts**: Performing variational derivatives on $S[\\phi]$ generates boundary surface integrals $\\oint_{\\partial\\Omega} \\left(\\frac{\\partial \\mathcal{L}}{\\partial(\\partial_\\mu \\phi)} \\delta\\phi\\right) d\\Sigma_\\mu$. Standard boundary conditions fix $\\delta\\phi = 0$ on $\\partial\\Omega$, causing boundary terms to vanish.",
         "semantic_variables": {
             "S[\\phi]": {
-                "name": "Field Action Integral",
+                "name": "Action Functional",
                 "type": "variable",
                 "unit": "J·s",
-                "description": "The action functional, which is a scalar quantity representing the total 'effect' or 'path' of a field configuration over spacetime. Its units are those of energy multiplied by time."
+                "description": "The action functional representing the integrated dynamical history of the field configuration over spacetime."
             },
             "\\phi": {
-                "name": "Field",
+                "name": "Field Configuration",
                 "type": "variable",
-                "unit": "N/C (example for electric field) or dimensionless (example for scalar field)",
-                "description": "The physical field whose dynamics are being described. This can be a scalar, vector, spinor, or tensor field, and its units depend on the specific field."
+                "unit": "dimensionless (scalar) or field-specific",
+                "description": "The physical field configuration whose dynamical evolution is being described."
             },
             "\\mathcal{L}": {
                 "name": "Lagrangian Density",
                 "type": "variable",
                 "unit": "J/m³",
-                "description": "A scalar function that depends on the field $\\phi$, its derivatives $\\partial_\\mu \\phi$, and spacetime coordinates $x^\\mu$. It is the integrand of the action integral and determines the field's equations of motion."
+                "description": "Scalar density function encapsulating the kinetic, potential, and gradient energy densities of the field."
             },
             "\\partial_\\mu \\phi": {
-                "name": "Field Gradient",
+                "name": "Field Four-Gradient",
+                "type": "variable",
+                "unit": "1/m * [field unit]",
+                "description": "The four-gradient of the field $\\phi$ with respect to spacetime coordinates."
+            },
+            "\\partial_\\mu": {
+                "name": "Four-Gradient Operator",
                 "type": "operator",
-                "unit": "N/(C·m) (example for electric field gradient)",
-                "description": "The four-gradient of the field $\\phi$, representing how the field changes in spacetime. $\\mu$ is a spacetime index (0 for time, 1, 2, 3 for space). The units depend on the field and spacetime dimension."
+                "unit": "1/m",
+                "description": "Differential operator $\\partial_\\mu = \\frac{\\partial}{\\partial x^\\mu}$ with spacetime index $\\mu$."
             },
             "x^\\mu": {
                 "name": "Spacetime Coordinates",
                 "type": "variable",
                 "unit": "m",
-                "description": "The coordinates of a point in spacetime. $\\mu$ is the spacetime index (0 for time, 1, 2, 3 for space)."
+                "description": "Contravariant four-position vector coordinates $(ct, x, y, z)$ in Minkowski spacetime."
             },
             "\\Omega": {
                 "name": "Spacetime Region",
                 "type": "variable",
                 "unit": "m⁴",
-                "description": "The four-dimensional region of spacetime over which the action integral is computed. The units are those of spacetime volume."
+                "description": "The four-dimensional spacetime domain of integration."
             },
             "d^4x": {
-                "name": "Infinitesimal Spacetime Volume Element",
+                "name": "Spacetime Volume Element",
                 "type": "variable",
                 "unit": "m⁴",
-                "description": "The infinitesimal volume element in four-dimensional spacetime, used for integration."
-            },
-            "S": {
-                "name": "Poynting Vector",
-                "type": "variable",
-                "unit": "W/m²",
-                "description": "The directional energy flux density of an electromagnetic field."
+                "description": "The differential four-volume element in flat spacetime ($d^4x = c\\,dt\\,dx\\,dy\\,dz$)."
             }
         },
         "status": "platinum",

@@ -51,6 +51,7 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/api/subtopic-variables/@slug', [ $app->physicsController(), 'apiGetSubtopicVariables' ]);
 		$router->get('/api/search', [ $app->physicsController(), 'apiSearch' ]);
 		$router->get('/api/semantic-search', [ $app->physicsController(), 'apiSemanticSearch' ]);
+		$router->get('/api/related-subtopics/@slug', [ $app->physicsController(), 'apiRelatedSubtopics' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 
 		// Multi-Tier Auth & Formula Review API Routes

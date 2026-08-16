@@ -8,7 +8,10 @@ class SemanticSearchService
 {
     private string $embeddingsPath;
     private string $embeddingsGzPath;
+    private string $subtopicsPath;
+    private string $subtopicsGzPath;
     private ?array $embeddingsIndex = null;
+    private ?array $subtopicsIndex = null;
     private ?string $apiKey = null;
     private ?string $gcpProjectId = null;
     private ?string $credentialsPath = null;
@@ -19,6 +22,8 @@ class SemanticSearchService
     {
         $this->embeddingsPath = PROJECT_ROOT . '/app/config/physics_embeddings.json';
         $this->embeddingsGzPath = PROJECT_ROOT . '/app/config/physics_embeddings.json.gz';
+        $this->subtopicsPath = PROJECT_ROOT . '/app/config/subtopic_embeddings.json';
+        $this->subtopicsGzPath = PROJECT_ROOT . '/app/config/subtopic_embeddings.json.gz';
         $this->credentialsPath = PROJECT_ROOT . '/gcp-credentials.json';
 
         // Load environment variables if not loaded
@@ -30,7 +35,7 @@ class SemanticSearchService
     }
 
     /**
-     * Lazy-loads the vector database into memory from JSON or GZIP.
+     * Lazy-loads the formula vector database into memory.
      */
     public function loadIndex(): ?array
     {
@@ -44,12 +49,29 @@ class SemanticSearchService
         } elseif (file_exists($this->embeddingsGzPath)) {
             $json = gzdecode(file_get_contents($this->embeddingsGzPath));
             $this->embeddingsIndex = json_decode($json, true);
-        } elseif (file_exists(PROJECT_ROOT . '/app/config/physics_embeddings_checkpoint.json')) {
-            $json = file_get_contents(PROJECT_ROOT . '/app/config/physics_embeddings_checkpoint.json');
-            $this->embeddingsIndex = json_decode($json, true);
         }
 
         return $this->embeddingsIndex;
+    }
+
+    /**
+     * Lazy-loads the subtopic article vector database into memory.
+     */
+    public function loadSubtopicIndex(): ?array
+    {
+        if ($this->subtopicsIndex !== null) {
+            return $this->subtopicsIndex;
+        }
+
+        if (file_exists($this->subtopicsPath)) {
+            $json = file_get_contents($this->subtopicsPath);
+            $this->subtopicsIndex = json_decode($json, true);
+        } elseif (file_exists($this->subtopicsGzPath)) {
+            $json = gzdecode(file_get_contents($this->subtopicsGzPath));
+            $this->subtopicsIndex = json_decode($json, true);
+        }
+
+        return $this->subtopicsIndex;
     }
 
     /**
@@ -123,15 +145,133 @@ class SemanticSearchService
     }
 
     /**
-     * Executes dense semantic vector search across all indexed formulas.
+     * Executes dense semantic vector search across all Subtopic Encyclopedia Articles.
      */
-    public function search(string $query, int $limit = 10, float $minScore = 0.40): array
+    public function searchSubtopics(string $query, int $limit = 8, float $minScore = 0.40): array
     {
         $query = trim($query);
         if (empty($query)) {
             return [];
         }
 
+        $subtopics = $this->loadSubtopicIndex();
+        if (empty($subtopics)) {
+            return [];
+        }
+
+        $queryVector = $this->embedQuery($query);
+        if (empty($queryVector)) {
+            return [];
+        }
+
+        $queryNorm = sqrt(array_sum(array_map(fn($x) => $x * $x, $queryVector)));
+        if ($queryNorm <= 0.0) {
+            return [];
+        }
+
+        $qLen = count($queryVector);
+        $scored = [];
+
+        foreach ($subtopics as $slug => $entry) {
+            $vec = $entry['vector'] ?? null;
+            if (!is_array($vec) || count($vec) !== $qLen) {
+                continue;
+            }
+
+            // Dot product
+            $dot = 0.0;
+            $vNormSq = 0.0;
+            for ($i = 0; $i < $qLen; $i++) {
+                $dot += $queryVector[$i] * $vec[$i];
+                $vNormSq += $vec[$i] * $vec[$i];
+            }
+
+            $sim = ($vNormSq > 0) ? ($dot / ($queryNorm * sqrt($vNormSq))) : 0.0;
+
+            if ($sim >= $minScore) {
+                $scored[] = [
+                    'type' => 'subtopic',
+                    'slug' => $slug,
+                    'title' => $entry['title'] ?? $slug,
+                    'domain' => $entry['domain'] ?? 'Physics',
+                    'snippet' => $entry['snippet'] ?? '',
+                    'url' => '/physics/subtopic/' . $slug,
+                    'similarity' => round($sim, 4),
+                    'confidence' => round($sim * 100, 1) . '%'
+                ];
+            }
+        }
+
+        usort($scored, fn($a, $b) => $b['similarity'] <=> $a['similarity']);
+        return array_slice($scored, 0, $limit);
+    }
+
+    /**
+     * Computes top N conceptually related subtopics using in-memory vector cosine similarity.
+     */
+    public function getRelatedSubtopics(string $subtopicSlug, int $limit = 4): array
+    {
+        $subtopics = $this->loadSubtopicIndex();
+        if (empty($subtopics) || !isset($subtopics[$subtopicSlug])) {
+            return [];
+        }
+
+        $targetVector = $subtopics[$subtopicSlug]['vector'] ?? null;
+        if (!is_array($targetVector)) {
+            return [];
+        }
+
+        $targetNorm = sqrt(array_sum(array_map(fn($x) => $x * $x, $targetVector)));
+        if ($targetNorm <= 0.0) {
+            return [];
+        }
+
+        $vLen = count($targetVector);
+        $scored = [];
+
+        foreach ($subtopics as $slug => $entry) {
+            if ($slug === $subtopicSlug) continue;
+            $vec = $entry['vector'] ?? null;
+            if (!is_array($vec) || count($vec) !== $vLen) continue;
+
+            $dot = 0.0;
+            $vNormSq = 0.0;
+            for ($i = 0; $i < $vLen; $i++) {
+                $dot += $targetVector[$i] * $vec[$i];
+                $vNormSq += $vec[$i] * $vec[$i];
+            }
+
+            $sim = ($vNormSq > 0) ? ($dot / ($targetNorm * sqrt($vNormSq))) : 0.0;
+
+            if ($sim >= 0.55) {
+                $scored[] = [
+                    'slug' => $slug,
+                    'title' => $entry['title'] ?? $slug,
+                    'domain' => $entry['domain'] ?? 'Physics',
+                    'url' => '/physics/subtopic/' . $slug,
+                    'similarity' => round($sim, 4),
+                    'confidence' => round($sim * 100, 1) . '%'
+                ];
+            }
+        }
+
+        usort($scored, fn($a, $b) => $b['similarity'] <=> $a['similarity']);
+        return array_slice($scored, 0, $limit);
+    }
+
+    /**
+     * Executes dense semantic vector search (prioritizing Subtopic Articles).
+     */
+    public function search(string $query, int $limit = 8, float $minScore = 0.40): array
+    {
+        // 1. First, search Subtopic Articles via Dense Embeddings
+        $results = $this->searchSubtopics($query, $limit, $minScore);
+        if (!empty($results)) {
+            return $results;
+        }
+
+        // 2. Fallback to Formula Vectors if subtopics didn't meet score threshold
+        $query = trim($query);
         $index = $this->loadIndex();
         if (empty($index)) {
             return [];
@@ -179,6 +319,7 @@ class SemanticSearchService
 
                 $scored[] = [
                     'id' => $formulaId,
+                    'type' => 'formula',
                     'title' => $displayTitle,
                     'formula_title' => $entry['title'] ?? '',
                     'equation' => $entry['equation'] ?? '',

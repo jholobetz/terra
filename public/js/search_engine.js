@@ -164,7 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <a href="${m.url}" class="modal-search-item">
                                     <div class="modal-search-item-header">
                                         <span class="modal-search-item-title">${m.title}</span>
-                                        <span class="modal-search-item-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">✨ ${m.confidence} AI Match</span>
+                                        <div style="display: flex; gap: 6px; align-items: center;">
+                                            ${m.domain ? `<span class="modal-search-item-badge" style="background: rgba(255, 255, 255, 0.05); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.1);">${m.domain}</span>` : ''}
+                                            <span class="modal-search-item-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">✨ ${m.confidence} AI Match</span>
+                                        </div>
                                     </div>
                                     <div class="modal-search-item-path">
                                         <span>${m.snippet || ''}</span>

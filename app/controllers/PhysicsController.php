@@ -419,6 +419,30 @@ class PhysicsController
     }
 
     /**
+     * API action returning conceptually isomorphic related subtopics computed via dense vectors.
+     */
+    public function apiRelatedSubtopics(string $slug)
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        try {
+            $semanticService = Flight::semanticSearchService();
+            $results = $semanticService->getRelatedSubtopics($slug, 4);
+            echo json_encode([
+                'success' => true,
+                'slug' => $slug,
+                'total' => count($results),
+                'results' => $results
+            ]);
+        } catch (\Throwable $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'results' => []
+            ]);
+        }
+    }
+
+    /**
      * View action rendering the interactive Noether's Vault (Symmetry-to-Conservation Mapping).
      */
     public function noethersVault()

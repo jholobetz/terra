@@ -1040,6 +1040,14 @@ class PhysicsService
     }
 
     /**
+     * Alias for searchFormulaByLatex
+     */
+    public function findFormulaByLatex(string $latex): ?array
+    {
+        return $this->searchFormulaByLatex($latex);
+    }
+
+    /**
      * Searches for a formula entry by matching its LaTeX equation.
      */
     public function searchFormulaByLatex(string $latex): ?array

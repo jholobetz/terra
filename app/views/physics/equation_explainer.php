@@ -444,6 +444,20 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                 <textarea id="drawer-latex-input" rows="2" style="width: 100%; padding: 10px 12px; background: rgba(3, 7, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; color: #64ffda; font-family: 'Fira Code', monospace; font-size: 0.9rem; box-sizing: border-box; outline: none;"></textarea>
             </div>
 
+            <!-- Action Progress Status Bar (Dynamic) -->
+            <div id="drawer-action-progress-container" style="display: none; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; padding: 10px 14px; flex-direction: column; gap: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span id="drawer-progress-status-text" style="font-size: 0.76rem; color: #38bdf8; font-family: 'Space Grotesk', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                        <span style="display:inline-block; width:8px; height:8px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:explainer-spin 0.8s linear infinite;"></span>
+                        <span id="drawer-progress-status-msg">Processing LaTeX repair...</span>
+                    </span>
+                    <span id="drawer-progress-percent" style="font-size: 0.74rem; color: #94a3b8; font-family: 'Fira Code', monospace; font-weight: 600;">0%</span>
+                </div>
+                <div style="width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; position: relative;">
+                    <div id="drawer-progress-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #64ffda); border-radius: 2px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);"></div>
+                </div>
+            </div>
+
             <div>
                 <label style="display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; font-family: 'Space Grotesk', sans-serif;">
                     Pasted Reference Text / Hint

@@ -2029,6 +2029,41 @@ const EquationExplainer = {
         });
     },
 
+    showActionProgress(percent, msg, isDone = false, isError = false) {
+        const container = document.getElementById('drawer-action-progress-container');
+        const fill = document.getElementById('drawer-progress-bar-fill');
+        const statusMsg = document.getElementById('drawer-progress-status-msg');
+        const percentLabel = document.getElementById('drawer-progress-percent');
+        const statusText = document.getElementById('drawer-progress-status-text');
+
+        if (!container || !fill || !statusMsg || !percentLabel) return;
+
+        container.style.display = 'flex';
+        fill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+        percentLabel.textContent = `${Math.round(percent)}%`;
+        statusMsg.textContent = msg;
+
+        if (isError) {
+            fill.style.background = '#f43f5e';
+            if (statusText) statusText.style.color = '#f43f5e';
+        } else if (isDone) {
+            fill.style.background = '#64ffda';
+            if (statusText) statusText.style.color = '#64ffda';
+        } else {
+            fill.style.background = 'linear-gradient(90deg, #38bdf8, #64ffda)';
+            if (statusText) statusText.style.color = '#38bdf8';
+        }
+    },
+
+    hideActionProgress(delay = 1000) {
+        setTimeout(() => {
+            const container = document.getElementById('drawer-action-progress-container');
+            if (container) {
+                container.style.display = 'none';
+            }
+        }, delay);
+    },
+
     triggerFixLatex() {
         const latex = (this.drawerLatexInput ? this.drawerLatexInput.value.trim() : '') || this.currentLatex;
         if (!latex) {
@@ -2043,6 +2078,9 @@ const EquationExplainer = {
             btnFixLatex.style.opacity = '0.7';
             btnFixLatex.innerHTML = `<span style="display:inline-block; width:9px; height:9px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:explainer-spin 0.8s linear infinite; margin-right:4px;"></span> Fixing...`;
         }
+
+        // Progress Stage 1: Initializing
+        this.showActionProgress(15, 'Validating syntax & searching formula index...');
 
         const formulaId = this.currentId || (this.currentFormula ? this.currentFormula.id : '') || 'synthesized-custom';
         const hint = this.drawerHintInput ? this.drawerHintInput.value.trim() : '';
@@ -2059,12 +2097,26 @@ const EquationExplainer = {
             }
         };
 
+        // Simulated smooth micro-progress while network request executes
+        const t1 = setTimeout(() => this.showActionProgress(45, 'Sanitizing TeX tokens & structuring narrative...'), 180);
+        const t2 = setTimeout(() => this.showActionProgress(75, 'Updating JSON shard & synchronizing MariaDB...'), 420);
+
+        // AbortController with 20s timeout safeguard
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
+
         fetch(`${BASE_URL}/physics/api/apply-repair`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            signal: controller.signal
         })
-        .then(res => res.json())
+        .then(res => {
+            clearTimeout(timeoutId);
+            clearTimeout(t1);
+            clearTimeout(t2);
+            return res.json();
+        })
         .then(data => {
             if (btnFixLatex) {
                 btnFixLatex.disabled = false;
@@ -2073,6 +2125,9 @@ const EquationExplainer = {
             }
 
             if (data.success && data.data && data.data.formula) {
+                this.showActionProgress(100, '✓ Repair complete! MathJax synced.', true, false);
+                this.hideActionProgress(1400);
+
                 const f = data.data.formula;
                 this.currentFormula = f;
                 this.currentId = f.id;
@@ -2102,17 +2157,30 @@ const EquationExplainer = {
                     window.history.replaceState(null, '', newUrl);
                 }
             } else {
+                this.showActionProgress(100, `Error: ${data.error || 'Failed to fix LaTeX.'}`, false, true);
+                this.hideActionProgress(3000);
                 this.showDrawerAlert(data.error || 'Failed to fix LaTeX.', true);
             }
         })
         .catch(err => {
+            clearTimeout(timeoutId);
+            clearTimeout(t1);
+            clearTimeout(t2);
+
             if (btnFixLatex) {
                 btnFixLatex.disabled = false;
                 btnFixLatex.style.opacity = '1';
                 btnFixLatex.innerHTML = originalHtml;
             }
+
+            const isTimeout = err.name === 'AbortError';
+            const errorMsg = isTimeout ? 'Request timed out after 20 seconds.' : 'Network error while running Fix LaTeX.';
+
+            this.showActionProgress(100, errorMsg, false, true);
+            this.hideActionProgress(3000);
+
             console.error('Fix LaTeX error:', err);
-            this.showDrawerAlert('Network error while running Fix LaTeX.', true);
+            this.showDrawerAlert(errorMsg, true);
         });
     },
 

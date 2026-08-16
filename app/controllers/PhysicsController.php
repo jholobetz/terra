@@ -1451,7 +1451,7 @@ class PhysicsController
         if (empty($formulaId) || $formulaId === 'synthesized-custom') {
             if (!empty($latex)) {
                 $physicsService = Flight::physicsService();
-                $matched = $physicsService->findFormulaByLatex($latex);
+                $matched = $physicsService->searchFormulaByLatex($latex);
                 if ($matched && !empty($matched['id'])) {
                     $formulaId = $matched['id'];
                 } else {

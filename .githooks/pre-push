@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# 🛡️ Full Integrity Shield Pre-Push Hook for Physics Lab
+# Guarantees zero regressions reach remote master before pushing to GitHub.
+
+echo "🛡️ Running full Integrity Shield repository audit before pushing to remote..."
+
+if [ -x ".venv/bin/python3" ]; then
+    PYTHON_BIN=".venv/bin/python3"
+else
+    PYTHON_BIN="python3"
+fi
+
+$PYTHON_BIN integrity_shield.py
+
+if [ $? -ne 0 ]; then
+    echo "❌ Git Push Aborted: Integrity Shield detected failures in content shards or references."
+    exit 1
+fi
+
+echo "✓ Integrity Shield Secure: All shards and references are valid. Proceeding with push."
+exit 0

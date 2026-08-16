@@ -14,10 +14,16 @@ class SecurityHeadersMiddleware
 	{
 		$this->app = $app;
 	}
-	
+
 	public function before(array $params): void
 	{
-		$nonce = $this->app->get('csp_nonce');
+		$nonce = $this->app->get('csp_nonce') ?? '';
+
+		// Disable Tracy debug bar on API endpoints and AJAX requests to ensure clean JSON responses
+		$url = $this->app->request()->url;
+		if (strpos($url, '/api/') !== false || strpos($url, '/api') === 0 || $this->app->request()->ajax) {
+			Debugger::$showBar = false;
+		}
 
 		// development mode to execute Tracy debug bar CSS
 		$tracyCssBypass = "'nonce-{$nonce}'";

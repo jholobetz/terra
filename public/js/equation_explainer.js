@@ -2109,15 +2109,27 @@ const EquationExplainer = {
         const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
         fetch(`${baseUrl}/physics/api/apply-repair`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             body: JSON.stringify(payload),
             signal: controller.signal
         })
-        .then(res => {
+        .then(async res => {
             clearTimeout(timeoutId);
             clearTimeout(t1);
             clearTimeout(t2);
-            return res.json();
+            let data;
+            try {
+                data = await res.json();
+            } catch (e) {
+                throw new Error(`HTTP ${res.status}: Server returned invalid response.`);
+            }
+            if (!res.ok && data && data.error) {
+                throw new Error(data.error);
+            }
+            return data;
         })
         .then(data => {
             if (btnFixLatex) {
@@ -2188,7 +2200,7 @@ const EquationExplainer = {
             }
 
             const isTimeout = err.name === 'AbortError';
-            const errorMsg = isTimeout ? 'Request timed out after 20 seconds.' : 'Network error while running Fix LaTeX.';
+            const errorMsg = isTimeout ? 'Request timed out after 20 seconds.' : (err.message || 'Error while running Fix LaTeX.');
 
             this.showActionProgress(100, errorMsg, false, true);
             this.hideActionProgress(3000);

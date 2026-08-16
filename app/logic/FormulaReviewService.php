@@ -494,21 +494,21 @@ class FormulaReviewService
         $text = preg_replace('/You_\s*\$\s*u\s*\$to\$/i', 'four-velocity $U_\\mu$ to', $text);
 
         // 8. Fix fragmented sums, vector displacement, and absolute bounds
-        $text = str_replace("'V($\\mathbf{r}_i$ - $\\mathbf{R}_I$)'", "'$V(\\mathbf{r}_i - \\mathbf{R}_I)$'", $text);
-        $text = str_replace("'(\\mathbf{r}_i - \\mathbf{R}_I)$'", "'$V(\\mathbf{r}_i - \\mathbf{R}_I)$'", $text);
-        $text = str_replace("'($\\mathbf{r}_i$ - $\\mathbf{R}_I$)'", "'$\\mathbf{r}_i - \\mathbf{R}_I$'", $text);
-        $text = str_replace("'$\\sum_{i$, I}'", "'$\\sum_{i, I}$'", $text);
-        $text = str_replace("$\\sum_{i$, I}", "$\\sum_{i, I}$", $text);
-        $text = str_replace("'|$\\mathbf{r}_i$ - $\\mathbf{R}_I$| $\\to\\infty$'", "'$|\\mathbf{r}_i - \\mathbf{R}_I| \\to \\infty$'", $text);
-        $text = str_replace("'|$\\mathbf{r}_i$ - $\\mathbf{R}_I$| $\\to$ 0'", "'$|\\mathbf{r}_i - \\mathbf{R}_I| \\to 0$'", $text);
+        $text = str_replace("'V(\$\\mathbf{r}_i$ - \$\\mathbf{R}_I$)'", "'\$V(\\mathbf{r}_i - \\mathbf{R}_I)\$'", $text);
+        $text = str_replace("'(\\mathbf{r}_i - \\mathbf{R}_I)\$'", "'\$V(\\mathbf{r}_i - \\mathbf{R}_I)\$'", $text);
+        $text = str_replace("'(\$\\mathbf{r}_i$ - \$\\mathbf{R}_I$)'", "'\$\\mathbf{r}_i - \\mathbf{R}_I\$'", $text);
+        $text = str_replace("'\$\\sum_{i$, I}'", "'\$\\sum_{i, I}\$'", $text);
+        $text = str_replace("\$\\sum_{i$, I}", "\$\\sum_{i, I}\$", $text);
+        $text = str_replace("'|\$\\mathbf{r}_i$ - \$\\mathbf{R}_I$| \$\\to\\infty$'", "'\$|\\mathbf{r}_i - \\mathbf{R}_I| \\to \\infty\$'", $text);
+        $text = str_replace("'|\$\\mathbf{r}_i$ - \$\\mathbf{R}_I$| \$\\to\$ 0'", "'\$|\\mathbf{r}_i - \\mathbf{R}_I| \\to 0\$'", $text);
 
-        $res = preg_replace('/\'?V\(\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\)\'?/u', '\'$V(\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4})$\'', $text);
+        $res = preg_replace('/\'?V\(\$\\\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\)\'?/u', '\'$V(\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4})\'', $text);
         if (!empty($res)) $text = $res;
 
-        $res = preg_replace('/\'?\|\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\|\s*\\$\\to\\\\infty\$\'?/u', '\'$|\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4}| \\to \\infty$\'', $text);
+        $res = preg_replace('/\'?\|\$\\\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\|\s*\$\\\\to\\\\infty\$\'?/u', '\'$|\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4}| \\to \\infty$\'', $text);
         if (!empty($res)) $text = $res;
 
-        $res = preg_replace('/\'?\|\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\|\s*\\$\\to\\\$\s*0\'?/u', '\'$|\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4}| \\to 0$\'', $text);
+        $res = preg_replace('/\'?\|\$\\\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\|\s*\$\\\\to\$\s*0\'?/u', '\'$|\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4}| \\to 0$\'', $text);
         if (!empty($res)) $text = $res;
 
         // 9. Precision Math Delimiter Sanitizer

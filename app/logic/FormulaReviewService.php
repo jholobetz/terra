@@ -532,44 +532,48 @@ class FormulaReviewService
         $res = preg_replace('/\'?\|\$\\\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\s*-\s*\$\\\\mathbf\{([a-zA-Z]+)\}_([a-zA-Z0-9]+)\$\|\s*\$\\\\to\$\s*0\'?/u', '\'$|\\mathbf{$1}_{$2} - \\mathbf{$3}_{$4}| \\to 0$\'', $text);
         if (!empty($res)) $text = $res;
 
-        // 9. Precision Math Delimiter Sanitizer
-        $parts = explode('$', $text);
-        for ($i = 0; $i < count($parts); $i += 2) {
-            $segment = $parts[$i];
-            
-            // Wrap fraction equations: e.g. F_i = -\frac{\partial V}{\partial q_i}
-            $segment = preg_replace_callback('/(?<![a-zA-Z0-9$\\\\])((?:[A-Za-z](?:_[a-zA-Z0-9]+)?\s*=\s*)?(?:-\\s*)?\\\\frac\{[^{}]+\}\{[^{}]+\}(?:\s*=\s*0)?)(?![a-zA-Z0-9$])/u', function($m) {
-                return '$' . trim($m[1]) . '$';
-            }, $segment);
+        // 9. Precision Math Delimiter Sanitizer using Token-Protected Placeholders
+        $mathBlocks = [];
+        $text = preg_replace_callback('/(\$\$[\s\S]*?\$\$|\$[^\$\n]+?\$|\\\\\[[\s\S]*?\\\\\]|\\\\\([\s\S]*?\\\\\))/u', function($m) use (&$mathBlocks) {
+            $mathBlocks[] = $m[0];
+            return '___MATHBLOCK_' . (count($mathBlocks) - 1) . '___';
+        }, $text);
 
-            // Wrap Euler-Lagrange differential form
-            $segment = preg_replace_callback('/(?<![a-zA-Z0-9$\\\\])(\\\\frac\{d\}\{dt\}\\\\left\(\\\\frac\{\\\\partial L\}\{\\\\partial \\\\dot\{q\}_i\}\\\\right\)\s*-\s*\\\\frac\{\\\\partial L\}\{\\\\partial q_i\}\s*=\s*Q_i(?:\^\{?\\\\?text\{nc\}|nc\}?|\^\{nc\}))(?![a-zA-Z0-9$])/u', function($m) {
-                $math = str_replace('Q_i^{nc}', 'Q_i^{\\text{nc}}', $m[1]);
-                $math = str_replace('Q_i^nc', 'Q_i^{\\text{nc}}', $math);
-                return '$' . trim($math) . '$';
-            }, $segment);
+        // Safely apply regex wrappers to narrative prose only
+        // Wrap fraction equations: e.g. F_i = -\frac{\partial V}{\partial q_i}
+        $text = preg_replace_callback('/(?<![a-zA-Z0-9$\\\\])((?:[A-Za-z](?:_[a-zA-Z0-9]+)?\s*=\s*)?(?:-\\s*)?\\\\frac\{[^{}]+\}\{[^{}]+\}(?:\s*=\s*0)?)(?![a-zA-Z0-9$])/u', function($m) {
+            return '$' . trim($m[1]) . '$';
+        }, $text);
 
-            // Wrap logic quantifiers and ontological predicates
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(\\\\exists\s+[a-zA-Z0-9]+(?:\s*:\s*[PQR]\([a-zA-Z0-9]+\))?(?:\s*(?:\\\\implies|\\\\iff|→)\s*(?:\\\\text\{Ont\}|Ont)\([a-zA-Z0-9]+\))?)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(\\\\exists\s+[a-zA-Z0-9]+|\\\\forall\s+[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([PQR]\([a-zA-Z0-9]+\))(?![a-zA-Z0-9$])/u', '$$1$', $segment);
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(?:\\\\text\{Ont\}|Ont)\(([a-zA-Z0-9]+)\)(?![a-zA-Z0-9$])/u', '$\\text{Ont}($1)$', $segment);
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(\\\\implies|\\\\iff)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+        // Wrap Euler-Lagrange differential form
+        $text = preg_replace_callback('/(?<![a-zA-Z0-9$\\\\])(\\\\frac\{d\}\{dt\}\\\\left\(\\\\frac\{\\\\partial L\}\{\\\\partial \\\\dot\{q\}_i\}\\\\right\)\s*-\s*\\\\frac\{\\\\partial L\}\{\\\\partial q_i\}\s*=\s*Q_i(?:\^\{?\\\\?text\{nc\}|nc\}?|\^\{nc\}))(?![a-zA-Z0-9$])/u', function($m) {
+            $math = str_replace('Q_i^{nc}', 'Q_i^{\\text{nc}}', $m[1]);
+            $math = str_replace('Q_i^nc', 'Q_i^{\\text{nc}}', $math);
+            return '$' . trim($math) . '$';
+        }, $text);
 
-            // Wrap sub-indexed thermodynamic and physical variables (e.g. B_i - B_j, k_B T, B_i, B_j)
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([A-Za-z]_[a-zA-Z0-9]+\s*[-+><=]\s*[A-Za-z]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(k_B\s*T|k_B)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])(T\s*\\\\to\s*0(?:\s*\\\\text\{K\}|K)?|T\s*\\\\to\s*\\\\infty|v\s*\\\\to\s*c|\\\\hbar\s*\\\\to\s*0)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
+        // Wrap logic quantifiers and ontological predicates
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])(\\\\exists\s+[a-zA-Z0-9]+(?:\s*:\s*[PQR]\([a-zA-Z0-9]+\))?(?:\s*(?:\\\\implies|\\\\iff|→)\s*(?:\\\\text\{Ont\}|Ont)\([a-zA-Z0-9]+\))?)(?![a-zA-Z0-9$])/u', '$$1$', $text);
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])(\\\\exists\s+[a-zA-Z0-9]+|\\\\forall\s+[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $text);
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])([PQR]\([a-zA-Z0-9]+\))(?![a-zA-Z0-9$])/u', '$$1$', $text);
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])(?:\\\\text\{Ont\}|Ont)\(([a-zA-Z0-9]+)\)(?![a-zA-Z0-9$])/u', '$\\text{Ont}($1)$', $text);
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])(\\\\implies|\\\\iff)(?![a-zA-Z0-9$])/u', '$$1$', $text);
 
-            // Wrap common isolated relations
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])L\s*=\s*T\s*-\s*V(?![a-zA-Z0-9$])/u', '$L = T - V$', $segment);
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])p_i\s*=\s*\\\\frac\{\\\\partial L\}\{\\\\partial \\\\dot\{q\}_i\}(?![a-zA-Z0-9$])/u', '$p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$', $segment);
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])Q_i\^?\{?nc\}?(?![a-zA-Z0-9$])/u', '$Q_i^{\\text{nc}}$', $segment);
-            $segment = preg_replace('/(?<![a-zA-Z0-9$\\\\])([FqpB]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $segment);
-            
-            $parts[$i] = $segment;
+        // Wrap sub-indexed thermodynamic and physical variables (e.g. B_i - B_j, k_B T, B_i, B_j)
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])([A-Za-z]_[a-zA-Z0-9]+\s*[-+><=]\s*[A-Za-z]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $text);
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])(k_B\s*T|k_B)(?![a-zA-Z0-9$])/u', '$$1$', $text);
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])(T\s*\\\\to\s*0(?:\s*\\\\text\{K\}|K)?|T\s*\\\\to\s*\\\\infty|v\s*\\\\to\s*c|\\\\hbar\s*\\\\to\s*0)(?![a-zA-Z0-9$])/u', '$$1$', $text);
+
+        // Wrap common isolated relations
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])L\s*=\s*T\s*-\s*V(?![a-zA-Z0-9$])/u', '$L = T - V$', $text);
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])p_i\s*=\s*\\\\frac\{\\\\partial L\}\{\\\\partial \\\\dot\{q\}_i\}(?![a-zA-Z0-9$])/u', '$p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$', $text);
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])Q_i\^?\{?nc\}?(?![a-zA-Z0-9$])/u', '$Q_i^{\\text{nc}}$', $text);
+        $text = preg_replace('/(?<![a-zA-Z0-9$\\\\])([FqpB]_[a-zA-Z0-9]+)(?![a-zA-Z0-9$])/u', '$$1$', $text);
+
+        // Restore all protected original math blocks
+        for ($i = 0; $i < count($mathBlocks); $i++) {
+            $text = str_replace('___MATHBLOCK_' . $i . '___', $mathBlocks[$i], $text);
         }
-        $text = implode('$', $parts);
 
         // 10. Clean duplicate dollars and normalize spacing while preserving paragraph newlines
         $text = preg_replace('/\$+/', '$', $text);

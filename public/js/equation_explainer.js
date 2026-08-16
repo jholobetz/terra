@@ -2099,13 +2099,7 @@ const EquationExplainer = {
             url: window.location.href,
             formula_id: formulaId,
             latex: latex,
-            hint: hint,
-            prose: {
-                title: this.drawerFieldTitle ? this.drawerFieldTitle.value.trim() : (this.currentFormula ? this.currentFormula.title : ''),
-                interpretation: this.drawerFieldInterpretation ? this.drawerFieldInterpretation.value.trim() : '',
-                symmetry_origin: this.drawerFieldSymmetry ? this.drawerFieldSymmetry.value.trim() : '',
-                limits_and_boundary: this.drawerFieldLimits ? this.drawerFieldLimits.value.trim() : ''
-            }
+            hint: hint
         };
 
         // Simulated smooth micro-progress while network request executes

@@ -1448,11 +1448,24 @@ class PhysicsController
         $prose = $input['prose'] ?? null;
         $hint = $input['hint'] ?? null;
 
-        if (empty($formulaId)) {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Formula ID is required.']);
-            exit;
+        if (empty($formulaId) || $formulaId === 'synthesized-custom') {
+            if (!empty($latex)) {
+                $physicsService = Flight::physicsService();
+                $matched = $physicsService->findFormulaByLatex($latex);
+                if ($matched && !empty($matched['id'])) {
+                    $formulaId = $matched['id'];
+                } else {
+                    $title = $prose['title'] ?? 'custom-physical-relation';
+                    $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($title));
+                    $slug = trim($slug, '-');
+                    $formulaId = (!empty($slug) ? $slug : 'formula') . '-' . substr(md5($latex), 0, 8);
+                }
+            } else {
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Formula ID or LaTeX equation is required.']);
+                exit;
+            }
         }
 
         try {

@@ -2029,6 +2029,93 @@ const EquationExplainer = {
         });
     },
 
+    triggerFixLatex() {
+        const latex = (this.drawerLatexInput ? this.drawerLatexInput.value.trim() : '') || this.currentLatex;
+        if (!latex) {
+            this.showDrawerAlert('Please provide a LaTeX equation to fix.', true);
+            return;
+        }
+
+        const btnFixLatex = document.getElementById('drawer-btn-fixlatex');
+        const originalHtml = btnFixLatex ? btnFixLatex.innerHTML : '';
+        if (btnFixLatex) {
+            btnFixLatex.disabled = true;
+            btnFixLatex.style.opacity = '0.7';
+            btnFixLatex.innerHTML = `<span style="display:inline-block; width:9px; height:9px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:explainer-spin 0.8s linear infinite; margin-right:4px;"></span> Fixing...`;
+        }
+
+        const formulaId = this.currentId || (this.currentFormula ? this.currentFormula.id : '') || 'synthesized-custom';
+        const hint = this.drawerHintInput ? this.drawerHintInput.value.trim() : '';
+
+        const payload = {
+            formula_id: formulaId,
+            latex: latex,
+            hint: hint,
+            prose: {
+                title: this.drawerFieldTitle ? this.drawerFieldTitle.value.trim() : (this.currentFormula ? this.currentFormula.title : ''),
+                interpretation: this.drawerFieldInterpretation ? this.drawerFieldInterpretation.value.trim() : '',
+                symmetry_origin: this.drawerFieldSymmetry ? this.drawerFieldSymmetry.value.trim() : '',
+                limits_and_boundary: this.drawerFieldLimits ? this.drawerFieldLimits.value.trim() : ''
+            }
+        };
+
+        fetch(`${BASE_URL}/physics/api/apply-repair`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (btnFixLatex) {
+                btnFixLatex.disabled = false;
+                btnFixLatex.style.opacity = '1';
+                btnFixLatex.innerHTML = originalHtml;
+            }
+
+            if (data.success && data.data && data.data.formula) {
+                const f = data.data.formula;
+                this.currentFormula = f;
+                this.currentId = f.id;
+                this.currentLatex = data.data.clean_equation || f.equation;
+
+                // Update drawer form fields
+                if (this.drawerLatexInput) this.drawerLatexInput.value = this.currentLatex;
+                if (this.drawerFieldTitle) this.drawerFieldTitle.value = f.title || '';
+                if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = f.interpretation || '';
+                if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = f.symmetry_origin || '';
+                if (this.drawerFieldLimits) this.drawerFieldLimits.value = f.limits_and_boundary || '';
+
+                if (this.drawerFormulaIdLabel) {
+                    this.drawerFormulaIdLabel.textContent = `Formula ID: ${f.id}`;
+                }
+
+                // Render main UI and update MathJax
+                this.renderFormula(f, this.currentSubtopics || []);
+                this.compileMathJax(this.currentLatex);
+                this.updateDrawerLivePreview();
+
+                this.showDrawerAlert('✓ LaTeX decorrupted, hint applied, and shard/database synchronized!');
+
+                // Update URL query state to registered formula ID
+                if (window.history && window.history.replaceState) {
+                    const newUrl = window.location.pathname + '?id=' + encodeURIComponent(f.id);
+                    window.history.replaceState(null, '', newUrl);
+                }
+            } else {
+                this.showDrawerAlert(data.error || 'Failed to fix LaTeX.', true);
+            }
+        })
+        .catch(err => {
+            if (btnFixLatex) {
+                btnFixLatex.disabled = false;
+                btnFixLatex.style.opacity = '1';
+                btnFixLatex.innerHTML = originalHtml;
+            }
+            console.error('Fix LaTeX error:', err);
+            this.showDrawerAlert('Network error while running Fix LaTeX.', true);
+        });
+    },
+
     fetchSubtopicsForFormula(id) {
         return fetch(`${BASE_URL}/physics/search-index`)
             .then(res => res.json())
@@ -4541,6 +4628,12 @@ const EquationExplainer = {
         // Action: Apply Directly (Curator/Admin Tier)
         if (this.drawerBtnApplyDirect) {
             this.drawerBtnApplyDirect.addEventListener('click', () => this.applyDirectRepair());
+        }
+
+        // Action: Fix LaTeX
+        const btnFixLatex = document.getElementById('drawer-btn-fixlatex');
+        if (btnFixLatex) {
+            btnFixLatex.addEventListener('click', () => this.triggerFixLatex());
         }
 
         // Action: Auto-Draft

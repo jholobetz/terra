@@ -430,10 +430,16 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     <label style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: #cbd5e1; font-family: 'Space Grotesk', sans-serif;">
                         LaTeX Equation
                     </label>
-                    <button id="drawer-btn-autodraft" type="button" style="padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 5px;">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                        <span>Auto-Draft</span>
-                    </button>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <button id="drawer-btn-fixlatex" type="button" title="Decorrupt TeX syntax, incorporate hint, and sync shard & database" style="padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 5px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                            <span>Fix LaTeX</span>
+                        </button>
+                        <button id="drawer-btn-autodraft" type="button" title="Synthesize draft fields from equation AST" style="padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 5px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            <span>Auto-Draft</span>
+                        </button>
+                    </div>
                 </div>
                 <textarea id="drawer-latex-input" rows="2" style="width: 100%; padding: 10px 12px; background: rgba(3, 7, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; color: #64ffda; font-family: 'Fira Code', monospace; font-size: 0.9rem; box-sizing: border-box; outline: none;"></textarea>
             </div>

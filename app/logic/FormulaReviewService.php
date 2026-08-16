@@ -211,7 +211,7 @@ class FormulaReviewService
         // 2. Merge prose overrides if provided
         if (!empty($prose) && is_array($prose)) {
             foreach ($prose as $field => $val) {
-                if (is_string($val) && (!isset($formulaData[$field]) || $formulaData[$field] !== $val)) {
+                if (is_string($val) && ($isNew || trim($val) !== '') && (!isset($formulaData[$field]) || $formulaData[$field] !== $val)) {
                     $formulaData[$field] = $val;
                     $repairsMade[] = "Updated narrative field: '{$field}'";
                 }

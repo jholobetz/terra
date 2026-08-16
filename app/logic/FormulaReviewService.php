@@ -397,17 +397,38 @@ class FormulaReviewService
         $clean = trim($latex);
         if (empty($clean)) return '';
 
-        // Slash derivative conversion: dp^u/dtau -> \frac{dp^\mu}{d\tau}
-        if (strpos($clean, 'dp^') !== false && strpos($clean, '\frac') === false) {
-            $clean = preg_replace('/dp\^?\\\\?([a-zA-Z]+)\/d\\\\?([a-zA-Z]+)/', '\frac{dp^\1}{d\\\2}', $clean);
+        // 1. Extract clean LaTeX if raw SVG or HTML was passed
+        if (strpos($clean, 'data-tex=') !== false && preg_match('/data-tex="([^"]+)"/i', $clean, $m)) {
+            $clean = html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        } else if (strpos($clean, '<svg') !== false || strpos($clean, '<div') !== false) {
+            $clean = strip_tags($clean);
+            $clean = html_entity_decode($clean, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+
+        // 2. Strip equation delimiter wrappers: \[ ... \], $$ ... $$, \( ... \)
+        $clean = preg_replace('/^\\\\\[\s*/', '', $clean);
+        $clean = preg_replace('/\s*\\\\\]$/', '', $clean);
+        $clean = preg_replace('/^\$\$\s*/', '', $clean);
+        $clean = preg_replace('/\s*\$\$$/', '', $clean);
+        $clean = preg_replace('/^\\\\\(\s*/', '', $clean);
+        $clean = preg_replace('/\s*\\\\\)$/', '', $clean);
+        $clean = trim($clean);
+
+        // 3. Slash derivative conversion: dp^u/dtau -> \frac{dp^\mu}{d\tau}, dp/dt -> \frac{dp}{dt}
+        if (preg_match('/dp\^?\\\\?([a-zA-Z]+)\/d\\\\?([a-zA-Z]+)/', $clean)) {
+            $clean = preg_replace('/dp\^?\\\\?([a-zA-Z]+)\/d\\\\?([a-zA-Z]+)/', '\\frac{dp^\\1}{d\\\\\\2}', $clean);
+        }
+        if (preg_match('/dp\/dt/', $clean)) {
+            $clean = preg_replace('/dp\/dt/', '\\frac{dp}{dt}', $clean);
         }
 
         $clean = strtr($clean, [
             'dau' => '\\tau',
             'extbf' => '\\mathbf',
+            '\\par' => ' ',
         ]);
 
-        return $clean;
+        return trim($clean);
     }
 
     /**

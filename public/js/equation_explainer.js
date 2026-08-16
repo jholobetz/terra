@@ -1859,6 +1859,11 @@ const EquationExplainer = {
         this.mathRenderTarget.textContent = mathMarkup;
 
         if (window.MathJax) {
+            if (window.MathJax.typesetClear) {
+                try {
+                    window.MathJax.typesetClear([this.mathRenderTarget]);
+                } catch (e) {}
+            }
             if (window.MathJax.typesetPromise) {
                 window.MathJax.typesetPromise([this.mathRenderTarget])
                     .then(() => {
@@ -1871,6 +1876,11 @@ const EquationExplainer = {
             } else if (window.MathJax.startup && window.MathJax.startup.promise) {
                 this.setCompilerStatus('Loading Engine...', '#f59e0b');
                 window.MathJax.startup.promise.then(() => {
+                    if (window.MathJax.typesetClear) {
+                        try {
+                            window.MathJax.typesetClear([this.mathRenderTarget]);
+                        } catch (e) {}
+                    }
                     window.MathJax.typesetPromise([this.mathRenderTarget])
                         .then(() => {
                             this.setCompilerStatus('Ready', '#10b981');
@@ -2164,15 +2174,14 @@ const EquationExplainer = {
                 this.compileMathJax(this.currentLatex);
                 this.updateDrawerLivePreview();
 
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    const targets = [];
-                    if (this.mathRenderTarget) targets.push(this.mathRenderTarget);
-                    if (this.conceptualIntroCard) targets.push(this.conceptualIntroCard);
-                    if (this.aiScenariosList) targets.push(this.aiScenariosList);
-                    if (this.drawerPreviewTarget) targets.push(this.drawerPreviewTarget);
-                    if (targets.length > 0) {
-                        window.MathJax.typesetPromise(targets).catch(e => console.warn('MathJax typeset:', e));
-                    }
+                // Re-render and typeset all target containers
+                const targets = [];
+                if (this.mathRenderTarget) targets.push(this.mathRenderTarget);
+                if (this.conceptualIntroCard) targets.push(this.conceptualIntroCard);
+                if (this.aiScenariosList) targets.push(this.aiScenariosList);
+                if (this.drawerPreviewTarget) targets.push(this.drawerPreviewTarget);
+                if (targets.length > 0) {
+                    this.triggerTypeset(targets);
                 }
 
                 this.showDrawerAlert('✓ LaTeX decorrupted, hint applied, and shard/database synchronized!');
@@ -4778,7 +4787,7 @@ const EquationExplainer = {
         // Populate Fields
         const f = this.currentFormula || {};
         if (this.drawerFieldTitle) this.drawerFieldTitle.value = f.title || '';
-        if (this.drawerLatexInput) this.drawerLatexInput.value = this.currentLatex || f.equation || '';
+        if (this.drawerLatexInput) this.drawerLatexInput.value = this.currentLatex || this.getCleanLatexFromEq(f.equation) || '';
         if (this.drawerHintInput) this.drawerHintInput.value = '';
         if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = f.interpretation || '';
         if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = f.symmetry_origin || '';
@@ -4791,6 +4800,7 @@ const EquationExplainer = {
         this.drawerOverlay.style.display = 'block';
         setTimeout(() => {
             this.drawer.style.right = '0px';
+            this.updateDrawerLivePreview();
         }, 10);
 
         this.loadReviewsForDrawer();

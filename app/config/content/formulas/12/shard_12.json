@@ -790,69 +790,75 @@
         ]
     },
     "the-2nd-identity-919acdae": {
-        "title": "The 2nd Identity",
-        "equation": "\\int_V (\\phi \\nabla^2 \\psi - \\psi \\nabla^2 \\phi) d\\tau = \\oint_S (\\phi \\frac{\\partial \\psi}{\\partial n} - \\psi \\frac{\\partial \\phi}{\\partial n}) da",
+        "title": "Green's Second Identity",
+        "equation": "\\int_{V} (\\phi \\nabla^2 \\psi - \\psi \\nabla^2 \\phi) \\, \\mathrm{d}V = \\oint_{S = \\partial V} \\left(\\phi \\frac{\\partial \\psi}{\\partial n} - \\psi \\frac{\\partial \\phi}{\\partial n}\\right) \\mathrm{d}S",
         "semantic_variables": {
             "\\phi": {
                 "name": "Scalar Field 1",
-                "type": "variable",
+                "type": "scalar field",
                 "unit": "Problem-dependent",
-                "description": "An arbitrary scalar field, a function of position, representing a physical quantity (e.g., potential, temperature, concentration) that varies continuously throughout the volume $V$."
+                "description": "A twice continuously differentiable scalar field over the volume $V$."
             },
             "\\psi": {
                 "name": "Scalar Field 2",
-                "type": "variable",
+                "type": "scalar field",
                 "unit": "Problem-dependent",
-                "description": "Another arbitrary scalar field, a function of position, also representing a physical quantity that varies continuously throughout the volume $V$."
+                "description": "A second, twice continuously differentiable scalar field over the volume $V$."
             },
             "\\nabla^2": {
                 "name": "Laplacian Operator",
                 "type": "operator",
-                "unit": "1/m^2",
-                "description": "A second-order differential operator that, when applied to a scalar field, gives the divergence of its gradient. It measures how much the value of the field at a point differs from its average value over an infinitesimally small neighborhood, often related to sources or sinks."
+                "unit": "m⁻²",
+                "description": "The divergence of the gradient of a scalar field, measuring its local curvature."
             },
             "V": {
                 "name": "Volume of Integration",
-                "type": "variable",
-                "unit": "m^3",
-                "description": "The three-dimensional region in space over which the volume integral (LHS) is computed. It must be a simply connected region."
+                "type": "region",
+                "unit": "m³",
+                "description": "The three-dimensional region in space over which the volume integral is computed."
             },
-            "d\\tau": {
+            "\\mathrm{d}V": {
                 "name": "Infinitesimal Volume Element",
-                "type": "variable",
-                "unit": "m^3",
-                "description": "An infinitesimally small volume element within the region $V$ used for integration (e.g., $dx dy dz$ in Cartesian coordinates)."
+                "type": "differential",
+                "unit": "m³",
+                "description": "An infinitesimally small volume element within the region $V$."
             },
             "S": {
-                "name": "Surface of Integration",
-                "type": "variable",
-                "unit": "m^2",
-                "description": "The closed, two-dimensional surface that forms the boundary of the volume $V$. The surface integral (RHS) is performed over this surface."
+                "name": "Boundary Surface",
+                "type": "surface",
+                "unit": "m²",
+                "description": "The closed, two-dimensional surface that forms the boundary of the volume $V$, denoted as $S = \\partial V$."
             },
-            "da": {
+            "\\mathrm{d}S": {
                 "name": "Infinitesimal Surface Area Element",
-                "type": "variable",
-                "unit": "m^2",
-                "description": "An infinitesimally small area element on the surface $S$ used for integration."
+                "type": "differential",
+                "unit": "m²",
+                "description": "An infinitesimally small area element on the surface $S$."
             },
             "\\frac{\\partial}{\\partial n}": {
                 "name": "Normal Derivative Operator",
                 "type": "operator",
-                "unit": "1/m",
-                "description": "A differential operator representing the derivative of a scalar field in the direction normal (perpendicular) to the surface $S$. It indicates the rate of change of the field as one moves away from the surface along its normal vector."
+                "unit": "m⁻¹",
+                "description": "The directional derivative in the direction of the outward-pointing unit normal vector to the surface $S$."
             },
-            "\\tau": {
-                "name": "Infinitesimal Volume Element",
-                "type": "variable",
-                "unit": "m³",
-                "description": "An infinitesimal region of space over which a volume integration is performed."
+            "\\int_V": {
+                "name": "Volume Integral",
+                "type": "operator",
+                "unit": "Varies",
+                "description": "Operator that integrates a function over the volume $V$."
+            },
+            "\\oint_S": {
+                "name": "Closed Surface Integral",
+                "type": "operator",
+                "unit": "Varies",
+                "description": "Operator that integrates a function over the closed boundary surface $S$."
             }
         },
-        "interpretation": "The identity involves two arbitrary scalar fields, $\\phi$ and $\\psi$, which are functions of position in three-dimensional space. The operator $\\nabla^2$ represents the Laplacian, which describes the divergence of the gradient of a scalar field and is often associated with the local 'sources' or 'sinks' of the field, or its local curvature. The integral $\\int_V$ denotes integration over a specific volume $V$, with $d\\tau$ being an infinitesimal volume element. The term $(\\phi \\nabla^2 \\psi - \\psi \\nabla^2 \\phi)$ forms the integrand on the left-hand side, representing a measure of the asymmetry in how $\\phi$ and $\\psi$ are influenced by the Laplacian of the other. The right-hand side features a surface integral $\\oint_S$ over the closed surface $S$ that bounds the volume $V$. $da$ is an infinitesimal surface area element. The derivative $\\frac{\\partial}{\\partial n}$ denotes the normal derivative, which is the rate of change of the scalar field in the direction perpendicular to the surface $S$. The identity asserts that the total 'Laplacian interaction difference' within the volume $V$ is exactly equal to the net flux-like quantity involving the fields and their normal derivatives across the enclosing surface $S$.",
-        "symmetry_origin": "Green's Second Identity is a direct consequence of the Divergence Theorem (also known as Gauss's Theorem), which states that the volume integral of the divergence of a vector field is equal to the surface integral of the normal component of that vector field over the enclosing surface. It is derived by applying the Divergence Theorem to the vector field $\\mathbf{A} = \\phi \\nabla \\psi , which yields Green's First Identity: \\int_V (\\phi \\nabla^2 \\psi + \\nabla \\phi \\cdot \\nabla \\psi) d\\tau = \\oint_S \\phi \\frac{ \\partial \\psi}{\\partial n} da . By swapping the roles of \\phi and \\psi in Green's First Identity and then subtracting the resulting equation from the original Green's First Identity, the \\nabla \\phi \\cdot \\nabla \\psi terms cancel, leading directly to Green's Second Identity. This derivation highlights its fundamental connection to the interrelation between volume and surface integrals through the properties of differential operators .",
-        "limits_and_boundary": "The identity inherently relies on the definition of a closed volume $V$ and its bounding surface $S$. It is particularly useful when dealing with boundary conditions. If $\\phi$ or $\\psi$ (or both) are harmonic functions (i.e., $\\nabla$^2 $\\phi$ = 0$or \\nabla ^2 \\psi = 0$) within the volume $V$, the left-hand side of the identity simplifies or vanishes. For instance, if both $\\phi$ and $\\psi$ are harmonic, the entire left-hand side is zero, implying $\\oint_S$ ($\\phi \\frac{\\partial \\psi}{ \\partial n} - \\psi \\frac{ \\partial \\phi}{\\partial n}$) da = 0$. This identity is crucial for solving boundary value problems, where the values of$\\phi$,$\\psi$, or their normal derivatives are specified on the surface$S$(Dirichlet or Neumann boundary conditions, respectively). In cases where the volume$V$extends to infinity, the identity requires careful consideration of the behavior of$\\phi$and$\\psi$ at large distances; if they decay sufficiently fast, the surface integral over an infinitely large sphere (or equivalent boundary) can vanish, simplifying the equation significantly .",
+        "interpretation": "The identity involves two arbitrary, twice continuously differentiable scalar fields, $\\phi$ and $\\psi$, defined in a region of three-dimensional space. The operator $\\nabla^2$ is the Laplacian, which measures the local curvature or source density of a field. The left side integrates the term $(\\phi \\nabla^2 \\psi - \\psi \\nabla^2 \\phi)$ over a volume $V$, representing the net 'source interaction' within that volume. The right side is an integral over the closed surface $S$ that bounds the volume $V$. The term $\\partial/\\partial n$ denotes the normal derivative, the rate of change perpendicular to the surface. The identity equates the internal source interaction to the net flux of field-gradient interactions across the boundary, providing a powerful link between a field's behavior inside a volume and its properties on the boundary.",
+        "symmetry_origin": "Green's second identity is a mathematical theorem derived from the divergence theorem (Gauss's theorem). It does not arise from a physical symmetry in the same way as conservation laws from Noether's theorem. Its origin is in the fundamental theorem of calculus extended to higher dimensions. The derivation begins by applying the divergence theorem to the vector field $\\mathbf{F} = \\phi \\nabla \\psi$, which yields Green's first identity: $\\int_{V} (\\phi \\nabla^2 \\psi + \\nabla \\phi \\cdot \\nabla \\psi) \\, \\mathrm{d}V = \\oint_{S} \\phi \\frac{\\partial \\psi}{\\partial n} \\, \\mathrm{d}S$. By interchanging $\\phi$ and $\\psi$ and subtracting the resulting equation from the first identity, the symmetric term $\\nabla \\phi \\cdot \\nabla \\psi$ is eliminated, yielding the second identity.",
+        "limits_and_boundary": "1. **Harmonic Functions**: If $\\phi$ is harmonic in $V$ (i.e., $\\nabla^2\\phi = 0$), the identity simplifies. If both $\\phi$ and $\\psi$ are harmonic, the volume integral vanishes, leading to $\\oint_{S} (\\phi \\frac{\\partial \\psi}{\\partial n} - \\psi \\frac{\\partial \\phi}{\\partial n}) \\mathrm{d}S = 0$.\n2. **Green's Function Construction**: The identity is crucial for constructing Green's functions for the Poisson equation. By choosing $\\psi$ to be the fundamental solution of the Laplacian, $G(\\mathbf{r}, \\mathbf{r}') = -1/(4\\pi|\\mathbf{r}-\\mathbf{r}'|)$, which satisfies $\\nabla^2 G = -\\delta(\\mathbf{r}-\\mathbf{r}')$, the identity can be used to express the solution $\\phi(\\mathbf{r}')$ in terms of its boundary values and sources.\n3. **Unbounded Domains**: For the identity to hold in an infinite domain, the surface integral at infinity must vanish. This requires that the fields and their gradients decay sufficiently fast at large distances (e.g., $\\phi \\sim 1/r$ and $|\\nabla\\phi| \\sim 1/r^2$ as $r \\to \\infty$), a condition related to the Sommerfeld radiation condition in wave problems.",
         "status": "platinum",
-        "conceptual_definition": "Green's Second Identity is a fundamental theorem in vector calculus that relates a volume integral of a particular combination of two scalar fields and their Laplacians to a surface integral of a combination of these scalar fields and their normal derivatives over the boundary of that volume. It is a powerful tool for converting differential equations into integral equations, particularly useful in fields like electrostatics, heat transfer, and quantum mechanics, by establishing a connection between the behavior of fields within a region and their behavior on its boundary.",
+        "conceptual_definition": "Green's second identity relates a volume integral over a region $V$ involving two scalar fields and their Laplacians to a surface integral over the boundary $S$ of that region involving the fields and their normal derivatives. It is a fundamental tool in potential theory and for solving boundary value problems for partial differential equations.",
         "intuitive_summary": "This identity shows that the net difference in how two scalar fields interact with the Laplacian operator within a volume can be precisely determined by their values and their rates of change perpendicular to the boundary surface of that volume.",
         "subcomponents": [
             "laplacian-operator-683590a0",
@@ -1721,45 +1727,39 @@
     },
     "arithmetic-mean-frequentist-e4ed9c4d": {
         "title": "Frequentist Expectation Value",
-        "equation": "\\bar{x} = \\lim_{N \\to \\infty} \\frac{1}{N} \\sum_{i=1}^N x_i",
-        "interpretation": "The equation $\\bar{x} = \\lim_{N \\to \\infty$} $\\frac{1}{N} \\sum_{i=1}^N x_i$ defines the frequentist expectation value $\\bar{x}$ of a random variable $X$. Here, $N$ represents the total number of observations or trials in a sequence. The term $\\sum_{i=1}^N x_i$ signifies the sum of all individual observed values, where $x_i$ is the outcome of the $i$-th observation. Dividing this sum by $N$ calculates the arithmetic mean of the observed values. The crucial element is the limit $\\lim_{N \\to \\infty$}$, which indicates that the expectation value is only precisely defined as the number of observations approaches infinity. This ensures that random fluctuations in finite samples average out, revealing the true underlying average of the process generating the$x_i$values$.",
-        "symmetry_origin": "This formula is rooted in the strong Law of Large Numbers, a fundamental theorem in probability theory that states the sample average of a sequence of independent and identically distributed random variables converges almost surely to the expected value (mean) of the distribution. It's a foundational principle of frequentist probability, where probabilities are interpreted as the limiting relative frequencies of events, rather than arising from a physical symmetry or conservation law.",
-        "limits_and_boundary": "As the number of observations $N$ approaches infinity, the sample mean $\\frac{1}{N} \\sum_{i = 1}^N x_i$ converges to the true expectation value $\\bar{x}$ . For any finite $N$, the calculated sample mean is an estimate of $\\bar{x}$ , and its accuracy generally increases with $N$ (as indicated by the Central Limit Theorem, which describes the distribution of these estimates). When $N=1$, $\\bar{x}$ = x_1$, which is just the single observation and a very poor estimate of the true mean. The formula fundamentally requires at least one observation, making$N \\ge 1$a practical boundary condition; the expression is undefined for$N=0$.",
+        "equation": "\\bar{x} = \\lim_{N \\to \\infty} \\frac{1}{N} \\sum_{i=1}^{N} x_i",
+        "interpretation": "The equation $\\bar{x} = \\lim_{N \\to \\infty} \\frac{1}{N} \\sum_{i=1}^{N} x_i$ defines the frequentist expectation value $\\bar{x}$ of a random variable. In this expression, $N$ is the total number of observations or trials, and $x_i$ is the outcome of the $i$-th observation. The term $\\frac{1}{N} \\sum_{i=1}^{N} x_i$ represents the arithmetic mean of a finite sample of $N$ observations. The crucial element is the limit as $N \\to \\infty$, which asserts that this sample mean converges to the true expectation value only as the number of observations becomes infinitely large. This convergence ensures that random fluctuations inherent in finite samples are averaged out, revealing the underlying mean of the process generating the $x_i$ values.",
+        "symmetry_origin": "This formula is an expression of the strong Law of Large Numbers, a cornerstone theorem of probability theory. The theorem states that the sample average of a sequence of independent and identically distributed random variables converges almost surely to the true expected value. Unlike principles in physics derived from spacetime or gauge symmetries via Noether's theorem, its origin is purely mathematical and statistical, defining probability itself in the frequentist interpretation.",
+        "limits_and_boundary": "1. For a finite number of observations $N$, the sample mean $\\frac{1}{N} \\sum_{i=1}^{N} x_i$ is an estimate of the true expectation value $\\bar{x}$.\n2. As $N \\to \\infty$, the sample mean converges to the true expectation value $\\bar{x}$, according to the Law of Large Numbers.\n3. For a single observation, $N=1$, the estimate is simply the observed value, $\\bar{x}_1 = x_1$, which is generally a poor estimate of the true mean.\n4. The formula is undefined for $N=0$.",
         "semantic_variables": {
             "\\bar{x}": {
                 "name": "Frequentist Expectation Value",
                 "type": "variable",
-                "unit": "unit of x",
-                "description": "The long-term average value of the random variable $X$, obtained from an infinite number of observations. Its unit depends on the quantity being measured."
+                "unit": "Same as $x_i$",
+                "description": "The theoretical long-term average value of a random variable, defined as the limit of the sample mean as the number of observations approaches infinity."
             },
             "N": {
                 "name": "Number of Observations",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The total count of independent and identically distributed trials or measurements conducted."
+                "description": "The total count of independent and identically distributed trials or measurements."
             },
             "x_i": {
-                "name": "Individual Observation",
+                "name": "i-th Observation",
                 "type": "variable",
-                "unit": "unit of x",
-                "description": "The value observed in the $i$-th trial or measurement. Its unit depends on the quantity being measured."
-            },
-            "\\lim": {
-                "name": "\\lim Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "unit": "Depends on the quantity measured",
+                "description": "The value recorded for the $i$-th trial or measurement in a sequence of observations."
             },
             "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
+                "name": "Summation Index",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
+                "description": "An integer index that labels each individual observation from 1 to $N$."
             }
         },
         "status": "platinum",
         "conceptual_definition": "The frequentist expectation value, also known as the sample mean in the limit, defines the long-term average value of a random variable obtained by observing an infinitely large sequence of independent and identically distributed (i.i.d.) trials. It is a fundamental concept in frequentist statistics, linking observed frequencies to theoretical probabilities.",
-        "intuitive_summary": "This formula states that the average value of a quantity, in the frequentist sense, is the arithmetic mean of an infinitely large number of independent measurements of that quantity.",
+        "intuitive_summary": "The average value of a quantity is the arithmetic mean of an infinitely large number of independent measurements of that quantity.",
         "subcomponents": [
             "zero-net-elementary-charge-0e64ab01",
             "first-order-perturbation-index-6d24e2bc",
@@ -1892,68 +1892,62 @@
     "state-vector-identity-1-eb62c446-39c0e53b": {
         "title": "Unitary Time Evolution of State Vector",
         "equation": "|\\psi(t)\\rangle = e^{-\\frac{i}{\\hbar} \\hat{H} (t - t_0)} |\\psi(t_0)\\rangle",
-        "interpretation": "The equation describes the time evolution of a quantum state vector, denoted as |$\\psi$(t) $\\rangle$ , from an initial state |$\\psi$(t_0) $\\rangle$ at time (t_0) to a state at a later time (t) . The evolution is governed by the Hamiltonian operator $\\hat{H}$ , which represents the total energy of the system. The term $\\frac{i}{ \\hbar }$ involves$the imaginary unit (i) and the reduced Planck constant ($\\hbar$) , and it dictates the oscillatory nature of the time evolution in the complex Hilbert space. The operator U(t, t_0) = e^{-$\\frac{i}{ \\hbar } $\\hat{H} (t - t_0)} is known as the time evolution operator, which transforms the initial state into the state at time (t) . This evolution is unitary, meaning that the norm of the state vector is preserved, ensuring the conservation of probability.",
-        "symmetry_origin": "The formula is derived from the fundamental postulates of quantum mechanics, specifically the Schrödinger equation, $\\frac{d}{dt}| \\psi (t)\\rangle = - \\frac{i}{\\hbar} \\hat{H} | \\psi (t)\\rangle$. This equation itself arises from the principle of superposition and the role of the Hamiltonian as the generator of time translations. The unitary nature of the time evolution operator is a consequence of the Hamiltonian being a Hermitian operator, which ensures that probability is conserved.",
-        "limits_and_boundary": "As (t \\to t_0) , the time evolution operator approaches the identity operator ($\\hat{I}) , so | \\psi (t)\\rangle \\to | \\psi (t_0)\\rangle . If the Hamiltonian is time-independent, \\hat{H} , the evolution operator can be written as U(t, t_0) = e^{- \\frac{i}{\\hbar} \\hat{H}$ (t - t_0)}$. If \\hat{H}$ = 0 , the state vector remains constant over time. If $\\hat{H}$ is very large, the state vector evolves very rapidly.",
+        "interpretation": "This equation is the formal solution to the Schrödinger equation for a system with a time-independent Hamiltonian $\\hat{H}$. It describes the time evolution of a quantum state vector $|\\psi(t)\\rangle$ from an initial state $|\\psi(t_0)\\rangle$ at time $t_0$. The operator $\\hat{U}(t, t_0) = e^{-\\frac{i}{\\hbar} \\hat{H} (t - t_0)}$ is the time evolution operator, which propagates the state forward in time. The presence of the imaginary unit $i$ and the reduced Planck constant $\\hbar$ is characteristic of quantum dynamics, leading to wave-like, oscillatory behavior. Because the Hamiltonian $\\hat{H}$ is a Hermitian operator, the time evolution operator $\\hat{U}$ is unitary, which mathematically guarantees that the norm of the state vector, $\\langle\\psi(t)|\\psi(t)\\rangle$, remains constant and equal to 1, thus conserving total probability.",
+        "symmetry_origin": "The formula is a direct solution to the time-dependent Schrödinger equation, $i\\hbar \\frac{\\mathrm{d}}{\\mathrm{d}t} |\\psi(t)\\rangle = \\hat{H} |\\psi(t)\\rangle$, for a time-independent Hamiltonian. According to Noether's theorem, the continuous symmetry of physical laws under time translation implies the conservation of energy. The Hamiltonian $\\hat{H}$ is the quantum mechanical generator of these time translations. The unitary nature of the evolution is a direct consequence of the Hamiltonian being Hermitian, which is required for energy observables to have real eigenvalues and for probability to be conserved.",
+        "limits_and_boundary": "1. In the limit $t \\to t_0$, the exponential term becomes $e^0 = \\hat{I}$ (the identity operator), so $|\\psi(t)\\rangle \\to |\\psi(t_0)\\rangle$, correctly returning the initial state.\n2. If the Hamiltonian is the zero operator, $\\hat{H} = 0$, the state vector does not evolve: $|\\psi(t)\\rangle = |\\psi(t_0)\\rangle$ for all $t$.\n3. This specific form of the solution is valid only if the Hamiltonian $\\hat{H}$ is time-independent. If $\\hat{H}$ depends on time, the solution involves a time-ordered exponential, $\\hat{U}(t, t_0) = \\mathcal{T} e^{-\\frac{i}{\\hbar} \\int_{t_0}^t \\hat{H}(t') \\mathrm{d}t'}$.\n4. In the classical limit $\\hbar \\to 0$, the quantum evolution should correspond to classical mechanics, a principle formalized by the Ehrenfest theorem.",
         "semantic_variables": {
-            "\\psi(t)\\rangle": {
+            "|\\psi(t)\\rangle": {
                 "name": "State Vector at time t",
-                "type": "variable",
+                "type": "ket vector",
                 "unit": "dimensionless",
-                "description": "The quantum mechanical state of the system at time t, represented as a vector in a Hilbert space."
+                "description": "The quantum state of the system at time $t$, represented as a vector in a complex Hilbert space."
             },
-            "t": {
-                "name": "Current Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The time at which the state vector is being considered."
-            },
-            "t_0": {
-                "name": "Initial Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The initial time from which the evolution is measured."
-            },
-            "\\hbar": {
-                "name": "Reduced Planck Constant",
-                "type": "constant",
-                "unit": "J s",
-                "description": "A fundamental physical constant relating energy to frequency, crucial in quantum mechanics."
+            "|\\psi(t_0)\\rangle": {
+                "name": "Initial State Vector",
+                "type": "ket vector",
+                "unit": "dimensionless",
+                "description": "The quantum state of the system at the initial time $t_0$."
             },
             "\\hat{H}": {
                 "name": "Hamiltonian Operator",
                 "type": "operator",
                 "unit": "J",
-                "description": "The quantum mechanical operator corresponding to the total energy of the system. It generates time translations."
+                "description": "The quantum mechanical operator corresponding to the total energy of the system. For this equation, it is assumed to be time-independent."
             },
-            "\\psi(t_0)\\rangle": {
-                "name": "Initial State Vector",
+            "t": {
+                "name": "Time",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The quantum mechanical state of the system at the initial time t_0."
+                "unit": "s",
+                "description": "The time at which the system's state is evaluated."
             },
-            "e": {
-                "name": "Euler's number",
+            "t_0": {
+                "name": "Initial Time",
+                "type": "variable",
+                "unit": "s",
+                "description": "The reference time at which the initial state of the system is known."
+            },
+            "\\hbar": {
+                "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "dimensionless",
-                "description": "The base of the natural logarithm, approximately 2.71828."
+                "unit": "J⋅s",
+                "description": "The Planck constant divided by $2\\pi$, a fundamental constant in quantum mechanics. Value is approximately $1.054 \\times 10^{-34}$ J⋅s."
             },
             "i": {
                 "name": "Imaginary Unit",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The square root of -1, essential for describing quantum mechanical states in complex Hilbert spaces."
+                "description": "The mathematical constant defined by the property $i^2 = -1$."
             },
-            "H": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "A/m",
-                "description": "The auxiliary magnetic field vector representing magnetization effects in media."
+            "e": {
+                "name": "Euler's Number",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The base of the natural logarithm, approximately 2.71828."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "This formula describes how the quantum state of a system evolves over time under the influence of its Hamiltonian, adhering to the principles of quantum mechanics.",
-        "intuitive_summary": "The quantum state of a system at a future time is obtained by 'rotating' its initial state in a complex Hilbert space according to the system's energy."
+        "conceptual_definition": "This equation describes how the quantum state of a closed system evolves from an initial time to a later time, governed by the system's time-independent Hamiltonian. The evolution is unitary, meaning it preserves the total probability.",
+        "intuitive_summary": "The quantum state of a system at a future time is obtained by 'rotating' its initial state in a complex vector space, where the 'angle' of rotation is determined by the system's energy and the elapsed time."
     },
     "anti-de-sitter-identity-1-5c335cab-b793bf2e": {
         "title": "Anti-de Sitter Spacetime Riemann Curvature Tensor",
@@ -2012,39 +2006,39 @@
     },
     "bbn-theory-identity-1-26004c79-75c1c121": {
         "title": "The Primordial Deuterium Synthesis",
-        "equation": "p + n \\to \\text{d} + \\gamma",
-        "interpretation": "The equation represents the strong nuclear force interaction between a proton ( $p$) and a neutron ( $n$) that results in the formation of a deuterium nucleus, commonly known as a deuteron ( d ). This is an exothermic reaction, meaning it releases energy, which is carried away by a gamma-ray photon ( $\\gamma$). The process is essential for understanding the primordial abundances of light elements. The rate of this reaction is highly dependent on temperature and density, and it ceased to be significant once the universe expanded and cooled sufficiently.",
-        "symmetry_origin": "This reaction is governed by the strong nuclear force, which is charge-independent and respects parity conservation. The conservation of baryon number and lepton number (implicitly, as no leptons are created or destroyed) are also fundamental principles at play.",
-        "limits_and_boundary": "At extremely high temperatures and densities, such as those present in the very early universe, this reaction proceeds readily. As the universe expands and cools, the rate of this reaction decreases significantly. If the temperature drops below the binding energy of deuterium (approximately 2.22 MeV), deuterium nuclei become unstable and are more likely to be photodissociated back into a proton and a neutron, effectively halting the net production of deuterium.",
+        "equation": "p + n \\to \\mathrm{d} + \\gamma",
+        "interpretation": "The equation represents the strong nuclear force interaction between a proton ($p$) and a neutron ($n$) that results in the formation of a deuterium nucleus, commonly known as a deuteron ($\\mathrm{d}$). This is an exothermic reaction, releasing the deuteron's binding energy of approximately 2.22 MeV, which is carried away by a high-energy gamma-ray photon ($\\gamma$). This process, known as deuterium synthesis, is the first and rate-limiting step in Big Bang Nucleosynthesis (BBN), and its efficiency determines the primordial abundances of all heavier light elements.",
+        "symmetry_origin": "The reaction is governed by the strong nuclear force and conserves several fundamental quantities. Baryon number is conserved ($B=1+1 \\to 2$). Electric charge is conserved ($Q=+1+0 \\to +1$). Lepton number is conserved ($L=0+0 \\to 0$). The interaction also respects parity (P) and time-reversal (T) symmetry.",
+        "limits_and_boundary": "1. High Temperature Limit (T >> 0.1 MeV): In the very early universe, temperatures are so high that a large number of high-energy photons exist in the thermal bath. Any deuteron formed is immediately destroyed by photodissociation ($\\mathrm{d} + \\gamma \\to p + n$). This period is known as the 'deuterium bottleneck', preventing the synthesis of heavier elements.\n2. Nucleosynthesis Epoch (T ≈ 0.07 MeV): As the universe expands and cools, the number of photons energetic enough to break up deuterium (E > 2.22 MeV) drops significantly. Deuterium production becomes favorable, allowing nucleosynthesis to proceed and form helium and other light elements.\n3. Low Temperature Limit (T << 0.07 MeV): At much later times, the density and temperature of protons and neutrons become too low for the fusion reaction rate to be significant, effectively 'freezing out' the final abundances of the light elements.",
         "semantic_variables": {
             "p": {
                 "name": "Proton",
                 "type": "particle",
                 "unit": "dimensionless",
-                "description": "Represents a proton, a subatomic particle with a positive electric charge and a mass of approximately 1.672 x 10^-27 kg. It is the nucleus of the most common isotope of hydrogen."
+                "description": "A subatomic particle with a positive electric charge, consisting of two up quarks and one down quark. It is the nucleus of the most common isotope of hydrogen."
             },
             "n": {
                 "name": "Neutron",
                 "type": "particle",
                 "unit": "dimensionless",
-                "description": "Represents a neutron, a subatomic particle with no net electric charge and a mass of approximately 1.675 x 10^-27 kg. It is a constituent of atomic nuclei."
+                "description": "A subatomic particle with no net electric charge, consisting of one up quark and two down quarks. It is a constituent of all atomic nuclei except for protium (ordinary hydrogen)."
             },
-            "d": {
+            "\\mathrm{d}": {
                 "name": "Deuteron",
                 "type": "particle",
                 "unit": "dimensionless",
-                "description": "Represents a deuteron, the nucleus of deuterium, an isotope of hydrogen. It consists of one proton and one neutron bound together."
+                "description": "The nucleus of deuterium (an isotope of hydrogen), consisting of one proton and one neutron bound together by the strong nuclear force."
             },
             "\\gamma": {
-                "name": "Photon",
+                "name": "Gamma Photon",
                 "type": "particle",
-                "unit": "J",
-                "description": "Represents a gamma-ray photon, a quantum of electromagnetic radiation. In this reaction, it carries away the excess energy released by the formation of the deuteron."
+                "unit": "dimensionless",
+                "description": "A quantum of high-energy electromagnetic radiation (a gamma ray). In this reaction, it carries away the binding energy released upon the formation of the deuteron."
             }
         },
         "status": "platinum",
         "conceptual_definition": "This formula describes the nuclear fusion reaction where a proton and a neutron combine to form a deuteron (the nucleus of deuterium), releasing a gamma-ray photon in the process. This reaction was a crucial step in Big Bang nucleosynthesis, determining the abundance of deuterium in the early universe.",
-        "intuitive_summary": "In the hot, dense early universe, a proton and a neutron could overcome their mutual repulsion and bind together to form a deuterium nucleus, emitting energy as a photon."
+        "intuitive_summary": "In the hot, dense early universe, a proton and a neutron can bind together via the strong nuclear force to form a stable deuterium nucleus, releasing the binding energy as a high-energy photon."
     },
     "poset-spacetime-identity-1-200e74f6-7a80f635": {
         "title": "Causal Set Interval Cardinality",
@@ -2321,31 +2315,37 @@
     },
     "unit-vector-field": {
         "title": "Unit Vector Field",
-        "equation": "\\hat{\\phi}^a = \\phi^a / |\\phi|",
-        "conceptual_definition": "The formula $\\hat${$\\phi$}^a = $\\phi^a$ / |$\\phi$| defines a unit vector field. A unit vector field assigns a vector of magnitude one (a unit vector) to each point in space, indicating direction without contributing to magnitude. This is achieved by normalizing an existing vector field $\\phi$^a $by$ dividing each of its components by its magnitude |$\\phi|$.",
+        "equation": "\\hat{\\phi}^a = \\frac{\\phi^a}{\\|\\boldsymbol{\\phi}\\|}",
+        "conceptual_definition": "A unit vector field is a field that assigns a vector of magnitude one to each point in a space, thereby specifying only a direction at each point. It is obtained by normalizing a given vector field, which involves dividing each vector in the field by its own magnitude.",
         "intuitive_summary": "A unit vector field shows only direction by scaling any given vector down to a length of one.",
-        "interpretation": "In this formula, $\\hat${$\\phi}^a represents the components of the unit vector field. The superscript$a$indicates that this is a contravariant vector, often used to represent quantities like velocity or position in a given coordinate system .\\phi ^a is the original vector field whose components are being normalized. The notation | \\phi | signifies the magnitude (or norm) of the vector \\phi ^a$. The magnitude of a vector $\\phi$^a $in$ Cartesian coordinates is given by |$\\phi$| = $\\sqrt{( \\phi ^1)^2 + ( \\phi ^2)^2 + ... + ( \\phi ^n)^2}$, where $n$ is the dimension of the space. By dividing each component of \\phi ^a $by$ its magnitude, we obtain a new vector \\hat { \\phi }^a that has the same direction as \\phi ^a $but$ a magnitude of exactly one. This process is called normalization$.",
-        "symmetry_origin": "The concept of a unit vector field is fundamental in differential geometry and physics, particularly in describing directional properties independent of magnitude. It often arises when analyzing symmetries or intrinsic properties of a system where the scale or intensity is less important than the orientation. For instance, in electromagnetism, the direction of the Poynting vector indicates energy flow, and normalizing it yields a unit vector representing the direction of propagation of electromagnetic waves.",
-        "limits_and_boundary": "If the original vector field $\\phi$^a is the zero vector at a particular point, i.e., $\\phi$^a = 0 $for all$a$, then its magnitude | \\phi | = 0$. In this case, the division $\\phi$^a / |$\\phi$| is undefined. Therefore, the unit vector field is not defined at points where the original vector field is zero. If $\\phi$^a approaches zero, the magnitude of $\\hat${$\\phi$}^a remains 1, but the direction might become unstable or undefined if $\\phi$^a $itself$ has fluctuating directions as it tends towards zero.",
+        "interpretation": "The equation defines the components $\\hat{\\phi}^a$ of a unit vector field by normalizing an existing vector field with components $\\phi^a$. The superscript $a$ is an index indicating a contravariant vector component. The term $\\|\\boldsymbol{\\phi}\\|$ represents the magnitude (or norm) of the vector $\\boldsymbol{\\phi}$, which is a scalar field. In a general manifold with metric tensor $g_{ab}$, the magnitude is calculated as $\\|\\boldsymbol{\\phi}\\| = \\sqrt{g_{ab}\\phi^a \\phi^b}$. For a simple Euclidean space with Cartesian coordinates, this simplifies to $\\|\\boldsymbol{\\phi}\\| = \\sqrt{\\sum_{a=1}^{n} (\\phi^a)^2}$. By dividing each component $\\phi^a$ by the vector's magnitude at that point, the resulting vector $\\hat{\\boldsymbol{\\phi}}$ has a magnitude of one, preserving the original direction while discarding magnitude information.",
+        "symmetry_origin": "The normalization process itself is invariant under global scale transformations of the original field, $\\boldsymbol{\\phi} \\to \\lambda \\boldsymbol{\\phi}$ for a constant $\\lambda > 0$, as the resulting unit vector field $\\hat{\\boldsymbol{\\phi}}$ remains unchanged. This scale invariance makes unit vector fields essential for describing purely directional properties of physical systems, such as the orientation of a spin vector in quantum mechanics or the direction of energy flow given by the Poynting vector in electromagnetism, independent of the system's overall scale or intensity.",
+        "limits_and_boundary": "1. Singularity at Zero: The normalization is undefined at any point where the original vector field $\\boldsymbol{\\phi}$ is the zero vector, as this would lead to division by zero ($\\!\\|\\boldsymbol{\\phi}\\|\\! = 0$). Such points are singularities of the unit vector field.\n2. Topological Defects: If the vector field $\\boldsymbol{\\phi}$ vanishes at an isolated point or on a line/surface, the resulting unit vector field $\\hat{\\boldsymbol{\\phi}}$ can exhibit topological defects (e.g., vortices, monopoles) at these locations, which are of great importance in condensed matter physics and cosmology.",
         "status": "platinum",
         "semantic_variables": {
             "\\hat{\\phi}^a": {
-                "name": "Unit Vector Field Components",
+                "name": "Unit Vector Field Component",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The components of the normalized vector field, which has a magnitude of one. The superscript 'a' denotes a contravariant component."
+                "description": "The $a$-th contravariant component of the normalized vector field, which has a magnitude of one at every point."
             },
             "\\phi^a": {
-                "name": "Original Vector Field Components",
+                "name": "Vector Field Component",
                 "type": "variable",
                 "unit": "arbitrary",
-                "description": "The components of the original vector field that is being normalized. The superscript 'a' denotes a contravariant component. The units depend on the physical quantity represented by the vector field (e.g., m/s for velocity)."
+                "description": "The $a$-th contravariant component of the original vector field being normalized. Its physical units depend on the quantity it represents (e.g., m/s for velocity)."
             },
-            "|\\phi|": {
+            "\\|\\boldsymbol{\\phi}\\|": {
                 "name": "Magnitude of the Vector Field",
                 "type": "variable",
                 "unit": "arbitrary",
-                "description": "The magnitude (or Euclidean norm) of the vector field \\phi^a . It is calculated as the square root of the sum of the squares of its components. The units are the same as the units of the vector field components."
+                "description": "The magnitude (norm) of the vector $\\boldsymbol{\\phi}$, a scalar field calculated as $\\|\\boldsymbol{\\phi}\\| = \\sqrt{g_{ab}\\phi^a \\phi^b}$. It has the same units as the components $\\phi^a$."
+            },
+            "g_{ab}": {
+                "name": "Metric Tensor",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The metric tensor of the spacetime or manifold, which defines distances and angles. Its components $g_{ab}$ are used to calculate the inner product and norm of vectors."
             }
         }
     },
@@ -2388,19 +2388,20 @@
     "tsirelson-bound-numerical-value-44dd454e": {
         "title": "Tsirelson Bound Numerical Value",
         "description": "This constant represents the maximum possible quantum mechanical correlation for a Bell-type inequality.",
-        "conceptual_definition": "In quantum information theory, $2\\sqrt{2}$ is the numerical value of the Tsirelson Bound, which sets the upper limit for the expectation value of a Bell operator in quantum mechanics. It quantifies the maximum correlation achievable by entangled quantum systems, surpassing classical limits.",
-        "interpretation": "This specific numerical value, $2\\sqrt{2}$, is a cornerstone in understanding the non-classical nature of quantum correlations. It demonstrates that quantum mechanics allows for stronger correlations than any local hidden variable theory, which are bounded by 2. The fact that quantum systems can reach $2\\sqrt{2}$ (approximately 2.828) while classical systems are limited to 2 is a profound manifestation of quantum entanglement and non-locality, distinguishing quantum reality from classical intuition.",
-        "limits_and_boundary": "This value serves as an upper bound for the Bell-CHSH inequality in quantum mechanics. Any experimental measurement of a Bell operator's expectation value must not exceed this limit, otherwise, it would imply physics beyond standard quantum theory.",
-        "symmetry_origin": "The Tsirelson Bound itself arises from the algebraic properties of quantum operators and the non-commutativity inherent in quantum mechanics. While $2\\sqrt{2}$ is a specific numerical constant, its origin is deeply rooted in the symmetries and structure of Hilbert space and the tensor product structure of multi-partite quantum systems, particularly the properties of Pauli matrices.",
+        "conceptual_definition": "The Tsirelson Bound is the maximum value, equal to 2 times the square root of 2, that the expectation value of a CHSH Bell operator can attain in quantum mechanics. This value quantifies the upper limit of correlation possible between two entangled quantum systems, which is strictly greater than the classical limit.",
+        "interpretation": "The numerical value $2\\sqrt{2}$ is a fundamental constant in quantum information theory that starkly contrasts quantum mechanics with classical physics. Local hidden variable theories, which assume that physical properties are predetermined and that influences cannot travel faster than light, predict that the correlations measured in a Bell-CHSH experiment cannot exceed the value of 2. However, quantum mechanics predicts, and experiments confirm, that entangled systems can exhibit correlations up to $2\\sqrt{2} \\approx 2.828$. This violation of the classical bound is a direct proof of quantum non-locality and the inadequacy of a classical worldview.",
+        "limits_and_boundary": "1. Classical Limit: In any local realist theory, the Bell-CHSH parameter is bounded by 2.\n2. Quantum Limit: In standard quantum mechanics, the Bell-CHSH parameter is bounded by $2\\sqrt{2}$.\n3. Supra-Quantum Limit: Hypothetical non-signaling theories could allow for correlations up to the Popescu-Rohrlich box limit of 4, but this is not realized in quantum mechanics. An experimental result exceeding $2\\sqrt{2}$ would falsify standard quantum theory.",
+        "symmetry_origin": "The bound of $2\\sqrt{2}$ is a direct mathematical consequence of the structure of quantum mechanics, specifically the algebra of operators on a Hilbert space. It arises from the non-commutativity of measurement operators for entangled particles, often represented using Pauli matrices. The value is derived by finding the maximum eigenvalue of the Bell-CHSH operator, which is constrained by the geometric properties (symmetries) of the state space of two qubits.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-information-theory",
         "semantic_variables": {},
         "equation": "2\\sqrt{2}",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "experimental-rigor-0bd5b376",
         "subcomponents": [],
-        "id": "tsirelson-bound-numerical-value-44dd454e"
+        "id": "tsirelson-bound-numerical-value-44dd454e",
+        "intuitive_summary": "Quantum entanglement allows for correlations that are fundamentally stronger than anything possible in the classical world, with this value marking the absolute quantum limit for those correlations."
     },
     "material-acceleration-of-fluid-parcel-066d294e": {
         "title": "Material Acceleration of Fluid Parcel",
@@ -2436,7 +2437,8 @@
         "status": "published",
         "parent_formula_id": "friction-source-f3ff6185",
         "subcomponents": [],
-        "id": "material-acceleration-of-fluid-parcel-066d294e"
+        "id": "material-acceleration-of-fluid-parcel-066d294e",
+        "intuitive_summary": ""
     },
     "equation-of-state-for-pressure-0c070485": {
         "title": "Equation of State for Pressure",
@@ -2472,7 +2474,8 @@
         "status": "published",
         "parent_formula_id": "cosmic-fluid-equation-ident-bfe90efa",
         "subcomponents": [],
-        "id": "equation-of-state-for-pressure-0c070485"
+        "id": "equation-of-state-for-pressure-0c070485",
+        "intuitive_summary": ""
     },
     "partial-derivative-of-vector-potential-component-7275dd15": {
         "title": "Partial Derivative of Vector Potential Component",
@@ -2508,7 +2511,8 @@
         "status": "published",
         "parent_formula_id": "4d-connection-7bf3a5f2",
         "subcomponents": [],
-        "id": "partial-derivative-of-vector-potential-component-7275dd15"
+        "id": "partial-derivative-of-vector-potential-component-7275dd15",
+        "intuitive_summary": ""
     },
     "effective-spatial-dimension-exponent-c64a6619": {
         "title": "Effective Spatial Dimension Exponent",
@@ -2532,7 +2536,8 @@
         "status": "published",
         "parent_formula_id": "geometric-scaling-77e6ec50",
         "subcomponents": [],
-        "id": "effective-spatial-dimension-exponent-c64a6619"
+        "id": "effective-spatial-dimension-exponent-c64a6619",
+        "intuitive_summary": ""
     },
     "equation-of-state-for-vacuum-energy-7f06ba88": {
         "title": "Equation of State for Vacuum Energy",
@@ -2562,7 +2567,8 @@
         "status": "published",
         "parent_formula_id": "equation-of-state-limit",
         "subcomponents": [],
-        "id": "equation-of-state-for-vacuum-energy-7f06ba88"
+        "id": "equation-of-state-for-vacuum-energy-7f06ba88",
+        "intuitive_summary": ""
     },
     "effective-lagrangian-density-8736c038": {
         "title": "Effective Lagrangian Density",
@@ -2586,7 +2592,8 @@
         "status": "published",
         "parent_formula_id": "effective-field-theory-expansion-cutoff-e4d1c9b4",
         "subcomponents": [],
-        "id": "effective-lagrangian-density-8736c038"
+        "id": "effective-lagrangian-density-8736c038",
+        "intuitive_summary": ""
     },
     "high-frequency-limit-e894258a": {
         "title": "High-Frequency Limit",
@@ -2610,31 +2617,45 @@
         "status": "published",
         "parent_formula_id": "blackbody-bath-09e54191",
         "subcomponents": [],
-        "id": "high-frequency-limit-e894258a"
+        "id": "high-frequency-limit-e894258a",
+        "intuitive_summary": ""
     },
     "second-su2-gauge-field-component-956ddb33": {
         "title": "Second SU(2) Gauge Field Component",
         "description": "This equation represents the second component of the SU(2) gauge field triplet, $W_2$, which is a fundamental field in the electroweak theory.",
-        "conceptual_definition": "In the Standard Model, $W_2$ is one of the three massless SU(2) gauge fields ($W_1, W_2, W_3$) that exist before electroweak symmetry breaking. These fields are associated with the weak isospin symmetry. After the Higgs mechanism, $W_1$ and $W_2$ combine to form the massive charged W-bosons ($W^+$ and $W^-$), while $W_3$ mixes with the U(1) gauge field $B_\\mu$ to form the Z-boson and the photon.",
-        "interpretation": "The field $W_2$ is a fundamental quantum field mediating the weak nuclear force. Prior to spontaneous symmetry breaking, it is a massless gauge boson. The term $W_2^2$ in the master formula $|D_\\mu \\phi|^2 \\supset \\frac{g^2 v^2}{8}$(W_1^2 + W_2^2) directly contributes to the mass term of the W-bosons after the Higgs field acquires a vacuum expectation value. Specifically, $W_2$ combines with $W_1$ to form the physical charged W-bosons, $W^$\\pm = \\frac{1}{\\sqrt{2} }$(W_1$\\mp$i W_2)$, which are responsible for charged current weak interactions$.",
-        "limits_and_boundary": "At energies significantly above the electroweak scale (approximately 246 GeV), the electroweak symmetry is effectively restored, and $W_1, W_2, W_3$ behave as massless gauge bosons. At energies below this scale, the symmetry is spontaneously broken, and $W_2$ contributes to the massive W-bosons. The field is described within the framework of quantum field theory.",
-        "symmetry_origin": "The existence and properties of the $W_2$ field are a direct consequence of the local SU(2) gauge symmetry of the electroweak theory. This symmetry, along with the U(1) hypercharge symmetry, forms the SU(2)L \\times U(1)Y gauge group of the Standard Model. The spontaneous breaking of this symmetry by the Higgs mechanism gives mass to the W-bosons.",
+        "conceptual_definition": "The field $W^2_\\mu$ is the second of the three gauge fields, collectively denoted $W^a_\\mu$ with $a=1,2,3$, that mediate the SU(2) weak isospin interaction before electroweak symmetry breaking. In this symmetric phase, it is a massless vector boson field.",
+        "interpretation": "The field $W^2_\\mu$ is a fundamental vector field component of the electroweak theory. Prior to spontaneous symmetry breaking, it is a massless gauge boson field. After the Higgs field $\\phi$ acquires a vacuum expectation value $v$, the kinetic term for the Higgs, $|D_\\mu \\phi|^2$, generates mass terms for the gauge bosons. The relevant part of this term is $\\frac{g^2 v^2}{8} \\left( (W^1_\\mu)^2 + (W^2_\\mu)^2 \\right)$, which shows that a linear combination of $W^1_\\mu$ and $W^2_\\mu$ becomes massive. These combinations are the physical charged W-bosons, defined as $W^\\pm_\\mu = \\frac{1}{\\sqrt{2}}(W^1_\\mu \\mp i W^2_\\mu)$, which mediate charged-current weak interactions.",
+        "limits_and_boundary": "1. High-Energy Limit (Symmetry Restoration): At energies significantly above the electroweak scale ($E \\gg 246 \\, \\mathrm{GeV}$), the electroweak symmetry is restored. In this limit, $W^1_\\mu$, $W^2_\\mu$, and $W^3_\\mu$ are distinct, massless gauge bosons.\n2. Low-Energy Limit (Broken Symmetry): At energies below the electroweak scale ($E \\ll 246 \\, \\mathrm{GeV}$), the symmetry is spontaneously broken. The $W^2_\\mu$ field is not a physical mass eigenstate but is a component of the massive charged $W^\\pm_\\mu$ bosons.",
+        "symmetry_origin": "The $W^2_\\mu$ field, as part of the triplet $W^a_\\mu$, is a direct consequence of imposing a local SU(2) gauge invariance on the Standard Model Lagrangian. This SU(2) symmetry corresponds to the conservation of weak isospin. The spontaneous breaking of the full electroweak gauge group $SU(2)_L \\times U(1)_Y$ down to $U(1)_{em}$ by the Higgs mechanism is responsible for the mixing of these fields and the generation of mass for the physical W and Z bosons.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "electroweak-theory",
         "semantic_variables": {
-            "W_2": {
-                "name": "W_2",
+            "W^2_\\mu": {
+                "name": "Second SU(2) Gauge Field",
                 "type": "variable",
+                "unit": "kg⋅m⋅s⁻²⋅A⁻¹",
+                "description": "The four-vector potential for the second component (in the isospin basis) of the SU(2) gauge field, which mediates the weak interaction. In natural units (ħ=c=1), it has units of energy."
+            },
+            "\\mu": {
+                "name": "Spacetime Index",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "The second component of the SU(2) gauge field triplet before electroweak symmetry breaking. It is a fundamental quantum field in the Standard Model, representing one of the mediators of the weak nuclear force. Its quanta are gauge bosons. After spontaneous symmetry breaking, $W_2$ combines with $W_1$ to form the charged W-bosons ($W^+$ and $W^-$). In natural units ($\\hbar=c=1$), the field $W_2$ has units of mass (energy). In SI units, its units are typically expressed such that $W_2^2$ has units of energy density, meaning $W_2$ has units of $\\text{J}^{1/2} \\cdot \\text{m}^{-3/2}$."
+                "description": "A Lorentz index running from 0 to 3, representing the four components of spacetime (time, x, y, z)."
+            },
+            "2": {
+                "name": "Isospin Index",
+                "type": "index",
+                "unit": "dimensionless",
+                "description": "An internal symmetry index corresponding to the second generator of the SU(2) Lie algebra, typically associated with the Pauli matrix $\\sigma_2/2$."
             }
         },
-        "equation": "W_2",
-        "status": "published",
+        "equation": "W^2_\\mu",
+        "status": "platinum",
         "parent_formula_id": "ssb-link-9b47d024",
         "subcomponents": [],
-        "id": "second-su2-gauge-field-component-956ddb33"
+        "id": "second-su2-gauge-field-component-956ddb33",
+        "intuitive_summary": "Before the universe cooled, this field was one of three identical carriers of the weak force; after symmetry breaking, it combined with another to become the familiar charged W bosons."
     },
     "collinear-velocity-and-acceleration-condition-c32d8ef2": {
         "title": "Collinear Velocity and Acceleration Condition",
@@ -2664,7 +2685,8 @@
         "status": "published",
         "parent_formula_id": "total-radiation-bf891e8d",
         "subcomponents": [],
-        "id": "collinear-velocity-and-acceleration-condition-c32d8ef2"
+        "id": "collinear-velocity-and-acceleration-condition-c32d8ef2",
+        "intuitive_summary": ""
     },
     "distance-under-constant-acceleration-1209f2c6": {
         "title": "Distance under Constant Acceleration",
@@ -2700,7 +2722,8 @@
         "status": "published",
         "parent_formula_id": "inclined-plane-9faed8e7",
         "subcomponents": [],
-        "id": "distance-under-constant-acceleration-1209f2c6"
+        "id": "distance-under-constant-acceleration-1209f2c6",
+        "intuitive_summary": ""
     },
     "sum-of-proton-and-electron-chemical-potentials-2d476179": {
         "title": "Sum of Proton and Electron Chemical Potentials",
@@ -2730,43 +2753,45 @@
         "status": "published",
         "parent_formula_id": "core-composition-cf491a29",
         "subcomponents": [],
-        "id": "sum-of-proton-and-electron-chemical-potentials-2d476179"
+        "id": "sum-of-proton-and-electron-chemical-potentials-2d476179",
+        "intuitive_summary": ""
     },
     "redshift-corrected-luminosity-distance-3d20748a": {
         "title": "Redshift-Corrected Luminosity Distance",
         "description": "This equation defines the luminosity distance in an expanding universe, relating it to the comoving distance and the cosmological redshift.",
-        "conceptual_definition": "Luminosity distance ( $D_L$) is a measure of distance used in cosmology to relate the observed flux of a celestial object to its intrinsic luminosity. In an expanding universe, the observed flux is reduced not only by the inverse square law of distance but also by the redshift of the light, which stretches photon wavelengths and reduces their energy, and by the increased time between photon arrivals. This formula specifically corrects the comoving distance for these relativistic effects to yield the luminosity distance.",
-        "interpretation": "The equation $D_L = d_{comov} (1+z)$ quantifies how the expansion of the universe affects the apparent brightness of distant objects. The term $(1+z)$ accounts for two primary effects: the redshift of photons, which reduces their individual energy by a factor of $(1+z)$, and the increased time interval between the arrival of successive photons, also by a factor of $(1+z)$. Consequently, the observed flux is reduced by a factor of $(1+z)^2 compared to a static universe. The luminosity distance effectively incorporates these relativistic dimming effects, making it larger than the comoving distance for any non-zero redshift$.",
-        "limits_and_boundary": "This formula is valid within the framework of general relativity and an expanding universe model (e.g., FLRW metric). For very small redshifts ($z \\ll 1$), the luminosity distance approaches the comoving distance, as $(1+z) \\approx 1$. As redshift $z \\to \\infty$, the luminosity distance also tends to infinity, reflecting the extreme dimming of light from very distant and early universe objects. It assumes a standard candle for luminosity measurements.",
-        "symmetry_origin": "This formula arises from the fundamental symmetries of the Friedmann-Lema\\^itre-Robertson-Walker (FLRW) metric, which describes a homogeneous and isotropic universe. The conservation of photon number and the energy-momentum relation for photons in an expanding spacetime are implicitly incorporated.",
+        "conceptual_definition": "Luminosity distance is a measure used in cosmology to relate the observed flux of a celestial object to its intrinsic luminosity. It accounts for the dimming of light due to the expansion of the universe, which includes both the energy loss of photons (redshift) and the time dilation between photon arrivals.",
+        "interpretation": "The equation $D_L = d_{\\mathrm{comov}} (1+z)$ quantifies how the expansion of the universe affects the apparent brightness of distant objects. The term $(1+z)$ accounts for two primary effects: the redshift of photons, which reduces their individual energy by a factor of $(1+z)$, and the increased time interval between the arrival of successive photons (time dilation), also by a factor of $(1+z)$. Consequently, the observed flux is reduced by a factor of $(1+z)^2$ compared to a static universe at the same comoving distance. The luminosity distance effectively incorporates these relativistic dimming effects, making it larger than the comoving distance for any non-zero redshift.",
+        "limits_and_boundary": "1. In the low redshift limit ($z \\ll 1$), the luminosity distance approximates the comoving distance, $D_L \\approx d_{\\mathrm{comov}}$, as the effects of expansion are negligible.\n2. In the high redshift limit ($z \\to \\infty$), the luminosity distance also tends to infinity, reflecting the extreme dimming of light from objects in the very early universe.\n3. The formula is derived within the framework of a Friedmann-Lemaître-Robertson-Walker (FLRW) metric, assuming a homogeneous and isotropic universe.",
+        "symmetry_origin": "This formula arises from the fundamental symmetries of the Friedmann-Lemaître-Robertson-Walker (FLRW) metric, which describes a homogeneous and isotropic universe on large scales. The conservation of photon number and the transformation of energy-momentum in an expanding spacetime are implicitly incorporated.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "cosmology-distances",
         "semantic_variables": {
             "D_L": {
-                "name": "D_L",
+                "name": "Luminosity Distance",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Luminosity Distance (meters, m) - The distance at which an object of a given intrinsic luminosity would have the observed apparent brightness in a static, Euclidean universe."
+                "unit": "m",
+                "description": "The distance defined by the relationship between an object's intrinsic luminosity and its observed flux, accounting for cosmological expansion effects."
             },
-            "d_comov": {
-                "name": "d_comov",
+            "d_{\\mathrm{comov}}": {
+                "name": "Comoving Distance",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Comoving Distance (meters, m) - The distance between two objects in the expanding universe, measured at a constant cosmic time, effectively factoring out the expansion."
+                "unit": "m",
+                "description": "The distance between two points measured along a path at the present cosmological time, which remains constant as the universe expands."
             },
             "z": {
-                "name": "z",
+                "name": "Redshift",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Redshift (dimensionless) - A measure of how much the wavelength of light from a celestial object has been stretched due to the expansion of the universe."
+                "description": "A measure of the fractional increase in wavelength of light due to the expansion of space between the source and the observer."
             }
         },
-        "equation": "D_L = d_{comov} (1+z)",
-        "status": "published",
+        "equation": "D_L = d_{\\mathrm{comov}} (1+z)",
+        "status": "platinum",
         "parent_formula_id": "redshift-correction-3766c0c9",
         "subcomponents": [],
-        "id": "redshift-corrected-luminosity-distance-3d20748a"
+        "id": "redshift-corrected-luminosity-distance-3d20748a",
+        "intuitive_summary": "The luminosity distance is the effective distance an object would need to be in a static universe to appear as faint as it does in our expanding one."
     },
     "interior-product-of-canonical-2-form-9ca5be52": {
         "title": "Interior Product of Canonical 2-Form",
@@ -2814,7 +2839,8 @@
         "status": "published",
         "parent_formula_id": "hamiltonian-jacobi-alternative-form",
         "subcomponents": [],
-        "id": "interior-product-of-canonical-2-form-9ca5be52"
+        "id": "interior-product-of-canonical-2-form-9ca5be52",
+        "intuitive_summary": ""
     },
     "second-derivative-of-entropy-with-respect-to-volume-4a29a08a": {
         "title": "Second Derivative of Entropy with Respect to Volume",
@@ -2844,6 +2870,7 @@
         "status": "published",
         "parent_formula_id": "entropy-maximization-32a6b8b7",
         "subcomponents": [],
-        "id": "second-derivative-of-entropy-with-respect-to-volume-4a29a08a"
+        "id": "second-derivative-of-entropy-with-respect-to-volume-4a29a08a",
+        "intuitive_summary": ""
     }
 }

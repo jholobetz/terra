@@ -297,76 +297,58 @@
         ]
     },
     "chemical-transport-168c8f6c": {
-        "title": "Chemical Transport",
-        "equation": "v_{conv} \\approx \\sqrt{g \\frac{\\ell^2}{8 H_p} (\\nabla - \\nabla_{ad})}",
+        "title": "Convective Velocity",
+        "equation": "v_{\\mathrm{conv}} \\approx \\sqrt{\\frac{g \\ell^2}{8 H_p} (\\nabla - \\nabla_{\\mathrm{ad}})}",
         "semantic_variables": {
-            "v_{conv}": {
+            "v_{\\mathrm{conv}}": {
                 "name": "Convective Velocity",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The characteristic velocity of fluid motion driven by convection."
+                "description": "The characteristic velocity of a fluid parcel moving due to convection."
             },
             "g": {
-                "name": "Acceleration due to Gravity",
+                "name": "Gravitational Acceleration",
                 "type": "constant",
                 "unit": "m/s^2",
-                "description": "The gravitational acceleration, providing the buoyancy driving force."
+                "description": "The local acceleration due to gravity, which drives buoyancy."
             },
             "\\ell": {
-                "name": "Characteristic Length Scale",
+                "name": "Mixing Length",
                 "type": "variable",
                 "unit": "m",
-                "description": "A typical spatial dimension relevant to the convective process, such as plume size or fluid layer depth."
+                "description": "The characteristic distance a convective fluid parcel travels before dissolving into the surrounding medium, often taken as a fraction of the pressure scale height."
             },
             "H_p": {
                 "name": "Pressure Scale Height",
                 "type": "variable",
                 "unit": "m",
-                "description": "A measure of the vertical extent over which pressure changes significantly, indicating the characteristic vertical scale of the fluid environment."
+                "description": "The vertical distance over which the atmospheric or stellar pressure decreases by a factor of e, defining the characteristic scale of the stratified medium."
             },
             "\\nabla": {
-                "name": "Actual Lapse Rate",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "The actual rate at which temperature decreases with altitude in the fluid. It's often expressed as a ratio of temperature change to pressure change."
-            },
-            "\\nabla_{ad}": {
-                "name": "Adiabatic Lapse Rate",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "The rate at which a parcel of fluid cools as it rises adiabatically (without heat exchange with its surroundings). It represents the threshold for convective instability."
-            },
-            "v": {
-                "name": "Speed / Velocity Magnitude",
+                "name": "Actual Temperature Gradient",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The rate of change of position with respect to time, representing the speed of a particle."
+                "unit": "dimensionless",
+                "description": "The actual logarithmic temperature gradient with respect to pressure, defined as $\\mathrm{d}(\\ln T) / \\mathrm{d}(\\ln P)$."
+            },
+            "\\nabla_{\\mathrm{ad}}": {
+                "name": "Adiabatic Temperature Gradient",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The logarithmic adiabatic temperature gradient with respect to pressure, $(\\mathrm{d}(\\ln T) / \\mathrm{d}(\\ln P))_{\\mathrm{ad}}$, representing the temperature change for a fluid parcel moving adiabatically. Convection occurs when $\\nabla > \\nabla_{\\mathrm{ad}}$."
             },
             "\\approx": {
-                "name": "\\approx Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "H": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "A/m",
-                "description": "The auxiliary magnetic field vector representing magnetization effects in media."
-            },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
+                "name": "Approximately Equal To",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Indicates that the two sides are approximately equal, reflecting the model's phenomenological nature."
             }
         },
-        "interpretation": "The formula for convective velocity, $v_{conv}$, is approximated as $v_{conv} \\approx \\sqrt{g \\frac{\\ell^2}{8 H_p} ( \\nabla - \\nabla_{ad})}$. Here, $g$ represents the acceleration due to gravity (in m/s²), which provides the driving force for buoyancy. The term $\\ell$ is a characteristic length scale (in meters) over which these buoyant forces operate, such as the depth of a fluid layer or the size of a convective plume. $H_p$ is the pressure scale height (in meters), a measure of how rapidly atmospheric pressure decreases with altitude, indicating the vertical extent over which buoyancy effects are significant. The term $( \\nabla - \\nabla_{ad})$ represents the dimensionless superadiabaticity, which is the difference between the actual lapse rate (how temperature changes with height, $\\nabla$) and the adiabatic lapse rate (the rate at which a parcel of air would cool if it rose adiabatically without mixing with its surroundings, $\\nabla_{ad}$). This difference quantifies the degree of thermal instability in the fluid; a positive value indicates that the fluid is unstable and will convect. The formula thus shows that convection is enhanced by stronger gravity, larger scales of motion, and greater thermal instability, while being somewhat suppressed by a large pressure scale height.",
-        "symmetry_origin": "This formula originates from considerations of buoyancy-driven instabilities and fluid dynamics, often derived from simplified equations of motion for stratified fluids, such as the Boussinesq approximation. It encapsulates the balance between buoyant forces trying to drive motion and stabilizing forces (like stratification and viscosity, though viscosity is implicit in the scaling and approximation). The derivation involves analyzing the growth rate of small perturbations in a fluid with unstable stratification under gravity.",
-        "limits_and_boundary": "As the superadiabaticity $( \\nabla - \\nabla_{ad})$ approaches zero, the convective velocity $v_{conv}$ approaches zero, indicating that a fluid with a stable or neutral stratification will not convect. Conversely, as the superadiabaticity becomes very large, the convective velocity increases significantly. If the characteristic length $\\ell$ becomes very small, $v_{conv}$ also decreases. A very large pressure scale height $H_p$ would also tend to decrease $v_{conv}$, implying that convection is less vigorous in more extended atmospheric or fluid layers.",
+        "interpretation": "This formula, derived from mixing-length theory, approximates the convective velocity $v_{\\mathrm{conv}}$. The motion is driven by buoyancy in a gravitational field with acceleration $g$. The term $(\\nabla - \\nabla_{\\mathrm{ad}})$ is the dimensionless superadiabaticity, which quantifies the thermal instability; it is the difference between the actual temperature gradient $\\nabla$ and the adiabatic gradient $\\nabla_{\\mathrm{ad}}$. Convection only occurs when this term is positive. The velocity scales with the mixing length $\\ell$, the characteristic distance a fluid parcel travels, and is inversely related to the pressure scale height $H_p$, which defines the vertical scale of the atmosphere or star. The factor of $8$ is a model-dependent constant from the theory's approximations.",
+        "symmetry_origin": "This formula is derived from mixing-length theory, a phenomenological model for turbulent convection based on the Navier-Stokes equations under the Boussinesq approximation. It arises from analyzing the stability of a fluid parcel displaced in a gravitational field, where the symmetry breaking of hydrostatic equilibrium leads to convective motion when the fluid is buoyantly unstable (violating the Schwarzschild criterion).",
+        "limits_and_boundary": "1. When the superadiabaticity $(\\nabla - \\nabla_{\\mathrm{ad}}) \\to 0$, the convective velocity $v_{\\mathrm{conv}} \\to 0$. This defines the onset of convection at the Schwarzschild criterion, $\\nabla = \\nabla_{\\mathrm{ad}}$. The fluid is stable against convection for $\\nabla < \\nabla_{\\mathrm{ad}}$.\n2. The formula is an approximation valid for mixing lengths much smaller than the pressure scale height, $\\ell \\ll H_p$.\n3. This model assumes an idealized, steady-state, and often one-dimensional treatment of convection, neglecting effects like rotation, magnetic fields, and complex geometries.",
         "status": "platinum",
-        "conceptual_definition": "This formula describes the characteristic velocity of convective transport in a fluid medium, particularly relevant in contexts like atmospheric or oceanic dynamics. Convection is the process of heat and mass transfer through the bulk movement of a fluid. This specific formulation estimates the speed at which fluid parcels move due to buoyant forces driven by density differences, which in turn are caused by temperature or composition gradients.",
-        "intuitive_summary": "The speed of convective transport is proportional to the square root of gravity acting on density differences, scaled by a length, and inversely scaled by a measure of stratification.",
+        "conceptual_definition": "This formula provides an estimate for the characteristic velocity of fluid parcels moving under convection in a stratified medium, such as a star's interior or a planet's atmosphere. The velocity is driven by buoyancy forces that arise when the actual temperature gradient exceeds the adiabatic gradient.",
+        "intuitive_summary": "The speed of convective fluid motion increases with the strength of gravity, the size of the convective cells, and how much the temperature drops with height compared to the stable adiabatic rate.",
         "subcomponents": [
             "nabla-vector-differential-operator-8319f01c",
             "adiabatic-temperature-pressure-gradient-589952ec",
@@ -1726,38 +1708,32 @@
     "left-handed-chiral-projector-1a19d44d": {
         "title": "Left-Handed Chiral Projector",
         "equation": "P_L = \\frac{1 - \\gamma^5}{2}",
-        "interpretation": "In the given equation, $P_L = \\frac{1 - \\gamma^5}{2}$, the central mathematical object is $\\begin{math} \\text{gamma}^5 (gamma-5), also known as the Dirac matrix \\begin{math} \\text{gamma}^5$. This matrix is a fundamental component in the Dirac equation and has the property that its eigenvalues are +1 and -1. When acting on a fermion's Dirac spinor, $\\begin{math} \\text{gamma}^5 effectively separates the spinor into two components, which are called chiral components. The \\begin{math}$1 represents the identity matrix, which is always present and acts on all components. The term $\\begin{math} -\\text{gamma}^5$introduces the distinction. When $\\begin{math} \\text{gamma}^5 has an eigenvalue of +1, the term \\begin{math}$1 - $\\text{gamma}^5 becomes \\begin{math}$1 - 1 = 0$, thus projecting out that component. Conversely, when \\begin{math} \\text{gamma}^5$has an eigenvalue of -1, the term $\\begin{math} 1 - \\text{gamma}^5$becomes $\\begin{math} 1 - (-1) = 2$. The factor of $\\begin{math} 1/2$then normalizes the projector such that applying $\\begin{math} P_L$ twice yields the same result as applying it once ( $\\begin{math} P_L^2 = P_L$), a property of projectors. Therefore, $\\begin{math} P_L$ isolates the components of the Dirac spinor that correspond to the eigenvalue -1 of $\\begin{math} \\text{gamma}^5 , which are defined as the left-handed chiral components. Similarly, the right-handed projector is given by \\begin{math}$P_R = \\frac{1 + \\text{gamma}$^5}{2}$, and \\begin{math}$P_L$ + P_R = 1$, meaning these projectors form a complete basis for decomposing the Dirac spinor.",
-        "symmetry_origin": "The left-handed chiral projector arises from the structure of the Dirac equation and the concept of chiral symmetry in relativistic quantum field theories. In a massless fermion theory, the Dirac equation splits into two independent equations, one for left-handed and one for right-handed components. This separation is dictated by the behavior of the fermion's wavefunction under Lorentz transformations and specifically under parity (P) transformations. The $\\begin{math} \\text{gamma}^5 matrix is the generator of chiral transformations; it anticommutes with the gamma matrices ( \\begin{math}$\\{$\\text{gamma}$^$\\mu$, $\\text{gamma}^5\\}$ = 0$) and commutes with the Dirac Hamiltonian in the absence of mass. The mass term in the Dirac equation ( \\begin{math}$m $\\bar${$\\psi$} ̈ ̇ ̈ ̇ $\\psi$) mixes these chiral components, and its presence breaks chiral symmetry. The projectors $\\begin{math} P_L$ and $\\begin{math} P_R$ are therefore essential for analyzing theories with or without explicit chiral symmetry, such as the Standard Model where the weak interaction is chiral.",
-        "limits_and_boundary": "The formula for $P_L = \\frac{1 - \\gamma^5}{2} is an operator definition and does not depend on continuous variables approaching zero or infinity in the same way as a physical quantity might. However, its *application* to a fermion field \\begin{math}$ψ$reveals its nature. For a massless fermion ( \\begin{math}$m = 0$), the left-handed and right-handed components are physically distinct and evolve independently. Applying \\begin{math}$P_L$to a massless fermion's wave function \\begin{math}$ψ$yields the left-handed component: \\begin{math}$P_L ψ = ψ_L$. If the fermion has mass ( \\begin{math}$m$eq 0$), chiral symmetry is broken, and there are no strictly left-handed or right-handed single-particle states in the strict sense of helicity for massive particles. However, the projectors $\\begin{math} P_L$ and $\\begin{math} P_R$ still serve to decompose the Dirac spinor into its components that would be left-handed and right-handed if the mass were zero. These decomposed components are crucial for understanding interactions, particularly the parity-violating nature of the weak force, where only left-handed fermions (and right-handed antifermions) participate.",
+        "interpretation": "The left-handed projector $P_L$ is defined in terms of the fifth gamma matrix, $\\gamma^5$, which is the generator of chiral transformations. The matrix $\\gamma^5$ has eigenvalues of $+1$ and $-1$, corresponding to right-handed and left-handed chirality, respectively. The term $1 - \\gamma^5$ in the numerator acts on a Dirac spinor $\\psi$. If a component of $\\psi$ is an eigenstate of $\\gamma^5$ with eigenvalue $+1$, this term becomes $1 - 1 = 0$, annihilating the right-handed component. If the component is an eigenstate with eigenvalue $-1$, the term becomes $1 - (-1) = 2$. The factor of $1/2$ normalizes the result, ensuring that the operator is a projector, meaning it is idempotent ($P_L^2 = P_L$). Therefore, $P_L$ isolates the components of the Dirac spinor that correspond to the eigenvalue $-1$ of $\\gamma^5$, which are by definition the left-handed chiral components. Together with the right-handed projector $P_R = \\frac{1 + \\gamma^5}{2}$, they form a complete set, $P_L + P_R = 1$, allowing any Dirac spinor to be decomposed into its chiral parts: $\\psi = \\psi_L + \\psi_R = P_L\\psi + P_R\\psi$.",
+        "symmetry_origin": "The concept of chirality and its projectors originates from the Lorentz group and its representations, specifically as they apply to the Dirac equation. For massless fermions, the Dirac Lagrangian possesses a global chiral symmetry under the transformation $\\psi \\to e^{i\\alpha\\gamma^5}\\psi$. This symmetry implies that the left-handed and right-handed components of the fermion field decouple and evolve independently. The conserved Noether current associated with this symmetry is the axial vector current, $J_A^\\mu = \\bar{\\psi}\\gamma^\\mu\\gamma^5\\psi$. The presence of a mass term, $m\\bar{\\psi}\\psi$, explicitly breaks this chiral symmetry because it couples the left- and right-handed components. In the Standard Model, the weak interaction is chiral, meaning it couples differently to left- and right-handed fermions, making these projectors essential for describing electroweak physics.",
+        "limits_and_boundary": "1. Massless Limit ($m \\to 0$): For a massless fermion, chirality is a conserved quantity and is equivalent to helicity. Applying $P_L$ to a massless fermion's wave function $\\psi$ projects out a physically distinct, non-interacting left-handed state $\\psi_L = P_L\\psi$ that evolves independently from its right-handed counterpart.\n2. Massive Case ($m \\neq 0$): For a massive fermion, chirality is not conserved because the mass term mixes left- and right-handed states. Helicity is also not Lorentz invariant. However, the projectors $P_L$ and $P_R$ still provide a mathematically crucial decomposition of the Dirac spinor into its chiral components. These components are not energy eigenstates but are fundamental for describing interactions, particularly the parity-violating weak force, which only couples to left-handed fermions (and right-handed anti-fermions).",
         "semantic_variables": {
             "P_L": {
                 "name": "Left-Handed Chiral Projector",
-                "type": "constant",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "An operator that extracts the left-handed chiral component of a Dirac spinor or fermionic field. It is a projection operator, meaning applying it multiple times has the same effect as applying it once (P_L^2 = P_L)."
-            },
-            "\\gamma^5": {
-                "name": "Gamma-5 Matrix",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "A specific Dirac matrix, also known as the chirality matrix. It is anti-Hermitian and its eigenvalues are +1 and -1. It plays a crucial role in distinguishing between left-handed and right-handed chiral components of fermionic fields in relativistic quantum field theory."
+                "description": "A 4x4 matrix operator that extracts the left-handed chiral component of a Dirac spinor. It is idempotent, satisfying $P_L^2 = P_L$."
             },
             "1": {
                 "name": "Identity Matrix",
-                "type": "constant",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The identity matrix, which acts trivially on all components of a Dirac spinor. In the context of the projector, it ensures that the entire spinor is considered before the chirality is projected out."
+                "description": "The 4x4 identity matrix, which acts trivially on all components of a Dirac spinor."
             },
-            "\\gamma": {
-                "name": "Lorentz Factor",
-                "type": "variable",
+            "\\gamma^5": {
+                "name": "Fifth Gamma Matrix (Chirality Matrix)",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The relativistic scale factor describing time dilation and length contraction."
+                "description": "A 4x4 Dirac matrix defined as $\\gamma^5 = i\\gamma^0\\gamma^1\\gamma^2\\gamma^3$. It is central to defining chirality, anticommutes with the other four gamma matrices, and has eigenvalues $\\pm 1$."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The left-handed chiral projector, denoted as $P_L = \\frac{1 - \\gamma^5}{2}$ is a fundamental operator in relativistic quantum mechanics and quantum field theory, particularly in the study of fermions. It is used to isolate or project out components of a fermion's wave function or field that exhibit left-handed chirality. Chirality is a property related to the spin of a particle and its direction of motion. For massless fermions, chirality is equivalent to helicity (the projection of spin along the direction of momentum). This projector plays a crucial role in theories that exhibit chiral symmetry, such as the Standard Model of particle physics, where it distinguishes between left-handed and right-handed components of fermionic fields, which interact differently with the weak force.",
-        "intuitive_summary": "This operator acts like a filter, selecting only the 'left-handed' components of a particle's quantum state, based on its spin and momentum.",
+        "conceptual_definition": "The left-handed chiral projector is a mathematical operator in relativistic quantum field theory that isolates the left-handed chiral component of a Dirac spinor. Chirality is an intrinsic quantum property of a particle, which for massless particles corresponds to helicity.",
+        "intuitive_summary": "This operator acts like a filter, selecting only the left-handed part of a fermion's quantum state.",
         "subcomponents": [
             "massless-condition-for-photons-e6753e61",
             "scalar-constant-one-half-975ca880",
@@ -2157,40 +2133,40 @@
         "equation": "V = \\frac{1}{2}k(x_1^2 + x_2^2) + \\frac{1}{2}\\kappa(x_1 - x_2)^2",
         "conceptual_definition": "The formula describes the total potential energy stored in a system of two coupled harmonic oscillators. This energy arises from two sources: the individual displacements of each oscillator from their equilibrium positions, and the relative displacement between the two oscillators, which signifies the energy stored in the coupling mechanism.",
         "intuitive_summary": "The total potential energy is the sum of energies due to each oscillator's stretch and the energy due to the stretch of the spring connecting them.",
-        "interpretation": "The potential energy of a coupled oscillator system is given by the equation: $V = \\frac{1}{2} k$(x_1^2 + x_2^2)$+ \\frac{1}{2} \\kappa(x_1 - x_2)^2$. This equation consists of two main terms. The first term, $\\frac{1}{2}$ k$(x_1^2 + x_2^2)$, represents the potential energy associated with the individual oscillations of the two masses. Here, $k$ is the spring constant for the individual springs attached to each mass $m_1$ and $m_2$ (although masses are not explicitly in this potential energy formula, they are implicit in the dynamics of oscillation). $x_1$ and $x_2$ are the displacements of the respective masses from their equilibrium positions. This term implies that each oscillator behaves as an independent simple harmonic oscillator when the coupling is absent (i.e., when \\kappa$= 0$). The second term, \\frac{1}{2} \\kappa(x_1 - x_2)^2$, describes the potential energy stored in the coupling element, typically a spring, that connects the two oscillators.$\\kappa$is the spring constant of this coupling spring. The term$(x_1 - x_2)$represents the relative displacement between the two masses. This term is zero when the masses are at the same displacement, meaning no energy is stored in the coupling spring. The total potential energy$V$ is the sum of these two contributions, reflecting the combined effects of individual oscillations and their interaction.",
-        "symmetry_origin": "This potential energy formula is derived from Hooke's Law for elastic springs. Each spring exerts a restoring force proportional to its displacement from equilibrium. For the individual oscillators, the potential energy of a spring is $\\frac{1}{2}kx^2$. For the coupling spring, the force it experiences is proportional to the difference in displacements of the two masses, $(x_1 - x_2)$. Integrating this force with respect to the relative displacement gives the potential energy term $\\frac{1}{2}\\kappa(x_1 - x_2)^2$. The total potential energy is the sum of these energy contributions.",
-        "limits_and_boundary": "As the displacements $x_1$ and $x_2$ approach zero (i.e., the oscillators return to their equilibrium positions), the potential energy $V$ approaches zero, $V \\to 0$. This is consistent with the oscillators being at their lowest energy state. As the displacements $x_1$ or $x_2$ become very large (approaching infinity), the potential energy $V$ also approaches infinity, $V \\to \\infty$. This indicates that it requires an infinite amount of energy to displace the oscillators infinitely far from equilibrium, which is a characteristic of harmonic potentials. If the coupling constant $\\kappa$ is zero, the system decouples into two independent harmonic oscillators, and the potential energy becomes $V = \\frac{1}{2} k$(x_1^2 + x_2^2).",
+        "interpretation": "The potential energy $V$ of the system is the sum of two terms based on Hooke's Law. The first term, $\\frac{1}{2}k(x_1^2 + x_2^2)$, represents the potential energy stored in the two primary springs, assuming each oscillator has a spring with constant $k$. Here, $x_1$ and $x_2$ are the displacements of the respective masses from their equilibrium positions. This term is the sum of two independent harmonic potential energies, $\\frac{1}{2}kx_1^2$ and $\\frac{1}{2}kx_2^2$. The second term, $\\frac{1}{2}\\kappa(x_1 - x_2)^2$, represents the potential energy stored in the coupling element, which is a spring with constant $\\kappa$. The energy in this spring depends on its extension or compression, given by the relative displacement of the two masses, $(x_1 - x_2)$. When the masses move together ($x_1 = x_2$), this term is zero, and no energy is stored in the coupling. The total potential energy $V$ is the sum of these contributions, defining the potential landscape that governs the system's dynamics.",
+        "symmetry_origin": "The quadratic form of the potential energy ensures that the restoring forces are linear (obeying Hooke's Law, $F = -\\nabla V$), which is the definition of a harmonic oscillator system. The potential is symmetric under the exchange of the two identical oscillators, i.e., swapping $x_1 \\leftrightarrow x_2$ leaves the term $k(x_1^2 + x_2^2)$ unchanged, and the coupling term $\\kappa(x_1 - x_2)^2 = \\kappa(x_2 - x_1)^2$ is also unchanged. This exchange symmetry leads to the existence of symmetric and anti-symmetric normal modes of oscillation. The potential also has parity symmetry, $V(x_1, x_2) = V(-x_1, -x_2)$, as it only depends on the squares of the displacements.",
+        "limits_and_boundary": "1. Equilibrium Limit: As the displacements approach their equilibrium positions, $x_1 \\to 0$ and $x_2 \\to 0$, the potential energy vanishes, $V \\to 0$. This defines the minimum of the potential energy landscape.\n2. Decoupled Limit: If the coupling constant is zero, $\\kappa = 0$, the system decouples into two independent harmonic oscillators. The potential energy simplifies to $V = \\frac{1}{2}k(x_1^2 + x_2^2)$.\n3. Strong Coupling Limit: If the coupling is very stiff, $\\kappa \\gg k$, the term $\\frac{1}{2}\\kappa(x_1 - x_2)^2$ dominates. This forces the oscillators to move together ($x_1 \\approx x_2$) to minimize energy, effectively behaving like a single object with a combined spring constant.",
         "status": "platinum",
         "semantic_variables": {
             "V": {
                 "name": "Potential Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total potential energy stored in the coupled oscillator system, measured in Joules (J)."
+                "description": "The total potential energy stored in the coupled oscillator system."
             },
             "k": {
                 "name": "Individual Spring Constant",
                 "type": "constant",
                 "unit": "N/m",
-                "description": "The spring constant of the individual springs attached to each oscillator, measuring the stiffness of these springs. It relates the restoring force to the displacement from equilibrium for each oscillator (e.g., N/m)."
+                "description": "The spring constant of the individual springs attached to each oscillator, measuring their stiffness."
             },
             "x_1": {
                 "name": "Displacement of Oscillator 1",
                 "type": "variable",
                 "unit": "m",
-                "description": "The displacement of the first oscillator from its equilibrium position, measured in meters (m)."
+                "description": "The displacement of the first oscillator from its equilibrium position."
             },
             "x_2": {
                 "name": "Displacement of Oscillator 2",
                 "type": "variable",
                 "unit": "m",
-                "description": "The displacement of the second oscillator from its equilibrium position, measured in meters (m)."
+                "description": "The displacement of the second oscillator from its equilibrium position."
             },
             "\\kappa": {
                 "name": "Coupling Spring Constant",
                 "type": "constant",
                 "unit": "N/m",
-                "description": "The spring constant of the spring connecting the two oscillators, measuring the stiffness of the coupling. It dictates how much energy is stored due to the relative motion of the oscillators (e.g., N/m)."
+                "description": "The spring constant of the spring connecting the two oscillators, measuring the stiffness of the coupling."
             }
         },
         "subcomponents": [
@@ -2609,7 +2585,8 @@
         "status": "published",
         "parent_formula_id": "effective-potential",
         "subcomponents": [],
-        "id": "effective-potential-function-4331d14b"
+        "id": "effective-potential-function-4331d14b",
+        "intuitive_summary": ""
     },
     "polar-angular-increment-ee0d09e5": {
         "title": "Polar Angular Increment",
@@ -2633,7 +2610,8 @@
         "status": "published",
         "parent_formula_id": "angular-scale-72fdb4e4",
         "subcomponents": [],
-        "id": "polar-angular-increment-ee0d09e5"
+        "id": "polar-angular-increment-ee0d09e5",
+        "intuitive_summary": ""
     },
     "condition-for-a-conserved-quantity-6e5f4e3a": {
         "title": "Condition for a Conserved Quantity",
@@ -2663,7 +2641,8 @@
         "status": "published",
         "parent_formula_id": "time-evolution-hamiltonian-poisson-bracket",
         "subcomponents": [],
-        "id": "condition-for-a-conserved-quantity-6e5f4e3a"
+        "id": "condition-for-a-conserved-quantity-6e5f4e3a",
+        "intuitive_summary": ""
     },
     "magnitude-of-the-wave-vector-963bfba1": {
         "title": "Magnitude of the Wave Vector",
@@ -2699,7 +2678,8 @@
         "status": "published",
         "parent_formula_id": "quantum-link-61881485",
         "subcomponents": [],
-        "id": "magnitude-of-the-wave-vector-963bfba1"
+        "id": "magnitude-of-the-wave-vector-963bfba1",
+        "intuitive_summary": ""
     },
     "peak-magnetic-field-amplitude-c04ce5bb": {
         "title": "Peak Magnetic Field Amplitude",
@@ -2723,7 +2703,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-3740ce7e",
         "subcomponents": [],
-        "id": "peak-magnetic-field-amplitude-c04ce5bb"
+        "id": "peak-magnetic-field-amplitude-c04ce5bb",
+        "intuitive_summary": ""
     },
     "position-operator-in-quantum-mechanics-150aebd2": {
         "title": "Position Operator in Quantum Mechanics",
@@ -2747,7 +2728,8 @@
         "status": "published",
         "parent_formula_id": "dirac-quantization-identity-5569a47c",
         "subcomponents": [],
-        "id": "position-operator-in-quantum-mechanics-150aebd2"
+        "id": "position-operator-in-quantum-mechanics-150aebd2",
+        "intuitive_summary": ""
     },
     "magnitude-of-perpendicular-cross-product-b77887e1": {
         "title": "Magnitude of Perpendicular Cross Product",
@@ -2783,7 +2765,8 @@
         "status": "published",
         "parent_formula_id": "vector-geometry-0ccb35c2",
         "subcomponents": [],
-        "id": "magnitude-of-perpendicular-cross-product-b77887e1"
+        "id": "magnitude-of-perpendicular-cross-product-b77887e1",
+        "intuitive_summary": ""
     },
     "self-energy-of-a-charge-distribution-da10d940": {
         "title": "Self-Energy of a Charge Distribution",
@@ -2825,7 +2808,8 @@
         "status": "published",
         "parent_formula_id": "potential-energy-charge-distribution",
         "subcomponents": [],
-        "id": "self-energy-of-a-charge-distribution-da10d940"
+        "id": "self-energy-of-a-charge-distribution-da10d940",
+        "intuitive_summary": ""
     },
     "squared-normalized-hubble-parameter-84c03860": {
         "title": "Squared Normalized Hubble Parameter",
@@ -2855,7 +2839,8 @@
         "status": "published",
         "parent_formula_id": "flatness-marker-bfa74ce4",
         "subcomponents": [],
-        "id": "squared-normalized-hubble-parameter-84c03860"
+        "id": "squared-normalized-hubble-parameter-84c03860",
+        "intuitive_summary": ""
     },
     "integral-of-exterior-derivative-over-a-manifold-d5ee5ccc": {
         "title": "Integral of Exterior Derivative over a Manifold",
@@ -2891,7 +2876,8 @@
         "status": "published",
         "parent_formula_id": "boundary-integral-62909b6f",
         "subcomponents": [],
-        "id": "integral-of-exterior-derivative-over-a-manifold-d5ee5ccc"
+        "id": "integral-of-exterior-derivative-over-a-manifold-d5ee5ccc",
+        "intuitive_summary": ""
     },
     "bra-vector-component-3d668440": {
         "title": "Bra Vector Component",
@@ -2915,7 +2901,8 @@
         "status": "published",
         "parent_formula_id": "wave-function-collapse-03266b1a",
         "subcomponents": [],
-        "id": "bra-vector-component-3d668440"
+        "id": "bra-vector-component-3d668440",
+        "intuitive_summary": ""
     },
     "arcsecond-to-radian-conversion-65d3bf6a": {
         "title": "Arcsecond to Radian Conversion",
@@ -2957,7 +2944,8 @@
         "status": "published",
         "parent_formula_id": "distance-base-52fc1299",
         "subcomponents": [],
-        "id": "arcsecond-to-radian-conversion-65d3bf6a"
+        "id": "arcsecond-to-radian-conversion-65d3bf6a",
+        "intuitive_summary": ""
     },
     "approximation-of-lorentz-boost-component-b8324606": {
         "title": "Approximation of Lorentz Boost Component",
@@ -2987,7 +2975,8 @@
         "status": "published",
         "parent_formula_id": "lorentz-tensor-transformation-2236e558",
         "subcomponents": [],
-        "id": "approximation-of-lorentz-boost-component-b8324606"
+        "id": "approximation-of-lorentz-boost-component-b8324606",
+        "intuitive_summary": ""
     },
     "time-evolution-operator-on-energy-eigenstate-a21b1ada": {
         "title": "Time-Evolution Operator on Energy Eigenstate",
@@ -3035,7 +3024,8 @@
         "status": "published",
         "parent_formula_id": "energy-operator-time-2abe9388",
         "subcomponents": [],
-        "id": "time-evolution-operator-on-energy-eigenstate-a21b1ada"
+        "id": "time-evolution-operator-on-energy-eigenstate-a21b1ada",
+        "intuitive_summary": ""
     },
     "zero-virtual-displacement-of-generalized-coordinate-5c8a68a5": {
         "title": "Zero Virtual Displacement of Generalized Coordinate",
@@ -3059,7 +3049,8 @@
         "status": "published",
         "parent_formula_id": "hypothetical-shift-3fb2e2d1",
         "subcomponents": [],
-        "id": "zero-virtual-displacement-of-generalized-coordinate-5c8a68a5"
+        "id": "zero-virtual-displacement-of-generalized-coordinate-5c8a68a5",
+        "intuitive_summary": ""
     },
     "spacelike-interval-condition-14fc4677": {
         "title": "Spacelike Interval Condition",
@@ -3101,7 +3092,8 @@
         "status": "published",
         "parent_formula_id": "the-null-condition-620fc72a",
         "subcomponents": [],
-        "id": "spacelike-interval-condition-14fc4677"
+        "id": "spacelike-interval-condition-14fc4677",
+        "intuitive_summary": ""
     },
     "final-mass-equals-initial-mass-74ac4a3b": {
         "title": "Final Mass Equals Initial Mass",
@@ -3131,7 +3123,8 @@
         "status": "published",
         "parent_formula_id": "mass-ratio-expression",
         "subcomponents": [],
-        "id": "final-mass-equals-initial-mass-74ac4a3b"
+        "id": "final-mass-equals-initial-mass-74ac4a3b",
+        "intuitive_summary": ""
     },
     "four-momentum-time-component-for-massless-particles-b96216fd": {
         "title": "Four-Momentum Time Component for Massless Particles",
@@ -3167,7 +3160,8 @@
         "status": "published",
         "parent_formula_id": "four-momentum",
         "subcomponents": [],
-        "id": "four-momentum-time-component-for-massless-particles-b96216fd"
+        "id": "four-momentum-time-component-for-massless-particles-b96216fd",
+        "intuitive_summary": ""
     },
     "causal-interval-cardinality-vanishing-condition-27219507": {
         "title": "Causal Interval Cardinality Vanishing Condition",
@@ -3209,6 +3203,7 @@
         "status": "published",
         "parent_formula_id": "poset-spacetime-identity-1-200e74f6-7a80f635",
         "subcomponents": [],
-        "id": "causal-interval-cardinality-vanishing-condition-27219507"
+        "id": "causal-interval-cardinality-vanishing-condition-27219507",
+        "intuitive_summary": ""
     }
 }

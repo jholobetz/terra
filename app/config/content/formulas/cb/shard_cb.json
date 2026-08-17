@@ -255,20 +255,20 @@
         ]
     },
     "the-nfw-rule-23873db3": {
-        "title": "The NFW Rule",
-        "equation": "\\rho(r) = \\frac{\\rho_0}{(r/R_s)(1+r/R_s)^2} \\quad (\\text{NFW})",
+        "title": "The NFW Profile",
+        "equation": "\\rho(r) = \\frac{\\rho_0}{\\frac{r}{R_s} \\left(1 + \\frac{r}{R_s}\\right)^2}",
         "semantic_variables": {
             "\\rho(r)": {
-                "name": "Radial Density",
+                "name": "Dark Matter Density",
                 "type": "variable",
-                "unit": "kg/m^3",
+                "unit": "kg/m³",
                 "description": "The density of dark matter at a radial distance $r$ from the center of the halo."
             },
             "\\rho_0": {
                 "name": "Characteristic Density",
-                "type": "constant",
-                "unit": "kg/m^3",
-                "description": "A normalization constant representing a characteristic density of the dark matter halo. It is not the central density but rather a parameter that scales the profile."
+                "type": "parameter",
+                "unit": "kg/m³",
+                "description": "A normalization constant representing a characteristic density of the dark matter halo, specific to each halo."
             },
             "r": {
                 "name": "Radial Distance",
@@ -278,53 +278,17 @@
             },
             "R_s": {
                 "name": "Scale Radius",
-                "type": "constant",
+                "type": "parameter",
                 "unit": "m",
-                "description": "A characteristic radius that defines the scale of the dark matter halo's density profile. It is the radius at which the logarithmic derivative of the density profile reaches a specific value."
-            },
-            "\\rho": {
-                "name": "Charge Density",
-                "type": "variable",
-                "unit": "C/m³",
-                "description": "The quantity of electric charge per unit volume."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "N": {
-                "name": "Number of Particles / Normal Force",
-                "type": "variable",
-                "unit": "dimensionless or N",
-                "description": "The total count of atoms/molecules, or perpendicular contact force."
-            },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
-            },
-            "W": {
-                "name": "Electrostatic Energy",
-                "type": "variable",
-                "unit": "J",
-                "description": "The potential energy stored in the electric field of a distribution of charges, or the total work required to assemble the charges."
+                "description": "A characteristic radius that defines the scale of the dark matter halo's density profile, specific to each halo."
             }
         },
-        "interpretation": "The NFW profile, given by the equation $\\rho$(r) = \\frac{\\rho_0}{(r/R_s)(1+r/R_s)^2} \\quad$($\\text{NFW}$)$, describes the density \\rho (r)$of dark matter as a function of the radial distance from the center of a dark matter halo.$\\rho_0$represents a characteristic density, often related to the critical density of the universe at the halo's formation epoch, and$\\rho_0$is effectively a normalization constant.$\\rs$is a scale radius, defining the distance at which the density profile transitions from a nearly constant value (at very small ) to a$\\r^{$-3} power-law decay (at large ). The term$\\r$/R_s in the denominator dictates how the density decreases with radius: it starts by behaving like$\\r^{$-1} near the center and then transitions to$\\r^{$-3} at large radii. This specific functional form arises from theoretical considerations and numerical simulations of structure formation in the universe.",
-        "symmetry_origin": "The NFW profile is derived from results of large-scale N-body simulations of cold dark matter (CDM) cosmology, which are designed to model the gravitational evolution and clumping of dark matter under the influence of gravity. The spherical symmetry assumed in the profile is a consequence of the hierarchical structure formation process, where smaller dark matter halos merge to form larger ones, leading to roughly spherical distributions on average.",
-        "limits_and_boundary": "At small radii, $\\r \\to$ 0 , the density profile approaches $\\rho$(r)$\\approx \\frac{\\rho_0}{(r/R_s)} = \frac{\\rho_0 R_s}{r}$. This indicates a divergence towards infinite density at the very center, which is a common feature of theoretical halo profiles but is expected to be resolved by baryonic physics or a non-point-like nature of dark matter particles in realistic scenarios. At large radii, $\\r \\to$ ∞ , the density profile decays as $\\rho$(r)$\\approx \\frac { \\rho_0} {(r/R_s)(r/R_s)^2} = \\frac{ \\rho_0 R_s^3}{r^3}$ . This $\\r^{$-3} power-law decay is a key prediction of the NFW model for the outer regions of dark matter halos.",
+        "interpretation": "The NFW profile, given by $\\rho(r) = \\frac{\\rho_0}{\\frac{r}{R_s} \\left(1 + \\frac{r}{R_s}\\right)^2}$, describes the dark matter density $\\rho(r)$ as a function of radial distance $r$ from a halo's center. The two parameters, $\\rho_0$ and $R_s$, are the characteristic density and scale radius, respectively, which vary between halos. The scale radius $R_s$ is the radius where the logarithmic slope of the density profile, $\\mathrm{d}\\ln\\rho / \\mathrm{d}\\ln r$, is equal to -2. The profile exhibits a 'cusp' near the center where the density scales as $\\rho \\propto r^{-1}$, and a steeper fall-off in the outer regions where $\\rho \\propto r^{-3}$. This functional form provides a good fit to the results of dissipationless, gravity-only cosmological simulations.",
+        "symmetry_origin": "The NFW profile is derived from results of large-scale N-body simulations of cold dark matter (CDM) cosmology, which model the hierarchical, gravitational collapse of matter. The assumed spherical symmetry of the profile is an idealization, as simulated halos are generally triaxial, but it serves as a useful average description.",
+        "limits_and_boundary": "1. In the limit of small radii ($r \\ll R_s$), the density profile approximates a central cusp: $\\rho(r) \\approx \\frac{\\rho_0 R_s}{r}$. This divergence at $r=0$ is a known issue, potentially resolved by baryonic feedback or alternative dark matter physics.\n2. In the limit of large radii ($r \\gg R_s$), the density profile falls off as $\\rho(r) \\approx \\frac{\\rho_0 R_s^3}{r^3}$. This behavior leads to a total mass that diverges logarithmically with radius, requiring a cutoff radius (e.g., the virial radius) to define a finite halo mass.",
         "status": "platinum",
-        "conceptual_definition": "The Navarro-Frenk-White (NFW) profile is a mathematical model describing the density distribution of dark matter halos in the universe, as predicted by cosmological simulations. It posits that dark matter halos are denser at their centers and become less dense as the radius increases, but do not go to zero density at any finite radius, instead approaching a power-law decay at large distances.",
-        "intuitive_summary": "The NFW profile models dark matter halos as being densest at the center and smoothly decreasing in density with increasing distance, following a specific mathematical form."
+        "conceptual_definition": "The Navarro-Frenk-White (NFW) profile is an empirical formula that describes the mass density distribution of dark matter halos found in N-body simulations of cosmic structure formation. It characterizes a universal density profile with a central cusp and a gradually decreasing density at larger radii.",
+        "intuitive_summary": "The NFW profile describes how the density of a dark matter halo is highest at its center and falls off predictably with distance."
     },
     "atomic-trap-e892cf4a": {
         "title": "Atomic trap",
@@ -1144,75 +1108,63 @@
     },
     "ads-metric-tensor-adc11365": {
         "title": "AdS Metric Tensor",
-        "equation": "ds^2 = \\frac{L^2}{z^2} ( dz^2 + \\eta_{\\mu\\nu} dx^\\mu dx^\\nu )",
+        "equation": "ds^2 = \\frac{L^2}{z^2} \\left( dz^2 + \\eta_{\\mu\\nu} dx^\\mu dx^\\nu \\right)",
         "semantic_variables": {
             "ds^2": {
                 "name": "Infinitesimal Spacetime Interval",
                 "type": "variable",
                 "unit": "m^2",
-                "description": "The square of the infinitesimal distance between two infinitesimally separated spacetime events. It is a measure of spacetime separation and is invariant under coordinate transformations."
+                "description": "The square of the invariant spacetime distance between two infinitesimally separated events."
             },
             "L": {
-                "name": "AdS Radius of Curvature",
+                "name": "AdS Radius",
                 "type": "constant",
                 "unit": "m",
-                "description": "The characteristic length scale or radius of curvature of the Anti-de Sitter space. It determines the strength of the spacetime curvature."
+                "description": "The characteristic length scale and radius of curvature of the Anti-de Sitter space."
             },
             "z": {
-                "name": "Radial Coordinate",
+                "name": "Radial Bulk Coordinate",
                 "type": "variable",
                 "unit": "m",
-                "description": "A coordinate that measures the radial distance from the boundary of the Anti-de Sitter space into its 'bulk'. In holographic contexts, this is often referred to as the 'bulk' or 'radial' direction."
+                "description": "The coordinate measuring the proper distance into the 'bulk' of AdS space, away from the boundary at $z=0$."
             },
             "\\eta_{\\mu\\nu}": {
-                "name": "Minkowski Metric Tensor",
-                "type": "constant",
+                "name": "Minkowski Metric",
+                "type": "tensor",
                 "unit": "dimensionless",
-                "description": "The metric tensor of flat Minkowski spacetime. It defines the geometry of the boundary spacetime and has components diag(-1, 1, 1, ...). Used here to describe the intrinsic spacetime dimensions."
+                "description": "The metric tensor of flat Minkowski spacetime, typically with signature (-, +, +, ...), defining the geometry of the boundary slices."
             },
-            "dx^\\mu": {
-                "name": "Infinitesimal Coordinate Displacements",
+            "x^\\mu": {
+                "name": "Boundary Coordinates",
                 "type": "variable",
                 "unit": "m",
-                "description": "The infinitesimal changes in the spacetime coordinates of the boundary. The index $\\mu$ ranges over the dimensions of the boundary spacetime."
+                "description": "The coordinates parameterizing the $d$-dimensional boundary spacetime, e.g., $(t, x, y, ...)$."
+            },
+            "dx^\\mu": {
+                "name": "Infinitesimal Boundary Displacement",
+                "type": "differential",
+                "unit": "m",
+                "description": "An infinitesimal displacement in the boundary coordinate $x^\\mu$."
             },
             "dz": {
                 "name": "Infinitesimal Radial Displacement",
-                "type": "variable",
+                "type": "differential",
                 "unit": "m",
-                "description": "The infinitesimal change in the radial coordinate $z$."
+                "description": "An infinitesimal displacement in the radial coordinate $z$."
             },
             "\\mu, \\nu": {
-                "name": "Boundary Spacetime Indices",
-                "type": "variable",
+                "name": "Spacetime Indices",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "Indices that run over the dimensions of the boundary spacetime (typically from 0 to d-2, where d is the total dimension of AdS space)."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "\\eta": {
-                "name": "Efficiency / Viscosity / Minkowski Metric",
-                "type": "variable",
-                "unit": "dimensionless or Pa·s",
-                "description": "Ratio of useful work output to input energy, fluid shear resistance, or flat spacetime metric."
-            },
-            "\\nu": {
-                "name": "Kinematic Viscosity",
-                "type": "variable",
-                "unit": "m²/s",
-                "description": "The ratio of dynamic viscosity to density, representing a fluid's resistance to shear flow under gravity."
+                "description": "Indices running over the dimensions of the boundary spacetime, typically from 0 to $d-1$."
             }
         },
-        "interpretation": "The equation $ds^2 = \\frac{L^2}{z^2}$ ( dz^2 + $\\eta_{\\mu \\nu$} dx^$\\mu$ dx^^ u )$defines the infinitesimal spacetime interval, denoted as$ds^2$. This interval is the invariant 'distance' between two infinitesimally separated spacetime events. The term$L$is a constant representing the characteristic length scale or radius of curvature of the Anti-de Sitter space. The variable$z$is a radial coordinate, often referred to as the 'radial direction' or 'bulk direction' in holographic contexts, which measures distance away from a boundary or 'center' of the space. The factor \\frac{L^2}{z^2} indicates that the metric is$'rescaled' or 'stretched' as one moves away from the boundary (larger $z$) and 'compressed' as one approaches it (smaller $z$). This term is responsible for the specific curvature of AdS space. The term $\\eta_{\\mu$ u} dx^$\\mu$ dx^^ u represents the infinitesimal interval in the$(d-1)$-dimensional boundary spacetime, where $\\eta_{\\mu \\nu$} is the Minkowski metric (a constant tensor defining the flat spacetime geometry of the boundary) and $dx^\\mu are the infinitesimal coordinate displacements along the boundary spacetime dimensions ( \\mu , u$range$from 0 to$d-2$, where$d$is the total spacetime dimension of AdS). The presence of$dz^2 $signifies that there is an infinitesimal interval along the radial direction as well. This formulation describes a conformally flat spacetime, where the curvature is determined by the conformal factor \\frac{L^2}{z^2}.",
-        "symmetry_origin": "This metric arises from the symmetries of the Anti-de Sitter group, $SO(d-1,2)$, which is the isometry group of AdS space. The formulation is derived by considering the symmetries inherent in the definition of AdS space as a hyperboloid embedded in a higher-dimensional flat spacetime, and then projecting the Killing vectors (generators of isometries) onto the hyperboloid. The coordinate invariance is manifest as the metric allows for reparameterizations of the coordinates. The specific form with the conformal factor $\\frac{L^2}{z^2}$ is characteristic of the boundary conformal field theory (CFT) in the context of the AdS/CFT correspondence.",
-        "limits_and_boundary": "As the radial coordinate $z$ approaches infinity ($z \\to \\infty$), the conformal factor $\\frac{L^2}{z^2}$ approaches zero. This means that the contribution from the radial direction diminishes, and the metric effectively approaches that of the flat Minkowski spacetime of the boundary ($\\eta_{\\mu u} dx^\\mu dx^^ u$). This signifies that the boundary of AdS space is a flat Minkowski spacetime. Conversely, as $z$ approaches zero ($z \\to 0$), the conformal factor $\\frac{L^2}{z^2}$ diverges. This indicates a 'singularity' at $z=0$ in this coordinate system, often interpreted as the 'center' or 'bottom' of the AdS bulk. Geometrically, this corresponds to the warping of spacetime becoming infinitely strong as one approaches this point.",
+        "interpretation": "The equation defines the line element $ds^2$ for an Anti-de Sitter spacetime in Poincaré coordinates. The term $L$ is the AdS radius, a constant setting the length scale of the curvature. The coordinate $z > 0$ represents the radial or 'bulk' dimension, where the boundary of the spacetime is located at $z \\to 0$. The term $\\eta_{\\mu\\nu} dx^\\mu dx^\\nu$ is the line element for a flat $d$-dimensional Minkowski spacetime, which describes the geometry of constant-$z$ slices. The overall prefactor $\\frac{L^2}{z^2}$ is a conformal 'warp' factor. This factor shows that the spacetime is conformally flat, but the warping causes strong gravitational effects, particularly near the boundary ($z \\to 0$) where the factor diverges. In the context of the AdS/CFT correspondence, the radial coordinate $z$ is inversely related to the energy scale of the dual conformal field theory (CFT) living on the boundary.",
+        "symmetry_origin": "The AdS metric possesses the maximal number of isometries for a spacetime of its dimension, with the isometry group being $SO(d, 2)$ for a $(d+1)$-dimensional AdS space. These symmetries correspond to the conformal group in the $d$-dimensional boundary theory. The metric is a solution to Einstein's field equations with a negative cosmological constant, $\\Lambda = -d(d-1)/(2L^2)$. Its form is invariant under the transformations of the Poincaré group on the boundary coordinates $x^\\mu$ as well as a special conformal transformation and scaling symmetry, which together form the full conformal group.",
+        "limits_and_boundary": "1. Boundary Limit ($z \\to 0$): The boundary of AdS space is reached. The conformal factor $L^2/z^2$ diverges, meaning physical lengths and time intervals on constant-$z$ slices become infinitely stretched. This limit corresponds to the high-energy (UV) regime of the dual CFT.\n2. Flat Space Limit ($L \\to \\infty$): The curvature of the spacetime, which scales as $1/L^2$, goes to zero. In any finite coordinate patch, the metric approaches that of flat Minkowski space, recovering special relativity.\n3. Deep Bulk / Poincaré Horizon ($z \\to \\infty$): The conformal factor $L^2/z^2 \\to 0$. This is a coordinate singularity known as the Poincaré horizon. This region corresponds to the low-energy (IR) regime of the dual CFT.",
         "status": "platinum",
-        "conceptual_definition": "The given formula describes the metric tensor of Anti-de Sitter (AdS) space, a type of curved spacetime that plays a crucial role in theoretical physics, particularly in the context of the AdS/CFT correspondence. The metric tensor is fundamental in general relativity as it defines the geometry of spacetime and dictates how distances and time intervals are measured.",
-        "intuitive_summary": "This equation specifies how to measure infinitesimal distances in Anti-de Sitter space, revealing its curved geometry that warps according to a radial coordinate and intrinsic spacetime dimensions.",
+        "conceptual_definition": "The metric tensor for Anti-de Sitter (AdS) space defines the infinitesimal spacetime interval, $ds^2$, in a maximally symmetric spacetime with constant negative scalar curvature. This specific coordinate representation, known as the Poincaré patch, is fundamental to the AdS/CFT correspondence.",
+        "intuitive_summary": "This equation describes how to measure distances in Anti-de Sitter space, a curved spacetime that is 'warped' such that distances are scaled by a factor depending on the depth into the space.",
         "subcomponents": [
             "minkowski-metric-tensor-22a68463",
             "infinitesimal-spacetime-displacement-component-5d85fdeb",
@@ -1416,136 +1368,100 @@
         ]
     },
     "phase-space-symplectic-two-form-e43dcdaa": {
-        "title": "Symplectic Two-Form and Phase Space Volume (Phase Space and Symplectic Geometry)",
-        "equation": "REG",
-        "interpretation": "In the context of Hamiltonian mechanics, phase space is a manifold whose coordinates are generalized positions q_i and their conjugate momenta p_i. The symplectic two-form ω is an antisymmetric bilinear form on the tangent space of this phase space. In local canonical coordinates, it takes the form ω = $\\sum$_{i=1}^N dq_i ∧ dp_i, where $d$ is the exterior derivative and '∧' denotes the wedge product. This form is closed (δω = 0) and non-degenerate, meaning it can be used to define an invariant measure on the phase space. The phase space volume element ρ is given by ρ = (ω^N)/N!, where N is the number of degrees of freedom of the system. Liouville's theorem states that for a Hamiltonian system, the integral of this volume element over any region of phase space is conserved under the time evolution of the system: ∫_{R(t)} ρ = constant, where R(t) is a region in phase space evolving in time.",
-        "symmetry_origin": "The symplectic two-form arises from the canonical structure of Hamiltonian mechanics, which is derived from the principle of least action applied to the Lagrangian. The invariance of the symplectic form under canonical transformations ensures that the fundamental laws of physics remain unchanged regardless of the choice of generalized coordinates and momenta. This invariance is crucial for expressing the Hamiltonian equations of motion in a covariant form. The conservation of phase space volume (Liouville's theorem), which is a direct consequence of the properties of the symplectic form, is a fundamental conservation law for Hamiltonian systems and implies that microscopic states are neither created nor destroyed, only rearranged.",
-        "limits_and_boundary": "As the phase space volume element ρ approaches zero, it implies a region of phase space with infinitesimal extent, effectively representing a single point or a state with extremely high precision in all canonical coordinates and momenta. In a bounded system, the total phase space volume is finite. As the system evolves, the shape of a region in phase space may change dramatically, but its total volume, as measured by the integral of ρ, remains constant. In the limit of a very large phase space volume, the effects of boundaries or constraints become less significant, and the system can be approximated by continuous distributions of states.",
+        "title": "Symplectic Two-Form",
+        "equation": "\\omega = \\sum_{i=1}^{N} \\mathrm{d}q_i \\wedge \\mathrm{d}p_i",
+        "interpretation": "In Hamiltonian mechanics, the state of a system with $N$ degrees of freedom is described by a point in a $2N$-dimensional phase space with coordinates $(q_1, ..., q_N, p_1, ..., p_N)$. The symplectic form $\\omega$ is a rank-2 antisymmetric tensor field that equips this space with a geometric structure. The expression $\\mathrm{d}q_i \\wedge \\mathrm{d}p_i$ is the exterior product of the differentials of the $i$-th generalized coordinate and its conjugate momentum, representing an infinitesimal oriented area element in the $(q_i, p_i)$ plane. The full form $\\omega$ sums these areas over all degrees of freedom. The fact that $\\omega$ is closed ($d\\omega=0$) is equivalent to Hamilton's equations of motion. The $N$-th exterior power of $\\omega$, divided by $N!$, defines the phase space volume element $\\Omega = \\frac{1}{N!}\\omega^N = \\mathrm{d}q_1 \\wedge \\mathrm{d}p_1 \\wedge \\dots \\wedge \\mathrm{d}q_N \\wedge \\mathrm{d}p_N$. The conservation of this volume under Hamiltonian flow is the statement of Liouville's theorem.",
+        "symmetry_origin": "The symplectic structure is a direct consequence of the variational principle for the action in Lagrangian mechanics, transitioning to the Hamiltonian framework via the Legendre transform. Its invariance under canonical transformations (symplectomorphisms) reflects that the laws of Hamiltonian mechanics are independent of the specific choice of generalized coordinates and momenta. By Noether's theorem, this continuous symmetry of the Hamiltonian flow leads to the conservation of phase space volume, a result known as Liouville's theorem.",
+        "limits_and_boundary": "1. Classical Limit ($\\hbar \\to 0$): Phase space is a smooth manifold with well-defined points $(q_i, p_i)$, and the symplectic form governs the continuous, deterministic evolution described by Hamilton's equations.\n2. Quantum Limit: Phase space points are no longer well-defined due to the Heisenberg uncertainty principle, $\\Delta q_i \\Delta p_i \\ge \\hbar/2$. Phase space is effectively coarse-grained or 'quantized' into cells of volume on the order of $h^N$.\n3. Integrable Systems: For a fully integrable system, the dynamics are constrained to lie on $N$-dimensional tori within the $2N$-dimensional phase space. The symplectic form is crucial for defining the action-angle variables that simplify the motion on these tori.",
         "semantic_variables": {
-            "ω": {
+            "\\omega": {
                 "name": "Symplectic Two-Form",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "The fundamental differential 2-form in symplectic geometry, used to define canonical structure and measure oriented areas in phase space. In canonical coordinates, ω = $\\sum$_{i=1}^N dq_i ∧ dp_i."
+                "type": "differential form",
+                "unit": "J⋅s",
+                "description": "The fundamental differential 2-form that defines the geometric structure of phase space in Hamiltonian mechanics."
+            },
+            "i": {
+                "name": "Index",
+                "type": "index",
+                "unit": "dimensionless",
+                "description": "An index that runs from 1 to $N$, labeling the degrees of freedom of the system."
+            },
+            "N": {
+                "name": "Number of Degrees of Freedom",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The number of independent parameters that define the configuration of the system."
+            },
+            "\\mathrm{d}": {
+                "name": "Exterior Derivative",
+                "type": "operator",
+                "unit": "inverse of coordinate unit",
+                "description": "An operator that maps a $k$-form to a $(k+1)$-form, generalizing the gradient, curl, and divergence."
             },
             "q_i": {
                 "name": "Generalized Coordinate",
                 "type": "variable",
-                "unit": "m",
-                "description": "The i-th generalized position coordinate of the system, representing its configuration. For example, it could be a Cartesian position, an angle, etc."
+                "unit": "varies (e.g., m, rad)",
+                "description": "The $i$-th generalized coordinate describing the system's configuration."
+            },
+            "\\wedge": {
+                "name": "Wedge Product",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "The anti-symmetric exterior product that combines differential forms."
             },
             "p_i": {
                 "name": "Conjugate Momentum",
                 "type": "variable",
-                "unit": "kg m/s",
-                "description": "The i-th conjugate momentum corresponding to the generalized coordinate q_i. It is defined as p_i = ∂L/∂q̇_i, where L is the Lagrangian of the system."
-            },
-            "d": {
-                "name": "Exterior Derivative",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "The exterior derivative operator, which acts on differential forms. It increases the degree of a differential form by one."
-            },
-            "∧": {
-                "name": "Wedge Product",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "The wedge product (or exterior product), used to combine differential forms. It is bilinear and anticommutative (A ∧ B = -B ∧ A)."
-            },
-            "ρ": {
-                "name": "Phase Space Volume Element",
-                "type": "variable",
-                "unit": "J^N s^N",
-                "description": "The infinitesimal volume element in phase space, derived from the symplectic two-form: ρ = (ω^N)/N!. It is used to define invariant measures on phase space."
-            },
-            "N": {
-                "name": "Number of Degrees of Freedom",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "The number of independent generalized coordinates required to specify the state of the system, i.e., the dimension of the configuration space."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "varies (e.g., kg⋅m/s, J⋅s/rad)",
+                "description": "The $i$-th canonical momentum conjugate to the coordinate $q_i$."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The symplectic two-form, denoted as ω, is a fundamental concept in Hamiltonian mechanics and symplectic geometry. It is a differential 2-form defined on the phase space of a dynamical system. Phase space is a manifold where each point represents a unique state of the system, characterized by generalized coordinates and their conjugate momenta. The symplectic two-form provides a way to measure oriented areas in phase space and is intrinsically linked to the canonical structure of Hamiltonian dynamics. Specifically, for a system with generalized coordinates q_i and conjugate momenta p_i, the canonical symplectic two-form is ω = $\\sum$_{i=1}^N dq_i ∧ dp_i. A key property is its invariance under canonical transformations, which preserve the form of Hamilton's equations. The volume element in phase space, which is derived from the symplectic two-form, is related to the Liouville's theorem, stating that the volume occupied by a collection of states in phase space remains constant over time for a Hamiltonian system.",
-        "intuitive_summary": "The symplectic two-form quantifies the infinitesimal area spanned by pairs of conjugate variables in phase space, and its integral over a region gives the phase space volume, which is conserved in Hamiltonian evolution."
+        "conceptual_definition": "The symplectic two-form, $\\omega$, is a closed ($d\\omega=0$) and non-degenerate differential 2-form on a phase space manifold. In canonical coordinates $(q_i, p_i)$, it defines the fundamental geometric structure that underlies Hamiltonian mechanics and gives rise to a conserved phase space volume.",
+        "intuitive_summary": "The symplectic two-form quantifies the infinitesimal oriented area spanned by pairs of conjugate variables in phase space, and its integral over a region gives the phase space volume, which is conserved during Hamiltonian evolution."
     },
     "grand-unification-identity-2-de508531": {
         "title": "Proton Decay Rate (SU(5) GUT)",
-        "equation": "REG",
-        "interpretation": "The formula for the proton decay rate, within the SU(5) Grand Unified Theory, is generally given by a relationship proportional to the square of the coupling constant of the GUT force and inversely proportional to the square of the mass of the mediating gauge bosons. Specifically, the decay rate, Γ, is often expressed as Γ ∝ α^2_{GUT} / M_{GUT}^2, where α_{GUT} is the fine-structure constant associated with the unified force and M_{GUT} is the mass scale of the GUT symmetry breaking, which is related to the mass of the leptoquarks and diquarks that mediate the decay. More detailed calculations involve Clebsch-Gordan coefficients and matrix elements representing the transition from the initial proton state to the final state (e.g., a positron and a neutral pion). The decay channels are typically of the form p → e^+ + π^0 or p → ν_e + π^+ , where the dominant channel depends on the specific model. The inverse of the decay rate, 1/Γ, gives the mean lifetime of the proton. Experimental searches for proton decay are crucial for constraining GUT models, as current limits on the proton's lifetime are extremely long, implying that the mediating bosons must be exceptionally massive.",
-        "symmetry_origin": "This formula arises from the breakdown of the SU(5) gauge symmetry of the Grand Unified Theory. At high energies, the SU(5) symmetry is assumed to be manifest. However, at lower energies, this symmetry is spontaneously broken down to the Standard Model gauge group SU(3)_C × SU(2)_L × U(1)_Y through the vacuum expectation value of a scalar Higgs field. This symmetry breaking generates new gauge bosons (X and Y bosons) with very large masses, which mediate baryon-number-violating interactions, leading to proton decay. The rate of these interactions is determined by the coupling strength of the unified force and the inverse square of the masses of these new bosons.",
-        "limits_and_boundary": "In the limit of an infinitely large mass for the mediating gauge bosons ( M_{GUT} → ∞), the proton decay rate approaches zero (Γ → 0). This corresponds to the scenario where the GUT-scale interactions are so weak or the mediating particles are so heavy that proton decay becomes practically unobservable. Conversely, as the mass of the mediating bosons approaches physically accessible scales (M_{GUT} → finite), the decay rate increases dramatically. However, experimental observations place stringent lower bounds on the proton's lifetime, implying that M_{GUT} must be extremely large (typically > 10^15 GeV).",
+        "equation": "\\tau_p \\approx \\frac{1}{C} \\frac{M_X^4}{\\alpha_{\\mathrm{GUT}}^2 m_p^5}",
+        "interpretation": "This formula estimates the proton lifetime $\\tau_p$ (the inverse of the decay rate $\\Gamma_p$) for a specific decay channel, such as $p \\to e^+ \\pi^0$. The lifetime is extremely sensitive to the mass $M_X$ of the mediating leptoquark gauge boson (the X boson), scaling as the fourth power. The term $\\alpha_{\\mathrm{GUT}}^2$ arises from the two vertices in the Feynman diagram for the decay, where $\\alpha_{\\mathrm{GUT}}$ is the unified coupling constant. The $m_p^5$ term in the denominator comes from dimensional analysis and the available phase space for the decay products, as the energy released is proportional to the proton's mass $m_p$. The factor $C$ is a dimensionless constant of order unity that contains model-dependent details like hadronic matrix elements and Clebsch-Gordan coefficients. The formula is typically expressed in natural units where $\\hbar=c=1$.",
+        "symmetry_origin": "Proton decay arises from the spontaneous breaking of a larger gauge symmetry, such as SU(5), down to the Standard Model gauge group SU(3)_C × SU(2)_L × U(1)_Y. This symmetry breaking gives very large masses to new gauge bosons (X and Y bosons) which, unlike Standard Model bosons, carry both color and electroweak charge. These new particles mediate interactions that transform quarks into leptons, thus violating the conservation of baryon number (B) and lepton number (L), while conserving the combination B-L in many models.",
+        "limits_and_boundary": "1. As the GUT mass scale approaches infinity ($M_X \\to \\infty$), the proton lifetime also approaches infinity ($\\tau_p \\to \\infty$), and the proton becomes stable, recovering the prediction of the Standard Model.\n2. Experimental lower bounds on the proton lifetime ($\\tau_p > 10^{34}$ years) place a stringent lower limit on the mass of the X boson, requiring $M_X \\gtrsim 10^{15}$ GeV/c², which serves as a crucial test for any proposed GUT model.\n3. In the limit where the proton mass is zero ($m_p \\to 0$), the lifetime would become infinite as there would be no energy to drive the decay.",
         "semantic_variables": {
-            "Γ": {
-                "name": "Proton Decay Rate",
+            "\\tau_p": {
+                "name": "Proton Lifetime",
                 "type": "variable",
-                "unit": "s^-1",
-                "description": "The probability per unit time that a proton will decay. Its inverse, 1/Γ, represents the mean lifetime of the proton."
+                "unit": "s",
+                "description": "The predicted mean lifetime of a proton before it decays. It is the inverse of the total decay rate, $\\tau_p = 1/\\Gamma_p$."
             },
-            "α_{GUT}": {
-                "name": "GUT Fine-Structure Constant",
+            "C": {
+                "name": "Dimensionless Factor",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The coupling strength of the unified Grand Unified Theory force. It is analogous to the electromagnetic fine-structure constant in Quantum Electrodynamics."
+                "description": "A dimensionless constant of order unity that encapsulates model-dependent hadronic matrix elements and phase space factors for a specific decay channel."
             },
-            "M_{GUT}": {
-                "name": "GUT Energy Scale / Mass of Mediating Bosons",
+            "M_X": {
+                "name": "X Boson Mass",
                 "type": "constant",
                 "unit": "kg",
-                "description": "The characteristic energy scale at which the Grand Unified Theory symmetry breaks and the masses of the new, heavy gauge bosons (e.g., X and Y bosons) that mediate proton decay are found. This is typically a very large mass."
+                "description": "The mass of the hypothetical X gauge boson, a leptoquark that mediates proton decay in SU(5) Grand Unified Theory."
+            },
+            "\\alpha_{\\mathrm{GUT}}": {
+                "name": "GUT Coupling Constant",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The value of the unified gauge coupling constant at the GUT energy scale, analogous to the fine-structure constant."
             },
             "m_p": {
                 "name": "Proton Mass",
                 "type": "constant",
                 "unit": "kg",
-                "description": "The rest mass of the proton. It sets the energy scale for the initial state of the decay."
-            },
-            "A": {
-                "name": "Matrix Element",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A factor that encapsulates the quantum mechanical transition amplitude from the initial proton state to the final state particles (e.g., positron and pion). This depends on the specific GUT model and the decay channel."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "description": "The rest mass of the proton, which sets the energy scale for the decay process."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Proton Decay Rate (SU(5) GUT) formula quantifies the probability per unit time that a proton will spontaneously decay into lighter subatomic particles, as predicted by the SU(5) Grand Unified Theory. Grand Unified Theories (GUTs) propose that at extremely high energies, the strong, weak, and electromagnetic forces unify into a single fundamental force, mediated by new, very massive gauge bosons. The decay of the proton, a cornerstone of the Standard Model's stability, is a potential observable consequence of these theories, occurring via interactions mediated by these hypothetical bosons.",
-        "intuitive_summary": "In certain Grand Unified Theories, a proton can decay by emitting a positron and a neutral pion, a process mediated by extremely heavy gauge bosons predicted by the theory."
+        "conceptual_definition": "The Proton Lifetime formula provides an estimate for the mean lifetime of a proton, which is predicted to be finite in Grand Unified Theories (GUTs) like SU(5). This decay is a direct consequence of new, extremely massive gauge bosons (X and Y bosons) that mediate interactions violating baryon number conservation, a key prediction distinguishing GUTs from the Standard Model.",
+        "intuitive_summary": "In theories that unify fundamental forces, a proton is not perfectly stable and can decay over an extremely long timescale, with its lifetime depending critically on the mass of the new particles mediating the decay."
     },
     "quantum-resistance-identity-1-875292e2-c360c085": {
         "title": "Fermi Energy of Degenerate Electron Gas",
@@ -1620,69 +1536,63 @@
     },
     "potential-compensation-identity-1-39b8e404-7668f025": {
         "title": "Retarded Vector Potential Integration",
-        "equation": "REG",
-        "interpretation": "$\\mathbf{A}$ is the vector potential, $\\mu_0$ is the vacuum permeability, $\\mathbf{J}$ is the current density vector, and $|\\mathbf{r} - \\mathbf{r}'|$ is the distance from the source point to the field point.",
-        "symmetry_origin": "Lorentz covariance and causality in Maxwell's equations.",
-        "limits_and_boundary": "In the static limit where the current is time-independent, the retarded time dependence disappears, reducing the equation to the standard magnetostatic Biot-Savart vector potential integration.",
+        "equation": "\\mathbf{A}(\\mathbf{r}, t) = \\frac{\\mu_0}{4\\pi} \\int_V \\frac{\\mathbf{J}(\\mathbf{r}', t - \\frac{|\\mathbf{r} - \\mathbf{r}'|}{c})}{ |\\mathbf{r} - \\mathbf{r}'|} \\mathrm{d}^3\\mathbf{r}'",
+        "interpretation": "This integral formula provides the magnetic vector potential $\\mathbf{A}$ at a field point $\\mathbf{r}$ and time $t$ generated by a volume distribution of current density $\\mathbf{J}$. It is a particular solution to the electromagnetic wave equation $\\nabla^2\\mathbf{A} - \\frac{1}{c^2}\\frac{\\partial^2 \\mathbf{A}}{\\partial t^2} = -\\mu_0\\mathbf{J}$, derived using a Green's function approach. The key feature is the evaluation of the current density $\\mathbf{J}$ at the source point $\\mathbf{r}'$ not at the present time $t$, but at the 'retarded time' $t_r = t - |\\mathbf{r} - \\mathbf{r}'|/c$. This time delay, $|\\mathbf{r} - \\mathbf{r}'|/c$, is precisely the time it takes for light to travel from the source point $\\mathbf{r}'$ to the field point $\\mathbf{r}$, thus enforcing the principle of causality.",
+        "symmetry_origin": "This formula is a direct consequence of the Lorentz covariance of Maxwell's equations and the principle of causality. The finite propagation speed of electromagnetic waves, $c$, is a cornerstone of special relativity. The retarded time structure ensures that an effect (the potential at $\\mathbf{r}$) does not occur before its cause (the current at $\\mathbf{r}'$) has had time to propagate to the field point, respecting the light cone structure of spacetime.",
+        "limits_and_boundary": "1. In the static limit ($\\partial\\mathbf{J}/\\partial t = 0$), the time dependence vanishes, and the equation reduces to the magnetostatic vector potential: $\\mathbf{A}(\\mathbf{r}) = \\frac{\\mu_0}{4\\pi} \\int_V \\frac{\\mathbf{J}(\\mathbf{r}')}{|\\mathbf{r} - \\mathbf{r}'|} \\mathrm{d}^3\\mathbf{r}'$.\n2. In the quasi-static (near-zone) approximation, where the distance to the source is much smaller than the wavelength of the radiation ($r \\ll \\lambda$), the retardation delay is negligible ($t_r \\approx t$), and the magnetostatic equation can be used as a good approximation.\n3. In the far-zone (radiation) approximation ($r \\gg r'$), the distance in the denominator can be approximated as $|\\mathbf{r} - \\mathbf{r}'| \\approx r$, simplifying the integral and leading to the radiation field.",
         "semantic_variables": {
             "\\mathbf{A}(\\mathbf{r}, t)": {
-                "name": "Vector Potential Field",
-                "type": "variable",
-                "unit": "T m",
-                "description": "The magnetic vector potential at position r and time t."
+                "name": "Magnetic Vector Potential",
+                "type": "vector field",
+                "unit": "T·m",
+                "description": "The magnetic vector potential at position $\\mathbf{r}$ and time $t$, from which the magnetic field can be derived via $\\mathbf{B} = \\nabla \\times \\mathbf{A}$."
             },
             "\\mu_0": {
                 "name": "Vacuum Permeability",
                 "type": "constant",
-                "unit": "N/A^2",
-                "description": "The magnetic constant of free space."
+                "unit": "H/m",
+                "description": "The magnetic constant, a fundamental physical constant defining the magnetic permeability of free space."
             },
-            "\\mathbf{J}": {
-                "name": "Current Density Vector",
-                "type": "variable",
-                "unit": "A/m^2",
-                "description": "The electric current density at the source point."
+            "\\mathbf{J}(\\mathbf{r}', t_r)": {
+                "name": "Current Density",
+                "type": "vector field",
+                "unit": "A/m²",
+                "description": "The electric current density at the source position $\\mathbf{r}'$ evaluated at the retarded time $t_r$."
             },
             "\\mathbf{r}": {
-                "name": "Field Position Vector",
-                "type": "variable",
+                "name": "Field Point Position Vector",
+                "type": "vector",
                 "unit": "m",
-                "description": "The position vector where the potential is calculated."
+                "description": "The position vector of the point in space where the potential is being calculated."
             },
             "\\mathbf{r}'": {
-                "name": "Source Position Vector",
-                "type": "variable",
+                "name": "Source Point Position Vector",
+                "type": "vector",
                 "unit": "m",
-                "description": "The position vector of the source current element."
+                "description": "The position vector that sweeps over the volume of the current source during integration."
+            },
+            "t": {
+                "name": "Time",
+                "type": "variable",
+                "unit": "s",
+                "description": "The time at which the potential is measured at the field point $\\mathbf{r}$."
             },
             "c": {
-                "name": "Speed of Light",
+                "name": "Speed of Light in Vacuum",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "The speed of light in vacuum."
+                "description": "The universal speed of propagation of electromagnetic waves in a vacuum."
             },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+            "\\mathrm{d}^3\\mathbf{r}'": {
+                "name": "Differential Volume Element",
+                "type": "operator",
+                "unit": "m³",
+                "description": "A differential volume element at the source position $\\mathbf{r}'$ over which the integration is performed."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "In classical electrodynamics, the retarded vector potential $\\mathbf{A}(\\mathbf{r}, t)$ solves the inhomogeneous wave equation for a given time-dependent current distribution $\\mathbf{J}$. Because electromagnetic signals travel at the speed of light $c$, the potential at position $\\mathbf{r}$ and time $t$ depends on the state of the source at the retarded time $t_{\\text{ret}} = t - |\\mathbf{r} - \\mathbf{r}'|/c$.",
-        "intuitive_summary": "The electromagnetic vector potential at a point in space is determined by summing the currents of the sources, taking into account the time delay required for light to travel from each source point.",
+        "conceptual_definition": "In classical electrodynamics, the retarded vector potential is the solution to the inhomogeneous wave equation for a given time-dependent current distribution. Because electromagnetic signals propagate at the finite speed of light, the potential at a specific position and time depends on the state of the source at an earlier, or 'retarded', time.",
+        "intuitive_summary": "The magnetic vector potential at a point in space and time is calculated by summing the contributions from all source currents, accounting for the time it takes for their influence to travel to that point.",
         "subcomponents": [
             "permeability-of-free-space-3a843417",
             "magnitude-of-relative-position-vector-94bcc2ae",
@@ -1954,7 +1864,8 @@
         "status": "published",
         "parent_formula_id": "greens-function-laplacian-definition",
         "subcomponents": [],
-        "id": "laplacian-operator-683590a0"
+        "id": "laplacian-operator-683590a0",
+        "intuitive_summary": ""
     },
     "gauge-covariant-derivative-decoupling-limit-bcb84bf8": {
         "title": "Gauge Covariant Derivative Decoupling Limit",
@@ -1984,7 +1895,8 @@
         "status": "published",
         "parent_formula_id": "renormalization-link-53b0411f",
         "subcomponents": [],
-        "id": "gauge-covariant-derivative-decoupling-limit-bcb84bf8"
+        "id": "gauge-covariant-derivative-decoupling-limit-bcb84bf8",
+        "intuitive_summary": ""
     },
     "one-dimensional-complex-plane-wave-2d55f3bc": {
         "title": "One-Dimensional Complex Plane Wave",
@@ -2026,7 +1938,8 @@
         "status": "published",
         "parent_formula_id": "simplicity-check-2e2a6a92",
         "subcomponents": [],
-        "id": "one-dimensional-complex-plane-wave-2d55f3bc"
+        "id": "one-dimensional-complex-plane-wave-2d55f3bc",
+        "intuitive_summary": ""
     },
     "lambda-phi-four-interaction-term-cd281bcc": {
         "title": "Lambda Phi-Four Interaction Term",
@@ -2056,7 +1969,8 @@
         "status": "published",
         "parent_formula_id": "physical-force-552de685",
         "subcomponents": [],
-        "id": "lambda-phi-four-interaction-term-cd281bcc"
+        "id": "lambda-phi-four-interaction-term-cd281bcc",
+        "intuitive_summary": ""
     },
     "four-velocity-proper-time-derivative-f2f738f9": {
         "title": "Four-Velocity Proper-Time Derivative",
@@ -2092,7 +2006,8 @@
         "status": "published",
         "parent_formula_id": "4d-tracking-158b0de0",
         "subcomponents": [],
-        "id": "four-velocity-proper-time-derivative-f2f738f9"
+        "id": "four-velocity-proper-time-derivative-f2f738f9",
+        "intuitive_summary": ""
     },
     "lagrangian-independence-from-generalized-coordinate-313fc3ee": {
         "title": "Lagrangian Independence from Generalized Coordinate",
@@ -2122,7 +2037,8 @@
         "status": "published",
         "parent_formula_id": "conservation-total-momentum-internal-forces",
         "subcomponents": [],
-        "id": "lagrangian-independence-from-generalized-coordinate-313fc3ee"
+        "id": "lagrangian-independence-from-generalized-coordinate-313fc3ee",
+        "intuitive_summary": ""
     },
     "probability-of-quantum-state-outcome-11c6c7c5": {
         "title": "Probability of Quantum State Outcome",
@@ -2146,24 +2062,57 @@
         "status": "published",
         "parent_formula_id": "world-splitting-a3e1ec07",
         "subcomponents": [],
-        "id": "probability-of-quantum-state-outcome-11c6c7c5"
+        "id": "probability-of-quantum-state-outcome-11c6c7c5",
+        "intuitive_summary": ""
     },
     "quantum-state-normalization-constant-ff3031ce": {
-        "title": "Quantum State Normalization Constant",
+        "title": "Quantum State Normalization Condition",
         "description": "This constant is a normalization factor ensuring the total probability of a quantum state, particularly an antisymmetric one, is unity.",
-        "conceptual_definition": "In quantum mechanics, the numerical constant $1/\\sqrt{2}$ serves as a normalization factor for superposed quantum states. Its presence ensures that the integrated probability density over all possible configurations of a system equals one, a fundamental requirement for a valid probabilistic interpretation of the wavefunction. For multi-particle systems, especially those involving identical fermions, this factor specifically arises from the antisymmetrization postulate.",
-        "interpretation": "The value $1/\\sqrt{2}$ is a dimensionless mathematical constant, not a physical observable, whose role is to scale the amplitude of a quantum state vector. It guarantees that the sum of probabilities for all possible outcomes of a measurement on the system is exactly one. In the context of the Antisymmetric State Law, it specifically ensures that the combined wavefunction for two indistinguishable fermions, which must be antisymmetric under particle exchange, is correctly normalized.",
-        "limits_and_boundary": "As a fundamental mathematical constant, $1/\\sqrt{2}$ does not possess physical limits or boundary conditions. Its applicability is inherent to the framework of quantum mechanics, specifically when constructing normalized superpositions of states, particularly those requiring specific symmetry properties like antisymmetry for fermions.",
-        "symmetry_origin": "The constant $1/\\sqrt{2}$ is intrinsically linked to the normalization postulate of quantum mechanics, which demands that the total probability of finding a system in any state is unity. In the context of antisymmetric states, its specific value arises from the permutation symmetry requirements for identical fermions, ensuring the wavefunction's antisymmetry upon particle exchange while maintaining overall normalization.",
+        "conceptual_definition": "The normalization condition is a fundamental postulate of quantum mechanics requiring that the total probability of finding a particle or system in any possible configuration within its entire configuration space is exactly one. This is achieved by scaling the system's wave function such that the integral of its squared magnitude over all space equals unity.",
+        "interpretation": "According to the Born rule, the quantity $|\\psi(\\mathbf{r}, t)|^2$ represents the probability density of finding a particle at position $\\mathbf{r}$ at time $t$. For the probabilistic interpretation of quantum mechanics to be consistent, the total probability of finding the particle *somewhere* in the universe must be 1. The normalization condition enforces this by requiring that the integral of the probability density over all of space must equal one. Any solution to the Schrödinger equation, $\\psi$, can be multiplied by an arbitrary complex constant and still be a solution; normalization fixes the magnitude of this constant, leaving only an unobservable overall phase factor $e^{i\\phi}$.",
+        "limits_and_boundary": "1. The normalization condition is a core postulate of quantum mechanics and is assumed to hold universally for any bound or localized quantum state (i.e., states for which the integral converges).\n2. For unbound states, such as plane waves representing free particles, this condition is relaxed as the states are not square-integrable over all space. These states are instead 'normalized to a Dirac delta function' or confined to a finite volume with periodic boundary conditions for mathematical convenience.",
+        "symmetry_origin": "The normalization condition is preserved over time by the Schrödinger equation, a consequence of the unitarity of time evolution. Unitarity ensures the conservation of probability, which is a fundamental consistency requirement of the theory. This conservation is guaranteed by the Hermitian nature of the Hamiltonian operator, which generates time evolution.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-mechanics",
-        "semantic_variables": {},
-        "equation": "1/\\sqrt{2}",
-        "status": "published",
+        "semantic_variables": {
+            "\\psi": {
+                "name": "Wave Function",
+                "type": "variable",
+                "unit": "m^{-3/2}",
+                "description": "A complex-valued function describing the quantum state of a single particle in 3D, from which probabilities of measurement outcomes can be derived."
+            },
+            "\\mathbf{r}": {
+                "name": "Position Vector",
+                "type": "variable",
+                "unit": "m",
+                "description": "The spatial coordinate vector in three-dimensional space."
+            },
+            "t": {
+                "name": "Time",
+                "type": "variable",
+                "unit": "s",
+                "description": "The time coordinate."
+            },
+            "\\mathrm{d}^3\\mathbf{r}": {
+                "name": "Differential Volume Element",
+                "type": "operator",
+                "unit": "m^3",
+                "description": "An infinitesimal volume element in three-dimensional space, over which the integration is performed."
+            },
+            "\\int_{\\text{all space}}": {
+                "name": "Integral over all space",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "The definite integral taken over the entire spatial domain of the system."
+            }
+        },
+        "equation": "\\int_{\\text{all space}} |\\psi(\\mathbf{r}, t)|^2 \\, \\mathrm{d}^3\\mathbf{r} = 1",
+        "status": "platinum",
         "parent_formula_id": "antisymmetric-state-law-818671ab",
         "subcomponents": [],
-        "id": "quantum-state-normalization-constant-ff3031ce"
+        "id": "quantum-state-normalization-constant-ff3031ce",
+        "intuitive_summary": "To be physically meaningful, the probabilities of all possible outcomes for a quantum system must add up to 100%."
     },
     "electrostatic-potential-energy-term-839ddd01": {
         "title": "Electrostatic Potential Energy Term",
@@ -2193,7 +2142,8 @@
         "status": "published",
         "parent_formula_id": "electromagnetic-lagrangian-2f0b0448",
         "subcomponents": [],
-        "id": "electrostatic-potential-energy-term-839ddd01"
+        "id": "electrostatic-potential-energy-term-839ddd01",
+        "intuitive_summary": ""
     },
     "lie-derivative-operator-7422d7c7": {
         "title": "Lie Derivative Operator",
@@ -2217,7 +2167,8 @@
         "status": "published",
         "parent_formula_id": "spatial-symmetry-aeac547d",
         "subcomponents": [],
-        "id": "lie-derivative-operator-7422d7c7"
+        "id": "lie-derivative-operator-7422d7c7",
+        "intuitive_summary": ""
     },
     "vacuum-permittivity-scaling-factor-1882e4ea": {
         "title": "Vacuum Permittivity Scaling Factor",
@@ -2253,7 +2204,8 @@
         "status": "published",
         "parent_formula_id": "coulomb-barrier-identity-1-e01acce2-9f13364f-656e5c99",
         "subcomponents": [],
-        "id": "vacuum-permittivity-scaling-factor-1882e4ea"
+        "id": "vacuum-permittivity-scaling-factor-1882e4ea",
+        "intuitive_summary": ""
     },
     "cyclic-permutation-indices-of-covariant-bianchi-identities-df0625a4": {
         "title": "Cyclic Permutation Indices of Covariant Bianchi Identities",
@@ -2289,7 +2241,8 @@
         "status": "published",
         "parent_formula_id": "bianchi-identities-physics-identity-1-1f73fa96-4c7ddd65",
         "subcomponents": [],
-        "id": "cyclic-permutation-indices-of-covariant-bianchi-identities-df0625a4"
+        "id": "cyclic-permutation-indices-of-covariant-bianchi-identities-df0625a4",
+        "intuitive_summary": ""
     },
     "convective-energy-momentum-flux-density-5d4e464f": {
         "title": "Convective Energy-Momentum Flux Density",
@@ -2337,7 +2290,8 @@
         "status": "published",
         "parent_formula_id": "perfect-fluid-stress-energy-tensor-da2f26e5",
         "subcomponents": [],
-        "id": "convective-energy-momentum-flux-density-5d4e464f"
+        "id": "convective-energy-momentum-flux-density-5d4e464f",
+        "intuitive_summary": ""
     },
     "four-velocity-outer-product-tensor-b8eb287a": {
         "title": "Four-Velocity Outer Product Tensor",
@@ -2367,7 +2321,8 @@
         "status": "published",
         "parent_formula_id": "perfect-fluid-stress-energy-tensor-da2f26e5",
         "subcomponents": [],
-        "id": "four-velocity-outer-product-tensor-b8eb287a"
+        "id": "four-velocity-outer-product-tensor-b8eb287a",
+        "intuitive_summary": ""
     },
     "infinitesimal-scalar-field-change-9622dd40": {
         "title": "Infinitesimal Scalar Field Change",
@@ -2403,7 +2358,8 @@
         "status": "published",
         "parent_formula_id": "bridge-tool-92de610e",
         "subcomponents": [],
-        "id": "infinitesimal-scalar-field-change-9622dd40"
+        "id": "infinitesimal-scalar-field-change-9622dd40",
+        "intuitive_summary": ""
     },
     "asymptotic-hubble-parameter-a4cb50a0": {
         "title": "Asymptotic Hubble Parameter",
@@ -2439,7 +2395,8 @@
         "status": "published",
         "parent_formula_id": "cosmic-horizon-a578080f",
         "subcomponents": [],
-        "id": "asymptotic-hubble-parameter-a4cb50a0"
+        "id": "asymptotic-hubble-parameter-a4cb50a0",
+        "intuitive_summary": ""
     },
     "tangential-magnetic-field-continuity-73d5eef8": {
         "title": "Tangential Magnetic Field Continuity",
@@ -2469,7 +2426,8 @@
         "status": "published",
         "parent_formula_id": "magnetic-interface-condition-identity-1-5ed3f98d-d889a4e7",
         "subcomponents": [],
-        "id": "tangential-magnetic-field-continuity-73d5eef8"
+        "id": "tangential-magnetic-field-continuity-73d5eef8",
+        "intuitive_summary": ""
     },
     "infinitesimal-gravitational-impulse-component-fc5f63a1": {
         "title": "Infinitesimal Gravitational Impulse Component",
@@ -2499,7 +2457,8 @@
         "status": "published",
         "parent_formula_id": "differential-momentum-gravity",
         "subcomponents": [],
-        "id": "infinitesimal-gravitational-impulse-component-fc5f63a1"
+        "id": "infinitesimal-gravitational-impulse-component-fc5f63a1",
+        "intuitive_summary": ""
     },
     "weak-coupling-temperature-product-63f6ecf2": {
         "title": "Weak Coupling-Temperature Product",
@@ -2529,7 +2488,8 @@
         "status": "published",
         "parent_formula_id": "multiplier-rule-5ed52a4a",
         "subcomponents": [],
-        "id": "weak-coupling-temperature-product-63f6ecf2"
+        "id": "weak-coupling-temperature-product-63f6ecf2",
+        "intuitive_summary": ""
     },
     "hubble-lematre-law-1005b449": {
         "title": "Hubble-Lemaître Law",
@@ -2565,24 +2525,51 @@
         "status": "published",
         "parent_formula_id": "hubble-radius",
         "subcomponents": [],
-        "id": "hubble-lematre-law-1005b449"
+        "id": "hubble-lematre-law-1005b449",
+        "intuitive_summary": ""
     },
     "degree-to-radian-conversion-factor-341e2305": {
-        "title": "Degree to Radian Conversion Factor",
+        "title": "Degree to Radian Conversion",
         "description": "This equation defines the fundamental conversion factor between degrees and radians, two common units for measuring angles.",
-        "conceptual_definition": "Degrees and radians are both units used to quantify angular displacement or rotation. A degree is defined as $1/360$th of a full circle, making a full rotation $360$ degrees. A radian, on the other hand, is defined as the angle subtended at the center of a circle by an arc whose length is equal to the radius of the circle. This equation establishes the precise mathematical relationship between these two systems of angular measurement.",
-        "interpretation": "The equation $1 \\text{ degree} = \\frac{\\pi}{180} \\text{ radians}$ quantifies how many radians are equivalent to one degree. Since a full circle is $360$ degrees and also $2\\pi$ radians, dividing both by $360$ yields this conversion. Radians are often preferred in physics and mathematics because they are dimensionless (ratio of arc length to radius) and simplify many formulas, especially those involving calculus, by eliminating conversion factors like $180/\\pi$ or $\\pi/180$ from derivatives and integrals of trigonometric functions. This conversion is essential for consistency when working with angular quantities in scientific contexts.",
-        "limits_and_boundary": "This equation represents an exact mathematical definition for converting between two units of angular measure. It holds universally for all angular values, positive or negative, and does not have physical limits or boundary conditions in the traditional sense, as it is a fundamental unit equivalence. Its applicability is limited only by the context of angular measurement.",
-        "symmetry_origin": "This formula is a direct mathematical definition for unit conversion and does not originate from a physical symmetry or conservation law. It arises from the geometric definitions of degrees (a division of a circle) and radians (ratio of arc length to radius).",
+        "conceptual_definition": "This formula provides the mathematical conversion for an angle from a measurement in degrees, which divide a full circle into 360 parts, to radians, which measure an angle by the ratio of the subtended arc length to the circle's radius.",
+        "interpretation": "This equation defines the linear transformation from an angle's numerical value in degrees ($\\theta_{\\text{deg}}$) to its value in radians ($\\theta_{\\text{rad}}$). The conversion factor $\\pi/180$ arises from the fundamental geometric fact that a full circle comprises $360$ degrees or $2\\pi$ radians. Radians are the natural unit for angles in physics and calculus as they are dimensionless and simplify expressions for derivatives and integrals of trigonometric functions, avoiding spurious factors of $\\pi/180$.",
+        "limits_and_boundary": "1. This is an exact mathematical definition and holds for all real-valued angles.\n2. It is a convention of measurement and has no physical boundary conditions or limits in the sense of a physical law.",
+        "symmetry_origin": "This conversion is a mathematical definition based on the geometry of a circle and does not originate from a physical symmetry or conservation law via Noether's theorem. It is a convention established to relate two different scales for measuring the same geometric quantity (angle), one arbitrary (degrees) and one intrinsic to the circle's geometry (radians).",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "unit-conversions",
-        "semantic_variables": {},
-        "equation": "1 \\text{ degree} = \\frac{\\pi}{180} \\text{ radians}",
-        "status": "published",
+        "semantic_variables": {
+            "\\theta_{\\text{rad}}": {
+                "name": "Angle in Radians",
+                "type": "variable",
+                "unit": "rad",
+                "description": "The measure of the angle in radians."
+            },
+            "\\theta_{\\text{deg}}": {
+                "name": "Angle in Degrees",
+                "type": "variable",
+                "unit": "deg",
+                "description": "The measure of the angle in degrees."
+            },
+            "\\pi": {
+                "name": "Pi",
+                "type": "constant",
+                "unit": "Dimensionless",
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
+            },
+            "180": {
+                "name": "One Hundred Eighty",
+                "type": "constant",
+                "unit": "deg",
+                "description": "The numerical value representing half of a full circle in degrees, serving as the denominator in the conversion factor."
+            }
+        },
+        "equation": "\\theta_{\\text{rad}} = \\theta_{\\text{deg}} \\frac{\\pi}{180}",
+        "status": "platinum",
         "parent_formula_id": "distance-base-52fc1299",
         "subcomponents": [],
-        "id": "degree-to-radian-conversion-factor-341e2305"
+        "id": "degree-to-radian-conversion-factor-341e2305",
+        "intuitive_summary": "To convert an angle from degrees to the natural scientific unit of radians, you multiply its value by the factor π/180."
     },
     "volume-density-derivative-transformation-b8e66a34": {
         "title": "Volume-Density Derivative Transformation",
@@ -2630,7 +2617,8 @@
         "status": "published",
         "parent_formula_id": "pressure-scale-c2935624",
         "subcomponents": [],
-        "id": "volume-density-derivative-transformation-b8e66a34"
+        "id": "volume-density-derivative-transformation-b8e66a34",
+        "intuitive_summary": ""
     },
     "canonical-coordinate-poisson-bracket-definition-ccd29c2f": {
         "title": "Canonical Coordinate Poisson Bracket Definition",
@@ -2684,7 +2672,8 @@
         "status": "published",
         "parent_formula_id": "canonical-momenta-and-position-commutation",
         "subcomponents": [],
-        "id": "canonical-coordinate-poisson-bracket-definition-ccd29c2f"
+        "id": "canonical-coordinate-poisson-bracket-definition-ccd29c2f",
+        "intuitive_summary": ""
     },
     "internal-kinetic-energy-0a59d77f": {
         "title": "Internal Kinetic Energy",
@@ -2708,7 +2697,8 @@
         "status": "published",
         "parent_formula_id": "energy-split-98e2aa6f",
         "subcomponents": [],
-        "id": "internal-kinetic-energy-0a59d77f"
+        "id": "internal-kinetic-energy-0a59d77f",
+        "intuitive_summary": ""
     },
     "lorentz-invariant-four-acceleration-square-parallel-case-25c3cece": {
         "title": "Lorentz Invariant Four-Acceleration Square (Parallel Case)",
@@ -2744,7 +2734,8 @@
         "status": "published",
         "parent_formula_id": "total-radiation-bf891e8d",
         "subcomponents": [],
-        "id": "lorentz-invariant-four-acceleration-square-parallel-case-25c3cece"
+        "id": "lorentz-invariant-four-acceleration-square-parallel-case-25c3cece",
+        "intuitive_summary": ""
     },
     "covariant-divergence-of-stress-energy-tensor-bb1743b3": {
         "title": "Covariant Divergence of Stress-Energy Tensor",
@@ -2780,7 +2771,8 @@
         "status": "published",
         "parent_formula_id": "thermodynamic-link-29e26808",
         "subcomponents": [],
-        "id": "covariant-divergence-of-stress-energy-tensor-bb1743b3"
+        "id": "covariant-divergence-of-stress-energy-tensor-bb1743b3",
+        "intuitive_summary": ""
     },
     "reduced-charge-definition-83021ec7": {
         "title": "Reduced Charge Definition",
@@ -2816,7 +2808,8 @@
         "status": "published",
         "parent_formula_id": "symmetry-manifold-83021ec7",
         "subcomponents": [],
-        "id": "reduced-charge-definition-83021ec7"
+        "id": "reduced-charge-definition-83021ec7",
+        "intuitive_summary": ""
     },
     "nuclear-burning-timescale-df771269": {
         "title": "Nuclear Burning Timescale",
@@ -2852,6 +2845,7 @@
         "status": "published",
         "parent_formula_id": "nuclear-timescale",
         "subcomponents": [],
-        "id": "nuclear-burning-timescale-df771269"
+        "id": "nuclear-burning-timescale-df771269",
+        "intuitive_summary": ""
     }
 }

@@ -102,70 +102,34 @@
         ]
     },
     "resolution-floor-c525d893": {
-        "title": "Resolution Floor",
-        "equation": "\\text{FWHM} \\approx 0.98 \\frac{\\lambda}{r_0}",
+        "title": "Resolution Floor (Atmospheric Seeing)",
+        "equation": "\\text{FWHM} \\approx \\frac{\\lambda}{r_0}",
         "semantic_variables": {
-            "FWHM": {
+            "\\text{FWHM}": {
                 "name": "Full Width at Half Maximum",
                 "type": "variable",
-                "unit": "m",
-                "description": "The Full Width at Half Maximum of the point spread function, representing the minimum resolvable feature size or the width of the central diffraction peak."
+                "unit": "rad",
+                "description": "The angular Full Width at Half Maximum of the long-exposure point spread function, representing the seeing-limited resolution."
             },
             "\\lambda": {
                 "name": "Wavelength",
                 "type": "variable",
                 "unit": "m",
-                "description": "The wavelength of the light or electromagnetic radiation being used by the optical system."
+                "description": "The wavelength of the light being observed."
             },
             "r_0": {
-                "name": "Aperture Radius",
+                "name": "Fried Parameter",
                 "type": "variable",
                 "unit": "m",
-                "description": "The radius of the limiting aperture of the optical system, such as a lens or mirror."
-            },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
-            },
-            "W": {
-                "name": "Electrostatic Energy",
-                "type": "variable",
-                "unit": "J",
-                "description": "The potential energy stored in the electric field of a distribution of charges, or the total work required to assemble the charges."
-            },
-            "H": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "A/m",
-                "description": "The auxiliary magnetic field vector representing magnetization effects in media."
-            },
-            "M": {
-                "name": "Total Mass / Magnetization",
-                "type": "variable",
-                "unit": "kg or A/m",
-                "description": "The total inertial mass of a system, or net magnetic dipole moment density."
-            },
-            "\\approx": {
-                "name": "\\approx Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
+                "description": "The atmospheric coherence length, which characterizes the spatial scale over which the wavefront from a celestial object is considered coherent. It is a measure of the optical quality of the atmosphere."
             }
         },
-        "interpretation": "In this formula, $\\text${FWHM}$represents the Full Width at Half Maximum of the intensity distribution of a point source after it has passed through an optical system. This is a measure of the blur or spread of an image of a point object. The symbol \\lambda denotes the wavelength of the light being used by the optical system. Shorter wavelengths of light lead to better resolution, as evidenced by their inverse relationship with \\text {FWHM}$. The symbol $r_0$ represents the radius of the limiting aperture of the optical system (e.g., the radius of the telescope mirror or camera lens). A larger aperture radius $r_0$ corresponds to a smaller $\\text${FWHM}$, indicating improved resolution. The constant factor, approximately 0.98, arises from the specific mathematical analysis of the diffraction pattern, often related to the Airy disk for circular apertures. This formula highlights the fundamental trade-off between the wavelength of electromagnetic radiation and the size of the optical aperture in determining the ultimate resolution limit of an imaging system$.",
-        "symmetry_origin": "This formula is derived from the principles of diffraction, specifically the Fraunhofer diffraction pattern produced by a circular aperture. The Airy disk, which is the central bright spot in this diffraction pattern, is a key concept. The radius of the first dark ring of the Airy disk, which is approximately proportional to $\\lambda$ / D$(where D is the diameter of the aperture), directly relates to the resolution limit. The FWHM is a measure of the width of this central bright spot and is mathematically derived by analyzing the intensity distribution of the Airy disk and finding the width at half of its maximum intensity. The origin lies in wave optics and Huygens' principle, describing how waves propagate and interfere after passing through an aperture. This derivation is inherently tied to the geometry of the aperture and the wave nature of light, and while not a direct symmetry or conservation law, it stems from the predictable interference patterns governed by Maxwell's equations$.",
-        "limits_and_boundary": "As the wavelength $\\lambda$ approaches zero (an idealized scenario for perfect point sources), the $\\text${FWHM}$also approaches zero, implying perfect resolution. Conversely, as the wavelength \\lambda increases, the \\text {FWHM}$ increases, leading to poorer resolution. If the aperture radius $r_0$ approaches infinity (an idealized system with an infinitely large aperture), the $\\text${FWHM}$approaches zero, indicating theoretically infinite resolution. As the aperture radius$r_0$approaches zero (a vanishing aperture), the \\text {FWHM}$ approaches infinity, meaning no meaningful resolution can be achieved. In practical terms, $\\lambda$ is always positive and finite, and $r_0$ is also positive and finite, leading to a finite, non-zero $\\text${FWHM}.",
+        "interpretation": "The formula provides the angular size, $\\text{FWHM}$, of a star as seen through a ground-based telescope after a long exposure. The variable $\\lambda$ is the wavelength of light being observed. The crucial parameter $r_0$, known as the Fried parameter or atmospheric coherence length, characterizes the strength of the atmospheric turbulence; a smaller $r_0$ signifies more severe turbulence and thus more blurring. This relation shows that for a given level of turbulence (fixed $r_0$), observing at longer wavelengths (larger $\\lambda$) results in a larger, more blurred image. The formula represents the 'seeing limit,' which is often the dominant factor limiting resolution for large-aperture telescopes, where the theoretical diffraction limit ($\\approx \\lambda/D$) is much smaller than the atmospheric blur.",
+        "symmetry_origin": "This formula originates from the statistical theory of wave propagation through a turbulent medium, specifically the Kolmogorov model of atmospheric turbulence. The model assumes that turbulence is isotropic and homogeneous, and that energy cascades from large eddies to smaller ones until it is dissipated by viscosity. The phase fluctuations of the incoming planar wavefront from a distant star are described by a structure function that depends on the Fried parameter $r_0$. The long-exposure point spread function is the Fourier transform of the optical transfer function, which is a product of the telescope and atmospheric transfer functions, with the latter being derived from these statistical phase fluctuations.",
+        "limits_and_boundary": "1. Diffraction-Limited Regime ($D < r_0$): When the telescope diameter $D$ is smaller than the Fried parameter $r_0$, the resolution is limited by the telescope's own diffraction, and the FWHM is approximately $\\lambda/D$.\n2. Seeing-Limited Regime ($D > r_0$): When the telescope diameter is much larger than the Fried parameter, atmospheric turbulence dominates, and the resolution is limited by seeing, with the FWHM approaching $\\lambda/r_0$ regardless of how large $D$ becomes.\n3. Perfect Seeing ($r_0 \\to \\infty$): In the hypothetical limit of no atmospheric turbulence, the Fried parameter becomes infinite, and the resolution floor approaches zero, meaning the system becomes purely diffraction-limited.",
         "status": "platinum",
-        "conceptual_definition": "The \"Resolution Floor\" formula, denoted as $\\text${FWHM} \\approx 0.98 $\\frac{\\lambda}{r_0}$ provides$ an estimate for the minimum resolvable feature size, often referred to as the Full Width at Half Maximum (FWHM) of the point spread function, in optical systems or imaging processes. This is particularly relevant in scenarios where diffraction limits the system's ability to distinguish fine details. The FWHM quantifies the spatial extent of the central lobe of the diffraction pattern, and a smaller FWHM implies better resolution, meaning smaller objects or features can be distinguished.",
-        "intuitive_summary": "The smallest detail an optical system can resolve is inversely proportional to the system's aperture size and directly proportional to the wavelength of light used.",
+        "conceptual_definition": "The resolution floor formula defines the angular resolution limit imposed by atmospheric turbulence, where the Full Width at Half Maximum (FWHM) of a long-exposure stellar image is approximately the ratio of the observing wavelength to the Fried parameter. This quantity represents the effective diameter of a telescope whose diffraction-limited resolution would be equivalent to the seeing-limited resolution.",
+        "intuitive_summary": "The blurring of an astronomical image by Earth's atmosphere is worse at longer wavelengths and during more turbulent conditions.",
         "subcomponents": [
             "equilibrium-radius-of-radial-oscillations-d494fff4"
         ]
@@ -321,87 +285,27 @@
     },
     "coordinate-energy-89794259": {
         "title": "Coordinate Energy",
-        "equation": "E = -p_0 \\quad (\\text{Energy as 0-component})",
+        "equation": "E = -p_0",
         "semantic_variables": {
             "E": {
                 "name": "Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total energy of the system or particle, measured in Joules (J). In relativistic contexts, it includes rest mass energy and kinetic energy."
+                "description": "The total relativistic energy of a particle or system, including both its rest energy and kinetic energy."
             },
             "p_0": {
-                "name": "Momentum Parameter",
+                "name": "Covariant Time-Component of Four-Momentum",
                 "type": "variable",
-                "unit": "kg m/s",
-                "description": "A parameter representing momentum, or specifically, the time-component of a four-momentum, conventionally denoted as $p^0$ or $p_0$ depending on index position and metric convention. The units are kg m/s, reflecting its momentum nature."
-            },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "g": {
-                "name": "Gravitational Acceleration",
-                "type": "constant",
-                "unit": "m/s²",
-                "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
+                "unit": "kg⋅m/s",
+                "description": "The zeroth (time) component of the covariant four-momentum vector $p_\\mu$. Its value depends on the metric signature; in the (-,+,+,+) signature, $p_0 = -E/c$."
             }
         },
-        "interpretation": "In the equation $E = -p_0$, the symbol $E$ represents the total energy of a system or particle. The term $p_0$ represents the time component of the four-momentum vector. In special relativity, the four-momentum is a four-vector $p^ u = (p^0, p^1, p^2, p^3)$, where $p^0$ is related to energy and $p^1, p^2, p^3$ are the spatial components of momentum. The negative sign is often a convention related to the metric signature used (e.g., Minkowski metric with signature (+, -, -, -) or (-, +, +, +)). If we adopt the convention where $p^0 = E/c$, and use a metric with signature (-, +, +, +), then $p_$ u p^ u = -m^2c^2$. If$p_0$is defined as the time-component of the four-momentum$p^ u$, and the metric signature is$(-, +, +, +)$, then$p_0 = \\frac{E}{c}$. However, if the equation is strictly$E = -p_0$, it implies a specific context or convention. A common relation derived from the four-momentum is$p^0 = \\frac{E}{c} . If $p_0$ in the given equation refers to $-p^0$ in a standard convention or a specific momentum parameter of a system, then the equation states that the energy is equal to this characteristic momentum parameter (potentially with a sign convention). In the context of defining energy as a 0-component, $p_0$ likely refers to the magnitude of a constant momentum or a parameter related to it. For instance, if a system has a constant momentum $p_{const}$, then a conserved energy could be represented by this relation in specific scenarios$.",
-        "symmetry_origin": "This formula arises from the framework of special relativity, where energy and momentum are combined into a single four-vector. The conservation of four-momentum is a fundamental consequence of the symmetries of spacetime, specifically spacetime translation, as described by Noether's theorem. The energy component of this conserved four-vector is often a conserved quantity in isolated systems.",
-        "limits_and_boundary": "If $p_0$ is a constant parameter, then $E$ is also a constant. If $p_0$ can vary, for instance, approaching zero, then the energy $E$ would also approach zero, assuming a direct proportionality. If $p_0$ approaches infinity, $E$ would also approach infinity. In certain physical systems, $p_0$ might be related to the mass of a particle ( $m$) and the speed of light ( $c$) through relations like $p_0 =$ mc or $p_0 = \\frac{E}{c}$, making $E$ directly proportional to fundamental constants or intrinsic properties.",
+        "interpretation": "In special relativity, energy $E$ and momentum $\\mathbf{p}$ are unified into a single four-dimensional vector called the four-momentum. The contravariant four-momentum is defined as $p^\\mu = (p^0, p^1, p^2, p^3) = (E/c, \\mathbf{p})$. To obtain the covariant four-momentum $p_\\mu$, one must lower the index using the metric tensor, $p_\\mu = g_{\\mu\\nu} p^\\nu$. The choice of metric signature affects the result. Using the 'mostly plus' signature $(-,+,+,+)$, common in particle physics, the metric tensor is diagonal with components $g_{00}=-1$, $g_{11}=g_{22}=g_{33}=1$. The time component of the covariant four-momentum is then $p_0 = g_{0\\nu} p^\\nu = g_{00}p^0 = (-1)(E/c) = -E/c$. If we work in natural units where the speed of light $c=1$, this simplifies to $p_0 = -E$, which rearranges to $E = -p_0$. This equation is therefore a definitional statement within a specific, common set of relativistic conventions.",
+        "symmetry_origin": "The conservation of energy is a direct consequence of the time-translation symmetry of the laws of physics, as established by Noether's theorem. In relativity, this is expressed as the conservation of the time-component of the four-momentum vector, which is conserved due to the homogeneity of time.",
+        "limits_and_boundary": "1. Non-relativistic limit ($v \\ll c$): The total energy $E = \\gamma m c^2$ approximates to $m c^2 + \\frac{1}{2} m v^2$. The covariant momentum component $p_0 = -E/c$ becomes $p_0 \\approx -mc - \\frac{1}{2} m v^2/c$.\n2. Massless particle limit ($m=0$): For a massless particle like a photon, $E = |\\mathbf{p}|c$. Therefore, $p_0 = -E/c = -|\\mathbf{p}|$.\n3. Rest frame limit ($\\mathbf{p}=0$): The energy is the rest energy, $E = mc^2$. The covariant momentum component is $p_0 = -mc$.",
         "status": "platinum",
-        "conceptual_definition": "The formula defines energy as the time component (0-component) of a four-momentum vector in relativistic physics. In special relativity, energy and momentum are unified into a single four-vector. This equation specifically isolates the energy aspect, relating it to a constant parameter, which, in certain contexts, can represent a characteristic momentum or a conserved quantity.",
-        "intuitive_summary": "Energy is fundamentally linked to momentum, specifically appearing as its time-like component in a unified spacetime framework.",
+        "conceptual_definition": "In relativistic mechanics, the total energy of a particle is identified with the time-component of its covariant four-momentum vector, with the sign determined by the spacetime metric signature convention. This equation reflects the convention where spacetime has a (-,+,+,+) signature and natural units (c=1) are used.",
+        "intuitive_summary": "Energy is the 'time part' of the unified four-dimensional momentum vector in spacetime.",
         "subcomponents": [
             "four-momentum-time-component-definition-27bdef12",
             "minkowski-spacetime-metric-signature-convention-bd48ed85",
@@ -491,88 +395,40 @@
         "intuitive_summary": "Variance measures the average squared difference between each possible outcome and the mean outcome."
     },
     "irrotationality-141fb3b9": {
-        "title": "Irrotationality",
-        "equation": "V(\\mathbf{r}) = \\frac{1}{4\\pi\\varepsilon_0} \\sum \\frac{q_i}{r_i}",
+        "title": "Irrotationality of the Electrostatic Field",
+        "equation": "\\nabla \\times \\mathbf{E} = 0",
         "semantic_variables": {
-            "V(\\mathbf{r})": {
-                "name": "Electric Potential",
-                "type": "variable",
-                "unit": "V",
-                "description": "The scalar electric potential at a specific point in space defined by the position vector $\\mathbf{r}$. It represents the electric potential energy per unit charge at that point."
-            },
-            "\\frac{1}{4\\pi\\varepsilon_0}": {
-                "name": "Coulomb's Constant",
-                "type": "constant",
-                "unit": "N m^2 C^{-2}",
-                "description": "A fundamental physical constant, often denoted as $k_e$, which relates the strength of electric forces and potentials to the charges involved. $\\varepsilon_0$ is the permittivity of free space."
-            },
-            "\\sum": {
-                "name": "Summation Operator",
+            "\\nabla": {
+                "name": "Nabla Operator",
                 "type": "operator",
-                "unit": "",
-                "description": "Indicates that the terms following it are to be added together over all the individual point charges in the system."
+                "unit": "m⁻¹",
+                "description": "The vector differential operator, which in this context is used as part of the curl operation $\\nabla \\times$."
             },
-            "q_i": {
-                "name": "Charge of the i-th point charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "The magnitude of the electric charge of the $i$-th point charge in the collection. Can be positive or negative."
-            },
-            "r_i": {
-                "name": "Distance to the i-th point charge",
-                "type": "variable",
-                "unit": "m",
-                "description": "The scalar distance between the $i$-th point charge and the point $\\mathbf{r}$ at which the electric potential is being calculated."
-            },
-            "\\mathbf{r}": {
-                "name": "Position Vector",
-                "type": "variable",
-                "unit": "m",
-                "description": "The vector specifying the location in three-dimensional space where the electric potential is being determined."
-            },
-            "\\epsilon_0": {
-                "name": "Vacuum Permittivity",
-                "type": "constant",
-                "unit": "F/m",
-                "description": "The capability of the vacuum to permit electric field lines."
-            },
-            "V": {
-                "name": "Electric Potential",
-                "type": "variable",
-                "unit": "V",
-                "description": "The amount of work energy needed to move a unit of electric charge from a reference point to a specific point in an electric field."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "\\pi": {
-                "name": "Pi constant",
-                "type": "constant",
+            "\\times": {
+                "name": "Cross Product",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The ratio of a circle's circumference to its diameter (approx. 3.14159)."
+                "description": "A binary operation on two vectors in three-dimensional space. Here it forms the curl of the electric field."
             },
-            "q": {
-                "name": "Electric Charge",
+            "\\mathbf{E}": {
+                "name": "Electric Field Vector",
                 "type": "variable",
-                "unit": "C",
-                "description": "A physical property of matter that causes it to experience a force when placed in an electromagnetic field."
+                "unit": "V/m",
+                "description": "A vector field representing the force per unit charge experienced by a test charge at any given point in space."
             },
-            "i": {
-                "name": "Imaginary Unit",
+            "0": {
+                "name": "Zero Vector",
                 "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
+                "unit": "V/m²",
+                "description": "A vector of zero magnitude, indicating that the curl of the electrostatic field is null at all points."
             }
         },
-        "interpretation": "The formula defines the scalar electric potential $V(\\mathbf{r})$ at a position $\\mathbf{r}$ caused by a system of point charges. The term $\\frac{1}{4\\pi\\varepsilon_0}$ is Coulomb's constant, a fundamental physical constant relating electric charge to force and energy. The summation symbol $\\sum$ indicates that the potentials from all individual point charges must be added together. Each term in the sum, $\\frac{q_i}{r_i}$, represents the potential contribution from the $i$-th point charge. $q_i$ is the magnitude of the $i$-th electric charge, measured in Coulombs (C), and $r_i$ is the distance from the $i$-th charge to the point $\\mathbf{r}$ where the potential is being evaluated, measured in meters (m). The electric potential is a scalar quantity, meaning it has magnitude but no direction, and its unit is Volts ( $V$). The fact that the electric field derived from this potential is irrotational means that the work done by the electric field in moving a charge between two points is independent of the path taken.",
-        "symmetry_origin": "The irrotationality of the electrostatic field, and thus the validity of expressing it as the gradient of a scalar potential, stems directly from Gauss's Law and the inverse-square nature of the Coulomb force. Mathematically, the curl of the gradient of any scalar field is identically zero ($\\nabla \\times ( \\nabla V) = 0$). Since the electrostatic field $\\mathbf{E} is related to the scalar potential$V$by \\mathbf{E} = - \\nabla V$, it follows that $\\nabla \\times \\mathbf{E} = \\nabla \\times (- \\nabla V) = 0$. This arises from the symmetry of the Coulomb interaction and the conservation of charge, leading to a conservative force field. The formula for $V( \\mathbf{r} )$ is derived by integrating the electric field of a point charge along a radial path, or more generally, by applying the principle of superposition to the potentials of individual charges.",
-        "limits_and_boundary": "As the distance $r_i$ to any charge $q_i$ approaches infinity, the contribution of that specific charge to the potential, $\\frac{q_i}{r_i}$, approaches zero. If all charges are infinitely far away, the potential at any finite point becomes zero. Conversely, as the point $\\mathbf{r} approaches the location of a point charge$q_i$(i.e.,$r_i$\\to 0$), the potential due to that charge tends to infinity. If the charge is positive, the potential tends to positive infinity; if the charge is negative, it tends to negative infinity. This indicates that a point charge is a source or sink of the electric field, and the potential becomes singular at the location of a point charge. In the limit of a continuous charge distribution $\\rho( \\mathbf{r} ')$, the summation is replaced by an integral: $V( \\mathbf{r}$) = \\frac{1}{4\\pi\\varepsilon_0} \\int \\frac{\\rho( $\\mathbf{r}$ ')}{| $\\mathbf{r} - \\mathbf{r}'|}$ dV$'.",
+        "interpretation": "This equation is the differential form of Faraday's law of induction for the static case, and is one of the four fundamental Maxwell's equations for electrostatics. It states that the curl of the static electric field $\\mathbf{E}$ is the zero vector. A vector field with zero curl is called irrotational. By the Helmholtz decomposition theorem, any sufficiently smooth, rapidly decaying curl-free vector field can be expressed as the gradient of a scalar function. This mathematical property allows the electrostatic field $\\mathbf{E}$ to be written as the negative gradient of a scalar potential $V$, i.e., $\\mathbf{E} = -\\nabla V$. This is because the curl of a gradient is always identically zero: $\\nabla \\times (\\nabla V) \\equiv 0$. The existence of this scalar potential is equivalent to the statement that the electrostatic force is a conservative force.",
+        "symmetry_origin": "This law reflects the fundamental structure of electromagnetism and is a statement that there are no magnetic monopoles to act as sources for a curling electric field. It is intrinsically linked to the U(1) gauge symmetry of electromagnetism, which allows the field to be described by potentials ($A^\\mu$) that are not unique. The physical field $\\mathbf{E}$ remains invariant under the gauge transformation of the scalar potential $V \\to V + \\text{constant}$, which is a symmetry of the underlying theory.",
+        "limits_and_boundary": "1. Static Limit: This equation is strictly valid only in electrostatics, where all charges are stationary and the magnetic field is constant in time ($\\partial \\mathbf{B} / \\partial t = 0$).\n2. Electrodynamics: In the presence of a time-varying magnetic field, the equation is modified by the full Faraday's law of induction to $\\nabla \\times \\mathbf{E} = -\\partial \\mathbf{B} / \\partial t$, and the electric field is no longer irrotational.\n3. Universal Applicability: In static conditions, the equation holds true at all points in space, both inside and outside of charge distributions.",
         "status": "platinum",
-        "conceptual_definition": "The formula presented, $V(\\mathbf{r}) = \\frac{1}{4\\pi\\varepsilon_0} \\sum \\frac{q_i}{r_i}, describes the electric potential at a point \\mathbf{r} in space due to a collection of discrete point charges. In this context, 'Irrotationality' refers to a property of the electric field derived from this potential. An electric field \\mathbf{E}$ is considered irrotational if its curl is zero,$\\nabla \\times \\mathbf{E} = 0$. This condition is satisfied when the electric field can be expressed as the gradient of a scalar potential, $\\mathbf{E}$ = - \n\\nabla V$. The given formula for$V($\\mathbf{r})$ is the fundamental building block for calculating such a scalar potential, which in turn guarantees the irrotational nature of the resulting electric field.",
-        "intuitive_summary": "The total electric potential at any point is the sum of the contributions from each individual charge, where each contribution decreases with distance.",
+        "conceptual_definition": "An electrostatic field is irrotational, meaning it has zero curl everywhere. This property implies that the line integral of the field between any two points is independent of the path taken, defining a conservative force.",
+        "intuitive_summary": "A static electric field never curls or forms closed loops, meaning the work required to move a charge in it depends only on the start and end points, not the path.",
         "subcomponents": [
             "generalized-coordinate-in-classical-mechanics-da326f72",
             "summation-operator-7231fa80",
@@ -950,48 +806,48 @@
         "equation": "L_n(\\mathbf{x}) = \\left(\\frac{1}{\\pi a^2}\\right)^{3/4} e^{-\\frac{(\\mathbf{x} - \\mathbf{x}_n)^2}{2a^2}}",
         "semantic_variables": {
             "L_n(\\mathbf{x})": {
-                "name": "Localization Identity",
+                "name": "Localization Wave Function",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Represents the probability amplitude (wave function) of finding a quantum particle at position $\\mathbf{x}$ when its most probable location is $\\mathbf{x}_n$."
+                "unit": "m^{-3/2}",
+                "description": "The probability amplitude of finding a quantum particle at position $\\mathbf{x}$ for a state localized around $\\mathbf{x}_n$."
             },
             "\\mathbf{x}": {
                 "name": "Position Vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The three-dimensional spatial coordinate vector $(x, y, z)$ where the probability amplitude is being evaluated."
+                "description": "The three-dimensional spatial coordinate vector where the wave function is evaluated."
             },
             "\\mathbf{x}_n": {
                 "name": "Mean Position Vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The central point of the probability distribution, representing the most likely position of the quantum particle."
+                "description": "The center of the Gaussian wave packet, representing the most probable position of the particle."
             },
             "a": {
                 "name": "Characteristic Length Scale",
                 "type": "variable",
                 "unit": "m",
-                "description": "A parameter that defines the spatial extent or width of the Gaussian probability distribution. It quantifies the degree of localization."
+                "description": "A parameter defining the spatial width of the Gaussian wave packet, quantifying the degree of localization."
             },
             "\\pi": {
-                "name": "Pi constant",
+                "name": "Pi",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The ratio of a circle's circumference to its diameter (approx. 3.14159)."
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
             },
             "e": {
-                "name": "Elementary Charge / Euler's Number",
+                "name": "Euler's Number",
                 "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
+                "unit": "dimensionless",
+                "description": "The base of the natural logarithm, approximately 2.71828."
             }
         },
-        "interpretation": "The formula $L_n(\\mathbf{x}) = \\left( \\frac{1}{\\pi a^2} \\right$)^{3/4} e^{-$\\frac{( \\mathbf{x} - \\mathbf{x} _n$)^2}{2a^2}$}$ represents a three-dimensional probability amplitude density function. The term $\\left( \\frac{1}{\\pi a^2} \\right$)^{3/4}$is a normalization constant that ensures the total probability of finding the particle somewhere in space is 1. The exponential term$e^{-$\\frac{( \\mathbf{x} - \\mathbf{x}_n )^2}{2a^2}$}$dictates the spatial distribution. Here, \\mathbf{x} is the position vector in three-dimensional space where the particle is being observed. \\mathbf{x} _n$ is the mean position or the center of the probability distribution, representing the most likely location of the particle. The term $( \\mathbf{x} - \\mathbf{x} _n)^2 is the squared Euclidean distance between the observation point and the mean position. The parameter$a$is a characteristic length scale that determines the width or spread of the Gaussian distribution. A smaller$a$means the particle is more tightly localized around \\mathbf{x}_n , while a larger$a$indicates a broader, less localized distribution. The exponent's dependence on the square of the distance means that the probability amplitude decreases rapidly as the particle's position deviates from\\mathbf{x}_n.",
-        "symmetry_origin": "This form of the wave function is closely related to the concept of coherent states in quantum mechanics. Coherent states are quantum states that most closely resemble classical particle trajectories. They are often constructed as minimum uncertainty wave packets, which take a Gaussian form. The derivation can originate from the action of the annihilation operator on a vacuum state, or from finding the ground state solution of the quantum harmonic oscillator, which is a Gaussian. The specific form presented is invariant under translations of the coordinate system (i.e., changing the origin) if the mean position $\\mathbf{x}_n$ is also translated accordingly. Furthermore, it possesses rotational symmetry around $\\mathbf{x}_n$ due to the squared Euclidean norm of the displacement vector.",
-        "limits_and_boundary": "As the spread parameter $a$ approaches zero ($a \\to 0$), the Gaussian function becomes infinitely sharp, concentrating all probability at $\\mathbf{x}_n$. This represents a perfectly localized particle, akin to a Dirac delta function, though technically a wave function cannot be perfectly localized due to the Heisenberg uncertainty principle. Conversely, as $a$ approaches infinity ($a \\to \\infty$), the Gaussian becomes very broad, indicating that the particle is essentially equally likely to be found anywhere in space, representing a state of maximum delocalization. If $\\mathbf{x} moves infinitely far from \\mathbf{x} _n$ (i.e., $| \\mathbf{x} - \\mathbf{x} _n| \\to \\infty$), the exponential term $e^{- \\frac{( \\mathbf{x} - \\mathbf{x}_n )^2}{2a^2}$}$approaches zero, meaning the probability amplitude decays to zero far from the center of localization$.",
+        "interpretation": "The formula $L_n(\\mathbf{x})$ represents a three-dimensional probability amplitude, or wave function, in the form of a Gaussian wave packet. The term $\\left( \\frac{1}{\\pi a^2} \\right)^{3/4}$ is a normalization constant ensuring that the total probability of finding the particle anywhere in space, given by $\\int |L_n(\\mathbf{x})|^2 \\mathrm{d}^3x$, equals 1. The exponential term $e^{-\\frac{(\\mathbf{x} - \\mathbf{x}_n)^2}{2a^2}}$ dictates the spatial distribution, centered at the mean position $\\mathbf{x}_n$. The term $(\\mathbf{x} - \\mathbf{x}_n)^2$ is the squared Euclidean distance from this center. The parameter $a$ is a characteristic length scale defining the spatial width of the wave packet; a smaller $a$ implies a more localized particle, while a larger $a$ indicates a more delocalized one. The Gaussian form ensures the probability amplitude decays rapidly away from the center.",
+        "symmetry_origin": "This form of the wave function is closely related to coherent states in quantum mechanics, which are minimum uncertainty wave packets that most closely resemble classical particle trajectories. The Gaussian form can be derived as the ground state of the quantum harmonic oscillator. The function is invariant under spatial translations if the mean position $\\mathbf{x}_n$ is also translated, and it possesses rotational symmetry around $\\mathbf{x}_n$ due to its dependence on the squared Euclidean distance.",
+        "limits_and_boundary": "1. In the limit $a \\to 0$, the Gaussian function approaches a Dirac delta function $\\delta(\\mathbf{x} - \\mathbf{x}_n)$, representing a particle perfectly localized at $\\mathbf{x}_n$, which is an idealization due to the uncertainty principle.\n2. In the limit $a \\to \\infty$, the wave function becomes infinitely broad and flat, corresponding to a completely delocalized particle with a sharply defined momentum (zero).\n3. As the distance from the center becomes large, $|\\mathbf{x} - \\mathbf{x}_n| \\to \\infty$, the wave function $L_n(\\mathbf{x})$ and its associated probability density decay to zero, as expected for a bound or localized state.",
         "status": "platinum",
-        "conceptual_definition": "The Collapse Localization Identity, denoted by $L_n(\\mathbf{x})$, describes the probability amplitude or wave function of a quantum mechanical particle localized around a specific position. It is a Gaussian function, indicating that the particle is most likely to be found at a central point and the probability decreases symmetrically as the distance from this point increases. This form is often encountered in quantum mechanics, particularly when dealing with coherent states or the ground state of simple potentials like the quantum harmonic oscillator.",
-        "intuitive_summary": "This formula quantifies the probability of finding a quantum particle at a specific location $\\mathbf{x}, given that its most probable position is \\mathbf{x} _n$ and its spread is governed by $a$.",
+        "conceptual_definition": "The Collapse Localization Identity describes the probability amplitude (wave function) of a quantum mechanical particle localized around a specific position. This identity is represented by a Gaussian function, where the probability of finding the particle is highest at a central point and decreases symmetrically with distance.",
+        "intuitive_summary": "This formula describes the probability amplitude for finding a quantum particle at a specific location, which is highest at a central point and spreads out like a bell curve.",
         "subcomponents": [
             "variable-approaching-infinity-2d9d5b00",
             "number-of-generations-subcomponent-1741840f",
@@ -1852,7 +1708,8 @@
         "status": "published",
         "parent_formula_id": "invariant-mass-044a48ba",
         "subcomponents": [],
-        "id": "squared-rest-mass-energy-33f78399"
+        "id": "squared-rest-mass-energy-33f78399",
+        "intuitive_summary": ""
     },
     "generalized-coordinates-sequence-1c23f474": {
         "title": "Generalized Coordinates Sequence",
@@ -1882,7 +1739,8 @@
         "status": "published",
         "parent_formula_id": "phase-space-symplectic-two-form-e3d55310",
         "subcomponents": [],
-        "id": "generalized-coordinates-sequence-1c23f474"
+        "id": "generalized-coordinates-sequence-1c23f474",
+        "intuitive_summary": ""
     },
     "traceless-electromagnetic-stress-energy-tensor-d41996ed": {
         "title": "Traceless Electromagnetic Stress-Energy Tensor",
@@ -1906,7 +1764,8 @@
         "status": "published",
         "parent_formula_id": "poynting-link-5e5f7323",
         "subcomponents": [],
-        "id": "traceless-electromagnetic-stress-energy-tensor-d41996ed"
+        "id": "traceless-electromagnetic-stress-energy-tensor-d41996ed",
+        "intuitive_summary": ""
     },
     "commutator-of-covariant-derivatives-on-a-vector-33156dcc": {
         "title": "Commutator of Covariant Derivatives on a Vector",
@@ -1948,61 +1807,57 @@
         "status": "published",
         "parent_formula_id": "parallel-transport-a252f306",
         "subcomponents": [],
-        "id": "commutator-of-covariant-derivatives-on-a-vector-33156dcc"
+        "id": "commutator-of-covariant-derivatives-on-a-vector-33156dcc",
+        "intuitive_summary": ""
     },
     "contravariant-four-gradient-operator-definition-f48061d9": {
-        "title": "Contravariant Four-Gradient Operator Definition",
+        "title": "Contravariant Four-Gradient Operator",
         "description": "This equation defines the contravariant four-gradient operator in Minkowski spacetime, combining the time derivative and the spatial gradient into a single four-vector operator.",
-        "conceptual_definition": "In relativistic physics, the contravariant four-gradient operator $\\partial^\\mu$ is a fundamental differential operator that acts on scalar or tensor fields in Minkowski spacetime. It is the contravariant counterpart to the covariant four-gradient $\\partial_\\mu = ( \\frac{1}{c} \\frac{\\partial}{\\partial t}$, - \\nabla)$. This operator is crucial for formulating physical laws in a manifestly covariant way, ensuring they hold true in all inertial reference frames.",
-        "interpretation": "This equation defines a four-vector differential operator whose components are the time derivative (scaled by $1/c$) and the spatial gradient operator. The time component, $\\frac{1}{c} \\frac{\\partial}{\\partial t}$, represents the rate of change with respect to time, normalized by the speed of light to ensure consistent units and relativistic transformation properties. The spatial component, $\\nabla$, is the standard three-dimensional gradient operator, indicating the direction and magnitude of the maximum rate of change of a scalar field in space. Together, these components allow for the differentiation of fields in a way that respects the geometry of spacetime, making it a cornerstone for constructing relativistic field equations like Maxwell's equations in covariant form.",
-        "limits_and_boundary": "This operator is defined within the framework of special relativity and Minkowski spacetime. Its application is generally limited to flat spacetime; in curved spacetime, it is replaced by the covariant derivative $\\nabla_\\mu$. It assumes a continuous and differentiable field on which it operates.",
+        "conceptual_definition": "The contravariant four-gradient, $\\partial^\\mu$, is a four-vector differential operator in Minkowski spacetime that combines the partial derivative with respect to time and the spatial gradient. It is the contravariant counterpart to the covariant four-gradient, $\\partial_\\mu$, and is essential for writing physical laws in a form that is invariant under Lorentz transformations.",
+        "interpretation": "The contravariant four-gradient $\\partial^\\mu$ is a four-vector operator defined in Minkowski spacetime. Its zeroth (time) component is $\\frac{1}{c}\\frac{\\partial}{\\partial t}$, the rate of change with respect to time, scaled by the inverse speed of light for dimensional consistency. Its spatial components are given by $-\\nabla = (-\\frac{\\partial}{\\partial x}, -\\frac{\\partial}{\\partial y}, -\\frac{\\partial}{\\partial z})$, the negative of the standard three-dimensional gradient. This structure arises from raising the index of the covariant four-gradient $\\partial_\\mu = (\\frac{1}{c}\\frac{\\partial}{\\partial t}, \\nabla)$ using the Minkowski metric $g^{\\mu\\nu} = \\mathrm{diag}(1, -1, -1, -1)$. The operator's four-vector nature ensures that derivatives of fields transform correctly under Lorentz transformations, which is fundamental to relativistic field theory.",
+        "limits_and_boundary": "1. The four-gradient is defined in the context of special relativity and is valid only in flat Minkowski spacetime.\n2. In the presence of gravity (curved spacetime), as described by general relativity, this operator is replaced by the more general covariant derivative, denoted $\\nabla_\\mu$, which includes Christoffel symbols to account for the curvature.\n3. The operator acts on fields that are assumed to be at least once differentiable.",
         "symmetry_origin": "The four-gradient operator is a direct consequence of Lorentz symmetry, which dictates that the laws of physics must be invariant under Lorentz transformations. Its four-vector structure ensures that differential operations transform correctly between inertial frames, maintaining the covariance of physical equations. This is essential for upholding the principle of relativity.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "relativistic-electrodynamics",
         "semantic_variables": {
             "\\partial^\\mu": {
-                "name": "\\partial^\\mu",
+                "name": "Contravariant Four-Gradient",
                 "type": "operator",
-                "unit": "dimensionless",
-                "description": "Contravariant four-gradient operator. This is a four-vector differential operator that combines time and spatial derivatives in Minkowski spacetime. Its components are $(\\frac{1}{c} \\frac{\\partial}{\\partial t}, \\frac{\\partial}{\\partial x}, \\frac{\\partial}{\\partial y}, \\frac{\\partial}{\\partial z})$. Units: inverse meters ($m^{-1}$)."
+                "unit": "m^{-1}",
+                "description": "A four-vector differential operator that combines time and spatial derivatives. In the (+,-,-,-) metric signature, its components are $(\\frac{1}{c}\\frac{\\partial}{\\partial t}, -\\nabla)$."
             },
             "c": {
-                "name": "c",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Speed of light in vacuum. A fundamental physical constant representing the speed at which all electromagnetic radiation travels in a vacuum. Units: meters per second ($m/s$)."
+                "name": "Speed of Light in Vacuum",
+                "type": "constant",
+                "unit": "m/s",
+                "description": "A fundamental physical constant representing the speed of electromagnetic radiation in vacuum."
             },
             "t": {
-                "name": "t",
+                "name": "Time Coordinate",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Time coordinate. The temporal component in a spacetime coordinate system. Units: seconds ( $s$)."
+                "unit": "s",
+                "description": "The temporal component in a spacetime coordinate system."
             },
             "\\nabla": {
-                "name": "\\nabla",
+                "name": "Nabla Operator",
                 "type": "operator",
-                "unit": "dimensionless",
-                "description": "Three-dimensional spatial gradient operator (del operator). A vector differential operator that indicates the direction and magnitude of the maximum rate of increase of a scalar field in three-dimensional Euclidean space. Its components are $(\\frac{\\partial}{\\partial x}, \\frac{\\partial}{\\partial y}, \\frac{\\partial}{\\partial z})$. Units: inverse meters ($m^{-1}$)."
+                "unit": "m^{-1}",
+                "description": "The three-dimensional spatial gradient operator, with components $(\\frac{\\partial}{\\partial x}, \\frac{\\partial}{\\partial y}, \\frac{\\partial}{\\partial z})$."
             },
             "\\frac{\\partial}{\\partial t}": {
-                "name": "\\frac{\\partial}{\\partial t}",
+                "name": "Partial Derivative with Respect to Time",
                 "type": "operator",
-                "unit": "dimensionless",
-                "description": "Partial derivative with respect to time. Represents the rate of change of a function with respect to time, holding other variables constant. Units: inverse seconds ($s^{-1}$)."
-            },
-            "\\frac{1}{c} \\frac{\\partial}{\\partial t}": {
-                "name": "\\frac{1}{c} \\frac{\\partial}{\\partial t}",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Time component of the four-gradient operator, scaled by the inverse of the speed of light. Units: inverse meters ($m^{-1}$)."
+                "unit": "s^{-1}",
+                "description": "Represents the rate of change of a function with respect to time, holding spatial variables constant."
             }
         },
-        "equation": "\\partial^\\mu = (\\frac{1}{c} \\frac{\\partial}{\\partial t}, \\nabla)",
-        "status": "published",
+        "equation": "\\partial^\\mu \\equiv \\left(\\frac{1}{c}\\frac{\\partial}{\\partial t}, -\\nabla\\right)",
+        "status": "platinum",
         "parent_formula_id": "unified-matrix-1c923838",
         "subcomponents": [],
-        "id": "contravariant-four-gradient-operator-definition-f48061d9"
+        "id": "contravariant-four-gradient-operator-definition-f48061d9",
+        "intuitive_summary": "The four-gradient operator generalizes the concept of a gradient to four-dimensional spacetime, measuring how a field changes across both space and time."
     },
     "particle-position-vector-definition-c7f43e86": {
         "title": "Particle Position Vector Definition",
@@ -2044,7 +1899,8 @@
         "status": "published",
         "parent_formula_id": "general-constraint-on-particle-positions-and-time",
         "subcomponents": [],
-        "id": "particle-position-vector-definition-c7f43e86"
+        "id": "particle-position-vector-definition-c7f43e86",
+        "intuitive_summary": ""
     },
     "electron-positron-pair-rest-energy-304462d7": {
         "title": "Electron-Positron Pair Rest Energy",
@@ -2074,7 +1930,8 @@
         "status": "published",
         "parent_formula_id": "decay-limit-5f2616b3",
         "subcomponents": [],
-        "id": "electron-positron-pair-rest-energy-304462d7"
+        "id": "electron-positron-pair-rest-energy-304462d7",
+        "intuitive_summary": ""
     },
     "bell-chsh-expectation-value-sum-aa6cf609": {
         "title": "Bell-CHSH Expectation Value Sum",
@@ -2122,7 +1979,8 @@
         "status": "published",
         "parent_formula_id": "bell-chsh-inequality-philosophy-4615a8aa",
         "subcomponents": [],
-        "id": "bell-chsh-expectation-value-sum-aa6cf609"
+        "id": "bell-chsh-expectation-value-sum-aa6cf609",
+        "intuitive_summary": ""
     },
     "constant-function-definition-29e68186": {
         "title": "Constant Function Definition",
@@ -2152,7 +2010,8 @@
         "status": "published",
         "parent_formula_id": "the-sign-flip-ed50a57a",
         "subcomponents": [],
-        "id": "constant-function-definition-29e68186"
+        "id": "constant-function-definition-29e68186",
+        "intuitive_summary": ""
     },
     "magnetic-dipole-interaction-energy-6284c4c2": {
         "title": "Magnetic Dipole Interaction Energy",
@@ -2182,7 +2041,8 @@
         "status": "published",
         "parent_formula_id": "hamiltonian-dipole-interactions",
         "subcomponents": [],
-        "id": "magnetic-dipole-interaction-energy-6284c4c2"
+        "id": "magnetic-dipole-interaction-energy-6284c4c2",
+        "intuitive_summary": ""
     },
     "anomalous-magnetic-moment-definition-42db9dd5": {
         "title": "Anomalous Magnetic Moment Definition",
@@ -2212,7 +2072,8 @@
         "status": "published",
         "parent_formula_id": "anomalous-magnetic-moment",
         "subcomponents": [],
-        "id": "anomalous-magnetic-moment-definition-42db9dd5"
+        "id": "anomalous-magnetic-moment-definition-42db9dd5",
+        "intuitive_summary": ""
     },
     "virial-theorem-for-inverse-square-forces-c156f8a1": {
         "title": "Virial Theorem for Inverse-Square Forces",
@@ -2242,7 +2103,8 @@
         "status": "published",
         "parent_formula_id": "the-weight-ratio-08c66723",
         "subcomponents": [],
-        "id": "virial-theorem-for-inverse-square-forces-c156f8a1"
+        "id": "virial-theorem-for-inverse-square-forces-c156f8a1",
+        "intuitive_summary": ""
     },
     "weak-gravitational-field-condition-e45bf62d": {
         "title": "Weak Gravitational Field Condition",
@@ -2272,7 +2134,8 @@
         "status": "published",
         "parent_formula_id": "laboratory-proof-d9d185c2",
         "subcomponents": [],
-        "id": "weak-gravitational-field-condition-e45bf62d"
+        "id": "weak-gravitational-field-condition-e45bf62d",
+        "intuitive_summary": ""
     },
     "volume-integral-of-density-cad88284": {
         "title": "Volume Integral of Density",
@@ -2308,7 +2171,8 @@
         "status": "published",
         "parent_formula_id": "flux-balance-fa915e79",
         "subcomponents": [],
-        "id": "volume-integral-of-density-cad88284"
+        "id": "volume-integral-of-density-cad88284",
+        "intuitive_summary": ""
     },
     "projection-operator-for-a-basis-state-3d19564c": {
         "title": "Projection Operator for a Basis State",
@@ -2338,7 +2202,8 @@
         "status": "published",
         "parent_formula_id": "separable-space-identity-1-c550056f-16104393",
         "subcomponents": [],
-        "id": "projection-operator-for-a-basis-state-3d19564c"
+        "id": "projection-operator-for-a-basis-state-3d19564c",
+        "intuitive_summary": ""
     },
     "photon-energy-in-absorption-transition-8595e511": {
         "title": "Photon Energy in Absorption Transition",
@@ -2380,7 +2245,8 @@
         "status": "published",
         "parent_formula_id": "energy-momentum-recoil-balance-24e0aa53",
         "subcomponents": [],
-        "id": "photon-energy-in-absorption-transition-8595e511"
+        "id": "photon-energy-in-absorption-transition-8595e511",
+        "intuitive_summary": ""
     },
     "renormalization-scale-dependence-of-n-point-function-db6b08ae": {
         "title": "Renormalization Scale Dependence of n-Point Function",
@@ -2410,7 +2276,8 @@
         "status": "published",
         "parent_formula_id": "callan-symanzik-equation-5a23fdb1-365ae739",
         "subcomponents": [],
-        "id": "renormalization-scale-dependence-of-n-point-function-db6b08ae"
+        "id": "renormalization-scale-dependence-of-n-point-function-db6b08ae",
+        "intuitive_summary": ""
     },
     "equation-of-motion-for-simple-harmonic-oscillator-edd65145": {
         "title": "Equation of Motion for Simple Harmonic Oscillator",
@@ -2452,6 +2319,7 @@
         "status": "published",
         "parent_formula_id": "equation-motion-coupled-oscillator-2",
         "subcomponents": [],
-        "id": "equation-of-motion-for-simple-harmonic-oscillator-edd65145"
+        "id": "equation-of-motion-for-simple-harmonic-oscillator-edd65145",
+        "intuitive_summary": ""
     }
 }

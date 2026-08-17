@@ -614,7 +614,8 @@
         "status": "published",
         "parent_formula_id": "total-kinetic-energy-of-a-system-of-particles",
         "subcomponents": [],
-        "id": "relativistic-kinetic-energy-86bf4ce1"
+        "id": "relativistic-kinetic-energy-86bf4ce1",
+        "intuitive_summary": ""
     },
     "causal-foundation-f5681823": {
         "title": "Causal Foundation",
@@ -1043,12 +1044,12 @@
     },
     "sedov-taylor-blast-radius-scaling-ed7792bd": {
         "title": "Sedov-Taylor Blast Scaling",
-        "equation": "REG",
-        "interpretation": "The Sedov-Taylor scaling law is typically expressed as $R(t) = C E_0 / ρ_0^{1/5} t^{2/5}$, where $R(t)$ is the radius of the blast wave at time $t$. The energy of the blast is denoted by $E_0$ J, and the ambient medium density is represented by$ρ_0 kg/m^3. The constant$C$is a dimensionless constant determined by the self-similar solution, and its value depends on the specific properties of the flow, typically around 1.1 to 1.2 for ideal gases. The exponent on time,$2/5$, signifies that the blast wave expands at a decreasing velocity as it propagates, transferring its initial energy to a larger and larger volume of the surrounding medium. The dependence on$E_0^{1/5}$indicates that a more energetic explosion leads to a larger radius at a given time, while the inverse dependence on$ρ_0^{1/5}$shows that a denser medium will slow down the expansion, resulting in a smaller radius$.",
-        "symmetry_origin": "The Sedov-Taylor scaling law originates from the principle of self-similarity in the context of a spherically symmetric blast wave. By assuming that the solution for the blast wave's expansion is self-similar, one can reduce the number of independent variables and derive power-law relationships. This self-similar solution is often derived using dimensional analysis or by solving the relevant fluid dynamics equations under this assumption. The spherical symmetry is crucial, as it simplifies the problem to a single spatial dimension (the radial coordinate).",
-        "limits_and_boundary": "The Sedov-Taylor scaling law is primarily valid for the 'free expansion' phase of a blast wave, after the initial very rapid expansion dominated by the initial energy deposition and before the blast wave becomes significantly affected by energy losses or external pressures (like in supernova remnants interacting with the interstellar medium). It is most accurate for strong blast waves where the energy of the wave is much greater than the thermal energy of the ambient medium, and the expansion is adiabatic (no significant heat loss). It does not apply to the very early stages of an explosion (e.g., within the first few milliseconds for a nuclear blast) where hydrodynamics are not yet the dominant physics, nor does it accurately describe the later stages where the blast wave may decelerate due to radiative losses or interactions with complex structures in the ambient medium.",
+        "equation": "R(t) = C_0 \\left( \\frac{E_0 t^2}{\\rho_0} \\right)^{1/5}",
+        "interpretation": "The Sedov-Taylor solution is derived from dimensional analysis or by solving the Euler equations under the assumption of self-similarity. The radius of the blast wave $R$ at time $t$ depends only on the initial energy released $E_0$ and the ambient medium density $\\rho_0$. By combining these variables to form a quantity with units of length, one arrives at the scaling law $R(t) = C_0 \\left( \\frac{E_0 t^2}{\\rho_0} \\right)^{1/5}$. Here, $C_0$ is a dimensionless constant of order unity that depends on the adiabatic index $\\gamma$ of the gas. The $t^{2/5}$ dependence shows that the shock front decelerates as it expands, with its velocity scaling as $v(t) = \\frac{\\mathrm{d}R}{\\mathrm{d}t} \\propto t^{-3/5}$.",
+        "symmetry_origin": "The solution is founded on the assumption of self-similarity, a continuous scaling symmetry where the problem's solution profile remains the same shape over time when appropriately scaled. This symmetry, combined with the problem's spherical symmetry in space, reduces the governing partial differential equations of fluid dynamics to a single ordinary differential equation. The scaling exponents are determined by the conservation of energy.",
+        "limits_and_boundary": "1. Strong Shock Condition: The solution is valid only when the pressure behind the shock is much greater than the ambient pressure of the surrounding medium, which can be treated as zero.\n2. Point Explosion: The energy is assumed to be released instantaneously at a single point ($t=0, r=0$).\n3. Adiabatic Flow: The model assumes no energy is lost from the system, for example, through radiation. The flow is adiabatic.\n4. Late-time Breakdown: At very late times, the shock weakens, the strong shock condition is violated, and the expansion is better described by acoustic wave propagation. Radiative cooling can also become significant, leading to the formation of a thin, dense shell (the snowplow phase).",
         "semantic_variables": {
-            "R(t)": {
+            "R": {
                 "name": "Blast Wave Radius",
                 "type": "variable",
                 "unit": "m",
@@ -1060,45 +1061,27 @@
                 "unit": "s",
                 "description": "The time elapsed since the initiation of the explosion."
             },
+            "C_0": {
+                "name": "Dimensionless Constant",
+                "type": "constant",
+                "unit": "unitless",
+                "description": "A dimensionless constant of order unity determined by the self-similar solution, dependent on the adiabatic index of the gas."
+            },
             "E_0": {
                 "name": "Initial Energy",
-                "type": "variable",
+                "type": "constant",
                 "unit": "J",
-                "description": "The total initial energy released by the explosion."
+                "description": "The total initial energy released by the explosion at t=0."
             },
             "\\rho_0": {
                 "name": "Ambient Medium Density",
-                "type": "variable",
+                "type": "constant",
                 "unit": "kg/m^3",
                 "description": "The uniform density of the medium into which the blast wave is expanding."
-            },
-            "C": {
-                "name": "Dimensionless Constant",
-                "type": "constant",
-                "unit": "1",
-                "description": "A dimensionless constant determined by the self-similar solution of the fluid dynamics equations governing the blast wave expansion. Its value depends on the properties of the gas, such as the adiabatic index."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Sedov-Taylor blast wave scaling law describes the expansion of a spherically symmetric blast wave in a uniform medium, specifically how the radius of the blast wave changes over time. This law is derived by assuming self-similarity, meaning the blast wave's structure at any given time can be scaled to match its structure at any other time, provided the appropriate scaling factor is used. It relates the radius of the blast wave to the initial energy deposited and the ambient medium density.",
+        "conceptual_definition": "The Sedov-Taylor solution describes the self-similar evolution of a strong shock wave propagating away from a point-like, instantaneous energy release in a cold, uniform medium. It provides a power-law scaling for the shock radius as a function of time, initial energy, and ambient density.",
         "intuitive_summary": "The radius of a powerful explosion grows with time as a power-law, determined by the explosion's energy and the density of the surrounding gas.",
         "subcomponents": [
             "exponent-of-time-in-sedov-taylor-relation-5969ea43"
@@ -1106,62 +1089,38 @@
     },
     "completeness-resolution-identity-8f33a2d7": {
         "title": "Resolution of the Identity (Hilbert Spaces)",
-        "equation": "REG",
-        "interpretation": "In the context of Hilbert spaces, which are vector spaces with an inner product allowing for notions of length and angle, the Resolution of the Identity, often expressed as $\\sum_i |\\psi_i\\rangle\\langle\\psi_i| = \\mathbb{I}$, provides a way to decompose any vector or operator. Here, $|\\psi_i\\rangle$ represents the $i$-th vector in a complete orthonormal basis of the Hilbert space. The term $|\\psi_i\\rangle\\langle\\psi_i|$ is a projection operator that maps any vector onto the subspace spanned by $|\\psi_i\\rangle$. The summation is over all basis vectors in this complete set. The mathematical object $\\mathbb{I}$ is the identity operator, which, when acting on any vector, returns that same vector. Thus, the equation asserts that projecting onto every basis vector and summing these projections reconstructs the original vector, meaning the basis is 'complete' and captures the entire space. This is directly analogous to resolving a vector into its Cartesian components in Euclidean space.",
-        "symmetry_origin": "The Resolution of the Identity arises from the mathematical structure of Hilbert spaces, specifically the property of completeness and the existence of orthonormal bases. In quantum mechanics, this principle is intimately linked to the concept of measurement and the superposition principle. A complete orthonormal basis often corresponds to the set of possible outcomes of a particular observable quantity. The 'resolution' of a state vector into these basis states represents the probabilities (related to the squared magnitudes of the projection coefficients) of obtaining each outcome upon measurement. The sum of these probabilities must be one, reflecting the certainty that one of the outcomes will occur.",
-        "limits_and_boundary": "In finite-dimensional Hilbert spaces (like $\\mathbb{C}^n$), the sum is finite and always equals the identity operator if an orthonormal basis exists. In infinite-dimensional Hilbert spaces, the sum is an infinite series. The convergence of this series is guaranteed by the completeness of the Hilbert space. If the set of basis vectors is not complete, the sum of the projectors will yield an operator that is not the identity, meaning it does not map every vector to itself, and some part of the vector space is 'missed' by the basis.",
+        "equation": "\\sum_i |i\\rangle\\langle i| = \\mathbb{I}",
+        "interpretation": "In a Hilbert space, the completeness relation asserts that a set of orthonormal basis vectors $\\{|i\\rangle\\}$ is sufficient to describe the entire space. The term $|i\\rangle\\langle i|$ is the projection operator onto the one-dimensional subspace spanned by the basis vector $|i\\rangle$. The equation $\\sum_i |i\\rangle\\langle i| = \\mathbb{I}$ states that summing these mutually orthogonal projection operators over the complete basis $i$ yields the identity operator $\\mathbb{I}$. Applying this to an arbitrary vector $|\\psi\\rangle$ gives $|\\psi\\rangle = \\mathbb{I}|\\psi\\rangle = \\sum_i |i\\rangle\\langle i|\\psi\\rangle = \\sum_i c_i |i\\rangle$, which is the expansion of the vector in that basis, where $c_i = \\langle i|\\psi\\rangle$ are the components. For a basis with a continuous index, such as position eigenstates $|x\\rangle$, the sum is replaced by an integral: $\\int |x\\rangle\\langle x| \\, \\mathrm{d}x = \\mathbb{I}$.",
+        "symmetry_origin": "The completeness relation is a fundamental structural property of Hilbert spaces, not originating from a physical symmetry in the sense of Noether's theorem. However, in quantum mechanics, the choice of a specific basis is often related to the symmetries of the system's Hamiltonian. For instance, the eigenstates of the Hamiltonian form a complete basis, and if the Hamiltonian possesses a symmetry, its eigenstates can be chosen to be simultaneous eigenstates of the corresponding symmetry operator.",
+        "limits_and_boundary": "1. In a finite-dimensional Hilbert space (e.g., $\\mathbb{C}^n$), the sum is finite and is guaranteed to equal the identity operator for any complete orthonormal basis.\n2. In an infinite-dimensional Hilbert space, the sum becomes an infinite series. The definition of a Hilbert space (specifically, its completeness as a metric space) ensures this series converges in the strong operator topology to the identity operator.\n3. If the set of basis vectors is not complete, the sum $\\sum_i |i\\rangle\\langle i|$ results in a projection operator onto the subspace spanned by the incomplete set, not the full identity operator.",
         "semantic_variables": {
-            "\\psi_i": {
-                "name": "Basis Vector",
+            "|i\\rangle": {
+                "name": "Basis Ket Vector",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Represents the $i$-th vector in a complete orthonormal basis of the Hilbert space. These vectors are often complex and represent states or directions in the abstract vector space."
+                "unit": "Varies",
+                "description": "The i-th vector in a complete orthonormal basis of the Hilbert space. Its physical units depend on the specific representation."
             },
-            "\\langle\\psi_i|": {
-                "name": "Dual Basis Vector",
+            "\\langle i|": {
+                "name": "Basis Bra Vector",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The conjugate transpose (or adjoint) of the basis vector $|\\psi_i\\rangle$. It is an element of the dual space and is used in conjunction with $|\\psi_i\\rangle$ to form projection operators."
-            },
-            "|\\psi_i\\rangle\\langle\\psi_i|": {
-                "name": "Projection Operator",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The operator that projects any vector in the Hilbert space onto the subspace spanned by the basis vector $|\\psi_i\\rangle$. For an orthonormal basis, this operator is self-adjoint and idempotent."
-            },
-            "\\sum_i": {
-                "name": "Summation Index",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Indicates the sum over all vectors $i$ in the complete orthonormal basis. In infinite-dimensional spaces, this represents an infinite series."
+                "unit": "Varies",
+                "description": "The Hermitian conjugate of the ket vector $|i\\rangle$, an element of the dual Hilbert space."
             },
             "\\mathbb{I}": {
                 "name": "Identity Operator",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The operator that leaves any vector in the Hilbert space unchanged, i.e., $\\mathbb{I}|v\\rangle = |v\\rangle$ for any vector $|v\\rangle$. It signifies that the entire Hilbert space is being accounted for."
+                "type": "operator",
+                "unit": "Dimensionless",
+                "description": "The operator that leaves any vector in the Hilbert space unchanged, satisfying $\\mathbb{I}|\\psi\\rangle = |\\psi\\rangle$ for any vector $|\\psi\\rangle$."
             },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+            "i": {
+                "name": "Basis Index",
+                "type": "index",
+                "unit": "Dimensionless",
+                "description": "An index that enumerates all vectors in the discrete basis set."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Resolution of the Identity is a fundamental principle in Hilbert space theory, particularly crucial in quantum mechanics. It states that for any vector space equipped with an inner product (a Hilbert space), a complete orthonormal set of basis vectors can be used to represent any vector in the space as a sum of its projections onto these basis vectors. This is equivalent to saying that the sum of the projectors onto each basis vector, weighted appropriately, equals the identity operator. This identity operator leaves any vector unchanged, signifying that the entire space has been accounted for by the basis.",
+        "conceptual_definition": "The resolution of the identity, or completeness relation, states that the sum of the projection operators formed from a complete orthonormal basis $\\{|i\\rangle\\}$ of a Hilbert space is equal to the identity operator. This property guarantees that the basis spans the entire space, allowing any vector to be expressed as a linear combination of the basis vectors.",
         "intuitive_summary": "Any vector in a Hilbert space can be perfectly reconstructed by summing its 'shadows' cast onto a complete set of orthogonal directions.",
         "subcomponents": [
             "quantum-state-ket-vector-a501695b",
@@ -1633,31 +1592,57 @@
         "status": "published",
         "parent_formula_id": "rotational-euler-identity-299f94c5",
         "subcomponents": [],
-        "id": "newtons-second-law-for-rotation-89e9c0ba"
+        "id": "newtons-second-law-for-rotation-89e9c0ba",
+        "intuitive_summary": ""
     },
     "einstein-tensor-bf76061d": {
         "title": "Einstein Tensor",
         "description": "The Einstein Tensor quantifies the curvature of spacetime, representing the geometric side of Einstein's Field Equations.",
-        "conceptual_definition": "The Einstein Tensor, $G_{\\mu u}$, is a rank-2 symmetric tensor derived from the Ricci tensor ($R_{\\mu u}$) and the scalar curvature ( $R$). It encapsulates the intrinsic curvature of spacetime, providing a mathematical description of how spacetime is warped by the presence of mass and energy. In the Einstein Field Equations, it directly relates this curvature to the stress-energy-momentum tensor.",
-        "interpretation": "Physically, the Einstein Tensor describes the local curvature of spacetime at a given point, indicating how much spacetime deviates from being flat. Its components determine the gravitational field, dictating the paths of particles and light. A non-zero Einstein Tensor signifies the presence of gravity, with its magnitude and sign reflecting the strength and nature of the gravitational field.",
-        "limits_and_boundary": "In regions of flat spacetime (e.g., far from massive objects), the Einstein Tensor approaches zero, indicating no curvature. In the weak-field limit, it simplifies to terms related to Newtonian gravity. It is defined for any Lorentzian manifold and its components depend on the chosen coordinate system, transforming appropriately under coordinate changes.",
-        "symmetry_origin": "The Einstein Tensor is constructed to be divergence-free ($\\nabla^{\\mu} G_{\\mu u} = 0$), reflecting the local conservation of energy and momentum, a consequence of diffeomorphism invariance (general covariance) in General Relativity. Its symmetry ($G_{\\mu u} = G_{ u\\mu}$) arises from the symmetry of the Ricci tensor and the metric tensor.",
+        "conceptual_definition": "The Einstein Tensor, $G_{\\mu\\nu}$, is a rank-2 symmetric tensor derived from the Ricci tensor ($R_{\\mu\\nu}$), the scalar curvature ($R$), and the metric tensor ($g_{\\mu\\nu}$). It is constructed to have zero covariant divergence and describes the curvature of spacetime in a way that is directly proportional to the stress-energy tensor in Einstein's field equations.",
+        "interpretation": "The Einstein tensor $G_{\\mu\\nu}$ is a mathematical object in general relativity that describes the curvature of a pseudo-Riemannian manifold. Its defining property is that its covariant divergence is zero, $\\nabla^\\mu G_{\\mu\\nu} = 0$, a result known as the contracted Bianchi identity. This mathematical property is crucial because it mirrors the physical principle of local conservation of energy and momentum, for which the divergence of the stress-energy tensor $T_{\\mu\\nu}$ is also zero. This parallel structure allows for the formulation of the Einstein field equations, $G_{\\mu\\nu} \\propto T_{\\mu\\nu}$, which equate local spacetime curvature with the local density and flux of energy and momentum.",
+        "limits_and_boundary": "1. In flat Minkowski spacetime, the Riemann curvature tensor is zero, which implies the Ricci tensor and scalar curvature are also zero. Consequently, the Einstein tensor is identically zero, $G_{\\mu\\nu} = 0$.\n2. In a vacuum region of spacetime ($T_{\\mu\\nu}=0$), the Einstein field equations reduce to $G_{\\mu\\nu} = 0$. In 4 dimensions, this is equivalent to the vacuum field equations $R_{\\mu\\nu} = 0$.\n3. In 2 spacetime dimensions, the Einstein tensor is identically zero for any metric. In 3 dimensions, $G_{\\mu\\nu}=0$ is equivalent to the spacetime being flat. Therefore, gravity as a dynamic field described by the Einstein equations is non-trivial only in 4 or more dimensions.",
+        "symmetry_origin": "The Einstein tensor is symmetric, $G_{\\mu\\nu} = G_{\\nu\\mu}$, because both the Ricci tensor and the metric tensor are symmetric. Its most crucial property, the vanishing of its covariant divergence ($\\nabla^\\mu G_{\\mu\\nu} = 0$), is a direct mathematical consequence of the contracted Bianchi identity. In the context of general relativity, this property is the geometric counterpart to the local conservation of energy and momentum, which is itself a consequence of the theory's diffeomorphism invariance (general covariance), a fundamental gauge symmetry.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity",
         "semantic_variables": {
             "G_{\\mu\\nu}": {
-                "name": "G_{\\mu\\nu}",
+                "name": "Einstein Tensor",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The Einstein Tensor, a rank-2 symmetric tensor representing the curvature of spacetime. Its components have units of inverse length squared (m^-2)."
+                "unit": "m⁻²",
+                "description": "A rank-2 symmetric tensor that describes the curvature of spacetime, constructed to be divergence-free."
+            },
+            "R_{\\mu\\nu}": {
+                "name": "Ricci Curvature Tensor",
+                "type": "variable",
+                "unit": "m⁻²",
+                "description": "A rank-2 symmetric tensor obtained by contracting the Riemann curvature tensor, representing how the volume of a geodesic ball deviates from that of a standard ball in Euclidean space."
+            },
+            "R": {
+                "name": "Scalar Curvature (Ricci Scalar)",
+                "type": "variable",
+                "unit": "m⁻²",
+                "description": "The trace of the Ricci tensor with respect to the metric ($R = g^{\\mu\\nu}R_{\\mu\\nu}$), representing the intrinsic curvature of the manifold at a point."
+            },
+            "g_{\\mu\\nu}": {
+                "name": "Metric Tensor",
+                "type": "variable",
+                "unit": "Dimensionless",
+                "description": "A rank-2 symmetric tensor that defines the geometry of spacetime, including distances, angles, and the causal structure."
+            },
+            "\\mu, \\nu": {
+                "name": "Spacetime Indices",
+                "type": "index",
+                "unit": "Dimensionless",
+                "description": "Indices ranging from 0 to 3, representing the time and three spatial dimensions in a 4D spacetime."
             }
         },
-        "equation": "G_{μν}",
-        "status": "published",
+        "equation": "G_{\\mu\\nu} = R_{\\mu\\nu} - \\frac{1}{2} R g_{\\mu\\nu}",
+        "status": "platinum",
         "parent_formula_id": "einstein-field-equations-simplified",
         "subcomponents": [],
-        "id": "einstein-tensor-bf76061d"
+        "id": "einstein-tensor-bf76061d",
+        "intuitive_summary": "The Einstein Tensor quantifies how the geometry of spacetime is curved at a point."
     },
     "wimp-freeze-out-temperature-d3e5d38c": {
         "title": "WIMP Freeze-out Temperature",
@@ -1681,7 +1666,8 @@
         "status": "published",
         "parent_formula_id": "standard-model-link-733c6c78",
         "subcomponents": [],
-        "id": "wimp-freeze-out-temperature-d3e5d38c"
+        "id": "wimp-freeze-out-temperature-d3e5d38c",
+        "intuitive_summary": ""
     },
     "cubic-self-interaction-lagrangian-density-9569a762": {
         "title": "Cubic Self-Interaction Lagrangian Density",
@@ -1717,7 +1703,8 @@
         "status": "published",
         "parent_formula_id": "three-boson-interaction-vertex-845764b4",
         "subcomponents": [],
-        "id": "cubic-self-interaction-lagrangian-density-9569a762"
+        "id": "cubic-self-interaction-lagrangian-density-9569a762",
+        "intuitive_summary": ""
     },
     "magnetic-field-vector-component-889416bc": {
         "title": "Magnetic Field Vector Component",
@@ -1741,7 +1728,8 @@
         "status": "published",
         "parent_formula_id": "maxwell-stress-tensor",
         "subcomponents": [],
-        "id": "magnetic-field-vector-component-889416bc"
+        "id": "magnetic-field-vector-component-889416bc",
+        "intuitive_summary": ""
     },
     "spherical-surface-area-element-fb1f8b30": {
         "title": "Spherical Surface Area Element",
@@ -1771,7 +1759,8 @@
         "status": "published",
         "parent_formula_id": "luminosity-origin-84031dbb",
         "subcomponents": [],
-        "id": "spherical-surface-area-element-fb1f8b30"
+        "id": "spherical-surface-area-element-fb1f8b30",
+        "intuitive_summary": ""
     },
     "condition-for-diamagnetic-permeability-067938f8": {
         "title": "Condition for Diamagnetic Permeability",
@@ -1801,7 +1790,8 @@
         "status": "published",
         "parent_formula_id": "permeability-892ad545",
         "subcomponents": [],
-        "id": "condition-for-diamagnetic-permeability-067938f8"
+        "id": "condition-for-diamagnetic-permeability-067938f8",
+        "intuitive_summary": ""
     },
     "poisson-bracket-vanishing-condition-a96677f1": {
         "title": "Poisson Bracket Vanishing Condition",
@@ -1843,7 +1833,8 @@
         "status": "published",
         "parent_formula_id": "stability-guard-df7dc51e",
         "subcomponents": [],
-        "id": "poisson-bracket-vanishing-condition-a96677f1"
+        "id": "poisson-bracket-vanishing-condition-a96677f1",
+        "intuitive_summary": ""
     },
     "inverse-cube-root-of-mass-number-7c4a45e2": {
         "title": "Inverse Cube Root of Mass Number",
@@ -1867,7 +1858,8 @@
         "status": "published",
         "parent_formula_id": "liquid-drop-model-binding-energy-1fa2abb2",
         "subcomponents": [],
-        "id": "inverse-cube-root-of-mass-number-7c4a45e2"
+        "id": "inverse-cube-root-of-mass-number-7c4a45e2",
+        "intuitive_summary": ""
     },
     "bell-inequality-upper-bound-component-67869202": {
         "title": "Bell Inequality Upper Bound Component",
@@ -1891,7 +1883,8 @@
         "status": "published",
         "parent_formula_id": "observer-drift-463319b8",
         "subcomponents": [],
-        "id": "bell-inequality-upper-bound-component-67869202"
+        "id": "bell-inequality-upper-bound-component-67869202",
+        "intuitive_summary": ""
     },
     "stationary-phase-space-density-condition-a19744aa": {
         "title": "Stationary Phase Space Density Condition",
@@ -1921,7 +1914,8 @@
         "status": "published",
         "parent_formula_id": "phase-space-liouville-equation-e679c56f",
         "subcomponents": [],
-        "id": "stationary-phase-space-density-condition-a19744aa"
+        "id": "stationary-phase-space-density-condition-a19744aa",
+        "intuitive_summary": ""
     },
     "reciprocal-of-second-mass-component-744f9f92": {
         "title": "Reciprocal of Second Mass Component",
@@ -1945,7 +1939,8 @@
         "status": "published",
         "parent_formula_id": "mass-goes-to-infinity",
         "subcomponents": [],
-        "id": "reciprocal-of-second-mass-component-744f9f92"
+        "id": "reciprocal-of-second-mass-component-744f9f92",
+        "intuitive_summary": ""
     },
     "observed-frequency-at-zero-relative-velocity-49be2d72": {
         "title": "Observed Frequency at Zero Relative Velocity",
@@ -1975,7 +1970,8 @@
         "status": "published",
         "parent_formula_id": "transverse-doppler-identity-1-37d9b06b-b87e8ac7",
         "subcomponents": [],
-        "id": "observed-frequency-at-zero-relative-velocity-49be2d72"
+        "id": "observed-frequency-at-zero-relative-velocity-49be2d72",
+        "intuitive_summary": ""
     },
     "composite-system-hilbert-space-963581ee": {
         "title": "Composite System Hilbert Space",
@@ -2017,7 +2013,8 @@
         "status": "published",
         "parent_formula_id": "state-space-complexity-61524dcc",
         "subcomponents": [],
-        "id": "composite-system-hilbert-space-963581ee"
+        "id": "composite-system-hilbert-space-963581ee",
+        "intuitive_summary": ""
     },
     "newtons-second-law-of-motion-da1984bf": {
         "title": "Newton's Second Law of Motion",
@@ -2053,7 +2050,8 @@
         "status": "published",
         "parent_formula_id": "massless-limit",
         "subcomponents": [],
-        "id": "newtons-second-law-of-motion-da1984bf"
+        "id": "newtons-second-law-of-motion-da1984bf",
+        "intuitive_summary": ""
     },
     "differential-operator-with-respect-to-x-624febb9": {
         "title": "Differential Operator with Respect to x",
@@ -2077,7 +2075,8 @@
         "status": "published",
         "parent_formula_id": "basis-creation-77d39539",
         "subcomponents": [],
-        "id": "differential-operator-with-respect-to-x-624febb9"
+        "id": "differential-operator-with-respect-to-x-624febb9",
+        "intuitive_summary": ""
     },
     "minimum-spatial-dimensionality-condition-67c9067b": {
         "title": "Minimum Spatial Dimensionality Condition",
@@ -2101,7 +2100,8 @@
         "status": "published",
         "parent_formula_id": "dimensionality-constraint",
         "subcomponents": [],
-        "id": "minimum-spatial-dimensionality-condition-67c9067b"
+        "id": "minimum-spatial-dimensionality-condition-67c9067b",
+        "intuitive_summary": ""
     },
     "electromagnetic-field-bianchi-identity-b50f5777": {
         "title": "Electromagnetic Field Bianchi Identity",
@@ -2143,7 +2143,8 @@
         "status": "published",
         "parent_formula_id": "topological-bound-e644aff8",
         "subcomponents": [],
-        "id": "electromagnetic-field-bianchi-identity-b50f5777"
+        "id": "electromagnetic-field-bianchi-identity-b50f5777",
+        "intuitive_summary": ""
     },
     "current-photon-mass-upper-limit-d4cd6465": {
         "title": "Current Photon Mass Upper Limit",
@@ -2167,7 +2168,8 @@
         "status": "published",
         "parent_formula_id": "speed-color-link-83050657",
         "subcomponents": [],
-        "id": "current-photon-mass-upper-limit-d4cd6465"
+        "id": "current-photon-mass-upper-limit-d4cd6465",
+        "intuitive_summary": ""
     },
     "identity-transformation-matrix-element-b6ce0901": {
         "title": "Identity Transformation Matrix Element",
@@ -2197,7 +2199,8 @@
         "status": "published",
         "parent_formula_id": "orthogonality-2b17df88",
         "subcomponents": [],
-        "id": "identity-transformation-matrix-element-b6ce0901"
+        "id": "identity-transformation-matrix-element-b6ce0901",
+        "intuitive_summary": ""
     },
     "commutativity-of-generic-indices-77b06651": {
         "title": "Commutativity of Generic Indices",
@@ -2227,7 +2230,8 @@
         "status": "published",
         "parent_formula_id": "kinetic-energy-tensor",
         "subcomponents": [],
-        "id": "commutativity-of-generic-indices-77b06651"
+        "id": "commutativity-of-generic-indices-77b06651",
+        "intuitive_summary": ""
     },
     "redshift-scaled-matter-radiation-density-ratio-67057702": {
         "title": "Redshift-Scaled Matter-Radiation Density Ratio",
@@ -2263,7 +2267,8 @@
         "status": "published",
         "parent_formula_id": "causal-imprint-495e51c8",
         "subcomponents": [],
-        "id": "redshift-scaled-matter-radiation-density-ratio-67057702"
+        "id": "redshift-scaled-matter-radiation-density-ratio-67057702",
+        "intuitive_summary": ""
     },
     "quantum-phase-factor-of-action-variation-770a539f": {
         "title": "Quantum Phase Factor of Action Variation",
@@ -2299,54 +2304,70 @@
         "status": "published",
         "parent_formula_id": "path-integral-partition-function",
         "subcomponents": [],
-        "id": "quantum-phase-factor-of-action-variation-770a539f"
+        "id": "quantum-phase-factor-of-action-variation-770a539f",
+        "intuitive_summary": ""
     },
     "base-ten-to-the-power-of-one-fb74ff69": {
         "title": "Base Ten to the Power of One",
         "description": "This mathematical expression evaluates to the integer value ten, representing a fundamental numerical constant.",
-        "conceptual_definition": "In mathematics, $10^1$ denotes the base number 10 raised to the power of 1. This operation results in the value of the base itself, which is 10. In physics, such numerical constants often appear as dimensionless scaling factors or coefficients within larger equations, representing specific magnitudes or ratios.",
-        "interpretation": "The expression $10^1$ fundamentally represents the integer 10. As a subcomponent within a physical formula, it would typically act as a dimensionless constant, scaling factor, or a specific numerical coefficient. Its presence implies a direct multiplication by the value ten, influencing the overall magnitude of the physical quantity being calculated without introducing new physical dimensions.",
-        "limits_and_boundary": "As a fixed numerical constant, $10^1$ does not possess physical limits, asymptotic behaviors, or boundary conditions. Its value is precisely and universally defined as 10.",
-        "symmetry_origin": "This mathematical expression, representing a specific numerical value, does not directly embody any physical symmetries or conservation laws. It is a fundamental arithmetic operation resulting in a constant.",
+        "conceptual_definition": "The mathematical expression $10^1$ represents the base number 10 raised to the power of 1, which evaluates to the integer 10. In physics, this value often appears as a dimensionless numerical coefficient or scaling factor.",
+        "interpretation": "The expression $10^1$ is an arithmetic operation that evaluates to the integer 10. When it appears within a physical equation, it serves as a dimensionless constant, acting as a scaling factor or a specific numerical coefficient. Its role is to multiply a term by ten, thereby adjusting the magnitude of the calculated physical quantity without altering its physical dimensions or units.",
+        "limits_and_boundary": "1. The value is a fixed constant, 10, and does not have any physical limits or boundary conditions.",
+        "symmetry_origin": "As a fixed numerical constant, this expression does not originate from or represent any physical symmetries or conservation laws. It is a purely mathematical value.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "numerical-expressions",
-        "semantic_variables": {},
+        "semantic_variables": {
+            "10": {
+                "name": "Base",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The base of the exponentiation, representing the number ten."
+            },
+            "1": {
+                "name": "Exponent",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The power to which the base is raised."
+            }
+        },
         "equation": "10^1",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "efficiency-metric-3fe39304",
         "subcomponents": [],
-        "id": "base-ten-to-the-power-of-one-fb74ff69"
+        "id": "base-ten-to-the-power-of-one-fb74ff69",
+        "intuitive_summary": "This expression simply represents the number ten."
     },
     "source-position-at-retarded-time-d38c6f4d": {
         "title": "Source Position at Retarded Time",
         "description": "Represents the position vector of a field's source at the specific retarded time $t_{ret}$.",
-        "conceptual_definition": "The retarded time $t_{ret}$ is the time at which a signal (e.g., electromagnetic wave) must have been emitted from the source to reach an observer at position $\\mathbf{r} at the current observation time$t$. Therefore, \\mathbf{r} _{source}(t_{ret})$ denotes the exact location of the source particle or charge distribution at that past emission time, accounting for the finite propagation speed of the field.",
-        "interpretation": "This term is fundamental in relativistic field theories, particularly electrodynamics, where it ensures causality. It signifies that the observed field at a given time and location depends on the state of the source at an earlier time, specifically the time when the information (field disturbance) left the source. The difference between the observation time $t$ and the retarded time $t_{ret}$ is precisely the time it takes for the signal to travel from the source to the observer, which is $R/c$, where $R$ is the distance and $c$ is the speed of light.",
-        "limits_and_boundary": "The retarded time $t_{ret}$ must always be less than or equal to the observation time $t$ ($t_{ret} \\le t$). The source position $\\mathbf{r}_{source}(t_{ret})$ must be a physically valid location at the retarded time. The concept is valid as long as the source exists and emits fields.",
-        "symmetry_origin": "The concept of retarded time and thus $\\mathbf{r}_{source}(t_{ret})$ arises directly from the principle of causality and the finite, constant speed of light, which are cornerstones of special relativity and Lorentz invariance. It ensures that effects cannot precede their causes.",
+        "conceptual_definition": "The position vector of a field's source, $\\mathbf{r}_{\\mathrm{s}}$, evaluated at the retarded time, $t_{\\mathrm{r}}$. The retarded time is the past moment when a signal must have been emitted from the source to reach a specific observer at the present time, accounting for the finite speed of light.",
+        "interpretation": "This term is a cornerstone of relativistic field theories like electrodynamics, enforcing the principle of causality. The field experienced by an observer at position $\\mathbf{r}$ and time $t$ is not determined by the source's current state, but by its state at an earlier, 'retarded' time $t_{\\mathrm{r}}$. This time delay, $t - t_{\\mathrm{r}} = |\\mathbf{r} - \\mathbf{r}_{\\mathrm{s}}(t_{\\mathrm{r}})|/c$, is exactly the time required for the field's influence to propagate from the source's past position $\\mathbf{r}_{\\mathrm{s}}(t_{\\mathrm{r}})$ to the observer's position $\\mathbf{r}$ at the speed of light $c$.",
+        "limits_and_boundary": "1. Non-relativistic limit ($c \\to \\infty$): In the limit of infinite propagation speed, the time delay vanishes, and the retarded time becomes equal to the observation time ($t_{\\mathrm{r}} \\to t$). The source position becomes its instantaneous position, $\\mathbf{r}_{\\mathrm{s}}(t)$.\n2. Causality: The retarded time must always be less than or equal to the observation time, $t_{\\mathrm{r}} \\le t$, ensuring that the cause precedes the effect.",
+        "symmetry_origin": "The necessity of evaluating the source position at a retarded time is a direct consequence of Lorentz invariance, a fundamental spacetime symmetry of special relativity. This symmetry establishes a finite, constant speed of light, which in turn enforces causality, ensuring that effects (observed fields) cannot precede their causes (source emissions).",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "electrodynamics-retarded-potentials",
         "semantic_variables": {
-            "r_source": {
-                "name": "r_source",
+            "\\mathbf{r}_{\\mathrm{s}}": {
+                "name": "Source Position Vector",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Position vector of the field source, measured in meters (m). It describes the spatial coordinates of the entity generating the field."
+                "unit": "m",
+                "description": "The position vector describing the location of the field's source as a function of time."
             },
-            "t_ret": {
-                "name": "t_ret",
+            "t_{\\mathrm{r}}": {
+                "name": "Retarded Time",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Retarded time, measured in seconds (s). This is the specific past time at which a signal was emitted from the source to reach the observer at the current observation time."
+                "unit": "s",
+                "description": "The time at which a signal was emitted from the source to reach the observer at the current observation time. It is implicitly defined by $t_{\\mathrm{r}} = t - |\\mathbf{r} - \\mathbf{r}_{\\mathrm{s}}(t_{\\mathrm{r}})|/c$."
             }
         },
-        "equation": "\\mathbf{r}_{source}(t_{ret})",
-        "status": "published",
+        "equation": "\\mathbf{r}_{\\mathrm{s}}(t_{\\mathrm{r}})",
+        "status": "platinum",
         "parent_formula_id": "geometric-origin-04440e47",
         "subcomponents": [],
-        "id": "source-position-at-retarded-time-d38c6f4d"
+        "id": "source-position-at-retarded-time-d38c6f4d",
+        "intuitive_summary": "This term tells you where the source of a field was in the past when it emitted the signal you are just now observing."
     },
     "interaction-hamiltonian-at-zero-time-c25b1908": {
         "title": "Interaction Hamiltonian at Zero Time",
@@ -2382,6 +2403,7 @@
         "status": "published",
         "parent_formula_id": "h-i-t-cadf5ba6",
         "subcomponents": [],
-        "id": "interaction-hamiltonian-at-zero-time-c25b1908"
+        "id": "interaction-hamiltonian-at-zero-time-c25b1908",
+        "intuitive_summary": ""
     }
 }

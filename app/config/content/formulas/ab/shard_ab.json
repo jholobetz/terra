@@ -144,10 +144,10 @@
         ]
     },
     "restoring-force-e50eafbb": {
-        "title": "Restoring Force",
-        "equation": "v_{conv}^2 \\approx g H_p (\\nabla - \\nabla_{ad})",
+        "title": "Convective Velocity (Mixing-Length Theory)",
+        "equation": "v_{\\mathrm{conv}}^2 \\approx g H_p (\\nabla_T - \\nabla_{\\mathrm{ad}})",
         "semantic_variables": {
-            "v_{conv}": {
+            "v_{\\mathrm{conv}}": {
                 "name": "Convective Velocity",
                 "type": "variable",
                 "unit": "m/s",
@@ -157,56 +157,32 @@
                 "name": "Acceleration due to Gravity",
                 "type": "constant",
                 "unit": "m/s^2",
-                "description": "The constant acceleration experienced by objects due to gravity. For Earth, this is approximately 9.81 m/s^2."
+                "description": "The acceleration experienced by an object due to the gravitational force of a massive body, such as a planet or star."
             },
             "H_p": {
-                "name": "Characteristic Height",
+                "name": "Pressure Scale Height",
                 "type": "variable",
                 "unit": "m",
-                "description": "A characteristic vertical length scale over which convective processes operate, such as the depth of a mixed layer or atmospheric scale height."
+                "description": "A characteristic vertical length scale over which atmospheric pressure decreases by a factor of e, often used as the mixing length in convection models."
             },
-            "\\nabla": {
-                "name": "Environmental Lapse Rate",
-                "type": "operator",
+            "\\nabla_T": {
+                "name": "Environmental Temperature Lapse Rate",
+                "type": "variable",
                 "unit": "K/m",
-                "description": "The rate at which the temperature of the surrounding fluid (environment) changes with height."
+                "description": "The rate at which the actual temperature of the surrounding fluid (environment) decreases with an increase in altitude, defined as $-\\mathrm{d}T/\\mathrm{d}z$."
             },
-            "\\nabla_{ad}": {
+            "\\nabla_{\\mathrm{ad}}": {
                 "name": "Adiabatic Lapse Rate",
-                "type": "operator",
+                "type": "variable",
                 "unit": "K/m",
-                "description": "The rate at which a parcel of fluid would cool if it were lifted adiabatically without any heat exchange with its surroundings."
-            },
-            "v": {
-                "name": "Speed / Velocity Magnitude",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The rate of change of position with respect to time, representing the speed of a particle."
-            },
-            "\\approx": {
-                "name": "\\approx Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "H": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "A/m",
-                "description": "The auxiliary magnetic field vector representing magnetization effects in media."
-            },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
+                "description": "The rate at which the temperature of a parcel of fluid would decrease as it expands adiabatically during a vertical displacement."
             }
         },
-        "interpretation": "The equation v_{conv}^2 is proportional to g H_p ( \n\\nabla - $\\nabla_{ad}$) . Here, v_{conv} represents the velocity associated with convection, often termed the convective velocity. The term g is the acceleration due to gravity (approximately 9.81 m/s² on Earth), which drives the vertical motion. H_p is a characteristic height, such as the depth of a mixed layer or the scale height of an atmosphere, over which the convective process occurs. The core of the instability is captured by the term ( \n\\nabla - $\\nabla_{ad}$) . \n\\nabla is the environmental lapse rate, describing how the temperature of the surrounding atmosphere or fluid changes with height. $\\nabla_{ad}$ is the adiabatic lapse rate, the rate at which a parcel of fluid would cool if it were lifted adiabatically without any heat exchange. The difference ( \n\\nabla - $\\nabla_{ad}$) is positive when the environment is unstable to convection (i.e., the surrounding fluid becomes warmer with height faster than an adiabatically rising parcel would cool), zero when the environment is neutrally stable, and negative when it is stable. Thus, a larger positive difference ( \n\\nabla - $\\nabla_{ad}$) leads to a larger v_{conv}^2 , indicating stronger convective motions.",
-        "symmetry_origin": "This formula originates from the Boussinesq approximation in fluid dynamics, which simplifies the buoyancy term in the momentum equation. It is derived by considering the forces acting on a fluid parcel displaced vertically within a stratified medium. The imbalance between the parcel's buoyancy and its weight, driven by differences in density due to temperature variations, creates an acceleration that results in convective motion. The formula assumes a simplified, often hydrostatic, vertical stratification.",
-        "limits_and_boundary": "As the instability term ( \n\\nabla - $\\nabla_{ad}$) approaches zero (i.e., the fluid becomes neutrally stable or stable), the convective velocity v_{conv} approaches zero. This means that if the environmental lapse rate equals the adiabatic lapse rate, or is less than it (stable stratification), there will be no significant convective motion. Conversely, as the instability ( \n\\nabla - $\\nabla_{ad}$) increases, the convective velocity increases. As H_p approaches zero, v_{conv} also approaches zero, indicating that convection requires a significant vertical extent to develop.",
+        "interpretation": "The equation $v_{\\mathrm{conv}}^2 \\approx g H_p (\\nabla_T - \\nabla_{\\mathrm{ad}})$ is a cornerstone of mixing-length theory for convection. Here, $v_{\\mathrm{conv}}$ represents the characteristic velocity of convective fluid parcels. The term $g$ is the acceleration due to gravity, which provides the driving force for buoyancy. $H_p$ is a characteristic vertical length scale, such as the pressure scale height or the depth of the convective layer. The critical term $(\\nabla_T - \\nabla_{\\mathrm{ad}})$ quantifies the thermal instability of the fluid. $\\nabla_T = -\\mathrm{d}T/\\mathrm{d}z$ is the environmental (actual) temperature lapse rate, describing how the background temperature changes with height $z$. $\\nabla_{\\mathrm{ad}}$ is the adiabatic lapse rate, the rate at which a vertically displaced fluid parcel would cool adiabatically. When $\\nabla_T > \\nabla_{\\mathrm{ad}}$, a rising parcel becomes warmer and less dense than its surroundings, leading to a net upward buoyant force that accelerates it, driving convection. A larger positive difference signifies stronger instability and thus a larger convective velocity.",
+        "symmetry_origin": "This formula is derived from the momentum equation for a fluid under the Boussinesq approximation, which simplifies the buoyancy term by assuming density variations are small except when multiplied by gravity. It arises from considering the net force (buoyancy minus weight) on a fluid parcel displaced from its equilibrium position in a stratified medium. The underlying symmetry is the translational invariance of the physical laws in a uniform gravitational field, though the stratification itself breaks vertical translational symmetry.",
+        "limits_and_boundary": "1. As the instability term $(\\nabla_T - \\nabla_{\\mathrm{ad}})$ approaches zero from above (neutral stability), the convective velocity $v_{\\mathrm{conv}}$ approaches zero. For stable stratification where $(\\nabla_T - \\nabla_{\\mathrm{ad}}) \\le 0$, this model predicts no convection.\n2. As the characteristic height $H_p$ approaches zero, $v_{\\mathrm{conv}}$ also approaches zero, indicating that convection requires a finite vertical extent to develop significant velocities.\n3. The formula is an approximation from mixing-length theory and neglects factors such as viscosity, radiative damping, and the detailed geometry of convective cells.",
         "status": "platinum",
-        "conceptual_definition": "The formula describes the square of the convective velocity, denoted as v_{conv}^2 , in a fluid system where buoyancy forces are significant. It relates this velocity to the gravitational acceleration g , a characteristic height H_p , and the difference between the environmental lapse rate \n\\nabla and the adiabatic lapse rate $\\nabla_{ad}$ . This difference, ( \n\\nabla - $\\nabla_{ad}$) , is crucial as it determines the stability of the fluid column and thus the magnitude of the convective motions.",
+        "conceptual_definition": "This formula provides an estimate for the square of the characteristic convective velocity in a fluid, driven by buoyancy. It relates the velocity to the gravitational acceleration $g$, a characteristic vertical scale height $H_p$, and the superadiabaticity, which is the difference between the environmental temperature lapse rate $\\nabla_T$ and the adiabatic lapse rate $\\nabla_{\\mathrm{ad}}$.",
         "intuitive_summary": "The speed at which a fluid parcel convects is proportional to the square root of how unstable the surrounding environment is and the height over which that instability acts."
     },
     "precision-engineering-9653255f": {
@@ -340,107 +316,47 @@
         ]
     },
     "dimensional-reduction-42f3bbfb": {
-        "title": "Dimensional Reduction",
-        "equation": "U = \\frac{n}{2} N k_B T \\quad (\\text{Equipartition})",
+        "title": "Equipartition Theorem",
+        "equation": "U = \\frac{1}{2} n N k_B T",
         "semantic_variables": {
             "U": {
                 "name": "Internal Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total energy contained within a thermodynamic system due to the motion of its constituent particles. This includes kinetic and potential energies of atoms and molecules."
+                "description": "The total energy contained within a thermodynamic system, representing the sum of all kinetic and potential energies of its constituent particles."
             },
             "n": {
                 "name": "Degrees of Freedom per Particle",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The number of independent ways a particle can store energy. This can include translational, rotational, and vibrational modes. For example, a monatomic gas atom has 3 translational degrees of freedom."
+                "description": "The number of independent quadratic terms in the energy expression for a single particle, corresponding to ways it can store energy (e.g., translational, rotational, vibrational)."
             },
             "N": {
                 "name": "Number of Particles",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The total number of individual particles (atoms or molecules) in the system."
+                "description": "The total count of individual particles (atoms or molecules) composing the system."
             },
             "k_B": {
                 "name": "Boltzmann Constant",
                 "type": "constant",
                 "unit": "J/K",
-                "description": "A fundamental physical constant relating the average kinetic energy of particles in a gas with the thermodynamic temperature of the gas. Its value is approximately $1.380649 imes 10^{-23}$ J/K."
+                "description": "A fundamental physical constant relating the average kinetic energy of particles in a gas with the thermodynamic temperature. Its value is approximately $1.380649 \\times 10^{-23}$ J/K."
             },
             "T": {
                 "name": "Absolute Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The thermodynamic temperature of the system, measured on an absolute scale (Kelvin). It is a measure of the average kinetic energy of the particles in the system."
-            },
-            "k": {
-                "name": "Spring Stiffness (Hooke's Constant)",
-                "type": "variable",
-                "unit": "N/m",
-                "description": "The rigidity of a spring or elastic medium, defining restoring force per unit of displacement: $F = -kx$."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "q": {
-                "name": "Electric Charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "A physical property of matter that causes it to experience a force when placed in an electromagnetic field."
-            },
-            "u": {
-                "name": "Velocity Component / Specific Internal Energy",
-                "type": "variable",
-                "unit": "m/s or J/kg",
-                "description": "Speed along a particular coordinate direction, or internal energy per unit mass."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
+                "description": "The thermodynamic temperature of the system, a measure of the average kinetic energy of the particles, measured on an absolute scale (Kelvin)."
             }
         },
-        "interpretation": "The internal energy $U$ of a system in thermal equilibrium is directly proportional to the number of particles $N$, the number of degrees of freedom per particle $n$, and the absolute temperature $T$. The constant of proportionality is $\\frac{1}{2}$ k_B$, where$k_B$is the Boltzmann constant. The term$n$denotes the number of independent ways a particle can possess kinetic or potential energy. For instance, a monatomic gas atom has 3 translational degrees of freedom (motion along x, y, and z axes), so$n=3$. A diatomic molecule at moderate temperatures has 3 translational and 2 rotational degrees of freedom (rotation about two axes), so$n=5$, but no vibrational modes. At higher temperatures, vibrational modes can also contribute. The$\\frac{1}{2}$ factor arises from the averaging over quadratic energy terms in the Hamiltonian, which describe these degrees of freedom.",
-        "symmetry_origin": "The Equipartition Theorem is a direct consequence of the principles of statistical mechanics and the Boltzmann distribution. It arises from the assumption of a system in thermal equilibrium with a heat bath at temperature $T$. In such a system, the probability of a given microstate is proportional to $e^{-E/k_B T}$, where $E$ is the energy of the microstate. For systems where the energy depends quadratically on position or momentum (e.g., $p^2/2m$ or $\\frac{1}{2}$ kx^2$), averaging the energy over all possible states yields the$\\frac{1}{2}$k_B T$ contribution per degree of freedom. This theorem is fundamentally linked to the statistical distribution of energy among the accessible states of a system.",
-        "limits_and_boundary": "As the temperature $T$ approaches absolute zero (0 K), the internal energy $U$ also approaches zero, indicating that at zero temperature, particles have minimal thermal energy and do not contribute to the internal energy through thermal fluctuations. As the number of particles $N$ or the number of degrees of freedom $n$ increases, the internal energy $U$ increases proportionally, assuming the temperature remains constant. This formula is most accurate for systems with classical degrees of freedom and breaks down at very low temperatures where quantum effects become significant, leading to the 'freezing out' of certain degrees of freedom.",
+        "interpretation": "The internal energy $U$ of a system in thermal equilibrium is directly proportional to the total number of degrees of freedom and the absolute temperature $T$. The term $n$ is the number of quadratic degrees of freedom per particle (e.g., kinetic energy terms like $\\frac{1}{2}mv_x^2$ or potential energy terms like $\\frac{1}{2}kx^2$). $N$ is the total number of particles in the system, so $nN$ is the total number of degrees of freedom. $k_B$ is the Boltzmann constant, which acts as the constant of proportionality. For example, a monatomic ideal gas has 3 translational degrees of freedom per atom ($n=3$), so its total internal energy is $U = \\frac{3}{2} N k_B T$. A diatomic molecule at intermediate temperatures has 3 translational and 2 rotational degrees of freedom ($n=5$), yielding $U = \\frac{5}{2} N k_B T$.",
+        "symmetry_origin": "The equipartition theorem is a direct consequence of classical statistical mechanics, specifically arising from averaging over the phase space of a system described by a Hamiltonian, weighted by the Boltzmann factor $e^{-E/(k_B T)}$. It applies to any degree of freedom that appears as a quadratic term in the system's total energy (Hamiltonian). The theorem's validity relies on the ergodicity of the system, meaning the system explores all accessible microstates over time, a concept deeply tied to the statistical nature of thermodynamics.",
+        "limits_and_boundary": "1. In the classical limit ($\\hbar \\to 0$), the theorem holds for any quadratic degree of freedom. It is highly accurate for gases at high temperatures.\n2. The theorem fails at low temperatures where quantum effects become dominant. Energy levels become quantized, and if the thermal energy $k_B T$ is much smaller than the energy gap to the first excited state ($\\Delta E$), that degree of freedom is 'frozen out' and does not contribute its classical share of energy.\n3. As temperature approaches absolute zero ($T \\to 0$), the internal energy $U$ approaches the ground-state energy of the system, which is not necessarily zero but is independent of temperature. The equipartition contribution to energy vanishes.",
         "status": "platinum",
         "latex": "U = \\frac{n}{2} N k_B T \\quad (\\text{Equipartition})",
-        "conceptual_definition": "The formula provided, $U = \\frac{n}{2}$ N k_B T $, is the Equipartition Theorem, which quantifies the average energy per degree of freedom for a system in thermal equilibrium. It states that each quadratic degree of freedom contributes \\frac{1}{2}$ k_B T $to$ the total internal energy of a system, where$N is the number of particles and$ n $represents the number of degrees of freedom per particle$.",
-        "intuitive_summary": "In thermal equilibrium, each independent way a particle can store energy receives an average of $\\frac{1}{2}$ k_B T$ energy.",
+        "conceptual_definition": "The equipartition theorem states that for a classical system in thermal equilibrium at temperature $T$, the total internal energy $U$ is distributed equally among all its quadratic degrees of freedom. Each such degree of freedom contributes an average energy of $\\frac{1}{2} k_B T$ to the total.",
+        "intuitive_summary": "In a warm system at equilibrium, every independent way a particle can move or vibrate holds, on average, the same amount of energy.",
         "subcomponents": [
             "the-fundamental-boltzmann-constant-a65e5fea",
             "classical-kinetic-energy-scalar-coefficient-93b05c90",
@@ -820,100 +736,40 @@
         ]
     },
     "unit-flexibility-65c20a43": {
-        "title": "Unit Flexibility",
-        "equation": "Q_i = -\\frac{\\partial V}{\\partial q_i} \\quad (\\text{Conservative case})",
+        "title": "Generalized Force (Conservative System)",
+        "equation": "Q_i = -\\frac{\\partial V}{\\partial q_i}",
         "semantic_variables": {
             "Q_i": {
                 "name": "Generalized Force",
                 "type": "variable",
-                "unit": "N",
-                "description": "The i-th generalized force acting on the system, which is conjugate to the generalized coordinate $q_i$. It represents the component of the total force along the direction defined by the generalized coordinate. Its units are Newtons (N)."
+                "unit": "N or N·m",
+                "description": "The i-th generalized force, conjugate to the generalized coordinate $q_i$. Its units depend on the units of $q_i$ such that their product $Q_i \\delta q_i$ has units of energy (Joules)."
             },
             "V": {
                 "name": "Potential Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The potential energy of the system, which is a scalar function of the generalized coordinates and possibly time. It represents the energy stored in the system due to its configuration. Its SI units are Joules (J)."
+                "description": "The scalar potential energy function of the system, which depends on the configuration of the system described by the generalized coordinates."
             },
             "q_i": {
                 "name": "Generalized Coordinate",
                 "type": "variable",
-                "unit": "m",
-                "description": "The i-th generalized coordinate describing the configuration of the system. It can be a position, an angle, or any other independent parameter that fully specifies the state of the system. For simplicity, its unit is often taken as meters (m) if it represents a displacement or distance, or radians (rad) if it represents an angle. However, the physical meaning of the force $Q_i$ will determine the appropriate interpretation and unit consistency."
+                "unit": "m or rad or dimensionless",
+                "description": "The i-th independent parameter that defines the configuration of the system. It can represent a position, an angle, or any other degree of freedom."
             },
-            "Q": {
-                "name": "Total Charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "The net electrical charge of a system."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "q": {
-                "name": "Electric Charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "A physical property of matter that causes it to experience a force when placed in an electromagnetic field."
-            },
-            "C": {
-                "name": "Capacitance / Heat Capacity",
-                "type": "variable",
-                "unit": "F or J/K",
-                "description": "The ability of a body to store electrical charge, or thermal energy needed to change temperature."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "v": {
-                "name": "Speed / Velocity Magnitude",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The rate of change of position with respect to time, representing the speed of a particle."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
+            "\\partial": {
+                "name": "Partial Derivative Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Operator that computes the rate of change of a multivariable function with respect to one of its variables, holding others constant."
             }
         },
-        "interpretation": "The equation $Q_i = - \\frac{ \\partial V}{ \\partial q_i} relates a generalized force$( Q_i) to the potential energy ( $V$)$of a system. The generalized coordinate$( q_i) represents a generalized displacement in the system, which may not be a simple Cartesian coordinate but rather an angle, a distance, or another relevant parameter that describes the configuration of the system. The term \\frac{ \\partial V}{ \\partial q_i}$is the partial derivative of the potential energy with respect to the generalized coordinate$( q_i)$, which represents the rate of change of potential energy as$( q_i)$changes. The negative sign signifies that forces do work to decrease the potential energy of the system. For example, if$( q_i) were a linear displacement and ( $V$) were gravitational potential energy ( V = mgh)$, then$( Q_i) would correspond to the force in that direction ( F_x = -mg)$. This definition is particularly powerful as it allows for the definition of forces even in complex systems where simple Cartesian force laws might be difficult to apply directly .",
-        "symmetry_origin": "This relationship originates from the principle of virtual work in mechanics. For a conservative system, the work done by the conservative forces during an infinitesimal virtual displacement is equal to the negative change in potential energy. If ($δ) W is the virtual work done by the conservative forces and$($δ) V$ is the change in potential energy, then ($δ$)$W = - ($δ$)$V$. In terms of generalized coordinates, the virtual work done by the generalized force$( Q_i) corresponding to a virtual displacement$($δ$)$q_i is$($δ$)$W = $\\sum$_i Q_i (δq_i)$. For a conservative potential$( $V$)$, the change in potential energy during a virtual displacement is ($δ$)$V = $\\sum$_i $\\frac{∂V}{∂q_i}$ (δq_i). Equating these, $\\sum$_i Q_i (δq_i) = -$\\sum$_i $\\frac{∂V}{∂q_i}$ (δq_i). For arbitrary virtual displacements ($δ$) $q_i$, the coefficients must be equal, leading to $Q_i = - \\frac{∂V}{∂q_i} . This demonstrates that the generalized forces are derivable from a potential$.",
-        "limits_and_boundary": "In the limit where the potential energy$($V$) is constant with respect to a generalized coordinate ( q_i)$, i.e., ($\\frac{∂V}{∂q_i} = 0$), the corresponding generalized force$( Q_i)$ is zero. This means there is no force acting in that generalized direction if changing that coordinate does not alter the potential energy. Conversely, if the potential energy changes very rapidly with respect to$( q_i)$ (a large gradient), the magnitude of the generalized force$( Q_i)$ will be large. The boundary cases are often related to equilibrium points, where the gradient of the potential is zero, leading to zero generalized forces.",
+        "interpretation": "The equation $Q_i = - \\frac{ \\partial V}{ \\partial q_i}$ relates a generalized force $Q_i$ to the potential energy $V$ of a system. The generalized coordinate $q_i$ represents a degree of freedom, which may not be a simple Cartesian coordinate but an angle, a distance, or any other parameter describing the system's configuration. The term $\\frac{ \\partial V}{ \\partial q_i}$ is the partial derivative of the potential energy with respect to the generalized coordinate $q_i$, representing the rate of change of potential energy as $q_i$ changes. The negative sign signifies that the force acts in the direction that decreases the potential energy. For example, if $q_i$ were a linear displacement $x$ and $V$ were gravitational potential energy $V = mgh$, then $Q_x$ would correspond to the gravitational force component $F_x = -\\frac{\\partial V}{\\partial x}$. This formulation is powerful as it allows for the definition of forces in complex systems where Cartesian force laws are cumbersome.",
+        "symmetry_origin": "This relationship originates from the principle of virtual work for conservative systems. The virtual work $\\delta W$ done by generalized forces $Q_i$ during an infinitesimal virtual displacement $\\delta q_i$ is given by $\\delta W = \\sum_i Q_i \\delta q_i$. For a conservative system, this work is equal to the negative change in potential energy, $\\delta W = -\\delta V$. The change in potential energy is $\\delta V = \\sum_i \\frac{\\partial V}{\\partial q_i} \\delta q_i$. Equating the two expressions for $\\delta W$ gives $\\sum_i Q_i \\delta q_i = -\\sum_i \\frac{\\partial V}{\\partial q_i} \\delta q_i$. Since the virtual displacements $\\delta q_i$ are arbitrary and independent, the coefficients must be equal for each $i$, leading to $Q_i = - \\frac{\\partial V}{\\partial q_i}$. This shows that for conservative systems, generalized forces are derivable from a scalar potential, which is a manifestation of energy conservation.",
+        "limits_and_boundary": "1. Equilibrium: If the potential energy $V$ is at a local extremum (minimum, maximum, or saddle point) with respect to a coordinate $q_i$, then $\\frac{\\partial V}{\\partial q_i} = 0$, and the corresponding generalized force $Q_i$ is zero. This defines a point of static equilibrium.\n2. Symmetry: If the system possesses a symmetry such that the potential energy $V$ is independent of a particular coordinate $q_k$ (i.e., $q_k$ is a cyclic coordinate), then $\\frac{\\partial V}{\\partial q_k} = 0$, and the corresponding generalized force $Q_k$ is zero. By Noether's theorem, this corresponds to the conservation of the generalized momentum conjugate to $q_k$.\n3. Steep Potential: In regions where the potential energy changes very rapidly with respect to $q_i$ (a large gradient), the magnitude of the generalized force $|Q_i|$ will be large.",
         "status": "platinum",
-        "conceptual_definition": "This formula, which is a fundamental result in analytical mechanics, defines the generalized force$( Q_i) associated with a particular generalized coordinate ( q_i) as the negative gradient of the potential energy ($V$)$ with respect to that coordinate, under the assumption that the system is conservative. This relationship is derived from the principle of virtual work and is crucial for formulating the equations of motion in terms of generalized coordinates, particularly within the Lagrangian and Hamiltonian formalisms.",
-        "intuitive_summary": "In a conservative system, the generalized force along a particular direction is simply the rate at which potential energy changes with displacement in that direction, with a negative sign indicating that forces tend to move systems towards lower potential energy.",
+        "conceptual_definition": "Defines the generalized force $Q_i$ conjugate to a generalized coordinate $q_i$ as the negative partial derivative of the system's potential energy $V$ with respect to that coordinate. This relationship holds for conservative systems and is a cornerstone of Lagrangian mechanics.",
+        "intuitive_summary": "A force pushes a system in the direction that most rapidly decreases its potential energy.",
         "subcomponents": [
             "generalized-coordinate-in-classical-mechanics-da326f72"
         ]
@@ -1063,88 +919,46 @@
         "intuitive_summary": "A system's energy cannot be known with perfect precision over an infinitely short duration, and conversely, a state with a precisely defined energy must persist for an indefinite amount of time."
     },
     "scale-realism-507d0755": {
-        "title": "Scale-Realism",
-        "equation": "\\frac{d g}{d \\ln \\mu} = \\beta(g) \\quad (\\text{RG Flow})",
+        "title": "Renormalization Group Flow Equation",
+        "equation": "\\frac{\\mathrm{d}g}{\\mathrm{d}\\ln\\mu} = \\beta(g)",
         "semantic_variables": {
             "g": {
                 "name": "Coupling Constant",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless parameter that quantifies the strength of a physical interaction. Its value can change depending on the energy scale at which the interaction is observed."
+                "description": "A parameter that quantifies the strength of a physical interaction, whose value depends on the energy scale."
             },
             "\\mu": {
-                "name": "Scale Parameter",
+                "name": "Renormalization Scale",
                 "type": "variable",
-                "unit": "J",
-                "description": "A parameter representing a physical scale, typically an energy scale (e.g., from particle collisions) or a momentum scale. It dictates the resolution or energy at which a system is probed. While often representing energy or momentum, its unit in this context is effectively energy (J) or its inverse (J^-1) when considering its logarithm, but the coupling 'g' is dimensionless. The change in 'ln $\\mu$' is dimensionless."
+                "unit": "J or eV",
+                "description": "An arbitrary energy or momentum scale introduced in the process of renormalization to define the theory's parameters. Physical observables are independent of its choice."
             },
             "\\beta(g)": {
                 "name": "Beta Function",
-                "type": "variable",
+                "type": "function",
                 "unit": "dimensionless",
-                "description": "The beta function is a mathematical function of the coupling constant $g$ that describes the rate of change of $g$ with respect to the logarithm of the scale $\\mu$. It determines the direction and magnitude of the 'running' of the coupling constant."
+                "description": "A function of the coupling constant $g$ that describes its rate of change with respect to the logarithm of the energy scale $\\mu$."
             },
-            "\\frac{d g}{d \\ln \\mu}": {
-                "name": "Rate of Change of Coupling with Scale",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "This term represents the derivative of the coupling constant $g$ with respect to the natural logarithm of the scale parameter $\\mu$. It quantifies how much the coupling changes as the observation scale is logarithmically varied."
+            "\\mathrm{d}": {
+                "name": "Differential Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Represents an infinitesimal change in a variable."
             },
             "\\ln": {
-                "name": "\\ln Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "\\beta": {
-                "name": "Phase Constant",
-                "type": "variable",
-                "unit": "rad/m",
-                "description": "The phase shift per unit distance of a wave propagating along a path."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
-            },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
-            },
-            "l": {
-                "name": "Length / Angular Quantum Number",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "w": {
-                "name": "Width / Angular Velocity Component",
-                "type": "variable",
-                "unit": "m or rad/s",
-                "description": "Horizontal size, or rate of rotation along a particular axis."
+                "name": "Natural Logarithm",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "The logarithm to the base $e$."
             }
         },
-        "interpretation": "In the equation $\\frac{d g}{d \\ln \\mu } = \\beta (g)$, $g$ is a dimensionless coupling constant that characterizes the strength of an interaction. For example, in quantum electrodynamics (QED), $g$ could be related to the fine-structure constant$.\\mu$ represents a physical scale, typically an energy scale (measured in Joules, J) or a momentum scale (measured in kg·m/s). The term $d \\ln \\mu signifies a$ change in the logarithm of the scale, which is a convenient way to parameterize scale transformations. The derivative $\\frac{d g}{d \\ln \\mu }$ quantifies how the coupling $g$ changes with respect to a change in the scale $\\mu$. The function $\\beta$(g)$is the beta function, which is a function of the coupling constant itself and determines the direction of the flow. If \\beta (g)$ is positive, the coupling $g$ increases as the scale $\\mu$ increases (or as $\\ln \\mu increases). If \\beta (g)$ is negative, the coupling decreases as the scale increases. The RG flow describes the trajectory of the coupling constant $g$ in the space of couplings as the scale $\\mu$ changes, revealing how interactions behave at different resolutions.",
-        "symmetry_origin": "The RG flow equation arises from the principle of scale invariance and the need to maintain physical consistency when integrating out short-distance or high-energy degrees of freedom. It is derived by considering how physical observables remain invariant under changes of the cutoff scale $\\mu \\nused$ in regularization procedures of divergent loop integrals in quantum field theory, or by considering the change in correlation functions under rescaling of distances in statistical mechanics.",
-        "limits_and_boundary": "As $\\mu \\to \\infty (high energies or short distances), the behavior of$g$is governed by \\beta (g)$. If $\\beta$(g)$has a zero at$g=0$(a fixed point), the coupling might approach a constant value or vanish, indicating asymptotic freedom (common in Quantum Chromodynamics). Conversely, as \\mu \\to 0$ (low energies or long distances), the behavior is also dictated by $\\beta$(g)$. If \\beta (g)$ has a zero at $g=0$, the coupling might grow unboundedly, leading to phenomena like chiral symmetry breaking or Landau poles. The existence and nature of fixed points (where $\\beta$(g)=0$) are crucial for understanding the behavior of the theory at different scales$.",
+        "interpretation": "In the equation $\\frac{\\mathrm{d}g}{\\mathrm{d}\\ln\\mu} = \\beta(g)$, $g$ is a dimensionless coupling constant that characterizes the strength of an interaction, such as the fine-structure constant in QED. The parameter $\\mu$ represents the energy or momentum scale at which the theory is being probed. The term $\\mathrm{d}\\ln\\mu$ represents an infinitesimal change in the logarithm of the scale, which is a natural parameterization for scale transformations. The derivative $\\frac{\\mathrm{d}g}{\\mathrm{d}\\ln\\mu}$ quantifies how the coupling $g$ 'runs' or changes as the scale $\\mu$ is varied. The function $\\beta(g)$ is the beta function, which depends on the coupling constant itself and the specific field theory. If $\\beta(g) > 0$, the coupling grows with increasing energy (e.g., QED). If $\\beta(g) < 0$, the coupling weakens with increasing energy, a property known as asymptotic freedom (e.g., QCD).",
+        "symmetry_origin": "The RG flow equation arises from the requirement that physical observables must be independent of the arbitrary renormalization scale $\\mu$ introduced to regularize divergences in quantum field theory. This principle of scale independence, when applied to a renormalized quantity, leads to a differential equation (the Callan-Symanzik equation) that governs how the parameters of the theory, like the coupling constant $g$, must change with $\\mu$ to keep physics constant. The underlying symmetry is a continuous scale transformation of the system's coordinates and fields, although this symmetry is typically broken by quantum effects (a 'quantum anomaly'), and the beta function quantifies this breaking.",
+        "limits_and_boundary": "1. High-Energy Limit ($\\mu \\to \\infty$): The behavior is governed by the ultraviolet (UV) fixed points of the flow, where $\\beta(g) = 0$. If the flow starts near an asymptotically free fixed point (like $g=0$ in QCD), the coupling becomes vanishingly small, and perturbation theory is reliable.\n2. Low-Energy Limit ($\\mu \\to 0$): The behavior is governed by the infrared (IR) fixed points. In theories like QCD, the coupling grows large at low energies (IR slavery), leading to non-perturbative phenomena like confinement. In other theories, the flow might hit a trivial IR fixed point where interactions turn off.\n3. Fixed Points ($\\beta(g^*) = 0$): At a specific coupling value $g^*$ where the beta function is zero, the coupling constant does not run with scale. Such fixed points correspond to scale-invariant theories, which are critical for describing phase transitions in statistical mechanics and conformal field theories.\n4. Landau Pole: If the beta function is positive and growing (e.g., $\\beta(g) \\propto g^2$), the equation predicts that the coupling $g$ will diverge at a finite energy scale, known as a Landau pole. This indicates a breakdown of the perturbative theory at high energies.",
         "status": "platinum",
-        "conceptual_definition": "The equation $\\frac{d g}{d \\ln \\mu} =$\\beta$(g)$ \\quad (\\text{RG Flow}) represents the core of the Renormalization Group (RG) flow in quantum field theory and statistical mechanics. It describes how the coupling strength of a physical interaction, denoted by $g$, changes as the characteristic energy scale or length scale (represented by \\mu ) of the system is varied. The function \\beta (g)$, known as the beta function, quantifies this rate of change. This equation is fundamental to understanding phenomena across different energy scales, such as the running of coupling constants in the Standard Model of particle physics or critical phenomena in statistical systems.",
-        "intuitive_summary": "This equation explains how the strength of a physical interaction, \n$g$, evolves as we probe the system at different scales, \n$\\mu$, with \n$\\beta(g)$ dictating the direction and speed of this evolution.",
+        "conceptual_definition": "This equation describes the change in a physical coupling constant $g$ with respect to a change in the energy scale $\\mu$ at which the system is observed. The beta function, $\\beta(g)$, determines the magnitude and direction of this 'running', forming the mathematical basis of the Renormalization Group (RG) in quantum field theory.",
+        "intuitive_summary": "The strength of a physical force changes depending on the energy scale at which you measure it.",
         "subcomponents": [
             "infinite-permeability-limit-7c872bed",
             "vanishing-coupling-constant-condition-e151612a",
@@ -1431,31 +1245,31 @@
     },
     "force-from-potential": {
         "title": "Force from potential",
-        "equation": "\\mathbf{F} = -\\nabla V \\,",
-        "conceptual_definition": "The formula $\\mathbf{F}$ = - $\\nabla$ V$establishes a fundamental relationship between a conservative force field \\mathbf{F} and its corresponding potential energy function$V$. It states that the force acting on a particle at any point in space is equal to the negative gradient of the potential energy at that point. The gradient, denoted by \\nabla , is a vector operator that points in the direction of the greatest rate of increase of the function, and its magnitude is that rate of increase. Therefore, the force is directed towards regions of decreasing potential energy$.",
-        "intuitive_summary": "Force is the negative gradient of potential energy, meaning force always pushes towards lower potential energy.",
-        "interpretation": "In this equation, $\\mathbf{F} represents the force vector, which has both magnitude and direction, typically measured in Newtons (N). The symbol$V$denotes the potential energy scalar field, typically measured in Joules (J). The gradient operator \\nabla , when applied to a scalar function$V$in three-dimensional Cartesian coordinates, is defined as \\nabla$ V = \\frac{\\partial V}{\\partial x} $\\mathbf{i}$ + \\frac{\\partial V}{\\partial y} $\\mathbf{j}$ + \\frac{ \\partial V}{ \\partial z} $\\mathbf{k}, where\\mathbf{i},\\mathbf{j}$ , and $\\mathbf{k}$ are the unit vectors along the x, y, and z axes, respectively. The partial derivatives \\frac{\\partial V}{\\partial x} , \\frac{\\partial V}{\\partial y} , and \\frac{\\partial V}{\\partial z} represent the rate of change of potential energy with respect to position along each coordinate axis. The negative sign before the gradient is crucial; it signifies that the force acts in the direction of steepest decrease in potential energy. This is consistent with the principle of energy minimization, where systems tend to move towards states of lower potential energy$.",
-        "symmetry_origin": "This formula originates from the definition of a conservative force. A force $\\mathbf{F} is conservative if the work done by it in moving a particle between two points is independent of the path taken. For such forces, a potential energy function$V$can be defined such that the work done by the force is$W = -$\\Delta$ V$. Mathematically, this implies that the curl of the force field is zero ( \\nabla \\times \\mathbf{F}$ = 0$). The relation \\mathbf{F} = - \\nabla V$ is a direct consequence of this path independence and the definition of work in terms of the line integral of force. It is also intimately related to the conservation of mechanical energy for systems where only conservative forces do work, as $E = K + V$, where $K$ is kinetic energy.",
-        "limits_and_boundary": "When the potential energy function $V$ is constant in a region, its gradient is zero, implying that the force $\\mathbf{F}$ is zero in that region. This means that no force is exerted where there is no change in potential energy. As the magnitude of the potential energy $V$ approaches infinity, the magnitude of the force $\\mathbf{F}$ generally becomes very large, indicating a strong tendency for a particle to move away from or towards such a region, depending on the sign of the gradient. Conversely, if the potential energy approaches zero (often taken as a reference point), the force magnitude is determined by the rate of change of potential energy from this zero level.",
+        "equation": "\\mathbf{F} = -\\nabla V",
+        "conceptual_definition": "A conservative force field $\\mathbf{F}$ is defined as the negative gradient of a scalar potential energy function $V$. This relationship dictates that the force vector at any point in space is directed opposite to the direction of the steepest increase in potential energy.",
+        "intuitive_summary": "Force is the negative gradient of potential energy, meaning force always pushes an object towards the region of lowest potential energy.",
+        "interpretation": "In this equation, $\\mathbf{F}$ is the force vector, $V$ is the scalar potential energy field, and $\\nabla$ is the gradient operator. In Cartesian coordinates, the gradient of $V$ is $\\nabla V = \\frac{\\partial V}{\\partial x}\\mathbf{i} + \\frac{\\partial V}{\\partial y}\\mathbf{j} + \\frac{\\partial V}{\\partial z}\\mathbf{k}$, a vector pointing in the direction of the steepest ascent of the potential energy. The negative sign is crucial, indicating that the force $\\mathbf{F}$ acts in the direction of the steepest descent of potential energy, driving the system towards a state of minimum energy.",
+        "symmetry_origin": "The existence of a potential function $V$ from which a force $\\mathbf{F}$ can be derived is equivalent to the force being conservative. This means the work done by the force between two points is path-independent, which mathematically implies that the curl of the force field is zero: $\\nabla \\times \\mathbf{F} = 0$. This property is ultimately linked to the conservation of mechanical energy ($E = K + V$) for an isolated system under the influence of such forces, which itself is a consequence of time-translation symmetry via Noether's theorem.",
+        "limits_and_boundary": "1. For a region where the potential energy $V$ is constant, its gradient $\\nabla V$ is zero, and thus the force $\\mathbf{F}$ is zero.\n2. This relation is only valid for conservative forces (e.g., gravity, electrostatic force). It does not apply to non-conservative forces like friction or air resistance.\n3. In the classical limit where quantum effects are negligible, this provides a complete description of the force on a particle in a potential field.",
         "status": "platinum",
         "semantic_variables": {
-            "F": {
-                "name": "Force Vector",
+            "\\mathbf{F}": {
+                "name": "Force vector",
                 "type": "variable",
                 "unit": "N",
-                "description": "The vector quantity representing the push or pull exerted on an object, with magnitude and direction. In SI units, force is measured in Newtons (kg&middot;m/s^2)."
+                "description": "The vector representing the push or pull on an object. In SI units, Newtons ($\\mathrm{kg \\cdot m \\cdot s^{-2}}$)."
             },
             "\\nabla": {
-                "name": "Gradient Operator",
+                "name": "Gradient operator",
                 "type": "operator",
-                "unit": "1/m",
-                "description": "The vector differential operator that represents the direction and rate of the greatest rate of increase of a scalar function. In Cartesian coordinates, it is defined as $\\nabla = \\frac{\\partial}{\\partial x}$\\mathbf{i}$ + \\frac{\\partial}{\\partial y}$\\mathbf{j}$ + \\frac{\\partial}{\\partial z}$\\mathbf{k}$. Its units are inverse length (e.g., 1/m) when applied to a scalar field with units of energy (J)."
+                "unit": "$\\mathrm{m^{-1}}$",
+                "description": "The vector differential operator which gives the direction and magnitude of the steepest ascent of a scalar field. In Cartesian coordinates, $\\nabla = \\mathbf{i} \\frac{\\partial}{\\partial x} + \\mathbf{j} \\frac{\\partial}{\\partial y} + \\mathbf{k} \\frac{\\partial}{\\partial z}$."
             },
             "V": {
-                "name": "Potential Energy",
+                "name": "Potential energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "A scalar quantity representing the energy stored in a system due to the position or configuration of its components within a force field. Measured in Joules (kg&middot;m^2/s^2)."
+                "description": "A scalar field representing the energy stored in a system due to its configuration in a force field. In SI units, Joules ($\\mathrm{kg \\cdot m^2 \\cdot s^{-2}}$)."
             }
         },
         "subcomponents": [
@@ -1804,7 +1618,8 @@
         "status": "published",
         "parent_formula_id": "higgs-fermion-yukawa-interaction-1869d0eb",
         "subcomponents": [],
-        "id": "right-handed-weyl-spinor-field-7df86efa"
+        "id": "right-handed-weyl-spinor-field-7df86efa",
+        "intuitive_summary": ""
     },
     "solar-mass-constant-in-kilograms-aed42081": {
         "title": "Solar Mass Constant in Kilograms",
@@ -1828,7 +1643,8 @@
         "status": "published",
         "parent_formula_id": "metal-rich-stars-50538ca5",
         "subcomponents": [],
-        "id": "solar-mass-constant-in-kilograms-aed42081"
+        "id": "solar-mass-constant-in-kilograms-aed42081",
+        "intuitive_summary": ""
     },
     "definition-of-a-complex-number-b727a8c6": {
         "title": "Definition of a Complex Number",
@@ -1870,7 +1686,8 @@
         "status": "published",
         "parent_formula_id": "cauchy-riemann-differentiability-idents-2087b552",
         "subcomponents": [],
-        "id": "definition-of-a-complex-number-b727a8c6"
+        "id": "definition-of-a-complex-number-b727a8c6",
+        "intuitive_summary": ""
     },
     "angular-variable-approaching-pi-4dc8523a": {
         "title": "Angular Variable Approaching Pi",
@@ -1900,7 +1717,8 @@
         "status": "published",
         "parent_formula_id": "point-map-c292372d",
         "subcomponents": [],
-        "id": "angular-variable-approaching-pi-4dc8523a"
+        "id": "angular-variable-approaching-pi-4dc8523a",
+        "intuitive_summary": ""
     },
     "initial-angular-position-dbc9011a": {
         "title": "Initial Angular Position",
@@ -1924,7 +1742,8 @@
         "status": "published",
         "parent_formula_id": "angular-displacement-constant-angular-velocity",
         "subcomponents": [],
-        "id": "initial-angular-position-dbc9011a"
+        "id": "initial-angular-position-dbc9011a",
+        "intuitive_summary": ""
     },
     "squared-axial-distance-from-loop-center-3683617b": {
         "title": "Squared Axial Distance from Loop Center",
@@ -1948,7 +1767,8 @@
         "status": "published",
         "parent_formula_id": "axial-magnetic-field-circular-loop",
         "subcomponents": [],
-        "id": "squared-axial-distance-from-loop-center-3683617b"
+        "id": "squared-axial-distance-from-loop-center-3683617b",
+        "intuitive_summary": ""
     },
     "total-mass-of-a-two-body-system-e576aaf2": {
         "title": "Total Mass of a Two-Body System",
@@ -1978,7 +1798,8 @@
         "status": "published",
         "parent_formula_id": "coordinate-trick-06899aa9",
         "subcomponents": [],
-        "id": "total-mass-of-a-two-body-system-e576aaf2"
+        "id": "total-mass-of-a-two-body-system-e576aaf2",
+        "intuitive_summary": ""
     },
     "boundary-of-a-manifold-a39083c0": {
         "title": "Boundary of a Manifold",
@@ -2002,7 +1823,8 @@
         "status": "published",
         "parent_formula_id": "boundary-integral-62909b6f",
         "subcomponents": [],
-        "id": "boundary-of-a-manifold-a39083c0"
+        "id": "boundary-of-a-manifold-a39083c0",
+        "intuitive_summary": ""
     },
     "instantaneous-velocity-definition-8c567b8c": {
         "title": "Instantaneous Velocity Definition",
@@ -2044,7 +1866,8 @@
         "status": "published",
         "parent_formula_id": "the-master-formula-98a3cd69",
         "subcomponents": [],
-        "id": "instantaneous-velocity-definition-8c567b8c"
+        "id": "instantaneous-velocity-definition-8c567b8c",
+        "intuitive_summary": ""
     },
     "nitrogen-15-isotopic-notation-18472c33": {
         "title": "Nitrogen-15 Isotopic Notation",
@@ -2080,7 +1903,8 @@
         "status": "published",
         "parent_formula_id": "recycled-nuclei-3d056e3e",
         "subcomponents": [],
-        "id": "nitrogen-15-isotopic-notation-18472c33"
+        "id": "nitrogen-15-isotopic-notation-18472c33",
+        "intuitive_summary": ""
     },
     "approximation-for-mean-molecular-weight-ae4537c3": {
         "title": "Approximation for Mean Molecular Weight",
@@ -2104,7 +1928,8 @@
         "status": "published",
         "parent_formula_id": "equation-of-state-84d964fe",
         "subcomponents": [],
-        "id": "approximation-for-mean-molecular-weight-ae4537c3"
+        "id": "approximation-for-mean-molecular-weight-ae4537c3",
+        "intuitive_summary": ""
     },
     "effective-spring-constant-from-potential-curvature-554cb21d": {
         "title": "Effective Spring Constant from Potential Curvature",
@@ -2140,7 +1965,8 @@
         "status": "published",
         "parent_formula_id": "taylor-expansion-mechanics-identity-1-9fffb077-1ccd2384",
         "subcomponents": [],
-        "id": "effective-spring-constant-from-potential-curvature-554cb21d"
+        "id": "effective-spring-constant-from-potential-curvature-554cb21d",
+        "intuitive_summary": ""
     },
     "laplacian-of-scalar-potential-2ce87c4f": {
         "title": "Laplacian of Scalar Potential",
@@ -2170,7 +1996,8 @@
         "status": "published",
         "parent_formula_id": "potential-well-f6815e89",
         "subcomponents": [],
-        "id": "laplacian-of-scalar-potential-2ce87c4f"
+        "id": "laplacian-of-scalar-potential-2ce87c4f",
+        "intuitive_summary": ""
     },
     "z-component-of-electric-field-0391aa9b": {
         "title": "Z-component of Electric Field",
@@ -2194,7 +2021,8 @@
         "status": "published",
         "parent_formula_id": "electromagnetic-field-tensor-e-components",
         "subcomponents": [],
-        "id": "z-component-of-electric-field-0391aa9b"
+        "id": "z-component-of-electric-field-0391aa9b",
+        "intuitive_summary": ""
     },
     "thermodynamic-expansion-coefficient-factor-57f82fbc": {
         "title": "Thermodynamic Expansion Coefficient Factor",
@@ -2230,7 +2058,8 @@
         "status": "published",
         "parent_formula_id": "thermostat-link-f2d0c870",
         "subcomponents": [],
-        "id": "thermodynamic-expansion-coefficient-factor-57f82fbc"
+        "id": "thermodynamic-expansion-coefficient-factor-57f82fbc",
+        "intuitive_summary": ""
     },
     "work-energy-relation-for-final-kinetic-energy-b7cfee06": {
         "title": "Work-Energy Relation for Final Kinetic Energy",
@@ -2266,7 +2095,8 @@
         "status": "published",
         "parent_formula_id": "classical-kinetic-energy",
         "subcomponents": [],
-        "id": "work-energy-relation-for-final-kinetic-energy-b7cfee06"
+        "id": "work-energy-relation-for-final-kinetic-energy-b7cfee06",
+        "intuitive_summary": ""
     },
     "dalembert-operator-definition-c6bd6c4b": {
         "title": "D'Alembert Operator Definition",
@@ -2308,7 +2138,8 @@
         "status": "published",
         "parent_formula_id": "free-waves-2fc9d212",
         "subcomponents": [],
-        "id": "dalembert-operator-definition-c6bd6c4b"
+        "id": "dalembert-operator-definition-c6bd6c4b",
+        "intuitive_summary": ""
     },
     "non-gravitational-four-force-component-ed64ba38": {
         "title": "Non-Gravitational Four-Force Component",
@@ -2332,7 +2163,8 @@
         "status": "published",
         "parent_formula_id": "4d-tracking-158b0de0",
         "subcomponents": [],
-        "id": "non-gravitational-four-force-component-ed64ba38"
+        "id": "non-gravitational-four-force-component-ed64ba38",
+        "intuitive_summary": ""
     },
     "rotated-vector-component-279a9c3d": {
         "title": "Rotated Vector Component",
@@ -2356,7 +2188,8 @@
         "status": "published",
         "parent_formula_id": "rotated-vector-components",
         "subcomponents": [],
-        "id": "rotated-vector-component-279a9c3d"
+        "id": "rotated-vector-component-279a9c3d",
+        "intuitive_summary": ""
     },
     "inverse-square-divergence-term-73ca8bdb": {
         "title": "Inverse Square Divergence Term",
@@ -2380,7 +2213,8 @@
         "status": "published",
         "parent_formula_id": "limit-of-epsilon-approaching-zero",
         "subcomponents": [],
-        "id": "inverse-square-divergence-term-73ca8bdb"
+        "id": "inverse-square-divergence-term-73ca8bdb",
+        "intuitive_summary": ""
     },
     "fundamental-mass-scale-factor-09938988": {
         "title": "Fundamental Mass Scale Factor",
@@ -2416,37 +2250,39 @@
         "status": "published",
         "parent_formula_id": "chandrasekhar-limit-identity-1-c9fe8ed6-2e96ed82",
         "subcomponents": [],
-        "id": "fundamental-mass-scale-factor-09938988"
+        "id": "fundamental-mass-scale-factor-09938988",
+        "intuitive_summary": ""
     },
     "potential-of-a-conductor-360f15d1": {
         "title": "Potential of a Conductor",
         "description": "This equation states that the electrostatic potential throughout a conductor in equilibrium is constant.",
-        "conceptual_definition": "In electrostatic equilibrium, the electric field inside a conductor must be zero. Since the electric field is the negative gradient of the electrostatic potential, a zero electric field implies that the potential within the conductor must be constant.",
-        "interpretation": "This fundamental principle highlights that charges within a conductor are free to move. If there were any potential difference within the conductor, charges would redistribute themselves instantaneously until the electric field became zero everywhere inside, thus making the potential uniform. This constant potential is often determined by external boundary conditions, such as the potential of a connected voltage source or ground.",
-        "limits_and_boundary": "This equation is valid for ideal conductors in electrostatic equilibrium. It assumes infinite conductivity and applies when the system has reached a steady state where no net charge movement occurs. It is a direct consequence of Dirichlet boundary conditions where the potential on the conductor's surface is fixed.",
-        "symmetry_origin": "The constancy of potential within a conductor in electrostatic equilibrium is a direct consequence of the mobility of free charges and the principle of minimum potential energy. Any non-uniform potential would create an electric field, causing charge movement until the field is nullified and the potential is uniform.",
+        "conceptual_definition": "In electrostatic equilibrium, the electric field inside a conductor is zero. Because the electric field is the negative gradient of the electrostatic potential ($\\mathbf{E} = -\\nabla V$), a zero field implies that the potential throughout the conductor's volume must be constant.",
+        "interpretation": "This principle arises from the high mobility of charge carriers (e.g., electrons) in a conductor. If a potential difference existed between any two points within the conductor, it would create an electric field, exerting a force on the free charges and causing them to move. This charge redistribution occurs almost instantaneously until the electric field inside the conductor becomes zero, at which point the charges are in electrostatic equilibrium and the potential is uniform. The specific constant value of the potential is determined by external factors, such as a connection to a voltage source or the proximity of external charges.",
+        "limits_and_boundary": "1. This relation holds for ideal conductors (with infinite conductivity) in a state of electrostatic equilibrium (no net flow of charge).\n2. For real conductors carrying a current, a potential gradient exists according to Ohm's Law ($\\mathbf{J} = \\sigma \\mathbf{E}$), meaning the potential is not constant.\n3. The surface of the conductor is an equipotential surface. The constant potential value is set by boundary conditions, such as being connected to a ground ($V=0$) or a battery terminal.",
+        "symmetry_origin": "This property is not a result of a fundamental spacetime symmetry but rather an emergent consequence of the system's dynamics. The free charges within the conductor move to minimize the system's total electrostatic potential energy. The equilibrium state, where the net internal electric field is zero and the potential is constant, corresponds to this minimum energy configuration.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "electromagnetism-electrostatics",
         "semantic_variables": {
-            "V_{conductor}": {
-                "name": "V_{conductor}",
+            "V(\\mathbf{r})": {
+                "name": "Electrostatic potential",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Electrostatic potential within the conductor (Volts, V)"
+                "unit": "V",
+                "description": "The electrostatic potential at any position $\\mathbf{r}$ within the volume of the conductor. It represents the potential energy per unit charge and is measured in Volts ($\\mathrm{J \\cdot C^{-1}}$)."
             },
-            "C": {
-                "name": "C",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Constant electrostatic potential value (Volts, V)"
+            "\\text{constant}": {
+                "name": "Constant value",
+                "type": "constant",
+                "unit": "V",
+                "description": "A single, uniform potential value that exists throughout the entire volume of the conductor in electrostatic equilibrium. Its value is determined by the system's boundary conditions."
             }
         },
-        "equation": "V_{conductor} = C",
-        "status": "published",
+        "equation": "V(\\mathbf{r}) = \\text{constant}",
+        "status": "platinum",
         "parent_formula_id": "technical-relation-7187a2a0",
         "subcomponents": [],
-        "id": "potential-of-a-conductor-360f15d1"
+        "id": "potential-of-a-conductor-360f15d1",
+        "intuitive_summary": "In a conductor at rest, free charges arrange themselves to cancel out any internal electric fields, resulting in a uniform voltage throughout the entire object."
     },
     "relativistic-mass-definition-52a005ad": {
         "title": "Relativistic Mass Definition",
@@ -2482,7 +2318,8 @@
         "status": "published",
         "parent_formula_id": "relativistic-mass-formula",
         "subcomponents": [],
-        "id": "relativistic-mass-definition-52a005ad"
+        "id": "relativistic-mass-definition-52a005ad",
+        "intuitive_summary": ""
     },
     "pressure-to-enclosed-mass-ratio-420bedd8": {
         "title": "Pressure to Enclosed Mass Ratio",
@@ -2518,7 +2355,8 @@
         "status": "published",
         "parent_formula_id": "pressure-term-hydrostatic-equilibrium",
         "subcomponents": [],
-        "id": "pressure-to-enclosed-mass-ratio-420bedd8"
+        "id": "pressure-to-enclosed-mass-ratio-420bedd8",
+        "intuitive_summary": ""
     },
     "sterile-neutrino-majorana-mass-term-15f7a353": {
         "title": "Sterile Neutrino Majorana Mass Term",
@@ -2554,6 +2392,7 @@
         "status": "published",
         "parent_formula_id": "sterile-particle-da8bdb51",
         "subcomponents": [],
-        "id": "sterile-neutrino-majorana-mass-term-15f7a353"
+        "id": "sterile-neutrino-majorana-mass-term-15f7a353",
+        "intuitive_summary": ""
     }
 }

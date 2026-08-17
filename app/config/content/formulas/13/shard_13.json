@@ -896,87 +896,69 @@
         ]
     },
     "stochastic-state-law-3b9e3145": {
-        "title": "Stochastic State Law",
-        "equation": "d|\\psi\\rangle = \\left[ -\\frac{i}{\\hbar}\\hat{H}dt + \\sum (\\hat{L}_i - \\langle \\hat{L}_i \\rangle) dw_i \\right] |\\psi\\rangle",
+        "title": "Stochastic Schrödinger Equation",
+        "equation": "\\mathrm{d}|\\psi(t)\\rangle = \\left[ -\\frac{i}{\\hbar}\\hat{H}\\mathrm{d}t + \\sum_j \\left( \\hat{L}_j - \\langle \\hat{L}_j \\rangle \\right) \\mathrm{d}W_j(t) \\right] |\\psi(t)\\rangle",
         "semantic_variables": {
-            "d|\\psi\\rangle": {
-                "name": "Infinitesimal state vector change",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The stochastic differential change in the normalized state vector of the quantum system."
-            },
-            "|\\psi\\rangle": {
+            "|\\psi(t)\\rangle": {
                 "name": "Quantum state vector",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The state vector describing the state of the quantum system in Hilbert space."
+                "description": "The time-dependent ket vector in Hilbert space representing the state of the quantum system."
+            },
+            "\\mathrm{d}|\\psi(t)\\rangle": {
+                "name": "Stochastic state vector differential",
+                "type": "differential",
+                "unit": "dimensionless",
+                "description": "The infinitesimal stochastic change in the quantum state vector over time $\\mathrm{d}t$."
             },
             "\\hat{H}": {
                 "name": "Hamiltonian operator",
                 "type": "operator",
                 "unit": "J",
-                "description": "The self-adjoint operator representing the total energy of the system, driving unitary dynamics."
+                "description": "The self-adjoint operator representing the total energy of the system, which governs its unitary evolution."
             },
             "\\hbar": {
                 "name": "Reduced Planck constant",
                 "type": "constant",
-                "unit": "J*s",
-                "description": "The fundamental physical constant relating the energy of a photon to its electromagnetic frequency."
+                "unit": "J⋅s",
+                "description": "The quantum of angular momentum, equal to the Planck constant divided by 2π."
             },
-            "dt": {
-                "name": "Infinitesimal time step",
-                "type": "variable",
+            "\\mathrm{d}t": {
+                "name": "Infinitesimal time differential",
+                "type": "differential",
                 "unit": "s",
-                "description": "The continuous, forward increment of physical time."
+                "description": "An infinitesimal increment of time."
             },
-            "\\hat{L}_i": {
+            "\\hat{L}_j": {
                 "name": "Lindblad operator",
-                "type": "variable",
-                "unit": "s^-1/2",
-                "description": "The operator representing the interaction channel of the system with its surrounding environment or measurement apparatus."
+                "type": "operator",
+                "unit": "s⁻¹ᐟ²",
+                "description": "An operator (also called a collapse or quantum jump operator) that models the coupling of the system to the j-th channel of its environment or measurement apparatus."
             },
-            "\\langle \\hat{L}_i \\rangle": {
+            "\\langle \\hat{L}_j \\rangle": {
                 "name": "Expectation value of Lindblad operator",
                 "type": "variable",
-                "unit": "s^-1/2",
-                "description": "The quantum mechanical expectation value of the Lindblad operator calculated over the current state vector."
+                "unit": "s⁻¹ᐟ²",
+                "description": "The quantum mechanical expectation value of the Lindblad operator, $\\langle\\psi|\\hat{L}_j|\\psi\\rangle$, for the current state $|\\psi\\rangle$."
             },
-            "dw_i": {
-                "name": "Wiener increment",
-                "type": "variable",
-                "unit": "s^1/2",
-                "description": "The independent, zero-mean Gaussian stochastic process increment representing measurement noise, satisfying the classical Itô relation (dw_i)^2 = dt."
+            "\\mathrm{d}W_j(t)": {
+                "name": "Wiener process increment",
+                "type": "differential",
+                "unit": "s¹ᐟ²",
+                "description": "An infinitesimal increment of a Wiener process, representing Gaussian white noise for the j-th channel, satisfying $\\mathrm{d}W_j \\mathrm{d}W_k = \\delta_{jk} \\mathrm{d}t$."
             },
             "i": {
-                "name": "Imaginary Unit",
+                "name": "Imaginary unit",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "H": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "A/m",
-                "description": "The auxiliary magnetic field vector representing magnetization effects in media."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "w": {
-                "name": "Width / Angular Velocity Component",
-                "type": "variable",
-                "unit": "m or rad/s",
-                "description": "Horizontal size, or rate of rotation along a particular axis."
+                "description": "The mathematical constant defined by the property $i^2 = -1$."
             }
         },
-        "interpretation": "The equation decomposes the change in the state vector $d|\\psi\\rangle$ into a deterministic unitary part and a stochastic measurement-induced part. The term $- \\frac{i}{\\hbar}\\hat{H}$ dt$represents the standard, deterministic Schrödinger evolution governed by the system's Hamiltonian\\hat{H}over an infinitesimal time step$dt$. The second term represents the stochastic feedback from continuous measurement:\\hat{L}_iis the Lindblad or collapse operator associated with a specific channel, and$\\langle $\\hat{L}_i$\\rangle is its expectation value \\langle \\psi | $\\hat{L}$_i | \\psi \\rangle$, which centers the fluctuations. The stochasticity is driven by the real Wiener increments$dw_i$, representing white noise processes. The subtraction of the expectation value$\\langle $\\hat{L}_i$\\rangle ensures that the state vector remains normalized during this stochastic trajectory, shifting the wave function dynamically based on the random measurement outcomes$.",
-        "symmetry_origin": "The equation is derived within the framework of quantum trajectory theory and continuous measurement. It represents a unraveling of the deterministic Lindblad master equation for the density matrix $\\rho = |\\psi\\rangle\\langle\\psi|$ into individual stochastic paths. Its mathematical structure preserves the unit norm of the state vector (the trace of the density operator) along each individual trajectory, satisfying the physical requirement of probability conservation.",
-        "limits_and_boundary": "In the limit where coupling to the environment or measurement apparatus approaches zero (i.e., $\\hat{L}_i \\to 0$), the stochastic term vanishes, and the equation collapses exactly back to the standard deterministic, unitary Schrödinger equation. Conversely, in the strong-coupling limit where the measurement rate is extremely high, the stochastic noise term dominates, driving rapid, projective-like quantum state reduction (collapse) into one of the eigenstates of the Lindblad operators.",
+        "interpretation": "The equation decomposes the change in the state vector $\\mathrm{d}|\\psi\\rangle$ into a deterministic unitary part and a stochastic measurement-induced part. The term $-\\frac{i}{\\hbar}\\hat{H}\\mathrm{d}t$ represents the standard, deterministic Schrödinger evolution governed by the system's Hamiltonian $\\hat{H}$ over an infinitesimal time step $\\mathrm{d}t$. The second term, $\\sum_j (\\hat{L}_j - \\langle \\hat{L}_j \\rangle) \\mathrm{d}W_j$, represents the stochastic feedback from continuous measurement. Here, $\\hat{L}_j$ is the Lindblad or collapse operator for channel $j$, and $\\langle \\hat{L}_j \\rangle = \\langle\\psi|\\hat{L}_j|\\psi\\rangle$ is its expectation value, which centers the fluctuations. The stochasticity is driven by the real Wiener increments $\\mathrm{d}W_j$, representing white noise. Subtracting the expectation value $\\langle \\hat{L}_j \\rangle$ ensures that the state vector's norm is preserved on average, a key feature for maintaining a valid probabilistic interpretation along each quantum trajectory.",
+        "symmetry_origin": "The equation is derived within quantum trajectory theory as an 'unraveling' of the deterministic Lindblad master equation for the density matrix $\\rho$. Its mathematical structure is designed to preserve the unit norm of the state vector $|\\psi(t)\\rangle$ along each individual stochastic trajectory, thus satisfying the fundamental requirement of probability conservation in quantum mechanics.",
+        "limits_and_boundary": "1. In the limit of no environmental coupling ($\\hat{L}_j \\to 0$ for all $j$), the stochastic term vanishes, and the equation reduces to the standard deterministic Schrödinger equation, $i\\hbar \\frac{\\mathrm{d}}{\\mathrm{d}t}|\\psi\\rangle = \\hat{H}|\\psi\\rangle$.\n2. In the strong measurement limit, the stochastic term dominates, leading to rapid state vector collapse towards an eigenstate of the measurement operator $\\hat{L}_j$, a phenomenon related to the quantum Zeno effect.\n3. The equation is valid for open quantum systems where the environment can be modeled as a set of Markovian white noise sources.",
         "status": "platinum",
-        "conceptual_definition": "The Stochastic State Law (also known as the Stochastic Schrödinger Equation or Quantum Trajectory Equation) describes the continuous, non-unitary, and stochastic evolution of an individual open quantum system undergoing continuous weak measurement or environmental monitoring. It models how a quantum state vector collapses progressively and randomly towards an eigenstate of the measured observables, combining deterministic unitary evolution with random quantum jumps or diffusive fluctuations.",
+        "conceptual_definition": "The Stochastic Schrödinger Equation (or Quantum Trajectory Equation) describes the continuous, non-unitary, and stochastic evolution of an individual open quantum system undergoing continuous weak measurement or environmental monitoring. It models how a quantum state vector evolves under both deterministic unitary dynamics and random fluctuations induced by observation.",
         "intuitive_summary": "This equation dictates how a quantum state evolves continuously under both its natural internal clock and the random, disturbing nudges of an external measurement apparatus.",
         "subcomponents": [
             "density-operator-for-pure-quantum-states-bf33ce87",
@@ -990,33 +972,27 @@
     },
     "technical-relation-f39fb90f": {
         "title": "Technical Relation (Advanced Waves and Retrocausality)",
-        "equation": "t_{advanced} > t_{now}",
+        "equation": "t_{\\mathrm{advanced}} > t_{\\mathrm{now}}",
         "semantic_variables": {
-            "t_{advanced}": {
+            "t_{\\mathrm{advanced}}": {
                 "name": "Time of Advanced Event/Cause",
                 "type": "variable",
                 "unit": "s",
                 "description": "The time coordinate representing a future event, or the origin of an advanced wave that hypothetically influences the present. In a retrocausal scenario, this is the time of the cause."
             },
-            "t_{now}": {
+            "t_{\\mathrm{now}}": {
                 "name": "Present Time/Time of Effect",
                 "type": "variable",
                 "unit": "s",
                 "description": "The time coordinate representing the current moment or the observation of an effect. In a retrocausal scenario, this is the time when the effect is observed."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
             }
         },
-        "interpretation": "The variable $t_{now}$ represents the present moment at which an effect, measurement, or observation occurs. The variable $t_{advanced}$ represents a point in time in the future relative to $t_{now}$ from which an advanced wave or causal influence would hypothetically originate. The inequality $t_{advanced} > t_{now}$ is the mathematical expression of retrocausality within this framework. It signifies that the source or origin of a specific physical phenomenon (conceptualized as an advanced wave) is located at a time $t_{advanced}$ that is chronologically later than the time $t_{now}$ when its influence or effect is observed. In the context of wave mechanics, advanced solutions to wave equations describe waves converging onto a source, propagating backward in time from a future event to a present observation. This means that, in a retrocausal interpretation, information about the future event at $t_{advanced}$ effectively reaches an observer at $t_{now}$ before the event itself physically happens.",
-        "symmetry_origin": "Advanced waves arise from the inherent time-reversal symmetry present in many fundamental physics equations, such as Maxwell's equations for electromagnetism or the Klein-Gordon equation in quantum field theory. These equations are symmetric under the transformation $t \\rightarrow -t$, meaning if a function $\\Psi(t)$ is a solution describing forward-time propagation, then $\\Psi(-t)$ is also a valid solution describing backward-time propagation. The retarded solution corresponds to waves propagating forward in time (cause preceding effect), while the advanced solution corresponds to waves propagating backward in time (effect preceding cause). The physical choice of retarded solutions over advanced solutions is typically made based on the empirical observation of causality in the macroscopic world, which dictates that causes must precede their effects. Theoretical frameworks, like the Wheeler-Feynman absorber theory, have explored how advanced potentials might be incorporated or cancelled out in a self-consistent manner.",
-        "limits_and_boundary": "The concept expressed by $t_{advanced} > t_{now}$ primarily defines a theoretical boundary condition for causality rather than exploring asymptotic limits of variables. If the time difference $(t_{advanced} - t_{now})$ approaches zero, it would imply that the future cause and the present effect become simultaneous, pushing the boundary of retrocausality towards instantaneous interaction. In a universe governed by standard causality, $(t_{advanced} - t_{now})$ would strictly be negative for a cause to precede an effect, or positive for an effect to precede a future cause. If $t_{advanced}$ were to approach infinity, it would mean the hypothesized future cause is infinitely far into the future, effectively decoupling it from any present effect and thus restoring standard causality where effects are solely determined by past or present causes. The inequality $t_{advanced} > t_{now}$ strictly defines a region of time where retrocausal phenomena are hypothesized to occur, with any deviation implying either standard causality or simultaneity.",
+        "interpretation": "The variable $t_{\\mathrm{now}}$ represents the present moment at which an effect, measurement, or observation occurs. The variable $t_{\\mathrm{advanced}}$ represents a point in time in the future relative to $t_{\\mathrm{now}}$ from which an advanced wave or causal influence would hypothetically originate. The inequality $t_{\\mathrm{advanced}} > t_{\\mathrm{now}}$ is the mathematical expression of retrocausality. It signifies that the source of a physical phenomenon is located at a time $t_{\\mathrm{advanced}}$ that is chronologically later than the time $t_{\\mathrm{now}}$ when its effect is observed. In the context of wave mechanics, advanced solutions to wave equations describe waves converging onto a source, propagating backward in time from a future event to a present observation. This means that, in a retrocausal interpretation, information about the future event at $t_{\\mathrm{advanced}}$ effectively reaches an observer at $t_{\\mathrm{now}}$ before the event itself physically happens.",
+        "symmetry_origin": "Advanced waves arise from the inherent time-reversal symmetry ($T$-symmetry) present in many fundamental physics equations, such as Maxwell's equations or the Klein-Gordon equation. These equations are symmetric under the transformation $t \\rightarrow -t$, meaning if a function $\\Psi(t)$ is a solution describing forward-time propagation, then $\\Psi(-t)$ is also a valid solution describing backward-time propagation. The physical choice of retarded solutions (cause preceding effect) over advanced solutions (effect preceding cause) is an explicit breaking of this symmetry, typically justified by the macroscopic arrow of time and empirical causality.",
+        "limits_and_boundary": "1. Standard Causality: If the inequality were reversed to $t_{\\mathrm{cause}} < t_{\\mathrm{effect}}$, it would represent standard causality where causes precede effects.\n2. Simultaneity: In the limit where $(t_{\\mathrm{advanced}} - t_{\\mathrm{now}}) \\to 0$, the cause and effect become simultaneous, representing instantaneous action at a distance rather than retrocausality.\n3. Decoupling: In the limit where $t_{\\mathrm{advanced}} \\to \\infty$, the future cause is infinitely far away, effectively decoupling it from any present effect and restoring a description where the present is determined solely by past events.",
         "status": "platinum",
-        "conceptual_definition": "This formula is foundational to understanding advanced waves and retrocausality, positing a scenario where an 'effect' at time $t_{now}$ is influenced or caused by an event or signal originating from a 'future' time $t_{advanced}$. This stands in stark contrast to conventional causality, where causes always precede their effects. Advanced waves are mathematical solutions to wave equations (such as Maxwell's equations) that propagate backward in time, leading to these retrocausal implications, although they are generally discarded in physical theories due to violating observed causality.",
-        "intuitive_summary": "This equation describes the non-standard concept where an observed effect occurs at $t_{now}$ due to a cause originating at a future time $t_{advanced}$, challenging the everyday understanding of time's arrow.",
+        "conceptual_definition": "This inequality defines retrocausality, a theoretical concept where an effect observed at the present time, t_now, is influenced by a cause originating from a future time, t_advanced. This arises from time-symmetric physical laws that permit advanced wave solutions propagating backward in time, which are typically discarded to enforce empirical causality.",
+        "intuitive_summary": "This inequality describes the concept that an effect observed now is caused by an event that will happen in the future.",
         "subcomponents": [
             "observers-local-present-time-d540be48",
             "time-reversal-transformation-a6198c43",
@@ -1097,26 +1073,20 @@
         ]
     },
     "potential-scaling-887ac255": {
-        "title": "Potential Scaling",
-        "equation": "\\langle G \\rangle = \\frac{d}{dt} \\sum \\mathbf{p}_i \\cdot \\mathbf{r}_i = 0 \\text{ (at steady state)}",
+        "title": "Virial Theorem (Steady State Condition)",
+        "equation": "\\left\\langle \\frac{\\mathrm{d}}{\\mathrm{d}t} \\sum_{i} \\mathbf{p}_{i} \\cdot \\mathbf{r}_{i} \\right\\rangle = 0",
         "semantic_variables": {
-            "\\langle G \\rangle": {
-                "name": "Time-averaged Virial Derivative",
-                "type": "variable",
-                "unit": "J/s",
-                "description": "The time average of the time derivative of the Virial,\\frac{d}{dt}$\\sum_i \\mathbf{p}_i \\cdot \\mathbf{r}_i$. For a system in a steady state (virial equilibrium), this value is zero, indicating a balance between kinetic and potential energy contributions."
-            },
-            "\\mathbf{p}_i": {
+            "\\mathbf{p}_{i}": {
                 "name": "Momentum of i-th particle",
                 "type": "variable",
-                "unit": "kg m/s",
-                "description": "The vector momentum of the $i$-th particle in the system, calculated as its mass times its velocity,$\\mathbf{p}_i = m_i \\mathbf{v}_i$."
+                "unit": "kg⋅m/s",
+                "description": "The vector momentum of the $i$-th particle in the system, calculated as its mass times its velocity, $\\mathbf{p}_i = m_i \\mathbf{v}_i$."
             },
-            "\\mathbf{r}_i": {
+            "\\mathbf{r}_{i}": {
                 "name": "Position of i-th particle",
                 "type": "variable",
                 "unit": "m",
-                "description": "The vector position of the $i$-th particle in the system, measured from a chosen origin. The specific choice of origin often cancels out in the final Virial Theorem for systems with internal forces."
+                "description": "The vector position of the $i$-th particle in the system, measured from a chosen origin."
             },
             "t": {
                 "name": "Time",
@@ -1124,55 +1094,31 @@
                 "unit": "s",
                 "description": "The independent variable representing time, over which the derivative is taken and the average is performed."
             },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+            "\\langle \\dots \\rangle": {
+                "name": "Time Average Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Denotes the long-term time average of the enclosed quantity, defined as $\\langle A \\rangle = \\lim_{\\tau\\to\\infty} \\frac{1}{\\tau} \\int_0^\\tau A(t) \\mathrm{d}t$."
             },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
+            "\\frac{\\mathrm{d}}{\\mathrm{d}t}": {
+                "name": "Time Derivative Operator",
+                "type": "operator",
+                "unit": "s⁻¹",
+                "description": "Represents the rate of change with respect to time."
             },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
+            "\\sum_{i}": {
+                "name": "Summation Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Represents the sum over all particles indexed by $i$ in the system."
             }
         },
-        "interpretation": "The equation states that the expectation value $\\langle$ G $\\rangle = \\langle \\frac{d}{dt} \\sum_i \\mathbf{p} _i \\cdot \\mathbf{r}_i \\rangle$ is zero for a system in a steady state. Here, $\\mathbf{p}$_i represents the momentum of the $i$-th particle, and $\\mathbf{r}_i is its position vector. The term \\sum_i \\mathbf{p}_i \\cdot \\mathbf{r}_i$ is known as the Virial. Taking the time derivative of the Virial $\\frac{dG}{dt}$ and$then its long-term time average (denoted by$\\langle \\dots \\rangle ) leads to the result. This condition \\langle G \\rangle = 0 $implies a fundamental relationship between the time-averaged total kinetic energy$\\langle$T$\\rangle$and the time-averaged total potential energy$\\langle$V$\\rangle for$systems where the interaction forces follow an inverse-square law (like gravity). Specifically, for such systems, the Virial Theorem states that$2\\langle T \\rangle = -\\langle V \\rangle$. This relation is crucial for understanding the stability and energy distribution in astrophysical systems.",
-        "symmetry_origin": "The Virial Theorem, including this formulation, originates directly from Newton's laws of motion applied to a system of particles. While not a direct consequence of a specific spacetime symmetry via Noether's theorem in the same way conservation laws are, its derivation involves manipulating the equations of motion. It implicitly relies on the time-invariance of the system's dynamics in a steady state for the time average to converge to zero. For potentials that are homogeneous functions of coordinates (e.g.,$V \\propto r^n$), the theorem establishes a relationship between kinetic and potential energies, which can be seen as a scaling property.",
-        "limits_and_boundary": "This equation is valid for systems that are in a statistically steady state (i.e., in 'virial equilibrium'), meaning their overall properties, such as total energy and size, are not systematically changing over long timescales. If a system is undergoing significant expansion or contraction (e.g., a collapsing gas cloud or an exploding supernova remnant), the time-averaged derivative of the Virial will not be zero. The theorem generally applies to bounded systems where particles remain within a finite region and the time averages are well-defined. For unbound particles or highly transient phenomena, the condition $\\langle$ G $\\rangle$ = 0 $may not hold or may not be meaningful$.",
+        "interpretation": "This equation expresses the Virial Theorem for a system in a steady state. The quantity $G = \\sum_{i} \\mathbf{p}_{i} \\cdot \\mathbf{r}_{i}$ is known as the Virial. Its time derivative is $\\frac{\\mathrm{d}G}{\\mathrm{d}t} = \\sum_i (\\dot{\\mathbf{p}}_i \\cdot \\mathbf{r}_i + \\mathbf{p}_i \\cdot \\dot{\\mathbf{r}}_i)$. Using Newton's second law, $\\dot{\\mathbf{p}}_i = \\mathbf{F}_i$, and the definition of momentum, $\\mathbf{p}_i = m_i \\dot{\\mathbf{r}}_i$, this becomes $\\frac{\\mathrm{d}G}{\\mathrm{d}t} = \\sum_i \\mathbf{F}_i \\cdot \\mathbf{r}_i + 2T$, where $T$ is the total kinetic energy. For a stable, bound system, the long-term time average of $\\frac{\\mathrm{d}G}{\\mathrm{d}t}$ is zero, which is the statement of the equation. This implies the famous result $2\\langle T \\rangle = -\\langle \\sum_i \\mathbf{F}_i \\cdot \\mathbf{r}_i \\rangle$. For potential forces that scale as $V \\propto r^k$, this simplifies to $2\\langle T \\rangle = k\\langle V \\rangle$, which for gravity ($k=-1$) gives the well-known relation $2\\langle T \\rangle = -\\langle V \\rangle$ for gravitationally bound systems like galaxies and star clusters.",
+        "symmetry_origin": "The Virial Theorem is derived directly from the dynamical equations of motion (e.g., Newton's second law). While not a conservation law from Noether's theorem in the typical sense, it is deeply connected to scaling symmetries (dilatations). For a system with a potential $V$ that is a homogeneous function of the coordinates of degree $k$ (i.e., $V(\\lambda \\mathbf{r}) = \\lambda^k V(\\mathbf{r})$), the theorem reveals a fixed relationship between the average kinetic and potential energies, reflecting how the system's dynamics behave under spatial scaling.",
+        "limits_and_boundary": "1. Steady State: The theorem in this form, $\\langle \\frac{\\mathrm{d}G}{\\mathrm{d}t} \\rangle = 0$, is strictly valid only for systems in a statistical steady state (virial equilibrium) over a sufficiently long time average.\n2. Bounded System: The particles must be confined to a finite region of space (a bounded system), so that quantities like position and momentum do not grow indefinitely, ensuring the time average converges. For unbound particles, the average is not guaranteed to be zero.\n3. Non-Equilibrium Systems: For systems not in equilibrium, such as a collapsing gas cloud, $\\langle \\frac{\\mathrm{d}G}{\\mathrm{d}t} \\rangle$ is not zero. For a collapsing system, it is negative, indicating that the potential energy is becoming more dominant (more negative) than the kinetic energy.",
         "status": "platinum",
-        "conceptual_definition": "This formula represents a statement of the Virial Theorem for a system in a steady state. It asserts that the long-term time average of the time derivative of the Virial, $G = \\sum_i \\mathbf{p}_i \\cdot \\mathbf{r}_i is zero when the system has reached a stable equilibrium and is not undergoing overall expansion or contraction. This condition is fundamental for relating the average kinetic and potential energies of bounded systems, such as stellar clusters or planetary systems under gravitational influence, particularly for potentials with homogeneous scaling properties$.",
-        "intuitive_summary": "For a stable, self-gravitating system in a steady state, the time-averaged rate of change of the sum of each particle's momentum dotted with its position is zero, signifying a dynamic balance.",
+        "conceptual_definition": "This equation states that for a stable, bound system of particles in a statistical steady state, the long-term time average of the time derivative of the Virial, defined as the sum of dot products of each particle's momentum and position, is zero. This condition of virial equilibrium is fundamental for relating the average kinetic and potential energies within the system.",
+        "intuitive_summary": "For a stable, self-interacting system in equilibrium, the time-averaged rate of change of the sum of each particle's momentum dotted with its position is zero, signifying a dynamic balance.",
         "subcomponents": [
             "force-on-the-i-th-particle-826b061f",
             "average-kinetic-energy-e38125ca",
@@ -1195,38 +1141,38 @@
                 "name": "Electric Potential",
                 "type": "variable",
                 "unit": "V",
-                "description": "The amount of work needed to move a unit positive charge from a reference point (usually infinity) to a specific point in an electric field. Measured in Volts."
+                "description": "The amount of work needed to move a unit positive charge from a reference point to a specific point in an electric field."
             },
             "n": {
-                "name": "Normal Direction/Distance",
+                "name": "Normal Coordinate",
                 "type": "variable",
                 "unit": "m",
-                "description": "Represents the direction perpendicular to the surface along which the partial derivative of the potential is taken. Implicitly, it is the distance coordinate measured along this normal direction."
+                "description": "A spatial coordinate representing the direction normal (perpendicular) to a surface, along which the directional derivative is taken."
             },
             "\\sigma": {
                 "name": "Surface Charge Density",
                 "type": "variable",
                 "unit": "C/m^2",
-                "description": "The amount of electric charge distributed per unit area on a surface. It can be positive or negative."
+                "description": "The amount of electric charge distributed per unit area on a surface."
             },
             "\\varepsilon_0": {
-                "name": "Permittivity of Free Space",
-                "type": "constant",
-                "unit": "F/m",
-                "description": "A fundamental physical constant representing the absolute dielectric permittivity of a vacuum. It quantifies the ability of a vacuum to permit electric field lines."
-            },
-            "\\epsilon_0": {
                 "name": "Vacuum Permittivity",
                 "type": "constant",
                 "unit": "F/m",
-                "description": "The capability of the vacuum to permit electric field lines."
+                "description": "A fundamental physical constant representing the capability of a classical vacuum to permit electric field lines."
+            },
+            "\\partial": {
+                "name": "Partial Derivative Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Represents the rate of change of a multivariable function with respect to one of its variables, while holding the others constant."
             }
         },
-        "interpretation": "The equation $\\frac{ \\partial V}{ \\partial n}$ = -$\\frac{\\sigma}{\\varepsilon_0}$ relates the change in electric potential perpendicular to a surface to the surface charge density $\\sigma on$ that surface. Here, $\\frac{ \\partial V}{ \\partial n}$ denotes$the normal derivative of the electric potential V , representing how rapidly the potential changes as one moves away from the surface along its normal direction\\hat{\\mathbf{n}$} . Since the electric field $\\mathbf{E}$ is related to the potential by $\\mathbf{E}= - \\nabla V , the normal component of the electric field immediately outside the surface is E_n =\\mathbf{E} \\cdot \\hat{\\mathbf{n}$} = - \\frac{ \\partial V}{ \\partial n}$. Substituting this into the given formula, we get E_n = \\frac{\\sigma}{\\varepsilon_0}$ . This form clarifies that the normal component of the electric field immediately outside a charged surface is directly proportional to the surface charge density and inversely proportional to the permittivity of free space. A positive surface charge density $\\sigma implies$ an electric field pointing away from the surface, which corresponds to a decrease in potential as one moves away from the surface along the outward normal, hence $\\frac{ \\partial V}{ \\partial n}$ is negative for positive \\sigma , consistent with the negative sign in the formula$.",
-        "symmetry_origin": "This formula is a direct consequence of Gauss's Law in integral form ($\\oint \\mathbf{E} \\cdot d \\mathbf{A} = \\frac{Q_{enc}}{\\varepsilon_0}$) when applied to an infinitesimally thin 'pillbox' Gaussian surface that straddles a charged interface. By taking the limit as the height of the pillbox approaches zero, the contributions from the side walls vanish, and only the normal components of the electric field (and thus the normal derivative of the potential) through the top and bottom faces remain, revealing the discontinuity directly related to the enclosed surface charge.",
-        "limits_and_boundary": "In the limit where the surface charge density $\\sigma$ approaches zero, the right-hand side of the equation goes to zero. This implies that $\\frac{\\partial V}{\\partial n} = 0$, meaning the normal derivative of the potential, and thus the normal component of the electric field, is continuous across an uncharged boundary. Conversely, if $\\sigma$ becomes very large, such as at the surface of a highly charged conductor, then $\\frac{\\partial V}{\\partial n}$ also$ becomes very large, indicating a strong electric field perpendicular to the surface. The formula is valid for macroscopic charge distributions and breaks down at atomic scales where charge is discrete.",
+        "interpretation": "The equation $\\frac{\\partial V}{\\partial n} = -\\frac{\\sigma}{\\varepsilon_0}$ relates the change in electric potential perpendicular to a surface to the surface charge density $\\sigma$ on that surface. Here, $\\frac{\\partial V}{\\partial n}$ denotes the normal derivative of the electric potential $V$, representing how rapidly the potential changes as one moves away from the surface along its normal direction $\\hat{\\mathbf{n}}$. Since the electric field $\\mathbf{E}$ is related to the potential by $\\mathbf{E} = -\\nabla V$, the normal component of the electric field immediately outside the surface is $E_n = \\mathbf{E} \\cdot \\hat{\\mathbf{n}} = -\\frac{\\partial V}{\\partial n}$. Substituting this into the given formula, we get $E_n = \\frac{\\sigma}{\\varepsilon_0}$. This form clarifies that the normal component of the electric field immediately outside a charged surface is directly proportional to the surface charge density and inversely proportional to the permittivity of free space. A positive surface charge density $\\sigma$ implies an electric field pointing away from the surface, which corresponds to a decrease in potential as one moves away from the surface along the outward normal, hence $\\frac{\\partial V}{\\partial n}$ is negative for positive $\\sigma$, consistent with the negative sign in the formula.",
+        "symmetry_origin": "This formula is a direct consequence of Gauss's Law in integral form, $\\oint_S \\mathbf{E} \\cdot \\mathrm{d}\\mathbf{A} = \\frac{Q_{\\text{enc}}}{\\varepsilon_0}$, when applied to an infinitesimally thin 'pillbox' Gaussian surface that straddles a charged interface. By taking the limit as the height of the pillbox approaches zero, the contributions from the side walls vanish, and only the normal components of the electric field (and thus the normal derivative of the potential) through the top and bottom faces remain, revealing the discontinuity directly related to the enclosed surface charge.",
+        "limits_and_boundary": "1. In the limit where the surface charge density $\\sigma \\to 0$, the right-hand side of the equation vanishes, implying $\\frac{\\partial V}{\\partial n} = 0$. This means the normal derivative of the potential, and thus the normal component of the electric field, is continuous across an uncharged boundary.\n2. For a perfect conductor in electrostatic equilibrium, the electric field inside is zero. The formula, combined with the condition $E_{\\text{inside}}=0$, gives the field just outside the conductor's surface as $E_n = \\sigma / \\varepsilon_0$.\n3. The formula assumes a continuous, macroscopic charge distribution and breaks down at atomic scales where charge is discrete and quantum effects become significant.",
         "status": "platinum",
-        "conceptual_definition": "This formula represents a fundamental boundary condition in electrostatics, stating that the normal component of the electric field (which is the negative gradient of the electric potential in the normal direction) is discontinuous across a surface containing a net surface charge density. It quantifies this discontinuity by relating it directly to the local surface charge density.",
+        "conceptual_definition": "This formula represents a fundamental boundary condition in electrostatics, stating that the normal component of the electric field is discontinuous across a surface with a net surface charge density. It quantifies this discontinuity by relating the normal derivative of the electric potential directly to the local surface charge density.",
         "intuitive_summary": "The rate at which electric potential changes perpendicularly across a charged surface is directly proportional to the surface charge density present on that surface."
     },
     "the-scale-law-36288521": {
@@ -1375,32 +1321,44 @@
                 "name": "Lagrangian Density",
                 "type": "variable",
                 "unit": "J/m^3",
-                "description": "The Lagrangian density is a scalar function that describes the dynamics of fields. When integrated over spacetime, it yields the action, which is minimized by the physical path. Its SI unit is joules per cubic meter, representing energy density."
+                "description": "A scalar function describing the dynamics of fields, whose integral over spacetime is the action. It represents an energy density."
             },
             "\\phi": {
                 "name": "Field(s)",
                 "type": "variable",
-                "unit": "sqrt(J/m)",
-                "description": "This represents one or more fundamental dynamical fields (e.g., scalar, vector, tensor fields) whose evolution is being described. The specific SI unit depends heavily on the nature of the field; for a generic scalar field in relativistic theories, it often has units such that its square, when divided by length squared, yields an energy density term."
+                "unit": "Varies (e.g., sqrt(J/m) for scalar field)",
+                "description": "Represents one or more dynamical fields (scalar, vector, tensor) whose evolution is described by the Lagrangian."
             },
             "\\partial_\\mu \\phi": {
-                "name": "Spacetime Derivative of Field(s)",
-                "type": "operator",
-                "unit": "sqrt(J/m^3)",
-                "description": "This denotes the four-gradient of the field $\\phi$, representing its rate of change with respect to spacetime coordinates. It encapsulates both spatial gradients and temporal derivatives, contributing to the 'kinetic energy density' terms in the Lagrangian density. Its unit is the unit of $\\phi$ divided by meters."
+                "name": "Spacetime Derivative of Field",
+                "type": "term",
+                "unit": "Varies (e.g., sqrt(J/m^3) for scalar field)",
+                "description": "The four-gradient of the field $\\phi$, representing its rate of change across spacetime coordinates. It contributes to the kinetic energy density."
             },
             "x^\\mu": {
-                "name": "Spacetime Coordinates",
+                "name": "Spacetime Four-Vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "These are the four spacetime coordinates (one time, three space) that define a specific point in spacetime. The Lagrangian density can explicitly depend on these coordinates, though for fundamental theories in homogeneous and isotropic spacetime, this dependence is typically absent."
+                "description": "The four spacetime coordinates $(ct, x, y, z)$ that define a point (event) in spacetime."
+            },
+            "\\partial_\\mu": {
+                "name": "Four-gradient",
+                "type": "operator",
+                "unit": "m^{-1}",
+                "description": "The covariant partial derivative with respect to the spacetime coordinate $x^\\mu$, written as $(\\frac{1}{c}\\frac{\\partial}{\\partial t}, \\nabla)$. It forms the four-gradient of a scalar field."
+            },
+            "\\mu": {
+                "name": "Spacetime Index",
+                "type": "index",
+                "unit": "N/A",
+                "description": "A Greek index running from 0 to 3, representing the components of a four-vector (0 for time, 1, 2, 3 for space)."
             }
         },
-        "interpretation": "The formula $\\mathcal{L} = \\mathcal{L}$( $\\phi$, $\\partial_\\mu \\phi$, x^$\\mu$)$indicates that the Lagrangian density \\mathcal{L} is generally a function of the field(s) \\phi , their first-order spacetime derivatives \\partial_\\mu \\phi$, and potentially explicitly of the spacetime coordinates $x^\\mu$. The terms involving $\\phi$ typically represent 'potential energy density' contributions, such as mass terms or interaction potentials between fields. For example, a $\\frac{1}{2}$ m^2 \\phi^2$term can represent the mass of a scalar particle, while$\\lambda\\phi^4$can represent self-interaction. The terms involving$\\partial_\\mu \\phi are crucial for describing the 'kinetic energy density' of the field, quantifying how the field changes over spacetime. A common kinetic term for a scalar field is \\frac{1}{2} (\\partial^\\mu \\phi)(\\partial_\\mu \\phi)$. An explicit dependence on$x^\\mu$signifies that the physical laws described by the Lagrangian density are not invariant under spacetime translations, implying that the spacetime itself is inhomogeneous (e.g., in the presence of an external source or curved background). For fundamental theories in flat spacetime,\\mathcal{L}is usually assumed not to depend explicitly on$x^\\mu$, reflecting the homogeneity and isotropy of spacetime.",
-        "symmetry_origin": "The formulation of field dynamics through the Lagrangian density is deeply rooted in the principle of least action, a fundamental variational principle in physics. This principle, when extended to fields using variational calculus, naturally leads to the Euler-Lagrange equations, which are the field equations of motion. A paramount origin of the structure of $\\mathcal{L} in relativistic field theories is the requirement of Lorentz invariance, meaning the action$S = $\\int \\mathcal{L}$ d^4x$must remain unchanged under Lorentz transformations (rotations and boosts) between inertial reference frames. This constraint dictates that \\mathcal{L} must be a Lorentz scalar. Furthermore, Noether's theorem establishes a profound connection between continuous symmetries of the Lagrangian density (and thus the action) and conserved quantities. For instance, if \\mathcal{L}$ is invariant under spacetime translations (no explicit $x^\\mu$ dependence), then energy and momentum are conserved. Similarly, gauge symmetries lead to conservation of charge.",
-        "limits_and_boundary": "In the asymptotic limits, the behavior of the Lagrangian density reveals key insights into the field dynamics: If the field is spatially and temporally constant, meaning $\\partial_\\mu \\phi = 0$ everywhere, the kinetic energy density terms in $\\mathcal{L} vanish. In this scenario, the Lagrangian density reduces to a function solely of \\phi (and possibly$x^$\\mu ), essentially describing only the potential energy density of the field. The field would typically settle into a configuration that minimizes this potential. Conversely, for rapidly varying fields where$|$\\partial_\\mu \\phi$|$is very large, the derivative terms dominate the Lagrangian density. These kinetic terms, often quadratic in derivatives, indicate that rapid changes in the field configuration are energetically costly, pushing the system towards smoother field distributions to minimize the action. The absence of an explicit$x^$\\mu dependence in \\mathcal{L} signifies homogeneity and isotropy of spacetime, leading to the conservation of energy and momentum. If \\mathcal{L}$ were to depend explicitly on $x^\\mu$, it would imply the presence of external, fixed background fields or an inhomogeneous spacetime, breaking these fundamental conservation laws.",
+        "interpretation": "The formula $\\mathcal{L} = \\mathcal{L}(\\phi, \\partial_\\mu \\phi, x^\\mu)$ indicates that the Lagrangian density $\\mathcal{L}$ is generally a function of the field(s) $\\phi$, their first-order spacetime derivatives $\\partial_\\mu \\phi$, and potentially the spacetime coordinates $x^\\mu$ explicitly. Terms involving only $\\phi$ typically represent 'potential energy density', such as a mass term $\\frac{1}{2} m^2 \\phi^2$ or a self-interaction term $\\frac{\\lambda}{4!} \\phi^4$. Terms involving derivatives like $\\partial_\\mu \\phi$ describe the 'kinetic energy density' of the field, with a common example for a scalar field being $\\frac{1}{2} (\\partial^\\mu \\phi)(\\partial_\\mu \\phi)$. An explicit dependence on $x^\\mu$ signifies that the physical laws are not invariant under spacetime translations, implying an inhomogeneous spacetime (e.g., due to an external source), whereas for fundamental theories in flat spacetime, $\\mathcal{L}$ is usually assumed not to depend explicitly on $x^\\mu$.",
+        "symmetry_origin": "The structure of the Lagrangian density is governed by the principle of least action and fundamental symmetries. The action, $S = \\int \\mathcal{L} \\, \\mathrm{d}^4x$, must be a scalar under spacetime transformations, which for relativistic theories means it must be Lorentz invariant, constraining $\\mathcal{L}$ to be a Lorentz scalar. Noether's theorem provides a direct link between continuous symmetries of the action and conservation laws: invariance under spacetime translations (i.e., no explicit $x^\\mu$ dependence in $\\mathcal{L}$) leads to the conservation of the energy-momentum tensor, while invariance under internal transformations of the fields (gauge symmetries) leads to the conservation of associated charges.",
+        "limits_and_boundary": "1. Static/Homogeneous Field Limit: If the field is constant throughout spacetime ($\\partial_\\mu \\phi = 0$), all kinetic terms in $\\mathcal{L}$ vanish. The dynamics are then governed entirely by the potential energy terms, and the field will seek a configuration that minimizes this potential.\n2. High-Frequency/Gradient Limit: For rapidly varying fields where the derivatives $|\\partial_\\mu \\phi|$ are large, the kinetic terms dominate the Lagrangian density. Since these terms are typically quadratic in the derivatives, they penalize sharp changes in the field, favoring smoother configurations to minimize the action.\n3. No Explicit Spacetime Dependence: If $\\mathcal{L}$ does not explicitly depend on the coordinates $x^\\mu$, the theory is invariant under spacetime translations. By Noether's theorem, this implies the conservation of energy and momentum.",
         "status": "platinum",
-        "conceptual_definition": "The Lagrangian density, denoted as $\\mathcal{L}$, is a fundamental scalar function in classical and quantum field theory that encapsulates the dynamics of physical fields. Its integral over a four-dimensional spacetime volume yields the action $S = \\int \\mathcal{L} d^4x$. According to Hamilton's principle of least action, the actual physical evolution of a field is the one that extremizes (usually minimizes) this action. The Lagrangian density serves as the starting point for deriving the field's equations of motion through the Euler-Lagrange equations, which are partial differential equations governing the field's behavior.",
+        "conceptual_definition": "The Lagrangian density $\\mathcal{L}$ is a scalar function in field theory that encapsulates the dynamics of one or more physical fields. Its integral over a four-dimensional spacetime volume, known as the action $S = \\int \\mathcal{L} \\, \\mathrm{d}^4x$, is extremized by the physical evolution of the fields according to the principle of least action.",
         "intuitive_summary": "The Lagrangian density provides a local description of a field's dynamics, from which its equations of motion can be derived by minimizing the total action over spacetime.",
         "subcomponents": [
             "contravariant-spacetime-position-four-vector-component-44ac717d",
@@ -1416,20 +1374,20 @@
     },
     "quantum-translation-operator-momentum-724490c0": {
         "title": "Quantum Translation Operator",
-        "equation": "\\hat{T}(\\mathbf{a}) = \\exp \\left( -\\frac{i}{\\hbar} \\mathbf{a} \\cdot \\hat{\\mathbf{p}} \\right)",
-        "interpretation": "The formula $\\hat{T}(\\mathbf{a}) = \\exp \\left( - \\frac{i}{\\hbar}\\mathbf{a} \\cdot \\hat{\\mathbf{p}}$\\right$)$ shows that the translation operator is an exponential function of the dot product of the displacement vector $\\mathbf{a}and the momentum operator\\hat{\\mathbf{p}}$, scaled by the imaginary unit $i$ and the reduced Planck constant \\hbar . The momentum operator $\\hat{\\mathbf{p}$ }$acts as the generator of infinitesimal spatial translations. This means that successive infinitesimal translations add up to a finite translation, analogous to how rotations are generated by angular momentum. The presence of$i$ensures that\\hat{T}(\\mathbf{a}$)$is a unitary operator, preserving the norm of quantum states. The dot product\\mathbf{a} \\cdot \\hat{\\mathbf{p}$ }$implies that only the component of momentum parallel to the translation direction$\\mathbf{a}$ contributes to the phase shift, which is crucial for understanding how momentum eigenvalues relate to spatial periodicity.",
-        "symmetry_origin": "The quantum translation operator arises from the fundamental symmetry of spatial translation invariance. In a spatially homogeneous universe, the laws of physics are the same regardless of an observer's position. This symmetry implies the conservation of linear momentum, as described by Noether's theorem. Mathematically, the translation operator is derived from the requirement that the Hamiltonian (or any observable) is invariant under spatial translations. The momentum operator $\\hat{\\mathbf{p}}$ is the generator of these continuous spatial translations, meaning that an infinitesimal translation $d\\mathbf{a} can be expressed as \\hat{T} (d \\mathbf{a} ) \\approx \\hat{I} - \\frac{i}{\\hbar}$d $\\mathbf{a} \\cdot \\hat{\\mathbf{p}$ }$. Integrating these infinitesimal transformations leads to the exponential form of the finite translation operator.",
-        "limits_and_boundary": "In the limit of an infinitesimal translation, i.e., as $\\mathbf{a} \\to$ 0$, the operator \\hat{T}$($\\mathbf{a}$)$approaches the identity operator \\hat{I} . This can be seen by Taylor expanding the exponential: \\exp$(x) \\approx 1+x$for small$x$, so \\hat{T} ( \\mathbf{a} ) \\approx \\hat{I} - \\frac{i}{\\hbar}\\mathbf{a} \\cdot \\hat{\\mathbf{p}$ }$. For very large displacements$| $\\mathbf{a}|$\\to \\infty , the phase factor \\exp \\left( - \\frac{i}{\\hbar} $\\mathbf{a} \\cdot \\hat{\\mathbf{p}$} $\\right$)$oscillates rapidly, indicating strong changes in the phase of the wave function, which can lead to vanishing overlap with the original state if the momentum is well-defined. If the system is an eigenstate of momentum \\hat{\\mathbf{p} }$ with eigenvalue $\\mathbf{p}$, then $\\hat{T}( \\mathbf{a} ) | \\mathbf{p} \\rangle = \\exp \\left( - \\frac{i}{\\hbar} \\mathbf{a} \\cdot \\mathbf{p} \\right) | \\mathbf{p} \\rangle$. The state is translated in space but gains a phase factor, consistent with the plane wave nature of momentum eigenstates.",
+        "equation": "\\hat{T}(\\mathbf{a}) = \\exp\\left( -\\frac{i}{\\hbar} \\mathbf{a} \\cdot \\hat{\\mathbf{p}} \\right)",
+        "interpretation": "The formula $\\hat{T}(\\mathbf{a}) = \\exp\\left(-\\frac{i}{\\hbar} \\mathbf{a} \\cdot \\hat{\\mathbf{p}}\\right)$ defines the finite translation operator in terms of the momentum operator $\\hat{\\mathbf{p}}$, which acts as the generator of infinitesimal spatial translations. This exponential form arises from integrating the infinitesimal translation operator $\\hat{T}(\\mathrm{d}\\mathbf{a}) \\approx \\hat{I} - \\frac{i}{\\hbar} \\mathrm{d}\\mathbf{a} \\cdot \\hat{\\mathbf{p}}$, where $\\hat{I}$ is the identity operator. The presence of the imaginary unit $i$ ensures that $\\hat{T}(\\mathbf{a})$ is a unitary operator, which preserves the norm of quantum states and thus conserves probability. The dot product $\\mathbf{a} \\cdot \\hat{\\mathbf{p}}$ signifies that the phase shift imparted to a momentum eigenstate is determined by the component of momentum along the direction of translation.",
+        "symmetry_origin": "The quantum translation operator is a direct consequence of the continuous symmetry of spatial translation invariance. According to Noether's theorem, if the laws of physics (and thus the Hamiltonian of a closed system) are the same everywhere in space, then linear momentum is a conserved quantity. The momentum operator $\\hat{\\mathbf{p}}$ is the conserved charge associated with this symmetry and acts as the generator of spatial translations. An infinitesimal translation by $\\mathrm{d}\\mathbf{a}$ is represented by the operator $\\hat{T}(\\mathrm{d}\\mathbf{a}) \\approx \\hat{I} - \\frac{i}{\\hbar}\\mathrm{d}\\mathbf{a} \\cdot \\hat{\\mathbf{p}}$, where $\\hat{I}$ is the identity. Integrating this infinitesimal form yields the exponential expression for a finite translation.",
+        "limits_and_boundary": "1. **Infinitesimal Translation Limit ($\\mathbf{a} \\to \\mathbf{0}$):** For an infinitesimal displacement, a first-order Taylor expansion of the exponential yields $\\hat{T}(\\mathbf{a}) \\approx \\hat{I} - \\frac{i}{\\hbar}\\mathbf{a} \\cdot \\hat{\\mathbf{p}}$, where $\\hat{I}$ is the identity operator. This shows the momentum operator $\\hat{\\mathbf{p}}$ as the generator of translations.\n2. **Classical Limit ($\\hbar \\to 0$):** In the classical limit, the phase factor oscillates infinitely rapidly, and quantum interference effects vanish. The operator's action on observables, via the commutator, recovers the classical Poisson bracket relationship between momentum and functions of position.\n3. **Momentum Eigenstate:** When acting on a momentum eigenstate $|\\mathbf{p}\\rangle$ with eigenvalue $\\mathbf{p}$, the operator simplifies to a phase factor: $\\hat{T}(\\mathbf{a})|\\mathbf{p}\\rangle = \\exp\\left(-\\frac{i}{\\hbar}\\mathbf{a} \\cdot \\mathbf{p}\\right)|\\mathbf{p}\\rangle$. This demonstrates that translating a state of definite momentum only changes its overall phase.",
         "semantic_variables": {
-            "\\hat{T}(\\mathbf{a})": {
-                "name": "Quantum Translation Operator",
-                "type": "variable",
+            "\\hat{T}": {
+                "name": "Translation Operator",
+                "type": "operator",
                 "unit": "unitless",
-                "description": "The operator that performs a spatial translation of a quantum state by a vector $\\mathbf{a}$."
+                "description": "The unitary operator that performs a spatial translation of a quantum state by a vector $\\mathbf{a}$."
             },
             "\\mathbf{a}": {
                 "name": "Displacement Vector",
-                "type": "variable",
+                "type": "parameter",
                 "unit": "m",
                 "description": "The spatial vector by which the quantum system is translated."
             },
@@ -1437,41 +1395,23 @@
                 "name": "Imaginary Unit",
                 "type": "constant",
                 "unit": "unitless",
-                "description": "The complex number defined as the square root of -1, $i = \\sqrt{-1}$. Its presence ensures the operator is unitary."
+                "description": "The complex number defined by $i^2 = -1$. Its presence ensures the operator is unitary."
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "J s",
-                "description": "The Dirac constant, equal to Planck's constant $h$ divided by $2\\pi$. It is a fundamental constant in quantum mechanics that sets the scale of quantum effects."
+                "unit": "J⋅s",
+                "description": "The Dirac constant, $h/(2\\pi)$, a fundamental constant setting the scale of quantum effects."
             },
             "\\hat{\\mathbf{p}}": {
                 "name": "Momentum Operator",
-                "type": "variable",
-                "unit": "kg m/s",
-                "description": "The quantum mechanical operator representing the linear momentum of a particle. In the position basis, it is given by $-i\\hbar \\nabla$."
-            },
-            "T": {
-                "name": "Tension / Period",
-                "type": "variable",
-                "unit": "N or s",
-                "description": "In dynamics, tension force in a string/cable, or period (time per cycle) of periodic motion."
-            },
-            "\\exp": {
-                "name": "\\exp Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
+                "type": "operator",
+                "unit": "kg⋅m/s",
+                "description": "The quantum mechanical operator for linear momentum, which is the generator of spatial translations. In the position basis, $\\hat{\\mathbf{p}} = -i\\hbar\\nabla$."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The quantum translation operator, denoted by $\\hat{T}(\\mathbf{a})$, is a unitary operator in quantum mechanics that shifts a quantum system by a displacement vector $\\mathbf{a} in space. When applied to a quantum state, it effectively translates the state without changing its intrinsic properties, mapping a state$|$\\psi \\rangle to a translated state$|$\\psi$'$\\rangle = \\hat{T}$($\\mathbf{a}$)|$\\psi \\rangle . Similarly, it translates wave functions \\psi$($\\mathbf{r}$)$such that \\hat{T} ( \\mathbf{a} )\\psi( \\mathbf{r} ) = \\psi( \\mathbf{r} - \\mathbf{a} )$. This operator is fundamental to understanding spatial symmetries and the conservation of momentum in quantum systems.",
+        "conceptual_definition": "The quantum translation operator, denoted by $\\hat{T}(\\mathbf{a})$, is a unitary operator that shifts a quantum system by a displacement vector $\\mathbf{a}$ in space. It maps a state $|\\psi\\rangle$ to a translated state $|\\psi'\\rangle = \\hat{T}(\\mathbf{a})|\\psi\\rangle$, which corresponds to translating the wave function $\\psi(\\mathbf{r})$ such that $(\\hat{T}(\\mathbf{a})\\psi)(\\mathbf{r}) = \\psi(\\mathbf{r} - \\mathbf{a})$.",
         "intuitive_summary": "The quantum translation operator shifts a quantum state or wave function in space, with the momentum operator acting as its generator for infinitesimal translations.",
         "subcomponents": [
             "quantum-state-ket-vector-bc44429c",
@@ -1811,92 +1751,80 @@
     },
     "heaviside-feynman-identity-1-77ce4401-60b50766": {
         "title": "The Heaviside-Feynman Electric Field Formula",
-        "equation": "\\mathbf{E}(\\mathbf{r}, t) = \\frac{q}{4\\pi\\epsilon_0} \\left[ \\frac{\\hat{\\mathbf{e}}_r}{r'^2} + \\frac{r'}{c} \\frac{d}{dt} \\left( \\frac{\\hat{\\mathbf{e}}_r}{r'^2} \\right) + \\frac{1}{c^2} \\frac{d^2 \\hat{\\mathbf{e}}_r}{dt^2} \\right]",
-        "interpretation": "The formula provides the electric field $\\rvec{E}$ at a position $\\rvec{r}$ and time t, produced by a point charge q. The first term, $\\rfrac{q}{4$pe$_{0}}$\\frac{\\rhat{e}_r}{r'^2}$, is analogous to the static Coulomb field, but it's evaluated at the 'retarded' position and time. Here,$\\rvec{r}$' is the vector from the charge's position at the retarded time to the observation point, and$\\rhat{e}_r$is the unit vector in the direction of$\\rvec{r}$'. The second term,$\\rfrac{q}{4 $pe$_{0}} $\\frac{r'}{c} \\frac{d}{dt} \\rleft( \\frac{\\rhat{e} _r}{r'^2} \\rright), accounts for the charge's velocity. It involves the time derivative of the first term's spatial part, scaled by the charge's speed relative to the speed of light c. The third term, \\rfrac{q}{4$pe$_{0}} \\frac{1}{c^2} \\frac{d^2 \\rhat{e} _r}{dt^2}$, represents the radiation field, which is proportional to the charge's acceleration. This term is particularly important for understanding electromagnetic radiation emitted by accelerating charges.",
-        "symmetry_origin": "This formula is derived from the Liénard-Wiechert potentials, which themselves arise from solving Maxwell's equations for a point charge. The key physical principle is the finite speed of causality: changes in the charge's state of motion do not instantaneously affect the electric field at distant points but propagate outwards at the speed of light.",
-        "limits_and_boundary": "In the limit of a stationary charge ($\\rvec{v} \\to$ 0, $\\rvec{a} \\to$ 0), the second and third terms vanish, and if we also consider $\\rvec{r}$' to be simply $\\rvec{r}$ (the distance to the charge at time t), the formula reduces to the static Coulomb's Law: $\\rvec{E} = \\frac{q}{4 pe_{0}}$\\frac{\\rhat{r}$}{r^2}$. As the charge's velocity becomes relativistic (\\rvec{v} \\to$ c) or its acceleration is significant, the velocity and acceleration terms become dominant, particularly for radiation fields far from the charge.",
+        "equation": "\\mathbf{E}(\\mathbf{r}, t) = \\frac{q}{4\\pi\\epsilon_0} \\left[ \\frac{\\hat{\\mathbf{r}}'}{r'^2} + \\frac{r'}{c} \\frac{\\mathrm{d}}{\\mathrm{d}t} \\left( \\frac{\\hat{\\mathbf{r}}'}{r'^2} \\right) + \\frac{1}{c^2} \\frac{\\mathrm{d}^2 \\hat{\\mathbf{r}}'}{\\mathrm{d}t^2} \\right]_{t_r}",
+        "interpretation": "This formula expresses the electric field $\\mathbf{E}$ at observer position $\\mathbf{r}$ and time $t$ from a charge $q$ whose state of motion is evaluated at the retarded time $t_r = t - r'/c$. The vector $\\mathbf{r}'$ points from the charge's retarded position to the observer, and $r'$ is its magnitude. The formula has three components:\n1. The first term, $\\frac{q}{4\\pi\\epsilon_0} \\frac{\\hat{\\mathbf{r}}'}{r'^2}$, is the 'retarded Coulomb' field. It is structurally similar to the static field but points from the position the charge *was* at, not where it *is*.\n2. The second term, $\\frac{q}{4\\pi\\epsilon_0} \\frac{r'}{c} \\frac{\\mathrm{d}}{\\mathrm{d}t} \\left( \\frac{\\hat{\\mathbf{r}}'}{r'^2} \\right)$, is a correction term that depends on the charge's velocity. It can be thought of as the 'news' of how the static-like field is changing, arriving at the speed of light.\n3. The third term, $\\frac{q}{4\\pi\\epsilon_0} \\frac{1}{c^2} \\frac{\\mathrm{d}^2 \\hat{\\mathbf{r}}'}{\\mathrm{d}t^2}$, is the radiation field. It is proportional to the charge's acceleration and is responsible for electromagnetic radiation. This term falls off as $1/r'$, unlike the other two which fall off as $1/r'^2$, and thus dominates at large distances.",
+        "symmetry_origin": "The formula is a direct consequence of Maxwell's equations, which are invariant under Lorentz transformations (the symmetry of spacetime in special relativity) and U(1) gauge symmetry. The solution for a point source is found via the Liénard-Wiechert potentials, which incorporate the principle of causality by evaluating the source's properties at the retarded time. This ensures that information about the charge's motion propagates at the finite speed of light, $c$, respecting the structure of spacetime.",
+        "limits_and_boundary": "1. **Static Limit ($\\mathbf{v} \\to \\mathbf{0}, \\mathbf{a} \\to \\mathbf{0}$):** If the charge is stationary, the time derivatives vanish, and the retarded position becomes the current position. The formula reduces to Coulomb's Law: $\\mathbf{E} = \\frac{q}{4\\pi\\epsilon_0} \\frac{\\hat{\\mathbf{r}}}{r^2}$.\n2. **Non-Relativistic Limit ($v \\ll c$):** For low velocities and accelerations, the formula can be expanded. The dominant terms give the static field plus the induction fields, which are the near-field corrections due to motion. The radiation term is small.\n3. **Far-Field Limit ($r' \\to \\infty$):** At large distances from the charge, the radiation term, which falls off as $1/r'$, dominates over the first two terms, which fall off as $1/r'^2$. This limit gives the electric field of an electromagnetic wave radiated by the accelerating charge.",
         "semantic_variables": {
-            "E": {
-                "name": "Electric Field",
+            "\\mathbf{E}": {
+                "name": "Electric Field Vector",
                 "type": "variable",
                 "unit": "V/m",
-                "description": "The electric field vector at the observation point vec{r} and time t, generated by the moving point charge."
+                "description": "The electric field vector at the observation point $\\mathbf{r}$ and time $t$."
             },
-            "q": {
-                "name": "Charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "The magnitude of the point electric charge."
-            },
-            "e_0": {
-                "name": "Permittivity of Free Space",
-                "type": "constant",
-                "unit": "F/m",
-                "description": "A fundamental physical constant representing the capability of a vacuum to permit electric fields."
-            },
-            "r": {
-                "name": "Observation Position Vector",
-                "type": "variable",
+            "\\mathbf{r}": {
+                "name": "Observer Position Vector",
+                "type": "parameter",
                 "unit": "m",
-                "description": "The position vector of the point where the electric field is being measured, relative to the origin of the coordinate system."
+                "description": "The position vector of the point where the electric field is measured."
             },
             "t": {
-                "name": "Time",
-                "type": "variable",
+                "name": "Observer Time",
+                "type": "parameter",
                 "unit": "s",
-                "description": "The time at which the electric field is being measured at the observation point vec{r}."
+                "description": "The time at which the electric field is measured."
             },
-            "r'": {
-                "name": "Retarded Distance",
-                "type": "variable",
-                "unit": "m",
-                "description": "The distance from the charge's position at the retarded time t_r to the observation point vec{r}. Mathematically, vec{r}' = vec{r} - vec{r}_c(t_r), where vec{r}_c(t_r) is the charge's position at the retarded time t_r, and t_r is the retarded time such that t_r + | vec{r} - vec{r}_c(t_r)|/c = t."
-            },
-            "e_r": {
-                "name": "Unit Vector",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The unit vector pointing from the charge's position at the retarded time t_r towards the observation point vec{r}. Mathematically, hat{e}_r = vec{r}' / | vec{r}'|."
-            },
-            "c": {
-                "name": "Speed of Light in Vacuum",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The speed of electromagnetic waves in vacuum, a fundamental constant of nature."
-            },
-            "v": {
-                "name": "Velocity of the Charge",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The velocity of the point charge at the retarded time t_r. This is implicitly involved in the time derivatives of vec{r}' and hat{e}_r."
-            },
-            "a": {
-                "name": "Acceleration of the Charge",
-                "type": "variable",
-                "unit": "m/s^2",
-                "description": "The acceleration of the point charge at the retarded time t_r. This is implicitly involved in the second time derivative of hat{e}_r and the first time derivative of vec{r}'."
+            "q": {
+                "name": "Electric Charge",
+                "type": "parameter",
+                "unit": "C",
+                "description": "The electric charge of the source particle."
             },
             "\\epsilon_0": {
                 "name": "Vacuum Permittivity",
                 "type": "constant",
                 "unit": "F/m",
-                "description": "The capability of the vacuum to permit electric field lines."
+                "description": "A fundamental constant representing the capability of a vacuum to permit electric fields."
             },
             "\\pi": {
-                "name": "Pi constant",
+                "name": "Pi",
                 "type": "constant",
-                "unit": "dimensionless",
-                "description": "The ratio of a circle's circumference to its diameter (approx. 3.14159)."
+                "unit": "unitless",
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter."
             },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
+            "c": {
+                "name": "Speed of Light in Vacuum",
                 "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
+                "unit": "m/s",
+                "description": "The speed of electromagnetic waves in vacuum, a fundamental constant."
+            },
+            "r'": {
+                "name": "Retarded Distance",
+                "type": "variable",
+                "unit": "m",
+                "description": "The distance from the charge's position at the retarded time $t_r$ to the observation point $\\mathbf{r}$. It is a function of $\\mathbf{r}$ and $t$ via $t_r = t - r'/c$."
+            },
+            "\\hat{\\mathbf{r}}'": {
+                "name": "Retarded Direction Vector",
+                "type": "variable",
+                "unit": "unitless",
+                "description": "The unit vector pointing from the charge's position at the retarded time $t_r$ towards the observation point $\\mathbf{r}$."
+            },
+            "t_r": {
+                "name": "Retarded Time",
+                "type": "variable",
+                "unit": "s",
+                "description": "The time at which the signal was emitted from the charge to reach the observer at time $t$. It is defined by the implicit equation $t_r = t - r'/c$."
+            },
+            "\\frac{\\mathrm{d}}{\\mathrm{d}t}": {
+                "name": "Total Time Derivative",
+                "type": "operator",
+                "unit": "s⁻¹",
+                "description": "The total derivative with respect to the observer's time $t$. It acts on quantities evaluated at the retarded time $t_r(t)$, requiring the chain rule."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Heaviside-Feynman formula describes the electric field generated by an arbitrarily moving point charge, accounting for the finite speed of electromagnetic wave propagation (the speed of light). It consists of three terms: the static Coulomb term, a velocity-dependent term, and an acceleration-dependent term.",
+        "conceptual_definition": "The Heaviside-Feynman formula gives the complete electric field of an arbitrarily moving point charge, correctly accounting for the time delay (retardation) due to the finite speed of light. The field is expressed as the sum of three terms evaluated at the retarded time: a term resembling a static field, a term related to the velocity of the charge, and a radiation term proportional to the charge's acceleration.",
         "intuitive_summary": "The electric field of a moving charge is a combination of the field that would exist if it were stationary, plus corrections due to its motion and acceleration, all retarded in time."
     },
     "energy-operator": {
@@ -2452,7 +2380,8 @@
         "status": "published",
         "parent_formula_id": "self-adjoint-rule-84437f73",
         "subcomponents": [],
-        "id": "hermitian-conjugate-of-an-operator-688a20a0"
+        "id": "hermitian-conjugate-of-an-operator-688a20a0",
+        "intuitive_summary": ""
     },
     "worldsheet-metric-determinant-square-root-edb12e4b": {
         "title": "Worldsheet Metric Determinant Square Root",
@@ -2476,7 +2405,8 @@
         "status": "published",
         "parent_formula_id": "polyako-action",
         "subcomponents": [],
-        "id": "worldsheet-metric-determinant-square-root-edb12e4b"
+        "id": "worldsheet-metric-determinant-square-root-edb12e4b",
+        "intuitive_summary": ""
     },
     "the-boltzmann-constant-16970646": {
         "title": "The Boltzmann Constant",
@@ -2500,7 +2430,8 @@
         "status": "published",
         "parent_formula_id": "equilibrium-potential-43d21401",
         "subcomponents": [],
-        "id": "the-boltzmann-constant-16970646"
+        "id": "the-boltzmann-constant-16970646",
+        "intuitive_summary": ""
     },
     "spatial-rigid-body-transformation-94445659": {
         "title": "Spatial Rigid Body Transformation",
@@ -2542,7 +2473,8 @@
         "status": "published",
         "parent_formula_id": "galilean-transformation-fc7fb797",
         "subcomponents": [],
-        "id": "spatial-rigid-body-transformation-94445659"
+        "id": "spatial-rigid-body-transformation-94445659",
+        "intuitive_summary": ""
     },
     "electromagnetic-four-potential-definition-34185900": {
         "title": "Electromagnetic Four-Potential Definition",
@@ -2584,7 +2516,8 @@
         "status": "published",
         "parent_formula_id": "electromagnetic-field-strength-tensor",
         "subcomponents": [],
-        "id": "electromagnetic-four-potential-definition-34185900"
+        "id": "electromagnetic-four-potential-definition-34185900",
+        "intuitive_summary": ""
     },
     "mass-radius-proportionality-uniform-density-790744c7": {
         "title": "Mass-Radius Proportionality (Uniform Density)",
@@ -2614,7 +2547,8 @@
         "status": "published",
         "parent_formula_id": "tov-hydrostatic-equilibrium-gr-3e08c07d",
         "subcomponents": [],
-        "id": "mass-radius-proportionality-uniform-density-790744c7"
+        "id": "mass-radius-proportionality-uniform-density-790744c7",
+        "intuitive_summary": ""
     },
     "instantaneous-limit-of-retarded-time-f5e14481": {
         "title": "Instantaneous Limit of Retarded Time",
@@ -2644,7 +2578,8 @@
         "status": "published",
         "parent_formula_id": "retardation-52db4211",
         "subcomponents": [],
-        "id": "instantaneous-limit-of-retarded-time-f5e14481"
+        "id": "instantaneous-limit-of-retarded-time-f5e14481",
+        "intuitive_summary": ""
     },
     "general-spatial-translation-d7a18a54": {
         "title": "General Spatial Translation",
@@ -2674,7 +2609,8 @@
         "status": "published",
         "parent_formula_id": "general-translation",
         "subcomponents": [],
-        "id": "general-spatial-translation-d7a18a54"
+        "id": "general-spatial-translation-d7a18a54",
+        "intuitive_summary": ""
     },
     "exchanged-two-particle-quantum-state-694dc0af": {
         "title": "Exchanged Two-Particle Quantum State",
@@ -2698,7 +2634,8 @@
         "status": "published",
         "parent_formula_id": "antisymmetric-two-particle-state",
         "subcomponents": [],
-        "id": "exchanged-two-particle-quantum-state-694dc0af"
+        "id": "exchanged-two-particle-quantum-state-694dc0af",
+        "intuitive_summary": ""
     },
     "infinitesimal-separation-vector-component-54f9f36e": {
         "title": "Infinitesimal Separation Vector Component",
@@ -2722,7 +2659,8 @@
         "status": "published",
         "parent_formula_id": "deviation-check-9a966486",
         "subcomponents": [],
-        "id": "infinitesimal-separation-vector-component-54f9f36e"
+        "id": "infinitesimal-separation-vector-component-54f9f36e",
+        "intuitive_summary": ""
     },
     "lagrangian-invariance-under-transformation-ee005c68": {
         "title": "Lagrangian Invariance under Transformation",
@@ -2752,7 +2690,8 @@
         "status": "published",
         "parent_formula_id": "action-gauge-invariance-boundary-8c3e2921",
         "subcomponents": [],
-        "id": "lagrangian-invariance-under-transformation-ee005c68"
+        "id": "lagrangian-invariance-under-transformation-ee005c68",
+        "intuitive_summary": ""
     },
     "classical-minimum-approach-distance-23dc0259": {
         "title": "Classical Minimum Approach Distance",
@@ -2806,7 +2745,8 @@
         "status": "published",
         "parent_formula_id": "characteristic-temperature-nuclear-reactions",
         "subcomponents": [],
-        "id": "classical-minimum-approach-distance-23dc0259"
+        "id": "classical-minimum-approach-distance-23dc0259",
+        "intuitive_summary": ""
     },
     "energy-at-a-specific-position-4b2a02d7": {
         "title": "Energy at a Specific Position",
@@ -2842,7 +2782,8 @@
         "status": "published",
         "parent_formula_id": "energy-levels-potential-well",
         "subcomponents": [],
-        "id": "energy-at-a-specific-position-4b2a02d7"
+        "id": "energy-at-a-specific-position-4b2a02d7",
+        "intuitive_summary": ""
     },
     "relativistic-energy-momentum-relation-e6720151": {
         "title": "Relativistic Energy-Momentum Relation",
@@ -2884,7 +2825,8 @@
         "status": "published",
         "parent_formula_id": "photon-energy-e6720151",
         "subcomponents": [],
-        "id": "relativistic-energy-momentum-relation-e6720151"
+        "id": "relativistic-energy-momentum-relation-e6720151",
+        "intuitive_summary": ""
     },
     "simple-harmonic-oscillator-initial-position-e68dc733": {
         "title": "Simple Harmonic Oscillator Initial Position",
@@ -2920,7 +2862,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-c7c9ede2",
         "subcomponents": [],
-        "id": "simple-harmonic-oscillator-initial-position-e68dc733"
+        "id": "simple-harmonic-oscillator-initial-position-e68dc733",
+        "intuitive_summary": ""
     },
     "complexity-divergence-condition-9b2bb178": {
         "title": "Complexity Divergence Condition",
@@ -2956,7 +2899,8 @@
         "status": "published",
         "parent_formula_id": "input-output-link-90964c23",
         "subcomponents": [],
-        "id": "complexity-divergence-condition-9b2bb178"
+        "id": "complexity-divergence-condition-9b2bb178",
+        "intuitive_summary": ""
     },
     "probability-of-success-given-false-theory-e3670118": {
         "title": "Probability of Success Given False Theory",
@@ -2992,6 +2936,7 @@
         "status": "published",
         "parent_formula_id": "predictive-probability-advantage-b460e6d3",
         "subcomponents": [],
-        "id": "probability-of-success-given-false-theory-e3670118"
+        "id": "probability-of-success-given-false-theory-e3670118",
+        "intuitive_summary": ""
     }
 }

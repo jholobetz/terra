@@ -755,10 +755,10 @@
     },
     "shock-temperature-jump-condition-97571dc5": {
         "title": "Shock Temperature Jump",
-        "equation": "REG",
-        "interpretation": "The formula relates the temperature downstream of a shock wave, denoted as $T_2$, to the temperature upstream of the shock wave, $T_1$. The ratio of these temperatures depends on the upstream Mach number, $M_1$, which represents the speed of the flow relative to the speed of sound upstream of the shock. Specifically, the formula is given by $T_2$ / T_1 = $\\left$($\\frac{2 \\gamma }{ \\gamma + 1} M_1^2 - \\frac{ \\gamma - 1}{ \\gamma + 1} \\right$) $\\left$($\\frac{( \\gamma - 1) M_1^2 + 2}{( \\gamma + 1) M_1^2} \\right)$. Here, $\\gamma$ is the ratio of specific heats (or adiabatic index) of the fluid, a property that characterizes how temperature changes with pressure and volume during adiabatic processes. The Mach number $M_1$ is critical because it dictates the strength of the shock; higher $M_1$ values lead to more intense compression and thus a larger temperature jump. The terms involving $\\gamma$ and $M_1^2$ precisely capture the thermodynamic and kinetic energy conversions occurring during the shock formation.",
-        "symmetry_origin": "This formula is derived from the Rankine-Hugoniot relations, which are a set of equations that describe the conservation of mass, momentum, and energy across a discontinuity like a shock wave. These conservation laws are fundamental principles in physics, and their application across the shock front leads to the specific expressions for the temperature, pressure, and density changes. The derivation inherently assumes one-dimensional, steady flow through the shock.",
-        "limits_and_boundary": "As the upstream Mach number $M_1$ approaches 1 (i.e., a very weak shock), the temperature ratio $T_2 / T_1$ approaches 1, meaning there is a negligible temperature jump. As $M_1$ approaches infinity (i.e., a very strong shock), the temperature ratio $T_2 / T_1$ approaches infinity, indicating a very significant temperature increase. For a fixed $M_1$, the temperature jump is larger for fluids with a higher ratio of specific heats $\\gamma$ (e.g., monatomic gases compared to diatomic gases).",
+        "equation": "\\frac{T_2}{T_1} = \\frac{\\left[2\\gamma M_1^2 - (\\gamma - 1)\\right] \\left[(\\gamma - 1) M_1^2 + 2\\right]}{(\\gamma + 1)^2 M_1^2}",
+        "interpretation": "The formula relates the temperature $T_2$ downstream of a normal shock wave to the upstream temperature $T_1$. This ratio $\\frac{T_2}{T_1}$ is determined by two key dimensionless parameters: the upstream Mach number $M_1$ and the fluid's ratio of specific heats $\\gamma$. The Mach number $M_1 > 1$ quantifies the supersonic nature of the incoming flow, and its magnitude determines the shock strength. The term $\\gamma$ (the adiabatic index) reflects the thermodynamic properties of the fluid. The equation is derived by combining the Rankine-Hugoniot relations for conservation of mass, momentum, and energy with the ideal gas law, describing the irreversible thermodynamic process of converting kinetic energy into internal energy across the shock discontinuity.",
+        "symmetry_origin": "The equation is a direct consequence of the Rankine-Hugoniot relations, which enforce the fundamental conservation laws of mass, momentum, and energy across the shock discontinuity. These conservation laws themselves arise from underlying symmetries of the governing fluid dynamics equations (Euler equations) via Noether's theorem, specifically translational symmetry in time (energy conservation) and space (momentum conservation). The derivation assumes a steady, one-dimensional flow, reflecting symmetries in the problem setup.",
+        "limits_and_boundary": "1. In the weak shock limit, as the upstream Mach number $M_1 \\to 1^+$, the temperature ratio $T_2/T_1 \\to 1$, indicating no temperature change as the shock vanishes.\n2. In the strong shock limit, as $M_1 \\to \\infty$, the temperature ratio becomes very large, scaling as $T_2/T_1 \\propto M_1^2$. Specifically, $\\frac{T_2}{T_1} \\to \\frac{2\\gamma(\\gamma-1)}{(\\gamma+1)^2} M_1^2$.\n3. The equation is valid only for supersonic upstream flow, i.e., $M_1 > 1$, as shocks do not form in subsonic flow.\n4. The derivation assumes an ideal gas, and the formula breaks down at extreme temperatures and pressures where real gas effects (like ionization or dissociation) become significant.",
         "semantic_variables": {
             "T_2": {
                 "name": "Downstream Temperature",
@@ -783,28 +783,10 @@
                 "type": "constant",
                 "unit": "dimensionless",
                 "description": "The ratio of the specific heat at constant pressure to the specific heat at constant volume for the fluid (also known as the adiabatic index). It is a measure of the fluid's internal degrees of freedom."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Shock Temperature Jump formula quantifies the abrupt increase in thermodynamic temperature experienced by a fluid (or gas) as it passes through a shock wave. A shock wave is a propagating disturbance characterized by a nearly instantaneous change in pressure, density, and temperature. This formula, derived from the conservation laws of mass, momentum, and energy across the shock front, provides a direct relationship between the upstream and downstream temperatures, accounting for the specific heat ratio of the fluid.",
+        "conceptual_definition": "The shock temperature jump condition relates the temperature of a fluid downstream of a normal shock wave to its upstream temperature. This relationship is a function of the upstream Mach number and the fluid's ratio of specific heats, derived from the Rankine-Hugoniot conservation laws.",
         "intuitive_summary": "As a fluid violently compresses across a shock wave, its internal thermal energy, and thus its temperature, jumps up abruptly.",
         "subcomponents": [
             "final-time-endpoint-76a9c0f8",
@@ -975,44 +957,32 @@
         }
     },
     "hamiltonian-time-evolution-commutation": {
-        "title": "Commutation of Hamiltonian and time evolution operator",
+        "title": "Commutation of Hamiltonian and Time Evolution Operator",
         "equation": "[\\hat{H}, \\hat{U}(t)] = 0",
-        "conceptual_definition": "The formula [$\\hat{H}, \\hat{U} (t)] = 0 expresses a fundamental property in quantum mechanics: the commutation of the Hamiltonian operator \\hat{H}$ with the time evolution operator $\\hat{U}$(t)$. This condition implies that the time evolution of a quantum system is independent of the specific time at which we start observing it, meaning that the system's evolution is 'stationary' in a particular sense. Mathematically, the commutator of two operators \\hat{A} and \\hat{B}$ is defined as $[ \\hat{A} , \\hat{B} ] = \\hat{A} \\hat{B} - \\hat{B} \\hat{A}$. Therefore, $\\hat{H}$ commuting with $\\hat{U}(t)$ means that the order in which these operations are applied does not matter.",
-        "intuitive_summary": "If the Hamiltonian commutes with the time evolution operator, the system's state evolves in a way that is invariant to the starting time.",
-        "interpretation": "In quantum mechanics, the Hamiltonian operator $\\hat{H}$ represents the total energy of a system. The time evolution operator $\\hat{U}$(t)$describes how the quantum state of a system evolves over a time interval$t$. The fundamental equation governing time evolution is the Schrödinger equation:$i$\\hbar \\frac{\\partial}{\\partial t} | \\psi (t)\\rangle = \\hat{H} | \\psi (t)\\rangle$. The formal solution to this equation gives the time evolution operator as $\\hat{U}$(t)$= e^{- \\frac{i}{\\hbar}\\hat{H}$ t}$, where$\\hbar$is the reduced Planck constant. The condition$[ $\\hat{H}$ , $\\hat{U}(t)$\\right$] = 0$means that $\\hat{H}and\\hat{U}$ (t)$are simultaneously diagonalizable. This implies that if a system is in an eigenstate of the Hamiltonian (which corresponds to a stationary state with definite energy), it will remain in that eigenstate as it evolves in time, only acquiring a phase factor$e^{- \\frac{iEt}{\\hbar} }$. This is a crucial concept for understanding stable states and spectroscopy, where energy levels are quantized.",
-        "symmetry_origin": "This commutation relation arises directly from the structure of quantum mechanics and the definition of the time evolution operator derived from the Schrödinger equation. If the Hamiltonian itself does not explicitly depend on time, then $\\hat{H} commutes with \\hat{U} (t)$. This implies a time-translation symmetry: the laws of physics governing the system are the same at all times.",
-        "limits_and_boundary": "As the time interval $t \\to 0$, the time evolution operator approaches the identity operator, $\\hat{U}(0) = \\hat{I}. In this limit, the commutator becomes$[$\\hat{H}$, $\\hat{I} \\right$] = $\\hat{H} \\hat{I} - \\hat{I} \\hat{H} = \\hat{H} - \\hat{H}$ = 0$, which is always true for any operator \\hat{H} . The condition$[$\\hat{H}$, $\\hat{U}$(t) $\\right$] = 0$is particularly significant for non-zero time intervals. As$t $\\to \\infty , the behavior of \\hat{U}$(t)$depends on the spectrum of \\hat{H} . If \\hat{H} has a continuous spectrum, the system may spread out or exhibit complex dynamics. If \\hat{H} has a discrete spectrum, the system will oscillate between eigenstates with corresponding energy phases$.",
+        "conceptual_definition": "For a quantum system with a time-independent Hamiltonian, the Hamiltonian operator commutes with the time evolution operator. This signifies that the total energy of the system is a conserved quantity and that the physical laws governing the system's evolution are invariant under time translations.",
+        "intuitive_summary": "For a system with fixed energy rules, the way it evolves over time does not depend on when you start watching.",
+        "interpretation": "In quantum mechanics, the Hamiltonian operator $\\hat{H}$ represents the total energy of a system, and the time evolution operator $\\hat{U}(t)$ propagates the system's state $|\\psi\\rangle$ in time. For a time-independent Hamiltonian, the formal solution to the Schrödinger equation $i\\hbar \\frac{\\partial}{\\partial t} |\\psi(t)\\rangle = \\hat{H} |\\psi(t)\\rangle$ is $|\\psi(t)\\rangle = \\hat{U}(t)|\\psi(0)\\rangle$, where $\\hat{U}(t) = e^{-i\\hat{H}t/\\hbar}$. The commutation relation $[\\hat{H}, \\hat{U}(t)] = 0$ follows directly from the fact that any operator commutes with a function of itself, as $\\hat{U}(t)$ is defined via the exponential series of $\\hat{H}$. This commutation implies that $\\hat{H}$ and $\\hat{U}(t)$ share a common set of eigenvectors; if a system is in an energy eigenstate with energy $E$, it remains in that state, acquiring only a time-dependent phase factor $e^{-iEt/\\hbar}$.",
+        "symmetry_origin": "The commutation relation is a direct consequence of time-translation symmetry for systems with a time-independent Hamiltonian. According to Noether's theorem for quantum mechanics, this continuous symmetry implies the existence of a conserved quantity, which is the energy represented by the Hamiltonian $\\hat{H}$.",
+        "limits_and_boundary": "1. Short-time limit ($t \\to 0$): The time evolution operator becomes the identity operator, $\\hat{U}(0) = \\hat{I}$. The commutator is trivially zero, $[\\hat{H}, \\hat{I}] = 0$, as any operator commutes with the identity.\n2. Classical limit ($\\hbar \\to 0$): The corresponding classical statement is the conservation of energy. The Poisson bracket of the Hamiltonian with itself is $\\{H, H\\} = 0$, which implies that the Hamiltonian is a constant of motion, $\\frac{\\mathrm{d}H}{\\mathrm{d}t} = \\{H, H\\} + \\frac{\\partial H}{\\partial t} = 0$ for a time-independent $H$.",
         "status": "platinum",
         "semantic_variables": {
             "\\hat{H}": {
                 "name": "Hamiltonian Operator",
                 "type": "operator",
                 "unit": "J",
-                "description": "The quantum mechanical operator corresponding to the total energy of the system. It governs the time evolution of the quantum state."
+                "description": "The quantum mechanical operator for the total energy of the system, which generates its time evolution."
             },
             "\\hat{U}(t)": {
                 "name": "Time Evolution Operator",
-                "type": "variable",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The unitary operator that transforms a quantum state at time $t_0$ to a quantum state at time $t_0 + t$. It is defined as $\\hat{U}(t) = e^{-$\\frac{i}{\\hbar}$\\hat{H}t}$ for time-independent Hamiltonians."
+                "description": "The unitary operator that evolves a quantum state through a time interval $t$. For a time-independent Hamiltonian, it is given by $\\hat{U}(t) = e^{-i\\hat{H}t/\\hbar}$."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
                 "description": "The duration of the time evolution."
-            },
-            "\\hbar": {
-                "name": "Reduced Planck Constant",
-                "type": "constant",
-                "unit": "J·s",
-                "description": "A fundamental physical constant relating the energy of a photon to its frequency. It is defined as Planck's constant $h$ divided by $2\\pi$."
-            },
-            "[\\hat{A}, \\hat{B}]": {
-                "name": "Commutator",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A mathematical operation on two operators $\\hat{A}$ and $\\hat{B}$ defined as $[\\hat{A}, \\hat{B}\\right] = \\hat{A}\\hat{B} - \\hat{B}\\hat{A}$. If the commutator is zero, the operators commute."
             }
         },
         "subcomponents": [
@@ -1132,7 +1102,8 @@
         "status": "published",
         "parent_formula_id": "entanglement-test-9312ee27",
         "subcomponents": [],
-        "id": "definition-of-the-trace-operator-ed6ff368"
+        "id": "definition-of-the-trace-operator-ed6ff368",
+        "intuitive_summary": ""
     },
     "ionization-fraction-of-a-gas-afd6509b": {
         "title": "Ionization Fraction of a Gas",
@@ -1156,7 +1127,8 @@
         "status": "published",
         "parent_formula_id": "ionization-rule-fd44c73b",
         "subcomponents": [],
-        "id": "ionization-fraction-of-a-gas-afd6509b"
+        "id": "ionization-fraction-of-a-gas-afd6509b",
+        "intuitive_summary": ""
     },
     "retarded-time-for-radiation-01dd07ab": {
         "title": "Retarded Time for Radiation",
@@ -1210,7 +1182,8 @@
         "status": "published",
         "parent_formula_id": "radiation-condition-d75fbaa1",
         "subcomponents": [],
-        "id": "retarded-time-for-radiation-01dd07ab"
+        "id": "retarded-time-for-radiation-01dd07ab",
+        "intuitive_summary": ""
     },
     "squared-magnitude-of-s-matrix-element-1ec7a29a": {
         "title": "Squared Magnitude of S-Matrix Element",
@@ -1252,7 +1225,8 @@
         "status": "published",
         "parent_formula_id": "unitarity-s-matrix",
         "subcomponents": [],
-        "id": "squared-magnitude-of-s-matrix-element-1ec7a29a"
+        "id": "squared-magnitude-of-s-matrix-element-1ec7a29a",
+        "intuitive_summary": ""
     },
     "baryon-and-lepton-number-sum-03345019": {
         "title": "Baryon and Lepton Number Sum",
@@ -1282,7 +1256,8 @@
         "status": "published",
         "parent_formula_id": "symmetry-break-e820a2a4",
         "subcomponents": [],
-        "id": "baryon-and-lepton-number-sum-03345019"
+        "id": "baryon-and-lepton-number-sum-03345019",
+        "intuitive_summary": ""
     },
     "inverse-of-system-dimension-452ceee6": {
         "title": "Inverse of System Dimension",
@@ -1306,7 +1281,8 @@
         "status": "published",
         "parent_formula_id": "purity-criterion-a639e5b8",
         "subcomponents": [],
-        "id": "inverse-of-system-dimension-452ceee6"
+        "id": "inverse-of-system-dimension-452ceee6",
+        "intuitive_summary": ""
     },
     "invariant-mass-speed-of-light-product-1e57879d": {
         "title": "Invariant Mass-Speed of Light Product",
@@ -1336,7 +1312,8 @@
         "status": "published",
         "parent_formula_id": "four-momentum",
         "subcomponents": [],
-        "id": "invariant-mass-speed-of-light-product-1e57879d"
+        "id": "invariant-mass-speed-of-light-product-1e57879d",
+        "intuitive_summary": ""
     },
     "work-done-by-electric-potential-79b8e3ee": {
         "title": "Work Done by Electric Potential",
@@ -1372,7 +1349,8 @@
         "status": "published",
         "parent_formula_id": "momentum-accelerating-potential",
         "subcomponents": [],
-        "id": "work-done-by-electric-potential-79b8e3ee"
+        "id": "work-done-by-electric-potential-79b8e3ee",
+        "intuitive_summary": ""
     },
     "ideal-gas-law-equation-4677303d": {
         "title": "Ideal Gas Law Equation",
@@ -1420,7 +1398,8 @@
         "status": "published",
         "parent_formula_id": "thermodynamic-potential-transform-3547a62f",
         "subcomponents": [],
-        "id": "ideal-gas-law-equation-4677303d"
+        "id": "ideal-gas-law-equation-4677303d",
+        "intuitive_summary": ""
     },
     "muon-g-factor-995619c9": {
         "title": "Muon g-factor",
@@ -1444,7 +1423,8 @@
         "status": "published",
         "parent_formula_id": "anomalous-magnetic-moment-limit",
         "subcomponents": [],
-        "id": "muon-g-factor-995619c9"
+        "id": "muon-g-factor-995619c9",
+        "intuitive_summary": ""
     },
     "phase-space-advection-term-6ffab0e9": {
         "title": "Phase Space Advection Term",
@@ -1492,7 +1472,8 @@
         "status": "published",
         "parent_formula_id": "phase-space-liouville-equation-e679c56f",
         "subcomponents": [],
-        "id": "phase-space-advection-term-6ffab0e9"
+        "id": "phase-space-advection-term-6ffab0e9",
+        "intuitive_summary": ""
     },
     "polytropic-equation-of-state-fc18ebf9": {
         "title": "Polytropic Equation of State",
@@ -1534,7 +1515,8 @@
         "status": "published",
         "parent_formula_id": "lane-emden-equation-stellar-basis-2e0cf25c",
         "subcomponents": [],
-        "id": "polytropic-equation-of-state-fc18ebf9"
+        "id": "polytropic-equation-of-state-fc18ebf9",
+        "intuitive_summary": ""
     },
     "inverse-lorentz-factor-relation-137b397c": {
         "title": "Inverse Lorentz Factor Relation",
@@ -1570,7 +1552,8 @@
         "status": "published",
         "parent_formula_id": "doppler-amplification-61df36b6",
         "subcomponents": [],
-        "id": "inverse-lorentz-factor-relation-137b397c"
+        "id": "inverse-lorentz-factor-relation-137b397c",
+        "intuitive_summary": ""
     },
     "kinetic-energy-from-momentum-uncertainty-a6809125": {
         "title": "Kinetic Energy from Momentum Uncertainty",
@@ -1600,7 +1583,8 @@
         "status": "published",
         "parent_formula_id": "zero-point-energy-well-8b88455e",
         "subcomponents": [],
-        "id": "kinetic-energy-from-momentum-uncertainty-a6809125"
+        "id": "kinetic-energy-from-momentum-uncertainty-a6809125",
+        "intuitive_summary": ""
     },
     "complex-variable-imaginary-increment-2081b773": {
         "title": "Complex Variable Imaginary Increment",
@@ -1636,43 +1620,51 @@
         "status": "published",
         "parent_formula_id": "cauchy-riemann-differentiability-idents-2087b552",
         "subcomponents": [],
-        "id": "complex-variable-imaginary-increment-2081b773"
+        "id": "complex-variable-imaginary-increment-2081b773",
+        "intuitive_summary": ""
     },
     "cartesian-z-from-spherical-coordinates-f6928bef": {
         "title": "Cartesian Z from Spherical Coordinates",
         "description": "This equation defines the Cartesian z-coordinate in terms of the spherical radial distance and the polar angle, providing a transformation from spherical to Cartesian coordinates.",
-        "conceptual_definition": "In a spherical coordinate system, a point in 3D space is defined by its radial distance $r$ from the origin, its polar angle '\\$\\theta$' (colatitude) measured from the positive z-axis, and its azimuthal angle '\\\\phi$' measured from the positive x-axis$in the xy-plane. This specific equation isolates the contribution of$r$and '\\ \\theta ' to the vertical Cartesian$z$component$.",
-        "interpretation": "The equation $z = r\\\\cos\\\\theta$ represents the projection of the radial vector $r$ onto the z-axis. The polar angle '\\$\\theta$' determines the 'vertical' component of the radial vector. When '\\\\theta$' is 0 (along the positive z-axis), $z = r$, meaning the point is directly above the origin. When '\\$\\theta$' is$\\\\pi/2$(in the xy-plane),$z = 0$, meaning the point lies on the equatorial plane. When '\\\\theta ' is$\\$\\pi (along the negative z-axis), $z = -r$, meaning the point is directly below the origin$.",
-        "limits_and_boundary": "The radial distance $r$ is always non-negative ($r \\\\ge 0$). The polar angle '\\$\\theta$' typically ranges from$0$to$\\\\pi$radians ($0 \\\\le \\\\theta \\\\le \\\\pi$). At$\\\\theta = 0$,$z = r$(positive z-axis). At$\\\\theta = \\\\pi/2$,$z = 0$(xy-plane). At$\\\\theta = \\\\pi$,$z = -r$ (negative z-axis). These boundaries define the extent of the z-coordinate based on the spherical parameters.",
-        "symmetry_origin": "This formula arises from the geometric projection of a vector in three dimensions onto the z-axis. It inherently possesses rotational symmetry around the z-axis, as the azimuthal angle $\\\\phi$ does not influence the z-coordinate. The cosine function naturally captures the vertical component of the radial vector relative to the z-axis.",
+        "conceptual_definition": "This equation defines the Cartesian z-coordinate of a point in three-dimensional space as a function of its spherical coordinates. It is the projection of the radial distance onto the vertical z-axis, determined by the polar angle.",
+        "interpretation": "The transformation $z = r \\cos\\theta$ is a fundamental component of converting from a spherical coordinate system $(r, \\theta, \\phi)$ to a Cartesian coordinate system $(x, y, z)$. The radial distance $r$ is the straight-line distance from the origin to the point. The polar angle $\\theta$ (colatitude) is the angle between the positive z-axis and the radial vector. The cosine function projects the length of the radial vector $r$ onto the z-axis, yielding the point's vertical displacement from the xy-plane.",
+        "limits_and_boundary": "1. North Pole ($\\theta = 0$): The point lies on the positive z-axis, so $\\cos(0) = 1$ and $z = r$.\n2. Equator ($\\theta = \\pi/2$): The point lies in the xy-plane, so $\\cos(\\pi/2) = 0$ and $z = 0$.\n3. South Pole ($\\theta = \\pi$): The point lies on the negative z-axis, so $\\cos(\\pi) = -1$ and $z = -r$.\n4. Origin ($r = 0$): The point is at the origin, so $z = 0$ for any value of $\\theta$.",
+        "symmetry_origin": "This transformation exhibits rotational symmetry about the z-axis (azimuthal symmetry). The value of the z-coordinate is independent of the azimuthal angle $\\phi$, meaning that rotating a point around the z-axis at a constant radius $r$ and polar angle $\\theta$ does not change its height $z$.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "coordinate-transformations",
         "semantic_variables": {
             "z": {
-                "name": "z",
+                "name": "Cartesian z-coordinate",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The Cartesian z-coordinate, representing the vertical position of a point in three-dimensional space, measured in meters (m)."
+                "unit": "m",
+                "description": "The coordinate representing the vertical position of a point along the z-axis in a Cartesian system."
             },
             "r": {
-                "name": "r",
+                "name": "Radial Distance",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The spherical radial distance, representing the distance from the origin to the point, measured in meters (m)."
+                "unit": "m",
+                "description": "The distance from the origin to the point in a spherical coordinate system."
             },
-            "\\\\theta": {
-                "name": "\\\\theta",
+            "\\theta": {
+                "name": "Polar Angle (Colatitude)",
                 "type": "variable",
+                "unit": "rad",
+                "description": "The angle between the positive z-axis and the radial vector to the point, with a range of $[0, \\pi]$."
+            },
+            "\\cos": {
+                "name": "Cosine",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The polar angle (or colatitude), representing the angle between the positive z-axis and the radial vector to the point, measured in radians (rad)."
+                "description": "The trigonometric function that gives the ratio of the adjacent side to the hypotenuse of a right-angled triangle."
             }
         },
-        "equation": "z = r\\cos\\theta",
-        "status": "published",
+        "equation": "z = r \\cos\\theta",
+        "status": "platinum",
         "parent_formula_id": "scale-factor-theta-spherical",
         "subcomponents": [],
-        "id": "cartesian-z-from-spherical-coordinates-f6928bef"
+        "id": "cartesian-z-from-spherical-coordinates-f6928bef",
+        "intuitive_summary": "The vertical height (z-coordinate) of a point is found by projecting its radial distance from the origin onto the vertical axis using the polar angle."
     },
     "canonical-partition-function-energy-integral-f0931056": {
         "title": "Canonical Partition Function (Energy Integral)",
@@ -1708,7 +1700,8 @@
         "status": "published",
         "parent_formula_id": "path-integral-partition-function",
         "subcomponents": [],
-        "id": "canonical-partition-function-energy-integral-f0931056"
+        "id": "canonical-partition-function-energy-integral-f0931056",
+        "intuitive_summary": ""
     },
     "new-potential-energy-function-bf6712e0": {
         "title": "New Potential Energy Function",
@@ -1732,30 +1725,50 @@
         "status": "published",
         "parent_formula_id": "energy-definition-3478b0a0",
         "subcomponents": [],
-        "id": "new-potential-energy-function-bf6712e0"
+        "id": "new-potential-energy-function-bf6712e0",
+        "intuitive_summary": ""
     },
     "gravitational-potential-function-0f644de0": {
         "title": "Gravitational Potential Function",
         "description": "This term represents the general gravitational potential function, which describes the potential energy per unit mass at a given radial distance from a source, serving as a fundamental component in gravitational theories.",
-        "conceptual_definition": "The gravitational potential, denoted as $V_{grav}(r)$, is a scalar field that describes the influence of a massive body on the space around it, such that any other mass placed in this field will experience a gravitational force. It is defined as the work done per unit mass by an external agent to bring a test mass from infinity to a point $r$ in the gravitational field without acceleration. In the context of higher-dimensional theories, its radial dependence can deviate from the inverse-square law at small scales.",
-        "interpretation": "Physically, $V_{grav}(r)$ quantifies the potential energy per unit mass that a test particle would possess at a distance $r$ from a source mass due to gravity. A negative value indicates an an attractive force, as work must be done against gravity to move the particle away from the source. The negative gradient of the gravitational potential gives the gravitational field (force per unit mass). In the 'Higher Space' model, the specific form of $V_{grav}(r)$ at small scales, $1/r^{1+n}$, implies a stronger gravitational interaction than predicted by Newtonian gravity, suggesting the presence of extra spatial dimensions or modifications to gravity at short distances.",
-        "limits_and_boundary": "As $r \\to \\infty$, the gravitational potential $V_{grav}(r)$ typically approaches zero, representing the reference point where gravitational influence is negligible. At $r \\to 0$, the potential generally diverges, indicating an infinitely strong interaction or a singularity at the source's location. In the context of the 'Higher Space' model, the deviation from the Newtonian $1/r$ behavior is expected to be significant only at very small scales, while at large scales, it should recover the standard Newtonian form.",
-        "symmetry_origin": "The form of $V_{grav}(r)$ inherently assumes spherical symmetry around the source mass, meaning the potential depends only on the radial distance $r$ and not on angular coordinates. This spherical symmetry is a consequence of the isotropic nature of gravity from a point mass. The existence of a potential function itself is linked to the conservative nature of the gravitational force, which implies the conservation of mechanical energy for a particle moving solely under gravity.",
+        "conceptual_definition": "The gravitational potential is a scalar field representing the potential energy per unit mass at a point in space due to a gravitational source. It is defined as the work required per unit mass to move an object from a reference point, conventionally set at infinity, to that specific point.",
+        "interpretation": "The gravitational potential $V(r)$ is a scalar field that characterizes the gravitational influence of a mass $M$. The negative sign indicates that the gravitational force is attractive, meaning that positive work must be done against the field to separate two masses. A particle in a region of negative potential is in a bound state. The gravitational field $\\mathbf{g}$, which is the force per unit mass, is found by taking the negative gradient of the potential, $\\mathbf{g} = -\\nabla V$. In the weak-field limit of General Relativity, the $g_{00}$ component of the metric tensor is related to the Newtonian potential by $g_{00} \\approx -(1 + 2V/c^2)$.",
+        "limits_and_boundary": "As the distance from the source approaches infinity ($r \\to \\infty$), the potential approaches zero ($V(r) \\to 0$). This convention sets the zero point of potential energy at a location of no gravitational influence.\nFor a theoretical point mass, as the distance approaches zero ($r \\to 0$), the potential diverges to negative infinity ($V(r) \\to -\\infty$). This singularity signifies the breakdown of the classical model at very small scales.\nFor an extended spherical body of radius $R$, this equation is valid for $r \\ge R$. For distances inside the body ($r < R$), the potential's form depends on the internal mass distribution.",
+        "symmetry_origin": "For a spherically symmetric mass distribution, the resulting gravitational potential is also spherically symmetric, depending only on the radial distance $r$. The existence of a scalar potential from which the force can be derived is a direct consequence of the gravitational force being conservative. By Noether's theorem, this property is associated with the conservation of mechanical energy for a particle moving solely under the influence of gravity.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "gravitational-potentials",
         "semantic_variables": {
-            "V_{grav}(r)": {
-                "name": "V_{grav}(r)",
+            "V(r)": {
+                "name": "Gravitational Potential",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Gravitational potential at a radial distance 'r' from the source mass. It represents the potential energy per unit mass. Units: Joules per kilogram (J/kg) or meters squared per second squared (m²/s²)."
+                "unit": "J·kg⁻¹",
+                "description": "The gravitational potential energy per unit mass at a radial distance r from the source."
+            },
+            "G": {
+                "name": "Newtonian Constant of Gravitation",
+                "type": "constant",
+                "unit": "m³·kg⁻¹·s⁻²",
+                "description": "An empirical physical constant quantifying the magnitude of the gravitational force between two bodies."
+            },
+            "M": {
+                "name": "Source Mass",
+                "type": "variable",
+                "unit": "kg",
+                "description": "The mass of the object creating the gravitational potential."
+            },
+            "r": {
+                "name": "Radial Distance",
+                "type": "variable",
+                "unit": "m",
+                "description": "The distance from the center of the source mass M."
             }
         },
-        "equation": "V_{grav}(r)",
-        "status": "published",
+        "equation": "V(r) = -\\frac{G M}{r}",
+        "status": "platinum",
         "parent_formula_id": "higher-space-32912110",
         "subcomponents": [],
-        "id": "gravitational-potential-function-0f644de0"
+        "id": "gravitational-potential-function-0f644de0",
+        "intuitive_summary": "Gravitational potential measures the 'depth' of the gravitational well created by a massive object at a given location."
     }
 }

@@ -367,94 +367,88 @@
         ]
     },
     "lorenz-gauge-law-9ffad88a": {
-        "title": "Lorenz Gauge Law",
+        "title": "Lorenz Gauge Condition",
         "equation": "\\nabla \\cdot \\mathbf{A} + \\frac{1}{c^2} \\frac{\\partial \\Phi}{\\partial t} = 0",
         "semantic_variables": {
+            "\\nabla \\cdot": {
+                "name": "Divergence Operator",
+                "type": "operator",
+                "unit": "m⁻¹",
+                "description": "A vector operator that measures the magnitude of a vector field's source or sink at a given point."
+            },
             "\\mathbf{A}": {
                 "name": "Magnetic Vector Potential",
                 "type": "variable",
-                "unit": "V·s/m",
-                "description": "The magnetic vector potential, a vector field from which the magnetic field $\\mathbf{B}$ can be derived via $\\mathbf{B} = \\nabla \\times \\mathbf{A}$. It represents the spatial distribution and direction of the 'potential' for magnetic fields."
-            },
-            "\\Phi": {
-                "name": "Electric Scalar Potential",
-                "type": "variable",
-                "unit": "V",
-                "description": "The electric scalar potential, a scalar field from which the electric field $\\mathbf{E}$ can be partially derived. In conjunction with $\\mathbf{A}$, it allows $\\mathbf{E} = - \\nabla \\Phi - \\frac{\\partial \\mathbf{A}}{\\partial t}$."
+                "unit": "T·m or V·s/m",
+                "description": "A vector field from which the magnetic field can be derived via $\\mathbf{B} = \\nabla \\times \\mathbf{A}$."
             },
             "c": {
                 "name": "Speed of Light in Vacuum",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "A fundamental physical constant representing the speed at which all electromagnetic waves, including light, propagate in a vacuum."
+                "description": "A fundamental physical constant representing the speed of electromagnetic wave propagation in a vacuum."
+            },
+            "\\partial / \\partial t": {
+                "name": "Partial Time Derivative",
+                "type": "operator",
+                "unit": "s⁻¹",
+                "description": "The operator that computes the rate of change of a function with respect to time, holding spatial coordinates constant."
+            },
+            "\\Phi": {
+                "name": "Electric Scalar Potential",
+                "type": "variable",
+                "unit": "V",
+                "description": "A scalar field whose negative gradient gives the static electric field component, $\\mathbf{E} = -\\nabla \\Phi - \\partial \\mathbf{A} / \\partial t$."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The independent variable representing the progression of events, against which the rate of change of the electric scalar potential is measured."
-            },
-            "A": {
-                "name": "Area / Vector Potential",
-                "type": "variable",
-                "unit": "m² or V·s/m",
-                "description": "The measure of a 2D surface, or the electrodynamic magnetic vector potential."
+                "description": "The temporal coordinate."
             }
         },
-        "interpretation": "The Lorenz gauge condition, \n\\nabla $\\cdot \\mathbf{A} + \\frac{1}{c^2}\\frac{\\partial \\Phi}{\\partial t}$ = 0$, links the divergence of the magnetic vector potential (\\mathbf{A}) to the time derivative of the electric scalar potential ($\\Phi$). The term$\\nabla \\cdot $\\mathbf{A}represents the spatial 'spread' or 'convergence' of the magnetic vector potential, essentially describing how the potential changes from point to point in space. The term$\\frac{\\partial \\Phi}{\\partial t}$represents the rate at which the electric scalar potential changes over time. The constant$\\frac{1}{c^2}$, where c is the speed of light, provides the necessary coupling between these spatial and temporal variations. By enforcing this condition, the inhomogeneous Maxwell's equations can be rewritten as separate, decoupled wave equations for\\mathbf{A}and$\\Phi$ , which propagate at the speed of light c . This makes the description of electromagnetic waves more straightforward and highlights the inherent relativistic nature of electromagnetism.",
-        "symmetry_origin": "The Lorenz gauge condition arises from the gauge invariance of electromagnetism. Maxwell's equations are invariant under a specific set of transformations of the electromagnetic potentials ( gauge transformations ). This freedom allows for many possible choices of potentials that describe the same physical electromagnetic fields. The Lorenz gauge is a particular choice among these possibilities, selected because it greatly simplifies the inhomogeneous wave equations for the potentials by decoupling them and making them Lorentz covariant. This ensures that the mathematical form of the field equations remains consistent across different inertial reference frames, which is crucial for a relativistic theory.",
-        "limits_and_boundary": "1. **Static Fields (no time dependence)**: In the case of static or time-independent electromagnetic fields, the term $\\frac{ \\partial \\Phi}{ \\partial t}$ becomes$zero. The Lorenz gauge condition then simplifies to \\nabla \\cdot \\mathbf{A}= 0 . This is precisely the Coulomb gauge condition, which is commonly used for static or quasi-static approximations where relativistic effects are negligible. This shows that the Coulomb gauge is a special, non-relativistic limit of the more general Lorenz gauge. 2. **Non-relativistic Limit ( c$\\rightarrow \\infty$)**: If the speed of light c is considered infinitely large (as in classical mechanics before special relativity), the term$\\frac{1}{c^2}\\frac{\\partial \\Phi}{\\partial t} approaches$zero. In this limit, the Lorenz gauge condition again reduces to \\nabla \\cdot \\mathbf{A} = 0 , effectively becoming the Coulomb gauge. This illustrates that the full form of the Lorenz gauge, with its coupling between spatial and temporal derivatives, is essential only when relativistic effects (finite speed of light) are taken into account$.",
+        "interpretation": "The Lorenz gauge condition, $\\nabla \\cdot \\mathbf{A} + \\frac{1}{c^2}\\frac{\\partial \\Phi}{\\partial t} = 0$, links the divergence of the magnetic vector potential $\\mathbf{A}$ to the time derivative of the electric scalar potential $\\Phi$. By enforcing this condition, the inhomogeneous Maxwell's equations decouple into two separate wave equations: $\\nabla^2 \\Phi - \\frac{1}{c^2}\\frac{\\partial^2 \\Phi}{\\partial t^2} = -\\frac{\\rho}{\\epsilon_0}$ and $\\nabla^2 \\mathbf{A} - \\frac{1}{c^2}\\frac{\\partial^2 \\mathbf{A}}{\\partial t^2} = -\\mu_0 \\mathbf{J}$. This simplifies the problem of finding the potentials, as they now independently satisfy wave equations sourced by the charge density $\\rho$ and current density $\\mathbf{J}$, respectively. In the language of special relativity, using the four-potential $A^\\mu = (\\Phi/c, \\mathbf{A})$ and the four-gradient $\\partial_\\mu = (\\frac{1}{c}\\frac{\\partial}{\\partial t}, \\nabla)$, the Lorenz condition takes the manifestly covariant form $\\partial_\\mu A^\\mu = 0$.",
+        "symmetry_origin": "The Lorenz gauge condition arises from the gauge invariance of electromagnetism. Maxwell's equations are invariant under gauge transformations of the potentials: $\\mathbf{A} \\rightarrow \\mathbf{A} + \\nabla \\chi$ and $\\Phi \\rightarrow \\Phi - \\partial \\chi / \\partial t$. This freedom allows one to choose a gauge condition to simplify the equations. The Lorenz gauge is specifically chosen because it is a Lorentz scalar, meaning it preserves its form under Lorentz transformations, which is essential for a relativistic theory like electromagnetism.",
+        "limits_and_boundary": "1. In the static limit ($\\partial / \\partial t = 0$), the Lorenz gauge condition simplifies to the Coulomb gauge condition, $\\nabla \\cdot \\mathbf{A} = 0$, which is often used in magnetostatics.\n2. In the non-relativistic limit ($c \\rightarrow \\infty$), the term $\\frac{1}{c^2} \\frac{\\partial \\Phi}{\\partial t}$ vanishes, and the Lorenz gauge again reduces to the Coulomb gauge. This shows that the full Lorenz gauge is necessary when considering effects related to the finite speed of light.",
         "status": "platinum",
-        "conceptual_definition": "The Lorenz gauge condition is a specific choice of gauge for the electromagnetic potentials, the magnetic vector potential ( $\\mathbf{A}$ ) and the electric scalar potential ( $\\Phi$ ), that simplifies Maxwell's equations in vacuum or in a homogeneous, isotropic medium. It is a fundamental condition in relativistic electromagnetism because it is Lorentz covariant, meaning its form remains the same in all inertial reference frames.",
+        "conceptual_definition": "The Lorenz gauge condition is a specific constraint imposed on the electromagnetic potentials, the magnetic vector potential $\\mathbf{A}$ and the electric scalar potential $\\Phi$, to simplify Maxwell's equations. This condition is Lorentz covariant, ensuring that the laws of electromagnetism maintain the same form in all inertial reference frames.",
         "intuitive_summary": "This condition establishes a specific, relativistically consistent relationship between the spatial variation of the magnetic vector potential and the time variation of the electric scalar potential, chosen to simplify the underlying wave equations for electromagnetic fields."
     },
     "the-90-degree-rule-b8f5467f": {
         "title": "The 90-Degree Rule",
-        "equation": "\\mathbf{E}_{surface} = \\frac{\\sigma}{\\varepsilon_0} \\mathbf{\\hat{n}}",
+        "equation": "\\mathbf{E} = \\frac{\\sigma}{\\varepsilon_0} \\mathbf{\\hat{n}}",
         "semantic_variables": {
-            "\\mathbf{E}_{surface}": {
-                "name": "Electric Field Vector at the Surface",
+            "\\mathbf{E}": {
+                "name": "Electric Field Vector",
                 "type": "variable",
                 "unit": "V/m",
-                "description": "The vector quantity representing the electric force per unit positive test charge exerted infinitesimally close to the surface of the charged object. Its direction is always perpendicular to the surface."
+                "description": "The vector representing the electric force per unit charge just outside the surface."
             },
             "\\sigma": {
                 "name": "Surface Charge Density",
                 "type": "variable",
-                "unit": "C/m$^2$",
-                "description": "The amount of electric charge distributed uniformly or non-uniformly over a unit area of the surface. It can be positive or negative."
+                "unit": "C/m^2",
+                "description": "The amount of electric charge per unit area on the surface."
             },
             "\\varepsilon_0": {
-                "name": "Permittivity of Free Space",
+                "name": "Vacuum Permittivity",
                 "type": "constant",
                 "unit": "F/m",
-                "description": "A fundamental physical constant that represents the capability of a vacuum to permit electric field lines. It determines the strength of the electric field generated by a charge in a vacuum. Its approximate value is $8.854 \\times 10^{-12}$ F/m."
+                "description": "A fundamental physical constant representing the capability of a vacuum to permit electric fields. Its value is approximately 8.854 x 10^{-12} F/m."
             },
             "\\mathbf{\\hat{n}}": {
                 "name": "Outward Normal Unit Vector",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A unit vector (magnitude 1) that is everywhere perpendicular to the surface at a given point, pointing outwards from the surface into the surrounding space. It specifies the direction of the electric field."
-            },
-            "\\epsilon_0": {
-                "name": "Vacuum Permittivity",
-                "type": "constant",
-                "unit": "F/m",
-                "description": "The capability of the vacuum to permit electric field lines."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
+                "description": "A unit vector perpendicular to the surface at a given point, pointing outwards."
             }
         },
-        "interpretation": "This formula, $\\mathbf{E}_{surface} = \\frac{\\sigma}{\\varepsilon_0} \\mathbf{\\hat{n}}$, provides a fundamental relationship for the electric field at the interface between a charged material and free space. The term $\\mathbf{E}_{surface} represents the electric field vector located infinitesimally close to the surface. Its direction is solely determined by the unit vector \\mathbf{\\hat{n} }$, which is normal to the surface and points outwards. The magnitude of this field is governed by $\\sigma$, the surface charge density, meaning that a greater concentration of charge on the surface results in a stronger electric field. The constant $\\varepsilon_0$, the permittivity of free space, scales this relationship, reflecting how easily electric fields can form in a vacuum. For a positively charged surface ($\\sigma > 0$), the electric field points directly away from the surface, while for a negatively charged surface ($\\sigma < 0$), it points directly towards the surface.",
-        "symmetry_origin": "This rule is a direct consequence of Gauss's Law in integral form ($\\oint \\mathbf{E} \\cdot d\\mathbf{A} = \\frac{Q_{enc}}{\\varepsilon_0}$) and the fundamental boundary conditions for electric fields. Specifically, for a conductor in electrostatic equilibrium, the electric field inside the conductor is zero, and any net charge resides entirely on its surface. By constructing a small Gaussian pillbox that straddles the surface (with one end face infinitesimally inside the conductor and the other end face just outside), the flux through the inner end face is zero. The flux through the side walls of the pillbox is also zero because the electric field at the surface must be purely normal (the tangential component is zero for a conductor, as $\\mathbf{E}=0$ inside). Thus, the only contributing flux is through the outer end face, leading directly to the relationship between the normal component of the electric field and the surface charge density.",
-        "limits_and_boundary": "As the surface charge density $\\sigma$ approaches zero, the electric field at the surface $\\mathbf{E}_{surface}$ also approaches zero, indicating that an uncharged surface produces no external electric field. Conversely, if $\\sigma$ were to approach infinity (an idealized scenario of infinitely dense charge), the electric field $\\mathbf{E}_{surface}$ would also approach infinity, signifying an extremely strong localized field. This formula is strictly applicable 'just outside' the surface; infinitesimally inside a conductor in electrostatic equilibrium, the electric field is identically zero. For dielectric materials, the formula holds for the normal component of the electric field, but $\\sigma$ must account for both free and bound surface charges.",
+        "interpretation": "This formula, $\\mathbf{E} = \\frac{\\sigma}{\\varepsilon_0} \\mathbf{\\hat{n}}$, provides the electric field at the surface of a conductor. The term $\\mathbf{E}$ is the electric field vector infinitesimally close to the surface. Its direction is defined by the unit vector $\\mathbf{\\hat{n}}$, which is normal (perpendicular) to the surface and points outwards. The field's magnitude is governed by $\\sigma$, the surface charge density, meaning a greater concentration of charge results in a stronger electric field. The constant $\\varepsilon_0$, the vacuum permittivity, scales this relationship. For a positively charged surface ($\\sigma > 0$), the electric field points directly away from the surface, while for a negatively charged surface ($\\sigma < 0$), it points directly towards it.",
+        "symmetry_origin": "This rule is a direct consequence of Gauss's Law, $\\oint_S \\mathbf{E} \\cdot \\mathrm{d}\\mathbf{A} = \\frac{Q_{\\mathrm{enc}}}{\\varepsilon_0}$, and the properties of a conductor in electrostatic equilibrium. Inside the conductor, the electric field is zero. By constructing a small Gaussian 'pillbox' that straddles the surface, the flux through the inner face is zero. The tangential component of the electric field must be continuous across the boundary, and since it is zero inside, it must also be zero just outside, forcing the external field to be purely normal. This leaves only the flux through the outer face of the pillbox, which leads directly to this relationship between the field and the surface charge.",
+        "limits_and_boundary": "1. In the limit of zero surface charge ($\\sigma \\to 0$), the electric field at the surface vanishes ($\\mathbf{E} \\to 0$).\n2. Infinitesimally inside a conductor in electrostatic equilibrium, the electric field is identically zero ($\\mathbf{E} = 0$).\n3. The formula is an idealization for a perfectly smooth surface; at sharp points or edges, charge density and the electric field can become extremely large.\n4. For dielectrics, a similar boundary condition applies, but the relationship involves the electric displacement field $\\mathbf{D}$ and must account for bound polarization charges.",
         "status": "platinum",
-        "conceptual_definition": "The 90-Degree Rule, also known as the boundary condition for the electric field at the surface of a conductor or a charged dielectric, states that the electric field just outside the surface of a charged object is always perpendicular (normal) to the surface and its magnitude is directly proportional to the local surface charge density.",
-        "intuitive_summary": "The electric field lines always emerge perpendicularly from a charged surface, with the field's strength at that surface determined by the local charge concentration.",
+        "conceptual_definition": "The 90-Degree Rule, a fundamental boundary condition in electrostatics, states that the electric field just outside the surface of a conductor in equilibrium is always perpendicular to the surface and its magnitude is directly proportional to the local surface charge density.",
+        "intuitive_summary": "Electric field lines emerge perpendicularly from a charged conductive surface, with the field's strength at that point determined by the local concentration of charge.",
         "subcomponents": [
             "vanishing-constant-constraint-a1bb8ad5",
             "vacuum-permittivity-constant-51a5e402",
@@ -694,39 +688,33 @@
                 "name": "Magnetic Susceptibility",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless quantity that measures how much a material becomes magnetized in response to an applied magnetic field. A higher value indicates a stronger magnetic response."
+                "description": "A measure of how much a material becomes magnetized in an applied magnetic field."
             },
             "C": {
                 "name": "Curie Constant",
                 "type": "constant",
                 "unit": "K",
-                "description": "A material-specific constant that reflects the intrinsic magnetic properties of the material, including the density of magnetic moments and the magnitude of individual magnetic moments. It has units of Kelvin if $\\chi$ is dimensionless."
+                "description": "A material-specific constant related to the magnitude of the individual magnetic moments in the substance."
             },
             "T": {
                 "name": "Absolute Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The absolute thermodynamic temperature of the material, measured in Kelvin. It represents the thermal energy available to disrupt the alignment of magnetic moments."
+                "description": "The thermodynamic temperature of the material."
             },
             "T_c": {
                 "name": "Curie Temperature",
                 "type": "constant",
                 "unit": "K",
-                "description": "The critical temperature above which a ferromagnetic or ferrimagnetic material behaves paramagnetically and below which it exhibits spontaneous magnetization (ferromagnetism). It is a characteristic constant for a given material."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
+                "description": "The critical temperature above which a material loses its spontaneous magnetic ordering and becomes paramagnetic."
             }
         },
-        "interpretation": "The formula $\\chi = \\frac{C}{T - T_c} relates the magnetic susceptibility$\\chi$of a material to its absolute temperature$T$. The term$C$is the Curie constant, a material-specific parameter that quantifies the intrinsic magnetic strength of the material, proportional to the density and magnitude of its magnetic moments. The critical temperature,$T_c$, known as the Curie temperature, represents the threshold below which the material exhibits spontaneous magnetization (becomes ferromagnetic or ferrimagnetic). Above$T_c$, the material is paramagnetic, but the influence of inter-atomic magnetic interactions is still significant. The denominator$(T - T_c)$highlights that as the temperature$T$approaches$T_c$from higher values, this difference diminishes, causing the susceptibility$\\chi$ to increase sharply. This increase reflects the growing alignment of magnetic moments due to their cooperative interactions as thermal agitation reduces.",
-        "symmetry_origin": "The Curie-Weiss Law originates from mean-field theory, an approximation used in statistical mechanics to describe phase transitions. In this framework, each magnetic moment in a material is assumed to interact with an average or 'mean' magnetic field produced by all its neighboring moments, rather than with each individual fluctuating moment. This molecular field, proposed by Pierre Weiss, effectively breaks the rotational symmetry that individual moments possess at high temperatures. Below $T_c$, this mean field becomes strong enough to align the moments spontaneously, even without an external magnetic field, leading to spontaneous magnetization. The divergence of susceptibility at $T_c$ is a hallmark of a second-order phase transition.",
-        "limits_and_boundary": "The Curie-Weiss Law is primarily valid for temperatures $T > T_c$. As $T$ approaches $T_c$ from above (i.e., $T \\to T_c^+$), the denominator $(T - T_c)$ approaches zero, causing the magnetic susceptibility $\\chi$ to diverge to infinity. This divergence signifies the critical point of a phase transition from the paramagnetic state to the ferromagnetic or ferrimagnetic state. Conversely, as the temperature $T$ becomes very large ($T \\to \\infty$), the denominator $(T - T_c)$ also becomes very large, and the magnetic susceptibility $\\chi$ approaches zero. In this high-temperature limit, thermal energy completely overwhelms the magnetic interactions, leading to a weak, almost negligible paramagnetic response, effectively reducing the law to the simple Curie Law (where $\\chi \\approx C/T$). The law does not accurately describe the magnetic behavior below $T_c$, where the material is ferromagnetic and exhibits spontaneous magnetization.",
+        "interpretation": "The formula $\\chi = \\frac{C}{T - T_c}$ relates the magnetic susceptibility $\\chi$ of a material to its absolute temperature $T$. The term $C$ is the Curie constant, a material-specific parameter that quantifies the intrinsic magnetic strength. The critical temperature, $T_c$, known as the Curie temperature, represents the point at which the material undergoes a phase transition to a magnetically ordered state (e.g., ferromagnetic). Above $T_c$, the material is paramagnetic, and the denominator $(T - T_c)$ shows that as the temperature $T$ approaches $T_c$ from above, the susceptibility $\\chi$ diverges, reflecting the growing influence of cooperative interactions over thermal agitation.",
+        "symmetry_origin": "The Curie-Weiss Law is derived from mean-field theory, where each magnetic moment is assumed to interact with an average magnetic field produced by all its neighbors. This 'molecular field' breaks the continuous rotational symmetry (O(3) symmetry) of the disordered paramagnetic state. Below the Curie temperature $T_c$, the system spontaneously chooses a specific magnetization direction, a classic example of spontaneous symmetry breaking that characterizes a second-order phase transition.",
+        "limits_and_boundary": "1. As temperature approaches the Curie temperature from above ($T \\to T_c^+$), the magnetic susceptibility diverges ($\\chi \\to \\infty$), indicating the onset of a phase transition to a magnetically ordered state.\n2. In the high-temperature limit ($T \\gg T_c$), the law simplifies to the Curie Law, $\\chi \\approx C/T$, where thermal energy dominates and interactions between moments become negligible.\n3. The law is not valid below the Curie temperature ($T < T_c$), where the material is in a spontaneously magnetized state and susceptibility is not described by this simple form.\n4. For antiferromagnetic materials, $T_c$ is negative and represents the negative of the Néel temperature ($T_c = -T_N$), describing the susceptibility above $T_N$.",
         "status": "platinum",
-        "conceptual_definition": "The Curie-Weiss Law describes the magnetic susceptibility of ferromagnetic and ferrimagnetic materials in their paramagnetic phase, specifically when the temperature is above the Curie temperature. It is a mean-field theory approximation that extends the simpler Curie Law by incorporating the cooperative interaction between magnetic moments within the material, which leads to the phenomenon of spontaneous magnetization below a critical temperature.",
-        "intuitive_summary": "This law predicts that a material's magnetic susceptibility dramatically increases and diverges as its temperature approaches the Curie temperature from above, signaling the onset of ferromagnetism due to internal magnetic interactions.",
+        "conceptual_definition": "The Curie-Weiss Law describes the magnetic susceptibility of a material in its paramagnetic phase above its critical (Curie) temperature. It extends the simpler Curie Law by incorporating the effects of cooperative interactions between magnetic moments via a mean-field approximation.",
+        "intuitive_summary": "A material's magnetism strengthens dramatically as its temperature cools towards a critical point, signaling the onset of spontaneous, cooperative magnetic ordering.",
         "subcomponents": [
             "curie-temperature-0036ac1e",
             "temperature-above-critical-temperature-condition-e9f07123",
@@ -737,40 +725,46 @@
         ]
     },
     "symmetry-breaker-8473ca37": {
-        "title": "Symmetry Breaker",
-        "equation": "\\nabla V(r) = \\frac{dV}{dr} \\hat{\\mathbf{r}}",
+        "title": "Gradient of a Spherically Symmetric Potential",
+        "equation": "\\nabla V(r) = \\frac{\\mathrm{d}V}{\\mathrm{d}r} \\hat{\\mathbf{r}}",
         "semantic_variables": {
-            "V(r)": {
+            "\\nabla": {
+                "name": "Gradient Operator",
+                "type": "operator",
+                "unit": "m⁻¹",
+                "description": "The vector differential operator that measures the rate and direction of fastest increase of a scalar field."
+            },
+            "V": {
                 "name": "Scalar Potential",
                 "type": "variable",
-                "unit": "J/C",
-                "description": "A scalar field whose value at any point depends only on the radial distance $r$ from a defined origin. It represents the potential energy per unit charge (for electric potential) or per unit mass (for gravitational potential) at that location."
+                "unit": "J/kg or V",
+                "description": "A scalar field whose value, $V(r)$, depends only on the radial distance $r$. It represents potential energy per unit mass (gravitational) or per unit charge (electric)."
             },
             "r": {
                 "name": "Radial Distance",
                 "type": "variable",
                 "unit": "m",
-                "description": "The Euclidean distance from the designated origin of the spherically symmetric system to the point where the potential $V$ or its gradient is being evaluated."
+                "description": "The Euclidean distance from the origin of the spherically symmetric system."
+            },
+            "\\frac{\\mathrm{d}}{\\mathrm{d}r}": {
+                "name": "Radial Derivative",
+                "type": "operator",
+                "unit": "m⁻¹",
+                "description": "The ordinary derivative with respect to the radial coordinate $r$."
             },
             "\\hat{\\mathbf{r}}": {
                 "name": "Radial Unit Vector",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A vector of unit magnitude that points directly outward from the origin along the line connecting the origin to the point $r$. It defines the radial direction."
-            },
-            "V": {
-                "name": "Electric Potential",
-                "type": "variable",
-                "unit": "V",
-                "description": "The amount of work energy needed to move a unit of electric charge from a reference point to a specific point in an electric field."
+                "description": "A vector of unit magnitude pointing radially outward from the origin."
             }
         },
-        "interpretation": "The equation $\\nabla$ V(r) = \\frac{dV}{dr} $\\hat{\\mathbf{r}$}$mathematically expresses how to determine the vector field (e.g., force or field strength) arising from a spherically symmetric scalar potential$V(r)$. The left-hand side,$\\nabla$V(r)$, represents the gradient of the scalar potential. In physics, the negative of the gradient of a potential field is often defined as the conservative force field associated with that potential (e.g., $\\mathbf{F}$ = - \\nabla V$) or the field strength itself (e.g., electric field\\mathbf{E}= -$\\nabla $V$). The right-hand side breaks down this gradient into two components: \\frac{dV}{dr} and $\\hat{\\mathbf{r}$ }$. The term$\\frac{dV}{dr}$is the ordinary derivative of the potential with respect to the radial distance$r$. It quantifies the rate at which the potential changes as one moves radially. Its magnitude gives the strength of the field in the radial direction. The term\\hat{\\mathbf{r}}$ is the radial unit vector, which sets the direction of the gradient. It points directly outward from the origin. Therefore, the formula states that for a spherically symmetric potential, the resulting vector field is always purely radial, with its magnitude determined by how rapidly the potential changes with distance from the center. A positive \\frac{dV}{dr} means the potential increases outward, so the gradient points outward. A negative \\frac{dV}{dr} means the potential decreases outward, so the gradient points inward$.",
-        "symmetry_origin": "This formula is a direct consequence of the spherical symmetry of the potential $V(r)$. When a scalar field $V$ depends only on the radial coordinate $r$ (i.e., $V = V(r)$), its value is invariant under rotations about the origin. Expressing the gradient operator $\\nabla$ in spherical coordinates, $\\nabla = \\hat{\\mathbf{r}$} $\\frac{\\partial}{\\partial r} + \\hat{\\boldsymbol{ \\theta }} \\frac{1}{r} \\frac{\\partial}{\\partial \\theta} + \\hat{\\boldsymbol{\\phi}}$\\frac{1}{r \\sin \\theta} \\frac{\\partial}{\\partial \\phi}$, it becomes evident that if$ V $has$ no dependence on the angular coordinates $\\theta and \\phi$, then $\\frac{\\partial V}{\\partial \\theta}$ = 0 $and$\\frac{\\partial V}{\\partial \\phi}$= 0$. This simplifies the gradient to only its radial component:$\\nabla V(r) = \\frac{\\partial V}{\\partial r} \\hat{\\mathbf{r}}$. Since$V is a function of only one variable,$ r $, the partial derivative \\frac{ \\partial V}{ \\partial r} becomes the ordinary derivative \\frac{dV}{dr} . This mathematical simplification perfectly reflects the physical intuition that a spherically symmetric potential can only generate a radial field$.",
-        "limits_and_boundary": "The behavior of $\\nabla V(r)$ at various limits depends crucially on the specific form of $V(r)$. As $r \\to \\infty$: For many physical potentials describing isolated sources (e.g., gravitational potential $V(r) = -GM/r$ or electric potential $V(r) = Q/(4\\pi\\epsilon_0 r)$), the potential $V(r)$ typically approaches zero as $r \\to \\infty$. Consequently, its derivative $\\frac{dV}{dr}$ also tends to zero, implying that the associated force field or field strength vanishes infinitely far away from the source. This reflects the finite range or diminishing influence of the source. As $r \\to 0$: If the source is an ideal point particle at the origin, potentials like $V(r) = -k/r$ become singular (tend to $\\pm \\infty$) as $r \\to 0$. In this case, $\\frac{dV}{dr} = k/r^2$ also becomes singular, indicating an infinitely strong field or force at the origin (e.g., the field of a point charge or mass). If the physical source has a finite size and extends to the origin (e.g., a uniformly charged sphere), the potential $V(r)$ often remains finite at $r=0$ and may even have a minimum or maximum there. For example, inside a uniformly charged sphere, the electric potential is finite, and the electric field (gradient) can be zero at the center. The behavior near $r=0$ therefore depends on whether the origin is a true singularity or a region with a distributed source.",
+        "interpretation": "The equation $\\nabla V(r) = \\frac{\\mathrm{d}V}{\\mathrm{d}r} \\hat{\\mathbf{r}}$ mathematically expresses how to determine the vector field arising from a spherically symmetric scalar potential $V(r)$. The left-hand side, $\\nabla V(r)$, represents the gradient of the scalar potential. In physics, the negative of the gradient of a potential field defines the conservative force field associated with it (e.g., $\\mathbf{F} = -\\nabla V$) or the field strength itself (e.g., electric field $\\mathbf{E} = -\\nabla V$). The right-hand side breaks this gradient into two components: $\\frac{\\mathrm{d}V}{\\mathrm{d}r}$ and $\\hat{\\mathbf{r}}$. The term $\\frac{\\mathrm{d}V}{\\mathrm{d}r}$ is the ordinary derivative of the potential with respect to the radial distance $r$, quantifying the rate at which the potential changes radially. The term $\\hat{\\mathbf{r}}$ is the radial unit vector, which sets the direction of the gradient. Therefore, the formula states that for a spherically symmetric potential, the resulting vector field is always purely radial, with its magnitude determined by how rapidly the potential changes with distance from the center.",
+        "symmetry_origin": "This formula is a direct consequence of the spherical symmetry of the potential $V(r)$. When a scalar field $V$ depends only on the radial coordinate $r$, its value is invariant under rotations about the origin. Expressing the gradient operator $\\nabla$ in spherical coordinates, $\\nabla = \\hat{\\mathbf{r}} \\frac{\\partial}{\\partial r} + \\hat{\\boldsymbol{\\theta}} \\frac{1}{r} \\frac{\\partial}{\\partial \\theta} + \\hat{\\boldsymbol{\\phi}} \\frac{1}{r \\sin \\theta} \\frac{\\partial}{\\partial \\phi}$, it is evident that if $V$ has no dependence on the angular coordinates $\\theta$ and $\\phi$, then $\\frac{\\partial V}{\\partial \\theta} = 0$ and $\\frac{\\partial V}{\\partial \\phi} = 0$. This simplifies the gradient to only its radial component: $\\nabla V(r) = \\frac{\\partial V}{\\partial r} \\hat{\\mathbf{r}}$. Since $V$ is a function of only one variable, $r$, the partial derivative becomes the ordinary derivative $\\frac{\\mathrm{d}V}{\\mathrm{d}r}$.",
+        "limits_and_boundary": "1. As $r \\to \\infty$: For many physical potentials describing isolated sources (e.g., gravitational potential $V(r) = -GM/r$ or electric potential $V(r) = Q/(4\\pi\\epsilon_0 r)$), the potential $V(r)$ typically approaches zero. Consequently, its derivative $\\frac{\\mathrm{d}V}{\\mathrm{d}r}$ also tends to zero, implying that the associated field strength vanishes infinitely far from the source.\n2. As $r \\to 0$: For an ideal point source at the origin, potentials like $V(r) \\propto 1/r$ become singular. The gradient, $\\nabla V \\propto 1/r^2 \\hat{\\mathbf{r}}$, also becomes singular, indicating an infinitely strong field. For a physically realistic source with a finite size (e.g., a uniformly charged sphere), the potential $V(r)$ remains finite at $r=0$, and the gradient may be zero at the center.",
         "status": "platinum",
-        "conceptual_definition": "This formula defines the gradient of a scalar potential $V$ that possesses spherical symmetry, meaning its value depends solely on the radial distance $r$ from a central point. The gradient operation transforms this scalar potential field into a vector field, which typically represents a conservative force field (like gravity or electrostatic force) or the corresponding field strength (like gravitational field or electric field).",
-        "intuitive_summary": "The gradient of a potential that is the same at all points equidistant from a center will always point directly toward or away from that center, indicating the direction of the steepest change in potential.",
+        "conceptual_definition": "This formula defines the gradient of a scalar potential V that possesses spherical symmetry, meaning its value depends solely on the radial distance r from a central point. The gradient operation transforms this scalar potential field into a vector field, which represents the direction and magnitude of the steepest ascent of the potential.",
+        "intuitive_summary": "The steepest change in a potential that is the same at all points equidistant from a center will always point directly toward or away from that center.",
         "subcomponents": [
             "z-direction-unit-vector-0716ab61",
             "nabla-vector-differential-operator-8319f01c",
@@ -1091,81 +1085,33 @@
     },
     "dark-matter-relic-density-constraint-f53f1be2": {
         "title": "Dark Matter Relic Density",
-        "equation": "REG",
-        "interpretation": "The formula relates the scaled cosmic dark matter density $\\Omega_{\\chi} h^2$ to early-universe thermodynamics. The relic abundance is inversely proportional to the thermally averaged annihilation cross-section $\\langle \\sigma v \\rangle$. A larger cross-section allows annihilation to continue longer into the cooling phase, resulting in fewer surviving particles. Conversely, a weak cross-section leads to earlier freeze-out and higher abundance. The Planck mass $M_{\\text{Pl}}$ appears in the denominator because it dictates the gravitational expansion rate of the universe; a stronger gravitational coupling (larger Planck mass) slows the expansion, keeping particles in equilibrium longer. The parameter $g_*$ represents the relativistic degrees of freedom, which control the energy density of the plasma and the expansion rate during the epoch of freeze-out.",
-        "symmetry_origin": "The formula is derived from the Boltzmann equation applied to a Friedmann-Lemaitre-Robertson-Walker (FLRW) cosmology, which assumes spatial homogeneity and isotropy. It relies on the conservation of total entropy per comoving volume in the expanding universe to map the density at freeze-out to the present epoch.",
-        "limits_and_boundary": "As the annihilation cross-section $\\langle \\sigma v \\rangle \\to \\infty$, the relic density $\\Omega_{\\chi} h^2 \\to 0$ because all dark matter particles would successfully annihilate. Conversely, as $\\langle \\sigma v \\rangle \\to 0$, the relic density $\\Omega_{\\chi} h^2 \\to \\infty$, which would overclose the universe and prevent galaxy formation. If the freeze-out parameter $x_f \\to \\infty$, it signifies a state of perpetual thermal equilibrium where relic abundance vanishes completely.",
+        "equation": "\\Omega_{\\chi} h^2 \\approx \\frac{3 \\times 10^{-27} \\, \\mathrm{cm}^3 \\mathrm{s}^{-1}}{\\langle \\sigma v \\rangle}",
+        "interpretation": "This approximate formula provides a powerful connection between the cosmological abundance of dark matter today, $\\Omega_{\\chi} h^2$, and its particle physics properties, encapsulated in the thermally averaged annihilation cross-section, $\\langle \\sigma v \\rangle$. The equation states that the relic density is inversely proportional to the annihilation strength. A larger cross-section means dark matter particles were more effective at finding and annihilating each other in the early universe, leading to a smaller number of surviving particles and thus a lower relic density today. Conversely, a 'weakly interacting' particle with a small cross-section would 'freeze out' earlier when the universe was denser, leaving a larger relic abundance. The numerical value in the numerator is the specific cross-section required to produce the observed dark matter density, a remarkable coincidence known as the 'WIMP miracle'.",
+        "symmetry_origin": "The formula is derived from the Boltzmann equation applied to a Friedmann-Lemaître-Robertson-Walker (FLRW) cosmology, which assumes large-scale spatial homogeneity and isotropy (the Cosmological Principle). It relies on the conservation of total entropy per comoving volume in the expanding universe to relate the particle density at the time of freeze-out to the density observed in the present epoch.",
+        "limits_and_boundary": "1. As $\\langle \\sigma v \\rangle \\to \\infty$: The relic density $\\Omega_{\\chi} h^2 \\to 0$. This corresponds to a hypothetical particle that is so strongly interacting that it remains in thermal equilibrium indefinitely, annihilating away completely.\n2. As $\\langle \\sigma v \\rangle \\to 0$: The relic density $\\Omega_{\\chi} h^2 \\to \\infty$. This represents a particle that is too weakly interacting to ever have been in thermal equilibrium, leading to an abundance that would overclose the universe, which is observationally excluded.\n3. The 'WIMP Miracle': The observed value of $\\Omega_{\\chi} h^2 \\approx 0.12$ implies an annihilation cross-section of $\\langle \\sigma v \\rangle \\approx 2.5 \\times 10^{-26} \\, \\mathrm{cm}^3 \\mathrm{s}^{-1}$. This value is remarkably close to the typical cross-section expected for a new particle interacting via the weak nuclear force, motivating the search for Weakly Interacting Massive Particles (WIMPs).",
         "semantic_variables": {
             "\\Omega_{\\chi}": {
                 "name": "Dark Matter Density Parameter",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The ratio of the current energy density of dark matter to the critical density of the universe."
+                "description": "The ratio of the average energy density of dark matter ($\\rho_\\chi$) to the critical energy density of the universe ($\\rho_c$)."
             },
             "h": {
                 "name": "Reduced Hubble Constant",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "A dimensionless parameter representing the modern expansion rate of the universe, defined as H_0 / (100 km/s/Mpc)."
-            },
-            "x_f": {
-                "name": "Freeze-out Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The ratio of the dark matter particle mass to the freeze-out temperature, typically valued between 20 and 30 for WIMPs."
-            },
-            "M_{Pl}": {
-                "name": "Planck Mass",
-                "type": "constant",
-                "unit": "kg",
-                "description": "The fundamental scale of gravity, representing the mass at which quantum gravitational effects become dominant."
-            },
-            "g_*": {
-                "name": "Relativistic Degrees of Freedom",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The effective number of relativistic particle species in the thermal bath at the time of dark matter freeze-out."
+                "description": "A dimensionless parameter scaling the Hubble constant, defined as $h = H_0 / (100 \\, \\mathrm{km} \\, \\mathrm{s}^{-1} \\mathrm{Mpc}^{-1})$. The product $\\Omega_{\\chi} h^2$ is well-constrained by cosmological observations."
             },
             "\\langle \\sigma v \\rangle": {
                 "name": "Thermally Averaged Annihilation Cross-Section",
                 "type": "variable",
-                "unit": "m^3/s",
-                "description": "The expectation value of the product of the dark matter self-annihilation cross-section and relative velocity, averaged over a Maxwell-Boltzmann distribution."
-            },
-            "s_0": {
-                "name": "Present Entropy Density",
-                "type": "constant",
-                "unit": "m^-3",
-                "description": "The current entropy density of the universe, primarily dominated by the Cosmic Microwave Background and relic neutrinos."
-            },
-            "\\rho_{c}": {
-                "name": "Critical Density",
-                "type": "constant",
-                "unit": "kg/m^3",
-                "description": "The average energy density required for a flat universe, acting as a normalization factor."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "m³⋅s⁻¹",
+                "description": "The product of the dark matter self-annihilation cross-section ($\\sigma$) and relative velocity ($v$), averaged over the thermal distribution of particles at the time of freeze-out."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The dark matter relic density formula calculates the remaining abundance of a stable thermal relic particle (such as a Weakly Interacting Massive Particle, or WIMP) in the present-day universe. In the hot early universe, dark matter particles were in thermal equilibrium. As the universe expanded and cooled, their annihilation rate fell below the Hubble expansion rate. This caused the dark matter particles to decouple or \"freeze out\" of thermal equilibrium, leaving behind a constant comoving number density known as the relic density.",
-        "intuitive_summary": "The present-day abundance of thermal dark matter is inversely proportional to how efficiently it annihilates; stronger interactions keep it in equilibrium longer, resulting in a smaller relic density.",
+        "conceptual_definition": "The dark matter relic density formula calculates the remaining abundance of a stable thermal relic particle in the present-day universe. In the hot early universe, these particles were in thermal equilibrium, but as the universe expanded and cooled, their annihilation rate fell below the Hubble expansion rate, causing them to 'freeze out' and leave behind a constant comoving number density.",
+        "intuitive_summary": "The present-day abundance of thermal dark matter is inversely proportional to how efficiently it annihilates; stronger interactions lead to a smaller relic density.",
         "subcomponents": [
             "supersymmetry-breaking-scale-fe7a2649",
             "thermally-averaged-annihilation-cross-section-20d5c45f",
@@ -1178,56 +1124,50 @@
     },
     "parker-isothermal-wind-equation-15a41e6b": {
         "title": "Parker Wind Equation",
-        "equation": "\\frac{1}{v} \\frac{dv}{dr} (v^2 - c_s^2) = \\frac{2 c_s^2}{r} - \\frac{G M}{r^2}",
-        "interpretation": "The equation $\\frac{1}{v}\\frac{dv}{dr}$ (v^2 - c_s^2) = \\frac{2 c_s^2}{r}$- \\frac{G M}{r^2}$ is a differential equation that governs the radial velocity profile of a stellar wind. The left side, \\frac{1}{v} \\frac{dv}{dr} (v^2 - c_s^2), represents the advection of momentum, specifically how the wind's velocity changes with radial distance. The term \\frac{dv}{dr} is the acceleration, and the factor \\frac{1}{v} is part of the hydrodynamic formulation. The term \\frac{2 c_s^2}{r}$on the right side represents the outward force due to the thermal pressure gradient of the gas; hotter gas (higher \\f$ c_s $\\f ) and smaller radial distances ( \\f$ r $\\f ) lead to stronger outward pressure. The term - \\frac{G M}{r^2}$ represents the inward gravitational force exerted by the central mass \\f $M$\\f at a distance \\f $r$\\f . A crucial feature of this equation is the critical point where \\f$v^2 = c_s^2$\\f (i.e., \\f$v = c_s$\\f ). For a physically realistic, smooth solution that transitions from subsonic to supersonic flow (which is characteristic of stellar winds), both sides of the equation must simultaneously be zero at this critical point. This condition determines the unique wind solution$.",
-        "symmetry_origin": "The Parker Wind Equation is derived from the steady-state (time-independent), spherically symmetric Euler equations, which represent the conservation of mass, momentum, and energy for an ideal fluid under the influence of gravity. The assumption of spherical symmetry simplifies the 3D fluid equations to a 1D problem in the radial coordinate, and the steady-state assumption eliminates time derivatives.",
-        "limits_and_boundary": "As $\\f r \\to 0 \\f$ (close to the stellar surface), the gravitational term -$\\frac{G M}{r^2}$ becomes very large and negative, implying a strong inward pull. For a physical outflow, the pressure gradient term \\frac{2 c_s^2}{r}$must dominate to initiate the wind, meaning the wind starts with low velocity and is thermally driven. As \\f$ r $\\to \\text{\\infty} \\f$ (far from the star), the gravitational term - $\\frac{G M}{r^2}$ becomes negligible. The wind reaches a terminal velocity where its kinetic energy dominates, and the velocity gradient \\f \\frac{dv}{dr} \\f approaches zero. The critical point where \\f$v = c_s$\\f is a mathematical boundary condition; physical solutions require the numerator and denominator of the derived equation (in some forms) to simultaneously vanish at this point, ensuring a smooth transition from subsonic to supersonic flow$.",
+        "equation": "\\frac{1}{v} \\frac{\\mathrm{d}v}{\\mathrm{d}r} (v^2 - c_s^2) = \\frac{2 c_s^2}{r} - \\frac{G M}{r^2}",
+        "interpretation": "The equation governs the radial velocity profile $v(r)$ of a stellar wind. The left side, $\\frac{1}{v} \\frac{\\mathrm{d}v}{\\mathrm{d}r} (v^2 - c_s^2)$, represents the inertial term, linking the fluid's acceleration to its velocity and the local sound speed. The right side contains the driving and restraining forces: the term $\\frac{2 c_s^2}{r}$ represents the outward force from the thermal pressure gradient, while $-\\frac{G M}{r^2}$ is the inward gravitational force from the central mass $M$. A crucial feature is the sonic point, where the flow velocity equals the sound speed, $v = c_s$. For a physically realistic, continuous solution that transitions from subsonic to supersonic flow, both sides of the equation must simultaneously equal zero at this critical radius, which uniquely determines the mass loss rate and velocity profile of the wind.",
+        "symmetry_origin": "The Parker Wind Equation is derived from the steady-state (time-independent) and spherically symmetric Euler equations for fluid dynamics. These assumptions reduce the conservation of mass and momentum for an ideal, isothermal fluid under gravity to a single ordinary differential equation in the radial coordinate $r$.",
+        "limits_and_boundary": "1. Near the star ($r \\to r_*$, where $r_*$ is the stellar radius), the gravitational term $-\\frac{G M}{r^2}$ is dominant. The wind is initiated by the pressure gradient term $\\frac{2 c_s^2}{r}$, starting at a low, subsonic velocity ($v \\ll c_s$).\n2. At the critical or sonic radius ($r=r_c$), the flow velocity matches the sound speed ($v=c_s$). For a smooth transition, the right-hand side must also be zero, which defines the critical radius as $r_c = \\frac{GM}{2c_s^2}$.\n3. Far from the star ($r \\to \\infty$), the gravitational and pressure gradient terms become negligible. The wind coasts at a constant terminal velocity ($v \\to v_\\infty$), and the acceleration $\\frac{\\mathrm{d}v}{\\mathrm{d}r}$ approaches zero.",
         "semantic_variables": {
             "v": {
-                "name": "Radial Velocity of the Wind",
+                "name": "Radial Wind Velocity",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The outward velocity of the stellar wind as a function of radial distance from the central star."
+                "unit": "m s^{-1}",
+                "description": "The outward velocity of the stellar wind as a function of radial distance $r$."
             },
             "r": {
                 "name": "Radial Distance",
                 "type": "variable",
                 "unit": "m",
-                "description": "The distance from the center of the gravitating mass (e.g., star) to the point where the wind velocity is being considered."
+                "description": "The distance from the center of the gravitating mass."
             },
             "c_s": {
                 "name": "Isothermal Sound Speed",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The speed at which sound waves propagate through the gas, assuming constant temperature. It is related to the gas temperature and represents the thermal energy and pressure support of the plasma."
+                "type": "constant",
+                "unit": "m s^{-1}",
+                "description": "The speed of sound in the gas, assumed to be constant with radius (isothermal assumption). It is determined by the gas temperature."
             },
             "G": {
                 "name": "Gravitational Constant",
                 "type": "constant",
-                "unit": "N m^2/kg^2",
-                "description": "Newton's universal gravitational constant, a fundamental physical constant that determines the strength of the gravitational force between masses."
+                "unit": "m^3 kg^{-1} s^{-2}",
+                "description": "The fundamental constant of gravitation."
             },
             "M": {
                 "name": "Central Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "The mass of the central object (e.g., star) from which the wind is flowing. This mass dictates the strength of the gravitational pull."
-            },
-            "c": {
-                "name": "Speed of Light",
                 "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
+                "unit": "kg",
+                "description": "The mass of the central star providing the gravitational field."
             },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
+            "\\mathrm{d}": {
+                "name": "Differential Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Represents an infinitesimal change in a variable, used here to form the ordinary derivative of velocity with respect to radius."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Parker Wind Equation describes the steady-state, spherically symmetric outflow of a hot, ionized gas, such as a stellar wind, from a central gravitational source. It is a one-dimensional, hydrodynamic equation that models the acceleration of a plasma as it escapes the gravitational pull of a star due to thermal pressure.",
+        "conceptual_definition": "The Parker Wind Equation describes the steady-state, spherically symmetric outflow of an isothermal gas, such as a stellar wind, from a central gravitational source. It is a one-dimensional, hydrodynamic equation that models the acceleration of a plasma as it escapes the gravitational pull of a star due to thermal pressure.",
         "intuitive_summary": "This equation explains how a star's hot atmosphere expands into space, accelerating from subsonic to supersonic speeds by balancing thermal pressure against gravitational attraction.",
         "subcomponents": [
             "limit-as-radial-distance-approaches-zero-5d54cde5",
@@ -1733,42 +1673,54 @@
     "renormalization-group-equation": {
         "title": "Renormalization Group Equation",
         "equation": "\\left( \\mu \\frac{\\partial}{\\partial \\mu} + \\beta(g) \\frac{\\partial}{\\partial g} + n \\gamma(g) \\right) \\Gamma^{(n)} = 0",
-        "conceptual_definition": "The Renormalization Group (RG) Equation, also known as the Callan-Symanzik equation in certain contexts, describes how physical quantities in a quantum field theory change when the energy scale or resolution at which the theory is probed is varied. It is a fundamental equation that encapsulates the scale dependence of coupling constants and other parameters of the theory, and it ensures that physical observables are independent of the arbitrary renormalization scale chosen. This independence is crucial for making predictions that match experimental observations.",
-        "intuitive_summary": "Physical observables remain unchanged as the energy scale of observation is varied, provided the coupling strengths are adjusted accordingly.",
-        "interpretation": "The Renormalization Group Equation, $\\left$( $\\mu \\frac{\\partial}{ \\partial \\mu } + \\beta$(g) $\\frac{\\partial}{\\partial g} + n \\gamma (g) \\right) \\Gamma^{(n)} = 0$, dictates how a quantum field theory's parameters and correlation functions evolve with the energy scale $\\mu$. The term $\\mu \\frac{\\partial}{ \\partial \\mu }$ represents the change with respect to the arbitrary energy scale $\\mu$, often called the renormalization scale. The term $\\beta$(g) $\\frac{\\partial}{\\partial g}$ describes how the coupling constant $g$ itself changes with the energy scale, governed by the beta function \\beta (g)$. The term$n \\gamma (g)$accounts for the anomalous dimension$\\gamma$(g)$of the fields involved, which also depends on the coupling constant and the energy scale .\\Gamma^{$(n)} represents the n-particle irreducible Green's function (or vertex function), which is a key observable in quantum field theory that describes the interaction of$n$particles. The entire equation states that the change in$\\Gamma$^{(n)}$when varying the scale \\mu is precisely compensated by the change in the coupling constant $g$ and the anomalous dimensions of the fields, such that the physical process described by \\Gamma ^{(n)}$remains invariant under a change of the renormalization scale.",
-        "symmetry_origin": "The Renormalization Group Equation arises from the requirement that physical observables in a quantum field theory must be independent of the arbitrary choice of renormalization scale $\\mu$. When we renormalize a theory, we introduce a cutoff scale (like $\\mu$) to handle divergences. However, the physical results should not depend on this artificial scale. This scale independence is a form of symmetry, specifically, a consequence of invariance under changes of the measurement resolution or energy scale.",
-        "limits_and_boundary": "In the limit of very high energies ($\\mu \\to \\infty ) or very low energies ( \\mu \\to 0$), the behavior of the theory is often dictated by the signs of the beta function $\\beta$(g)$. If \\beta (g)$ is negative, the coupling constant $g$ decreases at high energies, leading to asymptotic freedom (e.g., in Quantum Chromodynamics). If $\\beta$(g)$is positive, the coupling constant increases at high energies, potentially leading to a Landau pole where the theory breaks down. At low energies, the behavior depends on the specific theory; for example, some theories become strongly coupled, while others may exhibit dimensional transmutation$.",
+        "conceptual_definition": "The Renormalization Group (RG) Equation describes how the parameters of a quantum field theory, such as coupling constants and field normalizations, evolve with a change in the energy scale of observation. It ensures that physical observables, represented by Green's functions, remain independent of the arbitrary renormalization scale introduced to regulate divergences.",
+        "intuitive_summary": "This equation ensures that the predictions of a quantum theory do not depend on the arbitrary energy scale chosen for calculations, by describing how the theory's parameters must 'run' with that scale.",
+        "interpretation": "The Renormalization Group Equation, often called the Callan-Symanzik equation, asserts that physical quantities are independent of the unphysical renormalization scale $\\mu$. The equation is a differential operator acting on an $n$-point Green's function $\\Gamma^{(n)}$. The term $\\mu \\frac{\\partial}{\\partial \\mu}$ represents the explicit change with the scale $\\mu$. This change must be cancelled by the implicit scale dependence of the theory's parameters. The term $\\beta(g) \\frac{\\partial}{\\partial g}$ accounts for the 'running' of the coupling constant $g$ with scale, governed by the beta function $\\beta(g) = \\mu \\frac{\\partial g}{\\partial \\mu}$. The term $n \\gamma(g)$ accounts for the anomalous dimension $\\gamma(g)$ of the $n$ fields, which describes how the fields themselves are rescaled. The equation's vanishing result signifies that the total derivative of the physical quantity $\\Gamma^{(n)}$ with respect to the scale $\\mu$ is zero.",
+        "symmetry_origin": "The RG equation originates from the principle of renormalization scale invariance. In a renormalizable quantum field theory, the procedure for removing infinities introduces an arbitrary energy scale $\\mu$. The requirement that physical predictions must be independent of the choice of this unphysical scale constitutes a symmetry, leading directly to the RG equation.",
+        "limits_and_boundary": "1. High-Energy Limit (UV fixed point, $\\mu \\to \\infty$): The behavior is governed by the sign of the beta function $\\beta(g)$. If $\\beta(g) < 0$, the coupling $g$ approaches zero, a phenomenon known as asymptotic freedom (e.g., QCD). If $\\beta(g) > 0$, the coupling may diverge at a finite energy scale (a Landau pole).\n2. Low-Energy Limit (IR fixed point, $\\mu \\to 0$): The theory flows towards a fixed point where $\\beta(g) = 0$. If this occurs at $g=0$, the theory is free in the infrared. If it occurs at a non-zero coupling $g^*$, the theory becomes scale-invariant and may describe a continuous phase transition.",
         "status": "platinum",
         "semantic_variables": {
+            "\\mu": {
+                "name": "Renormalization Scale",
+                "type": "variable",
+                "unit": "GeV",
+                "description": "An arbitrary energy scale introduced in the renormalization process to regulate divergent integrals. Physical observables must be independent of its value."
+            },
             "g": {
                 "name": "Coupling Constant",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless parameter that quantifies the strength of interaction between particles in a quantum field theory. It is not a fundamental constant but rather depends on the renormalization scale $\\mu$."
+                "description": "A parameter that quantifies the strength of an interaction, which 'runs' with the energy scale $\\mu$."
             },
             "\\beta(g)": {
                 "name": "Beta Function",
-                "type": "variable",
+                "type": "function",
                 "unit": "dimensionless",
-                "description": "A function that describes how the coupling constant $g$ changes with the renormalization scale $\\mu$. It is defined by$\\beta(g) = \\mu \\frac{\\partial g}{\\partial \\mu}$. The sign and behavior of the beta function determine the asymptotic behavior of the theory."
+                "description": "Describes the running of the coupling constant with the energy scale, defined as $\\beta(g) = \\mu \\frac{\\partial g}{\\partial \\mu}$."
             },
             "\\gamma(g)": {
                 "name": "Anomalous Dimension",
-                "type": "variable",
+                "type": "function",
                 "unit": "dimensionless",
-                "description": "A dimensionless quantity that describes how the field strength or correlation functions of a theory change with the renormalization scale, beyond the simple power-law scaling expected from classical dimensions. It is a function of the coupling constant $g$."
+                "description": "A correction to the classical scaling dimension of a field or operator, describing how its normalization changes with the energy scale $\\mu$."
             },
             "\\Gamma^{(n)}": {
-                "name": "n-Particle Irreducible Green's Function",
-                "type": "variable",
+                "name": "n-Point Irreducible Green's Function",
+                "type": "function",
                 "unit": "depends on context",
-                "description": "A fundamental quantity in quantum field theory representing the amplitude for a process involving $n$ external particles, after removing all one-particle reducible Feynman diagrams. It captures the interaction vertices and propagators of the theory and its scale dependence is governed by the RG equation."
+                "description": "A correlation function for $n$ external particles that serves as a generating function for one-particle irreducible Feynman diagrams. It represents a fundamental physical observable."
             },
             "n": {
-                "name": "Number of External Particles",
-                "type": "variable",
+                "name": "Number of External Legs",
+                "type": "parameter",
                 "unit": "dimensionless",
-                "description": "The number of external particles associated with the Green's function$\\Gamma^{(n)}$. The anomalous dimension term is multiplied by $n$, reflecting the collective scaling of multiple fields."
+                "description": "The number of external particles or fields in the Green's function $\\Gamma^{(n)}$."
+            },
+            "\\partial": {
+                "name": "Partial Derivative Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Represents the rate of change of a function with respect to one of its variables, while holding others constant."
             }
         },
         "subcomponents": [
@@ -1868,7 +1820,8 @@
         "status": "published",
         "parent_formula_id": "hubble-radius",
         "subcomponents": [],
-        "id": "hubble-constant-present-day-e65765be"
+        "id": "hubble-constant-present-day-e65765be",
+        "intuitive_summary": ""
     },
     "electronic-kinetic-energy-summation-ba6e4290": {
         "title": "Electronic Kinetic Energy Summation",
@@ -1929,7 +1882,8 @@
         "status": "published",
         "parent_formula_id": "covariant-velocity-410796fd",
         "subcomponents": [],
-        "id": "proper-time-to-coordinate-time-limit-821ad6fd"
+        "id": "proper-time-to-coordinate-time-limit-821ad6fd",
+        "intuitive_summary": ""
     },
     "timelike-spacetime-interval-condition-331aed0f": {
         "title": "Timelike Spacetime Interval Condition",
@@ -1953,7 +1907,8 @@
         "status": "published",
         "parent_formula_id": "time-protection-6c90e08c",
         "subcomponents": [],
-        "id": "timelike-spacetime-interval-condition-331aed0f"
+        "id": "timelike-spacetime-interval-condition-331aed0f",
+        "intuitive_summary": ""
     },
     "thermal-de-broglie-volume-factor-3d04f4b4": {
         "title": "Thermal De Broglie Volume Factor",
@@ -1995,7 +1950,8 @@
         "status": "published",
         "parent_formula_id": "boltzmann-distribution-equilibrium-state-6cd6a17e",
         "subcomponents": [],
-        "id": "thermal-de-broglie-volume-factor-3d04f4b4"
+        "id": "thermal-de-broglie-volume-factor-3d04f4b4",
+        "intuitive_summary": ""
     },
     "peak-dipole-radiation-angle-condition-67418e5b": {
         "title": "Peak Dipole Radiation Angle Condition",
@@ -2019,7 +1975,8 @@
         "status": "published",
         "parent_formula_id": "wave-pulse-19129efd",
         "subcomponents": [],
-        "id": "peak-dipole-radiation-angle-condition-67418e5b"
+        "id": "peak-dipole-radiation-angle-condition-67418e5b",
+        "intuitive_summary": ""
     },
     "cosmological-scale-factor-and-hubble-parameter-product-4ecc6f72": {
         "title": "Cosmological Scale Factor and Hubble Parameter Product",
@@ -2049,31 +2006,57 @@
         "status": "published",
         "parent_formula_id": "weight-of-force-c84ee88b",
         "subcomponents": [],
-        "id": "cosmological-scale-factor-and-hubble-parameter-product-4ecc6f72"
+        "id": "cosmological-scale-factor-and-hubble-parameter-product-4ecc6f72",
+        "intuitive_summary": ""
     },
     "vacuum-energy-density-0f45828d": {
         "title": "Vacuum Energy Density",
         "description": "The intrinsic energy density of empty space.",
         "conceptual_definition": "In quantum field theory, the vacuum is not truly empty but filled with virtual particles and fields, leading to a non-zero energy density even in the absence of matter or radiation. This intrinsic energy of spacetime is known as vacuum energy density.",
-        "interpretation": "This quantity is a fundamental parameter in cosmology, often linked to the cosmological constant (\\$\\Lambda$). It represents a constant energy density that permeates all of space and is responsible for the accelerated expansion of the universe. Its observed value is extremely small but positive, posing a significant challenge to theoretical physics (the cosmological constant problem) due to the vast discrepancy with quantum field theory predictions.",
-        "limits_and_boundary": "Cosmologically, its value is constrained to be very small and positive, approximately $10^{-26} \\\\text{ kg/m}^3$. Theoretically, quantum field theory predicts a much larger value, leading to the cosmological constant problem. It is assumed to be constant throughout spacetime.",
-        "symmetry_origin": "Arises from the Lorentz invariance of the vacuum state in quantum field theories, implying that the vacuum energy density must be a scalar quantity that is constant everywhere.",
+        "interpretation": "This quantity is a fundamental parameter in cosmology, directly proportional to the cosmological constant $\\Lambda$. It represents a constant energy density that permeates all of space and acts as a source of negative pressure, causing the observed accelerated expansion of the universe. Its measured value is extremely small but positive, posing a significant challenge to theoretical physics—the cosmological constant problem—due to the vast discrepancy with quantum field theory predictions, which are many orders of magnitude larger.",
+        "limits_and_boundary": "1. In a hypothetical universe with no cosmological constant ($\\Lambda \\to 0$), the vacuum energy density is zero, which contradicts observations of cosmic acceleration.\n2. The observed value is extremely small and positive, $\\rho_{\\mathrm{vac}} \\approx 5.96 \\times 10^{-27} \\, \\mathrm{kg/m^3}$, corresponding to the measured rate of cosmic acceleration.\n3. In the early universe, the vacuum energy density is thought to have been much larger during the inflationary epoch, driving a period of exponential expansion before decaying to its current low value.",
+        "symmetry_origin": "The form of the vacuum energy-momentum tensor is constrained by Lorentz invariance. For the vacuum state to be the same for all inertial observers, its energy-momentum tensor must be proportional to the metric tensor, $T^{\\mu\\nu}_{\\mathrm{vac}} = -\\rho_{\\mathrm{vac}} g^{\\mu\\nu}$, which implies a constant energy density and a pressure $p = -\\rho_{\\mathrm{vac}}$. This Lorentz invariance of the vacuum state is a fundamental symmetry of spacetime.",
         "unit_system": "SI",
         "derivation_type": "DEFINITION",
         "equation_family": "cosmology-and-quantum-field-theory",
         "semantic_variables": {
-            "\\\\rho_{vac}": {
-                "name": "\\\\rho_{vac}",
+            "\\rho_{\\mathrm{vac}}": {
+                "name": "Vacuum Energy Density",
                 "type": "variable",
+                "unit": "kg/m³",
+                "description": "The intrinsic energy per unit volume of empty space, equivalent to a mass density."
+            },
+            "\\Lambda": {
+                "name": "Cosmological Constant",
+                "type": "constant",
+                "unit": "m⁻²",
+                "description": "A fundamental constant of nature introduced by Einstein that represents a constant energy density filling space homogeneously."
+            },
+            "c": {
+                "name": "Speed of Light in Vacuum",
+                "type": "constant",
+                "unit": "m/s",
+                "description": "The universal speed limit for all energy, matter, and information in the universe."
+            },
+            "G": {
+                "name": "Newtonian Gravitational Constant",
+                "type": "constant",
+                "unit": "m³⋅kg⁻¹⋅s⁻²",
+                "description": "The empirical physical constant quantifying the magnitude of the gravitational force between two bodies."
+            },
+            "\\pi": {
+                "name": "Pi",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "The vacuum energy density, representing the energy per unit volume of empty space. Units: kg\\\\cdot m^{-1}\\\\cdot s^{-2} (or J\\\\cdot m^{-3})"
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter."
             }
         },
-        "equation": "\\rho_{vac}",
-        "status": "published",
+        "equation": "\\rho_{\\mathrm{vac}} = \\frac{\\Lambda c^2}{8 \\pi G}",
+        "status": "platinum",
         "parent_formula_id": "non-dilution-law-45036b47",
         "subcomponents": [],
-        "id": "vacuum-energy-density-0f45828d"
+        "id": "vacuum-energy-density-0f45828d",
+        "intuitive_summary": "Even completely empty space possesses a fundamental, constant energy density that drives the accelerated expansion of the universe."
     },
     "reference-point-coordinates-cb8023b1": {
         "title": "Reference Point Coordinates",
@@ -2109,7 +2092,8 @@
         "status": "published",
         "parent_formula_id": "product-of-inertia",
         "subcomponents": [],
-        "id": "reference-point-coordinates-cb8023b1"
+        "id": "reference-point-coordinates-cb8023b1",
+        "intuitive_summary": ""
     },
     "non-relativistic-four-momentum-components-8fcf0f3e": {
         "title": "Non-Relativistic Four-Momentum Components",
@@ -2151,7 +2135,8 @@
         "status": "published",
         "parent_formula_id": "four-momentum-0df0b42f",
         "subcomponents": [],
-        "id": "non-relativistic-four-momentum-components-8fcf0f3e"
+        "id": "non-relativistic-four-momentum-components-8fcf0f3e",
+        "intuitive_summary": ""
     },
     "weak-field-gravitational-approximation-condition-7fca2074": {
         "title": "Weak Field Gravitational Approximation Condition",
@@ -2181,7 +2166,8 @@
         "status": "published",
         "parent_formula_id": "laboratory-proof-d9d185c2",
         "subcomponents": [],
-        "id": "weak-field-gravitational-approximation-condition-7fca2074"
+        "id": "weak-field-gravitational-approximation-condition-7fca2074",
+        "intuitive_summary": ""
     },
     "electrostatic-potential-of-a-point-charge-a88ef21e": {
         "title": "Electrostatic Potential of a Point Charge",
@@ -2223,7 +2209,8 @@
         "status": "published",
         "parent_formula_id": "symmetry-breaker-8473ca37",
         "subcomponents": [],
-        "id": "electrostatic-potential-of-a-point-charge-a88ef21e"
+        "id": "electrostatic-potential-of-a-point-charge-a88ef21e",
+        "intuitive_summary": ""
     },
     "four-vector-component-decomposition-81af34dc": {
         "title": "Four-Vector Component Decomposition",
@@ -2259,7 +2246,8 @@
         "status": "published",
         "parent_formula_id": "four-vector-representation",
         "subcomponents": [],
-        "id": "four-vector-component-decomposition-81af34dc"
+        "id": "four-vector-component-decomposition-81af34dc",
+        "intuitive_summary": ""
     },
     "high-temperature-spontaneity-condition-28429b91": {
         "title": "High Temperature Spontaneity Condition",
@@ -2319,7 +2307,8 @@
         "status": "published",
         "parent_formula_id": "existence-rule-7414e680",
         "subcomponents": [],
-        "id": "high-temperature-spontaneity-condition-28429b91"
+        "id": "high-temperature-spontaneity-condition-28429b91",
+        "intuitive_summary": ""
     },
     "squared-generalized-coordinate-relation-8314ccee": {
         "title": "Squared Generalized Coordinate Relation",
@@ -2349,7 +2338,8 @@
         "status": "published",
         "parent_formula_id": "boundary-conditions-for-path-integral",
         "subcomponents": [],
-        "id": "squared-generalized-coordinate-relation-8314ccee"
+        "id": "squared-generalized-coordinate-relation-8314ccee",
+        "intuitive_summary": ""
     },
     "klein-gordon-equation-standard-units-1651b86e": {
         "title": "Klein-Gordon Equation (Standard Units)",
@@ -2403,7 +2393,8 @@
         "status": "published",
         "parent_formula_id": "klein-gordon-field-eqn-5c602d48",
         "subcomponents": [],
-        "id": "klein-gordon-equation-standard-units-1651b86e"
+        "id": "klein-gordon-equation-standard-units-1651b86e",
+        "intuitive_summary": ""
     },
     "spin-correlation-function-ccd00dfa": {
         "title": "Spin Correlation Function",
@@ -2439,6 +2430,7 @@
         "status": "published",
         "parent_formula_id": "the-einstein-limit-7c7a32fe",
         "subcomponents": [],
-        "id": "spin-correlation-function-ccd00dfa"
+        "id": "spin-correlation-function-ccd00dfa",
+        "intuitive_summary": ""
     }
 }

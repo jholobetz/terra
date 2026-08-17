@@ -69,164 +69,110 @@
         ]
     },
     "probability-spike-c7d9af80": {
-        "title": "Probability Spike",
-        "equation": "\\sigma(E) = \\frac{\\pi}{k^2} \\frac{\\omega \\Gamma_{in} \\Gamma_{out}}{(E - E_r)^2 + (\\Gamma/2)^2}",
+        "title": "Breit-Wigner Formula",
+        "equation": "\\sigma(E) = \\frac{\\pi}{k^2} \\frac{\\omega \\Gamma_{\\mathrm{in}} \\Gamma_{\\mathrm{out}}}{(E - E_r)^2 + (\\Gamma/2)^2}",
         "semantic_variables": {
-            "\\sigma(E)": {
+            "\\sigma": {
                 "name": "Reaction Cross-section",
                 "type": "variable",
                 "unit": "m^2",
-                "description": "The effective area presented by a target nucleus or particle for a reaction to occur, as a function of incident energy $E$. It represents the probability of the specific reaction channel."
+                "description": "The effective area for a reaction to occur as a function of energy $E$. It represents the probability of a specific reaction channel."
+            },
+            "E": {
+                "name": "Center-of-Mass Energy",
+                "type": "variable",
+                "unit": "J",
+                "description": "The total energy of the interacting system in the center-of-mass frame. Particle physics commonly uses electronvolts (eV)."
             },
             "\\pi": {
                 "name": "Pi",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical constant pi (approximately 3.14159)."
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
             },
             "k": {
                 "name": "Wave Number",
                 "type": "variable",
-                "unit": "m^-1",
-                "description": "The wave number of the incident particle, related to its momentum $p$ by $k = p/\\hbar$, where $\\hbar$ is the reduced Planck constant."
+                "unit": "m^{-1}",
+                "description": "The wave number of the incident particle in the center-of-mass frame, related to its momentum $p$ by $k = p/\\hbar$."
             },
             "\\omega": {
                 "name": "Spin Statistical Factor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless factor accounting for the spin angular momenta of the incident and target particles, and the resonant state. It is given by $\\omega = \\frac{2J+1}{(2s_1+1)(2s_2+1)}, where$J$is the spin of the resonant state, and$s_1$and$s_2$ are the spins of the incident particles."
+                "description": "A factor accounting for the spins of the interacting particles and the resonance, given by $\\omega = (2J+1)/((2s_1+1)(2s_2+1))$, where $J$ is the spin of the resonance and $s_1, s_2$ are the spins of the initial particles."
             },
-            "\\Gamma_{in}": {
+            "\\Gamma_{\\mathrm{in}}": {
                 "name": "Partial Width (Incident Channel)",
                 "type": "variable",
                 "unit": "J",
-                "description": "The partial decay width for the resonant state to decay into the specific incident channel (i.e., the probability of forming the resonant state from the initial particles). In particle physics, eV is a common unit."
+                "description": "The partial decay width for the resonance to decay back into the initial state channel. It is proportional to the probability of forming the resonance."
             },
-            "\\Gamma_{out}": {
+            "\\Gamma_{\\mathrm{out}}": {
                 "name": "Partial Width (Outgoing Channel)",
                 "type": "variable",
                 "unit": "J",
-                "description": "The partial decay width for the resonant state to decay into the specific outgoing channel (i.e., the probability of the resonant state decaying into the observed final particles). In particle physics, eV is a common unit."
-            },
-            "E": {
-                "name": "Incident Energy",
-                "type": "variable",
-                "unit": "J",
-                "description": "The total energy of the incident particle or system in the center-of-mass frame. In particle physics, eV is a common unit."
+                "description": "The partial decay width for the resonance to decay into the final state channel being observed."
             },
             "E_r": {
                 "name": "Resonance Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The characteristic energy at which the reaction cross-section is maximal, corresponding to the energy of the unstable intermediate resonant state. In particle physics, eV is a common unit."
+                "description": "The characteristic energy at which the cross-section is maximal, corresponding to the rest mass-energy of the unstable intermediate state."
             },
             "\\Gamma": {
                 "name": "Total Width",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total decay width of the resonant state, representing the inverse of its lifetime via the uncertainty principle. It is the sum of all possible partial decay widths for the resonance to decay into any allowed final state. In particle physics, eV is a common unit."
-            },
-            "\\sigma": {
-                "name": "Stefan-Boltzmann Constant",
-                "type": "constant",
-                "unit": "W⋅m⁻²⋅K⁻⁴",
-                "description": "The physical constant relating the total energy radiated per unit surface area of a black body per unit time to the fourth power of the thermodynamic temperature."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
+                "description": "The total decay width of the resonant state, equal to the sum of all possible partial decay widths. It is the inverse of the resonance's mean lifetime, $\\Gamma = \\hbar/\\tau$."
             }
         },
-        "interpretation": "The formula describes a resonance phenomenon, where the reaction cross-section, represented by $\\sigma(E)$, peaks sharply at a specific incident energy $E_r$. The numerator contains the product of the spin statistical factor $\\omega$ and the partial widths $\\Gamma_{in}$ and $\\Gamma_{out}$, which represent the probabilities of forming the resonant state and decaying into the observed final state, respectively. The term $\\pi / k^2$ accounts for the wave properties of the incident particle, where $k$ is its wave number. The denominator term $(E - E_r)^2 + (\\Gamma/2)^2$ gives the characteristic Lorentzian shape of the resonance. Here, $E$ is the incident energy, $E_r$ is the resonance energy (the energy at which the reaction is most probable), and $\\Gamma$ is the total width of the resonance, which is inversely related to the lifetime of the intermediate state via the uncertainty principle ($\\Delta E \\Delta t \\approx \\hbar$). A smaller $\\Gamma$ indicates a longer-lived, sharper resonance, while a larger $\\Gamma$ indicates a shorter-lived, broader resonance.",
-        "symmetry_origin": "The Breit-Wigner formula is a phenomenological description derived from quantum mechanical scattering theory, particularly from solutions to the time-dependent Schrödinger equation for systems that form a quasi-bound (unstable) intermediate state. It does not directly originate from a fundamental symmetry in the sense of Noether's theorem, but rather from the general principles governing the probability amplitudes of transitions to unstable states. Its Lorentzian shape is a general feature arising from the Fourier transform of an exponentially decaying amplitude, which characterizes unstable particles or resonant states.",
-        "limits_and_boundary": "When the incident energy $E$ is exactly equal to the resonance energy $E_r$, the term $(E - E_r)^2$ in the denominator becomes zero, and $\\sigma(E)$ reaches its maximum value. As $|E - E_r|$ becomes much larger than $\\Gamma/2$, the term $(E - E_r)^2$ dominates the denominator, causing the cross-section $\\sigma(E)$ to rapidly decrease, approaching zero. If the total width $\\Gamma$ approaches zero, the resonance becomes infinitely sharp, resembling a delta function, which corresponds to an infinitely long-lived (stable) state. Conversely, if $\\Gamma$ is very large, the resonance is broad and shallow, indicating a very short-lived intermediate state.",
+        "interpretation": "The formula describes a resonance phenomenon, where the reaction cross-section, $\\sigma(E)$, peaks sharply at a specific incident energy $E_r$. The term $\\pi / k^2$ is a quantum mechanical factor related to the maximum possible cross-section for a given incident wave number $k$. The numerator contains the product of the spin statistical factor $\\omega$ and the partial widths $\\Gamma_{\\mathrm{in}}$ and $\\Gamma_{\\mathrm{out}}$, which represent the probabilities of forming the resonant state from the initial particles and its subsequent decay into the observed final state, respectively. The denominator, $(E - E_r)^2 + (\\Gamma/2)^2$, gives the characteristic Lorentzian lineshape of the resonance. Here, $E$ is the center-of-mass energy, $E_r$ is the resonance energy, and $\\Gamma$ is the total decay width of the resonance, which is inversely related to the lifetime of the intermediate state via the energy-time uncertainty principle, $\\tau = \\hbar/\\Gamma$. A smaller $\\Gamma$ indicates a longer-lived, sharper resonance, while a larger $\\Gamma$ indicates a shorter-lived, broader resonance.",
+        "symmetry_origin": "The Breit-Wigner formula is a phenomenological result derived from quantum mechanical scattering theory, specifically from the properties of the S-matrix near a pole in the complex energy plane corresponding to an unstable particle. Its Lorentzian shape is a general feature arising from the Fourier transform of an exponentially decaying probability amplitude, which characterizes any quasi-bound or resonant state. While not a direct consequence of a spacetime symmetry via Noether's theorem, it is deeply connected to the time-evolution governed by the Hamiltonian and the principle of unitarity in quantum mechanics.",
+        "limits_and_boundary": "On-Resonance Limit: When the incident energy exactly matches the resonance energy, $E = E_r$, the denominator is minimized and the cross-section $\\sigma(E)$ reaches its maximum value.\nOff-Resonance Limit: When the incident energy is far from the resonance, $|E - E_r| \\gg \\Gamma/2$, the $(E - E_r)^2$ term dominates the denominator, causing the cross-section to fall off rapidly, proportional to $(E - E_r)^{-2}$.\nNarrow Resonance Limit: As the total width $\\Gamma \\to 0$, the Lorentzian peak becomes infinitely sharp, approaching a Dirac delta function. This limit corresponds to a stable particle with an infinite lifetime, which does not decay.\nBroad Resonance Limit: If the total width $\\Gamma$ is very large, the resonance is broad and shallow. This indicates a very short-lived intermediate state that is difficult to distinguish from non-resonant background processes.",
         "status": "platinum",
-        "conceptual_definition": "The Probability Spike formula, also known as the Breit-Wigner distribution, describes the energy dependence of the cross-section for a scattering or reaction process that proceeds through an intermediate, unstable resonant state. It quantifies the likelihood of a reaction occurring at a particular incident energy, showing a characteristic peak (spike) when the incident energy matches the resonance energy of the intermediate state.",
-        "intuitive_summary": "This equation describes how the probability of a reaction dramatically increases when the incident particle's energy precisely matches a short-lived, intermediate resonant state.",
+        "conceptual_definition": "The Breit-Wigner formula describes the energy-dependent cross-section for a scattering or reaction process that proceeds through an intermediate, unstable resonant state. It quantifies the probability of a reaction, which exhibits a characteristic Lorentzian peak when the incident energy matches the mass-energy of the resonance.",
+        "intuitive_summary": "This equation shows how the chance of a particle interaction skyrockets when the incoming energy perfectly matches the energy needed to form a temporary, unstable composite particle.",
         "subcomponents": [
             "nuclear-reaction-energy-q-value-9bc10436",
             "energy-time-uncertainty-principle-173e29ed"
         ]
     },
     "law-paradox-dbae53d2": {
-        "title": "Law Paradox",
-        "equation": "\\frac{dS}{dt} > 0 \\iff \\text{Past Hypothesis}",
+        "title": "Second Law and the Past Hypothesis",
+        "equation": "\\frac{\\mathrm{d}S}{\\mathrm{d}t} \\ge 0 \\iff \\text{Past Hypothesis}",
         "semantic_variables": {
             "S": {
                 "name": "Entropy",
                 "type": "variable",
-                "unit": "J/K",
-                "description": "A thermodynamic property representing the degree of disorder or randomness in a system. For an isolated system, it tends to increase over time according to the Second Law of Thermodynamics."
+                "unit": "J⋅K⁻¹",
+                "description": "A measure of the thermal energy per unit temperature that is unavailable for doing useful work; in statistical mechanics, it is a measure of the number of microscopic states corresponding to the system's macroscopic configuration."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The continuous dimension in which events succeed one another, measured in seconds. In this context, it refers to the progression of time during which entropy changes."
+                "description": "The parameter that characterizes the evolution of a system, progressing from past to future."
+            },
+            "\\frac{\\mathrm{d}}{\\mathrm{d}t}": {
+                "name": "Time Derivative",
+                "type": "operator",
+                "unit": "s⁻¹",
+                "description": "An operator that measures the rate of change of a quantity with respect to time."
             },
             "\\text{Past Hypothesis}": {
                 "name": "Past Hypothesis",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "A fundamental cosmological postulate stating that the universe began in a state of extremely low entropy. It serves as a necessary initial condition to explain the observed thermodynamic arrow of time, given the time-symmetric nature of microscopic physical laws. It represents a conceptual condition rather than a continuously varying physical quantity."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "H": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "A/m",
-                "description": "The auxiliary magnetic field vector representing magnetization effects in media."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
-            },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
+                "type": "postulate",
                 "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "h": {
-                "name": "Planck Constant",
-                "type": "constant",
-                "unit": "J·s",
-                "description": "The quantum of electromagnetic action relating photon energy to frequency."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
+                "description": "The cosmological postulate that the universe began in a state of extremely low entropy."
             }
         },
-        "interpretation": "The expression $\\frac{dS}{dt} > 0 represents the Second Law of Thermodynamics for an isolated system, particularly the universe. It states that the total entropy$S$of the system always increases over time$t$for irreversible processes, defining the thermodynamic arrow of time. The term \\text {Past Hypothesis}$refers to a crucial cosmological conjecture: that the universe started in a state of exceptionally low entropy and high order. The logical equivalence symbol $\\iff$ indicates that these two propositions are inextricably linked in explaining the observed arrow of time. Without the Past Hypothesis, the omnipresent increase in entropy would be difficult to reconcile with the time-symmetric nature of the underlying microscopic laws of physics (e.g., classical mechanics, quantum mechanics). Conversely, if the Past Hypothesis is true, it provides a robust and consistent explanation for why we observe the Second Law in action across the universe.",
-        "symmetry_origin": "The core of this relationship arises from the statistical interpretation of entropy and the time-reversal symmetry of fundamental microscopic physical laws. While microscopic laws are reversible (they work equally well forward or backward in time), macroscopic phenomena, most notably the Second Law, are time-asymmetric. The 'paradox' is how this macroscopic asymmetry emerges from symmetric microphysics. The Past Hypothesis resolves this by positing an asymmetric initial condition for the universe — a state of extremely low entropy. This initial condition effectively 'breaks' the time symmetry at the cosmological scale, providing the necessary gradient for entropy to increase consistently into the future and thus defining the thermodynamic arrow of time.",
-        "limits_and_boundary": "In the limit that the Past Hypothesis were false (e.g., if the universe began in a high-entropy state), the consistent observation of $\\frac{dS}{dt} > 0$would be highly improbable, and the concept of a universal arrow of time driven by entropy increase would be undermined. If the universe were to reach a state of maximal entropy (thermodynamic equilibrium or 'heat death'), then $\\frac{dS}{dt}$ would$asymptotically approach zero, and the arrow of time, as defined by entropy increase, would effectively cease to be relevant, even if the Past Hypothesis was true at the origin. Conversely, if$\\frac{dS}{dt} = 0 $always held (i.e., a perfectly reversible or equilibrium universe), the Past Hypothesis would not be needed to explain an arrow of time from entropy increase.",
+        "interpretation": "The expression represents a foundational concept in cosmology and statistical mechanics. The term $\\frac{\\mathrm{d}S}{\\mathrm{d}t} \\ge 0$ is the mathematical statement of the Second Law of Thermodynamics for an isolated system, asserting that its total entropy $S$ can never decrease over time $t$. This law defines the thermodynamic arrow of time. The term 'Past Hypothesis' refers to the cosmological postulate that the universe's initial state at the Big Bang was one of extraordinarily low entropy. The logical equivalence symbol $\\iff$ signifies that these two ideas are inextricably linked. The fundamental laws of physics (classical, quantum, relativistic) are time-reversal symmetric, so they do not inherently prefer a direction for time. The observed, time-asymmetric increase in entropy is therefore explained not by the laws themselves, but by imposing a special, asymmetric boundary condition on the universe's past.",
+        "symmetry_origin": "The core issue is the emergence of macroscopic time-asymmetry from time-reversal symmetric microscopic laws. The Past Hypothesis resolves this by postulating an asymmetric boundary condition for the universe as a whole. This acts as a form of spontaneous symmetry breaking for the time-reversal invariance of the cosmos. While the underlying laws are symmetric, the specific state of our universe is not, having a low-entropy past and a high-entropy future. This asymmetry of the state, not the laws, is the origin of the arrow of time.",
+        "limits_and_boundary": "False Past Hypothesis: If the universe had begun in a generic, high-entropy state (thermal equilibrium), the consistent observation of $\\mathrm{d}S/\\mathrm{d}t \\ge 0$ would be statistically impossible, and no arrow of time would emerge.\nHeat Death Limit: In the distant future, if the universe approaches a state of maximum entropy ('heat death'), the rate of entropy change $\\mathrm{d}S/\\mathrm{d}t$ will approach zero. In this equilibrium state, macroscopic change ceases, and the arrow of time becomes meaningless.\nReversible System: For any hypothetical isolated system that only undergoes reversible processes, $\\mathrm{d}S/\\mathrm{d}t = 0$ holds true. Such a system is in equilibrium and does not exhibit a thermodynamic arrow of time, making the Past Hypothesis irrelevant to its internal dynamics.",
         "status": "platinum",
-        "conceptual_definition": "This 'formula' expresses a profound conceptual relationship in fundamental physics concerning the origin of the arrow of time. It posits that the observed universal increase in entropy, described by the Second Law of Thermodynamics ($\\frac{dS}{dt} > 0$), is fundamentally linked to a specific initial condition of the universe known as the Past Hypothesis. It suggests that the arrow of time is not an intrinsic property of microscopic laws (which are time-symmetric), but rather emerges from the universe beginning in a state of exceedingly low entropy.",
-        "intuitive_summary": "The Past Hypothesis, stating the universe began in an incredibly low-entropy state, is the foundational reason why entropy always increases and time appears to move forward.",
+        "conceptual_definition": "This conceptual relationship posits that the thermodynamic arrow of time, defined by the Second Law's mandate that the entropy of an isolated system never decreases ($\\mathrm{d}S/\\mathrm{d}t \\ge 0$), is a logical consequence of the Past Hypothesis. The Past Hypothesis is the cosmological postulate that the universe began in a state of exceptionally low entropy.",
+        "intuitive_summary": "The reason time seems to flow forward and things become more disordered is that the universe started in a highly ordered state.",
         "subcomponents": [
             "rate-of-change-of-entropy-b06d93fa",
             "entropy-conservation-condition-0b1275bd",
@@ -450,58 +396,40 @@
         "intuitive_summary": "If a physical system's configuration space contains obstacles or holes, paths can wrap around them in ways that cannot be undone, leading to unique topological quantum effects."
     },
     "massless-law-454026db": {
-        "title": "Massless Law",
-        "equation": "p = \\gamma m_0 v \\quad E = \\gamma m_0 c^2",
+        "title": "Relativistic Energy-Momentum Relation",
+        "equation": "E^2 = (pc)^2 + (m_0 c^2)^2",
         "semantic_variables": {
-            "p": {
-                "name": "Relativistic Momentum",
-                "type": "variable",
-                "unit": "kg m/s",
-                "description": "The relativistic momentum of the object, which accounts for the increase in effective mass at high speeds."
-            },
             "E": {
                 "name": "Total Relativistic Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total energy of the object, comprising its rest energy and kinetic energy, as observed in a given inertial frame."
+                "description": "The total energy of an object or system, including both its rest energy and kinetic energy, as measured in a given inertial frame."
             },
-            "\\gamma": {
-                "name": "Lorentz Factor",
+            "p": {
+                "name": "Relativistic Momentum",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A dimensionless factor that accounts for relativistic effects like time dilation, length contraction, and relativistic mass increase. It is defined as $\\frac{1}{\\sqrt{1 -\\frac{v^2}{c^2}$}}$."
+                "unit": "kg⋅m/s",
+                "description": "The magnitude of the relativistic momentum vector of the object."
             },
             "m_0": {
                 "name": "Rest Mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The invariant mass of the object, which is its mass when measured in a frame where it is at rest. This value is intrinsic to the object and does not change with velocity."
-            },
-            "v": {
-                "name": "Velocity",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The magnitude of the velocity of the object relative to the observer's inertial frame."
+                "description": "The invariant mass of an object, which is its mass measured in a frame where it is at rest. This value is intrinsic to the object."
             },
             "c": {
                 "name": "Speed of Light in Vacuum",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "A fundamental physical constant representing the speed at which all electromagnetic radiation and massless particles travel in a vacuum."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
+                "description": "A fundamental physical constant representing the universal speed limit and the speed of all massless particles in a vacuum."
             }
         },
-        "interpretation": "The first equation, $p = \\gamma m_0 v$, defines the relativistic momentum $p$ of an object. It shows that momentum is not simply the product of mass and velocity as in classical mechanics, but is scaled by the Lorentz factor $\\gamma$. As the object's velocity $v$ approaches the speed of light $c$, the Lorentz factor $\\gamma$ approaches infinity, causing the momentum $p$ to also approach infinity. This implies that an infinite amount of force would be required to accelerate a massive object to the speed of light, making it impossible. The second equation, $E = \\gamma m_0 c^2$, defines the total relativistic energy $E$ of an object. This energy includes both the kinetic energy due to its motion and its intrinsic rest energy. When the object is at rest ($v = 0$), $\\gamma = 1$, and the equation simplifies to $E = m_0 c^2$, famously known as the rest energy, indicating that mass itself is a form of energy. As the object's velocity increases, its total energy also increases due to the $\\gamma$ factor. The variables $m_0$ (rest mass) and $c$ (speed of light) are fundamental properties of the object and the universe, respectively.",
-        "symmetry_origin": "These relativistic energy and momentum formulas are direct consequences of the postulates of special relativity: the principle of relativity (physical laws are the same for all inertial observers) and the constancy of the speed of light in all inertial frames. They arise from requiring that the laws of conservation of energy and momentum hold true under Lorentz transformations, which describe how measurements of space and time change between different inertial frames. The formulas preserve the underlying symmetries of spacetime, specifically the homogeneity of space (leading to momentum conservation) and the homogeneity of time (leading to energy conservation), when expressed in a Lorentz-covariant manner.",
-        "limits_and_boundary": "In the non-relativistic limit, where the velocity $v$ of the object is much smaller than the speed of light $c$ (i.e., $v \\ll c$), the Lorentz factor $\\gamma$ can be approximated by a Taylor expansion as $\\gamma \\approx$ 1 +$\\frac{1}{2} \\frac{v^2}{c^2}$. Substituting this into the momentum equation gives$p \\approx m_0 v$, which is the classical expression for momentum. Substituting into the energy equation yields$E \\approx m_0 c^2 + \\frac{1}{2} m_0 v^2$, which recovers the classical kinetic energy term $\\frac{1}{2}$ m_0 v^2 $added to the rest energy$ m_0 c^2 $. For massless particles (e.g., photons),$ m_0 = 0 $. In this case, the original formulas become indeterminate forms ($ 0 \\times \\infty $) because massless particles must travel at$ v = c $, which causes$ \\gamma $to$ be infinite. For massless particles, the fundamental energy-momentum relation$E^2 = (pc)^2 + (m_0 c^2)^2$simplifies to$E = pc$. Thus, for massless particles, momentum is$ p = E/c .",
+        "interpretation": "The relativistic energy-momentum relation, $E^2 = (pc)^2 + (m_0 c^2)^2$, is a cornerstone of special relativity. It can be viewed as a 'Pythagorean theorem' for a particle's four-momentum, where the total energy $E$ is the time-like component and the momentum $p$ is the magnitude of the spatial components. The quantity $m_0 c^2$ is the rest energy, which is an invariant quantity independent of the observer's reference frame. For a particle at rest ($p=0$), the equation simplifies to the famous mass-energy equivalence, $E = m_0 c^2$. For a massless particle ($m_0=0$), such as a photon, the equation becomes $E = pc$, defining the relationship between its energy and momentum. The equation thus elegantly describes all particles, massive or massless, within a single unified framework.",
+        "symmetry_origin": "This relation is a direct consequence of the symmetries of spacetime as described by special relativity. It is an expression of the invariant magnitude of the energy-momentum four-vector under Lorentz transformations. The underlying symmetries are the homogeneity of spacetime: homogeneity in time leads to the conservation of energy (via Noether's theorem), and homogeneity in space leads to the conservation of momentum. The equation ensures that these conservation laws are consistent across all inertial reference frames.",
+        "limits_and_boundary": "1. Non-relativistic limit: For an object moving at a velocity $v \\ll c$, its momentum is small compared to its rest energy ($pc \\ll m_0 c^2$). A Taylor expansion of the energy yields $E \\approx m_0 c^2 + \\frac{p^2}{2m_0}$, which is the rest energy plus the classical kinetic energy $\\frac{1}{2}m_0 v^2$.\n2. Massless limit: For a particle with zero rest mass ($m_0 = 0$), such as a photon, the relation simplifies to $E = pc$. This implies that massless particles must always travel at the speed of light $c$.\n3. Rest frame limit: For a massive particle in its own rest frame, its momentum is zero ($p=0$). The relation simplifies to $E = m_0 c^2$, defining the particle's rest energy.",
         "status": "platinum",
-        "conceptual_definition": "These formulas represent the relativistic momentum and total energy of a particle in special relativity. They generalize the classical definitions of momentum and energy to account for speeds approaching the speed of light, where the effects of spacetime curvature become significant. The equations demonstrate the inherent connection between mass and energy, and how momentum and energy depend on an object's velocity relative to an observer.",
-        "intuitive_summary": "These equations describe how an object's momentum and total energy are observed to increase with its speed, especially near the speed of light, due to the principles of special relativity.",
+        "conceptual_definition": "This equation establishes the fundamental relationship between the total energy, relativistic momentum, and rest mass of any object or system in special relativity. It unifies the concepts of mass and energy, showing that a particle's total energy is composed of its rest energy and its kinetic energy, which is related to its momentum.",
+        "intuitive_summary": "An object's total energy is determined by a combination of its intrinsic rest mass and its momentum.",
         "subcomponents": [
             "rest-mass-fed1e477",
             "energy-momentum-relation-for-massless-particles-cc100b6e",
@@ -1629,19 +1557,19 @@
     },
     "hall-conductivity-quantization-law-5524fc65": {
         "title": "Hall Conductivity Quantization",
-        "equation": "REG",
+        "equation": "\\sigma_{xy} = n \\frac{e^2}{h}",
         "interpretation": "The formula $\\sigma_{xy} = n \\frac{e^2}{h}$ describes the quantized Hall conductivity. Here, $\\sigma_{xy}$ represents the Hall conductivity, which is the ratio of the transverse electric current density to the longitudinal electric field. The term $n$ is a dimensionless integer (or rational fraction for the fractional quantum Hall effect) known as the filling factor or Landau level index, representing the number of filled Landau levels. $e$ is the elementary charge, and $h$ is Planck's constant. The remarkable aspect of this quantization is its independence from the specific material properties, sample geometry, or presence of impurities, making it a highly accurate standard for resistance. This precision arises from the topological nature of the electron states, where current flows along the perfectly conducting edge channels while bulk states are localized by disorder.",
         "symmetry_origin": "The quantization of Hall conductivity has a profound origin in topological invariance and gauge invariance. Robert Laughlin's argument demonstrated that the Hall conductance is precisely quantized in integer multiples of $e^2/h$ due to the gauge invariance of the Hamiltonian. More generally, the integer quantum Hall effect is understood in terms of topological invariants called Chern numbers. These integers characterize the topology of the Bloch states in momentum space (specifically, the Berry curvature integrated over the Brillouin zone), indicating that the quantization is robust against local perturbations and disorder, as long as the underlying topology is preserved.",
-        "limits_and_boundary": "The Hall conductivity quantization is observed under specific experimental conditions: extremely low temperatures (typically millikelvin range) to suppress thermal excitations and maintain distinct Landau levels; strong magnetic fields (several Tesla) to ensure a large separation between Landau levels and a small magnetic length; and confinement to a two-dimensional electron system (e.g., in a semiconductor heterostructure like a GaAs/AlGaAs interface). The plateaus in $\\sigma_{xy}$ are robust and appear when the Fermi level lies between two Landau levels. As the temperature approaches absolute zero, the plateaus become sharper and more perfectly flat. In the limit of very weak magnetic fields or high temperatures, the quantization breaks down, and the system behaves as a classical conductor, where Hall conductivity depends on material properties.",
+        "limits_and_boundary": "1. Low Temperature: The effect is observed at extremely low temperatures, typically in the millikelvin range, to suppress thermal excitations and maintain distinct Landau levels.\n2. Strong Magnetic Field: A strong magnetic field, on the order of several Tesla, is required to ensure a large energy separation between Landau levels and a small magnetic length.\n3. Two-Dimensional System: The electrons must be confined to a two-dimensional system, such as in a semiconductor heterostructure (e.g., a GaAs/AlGaAs interface).\n4. Breakdown: In the limit of very weak magnetic fields or high temperatures, the quantization breaks down, and the system behaves as a classical conductor where Hall conductivity depends on material properties.",
         "semantic_variables": {
             "\\sigma_{xy}": {
                 "name": "Hall Conductivity",
                 "type": "variable",
-                "unit": "siemens",
+                "unit": "S",
                 "description": "The transverse electrical conductivity, representing the ratio of the transverse current density to the longitudinal electric field in a material subjected to a magnetic field perpendicular to the 2D plane."
             },
             "n": {
-                "name": "Integer (or filling factor)",
+                "name": "Filling Factor",
                 "type": "variable",
                 "unit": "dimensionless",
                 "description": "A dimensionless integer (or rational fraction for the Fractional Quantum Hall Effect) that signifies the number of completely filled Landau levels, or more generally, a topological invariant (Chern number) characterizing the quantum state."
@@ -1649,36 +1577,18 @@
             "e": {
                 "name": "Elementary Charge",
                 "type": "constant",
-                "unit": "coulomb",
-                "description": "The magnitude of the charge of a single electron or proton, a fundamental physical constant."
+                "unit": "C",
+                "description": "The magnitude of the charge of a single electron, a fundamental physical constant."
             },
             "h": {
                 "name": "Planck's Constant",
                 "type": "constant",
-                "unit": "joule-second",
-                "description": "A fundamental physical constant used in quantum mechanics, relating the energy of a photon to its frequency, and defining the scale of quantum effects."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "J⋅s",
+                "description": "A fundamental physical constant in quantum mechanics that defines the scale of quantum effects."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Hall conductivity quantization describes the phenomenon observed in two-dimensional electron systems (2DES) subjected to low temperatures and strong magnetic fields, where the Hall conductivity, $\\sigma_{xy}$, is found to be precisely quantized in integer (or fractional) multiples of the fundamental constant $e^2/h$. This effect, known as the Quantum Hall Effect (QHE), is a macroscopic manifestation of quantum mechanics and topology, leading to extremely precise and robust conductivity plateaus.",
+        "conceptual_definition": "The Hall conductivity quantization describes the phenomenon observed in two-dimensional electron systems subjected to low temperatures and strong magnetic fields, where the Hall conductivity, $\\sigma_{xy}$, is found to be precisely quantized in integer (or fractional) multiples of the fundamental constant $e^2/h$. This effect, known as the Quantum Hall Effect (QHE), is a macroscopic manifestation of quantum mechanics and topology, leading to extremely precise and robust conductivity plateaus.",
         "intuitive_summary": "The Hall conductivity in a 2D electron system becomes precisely quantized into discrete, universal values determined only by fundamental constants and an integer, demonstrating a robust topological order."
     },
     "jwst-astrometry-identity-1-9a2caff8-3df7d943": {
@@ -2355,7 +2265,8 @@
         "status": "published",
         "parent_formula_id": "seesaw-origin-8443c598",
         "subcomponents": [],
-        "id": "electroweak-gauge-symmetry-group-7f0a1e1a"
+        "id": "electroweak-gauge-symmetry-group-7f0a1e1a",
+        "intuitive_summary": ""
     },
     "generalized-coordinate-component-b995ac63": {
         "title": "Generalized Coordinate Component",
@@ -2379,7 +2290,8 @@
         "status": "published",
         "parent_formula_id": "total-differential-lagrangian",
         "subcomponents": [],
-        "id": "generalized-coordinate-component-b995ac63"
+        "id": "generalized-coordinate-component-b995ac63",
+        "intuitive_summary": ""
     },
     "quantum-energy-of-a-harmonic-oscillator-e881b3b5": {
         "title": "Quantum Energy of a Harmonic Oscillator",
@@ -2409,7 +2321,8 @@
         "status": "published",
         "parent_formula_id": "phonon-bose-einstein-occupancy-996345f3",
         "subcomponents": [],
-        "id": "quantum-energy-of-a-harmonic-oscillator-e881b3b5"
+        "id": "quantum-energy-of-a-harmonic-oscillator-e881b3b5",
+        "intuitive_summary": ""
     },
     "quantum-state-vector-component-befd4ee5": {
         "title": "Quantum State Vector Component",
@@ -2433,7 +2346,8 @@
         "status": "published",
         "parent_formula_id": "vector-splitting-fb2be198",
         "subcomponents": [],
-        "id": "quantum-state-vector-component-befd4ee5"
+        "id": "quantum-state-vector-component-befd4ee5",
+        "intuitive_summary": ""
     },
     "probability-current-density-in-quantum-mechanics-b17e6cd4": {
         "title": "Probability Current Density in Quantum Mechanics",
@@ -2469,7 +2383,8 @@
         "status": "published",
         "parent_formula_id": "deterministic-path-0f808b89",
         "subcomponents": [],
-        "id": "probability-current-density-in-quantum-mechanics-b17e6cd4"
+        "id": "probability-current-density-in-quantum-mechanics-b17e6cd4",
+        "intuitive_summary": ""
     },
     "pressure-density-proportionality-78ae9ac3": {
         "title": "Pressure-Density Proportionality",
@@ -2499,7 +2414,8 @@
         "status": "published",
         "parent_formula_id": "polytropic-eos-fluid-relation-8cd6b0e6",
         "subcomponents": [],
-        "id": "pressure-density-proportionality-78ae9ac3"
+        "id": "pressure-density-proportionality-78ae9ac3",
+        "intuitive_summary": ""
     },
     "canonical-momentum-from-action-bddc1fc0": {
         "title": "Canonical Momentum from Action",
@@ -2535,7 +2451,8 @@
         "status": "published",
         "parent_formula_id": "momentum-link-a91bee73",
         "subcomponents": [],
-        "id": "canonical-momentum-from-action-bddc1fc0"
+        "id": "canonical-momentum-from-action-bddc1fc0",
+        "intuitive_summary": ""
     },
     "total-mass-of-a-two-component-system-48d58b86": {
         "title": "Total Mass of a Two-Component System",
@@ -2571,7 +2488,8 @@
         "status": "published",
         "parent_formula_id": "total-mass",
         "subcomponents": [],
-        "id": "total-mass-of-a-two-component-system-48d58b86"
+        "id": "total-mass-of-a-two-component-system-48d58b86",
+        "intuitive_summary": ""
     },
     "magnetic-dipole-potential-energy-8df65147": {
         "title": "Magnetic Dipole Potential Energy",
@@ -2607,7 +2525,8 @@
         "status": "published",
         "parent_formula_id": "potential-energy-magnetic-dipole",
         "subcomponents": [],
-        "id": "magnetic-dipole-potential-energy-8df65147"
+        "id": "magnetic-dipole-potential-energy-8df65147",
+        "intuitive_summary": ""
     },
     "spatial-metric-tensor-component-5d7eb989": {
         "title": "Spatial Metric Tensor Component",
@@ -2631,7 +2550,8 @@
         "status": "published",
         "parent_formula_id": "flrw-spacetime-identity-b8a4fdcc",
         "subcomponents": [],
-        "id": "spatial-metric-tensor-component-5d7eb989"
+        "id": "spatial-metric-tensor-component-5d7eb989",
+        "intuitive_summary": ""
     },
     "coulomb-like-potential-approximation-9fbc550b": {
         "title": "Coulomb-like Potential Approximation",
@@ -2667,7 +2587,8 @@
         "status": "published",
         "parent_formula_id": "exponential-shield-c983d536",
         "subcomponents": [],
-        "id": "coulomb-like-potential-approximation-9fbc550b"
+        "id": "coulomb-like-potential-approximation-9fbc550b",
+        "intuitive_summary": ""
     },
     "local-phase-transformation-of-a-field-a7acc343": {
         "title": "Local Phase Transformation of a Field",
@@ -2715,7 +2636,8 @@
         "status": "published",
         "parent_formula_id": "geometric-origin-identity-1-c885b454",
         "subcomponents": [],
-        "id": "local-phase-transformation-of-a-field-a7acc343"
+        "id": "local-phase-transformation-of-a-field-a7acc343",
+        "intuitive_summary": ""
     },
     "conjugate-momentum-from-type-2-generating-function-ca3245fd": {
         "title": "Conjugate Momentum from Type-2 Generating Function",
@@ -2751,7 +2673,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-5c9bf032",
         "subcomponents": [],
-        "id": "conjugate-momentum-from-type-2-generating-function-ca3245fd"
+        "id": "conjugate-momentum-from-type-2-generating-function-ca3245fd",
+        "intuitive_summary": ""
     },
     "relativistic-spatial-velocity-component-a95fc480": {
         "title": "Relativistic Spatial Velocity Component",
@@ -2781,7 +2704,8 @@
         "status": "published",
         "parent_formula_id": "unity-of-motion-b7c51b2f",
         "subcomponents": [],
-        "id": "relativistic-spatial-velocity-component-a95fc480"
+        "id": "relativistic-spatial-velocity-component-a95fc480",
+        "intuitive_summary": ""
     },
     "contravariant-derivative-of-scalar-field-42b128a3": {
         "title": "Contravariant Derivative of Scalar Field",
@@ -2811,7 +2735,8 @@
         "status": "published",
         "parent_formula_id": "energy-momentum-source-6c43948d",
         "subcomponents": [],
-        "id": "contravariant-derivative-of-scalar-field-42b128a3"
+        "id": "contravariant-derivative-of-scalar-field-42b128a3",
+        "intuitive_summary": ""
     },
     "total-mechanical-energy-definition-7ef2ef22": {
         "title": "Total Mechanical Energy Definition",
@@ -2847,7 +2772,8 @@
         "status": "published",
         "parent_formula_id": "motion-bounds-73382dac",
         "subcomponents": [],
-        "id": "total-mechanical-energy-definition-7ef2ef22"
+        "id": "total-mechanical-energy-definition-7ef2ef22",
+        "intuitive_summary": ""
     },
     "generic-mathematical-identifier-39b8b9bb": {
         "title": "Generic Mathematical Identifier",
@@ -2871,7 +2797,8 @@
         "status": "published",
         "parent_formula_id": "non-linearity-ed66c7ba",
         "subcomponents": [],
-        "id": "generic-mathematical-identifier-39b8b9bb"
+        "id": "generic-mathematical-identifier-39b8b9bb",
+        "intuitive_summary": ""
     },
     "mean-lifetime-and-decay-constant-5fe52a94": {
         "title": "Mean Lifetime and Decay Constant",
@@ -2901,7 +2828,8 @@
         "status": "published",
         "parent_formula_id": "nickel-56-decay-timescale",
         "subcomponents": [],
-        "id": "mean-lifetime-and-decay-constant-5fe52a94"
+        "id": "mean-lifetime-and-decay-constant-5fe52a94",
+        "intuitive_summary": ""
     },
     "peculiar-velocity-in-cosmology-d5f1c6eb": {
         "title": "Peculiar Velocity in Cosmology",
@@ -2925,7 +2853,8 @@
         "status": "published",
         "parent_formula_id": "random-motion-1130c323",
         "subcomponents": [],
-        "id": "peculiar-velocity-in-cosmology-d5f1c6eb"
+        "id": "peculiar-velocity-in-cosmology-d5f1c6eb",
+        "intuitive_summary": ""
     },
     "black-hole-angular-momentum-contribution-e775e0b0": {
         "title": "Black Hole Angular Momentum Contribution",
@@ -2955,7 +2884,8 @@
         "status": "published",
         "parent_formula_id": "wave-boost-0b6bc7ea",
         "subcomponents": [],
-        "id": "black-hole-angular-momentum-contribution-e775e0b0"
+        "id": "black-hole-angular-momentum-contribution-e775e0b0",
+        "intuitive_summary": ""
     },
     "four-vector-coordinate-difference-76afa903": {
         "title": "Four-Vector Coordinate Difference",
@@ -2991,7 +2921,8 @@
         "status": "published",
         "parent_formula_id": "spacetime-interval-squared",
         "subcomponents": [],
-        "id": "four-vector-coordinate-difference-76afa903"
+        "id": "four-vector-coordinate-difference-76afa903",
+        "intuitive_summary": ""
     },
     "density-operator-hermiticity-condition-af14cbbb": {
         "title": "Density Operator Hermiticity Condition",
@@ -3021,7 +2952,8 @@
         "status": "published",
         "parent_formula_id": "entanglement-test-9312ee27",
         "subcomponents": [],
-        "id": "density-operator-hermiticity-condition-af14cbbb"
+        "id": "density-operator-hermiticity-condition-af14cbbb",
+        "intuitive_summary": ""
     },
     "potential-non-uniqueness-condition-e117f37b": {
         "title": "Potential Non-Uniqueness Condition",
@@ -3051,7 +2983,8 @@
         "status": "published",
         "parent_formula_id": "uniqueness-law-8b07eb8c",
         "subcomponents": [],
-        "id": "potential-non-uniqueness-condition-e117f37b"
+        "id": "potential-non-uniqueness-condition-e117f37b",
+        "intuitive_summary": ""
     },
     "confinement-factor-for-intensity-modulation-7f141fb3": {
         "title": "Confinement Factor for Intensity Modulation",
@@ -3075,7 +3008,8 @@
         "status": "published",
         "parent_formula_id": "temporal-bridge-94a6028e",
         "subcomponents": [],
-        "id": "confinement-factor-for-intensity-modulation-7f141fb3"
+        "id": "confinement-factor-for-intensity-modulation-7f141fb3",
+        "intuitive_summary": ""
     },
     "principle-of-stationary-proper-time-a0c8eeea": {
         "title": "Principle of Stationary Proper Time",
@@ -3105,7 +3039,8 @@
         "status": "published",
         "parent_formula_id": "metric-core-774041d7",
         "subcomponents": [],
-        "id": "principle-of-stationary-proper-time-a0c8eeea"
+        "id": "principle-of-stationary-proper-time-a0c8eeea",
+        "intuitive_summary": ""
     },
     "quantum-area-unit-in-black-hole-thermodynamics-f05b469c": {
         "title": "Quantum Area Unit in Black Hole Thermodynamics",
@@ -3129,7 +3064,8 @@
         "status": "published",
         "parent_formula_id": "bekenstein-hawking-area-law-ident-9f28c3ca",
         "subcomponents": [],
-        "id": "quantum-area-unit-in-black-hole-thermodynamics-f05b469c"
+        "id": "quantum-area-unit-in-black-hole-thermodynamics-f05b469c",
+        "intuitive_summary": ""
     },
     "stress-energy-tensor-spatial-component-t12-1dbfcbc3": {
         "title": "Stress-Energy Tensor Spatial Component $T^{12}$",
@@ -3153,6 +3089,7 @@
         "status": "published",
         "parent_formula_id": "stress-energy-tensor-symmetry",
         "subcomponents": [],
-        "id": "stress-energy-tensor-spatial-component-t12-1dbfcbc3"
+        "id": "stress-energy-tensor-spatial-component-t12-1dbfcbc3",
+        "intuitive_summary": ""
     }
 }

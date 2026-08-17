@@ -130,20 +130,20 @@
         ]
     },
     "photon-flow-dddf7a89": {
-        "title": "Photon Flow",
-        "equation": "\\frac{dT}{dr} = -\\frac{3\\kappa \\rho L}{64\\pi \\sigma r^2 T^3} \\quad (\\text{Radiative})",
+        "title": "Radiative Temperature Gradient",
+        "equation": "\\frac{\\mathrm{d}T}{\\mathrm{d}r} = -\\frac{3\\kappa \\rho L_r}{64\\pi \\sigma r^2 T^3}",
         "semantic_variables": {
-            "dT/dr": {
+            "\\frac{\\mathrm{d}T}{\\mathrm{d}r}": {
                 "name": "Temperature Gradient",
                 "type": "variable",
                 "unit": "K/m",
-                "description": "The rate of change of temperature with respect to radial distance. It indicates how quickly the temperature changes as one moves radially outwards."
+                "description": "The rate of change of temperature with respect to radial distance."
             },
             "T": {
                 "name": "Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The local thermodynamic temperature of the medium at a radial distance r."
+                "description": "The local thermodynamic temperature at a given radius."
             },
             "r": {
                 "name": "Radial Distance",
@@ -151,91 +151,43 @@
                 "unit": "m",
                 "description": "The distance from the center of the spherically symmetric system."
             },
-            "κ": {
+            "\\kappa": {
                 "name": "Opacity",
                 "type": "variable",
                 "unit": "m^2/kg",
-                "description": "A measure of how opaque the medium is to radiation. It quantifies the extent to which radiation is absorbed or scattered per unit mass."
+                "description": "A measure of the medium's resistance to the passage of radiation, representing the cross-sectional area for absorption and scattering per unit mass."
             },
-            "ρ": {
+            "\\rho": {
                 "name": "Density",
                 "type": "variable",
                 "unit": "kg/m^3",
-                "description": "The mass per unit volume of the medium."
+                "description": "The mass per unit volume of the medium at a given radius."
             },
-            "L": {
+            "L_r": {
                 "name": "Luminosity",
                 "type": "variable",
                 "unit": "W",
-                "description": "The total rate at which energy is transported outwards through a spherical surface of radius r. It represents the power flowing through the shell."
-            },
-            "σ": {
-                "name": "Stefan-Boltzmann Constant",
-                "type": "constant",
-                "unit": "W/(m^2 K^4)",
-                "description": "A fundamental physical constant that relates the total energy radiated per unit surface area of a black body to the fourth power of its thermodynamic temperature."
-            },
-            "\\kappa": {
-                "name": "Curvature / Thermal Conductivity",
-                "type": "variable",
-                "unit": "m⁻¹ or W/(m·K)",
-                "description": "The rate of deviation from a straight line, or heat transmission coefficient."
-            },
-            "\\rho": {
-                "name": "Charge Density",
-                "type": "variable",
-                "unit": "C/m³",
-                "description": "The quantity of electric charge per unit volume."
-            },
-            "\\pi": {
-                "name": "Pi constant",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The ratio of a circle's circumference to its diameter (approx. 3.14159)."
+                "description": "The total power (energy per unit time) flowing outwards through a spherical surface of radius $r$."
             },
             "\\sigma": {
                 "name": "Stefan-Boltzmann Constant",
                 "type": "constant",
                 "unit": "W⋅m⁻²⋅K⁻⁴",
-                "description": "The physical constant relating the total energy radiated per unit surface area of a black body per unit time to the fourth power of the thermodynamic temperature."
+                "description": "A fundamental physical constant relating temperature to the energy radiated by a black body."
             },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "i": {
-                "name": "Imaginary Unit",
+            "\\pi": {
+                "name": "Pi",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "v": {
-                "name": "Speed / Velocity Magnitude",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The rate of change of position with respect to time, representing the speed of a particle."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
             }
         },
-        "interpretation": "This equation, derived from the principles of radiative energy transfer, relates the rate of change of temperature with respect to radial distance in a medium. The left side, $\\frac{dT}{dr}$, represents the temperature gradient, indicating how temperature changes with distance. The right side quantifies this change$.κ is the opacity of the medium, which measures how effectively it absorbs or scatters radiation; higher opacity leads to a steeper temperature gradient .\\rho is the density of the medium, affecting how much matter is present to interact with radiation$.L$is the luminosity, or the rate at which energy is transported through the radial shell, with higher luminosity leading to a steeper gradient .\\r is the radial distance from the center, and the$r^2 $term shows that the gradient becomes less steep further from the energy source, as the energy spreads over a larger area$.T$is the local temperature, and the$T^3 $in the denominator means that at higher temperatures, energy is transported more efficiently, resulting in a shallower temperature gradient$.σ is the Stefan-Boltzmann constant, a fundamental constant governing thermal radiation. The entire right side is often referred to as the radiative flux.",
-        "symmetry_origin": "This equation is derived from the diffusion approximation of the radiative transfer equation, assuming spherical symmetry and that the radiation field is nearly isotropic. The flux of energy is related to the temperature gradient through an expression derived from the integral of the radiative transfer equation over all frequencies and directions, simplified by assumptions about the radiation field and the opacity of the medium. The spherical symmetry implies that all physical quantities depend only on the radial coordinate $r$.",
-        "limits_and_boundary": "As $r$ → ∞$(far from the energy source), the$r^2 $term in the denominator causes \\frac{dT}{dr} → 0$, implying the temperature gradient becomes negligible at large distances, and the temperature approaches a constant background or zero. As $T$ → 0$, the$T^3 $term in the denominator causes \\frac{dT}{dr} → -∞$(assuming other variables are finite and positive), indicating a very steep temperature drop where temperatures are extremely low, which is consistent with the rapid decrease in radiative energy transport efficiency at low temperatures. Conversely, as $T$ → ∞$, \\frac{dT}{dr} → 0$, meaning at very high temperatures, radiative transport becomes very efficient, leading to a flatter temperature gradient.",
+        "interpretation": "This equation is a cornerstone of stellar structure theory, derived under the diffusion approximation for radiative transfer. The left side, $\\mathrm{d}T/\\mathrm{d}r$, is the temperature gradient. The negative sign signifies that temperature decreases as radius $r$ increases, consistent with energy flowing from the hot core outwards. On the right side, the luminosity $L_r$ represents the total energy flux passing through a sphere of radius $r$. The gradient is proportional to $L_r$, $\\kappa$ (opacity), and $\\rho$ (density), meaning that a higher energy flow or greater resistance to that flow (higher opacity or density) requires a steeper temperature gradient to push the energy through. The denominator contains $r^2$, reflecting the geometric dilution of energy over a larger spherical area, and $T^3$, which arises from the Stefan-Boltzmann law's $T^4$ dependence for black-body radiation flux; higher temperatures allow for more efficient energy transport, thus reducing the required gradient. The constant $\\sigma$ is the Stefan-Boltzmann constant.",
+        "symmetry_origin": "The equation assumes a spherically symmetric and static system, meaning all physical quantities depend only on the radial coordinate $r$. This symmetry greatly simplifies the general equation of radiative transfer. The derivation uses the diffusion approximation, which is valid when the medium is optically thick and the photon mean free path is much smaller than the scale height of temperature change. The underlying principle is the conservation of energy, where the luminosity $L_r$ is the integral of the net energy flux over a spherical surface.",
+        "limits_and_boundary": "1. Optically Thin Limit ($\\kappa \\rho \\to 0$): If the medium becomes transparent, the radiative gradient $\\mathrm{d}T/\\mathrm{d}r \\to 0$. In this limit, the diffusion approximation breaks down, and energy transport is no longer described by this local equation.\n2. High Temperature Limit ($T \\to \\infty$): For a fixed luminosity, as temperature becomes very large, the gradient $\\mathrm{d}T/\\mathrm{d}r \\to 0$. This indicates that radiative transport becomes extremely efficient at high temperatures, leading to a nearly isothermal structure.\n3. Central Boundary ($r \\to 0$): At the center of a star, $L_r \\to 0$ (as there is no enclosed energy source), so the gradient $\\mathrm{d}T/\\mathrm{d}r \\to 0$. The temperature profile is flat at the core.\n4. Convective Instability: This equation is valid only when the radiative gradient is less steep than the adiabatic gradient. If $|\\mathrm{d}T/\\mathrm{d}r|_{\\text{rad}} > |\\mathrm{d}T/\\mathrm{d}r|_{\\text{ad}}$, convection becomes the dominant mode of energy transport.",
         "status": "platinum",
-        "conceptual_definition": "The formula $\\frac{dT}{dr} = - \\frac{3κ ρ L}{64π σ r^2 T^3}$ ( \\text{Radiative} )describes the temperature gradient \\frac{dT}{dr} in a medium undergoing energy transport primarily through radiation. It quantifies how the temperature $T$ changes$with radial distance$ r $in$ a spherically symmetric system, such as the interior of a star. The negative sign indicates that temperature decreases with increasing radius, which is expected as energy flows outwards from a hotter core to cooler surroundings$.",
-        "intuitive_summary": "Heat flows outwards, causing temperature to drop as you move away from the source.",
+        "conceptual_definition": "This equation, known as the radiative temperature gradient, describes how temperature $T$ changes with radial distance $r$ within a spherically symmetric, static object like a star, where energy is transported primarily by photons. It relates the temperature gradient to the local opacity $\\kappa$, density $\\rho$, luminosity $L_r$ at that radius, and temperature $T$.",
+        "intuitive_summary": "In a star, the temperature drops more steeply where the material is denser and more opaque, as it becomes harder for heat to radiate outwards.",
         "subcomponents": [
             "squared-boyer-lindquist-radial-coordinate-294ce890",
             "temperature-cubed-term-in-relativistic-densities-c64b993c",
@@ -563,52 +515,46 @@
         ]
     },
     "potential-logic-f330e27c": {
-        "title": "Potential Logic",
+        "title": "Laplacian of the Coulomb Potential",
         "equation": "\\nabla^2 \\left( \\frac{1}{r} \\right) = -4\\pi \\delta^3(\\mathbf{r})",
         "semantic_variables": {
             "\\nabla^2": {
                 "name": "Laplacian Operator",
                 "type": "operator",
-                "unit": "m^{-2}",
-                "description": "The second-order differential operator, defined as the divergence of the gradient. In Cartesian coordinates, it is \n\\nabla^2 = \\frac{\\partial^2}{\\partial x^2} + \\frac{\\partial^2}{\\partial y^2} + \\frac{\\partial^2}{\\partial z^2}$ . It describes how the value of a function at a point deviates from the average value in its neighborhood."
+                "unit": "m⁻²",
+                "description": "The divergence of the gradient of a scalar function, representing its local curvature. In Cartesian coordinates, $\\nabla^2 = \\partial^2/\\partial x^2 + \\partial^2/\\partial y^2 + \\partial^2/\\partial z^2$."
             },
             "r": {
                 "name": "Radial Distance",
                 "type": "variable",
                 "unit": "m",
-                "description": "The distance from the origin (0,0,0) to a point $\\mathbf{r}$ = (x, y, z) in three-dimensional space. It is calculated as r = \\sqrt{x^2 + y^2 + z^2} ."
-            },
-            "\\delta^3(\\mathbf{r})": {
-                "name": "Three-dimensional Dirac Delta Function",
-                "type": "constant",
-                "unit": "m^{-3}",
-                "description": "A generalized function that is zero everywhere except at the origin $\\mathbf{r} = \\mathbf{0}$ , where it is infinitely peaked. It satisfies the property that its integral over all space is unity, i.e., \\int_{-\\infty}^{\\infty} \\delta^3($\\mathbf{r}$) dV = 1 . It represents a localized source."
+                "description": "The magnitude of the position vector, $r = |\\mathbf{r}| = \\sqrt{x^2 + y^2 + z^2}$."
             },
             "\\mathbf{r}": {
                 "name": "Position Vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "A vector pointing from the origin to a specific point in three-dimensional space. Its components are (x, y, z) ."
+                "description": "A vector in three-dimensional space pointing from the origin to a point $(x, y, z)$."
             },
-            "-4\\pi": {
-                "name": "Constant Factor",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "A numerical constant that arises from the specific form of the potential in three dimensions and the normalization of the Dirac delta function. It is essential for ensuring that the equation holds true, particularly when relating potentials to charge distributions via Poisson's equation."
+            "\\delta^3(\\mathbf{r})": {
+                "name": "3D Dirac Delta Function",
+                "type": "distribution",
+                "unit": "m⁻³",
+                "description": "A generalized function representing an infinitely dense point source at the origin, defined by being zero for $\\mathbf{r} \\neq \\mathbf{0}$ and satisfying $\\int \\delta^3(\\mathbf{r}) \\mathrm{d}^3\\mathbf{r} = 1$."
             },
             "\\pi": {
-                "name": "Pi constant",
+                "name": "Pi",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The ratio of a circle's circumference to its diameter (approx. 3.14159)."
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
             }
         },
-        "interpretation": "The equation states that the Laplacian of the scalar function $\\frac{1}{r}$ is equal to$-4$\\pi times$the three-dimensional Dirac delta function$\\delta$^3(\\mathbf{r}$)$. The variable$r$represents the radial distance from the origin in a three-dimensional Cartesian coordinate system, given by$r = \\sqrt{x^2 + y^2 + z^2}$. The term$\\frac{1}{r}$is a common form for the potential due to a point source (like an electric charge or a mass) in three dimensions, in the absence of any source distribution. The Laplacian operator, \\nabla ^2 = \\frac{ \\partial ^2}{ \\partial x^2} + \\frac{ \\partial ^2}{ \\partial y^2} + \\frac{ \\partial ^2}{ \\partial z^2}$, measures the curvature or divergence of the gradient field. For $r$ eq 0$, the function \\frac{1}{r}$ is harmonic, meaning its Laplacian is zero. This is because the potential generated by a point source is only non-zero at the location of the source itself. The Dirac delta function $\\delta$^3($\\mathbf{r}) is a distribution that captures this localized source behavior. It is zero for \\mathbf{r} eq \\mathbf{0}$and has the property that $\\int \\delta^3$($\\mathbf{r}$) dV = 1 $over any volume containing the origin. The factor$-4$\\pi arises$ from the normalization convention of the Dirac delta function and the specific form of the potential in three dimensions. This identity is crucial in solving Poisson's equation, $\\nabla$^2 Φ = -4$\\pi \\rho , where$Φ is a potential and $\\rho$ is a charge or mass density. If the density is a point charge $\\rho$($\\mathbf{r}) = q \\delta ^3( \\mathbf{r} )$, then$Φ( \\mathbf{r}$) = \\frac{q}{r}$.",
-        "symmetry_origin": "This identity is derived from the properties of the Laplacian operator in spherical coordinates and the behavior of the inverse distance function. Specifically, for $r$ eq 0$, the function$1/r is a solution to Laplace's equation $\\nabla$^2 Φ = 0$. The divergence theorem and the definition of the Dirac delta function are used to show that the Laplacian is non-zero only at the origin, where it represents a singularity. The derivation often involves considering the potential due to a uniformly distributed spherical shell of charge and then taking the limit as the shell thickness approaches zero, or by direct calculation in spherical coordinates, carefully handling the singularity at$r = 0.",
-        "limits_and_boundary": "As $r \\to \\infty$, the term $\\frac{1}{r} \\to$ 0$, and consequently, \\nabla ^2 \\left( \\frac{1}{r} \\right) \\to 0$. This is consistent with the Dirac delta function being zero everywhere except at the origin. As $r \\to 0$, the function $\\frac{1}{r}$ tends$to infinity, and its Laplacian exhibits a singularity described by the Dirac delta function at$\\mathbf{r}$ = $\\mathbf{0}$.",
+        "interpretation": "This equation is a distributional identity central to potential theory, electromagnetism, and gravity. The function $\\Phi(\\mathbf{r}) = 1/r$ is the fundamental solution or Green's function for the Laplace operator in three dimensions. The Laplacian, $\\nabla^2$, measures the local curvature of a function. For any point where $\\mathbf{r} \\neq \\mathbf{0}$, the function $1/r$ is smooth and satisfies Laplace's equation, $\\nabla^2(1/r) = 0$. However, at the origin $\\mathbf{r} = \\mathbf{0}$, the function has a singularity. The Dirac delta function, $\\delta^3(\\mathbf{r})$, is a distribution that is zero everywhere except at the origin and integrates to one, perfectly capturing the nature of this point-like singularity. This identity is the key to solving Poisson's equation, $\\nabla^2 \\Phi = -4\\pi\\rho$, for a general source distribution $\\rho(\\mathbf{r})$, as the solution can be constructed by integrating the Green's function over the source: $\\Phi(\\mathbf{r}) = \\int \\frac{\\rho(\\mathbf{r}')}{|\\mathbf{r} - \\mathbf{r}'|} \\mathrm{d}^3\\mathbf{r}'$ (in appropriate units).",
+        "symmetry_origin": "The equation is a direct consequence of spherical symmetry. The Laplacian operator $\\nabla^2$ is invariant under rotations. The function $1/r$ is also spherically symmetric, as it depends only on the radial distance $r = |\\mathbf{r}|$. Applying a rotationally invariant operator to a rotationally symmetric function must yield a rotationally symmetric result. The Dirac delta function $\\delta^3(\\mathbf{r})$ is the unique spherically symmetric distribution with support only at the origin, making it the necessary result. The identity can be formally proven using the divergence theorem on a small sphere centered at the origin.",
+        "limits_and_boundary": "1. Away from the origin ($\\mathbf{r} \\neq \\mathbf{0}$): The Dirac delta function $\\delta^3(\\mathbf{r})$ is zero. The equation simplifies to Laplace's equation, $\\nabla^2(1/r) = 0$, which is satisfied for any non-zero radius.\n2. At the origin ($\\mathbf{r} \\to \\mathbf{0}$): The function $1/r$ diverges. The Laplacian is undefined in a classical sense but is well-defined as a distribution, equaling $-4\\pi\\delta^3(\\mathbf{r})$. This singularity represents a concentrated point source.\n3. At infinity ($|\\mathbf{r}| \\to \\infty$): The function $1/r \\to 0$, and its derivatives (and thus its Laplacian) also vanish. The right-hand side is also zero, so the equation holds.",
         "status": "platinum",
-        "conceptual_definition": "The equation $\\nabla$^2 $\\left$($\\frac{1}{r} \\right) = -4\\pi \\delta^3( \\mathbf{r} ) is a fundamental identity in mathematical physics, particularly relevant in electromagnetism and gravitational theory. It relates the Laplacian of the inverse distance function (which represents the potential of a point source) to the Dirac delta function. The Laplacian operator, denoted by \\nabla ^2$, represents the divergence of the gradient. The term $\\frac{1}{r}$ describes$a potential field that would be generated by a unit point source located at the origin. The Dirac delta function,$\\delta$^3(\\mathbf{r})$, is a generalized function that is zero everywhere except at the origin, where it is infinitely peaked, and integrates to unity. This identity signifies that the 'source' of a potential that decays as$1/r is precisely a point source at the origin.",
-        "intuitive_summary": "The rate of change of how a 1/r potential spreads out (its Laplacian) is zero everywhere except at the origin, where it represents an infinitely concentrated source.",
+        "conceptual_definition": "This fundamental identity states that the Laplacian of the inverse radial distance function $1/r$, which represents the potential of a unit point source, is equal to $-4\\pi$ times the three-dimensional Dirac delta function $\\delta^3(\\mathbf{r})$. It mathematically expresses that the source of a $1/r$ potential is an infinitely dense point located at the origin.",
+        "intuitive_summary": "The curvature of the potential field from a point source is zero everywhere except at the source itself, where it is infinitely sharp.",
         "subcomponents": [
             "central-radial-boundary-condition-fc1c2bb3",
             "inverse-distance-potential-term-30583754",
@@ -1354,21 +1300,21 @@
     },
     "instantaneous-power-af5bb2d3": {
         "title": "Instantaneous Power",
-        "equation": "P = \\mathbf{F} \\cdot \\mathbf{v} = \\frac{dT}{dt}",
+        "equation": "P = \\mathbf{F} \\cdot \\mathbf{v} = \\frac{\\mathrm{d}T}{\\mathrm{d}t}",
         "semantic_variables": {
             "P": {
                 "name": "Instantaneous Power",
                 "type": "variable",
-                "unit": "W (Joules per second)",
-                "description": "The rate at which work is done or energy is transferred at a specific instant in time. Its SI unit is the Watt (W)."
+                "unit": "W",
+                "description": "The rate at which work is done or energy is transferred at a specific instant in time. Its SI unit is the Watt (W), equivalent to Joules per second (J/s)."
             },
-            "F": {
+            "\\mathbf{F}": {
                 "name": "Net Force",
                 "type": "variable",
-                "unit": "N (Newtons)",
+                "unit": "N",
                 "description": "The vector sum of all forces acting on an object. It determines the acceleration of the object according to Newton's second law."
             },
-            "v": {
+            "\\mathbf{v}": {
                 "name": "Instantaneous Velocity",
                 "type": "variable",
                 "unit": "m/s",
@@ -1377,29 +1323,23 @@
             "T": {
                 "name": "Kinetic Energy",
                 "type": "variable",
-                "unit": "J (Joules)",
-                "description": "The energy possessed by an object due to its motion. For a non-relativistic object of mass m and speed v, it is given by $T = \\frac{1}{2}$mv^2$."
+                "unit": "J",
+                "description": "The energy possessed by an object due to its motion. For a non-relativistic object of mass $m$ and speed $v$, it is given by $T = \\frac{1}{2}mv^2$."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
-                "unit": "s (seconds)",
-                "description": "The independent variable representing the flow of events. The derivative $\\frac{dT}{dt}$ represents the rate of change of kinetic energy with respect to time."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg (kilograms)",
-                "description": "A fundamental property of matter that quantifies its resistance to acceleration. It is a scalar quantity."
+                "unit": "s",
+                "description": "The independent variable representing the progression of events. The derivative $\\frac{\\mathrm{d}T}{\\mathrm{d}t}$ represents the rate of change of kinetic energy with respect to time."
             }
         },
-        "interpretation": "The formula $P = \\mathbf{F} \\cdot \\mathbf{v} defines instantaneous power, denoted by$P$, as the dot product of the net force vector, \\mathbf{F} , acting on an object and the object's instantaneous velocity vector, \\mathbf{v}$. The dot product accounts for the fact that only the component of the force parallel to the velocity contributes to the work done. Thus, if the force is perpendicular to the velocity, no work is done, and the power is zero. The second form, $P = \\frac{dT}{dt}$, relates power to the rate of change of kinetic energy, $T$. By the work-energy theorem, the work done on an object is equal to the change in its kinetic energy. Therefore, the rate at which work is done (power) is equal to the rate at which the kinetic energy of the object changes. For kinetic energy $T = \\frac{1}{2} mv^2 , and using the chain rule, \\frac{dT}{dt} = \\frac{d}{dt}$($\\frac{1}{2}$ mv^2$)$= mv \\frac{dv}{dt} = v(m \\frac{dv}{dt} ) =$vF, where$F=ma$ is the magnitude of the force in the direction of motion. This scalar quantity of power has SI units of Watts (W), where 1 W = 1 J/s.",
-        "symmetry_origin": "The expression $P = \\mathbf{F} \\cdot \\mathbf{v} originates from the definition of work as$W = $\\int \\mathbf{F} \\cdot$ d$\\mathbf{r}$. By differentiating work with respect to time, $P = \\frac{dW}{dt} = \\frac{d}{dt} \\int \\mathbf{F} \\cdot d \\mathbf{r} . If the force is constant with respect to time and position during the infinitesimal displacement$d $\\mathbf{r} = \\mathbf{v}dt$, then $P = \\mathbf{F} \\cdot \\frac{d \\mathbf{r} }{dt} = \\mathbf{F} \\cdot \\mathbf{v}$. This relationship highlights that power is invariant under Galilean transformations, as both force and velocity transform linearly. The form $P = \\frac{dT}{dt} arises directly from the work-energy theorem, which states that the net work done on an object equals the change in its kinetic energy ($W = $\\Delta$ T$). Therefore, the instantaneous rate at which work is done is the instantaneous rate of change of kinetic energy$.",
-        "limits_and_boundary": "As the velocity $\\mathbf{v} approaches zero, the instantaneous power$P = $\\mathbf{F} \\cdot \\mathbf{v}$ approaches zero, provided the force $\\mathbf{F} remains finite. This means that if an object is stationary or moving very slowly, the rate at which work is done on it is negligible, regardless of the applied force. Conversely, as the velocity \\mathbf{v} approaches infinity (in non-relativistic scenarios), the power approaches infinity, implying an ever-increasing rate of energy transfer if the force is non-zero. In the limit where the force \\mathbf{F}$ is zero, the power $P$ is zero, indicating no work is being done, irrespective of the velocity. The second form, $P = \\frac{dT}{dt}$, shows that if the kinetic energy $T$ is constant (e.g., for uniform circular motion where speed is constant but velocity changes direction, or in systems with no net work input), then the instantaneous power is zero.",
+        "interpretation": "The formula $P = \\mathbf{F} \\cdot \\mathbf{v}$ defines instantaneous power $P$ as the dot product of the net force vector $\\mathbf{F}$ and the object's instantaneous velocity vector $\\mathbf{v}$. The dot product signifies that only the component of force parallel to the velocity contributes to the power. The equivalent form, $P = \\frac{\\mathrm{d}T}{\\mathrm{d}t}$, arises from the work-energy theorem, stating that the rate at which work is done equals the rate of change of kinetic energy $T$. This can be shown by differentiating kinetic energy $T = \\frac{1}{2}mv^2$: $\\frac{\\mathrm{d}T}{\\mathrm{d}t} = \\frac{\\mathrm{d}}{\\mathrm{d}t}(\\frac{1}{2}mv^2) = mv \\frac{\\mathrm{d}v}{\\mathrm{d}t} = v(ma) = \\mathbf{v} \\cdot (m\\mathbf{a}) = \\mathbf{F} \\cdot \\mathbf{v}$. Power is a scalar quantity with SI units of Watts (W).",
+        "symmetry_origin": "The relationship originates from the definition of work, $W = \\int \\mathbf{F} \\cdot \\mathrm{d}\\mathbf{r}$. Differentiating with respect to time gives power: $P = \\frac{\\mathrm{d}W}{\\mathrm{d}t} = \\mathbf{F} \\cdot \\frac{\\mathrm{d}\\mathbf{r}}{\\mathrm{d}t} = \\mathbf{F} \\cdot \\mathbf{v}$. The form $P = \\frac{\\mathrm{d}T}{\\mathrm{d}t}$ is a direct consequence of the work-energy theorem ($W_{\\text{net}} = \\Delta T$), which itself is a consequence of time-translation symmetry in a closed system, leading to conservation of energy via Noether's theorem. The equation is invariant under Galilean transformations.",
+        "limits_and_boundary": "1. If the velocity $\\mathbf{v} \\to 0$ while the force $\\mathbf{F}$ remains finite, the power $P \\to 0$. No work is done on a stationary object.\n2. If the net force $\\mathbf{F} = 0$, the power $P = 0$, and the object's kinetic energy remains constant.\n3. If the force $\\mathbf{F}$ is perpendicular to the velocity $\\mathbf{v}$ (i.e., $\\mathbf{F} \\cdot \\mathbf{v} = 0$), the power is zero. This occurs in uniform circular motion, where the centripetal force does no work and the object's speed and kinetic energy are constant.",
         "status": "platinum",
         "latex": "P = \\mathbf{F} \\cdot \\mathbf{v} = \\frac{dT}{dt}",
-        "conceptual_definition": "The instantaneous power formula, expressed as $P = \\mathbf{F} \\cdot \\mathbf{v} = \\frac{dT}{dt}$, quantifies the rate at which work is done by a force on an object or, equivalently, the rate of change of the kinetic energy of an object at a specific moment in time. It is a measure of how quickly energy is being transferred or transformed.",
-        "intuitive_summary": "Power is the product of the force acting on an object and its instantaneous velocity, representing how fast that force is doing work.",
+        "conceptual_definition": "Instantaneous power quantifies the rate at which work is done by a force on an object or, equivalently, the rate of change of the kinetic energy of an object at a specific moment in time. It is a measure of how quickly energy is being transferred or transformed.",
+        "intuitive_summary": "Power is the rate at which a force does work, calculated as the force component along the direction of motion multiplied by the object's speed.",
         "subcomponents": [
             "newtons-second-law-of-motion-91e94378",
             "classical-translational-kinetic-energy-6dc83fc6",
@@ -2092,26 +2032,26 @@
         ]
     },
     "vanishing-riemann-tensor": {
-        "title": "Vanishing Riemann tensor",
-        "equation": "R^\\rho{}_{\\sigma\\mu\\nu} = 0",
-        "conceptual_definition": "The equation $R^\\rho{}_{\\sigma\\mu u} = 0$ represents a condition in differential geometry and general relativity where the Riemann curvature tensor is identically zero. This implies that the spacetime manifold is locally flat. In simpler terms, it means that there are no tidal forces or gravitational effects in this region of spacetime. Any object moving freely in such a spacetime will follow a geodesic that is straight in a suitable coordinate system, much like an object moving in Euclidean space without any external forces.",
-        "intuitive_summary": "Spacetime is flat and free of gravitational effects.",
-        "interpretation": "The equation $R^\\rho{}_{\\sigma\\mu u} = 0$ is the condition for a vanishing Riemann curvature tensor. The Riemann curvature tensor, denoted as $R^\\rho{}_{\\sigma\\mu u}$, is a mathematical object that describes the curvature of a Riemannian manifold. In the context of general relativity, this manifold is spacetime, and its curvature is directly related to the presence of mass and energy, which manifest as gravity. The indices $\\rho, \\sigma, \\mu, u$ are abstract indices ranging from 0 to 3, representing the four dimensions of spacetime (time and three spatial dimensions). When all components of the Riemann tensor are zero, it signifies that spacetime is intrinsically flat, meaning it is locally indistinguishable from Minkowski spacetime, the flat spacetime of special relativity. This implies that parallel transport of a vector around any closed loop will result in the original vector, and the laws of physics in this region behave as if there were no gravitational field.",
-        "symmetry_origin": "This condition arises from the definition of the Riemann curvature tensor itself, which is derived from the Christoffel symbols and their derivatives. In a flat spacetime, the Christoffel symbols (which represent the connection coefficients and describe how vectors change when parallel transported) are constant in an appropriate coordinate system, and thus their derivatives, which form the Riemann tensor, vanish. This also implies that the spacetime is globally equivalent to a Euclidean space or Minkowski space. This condition is crucial for understanding the behavior of objects in the absence of gravity and serves as a fundamental reference point for understanding more complex, curved spacetimes.",
-        "limits_and_boundary": "The condition $R^\\rho{}_{\\sigma\\mu u} = 0$ represents the most extreme limit of 'flatness' for a spacetime manifold. As sources of gravity (mass, energy, momentum) approach zero, the curvature of spacetime also approaches zero. In the limit of vanishing matter and energy density, the Einstein field equations $G_{\\mu u} = \\frac{8\\pi G}{c^4} T_${$\\mu \\nu$}$simplify, and if the stress-energy tensor$T_{$\\mu \\nu$} is zero everywhere, the metric can be transformed into the Minkowski metric, leading to $R^\\rho{}_{\\sigma\\mu u} = 0$. Therefore, this equation describes spacetimes that are globally or locally equivalent to Minkowski spacetime, often referred to as 'empty' or 'gravitationally inert' spacetimes.",
+        "title": "Vanishing Riemann Tensor",
+        "equation": "R^{\\rho}{}_{\\sigma\\mu\\nu} = 0",
+        "conceptual_definition": "The equation $R^{\\rho}{}_{\\sigma\\mu\\nu} = 0$ is the mathematical condition for a spacetime manifold to be locally flat. This means that in any sufficiently small region, spacetime is indistinguishable from the flat Minkowski spacetime of special relativity, implying the absence of any gravitational tidal forces.",
+        "intuitive_summary": "A vanishing Riemann tensor means spacetime is perfectly flat, with no curvature or gravitational tidal forces anywhere.",
+        "interpretation": "The equation $R^{\\rho}{}_{\\sigma\\mu\\nu} = 0$ states that all components of the Riemann curvature tensor are zero. This tensor, with indices $\\rho, \\sigma, \\mu, \\nu$ running from 0 to 3, fundamentally quantifies the curvature of spacetime. Its vanishing implies that the parallel transport of a vector around any infinitesimal closed loop returns the vector to its original orientation, which is the hallmark of a flat geometry. In the context of general relativity, a flat spacetime corresponds to a region devoid of any gravitational field, meaning test particles do not experience tidal forces and free-falling objects follow straight-line paths (geodesics) in an appropriate coordinate system.",
+        "symmetry_origin": "A vanishing Riemann tensor implies that there exists a coordinate system (locally) in which the metric tensor $g_{\\mu\\nu}$ is constant and the Christoffel symbols $\\Gamma^{\\lambda}_{\\mu\\nu}$ are all zero. The Riemann tensor is constructed from derivatives of the Christoffel symbols, so it naturally vanishes in such a coordinate system. This condition reflects the maximal possible local symmetry for a spacetime, which is the full Poincaré group (Lorentz transformations plus spacetime translations), characteristic of Minkowski spacetime.",
+        "limits_and_boundary": "1. In the limit of vanishing mass-energy-momentum (i.e., the stress-energy tensor $T_{\\mu\\nu} \\to 0$ everywhere), the Einstein Field Equations $G_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}$ reduce to the vacuum equations $R_{\\mu\\nu} = 0$ (assuming zero cosmological constant). The stronger condition $R^{\\rho}{}_{\\sigma\\mu\\nu} = 0$ describes a specific vacuum solution that is also free of gravitational waves, corresponding to flat Minkowski spacetime.\n2. According to the equivalence principle, any curved spacetime is locally flat. This means that in the limit of an infinitesimally small region, $R^{\\rho}{}_{\\sigma\\mu\\nu} \\to 0$, and the laws of physics reduce to those of special relativity.",
         "status": "platinum",
         "semantic_variables": {
-            "R^\\rho{}_{\\sigma\\mu\\nu}": {
+            "R^{\\rho}{}_{\\sigma\\mu\\nu}": {
                 "name": "Riemann Curvature Tensor",
-                "type": "variable",
-                "unit": "1/m^2",
-                "description": "The Riemann curvature tensor is a fundamental object in differential geometry that quantifies the curvature of a manifold. In general relativity, it describes the strength and nature of gravitational fields. Its components are determined by the metric tensor and its derivatives. The vanishing of this tensor implies that the spacetime is intrinsically flat."
+                "type": "tensor",
+                "unit": "m^{-2}",
+                "description": "A rank-4 tensor that quantifies the curvature of a manifold. In general relativity, it describes the tidal forces of the gravitational field. Its vanishing implies the spacetime is intrinsically flat."
             },
             "\\rho, \\sigma, \\mu, \\nu": {
                 "name": "Spacetime Indices",
-                "type": "variable",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "These are abstract indices representing the four dimensions of spacetime (time and the three spatial dimensions). They range from 0 to 3. The notation $R^\\rho{}_{\\sigma\\mu u}$ indicates a tensor of rank 4. The upper index $\\rho$ and the lower indices $\\sigma, \\mu, u$ are used in tensor calculus to indicate the transformation properties of the tensor components under coordinate transformations."
+                "description": "Abstract indices representing the four dimensions of spacetime (one time, three space), typically ranging from 0 to 3. They denote the components of the tensor."
             }
         },
         "subcomponents": [
@@ -2125,19 +2065,45 @@
     "fermi-gas-energy-exponent-282378af": {
         "title": "Fermi Gas Energy Exponent",
         "description": "This constant represents a specific power-law exponent found in various physical models, particularly those describing degenerate Fermi gases.",
-        "conceptual_definition": "This constant, 5/3, arises in the context of the energy-density relationship for a non-relativistic degenerate Fermi gas. Specifically, the total energy of such a system scales with the particle density to the power of 5/3. This exponent is crucial for understanding the pressure and bulk modulus of degenerate matter, such as in white dwarfs or neutron stars, and also appears in certain quantum resistance formulations.",
-        "interpretation": "The value 5/3 signifies a specific scaling behavior. In the context of a non-relativistic degenerate Fermi gas, the kinetic energy per particle is proportional to $n^{2/3}$, where $n$ is the particle density. Consequently, the total energy density scales as $n \\cdot n^{2/3} = n^{5/3}$. This power law dictates how the energy and pressure of a system of fermions behave when quantum effects dominate due to high density and low temperature, preventing particles from occupying the same quantum states. It is a fundamental characteristic of degenerate matter.",
-        "limits_and_boundary": "This constant is valid in the non-relativistic limit for a degenerate Fermi gas. It applies when the thermal energy $k_B T$ is much less than the Fermi energy $E_F$, and the particle velocities are much less than the speed of light. If particles become relativistic, the exponent changes to 4/3.",
-        "symmetry_origin": "The value 5/3 arises from the fundamental principles of quantum mechanics, specifically the Pauli exclusion principle for fermions, combined with the three-dimensional nature of space. It reflects the scaling of kinetic energy with particle density in a non-relativistic degenerate system, which is a consequence of filling momentum states up to the Fermi momentum.",
+        "conceptual_definition": "The exponent 5/3 describes the power-law relationship between the energy density and the particle number density for a non-relativistic, three-dimensional degenerate Fermi gas. This scaling is a direct consequence of the Pauli exclusion principle and the quadratic energy-momentum dispersion relation.",
+        "interpretation": "The value 5/3 arises from the quantum mechanical behavior of fermions at low temperatures and high densities. According to the Pauli exclusion principle, no two fermions can occupy the same quantum state. In a 3D system, particles fill up all available momentum states up to a maximum known as the Fermi momentum, $p_F$, which is proportional to the cube root of the particle density, $p_F \\propto n^{1/3}$. For non-relativistic particles, the kinetic energy is $E_k = p^2/(2m)$, so the maximum kinetic energy (the Fermi energy) scales as $E_F \\propto p_F^2 \\propto n^{2/3}$. The average energy per particle is proportional to the Fermi energy, $\\langle E_k \\rangle \\propto E_F \\propto n^{2/3}$. The total energy density, $\\mathcal{E}$, is the particle density multiplied by the average energy per particle, thus $\\mathcal{E} = n \\langle E_k \\rangle \\propto n \\cdot n^{2/3} = n^{5/3}$. This power law governs the equation of state for matter in white dwarf stars and electrons in metals.",
+        "limits_and_boundary": "1. **Non-relativistic limit**: The exponent 5/3 is valid for particles whose Fermi energy is much less than their rest mass energy ($E_F \\ll mc^2$).\n2. **Degenerate limit**: The thermal energy must be much smaller than the Fermi energy ($k_B T \\ll E_F$), ensuring quantum pressure dominates over thermal pressure.\n3. **Relativistic limit**: For ultra-relativistic particles ($E_F \\gg mc^2$), the energy-momentum relation becomes $E \\approx pc$, and the energy density scales as $\\mathcal{E} \\propto n^{4/3}$.\n4. **Dimensionality**: The exponent is specific to a three-dimensional system. In two dimensions, the exponent is 2, and in one dimension, it is 3.",
+        "symmetry_origin": "The scaling exponent 5/3 originates from the combination of statistical mechanics for fermions (Fermi-Dirac statistics, embodying the Pauli exclusion principle) and the continuous translational and rotational symmetries of three-dimensional Euclidean space. These spacetime symmetries lead to a non-relativistic energy-momentum relation $E \\propto p^2$, which, when combined with the phase space volume scaling as $p^3$, dictates how energy levels are filled as a function of particle density.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-statistics",
-        "semantic_variables": {},
-        "equation": "5/3",
-        "status": "published",
+        "semantic_variables": {
+            "\\mathcal{E}": {
+                "name": "Energy Density",
+                "type": "variable",
+                "unit": "J/m^3",
+                "description": "The total kinetic energy of the Fermi gas per unit volume."
+            },
+            "\\hbar": {
+                "name": "Reduced Planck Constant",
+                "type": "constant",
+                "unit": "J·s",
+                "description": "The Planck constant divided by 2π, a fundamental constant in quantum mechanics."
+            },
+            "m": {
+                "name": "Particle Mass",
+                "type": "variable",
+                "unit": "kg",
+                "description": "The mass of a single fermion in the gas (e.g., an electron)."
+            },
+            "n": {
+                "name": "Particle Number Density",
+                "type": "variable",
+                "unit": "m^{-3}",
+                "description": "The number of fermions per unit volume."
+            }
+        },
+        "equation": "\\mathcal{E} = \\frac{3\\hbar^2}{10m} (3\\pi^2)^{2/3} n^{5/3}",
+        "status": "platinum",
         "parent_formula_id": "quantum-resistance-8302fa49",
         "subcomponents": [],
-        "id": "fermi-gas-energy-exponent-282378af"
+        "id": "fermi-gas-energy-exponent-282378af",
+        "intuitive_summary": "In a very dense, cold gas of fermions, the total energy grows faster than the number of particles because they are forced into higher and higher energy states."
     },
     "centrifugal-potential-energy-term-81711c3a": {
         "title": "Centrifugal Potential Energy Term",
@@ -2173,7 +2139,8 @@
         "status": "published",
         "parent_formula_id": "effective-potential-mechanics-identity-1-6d954933-fff4b99d",
         "subcomponents": [],
-        "id": "centrifugal-potential-energy-term-81711c3a"
+        "id": "centrifugal-potential-energy-term-81711c3a",
+        "intuitive_summary": ""
     },
     "partial-derivative-of-hamiltonian-with-generalized-momentum-4ee9a6bb": {
         "title": "Partial Derivative of Hamiltonian with Generalized Momentum",
@@ -2209,7 +2176,8 @@
         "status": "published",
         "parent_formula_id": "hamilton-canonical-equations-5314f032",
         "subcomponents": [],
-        "id": "partial-derivative-of-hamiltonian-with-generalized-momentum-4ee9a6bb"
+        "id": "partial-derivative-of-hamiltonian-with-generalized-momentum-4ee9a6bb",
+        "intuitive_summary": ""
     },
     "polytropic-pressure-density-relation-8cd6b0e6": {
         "title": "Polytropic Pressure-Density Relation",
@@ -2251,7 +2219,8 @@
         "status": "published",
         "parent_formula_id": "polytropic-eos-fluid-relation-8cd6b0e6",
         "subcomponents": [],
-        "id": "polytropic-pressure-density-relation-8cd6b0e6"
+        "id": "polytropic-pressure-density-relation-8cd6b0e6",
+        "intuitive_summary": ""
     },
     "standard-model-lagrangian-0674325b": {
         "title": "Standard Model Lagrangian",
@@ -2275,7 +2244,8 @@
         "status": "published",
         "parent_formula_id": "effective-field-theory-expansion-cutoff-e4d1c9b4",
         "subcomponents": [],
-        "id": "standard-model-lagrangian-0674325b"
+        "id": "standard-model-lagrangian-0674325b",
+        "intuitive_summary": ""
     },
     "electromagnetic-field-kinetic-term-913c7ccf": {
         "title": "Electromagnetic Field Kinetic Term",
@@ -2311,7 +2281,8 @@
         "status": "published",
         "parent_formula_id": "electromagnetic-lagrangian",
         "subcomponents": [],
-        "id": "electromagnetic-field-kinetic-term-913c7ccf"
+        "id": "electromagnetic-field-kinetic-term-913c7ccf",
+        "intuitive_summary": ""
     },
     "canonical-momentum-field-operator-03850db9": {
         "title": "Canonical Momentum Field Operator",
@@ -2347,7 +2318,8 @@
         "status": "published",
         "parent_formula_id": "operator-commutation-causality-identity-1-65f83a92-89d54b53",
         "subcomponents": [],
-        "id": "canonical-momentum-field-operator-03850db9"
+        "id": "canonical-momentum-field-operator-03850db9",
+        "intuitive_summary": ""
     },
     "fictitious-torque-vector-780e58de": {
         "title": "Fictitious Torque Vector",
@@ -2371,7 +2343,8 @@
         "status": "published",
         "parent_formula_id": "fictitious-torque",
         "subcomponents": [],
-        "id": "fictitious-torque-vector-780e58de"
+        "id": "fictitious-torque-vector-780e58de",
+        "intuitive_summary": ""
     },
     "complex-plane-wave-phase-factor-011fdc2f": {
         "title": "Complex Plane Wave Phase Factor",
@@ -2419,7 +2392,8 @@
         "status": "published",
         "parent_formula_id": "positive-wave-number",
         "subcomponents": [],
-        "id": "complex-plane-wave-phase-factor-011fdc2f"
+        "id": "complex-plane-wave-phase-factor-011fdc2f",
+        "intuitive_summary": ""
     },
     "vector-sum-of-component-vectors-a7aab4ea": {
         "title": "Vector Sum of Component Vectors",
@@ -2455,7 +2429,8 @@
         "status": "published",
         "parent_formula_id": "total-force",
         "subcomponents": [],
-        "id": "vector-sum-of-component-vectors-a7aab4ea"
+        "id": "vector-sum-of-component-vectors-a7aab4ea",
+        "intuitive_summary": ""
     },
     "dotted-spinor-index-4968c3b9": {
         "title": "Dotted Spinor Index",
@@ -2479,7 +2454,8 @@
         "status": "published",
         "parent_formula_id": "supersymmetric-commutation-relation",
         "subcomponents": [],
-        "id": "dotted-spinor-index-4968c3b9"
+        "id": "dotted-spinor-index-4968c3b9",
+        "intuitive_summary": ""
     },
     "squared-relativistic-velocity-factor-308971ff": {
         "title": "Squared Relativistic Velocity Factor",
@@ -2503,7 +2479,8 @@
         "status": "published",
         "parent_formula_id": "ives-stilwell-experiment-identity-1-bce3f631-4df9c5f9",
         "subcomponents": [],
-        "id": "squared-relativistic-velocity-factor-308971ff"
+        "id": "squared-relativistic-velocity-factor-308971ff",
+        "intuitive_summary": ""
     },
     "simple-harmonic-motion-position-d6c3c3b8": {
         "title": "Simple Harmonic Motion Position",
@@ -2551,7 +2528,8 @@
         "status": "published",
         "parent_formula_id": "complex-amplitude-solution-harmonic-oscillation",
         "subcomponents": [],
-        "id": "simple-harmonic-motion-position-d6c3c3b8"
+        "id": "simple-harmonic-motion-position-d6c3c3b8",
+        "intuitive_summary": ""
     },
     "idempotent-reduced-density-operator-b42424df": {
         "title": "Idempotent Reduced Density Operator",
@@ -2575,7 +2553,8 @@
         "status": "published",
         "parent_formula_id": "entanglement-entropy-identity-1-52a4c2e6-f9444fb5",
         "subcomponents": [],
-        "id": "idempotent-reduced-density-operator-b42424df"
+        "id": "idempotent-reduced-density-operator-b42424df",
+        "intuitive_summary": ""
     },
     "scalar-field-quartic-self-interaction-term-86a06d20": {
         "title": "Scalar Field Quartic Self-Interaction Term",
@@ -2605,7 +2584,8 @@
         "status": "published",
         "parent_formula_id": "mexican-hat-potential-57e9e519",
         "subcomponents": [],
-        "id": "scalar-field-quartic-self-interaction-term-86a06d20"
+        "id": "scalar-field-quartic-self-interaction-term-86a06d20",
+        "intuitive_summary": ""
     },
     "spherical-laplacian-radial-operator-14d9f634": {
         "title": "Spherical Laplacian Radial Operator",
@@ -2635,7 +2615,8 @@
         "status": "published",
         "parent_formula_id": "lane-emden-equation-stellar-basis-2e0cf25c",
         "subcomponents": [],
-        "id": "spherical-laplacian-radial-operator-14d9f634"
+        "id": "spherical-laplacian-radial-operator-14d9f634",
+        "intuitive_summary": ""
     },
     "mixed-state-density-operator-definition-eefa8e79": {
         "title": "Mixed State Density Operator Definition",
@@ -2671,7 +2652,8 @@
         "status": "published",
         "parent_formula_id": "ensemble-expectation-trace-02d3c609",
         "subcomponents": [],
-        "id": "mixed-state-density-operator-definition-eefa8e79"
+        "id": "mixed-state-density-operator-definition-eefa8e79",
+        "intuitive_summary": ""
     },
     "cosine-small-angle-approximation-first-order-883501cc": {
         "title": "Cosine Small Angle Approximation (First Order)",
@@ -2695,7 +2677,8 @@
         "status": "published",
         "parent_formula_id": "small-angle-approximation-cosine",
         "subcomponents": [],
-        "id": "cosine-small-angle-approximation-first-order-883501cc"
+        "id": "cosine-small-angle-approximation-first-order-883501cc",
+        "intuitive_summary": ""
     },
     "christoffel-symbol-curvature-term-7dcb7b8e": {
         "title": "Christoffel Symbol Curvature Term",
@@ -2731,19 +2714,69 @@
         "status": "published",
         "parent_formula_id": "proper-time-substitute-a9ad2344",
         "subcomponents": [],
-        "id": "christoffel-symbol-curvature-term-7dcb7b8e"
+        "id": "christoffel-symbol-curvature-term-7dcb7b8e",
+        "intuitive_summary": ""
     },
     "constitutive-relation-for-a-newtonian-fluid-viscous-stress-tensor-9d40765f": {
         "id": "constitutive-relation-for-a-newtonian-fluid-viscous-stress-tensor-9d40765f",
         "title": "Constitutive Relation for a Newtonian Fluid (Viscous Stress Tensor)",
-        "equation": "\\sigma_{ij} = \\lambda (\\nabla \\cdot \\mathbf{v}) \\delta_{ij} + \\mu (\\partial_i v_j + \\partial_j v_i)",
-        "conceptual_definition": "",
-        "intuitive_summary": "",
-        "interpretation": "The equation $\\sigma_{ij} = \\lambda (\\nabla \\cdot \\mathbf{v}) \\delta_{ij} + \\mu (\\partial_i v_j + \\partial_j v_i)$ represents the viscous stress tensor for a Newtonian fluid, which linearly relates stress to the rate of strain. The first term, $\\lambda (\\nabla \\cdot \\mathbf{v}) \\delta_{ij}$, accounts for the normal stresses (pressure-like components) that arise from the fluid's volumetric expansion or compression, where $\\nabla \\cdot \\mathbf{v}$ is the volumetric strain rate and $\\lambda$ is the first viscosity coefficient. The Kronecker delta $\\delta_{ij}$ ensures this term only contributes to diagonal components of the stress tensor. The second term, $\\mu (\\partial_i v_j + \\partial_j v_i)$, describes the shear stresses that develop due to the fluid's change in shape. Here, $\\mu$ is the dynamic viscosity (or shear viscosity), and $(\\partial_i v_j + \\partial_j v_i)$ is twice the symmetric part of the velocity gradient tensor, representing the rate of shear deformation. This linear relationship is the defining characteristic of a Newtonian fluid.",
-        "symmetry_origin": "The tensorial form of the equation ensures its invariance under rotations of the coordinate system, reflecting the isotropic nature of the Newtonian fluid's constitutive response. The symmetry of the viscous stress tensor, $\\sigma_{ij} = \\sigma_{ji}$, is inherently satisfied by the symmetric construction of the strain rate terms, particularly the symmetric velocity gradient $(\\partial_i v_j + \\partial_j v_i)$. This isotropy implies that the fluid's material properties (viscosity coefficients $\\lambda$ and $\\mu$) are independent of direction.",
-        "limits_and_boundary": "1. **Incompressible Fluid Limit**: For an incompressible fluid, the divergence of the velocity field is zero, $\\nabla \\cdot \\mathbf{v} = 0$. In this case, the first term vanishes, and the viscous stress tensor simplifies to $\\sigma_{ij} = \\mu (\\partial_i v_j + \\partial_j v_i)$. This is a common approximation in many fluid dynamics problems. 2. **Ideal Fluid Limit (Inviscid Flow)**: If the fluid is considered ideal or inviscid, both viscosity coefficients are zero, i.e., $\\mu = 0$ and $\\lambda = 0$. In this limit, the viscous stress tensor becomes identically zero, $\\sigma_{ij} = 0$, meaning no viscous forces are present. 3. **Static Fluid Limit**: If the fluid is static, the velocity field $\\mathbf{v}$ is zero everywhere, leading to all velocity derivatives being zero. Consequently, $\\sigma_{ij} = 0$, indicating no viscous stresses in a fluid at rest. 4. **Boundary Conditions**: At solid boundaries, the no-slip condition (fluid velocity matches the boundary velocity) is typically applied, which dictates the velocity gradient and thus the stress at the wall. At free surfaces, shear stresses are often assumed to be zero.",
+        "equation": "\\tau_{ij} = \\lambda (\\partial_k v_k) \\delta_{ij} + \\mu (\\partial_i v_j + \\partial_j v_i)",
+        "conceptual_definition": "This constitutive relation defines a Newtonian fluid by establishing a linear relationship between the viscous stress tensor and the fluid's rate of strain tensor. It describes how internal forces arise from the fluid's motion and deformation.",
+        "intuitive_summary": "For a simple fluid like water or air, the internal friction (stress) is directly proportional to how fast it is being stretched or sheared.",
+        "interpretation": "The equation $\\tau_{ij} = \\lambda (\\partial_k v_k) \\delta_{ij} + \\mu (\\partial_i v_j + \\partial_j v_i)$ describes the viscous stress tensor $\\tau_{ij}$ in an isotropic Newtonian fluid. It is composed of two parts. The first term, proportional to the second coefficient of viscosity $\\lambda$, represents the isotropic stress response to a change in volume, where $\\partial_k v_k$ (or $\\nabla \\cdot \\mathbf{v}$) is the rate of volumetric strain. The second term, proportional to the dynamic viscosity $\\mu$, represents the stress response to shear deformation, where the symmetric tensor $(\\partial_i v_j + \\partial_j v_i)$ is twice the rate-of-strain tensor $S_{ij}$. The linearity of this relationship is the defining property of a Newtonian fluid.",
+        "symmetry_origin": "The tensorial form of the equation ensures its covariance under coordinate transformations (Galilean invariance), a fundamental requirement for physical laws. The assumption of fluid isotropy (no preferred direction) constrains the relationship between the stress and strain rate tensors to be linear and involve only two material constants, $\\lambda$ and $\\mu$. The symmetry of the viscous stress tensor, $\\tau_{ij} = \\tau_{ji}$, which arises from the conservation of angular momentum in the absence of body couples, is explicitly satisfied by the symmetric form of the rate-of-strain tensor.",
+        "limits_and_boundary": "1. **Incompressible Flow**: For an incompressible fluid, the velocity field is solenoidal, $\\partial_k v_k = 0$. The constitutive relation simplifies to $\\tau_{ij} = \\mu (\\partial_i v_j + \\partial_j v_i)$, where stress is only due to shear deformation.\n2. **Inviscid (Ideal) Fluid**: In the limit of zero viscosity ($\\mu \\to 0$ and $\\lambda \\to 0$), the viscous stress tensor vanishes, $\\tau_{ij} = 0$. The fluid offers no resistance to deformation, and the total stress is purely hydrostatic pressure.\n3. **Stokes' Hypothesis**: For many monatomic gases and some liquids, it is often assumed that the mechanical pressure is equal to the thermodynamic pressure, which implies the trace of the viscous stress tensor is zero. This leads to the condition $3\\lambda + 2\\mu = 0$, known as Stokes' hypothesis, which simplifies the model by relating the two viscosity coefficients.\n4. **Static Fluid**: For a fluid at rest, the velocity $\\mathbf{v}$ is zero everywhere, so all velocity gradients are zero, and thus $\\tau_{ij} = 0$. No viscous stresses exist in a static fluid.",
         "unit_system": "SI",
-        "status": "published",
-        "semantic_variables": {}
+        "status": "platinum",
+        "semantic_variables": {
+            "\\tau_{ij}": {
+                "name": "Viscous Stress Tensor",
+                "type": "variable",
+                "unit": "Pa",
+                "description": "A second-rank tensor describing the internal forces per unit area within a fluid due to its motion and deformation."
+            },
+            "\\lambda": {
+                "name": "Second Coefficient of Viscosity",
+                "type": "constant",
+                "unit": "Pa·s",
+                "description": "A material property that relates the isotropic part of the viscous stress to the rate of volumetric expansion or compression."
+            },
+            "\\partial_k v_k": {
+                "name": "Divergence of Velocity",
+                "type": "operator/variable",
+                "unit": "s^{-1}",
+                "description": "The rate of volumetric strain, representing the rate of expansion or compression of a fluid element per unit volume. Summation over index k is implied."
+            },
+            "\\delta_{ij}": {
+                "name": "Kronecker Delta",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "A tensor that is 1 if i=j and 0 if i ≠ j, used here to create an isotropic tensor."
+            },
+            "\\mu": {
+                "name": "Dynamic Viscosity",
+                "type": "constant",
+                "unit": "Pa·s",
+                "description": "A material property measuring a fluid's resistance to shear deformation, also known as shear viscosity."
+            },
+            "\\partial_i v_j": {
+                "name": "Velocity Gradient Tensor",
+                "type": "operator/variable",
+                "unit": "s^{-1}",
+                "description": "A second-rank tensor describing how the velocity vector changes with position. The term (∂_i v_j + ∂_j v_i) is twice the rate-of-strain tensor."
+            },
+            "v_i, v_j, v_k": {
+                "name": "Velocity Components",
+                "type": "variable",
+                "unit": "m/s",
+                "description": "The components of the fluid velocity vector in the i, j, k directions."
+            },
+            "i, j, k": {
+                "name": "Indices",
+                "type": "metadata",
+                "unit": "dimensionless",
+                "description": "Indices representing the spatial dimensions (e.g., x, y, z or 1, 2, 3)."
+            }
+        }
     }
 }

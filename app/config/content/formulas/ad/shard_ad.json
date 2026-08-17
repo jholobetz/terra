@@ -210,10 +210,10 @@
         "equation": "g_{ij} = \\sum_k m_k \\frac{\\partial \\mathbf{r}_k}{\\partial q^i} \\cdot \\frac{\\partial \\mathbf{r}_k}{\\partial q^j}",
         "semantic_variables": {
             "g_{ij}": {
-                "name": "Coordinate Matrix Component",
-                "type": "variable",
-                "unit": "kg",
-                "description": "The (i, j)-th component of the Coordinate Matrix, which is a rank-2 tensor. It represents the contribution to the kinetic energy metric from the i-th and j-th generalized coordinates."
+                "name": "Component of the Coordinate Matrix",
+                "type": "tensor component",
+                "unit": "kg⋅m²/unit(q)²",
+                "description": "The (i, j)-th component of the symmetric rank-2 tensor that defines the kinetic energy metric on the configuration space. Its units depend on the units of the generalized coordinates q."
             },
             "m_k": {
                 "name": "Mass of k-th particle",
@@ -225,81 +225,45 @@
                 "name": "Position vector of k-th particle",
                 "type": "variable",
                 "unit": "m",
-                "description": "The position vector of the k-th particle in physical 3D space (e.g., Euclidean space)."
+                "description": "The position vector of the k-th particle in a 3D Cartesian coordinate system."
             },
             "q^i": {
-                "name": "i-th generalized coordinate",
+                "name": "i-th Generalized Coordinate",
                 "type": "variable",
-                "unit": "m",
-                "description": "The i-th generalized coordinate of the system. These are a set of independent parameters that uniquely define the configuration of the system."
+                "unit": "variable",
+                "description": "The i-th independent parameter that defines the configuration of the system. Its units can be length, angle, or be dimensionless."
             },
             "q^j": {
-                "name": "j-th generalized coordinate",
+                "name": "j-th Generalized Coordinate",
                 "type": "variable",
-                "unit": "m",
-                "description": "The j-th generalized coordinate of the system. This is a distinct generalized coordinate from q^i, with indices i and j ranging over the degrees of freedom of the system."
+                "unit": "variable",
+                "description": "The j-th independent parameter that defines the configuration of the system. Its units can be length, angle, or be dimensionless."
             },
-            "\\frac{\\partial \\mathbf{r}_k}{\\partial q^i}": {
-                "name": "Partial derivative of position vector w.r.t. i-th generalized coordinate",
+            "\\sum_k": {
+                "name": "Summation over particles",
                 "type": "operator",
-                "unit": "1",
-                "description": "Represents how the physical position vector of the k-th particle changes infinitesimally with respect to a change in the i-th generalized coordinate. It is a vector quantity."
-            },
-            "\\frac{\\partial \\mathbf{r}_k}{\\partial q^j}": {
-                "name": "Partial derivative of position vector w.r.t. j-th generalized coordinate",
-                "type": "operator",
-                "unit": "1",
-                "description": "Represents how the physical position vector of the k-th particle changes infinitesimally with respect to a change in the j-th generalized coordinate. It is a vector quantity."
-            },
-            "g": {
-                "name": "Gravitational Acceleration",
-                "type": "constant",
-                "unit": "m/s²",
-                "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
-            },
-            "k": {
-                "name": "Spring Stiffness (Hooke's Constant)",
-                "type": "variable",
-                "unit": "N/m",
-                "description": "The rigidity of a spring or elastic medium, defining restoring force per unit of displacement: $F = -kx$."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "q": {
-                "name": "Electric Charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "A physical property of matter that causes it to experience a force when placed in an electromagnetic field."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
+                "description": "A summation over the index $k$, which labels all particles in the system."
             },
-            "j": {
-                "name": "Current Density / Index",
-                "type": "variable",
-                "unit": "A/m²",
-                "description": "The flow of electric current per unit cross-sectional area."
+            "\\cdot": {
+                "name": "Dot Product",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The standard Euclidean dot product between two vectors."
+            },
+            "\\partial": {
+                "name": "Partial Derivative",
+                "type": "operator",
+                "unit": "1/unit(variable)",
+                "description": "The partial derivative operator, taken with respect to a generalized coordinate."
             }
         },
-        "interpretation": "The formula for the Coordinate Matrix is given by $g_{ij} = split{\\bf r}_k}{ split{q^i}} \\bf \\bf split{\\bf r}_k}{ split{q^j}}$. Here, $g_{ij}$ represents the components of the coordinate matrix, which is a symmetric tensor. The summation is performed over all constituent point masses, indexed by $k$. Each mass $m_k$ has a position vector $\\bf$ r_k$in physical space. The terms \\frac{$ split{$\\bf$ r}$_k}{ split{q^i}}$and $\\frac{$split{ $\\bf$ r}_k}{ split{q^j}}$represent the partial derivatives of the physical position vector \\bf r_k$with respect to the generalized coordinates $q^i and q^j$, respectively. These derivatives describe how the physical position of the $k$-th mass changes as the $i$-th and $j$-th generalized coordinates are varied. The dot product of these derivative vectors, multiplied by the mass $m_k$, and summed over all masses, yields the$(i, j)$component of the Coordinate Matrix. Physically, this quantity is directly related to the kinetic energy of the system. Specifically, the kinetic energy $T$ can be expressed as $T = \\frac{1}{2}$ g_{ij} split{q^i} split{q^j}$, where$split{q^i}$ are the generalized velocities.",
-        "symmetry_origin": "The Coordinate Matrix arises from the need to express physical quantities, such as kinetic energy, in a form that is invariant under arbitrary coordinate transformations. This relates to the principle of general covariance. In classical mechanics, it's derived from the definition of kinetic energy $T = \\frac{1}{2} split${v}_k^2 = \\frac{1}{2}$split${m}_k split{v}_k $\\bf \\bf \\bf \\bf \\bf , where \\bf v_k = \\frac{$split{$\\bf$ r}_k}{ split{t}}. Substituting $\\bf r_k$ as a function of generalized coordinates $\\bf r_k(\\bf q)$ and then taking the time derivative, $split{v}_k = \\frac{$split{$\\bf$ r}_k}{ split{q^i}}$split{q^i}$, leads to the expression involving the Coordinate Matrix. The symmetry $g_{ij} = g_{ji}$ is evident from the commutativity of partial derivatives and the dot product.",
-        "limits_and_boundary": "In the limit where the generalized coordinates are Cartesian coordinates and there is only one point mass, the Coordinate Matrix simplifies significantly. If $q^i = x_i$ (Cartesian coordinates) and there is only one mass $m_1$ at $\\bf r_1 = (x_1, x_2, x_3)$, then $\\frac{$split{$\\bf$ r}_1}{ split{q^i}} = ($\\frac{$split{x}_1}{ split{x}_i}$, \\frac{$split{x}_2}{ split{x}_i}$, \\frac{$split{x}_3}{ split{x}_i}$)$. This simplifies to the identity matrix multiplied by the mass: $g_{ij} = m_1 split{\\bf \\bf \\bf \\bf \\bf \\bf \\bf \\bf \\bf}$. As the masses $m_k$ approach zero, the Coordinate Matrix approaches zero, indicating that massless particles do not contribute to this geometric description of motion. As the partial derivatives $\\frac{$split{$\\bf$ r}_k}{ split{q^i}}$approach zero (meaning the physical positions are insensitive to changes in certain generalized coordinates), the corresponding components of the Coordinate Matrix will also tend towards zero$.",
+        "interpretation": "The formula defines the components $g_{ij}$ of a metric tensor on the configuration space of a mechanical system. The kinetic energy $T$ of the system can be expressed compactly using this tensor as $T = \\frac{1}{2} \\sum_{i,j} g_{ij} \\dot{q}^i \\dot{q}^j$, where $\\dot{q}^i$ are the generalized velocities. The equation is a sum over all particles $k$ in the system, each with mass $m_k$. The term $\\frac{\\partial \\mathbf{r}_k}{\\partial q^i}$ is a vector representing how the Cartesian position $\\mathbf{r}_k$ of particle $k$ changes with an infinitesimal change in the generalized coordinate $q^i$. The dot product of two such vectors, $\\frac{\\partial \\mathbf{r}_k}{\\partial q^i} \\cdot \\frac{\\partial \\mathbf{r}_k}{\\partial q^j}$, measures the geometric relationship between motions along the $q^i$ and $q^j$ directions in the configuration space, weighted by the mass of each particle contributing to that motion.",
+        "symmetry_origin": "The structure of the coordinate matrix is a consequence of expressing the kinetic energy, a scalar invariant, in a new coordinate system. The kinetic energy $T = \\sum_k \\frac{1}{2} m_k \\dot{\\mathbf{r}}_k^2$ is invariant under rotations and translations of the coordinate system (Galilean invariance). When re-expressed in generalized coordinates $q^i$ using the chain rule $\\dot{\\mathbf{r}}_k = \\sum_i \\frac{\\partial \\mathbf{r}_k}{\\partial q^i} \\dot{q}^i$, this invariance is preserved. The symmetry of the matrix, $g_{ij} = g_{ji}$, is a direct result of the commutativity of the scalar dot product, since $\\mathbf{a} \\cdot \\mathbf{b} = \\mathbf{b} \\cdot \\mathbf{a}$.",
+        "limits_and_boundary": "1. For a single particle of mass $m$ where the generalized coordinates are its own Cartesian coordinates ($q^i = x_i$), the partial derivative $\\frac{\\partial \\mathbf{r}}{\\partial x_i}$ is the unit vector $\\hat{\\mathbf{e}}_i$. The dot product becomes $\\hat{\\mathbf{e}}_i \\cdot \\hat{\\mathbf{e}}_j = \\delta_{ij}$, so the matrix simplifies to $g_{ij} = m \\delta_{ij}$.\n2. In the limit that all particle masses approach zero ($m_k \\to 0$), all components of the matrix go to zero, $g_{ij} \\to 0$, reflecting that a massless system has no kinetic energy in this classical formulation.\n3. If a generalized coordinate $q^i$ does not affect the position of any particle (i.e., $\\frac{\\partial \\mathbf{r}_k}{\\partial q^i} = 0$ for all $k$), then all components $g_{ij}$ involving that index $i$ will be zero, indicating that this coordinate is decoupled from the system's kinetic energy.",
         "status": "platinum",
-        "conceptual_definition": "The Coordinate Matrix, denoted by $g_{ij}$, is a fundamental object in differential geometry and theoretical physics, particularly in the formulation of classical and quantum mechanics in generalized coordinates. It quantifies how changes in generalized coordinates affect the squared infinitesimal displacement in physical space. In essence, it relates the metric tensor of the configuration space to the mass distribution and the mapping from generalized coordinates to physical space coordinates. It is crucial for defining kinetic energy in arbitrary coordinate systems and for understanding the geometry of spacetime in general relativity.",
-        "intuitive_summary": "The Coordinate Matrix describes how the motion of point masses in physical space is distorted when viewed through the lens of generalized coordinates.",
+        "conceptual_definition": "The coordinate matrix, also known as the mass matrix or kinetic energy metric, is a symmetric rank-2 tensor whose components $g_{ij}$ define the kinetic energy of a mechanical system in terms of generalized coordinates. It functions as the metric tensor for the system's configuration space, induced by the kinetic energy.",
+        "intuitive_summary": "It is a mass-weighted metric that determines a system's kinetic energy for a given set of generalized velocities.",
         "subcomponents": [
             "rest-mass-of-particle-one-377b1a53",
             "generalized-coordinate-qi-ba70a624",
@@ -1001,108 +965,96 @@
     },
     "the-heisenberg-cut-4e0004ea": {
         "title": "The Heisenberg Cut",
-        "equation": "|\\Psi_{total}\\rangle = |\\psi_{sys}\\rangle \\otimes |\\phi_{env}\\rangle \\to |a_n\\rangle",
+        "equation": "\\left( \\sum_n c_n |s_n\\rangle \\right) \\otimes |A_0\\rangle \\xrightarrow{\\text{interaction}} \\sum_n c_n \\left( |s_n\\rangle \\otimes |A_n\\rangle \\right) \\xrightarrow{\\text{collapse}} |s_k\\rangle \\otimes |A_k\\rangle",
         "semantic_variables": {
-            "|\\Psi_{total}\\rangle": {
-                "name": "Total Quantum State",
-                "type": "variable",
+            "|s_n\\rangle": {
+                "name": "System Eigenstate",
+                "type": "state vector",
                 "unit": "dimensionless",
-                "description": "Represents the complete quantum state of the combined system and its environment in Hilbert space. It is a vector in a composite Hilbert space."
+                "description": "The n-th eigenstate of the observable being measured on the quantum system S."
             },
-            "|\\psi_{sys}\\rangle": {
-                "name": "System Quantum State",
+            "c_n": {
+                "name": "Probability Amplitude",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Represents the quantum state of the system of interest before or during interaction with the environment. It is a vector in the system's Hilbert space."
+                "description": "A complex number whose squared modulus, $|c_n|^2$, gives the probability of measuring the system in the state $|s_n\\rangle$."
             },
-            "|\\phi_{env}\\rangle": {
-                "name": "Environment Quantum State",
-                "type": "variable",
+            "|A_0\\rangle": {
+                "name": "Initial Apparatus State",
+                "type": "state vector",
                 "unit": "dimensionless",
-                "description": "Represents the quantum state of the environment (e.g., measuring apparatus, vacuum, thermal bath) with which the system interacts. It is a vector in the environment's Hilbert space."
+                "description": "The initial 'ready' state of the measurement apparatus A before it interacts with the system."
+            },
+            "|A_n\\rangle": {
+                "name": "Apparatus Pointer State",
+                "type": "state vector",
+                "unit": "dimensionless",
+                "description": "The state of the apparatus that corresponds to, and indicates, that the system is in the state $|s_n\\rangle$."
+            },
+            "|s_k\\rangle \\otimes |A_k\\rangle": {
+                "name": "Post-Collapse State",
+                "type": "state vector",
+                "unit": "dimensionless",
+                "description": "The single, definite state of the combined system-apparatus after the wave function collapse, where k is a specific outcome."
             },
             "\\otimes": {
-                "name": "Tensor Product Operator",
+                "name": "Tensor Product",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "The mathematical operation used to combine the Hilbert spaces of the system and the environment to form the composite Hilbert space of the total system."
+                "description": "The operator that combines the Hilbert spaces of the system and the apparatus to form the composite Hilbert space."
             },
-            "\\to": {
-                "name": "Evolution or Measurement Process",
-                "type": "constant",
+            "\\sum_n": {
+                "name": "Summation over States",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "Represents the dynamical evolution of the combined state or, more commonly in measurement contexts, the effective 'collapse' or reduction of the quantum state due to interaction or observation, leading to a definite outcome for the system."
+                "description": "A sum over all possible outcome states indexed by n."
             },
-            "|a_n\\rangle": {
-                "name": "System Outcome State",
-                "type": "variable",
+            "\\xrightarrow{\\text{...}}": {
+                "name": "Process Arrow",
+                "type": "symbol",
                 "unit": "dimensionless",
-                "description": "Represents a definite state or outcome for the system after the interaction or measurement process. These states typically form a basis (e.g., an eigenbasis) corresponding to observable quantities."
-            },
-            "\\phi": {
-                "name": "Azimuth Angle / Scalar Potential",
-                "type": "variable",
-                "unit": "rad or V",
-                "description": "The horizontal coordinate angle, or electrostatic scalar potential."
+                "description": "Represents a dynamical process or transition, such as unitary interaction or non-unitary collapse."
             }
         },
-        "interpretation": "The equation $|\\Psi_{total}\\rangle = |\\psi_{sys}\\rangle \\otimes |\\phi_{env}\\rangle \\to |a_n\\rangle$ represents a process rather than a static relationship. Initially, the total quantum state $|\\Psi_{total}\\rangle$ is a product state (or generally, an entangled state) of a system $|\\psi_{sys}\\rangle$ and its environment $|\\phi_{env}\\rangle$. The environment can be anything from a measuring device to the wider universe. The interaction or measurement, indicated by the arrow \\to , effectively isolates the system from the environment, leading to a state where the system exhibits definite properties $|a_n\\rangle$. This is a common picture in discussions of quantum measurement and decoherence. The state $|a_n\\rangle$ represents one of the possible outcomes of the measurement performed on $|\\psi_{sys}\\rangle$, where the probabilities of obtaining these outcomes are determined by the initial state $|\\Psi_{total}\\rangle$. The 'cut' is the conceptual line drawn between what is considered 'quantum' (the system) and what is considered 'classical' (the observer or the measuring apparatus that forces a definite outcome).",
-        "symmetry_origin": "The concept of the Heisenberg Cut arises from the need to reconcile the deterministic evolution of quantum states described by the Schrödinger equation with the probabilistic outcomes observed in measurements. It is deeply connected to the problem of quantum measurement and the transition from quantum superposition to classical definiteness. While there isn't a fundamental symmetry or conservation law directly *deriving* the cut, the framework of quantum field theory and decoherence provides a more rigorous approach to understanding how this apparent boundary emerges from the interactions between quantum systems and their environments, without invoking an ad-hoc collapse postulate.",
-        "limits_and_boundary": "This formula is more of a conceptual framework than an equation with explicit limiting behavior based on variable magnitudes. However, in the context of decoherence, the 'cut' becomes less distinct as the entanglement between the system and the environment increases. As the environment becomes infinitely large or perfectly correlated with the system (approaching maximum entanglement), the distinction between system and environment blurs. Conversely, in an idealized scenario where the system is perfectly isolated from any environment (an 'infinitely large' cut), its quantum superposition states would persist indefinitely without collapsing to definite outcomes.",
+        "interpretation": "This sequence represents the von Neumann measurement model. Initially, a quantum system is in a superposition of states $|s_n\\rangle$ with amplitudes $c_n$, and a measuring apparatus is in a ready state $|A_0\\rangle$. The first step is a unitary interaction that entangles the system and apparatus, creating a larger superposition where each system state $|s_n\\rangle$ is perfectly correlated with a unique apparatus 'pointer' state $|A_n\\rangle$. The second step, labeled 'collapse', is a non-unitary, probabilistic projection onto one specific term of the sum, $|s_k\\rangle \\otimes |A_k\\rangle$. This is the 'measurement update' or 'wave function collapse' postulate. The Heisenberg Cut is the arbitrary decision of where this collapse occurs: is the apparatus $|A\\rangle$ part of the quantum system, or is it the classical device that *causes* the collapse? The location of the cut determines which parts of the world are described by unitary evolution versus probabilistic collapse.",
+        "symmetry_origin": "The concept of the Heisenberg Cut does not arise from a physical symmetry. Instead, it highlights a fundamental conflict between two dynamical principles in quantum mechanics: the continuous, deterministic, unitary evolution of isolated systems (guaranteed by time-translation symmetry and described by the Schrödinger equation), and the discontinuous, probabilistic, non-unitary state reduction that occurs during measurement. Modern approaches like decoherence theory attempt to explain the *appearance* of collapse as an emergent phenomenon from unitary evolution alone when a system interacts with a large environment, thus avoiding the need for a fundamental cut.",
+        "limits_and_boundary": "1. If the cut is placed immediately around the quantum system, one recovers the standard Copenhagen interpretation, where measurement by a classical device causes an instantaneous, irreducible collapse.\n2. If the cut is pushed outward to include the measuring device, then the device itself must be treated quantum mechanically, leading to macroscopic superpositions like Schrödinger's cat, which are not observed.\n3. In the decoherence limit, a system's rapid entanglement with a vast, unobserved environment causes the off-diagonal terms of its reduced density matrix to vanish, making it appear to have collapsed into a classical mixture for all practical purposes (FAPP), effectively smearing out the cut.\n4. In the many-worlds interpretation, there is no cut and no collapse; the second arrow does not exist. All terms in the entangled superposition are realized in separate, branching universes.",
         "status": "platinum",
-        "conceptual_definition": "The Heisenberg Cut, also known as the Schrödinger cut or the quantum-classical boundary, is not a single, universally defined formula but rather a conceptual demarcation in quantum mechanics. The provided LaTeX equation, $|\\Psi_{total}\\rangle = |\\psi_{sys}\\rangle \\otimes |\\phi_{env}\\rangle \\to |a_n\\rangle$, represents a *process* of measurement or interaction. It illustrates how a total quantum state, composed of a system state $|\\psi_{sys}\\rangle$ and an environment state $|\\phi_{env}\\rangle$, can, through an interaction or measurement, effectively reduce to a state representing definite outcomes for the system, denoted by $|a_n\\rangle$. This transition is often interpreted as the emergence of classical properties from a quantum substrate, where the 'cut' is the hypothetical boundary between the quantum system being observed and the classical apparatus or environment performing the observation. The arrow \\to signifies the dynamical evolution or the measurement process, leading to a collapse of the superposition.",
-        "intuitive_summary": "The Heisenberg Cut describes how a combined quantum system and its environment, through interaction or measurement, can appear to collapse into a definite state for the system alone.",
+        "conceptual_definition": "The Heisenberg Cut is the conceptual boundary separating a quantum system, which evolves unitarily according to the Schrödinger equation, from the classical macroscopic world of the observer and their measurement apparatus. This division is invoked to explain the measurement problem, where a quantum superposition appears to collapse into a single definite outcome upon observation.",
+        "intuitive_summary": "It is the imaginary line we draw between the quantum world of possibilities and our classical world of definite results to make sense of measurements.",
         "subcomponents": [
             "eigenstate-labeled-by-eigenvalue-cc7b692c"
         ]
     },
     "work-function-definition-8ce58f6c": {
         "title": "Thermodynamic Definition of Work Function",
-        "equation": "\\Phi = E_{vac} - E_F",
-        "interpretation": "The formula = E_{vac} - E_F defines the work function () as the difference between the energy of an electron in a vacuum just outside the material's surface (_{vac}) and the energy of an electron at the Fermi level (_F) within the material. _{vac} represents the potential energy of an electron that has been completely removed from the material and is at rest in the vacuum. _F is the highest energy level occupied by electrons in the material at absolute zero temperature, representing the most weakly bound electrons. Therefore, is the energy input needed to move an electron from this highest occupied internal state to the vacuum level, overcoming the attractive forces holding it within the solid.",
-        "symmetry_origin": "The work function arises from the electrostatic potential and the Pauli exclusion principle governing electron behavior in solids. Electrons within a metal are delocalized and occupy a band of energy states. The Fermi level represents the boundary of these occupied states. To escape the material, an electron must overcome the attractive potential of the positive ion lattice and the repulsion from other electrons. The work function is related to the surface properties of the material, as the vacuum level (_{vac}) is influenced by surface dipole layers. There isn't a direct symmetry principle that generates this formula, but rather it's a consequence of the energy landscape experienced by electrons at the surface of a conductor.",
-        "limits_and_boundary": "The work function () is always a positive quantity, as it requires energy to remove an electron from the material. If the vacuum level (_{vac}) were equal to the Fermi level (_F), the work function would be zero, implying electrons could escape with no energy input, which is not physically observed for typical solids. As the vacuum level becomes significantly higher than the Fermi level (a larger energy barrier), the work function increases. Conversely, if the vacuum level were hypothetically lower than the Fermi level (which would violate typical material properties), the work function would be negative, implying spontaneous electron emission, not observed under normal thermodynamic conditions.",
+        "equation": "\\Phi = E_{\\mathrm{vac}} - E_F",
+        "interpretation": "The formula $\\Phi = E_{\\mathrm{vac}} - E_F$ defines the work function ($\\Phi$) as the difference between the energy of an electron at rest in a vacuum just outside the material's surface ($E_{\\mathrm{vac}}$) and the chemical potential of electrons within the material, which at zero temperature is the Fermi energy ($E_F$). $E_{\\mathrm{vac}}$ represents the electrostatic potential energy of a stationary electron in vacuum far from the surface on a macroscopic scale, but close enough on a microscopic scale to not be influenced by other fields. $E_F$ is the energy of the highest occupied quantum state in the system at absolute zero. Therefore, $\\Phi$ represents the minimum energy barrier that must be overcome by an electron to escape the attractive forces of the solid, a key parameter in thermionic emission and the photoelectric effect.",
+        "symmetry_origin": "The work function is not derived from a fundamental symmetry in the Lagrangian sense. It is an emergent property arising from the complex many-body interactions (governed by quantum electrodynamics and the Pauli exclusion principle) within a condensed matter system with a boundary. The breaking of translational symmetry at the surface of the material is crucial, as it leads to the formation of a surface dipole layer that contributes significantly to the value of the vacuum level $E_{\\mathrm{vac}}$ and thus the work function.",
+        "limits_and_boundary": "1. For stable materials, $\\Phi > 0$, as energy is required to remove an electron against the electrostatic attraction of the solid.\n2. The value of $\\Phi$ is highly sensitive to surface conditions, including crystallographic orientation, surface reconstruction, and the presence of adsorbates or contaminants, which can alter the surface dipole.\n3. In the limit of absolute zero temperature ($T \\to 0$), the Fermi-Dirac distribution becomes a step function, and the Fermi level $E_F$ is sharply defined as the highest occupied energy level.",
         "semantic_variables": {
-            "\\pi": {
+            "\\Phi": {
                 "name": "Work Function",
                 "type": "variable",
                 "unit": "J",
-                "description": "The minimum energy required to remove an electron from the surface of a solid into vacuum. It is typically measured in electronvolts (eV), where 1 eV = 1.602 x 10^-19 J."
+                "description": "The minimum energy required to remove an electron from a solid surface to a point in vacuum. It is often expressed in electronvolts (eV), where 1 eV ≈ 1.602 x 10⁻¹⁹ J."
             },
-            "E_{vac}": {
+            "E_{\\mathrm{vac}}": {
                 "name": "Vacuum Energy Level",
                 "type": "variable",
                 "unit": "J",
-                "description": "The energy of an electron at rest in the vacuum just outside the surface of the material. This represents the potential energy state an electron occupies after it has escaped the solid."
+                "description": "The energy of a stationary electron in the vacuum just outside the material surface."
             },
             "E_F": {
                 "name": "Fermi Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The energy of the highest occupied electron state in a material at absolute zero temperature (0 K). For metals, it represents the energy of the most energetic electrons that are still bound within the material."
-            },
-            "\\Phi": {
-                "name": "Magnetic Flux / Potential Function",
-                "type": "variable",
-                "unit": "Wb or V",
-                "description": "Total magnetic field lines through a surface, or general field potential."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
+                "description": "The chemical potential of the electrons in the solid, which at absolute zero corresponds to the energy of the highest occupied quantum state."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The thermodynamic definition of the work function, denoted by , quantifies the minimum energy required to remove an electron from the surface of a solid material into vacuum. It represents the energy difference between an electron at rest in the vacuum just outside the material's surface and an electron at the Fermi level within the material. This quantity is crucial in understanding phenomena like the photoelectric effect and thermionic emission.",
-        "intuitive_summary": "The work function is the energy cost to liberate an electron from the surface of a material into empty space."
+        "conceptual_definition": "The work function is the minimum thermodynamic work required to remove an electron from a solid to a point in the vacuum immediately outside the surface. It is defined as the energy difference between the vacuum energy level and the Fermi level of the material.",
+        "intuitive_summary": "The work function is the energy cost to liberate the most weakly-bound electron from the surface of a material."
     },
     "empirical-adequacy-criterion-ident-43718638": {
         "title": "Empirical Adequacy (van Fraassen)",
@@ -1622,7 +1574,8 @@
         "status": "published",
         "parent_formula_id": "operator-transfer-2d8d6a65",
         "subcomponents": [],
-        "id": "generalized-momentum-definition-2f3dc5b8"
+        "id": "generalized-momentum-definition-2f3dc5b8",
+        "intuitive_summary": ""
     },
     "poisson-equation-for-gravitational-potential-8481dc9c": {
         "title": "Poisson Equation for Gravitational Potential",
@@ -1664,7 +1617,8 @@
         "status": "published",
         "parent_formula_id": "lane-emden-equation-stellar-basis-2e0cf25c",
         "subcomponents": [],
-        "id": "poisson-equation-for-gravitational-potential-8481dc9c"
+        "id": "poisson-equation-for-gravitational-potential-8481dc9c",
+        "intuitive_summary": ""
     },
     "electromagnetic-interaction-action-1e2a7ae7": {
         "title": "Electromagnetic Interaction Action",
@@ -1706,7 +1660,8 @@
         "status": "published",
         "parent_formula_id": "interaction-action-electromagnetism",
         "subcomponents": [],
-        "id": "electromagnetic-interaction-action-1e2a7ae7"
+        "id": "electromagnetic-interaction-action-1e2a7ae7",
+        "intuitive_summary": ""
     },
     "elastic-potential-energy-of-a-spring-433023d0": {
         "title": "Elastic Potential Energy of a Spring",
@@ -1742,7 +1697,8 @@
         "status": "published",
         "parent_formula_id": "equation-motion-coupled-oscillator-2",
         "subcomponents": [],
-        "id": "elastic-potential-energy-of-a-spring-433023d0"
+        "id": "elastic-potential-energy-of-a-spring-433023d0",
+        "intuitive_summary": ""
     },
     "magnetic-field-from-vector-potential-bd05070a": {
         "title": "Magnetic Field from Vector Potential",
@@ -1778,7 +1734,8 @@
         "status": "published",
         "parent_formula_id": "4d-connection-7bf3a5f2",
         "subcomponents": [],
-        "id": "magnetic-field-from-vector-potential-bd05070a"
+        "id": "magnetic-field-from-vector-potential-bd05070a",
+        "intuitive_summary": ""
     },
     "electromagnetic-four-potential-definition-9a453053": {
         "title": "Electromagnetic Four-Potential Definition",
@@ -1820,7 +1777,8 @@
         "status": "published",
         "parent_formula_id": "relativistic-link-70dd6f23",
         "subcomponents": [],
-        "id": "electromagnetic-four-potential-definition-9a453053"
+        "id": "electromagnetic-four-potential-definition-9a453053",
+        "intuitive_summary": ""
     },
     "z-coordinate-scale-factor-in-cylindrical-coordinates-3a61c065": {
         "title": "Z-Coordinate Scale Factor in Cylindrical Coordinates",
@@ -1844,7 +1802,8 @@
         "status": "published",
         "parent_formula_id": "scale-factor-s-cylindrical",
         "subcomponents": [],
-        "id": "z-coordinate-scale-factor-in-cylindrical-coordinates-3a61c065"
+        "id": "z-coordinate-scale-factor-in-cylindrical-coordinates-3a61c065",
+        "intuitive_summary": ""
     },
     "definition-operator-symbol-94ef1775": {
         "title": "Definition Operator Symbol",
@@ -1874,7 +1833,8 @@
         "status": "published",
         "parent_formula_id": "dual-mapping-a390133b",
         "subcomponents": [],
-        "id": "definition-operator-symbol-94ef1775"
+        "id": "definition-operator-symbol-94ef1775",
+        "intuitive_summary": ""
     },
     "coordinate-time-to-proper-time-ratio-b4e30e68": {
         "title": "Coordinate Time to Proper Time Ratio",
@@ -1904,7 +1864,8 @@
         "status": "published",
         "parent_formula_id": "time-component-four-velocity",
         "subcomponents": [],
-        "id": "coordinate-time-to-proper-time-ratio-b4e30e68"
+        "id": "coordinate-time-to-proper-time-ratio-b4e30e68",
+        "intuitive_summary": ""
     },
     "one-third-negative-elementary-charge-03f82a6a": {
         "title": "One-Third Negative Elementary Charge",
@@ -1928,7 +1889,8 @@
         "status": "published",
         "parent_formula_id": "primary-matter-880dc441",
         "subcomponents": [],
-        "id": "one-third-negative-elementary-charge-03f82a6a"
+        "id": "one-third-negative-elementary-charge-03f82a6a",
+        "intuitive_summary": ""
     },
     "lorentz-transformation-matrix-component-14d8786c": {
         "title": "Lorentz Transformation Matrix Component",
@@ -1964,7 +1926,8 @@
         "status": "published",
         "parent_formula_id": "special-relativity-qft-identity-1-389479bb-56f81ae7",
         "subcomponents": [],
-        "id": "lorentz-transformation-matrix-component-14d8786c"
+        "id": "lorentz-transformation-matrix-component-14d8786c",
+        "intuitive_summary": ""
     },
     "magnetic-field-strength-in-medium-1-2f213ecc": {
         "title": "Magnetic Field Strength in Medium 1",
@@ -1988,24 +1951,26 @@
         "status": "published",
         "parent_formula_id": "parallel-magnetic-field-continuity",
         "subcomponents": [],
-        "id": "magnetic-field-strength-in-medium-1-2f213ecc"
+        "id": "magnetic-field-strength-in-medium-1-2f213ecc",
+        "intuitive_summary": ""
     },
     "numerical-factor-for-critical-density-6c2e3e2e": {
-        "title": "Numerical Factor for Critical Density",
+        "title": "Numerical Factor in Critical Density Formula",
         "description": "This represents a fundamental numerical constant, specifically the fraction one-sixth, which arises in various physical contexts, including cosmological models.",
-        "conceptual_definition": "In physics, a numerical constant like 1/6 often emerges from the normalization of physical laws or the geometry of a system. It is a dimensionless quantity that scales other physical parameters, ensuring consistency in units and magnitudes. In the 'Old Star Problem' context, it is part of the proportionality constant relating the critical density to fundamental constants and time.",
-        "interpretation": "The numerical factor of 1/6, when considered in isolation, does not possess a direct physical interpretation beyond its mathematical value. However, its significance becomes apparent when embedded within a larger physical equation, such as the critical density formula in cosmology. Here, it acts as a dimensionless scaling factor that, in conjunction with other fundamental constants like pi and G, ensures the correct magnitude and units for the critical density. Its presence is a result of the specific mathematical derivation and physical assumptions underlying the model, often stemming from geometric considerations or the integration of differential equations.",
-        "limits_and_boundary": "As a pure numerical constant, 1/6 has no inherent physical limits, asymptotic behavior, or boundary conditions. Its value is fixed and independent of any physical parameters or conditions.",
-        "symmetry_origin": "The constant 1/6 itself does not directly represent a symmetry or conservation law. However, its appearance in the critical density formula for the 'Old Star Problem' likely stems from the underlying symmetries of spacetime (e.g., homogeneity and isotropy assumed in cosmological models) and the mathematical structure of general relativity, which dictate the form of the Friedmann equations from which such constants emerge.",
+        "conceptual_definition": "A dimensionless numerical constant that appears in the expression for the critical density of a matter-dominated Friedmann universe expressed in terms of its age, $\\rho_c = (6\\pi G t^2)^{-1}$. It arises from the specific dynamics of cosmic expansion in such a model.",
+        "interpretation": "The numerical factor of $\\frac{1}{6}$ is not a fundamental constant but rather a derived coefficient specific to a particular cosmological context. It appears in the formula for the critical density of a matter-dominated, spatially flat universe, $\\rho_c = \\frac{1}{6\\pi G t^2}$, where $t$ is the age of the universe. This expression is derived by combining the standard definition of critical density, $\\rho_c = \\frac{3H^2}{8\\pi G}$, with the Hubble parameter's time evolution in this model, $H = \\frac{2}{3t}$. The calculation is $\\frac{3}{8\\pi G} \\left(\\frac{2}{3t}\\right)^2 = \\frac{3 \\cdot 4}{8\\pi G \\cdot 9t^2} = \\frac{12}{72\\pi G t^2} = \\frac{1}{6\\pi G t^2}$, revealing the origin of the $\\frac{1}{6}$ factor.",
+        "limits_and_boundary": "1. This factor is specific to a spatially flat ($k=0$), matter-dominated ($\\Omega_m=1, \\Omega_\\Lambda=0, \\Omega_r=0$) universe. In a radiation-dominated universe, where $H = \\frac{1}{2t}$, the corresponding factor in the expression $\\rho_c = \\frac{3}{32\\pi G t^2}$ is different.\n2. As a pure number, its value is constant and does not change under any physical conditions; it is a fixed feature of the mathematical model.",
+        "symmetry_origin": "The appearance of this factor is a consequence of the symmetries assumed in the Friedmann-Lemaître-Robertson-Walker (FLRW) cosmological model, specifically the homogeneity and isotropy of space (the Cosmological Principle). These symmetries simplify Einstein's field equations to the Friedmann equations, whose solution for a matter-dominated era dictates the specific relationship between $H$ and $t$, leading to this numerical coefficient.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "cosmological-constants",
         "semantic_variables": {},
         "equation": "\\frac{1}{6}",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "the-old-star-problem-dc5b2723",
         "subcomponents": [],
-        "id": "numerical-factor-for-critical-density-6c2e3e2e"
+        "id": "numerical-factor-for-critical-density-6c2e3e2e",
+        "intuitive_summary": "This factor is a pure number that scales the relationship between the universe's age and the density required for a flat geometry in a matter-only cosmos."
     },
     "stress-energy-tensor-mixed-component-symmetry-b35fd03d": {
         "title": "Stress-Energy Tensor Mixed Component Symmetry",
@@ -2047,7 +2012,8 @@
         "status": "published",
         "parent_formula_id": "-d9f00471",
         "subcomponents": [],
-        "id": "stress-energy-tensor-mixed-component-symmetry-b35fd03d"
+        "id": "stress-energy-tensor-mixed-component-symmetry-b35fd03d",
+        "intuitive_summary": ""
     },
     "inverse-permeability-of-free-space-2c9e9a5c": {
         "title": "Inverse Permeability of Free Space",
@@ -2071,7 +2037,8 @@
         "status": "published",
         "parent_formula_id": "-d9f00471",
         "subcomponents": [],
-        "id": "inverse-permeability-of-free-space-2c9e9a5c"
+        "id": "inverse-permeability-of-free-space-2c9e9a5c",
+        "intuitive_summary": ""
     },
     "stress-energy-tensor-component-t10-91b97980": {
         "title": "Stress-Energy Tensor Component T^10",
@@ -2107,7 +2074,8 @@
         "status": "published",
         "parent_formula_id": "symmetry-of-the-stress-energy-tensor",
         "subcomponents": [],
-        "id": "stress-energy-tensor-component-t10-91b97980"
+        "id": "stress-energy-tensor-component-t10-91b97980",
+        "intuitive_summary": ""
     },
     "stopping-potential-8a21f66e": {
         "title": "Stopping Potential",
@@ -2131,7 +2099,8 @@
         "status": "published",
         "parent_formula_id": "stopping-potential-f07c2547",
         "subcomponents": [],
-        "id": "stopping-potential-8a21f66e"
+        "id": "stopping-potential-8a21f66e",
+        "intuitive_summary": ""
     },
     "boltzmanns-entropy-formula-a6351fd5": {
         "title": "Boltzmann's Entropy Formula",
@@ -2167,7 +2136,8 @@
         "status": "published",
         "parent_formula_id": "zero-entropy-limit",
         "subcomponents": [],
-        "id": "boltzmanns-entropy-formula-a6351fd5"
+        "id": "boltzmanns-entropy-formula-a6351fd5",
+        "intuitive_summary": ""
     },
     "location-of-stable-minimum-in-mexican-hat-potential-47672d36": {
         "title": "Location of Stable Minimum in Mexican Hat Potential",
@@ -2203,7 +2173,8 @@
         "status": "published",
         "parent_formula_id": "mexican-hat-potential-57e9e519",
         "subcomponents": [],
-        "id": "location-of-stable-minimum-in-mexican-hat-potential-47672d36"
+        "id": "location-of-stable-minimum-in-mexican-hat-potential-47672d36",
+        "intuitive_summary": ""
     },
     "cardinality-of-combined-theoretical-and-evidential-states-f91b0d9e": {
         "title": "Cardinality of Combined Theoretical and Evidential States",
@@ -2251,7 +2222,8 @@
         "status": "published",
         "parent_formula_id": "success-metric-identity-1-c2a150ec-12950023",
         "subcomponents": [],
-        "id": "cardinality-of-combined-theoretical-and-evidential-states-f91b0d9e"
+        "id": "cardinality-of-combined-theoretical-and-evidential-states-f91b0d9e",
+        "intuitive_summary": ""
     },
     "work-from-heat-transfer-efficiency-b44999ad": {
         "title": "Work from Heat Transfer Efficiency",
@@ -2293,7 +2265,8 @@
         "status": "published",
         "parent_formula_id": "end-of-time-8574b90b",
         "subcomponents": [],
-        "id": "work-from-heat-transfer-efficiency-b44999ad"
+        "id": "work-from-heat-transfer-efficiency-b44999ad",
+        "intuitive_summary": ""
     },
     "theory-utility-metric-90964c23": {
         "title": "Theory Utility Metric",
@@ -2335,7 +2308,8 @@
         "status": "published",
         "parent_formula_id": "input-output-link-90964c23",
         "subcomponents": [],
-        "id": "theory-utility-metric-90964c23"
+        "id": "theory-utility-metric-90964c23",
+        "intuitive_summary": ""
     },
     "momentum-transfer-definition-ce408e2c": {
         "title": "Momentum Transfer Definition",
@@ -2371,7 +2345,8 @@
         "status": "published",
         "parent_formula_id": "momentum-transfer-goes-zero",
         "subcomponents": [],
-        "id": "momentum-transfer-definition-ce408e2c"
+        "id": "momentum-transfer-definition-ce408e2c",
+        "intuitive_summary": ""
     },
     "monopole-electrostatic-potential-85e8f815": {
         "title": "Monopole Electrostatic Potential",
@@ -2407,7 +2382,8 @@
         "status": "published",
         "parent_formula_id": "angular-basis-de903d3a",
         "subcomponents": [],
-        "id": "monopole-electrostatic-potential-85e8f815"
+        "id": "monopole-electrostatic-potential-85e8f815",
+        "intuitive_summary": ""
     },
     "scale-factor-ratio-at-equality-42b50eb1": {
         "title": "Scale Factor Ratio at Equality",
@@ -2437,37 +2413,39 @@
         "status": "published",
         "parent_formula_id": "causal-imprint-495e51c8",
         "subcomponents": [],
-        "id": "scale-factor-ratio-at-equality-42b50eb1"
+        "id": "scale-factor-ratio-at-equality-42b50eb1",
+        "intuitive_summary": ""
     },
     "equality-of-calabi-yau-hodge-numbers-592c88ee": {
         "title": "Equality of Calabi-Yau Hodge Numbers",
         "description": "This equation states the equality of two specific Hodge numbers, h^{1,1} and h^{2,1}, which characterize the geometry of a Calabi-Yau manifold. This condition has profound implications for the number of chiral generations in string theory compactifications.",
-        "conceptual_definition": "In the context of Calabi-Yau manifolds, h^{1,1} represents the number of independent (deformable) Kähler forms, corresponding to the number of Kähler moduli. h^{2,1} represents the number of independent complex structure deformations, corresponding to the number of complex structure moduli. These numbers are topological invariants that describe the manifold's geometry and topology.",
-        "interpretation": "When h^{1,1} = h^{2,1}, the absolute difference |h^{1,1} - h^{2,1}| becomes zero. According to the 'Generation Counting Law' (N_{gen} = \\frac{1}{2}$|$\\chi$| = |h^{1,1} - h^{2,1}|), this implies that the number of chiral fermion generations (N_{gen}) is zero. This scenario suggests a compactification that does not yield chiral matter, or it can be interpreted as a self-mirror Calabi-Yau manifold where the manifold is isomorphic to its mirror. Such a condition is crucial for understanding the particle content arising from string theory compactifications.",
-        "limits_and_boundary": "This equality represents a specific topological condition for a Calabi-Yau manifold. It implies that the Euler characteristic $\\chi$ = 2(h^{1,1} - h^{2,1}) vanishes, meaning the manifold has a vanishing Euler characteristic. This condition is often associated with self-mirror Calabi-Yau manifolds or specific compactification scenarios where chiral matter is absent.",
-        "symmetry_origin": "The primary underlying concept is mirror symmetry in string theory. Mirror symmetry postulates that two distinct Calabi-Yau manifolds can lead to equivalent physics, with the roles of complex structure moduli and Kähler moduli interchanged. If h^{1,1} = h^{2,1}, the manifold is self-mirror, meaning it is topologically equivalent to its own mirror dual.",
+        "conceptual_definition": "In the context of a Calabi-Yau manifold, this equality states that the number of independent Kähler moduli, $h^{1,1}$, is equal to the number of independent complex structure moduli, $h^{2,1}$. These Hodge numbers are topological invariants that characterize the manifold's geometry.",
+        "interpretation": "When $h^{1,1} = h^{2,1}$, the Euler characteristic of the manifold, given by $\\chi = 2(h^{1,1} - h^{2,1})$, is zero. In string theory compactifications on such a manifold, the number of net chiral fermion generations, given by $N_{\\mathrm{gen}} = \\frac{1}{2}|\\chi|$, is also zero. This scenario implies a compactification that does not yield chiral matter, or it can be interpreted as a 'self-mirror' Calabi-Yau manifold, which is isomorphic to its own mirror dual. This condition is crucial for understanding the particle content arising from string theory.",
+        "limits_and_boundary": "1. This equality is a specific topological condition, not a limit. It implies that the Euler characteristic $\\chi = 2(h^{1,1} - h^{2,1})$ vanishes.\n2. In the context of string compactification, this leads to a model with zero net generations of chiral fermions, $N_{\\mathrm{gen}} = 0$.\n3. Such manifolds are often associated with self-mirror symmetry, where the manifold is its own mirror partner.",
+        "symmetry_origin": "The equality of these Hodge numbers is a manifestation of mirror symmetry in string theory. Mirror symmetry postulates that two topologically distinct Calabi-Yau manifolds can give rise to identical physical theories, where the roles of Kähler moduli ($h^{1,1}$) and complex structure moduli ($h^{2,1}$) are interchanged between the two manifolds. A manifold where $h^{1,1} = h^{2,1}$ is potentially 'self-mirror', meaning it is topologically equivalent to its own mirror dual.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "string-theory-compactification",
         "semantic_variables": {
             "h^{1,1}": {
-                "name": "h^{1,1}",
+                "name": "Hodge Number (1,1)",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The Hodge number h^{1,1}, representing the number of independent (deformable) Kähler forms on a Calabi-Yau manifold. It corresponds to the number of Kähler moduli, which are dimensionless parameters describing the size and shape of the manifold. It is a dimensionless integer."
+                "description": "The Hodge number $h^{1,1} = \\dim H^{1,1}(M)$, representing the dimension of the Dolbeault cohomology group of type (1,1). Physically, it counts the number of independent Kähler moduli of the Calabi-Yau manifold."
             },
             "h^{2,1}": {
-                "name": "h^{2,1}",
+                "name": "Hodge Number (2,1)",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The Hodge number h^{2,1}, representing the number of independent complex structure deformations on a Calabi-Yau manifold. It corresponds to the number of complex structure moduli, which are dimensionless parameters describing the complex structure of the manifold. It is a dimensionless integer."
+                "description": "The Hodge number $h^{2,1} = \\dim H^{2,1}(M)$, representing the dimension of the Dolbeault cohomology group of type (2,1). Physically, it counts the number of independent complex structure moduli of the Calabi-Yau manifold."
             }
         },
         "equation": "h^{1,1} = h^{2,1}",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "generation-counting-law-ec040b47",
         "subcomponents": [],
-        "id": "equality-of-calabi-yau-hodge-numbers-592c88ee"
+        "id": "equality-of-calabi-yau-hodge-numbers-592c88ee",
+        "intuitive_summary": "For a self-mirror Calabi-Yau manifold, the number of ways to deform its size and shape is equal to the number of ways to deform its complex structure."
     },
     "su5-antifundamental-tensor-product-decomposition-bca24256": {
         "title": "SU(5) Antifundamental Tensor Product Decomposition",
@@ -2515,7 +2493,8 @@
         "status": "published",
         "parent_formula_id": "antisymmetric-10-d3fd7dcf",
         "subcomponents": [],
-        "id": "su5-antifundamental-tensor-product-decomposition-bca24256"
+        "id": "su5-antifundamental-tensor-product-decomposition-bca24256",
+        "intuitive_summary": ""
     },
     "wavefunction-normalization-condition-76cdde47": {
         "title": "Wavefunction Normalization Condition",
@@ -2557,7 +2536,8 @@
         "status": "published",
         "parent_formula_id": "heisenberg-cut-f3650a62",
         "subcomponents": [],
-        "id": "wavefunction-normalization-condition-76cdde47"
+        "id": "wavefunction-normalization-condition-76cdde47",
+        "intuitive_summary": ""
     },
     "infinitesimal-spacetime-interval-squared-e21aba46": {
         "title": "Infinitesimal Spacetime Interval Squared",
@@ -2581,6 +2561,7 @@
         "status": "published",
         "parent_formula_id": "minkowski-metric-plus-minus-minus-minus",
         "subcomponents": [],
-        "id": "infinitesimal-spacetime-interval-squared-e21aba46"
+        "id": "infinitesimal-spacetime-interval-squared-e21aba46",
+        "intuitive_summary": ""
     }
 }

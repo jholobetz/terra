@@ -133,81 +133,63 @@
     },
     "energy-filter-833cd3a4": {
         "title": "Energy Filter",
-        "equation": "f(E) \\cdot P(E) \\propto \\exp\\left( -\\frac{E}{k_B T} - \\sqrt{\\frac{E_G}{E}} \\right)",
+        "equation": "f(E) P(E) \\propto \\exp\\left( -\\frac{E}{k_B T} - \\sqrt{\\frac{E_G}{E}} \\right)",
         "semantic_variables": {
-            "f(E) \\cdot P(E)": {
-                "name": "Overall Probability",
-                "type": "variable",
+            "f(E)": {
+                "name": "Energy Distribution Function",
+                "type": "function",
+                "unit": "J⁻¹",
+                "description": "The probability distribution function for the energy of the incident particles, typically a Maxwell-Boltzmann distribution proportional to $\\exp(-E/k_B T)$."
+            },
+            "P(E)": {
+                "name": "Transmission Probability",
+                "type": "function",
                 "unit": "dimensionless",
-                "description": "The combined probability of a system with energy E interacting with or passing through the energy filter."
+                "description": "The probability that a particle with energy E will penetrate the potential barrier, often approximated by the Gamow factor $\\exp(-\\sqrt{E_G/E})$."
             },
             "E": {
                 "name": "Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The kinetic or internal energy of the particle or system being considered."
+                "description": "The kinetic energy of the particle or system being considered."
             },
             "k_B": {
                 "name": "Boltzmann Constant",
                 "type": "constant",
-                "unit": "J/K",
-                "description": "A fundamental physical constant relating the average kinetic energy of particles in a gas with the thermodynamic temperature of the gas. It is a measure of energy per degree of freedom per molecule."
+                "unit": "J⋅K⁻¹",
+                "description": "A fundamental physical constant relating the average kinetic energy of particles in a gas with the thermodynamic temperature of the gas."
             },
             "T": {
                 "name": "Absolute Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The thermodynamic temperature of the system, measured in Kelvin. It is a measure of the average kinetic energy of the particles within the system."
+                "description": "The thermodynamic temperature of the system."
             },
             "E_G": {
-                "name": "Characteristic Energy Scale of the Filter",
-                "type": "variable",
+                "name": "Gamow Energy",
+                "type": "constant",
                 "unit": "J",
-                "description": "A parameter representing a characteristic energy associated with the filter's mechanism, such as the height of a potential barrier or a band gap energy. It determines the energy scale at which the filter's transmission properties become significant."
-            },
-            "f": {
-                "name": "Frequency",
-                "type": "variable",
-                "unit": "Hz",
-                "description": "The number of occurrences of a repeating event per unit of time."
-            },
-            "\\propto": {
-                "name": "\\propto Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "description": "A characteristic energy parameter related to the properties of the potential barrier, such as its height and width, and the charges of the interacting particles."
             },
             "\\exp": {
-                "name": "\\exp Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "name": "Exponential Function",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "The mathematical function $e^x$."
             },
-            "k": {
-                "name": "Spring Stiffness (Hooke's Constant)",
-                "type": "variable",
-                "unit": "N/m",
-                "description": "The rigidity of a spring or elastic medium, defining restoring force per unit of displacement: $F = -kx$."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+            "\\propto": {
+                "name": "Proportionality",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Indicates that the two sides of the relation are proportional, differing only by a constant multiplicative factor."
             }
         },
-        "interpretation": "The formula, $f(E) \\cdot P(E) \\propto \\exp\\left( - \\frac{E}{k_B T} - \\sqrt{ \\frac{E_G}{E} } \\right)$, represents the probability of an event occurring at energy $E$. The term $f(E)$ embodies the probability distribution of the incident particles or systems. The term $P(E)$ represents the transmission probability of the energy filter as a function of energy. The exponential factor combines two key dependencies. The term $-\\frac{E}{k_B T}$ typically arises from thermal distributions, where $k_B$ is the Boltzmann constant and $T$ is the absolute temperature. This suggests that at higher temperatures, a wider range of energies might be present or more readily transmitted. The term $-\\sqrt{ \\frac{E_G}{E} }$ represents an energy-dependent barrier or selection mechanism inherent to the filter itself. Here, $E_G$ is a characteristic energy scale of the filter. This term implies that the filter becomes less transparent at very low energies ($E \\to 0$) and more transparent as energy increases, up to a point where other factors (like the thermal term or the overall probability of having that energy) might dominate. The overall expression is thus a product of the availability of energy $E$ (related to $f(E)$) and the filter's ability to pass that energy $E$ (related to $P(E)$).",
-        "symmetry_origin": "This formula often arises in contexts involving statistical mechanics and quantum mechanics, particularly in situations with thermal equilibrium and energy barriers. The exponential form is characteristic of Boltzmann distributions in statistical mechanics, reflecting the probability of a system occupying a certain energy state. The energy-dependent term involving $\\sqrt{E_G/E}$ can stem from various physical models, such as the transmission probability through a potential barrier in quantum mechanics (e.g., in tunneling phenomena or scattering), where the barrier's effectiveness depends on the incident energy relative to a characteristic energy scale.",
-        "limits_and_boundary": "As energy $E \\to 0$, the term $-\\sqrt{ \\frac{E_G}{E} }$ approaches $-\\infty$, causing the overall probability to tend towards zero, indicating that the filter is largely opaque to very low-energy particles. As $E \\to \\infty$, the term $-\\frac{E}{k_B T}$ approaches $-\\infty$, also causing the overall probability to tend towards zero, provided $T$ is finite. This suggests that the filter's transmission, while increasing with energy initially due to the second term, is ultimately limited by the probability of having such high energies or by other high-energy suppression mechanisms not explicitly detailed in this simplified form. A peak in the probability is expected to exist at an intermediate energy where the combined exponential factor is maximized.",
+        "interpretation": "This formula models the probability of an event, such as a nuclear fusion reaction or electron field emission, occurring at a specific energy $E$. The overall probability is a product of two competing factors. The first term, $f(E)$, often represented by the Boltzmann factor $\\exp(-E/k_B T)$, describes the probability of finding a particle with energy $E$ in a system at thermal equilibrium with temperature $T$. This term exponentially suppresses high energies. The second term, $P(E)$, often represented by the Gamow factor $\\exp(-\\sqrt{E_G/E})$, describes the quantum mechanical probability of a particle with energy $E$ tunneling through a potential barrier of characteristic energy $E_G$. This term suppresses low energies. The product of these two opposing exponential functions results in a sharp peak at a specific energy, known as the Gamow peak or energy window, where the event is most likely to occur.",
+        "symmetry_origin": "The Boltzmann factor component arises from the principles of statistical mechanics for a system in thermal equilibrium with a heat bath (a canonical ensemble), which assumes ergodicity and time-reversal symmetry in microscopic dynamics. The tunneling probability component arises from the solution to the time-independent Schrödinger equation, which possesses time-translation symmetry, leading to the conservation of energy for the tunneling particle.",
+        "limits_and_boundary": "1. Low Energy Limit ($E \\to 0$): The tunneling term $\\exp(-\\sqrt{E_G/E})$ dominates and approaches zero. The probability vanishes, indicating the barrier is effectively impenetrable for particles with very low energy.\n2. High Energy Limit ($E \\to \\infty$): The Boltzmann factor $\\exp(-E/k_B T)$ dominates and approaches zero. The probability vanishes, reflecting the statistical rarity of extremely high-energy particles in a thermal distribution.\n3. Peak Energy: A maximum probability exists at a specific energy $E_0 = (E_G k_B^2 T^2 / 4)^{1/3}$, known as the Gamow peak, where the product of the two suppression factors is maximized. This creates an optimal 'energy window' for the process.",
         "status": "platinum",
-        "conceptual_definition": "This formula describes the probability of a particle or system with energy $E$ to pass through an energy filter. It combines two crucial factors: the probability $f(E)$ of the particle having a certain energy, and the transmission probability $P(E)$ of the filter at that energy. The product of these two terms, proportional to $\\exp$ (-$\\frac{E}{k_B T} -$\\sqrt{ \\frac{E_G}{E} }) , dictates the overall likelihood of detection or passage$.",
-        "intuitive_summary": "The formula quantifies the likelihood of an energy-filtered event by balancing the inherent energy distribution of the incident entities with the energy-dependent transparency of the filter.",
+        "conceptual_definition": "Describes the energy-dependent probability for a particle to interact or pass through a barrier, which is a product of the particle's thermal energy distribution and the quantum tunneling probability. This combined probability is proportional to the product of a Boltzmann factor and a Gamow-like tunneling factor.",
+        "intuitive_summary": "The chance of a particle passing through an energy barrier is highest in a specific energy 'window' where the particle is energetic enough to tunnel but not so energetic that it becomes statistically rare.",
         "subcomponents": [
             "the-fundamental-boltzmann-constant-a65e5fea",
             "negative-infinity-mathematical-concept-aad18c0a",
@@ -258,51 +240,69 @@
         "intuitive_summary": "The universe's expansion rate is dictated by its total density compared to a specific critical density."
     },
     "sum-of-slopes-ca3095c9": {
-        "title": "Sum of Slopes",
-        "equation": "df = \\sum \\frac{\\partial f}{\\partial x_i} dx_i",
+        "title": "Total Differential",
+        "equation": "\\mathrm{d}f = \\sum_{i=1}^{n} \\frac{\\partial f}{\\partial x_i} \\mathrm{d}x_i",
         "semantic_variables": {
-            "df": {
-                "name": "Total Differential",
-                "type": "variable",
-                "unit": "N/A (differential)",
-                "description": "Represents the infinitesimal total change in the function $f$ due to infinitesimal changes in its independent variables."
+            "\\mathrm{d}f": {
+                "name": "Total Differential of f",
+                "type": "differential",
+                "unit": "Units of f",
+                "description": "The infinitesimal total change in the function $f$ resulting from infinitesimal changes in all its independent variables."
             },
             "f": {
-                "name": "Function",
-                "type": "variable",
-                "unit": "N/A (dependent on the function's definition)",
-                "description": "The multivariable function whose total differential is being calculated. Its units depend on the physical quantity it represents."
+                "name": "Multivariable Function",
+                "type": "function",
+                "unit": "Depends on the physical quantity represented",
+                "description": "A differentiable scalar function $f(x_1, x_2, \\dots, x_n)$ of $n$ independent variables."
             },
-            "\\frac{\\partial f}{\\partial x_i}": {
-                "name": "Partial Derivative",
-                "type": "operator",
-                "unit": "Units of $ f $ / Units of $ x_i $",
-                "description": "Measures the rate of change of the function $f$ with respect to a specific independent variable $x_i$, while all other independent variables are held constant. This quantifies the sensitivity of $f$ to changes in $x_i$."
+            "i": {
+                "name": "Summation Index",
+                "type": "index",
+                "unit": "dimensionless",
+                "description": "An index that runs from 1 to $n$, enumerating the independent variables."
+            },
+            "n": {
+                "name": "Number of Variables",
+                "type": "parameter",
+                "unit": "dimensionless",
+                "description": "The total number of independent variables the function $f$ depends on."
             },
             "x_i": {
                 "name": "Independent Variable",
                 "type": "variable",
-                "unit": "SI units appropriate to the variable (e.g., m, kg, s, K)",
-                "description": "The $i$-th independent variable upon which the function $f$ depends. Examples include position, mass, time, temperature, etc."
+                "unit": "Depends on the physical quantity represented",
+                "description": "The $i$-th independent variable of the function $f$."
             },
-            "dx_i": {
-                "name": "Infinitesimal Change in Independent Variable",
-                "type": "variable",
-                "unit": "SI units appropriate to the variable (e.g., m, kg, s, K)",
-                "description": "Represents an infinitesimal change or perturbation in the independent variable $x_i$."
+            "\\mathrm{d}x_i": {
+                "name": "Differential of x_i",
+                "type": "differential",
+                "unit": "Units of x_i",
+                "description": "An infinitesimal change in the independent variable $x_i$."
             },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
+            "\\partial": {
+                "name": "Partial Derivative Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "An operator that computes the derivative of a multivariable function with respect to one variable, holding all other variables constant."
+            },
+            "\\mathrm{d}": {
+                "name": "Total Differential Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "An operator that computes the total differential of a function. In differential geometry, this is the exterior derivative."
+            },
+            "\\sum": {
+                "name": "Summation Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "An operator that sums a sequence of terms over a specified index."
             }
         },
-        "interpretation": "In the given formula, $df$ denotes the total infinitesimal change in the function $f$. The symbol $f$ itself represents a function that depends on one or more independent variables, which we denote as $x_1, x_2, \\dots, x_n$. The term $\\frac{ \\partial f}{ \\partial x_i}$ is the partial derivative of $f$ with respect to the $i$-th independent variable, $x_i$. This partial derivative quantifies the sensitivity of the function $f$ to infinitesimal changes in $x_i$, assuming all other independent variables are held constant. For example, if $f$ were the pressure of a gas, $x_1$ could be its volume, and $x_2$ could be its temperature, then \\frac{ \\partial f}{ \\partial x_1} would$represent how much the pressure changes for a small change in volume, keeping temperature constant. The term$dx_i$is the infinitesimal change in the variable$x_i$. This is often referred to as the differential of$x_i$. The summation symbol$\\sum$indicates that we are summing up the contributions from each independent variable. Therefore, the total infinitesimal change$df$ is obtained by summing the product of the partial derivative (rate of change) and the infinitesimal change for each independent variable. This formula is a direct consequence of the definition of differentiability for functions of multiple variables and is also known as the 'total differential' or 'first-order approximation' of the function .",
-        "symmetry_origin": "This formula originates from the definition of differentiability for a function of several variables. For a function $f(x_1, x_2, …, x_n)$, the total differential $df$ is defined as the linear approximation of the change in $f$ resulting from infinitesimal changes $dx_1, dx_2, …, dx_n$in its arguments. This linear approximation is formed by summing the contributions of each partial derivative multiplied by the corresponding change in its argument. This concept is deeply connected to the idea of the tangent plane (or hyperplane in higher dimensions) to the function's graph, where the partial derivatives represent the slopes in the directions of the coordinate axes. The formula is invariant under coordinate transformations that preserve the differentiability of the function.",
-        "limits_and_boundary": "As the infinitesimal changes $dx_i$ approach zero, the total differential $df$ also approaches zero, reflecting that the function $f$ remains nearly constant for infinitesimally small perturbations. If the partial derivatives $\\frac{ \\partial f}{ \\partial x_i}$ become$very large, even small$dx_i$can lead to a significant$df$, indicating a region of rapid change in the function. Conversely, if the partial derivatives are zero, the function$f$is locally constant with respect to those variables, and$df$will be zero even if the$dx_i$are non-zero, provided the partial derivatives are zero for all$i$. In the limit where the$dx_i$ become large, this linear approximation may cease to be accurate, and higher-order terms might become significant.",
+        "interpretation": "The total differential $\\mathrm{d}f$ represents the principal linear part of the change in a function $f$ when its independent variables $x_i$ are changed by infinitesimal amounts $\\mathrm{d}x_i$. Each term in the sum, $(\\partial f / \\partial x_i) \\mathrm{d}x_i$, is the approximate change in $f$ due solely to the change in $x_i$. The partial derivative $\\partial f / \\partial x_i$ acts as a sensitivity factor, quantifying the rate of change of $f$ along the $x_i$ direction. Summing these individual contributions gives the best linear approximation for the total change in the function. In differential geometry, $\\mathrm{d}f$ is an exact 1-form, and this equation represents the action of the exterior derivative $\\mathrm{d}$ on a 0-form (the scalar function $f$).",
+        "symmetry_origin": "This formula is a fundamental definition in differential calculus and is not derived from a physical symmetry via Noether's theorem. Its importance in physics stems from its coordinate-invariant nature when interpreted in the language of differential geometry. The total differential $\\mathrm{d}f$ is a geometric object (a covector or 1-form) that does not depend on the choice of coordinate system used to describe the underlying manifold, making it a powerful tool for formulating physical laws.",
+        "limits_and_boundary": "1. Linear Approximation Limit: This formula provides the exact change in $f$ only for linear functions. For non-linear functions, it is an approximation that becomes exact in the limit as all infinitesimal changes $\\mathrm{d}x_i \\to 0$. The error in the approximation is of the second order or higher in the changes $\\mathrm{d}x_i$.\n2. Non-Differentiable Points: The formula is not valid at points where the function $f$ is not differentiable, as one or more partial derivatives $\\partial f / \\partial x_i$ may not exist or be well-defined.\n3. Stationary Points: At a stationary point (minimum, maximum, or saddle point), all partial derivatives are zero, so $\\partial f / \\partial x_i = 0$ for all $i$. Consequently, $\\mathrm{d}f = 0$, indicating that the function is locally 'flat' to the first order.",
         "status": "platinum",
-        "conceptual_definition": "The formula represents the total differential of a function, $df = \\sum \\frac{\\partial f}{\\partial x_i} dx_i$ This equation quantifies how a function $f$ changes in response to infinitesimal changes in its independent variables $x_i$. It is a fundamental concept in multivariable calculus and has widespread applications in physics, particularly when dealing with systems described by multiple interacting parameters. The term $\\frac{\\partial f}{\\partial x_i}$ is the partial derivative of $f$ with respect to $x_i$, which measures the rate of change of $f$ as only $x_i$ varies, holding all other independent variables constant. The term $dx_i$ represents an infinitesimal change in the variable $x_i$. The sum aggregates the contributions of these infinitesimal changes across all independent variables to give the total infinitesimal change $df.",
+        "conceptual_definition": "The total differential of a multivariable function $f(x_1, \\dots, x_n)$ is the first-order approximation of its total change, expressed as the sum of its partial derivatives with respect to each variable, each weighted by the infinitesimal change in that variable.",
         "intuitive_summary": "The total change in a function is the sum of the changes caused by infinitesimal variations in each of its independent variables, weighted by how sensitive the function is to each variable.",
         "subcomponents": [
             "summation-operator-7231fa80",
@@ -875,19 +875,25 @@
     },
     "electroweak-vacuum-expectation-value": {
         "title": "Electroweak Vacuum Expectation Value",
-        "equation": "v \\approx 246 \\text{ GeV}",
-        "conceptual_definition": "The Electroweak Vacuum Expectation Value, denoted as $v \\approx$ 246 $\\text{ GeV}$ represents the non-zero background field strength of the Higgs field in the vacuum state of the universe. This value is crucial in the Standard Model of particle physics as it breaks the electroweak symmetry, giving mass to the W and Z bosons, as well as fundamental fermions.",
+        "equation": "v = (\\sqrt{2} G_F)^{-1/2}",
+        "conceptual_definition": "The Electroweak Vacuum Expectation Value, denoted as $v$, represents the non-zero background field strength of the Higgs field in the vacuum state of the universe. This value is crucial in the Standard Model of particle physics as it breaks the electroweak symmetry, giving mass to the W and Z bosons, as well as fundamental fermions.",
         "intuitive_summary": "The electroweak vacuum expectation value is the fundamental 'setting' of the Higgs field in empty space, which allows other particles to acquire mass.",
-        "interpretation": "In this formula, the symbol $\\mathbf{v}$ represents the vacuum expectation value (VEV) of the Higgs field. The VEV is a constant value that the Higgs field acquires throughout spacetime in its lowest energy state (the vacuum). The value$246 \\text{ GeV} is an approximate numerical value for this VEV, expressed in units of giga-electronvolts (GeV), a common unit of energy in particle physics. This non-zero VEV is the key to the Brout-Englert-Higgs mechanism, where interactions with this background Higgs field impart mass to fundamental particles. For instance, the masses of the W and Z bosons are directly proportional to $\\mathbf{v}$ , and the masses of fermions are proportional to the product of their Yukawa coupling constant and $\\mathbf{v}$.",
-        "symmetry_origin": "The Electroweak Vacuum Expectation Value arises from the spontaneous symmetry breaking of the electroweak symmetry group $\\text${SU}(2)_L $\\times U$(1)_Y $down to the electromagnetic gauge group U$(1)_{$\\text{em}$}$. This occurs when the Higgs field, which transforms as a doublet under \\text {SU}(2)_L$, acquires a non-zero VEV. The potential energy function of the Higgs field has a 'Mexican hat' shape, and the vacuum state corresponds to the minimum energy along the brim of the hat, leading to a non-zero VEV and the breaking of the symmetry.",
-        "limits_and_boundary": "The concept of limits and boundaries is not directly applicable to the VEV $\\mathbf{v}itself, as it is a fundamental constant determined by the underlying physics of the Higgs potential. However, the mass of particles like the W and Z bosons, which is proportional to \\mathbf{v} , would approach zero if \\mathbf{v}$were zero. This would imply a restoration of the electroweak symmetry, where the W and Z bosons would be massless like the photon. Conversely, a significantly larger $\\mathbf{v}$would lead to more massive gauge bosons and fermions.",
+        "interpretation": "The symbol $v$ represents the vacuum expectation value (VEV) of the Higgs field, defined as the square root of the inverse of the Fermi constant $G_F$ scaled by $\\sqrt{2}$. This constant value is acquired by the Higgs field throughout spacetime in its lowest energy state (the vacuum) and has a numerical value of approximately $v \\approx 246.22$ GeV. This non-zero VEV is the cornerstone of the Brout-Englert-Higgs mechanism, where interactions with this background field impart mass to fundamental particles. For instance, the masses of the W and Z bosons are directly proportional to $v$ ($m_W = gv/2$, $m_Z = \\sqrt{g^2+g'^2}v/2$), and the masses of fermions are proportional to the product of their Yukawa coupling and $v$ ($m_f = y_f v/\\sqrt{2}$).",
+        "symmetry_origin": "The non-zero vacuum expectation value arises from the spontaneous symmetry breaking of the electroweak gauge group $SU(2)_L \\times U(1)_Y$ down to the electromagnetic gauge group $U(1)_{\\text{em}}$. This occurs because the Higgs field's potential energy function has a 'Mexican hat' shape, causing the field, which transforms as a doublet under $SU(2)_L$, to acquire a non-zero value in its minimum energy state, thereby breaking the symmetry.",
+        "limits_and_boundary": "$v \\to 0$: In the limit where the vacuum expectation value approaches zero (or equivalently, $G_F \\to \\infty$), the electroweak symmetry $SU(2)_L \\times U(1)_Y$ would be restored. The W and Z bosons, as well as all fundamental fermions, would become massless. This state is theorized to have existed in the high-temperature environment of the early universe.\n$v \\to \\infty$: A hypothetical limit where $v$ becomes very large (or $G_F \\to 0$) would imply extremely massive W, Z bosons and fermions (for fixed couplings), fundamentally altering the scale and nature of electroweak interactions.",
         "status": "platinum",
         "semantic_variables": {
             "v": {
                 "name": "Electroweak Vacuum Expectation Value",
                 "type": "constant",
                 "unit": "GeV",
-                "description": "The non-zero background value of the Higgs field in the vacuum state. This constant is responsible for spontaneous symmetry breaking in the electroweak theory and is the source of mass for elementary particles."
+                "description": "The non-zero background value of the Higgs field in the vacuum state. It sets the energy scale for electroweak symmetry breaking and is approximately 246.22 GeV."
+            },
+            "G_F": {
+                "name": "Fermi Coupling Constant",
+                "type": "constant",
+                "unit": "GeV^{-2}",
+                "description": "A fundamental constant characterizing the strength of the weak interaction at low energies."
             }
         },
         "subcomponents": [
@@ -1024,7 +1030,8 @@
         "status": "published",
         "parent_formula_id": "free-waves-2fc9d212",
         "subcomponents": [],
-        "id": "dalembertian-operator-definition-92f3b5c6"
+        "id": "dalembertian-operator-definition-92f3b5c6",
+        "intuitive_summary": ""
     },
     "contravariant-four-vector-potential-component-4c0dd892": {
         "title": "Contravariant Four-Vector Potential Component",
@@ -1054,7 +1061,8 @@
         "status": "published",
         "parent_formula_id": "gauge-condition",
         "subcomponents": [],
-        "id": "contravariant-four-vector-potential-component-4c0dd892"
+        "id": "contravariant-four-vector-potential-component-4c0dd892",
+        "intuitive_summary": ""
     },
     "magnetic-dipole-moment-of-a-current-loop-a9a4fda4": {
         "title": "Magnetic Dipole Moment of a Current Loop",
@@ -1090,7 +1098,8 @@
         "status": "published",
         "parent_formula_id": "magnetic-dipole-9e8c1e09",
         "subcomponents": [],
-        "id": "magnetic-dipole-moment-of-a-current-loop-a9a4fda4"
+        "id": "magnetic-dipole-moment-of-a-current-loop-a9a4fda4",
+        "intuitive_summary": ""
     },
     "vanishing-of-a-specific-field-component-2effe546": {
         "title": "Vanishing of a Specific Field Component",
@@ -1114,7 +1123,8 @@
         "status": "published",
         "parent_formula_id": "alpha-nu-zero",
         "subcomponents": [],
-        "id": "vanishing-of-a-specific-field-component-2effe546"
+        "id": "vanishing-of-a-specific-field-component-2effe546",
+        "intuitive_summary": ""
     },
     "squared-covariant-derivative-of-scalar-field-dc3ffab7": {
         "title": "Squared Covariant Derivative of Scalar Field",
@@ -1150,7 +1160,8 @@
         "status": "published",
         "parent_formula_id": "balance-rule-3df1beb9",
         "subcomponents": [],
-        "id": "squared-covariant-derivative-of-scalar-field-dc3ffab7"
+        "id": "squared-covariant-derivative-of-scalar-field-dc3ffab7",
+        "intuitive_summary": ""
     },
     "product-of-electric-charges-fd95bc46": {
         "title": "Product of Electric Charges",
@@ -1180,7 +1191,8 @@
         "status": "published",
         "parent_formula_id": "coulombs-law",
         "subcomponents": [],
-        "id": "product-of-electric-charges-fd95bc46"
+        "id": "product-of-electric-charges-fd95bc46",
+        "intuitive_summary": ""
     },
     "statistical-variance-10e16c6a": {
         "title": "Statistical Variance",
@@ -1204,7 +1216,8 @@
         "status": "published",
         "parent_formula_id": "variance-approaching-zero",
         "subcomponents": [],
-        "id": "statistical-variance-10e16c6a"
+        "id": "statistical-variance-10e16c6a",
+        "intuitive_summary": ""
     },
     "double-exterior-derivative-vanishes-b65733ba": {
         "title": "Double Exterior Derivative Vanishes",
@@ -1234,7 +1247,8 @@
         "status": "published",
         "parent_formula_id": "topological-boundary-identity-eb11cab6",
         "subcomponents": [],
-        "id": "double-exterior-derivative-vanishes-b65733ba"
+        "id": "double-exterior-derivative-vanishes-b65733ba",
+        "intuitive_summary": ""
     },
     "vector-curl-operator-270fc315": {
         "title": "Vector Curl Operator",
@@ -1264,24 +1278,33 @@
         "status": "published",
         "parent_formula_id": "ampere-maxwell-law",
         "subcomponents": [],
-        "id": "vector-curl-operator-270fc315"
+        "id": "vector-curl-operator-270fc315",
+        "intuitive_summary": ""
     },
     "negative-one-millionth-constant-3fc86e89": {
         "title": "Negative One Millionth Constant",
         "description": "This expression represents the specific numerical constant value of negative one millionth, or -10^-6.",
-        "conceptual_definition": "In physics, specific numerical constants often represent fundamental properties, empirical measurements, or derived coefficients. This value signifies a fixed, very small negative quantity, which can appear in various physical contexts, such as material properties or interaction strengths.",
-        "interpretation": "When this value appears in a physical formula, such as for magnetic susceptibility ( $\\chi_m$), it indicates a very weak diamagnetic response. A negative susceptibility means the material is magnetized in the opposite direction to an applied external magnetic field, a characteristic of diamagnetic materials. The magnitude 10^-6 suggests a very subtle effect, typical for many common diamagnetic substances.",
-        "limits_and_boundary": "As a constant, this value has no inherent limits or boundary conditions in itself. Its significance is defined by the context of the physical system it describes. It represents a specific point value rather than a range or asymptotic behavior.",
-        "symmetry_origin": "As a fixed numerical constant, this expression does not inherently possess symmetries or conservation laws. Its origin is typically from empirical measurement or theoretical calculation within a specific physical model.",
+        "conceptual_definition": "A numerical constant representing the value of negative one millionth. In physics, such a dimensionless value often appears as an empirically determined coefficient, for example, as the magnetic susceptibility for a weakly diamagnetic material.",
+        "interpretation": "The equation defines a constant $C$ with the value $-10^{-6}$. While not a fundamental constant of nature, this value is representative of certain dimensionless physical properties. A prominent example is the magnetic susceptibility, $\\chi_m$, for a weakly diamagnetic substance like water ($\\chi_m \\approx -9 \\times 10^{-6}$). In the constitutive relation for magnetization, $\\mathbf{M} = \\chi_m \\mathbf{H}$, a value of $\\chi_m \\approx -10^{-6}$ indicates that the material's induced magnetization $\\mathbf{M}$ is very weak (one part per million) and opposes the direction of the applied magnetic field strength $\\mathbf{H}$.",
+        "limits_and_boundary": "Contextual Limit ($\\chi_m = -1$): Represents perfect diamagnetism, a state where a material completely expels magnetic fields, as seen in superconductors.\nContextual Limit ($\\chi_m = 0$): Represents the vacuum or a material with no magnetic response.\nContextual Value ($-10^{-6}$): Represents a typical weak diamagnetic response, situated between the vacuum limit and the perfect diamagnetism limit.",
+        "symmetry_origin": "As a fixed numerical constant, this expression does not inherently possess symmetries or conservation laws. Its physical significance and any associated symmetries derive from the context of the model in which it appears. For instance, if this value represents magnetic susceptibility, its origin is tied to the electromagnetic gauge invariance underlying the diamagnetic response of matter.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "electromagnetism-magnetism",
-        "semantic_variables": {},
-        "equation": "-10^{-6}",
-        "status": "published",
+        "semantic_variables": {
+            "C": {
+                "name": "Constant Value",
+                "type": "constant",
+                "unit": "Dimensionless",
+                "description": "A representative numerical constant with the value of negative one millionth, often used to describe weak, dimensionless coefficients in physics."
+            }
+        },
+        "equation": "C = -10^{-6}",
+        "status": "platinum",
         "parent_formula_id": "geometric-guiding-ed3c1821",
         "subcomponents": [],
-        "id": "negative-one-millionth-constant-3fc86e89"
+        "id": "negative-one-millionth-constant-3fc86e89",
+        "intuitive_summary": "This is a very small negative number that can represent a weak, opposing response in a physical system, like a material slightly repelling a magnetic field."
     },
     "four-velocity-normalization-condition-2e84b305": {
         "title": "Four-Velocity Normalization Condition",
@@ -1311,7 +1334,8 @@
         "status": "published",
         "parent_formula_id": "focusing-condition-8569465f",
         "subcomponents": [],
-        "id": "four-velocity-normalization-condition-2e84b305"
+        "id": "four-velocity-normalization-condition-2e84b305",
+        "intuitive_summary": ""
     },
     "transformed-contravariant-coordinate-component-9a2d19a5": {
         "title": "Transformed Contravariant Coordinate Component",
@@ -1335,7 +1359,8 @@
         "status": "published",
         "parent_formula_id": "notation-rules-c6441ceb",
         "subcomponents": [],
-        "id": "transformed-contravariant-coordinate-component-9a2d19a5"
+        "id": "transformed-contravariant-coordinate-component-9a2d19a5",
+        "intuitive_summary": ""
     },
     "scalar-field-quartic-self-interaction-term-cdc80c1f": {
         "title": "Scalar Field Quartic Self-Interaction Term",
@@ -1359,7 +1384,8 @@
         "status": "published",
         "parent_formula_id": "free-scalar-field-lagrangian-phi4",
         "subcomponents": [],
-        "id": "scalar-field-quartic-self-interaction-term-cdc80c1f"
+        "id": "scalar-field-quartic-self-interaction-term-cdc80c1f",
+        "intuitive_summary": ""
     },
     "hubble-parameter-definition-99037107": {
         "title": "Hubble Parameter Definition",
@@ -1401,7 +1427,8 @@
         "status": "published",
         "parent_formula_id": "distance-rule-8abbc5f6",
         "subcomponents": [],
-        "id": "hubble-parameter-definition-99037107"
+        "id": "hubble-parameter-definition-99037107",
+        "intuitive_summary": ""
     },
     "second-event-spacetime-coordinates-7498ec9c": {
         "title": "Second Event Spacetime Coordinates",
@@ -1443,7 +1470,8 @@
         "status": "published",
         "parent_formula_id": "minkowski-triangle-law-a8790c05",
         "subcomponents": [],
-        "id": "second-event-spacetime-coordinates-7498ec9c"
+        "id": "second-event-spacetime-coordinates-7498ec9c",
+        "intuitive_summary": ""
     },
     "number-of-failures-bc7e6f1d": {
         "title": "Number of Failures",
@@ -1473,7 +1501,8 @@
         "status": "published",
         "parent_formula_id": "discrete-stats-121dc76f",
         "subcomponents": [],
-        "id": "number-of-failures-bc7e6f1d"
+        "id": "number-of-failures-bc7e6f1d",
+        "intuitive_summary": ""
     },
     "ricci-scalar-density-64940768": {
         "title": "Ricci Scalar Density",
@@ -1509,7 +1538,8 @@
         "status": "published",
         "parent_formula_id": "einstein-field-equations-cosmological-constant",
         "subcomponents": [],
-        "id": "ricci-scalar-density-64940768"
+        "id": "ricci-scalar-density-64940768",
+        "intuitive_summary": ""
     },
     "euler-lagrange-equation-term-1adf63f9": {
         "title": "Euler-Lagrange Equation Term",
@@ -1569,7 +1599,8 @@
         "status": "published",
         "parent_formula_id": "operator-transfer-2d8d6a65",
         "subcomponents": [],
-        "id": "euler-lagrange-equation-term-1adf63f9"
+        "id": "euler-lagrange-equation-term-1adf63f9",
+        "intuitive_summary": ""
     },
     "lagrangian-density-function-537c5937": {
         "title": "Lagrangian Density Function",
@@ -1611,7 +1642,8 @@
         "status": "published",
         "parent_formula_id": "action-in-d-dimensions",
         "subcomponents": [],
-        "id": "lagrangian-density-function-537c5937"
+        "id": "lagrangian-density-function-537c5937",
+        "intuitive_summary": ""
     },
     "newtonian-gravitational-acceleration-5938cbe1": {
         "title": "Newtonian Gravitational Acceleration",
@@ -1653,7 +1685,8 @@
         "status": "published",
         "parent_formula_id": "proper-time-substitute-a9ad2344",
         "subcomponents": [],
-        "id": "newtonian-gravitational-acceleration-5938cbe1"
+        "id": "newtonian-gravitational-acceleration-5938cbe1",
+        "intuitive_summary": ""
     },
     "noether-current-superpotential-term-b60d922a": {
         "title": "Noether Current Superpotential Term",
@@ -1683,7 +1716,8 @@
         "status": "published",
         "parent_formula_id": "noether-current-law-11e84e1e",
         "subcomponents": [],
-        "id": "noether-current-superpotential-term-b60d922a"
+        "id": "noether-current-superpotential-term-b60d922a",
+        "intuitive_summary": ""
     },
     "test-function-definition-in-qft-eefbc4e9": {
         "title": "Test Function Definition in QFT",
@@ -1707,6 +1741,7 @@
         "status": "published",
         "parent_formula_id": "field-operator-acting-on-test-function",
         "subcomponents": [],
-        "id": "test-function-definition-in-qft-eefbc4e9"
+        "id": "test-function-definition-in-qft-eefbc4e9",
+        "intuitive_summary": ""
     }
 }

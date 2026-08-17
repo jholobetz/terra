@@ -1325,58 +1325,58 @@
         "intuitive_summary": "The energy of a phonon is its number of vibrational quanta plus a fundamental ground-state energy, all scaled by its characteristic vibrational frequency."
     },
     "sec-perfect-fluid-pressure-limit-53782061": {
-        "title": "SEC (Fluid Form)",
-        "equation": "REG",
-        "interpretation": "The equation is typically written in terms of a conserved quantity φ per unit mass. The term φ/t represents the local rate of change of φ at a fixed point in space, but the SEC (Fluid Form) focuses on the change experienced by a fluid parcel as it moves. The material derivative, Dφ/Dt, captures this Lagrangian perspective, encompassing both the local rate of change and the change due to the fluid parcel's motion ( ). The term / represents the rate of change of φ due to diffusion or other dissipative processes within the fluid. Finally, / represents the rate of generation or destruction of φ per unit mass due to chemical reactions or other source/sink terms. Thus, the equation states that the total change in φ following a fluid parcel is the sum of changes due to diffusion and sources/sinks.",
-        "symmetry_origin": "This equation originates from the general integral form of the conservation law applied to a control volume that moves with the fluid (Lagrangian perspective). By considering the rate of change of the conserved quantity within this moving volume and relating it to the flux across its boundaries, one arrives at the differential form. It reflects the fundamental principle that a conserved quantity cannot be created or destroyed spontaneously; its change is accounted for by transport and local sources/sinks.",
-        "limits_and_boundary": "In the limit where there are no sources or sinks (/ = 0) and no diffusive effects (/ = 0), the equation simplifies to Dφ/Dt = 0, meaning the quantity φ is conserved along the fluid streamlines. As diffusion becomes dominant (/ ≠ 0, / = 0), the quantity φ will tend to smooth out over space. If there are strong sources or sinks and negligible diffusion, the local generation or destruction rate will dominate the change in φ.",
+        "title": "General Transport Equation (Fluid Dynamics)",
+        "equation": "\\rho \\frac{\\mathrm{D}\\phi}{\\mathrm{D}t} = \\nabla \\cdot (\\Gamma \\nabla \\phi) + S_\\phi",
+        "interpretation": "This equation describes the change of a scalar property $\\phi$ (per unit mass) within a fluid of density $\\rho$. The left side, $\\rho \\frac{\\mathrm{D}\\phi}{\\mathrm{D}t}$, represents the rate of change of the property for a fluid parcel as it moves; this is the material or Lagrangian derivative. The right side models the physical processes causing this change: the term $\\nabla \\cdot (\\Gamma \\nabla \\phi)$ represents the net rate of change due to diffusion, where $\\Gamma$ is the diffusivity, and $S_\\phi$ is a source (or sink) term representing the rate at which $\\phi$ is created (or destroyed) per unit volume.",
+        "symmetry_origin": "The equation is derived from the integral conservation law for a quantity $\\phi$ applied to an arbitrary control volume. Using the Reynolds transport theorem to relate the Lagrangian (material) derivative to the Eulerian (spatial) frame, and then applying the divergence theorem, one obtains this differential form. It embodies the fundamental physical principle of conservation, stating that the change in a quantity within a volume is accounted for by fluxes across its boundary and sources within it.",
+        "limits_and_boundary": "1. **Pure Advection:** If diffusion and sources are negligible ($\\Gamma=0, S_\\phi=0$), the equation becomes $\\frac{\\mathrm{D}\\phi}{\\mathrm{D}t} = 0$. This means the quantity $\\phi$ is conserved along the path of each fluid particle (streamlines in steady flow).\n2. **Pure Diffusion:** In a stationary fluid ($\\mathbf{u}=0$) with no sources ($S_\\phi=0$), the equation reduces to the heat/diffusion equation, $\\rho \\frac{\\partial \\phi}{\\partial t} = \\nabla \\cdot (\\Gamma \\nabla \\phi)$, which describes how $\\phi$ spreads out to eliminate gradients.\n3. **Steady State:** If the system is in a steady state ($\\frac{\\partial}{\\partial t} = 0$), the equation balances advection, diffusion, and sources: $\\rho (\\mathbf{u} \\cdot \\nabla \\phi) = \\nabla \\cdot (\\Gamma \\nabla \\phi) + S_\\phi$.",
         "semantic_variables": {
-            "D/Dt": {
+            "\\rho": {
+                "name": "Fluid Density",
+                "type": "variable",
+                "unit": "kg/m³",
+                "description": "The mass per unit volume of the fluid."
+            },
+            "\\phi": {
+                "name": "Scalar Quantity per Unit Mass",
+                "type": "variable",
+                "unit": "Varies (e.g., J/kg, unitless)",
+                "description": "The transported scalar property, such as specific enthalpy, temperature, or species mass fraction."
+            },
+            "t": {
+                "name": "Time",
+                "type": "variable",
+                "unit": "s",
+                "description": "The independent time variable."
+            },
+            "\\frac{\\mathrm{D}}{\\mathrm{D}t}": {
                 "name": "Material Derivative",
+                "type": "operator",
+                "unit": "1/s",
+                "description": "The total time derivative following a fluid particle, defined as $\\frac{\\mathrm{D}}{\\mathrm{D}t} = \\frac{\\partial}{\\partial t} + \\mathbf{u} \\cdot \\nabla$, where $\\mathbf{u}$ is the fluid velocity."
+            },
+            "\\nabla": {
+                "name": "Nabla Operator",
+                "type": "operator",
+                "unit": "1/m",
+                "description": "The vector differential operator, used here for gradient ($\\nabla \\phi$) and divergence ($\\nabla \\cdot$)."
+            },
+            "\\Gamma": {
+                "name": "Diffusivity",
                 "type": "variable",
-                "unit": "s^-1",
-                "description": "The total time rate of change of a quantity following a fluid particle. It is defined as D/Dt = /t + , where /t is the local rate of change and is the advective term representing the change due to the fluid's motion."
+                "unit": "Varies (e.g., m²/s)",
+                "description": "A transport coefficient that quantifies the rate of diffusion of the property $\\phi$. Often related to thermal conductivity or mass diffusivity."
             },
-            "φ": {
-                "name": "Conserved Quantity per Unit Mass",
+            "S_\\phi": {
+                "name": "Source Term",
                 "type": "variable",
-                "unit": "J/kg, kg/kg, etc.",
-                "description": "The conserved physical quantity (e.g., enthalpy, specific momentum, specific entropy) divided by mass."
-            },
-            "φ/t": {
-                "name": "Local Rate of Change",
-                "type": "variable",
-                "unit": "s^-1",
-                "description": "The rate at which the quantity φ changes at a fixed point in space. This is often the 'unsteady' term in fluid dynamics equations."
-            },
-            "/": {
-                "name": "Source/Sink Term",
-                "type": "variable",
-                "unit": "s^-1",
-                "description": "Represents the rate of generation or destruction of the quantity φ per unit mass within the fluid parcel, due to internal processes such as chemical reactions or phase changes."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "Varies (e.g., W/m³)",
+                "description": "The rate of creation or destruction of the quantity $\\phi$ per unit volume."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The SEC (Fluid Form) is a differential equation that describes the evolution of a conserved quantity, such as mass, momentum, or energy, within a fluid flow. It is derived from the general conservation law by applying it to a specific control volume moving with the fluid. This form is particularly useful for understanding how quantities are transported and change in a Lagrangian sense, meaning along the paths of fluid particles.",
-        "intuitive_summary": "The rate of change of a conserved quantity following a fluid particle is equal to the net rate at which that quantity is generated or destroyed within the particle's infinitesimal volume."
+        "conceptual_definition": "The General Transport Equation is a differential equation describing the evolution of a scalar quantity (e.g., temperature, species concentration) within a fluid flow. It accounts for the change of the quantity following a fluid particle (advection) as a balance between internal diffusion and local sources or sinks.",
+        "intuitive_summary": "The change in a property of a moving fluid parcel is caused by that property spreading out (diffusion) and being created or destroyed (sources/sinks)."
     },
     "trigonometric-parallax-ef02e36b-19ecf2ad": {
         "title": "Trigonometric Parallax Distance Relation (The Parsec)",
@@ -1922,7 +1922,8 @@
         "status": "published",
         "parent_formula_id": "magnetic-hoop-stress-collimation-14488669",
         "subcomponents": [],
-        "id": "magnetic-force-density-on-current-8cad2818"
+        "id": "magnetic-force-density-on-current-8cad2818",
+        "intuitive_summary": ""
     },
     "fermi-velocity-of-conduction-electrons-8efd9bad": {
         "title": "Fermi Velocity of Conduction Electrons",
@@ -1946,7 +1947,8 @@
         "status": "published",
         "parent_formula_id": "superconducting-coherence-length-scale-6fd0147e",
         "subcomponents": [],
-        "id": "fermi-velocity-of-conduction-electrons-8efd9bad"
+        "id": "fermi-velocity-of-conduction-electrons-8efd9bad",
+        "intuitive_summary": ""
     },
     "lorentzian-gauge-connection-one-form-34af7d2e": {
         "title": "Lorentzian Gauge Connection One-Form",
@@ -1976,7 +1978,8 @@
         "status": "published",
         "parent_formula_id": "4d-connection-7bf3a5f2",
         "subcomponents": [],
-        "id": "lorentzian-gauge-connection-one-form-34af7d2e"
+        "id": "lorentzian-gauge-connection-one-form-34af7d2e",
+        "intuitive_summary": ""
     },
     "minkowski-metric-tensor-component-bf516e91": {
         "title": "Minkowski Metric Tensor Component",
@@ -2000,7 +2003,8 @@
         "status": "published",
         "parent_formula_id": "geometric-consistency-d84af58c",
         "subcomponents": [],
-        "id": "minkowski-metric-tensor-component-bf516e91"
+        "id": "minkowski-metric-tensor-component-bf516e91",
+        "intuitive_summary": ""
     },
     "proper-time-interval-in-flat-spacetime-703ad433": {
         "title": "Proper Time Interval in Flat Spacetime",
@@ -2054,7 +2058,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-48c59408",
         "subcomponents": [],
-        "id": "proper-time-interval-in-flat-spacetime-703ad433"
+        "id": "proper-time-interval-in-flat-spacetime-703ad433",
+        "intuitive_summary": ""
     },
     "newtons-second-law-of-motion-f9236016": {
         "title": "Newton's Second Law of Motion",
@@ -2090,7 +2095,8 @@
         "status": "published",
         "parent_formula_id": "pseudo-force-d9573dbe",
         "subcomponents": [],
-        "id": "newtons-second-law-of-motion-f9236016"
+        "id": "newtons-second-law-of-motion-f9236016",
+        "intuitive_summary": ""
     },
     "negative-mass-squared-term-4f00bf7a": {
         "title": "Negative Mass-Squared Term",
@@ -2126,7 +2132,8 @@
         "status": "published",
         "parent_formula_id": "higgs-potential-identity-1-e48ff77a-fd730d53",
         "subcomponents": [],
-        "id": "negative-mass-squared-term-4f00bf7a"
+        "id": "negative-mass-squared-term-4f00bf7a",
+        "intuitive_summary": ""
     },
     "non-relativistic-length-approximation-800ee780": {
         "title": "Non-relativistic Length Approximation",
@@ -2156,7 +2163,8 @@
         "status": "published",
         "parent_formula_id": "lagrangian-scaling-with-lorentz-factor",
         "subcomponents": [],
-        "id": "non-relativistic-length-approximation-800ee780"
+        "id": "non-relativistic-length-approximation-800ee780",
+        "intuitive_summary": ""
     },
     "trace-of-the-electromagnetic-field-tensor-b9ac4a7b": {
         "title": "Trace of the Electromagnetic Field Tensor",
@@ -2180,7 +2188,8 @@
         "status": "published",
         "parent_formula_id": "component-map-018c6e30",
         "subcomponents": [],
-        "id": "trace-of-the-electromagnetic-field-tensor-b9ac4a7b"
+        "id": "trace-of-the-electromagnetic-field-tensor-b9ac4a7b",
+        "intuitive_summary": ""
     },
     "action-functional-definition-9756300d": {
         "title": "Action Functional Definition",
@@ -2216,7 +2225,8 @@
         "status": "published",
         "parent_formula_id": "action",
         "subcomponents": [],
-        "id": "action-functional-definition-9756300d"
+        "id": "action-functional-definition-9756300d",
+        "intuitive_summary": ""
     },
     "radiative-transfer-equation-87e92dd5": {
         "title": "Radiative Transfer Equation",
@@ -2264,7 +2274,8 @@
         "status": "published",
         "parent_formula_id": "source-function-142766a3",
         "subcomponents": [],
-        "id": "radiative-transfer-equation-87e92dd5"
+        "id": "radiative-transfer-equation-87e92dd5",
+        "intuitive_summary": ""
     },
     "non-relativistic-kinetic-energy-operator-0d84f27b": {
         "title": "Non-Relativistic Kinetic Energy Operator",
@@ -2300,7 +2311,8 @@
         "status": "published",
         "parent_formula_id": "finite-kinetic-energy-da5f08a4",
         "subcomponents": [],
-        "id": "non-relativistic-kinetic-energy-operator-0d84f27b"
+        "id": "non-relativistic-kinetic-energy-operator-0d84f27b",
+        "intuitive_summary": ""
     },
     "inverse-three-halves-power-of-radial-distance-0195f9f8": {
         "title": "Inverse Three-Halves Power of Radial Distance",
@@ -2324,7 +2336,8 @@
         "status": "published",
         "parent_formula_id": "finite-kinetic-energy-da5f08a4",
         "subcomponents": [],
-        "id": "inverse-three-halves-power-of-radial-distance-0195f9f8"
+        "id": "inverse-three-halves-power-of-radial-distance-0195f9f8",
+        "intuitive_summary": ""
     },
     "potential-energy-minus-total-energy-e6d2b383": {
         "title": "Potential Energy Minus Total Energy",
@@ -2354,7 +2367,8 @@
         "status": "published",
         "parent_formula_id": "the-classical-wall-b88cdee7",
         "subcomponents": [],
-        "id": "potential-energy-minus-total-energy-e6d2b383"
+        "id": "potential-energy-minus-total-energy-e6d2b383",
+        "intuitive_summary": ""
     },
     "potential-from-greens-function-and-source-distribution-83e0ee72": {
         "title": "Potential from Green's Function and Source Distribution",
@@ -2408,7 +2422,8 @@
         "status": "published",
         "parent_formula_id": "greens-function-laplacian-definition",
         "subcomponents": [],
-        "id": "potential-from-greens-function-and-source-distribution-83e0ee72"
+        "id": "potential-from-greens-function-and-source-distribution-83e0ee72",
+        "intuitive_summary": ""
     },
     "off-resonance-condition-dcfd47e3": {
         "title": "Off-Resonance Condition",
@@ -2438,7 +2453,8 @@
         "status": "published",
         "parent_formula_id": "resonance-condition",
         "subcomponents": [],
-        "id": "off-resonance-condition-dcfd47e3"
+        "id": "off-resonance-condition-dcfd47e3",
+        "intuitive_summary": ""
     },
     "torque-free-euler-equation-axis-1-7c67ca5f": {
         "title": "Torque-Free Euler Equation (Axis 1)",
@@ -2498,7 +2514,8 @@
         "status": "published",
         "parent_formula_id": "rotational-euler-identity-299f94c5",
         "subcomponents": [],
-        "id": "torque-free-euler-equation-axis-1-7c67ca5f"
+        "id": "torque-free-euler-equation-axis-1-7c67ca5f",
+        "intuitive_summary": ""
     },
     "renormalization-group-equation-for-n-point-function-019fc550": {
         "title": "Renormalization Group Equation for n-point Function",
@@ -2552,31 +2569,63 @@
         "status": "published",
         "parent_formula_id": "renormalization-group-equation",
         "subcomponents": [],
-        "id": "renormalization-group-equation-for-n-point-function-019fc550"
+        "id": "renormalization-group-equation-for-n-point-function-019fc550",
+        "intuitive_summary": ""
     },
     "partial-trace-over-environment-ad2f27a4": {
         "title": "Partial Trace Over Environment",
         "description": "The partial trace operation, \\(\\text{Tr}_{env}\\), mathematically removes the environmental degrees of freedom from a composite quantum state, yielding a reduced density matrix for the system of interest.",
-        "conceptual_definition": "In quantum mechanics, the partial trace $\\text{Tr}_{env}$ is a linear map that takes an operator (typically a density matrix) on a composite Hilbert space $\\mathcal{H}_S \\otimes \\mathcal{H}_{env}$ and returns an operator on the subsystem's Hilbert space $\\mathcal{H}_S$. It is defined by summing over an orthonormal basis of the environmental Hilbert space $\\mathcal{H}_{env}$. For a general operator $A$ on $\\mathcal{H}_S \\otimes \\mathcal{H}_{env}$, its partial trace over the environment is given by $\\text{Tr}_{env}(A) = \\sum_k \\langle k|_{env} A |k\\rangle_{env}$, where $\\{|k\\rangle_{env}\\}$ is an orthonormal basis for $\\mathcal{H}_{env}$.",
-        "interpretation": "Physically, the partial trace operation represents the act of 'ignoring' or 'averaging over' the quantum states of the environmental subsystem. When applied to the density matrix of a combined system (system + environment), it yields the reduced density matrix of the system of interest. This reduced density matrix contains all the observable information about the system, without requiring knowledge of the environment's specific state. It is a fundamental tool for describing open quantum systems, entanglement, and decoherence, as it allows us to characterize a subsystem's state even when it is entangled with or interacting with an external environment.",
-        "limits_and_boundary": "The partial trace is well-defined only for composite Hilbert spaces that can be expressed as a tensor product of subsystem Hilbert spaces. It is a linear operation. The resulting reduced density matrix must be a positive semi-definite operator with trace equal to one, representing a valid quantum state (pure or mixed). The operation assumes that the environment's degrees of freedom are not directly observed or are inaccessible.",
-        "symmetry_origin": "The partial trace itself is a mathematical operation rather than originating from a fundamental physical symmetry. However, its application is crucial in contexts where the total system's unitary evolution (a symmetry of quantum mechanics) leads to entanglement between a system and its environment. By tracing out the environment, we describe the *apparent* non-unitary evolution of the subsystem, which is consistent with the underlying unitary evolution of the larger, isolated system. It is essential for understanding the emergence of classicality through decoherence, where environmental interactions effectively 'wash out' quantum coherences.",
+        "conceptual_definition": "The partial trace is a linear map that reduces an operator on a composite Hilbert space $\\mathcal{H}_S \\otimes \\mathcal{H}_E$ to an operator on the subsystem's Hilbert space $\\mathcal{H}_S$. It is defined by taking the trace over the degrees of freedom of the second subsystem (the environment, $E$), effectively averaging over its basis states.",
+        "interpretation": "The partial trace is the quantum mechanical procedure for obtaining the state of a subsystem, described by the reduced density matrix $\\rho_S$, from the state of a larger composite system $\\rho_{SE}$. This operation effectively 'traces out' or averages over the environmental degrees of freedom, represented by the basis states $|e_i\\rangle$. The resulting $\\rho_S$ encapsulates all information that can be obtained by performing measurements solely on the system $S$. This is crucial for describing open quantum systems, where a system of interest is entangled with an inaccessible environment; the partial trace quantifies the effects of this entanglement and interaction, leading to phenomena like decoherence where the subsystem appears to lose its quantum properties.",
+        "limits_and_boundary": "The operation is defined for operators on a composite Hilbert space that has a tensor product structure, $\\mathcal{H} = \\mathcal{H}_S \\otimes \\mathcal{H}_E$.\nIf the input operator $\\rho_{SE}$ is a valid density matrix (Hermitian, positive semi-definite, trace one), the resulting reduced density matrix $\\rho_S$ is also a valid density matrix.\nThe result of the partial trace is independent of the choice of orthonormal basis $\\{|e_i\\rangle\\}$ for the environment's Hilbert space $\\mathcal{H}_E$.\nIf the composite state $\\rho_{SE}$ is a product state, $\\rho_{SE} = \\rho_S \\otimes \\rho_E$, then the partial trace simply returns the original system state, $\\mathrm{Tr}_E(\\rho_{SE}) = \\rho_S$.",
+        "symmetry_origin": "The partial trace is a mathematical map, not a direct consequence of a physical symmetry. However, it is essential for reconciling the unitary time evolution (a fundamental symmetry of isolated quantum systems) of a total system-environment state with the observed non-unitary, dissipative evolution of the open subsystem. By tracing out the environment, we see how the subsystem's evolution can appear to violate unitarity and lose coherence, even though the total system evolves unitarily.",
         "unit_system": "SI",
         "derivation_type": "DEFINITION",
         "equation_family": "open-quantum-systems",
         "semantic_variables": {
-            "Tr_{env}": {
-                "name": "Tr_{env}",
-                "type": "variable",
+            "\\rho_S": {
+                "name": "Reduced Density Matrix",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The partial trace operator over the environmental degrees of freedom. It is a linear map that transforms an operator on a composite Hilbert space into an operator on the subsystem's Hilbert space. It is dimensionless."
+                "description": "The density matrix describing the quantum state of the subsystem $S$ after tracing out the environment $E$."
+            },
+            "\\mathrm{Tr}_E": {
+                "name": "Partial Trace Operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The linear map that traces over the Hilbert space of the environment, $\\mathcal{H}_E$."
+            },
+            "\\rho_{SE}": {
+                "name": "Composite Density Matrix",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The density matrix describing the quantum state of the total composite system-environment state in the Hilbert space $\\mathcal{H}_S \\otimes \\mathcal{H}_E$."
+            },
+            "|e_i\\rangle": {
+                "name": "Environment Basis Ket",
+                "type": "vector",
+                "unit": "dimensionless",
+                "description": "An element of an orthonormal basis for the environment's Hilbert space $\\mathcal{H}_E$."
+            },
+            "\\langle e_i|": {
+                "name": "Environment Basis Bra",
+                "type": "vector",
+                "unit": "dimensionless",
+                "description": "The dual vector (bra) corresponding to the basis ket $|e_i\\rangle$."
+            },
+            "\\sum_i": {
+                "name": "Summation",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Summation over all basis states of the environment's Hilbert space."
             }
         },
-        "equation": "\\text{Tr}_{env}",
-        "status": "published",
+        "equation": "\\rho_S = \\mathrm{Tr}_E(\\rho_{SE}) = \\sum_i \\langle e_i | \\rho_{SE} | e_i \\rangle",
+        "status": "platinum",
         "parent_formula_id": "information-filtering-18094d35",
         "subcomponents": [],
-        "id": "partial-trace-over-environment-ad2f27a4"
+        "id": "partial-trace-over-environment-ad2f27a4",
+        "intuitive_summary": "The partial trace mathematically describes the process of ignoring a part of a larger quantum system to find the effective state of the remaining part."
     },
     "subsystem-b-hamiltonian-operator-bc72c9c7": {
         "title": "Subsystem B Hamiltonian Operator",
@@ -2600,7 +2649,8 @@
         "status": "published",
         "parent_formula_id": "paradox-prevention-97250117",
         "subcomponents": [],
-        "id": "subsystem-b-hamiltonian-operator-bc72c9c7"
+        "id": "subsystem-b-hamiltonian-operator-bc72c9c7",
+        "intuitive_summary": ""
     },
     "spacetime-four-vector-coordinate-e34acad8": {
         "title": "Spacetime Four-Vector Coordinate",
@@ -2624,7 +2674,8 @@
         "status": "published",
         "parent_formula_id": "field-operator-acting-on-test-function",
         "subcomponents": [],
-        "id": "spacetime-four-vector-coordinate-e34acad8"
+        "id": "spacetime-four-vector-coordinate-e34acad8",
+        "intuitive_summary": ""
     },
     "pseudo-force-in-non-inertial-frames-cb01b814": {
         "title": "Pseudo-Force in Non-Inertial Frames",
@@ -2660,7 +2711,8 @@
         "status": "published",
         "parent_formula_id": "pseudo-force-d9573dbe",
         "subcomponents": [],
-        "id": "pseudo-force-in-non-inertial-frames-cb01b814"
+        "id": "pseudo-force-in-non-inertial-frames-cb01b814",
+        "intuitive_summary": ""
     },
     "rest-frame-4-velocity-vector-b4980ed8": {
         "title": "Rest Frame 4-Velocity Vector",
@@ -2696,7 +2748,8 @@
         "status": "published",
         "parent_formula_id": "energy-transfer-e22e94db",
         "subcomponents": [],
-        "id": "rest-frame-4-velocity-vector-b4980ed8"
+        "id": "rest-frame-4-velocity-vector-b4980ed8",
+        "intuitive_summary": ""
     },
     "conservative-property-of-electrostatic-fields": {
         "id": "conservative-property-of-electrostatic-fields",

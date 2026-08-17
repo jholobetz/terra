@@ -1050,12 +1050,12 @@
     },
     "prandtl-number-diffusion-ratio-5871e7f8": {
         "title": "Prandtl Number (Pr)",
-        "equation": "REG",
-        "interpretation": "The Prandtl number ( $Pr$) is defined as the ratio of the kinematic viscosity ( $u$) to the thermal diffusivity ( $\\alpha$). Kinematic viscosity ($u = \\mu / \\rho$) quantifies the diffusion of momentum by viscous forces, where $\\mu is the dynamic viscosity (a measure of the fluid's resistance to shear flow, with SI units of Pa·s or kg/(m·s)) and \\rho is the density of the fluid (with SI units of kg/m³). Thermal diffusivity ( \\alpha$ = k / ( $\\rho$ c_p)$) quantifies the diffusion of heat, where$k$is the thermal conductivity (with SI units of W/(m·K)) and$c_p$is the specific heat capacity at constant pressure (with SI units of J/(kg·K)). Substituting these expressions, the Prandtl number can be rewritten as$Pr = \\frac{\\mu c_p}{k}$. A value of$Pr < 1 $implies that heat diffuses faster than momentum (e.g., gases), leading to a thicker thermal boundary layer than momentum boundary layer. A value of$Pr > 1 $indicates that momentum diffuses faster than heat (e.g., oils, viscous liquids), resulting in a thicker momentum boundary layer than thermal boundary layer. For$Pr \\approx 1$, momentum and heat diffuse at comparable rates.",
-        "symmetry_origin": "The Prandtl number arises from the non-dimensionalization of the Navier-Stokes equations and the energy equation. Specifically, it emerges when comparing the terms governing momentum transport (viscous terms) and energy transport (conduction terms) in these conservation equations. It is a characteristic property of the fluid itself and is independent of the flow geometry or external forces, reflecting an intrinsic relationship between momentum and thermal diffusion mechanisms.",
-        "limits_and_boundary": "In the limit of very low temperatures or for certain rarefied gases, the Prandtl number can approach unity. For very high Prandtl numbers, typical of oils and viscous fluids, the thermal boundary layer thickness is significantly smaller than the hydrodynamic (momentum) boundary layer thickness. Conversely, for very low Prandtl numbers, characteristic of many gases, the thermal boundary layer is thicker than the hydrodynamic boundary layer.",
+        "equation": "\\mathrm{Pr} = \\frac{\\nu}{\\alpha} = \\frac{\\mu c_p}{k}",
+        "interpretation": "The Prandtl number ($\\mathrm{Pr}$) is defined as the ratio of the kinematic viscosity ($\\nu$) to the thermal diffusivity ($\\alpha$). Kinematic viscosity, $\\nu = \\mu / \\rho$, quantifies the diffusion of momentum by viscous forces, where $\\mu$ is the dynamic viscosity and $\\rho$ is the fluid density. Thermal diffusivity, $\\alpha = k / (\\rho c_p)$, quantifies the diffusion of heat, where $k$ is the thermal conductivity and $c_p$ is the specific heat capacity at constant pressure. Substituting these expressions, the Prandtl number can be rewritten in terms of fundamental fluid properties as $\\mathrm{Pr} = \\frac{\\mu c_p}{k}$. A value of $\\mathrm{Pr} < 1$ implies that heat diffuses faster than momentum (e.g., liquid metals), leading to a thermal boundary layer that is thicker than the momentum boundary layer. A value of $\\mathrm{Pr} > 1$ indicates that momentum diffuses faster than heat (e.g., oils), resulting in a momentum boundary layer that is thicker than the thermal boundary layer. For $\\mathrm{Pr} \\approx 1$ (e.g., gases), momentum and heat diffuse at comparable rates.",
+        "symmetry_origin": "The Prandtl number arises from the non-dimensionalization of the Navier-Stokes equations and the thermal energy equation. It emerges as the coefficient ratio of the viscous diffusion term in the momentum equation to the thermal diffusion term in the energy equation. As a material property, it is independent of the flow geometry or external forces, reflecting an intrinsic relationship between the fluid's momentum and thermal diffusion mechanisms.",
+        "limits_and_boundary": "1. $\\mathrm{Pr} \\to \\infty$: This limit applies to highly viscous fluids (e.g., oils, polymers) where momentum diffusion is dominant over heat diffusion. The thermal boundary layer is much thinner than the momentum boundary layer.\n2. $\\mathrm{Pr} \\approx 1$: This case is typical for gases and some liquids where momentum and thermal diffusivities are of the same order. The momentum and thermal boundary layers have comparable thickness.\n3. $\\mathrm{Pr} \\to 0$: This limit is characteristic of liquid metals, where thermal conductivity is very high. Heat diffuses much faster than momentum, leading to a thermal boundary layer that is much thicker than the momentum boundary layer.",
         "semantic_variables": {
-            "Pr": {
+            "\\mathrm{Pr}": {
                 "name": "Prandtl Number",
                 "type": "variable",
                 "unit": "dimensionless",
@@ -1065,31 +1065,25 @@
                 "name": "Kinematic Viscosity",
                 "type": "variable",
                 "unit": "m^2/s",
-                "description": "A measure of the fluid's ability to resist shear flow under gravity, quantifying the diffusion of momentum."
+                "description": "The ratio of dynamic viscosity to density, representing momentum diffusivity."
             },
             "\\alpha": {
                 "name": "Thermal Diffusivity",
                 "type": "variable",
                 "unit": "m^2/s",
-                "description": "A measure of how quickly heat diffuses through a material."
+                "description": "The ratio of thermal conductivity to the product of density and specific heat capacity, representing heat diffusivity."
             },
             "\\mu": {
                 "name": "Dynamic Viscosity",
                 "type": "variable",
                 "unit": "Pa·s",
-                "description": "The measure of a fluid's internal resistance to flow or shear."
-            },
-            "\\rho": {
-                "name": "Density",
-                "type": "variable",
-                "unit": "kg/m^3",
-                "description": "The mass of the fluid per unit volume."
+                "description": "A measure of a fluid's internal resistance to shear stress."
             },
             "c_p": {
                 "name": "Specific Heat Capacity at Constant Pressure",
                 "type": "variable",
                 "unit": "J/(kg·K)",
-                "description": "The amount of heat required to raise the temperature of one unit of mass of the fluid by one degree Celsius (or Kelvin) at constant pressure."
+                "description": "The heat required to raise the temperature of a unit mass by one degree at constant pressure."
             },
             "k": {
                 "name": "Thermal Conductivity",
@@ -1097,79 +1091,49 @@
                 "unit": "W/(m·K)",
                 "description": "A measure of a material's ability to conduct heat."
             },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
+            "\\rho": {
+                "name": "Density",
                 "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "kg/m^3",
+                "description": "The mass of the fluid per unit volume."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Prandtl number, denoted by $Pr = \\frac{ u}{\\alpha} = \\frac{\\mu / \\rho}{k / (\\rho c_p)} = \\frac{ \\mu c_p}{k} is a dimensionless quantity used in fluid dynamics and heat transfer. It represents the ratio of momentum diffusivity (kinematic viscosity) to thermal diffusivity. Essentially, it compares how quickly momentum diffuses through a fluid compared to how quickly heat diffuses through it. A high Prandtl number indicates that momentum diffuses much faster than heat, while a low Prandtl number means heat diffuses much faster than momentum$.",
-        "intuitive_summary": "The Prandtl number compares the relative rates at which momentum and heat are transported within a fluid.",
+        "conceptual_definition": "The Prandtl number is a dimensionless quantity in fluid dynamics that represents the ratio of momentum diffusivity (kinematic viscosity) to thermal diffusivity. It quantifies the relative effectiveness of momentum and energy transport by diffusion in the fluid.",
+        "intuitive_summary": "The Prandtl number compares the relative thickness of the momentum and thermal boundary layers in a fluid flow.",
         "subcomponents": [
             "coulomb-factor-cfa6a5bd"
         ]
     },
     "haecceity-point-identity-operator-2345e4b1": {
-        "title": "Haecceity (Point Identity)",
-        "equation": "REG",
-        "interpretation": "In the realm of quantum mechanics, the concept of haecceity, or point identity, takes a peculiar turn when dealing with identical particles, such as electrons or photons. Classically, one might assume that two identical objects are still distinct entities that can, in principle, be tracked individually. However, quantum mechanics dictates that identical particles are truly indistinguishable. This means that if we were to swap two identical particles, the physical state of the system would remain unchanged. This indistinguishability is mathematically encoded in the wave function of a system of identical particles. For bosons (particles with integer spin), the wave function is symmetric under the exchange of any two particles, Ψ(..., ri, ..., rj, ...) = Ψ(..., rj, ..., ri, ...). For fermions (particles with half-integer spin), the wave function is antisymmetric, Ψ(..., ri, ..., rj, ...) = -Ψ(..., rj, ..., ri, ...). The 'formula' REG is not applicable here and does not represent any known physical quantity or relationship. The identity of a particle is thus not tied to a unique 'point' in the classical sense but rather to its quantum state and its role within the overall symmetry properties of the system's wave function.",
-        "symmetry_origin": "The origin of this concept in physics stems from the fundamental symmetry principles of quantum mechanics, specifically the behavior of wave functions under particle exchange. This is directly related to the spin-statistics theorem, which connects a particle's spin to its symmetry under exchange (bosons are symmetric, fermions are antisymmetric). This principle is a consequence of Lorentz invariance and causality, ensuring that the physical description of a system does not depend on arbitrary labeling of identical constituents.",
-        "limits_and_boundary": "In the limit of a system with only one particle, the concept of indistinguishability is moot, as there is no other particle to exchange it with. As the number of particles increases, the consequences of indistinguishability become more pronounced, leading to phenomena like the Pauli exclusion principle for fermions and Bose-Einstein condensation for bosons. The 'formula' REG has no defined limits or boundary conditions in a physical context.",
+        "title": "Haecceity (Quantum Indistinguishability)",
+        "equation": "P_{ij} |\\Psi\\rangle = \\epsilon |\\Psi\\rangle",
+        "interpretation": "In classical physics, identical objects are still considered distinct individuals, a property known as haecceity. Quantum mechanics replaces this with the postulate of indistinguishability: any two identical particles (e.g., two electrons) are fundamentally indistinguishable from one another. This is formalized using the permutation operator $P_{ij}$, which swaps all quantum coordinates (position, spin, etc.) of particle $i$ and particle $j$. Since the particles are identical, any physical observable, including the Hamiltonian $H$, must be symmetric under their exchange, meaning $[H, P_{ij}] = 0$. Consequently, energy eigenstates can also be eigenstates of $P_{ij}$. Because swapping the particles twice returns the original state ($P_{ij}^2 = I$), the eigenvalues of $P_{ij}$ must be $\\epsilon = \\pm 1$. The spin-statistics theorem dictates that particles with integer spin (bosons) correspond to the eigenvalue $\\epsilon = +1$ (symmetric states), while particles with half-integer spin (fermions) correspond to $\\epsilon = -1$ (antisymmetric states). This symmetry constraint, not a unique trajectory, defines the nature of a particle in a multi-particle system.",
+        "symmetry_origin": "The principle of indistinguishability reflects a fundamental permutation symmetry in the description of systems with identical particles. The spin-statistics theorem, a cornerstone of relativistic quantum field theory, connects this permutation symmetry to spacetime symmetries (the Poincaré group), establishing the link between a particle's intrinsic spin and its required exchange statistics. This symmetry profoundly constrains the allowed quantum states, leading to phenomena like the Pauli exclusion principle for fermions and Bose-Einstein condensation for bosons.",
+        "limits_and_boundary": "1. Classical Limit (ħ → 0 or high temperature/low density): If the de Broglie wavelengths of particles are much smaller than the inter-particle separation, their wave packets are effectively non-overlapping. In this regime, the particles can be treated as distinguishable, and quantum statistics converge to classical Maxwell-Boltzmann statistics.\n2. Distinguishable Particles: For particles of different kinds (e.g., an electron and a proton), there is no exchange symmetry, and the state vector has no specific symmetry requirement under their permutation.\n3. Single-Particle System: The concept of exchange symmetry is inapplicable, as there are no other identical particles with which to perform a permutation.",
         "semantic_variables": {
-            "Ψ": {
-                "name": "Wave Function",
+            "P_{ij}": {
+                "name": "Permutation Operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "A linear operator that exchanges the quantum labels (e.g., position, spin) of particle 'i' and particle 'j'."
+            },
+            "|\\Psi\\rangle": {
+                "name": "Multi-particle State Vector",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The quantum mechanical wave function of a system of identical particles. Its symmetry properties under particle exchange dictate whether the particles are bosons or fermions, embodying their indistinguishability."
+                "description": "The quantum state vector in Hilbert space that describes the total system of identical particles."
             },
-            "ri": {
-                "name": "Position of the i-th particle",
-                "type": "variable",
-                "unit": "m",
-                "description": "The spatial coordinates representing the position of the i-th identical particle within the system."
-            },
-            "rj": {
-                "name": "Position of the j-th particle",
-                "type": "variable",
-                "unit": "m",
-                "description": "The spatial coordinates representing the position of the j-th identical particle within the system."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
+            "\\epsilon": {
+                "name": "Exchange Phase Factor",
                 "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "dimensionless",
+                "description": "The eigenvalue of the permutation operator, which is +1 for bosons (symmetric state) and -1 for fermions (antisymmetric state)."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The concept of 'Haecceity,' often referred to as 'point identity' in physics, is not represented by a standard, universally accepted formula like those governing fundamental forces or kinematics. Instead, it is a philosophical concept that grapples with the identity of an object or entity, particularly when it is indistinguishable from other entities of the same type. In physics, this becomes relevant in quantum mechanics, especially with identical particles. The 'formula' REG is not a recognized equation in physics; it seems to be a placeholder or a misunderstanding. Therefore, this explanation will focus on the physics related to indistinguishable particles, which is the closest physical manifestation of the idea of haecceity.",
-        "intuitive_summary": "Identical particles, due to quantum principles, are fundamentally indistinguishable, meaning we cannot assign unique identities to them, challenging classical notions of 'point identity'."
+        "conceptual_definition": "In quantum mechanics, haecceity is superseded by the principle of indistinguishability, which states that identical particles cannot be individually identified or tracked. This principle is mathematically expressed by the requirement that the total state vector of a system of identical particles must be an eigenstate of any two-particle permutation operator.",
+        "intuitive_summary": "Identical quantum particles are fundamentally indistinguishable, meaning swapping any two leaves the system in a physically identical state, distinguished only by a possible sign change."
     },
     "equilibrium-potential-identity-1-b9031a72-df23a72e": {
         "title": "Helmholtz Free Energy Potential",
@@ -1506,7 +1470,8 @@
         "status": "published",
         "parent_formula_id": "lorentz-factor-definition-b4debeaf",
         "subcomponents": [],
-        "id": "relativistic-dilation-factor-denominator-dbf4d465"
+        "id": "relativistic-dilation-factor-denominator-dbf4d465",
+        "intuitive_summary": ""
     },
     "center-of-mass-velocity-vector-c80a769c": {
         "title": "Center of Mass Velocity Vector",
@@ -1530,7 +1495,8 @@
         "status": "published",
         "parent_formula_id": "k-nig-s-theorem-a8857941",
         "subcomponents": [],
-        "id": "center-of-mass-velocity-vector-c80a769c"
+        "id": "center-of-mass-velocity-vector-c80a769c",
+        "intuitive_summary": ""
     },
     "spherical-coordinate-system-definition-00f78715": {
         "title": "Spherical Coordinate System Definition",
@@ -1566,7 +1532,8 @@
         "status": "published",
         "parent_formula_id": "scale-factor-theta-spherical",
         "subcomponents": [],
-        "id": "spherical-coordinate-system-definition-00f78715"
+        "id": "spherical-coordinate-system-definition-00f78715",
+        "intuitive_summary": ""
     },
     "quantum-mechanical-density-operator-408c6599": {
         "title": "Quantum Mechanical Density Operator",
@@ -1590,7 +1557,8 @@
         "status": "published",
         "parent_formula_id": "wigner-quasi-probability-1a8c59c6",
         "subcomponents": [],
-        "id": "quantum-mechanical-density-operator-408c6599"
+        "id": "quantum-mechanical-density-operator-408c6599",
+        "intuitive_summary": ""
     },
     "maximum-kinetic-energy-of-photoelectrons-ce821cb3": {
         "title": "Maximum Kinetic Energy of Photoelectrons",
@@ -1614,7 +1582,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-02fc9a67",
         "subcomponents": [],
-        "id": "maximum-kinetic-energy-of-photoelectrons-ce821cb3"
+        "id": "maximum-kinetic-energy-of-photoelectrons-ce821cb3",
+        "intuitive_summary": ""
     },
     "far-field-approximation-limit-d3183c35": {
         "title": "Far-Field Approximation Limit",
@@ -1638,24 +1607,39 @@
         "status": "published",
         "parent_formula_id": "moving-source-rule-4c610863",
         "subcomponents": [],
-        "id": "far-field-approximation-limit-d3183c35"
+        "id": "far-field-approximation-limit-d3183c35",
+        "intuitive_summary": ""
     },
     "numerical-constant-for-stellar-processes-4fe556ec": {
-        "title": "Numerical Constant for Stellar Processes",
+        "title": "Characteristic Temperature for Triple-Alpha Process",
         "description": "This equation defines a specific numerical constant, $10^8$, often used as a scaling factor or threshold in astrophysical calculations.",
-        "conceptual_definition": "In physics, $10^8$ represents a numerical constant, a pure dimensionless number that often serves to establish an order of magnitude or a specific threshold within a physical model. It can emerge from unit conversions, dimensionless ratios of physical quantities, or as an empirical constant fitted to experimental or observational data. Within the context of stellar nucleosynthesis, such values frequently appear in expressions for reaction rates, energy generation, or critical temperatures required for specific nuclear processes.",
-        "interpretation": "This numerical constant, $10^8$, often signifies a critical order of magnitude for physical parameters in astrophysical environments, particularly within stellar interiors. In the context of carbon synthesis via the triple-alpha process, temperatures of approximately $10^8$ Kelvin are required for the reaction to proceed at a significant rate. Therefore, this constant likely represents a characteristic temperature scale or a scaling factor related to the thermal energy necessary to overcome the Coulomb barrier for helium nuclei fusion. It underscores the extreme conditions prevalent in the cores of red giant stars where carbon is synthesized.",
-        "limits_and_boundary": "As a pure numerical constant, $10^8$ itself does not possess physical limits or boundary conditions. However, its application within physical formulas, such as those governing stellar nucleosynthesis, implies specific physical regimes. For instance, if it represents a temperature threshold, the associated physical process (e.g., carbon synthesis) only becomes significant when the actual temperature approaches or exceeds this order of magnitude.",
-        "symmetry_origin": "As a specific numerical constant, $10^8$ does not directly arise from fundamental symmetries or conservation laws in the same way a physical law might. Instead, its value is often determined by the specific physical parameters and conditions of the system being modeled, or it may emerge from empirical observations or theoretical calculations that incorporate various physical principles.",
+        "conceptual_definition": "The characteristic temperature for the triple-alpha process is the approximate threshold temperature required in the core of a star for three helium nuclei (alpha particles) to fuse into a carbon nucleus. This temperature, approximately 100 million Kelvin, provides sufficient kinetic energy to overcome the Coulomb repulsion between the nuclei.",
+        "interpretation": "The triple-alpha process ($3{}^4\\mathrm{He} \\to {}^{12}\\mathrm{C}$) is the primary mechanism for carbon synthesis in stars. Its rate is extraordinarily sensitive to temperature, scaling approximately as $T^{40}$. The value $T_{3\\alpha} \\approx 10^8 \\, \\mathrm{K}$ represents the temperature at which this reaction becomes efficient. This thermal energy is critical for two reasons: first, it allows helium nuclei to overcome their mutual electrostatic (Coulomb) repulsion. Second, it establishes a sufficient equilibrium concentration of the highly unstable Beryllium-8 ($^8\\mathrm{Be}$) intermediate nucleus, which is formed from the fusion of two alpha particles. The subsequent capture of a third alpha particle by $^8\\mathrm{Be}$ is greatly enhanced by a resonance in the Carbon-12 nucleus (the Hoyle state), making the process viable at this specific temperature scale.",
+        "limits_and_boundary": "1. Below Threshold (T ≪ 10^8 K): The triple-alpha process rate is negligible. Helium-burning does not occur, and stars in this phase (e.g., main-sequence stars like the Sun) cannot synthesize carbon in their cores.\n2. At Threshold (T ≈ 10^8 K): The reaction rate becomes significant, enabling helium burning. This stage defines the evolution of red giant and red supergiant stars.\n3. Above Threshold (T > 10^8 K): The reaction proceeds vigorously. At much higher temperatures (e.g., T > 5×10^8 K), other fusion processes like carbon burning become dominant.",
+        "symmetry_origin": "This characteristic temperature is not a direct consequence of a fundamental symmetry but is an emergent physical scale. Its value is determined by the interplay between the fundamental forces: the strength of the electromagnetic force, which sets the scale of the Coulomb barrier, and the strong nuclear force, which governs nuclear binding energies and the precise energy level of the resonant Hoyle state in Carbon-12.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "stellar-nucleosynthesis",
-        "semantic_variables": {},
-        "equation": "10^8",
-        "status": "published",
+        "semantic_variables": {
+            "T_{3\\alpha}": {
+                "name": "Characteristic Temperature for Triple-Alpha Process",
+                "type": "constant",
+                "unit": "K",
+                "description": "The approximate core temperature at which the triple-alpha process of stellar nucleosynthesis becomes efficient."
+            },
+            "\\mathrm{K}": {
+                "name": "Kelvin",
+                "type": "unit",
+                "unit": "K",
+                "description": "The SI base unit of thermodynamic temperature."
+            }
+        },
+        "equation": "T_{3\\alpha} \\approx 10^8 \\, \\mathrm{K}",
+        "status": "platinum",
         "parent_formula_id": "carbon-synthesis-d2f6929d",
         "subcomponents": [],
-        "id": "numerical-constant-for-stellar-processes-4fe556ec"
+        "id": "numerical-constant-for-stellar-processes-4fe556ec",
+        "intuitive_summary": "Stars must reach a core temperature of about 100 million Kelvin to begin forging carbon from helium."
     },
     "left-handed-chirality-projection-operator-1a19d44d": {
         "title": "Left-Handed Chirality Projection Operator",
@@ -1685,7 +1669,8 @@
         "status": "published",
         "parent_formula_id": "left-handed-projection-operator",
         "subcomponents": [],
-        "id": "left-handed-chirality-projection-operator-1a19d44d"
+        "id": "left-handed-chirality-projection-operator-1a19d44d",
+        "intuitive_summary": ""
     },
     "commutator-of-commuting-operators-9ffbcf11": {
         "title": "Commutator of Commuting Operators",
@@ -1721,7 +1706,8 @@
         "status": "published",
         "parent_formula_id": "simultaneous-eigenbasis-identity-1-1ab1885f-05dcb811",
         "subcomponents": [],
-        "id": "commutator-of-commuting-operators-9ffbcf11"
+        "id": "commutator-of-commuting-operators-9ffbcf11",
+        "intuitive_summary": ""
     },
     "dark-energy-density-parameter-definition-9b168441": {
         "title": "Dark Energy Density Parameter Definition",
@@ -1757,7 +1743,8 @@
         "status": "published",
         "parent_formula_id": "dark-energy-density-2d1891bd",
         "subcomponents": [],
-        "id": "dark-energy-density-parameter-definition-9b168441"
+        "id": "dark-energy-density-parameter-definition-9b168441",
+        "intuitive_summary": ""
     },
     "infinitesimal-virtual-work-of-a-single-force-fe0ca623": {
         "title": "Infinitesimal Virtual Work of a Single Force",
@@ -1793,7 +1780,8 @@
         "status": "published",
         "parent_formula_id": "virtual-work-law-049285fd",
         "subcomponents": [],
-        "id": "infinitesimal-virtual-work-of-a-single-force-fe0ca623"
+        "id": "infinitesimal-virtual-work-of-a-single-force-fe0ca623",
+        "intuitive_summary": ""
     },
     "magnetic-force-on-a-moving-charge-cfad24a0": {
         "title": "Magnetic Force on a Moving Charge",
@@ -1835,7 +1823,8 @@
         "status": "published",
         "parent_formula_id": "magnetic-force-perpendicular-to-velocity",
         "subcomponents": [],
-        "id": "magnetic-force-on-a-moving-charge-cfad24a0"
+        "id": "magnetic-force-on-a-moving-charge-cfad24a0",
+        "intuitive_summary": ""
     },
     "infinitesimal-volume-element-ce8bb937": {
         "title": "Infinitesimal Volume Element",
@@ -1859,7 +1848,8 @@
         "status": "published",
         "parent_formula_id": "retarded-scalar-potential-charge-density",
         "subcomponents": [],
-        "id": "infinitesimal-volume-element-ce8bb937"
+        "id": "infinitesimal-volume-element-ce8bb937",
+        "intuitive_summary": ""
     },
     "time-derivative-of-quantum-state-vector-138a1b8e": {
         "title": "Time Derivative of Quantum State Vector",
@@ -1889,7 +1879,8 @@
         "status": "published",
         "parent_formula_id": "total-reality-eddbcf33",
         "subcomponents": [],
-        "id": "time-derivative-of-quantum-state-vector-138a1b8e"
+        "id": "time-derivative-of-quantum-state-vector-138a1b8e",
+        "intuitive_summary": ""
     },
     "integral-of-u-dv-9a90d7ce": {
         "title": "Integral of u dv",
@@ -1919,7 +1910,8 @@
         "status": "published",
         "parent_formula_id": "integration-by-parts",
         "subcomponents": [],
-        "id": "integral-of-u-dv-9a90d7ce"
+        "id": "integral-of-u-dv-9a90d7ce",
+        "intuitive_summary": ""
     },
     "schwarzschild-factor-for-gravitational-redshift-5b70ae36": {
         "title": "Schwarzschild Factor for Gravitational Redshift",
@@ -1949,7 +1941,8 @@
         "status": "published",
         "parent_formula_id": "redshift-near-schwarzschild-black-hole",
         "subcomponents": [],
-        "id": "schwarzschild-factor-for-gravitational-redshift-5b70ae36"
+        "id": "schwarzschild-factor-for-gravitational-redshift-5b70ae36",
+        "intuitive_summary": ""
     },
     "induced-metric-component-on-d-brane-worldvolume-87323f6e": {
         "title": "Induced Metric Component on D-brane Worldvolume",
@@ -1997,7 +1990,8 @@
         "status": "published",
         "parent_formula_id": "dirac-born-infeld-action",
         "subcomponents": [],
-        "id": "induced-metric-component-on-d-brane-worldvolume-87323f6e"
+        "id": "induced-metric-component-on-d-brane-worldvolume-87323f6e",
+        "intuitive_summary": ""
     },
     "backward-time-evolution-operator-280a5907": {
         "title": "Backward Time Evolution Operator",
@@ -2039,7 +2033,8 @@
         "status": "published",
         "parent_formula_id": "operator-dynamics-7b5b05ee",
         "subcomponents": [],
-        "id": "backward-time-evolution-operator-280a5907"
+        "id": "backward-time-evolution-operator-280a5907",
+        "intuitive_summary": ""
     },
     "partial-derivative-of-lagrangian-with-respect-to-generalized-coordinate-87522caa": {
         "title": "Partial Derivative of Lagrangian with Respect to Generalized Coordinate",
@@ -2075,7 +2070,8 @@
         "status": "published",
         "parent_formula_id": "total-differential-lagrangian",
         "subcomponents": [],
-        "id": "partial-derivative-of-lagrangian-with-respect-to-generalized-coordinate-87522caa"
+        "id": "partial-derivative-of-lagrangian-with-respect-to-generalized-coordinate-87522caa",
+        "intuitive_summary": ""
     },
     "neutrino-mass-right-handed-neutrino-mass-seesaw-relation-6873424c": {
         "title": "Neutrino Mass-Right-Handed Neutrino Mass Seesaw Relation",
@@ -2105,7 +2101,8 @@
         "status": "published",
         "parent_formula_id": "seesaw-origin-8443c598",
         "subcomponents": [],
-        "id": "neutrino-mass-right-handed-neutrino-mass-seesaw-relation-6873424c"
+        "id": "neutrino-mass-right-handed-neutrino-mass-seesaw-relation-6873424c",
+        "intuitive_summary": ""
     },
     "equation-of-straight-line-motion-in-flat-spacetime-468ff1f9": {
         "title": "Equation of Straight-Line Motion in Flat Spacetime",
@@ -2141,7 +2138,8 @@
         "status": "published",
         "parent_formula_id": "proper-time-substitute-a9ad2344",
         "subcomponents": [],
-        "id": "equation-of-straight-line-motion-in-flat-spacetime-468ff1f9"
+        "id": "equation-of-straight-line-motion-in-flat-spacetime-468ff1f9",
+        "intuitive_summary": ""
     },
     "non-zero-scalar-field-vacuum-expectation-120df58b": {
         "title": "Non-Zero Scalar Field Vacuum Expectation",
@@ -2183,7 +2181,8 @@
         "status": "published",
         "parent_formula_id": "vacuum-expectation-value-120df58b",
         "subcomponents": [],
-        "id": "non-zero-scalar-field-vacuum-expectation-120df58b"
+        "id": "non-zero-scalar-field-vacuum-expectation-120df58b",
+        "intuitive_summary": ""
     },
     "inverse-delta-factor-cb051420": {
         "title": "Inverse Delta Factor",
@@ -2207,7 +2206,8 @@
         "status": "published",
         "parent_formula_id": "large-delta-limit",
         "subcomponents": [],
-        "id": "inverse-delta-factor-cb051420"
+        "id": "inverse-delta-factor-cb051420",
+        "intuitive_summary": ""
     },
     "differential-stellar-mass-distribution-4d492455": {
         "title": "Differential Stellar Mass Distribution",
@@ -2243,7 +2243,8 @@
         "status": "published",
         "parent_formula_id": "birth-distribution-9605a291",
         "subcomponents": [],
-        "id": "differential-stellar-mass-distribution-4d492455"
+        "id": "differential-stellar-mass-distribution-4d492455",
+        "intuitive_summary": ""
     },
     "motional-electromotive-force-line-integral-ffd7a98c": {
         "title": "Motional Electromotive Force Line Integral",
@@ -2285,7 +2286,8 @@
         "status": "published",
         "parent_formula_id": "energy-bound-349d7995",
         "subcomponents": [],
-        "id": "motional-electromotive-force-line-integral-ffd7a98c"
+        "id": "motional-electromotive-force-line-integral-ffd7a98c",
+        "intuitive_summary": ""
     },
     "vector-orthogonality-condition-19525769": {
         "title": "Vector Orthogonality Condition",
@@ -2315,7 +2317,8 @@
         "status": "published",
         "parent_formula_id": "alignment-test-19525769",
         "subcomponents": [],
-        "id": "vector-orthogonality-condition-19525769"
+        "id": "vector-orthogonality-condition-19525769",
+        "intuitive_summary": ""
     },
     "commuting-operators-condition-dd1717e3": {
         "title": "Commuting Operators Condition",
@@ -2351,7 +2354,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-08a27bbc",
         "subcomponents": [],
-        "id": "commuting-operators-condition-dd1717e3"
+        "id": "commuting-operators-condition-dd1717e3",
+        "intuitive_summary": ""
     },
     "general-lagrangian-function": {
         "id": "general-lagrangian-function",

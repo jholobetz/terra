@@ -227,64 +227,46 @@
         ]
     },
     "reaction-sensitivity-2eb95b90": {
-        "title": "Reaction Sensitivity",
-        "equation": "E_r = E_{level} - (M_1 + M_2)c^2",
+        "title": "Reaction Energy (Q-value)",
+        "equation": "Q = \\left( \\sum_{i} m_{\\text{reactants}, i} - \\sum_{j} m_{\\text{products}, j} \\right) c^2",
         "semantic_variables": {
-            "E_r": {
-                "name": "Reaction Sensitivity",
+            "Q": {
+                "name": "Reaction Energy (Q-value)",
                 "type": "variable",
                 "unit": "Joule (J)",
-                "description": "Represents the net energy released (if positive) or absorbed (if negative) during a reaction. Often referred to as the Q-value in nuclear physics."
+                "description": "The net energy released or absorbed during a reaction, corresponding to the change in rest mass between reactants and products."
             },
-            "E_{level}": {
-                "name": "Initial Energy Level",
-                "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The total energy of the initial state of the system or incoming particles, including kinetic, excitation, or potential energies."
-            },
-            "M_1": {
-                "name": "Rest Mass of First Reactant",
+            "m_{\\text{reactants}, i}": {
+                "name": "Rest Mass of i-th Reactant",
                 "type": "variable",
                 "unit": "kilogram (kg)",
-                "description": "The invariant rest mass of the first particle or nucleus participating in the reaction."
+                "description": "The invariant rest mass of an individual particle or nucleus participating as a reactant in the initial state."
             },
-            "M_2": {
-                "name": "Rest Mass of Second Reactant",
+            "m_{\\text{products}, j}": {
+                "name": "Rest Mass of j-th Product",
                 "type": "variable",
                 "unit": "kilogram (kg)",
-                "description": "The invariant rest mass of the second particle or nucleus participating in the reaction."
+                "description": "The invariant rest mass of an individual particle or nucleus created as a product in the final state."
             },
             "c": {
                 "name": "Speed of Light in Vacuum",
                 "type": "constant",
-                "unit": "meter per second (m/s)",
-                "description": "A fundamental physical constant, approximately$2.99792458 \\times 10^8$m/s, representing the speed at which all electromagnetic radiation and massless particles propagate in a vacuum."
+                "unit": "m/s",
+                "description": "A fundamental physical constant representing the universal speed limit for energy and information propagation."
             },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "M": {
-                "name": "Total Mass / Magnetization",
-                "type": "variable",
-                "unit": "kg or A/m",
-                "description": "The total inertial mass of a system, or net magnetic dipole moment density."
+            "\\sum": {
+                "name": "Summation Operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "An operator that sums a sequence of terms, used here to sum the masses of all reactants and all products."
             }
         },
-        "interpretation": "The formula $E_r = E_{level} - (M_1 + M_2)c^2$calculates the reaction sensitivity, $E_r$, which represents the energy difference between an initial energy level and the total rest mass energy of the constituent particles. Here, $E_{level}$denotes the total energy of the initial state or level. This term can encompass various forms of energy, such as the kinetic energies of incident particles, the excitation energy of a nucleus, or the binding energy released upon forming an intermediate state. The term$(M_1 + M_2)c^2 represents the total relativistic rest mass energy of the two initial reactants, where$M_1$and$M_2$are their respective invariant rest masses, and$c$is the speed of light in vacuum. If$E_r$is positive, it indicates an exoergic reaction where energy is released (e.g., as kinetic energy of products or gamma rays). If$E_r$is negative, the reaction is endoergic, meaning energy must be supplied for the reaction to proceed, often indicating that the total rest mass energy of the products is greater than that of the reactants$.E_r is essentially the Q-value of the reaction, representing the energy available for conversion into other forms, like kinetic energy of products, or the energy deficit that must be overcome.",
-        "symmetry_origin": "This formula fundamentally stems from the principle of conservation of total relativistic energy and Einstein's mass-energy equivalence ($E = mc^2$). In any isolated system, the total energy (which includes both kinetic energy and rest mass energy) must remain constant before and after a reaction. The reaction sensitivity is a measure of how the total energy of the initial state relates to the intrinsic rest mass energy of the reactants, allowing for the calculation of the energy released or absorbed to maintain this conservation.",
-        "limits_and_boundary": "When $E_{level} is exactly equal to$(M_1 + M_2)c^2$, then$E_r = 0$. This signifies a reaction where the initial total energy precisely matches the rest mass energy of the reactants, implying no net energy release or absorption from the initial state (though mass-energy transformations may still occur). If$E_{level} is significantly greater than$(M_1 + M_2)c^2$, then $E_r$ will be a large positive value, characteristic of a highly exoergic reaction where a substantial amount of energy is released. Conversely, if $E_{level} is much less than$(M_1 + M_2)c^2$, then$E_r$will be a large negative value, indicating a highly endoergic reaction requiring significant energy input to proceed. In the non-relativistic limit, often applicable to chemical reactions, mass changes are negligible, and the term$(M_1 + M_2)c^2 is often considered constant. In this scenario, $E_r$ would primarily reflect the difference in chemical binding energies, akin to the enthalpy change.",
+        "interpretation": "The Q-value, often denoted by $Q$ or $E_r$, represents the total energy released or absorbed in a nuclear or chemical reaction. It is defined as the difference between the sum of the rest masses of the initial reactants ($m_{\\text{reactants}, i}$) and the sum of the rest masses of the final products ($m_{\\text{products}, j}$), multiplied by the speed of light squared ($c^2$). If $Q > 0$, the reaction is 'exoergic', meaning the total rest mass decreases and is converted into kinetic energy of the products. If $Q < 0$, the reaction is 'endoergic', meaning rest mass is created, which requires a corresponding amount of energy to be supplied from the kinetic energy of the reactants. By the conservation of total energy, the Q-value is also equal to the change in kinetic energy: $Q = K_{\\text{final}} - K_{\\text{initial}}$.",
+        "symmetry_origin": "The formula is a direct consequence of the conservation of total relativistic energy, which is mandated by the time-translation symmetry of physical laws via Noether's theorem. It explicitly uses Einstein's mass-energy equivalence ($E=mc^2$) to relate the change in total rest mass of the system to the kinetic energy released or absorbed, ensuring that the total energy (rest mass energy + kinetic energy) is conserved throughout the reaction.",
+        "limits_and_boundary": "1. Exoergic Reaction ($Q > 0$): The total mass of the reactants is greater than the total mass of the products. The 'missing' mass is converted into kinetic energy of the products, so the reaction spontaneously releases energy.\n2. Endoergic Reaction ($Q < 0$): The total mass of the products is greater than the total mass of the reactants. The reaction requires a net input of energy to proceed, typically from the initial kinetic energy of the reactants, which must exceed a certain threshold value.\n3. Mass and Kinetic Energy Conservation ($Q = 0$): The total rest mass is conserved. In this case, the total kinetic energy is also conserved. If the particles themselves are unchanged, this describes an elastic collision.\n4. Non-relativistic Limit: For chemical reactions, the mass change is minuscule ($\\Delta m / m \\ll 1$). The energy change is typically described by enthalpy ($\\Delta H$), but the underlying principle of mass-energy conversion still holds, though it is often too small to measure directly.",
         "status": "platinum",
-        "conceptual_definition": "This formula defines the 'reaction sensitivity' or 'reaction energy' ( $E_r$), which quantifies the net energy released or absorbed during a physical process, typically a nuclear reaction, based on the energy of an initial state and the total rest mass energy of the reactants. It is a direct application of mass-energy equivalence in the context of energy conservation for reactions.",
-        "intuitive_summary": "Reaction sensitivity quantifies the net energy change in a process by comparing the initial energy state to the total rest mass energy of the system's components.",
+        "conceptual_definition": "The reaction energy, or Q-value, quantifies the net energy released (exoergic) or absorbed (endoergic) in a reaction by calculating the difference between the total rest mass of the initial reactants and the total rest mass of the final products. This value is a direct consequence of mass-energy equivalence.",
+        "intuitive_summary": "The Q-value of a reaction is the energy released or absorbed, determined by the change in total mass from reactants to products.",
         "subcomponents": [
             "mass-energy-equivalence-principle-826676a6",
             "rest-mass-of-particle-one-377b1a53",
@@ -297,106 +279,34 @@
         ]
     },
     "primordial-sound-59e5bfd9": {
-        "title": "Primordial Sound",
-        "equation": "\\frac{\\Delta T}{T} \\sim 10^{-5} \\quad (\\text{Anisotropy scale})",
+        "title": "Primordial Sound Anisotropy",
+        "equation": "\\frac{\\Delta T}{T} \\approx 10^{-5}",
         "semantic_variables": {
             "\\Delta T": {
                 "name": "Temperature Fluctuation",
-                "type": "operator",
-                "unit": "K",
-                "description": "The amplitude of temperature deviations or anisotropies observed in the Cosmic Microwave Background radiation across the sky."
+                "type": "variable",
+                "unit": "Kelvin (K)",
+                "description": "The root-mean-square amplitude of temperature deviations or anisotropies from the mean, observed in the Cosmic Microwave Background radiation across the celestial sphere."
             },
             "T": {
                 "name": "Average CMB Temperature",
                 "type": "constant",
-                "unit": "K",
-                "description": "The average uniform temperature of the Cosmic Microwave Background radiation across the sky (approximately 2.725 Kelvin today)."
+                "unit": "Kelvin (K)",
+                "description": "The average monopole temperature of the Cosmic Microwave Background radiation, measured today to be approximately 2.725 K."
             },
-            "\\Delta": {
-                "name": "Laplacian / Change Operator",
-                "type": "operator",
-                "unit": "operator",
-                "description": "Represents spatial second derivatives, or finite difference increment."
-            },
-            "\\sim": {
-                "name": "\\sim Parameter",
+            "\\frac{\\Delta T}{T}": {
+                "name": "Relative Temperature Anisotropy",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "A": {
-                "name": "Area / Vector Potential",
-                "type": "variable",
-                "unit": "m² or V·s/m",
-                "description": "The measure of a 2D surface, or the electrodynamic magnetic vector potential."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
-            },
-            "l": {
-                "name": "Length / Angular Quantum Number",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
+                "description": "The dimensionless measure of the fractional temperature fluctuations in the Cosmic Microwave Background, which characterizes the initial conditions for large-scale structure formation."
             }
         },
-        "interpretation": "The ratio $\\frac{\\Delta T}{T}$ represents the relative magnitude of temperature fluctuations in the Cosmic Microwave Background. Here, $\\Delta$ T is the amplitude of the temperature variations observed across the sky, and T is the average temperature of the CMB (currently about 2.725 Kelvin). The observed value of approximately 10^{-5} indicates that the early universe was remarkably smooth and isotropic, but not perfectly so. These minute inhomogeneities were the seeds from which all large-scale structures (galaxies, clusters, superclusters) in the universe eventually grew through gravitational collapse. The term 'primordial sound' arises because these temperature fluctuations correspond to regions of slightly higher or lower density in the early photon-baryon plasma, which propagated as sound waves until photons decoupled from matter during the epoch of recombination.",
-        "symmetry_origin": "The overall large-scale isotropy and homogeneity of the universe, as encapsulated by the Cosmological Principle, dictates that the average temperature T is nearly uniform. The tiny anisotropies $\\Delta$ T are believed to have originated from quantum fluctuations in the very early universe, likely during an inflationary epoch, which were stretched to macroscopic scales. These fluctuations then served as initial density perturbations that evolved into acoustic oscillations in the primordial plasma due to the interplay between gravitational collapse and radiation pressure. The 'primordial sound' spectrum observed in the CMB is a direct consequence of these oscillations and the specific physical conditions (e.g., matter density, baryon density) of the early universe.",
-        "limits_and_boundary": "If the ratio $\\frac{\\Delta T}{T}$ were$significantly larger (e.g., 10^{-1} ), the early universe would have been so inhomogeneous that structure formation might have proceeded too rapidly or led to a much clumpier, perhaps unstable, universe. Conversely, if this ratio were much smaller (e.g., 10^{-10} ), the universe would have been too smooth, and gravitational forces would not have had sufficient initial density enhancements to form galaxies, stars, and other structures within the observed cosmic age. The measured value of$\\sim$ 10^{-5} is a crucial observational constraint that strongly supports the standard cosmological model, including the existence of dark matter and dark energy, and provides strong evidence for an inflationary epoch.",
+        "interpretation": "The ratio $\\frac{\\Delta T}{T}$ represents the relative magnitude of temperature fluctuations in the Cosmic Microwave Background. Here, $\\Delta T$ is the amplitude of the temperature variations observed across the sky, and $T$ is the average temperature of the CMB (currently about 2.725 Kelvin). The observed value of approximately $10^{-5}$ indicates that the early universe was remarkably smooth and isotropic, but not perfectly so. These minute inhomogeneities were the seeds from which all large-scale structures (galaxies, clusters, superclusters) in the universe eventually grew through gravitational collapse. The term 'primordial sound' arises because these temperature fluctuations correspond to regions of slightly higher or lower density in the early photon-baryon plasma, which propagated as sound waves until photons decoupled from matter during the epoch of recombination.",
+        "symmetry_origin": "The overall large-scale isotropy and homogeneity of the universe, as encapsulated by the Cosmological Principle, dictates that the average temperature $T$ is nearly uniform. The tiny anisotropies $\\Delta T$ are believed to have originated from quantum fluctuations in the very early universe, likely during an inflationary epoch, which were stretched to macroscopic scales. These fluctuations then served as initial density perturbations that evolved into acoustic oscillations in the primordial plasma due to the interplay between gravitational collapse and radiation pressure. The 'primordial sound' spectrum observed in the CMB is a direct consequence of these oscillations and the specific physical conditions of the early universe.",
+        "limits_and_boundary": "1. If $\\Delta T / T \\gg 10^{-5}$: If the anisotropies were significantly larger (e.g., $10^{-3}$), the universe would have been highly inhomogeneous. This could lead to overly rapid gravitational collapse, forming massive black holes instead of galaxies, resulting in a much 'clumpier' universe.\n2. If $\\Delta T / T \\ll 10^{-5}$: If the anisotropies were much smaller (e.g., $10^{-7}$), the initial density perturbations would have been too weak. Gravitational collapse would be too slow to form the observed large-scale structures like galaxies and clusters within the age of the universe.\n3. The observed value $\\Delta T / T \\approx 10^{-5}$ is a cornerstone of modern cosmology. It is small enough to be consistent with the observed large-scale homogeneity but large enough to seed the formation of all cosmic structures seen today, providing strong evidence for models of cosmic inflation and the standard $\\Lambda$CDM model.",
         "status": "platinum",
-        "conceptual_definition": "The formula describes the characteristic magnitude of temperature anisotropies (fluctuations) in the Cosmic Microwave Background (CMB) radiation. These tiny deviations from the average temperature of the early universe are referred to as 'primordial sound' because they are the fossilized imprints of acoustic oscillations (sound waves) that propagated through the hot, dense plasma before the universe cooled enough for atoms to form.",
-        "intuitive_summary": "This equation quantifies the extremely small temperature variations across the Cosmic Microwave Background, which are relic imprints of acoustic waves in the early universe's plasma."
+        "conceptual_definition": "This relation describes the characteristic magnitude of temperature anisotropies (fluctuations) in the Cosmic Microwave Background (CMB) radiation. These tiny deviations from the average temperature of the early universe are referred to as 'primordial sound' because they are the fossilized imprints of acoustic oscillations (sound waves) that propagated through the hot, dense plasma before the universe cooled enough for atoms to form.",
+        "intuitive_summary": "This relation quantifies the extremely small, part-per-hundred-thousand temperature variations across the Cosmic Microwave Background, which are the relic imprints of sound waves in the early universe's plasma."
     },
     "curvature-growth-f92b6e74": {
         "title": "Curvature Growth",
@@ -920,63 +830,39 @@
     },
     "zero-connection-0bf66671": {
         "title": "Zero Connection",
-        "equation": "\\frac{d^2 x^\\mu}{d\\tau^2} = 0 \\quad (\\text{Inside LIF})",
+        "equation": "\\frac{\\mathrm{d}^2 x^\\mu}{\\mathrm{d}\\tau^2} = 0",
         "semantic_variables": {
             "x^\\mu": {
                 "name": "Four-position",
                 "type": "variable",
                 "unit": "m",
-                "description": "The spacetime coordinates of the particle in a four-vector representation$(ct, x, y, z)) , indicating its position in four-dimensional spacetime$."
+                "description": "The spacetime coordinates of a particle, represented as a four-vector $(x^0, x^1, x^2, x^3) = (ct, x, y, z)$, indicating its position in four-dimensional spacetime."
             },
             "\\tau": {
                 "name": "Proper Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The time measured by a clock moving with the particle; it is an invariant scalar interval in spacetime, representing the time elapsed along the particle's worldline."
+                "description": "The time measured by a clock moving along the particle's worldline. It is a Lorentz-invariant scalar."
             },
-            "0": {
-                "name": "Zero Four-Acceleration",
-                "type": "constant",
-                "unit": "m/s^2",
-                "description": "Represents the state of zero four-acceleration for a free particle within a local inertial frame, signifying constant four-velocity and motion along a straight worldline."
-            },
-            "I": {
-                "name": "Electric Current / Moment of Inertia",
-                "type": "variable",
-                "unit": "A or kg·m²",
-                "description": "The rate of flow of electric charge, or resistance to rotational acceleration."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
+            "\\mu": {
+                "name": "Spacetime Index",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
+                "description": "A Greek index running from 0 to 3, representing the components of a four-vector (0 for time, 1, 2, 3 for space)."
             },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
+            "\\frac{\\mathrm{d}^2}{\\mathrm{d}\\tau^2}": {
+                "name": "Second Proper Time Derivative",
+                "type": "operator",
+                "unit": "s^{-2}",
+                "description": "The operator for the second derivative with respect to proper time, which yields the four-acceleration when applied to the four-position."
             }
         },
-        "interpretation": "The equation $\\frac{d^2 x^\\mu}{d\\tau^2} = 0 describes the path of a free particle, i.e., a particle not subject to any non-gravitational forces, when observed in a Local Inertial Frame (LIF). Here,$x^$\\mu$ represents the four-position vector of the particle, with components$(ct, x, y, z)) , where$c) is the speed of light and $t) is coordinate time. The parameter \\tau ) is the proper time, which is the time measured by a clock moving with the particle. The second derivative \\frac{d^2 x^\\mu}{d\\tau^2}$) represents the four-acceleration of the particle. The statement that this four-acceleration is zero signifies that the particle is not accelerating in the LIF. This implies that the particle's four-velocity, $\\frac{d x^\\mu}{d\\tau}$) , is constant within the LIF. In essence, it moves along a straight line in spacetime, which is the definition of a geodesic in a locally flat spacetime. This equation is a direct consequence of the Equivalence Principle, which states that locally, gravity is indistinguishable from acceleration$.",
-        "symmetry_origin": "This equation arises from the principle of equivalence and the definition of a local inertial frame in General Relativity. It represents the geodesic equation, $\\frac{d^2 x^\\mu}{d\\tau^2} + \\Gamma$^$\\mu$_{$\\alpha \\beta } \\frac{d x^ \\alpha }{d\\tau}\\frac{d x^ \\beta }{d\\tau}$= 0)$, in a coordinate system where the Christoffel symbols ( \\Gamma^\\mu_{\\alpha\\beta} ) ) vanish. Such a coordinate system can always be constructed locally at any point in spacetime. The vanishing of the Christoffel symbols is a consequence of the local flatness of spacetime, which in turn reflects the fact that gravity is locally 'turned off' or 'transformed away' in a freely falling frame. This is a statement of local Lorentz invariance and the path of least action for a free particle in spacetime$.",
-        "limits_and_boundary": "This equation is strictly valid within a sufficiently small region of spacetime known as a Local Inertial Frame (LIF), where the effects of tidal forces (due to non-uniform gravity) are negligible. As the size of the region considered increases, the curvature of spacetime becomes significant, and the Christoffel symbols can no longer be ignored. In such cases, the full geodesic equation, $\\frac{d^2 x^ \\mu }{d\\tau^2} + \\Gamma^ \\mu _{ \\alpha \\beta$} $\\frac{d x^ \\alpha }{d \\tau } \\frac{d x^ \\beta }{d \\tau }$= 0)$, must be used. The 'boundary' of the LIF is defined by where tidal forces become measurable, or equivalently, where the second derivatives of the metric tensor become significant. The equation also implicitly assumes the particle is massive, such that \\tau ) is well-defined. For massless particles (e.g., photons), an affine parameter is used instead of proper time, but the principle of following a geodesic still holds$.",
+        "interpretation": "The equation $\\frac{\\mathrm{d}^2 x^\\mu}{\\mathrm{d}\\tau^2} = 0$ describes the path of a free particle, one not subject to any non-gravitational forces, as observed in a Local Inertial Frame (LIF). The variable $x^\\mu$ is the particle's four-position vector $(ct, x, y, z)$, and $\\tau$ is the proper time, the time measured by a clock traveling with the particle. The term $\\frac{\\mathrm{d}^2 x^\\mu}{\\mathrm{d}\\tau^2}$ represents the particle's four-acceleration. Setting this to zero implies that the particle's four-velocity, $u^\\mu = \\frac{\\mathrm{d} x^\\mu}{\\mathrm{d}\\tau}$, is constant. This describes motion along a straight line in the locally flat spacetime of the LIF, which is the definition of a geodesic in this simplified context. This equation is a direct manifestation of the Equivalence Principle, which posits the local equivalence of gravity and acceleration.",
+        "symmetry_origin": "This equation is the geodesic equation, $\\frac{\\mathrm{d}^2 x^\\mu}{\\mathrm{d}\\tau^2} + \\Gamma^\\mu_{\\alpha\\beta} \\frac{\\mathrm{d}x^\\alpha}{\\mathrm{d}\\tau}\\frac{\\mathrm{d}x^\\beta}{\\mathrm{d}\\tau} = 0$, evaluated in a local inertial frame where the Christoffel symbols $\\Gamma^\\mu_{\\alpha\\beta}$ vanish. The existence of such a frame is guaranteed by the Equivalence Principle. The underlying symmetry is local Lorentz invariance (local Poincaré symmetry), which dictates that the laws of physics in a sufficiently small region of spacetime are the same as in special relativity. The straight-line motion corresponds to the path of extremal proper time (an extremum of the action) between two spacetime points.",
+        "limits_and_boundary": "1. **Large Scale Limit:** The equation is only valid in a local inertial frame (LIF). As the region of spacetime increases, tidal forces due to spacetime curvature become non-negligible, and the full geodesic equation with non-zero Christoffel symbols must be used. \n2. **Non-Relativistic Limit ($c \\to \\infty$):** The time component of the four-acceleration becomes negligible, and the spatial components reduce to Newton's first law, $\\frac{\\mathrm{d}^2 \\vec{x}}{\\mathrm{d}t^2} = 0$, in an inertial frame. \n3. **Massless Particle Limit ($m \\to 0$):** Proper time $\\tau$ is not a suitable parameter. The equation is replaced by a similar one using an affine parameter $\\lambda$, $\\frac{\\mathrm{d}^2 x^\\mu}{\\mathrm{d}\\lambda^2} = 0$, which describes the path of a light ray in the LIF.",
         "status": "platinum",
-        "conceptual_definition": "This formula represents the equation of motion for a free particle in a Local Inertial Frame (LIF) within the framework of General Relativity. It states that such a particle experiences no acceleration when observed from an inertial observer, meaning it moves along a straight line in spacetime. This is the essence of Galileo's principle of inertia, extended to relativistic mechanics.",
-        "intuitive_summary": "In a region of spacetime where gravity's effects are locally absent due to a freely falling frame, a freely falling object experiences no proper acceleration, maintaining a constant four-velocity.",
+        "conceptual_definition": "In a local inertial frame (LIF) where gravitational effects are locally eliminated, the equation of motion for a free particle states that its four-acceleration is zero. This signifies that the particle moves along a straight worldline, representing the relativistic extension of Newton's first law.",
+        "intuitive_summary": "In a freely falling frame where gravity seems to vanish, an object without other forces acting on it moves in a straight line at a constant velocity.",
         "subcomponents": [
             "contravariant-spacetime-position-four-vector-component-44ac717d",
             "geodesic-equation-in-general-relativity-e9a37d9e",
@@ -2629,7 +2515,8 @@
         "status": "published",
         "parent_formula_id": "feynman-link-f13a7e97",
         "subcomponents": [],
-        "id": "gauge-covariant-derivative-operator-eee61d96"
+        "id": "gauge-covariant-derivative-operator-eee61d96",
+        "intuitive_summary": ""
     },
     "ultra-relativistic-velocity-limit-d437ab88": {
         "title": "Ultra-Relativistic Velocity Limit",
@@ -2653,7 +2540,8 @@
         "status": "published",
         "parent_formula_id": "doppler-amplification-61df36b6",
         "subcomponents": [],
-        "id": "ultra-relativistic-velocity-limit-d437ab88"
+        "id": "ultra-relativistic-velocity-limit-d437ab88",
+        "intuitive_summary": ""
     },
     "tev-brane-location-in-randall-sundrum-model-596093e0": {
         "title": "TeV Brane Location in Randall-Sundrum Model",
@@ -2683,7 +2571,8 @@
         "status": "published",
         "parent_formula_id": "hierarchy-link-df927c11",
         "subcomponents": [],
-        "id": "tev-brane-location-in-randall-sundrum-model-596093e0"
+        "id": "tev-brane-location-in-randall-sundrum-model-596093e0",
+        "intuitive_summary": ""
     },
     "universal-gravitational-constant-g-6de64c3c": {
         "title": "Universal Gravitational Constant (G)",
@@ -2707,7 +2596,8 @@
         "status": "published",
         "parent_formula_id": "universal-gravitation-3453af42",
         "subcomponents": [],
-        "id": "universal-gravitational-constant-g-6de64c3c"
+        "id": "universal-gravitational-constant-g-6de64c3c",
+        "intuitive_summary": ""
     },
     "relativistic-total-energy-component-e12a8c1b": {
         "title": "Relativistic Total Energy Component",
@@ -2743,7 +2633,8 @@
         "status": "published",
         "parent_formula_id": "coordinate-energy-killing-field-d4da4689",
         "subcomponents": [],
-        "id": "relativistic-total-energy-component-e12a8c1b"
+        "id": "relativistic-total-energy-component-e12a8c1b",
+        "intuitive_summary": ""
     },
     "net-baryon-number-density-5125a681": {
         "title": "Net Baryon Number Density",
@@ -2773,7 +2664,8 @@
         "status": "published",
         "parent_formula_id": "success-rate-0c8c402e",
         "subcomponents": [],
-        "id": "net-baryon-number-density-5125a681"
+        "id": "net-baryon-number-density-5125a681",
+        "intuitive_summary": ""
     },
     "maximum-kinetic-energy-of-photoelectron-1050f7f6": {
         "title": "Maximum Kinetic Energy of Photoelectron",
@@ -2803,7 +2695,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-4500a388",
         "subcomponents": [],
-        "id": "maximum-kinetic-energy-of-photoelectron-1050f7f6"
+        "id": "maximum-kinetic-energy-of-photoelectron-1050f7f6",
+        "intuitive_summary": ""
     },
     "energy-momentum-four-vector-07e5bb25": {
         "title": "Energy-Momentum Four-Vector",
@@ -2839,66 +2732,76 @@
         "status": "published",
         "parent_formula_id": "quantum-link-61881485",
         "subcomponents": [],
-        "id": "energy-momentum-four-vector-07e5bb25"
+        "id": "energy-momentum-four-vector-07e5bb25",
+        "intuitive_summary": ""
     },
     "upper-bound-factor-for-glitch-magnitude-1ec79e91": {
         "title": "Upper Bound Factor for Glitch Magnitude",
         "description": "This constant represents a factor of one millionth, often used to denote a specific scale or magnitude in physical phenomena.",
-        "conceptual_definition": "In physics, $10^{-6}$ represents a numerical constant equivalent to one part per million (ppm) or a micro-scale factor. When applied to dimensionless ratios, it quantifies a very small relative change or magnitude. In the context of neutron star glitches, it specifically denotes the upper end of the observed fractional change in the star's angular rotation rate.",
-        "interpretation": "This numerical value, $10^{-6}$, serves as a critical reference point for the magnitude of physical phenomena. Specifically, within the 'Glitch Event' formula, it defines the upper limit for the fractional change in a neutron star's angular frequency ($\\Delta \\Omega / \\Omega$). A glitch event, characterized by a sudden spin-up of the neutron star, can exhibit a relative change in angular frequency up to this magnitude. This implies that the star's rotation rate increases by no more than one part per million during such an event, providing a scale for the energy and momentum transfer involved.",
-        "limits_and_boundary": "This value represents an upper bound for the relative change in angular frequency ($\\Delta \\Omega / \\Omega$) observed in neutron star glitch events. It sets a maximum magnitude for the sudden spin-up, indicating that glitches typically do not exceed a fractional change of one part per million.",
-        "symmetry_origin": "As a numerical constant, $10^{-6}$ does not directly originate from fundamental symmetries or conservation laws. Its relevance in the 'Glitch Event' formula is empirical, representing an observed magnitude range for a physical phenomenon rather than a theoretical derivation from first principles.",
+        "conceptual_definition": "In the context of neutron star astrophysics, $10^{-6}$ is an empirically determined constant representing the approximate upper bound for the fractional change in angular frequency, $\\Delta \\Omega / \\Omega$, during a glitch event.",
+        "interpretation": "This numerical value, $10^{-6}$, serves as a critical reference point for the magnitude of neutron star glitches. It defines the observed upper limit for the fractional change in a neutron star's angular frequency, $\\Delta \\Omega / \\Omega$. A glitch event, characterized by a sudden spin-up of the neutron star, can exhibit a relative change in angular frequency up to this magnitude. This implies that the star's rotation rate increases by no more than one part per million during such an event, providing a scale for the energy and momentum transfer involved in the underlying physical mechanism, likely related to the dynamics of the star's superfluid interior.",
+        "limits_and_boundary": "1. This value is an empirically observed upper bound for the magnitude of the fractional change in angular frequency, $\\Delta \\Omega / \\Omega$, during a neutron star glitch. It is not a fundamental limit derived from theory, and the discovery of larger glitches, while unexpected, remains a possibility.",
+        "symmetry_origin": "As a numerical constant derived from astronomical observations, $10^{-6}$ does not directly originate from a fundamental symmetry or conservation law. Its value is determined by the complex microphysics and macrophysics of neutron star interiors, including superfluid dynamics, crust-core coupling, and magnetic field effects, rather than a first principle of symmetry.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "compact-object-dynamics",
-        "semantic_variables": {},
+        "semantic_variables": {
+            "10^{-6}": {
+                "name": "Micro-scale factor / Parts-per-million",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "A numerical constant representing one millionth, used here as the empirical upper bound for the fractional change in angular frequency during a neutron star glitch."
+            }
+        },
         "equation": "10^{-6}",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "glitch-event-8c27e562",
         "subcomponents": [],
-        "id": "upper-bound-factor-for-glitch-magnitude-1ec79e91"
+        "id": "upper-bound-factor-for-glitch-magnitude-1ec79e91",
+        "intuitive_summary": "A neutron star's spin can suddenly jump, but the fractional increase in its rotation speed is typically no more than one part in a million."
     },
     "amperes-law-steady-currents-9accb9ba": {
         "title": "Ampere's Law (Steady Currents)",
         "description": "This equation relates the curl of the magnetic field to the current density, describing how electric currents generate magnetic fields.",
-        "conceptual_definition": "Ampere's Law in differential form states that the curl of the magnetic field $\\mathbf{B}$ at any point is directly proportional to the current density $\\mathbf{J}$ at that point. The constant of proportionality is the permeability of free space, $\\mu_0$. This formulation is valid for steady currents where the displacement current term is negligible or zero.",
-        "interpretation": "This equation is one of Maxwell's equations and a fundamental law of electromagnetism. It implies that electric currents are sources of magnetic fields, and the magnetic field lines curl around the direction of current flow. It describes the generation of magnetic fields by moving charges (currents) in a local manner, illustrating the direct link between electricity and magnetism.",
-        "limits_and_boundary": "This specific form of Ampere's Law is valid only for steady currents (DC currents) where the electric field is constant in time, meaning the displacement current term $\\mu_0 \\epsilon_0 \\frac{\\partial \\mathbf{E}$}{$\\partial t} is zero. It applies in vacuum or non-magnetic linear media where the magnetization $\\mathbf{M}$ is negligible or incorporated into \\mu_0.",
-        "symmetry_origin": "This equation reflects the rotational symmetry of magnetic fields around current sources, consistent with the right-hand rule. It is also implicitly linked to the conservation of charge through the continuity equation when considering its full time-dependent form (Ampere-Maxwell Law). The local nature of the equation reflects the locality of interactions in classical electromagnetism.",
+        "conceptual_definition": "The curl of the magnetic field at any point is directly proportional to the electric current density at that point. This form of the law is valid for steady, time-independent currents.",
+        "interpretation": "This equation is one of the four fundamental laws of classical electromagnetism, known as Maxwell's equations. It locally relates a static magnetic field $\\mathbf{B}$ to its source, the steady electric current density $\\mathbf{J}$. The curl operator, $\\nabla \\times$, signifies that the magnetic field lines produced by a current loop around the current path, a geometric relationship often visualized with the right-hand rule. This equation is the differential form of the law; its integral form, $\\oint_C \\mathbf{B} \\cdot \\mathrm{d}\\mathbf{l} = \\mu_0 I_{\\mathrm{enc}}$, is obtained via Stokes' theorem and is often more practical for calculating fields in symmetric situations.",
+        "limits_and_boundary": "1. This equation is valid only in magnetostatics, where all charge densities are static and all currents are steady, implying that all fields are time-independent ($\\partial/\\partial t = 0$).\n2. In time-varying conditions, this law must be corrected with Maxwell's displacement current term, $\\mu_0 \\epsilon_0 \\frac{\\partial \\mathbf{E}}{\\partial t}$, to become the full Ampere-Maxwell law.\n3. It is presented here for a vacuum or a linear, non-magnetic medium.",
+        "symmetry_origin": "The law is a consequence of local U(1) gauge invariance when applied to the quantum mechanical description of charged particles, which ultimately leads to charge conservation. In its macroscopic form, it respects spacetime translation and rotation symmetries. The full Ampere-Maxwell law is required to be consistent with Lorentz invariance and the continuity equation for charge conservation in time-dependent scenarios.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "maxwell-equations",
         "semantic_variables": {
-            "nabla": {
-                "name": "nabla",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Nabla operator (vector differential operator), representing spatial derivatives."
+            "\\nabla": {
+                "name": "Nabla Operator",
+                "type": "operator",
+                "unit": "m^{-1}",
+                "description": "The vector differential operator, which in Cartesian coordinates is $\\mathbf{\\hat{x}}\\frac{\\partial}{\\partial x} + \\mathbf{\\hat{y}}\\frac{\\partial}{\\partial y} + \\mathbf{\\hat{z}}\\frac{\\partial}{\\partial z}$."
             },
-            "B": {
-                "name": "B",
+            "\\mathbf{B}": {
+                "name": "Magnetic Field",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Magnetic field (Tesla, T), a vector field describing the magnetic influence on moving electric charges, electric currents, and magnetic materials."
+                "unit": "T",
+                "description": "The magnetic field vector, a pseudovector field that describes the magnetic influence on moving electric charges and magnetic materials. Its SI unit is the Tesla."
             },
-            "mu_0": {
-                "name": "mu_0",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Permeability of free space (Henry per meter, H/m or N/A^2), a fundamental physical constant representing the ability of a vacuum to permit magnetic field lines to pass through it."
+            "\\mu_0": {
+                "name": "Permeability of Free Space",
+                "type": "constant",
+                "unit": "H/m",
+                "description": "A fundamental physical constant representing the capability of a vacuum to permit magnetic fields. Its value is exactly $4\\pi \\times 10^{-7}$ Henry per meter."
             },
-            "J": {
-                "name": "J",
+            "\\mathbf{J}": {
+                "name": "Current Density",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Current density (Amperes per square meter, A/m^2), a vector field representing the amount of electric current flowing per unit cross-sectional area."
+                "unit": "A/m^2",
+                "description": "The vector field describing the density of electric current flow at a point. Its magnitude is the current per unit cross-sectional area."
             }
         },
         "equation": "\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J}",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "current-density-approaches-zero",
         "subcomponents": [],
-        "id": "amperes-law-steady-currents-9accb9ba"
+        "id": "amperes-law-steady-currents-9accb9ba",
+        "intuitive_summary": "Electric currents create magnetic fields that curl around the path of the current."
     },
     "heisenberg-equation-of-motion-aa361f8d": {
         "title": "Heisenberg Equation of Motion",
@@ -2964,7 +2867,8 @@
         "status": "published",
         "parent_formula_id": "time-dependent-schrodinger-equation",
         "subcomponents": [],
-        "id": "heisenberg-equation-of-motion-aa361f8d"
+        "id": "heisenberg-equation-of-motion-aa361f8d",
+        "intuitive_summary": ""
     },
     "negative-gradient-of-scalar-potential-820f44f5": {
         "title": "Negative Gradient of Scalar Potential",
@@ -2994,7 +2898,8 @@
         "status": "published",
         "parent_formula_id": "e-field-stability-bd23b472",
         "subcomponents": [],
-        "id": "negative-gradient-of-scalar-potential-820f44f5"
+        "id": "negative-gradient-of-scalar-potential-820f44f5",
+        "intuitive_summary": ""
     },
     "coincident-spacetime-events-condition-6d270c6c": {
         "title": "Coincident Spacetime Events Condition",
@@ -3024,7 +2929,8 @@
         "status": "published",
         "parent_formula_id": "spacetime-interval-squared",
         "subcomponents": [],
-        "id": "coincident-spacetime-events-condition-6d270c6c"
+        "id": "coincident-spacetime-events-condition-6d270c6c",
+        "intuitive_summary": ""
     },
     "probability-weighted-log-probability-term-afea45f3": {
         "title": "Probability-Weighted Log-Probability Term",
@@ -3048,7 +2954,8 @@
         "status": "published",
         "parent_formula_id": "gibbs-entropy-definition-a6fa7a88",
         "subcomponents": [],
-        "id": "probability-weighted-log-probability-term-afea45f3"
+        "id": "probability-weighted-log-probability-term-afea45f3",
+        "intuitive_summary": ""
     },
     "characteristic-length-scale-for-massive-particles-3f419634": {
         "title": "Characteristic Length Scale for Massive Particles",
@@ -3090,43 +2997,51 @@
         "status": "published",
         "parent_formula_id": "exponential-shield-c983d536",
         "subcomponents": [],
-        "id": "characteristic-length-scale-for-massive-particles-3f419634"
+        "id": "characteristic-length-scale-for-massive-particles-3f419634",
+        "intuitive_summary": ""
     },
     "spacetime-curvature-four-velocity-coupling-term-047be583": {
         "title": "Spacetime Curvature Four-Velocity Coupling Term",
         "description": "This term quantifies the change in a particle's four-velocity due to the curvature of spacetime, representing the 'gravitational acceleration' in general relativity.",
-        "conceptual_definition": "In general relativity, particles in free fall follow geodesics, which are the 'straightest possible paths' in curved spacetime. The Christoffel symbols, $\\Gamma$^$\\mu$_{$\\alpha \\beta }, are connection coefficients that quantify how basis vectors change from point to point in a curved manifold. This specific term represents the component of the four-acceleration that arises purely from the curvature of spacetime, not from external forces. It dictates how the direction of the four-velocity vector changes as it is parallel transported along itself$.",
-        "interpretation": "This term is fundamental for understanding motion in curved spacetime, as it describes how the four-velocity of a freely falling particle is affected by the geometry of spacetime. It demonstrates that even in the absence of external forces, a particle's four-velocity can change if spacetime itself is curved, which is the core principle of gravity in general relativity. Gravity is thus interpreted not as a force, but as a manifestation of spacetime curvature. The term ensures that the four-velocity vector remains tangent to the geodesic path, accounting for the 'straightest possible path' in a curved geometry. Without this term, the geodesic equation would only describe inertial motion in flat spacetime.",
-        "limits_and_boundary": "In flat spacetime, such as Minkowski spacetime, all Christoffel symbols $\\Gamma$^$\\mu$_{$\\alpha \\beta } are identically zero. In this limit, the entire term vanishes, and the geodesic equation reduces to \\frac{d U^\\mu}{d\\tau}$ = 0, which describes inertial motion (constant four-velocity) in the absence of gravity. This term is only non-zero in the presence of a gravitational field, i.e., in curved spacetime$.",
-        "symmetry_origin": "This term arises from the principles of general covariance and the equivalence principle, which are foundational to general relativity. The geodesic equation, of which this term is a part, is derived from the variational principle for the proper time, which is an invariant quantity under general coordinate transformations. The Christoffel symbols themselves are not tensors but arise from the requirement that the covariant derivative of the metric tensor is zero, reflecting the compatibility of the connection with the metric.",
+        "conceptual_definition": "This term represents the component of a particle's four-acceleration arising from spacetime curvature, as described by the Christoffel symbols coupling with the particle's four-velocity. It quantifies how the geometry of spacetime itself causes a deviation from a straight path in the flat-space sense.",
+        "interpretation": "This term is a crucial component of the geodesic equation, $a^\\mu = \\frac{\\mathrm{d}U^\\mu}{\\mathrm{d}\\tau} + \\Gamma^\\mu_{\\alpha\\beta} U^\\alpha U^\\beta = 0$, which describes the world line of a freely-falling particle in curved spacetime. The term $\\Gamma^\\mu_{\\alpha\\beta} U^\\alpha U^\\beta$ represents the 'gravitational' part of the four-acceleration. It is not a true force but a fictitious or inertial force arising from describing motion in a curved manifold with curvilinear coordinates. It corrects the rate of change of the four-velocity $U^\\mu$ to account for the fact that the basis vectors themselves are changing from point to point, ensuring that the particle follows the 'straightest possible path' (a geodesic) through the curved geometry.",
+        "limits_and_boundary": "1. In the limit of flat spacetime (e.g., Minkowski space), the metric tensor is constant, and all Christoffel symbols are zero ($\\Gamma^\\mu_{\\alpha\\beta} = 0$). This term vanishes, and the geodesic equation reduces to $\\mathrm{d}U^\\mu/\\mathrm{d}\\tau = 0$, describing inertial motion.\n2. In the weak-field, low-velocity limit ($v \\ll c$), the geodesic equation, of which this term is a part, reduces to Newton's law of universal gravitation, with the Christoffel symbols being related to the derivatives of the Newtonian gravitational potential.",
+        "symmetry_origin": "This term is a direct consequence of the principle of general covariance, which states that the laws of physics must be expressed in a form that is invariant under arbitrary differentiable coordinate transformations. The Christoffel symbols $\\Gamma^\\mu_{\\alpha\\beta}$ are derived from the metric tensor $g_{\\mu\\nu}$ under the condition of metric compatibility ($\\nabla_\\sigma g_{\\mu\\nu} = 0$), ensuring that lengths and angles are locally preserved under parallel transport. The geodesic equation itself can be derived from a variational principle using the spacetime interval, which is an invariant quantity, reflecting the underlying spacetime symmetries.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity-kinematics",
         "semantic_variables": {
-            "Gamma^mu_alphabeta": {
-                "name": "Gamma^mu_alphabeta",
+            "\\Gamma^\\mu_{\\alpha\\beta}": {
+                "name": "Christoffel Symbol",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Christoffel symbols of the second kind, representing the connection coefficients that describe how basis vectors change in a curved manifold. These are not tensors. Unitless."
+                "unit": "m^{-1}",
+                "description": "The Christoffel symbol of the second kind, which acts as the connection coefficient for the Levi-Civita connection on a Riemannian manifold. It is not a tensor but quantifies how basis vectors change from point to point due to spacetime curvature."
             },
-            "U^alpha": {
-                "name": "U^alpha",
+            "U^\\alpha": {
+                "name": "Four-velocity",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Contravariant component of the four-velocity vector. It represents the rate of change of spacetime position with respect to proper time. In SI units, its components are typically (c, dx/d\\tau, dy/d\\tau, dz/d\\tau). Unit: m/s (or unitless if normalized by c)."
+                "unit": "m/s",
+                "description": "The contravariant component of the four-velocity vector, representing the rate of change of a particle's spacetime position with respect to its proper time $\\tau$. Summation is implied over the index $\\alpha$."
             },
-            "U^beta": {
-                "name": "U^beta",
+            "U^\\beta": {
+                "name": "Four-velocity",
                 "type": "variable",
+                "unit": "m/s",
+                "description": "The contravariant component of the four-velocity vector. Summation is implied over the index $\\beta$."
+            },
+            "\\mu, \\alpha, \\beta": {
+                "name": "Spacetime Indices",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "Contravariant component of the four-velocity vector. Same physical meaning and units as U^alpha. Unit: m/s (or unitless if normalized by c)."
+                "description": "Indices ranging from 0 to 3, representing the time (0) and three spatial dimensions (1, 2, 3). Repeated upper and lower indices imply Einstein summation."
             }
         },
         "equation": "\\Gamma^\\mu_{\\alpha\\beta} U^\\alpha U^\\beta",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "twin-paradox-base-700c2ee3",
         "subcomponents": [],
-        "id": "spacetime-curvature-four-velocity-coupling-term-047be583"
+        "id": "spacetime-curvature-four-velocity-coupling-term-047be583",
+        "intuitive_summary": "This term mathematically describes how the curvature of spacetime, which we perceive as gravity, forces a freely-moving object to follow a curved path."
     },
     "cartesian-form-of-a-complex-number-bd9d908e": {
         "title": "Cartesian Form of a Complex Number",
@@ -3162,7 +3077,8 @@
         "status": "published",
         "parent_formula_id": "complex-number-representation",
         "subcomponents": [],
-        "id": "cartesian-form-of-a-complex-number-bd9d908e"
+        "id": "cartesian-form-of-a-complex-number-bd9d908e",
+        "intuitive_summary": ""
     },
     "kinetic-energy-from-momentum-f953911c": {
         "title": "Kinetic Energy from Momentum",
@@ -3198,7 +3114,8 @@
         "status": "published",
         "parent_formula_id": "kinetic-energy-classical",
         "subcomponents": [],
-        "id": "kinetic-energy-from-momentum-f953911c"
+        "id": "kinetic-energy-from-momentum-f953911c",
+        "intuitive_summary": ""
     },
     "distinct-neutrino-flavor-eigenstates-condition-4699c3e9": {
         "title": "Distinct Neutrino Flavor Eigenstates Condition",
@@ -3228,7 +3145,8 @@
         "status": "published",
         "parent_formula_id": "neutrino-flavor-transition-probability-98612f24",
         "subcomponents": [],
-        "id": "distinct-neutrino-flavor-eigenstates-condition-4699c3e9"
+        "id": "distinct-neutrino-flavor-eigenstates-condition-4699c3e9",
+        "intuitive_summary": ""
     },
     "time-invariance-of-lagrangian-bd8619c0": {
         "title": "Time Invariance of Lagrangian",
@@ -3258,7 +3176,8 @@
         "status": "published",
         "parent_formula_id": "scalar-laws-01d54036",
         "subcomponents": [],
-        "id": "time-invariance-of-lagrangian-bd8619c0"
+        "id": "time-invariance-of-lagrangian-bd8619c0",
+        "intuitive_summary": ""
     },
     "full-width-at-half-maximum-angular-resolution-6aedecd7": {
         "title": "Full Width at Half Maximum Angular Resolution",
@@ -3294,7 +3213,8 @@
         "status": "published",
         "parent_formula_id": "hubble-telescope-astrometry-identity-1-e96fc98f-6581a2e1",
         "subcomponents": [],
-        "id": "full-width-at-half-maximum-angular-resolution-6aedecd7"
+        "id": "full-width-at-half-maximum-angular-resolution-6aedecd7",
+        "intuitive_summary": ""
     },
     "sub-threshold-frequency-condition-72d75fa7": {
         "title": "Sub-Threshold Frequency Condition",
@@ -3324,7 +3244,8 @@
         "status": "published",
         "parent_formula_id": "universal-constant-685e36dd",
         "subcomponents": [],
-        "id": "sub-threshold-frequency-condition-72d75fa7"
+        "id": "sub-threshold-frequency-condition-72d75fa7",
+        "intuitive_summary": ""
     },
     "isothermal-adiabatic-compressibility-equivalence-limit-66f9b441": {
         "title": "Isothermal-Adiabatic Compressibility Equivalence Limit",
@@ -3354,7 +3275,8 @@
         "status": "published",
         "parent_formula_id": "thermostat-link-f2d0c870",
         "subcomponents": [],
-        "id": "isothermal-adiabatic-compressibility-equivalence-limit-66f9b441"
+        "id": "isothermal-adiabatic-compressibility-equivalence-limit-66f9b441",
+        "intuitive_summary": ""
     },
     "arcsecond-to-degree-and-radian-conversion-52fc1299": {
         "title": "Arcsecond to Degree and Radian Conversion",
@@ -3390,7 +3312,8 @@
         "status": "published",
         "parent_formula_id": "distance-base-52fc1299",
         "subcomponents": [],
-        "id": "arcsecond-to-degree-and-radian-conversion-52fc1299"
+        "id": "arcsecond-to-degree-and-radian-conversion-52fc1299",
+        "intuitive_summary": ""
     },
     "transformed-vector-component-in-euclidean-space-add3c83c": {
         "title": "Transformed Vector Component in Euclidean Space",
@@ -3414,7 +3337,8 @@
         "status": "published",
         "parent_formula_id": "orthogonality-2b17df88",
         "subcomponents": [],
-        "id": "transformed-vector-component-in-euclidean-space-add3c83c"
+        "id": "transformed-vector-component-in-euclidean-space-add3c83c",
+        "intuitive_summary": ""
     },
     "algebraic-simplification-of-dimensionless-ratio-965412aa": {
         "title": "Algebraic Simplification of Dimensionless Ratio",
@@ -3456,7 +3380,8 @@
         "status": "published",
         "parent_formula_id": "phonon-bose-einstein-occupancy-996345f3",
         "subcomponents": [],
-        "id": "algebraic-simplification-of-dimensionless-ratio-965412aa"
+        "id": "algebraic-simplification-of-dimensionless-ratio-965412aa",
+        "intuitive_summary": ""
     },
     "infinitesimal-line-element-in-3d-euclidean-space-3adfea6c": {
         "title": "Infinitesimal Line Element in 3D Euclidean Space",
@@ -3498,7 +3423,8 @@
         "status": "published",
         "parent_formula_id": "metric-tensor-cartesian",
         "subcomponents": [],
-        "id": "infinitesimal-line-element-in-3d-euclidean-space-3adfea6c"
+        "id": "infinitesimal-line-element-in-3d-euclidean-space-3adfea6c",
+        "intuitive_summary": ""
     },
     "ghz-state-stabilizer-equation-a37a72bc": {
         "title": "GHZ State Stabilizer Equation",
@@ -3540,7 +3466,8 @@
         "status": "published",
         "parent_formula_id": "algebraic-definition-a37a72bc",
         "subcomponents": [],
-        "id": "ghz-state-stabilizer-equation-a37a72bc"
+        "id": "ghz-state-stabilizer-equation-a37a72bc",
+        "intuitive_summary": ""
     },
     "big-o-notation-for-quadratic-term-bd2e5345": {
         "title": "Big O Notation for Quadratic Term",
@@ -3570,7 +3497,8 @@
         "status": "published",
         "parent_formula_id": "logarithm-taylor-expansion",
         "subcomponents": [],
-        "id": "big-o-notation-for-quadratic-term-bd2e5345"
+        "id": "big-o-notation-for-quadratic-term-bd2e5345",
+        "intuitive_summary": ""
     },
     "number-density-evolution-in-expanding-universe-6eed0756": {
         "title": "Number Density Evolution in Expanding Universe",
@@ -3606,7 +3534,8 @@
         "status": "published",
         "parent_formula_id": "bbn-rule-9cce0af7",
         "subcomponents": [],
-        "id": "number-density-evolution-in-expanding-universe-6eed0756"
+        "id": "number-density-evolution-in-expanding-universe-6eed0756",
+        "intuitive_summary": ""
     },
     "hodge-number-component-672ef481": {
         "title": "Hodge Number Component",
@@ -3642,7 +3571,8 @@
         "status": "published",
         "parent_formula_id": "geometric-duality-identity-1-5b3b97e8-38dc0dc6",
         "subcomponents": [],
-        "id": "hodge-number-component-672ef481"
+        "id": "hodge-number-component-672ef481",
+        "intuitive_summary": ""
     },
     "rest-energy-invariance-in-proper-time-bd739853": {
         "title": "Rest Energy Invariance in Proper Time",
@@ -3672,6 +3602,7 @@
         "status": "published",
         "parent_formula_id": "energy-transfer-e22e94db",
         "subcomponents": [],
-        "id": "rest-energy-invariance-in-proper-time-bd739853"
+        "id": "rest-energy-invariance-in-proper-time-bd739853",
+        "intuitive_summary": ""
     }
 }

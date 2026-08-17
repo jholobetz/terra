@@ -524,26 +524,26 @@
         ]
     },
     "the-operator-shift-c0b4b7cd": {
-        "title": "The Operator Shift",
-        "equation": "\\frac{\\partial \\mathcal{L}}{\\partial q} - \\frac{d}{dt} \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}} = 0",
+        "title": "Euler-Lagrange Equation",
+        "equation": "\\frac{\\partial \\mathcal{L}}{\\partial q_i} - \\frac{\\mathrm{d}}{\\mathrm{d}t} \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}_i} = 0",
         "semantic_variables": {
             "\\mathcal{L}": {
                 "name": "Lagrangian",
-                "type": "variable",
+                "type": "scalar function",
                 "unit": "J (Joule)",
-                "description": "The Lagrangian of the system, typically defined as the difference between the kinetic energy and the potential energy of the system."
+                "description": "The Lagrangian of the system, a function of generalized coordinates, velocities, and time, typically defined as kinetic energy minus potential energy ($T-V$)."
             },
-            "q": {
+            "q_i": {
                 "name": "Generalized Coordinate",
                 "type": "variable",
-                "unit": "m (meter) (if spatial)",
-                "description": "A generalized coordinate describing the configuration of the system. It can represent positions, angles, or other independent variables that define the state of the system."
+                "unit": "Varies (e.g., m, rad)",
+                "description": "An independent coordinate that describes the configuration of the system. The index $i$ runs over the degrees of freedom."
             },
-            "\\dot{q}": {
+            "\\dot{q}_i": {
                 "name": "Generalized Velocity",
                 "type": "variable",
-                "unit": "m/s (meter per second) (if spatial)",
-                "description": "The time derivative of the generalized coordinate, representing the generalized velocity of the system."
+                "unit": "Varies (e.g., m/s, rad/s)",
+                "description": "The time derivative of the generalized coordinate, $\\mathrm{d}q_i/\\mathrm{d}t$."
             },
             "t": {
                 "name": "Time",
@@ -551,31 +551,25 @@
                 "unit": "s (second)",
                 "description": "The independent variable representing time."
             },
-            "\\frac{\\partial \\mathcal{L}}{\\partial q}": {
-                "name": "Partial derivative of Lagrangian with respect to generalized coordinate",
+            "\\frac{\\mathrm{d}}{\\mathrm{d}t}": {
+                "name": "Total Time Derivative",
                 "type": "operator",
-                "unit": "J/m (Joule per meter) (if spatial)",
-                "description": "Represents the rate of change of the Lagrangian with respect to the generalized coordinate, holding velocities constant. It is related to the generalized force acting on the system."
+                "unit": "s⁻¹",
+                "description": "The operator for the total derivative with respect to time."
             },
-            "\\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}}": {
-                "name": "Partial derivative of Lagrangian with respect to generalized velocity",
+            "\\partial": {
+                "name": "Partial Derivative",
                 "type": "operator",
-                "unit": "kg m/s (kilogram meter per second) (if spatial)",
-                "description": "Represents the rate of change of the Lagrangian with respect to the generalized velocity. This quantity is known as the generalized momentum conjugate to $q$."
-            },
-            "\\frac{d}{dt}": {
-                "name": "Total time derivative",
-                "type": "variable",
-                "unit": "1/s (per second)",
-                "description": "The total derivative with respect to time, accounting for any explicit time dependence of the function it operates on."
+                "unit": "Varies",
+                "description": "The operator for a partial derivative."
             }
         },
-        "interpretation": "This equation relates the Lagrangian, $\\mathcal{L}, of a system to its generalized coordinates and velocities. The Lagrangian is typically defined as the difference between the kinetic energy,$T$, and the potential energy,$V$, of the system, i.e., \\mathcal{L} = T - V$. The term $\\frac{\\partial \\mathcal{L} }{\\partial q}$ represents the rate of change of the Lagrangian with respect to a generalized coordinate $q$ (which has units of Joules per meter, J/m, if $q$ is a spatial coordinate). This term signifies how the energy of the system changes as the generalized coordinate changes, holding the velocities constant. The term $\\frac{\\partial \\mathcal{L} }{\\partial \\dot{q} }$, where $\\dot{q}$ is the generalized velocity (with units of m/s if $q$ is a spatial coordinate), represents the change in the Lagrangian with respect to velocity. This quantity is related to the generalized momentum conjugate to $q$ (with units of kg m/s). The term $\\frac{d}{dt}\\left( \\frac{ \\partial \\mathcal{L}$}{ $\\partial \\dot{q}$ } $\\right$)$is the total time derivative of this conjugate momentum, signifying how this momentum changes over time. The Euler-Lagrange equation states that the difference between the rate of change of the Lagrangian with respect to position and the rate of change of the conjugate momentum with respect to time must be zero. This condition is precisely what is required for the action to be extremized, thus yielding the equations of motion$.",
-        "symmetry_origin": "The Euler-Lagrange equation is a direct consequence of the principle of least action, which is a variational principle. It arises from the requirement that the action integral, $S = \\int_{t_1}^{t_2} \\mathcal{L}(q(t), (t), t)$ dt, be stationary with respect to variations in the path $q(t)$. If the Lagrangian is invariant under certain transformations (e.g., translations or rotations), this leads to conservation laws through Noether's theorem. For instance, if $\\mathcal{L}$ does not explicitly depend on time, then $\\frac{d \\mathcal{L} }{dt} = \\frac{\\partial \\mathcal{L}}{ \\partial q} \\dot{q} + \\frac{ \\partial \\mathcal{L}$}{ $\\partial \\dot{q}$} $\\ddot{q}$. However, from the Euler-Lagrange equation, $\\frac{\\partial \\mathcal{L}$ }{$\\partial q} = \\frac{d}{dt} \\frac{ \\partial \\mathcal{L}$}{$\\partial \\dot{q}$}$. Substituting this into the time derivative of \\mathcal{L} gives \\frac{d \\mathcal{L} }{dt} = \\frac{d}{dt} \\frac{\\partial \\mathcal{L} }{ \\partial \\dot{q} } \\dot{q} + \\frac{\\partial \\mathcal{L}$}{$\\partial \\dot{q} } \\ddot{q} = \\frac{d}{dt} \\left ( \\dot{q} \\frac{ \\partial \\mathcal{L} }{ \\partial \\dot{q}$ } $\\right )$. This implies that $\\mathcal{L} - \\dot{q} \\frac{\\partial \\mathcal{L}$ }{ $\\partial \\dot{q} }$ is a conserved quantity, which for a system where $\\mathcal{L}$ = T - V $and$ T = \\frac{1}{2}$m\\dot{q}$^2 (a simple harmonic oscillator case), corresponds to the total energy of the system.",
-        "limits_and_boundary": "In the limit where the generalized coordinate $q$ approaches zero, the term $\\frac{\\partial \\mathcal{L}}{\\partial q}$ will depend on the specific form of the Lagrangian. If the potential energy $V$ has a minimum at $q=0$ (e.g., a stable equilibrium), then $\\frac{\\partial V}{\\partial q}$ would be zero at $q=0$. If the kinetic energy $T$ does not depend on $q$ itself, then $\\frac{\\partial \\mathcal{L}}{\\partial q} = -\\frac{\\partial V}{\\partial q}$ would be zero at $q=0$ in this stable equilibrium case. The term $\\frac{d}{dt} \\frac{ \\partial \\mathcal{L}$}{ $\\partial \\dot{q}$ } represents the rate of change of momentum. If the system is at rest (all velocities are zero, $\\dot{q} = 0$), then $\\frac{ \\partial \\mathcal{L} }{ \\partial \\dot{q} }$might also be zero if the kinetic energy is zero, leading to the equation$0 - 0 = 0$, which is trivially satisfied. As $q$ approaches infinity, the behavior is highly dependent on the nature of the potential energy. For instance, if $V(q)$grows unboundedly with $q$, the system may tend towards a state of minimum potential energy, or if it has sufficient kinetic energy, it might escape to infinity. In cases where the Lagrangian becomes constant for large $q$, the derivatives would tend to zero. For instance, if $\\mathcal{L}$ tends to a constant $C$ as $q \\to \\to \\to , then both \\frac{ \\partial \\mathcal{L} }{ \\partial q}$and $\\frac{ \\partial \\mathcal{L} }{ \\partial \\dot{q} }$would approach zero. The time derivative of a$ constant is zero, thus satisfying the equation.",
+        "interpretation": "The Euler-Lagrange equation is the fundamental result of the calculus of variations as applied to physics. It is derived by finding the path $q(t)$ that extremizes the action integral $S = \\int \\mathcal{L}(q_i, \\dot{q}_i, t) \\, \\mathrm{d}t$. The term $\\frac{\\partial \\mathcal{L}}{\\partial q_i}$ is the generalized force, which drives the system to lower potential energy. The term $\\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}_i}$ is the generalized momentum $p_i$ conjugate to the coordinate $q_i$. Its total time derivative, $\\frac{\\mathrm{d}p_i}{\\mathrm{d}t}$, represents the rate of change of this generalized momentum. The equation states that the generalized force is equal to the rate of change of the generalized momentum, which is a generalization of Newton's second law.",
+        "symmetry_origin": "This equation is a direct consequence of the principle of stationary action, a fundamental variational principle. Through Noether's theorem, any differentiable symmetry of the action corresponds to a conserved quantity. If the Lagrangian $\\mathcal{L}$ is invariant under a continuous transformation (e.g., translation in space), the corresponding generalized momentum is conserved. If $\\mathcal{L}$ has no explicit time dependence ($\\partial \\mathcal{L} / \\partial t = 0$), the quantity $H = \\sum_i \\dot{q}_i \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}_i} - \\mathcal{L}$, known as the Hamiltonian, is conserved, representing the total energy of the system.",
+        "limits_and_boundary": "1. Non-relativistic Limit: For a single particle with Lagrangian $\\mathcal{L} = T - V = \\frac{1}{2}m\\dot{q}^2 - V(q)$, the Euler-Lagrange equation reduces to $m\\ddot{q} = -\\frac{\\partial V}{\\partial q}$, which is Newton's second law, $F=ma$.\n2. Free Particle: If the Lagrangian is independent of position $q$ (e.g., $\\mathcal{L} = \\frac{1}{2}m\\dot{q}^2$), then $\\frac{\\partial \\mathcal{L}}{\\partial q} = 0$, implying $\\frac{\\mathrm{d}}{\\mathrm{d}t}(\\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}}) = 0$. This shows that the momentum $p = m\\dot{q}$ is conserved.\n3. Field Theory Generalization: For a continuous field $\\phi(x, t)$, the equation generalizes to $\\frac{\\partial \\mathcal{L}}{\\partial \\phi} - \\partial_\\mu \\left( \\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)} \\right) = 0$, which describes the dynamics of fields in spacetime.",
         "status": "platinum",
-        "conceptual_definition": "The formula provided, $\\frac{\\partial \\mathcal{L}$}{$\\partial q} -\\frac{d}{dt} \\frac{\\partial \\mathcal{L}$}{$\\partial \\dot{q}$}$= 0$, is known as the Euler-Lagrange equation. It is a fundamental equation in classical mechanics and field theory that describes the motion of a system. It is derived from the principle of least action, which states that the path taken by a system between two points in time is the one that minimizes (or extremizes) a quantity called the action, which is the time integral of the Lagrangian. The Euler-Lagrange equation provides the equations of motion for the system.",
-        "intuitive_summary": "Nature chooses the path of least action, and this equation mathematically enforces that choice for any given system.",
+        "conceptual_definition": "The Euler-Lagrange equation is a second-order differential equation whose solutions are the paths for which the action functional is stationary. It provides the equations of motion for a system described by a Lagrangian, derived from the principle of stationary action.",
+        "intuitive_summary": "This equation mathematically enforces that a physical system will evolve along a path of stationary (often, least) action.",
         "subcomponents": [
             "zero-net-electric-charge-condition-08407cb5",
             "lagrangian-function-definition-7dc75537",
@@ -1237,75 +1231,45 @@
     },
     "ssb-vacuum-selection-vev-683b0861": {
         "title": "Symmetry-Breaking Vacuum State",
-        "equation": "REG",
-        "interpretation": "In a symmetry-breaking scenario, the vacuum state is characterized by a non-zero expectation value of certain fields, which consequently breaks the symmetry. The expression 'REG' would typically represent the vacuum energy density, denoted as Λ (Lambda), which is a constant energy per unit volume inherent to space itself. In a more complex formulation, 'REG' might be a functional that depends on the values of quantum fields, say ϕ (phi), and their gradients. For instance, a common potential energy term for a scalar field ϕ that exhibits spontaneous symmetry breaking is of the form V(ϕ) = μ^2 |ϕ|^2 + $\\lambda$ |ϕ|^4, where μ^2 $0 and \\lambda 0. The minimum of this potential occurs at a non-zero value of ϕ, indicating a broken symmetry. The 'REG' expression would then be related to the value of this potential at its minimum, representing the vacuum energy density. If 'REG' were to explicitly contain field variables, then for a scalar field ϕ, it might be expressed as REG(ϕ) = ½ (∂_μ ϕ)(∂^μ ϕ) + V(ϕ), where the first term is the kinetic energy and V(ϕ) is the potential energy. The physical interpretation hinges on the specific form of 'REG', but it invariably describes the ground state energy of a system where the fundamental symmetries of the Lagrangian are not mirrored by the vacuum itself$.",
-        "symmetry_origin": "The origin of symmetry breaking in the vacuum state lies in the potential energy function of the underlying fields. If the potential energy V(ϕ) has a minimum at a non-zero value of a field ϕ, then the vacuum state, which corresponds to the minimum energy configuration, will have a non-zero expectation value for ϕ. This non-zero expectation value breaks the symmetry that would be present if the minimum were at ϕ = 0. This is often motivated by phenomenological models in particle physics (like the Higgs mechanism) or observed cosmological phenomena. Mathematically, it arises from the choice of the ground state of the Hamiltonian, which, due to the shape of the potential, may not be invariant under the symmetry transformations of the Hamiltonian itself.",
-        "limits_and_boundary": "If 'REG' represents a vacuum energy density Λ, then in the limit of extremely small systems or energies, this vacuum energy might become negligible compared to other energy scales. Conversely, if Λ is very large, it can dominate the energy budget of the universe, as suggested in some cosmological models. If 'REG' includes field-dependent terms, such as REG(ϕ) = ½ (∂_μ ϕ)(∂^μ ϕ) + V(ϕ), then as the fields ϕ and their gradients approach zero (approaching the symmetric point if it were the minimum), the vacuum energy density would approach V(0). If V(ϕ) has a minimum at ϕ = ϕ_0 ≠ 0, then as ϕ approaches ϕ_0, the vacuum energy density approaches the minimum value V(ϕ_0), which is the physically realized vacuum energy.",
+        "equation": "\\langle \\phi \\rangle_0 = \\pm v \\quad \\text{where} \\quad v = \\sqrt{\\frac{\\mu^2}{\\lambda}}",
+        "interpretation": "This equation describes the vacuum expectation value (VEV) for a real scalar field $\\phi$ with a potential $V(\\phi) = -\\frac{1}{2}\\mu^2 \\phi^2 + \\frac{1}{4}\\lambda \\phi^4$. This 'Mexican hat' potential is symmetric under the reflection $\\phi \\to -\\phi$. However, its minimum energy state is not at $\\phi=0$ but at two degenerate points, $\\phi = \\pm v$. The physical vacuum must 'choose' one of these minima, for instance $\\langle \\phi \\rangle_0 = +v$. This choice breaks the $\\mathbb{Z}_2$ reflection symmetry of the Lagrangian, as the vacuum state itself is no longer invariant under the symmetry operation. This mechanism is fundamental to the Standard Model, where the Higgs field acquires a non-zero VEV, breaking the electroweak symmetry and giving mass to elementary particles.",
+        "symmetry_origin": "The phenomenon is called spontaneous symmetry breaking because the breaking is not caused by an explicit symmetry-breaking term in the Lagrangian. The Lagrangian itself possesses a symmetry (e.g., a continuous $U(1)$ or discrete $\\mathbb{Z}_2$ symmetry), but the ground state (vacuum) of the theory does not. The choice of a particular ground state from a continuous or discrete manifold of degenerate, minimum-energy states is what breaks the symmetry.",
+        "limits_and_boundary": "1. High-Temperature Limit: At temperatures $T$ much higher than the energy scale of the VEV ($k_B T \\gg v$), thermal fluctuations can restore the symmetry. The effective potential is modified by temperature, and its minimum shifts to $\\langle \\phi \\rangle = 0$.\n2. Symmetric Phase: If the quadratic term in the potential were positive (i.e., a standard mass term $V = \\frac{1}{2}m^2\\phi^2$ with $m^2 > 0$), the minimum would be at $\\phi=0$. In this case, $\\langle \\phi \\rangle_0 = 0$, the vacuum is symmetric, and no spontaneous symmetry breaking occurs.\n3. Quantum Tunneling: In the quantum theory, there is a non-zero probability for the system to tunnel between the degenerate vacua (e.g., from $+v$ to $-v$), although this rate is typically exponentially suppressed for macroscopic systems.",
         "semantic_variables": {
-            "REG": {
-                "name": "Symmetry-Breaking Vacuum State Expression",
-                "type": "variable",
-                "unit": "J/m^3",
-                "description": "A placeholder representing the mathematical expression for the energy density of the vacuum state when spontaneous symmetry breaking occurs. Its specific form depends on the underlying theory and fields involved. It can represent a constant vacuum energy density (Λ) or a functional of quantum fields and their derivatives."
-            },
-            "ϕ": {
+            "\\phi": {
                 "name": "Scalar Field",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A fundamental quantum field, often a scalar field, whose potential energy function dictates the symmetry properties of the vacuum. Its expectation value in the vacuum state can break symmetries."
+                "unit": "GeV (Giga-electronvolt)",
+                "description": "A quantum field, such as the Higgs field, whose potential energy landscape can lead to spontaneous symmetry breaking."
             },
-            "V(ϕ)": {
-                "name": "Potential Energy Function",
-                "type": "variable",
-                "unit": "J/m^3",
-                "description": "The potential energy of the scalar field ϕ. The shape of this function, particularly the location of its minimum, determines whether symmetry breaking occurs."
+            "\\langle \\cdot \\rangle_0": {
+                "name": "Vacuum Expectation Value",
+                "type": "operator",
+                "unit": "Same as operand",
+                "description": "The expectation value of an operator in the vacuum state, which is the lowest energy state of the system."
             },
-            "μ^2": {
-                "name": "Mass Parameter Squared",
-                "type": "variable",
-                "unit": "1/m^2",
-                "description": "A parameter in the potential energy function. If μ^2 is negative, it typically leads to spontaneous symmetry breaking in a scalar field theory."
-            },
-            "λ": {
-                "name": "Coupling Constant",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A coupling constant that determines the strength of the self-interaction of the scalar field ϕ. It must be positive for a stable vacuum."
-            },
-            "∂_μ ϕ": {
-                "name": "Field Gradient",
-                "type": "variable",
-                "unit": "1/m",
-                "description": "The derivative of the scalar field ϕ with respect to spacetime coordinates. It represents the kinetic energy contribution of the field."
-            },
-            "Λ": {
-                "name": "Cosmological Constant / Vacuum Energy Density",
-                "type": "variable",
-                "unit": "J/m^3",
-                "description": "Represents a constant energy density inherent to space itself. In the context of symmetry breaking, it is the value of the potential energy at its minimum."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
+            "v": {
+                "name": "Vacuum Expectation Value (VEV)",
                 "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
+                "unit": "GeV (Giga-electronvolt)",
+                "description": "The non-zero magnitude of the scalar field in the vacuum state, representing the scale at which symmetry is broken."
             },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
+            "\\mu^2": {
+                "name": "Quadratic Coupling Parameter",
                 "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "GeV²",
+                "description": "A parameter in the scalar potential. A positive value (with a negative sign in the potential, as in $-\\mu^2\\phi^2$) indicates an instability at $\\phi=0$, driving spontaneous symmetry breaking."
+            },
+            "\\lambda": {
+                "name": "Quartic Self-Interaction Coupling",
+                "type": "constant",
+                "unit": "Dimensionless",
+                "description": "A positive coupling constant that determines the strength of the field's self-interaction and ensures the potential is bounded from below."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The concept of a symmetry-breaking vacuum state is central to modern quantum field theory and cosmology. In quantum field theory, the vacuum is not empty but is filled with quantum fields that fluctuate. A vacuum state is considered 'symmetric' if it possesses the same symmetries as the underlying laws of physics. However, in many physical systems, the lowest energy state (the vacuum) does not exhibit all the symmetries of the governing equations. This phenomenon is known as spontaneous symmetry breaking. The 'REG' in this context is a placeholder for a specific mathematical expression that quantifies the energy density of such a vacuum state, often involving scalar fields or other fundamental fields whose potential energy function has a minimum away from the symmetric point.",
-        "intuitive_summary": "A symmetry-breaking vacuum state is the lowest energy configuration of a system that does not possess all the symmetries of its governing physical laws."
+        "conceptual_definition": "In spontaneous symmetry breaking, the lowest energy state of a system (the vacuum) does not share the full symmetry of the underlying physical laws. This is characterized by a quantum field acquiring a non-zero vacuum expectation value (VEV).",
+        "intuitive_summary": "The system settles into a lowest-energy state that is asymmetric, even though the rules governing it are perfectly symmetric."
     },
     "muon-decay-identity-1-f46e1a57-9000d69f": {
         "title": "Relativistic Mean Lifetime Expansion of Cosmic Muons",
@@ -1351,123 +1315,57 @@
     },
     "lepton-flavor-universality-identity-1-c9bf4d34-2f526955": {
         "title": "Gauge Coupling Universality in the Electroweak Lagrangian",
-        "equation": "\\mathcal{L}_{\\text{gauge}} = \\sum_{\\ell = e, \\mu, \\tau} \\bar{L}_\\ell i \\gamma^\\mu D_\\mu L_\\ell \\quad \\text{with} \\quad g_e = g_\\mu = g_\\tau",
-        "interpretation": "$L_\\ell$ is the left-handed lepton doublet for generation $\\ell$, $\\gamma^\\mu$ are the Dirac matrices, $D_\\mu$ is the covariant derivative containing the gauge fields, and $g_\\ell$ are the gauge couplings.",
-        "symmetry_origin": "Gauge symmetry of the electroweak interaction under $SU(2)_L \\times U(1)_Y$.",
-        "limits_and_boundary": "Deviations from this universality would indicate new physics beyond the Standard Model.",
+        "equation": "\\mathcal{L}_{\\text{kinetic}} = \\sum_{\\ell=e,\\mu,\\tau} i \\bar{L}_\\ell \\gamma^\\mu D_\\mu L_\\ell",
+        "interpretation": "This term in the Standard Model Lagrangian describes the kinetic energy and gauge interactions of the left-handed lepton doublets $L_\\ell$. The structure is universal for each lepton generation $\\ell \\in \\{e, \\mu, \\tau\\}$. The operator $i \\bar{L}_\\ell \\gamma^\\mu D_\\mu L_\\ell$ ensures Lorentz invariance and gauge invariance under the electroweak symmetry group $SU(2)_L \\times U(1)_Y$. The universality arises because the covariant derivative $D_\\mu$ contains the gauge fields and their corresponding coupling constants ($g$ for $SU(2)_L$ and $g'$ for $U(1)_Y$), which are the same for all three generations. This identical mathematical form for each lepton flavor is the precise statement of lepton universality in the gauge sector.",
+        "symmetry_origin": "The form of this Lagrangian term is dictated by the gauge symmetry of the electroweak interaction, described by the group $SU(2)_L \\times U(1)_Y$. Since all left-handed lepton doublets $L_e, L_\\mu, L_\\tau$ transform identically under this gauge group, the principle of gauge invariance requires that they couple to the gauge bosons with the same strength. This universality is a direct consequence of placing the three lepton generations into the same representation of the gauge group.",
+        "limits_and_boundary": "1. Standard Model Limit: This equation holds exactly within the Standard Model framework, where the gauge couplings are postulated to be universal.\n2. Beyond the Standard Model (BSM): Any experimentally observed deviation from this universality (e.g., different decay rates for W bosons into different lepton flavors after accounting for mass effects) would be a direct signal of new physics. Such deviations could be caused by new particles like leptoquarks or Z' bosons that couple differently to different lepton generations.",
         "semantic_variables": {
-            "\\mathcal{L}_{\\text{gauge}}": {
-                "name": "Gauge Lepton Lagrangian",
+            "\\mathcal{L}_{\\text{kinetic}}": {
+                "name": "Lepton Kinetic Lagrangian",
                 "type": "variable",
                 "unit": "J/m^3",
-                "description": "The lepton-gauge boson interaction term in the Lagrangian."
-            },
-            "L_\\ell": {
-                "name": "Lepton Doublet Field",
-                "type": "variable",
-                "unit": "1/m^(3/2)",
-                "description": "The left-handed lepton doublet field for flavor \\ell."
-            },
-            "\\bar{L}_\\ell": {
-                "name": "Dirac Conjugate Lepton Field",
-                "type": "variable",
-                "unit": "1/m^(3/2)",
-                "description": "The Dirac conjugate of the doublet field."
-            },
-            "\\gamma^\\mu": {
-                "name": "Dirac Gamma Matrices",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The Dirac spin matrices."
-            },
-            "D_\\mu": {
-                "name": "Covariant Derivative Operator",
-                "type": "operator",
-                "unit": "1/m",
-                "description": "The gauge-covariant derivative."
-            },
-            "g_e": {
-                "name": "Electron Gauge Coupling",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The electroweak coupling strength of the electron."
-            },
-            "g_\\mu": {
-                "name": "Muon Gauge Coupling",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The electroweak coupling strength of the muon."
-            },
-            "g_\\tau": {
-                "name": "Tau Gauge Coupling",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The electroweak coupling strength of the tau lepton."
-            },
-            "\\ell": {
-                "name": "\\ell Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "description": "The part of the Lagrangian density describing the kinetic energy and gauge interactions of the lepton fields."
             },
             "i": {
                 "name": "Imaginary Unit",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
+                "description": "The mathematical constant defined by the property $i^2 = -1$."
             },
-            "\\gamma": {
-                "name": "Lorentz Factor",
+            "\\bar{L}_\\ell": {
+                "name": "Adjoint Lepton Doublet Field",
                 "type": "variable",
+                "unit": "m^{-3/2}",
+                "description": "The Dirac adjoint, $\\bar{L}_\\ell = L_\\ell^\\dagger \\gamma^0$, of the left-handed lepton doublet field for flavor $\\ell$."
+            },
+            "\\gamma^\\mu": {
+                "name": "Dirac Gamma Matrices",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The relativistic scale factor describing time dilation and length contraction."
+                "description": "A set of four matrices that satisfy the Clifford algebra, $\\{ \\gamma^\\mu, \\gamma^\\nu \\} = 2\\eta^{\\mu\\nu}I_4$, used to construct Lorentz-covariant expressions involving spinor fields."
             },
-            "D": {
-                "name": "Electric Displacement Field",
+            "D_\\mu": {
+                "name": "Gauge Covariant Derivative",
+                "type": "operator",
+                "unit": "m^{-1}",
+                "description": "An operator that replaces the partial derivative $\\partial_\\mu$ to ensure gauge invariance of the Lagrangian. It is defined as $D_\\mu = \\partial_\\mu - i g \\frac{\\sigma^a}{2} W^a_\\mu - i g' \\frac{Y}{2} B_\\mu$ for the electroweak interaction."
+            },
+            "L_\\ell": {
+                "name": "Left-Handed Lepton Doublet",
                 "type": "variable",
-                "unit": "C/m²",
-                "description": "The displacement flux density representing electric charge polarization in media."
+                "unit": "m^{-3/2}",
+                "description": "A two-component spinor field representing the left-handed lepton and its corresponding neutrino for a given generation $\\ell \\in \\{e, \\mu, \\tau\\}$. For example, $L_e = (\\nu_{eL}, e_L)^T$."
             },
-            "w": {
-                "name": "Width / Angular Velocity Component",
-                "type": "variable",
-                "unit": "m or rad/s",
-                "description": "Horizontal size, or rate of rotation along a particular axis."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "h": {
-                "name": "Planck Constant",
-                "type": "constant",
-                "unit": "J·s",
-                "description": "The quantum of electromagnetic action relating photon energy to frequency."
-            },
-            "g": {
-                "name": "Gravitational Acceleration",
-                "type": "constant",
-                "unit": "m/s²",
-                "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "\\tau": {
-                "name": "Infinitesimal Volume Element",
-                "type": "variable",
-                "unit": "m³",
-                "description": "An infinitesimal region of space over which a volume integration is performed."
+            "\\ell": {
+                "name": "Lepton Flavor Index",
+                "type": "index",
+                "unit": "dimensionless",
+                "description": "An index that runs over the three lepton generations: electron ($e$), muon ($\\mu$), and tau ($\\tau$)."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "In the Standard Model, Lepton Flavor Universality states that the gauge couplings $g_\\ell$ of the three generations of leptons (electron, muon, tau) to the electroweak gauge bosons are identical, represented by summing over the identical kinetic terms in the electroweak Lagrangian.",
-        "intuitive_summary": "Weak and electromagnetic gauge bosons interact with electrons, muons, and tau leptons with exactly the same coupling strength, ignoring differences in their masses.",
+        "conceptual_definition": "In the Standard Model, Lepton Flavor Universality posits that the gauge couplings of the three generations of leptons (electron, muon, tau) to the electroweak gauge bosons are identical. This is expressed through a single, universal kinetic and interaction term in the Lagrangian, summed over all lepton flavors.",
+        "intuitive_summary": "Electroweak forces interact with electrons, muons, and tau leptons with exactly the same fundamental strength, treating them identically apart from their mass.",
         "subcomponents": [
             "gauge-covariant-derivative-operator-eee61d96",
             "electroweak-gauge-symmetry-group-7f0a1e1a",
@@ -1904,7 +1802,8 @@
         "status": "published",
         "parent_formula_id": "redshift-correction-3766c0c9",
         "subcomponents": [],
-        "id": "luminosity-distance-in-cosmology-447c66ee"
+        "id": "luminosity-distance-in-cosmology-447c66ee",
+        "intuitive_summary": ""
     },
     "hubble-parameter-9cc37e97": {
         "title": "Hubble Parameter",
@@ -1940,7 +1839,8 @@
         "status": "published",
         "parent_formula_id": "energy-density-change-1125d63c",
         "subcomponents": [],
-        "id": "hubble-parameter-9cc37e97"
+        "id": "hubble-parameter-9cc37e97",
+        "intuitive_summary": ""
     },
     "radial-pressure-gradient-4976cb7f": {
         "title": "Radial Pressure Gradient",
@@ -1970,7 +1870,8 @@
         "status": "published",
         "parent_formula_id": "adiabatic-temperature-gradient-bd19cf0d",
         "subcomponents": [],
-        "id": "radial-pressure-gradient-4976cb7f"
+        "id": "radial-pressure-gradient-4976cb7f",
+        "intuitive_summary": ""
     },
     "stellar-effective-temperature-f81af773": {
         "title": "Stellar Effective Temperature",
@@ -2006,7 +1907,8 @@
         "status": "published",
         "parent_formula_id": "photospheric-boundary-approximation-9ad58585",
         "subcomponents": [],
-        "id": "stellar-effective-temperature-f81af773"
+        "id": "stellar-effective-temperature-f81af773",
+        "intuitive_summary": ""
     },
     "pressure-volume-work-component-96a96026": {
         "title": "Pressure-Volume Work Component",
@@ -2036,7 +1938,8 @@
         "status": "published",
         "parent_formula_id": "stiffness-factor-88a8e028",
         "subcomponents": [],
-        "id": "pressure-volume-work-component-96a96026"
+        "id": "pressure-volume-work-component-96a96026",
+        "intuitive_summary": ""
     },
     "cosmic-scale-factor-and-redshift-relation-c7a745eb": {
         "title": "Cosmic Scale Factor and Redshift Relation",
@@ -2066,7 +1969,8 @@
         "status": "published",
         "parent_formula_id": "hierarchy-dea15ce5",
         "subcomponents": [],
-        "id": "cosmic-scale-factor-and-redshift-relation-c7a745eb"
+        "id": "cosmic-scale-factor-and-redshift-relation-c7a745eb",
+        "intuitive_summary": ""
     },
     "mean-field-dynamo-alpha-omega-product-2e186a26": {
         "title": "Mean-Field Dynamo Alpha-Omega Product",
@@ -2096,24 +2000,33 @@
         "status": "published",
         "parent_formula_id": "efficiency-metric-3fe39304",
         "subcomponents": [],
-        "id": "mean-field-dynamo-alpha-omega-product-2e186a26"
+        "id": "mean-field-dynamo-alpha-omega-product-2e186a26",
+        "intuitive_summary": ""
     },
     "normalization-constant-for-majorana-mass-term-b5a9867e": {
         "title": "Normalization Constant for Majorana Mass Term",
         "description": "This constant factor ensures proper normalization of the Majorana mass term in the Lagrangian, preventing double-counting of identical contributions.",
-        "conceptual_definition": "In quantum field theory, the Majorana mass term describes the mass of a self-conjugate fermion. The factor of 1/2 is introduced to correctly account for the degrees of freedom, as the term $\\bar{\\psi}_L^c \\psi_L$ is symmetric under the exchange of fields (up to charge conjugation properties), meaning each physical interaction is counted only once in the action integral. The negative sign is a convention to ensure a positive mass-squared term in the Hamiltonian, corresponding to a stable vacuum.",
-        "interpretation": "The $-\\frac{1}{2}$ factor is a crucial normalization constant within the Majorana mass Lagrangian. The 1/2 factor specifically addresses the self-conjugate nature of Majorana fermions, where the term $\\bar{\\psi}_L^c \\psi_L$ is effectively equivalent to its Hermitian conjugate, thus requiring a factor of 1/2 to avoid overcounting when integrating over the field configurations to form the action. The negative sign is a standard convention in defining mass terms in field theory, ensuring that the energy associated with the mass is positive, which is essential for a stable physical system. It reflects the specific structure required for a Lorentz-invariant mass term for a self-conjugate fermion.",
-        "limits_and_boundary": "As a fundamental constant factor within the definition of the Majorana mass Lagrangian, this value is fixed and does not possess physical limits, asymptotic behavior, or boundary conditions in the traditional sense. Its presence is inherent to the theoretical construction of a mass term for a Majorana fermion.",
-        "symmetry_origin": "The factor of 1/2 arises from the requirement that the Lagrangian density must be a real scalar under Lorentz transformations and that the action correctly counts distinct physical processes. The overall structure of the Majorana mass term, including this factor, respects CPT symmetry and is constructed to be invariant under Lorentz transformations, though the mass term itself explicitly breaks lepton number conservation.",
+        "conceptual_definition": "A normalization factor of $-1/2$ is included in the Majorana mass term of a Lagrangian to correctly count the degrees of freedom for a self-conjugate fermion and to ensure the mass term contributes positively to the system's energy.",
+        "interpretation": "The Majorana mass term, such as $\\mathcal{L}_M = -\\frac{1}{2} m \\left( \\overline{(\\psi_L)^c} \\psi_L + \\text{h.c.} \\right)$, gives mass to a fermion that is its own antiparticle. The factor of $1/2$ is necessary because the field and its charge conjugate are not independent (e.g., $\\psi = \\psi^c$), so including the term and its hermitian conjugate (h.c.) without this factor would double-count the interaction in the action. The negative sign is a convention in the $(+,-,-,-)$ metric signature to ensure that the mass term in the Hamiltonian is positive, corresponding to a positive rest energy and a stable vacuum.",
+        "limits_and_boundary": "1. Theoretical Constant: This factor is a fixed numerical constant required by the mathematical structure of a quantum field theory for self-conjugate fermions. It is not subject to physical limits or boundary conditions.\n2. Dirac Fermion Limit: This factor is absent in the mass term for a Dirac fermion, $\\mathcal{L}_m = -m \\bar{\\psi}\\psi$, because the field $\\psi$ and its adjoint $\\bar{\\psi}$ represent independent particle and antiparticle degrees of freedom, so no double-counting occurs.",
+        "symmetry_origin": "The factor of $1/2$ arises from the requirement that the action correctly counts the distinct physical degrees of freedom for a self-conjugate field. The overall structure of the Majorana mass term, including this factor, is constructed to be a Lorentz scalar. While the term is invariant under CPT and Lorentz transformations, it explicitly breaks any symmetry associated with lepton number conservation by two units, as it mixes a fermion with its antifermion.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "majorana-fermions",
-        "semantic_variables": {},
+        "semantic_variables": {
+            "-1/2": {
+                "name": "Majorana Normalization Factor",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "A conventional normalization constant for a Majorana mass term, ensuring correct counting of degrees of freedom and a positive mass-squared in the Hamiltonian."
+            }
+        },
         "equation": "-\\frac{1}{2}",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "majorana-mass-lagrangian-3290a41c",
         "subcomponents": [],
-        "id": "normalization-constant-for-majorana-mass-term-b5a9867e"
+        "id": "normalization-constant-for-majorana-mass-term-b5a9867e",
+        "intuitive_summary": "This factor is a bookkeeping rule ensuring we don't double-count the mass of a particle that is its own antiparticle."
     },
     "gravitational-centripetal-force-equivalence-e525642e": {
         "title": "Gravitational-Centripetal Force Equivalence",
@@ -2143,7 +2056,8 @@
         "status": "published",
         "parent_formula_id": "standard-decay-46f67473",
         "subcomponents": [],
-        "id": "gravitational-centripetal-force-equivalence-e525642e"
+        "id": "gravitational-centripetal-force-equivalence-e525642e",
+        "intuitive_summary": ""
     },
     "complex-conjugate-of-charm-down-ckm-matrix-element-f68768ef": {
         "title": "Complex Conjugate of Charm-Down CKM Matrix Element",
@@ -2167,7 +2081,8 @@
         "status": "published",
         "parent_formula_id": "jarlskog-invariant-cp-violation-ident-2f2f2397",
         "subcomponents": [],
-        "id": "complex-conjugate-of-charm-down-ckm-matrix-element-f68768ef"
+        "id": "complex-conjugate-of-charm-down-ckm-matrix-element-f68768ef",
+        "intuitive_summary": ""
     },
     "yang-mills-field-strength-tensor-3f6b1546": {
         "title": "Yang-Mills Field Strength Tensor",
@@ -2227,7 +2142,8 @@
         "status": "published",
         "parent_formula_id": "geometric-ropes-ec23388a",
         "subcomponents": [],
-        "id": "yang-mills-field-strength-tensor-3f6b1546"
+        "id": "yang-mills-field-strength-tensor-3f6b1546",
+        "intuitive_summary": ""
     },
     "inner-product-of-a-quantum-state-with-itself-31b51e8f": {
         "title": "Inner Product of a Quantum State with Itself",
@@ -2251,7 +2167,8 @@
         "status": "published",
         "parent_formula_id": "right-angle-rule-0c05bfbb",
         "subcomponents": [],
-        "id": "inner-product-of-a-quantum-state-with-itself-31b51e8f"
+        "id": "inner-product-of-a-quantum-state-with-itself-31b51e8f",
+        "intuitive_summary": ""
     },
     "tangent-of-parallactic-angle-98aadba9": {
         "title": "Tangent of Parallactic Angle",
@@ -2287,7 +2204,8 @@
         "status": "published",
         "parent_formula_id": "standard-survey-4f72204b",
         "subcomponents": [],
-        "id": "tangent-of-parallactic-angle-98aadba9"
+        "id": "tangent-of-parallactic-angle-98aadba9",
+        "intuitive_summary": ""
     },
     "comoving-volume-scale-factor-proportionality-d86d1238": {
         "title": "Comoving Volume-Scale Factor Proportionality",
@@ -2317,7 +2235,8 @@
         "status": "published",
         "parent_formula_id": "cosmic-fluid-equation-ident-bfe90efa",
         "subcomponents": [],
-        "id": "comoving-volume-scale-factor-proportionality-d86d1238"
+        "id": "comoving-volume-scale-factor-proportionality-d86d1238",
+        "intuitive_summary": ""
     },
     "stokes-theorem-for-electric-field-be47c565": {
         "title": "Stokes' Theorem for Electric Field",
@@ -2371,7 +2290,8 @@
         "status": "published",
         "parent_formula_id": "phase-shift-1694fda8",
         "subcomponents": [],
-        "id": "stokes-theorem-for-electric-field-be47c565"
+        "id": "stokes-theorem-for-electric-field-be47c565",
+        "intuitive_summary": ""
     },
     "canonical-poisson-bracket-definition-4b143ee8": {
         "title": "Canonical Poisson Bracket Definition",
@@ -2443,7 +2363,8 @@
         "status": "published",
         "parent_formula_id": "conserved-charge-1e792fb7",
         "subcomponents": [],
-        "id": "canonical-poisson-bracket-definition-4b143ee8"
+        "id": "canonical-poisson-bracket-definition-4b143ee8",
+        "intuitive_summary": ""
     },
     "product-of-generalized-velocities-aeb5599a": {
         "title": "Product of Generalized Velocities",
@@ -2485,7 +2406,8 @@
         "status": "published",
         "parent_formula_id": "inertia-rule-0da3073e",
         "subcomponents": [],
-        "id": "product-of-generalized-velocities-aeb5599a"
+        "id": "product-of-generalized-velocities-aeb5599a",
+        "intuitive_summary": ""
     },
     "initial-tau-lepton-number-f621e0cc": {
         "title": "Initial Tau Lepton Number",
@@ -2509,7 +2431,8 @@
         "status": "published",
         "parent_formula_id": "lepton-number-conservation-law-8ad77619",
         "subcomponents": [],
-        "id": "initial-tau-lepton-number-f621e0cc"
+        "id": "initial-tau-lepton-number-f621e0cc",
+        "intuitive_summary": ""
     },
     "normalization-condition-for-probability-density-c1b9383b": {
         "title": "Normalization Condition for Probability Density",
@@ -2551,7 +2474,8 @@
         "status": "published",
         "parent_formula_id": "born-rule-for-probability-density",
         "subcomponents": [],
-        "id": "normalization-condition-for-probability-density-c1b9383b"
+        "id": "normalization-condition-for-probability-density-c1b9383b",
+        "intuitive_summary": ""
     },
     "square-root-of-mean-squared-velocity-945009ec": {
         "title": "Square Root of Mean Squared Velocity",
@@ -2581,7 +2505,8 @@
         "status": "published",
         "parent_formula_id": "energy-weight-d95849e8",
         "subcomponents": [],
-        "id": "square-root-of-mean-squared-velocity-945009ec"
+        "id": "square-root-of-mean-squared-velocity-945009ec",
+        "intuitive_summary": ""
     },
     "differential-potential-energy-change-599e589e": {
         "title": "Differential Potential Energy Change",
@@ -2617,7 +2542,8 @@
         "status": "published",
         "parent_formula_id": "downhill-force-13e4de5a",
         "subcomponents": [],
-        "id": "differential-potential-energy-change-599e589e"
+        "id": "differential-potential-energy-change-599e589e",
+        "intuitive_summary": ""
     },
     "offset-wave-function-component-28edc1ea": {
         "title": "Offset Wave Function Component",
@@ -2641,7 +2567,8 @@
         "status": "published",
         "parent_formula_id": "temporal-bridge-94a6028e",
         "subcomponents": [],
-        "id": "offset-wave-function-component-28edc1ea"
+        "id": "offset-wave-function-component-28edc1ea",
+        "intuitive_summary": ""
     },
     "position-momentum-uncertainty-principle-3579c023": {
         "title": "Position-Momentum Uncertainty Principle",
@@ -2677,7 +2604,8 @@
         "status": "published",
         "parent_formula_id": "correspondence-20c2d80d",
         "subcomponents": [],
-        "id": "position-momentum-uncertainty-principle-3579c023"
+        "id": "position-momentum-uncertainty-principle-3579c023",
+        "intuitive_summary": ""
     },
     "weak-gravity-conjecture-condition-b6c456aa": {
         "title": "Weak Gravity Conjecture Condition",
@@ -2713,7 +2641,8 @@
         "status": "published",
         "parent_formula_id": "weak-gravity-condition-b6c456aa",
         "subcomponents": [],
-        "id": "weak-gravity-conjecture-condition-b6c456aa"
+        "id": "weak-gravity-conjecture-condition-b6c456aa",
+        "intuitive_summary": ""
     },
     "non-trivial-renormalization-group-fixed-point-8610d753": {
         "title": "Non-trivial Renormalization Group Fixed Point",
@@ -2737,6 +2666,7 @@
         "status": "published",
         "parent_formula_id": "callan-symanzik-equation-5a23fdb1-365ae739",
         "subcomponents": [],
-        "id": "non-trivial-renormalization-group-fixed-point-8610d753"
+        "id": "non-trivial-renormalization-group-fixed-point-8610d753",
+        "intuitive_summary": ""
     }
 }

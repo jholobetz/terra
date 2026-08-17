@@ -36,117 +36,69 @@
         "intuitive_summary": "An isomorphism means two systems behave identically, even if they look different on the surface, implying their fundamental relationships and operations are preserved under a specific transformation."
     },
     "operator-transfer-2d8d6a65": {
-        "title": "Operator Transfer",
-        "equation": "\\delta S = \\text{Boundary Terms} + \\int \\left( \\frac{\\partial L}{\\partial q} - \\frac{d}{dt} \\frac{\\partial L}{\\partial \\dot{q}} \\right) \\delta q \\, dt",
+        "title": "First Variation of the Action",
+        "equation": "\\delta S = \\left[ \\frac{\\partial L}{\\partial \\dot{q}} \\delta q \\right]_{t_1}^{t_2} + \\int_{t_1}^{t_2} \\left( \\frac{\\partial L}{\\partial q} - \\frac{\\mathrm{d}}{\\mathrm{d}t} \\frac{\\partial L}{\\partial \\dot{q}} \\right) \\delta q \\, \\mathrm{d}t",
         "semantic_variables": {
-            "\\delta\\delta\\delta S": {
-                "name": "Variation of Action",
+            "\\delta S": {
+                "name": "First Variation of the Action",
                 "type": "variable",
-                "unit": "J s",
-                "description": "Represents an infinitesimal change in the action functional $S$ due to an infinitesimal variation in the path taken by the system."
-            },
-            "\\text{Boundary Terms}": {
-                "name": "Boundary Terms",
-                "type": "variable",
-                "unit": "J s",
-                "description": "Represents the contribution to the total variation of action from the variations in generalized coordinates and velocities at the initial and final time points of the path. Typically takes the form $\\left[$\\frac{\\partial L}{\\partial $\\dot{q}}$\\delta q \\right]_{t_1}^{t_2}$."
+                "unit": "J·s",
+                "description": "The infinitesimal change in the action functional $S$ resulting from an infinitesimal variation of the path $q(t)$."
             },
             "L": {
                 "name": "Lagrangian",
-                "type": "variable",
+                "type": "function",
                 "unit": "J",
-                "description": "A function of generalized coordinates $q$, generalized velocities $\\dot{q}$, and time $t$, defined as $L = T - V$, where $T$ is the kinetic energy and $V$ is the potential energy. It describes the dynamics of a physical system."
+                "description": "A function of the system's generalized coordinates, generalized velocities, and time, typically defined as kinetic energy minus potential energy ($L=T-V$). It encapsulates the dynamics of the system."
             },
             "q": {
                 "name": "Generalized Coordinate",
                 "type": "variable",
-                "unit": "m",
-                "description": "A variable used to describe the configuration of a system, generalizing Cartesian coordinates to allow for constraints and different geometries. It can be a position, angle, etc."
+                "unit": "m, rad, etc.",
+                "description": "A parameter that describes the configuration of the system relative to some reference state. It can be a position, an angle, or another type of coordinate."
             },
             "\\dot{q}": {
                 "name": "Generalized Velocity",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The time derivative of the generalized coordinate $q$, representing the rate of change of the system's configuration."
+                "unit": "m/s, rad/s, etc.",
+                "description": "The time derivative of the generalized coordinate, $\\dot{q} = \\mathrm{d}q/\\mathrm{d}t$."
+            },
+            "\\delta q": {
+                "name": "Path Variation",
+                "type": "variable",
+                "unit": "m, rad, etc.",
+                "description": "An infinitesimal, virtual displacement of the generalized coordinate from the physical path."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The independent variable representing the progression of time."
+                "description": "The independent variable representing time."
             },
-            "\\delta q": {
-                "name": "Variation of Generalized Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "An infinitesimal, arbitrary variation in the generalized coordinate $q$ from the actual physical path. It represents a small deviation from the path."
-            },
-            "S": {
-                "name": "Poynting Vector",
-                "type": "variable",
-                "unit": "W/m²",
-                "description": "The directional energy flux density of an electromagnetic field."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "u": {
-                "name": "Velocity Component / Specific Internal Energy",
-                "type": "variable",
-                "unit": "m/s or J/kg",
-                "description": "Speed along a particular coordinate direction, or internal energy per unit mass."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
-            },
-            "T": {
-                "name": "Tension / Period",
-                "type": "variable",
-                "unit": "N or s",
-                "description": "In dynamics, tension force in a string/cable, or period (time per cycle) of periodic motion."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
+            "t_1": {
+                "name": "Initial Time",
+                "type": "parameter",
                 "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
+                "description": "The starting time of the path integral."
+            },
+            "t_2": {
+                "name": "Final Time",
+                "type": "parameter",
+                "unit": "s",
+                "description": "The ending time of the path integral."
+            },
+            "\\frac{\\mathrm{d}}{\\mathrm{d}t}": {
+                "name": "Total Time Derivative",
+                "type": "operator",
+                "unit": "s^{-1}",
+                "description": "The operator for the total derivative with respect to time."
             }
         },
-        "interpretation": "The equation $\\delta$ S = $\\text{Boundary Terms} + \\int \\left$($\\frac{ \\partial L}{ \\partial q} - \\frac{d}{dt} \\frac{ \\partial L}{ \\partial \\dot{q}$} $\\right ) \\delta q \\,$dt describes how the action $S$ changes when the path taken by a system, specified by its generalized coordinates $q$, is varied infinitesimally.The term $\\delta$ S represents the total variation of the action.The \"Boundary Terms\" encapsulate the contributions to $\\delta$ S that arise from the variations in the generalized coordinates $\\delta$ q and generalized velocities $\\delta \\dot{q} at$ the initial and final time points of the path. Specifically, these terms typically take the form $\\left$ [ $\\frac{ \\partial L}{ \\partial \\dot{q}$} $\\delta q \\right ]_{t_1}^{t_2}$.The integral term, $\\int \\left$( $\\frac{ \\partial L}{ \\partial q} - \\frac{d}{dt} \\frac{ \\partial L}{ \\partial \\dot{q} } \\right ) \\delta q \\,$dt, represents the contribution to the action variation from the interior of the path. The expression $\\left$ ( $\\frac{ \\partial L}{ \\partial q}$ - \\frac{d}{dt} \\frac${$\\partial L}{ \\partial $\\dot{q}$ } \\right )$is precisely the Euler-Lagrange operator.According to the Principle of Least Action (or Hamilton's Principle), for the actual physical path taken by a system, the action$S$is stationary, meaning$\\delta$S = 0$. If we impose the condition that the variations at the endpoints are zero (i.e., \\delta q(t_1) = 0$and$\\delta$q(t_2) = 0$), then the \"Boundary Terms\" vanish. In this scenario, for \\delta S$to be zero for arbitrary variations$\\delta$q$ along the path, the Euler-Lagrange operator must be zero, leading directly to the Euler-Lagrange equations of motion: \\frac{ \\partial L}{ \\partial q} - \\frac{d}{dt} \\frac{ \\partial L}{ \\partial $\\dot{q}$} = 0$. This demonstrates how the variational principle yields the equations of motion for a system.",
-        "symmetry_origin": "The formula originates from the Principle of Least Action (or Hamilton's Principle), which is a fundamental variational principle in classical mechanics. This principle states that the path taken by a physical system between two points in time is the one for which the action $S$ has a stationary value. The act of performing the variation $\\delta S$ and setting it to zero directly leads to the Euler-Lagrange equations. This principle itself is a powerful statement about the underlying mathematical structure of physical laws, often reflecting coordinate invariance and leading to conservation laws via Noether's theorem when the Lagrangian exhibits specific symmetries.",
-        "limits_and_boundary": "1. **Fixed Endpoints**: The most common application involves fixing the initial and final positions of the system, meaning $\\delta$ q(t_1) = 0$and \\delta q(t_2) = 0$. In this case, the \"Boundary Terms\" vanish, and the condition $\\delta$ S = 0$directly implies the Euler-Lagrange equations \\frac{ \\partial L}{\\partial q} -$\\frac{d}{dt} \\frac{ \\partial L}{ \\partial $\\dot{q}$}$= 0$. 2. **Free Endpoints**: If the endpoints are not fixed, the \"Boundary Terms\" remain. For $\\delta$ S $to$ be zero for arbitrary variations, not only must the integral term vanish (leading to Euler-Lagrange equations), but the total boundary term $\\left$[$\\frac{ \\partial L}{ \\partial \\dot{q}}$\\delta q \\right$]_{t_1}^{t_2}$ must also be zero. This implies that if \\delta q$is not zero at an endpoint, then$\\frac{ \\partial L}{ \\partial $\\dot{q}}$(which is the generalized momentum) must be zero at that endpoint, leading to natural boundary conditions. 3. **No Dynamics / Static Case**: If the system is static or in equilibrium,$\\dot{q}$= 0$, and the time derivatives vanish. The Lagrangian often becomes equivalent to the negative of the potential energy ($L = -V$if kinetic energy is zero or constant), and the Euler-Lagrange equations simplify to conditions of equilibrium, e.g., \\frac${$\\partial V}{ \\partial q}$= 0$. 4. **Special Lagrangians**: If the Lagrangian$L$does not depend on a particular coordinate$q_i$(i.e., \\frac{ \\partial L}{ \\partial q_i} = 0$), then that coordinate is cyclic, and the corresponding Euler-Lagrange equation implies$\\frac{d}{dt} \\frac{ \\partial L}{ \\partial \\dot{q_i}}$= 0$, meaning$\\frac${$\\partial L}{ \\partial $\\dot{q_i}$ }$(the generalized momentum conjugate to$q_i$) is a conserved quantity.",
+        "interpretation": "The equation for the first variation of the action, $\\delta S$, is derived by integrating the variation of the Lagrangian $\\delta L$ over time and applying integration by parts. The total variation $\\delta S$ is split into two components. The first, $\\left[ \\frac{\\partial L}{\\partial \\dot{q}} \\delta q \\right]_{t_1}^{t_2}$, is the boundary term, which depends only on the values of the path variation $\\delta q$ and the generalized momentum $p = \\frac{\\partial L}{\\partial \\dot{q}}$ at the initial time $t_1$ and final time $t_2$. The second component is the path integral, whose integrand is the product of the path variation $\\delta q(t)$ and the Euler-Lagrange expression $\\frac{\\partial L}{\\partial q} - \\frac{\\mathrm{d}}{\\mathrm{d}t} \\frac{\\partial L}{\\partial \\dot{q}}$. Hamilton's Principle of Stationary Action states that the true physical path is one for which the action is stationary, i.e., $\\delta S = 0$. If the path variations at the endpoints are zero ($\\delta q(t_1) = \\delta q(t_2) = 0$), the boundary term vanishes, and for $\\delta S$ to be zero for any arbitrary $\\delta q(t)$, the Euler-Lagrange expression must be zero, yielding the equations of motion.",
+        "symmetry_origin": "This formula is the mathematical embodiment of Hamilton's Principle (the Principle of Stationary Action), a fundamental variational principle in physics. The structure of the action and its variation is deeply connected to the symmetries of the system via Noether's Theorem. If the Lagrangian $L$ is invariant under a continuous transformation (a symmetry), the corresponding action $S$ is also invariant, which implies a conservation law for the system.",
+        "limits_and_boundary": "1. Fixed Endpoints: If the path variation is zero at the endpoints ($\\delta q(t_1) = \\delta q(t_2) = 0$), the boundary term vanishes. The condition $\\delta S = 0$ then directly implies the Euler-Lagrange equations of motion: $\\frac{\\partial L}{\\partial q} - \\frac{\\mathrm{d}}{\\mathrm{d}t} \\frac{\\partial L}{\\partial \\dot{q}} = 0$.\n2. Free Endpoints: If the variations $\\delta q$ at the endpoints are not zero, then for $\\delta S=0$ to hold for arbitrary variations, both the Euler-Lagrange equations must be satisfied and the boundary term must vanish. This leads to 'natural boundary conditions', such as requiring the generalized momentum $\\frac{\\partial L}{\\partial \\dot{q}}$ to be zero at a free endpoint.\n3. Cyclic Coordinates: If the Lagrangian $L$ does not explicitly depend on a coordinate $q_i$ (i.e., $\\frac{\\partial L}{\\partial q_i} = 0$), the corresponding Euler-Lagrange equation simplifies to $\\frac{\\mathrm{d}}{\\mathrm{d}t} \\frac{\\partial L}{\\partial \\dot{q}_i} = 0$. This implies that the conjugate momentum $p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$ is a conserved quantity.",
         "status": "platinum",
-        "conceptual_definition": "This formula represents the first variation of the action $S$ for a system described by a Lagrangian $L$. It decomposes the total change in action $\\delta S$ due to an infinitesimal variation in the generalized coordinates $\\delta q$ into two parts: \"Boundary Terms\" which depend on the variations at the endpoints of the time interval, and an integral term containing the Euler-Lagrange expression. It is a fundamental step in deriving the Euler-Lagrange equations from the Principle of Least Action.",
+        "conceptual_definition": "This formula represents the first variation of the action functional $S$ for a system described by a Lagrangian $L$. It decomposes the total change in action $\\delta S$ due to an infinitesimal path variation $\\delta q$ into a boundary term evaluated at the time endpoints and an integral term containing the Euler-Lagrange expression.",
         "intuitive_summary": "The formula shows that a small change in a system's path over time causes a change in its action, which can be broken down into contributions from the path's endpoints and from how far the path deviates from one satisfying the equations of motion.",
         "subcomponents": [
             "generalized-coordinate-in-classical-mechanics-da326f72",
@@ -1027,72 +979,42 @@
         "equation": "\\Gamma^\\sigma_{\\mu\\nu} = \\frac{1}{2} g^{\\sigma\\rho} (\\partial_\\nu g_{\\rho\\mu} + \\partial_\\mu g_{\\rho\\nu} - \\partial_\\rho g_{\\mu\\nu})",
         "semantic_variables": {
             "\\Gamma^\\sigma_{\\mu\\nu}": {
-                "name": "Christoffel Symbols (of the second kind)",
+                "name": "Christoffel Symbol (of the second kind)",
                 "type": "variable",
-                "unit": "m$^{-1}$",
-                "description": "Components of the affine connection, which describe how basis vectors change from point to point in a given coordinate system. They are crucial for defining parallel transport, covariant differentiation, and geodesics in curved spacetime."
+                "unit": "m⁻¹",
+                "description": "The components of the Levi-Civita connection, describing the effects of parallel transport in a curved manifold. They are not tensor components."
             },
             "g^{\\sigma\\rho}": {
-                "name": "Inverse Metric Tensor components",
+                "name": "Inverse Metric Tensor",
                 "type": "variable",
-                "unit": "m$^{-2}$",
-                "description": "The components of the inverse of the metric tensor, used to raise indices and convert between covariant and contravariant tensor components."
+                "unit": "dimensionless",
+                "description": "The components of the inverse of the metric tensor, used to raise indices and define inner products on covectors."
             },
             "g_{\\mu\\nu}": {
-                "name": "Metric Tensor components",
+                "name": "Metric Tensor",
                 "type": "variable",
-                "unit": "m$^{2}$",
-                "description": "The components of the metric tensor, which defines the fundamental geometric properties of spacetime, such as distances, angles, and the causal structure."
+                "unit": "dimensionless",
+                "description": "The components of the metric tensor, which defines the geometry of spacetime, including distances, angles, and causal structure."
             },
             "\\partial_\\nu": {
                 "name": "Partial Derivative Operator",
                 "type": "operator",
-                "unit": "m$^{-1}$",
-                "description": "An operator representing differentiation with respect to the $u$-th coordinate variable."
+                "unit": "m⁻¹",
+                "description": "An operator representing differentiation with respect to the spacetime coordinate $x^\\nu$."
             },
             "\\mu, \\nu, \\rho, \\sigma": {
                 "name": "Spacetime Indices",
-                "type": "variable",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "These are abstract indices that run over the dimensions of spacetime (typically 0, 1, 2, 3 for 4D spacetime), indicating specific components in a chosen coordinate system."
-            },
-            "\\Gamma": {
-                "name": "Circulation",
-                "type": "variable",
-                "unit": "m²/s",
-                "description": "The line integral of fluid velocity around a closed curve, measuring local rotation."
-            },
-            "\\sigma": {
-                "name": "Stefan-Boltzmann Constant",
-                "type": "constant",
-                "unit": "W⋅m⁻²⋅K⁻⁴",
-                "description": "The physical constant relating the total energy radiated per unit surface area of a black body per unit time to the fourth power of the thermodynamic temperature."
-            },
-            "g": {
-                "name": "Gravitational Acceleration",
-                "type": "constant",
-                "unit": "m/s²",
-                "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
-            },
-            "\\rho": {
-                "name": "Charge Density",
-                "type": "variable",
-                "unit": "C/m³",
-                "description": "The quantity of electric charge per unit volume."
-            },
-            "\\nu": {
-                "name": "Kinematic Viscosity",
-                "type": "variable",
-                "unit": "m²/s",
-                "description": "The ratio of dynamic viscosity to density, representing a fluid's resistance to shear flow under gravity."
+                "description": "Abstract indices that run over the dimensions of spacetime (typically 0, 1, 2, 3), indicating specific tensor components in a chosen coordinate system."
             }
         },
-        "interpretation": "The equation defines the Christoffel symbols of the second kind, $\\Gamma^\\sigma_{\\mu u}$, in terms of the metric tensor $g_{\\mu u}$ and its inverse $g^{\\sigma\\rho}$. The indices $\\mu, u, \\rho, \\sigma$ represent spacetime components. The terms $\\partial_ u g_{\\rho\\mu}$, $\\partial_\\mu g_{\\rho u}$, and $\\partial_\\rho g_{\\mu u}$ are partial derivatives of the metric tensor components with respect to the coordinates. These derivatives capture how the geometry of spacetime changes from one point to another. The factor $\\frac{1}{2}$ g^{\\sigma\\rho}$effectively raises an index and combines these changes. Specifically, the terms$\\partial_ u g_{\\rho\\mu} + \\partial_\\mu g_{\\rho u}$relate to how the metric \"stretches\" or \"shrinks\" along different directions, while$- \\partial_\\rho g_{\\mu u}$ accounts for a potential \"twisting\" or non-orthogonality of coordinate lines. Together, these terms quantify the \"curvature\" or non-Euclidean nature of the coordinate system at a given point, which is crucial for defining covariant derivatives and geodesic motion in general relativity.",
-        "symmetry_origin": "Christoffel symbols arise from the twin requirements of a metric-compatible connection and a torsion-free connection. Metric compatibility means that the covariant derivative of the metric tensor is zero ($\\nabla_\\alpha g_{\\mu u} = 0$), ensuring that lengths and angles are preserved under parallel transport. A torsion-free connection (or symmetric connection) implies that the connection coefficients are symmetric in their lower indices ($\\Gamma^\\sigma_{\\mu u} = \\Gamma^\\sigma_{ u\\mu}$), reflecting that the commutator of covariant derivatives does not involve torsion. These conditions, combined with the definition of the metric tensor, uniquely determine the Christoffel symbols. They essentially describe the geometric effects of gravity as encoded in the spacetime metric.",
-        "limits_and_boundary": "In a flat spacetime, such as Minkowski space with Cartesian coordinates, the metric tensor $g_{\\mu u}$ is constant (e.g., $\\eta_{\\mu u} = \\text{diag}(-1, 1, 1, 1)$). Consequently, all its partial derivatives $\\partial g_{\\mu u}$ are zero. In this limit, all Christoffel symbols $\\Gamma^\\sigma_{\\mu u}$ vanish, indicating that there is no effective curvature and parallel transport simply means moving in a straight line without changing the components of a vector. When the gravitational field is weak, the metric tensor $g_{\\mu u}$ is approximately the flat Minkowski metric plus small perturbations. In this scenario, the derivatives of the metric are also small, leading to small Christoffel symbols, which correspond to the Newtonian gravitational potential in the non-relativistic limit. As one approaches regions of strong gravitational fields or singularities (e.g., black holes), the derivatives of the metric can become very large or even diverge. This implies that the Christoffel symbols also become very large or undefined, signifying extreme spacetime curvature where standard approximations break down.",
+        "interpretation": "The equation defines the Christoffel symbols of the second kind, $\\Gamma^\\sigma_{\\mu\\nu}$, entirely in terms of the metric tensor $g_{\\mu\\nu}$ and its inverse $g^{\\sigma\\rho}$. The indices $\\mu, \\nu, \\rho, \\sigma$ are spacetime indices. The terms $\\partial_\\nu g_{\\rho\\mu}$, $\\partial_\\mu g_{\\rho\\nu}$, and $\\partial_\\rho g_{\\mu\\nu}$ are partial derivatives of the metric tensor components, capturing how the geometry of spacetime changes from point to point. The factor $\\frac{1}{2} g^{\\sigma\\rho}$ raises an index and combines these changes. The combination of derivatives quantifies the non-inertial nature of the coordinate system, which is essential for defining covariant derivatives and geodesic motion in general relativity.",
+        "symmetry_origin": "Christoffel symbols arise from the twin requirements of a metric-compatible connection ($\\nabla_\\alpha g_{\\mu\\nu} = 0$) and a torsion-free connection. Metric compatibility ensures that lengths and angles are preserved under parallel transport. A torsion-free (or symmetric) connection implies that the connection coefficients are symmetric in their lower indices, $\\Gamma^\\sigma_{\\mu\\nu} = \\Gamma^\\sigma_{\\nu\\mu}$, which is manifest in the definition. These two conditions, within the framework of Riemannian geometry, uniquely determine the Christoffel symbols (the Levi-Civita connection) from the metric tensor.",
+        "limits_and_boundary": "1. **Flat Spacetime**: In a flat spacetime with Cartesian coordinates, the metric tensor $g_{\\mu\\nu}$ is constant (e.g., the Minkowski metric $\\eta_{\\mu\\nu}$). All its partial derivatives $\\partial_\\rho g_{\\mu\\nu}$ are zero, causing all Christoffel symbols $\\Gamma^\\sigma_{\\mu\\nu}$ to vanish. This signifies the absence of gravitational forces and that covariant derivatives reduce to partial derivatives.\n2. **Weak Field Limit**: For a weak gravitational field, the metric is a small perturbation from the flat metric, $g_{\\mu\\nu} = \\eta_{\\mu\\nu} + h_{\\mu\\nu}$ where $|h_{\\mu\\nu}| \\ll 1$. The Christoffel symbols are then first order in $h_{\\mu\\nu}$ and its derivatives, and in the non-relativistic limit, they are related to the gradient of the Newtonian gravitational potential.\n3. **General Coordinate Transformations**: Christoffel symbols are not tensors. Under a general coordinate transformation $x^\\alpha \\to x'^\\alpha$, their components transform inhomogeneously, which reflects their role as connection coefficients rather than intrinsic geometric quantities.",
         "status": "platinum",
-        "conceptual_definition": "Christoffel symbols are mathematical objects that arise in differential geometry and general relativity to describe the connection or \"covariant derivative\" in a curved manifold. They quantify how the basis vectors change from point to point in a given coordinate system, which is essential for defining parallel transport of vectors and determining the paths of shortest distance (geodesics) in curved spaces, such as spacetime. They are not tensors themselves but represent the components of the affine connection in a specific coordinate basis.",
-        "intuitive_summary": "Christoffel symbols essentially tell us how to \"straighten out\" or adjust our understanding of direction when moving in a curved space, allowing us to perform differentiation in a way that respects the underlying geometry.",
+        "conceptual_definition": "Christoffel symbols are the component representation of a metric-compatible, torsion-free affine connection (the Levi-Civita connection) on a manifold. They quantify the change in basis vectors from point to point, enabling the definition of covariant differentiation for tensors.",
+        "intuitive_summary": "Christoffel symbols correct for the fictitious forces that appear in a curved or non-inertial coordinate system, allowing for a proper definition of differentiation.",
         "subcomponents": [
             "spacetime-metric-tensor-component-89e991c7",
             "spacetime-tensor-indices-notation-4026d513",
@@ -1110,69 +1032,57 @@
     },
     "qft-s-matrix-dyson-109f2c08": {
         "title": "S-Matrix Perturbative Dyson Expansion",
-        "equation": "REG",
-        "interpretation": "The Dyson expansion for the $\\delta \\delta$ S-matrix, in its exponential form, is typically written as $S = T \\exp\\left( -i/\\hbar \\int_{-\\infty}^{\\infty} H_I(t) dt \\right)$. When expanded in a series, it becomes $S = \\sum_{n=0}^{\\infty} \\frac{(-i/\\hbar)^n}{n!} \\int_{-\\infty}^{\\infty} dt_1 \\dots \\int_{-\\infty}^{\\infty} dt_n T \\left[ H_I(t_1) \\dots H_I(t_n) \\right]$. Here, $S$ represents the $\\delta \\delta$ S-matrix, which maps initial 'in' states to final 'out' states in a scattering process, providing the probability amplitudes for transitions. The operator $T$ is the time-ordering operator, crucial for maintaining causality by arranging any product of time-dependent operators in chronological sequence from right to left. $H_I(t)$ is the interaction Hamiltonian in the interaction picture, embodying the forces and couplings between particles that drive the scattering. Each term in the series corresponds to a specific order of perturbation theory: the $n=0$ term is the identity (no interaction), the $n=1$ term describes a single interaction, the $n=2$ term describes two interactions, and so forth, which can be visualized by Feynman diagrams. The integral extends over all time $t$, reflecting the idea that particles are prepared and measured in asymptotically free states where interactions are negligible.",
-        "symmetry_origin": "The Dyson expansion itself is a consequence of solving the time-evolution operator for an interacting system in quantum mechanics using a perturbative approach, rather than directly stemming from a specific symmetry. It relies on the interaction picture formulation of quantum mechanics and the formal solution of the Schrödinger equation for time evolution. However, the specific form and content of the interaction Hamiltonian $H_I(t)$ are profoundly dictated by underlying fundamental symmetries of nature, such as Lorentz invariance, gauge invariance, and other internal symmetries, which ensure the consistency and physical validity of the quantum field theory.",
-        "limits_and_boundary": "The validity of the Dyson expansion is primarily confined to the **perturbative regime**, where the interaction strength (or coupling constant, implicitly contained in $H_I$) is small. In this limit, higher-order terms in the expansion diminish rapidly, leading to convergence, and allowing for reliable approximations by truncating the series at a finite number of terms. Conversely, in the **strong coupling regime**, the series typically diverges or converges very slowly, rendering the perturbative approach unreliable and necessitating alternative non-perturbative methods. The integral limits from $-\\infty$ to $+\\infty$ imply that the system is considered in the adiabatic limit, where interactions are slowly turned on and off, allowing for the definition of asymptotic free particle states before and after scattering.",
+        "equation": "S = \\sum_{n=0}^{\\infty} \\frac{1}{n!} \\left(-\\frac{i}{\\hbar}\\right)^n \\int_{-\\infty}^{\\infty} \\mathrm{d}t_1 \\dots \\int_{-\\infty}^{\\infty} \\mathrm{d}t_n \\, \\mathcal{T} \\{ H_I(t_1) \\dots H_I(t_n) \\}",
+        "interpretation": "The Dyson series expresses the S-matrix, which connects asymptotic 'in' and 'out' states, as a time-ordered exponential: $S = \\mathcal{T} \\exp\\left(-\\frac{i}{\\hbar} \\int_{-\\infty}^{\\infty} \\mathrm{d}t \\, H_I(t)\\right)$. Expanding this exponential gives the perturbative series shown in the equation. Here, $\\mathcal{T}$ is the time-ordering operator, which arranges the interaction Hamiltonians $H_I(t_k)$ in chronological order. Each term in the sum corresponds to a specific order in perturbation theory, representing the amplitude for a process involving $n$ interaction vertices, and can be systematically calculated using Feynman diagrams.",
+        "symmetry_origin": "The Dyson expansion itself is a consequence of solving the time-evolution operator for an interacting system in quantum mechanics using a perturbative approach. It relies on the interaction picture formulation and the formal solution of the Schrödinger equation. However, the specific form and content of the interaction Hamiltonian $H_I(t)$ are profoundly dictated by underlying fundamental symmetries of nature, such as Lorentz invariance and gauge invariance, which ensure the consistency and physical validity of the quantum field theory.",
+        "limits_and_boundary": "1. **Perturbative Regime**: The expansion is valid when the coupling constant associated with the interaction Hamiltonian $H_I$ is small. In this weak-coupling limit, the series is expected to be at least an asymptotic series, and truncating it at a low order provides a good approximation to the physical result.\n2. **Non-Perturbative Regime**: In strong-coupling theories (like QCD at low energies), the expansion parameter is large, and the series does not converge. The formula is inapplicable, and non-perturbative methods (e.g., lattice QCD, instantons) are required.\n3. **Asymptotic States**: The integration from $t=-\\infty$ to $t=+\\infty$ formally assumes that the particles are in non-interacting \"in\" states in the distant past and evolve to non-interacting \"out\" states in the distant future. This is known as the adiabatic hypothesis.",
         "semantic_variables": {
             "S": {
                 "name": "Scattering Matrix",
-                "type": "variable",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The\\delta\\delta S-matrix (Scattering matrix) is an operator that describes the transformation of an initial quantum state of free particles into a final quantum state of free particles due to interactions. Its matrix elements give the probability amplitudes for various scattering processes."
+                "description": "The S-matrix is a unitary operator in quantum field theory that connects asymptotic initial states (at $t \\to -\\infty$) to asymptotic final states (at $t \\to +\\infty$). Its matrix elements are the scattering amplitudes."
             },
-            "T": {
-                "name": "Time-ordering Operator",
-                "type": "constant",
+            "n": {
+                "name": "Perturbation Order Index",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "The time-ordering operator arranges any product of time-dependent operators such that operators with later times appear to the left of operators with earlier times. It is crucial for maintaining causality in the Dyson expansion."
-            },
-            "H_I(t)": {
-                "name": "Interaction Hamiltonian",
-                "type": "variable",
-                "unit": "J",
-                "description": "The interaction Hamiltonian in the interaction picture. It represents the part of the total Hamiltonian responsible for interactions between particles, which is treated as a perturbation. It typically depends on quantum fields evaluated at time $t$."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The independent time variable over which the interaction Hamiltonian is integrated, representing the duration and sequence of interactions."
+                "description": "An integer index that runs from 0 to infinity, representing the order of the term in the perturbative expansion."
             },
             "i": {
                 "name": "Imaginary Unit",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical imaginary unit, defined as the square root of -1. It is a fundamental component in quantum mechanics, arising from the complex nature of wave functions and amplitudes."
+                "description": "The mathematical imaginary unit, defined as $i^2 = -1$."
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "J s",
-                "description": "The reduced Planck constant, $h / (2\\pi)$, a fundamental constant of quantum mechanics relating the energy of a photon to its frequency, or the angular momentum of a particle to its wave number. It is often set to 1 in natural units in quantum field theory for simplicity."
+                "unit": "J⋅s",
+                "description": "The Planck constant divided by 2π, a fundamental constant in quantum mechanics. Often set to 1 in natural units."
             },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
+            "t_k": {
+                "name": "Interaction Time",
                 "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
+                "unit": "s",
+                "description": "The time at which the k-th interaction occurs, integrated over all possible times from negative to positive infinity."
             },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+            "\\mathcal{T}": {
+                "name": "Time-ordering Operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "An operator that arranges a product of time-dependent operators in chronological order, with later times to the left."
+            },
+            "H_I(t_k)": {
+                "name": "Interaction Hamiltonian",
+                "type": "operator",
+                "unit": "J",
+                "description": "The part of the total Hamiltonian responsible for interactions, expressed in the interaction picture at time $t_k$."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The $\\delta$ S-Matrix$Perturbative Dyson Expansion is a fundamental series solution in quantum field theory that describes the time evolution of quantum states from an initial, non-interacting state to a final, non-interacting state due to an interacting Hamiltonian. It expresses the scattering matrix$S$as an infinite sum of terms, each representing a higher order of interaction, thereby providing a systematic method to calculate probability amplitudes for various scattering processes by treating the interaction as a perturbation to a free theory$.",
-        "intuitive_summary": "This formula provides a way to calculate the total effect of quantum interactions on particles by summing up all possible sequences of individual interaction events, ensuring they occur in chronological order.",
+        "conceptual_definition": "The S-Matrix Perturbative Dyson Expansion is a fundamental series solution in quantum field theory that describes the time evolution of quantum states from an initial, non-interacting 'in' state to a final, non-interacting 'out' state due to an interacting Hamiltonian. It expresses the scattering matrix S as an infinite sum of terms, each representing a higher order of interaction, thereby providing a systematic method to calculate probability amplitudes for various scattering processes by treating the interaction as a perturbation to a free theory.",
+        "intuitive_summary": "This formula calculates the total effect of quantum interactions on particles by summing up all possible sequences of individual interaction events, ensuring they occur in chronological order.",
         "subcomponents": [
             "zero-net-elementary-charge-0e64ab01",
             "first-order-perturbation-index-6d24e2bc",
@@ -1789,7 +1699,8 @@
         "status": "published",
         "parent_formula_id": "mass-vev-universal-scaling-bb509d7d",
         "subcomponents": [],
-        "id": "vanishing-coupling-constant-condition-e151612a"
+        "id": "vanishing-coupling-constant-condition-e151612a",
+        "intuitive_summary": ""
     },
     "coulombs-constant-factor-dce2ad58": {
         "title": "Coulomb's Constant Factor",
@@ -1819,7 +1730,8 @@
         "status": "published",
         "parent_formula_id": "retardation-52db4211",
         "subcomponents": [],
-        "id": "coulombs-constant-factor-dce2ad58"
+        "id": "coulombs-constant-factor-dce2ad58",
+        "intuitive_summary": ""
     },
     "orbital-semi-major-axis-d2fa195e": {
         "title": "Orbital Semi-major Axis",
@@ -1843,7 +1755,8 @@
         "status": "published",
         "parent_formula_id": "orbital-semi-major-axis",
         "subcomponents": [],
-        "id": "orbital-semi-major-axis-d2fa195e"
+        "id": "orbital-semi-major-axis-d2fa195e",
+        "intuitive_summary": ""
     },
     "fundamental-scalar-equivalence-relation-e62d2398": {
         "title": "Fundamental Scalar Equivalence Relation",
@@ -1873,7 +1786,8 @@
         "status": "published",
         "parent_formula_id": "orthogonal-matrix-property",
         "subcomponents": [],
-        "id": "fundamental-scalar-equivalence-relation-e62d2398"
+        "id": "fundamental-scalar-equivalence-relation-e62d2398",
+        "intuitive_summary": ""
     },
     "quantum-pure-state-projector-operator-cf817373": {
         "title": "Quantum Pure State Projector Operator",
@@ -1897,7 +1811,8 @@
         "status": "published",
         "parent_formula_id": "non-physical-collapse-efcafda8",
         "subcomponents": [],
-        "id": "quantum-pure-state-projector-operator-cf817373"
+        "id": "quantum-pure-state-projector-operator-cf817373",
+        "intuitive_summary": ""
     },
     "poloidal-toroidal-flow-angular-coefficient-s2-59a12118": {
         "title": "Poloidal-Toroidal Flow Angular Coefficient s_2",
@@ -1921,7 +1836,8 @@
         "status": "published",
         "parent_formula_id": "poloidal-toroidal-232e5852",
         "subcomponents": [],
-        "id": "poloidal-toroidal-flow-angular-coefficient-s2-59a12118"
+        "id": "poloidal-toroidal-flow-angular-coefficient-s2-59a12118",
+        "intuitive_summary": ""
     },
     "probability-of-measurement-outcome-ffe566a6": {
         "title": "Probability of Measurement Outcome",
@@ -1945,7 +1861,8 @@
         "status": "published",
         "parent_formula_id": "probabilistic-2f24c297",
         "subcomponents": [],
-        "id": "probability-of-measurement-outcome-ffe566a6"
+        "id": "probability-of-measurement-outcome-ffe566a6",
+        "intuitive_summary": ""
     },
     "cross-product-of-radial-unit-vector-and-electric-field-f65ae7b7": {
         "title": "Cross Product of Radial Unit Vector and Electric Field",
@@ -1975,7 +1892,8 @@
         "status": "published",
         "parent_formula_id": "motion-correction-4854a0d8",
         "subcomponents": [],
-        "id": "cross-product-of-radial-unit-vector-and-electric-field-f65ae7b7"
+        "id": "cross-product-of-radial-unit-vector-and-electric-field-f65ae7b7",
+        "intuitive_summary": ""
     },
     "schmidt-coefficient-amplitude-cf09678f": {
         "title": "Schmidt Coefficient Amplitude",
@@ -1999,7 +1917,8 @@
         "status": "published",
         "parent_formula_id": "schmidt-coefficients-98d25a43",
         "subcomponents": [],
-        "id": "schmidt-coefficient-amplitude-cf09678f"
+        "id": "schmidt-coefficient-amplitude-cf09678f",
+        "intuitive_summary": ""
     },
     "physical-state-vector-caf16213": {
         "title": "Physical State Vector",
@@ -2023,7 +1942,8 @@
         "status": "published",
         "parent_formula_id": "gauge-constraint",
         "subcomponents": [],
-        "id": "physical-state-vector-caf16213"
+        "id": "physical-state-vector-caf16213",
+        "intuitive_summary": ""
     },
     "material-acceleration-of-fluid-element-d7327a65": {
         "title": "Material Acceleration of Fluid Element",
@@ -2071,7 +1991,8 @@
         "status": "published",
         "parent_formula_id": "euler-momentum-balance-6ee6e461",
         "subcomponents": [],
-        "id": "material-acceleration-of-fluid-element-d7327a65"
+        "id": "material-acceleration-of-fluid-element-d7327a65",
+        "intuitive_summary": ""
     },
     "relativistic-black-hole-jet-power-scaling-3ff51c8c": {
         "title": "Relativistic Black Hole Jet Power Scaling",
@@ -2113,7 +2034,8 @@
         "status": "published",
         "parent_formula_id": "metric-coupling-30213f2a",
         "subcomponents": [],
-        "id": "relativistic-black-hole-jet-power-scaling-3ff51c8c"
+        "id": "relativistic-black-hole-jet-power-scaling-3ff51c8c",
+        "intuitive_summary": ""
     },
     "nucleon-count-definition-df764b94": {
         "title": "Nucleon Count Definition",
@@ -2149,7 +2071,8 @@
         "status": "published",
         "parent_formula_id": "mass-number-definition",
         "subcomponents": [],
-        "id": "nucleon-count-definition-df764b94"
+        "id": "nucleon-count-definition-df764b94",
+        "intuitive_summary": ""
     },
     "relativistic-limit-of-lorentz-factor-7402af22": {
         "title": "Relativistic Limit of Lorentz Factor",
@@ -2179,31 +2102,33 @@
         "status": "published",
         "parent_formula_id": "work-rate-dcee36d3",
         "subcomponents": [],
-        "id": "relativistic-limit-of-lorentz-factor-7402af22"
+        "id": "relativistic-limit-of-lorentz-factor-7402af22",
+        "intuitive_summary": ""
     },
     "constraint-index-label-4c1e3b2d": {
         "title": "Constraint Index Label",
         "description": "An index labeling individual holonomic or non-holonomic constraint equations in a system.",
-        "conceptual_definition": "In analytical mechanics, $\\alpha$ serves as an index that uniquely identifies each constraint equation imposed on a system. For a system with $m$ constraints, $\\alpha$ ranges from 1 to $m$, associating each constraint $f_\\alpha$ with its corresponding Lagrange multiplier $\\lambda$_$\\alpha$.",
-        "interpretation": "This index is crucial for distinguishing between multiple constraints acting on a system. Each value of $\\alpha$ corresponds to a specific functional relationship $f_\\alpha(q_1, ..., q_N, t) = 0$ that restricts the motion of the system. It ensures that each constraint's contribution to the generalized constraint forces is accounted for separately through its unique Lagrange multiplier, allowing for a systematic treatment of constrained motion.",
-        "limits_and_boundary": "The index $\\alpha$ typically ranges from 1 to $m$, where $m$ is the total number of independent constraint equations. It is a positive integer.",
-        "symmetry_origin": "This index does not directly represent a physical symmetry or conservation law but is a mathematical construct for enumerating constraints. The constraints themselves might arise from underlying symmetries or conservation laws of the system.",
+        "conceptual_definition": "In analytical mechanics, $\\alpha$ serves as an index that uniquely identifies each constraint equation imposed on a system. For a system with $m$ constraints, $\\alpha$ ranges from 1 to $m$, associating each constraint function $f_\\alpha$ with its corresponding Lagrange multiplier $\\lambda_\\alpha$.",
+        "interpretation": "This index is a mathematical tool crucial for distinguishing between multiple constraints acting on a system. Each integer value of $\\alpha$ corresponds to a specific functional relationship, such as $f_\\alpha(q_1, \\dots, q_N, t) = 0$, that restricts the possible motions of the system. It ensures that each constraint's contribution to the generalized constraint forces is accounted for separately through its unique Lagrange multiplier, allowing for a systematic and organized treatment of constrained motion within the Lagrangian or Hamiltonian framework.",
+        "limits_and_boundary": "1. The index $\\alpha$ is a positive integer that ranges from 1 to $m$, where $m$ is the total number of independent constraint equations in the system.",
+        "symmetry_origin": "This index does not directly represent a physical symmetry or conservation law but is a mathematical construct for enumerating constraints. The constraints themselves, however, may arise from underlying symmetries or conservation laws of the system.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "analytical-mechanics",
         "semantic_variables": {
             "\\alpha": {
-                "name": "\\alpha",
-                "type": "variable",
+                "name": "Constraint Index",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "An integer index representing a specific constraint equation in a system. It ranges from 1 to $m$, where $m$ is the total number of constraints. Dimensionless."
+                "description": "An integer index that enumerates the individual constraint equations in a system, typically ranging from 1 to $m$, where $m$ is the total number of constraints."
             }
         },
-        "equation": "ext{alpha}",
-        "status": "published",
+        "equation": "\\alpha",
+        "status": "platinum",
         "parent_formula_id": "generalized-constraint-forces",
         "subcomponents": [],
-        "id": "constraint-index-label-4c1e3b2d"
+        "id": "constraint-index-label-4c1e3b2d",
+        "intuitive_summary": "A label used to count and distinguish between multiple physical or geometrical constraints in a mechanical system."
     },
     "electromagnetic-field-bianchi-identity-56b22c5a": {
         "title": "Electromagnetic Field Bianchi Identity",
@@ -2245,7 +2170,8 @@
         "status": "published",
         "parent_formula_id": "topological-bound-e644aff8",
         "subcomponents": [],
-        "id": "electromagnetic-field-bianchi-identity-56b22c5a"
+        "id": "electromagnetic-field-bianchi-identity-56b22c5a",
+        "intuitive_summary": ""
     },
     "mass-times-squared-electric-drift-velocity-cfbe944b": {
         "title": "Mass times Squared Electric Drift Velocity",
@@ -2275,7 +2201,8 @@
         "status": "published",
         "parent_formula_id": "kinetic-energy-electric-drift",
         "subcomponents": [],
-        "id": "mass-times-squared-electric-drift-velocity-cfbe944b"
+        "id": "mass-times-squared-electric-drift-velocity-cfbe944b",
+        "intuitive_summary": ""
     },
     "canonical-momentum-operator-definition-c72d19e1": {
         "title": "Canonical Momentum Operator Definition",
@@ -2317,7 +2244,8 @@
         "status": "published",
         "parent_formula_id": "free-waves-2fc9d212",
         "subcomponents": [],
-        "id": "canonical-momentum-operator-definition-c72d19e1"
+        "id": "canonical-momentum-operator-definition-c72d19e1",
+        "intuitive_summary": ""
     },
     "grand-canonical-partition-function-a5c8de65": {
         "title": "Grand Canonical Partition Function",
@@ -2383,7 +2311,8 @@
         "status": "published",
         "parent_formula_id": "grand-partition-function-a5c8de65",
         "subcomponents": [],
-        "id": "grand-canonical-partition-function-a5c8de65"
+        "id": "grand-canonical-partition-function-a5c8de65",
+        "intuitive_summary": ""
     },
     "retarded-wave-function-f060d965": {
         "title": "Retarded Wave Function",
@@ -2413,7 +2342,8 @@
         "status": "published",
         "parent_formula_id": "backward-propagation-ce1b6df3",
         "subcomponents": [],
-        "id": "retarded-wave-function-f060d965"
+        "id": "retarded-wave-function-f060d965",
+        "intuitive_summary": ""
     },
     "geodesic-equation-in-general-relativity-e9a37d9e": {
         "title": "Geodesic Equation in General Relativity",
@@ -2461,6 +2391,7 @@
         "status": "published",
         "parent_formula_id": "zero-connection-0bf66671",
         "subcomponents": [],
-        "id": "geodesic-equation-in-general-relativity-e9a37d9e"
+        "id": "geodesic-equation-in-general-relativity-e9a37d9e",
+        "intuitive_summary": ""
     }
 }

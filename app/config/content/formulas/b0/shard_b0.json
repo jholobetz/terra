@@ -1218,62 +1218,56 @@
     },
     "pmns-matrix-parameterization-ecaf7dc8": {
         "title": "PMNS Matrix (Lepton Mixing)",
-        "equation": "REG",
-        "interpretation": "The PMNS matrix, denoted by $U_{PMNS}$, is a $3 \\times 3$ unitary matrix that connects the flavor basis $| u_e \\rangle, | u_\\mu \\rangle, | u_\\tau \\rangle$ to the mass basis $| u_1 \\rangle, | u_2 \\rangle, | u_3 \\rangle$. The elements of the matrix, $U_{e i}$, $U_{\\mu i}$, and $U_{\\tau i}$ (where $i=1,2,3$), represent the amplitude for a neutrino of flavor $\\alpha$ (where $\\alpha = e, \\mu, \\tau$) to be in a mass state $| u_i \\rangle$. Mathematically, this relationship is expressed as: $| u_\\alpha \\rangle = \\sum_{i=1}^3 U_{\\alpha i} | u_i \\rangle$. The elements of the PMNS matrix are complex numbers and can be parameterized by three mixing angles (analogous to Euler angles) and one complex phase, which is responsible for CP violation in the lepton sector. The unitarity of the matrix ensures probability conservation, meaning that the sum of the probabilities of a neutrino being in any mass state must equal 1 for any given flavor state.",
-        "symmetry_origin": "The PMNS matrix arises from the fact that neutrinos are observed to have mass, a feature not present in the original formulation of the Standard Model. When a mass term is introduced for neutrinos, the mass eigenstates are generally not aligned with the flavor eigenstates. The specific form and parameters of the PMNS matrix are not predicted by the Standard Model and must be determined experimentally. Its origin lies in the spontaneous symmetry breaking of the electroweak sector and the introduction of non-zero neutrino masses, which can occur through mechanisms like the seesaw mechanism. The requirement of unitarity for the PMNS matrix stems from the fundamental principle of quantum mechanics that probabilities must sum to one, reflecting the conservation of probability.",
-        "limits_and_boundary": "The PMNS matrix is a fundamental parameterization and does not have simple asymptotic limits in the typical sense of approaching zero or infinity for its parameters, as it describes the fixed mixing between neutrino flavor and mass states. However, specific mixing angles can approach limiting values: If a mixing angle were to approach $0$ radians, it would imply no mixing between the corresponding flavor and mass states. If a mixing angle were to approach $\\pi/2$ radians, it would indicate maximal mixing between the two states. The complex phase, responsible for CP violation, can range from $0$ to $2\\pi$. If the complex phase is zero or $\\pi$, CP violation is absent. The magnitudes of the matrix elements are probabilities and range from $0$ to $1$.",
+        "equation": "U = \\begin{pmatrix} c_{12}c_{13} & s_{12}c_{13} & s_{13}e^{-i\\delta_{CP}} \\\\ -s_{12}c_{23} - c_{12}s_{23}s_{13}e^{i\\delta_{CP}} & c_{12}c_{23} - s_{12}s_{23}s_{13}e^{i\\delta_{CP}} & s_{23}c_{13} \\\\ s_{12}s_{23} - c_{12}c_{23}s_{13}e^{i\\delta_{CP}} & -c_{12}s_{23} - s_{12}c_{23}s_{13}e^{i\\delta_{CP}} & c_{23}c_{13} \\end{pmatrix}}",
+        "interpretation": "The PMNS matrix, denoted $U$, connects the neutrino flavor eigenstates $|\\nu_\\alpha\\rangle$ (for $\\alpha = e, \\mu, \\tau$) to the mass eigenstates $|\\nu_i\\rangle$ (for $i = 1, 2, 3$) via the relation $|\\nu_\\alpha\\rangle = \\sum_{i} U_{\\alpha i}^* |\\nu_i\\rangle$. The mass eigenstates are the states that propagate through spacetime with a definite mass. Since the flavor states are superpositions of mass states, a neutrino created with a specific flavor (e.g., an electron neutrino) can later be detected as a different flavor (e.g., a muon neutrino), a phenomenon known as neutrino oscillation. The matrix $U$ is unitary ($U^\\dagger U = I$) to conserve probability. It is parameterized by three mixing angles ($\\theta_{12}, \\theta_{23}, \\theta_{13}$) and one complex phase ($\\delta_{CP}$) that allows for CP violation in the lepton sector. The standard parameterization is a product of three rotation matrices and a phase matrix.",
+        "symmetry_origin": "The existence of the PMNS matrix is a consequence of neutrino masses and the fact that the mass term in the Lagrangian is not diagonal in the same basis as the weak interaction (flavor) term. This misalignment arises from the Yukawa coupling sector of the theory after electroweak symmetry breaking. The unitarity of the matrix, $U^\\dagger U = I$, is a fundamental requirement of quantum mechanics, ensuring the conservation of probability. If neutrinos are Majorana particles, the mass term breaks the global $U(1)_L$ lepton number conservation symmetry.",
+        "limits_and_boundary": "1. No mixing: If any mixing angle $\\theta_{ij} \\to 0$, the corresponding rotation becomes the identity, and the mixing between the respective states vanishes.\n2. Maximal mixing: If a mixing angle $\\theta_{ij} \\to \\pi/4$, the mixing between the corresponding states is maximal, leading to the highest probability of oscillation between them.\n3. No CP violation: If the Dirac phase $\\delta_{CP}$ is $0$ or $\\pi$, the matrix becomes real (up to rephasing), and there is no CP violation in neutrino oscillations. The difference between neutrino and antineutrino oscillation probabilities would be zero.\n4. Decoupling: If one mixing angle, e.g., $\\theta_{13} \\to 0$, the matrix block-diagonalizes, decoupling one flavor/mass state from the other two in certain interactions.",
         "semantic_variables": {
-            "U_{\\alpha i}": {
-                "name": "PMNS Matrix Element",
-                "type": "variable",
+            "U": {
+                "name": "PMNS Matrix",
+                "type": "matrix",
                 "unit": "dimensionless",
-                "description": "The element of the PMNS matrix connecting a lepton flavor eigenstate (e.g., electron neutrino, $\\alpha=e$) to a neutrino mass eigenstate $i$ (where $i=1,2,3$). The square of its magnitude, $|U_{\\alpha i}|^2$, represents the probability that a neutrino of flavor $\\alpha$ is in mass state $i$."
+                "description": "The $3 \\times 3$ unitary lepton mixing matrix connecting neutrino flavor and mass eigenstates."
             },
-            "\\nu_e, \\nu_\\mu, \\nu_\\tau": {
-                "name": "Flavor Eigenstates",
-                "type": "constant",
+            "c_{ij}": {
+                "name": "Cosine of mixing angle",
+                "type": "shorthand",
                 "unit": "dimensionless",
-                "description": "The neutrino states that are associated with the charged leptons produced or absorbed in weak interactions (electron neutrino, muon neutrino, tau neutrino)."
+                "description": "Shorthand for $\\cos(\\theta_{ij})$, where $\\theta_{ij}$ is the mixing angle between mass eigenstates $i$ and $j$."
             },
-            "\\nu_1, \\nu_2, \\nu_3": {
-                "name": "Mass Eigenstates",
-                "type": "constant",
+            "s_{ij}": {
+                "name": "Sine of mixing angle",
+                "type": "shorthand",
                 "unit": "dimensionless",
-                "description": "The neutrino states that have definite masses $m_1, m_2, m_3$. These are the states that propagate freely."
+                "description": "Shorthand for $\\sin(\\theta_{ij})$, where $\\theta_{ij}$ is the mixing angle between mass eigenstates $i$ and $j$."
             },
-            "\\theta_{12}, \\theta_{13}, \\theta_{23}": {
-                "name": "Mixing Angles",
-                "type": "variable",
-                "unit": "radians",
-                "description": "Three real parameters that describe the angles of rotation between the neutrino flavor and mass eigenstates, analogous to Euler angles. These determine the probabilities of flavor transitions."
+            "\\theta_{12}, \\theta_{23}, \\theta_{13}": {
+                "name": "Neutrino mixing angles",
+                "type": "parameter",
+                "unit": "rad",
+                "description": "Three Euler-like angles that parameterize the rotation between the flavor and mass bases of neutrinos. They are determined experimentally."
             },
             "\\delta_{CP}": {
-                "name": "CP-violating Phase",
-                "type": "variable",
-                "unit": "radians",
-                "description": "A complex phase parameter that is responsible for Charge-Parity (CP) violation in the lepton sector. If this phase is non-zero (and not equal to $\\pi$), the PMNS matrix is not symmetric with respect to the reversal of time and charge conjugation, leading to differences in the behavior of neutrinos and antineutrinos."
+                "name": "Dirac CP-violating phase",
+                "type": "parameter",
+                "unit": "rad",
+                "description": "A complex phase in the PMNS matrix that is responsible for Charge-Parity (CP) violation in the lepton sector. A non-zero value (other than $\\pi$) leads to different oscillation probabilities for neutrinos and antineutrinos."
             },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
+            "i": {
+                "name": "Imaginary unit",
                 "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
+                "unit": "dimensionless",
+                "description": "The imaginary unit, defined as $i^2 = -1$."
             },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
+            "e": {
+                "name": "Euler's number",
                 "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "dimensionless",
+                "description": "The base of the natural logarithm, approximately 2.718."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Pontecorvo-Maki-Nakagawa-Sakata (PMNS) matrix, often referred to as the lepton mixing matrix, describes the phenomenon of neutrino oscillations. It is a unitary matrix that relates the flavor eigenstates of neutrinos (electron neutrino, muon neutrino, and tau neutrino) to their mass eigenstates. In the Standard Model of particle physics, charged leptons (electron, muon, tau) have definite masses and their flavor eigenstates are identical to their mass eigenstates. However, neutrinos are observed to have mass, and their flavor eigenstates are a superposition of their mass eigenstates. The PMNS matrix quantifies this mixing, analogous to the Cabibbo-Kobayashi-Maskawa (CKM) matrix for quark mixing.",
+        "conceptual_definition": "The Pontecorvo-Maki-Nakagawa-Sakata (PMNS) matrix is a $3 \\times 3$ unitary matrix that quantifies the mismatch between the flavor eigenstates $(\\nu_e, \\nu_\\mu, \\nu_\\tau)$ and mass eigenstates $(\\nu_1, \\nu_2, \\nu_3)$ of neutrinos. Its elements describe the amplitude of mixing between a specific neutrino flavor and a specific mass state, giving rise to the phenomenon of neutrino oscillations.",
         "intuitive_summary": "The PMNS matrix dictates how much each type of neutrino mass state mixes with each type of neutrino flavor state, allowing neutrinos to change their flavor as they propagate.",
         "subcomponents": [
             "index-definition-for-spatial-components-22cce648",
@@ -1283,69 +1277,33 @@
     },
     "monatomic-adiabatic-index-gamma-8a34e40a": {
         "title": "Monatomic Adiabatic Index",
-        "equation": "REG",
-        "interpretation": "The adiabatic index, denoted by the symbol γ, is defined as the ratio of the specific heat capacity at constant pressure ( $c_p$) to the specific heat capacity at constant volume ( $c_v$). Mathematically, γ = $c_p / c_v$. For an ideal gas, Meyer's relation states that $c_p - c_v = R$, where $R$ is the ideal gas constant. For a monatomic ideal gas, the internal energy $U$ depends only on the translational kinetic energy of the atoms. According to the equipartition theorem, each translational degree of freedom contributes $1/2$ kT to the internal energy, where $k$ is the Boltzmann constant and $T$ is the absolute temperature. A monatomic gas has 3 translational degrees of freedom. Thus, the molar internal energy is $U_m = 3/2$ RT. The molar heat capacity at constant volume is $c_v = (dU_m/dT)_V = 3/2 R$. Using Meyer's relation, $c_p = c_v + R = 3/2 R + R = 5/2 R$. Therefore, the adiabatic index for a monatomic ideal gas is γ = $c_p / c_v = (5/2 R) / (3/2 R) = 5/3$.",
-        "symmetry_origin": "The value of the adiabatic index for a monatomic gas originates from the degrees of freedom available for energy storage, as dictated by statistical mechanics and the equipartition theorem. For monatomic gases, only translational degrees of freedom contribute to internal energy. This is a consequence of the fact that individual atoms do not possess rotational or vibrational modes that can store energy at typical temperatures. The number of degrees of freedom determines the relationship between pressure, volume, and temperature during adiabatic processes, which are isentropic (constant entropy) transformations.",
-        "limits_and_boundary": "For an ideal monatomic gas, the adiabatic index γ is a constant value of 5/3, independent of temperature or pressure, as long as the gas remains monatomic and ideal. In more complex gases, γ varies with temperature due to the activation of rotational and vibrational degrees of freedom. As the number of degrees of freedom increases, γ approaches 1 from above. For extremely high temperatures where electronic excitations might occur, γ could theoretically deviate further, but this is not relevant for typical scenarios involving monatomic ideal gases.",
+        "equation": "\\gamma = \\frac{5}{3}",
+        "interpretation": "The adiabatic index, denoted by $\\gamma$, is defined as the ratio of the molar heat capacity at constant pressure ($c_p$) to the molar heat capacity at constant volume ($c_v$), such that $\\gamma = c_p / c_v$. For an ideal gas, Meyer's relation states that $c_p - c_v = R$, where $R$ is the universal gas constant. For a monatomic ideal gas, the internal energy $U$ depends only on the translational kinetic energy of its atoms. The equipartition theorem dictates that each of the 3 translational degrees of freedom contributes $\\frac{1}{2} k_B T$ to the average energy per atom. Thus, the molar internal energy is $U_m = \\frac{3}{2} RT$. The molar heat capacity at constant volume is the derivative of molar internal energy with respect to temperature: $c_v = \\left(\\frac{\\partial U_m}{\\partial T}\\right)_V = \\frac{3}{2} R$. Using Meyer's relation, we find the molar heat capacity at constant pressure: $c_p = c_v + R = \\frac{3}{2} R + R = \\frac{5}{2} R$. Therefore, the adiabatic index for a monatomic ideal gas is the ratio $\\gamma = \\frac{c_p}{c_v} = \\frac{5/2 R}{3/2 R} = \\frac{5}{3}$.",
+        "symmetry_origin": "The value of the adiabatic index for a monatomic gas originates from the degrees of freedom available for energy storage, as dictated by statistical mechanics and the equipartition theorem. For monatomic gases, only 3 translational degrees of freedom contribute to internal energy, a consequence of atoms lacking rotational or vibrational modes at typical temperatures. This number of degrees of freedom is a structural property that determines the isentropic (constant entropy) relationship between pressure, volume, and temperature during adiabatic transformations.",
+        "limits_and_boundary": "1. For an ideal monatomic gas, the adiabatic index $\\gamma$ is exactly 5/3, a constant independent of temperature or pressure, provided the gas remains ideal and no electronic excitations occur.\n2. For polyatomic gases, $\\gamma$ is lower than 5/3 and varies with temperature as rotational and vibrational modes become thermally active, increasing the total degrees of freedom.\n3. In the limit of infinite degrees of freedom ($f \\to \\infty$), such as in a phase transition, the adiabatic index approaches 1 from above, as given by the general relation $\\gamma = 1 + 2/f$.",
         "semantic_variables": {
-            "γ": {
+            "\\gamma": {
                 "name": "Adiabatic Index",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The ratio of specific heat capacities ( γ = cₙ / cᵙ$\\mathbf{r}\\mathbf{k}$ᵗ ). For a monatomic ideal gas, this value is 5/3."
+                "description": "The ratio of the heat capacity at constant pressure to the heat capacity at constant volume, $\\gamma = c_p / c_v$. For a monatomic ideal gas, this value is 5/3."
             },
-            "c_p": {
-                "name": "Specific Heat Capacity at Constant Pressure",
-                "type": "variable",
-                "unit": "J/(kg·K)",
-                "description": "The amount of heat required to raise the temperature of one kilogram of a substance by one Kelvin, while keeping the pressure constant."
-            },
-            "c_v": {
-                "name": "Specific Heat Capacity at Constant Volume",
-                "type": "variable",
-                "unit": "J/(kg·K)",
-                "description": "The amount of heat required to raise the temperature of one kilogram of a substance by one Kelvin, while keeping the volume constant. For a monatomic ideal gas, cᵙ$\\mathbf{r}\\mathbf{k}$ᵗ = 3/2 R, where R is the specific gas constant."
-            },
-            "R": {
-                "name": "Ideal Gas Constant",
-                "type": "constant",
-                "unit": "J/(kg·K)",
-                "description": "The universal gas constant divided by the molar mass of the gas. For a monatomic ideal gas, it relates to the heat capacities as cₙ - cᵙ$\\mathbf{r}\\mathbf{k}$ᵗ = R."
-            },
-            "U_m": {
-                "name": "Molar Internal Energy",
-                "type": "variable",
-                "unit": "J/mol",
-                "description": "The internal energy per mole of the gas. For a monatomic ideal gas, Uₘ = 3/2 RT, where T is the absolute temperature."
-            },
-            "T": {
-                "name": "Absolute Temperature",
-                "type": "variable",
-                "unit": "K",
-                "description": "The thermodynamic temperature of the gas, measured in Kelvin."
-            },
-            "f": {
-                "name": "Degrees of Freedom",
+            "5": {
+                "name": "Five",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The number of independent ways a molecule can store energy. For a monatomic gas, f = 3 (corresponding to translational motion)."
+                "description": "An integer constant derived from the three translational degrees of freedom plus the two additional degrees of freedom equivalent represented in the pressure-volume work term ($c_p = c_v + R$)."
             },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
+            "3": {
+                "name": "Three",
                 "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "dimensionless",
+                "description": "An integer constant representing the number of translational degrees of freedom for a monatomic particle in three-dimensional space."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The adiabatic index, also known as the heat capacity ratio or Poisson's constant, is a dimensionless quantity that characterizes the expansion and compression of gases during adiabatic processes. For a monatomic ideal gas, this index is a fundamental property directly related to the degrees of freedom available for energy storage within the gas molecules.",
-        "intuitive_summary": "The adiabatic index for a monatomic gas is 5/3, reflecting that internal energy changes only through translational motion, with no rotational or vibrational contributions.",
+        "conceptual_definition": "The adiabatic index, also known as the heat capacity ratio, is a dimensionless quantity that characterizes the expansion and compression of gases during adiabatic processes. For a monatomic ideal gas, this index is a constant value derived from the gas's translational degrees of freedom.",
+        "intuitive_summary": "The adiabatic index for a monatomic gas is 5/3, a value reflecting that its internal energy is stored exclusively in the translational motion of its atoms.",
         "subcomponents": [
             "coulomb-factor-cfa6a5bd",
             "coulomb-barrier-potential-energy-50b3495a",
@@ -1875,7 +1833,8 @@
         "status": "published",
         "parent_formula_id": "free-waves-2fc9d212",
         "subcomponents": [],
-        "id": "rest-mass-squared-term-e09d672d"
+        "id": "rest-mass-squared-term-e09d672d",
+        "intuitive_summary": ""
     },
     "energy-of-a-quantum-or-photon-5991e473": {
         "title": "Energy of a Quantum or Photon",
@@ -1911,7 +1870,8 @@
         "status": "published",
         "parent_formula_id": "quantum-link-61881485",
         "subcomponents": [],
-        "id": "energy-of-a-quantum-or-photon-5991e473"
+        "id": "energy-of-a-quantum-or-photon-5991e473",
+        "intuitive_summary": ""
     },
     "angular-frequency-to-frequency-conversion-05e9ac62": {
         "title": "Angular Frequency to Frequency Conversion",
@@ -1941,7 +1901,8 @@
         "status": "published",
         "parent_formula_id": "group-velocity",
         "subcomponents": [],
-        "id": "angular-frequency-to-frequency-conversion-05e9ac62"
+        "id": "angular-frequency-to-frequency-conversion-05e9ac62",
+        "intuitive_summary": ""
     },
     "elementary-charge-value-629e20d2": {
         "title": "Elementary Charge Value",
@@ -1965,7 +1926,8 @@
         "status": "published",
         "parent_formula_id": "coulomb-potential-energy",
         "subcomponents": [],
-        "id": "elementary-charge-value-629e20d2"
+        "id": "elementary-charge-value-629e20d2",
+        "intuitive_summary": ""
     },
     "quantum-state-index-identity-57cf0494": {
         "title": "Quantum State Index Identity",
@@ -1995,7 +1957,8 @@
         "status": "published",
         "parent_formula_id": "time-split-e35634e0",
         "subcomponents": [],
-        "id": "quantum-state-index-identity-57cf0494"
+        "id": "quantum-state-index-identity-57cf0494",
+        "intuitive_summary": ""
     },
     "kinetic-energy-of-a-non-relativistic-particle-c13da651": {
         "title": "Kinetic Energy of a Non-relativistic Particle",
@@ -2025,7 +1988,8 @@
         "status": "published",
         "parent_formula_id": "non-relativistic-particle-density",
         "subcomponents": [],
-        "id": "kinetic-energy-of-a-non-relativistic-particle-c13da651"
+        "id": "kinetic-energy-of-a-non-relativistic-particle-c13da651",
+        "intuitive_summary": ""
     },
     "strong-energy-condition-satisfaction-for-dark-energy-72b29baf": {
         "title": "Strong Energy Condition Satisfaction for Dark Energy",
@@ -2049,7 +2013,8 @@
         "status": "published",
         "parent_formula_id": "dark-energy-equation-of-state-e30b2d17",
         "subcomponents": [],
-        "id": "strong-energy-condition-satisfaction-for-dark-energy-72b29baf"
+        "id": "strong-energy-condition-satisfaction-for-dark-energy-72b29baf",
+        "intuitive_summary": ""
     },
     "allowed-values-of-orbital-angular-momentum-quantum-number-574e5bd5": {
         "title": "Allowed Values of Orbital Angular Momentum Quantum Number",
@@ -2073,37 +2038,39 @@
         "status": "published",
         "parent_formula_id": "integer-spin-6bec4a16",
         "subcomponents": [],
-        "id": "allowed-values-of-orbital-angular-momentum-quantum-number-574e5bd5"
+        "id": "allowed-values-of-orbital-angular-momentum-quantum-number-574e5bd5",
+        "intuitive_summary": ""
     },
     "squared-light-speed-time-interval-62ffd20d": {
         "title": "Squared Light-Speed Time Interval",
         "description": "This term represents the squared distance covered by light in a given time interval, scaled by the speed of light squared. It forms the time-like component of the spacetime interval in special relativity.",
-        "conceptual_definition": "In the context of Minkowski spacetime, $c^2 \\\\Delta t^2$ quantifies the contribution of the time separation between two events to their overall spacetime interval. It represents the squared temporal 'distance' in spacetime, scaled by the speed of light squared. This term is fundamental to defining the causal structure of spacetime and is directly related to the proper time experienced by an observer moving between these events.",
-        "interpretation": "This expression signifies the squared temporal separation between two events, weighted by the square of the speed of light. It is the time-like part of the spacetime interval, $\\\\Delta s^2$, and its magnitude relative to the spatial separation squared (\\$\\Delta$x^2) determines the nature of the interval. If$c^2 \\\\Delta t^2 > \\\\Delta x^2$, the interval is time-like, meaning a causal connection is possible. It represents the maximum possible squared spatial distance that could be covered by a light signal in time \\\\Delta$ t, or equivalently, the squared proper time multiplied by $c^2$ for an observer at rest in the frame where \\$\\Delta$ x = 0.",
-        "limits_and_boundary": "As \\$\\Delta$t \\ \\to 0$, the term $c^2 \\\\Delta$ t^2 \\$\\to 0$, indicating that events occurring at the same time have no temporal separation contribution to the spacetime interval. In the context of the light cone, this term defines the temporal axis, and its magnitude relative to spatial terms determines whether an event lies within the past or future light cone, on the light cone, or outside it.",
-        "symmetry_origin": "This term arises from the principle of Lorentz invariance, which dictates that the laws of physics are the same for all inertial observers, implying the invariance of the spacetime interval. It also reflects the homogeneity of time, meaning that the laws of physics do not change with time.",
+        "conceptual_definition": "In Minkowski spacetime, $c^2 (\\Delta t)^2$ is the squared temporal component of the spacetime interval between two events. It quantifies the contribution of the time separation to the invariant interval, which determines the causal relationship between the events.",
+        "interpretation": "This expression signifies the squared temporal separation between two events, weighted by the square of the speed of light. It is the time-like part of the spacetime interval, $\\Delta s^2$. The nature of the interval is determined by its magnitude relative to the squared spatial separation, $(\\Delta \\mathbf{x})^2$. If $c^2 (\\Delta t)^2 > (\\Delta \\mathbf{x})^2$, the interval is time-like, meaning a causal connection between the events is possible. For an observer at rest in a frame where the spatial separation is zero ($\\Delta \\mathbf{x} = 0$), this term is equal to $c^2$ times the squared proper time, $c^2 (\\Delta \\tau)^2$.",
+        "limits_and_boundary": "1. In the limit as the time interval approaches zero ($\\Delta t \\to 0$), the term $c^2 (\\Delta t)^2 \\to 0$, indicating no temporal contribution to the spacetime interval for simultaneous events in a given frame.\n2. In the non-relativistic limit where the speed of light is considered infinite ($c \\to \\infty$), this term dominates the spacetime interval, effectively decoupling time from space and recovering the absolute time of Newtonian mechanics.",
+        "symmetry_origin": "This term is a component of the spacetime interval, whose invariance under Lorentz transformations is a fundamental postulate of special relativity. This Lorentz invariance is a spacetime symmetry reflecting the principle that the laws of physics are the same for all inertial observers. The term's structure also relies on the homogeneity of time, a symmetry implying that physical laws are constant over time.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "relativistic-kinematics",
         "semantic_variables": {
             "c": {
-                "name": "c",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Speed of light in vacuum (m/s)"
+                "name": "Speed of light in vacuum",
+                "type": "constant",
+                "unit": "m/s",
+                "description": "The universal physical constant for the speed of light in a vacuum, defined as exactly 299,792,458 m/s."
             },
-            "\\\\Delta t": {
-                "name": "\\\\Delta t",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Time interval between two events (s)"
+            "\\Delta t": {
+                "name": "Time interval",
+                "type": "variable",
+                "unit": "s",
+                "description": "The difference in the time coordinate between two events, as measured in a specific inertial frame of reference."
             }
         },
-        "equation": "c^2 \\Delta t^2",
-        "status": "published",
+        "equation": "c^2 (\\Delta t)^2",
+        "status": "platinum",
         "parent_formula_id": "time-protection-6c90e08c",
         "subcomponents": [],
-        "id": "squared-light-speed-time-interval-62ffd20d"
+        "id": "squared-light-speed-time-interval-62ffd20d",
+        "intuitive_summary": "This term represents the squared distance light would travel in a given time interval, forming the time-like part of the spacetime interval."
     },
     "operational-electric-field-definition-bfb3804e": {
         "title": "Operational Electric Field Definition",
@@ -2139,7 +2106,8 @@
         "status": "published",
         "parent_formula_id": "quantum-link-20a0014a",
         "subcomponents": [],
-        "id": "operational-electric-field-definition-bfb3804e"
+        "id": "operational-electric-field-definition-bfb3804e",
+        "intuitive_summary": ""
     },
     "friedmann-equation-for-cosmic-expansion-1a35fb37": {
         "title": "Friedmann Equation for Cosmic Expansion",
@@ -2193,7 +2161,8 @@
         "status": "published",
         "parent_formula_id": "cosmic-expansion-1a35fb37",
         "subcomponents": [],
-        "id": "friedmann-equation-for-cosmic-expansion-1a35fb37"
+        "id": "friedmann-equation-for-cosmic-expansion-1a35fb37",
+        "intuitive_summary": ""
     },
     "gauge-field-strength-tensor-f65db7bb": {
         "title": "Gauge Field Strength Tensor",
@@ -2223,7 +2192,8 @@
         "status": "published",
         "parent_formula_id": "standard-model-lagrangian-f2947c97",
         "subcomponents": [],
-        "id": "gauge-field-strength-tensor-f65db7bb"
+        "id": "gauge-field-strength-tensor-f65db7bb",
+        "intuitive_summary": ""
     },
     "minkowski-metric-time-component-324db209": {
         "title": "Minkowski Metric Time Component",
@@ -2247,7 +2217,8 @@
         "status": "published",
         "parent_formula_id": "minkowski-spacetime-interval",
         "subcomponents": [],
-        "id": "minkowski-metric-time-component-324db209"
+        "id": "minkowski-metric-time-component-324db209",
+        "intuitive_summary": ""
     },
     "inverse-distance-potential-relation-c66bfbfb": {
         "title": "Inverse Distance Potential Relation",
@@ -2277,7 +2248,8 @@
         "status": "published",
         "parent_formula_id": "equilibrium-balance-1300e66a",
         "subcomponents": [],
-        "id": "inverse-distance-potential-relation-c66bfbfb"
+        "id": "inverse-distance-potential-relation-c66bfbfb",
+        "intuitive_summary": ""
     },
     "lorentz-indices-for-gluon-fields-7da84444": {
         "title": "Lorentz Indices for Gluon Fields",
@@ -2313,7 +2285,8 @@
         "status": "published",
         "parent_formula_id": "three-gluon-interaction-vertex-edb1e0e4",
         "subcomponents": [],
-        "id": "lorentz-indices-for-gluon-fields-7da84444"
+        "id": "lorentz-indices-for-gluon-fields-7da84444",
+        "intuitive_summary": ""
     },
     "hodge-number-h11-58401a3e": {
         "title": "Hodge Number h^{1,1}",
@@ -2337,7 +2310,8 @@
         "status": "published",
         "parent_formula_id": "generation-counting-law-ec040b47",
         "subcomponents": [],
-        "id": "hodge-number-h11-58401a3e"
+        "id": "hodge-number-h11-58401a3e",
+        "intuitive_summary": ""
     },
     "kolmogorov-wavenumber-scaling-3a546e75": {
         "title": "Kolmogorov Wavenumber Scaling",
@@ -2361,7 +2335,8 @@
         "status": "published",
         "parent_formula_id": "kolmogorov-energy-spectrum-power-law-db8b1dba",
         "subcomponents": [],
-        "id": "kolmogorov-wavenumber-scaling-3a546e75"
+        "id": "kolmogorov-wavenumber-scaling-3a546e75",
+        "intuitive_summary": ""
     },
     "anti-ghost-field-component-a2ec8808": {
         "title": "Anti-Ghost Field Component",
@@ -2385,7 +2360,8 @@
         "status": "published",
         "parent_formula_id": "fake-particles-dce556c9",
         "subcomponents": [],
-        "id": "anti-ghost-field-component-a2ec8808"
+        "id": "anti-ghost-field-component-a2ec8808",
+        "intuitive_summary": ""
     },
     "electric-field-from-electromagnetic-potentials-8159b98a": {
         "title": "Electric Field from Electromagnetic Potentials",
@@ -2433,7 +2409,8 @@
         "status": "published",
         "parent_formula_id": "potential-freedom-8e481cff",
         "subcomponents": [],
-        "id": "electric-field-from-electromagnetic-potentials-8159b98a"
+        "id": "electric-field-from-electromagnetic-potentials-8159b98a",
+        "intuitive_summary": ""
     },
     "color-singlet-condition-dd42986f": {
         "title": "Color Singlet Condition",
@@ -2457,7 +2434,8 @@
         "status": "published",
         "parent_formula_id": "physical-constraint-6f08cca9",
         "subcomponents": [],
-        "id": "color-singlet-condition-dd42986f"
+        "id": "color-singlet-condition-dd42986f",
+        "intuitive_summary": ""
     },
     "divergence-free-heat-flux-equation-66f2b7d9": {
         "title": "Divergence-Free Heat Flux Equation",
@@ -2481,7 +2459,8 @@
         "status": "published",
         "parent_formula_id": "laplace-equation-temperature",
         "subcomponents": [],
-        "id": "divergence-free-heat-flux-equation-66f2b7d9"
+        "id": "divergence-free-heat-flux-equation-66f2b7d9",
+        "intuitive_summary": ""
     },
     "spacetime-dimensionality-proportionality-factor-357e92ed": {
         "title": "Spacetime Dimensionality Proportionality Factor",
@@ -2505,7 +2484,8 @@
         "status": "published",
         "parent_formula_id": "curvature-lambda-identity-0413c8e7",
         "subcomponents": [],
-        "id": "spacetime-dimensionality-proportionality-factor-357e92ed"
+        "id": "spacetime-dimensionality-proportionality-factor-357e92ed",
+        "intuitive_summary": ""
     },
     "cubic-relationship-between-variables-fee55d5c": {
         "title": "Cubic Relationship Between Variables",
@@ -2535,7 +2515,8 @@
         "status": "published",
         "parent_formula_id": "boundary-conditions-for-path-integral",
         "subcomponents": [],
-        "id": "cubic-relationship-between-variables-fee55d5c"
+        "id": "cubic-relationship-between-variables-fee55d5c",
+        "intuitive_summary": ""
     },
     "torque-and-angular-momentum-relation-3d6b45df": {
         "title": "Torque and Angular Momentum Relation",
@@ -2589,7 +2570,8 @@
         "status": "published",
         "parent_formula_id": "dynamical-law-1a062f12",
         "subcomponents": [],
-        "id": "torque-and-angular-momentum-relation-3d6b45df"
+        "id": "torque-and-angular-momentum-relation-3d6b45df",
+        "intuitive_summary": ""
     },
     "coupling-spring-force-on-particle-2-x10-6bc90d9f": {
         "title": "Coupling Spring Force on Particle 2 (x1=0)",
@@ -2619,7 +2601,8 @@
         "status": "published",
         "parent_formula_id": "equation-motion-coupled-oscillator-2",
         "subcomponents": [],
-        "id": "coupling-spring-force-on-particle-2-x10-6bc90d9f"
+        "id": "coupling-spring-force-on-particle-2-x10-6bc90d9f",
+        "intuitive_summary": ""
     },
     "su2-lie-algebra-generators": {
         "id": "su2-lie-algebra-generators",

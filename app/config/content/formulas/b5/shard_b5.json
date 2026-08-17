@@ -51,40 +51,34 @@
         "semantic_variables": {
             "\\Delta d": {
                 "name": "Uncertainty in Distance",
-                "type": "operator",
+                "type": "variable",
                 "unit": "m",
-                "description": "Represents the absolute error or uncertainty in the measurement or determination of a distance. In SI units, distance is measured in meters (m)."
+                "description": "The absolute error or uncertainty in the measurement of a distance $d$."
             },
             "B": {
                 "name": "Proportionality Constant",
                 "type": "constant",
-                "unit": "kg*m/s^2",
-                "description": "A constant of proportionality that links the uncertainty in distance to the momentum and its uncertainty. Its units depend on the specific physical context from which the formula is derived. For instance, in a quantum mechanical context, it is often related to Planck's constant (\\hbar) and may have units of J*s or kg*m^2/s."
+                "unit": "kg⋅m^2/s",
+                "description": "A constant of proportionality that links the uncertainty in distance to the momentum and its uncertainty. Its value and units depend on the specific physical context, often related to Planck's constant."
             },
             "p": {
                 "name": "Momentum",
                 "type": "variable",
-                "unit": "kg*m/s",
-                "description": "The momentum of a particle or system, defined as the product of its mass and velocity (p = mv). It is a measure of the quantity of motion. In SI units, momentum is measured in kilogram-meters per second (kg*m/s)."
+                "unit": "kg⋅m/s",
+                "description": "The momentum of a particle or system, defined as the product of its mass and velocity."
             },
             "\\Delta p": {
                 "name": "Uncertainty in Momentum",
-                "type": "operator",
-                "unit": "kg*m/s",
-                "description": "Represents the absolute error or uncertainty in the measurement or determination of momentum. In SI units, momentum uncertainty is also measured in kilogram-meters per second (kg*m/s)."
-            },
-            "\\Delta": {
-                "name": "Laplacian / Change Operator",
-                "type": "operator",
-                "unit": "operator",
-                "description": "Represents spatial second derivatives, or finite difference increment."
+                "type": "variable",
+                "unit": "kg⋅m/s",
+                "description": "The absolute error or uncertainty in the measurement of momentum."
             }
         },
-        "interpretation": "In this equation, $\\Delta$ d represents the uncertainty or variation in a measured or determined distance. The variable p signifies the momentum of a particle or system, which is a measure of its mass in motion. The term $\\Delta$ p denotes the uncertainty or variation in the measurement of this momentum. The constant B is a proportionality factor that depends on the specific physical system and context; in quantum mechanics, it often relates to Planck's constant. The equation shows that as the momentum p increases, the uncertainty in distance $\\Delta$ d decreases significantly (due to the p^2 term in the denominator), provided the uncertainty in momentum $\\Delta$ p remains constant. Conversely, a larger uncertainty in momentum $\\Delta$ p leads to a larger uncertainty in distance $\\Delta$ d.",
-        "symmetry_origin": "This relationship can be derived from the fundamental principles of quantum mechanics, specifically from the commutation relations between position and momentum operators. For instance, the commutator [$\\hat{x}$, $\\hat{p}_x] = i \\hbar in quantum mechanics leads to the Heisenberg uncertainty principle, \\Delta x \\Delta p_x ≥ \\hbar /2. The given formula \\Delta d = \\frac{B}{p^2} \\Delta p$ is a specific form that emerges under certain approximations or in specific scenarios, where B might be related to $\\hbar$ and p might represent an average momentum. In classical mechanics, such a relationship might arise from considerations of phase space or from specific dynamical constraints.",
-        "limits_and_boundary": "As the momentum p approaches infinity, the uncertainty in distance $\\Delta$ d approaches zero, assuming $\\Delta$ p is finite and B is a constant. This implies that for highly energetic or massive objects (large momentum), their position can be known with very high precision, given a fixed uncertainty in their momentum. Conversely, as the momentum p approaches zero, the uncertainty in distance $\\Delta$ d tends to infinity (if B is a positive constant and $\\Delta$ p is non-zero). This indicates that for particles with very low momentum, their position becomes highly uncertain for a given uncertainty in momentum, which aligns with quantum mechanical intuition where particles are more delocalized at low energies.",
+        "interpretation": "In this equation, $\\Delta d$ represents the uncertainty or variation in a measured distance. The variable $p$ signifies the momentum of a particle or system. The term $\\Delta p$ denotes the uncertainty in the measurement of this momentum. The constant $B$ is a proportionality factor that depends on the specific physical system and context; in quantum mechanics, it often relates to Planck's constant. The equation shows that as the momentum $p$ increases, the uncertainty in distance $\\Delta d$ decreases quadratically, provided the uncertainty in momentum $\\Delta p$ remains constant. This principle is critical in designing high-energy particle experiments where precise position tracking is required.",
+        "symmetry_origin": "This relationship is a specific manifestation of the principles of quantum mechanics, rooted in the non-commutativity of position and momentum operators. The fundamental commutator $[\\\\hat{x}, \\\\hat{p}_x] = i\\\\hbar$ arises from the role of momentum as the generator of spatial translations (a continuous spacetime symmetry via Noether's theorem). This leads to the general Heisenberg uncertainty principle, $\\Delta x \\Delta p_x \\ge \\hbar/2$. The given formula is a specialized version that can emerge in specific physical contexts or under certain approximations, such as analyzing the resolving power of a particle beam.",
+        "limits_and_boundary": "1. High Momentum Limit ($p \\to \\infty$): As momentum becomes very large, the uncertainty $\\Delta d$ approaches zero for a fixed $\\Delta p$. This implies that high-energy particles can, in principle, have their position determined with arbitrarily high precision.\n2. Low Momentum Limit ($p \\to 0$): As momentum approaches zero, the uncertainty $\\Delta d$ diverges to infinity (for non-zero $\\Delta p$). This indicates that the position of a very low-energy particle is highly delocalized, a key feature of quantum wave-particle duality.",
         "status": "platinum",
-        "conceptual_definition": "The formula $\\Delta$ d = \\frac{B}{p^2} \\Delta $p$ describes how the uncertainty or variation in a distance, \\Delta d, is related to the uncertainty in momentum, \\Delta p, and the momentum itself, p. It indicates that for a given uncertainty in momentum, the precision with which distance can be known is inversely proportional to the square of the momentum. This relationship is fundamental in quantum mechanics, particularly in the context of the Heisenberg uncertainty principle, and also appears in classical mechanics under certain conditions$.",
+        "conceptual_definition": "This formula describes how the uncertainty in a distance measurement, $\\Delta d$, is related to the uncertainty in momentum, $\\Delta p$, and the magnitude of the momentum, $p$. It indicates that for a given uncertainty in momentum, the precision with which distance can be determined is inversely proportional to the square of the momentum.",
         "intuitive_summary": "Higher momentum means distance is known more precisely for a given momentum uncertainty."
     },
     "wormhole-solution-40337a26": {
@@ -707,58 +701,52 @@
         "intuitive_summary": "The product of the uncertainty in position and the uncertainty in momentum of a particle is always greater than or equal to a fundamental constant, indicating a trade-off in how precisely both can be known simultaneously."
     },
     "basis-creation-77d39539": {
-        "title": "Basis Creation",
-        "equation": "\\hat{p}^\\dagger = \\left(-i\\hbar \\frac{d}{dx}\\right)^\\dagger = -i\\hbar \\frac{d}{dx} = \\hat{p}",
+        "title": "Hermiticity of the Momentum Operator",
+        "equation": "\\hat{p}^\\dagger = \\left(-i\\hbar \\frac{\\mathrm{d}}{\\mathrm{d}x}\\right)^\\dagger = -i\\hbar \\frac{\\mathrm{d}}{\\mathrm{d}x} = \\hat{p}",
         "semantic_variables": {
             "\\hat{p}": {
                 "name": "Momentum Operator",
-                "type": "variable",
-                "unit": "kg m/s",
-                "description": "The quantum mechanical operator representing linear momentum. In one dimension, it is given by $-i\\hbar\\frac{d}{dx}$."
+                "type": "operator",
+                "unit": "kg⋅m/s",
+                "description": "The quantum mechanical operator corresponding to the observable of linear momentum."
             },
-            "\\hat{p}^\\dagger": {
-                "name": "Hermitian Conjugate of Momentum Operator",
-                "type": "variable",
-                "unit": "kg m/s",
-                "description": "The Hermitian conjugate (or adjoint) of the momentum operator. It is obtained by taking the complex conjugate and the transpose (or adjoint for operators)."
+            "\\dagger": {
+                "name": "Hermitian Conjugate",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "An operation on a linear operator that generalizes the conjugate transpose of a matrix. For a physical observable, the operator must be equal to its Hermitian conjugate."
             },
             "i": {
                 "name": "Imaginary Unit",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The imaginary unit, defined as $i^2 = -1$."
+                "description": "The imaginary unit, defined by the property $i^2 = -1$."
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "J s",
-                "description": "Planck's constant $h$ divided by $2\\pi$. It is a fundamental constant in quantum mechanics that relates the energy of a particle to its frequency and the momentum of a particle to its wavelength."
+                "unit": "J⋅s",
+                "description": "The Planck constant divided by $2\\pi$, a fundamental constant in quantum mechanics that quantifies the relationship between a particle's energy and frequency."
             },
-            "\\frac{d}{dx}": {
-                "name": "Derivative Operator",
-                "type": "variable",
-                "unit": "m^{-1}",
-                "description": "The differential operator representing the rate of change of a function with respect to position $x$."
+            "\\frac{\\mathrm{d}}{\\mathrm{d}x}": {
+                "name": "Derivative with respect to position",
+                "type": "operator",
+                "unit": "m⁻¹",
+                "description": "The differential operator that computes the rate of change with respect to the spatial coordinate $x$."
             },
-            "p": {
-                "name": "Linear Momentum ($p$)",
+            "x": {
+                "name": "Position Coordinate",
                 "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
-            },
-            "\\dagger": {
-                "name": "\\dagger Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "unit": "m",
+                "description": "A spatial coordinate representing the position of a particle in one dimension."
             }
         },
-        "interpretation": "The formula starts with $\\hat{p}^\\dagger$, which represents the Hermitian conjugate (or adjoint) of the momentum operator $\\hat{p}. The momentum operator in one dimension is defined as \\hat{p} = -i\\hbar \\frac{d}{dx}$, where $i$ is the imaginary unit, $\\hbar$ is the reduced Planck constant, and $\\frac{d}{dx}$ is the derivative with respect to position $x$. The expression \\left (-i \\hbar \\frac{d}{dx} \\right)^\\dagger$denotes the process of taking the Hermitian conjugate of this operator. For differential operators, the Hermitian conjugate is determined by considering the integration by parts of the operator acting on wavefunctions. Specifically, the adjoint property requires that$\\int$ψ_1^*(x) φ(x) dx = ∫ φ_1^*(x) φ(x)$ dx where $φ$ is the operator and $ψ_1$ and $φ_1$ are test functions. For the momentum operator, this calculation leads to \\left$(-i$\\hbar \\frac{d}{dx} \\right$)^$\\dagger$= -i$\\hbar \\frac{d}{dx}$. Therefore, the momentum operator is equal to its own Hermitian conjugate:\\hat{p}^$\\dagger = $\\hat{p}. This equality is a defining characteristic of Hermitian operators, and it ensures that the eigenvalues of the momentum operator (which correspond to possible momentum measurements) are real numbers, as physical observables must be.",
-        "symmetry_origin": "The fact that the momentum operator $\\hat{p}$ = -i$\\hbar \\frac{d}{dx}$ is Hermitian arises from the integration by parts during the definition of the adjoint operator, combined with the assumption that the wavefunctions$ψ(x)$vanish at the boundaries of the integration domain (usually taken to be $x \\to ±∞$). This vanishing at infinity is crucial and is related to the physical requirement that particles are not infinitely spread out. Mathematically, the hermiticity of the momentum operator is directly linked to the continuous translational symmetry of free space. The generator of translations is the momentum operator, and the fact that it is Hermitian implies that translations are a unitary operation, preserving probabilities, and that momentum is a conserved observable when the Hamiltonian does not depend on position.",
-        "limits_and_boundary": "The concept of limits and boundary conditions is critical in defining the adjoint of the momentum operator. The hermiticity $\\hat{p}^† = φ$ depends on the assumption that the boundary terms arising from integration by parts vanish. This means that for wavefunctions $ψ_1(x)$ and $ψ_2(x)$, $ψ_1^*(x) ψ_2(x) \\to 0$ as $x \\to ±∞$. If we consider systems with finite boundaries or specific boundary conditions (e.g., periodic boundary conditions), the adjoint operator might differ from the original operator, and the momentum operator might not be strictly Hermitian in the same way. However, for the standard formulation of quantum mechanics in free space, this condition holds.",
+        "interpretation": "The equation demonstrates the Hermiticity of the one-dimensional momentum operator, $\\hat{p}$. An operator $\\hat{O}$ is Hermitian if it equals its adjoint, $\\hat{O}^\\dagger$, which is defined by the inner product relation $\\langle \\psi | \\hat{O}^\\dagger \\phi \\rangle = \\langle \\hat{O} \\psi | \\phi \\rangle$. For wavefunctions in position space, this becomes $\\int_{-\\infty}^{\\infty} \\psi^*(x) (\\hat{O}^\\dagger \\phi(x)) \\mathrm{d}x = \\int_{-\\infty}^{\\infty} (\\hat{O} \\psi(x))^* \\phi(x) \\mathrm{d}x$. For the momentum operator $\\hat{p} = -i\\hbar \\frac{\\mathrm{d}}{\\mathrm{d}x}$, we evaluate the right-hand side: $\\int_{-\\infty}^{\\infty} (-i\\hbar \\frac{\\mathrm{d}}{\\mathrm{d}x} \\psi(x))^* \\phi(x) \\mathrm{d}x = \\int_{-\\infty}^{\\infty} (i\\hbar \\frac{\\mathrm{d}}{\\mathrm{d}x} \\psi^*(x)) \\phi(x) \\mathrm{d}x$. Using integration by parts, this becomes $[i\\hbar \\psi^*(x)\\phi(x)]_{-\\infty}^{\\infty} - \\int_{-\\infty}^{\\infty} i\\hbar \\psi^*(x) (\\frac{\\mathrm{d}}{\\mathrm{d}x}\\phi(x)) \\mathrm{d}x$. For physically realistic, square-integrable wavefunctions, the boundary term vanishes. This leaves $\\int_{-\\infty}^{\\infty} \\psi^*(x) (-i\\hbar \\frac{\\mathrm{d}}{\\mathrm{d}x} \\phi(x)) \\mathrm{d}x$, which implies $\\hat{p}^\\dagger = -i\\hbar \\frac{\\mathrm{d}}{\\mathrm{d}x} = \\hat{p}$.",
+        "symmetry_origin": "The Hermiticity of the momentum operator is fundamentally linked to the continuous translational symmetry of space. By Noether's theorem, every continuous symmetry of a physical system's Lagrangian implies a conserved quantity. The momentum operator is the generator of spatial translations. The requirement that physical laws are the same everywhere (homogeneity of space) implies that the translation operator must be unitary to conserve probability, which in turn requires its generator (the momentum operator) to be Hermitian. This ensures that linear momentum is a conserved quantity in any system whose Hamiltonian is invariant under spatial translations.",
+        "limits_and_boundary": "1. The proof of Hermiticity relies on the boundary condition that the wavefunctions vanish at infinity, i.e., $\\lim_{x \\to \\pm\\infty} \\psi(x) = 0$. This is true for all square-integrable functions, which represent physically localized particles.\n2. For systems defined on a finite interval or with periodic boundary conditions (e.g., a particle on a ring), the domain of the operator must be carefully chosen to ensure the boundary terms from integration by parts vanish, thereby preserving Hermiticity.",
         "status": "platinum",
-        "conceptual_definition": "The formula $\\hat{p}^\\dagger = \\left$(-i$\\hbar \\frac{d}{dx} \\right$)^$\\dagger$ = -i$\\hbar \\frac{d}{dx} = \\hat{p}$ demonstrates that the momentum operator $\\hat{p}$ in one-dimensional quantum mechanics is a Hermitian operator. This means that the operator is equal to its own Hermitian conjugate (or adjoint). The Hermitian conjugate involves taking the complex conjugate of the operator's components and transposing them. For a differential operator like the momentum operator, its adjoint operation is defined through its action on wavefunctions within an integral, ensuring that the expectation value of an observable remains real, which is a fundamental requirement for physical observables in quantum mechanics.",
-        "intuitive_summary": "The momentum operator in quantum mechanics is its own 'adjoint', signifying that measurements of momentum are physically meaningful and always yield real values.",
+        "conceptual_definition": "This equation states that the quantum mechanical momentum operator is Hermitian, meaning it is equal to its own Hermitian conjugate (adjoint). This property ensures that the measured values of momentum, its eigenvalues, are real numbers, as required for any physical observable.",
+        "intuitive_summary": "The momentum operator's self-adjoint nature guarantees that any measurement of a particle's momentum will yield a real, physically meaningful value.",
         "subcomponents": [
             "hermiticity-condition-for-momentum-operator-7c16f820",
             "differential-operator-with-respect-to-x-624febb9",
@@ -804,46 +792,46 @@
         ]
     },
     "non-zero-baseline-1a8acd97": {
-        "title": "Non-Zero Baseline",
-        "equation": "E_0 = \\frac{1}{2} \\sum \\hbar \\omega",
+        "title": "Zero-Point Energy",
+        "equation": "E_0 = \\sum_k \\frac{1}{2} \\hbar \\omega_k",
         "semantic_variables": {
             "E_0": {
-                "name": "Ground State Energy",
+                "name": "Zero-Point Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total energy of the system in its lowest possible energy state, also known as the zero-point energy. It is the minimum energy the system can possess."
+                "description": "The total energy of a system in its ground state, also known as vacuum energy in the context of quantum field theory."
+            },
+            "\\sum_k": {
+                "name": "Summation over modes",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "A sum over all the independent modes of oscillation, indexed by $k$, that constitute the system."
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "J\\cdot s",
-                "description": "A fundamental physical constant that relates the energy of a photon to its frequency. It is the quantum of electromagnetic action."
+                "unit": "J⋅s",
+                "description": "The Planck constant divided by $2\\pi$, a fundamental constant in quantum mechanics."
             },
-            "\\omega": {
-                "name": "Angular Frequency",
+            "\\omega_k": {
+                "name": "Angular Frequency of Mode k",
                 "type": "variable",
                 "unit": "rad/s",
-                "description": "The angular frequency of an individual quantum harmonic oscillator mode within the system. It describes how quickly the oscillation occurs."
+                "description": "The angular frequency of the k-th harmonic oscillator mode."
             },
-            "\\sum": {
-                "name": "Summation",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The summation symbol indicates that the ground state energy is obtained by summing the contributions from all individual harmonic oscillator modes in the system."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
+            "k": {
+                "name": "Mode Index",
+                "type": "index",
+                "unit": "dimensionless or m⁻¹",
+                "description": "An index that labels each independent harmonic oscillator mode. In field theory, this often corresponds to the wavevector of the mode."
             }
         },
-        "interpretation": "The equation $E_0 = \\frac{1}{2} \\sum \\hbar \\omega$ describes the ground state energy (or zero-point energy) of a system composed of multiple quantum harmonic oscillators$.E_0$ denotes the total ground state energy of the system, measured in Joules (J$).\\hbar$ is the reduced Planck constant, a fundamental physical constant approximately equal to$1.054 \\times 10^{-34} \\text{ J}\\cdot$s, which relates a particle's momentum to its wavelength and its energy to its frequency$.\\omega$ represents the angular frequency of each individual harmonic oscillator mode, measured in radians per second (rad/s). The summation symbol$'\\sum$' indicates that the ground state energy is the sum over all possible harmonic oscillator modes within the system. Each mode contributes $\\frac{1}{2} ℏ ω$to the total zero-point energy. This term $\\frac{1}{2} ℏ ω$ is the minimum energy that a single quantum harmonic oscillator can possess, even at absolute zero temperature, due to the Heisenberg uncertainty principle, which prevents both position and momentum from being precisely zero simultaneously.",
-        "symmetry_origin": "The origin of the non-zero baseline energy lies in the Heisenberg uncertainty principle, a cornerstone of quantum mechanics. For a harmonic oscillator, the uncertainty relation dictates that if the oscillator is in its ground state, it cannot have both zero kinetic energy and zero potential energy simultaneously. Mathematically, this arises from the quantization of energy levels in the harmonic oscillator Hamiltonian, where the energy eigenvalues are given by $E_n = (n + \\frac{1}{2} )\\hbar\\omega$, with $n$ being a non-negative integer. The ground state corresponds to $n=0$, yielding the zero-point energy of $E_0 = \\frac{1}{2} \\hbar\\omega$ for a single oscillator. For a system of multiple independent harmonic oscillators, the total ground state energy is the sum of the ground state energies of each oscillator.",
-        "limits_and_boundary": "In the limit where the angular frequencies $\\omega$ of all constituent harmonic oscillators approach zero (i.e., $\\omega \\to 0$), the ground state energy $E_0$ also approaches zero, as $E_0 \\to 0$. This scenario corresponds to a system where the oscillators are no longer oscillating and have effectively decoupled, reducing their energy to zero. Conversely, as the angular frequencies $\\omega$ become very large, the ground state energy $E_0$ increases. In the context of field theories, if there are infinitely many modes with non-zero frequencies, the sum can lead to a divergent energy, which often requires renormalization techniques to handle.",
+        "interpretation": "The equation describes the ground state energy, or zero-point energy, $E_0$, of a system composed of a collection of non-interacting quantum harmonic oscillators. In quantum field theory, free fields can be described as an infinite collection of such oscillators, where each mode $k$ (e.g., a plane wave with wavevector $k$) has a characteristic angular frequency $\\omega_k$. The energy of each oscillator is quantized, with the lowest possible energy for mode $k$ being $\\frac{1}{2}\\hbar\\omega_k$. This non-zero minimum energy is a direct consequence of the Heisenberg uncertainty principle, which forbids a quantum particle from being perfectly at rest at its potential minimum. The total zero-point energy of the system is the sum of these ground state energies over all possible modes. For a quantum field, this sum is over an infinite number of modes and typically diverges, a problem known as the vacuum catastrophe, which is addressed in QFT by renormalization.",
+        "symmetry_origin": "The existence of zero-point energy stems from the fundamental commutation relations of quantum mechanics, such as $[\\hat{x}, \\hat{p}] = i\\hbar$. This non-commutativity ensures that the ground state of the harmonic oscillator Hamiltonian, $\\hat{H} = \\frac{\\hat{p}^2}{2m} + \\frac{1}{2}m\\omega^2\\hat{x}^2$, has an energy greater than zero. This algebraic structure is a cornerstone of quantum theory and is invariant under unitary time evolution, which corresponds to the symmetry of physical laws under time translation. The non-zero energy is a direct result of quantizing a classical system with this underlying phase space structure.",
+        "limits_and_boundary": "1. In the classical limit, as the reduced Planck constant $\\hbar \\to 0$, the zero-point energy $E_0 \\to 0$. In classical mechanics, a system can have zero energy by being motionless at its potential minimum.\n2. In quantum field theory, the sum over modes becomes an integral over momentum space in the continuum limit. This integral, $E_0 \\propto \\int \\omega_k \\mathrm{d}^3k$, typically diverges at high momenta (the ultraviolet divergence), leading to an infinite vacuum energy.\n3. While the absolute value of this infinite energy is often discarded via renormalization, its physical effects are observable through phenomena like the Casimir effect, where the change in vacuum energy due to boundary conditions creates a measurable force.",
         "status": "platinum",
-        "conceptual_definition": "The formula E_0 = \\frac{1}{2} \\sum \\hbar \\omega$ represents the ground state energy of a quantum harmonic oscillator or a system that can be approximated as a collection of harmonic oscillators, especially when considering a non-zero baseline energy. In quantum mechanics, even at absolute zero temperature, a quantum harmonic oscillator possesses a minimum energy, known as zero-point energy. This formula quantifies that residual energy, which arises from the inherent uncertainty principle.",
-        "intuitive_summary": "The non-zero baseline energy is half the sum of the energies of all quantum modes, reflecting the unavoidable quantum fluctuations.",
+        "conceptual_definition": "This formula gives the total zero-point energy of a system decomposable into independent quantum harmonic oscillators, such as the modes of a quantum field. It is the sum of the ground state energies of each individual oscillator, representing the minimum possible energy the system can have due to the Heisenberg uncertainty principle.",
+        "intuitive_summary": "Even in a perfect vacuum at absolute zero temperature, a quantum system possesses a minimum energy arising from the sum of the fundamental vibrations of all its constituent fields.",
         "subcomponents": [
             "zero-net-elementary-charge-0e64ab01",
             "summation-operator-7231fa80",
@@ -1475,31 +1463,49 @@
     },
     "friedmann-equation-inflationary": {
         "title": "Friedmann Equation (Inflationary)",
-        "equation": "H^2 \\approx \\frac{8\\pi G}{3} V(\\phi)",
-        "conceptual_definition": "The Friedmann equation describes the expansion rate of the universe. The inflationary Friedmann equation, a specific form of the Friedmann equations, relates the Hubble parameter during a period of cosmic inflation to the energy density of the inflaton field. This equation is crucial for understanding the rapid, exponential expansion that is hypothesized to have occurred in the very early universe.",
-        "intuitive_summary": "The expansion rate of the universe during inflation is directly proportional to the square root of the energy density of the inflaton field.",
-        "interpretation": "The equation $H^2 \\approx \\frac{8\\pi G}{3}$ V( $\\phi$)$relates the Hubble parameter,$H$, which quantifies the rate of cosmic expansion, to the energy density of a scalar field,$V( $\\phi$) .H$is measured in inverse seconds ( s$^{-1} ).G$is the gravitational constant, a fundamental constant of nature with SI units of m$^3 $kg$^{-1}$s$^{-2} .V( $\\phi$ ) represents the potential energy density of the scalar field (the inflaton field), typically measured in Joules per cubic meter ( J/m^3). The term $V( \\phi )$arises from the energy contribution of the inflaton field, which drives the accelerated expansion during inflation. The approximation $H^2 \\approx \\frac{8 \\pi G}{3}$ V( \\phi ) is valid when the energy density of the universe is dominated by the potential energy of the scalar field, meaning kinetic energy contributions from the field’s dynamics are negligible. This dominance is characteristic of the slow-roll inflation scenario$.",
-        "symmetry_origin": "This equation is derived from the Friedmann–Lemaître–Robertson–Walker (FLRW) metric in the context of general relativity, which assumes spatial homogeneity and isotropy of the universe. It is a direct consequence of Einstein's field equations applied to a homogeneous and isotropic universe, incorporating the energy-momentum tensor of the inflaton field.",
-        "limits_and_boundary": "As the potential energy density $V(\\phi)$approaches zero (which would imply the end of inflation or a universe without significant scalar field energy), the Hubble parameter $H$ also approaches zero, indicating a cessation of accelerated expansion. Conversely, a large potential energy density $V(\\phi)$leads to a large Hubble parameter $H$, signifying rapid, exponential expansion characteristic of the inflationary epoch.",
+        "equation": "H^2 \\approx \\frac{8\\pi G}{3c^2} V(\\phi)",
+        "conceptual_definition": "The inflationary Friedmann equation, a specific form of the Friedmann equations, relates the Hubble expansion rate of the universe during a period of cosmic inflation to the potential energy density of the inflaton scalar field.",
+        "intuitive_summary": "During inflation, the universe's expansion rate is determined by the energy stored in the quantum field that is driving the expansion.",
+        "interpretation": "The equation $H^2 \\approx \\frac{8\\pi G}{3c^2} V(\\phi)$ relates the Hubble parameter, $H$, which quantifies the rate of cosmic expansion, to the potential energy density of a scalar field, $V(\\phi)$. The Hubble parameter $H$ is measured in inverse seconds ($s^{-1}$). The term $V(\\phi)$ represents the potential energy density of the inflaton field $\\phi$, measured in Joules per cubic meter ($J/m^3$). This approximation is valid under the 'slow-roll' conditions of inflation, where the potential energy density of the inflaton field vastly exceeds its kinetic energy, and thus dominates the total energy density of the universe. The constants $G$ (gravitational constant) and $c$ (speed of light) connect the geometry of spacetime (left side) to its energy content (right side), as is characteristic of Einstein's field equations from which this is derived.",
+        "symmetry_origin": "This equation is a direct consequence of Einstein's field equations of general relativity, applied to a universe described by the Friedmann–Lemaître–Robertson–Walker (FLRW) metric. The FLRW metric itself embodies the cosmological principle: the large-scale symmetry that the universe is spatially homogeneous and isotropic. The energy content is sourced by a scalar field, respecting these spacetime symmetries.",
+        "limits_and_boundary": "1. End of Inflation: As the inflaton field $\\phi$ rolls to the minimum of its potential, $V(\\phi) \\to 0$. This causes the Hubble parameter $H$ to decrease, ending the period of accelerated expansion and leading into a radiation or matter-dominated era.\n2. High-Energy Inflation: For a very large potential energy density $V(\\phi)$, the Hubble parameter $H$ is large and nearly constant, leading to a period of quasi-de Sitter, exponential expansion of the scale factor, $a(t) \\propto e^{Ht}$.\n3. Classical Limit: In the hypothetical limit where the Planck constant $\\hbar \\to 0$, the inflaton field $\\phi$ would behave as a classical scalar field, though the quantum nature of the field is essential for the origin of cosmological perturbations.",
         "status": "platinum",
         "semantic_variables": {
             "H": {
                 "name": "Hubble Parameter",
                 "type": "variable",
-                "unit": "s^-1",
-                "description": "The Hubble parameter represents the rate of expansion of the universe. In the context of inflation, it is related to the exponential growth of the scale factor."
+                "unit": "s^{-1}",
+                "description": "The rate of expansion of the universe. During inflation, it is approximately constant, leading to exponential growth."
+            },
+            "\\pi": {
+                "name": "Pi",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
             },
             "G": {
-                "name": "Gravitational Constant",
+                "name": "Newtonian Gravitational Constant",
                 "type": "constant",
-                "unit": "m^3 kg^-1 s^-2",
+                "unit": "m^3 kg^{-1} s^{-2}",
                 "description": "The fundamental constant of gravitation, dictating the strength of the gravitational interaction."
             },
+            "c": {
+                "name": "Speed of Light in Vacuum",
+                "type": "constant",
+                "unit": "m s^{-1}",
+                "description": "The universal speed limit and the propagation speed of electromagnetic radiation in a vacuum."
+            },
             "V(\\phi)": {
-                "name": "Scalar Field Potential Energy Density",
+                "name": "Inflaton Potential Energy Density",
+                "type": "term",
+                "unit": "J m^{-3}",
+                "description": "The potential energy density of the scalar inflaton field $\\phi$. In the slow-roll approximation, this term dominates the total energy density of the universe, driving exponential expansion."
+            },
+            "\\phi": {
+                "name": "Inflaton Field",
                 "type": "variable",
-                "unit": "J/m^3",
-                "description": "The energy density associated with the potential of the scalar inflaton field. This potential energy drives the accelerated expansion during cosmic inflation."
+                "unit": "J^{1/2} m^{-1/2}",
+                "description": "A hypothetical scalar field postulated to drive cosmic inflation in the very early universe."
             }
         },
         "subcomponents": [
@@ -1617,44 +1623,38 @@
         }
     },
     "gravitational-redshift-weak-field": {
-        "title": "Gravitational redshift (weak field)",
-        "equation": "\\Delta \\nu / \\nu = -v/c = -ah/c^2",
-        "conceptual_definition": "The formula for gravitational redshift in a weak gravitational field quantifies the fractional change in the frequency of light as it escapes or enters a gravitational potential. Specifically, it describes how the frequency of a photon decreases (redshift) as it moves away from a massive object due to the energy it expends climbing out of the gravitational potential well. Conversely, a photon moving towards a massive object will experience a blueshift, with its frequency increasing.",
-        "intuitive_summary": "Light loses energy and thus its frequency decreases (redshifts) as it climbs out of a gravitational well.",
-        "interpretation": "The equation states that the fractional change in frequency, $\\f \\frac{\\Delta u}{ u}$\\f$, is proportional to the gravitational potential difference and inversely proportional to the speed of light squared. In the context of a weak field and for light escaping a massive body,$\\f u \\f$is the original frequency of the photon, and$\\f \\Delta$u$\\f$is the change in frequency. The term$\\f - \\frac{v}{c} \\f relates this shift to a velocity, where \\f $v$\\f is an effective velocity associated with the gravitational potential. For a weak field approximation near the surface of a celestial body, this can be expressed as \\f - \\frac{gh}{c^2} \\f$, where$\\f g \\f$is the acceleration due to gravity (in m/s^2) and$\\f h \\f$is the height from which the light is escaping. The negative sign indicates a decrease in frequency (redshift). The term$\\f ah/c^2 \\f is a more general form, where \\f $a$\\f represents the gravitational acceleration at a particular point, and \\f $h$\\f is the change in radial position. This phenomenon is a direct consequence of Einstein's theory of General Relativity, where gravity is understood as the curvature of spacetime. Photons, while massless, carry energy and momentum and are therefore affected by this curvature$.",
-        "symmetry_origin": "This formula originates from the principles of General Relativity, specifically from the geodesic equation in a weak gravitational field. The energy of a photon is proportional to its frequency ( $\\f E = h_p u \\f , where \\f$h_p $\\f is Planck's constant). As a photon moves through a gravitational potential, its energy changes. In General Relativity, this energy change is not due to a force in the Newtonian sense but rather due to the path (geodesic) taken in curved spacetime. The derivation involves considering the Schwarzschild metric in the weak-field limit and analyzing the change in the photon's frequency as it travels between two points at different gravitational potentials$.",
-        "limits_and_boundary": "In the limit of a vanishing gravitational field ( $\\f a \\to$ 0 $\\f$ or $\\f g \\to$ 0 $\\f$), the gravitational redshift approaches zero ( $\\f \\Delta$ u / u \\to 0 $\\f$), meaning light escaping from a region with negligible gravity does not experience a frequency shift. As the gravitational field becomes very strong (approaching the boundary of the weak-field approximation), this linear approximation breaks down, and the full Schwarzschild metric or more advanced relativistic calculations are required. For example, at the event horizon of a black hole, the redshift becomes infinite.",
+        "title": "Gravitational Redshift (Weak Field)",
+        "equation": "\\frac{\\Delta\\nu}{\\nu} \\approx -\\frac{\\Delta\\Phi}{c^2}",
+        "conceptual_definition": "Gravitational redshift describes the fractional decrease in the frequency of a photon as it moves away from a massive object, expending energy to climb out of the gravitational potential well. This formula provides the approximation for this effect in a weak gravitational field.",
+        "intuitive_summary": "Light loses energy and its frequency decreases (redshifts) as it climbs out of a gravitational field.",
+        "interpretation": "The equation states that the fractional change in frequency, $\\frac{\\Delta\\nu}{\\nu}$, is approximately equal to the change in gravitational potential, $\\Delta\\Phi$, divided by the speed of light squared, $c^2$. Here, $\\nu$ is the original frequency of the photon and $\\Delta\\nu$ is the change in its frequency. The gravitational potential $\\Phi$ has units of energy per unit mass ($m^2/s^2$). The change $\\Delta\\Phi$ is positive when a photon moves away from a mass to a region of higher potential (i.e., less negative potential). The negative sign in the formula ensures that for a positive $\\Delta\\Phi$, the frequency change $\\Delta\\nu$ is negative, corresponding to a redshift. For a uniform gravitational field $g$ over a small height $h$, the potential change is $\\Delta\\Phi = gh$, so the formula becomes $\\frac{\\Delta\\nu}{\\nu} \\approx -\\frac{gh}{c^2}$. This phenomenon is a direct prediction of Einstein's theory of general relativity.",
+        "symmetry_origin": "This formula is a consequence of the principle of equivalence and general relativity. It can be derived by considering the conservation of energy for a photon moving along a geodesic in the curved spacetime described by the Schwarzschild metric, taken in the weak-field limit. The underlying symmetry is the time-translation invariance of the static gravitational field, which, via Noether's theorem for fields, leads to a conserved energy for a particle, but this energy is subject to gravitational potential effects.",
+        "limits_and_boundary": "1. No Gravity Limit: In the limit of a vanishing gravitational field, the potential change $\\Delta\\Phi \\to 0$, and thus the fractional frequency shift $\\frac{\\Delta\\nu}{\\nu} \\to 0$. Light travels without a change in frequency.\n2. Strong Field Breakdown: This linear approximation is only valid in weak gravitational fields, where $\\Phi/c^2 \\ll 1$. Near extremely massive or compact objects like neutron stars or black holes, the full equations of general relativity are required, and the redshift can become very large.\n3. Event Horizon: At the event horizon of a black hole, a photon escaping to infinity would be infinitely redshifted, $\\frac{\\Delta\\nu}{\\nu} \\to -1$, meaning its final frequency approaches zero.",
         "status": "platinum",
         "semantic_variables": {
-            "\\Delta \\nu / \\nu": {
-                "name": "Fractional frequency shift",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "The relative change in the frequency of light due to the gravitational field. A negative value indicates a redshift (frequency decrease), and a positive value indicates a blueshift (frequency increase)."
-            },
-            "v": {
-                "name": "Effective escape velocity",
+            "\\Delta\\nu": {
+                "name": "Change in Frequency",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "An effective velocity representing the magnitude of the gravitational potential difference experienced by the photon. In the context of escaping a surface, it relates to the escape velocity."
+                "unit": "s^{-1}",
+                "description": "The change in the frequency of the photon. A negative value indicates a redshift (decrease in frequency)."
+            },
+            "\\nu": {
+                "name": "Original Frequency",
+                "type": "variable",
+                "unit": "s^{-1}",
+                "description": "The frequency of the photon at the initial point of its trajectory, before the gravitational shift."
+            },
+            "\\Delta\\Phi": {
+                "name": "Change in Gravitational Potential",
+                "type": "variable",
+                "unit": "m^2 s^{-2}",
+                "description": "The difference in gravitational potential (energy per unit mass) between the final and initial points of the photon's path."
             },
             "c": {
-                "name": "Speed of light in vacuum",
+                "name": "Speed of Light in Vacuum",
                 "type": "constant",
-                "unit": "m/s",
+                "unit": "m s^{-1}",
                 "description": "The universal constant representing the speed of light in a vacuum, approximately 299,792,458 meters per second."
-            },
-            "a": {
-                "name": "Gravitational acceleration",
-                "type": "variable",
-                "unit": "m/s^2",
-                "description": "The acceleration due to gravity at a specific point in spacetime. In the weak-field approximation near a spherical body, this is approximately constant near the surface."
-            },
-            "h": {
-                "name": "Change in radial position",
-                "type": "variable",
-                "unit": "m",
-                "description": "The vertical distance or change in radial coordinate from which the photon is escaping or to which it is moving. This represents the 'height' in the gravitational potential."
             }
         },
         "subcomponents": [
@@ -1737,7 +1737,8 @@
         "status": "published",
         "parent_formula_id": "integer-spin-6bec4a16",
         "subcomponents": [],
-        "id": "squared-orbital-angular-momentum-operator-11cc37d6"
+        "id": "squared-orbital-angular-momentum-operator-11cc37d6",
+        "intuitive_summary": ""
     },
     "time-interval-for-path-integration-626ca6c8": {
         "title": "Time Interval for Path Integration",
@@ -1767,7 +1768,8 @@
         "status": "published",
         "parent_formula_id": "boundary-conditions-for-path-integral",
         "subcomponents": [],
-        "id": "time-interval-for-path-integration-626ca6c8"
+        "id": "time-interval-for-path-integration-626ca6c8",
+        "intuitive_summary": ""
     },
     "quantum-time-evolution-operator-01cb9371": {
         "title": "Quantum Time Evolution Operator",
@@ -1803,7 +1805,8 @@
         "status": "published",
         "parent_formula_id": "propagator-position-representation",
         "subcomponents": [],
-        "id": "quantum-time-evolution-operator-01cb9371"
+        "id": "quantum-time-evolution-operator-01cb9371",
+        "intuitive_summary": ""
     },
     "reduced-density-matrix-of-subsystem-a-5e2b1c48": {
         "title": "Reduced Density Matrix of Subsystem A",
@@ -1827,7 +1830,8 @@
         "status": "published",
         "parent_formula_id": "entanglement-entropy-identity-1-52a4c2e6-f9444fb5",
         "subcomponents": [],
-        "id": "reduced-density-matrix-of-subsystem-a-5e2b1c48"
+        "id": "reduced-density-matrix-of-subsystem-a-5e2b1c48",
+        "intuitive_summary": ""
     },
     "four-current-density-relativistic-electrodynamics-40b3b309": {
         "title": "Four-Current Density (Relativistic Electrodynamics)",
@@ -1851,7 +1855,8 @@
         "status": "published",
         "parent_formula_id": "radiation-driver-abd3203e",
         "subcomponents": [],
-        "id": "four-current-density-relativistic-electrodynamics-40b3b309"
+        "id": "four-current-density-relativistic-electrodynamics-40b3b309",
+        "intuitive_summary": ""
     },
     "intrinsic-spin-quantum-number-value-77f6b08d": {
         "title": "Intrinsic Spin Quantum Number Value",
@@ -1875,7 +1880,8 @@
         "status": "published",
         "parent_formula_id": "spin-1-2-particle",
         "subcomponents": [],
-        "id": "intrinsic-spin-quantum-number-value-77f6b08d"
+        "id": "intrinsic-spin-quantum-number-value-77f6b08d",
+        "intuitive_summary": ""
     },
     "number-of-neutrons-in-a-nucleus-0c43922c": {
         "title": "Number of Neutrons in a Nucleus",
@@ -1905,7 +1911,8 @@
         "status": "published",
         "parent_formula_id": "mass-defect-87f1adbf",
         "subcomponents": [],
-        "id": "number-of-neutrons-in-a-nucleus-0c43922c"
+        "id": "number-of-neutrons-in-a-nucleus-0c43922c",
+        "intuitive_summary": ""
     },
     "hamiltonian-poisson-bracket-identity-5ebc8050": {
         "title": "Hamiltonian Poisson Bracket Identity",
@@ -1929,7 +1936,8 @@
         "status": "published",
         "parent_formula_id": "fixed-quantity-653a00aa",
         "subcomponents": [],
-        "id": "hamiltonian-poisson-bracket-identity-5ebc8050"
+        "id": "hamiltonian-poisson-bracket-identity-5ebc8050",
+        "intuitive_summary": ""
     },
     "cauchy-riemann-second-equation-b165893a": {
         "title": "Cauchy-Riemann Second Equation",
@@ -1983,7 +1991,8 @@
         "status": "published",
         "parent_formula_id": "cauchy-riemann-differentiability-idents-2087b552",
         "subcomponents": [],
-        "id": "cauchy-riemann-second-equation-b165893a"
+        "id": "cauchy-riemann-second-equation-b165893a",
+        "intuitive_summary": ""
     },
     "flat-universe-density-parameter-sum-2c1832e7": {
         "title": "Flat Universe Density Parameter Sum",
@@ -2013,7 +2022,8 @@
         "status": "published",
         "parent_formula_id": "energy-pie-92cd1760-99f358ce",
         "subcomponents": [],
-        "id": "flat-universe-density-parameter-sum-2c1832e7"
+        "id": "flat-universe-density-parameter-sum-2c1832e7",
+        "intuitive_summary": ""
     },
     "covariant-four-gradient-operator-c20878fb": {
         "title": "Covariant Four-Gradient Operator",
@@ -2055,7 +2065,8 @@
         "status": "published",
         "parent_formula_id": "unified-matrix-1c923838",
         "subcomponents": [],
-        "id": "covariant-four-gradient-operator-c20878fb"
+        "id": "covariant-four-gradient-operator-c20878fb",
+        "intuitive_summary": ""
     },
     "reduced-planck-constant-numerical-value-e5d70563": {
         "title": "Reduced Planck Constant Numerical Value",
@@ -2079,31 +2090,33 @@
         "status": "published",
         "parent_formula_id": "the-like-rule-5037d37d",
         "subcomponents": [],
-        "id": "reduced-planck-constant-numerical-value-e5d70563"
+        "id": "reduced-planck-constant-numerical-value-e5d70563",
+        "intuitive_summary": ""
     },
     "neutrino-mixing-angle-component-77714d72": {
         "title": "Neutrino Mixing Angle Component",
         "description": "Represents a specific mixing angle between neutrino mass eigenstates i and j, crucial for flavor oscillations.",
-        "conceptual_definition": "In the Pontecorvo-Maki-Nakagawa-Sakata (PMNS) matrix, $\\theta_{ij}$ denotes a fundamental mixing angle that quantifies the overlap between different neutrino flavor and mass eigenstates. These angles are essential parameters that govern the probability of a neutrino changing its flavor as it propagates through space.",
+        "conceptual_definition": "A fundamental parameter in the Pontecorvo-Maki-Nakagawa-Sakata (PMNS) matrix, θ_ij, which quantifies the degree of mixing between the i-th and j-th neutrino mass eigenstates. These angles govern the probability of neutrino flavor oscillation.",
         "interpretation": "The mixing angle $\\theta_{ij}$ is a real-valued parameter that determines the extent to which a neutrino mass eigenstate $i$ contributes to a neutrino flavor eigenstate, and vice-versa. Specifically, it relates to the rotation between the flavor basis and the mass basis. Non-zero values for these angles are direct evidence for neutrino oscillations and imply that neutrinos have mass, which is a departure from the Standard Model's original formulation.",
-        "limits_and_boundary": "The mixing angles $\\theta_{ij}$ are typically constrained to be between 0 and $\\pi/2$ radians (or 0 and 90 degrees), as they represent rotations. Experimental measurements have provided specific values for the three known mixing angles (\\$\\theta_{12}$, \\\\theta_{23}$, \\$\\theta_{13}$), indicating non-zero mixing.",
+        "limits_and_boundary": "1. The mixing angles $\\theta_{ij}$ are constrained by unitarity to lie in the range $[0, \\pi/2]$.\n2. In the limit $\\theta_{ij} \\to 0$, the $i$-th and $j$-th mass eigenstates do not mix, and oscillation between the corresponding flavors is suppressed.\n3. Experimental measurements have provided specific non-zero values for the three known mixing angles ($\\theta_{12}$, $\\theta_{23}$, $\\theta_{13}$), confirming the existence of neutrino oscillations.",
         "symmetry_origin": "The existence of non-zero mixing angles implies that the flavor symmetry of leptons is broken. If flavor symmetry were exact, neutrinos would not oscillate, and these angles would be zero. The PMNS matrix, which contains these angles, arises from the mismatch between the weak interaction eigenstates (flavor) and the mass eigenstates of neutrinos.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "neutrino-physics",
         "semantic_variables": {
             "\\theta_{ij}": {
-                "name": "\\theta_{ij}",
+                "name": "Neutrino Mixing Angle",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The mixing angle between neutrino mass eigenstates $i$ and $j$. It is a dimensionless quantity, typically expressed in radians or degrees."
+                "unit": "rad",
+                "description": "The mixing angle between neutrino mass eigenstates $i$ and $j$ within the PMNS matrix, parameterizing the rotation between the flavor and mass bases. The indices $i, j$ range from 1 to 3."
             }
         },
         "equation": "\\theta_{ij}",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "neutrino-flavor-transition-probability-98612f24",
         "subcomponents": [],
-        "id": "neutrino-mixing-angle-component-77714d72"
+        "id": "neutrino-mixing-angle-component-77714d72",
+        "intuitive_summary": "This angle measures how much a neutrino's mass state is a blend of different flavor states, enabling it to change flavor as it travels."
     },
     "curl-of-electrostatic-field-a8f01eb6": {
         "title": "Curl of Electrostatic Field",
@@ -2127,7 +2140,8 @@
         "status": "published",
         "parent_formula_id": "canonical-basis-c04891c6",
         "subcomponents": [],
-        "id": "curl-of-electrostatic-field-a8f01eb6"
+        "id": "curl-of-electrostatic-field-a8f01eb6",
+        "intuitive_summary": ""
     },
     "fermionic-creation-operator-a795149d": {
         "title": "Fermionic Creation Operator",
@@ -2157,7 +2171,8 @@
         "status": "published",
         "parent_formula_id": "antisymmetric-algebra-8667d5dd",
         "subcomponents": [],
-        "id": "fermionic-creation-operator-a795149d"
+        "id": "fermionic-creation-operator-a795149d",
+        "intuitive_summary": ""
     },
     "lqc-density-correction-factor-dd2684f1": {
         "title": "LQC Density Correction Factor",
@@ -2187,7 +2202,8 @@
         "status": "published",
         "parent_formula_id": "bounce-mechanism-49a28cf2",
         "subcomponents": [],
-        "id": "lqc-density-correction-factor-dd2684f1"
+        "id": "lqc-density-correction-factor-dd2684f1",
+        "intuitive_summary": ""
     },
     "specific-intensity-source-function-d7fe6caf": {
         "title": "Specific Intensity Source Function",
@@ -2223,7 +2239,8 @@
         "status": "published",
         "parent_formula_id": "flux-relation",
         "subcomponents": [],
-        "id": "specific-intensity-source-function-d7fe6caf"
+        "id": "specific-intensity-source-function-d7fe6caf",
+        "intuitive_summary": ""
     },
     "fixed-infinitesimal-variation-of-generalized-coordinate-573a4615": {
         "title": "Fixed Infinitesimal Variation of Generalized Coordinate",
@@ -2247,7 +2264,8 @@
         "status": "published",
         "parent_formula_id": "total-differential-lagrangian",
         "subcomponents": [],
-        "id": "fixed-infinitesimal-variation-of-generalized-coordinate-573a4615"
+        "id": "fixed-infinitesimal-variation-of-generalized-coordinate-573a4615",
+        "intuitive_summary": ""
     },
     "first-order-perturbation-term-d6953f38": {
         "title": "First-Order Perturbation Term",
@@ -2277,7 +2295,8 @@
         "status": "published",
         "parent_formula_id": "perturbed-hamiltonian",
         "subcomponents": [],
-        "id": "first-order-perturbation-term-d6953f38"
+        "id": "first-order-perturbation-term-d6953f38",
+        "intuitive_summary": ""
     },
     "lagrangian-invariance-under-field-transformation-70bc2fc4": {
         "title": "Lagrangian Invariance under Field Transformation",
@@ -2313,7 +2332,8 @@
         "status": "published",
         "parent_formula_id": "structural-survival-b7d99c5f",
         "subcomponents": [],
-        "id": "lagrangian-invariance-under-field-transformation-70bc2fc4"
+        "id": "lagrangian-invariance-under-field-transformation-70bc2fc4",
+        "intuitive_summary": ""
     },
     "constant-galactic-rotational-velocity-bff4ebea": {
         "title": "Constant Galactic Rotational Velocity",
@@ -2343,7 +2363,8 @@
         "status": "published",
         "parent_formula_id": "mass-discrepancy-7d3c2ea6",
         "subcomponents": [],
-        "id": "constant-galactic-rotational-velocity-bff4ebea"
+        "id": "constant-galactic-rotational-velocity-bff4ebea",
+        "intuitive_summary": ""
     },
     "final-velocity-of-particle-2-fa999f73": {
         "title": "Final Velocity of Particle 2",
@@ -2367,6 +2388,7 @@
         "status": "published",
         "parent_formula_id": "change-velocity-particle-2-zero",
         "subcomponents": [],
-        "id": "final-velocity-of-particle-2-fa999f73"
+        "id": "final-velocity-of-particle-2-fa999f73",
+        "intuitive_summary": ""
     }
 }

@@ -427,57 +427,39 @@
     },
     "perfect-shield-8fe5c1fd": {
         "title": "Perfect Shield",
-        "equation": "\\sigma_{surf} = \\varepsilon_0 (E_{1\\perp} - E_{2\\perp})",
+        "equation": "\\sigma = \\varepsilon_0 \\left( E_{1\\perp} - E_{2\\perp} \\right)",
         "semantic_variables": {
-            "<sigma_{surf}": {
+            "\\sigma": {
                 "name": "Surface Charge Density",
                 "type": "variable",
-                "unit": "C/m²",
-                "description": "The electric charge per unit area that has accumulated on the surface of the conductor due to the influence of an external electric field."
+                "unit": "C·m⁻²",
+                "description": "The net electric charge per unit area on the surface interface."
             },
-            "_0": {
-                "name": "Permittivity of Free Space",
-                "type": "constant",
-                "unit": "F/m",
-                "description": "A fundamental physical constant that describes how an electric field affects and is affected by a vacuum. It represents the ability of a vacuum to permit electric flux."
-            },
-            "E_{1⊥}": {
-                "name": "Perpendicular Electric Field (Outside)",
-                "type": "variable",
-                "unit": "V/m",
-                "description": "The component of the electric field that is perpendicular to the surface of the conductor, evaluated just outside the conductor's surface."
-            },
-            "E_{2⊥}": {
-                "name": "Perpendicular Electric Field (Inside)",
-                "type": "variable",
-                "unit": "V/m",
-                "description": "The component of the electric field that is perpendicular to the surface of the conductor, evaluated just inside the conductor's surface. For a conductor in electrostatic equilibrium, this value is always zero."
-            },
-            "\\epsilon_0": {
+            "\\varepsilon_0": {
                 "name": "Vacuum Permittivity",
                 "type": "constant",
-                "unit": "F/m",
-                "description": "The capability of the vacuum to permit electric field lines."
+                "unit": "F·m⁻¹",
+                "description": "A fundamental physical constant representing the capability of a classical vacuum to permit electric field lines."
             },
-            "\\sigma": {
-                "name": "Stefan-Boltzmann Constant",
-                "type": "constant",
-                "unit": "W⋅m⁻²⋅K⁻⁴",
-                "description": "The physical constant relating the total energy radiated per unit surface area of a black body per unit time to the fourth power of the thermodynamic temperature."
-            },
-            "E": {
-                "name": "Electric Field Strength",
+            "E_{1\\perp}": {
+                "name": "Perpendicular Electric Field (Region 1)",
                 "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
+                "unit": "V·m⁻¹",
+                "description": "The component of the electric field vector that is perpendicular (normal) to the surface, evaluated in region 1 (outside)."
+            },
+            "E_{2\\perp}": {
+                "name": "Perpendicular Electric Field (Region 2)",
+                "type": "variable",
+                "unit": "V·m⁻¹",
+                "description": "The component of the electric field vector that is perpendicular (normal) to the surface, evaluated in region 2 (inside)."
             }
         },
-        "interpretation": "In this formula, $<sigma_{surf}$ represents the surface charge density (in units of Coulombs per square meter, C/m²) that accumulates on the surface of a conductor. This accumulation occurs because free charges within the conductor rearrange themselves in response to an external electric field, seeking a new equilibrium. The term _0 is the permittivity of free space, a fundamental physical constant approximately equal to 8.854 10⁻¹² F/m (Farads per meter), which quantifies how an electric field affects and is affected by a vacuum. The terms $E_{1⊥}$ and $E_{2⊥}$ represent the components of the electric field that are perpendicular to the surface of the conductor, evaluated just outside the conductor (1) and just inside the conductor (2), respectively. Due to the properties of conductors in electrostatic equilibrium, the electric field inside a conductor must be zero ($E_{2⊥} = 0$). Therefore, the formula simplifies to $<sigma_{surf} = _0 E_{1⊥}$, showing that the surface charge density is directly proportional to the perpendicular electric field just outside the conductor. This relationship is a direct consequence of Gauss's Law applied to a small Gaussian surface that straddles the conductor's surface.",
-        "symmetry_origin": "This formula is derived from Gauss's Law, which is a fundamental law of electromagnetism. Specifically, it is obtained by applying Gauss's Law to a small, pillbox-shaped Gaussian surface whose top and bottom faces are infinitesimally small areas lying just outside and just inside the conductor's surface, respectively, and whose cylindrical sides are perpendicular to the surface. The electric field inside the conductor in electrostatic equilibrium is zero. The integral form of Gauss's Law is $d = / _0$, where is the electric field, d is the differential area vector, is the enclosed charge, and _0 is the permittivity of free space. For the pillbox, the flux through the sides is zero (assuming the field is parallel to the surface) and the flux through the bottom is zero (field inside is zero). The flux through the top is $E_{1⊥}$ dA, and the enclosed charge is <sigma_{surf} dA$/math$. This leads directly to the given formula.",
-        "limits_and_boundary": "As the electric field outside the conductor approaches zero ($E_{1⊥} → 0$), the surface charge density also approaches zero ($<sigma_{surf} → 0$), indicating that no net charge accumulates on the surface in the absence of an external field. Conversely, as the perpendicular component of the electric field outside the conductor becomes very large ($E_{1⊥} → ∞$), the surface charge density also becomes very large ($<sigma_{surf} → ∞$), implying that stronger external fields induce greater charge separation on the conductor's surface. The condition $E_{2⊥} = 0$ is a boundary condition that holds for any conductor in electrostatic equilibrium.",
+        "interpretation": "This equation describes the surface charge density, $\\sigma$, that accumulates at an interface. The constant $\\varepsilon_0$ is the vacuum permittivity. The terms $E_{1\\perp}$ and $E_{2\\perp}$ are the components of the electric field perpendicular (normal) to the surface, evaluated just outside (in region 1) and just inside (in region 2) the interface, respectively. This relationship is derived by applying Gauss's Law, $\\oint_S \\vec{E} \\cdot \\mathrm{d}\\vec{A} = Q_{\\text{enc}} / \\varepsilon_0$, to an infinitesimally thin 'pillbox' Gaussian surface that straddles the boundary. For the important special case of a perfect conductor in electrostatic equilibrium, the electric field inside is zero ($\\vec{E}_2 = 0$), which implies $E_{2\\perp} = 0$. The formula then simplifies to $\\sigma = \\varepsilon_0 E_{1\\perp}$, directly relating the charge on the conductor's surface to the normal component of the external electric field.",
+        "symmetry_origin": "This boundary condition is a direct consequence of Gauss's Law for electricity, which is one of Maxwell's equations. Gauss's Law itself can be seen as arising from the U(1) gauge symmetry of electromagnetism. The application of this law to a boundary surface, exploiting the translational symmetry along the surface and scaling symmetry perpendicular to it (by taking the limit as the pillbox height goes to zero), yields this result.",
+        "limits_and_boundary": "1. Perfect Conductor Limit: In a perfect conductor under electrostatic conditions, the internal electric field is zero, $\\vec{E}_2 = 0$. The boundary condition simplifies to $\\sigma = \\varepsilon_0 E_{1\\perp}$, meaning the surface charge density is directly proportional to the external normal electric field.\n2. No Free Charge Limit: If there is no free surface charge at the interface between two dielectrics ($\\sigma = 0$), the condition becomes $E_{1\\perp} = E_{2\\perp}$ (if both media are vacuum) or more generally $\\varepsilon_1 E_{1\\perp} = \\varepsilon_2 E_{2\\perp}$, which states the continuity of the normal component of the electric displacement field $\\vec{D}$.\n3. No Field Limit: In the absence of any external electric fields ($\\vec{E}_1 = 0$) and internal sources, the surface charge density on an uncharged conductor will be zero ($\\sigma = 0$).",
         "status": "platinum",
-        "conceptual_definition": "The formula $<sigma_{surf} = _0 (E_{1⊥} - E_{2⊥})$ describes the surface charge density that appears on a conductor when it is placed in an external electric field. Specifically, it quantifies the induced charge density on the surface of a conductor by relating it to the difference in the electric field components perpendicular to the surface on either side of the interface, scaled by the permittivity of free space.",
-        "intuitive_summary": "The induced surface charge density on a conductor is directly proportional to the jump in the perpendicular electric field across its surface.",
+        "conceptual_definition": "The free surface charge density induced at the boundary between two media is proportional to the discontinuity in the component of the electric field normal to the surface. This is a fundamental boundary condition in electrostatics derived from Gauss's Law.",
+        "intuitive_summary": "Electric charge builds up on a conductor's surface to perfectly cancel any electric field trying to get inside, with the amount of charge being directly proportional to the strength of the external field it opposes.",
         "subcomponents": [
             "partial-derivative-of-position-with-respect-to-generalized-coordinate-833ca246"
         ]
@@ -1145,33 +1127,39 @@
     },
     "wave-function-continuity-fddbd9b8": {
         "title": "Wave Function Continuity",
-        "equation": "\\lim_{\\epsilon \\to 0} [\\psi(x + \\epsilon) - \\psi(x - \\epsilon)] = 0",
+        "equation": "\\lim_{\\epsilon \\to 0^+} [\\psi(x + \\epsilon) - \\psi(x - \\epsilon)] = 0",
         "semantic_variables": {
-            "\\psi(x)": {
+            "\\psi": {
                 "name": "Wave Function",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The complex-valued wave function that describes the quantum state of a particle. Its square modulus, |$\\psi(x)\\|^2, gives the probability density of finding the particle at position$x$.$"
+                "unit": "m⁻¹/²",
+                "description": "A complex-valued probability amplitude in quantum mechanics. Its squared modulus, $|\\psi(x)|^2$, gives the probability density of finding the particle at position x."
             },
-            "\\epsilon": {
-                "name": "Infinitesimal displacement",
+            "x": {
+                "name": "Position",
                 "type": "variable",
                 "unit": "m",
-                "description": "An infinitesimally small positive quantity representing a displacement from the point $x$ in the limit process. It approaches zero to probe the behavior of the wave function at $x$."
+                "description": "A spatial coordinate."
+            },
+            "\\epsilon": {
+                "name": "Infinitesimal Displacement",
+                "type": "variable",
+                "unit": "m",
+                "description": "A small positive quantity that approaches zero in the limit, used to probe the function's behavior in the immediate neighborhood of a point."
             },
             "\\lim": {
-                "name": "\\lim Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "name": "Limit Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "A mathematical operator that evaluates the expression that follows it as its parameter approaches a specified value."
             }
         },
-        "interpretation": "In this equation, \\psi\\psi\\psi\\psi(x) represents the wave function of a quantum particle at position x. The symbol $\\lim_{\\epsilon \\to 0}\\ denotes the limit as \\epsilon approaches zero, meaning we are considering points infinitesimally close to$x$. The expression \\psi (x + \\epsilon )\\ is the value of the wave function at a point infinitesimally to the right of$x$, and$\\psi$(x -$\\epsilon$)\\ is the value at a point infinitesimally to the left of$x$. The condition$\\lim_{\\epsilon \\to 0} [\\psi(x + \\epsilon) - \\psi(x - \\epsilon)] = 0 is equivalent to stating that \\psi (x)$must be a continuous function. This condition is crucial because the square of the wave function, |$\\psi(x)\\$|^2, represents the probability density of finding the particle at position x. If the wave function were discontinuous, it would imply an infinite probability of finding the particle at the point of discontinuity, which is physically nonsensical.",
-        "symmetry_origin": "The continuity of the wave function arises from the fact that the Schrödinger equation, which governs the evolution of the wave function, is a differential equation. For the solutions to the Schrödinger equation to be physically meaningful probability amplitudes, they must satisfy certain regularity conditions, including continuity and differentiability (at least once), unless there are singular potentials present. The continuity ensures that the probability of finding a particle is well-defined and doesn't become infinite at any point in space.",
-        "limits_and_boundary": "As $\\epsilon \\to 0$, the expression $\\psi(x + \\epsilon) - \\psi(x - \\epsilon)\\ represents the difference between the wave function values at points arbitrarily close to$x$. For continuity, this difference must vanish, meaning the limit is 0. This implies that the wave function must approach the same value from both the left and the right at any point$x$. If the wave function were to approach different values from the left and right, the limit would not be zero, indicating a discontinuity. In physical systems, wave functions typically must also vanish at infinity, i.e., \\lim_{x \\to \\pm \\infty$} $\\psi$(x)$= 0$, reflecting the fact that a particle is usually localized within a finite region of space.",
+        "interpretation": "This equation is the formal mathematical definition of continuity for the wave function $\\psi$ at a position $x$. It states that the limit of $\\psi$ as approached from the right, $\\psi(x+\\epsilon)$, must equal the limit as approached from the left, $\\psi(x-\\epsilon)$. This condition is a fundamental postulate of quantum mechanics for physically realistic potentials. If $\\psi$ were discontinuous, its second derivative, $\\partial^2\\psi/\\partial x^2$, would be infinite (involving a Dirac delta function). This would imply an infinite kinetic energy via the Schrödinger equation, which is unphysical unless the potential energy is also infinite at that point in a specific way. Therefore, continuity is required for the kinetic energy to be well-defined and for the probability density $|\\psi(x)|^2$ to be non-singular.",
+        "symmetry_origin": "The continuity of the wave function is a regularity condition imposed on the solutions of the Schrödinger equation. It is necessary for the Hamiltonian operator, $\\hat{H}$, to be a self-adjoint (or Hermitian) operator on the Hilbert space of physical states. The Hermiticity of the Hamiltonian ensures that the time evolution operator, $U(t) = e^{-i\\hat{H}t/\\hbar}$, is unitary. Unitary time evolution guarantees the conservation of total probability over time, which is a consequence of global U(1) gauge symmetry of the wave function.",
+        "limits_and_boundary": "1. Finite Potential: For any potential $V(x)$ that is finite, the wave function $\\psi(x)$ and its first derivative $\\psi'(x)$ must be continuous.\n2. Infinite Potential Wall: At a boundary where the potential energy becomes infinite, such as an infinite square well, the wave function must go to zero, $\\psi(x_0) = 0$. This is a strict boundary condition that enforces continuity.\n3. Dirac Delta Potential: In the presence of a Dirac delta function potential, $V(x) \\propto \\delta(x-x_0)$, the wave function $\\psi(x)$ remains continuous across $x_0$, but its first derivative $\\psi'(x)$ exhibits a finite jump.\n4. Bound State Normalization: For a bound state, the particle must be localized in space. This imposes the boundary condition that the wave function must vanish at infinity, $\\lim_{x \\to \\pm\\infty} \\psi(x) = 0$, to ensure the total probability $\\int_{-\\infty}^{\\infty} |\\psi(x)|^2 \\mathrm{d}x$ is finite (and equal to 1).",
         "status": "platinum",
-        "conceptual_definition": "The wave function continuity equation is a fundamental postulate in quantum mechanics, asserting that the wave function, \\psi\\psi\\psi\\psi(x), describing a quantum system must be continuous everywhere in space. This means that the wave function cannot have any abrupt jumps or discontinuities. Mathematically, this is expressed by requiring that the limit of the difference between the wave function at a point slightly to the right of x and the wave function at a point slightly to the left of x, as these points approach x, must be zero.",
-        "intuitive_summary": "A quantum wave function cannot have sudden jumps; its value must transition smoothly from one point to another."
+        "conceptual_definition": "The wave function $\\psi(x)$ must be a continuous function of position, meaning it has no abrupt jumps or breaks. This ensures that the probability density, $|\\psi(x)|^2$, is finite and single-valued everywhere, which is a requirement for a physically realistic quantum state.",
+        "intuitive_summary": "A quantum particle's wave function must be smooth and connected, without any sudden teleportation-like gaps in its probability distribution."
     },
     "probability-current-density-c8663458": {
         "title": "Probability Current Density (Continuous Wave Function)",
@@ -1909,7 +1897,8 @@
         "status": "published",
         "parent_formula_id": "doppler-amplification-61df36b6",
         "subcomponents": [],
-        "id": "relativistic-velocity-parameter-beta-7f68bb50"
+        "id": "relativistic-velocity-parameter-beta-7f68bb50",
+        "intuitive_summary": ""
     },
     "summation-over-quantum-microstates-62945e19": {
         "title": "Summation Over Quantum Microstates",
@@ -1933,7 +1922,8 @@
         "status": "published",
         "parent_formula_id": "grand-partition-function-a5c8de65",
         "subcomponents": [],
-        "id": "summation-over-quantum-microstates-62945e19"
+        "id": "summation-over-quantum-microstates-62945e19",
+        "intuitive_summary": ""
     },
     "quantum-field-operator-at-spacetime-point-51afe800": {
         "title": "Quantum Field Operator at Spacetime Point",
@@ -1963,7 +1953,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-08a27bbc",
         "subcomponents": [],
-        "id": "quantum-field-operator-at-spacetime-point-51afe800"
+        "id": "quantum-field-operator-at-spacetime-point-51afe800",
+        "intuitive_summary": ""
     },
     "infinitesimal-adiabatic-work-and-internal-energy-a1f16dfa": {
         "title": "Infinitesimal Adiabatic Work and Internal Energy",
@@ -2011,43 +2002,45 @@
         "status": "published",
         "parent_formula_id": "thermodynamic-isolation-c04c4026",
         "subcomponents": [],
-        "id": "infinitesimal-adiabatic-work-and-internal-energy-a1f16dfa"
+        "id": "infinitesimal-adiabatic-work-and-internal-energy-a1f16dfa",
+        "intuitive_summary": ""
     },
     "zero-eigenvalue-condition-7337b257": {
         "title": "Zero Eigenvalue Condition",
         "description": "This equation defines the null space (or kernel) of a matrix $A$, where a non-zero vector $\\mathbf{v}$ is mapped to the zero vector. It represents the specific case of the eigenvalue equation $A \\mathbf{v} = \\lambda \\mathbf{v}$ where the eigenvalue $\\lambda$ is zero.",
-        "conceptual_definition": "In linear algebra, this equation signifies that the vector $\\mathbf{v}$ belongs to the null space (or kernel) of the matrix $A$. Physically, this can represent a system where certain inputs (represented by $\\mathbf{v}$) yield no output or a state of equilibrium. When considered within the context of the eigenvalue equation $A \\mathbf{v} = \\lambda \\mathbf{v}, this specific form implies that \\mathbf{v} is an eigenvector corresponding to an eigenvalue of zero. This means that the linear transformation represented by$A$'collapses' or 'annihilates' the vector\\mathbf{v}.",
-        "interpretation": "Physically, $A \\mathbf{v} = \\mathbf{0} can describe situations where a linear transformation or operator$A$has no effect on a particular state or vector \\mathbf{v} , effectively mapping it to the origin. In quantum mechanics, if$A$represents an observable, then \\mathbf{v} being in the null space of$A$means that measuring the observable$A$for the state \\mathbf{v} would yield a value of zero. For systems described by differential equations, this form often arises in finding steady-state solutions or equilibrium points where the rate of change is zero. It also indicates that the matrix$A$is singular (non-invertible) if a non-trivial \\mathbf{v} exists, implying that the transformation loses information or reduces the dimensionality of the space$.",
-        "limits_and_boundary": "This equation holds for any matrix $A$ (square or rectangular) and a vector $\\mathbf{v} of compatible dimensions. For a non-trivial solution \\mathbf{v} eq \\mathbf{0} to exist, the matrix$A$must be singular (i.e., its determinant must be zero, \\det$(A)=0$, if$A$is square). If$A$is invertible, then the only solution is \\mathbf{v} = \\mathbf{0}$.",
-        "symmetry_origin": "While not directly a fundamental symmetry or conservation law, the existence of a non-trivial null space can be related to degeneracies or specific symmetries within a system. For instance, if a system possesses a symmetry, certain transformations (represented by $A$) might leave some states (represented by $\\mathbf{v}$) invariant or map them to zero, reflecting that symmetry. In physics, a zero eigenvalue often corresponds to a stable equilibrium or a conserved quantity under specific conditions.",
+        "conceptual_definition": "This equation defines the null space (or kernel) of a linear operator $A$, consisting of all non-zero vectors $\\mathbf{v}$ that are mapped to the zero vector. It is the specific case of the eigenvalue equation $A \\mathbf{v} = \\lambda \\mathbf{v}$ where the eigenvalue $\\lambda$ is zero.",
+        "interpretation": "Physically, $A \\mathbf{v} = \\mathbf{0}$ describes situations where a linear transformation or operator $A$ has no effect on a particular state or vector $\\mathbf{v}$, effectively mapping it to the origin. In quantum mechanics, if $A$ represents an observable, then a state $\\mathbf{v}$ in the null space of $A$ means that measuring the observable $A$ for the state $\\mathbf{v}$ will yield a value of zero with certainty. The existence of a non-trivial solution ($\\mathbf{v} \\neq \\mathbf{0}$) implies that the matrix $A$ is singular (non-invertible), meaning the transformation loses information or reduces the dimensionality of the space.",
+        "limits_and_boundary": "1. For a non-trivial solution ($\\mathbf{v} \\neq \\mathbf{0}$) to exist, the operator $A$ must be singular. If $A$ is a square matrix, this is equivalent to its determinant being zero, $\\det(A) = 0$.\n2. If $A$ is non-singular (invertible), the only solution is the trivial solution $\\mathbf{v} = \\mathbf{0}$.",
+        "symmetry_origin": "The existence of a non-trivial null space is often a consequence of degeneracies or symmetries within a physical system. For instance, if a system possesses a symmetry, the operator representing that symmetry might leave certain states invariant or map them to zero, reflecting that symmetry. In physics, a zero eigenvalue often corresponds to a stable equilibrium, a ground state, or a conserved quantity under specific conditions.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "eigenvalue-problems",
         "semantic_variables": {
             "A": {
-                "name": "A",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Matrix representing a linear transformation or operator. Its units depend on the physical context of the transformation it describes."
+                "name": "Linear Operator",
+                "type": "operator",
+                "unit": "Context-dependent",
+                "description": "A matrix or linear operator representing a physical transformation, such as a rotation, projection, or a quantum mechanical observable."
             },
             "\\mathbf{v}": {
-                "name": "\\mathbf{v}",
+                "name": "Eigenvector",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Vector, often representing a state, input, or direction. Its units depend on the physical quantity it represents, e.g., a position vector in meters or a quantum state vector (unitless)."
+                "unit": "Context-dependent",
+                "description": "A non-zero vector that is mapped to the zero vector by the operator $A$. It represents a state or direction that is annihilated by the transformation."
             },
             "\\mathbf{0}": {
-                "name": "\\mathbf{0}",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Zero vector, representing the origin or null output. Its dimensions and implied units match the output dimension of the transformation $A\\mathbf{v}$."
+                "name": "Zero Vector",
+                "type": "constant",
+                "unit": "Context-dependent",
+                "description": "The additive identity element of the vector space, representing a null state or the origin."
             }
         },
         "equation": "A \\mathbf{v} = \\mathbf{0}",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "linear-eigenvalue-equation-ident-aab898b9",
         "subcomponents": [],
-        "id": "zero-eigenvalue-condition-7337b257"
+        "id": "zero-eigenvalue-condition-7337b257",
+        "intuitive_summary": "A linear transformation represented by the matrix A completely collapses or annihilates any vector v that satisfies this condition."
     },
     "external-electric-potential-68bce1fe": {
         "title": "External Electric Potential",
@@ -2071,7 +2064,8 @@
         "status": "published",
         "parent_formula_id": "interaction-energy-charges-external-potential",
         "subcomponents": [],
-        "id": "external-electric-potential-68bce1fe"
+        "id": "external-electric-potential-68bce1fe",
+        "intuitive_summary": ""
     },
     "curl-of-a-gradient-identity-144b4f60": {
         "title": "Curl of a Gradient Identity",
@@ -2101,7 +2095,8 @@
         "status": "published",
         "parent_formula_id": "potential-freedom-8e481cff",
         "subcomponents": [],
-        "id": "curl-of-a-gradient-identity-144b4f60"
+        "id": "curl-of-a-gradient-identity-144b4f60",
+        "intuitive_summary": ""
     },
     "proper-time-in-classical-limit-dd8c94df": {
         "title": "Proper Time in Classical Limit",
@@ -2137,7 +2132,8 @@
         "status": "published",
         "parent_formula_id": "proper-time-54ba2eb1",
         "subcomponents": [],
-        "id": "proper-time-in-classical-limit-dd8c94df"
+        "id": "proper-time-in-classical-limit-dd8c94df",
+        "intuitive_summary": ""
     },
     "expectation-value-of-an-observable-02d3c609": {
         "title": "Expectation Value of an Observable",
@@ -2179,7 +2175,8 @@
         "status": "published",
         "parent_formula_id": "ensemble-expectation-trace-02d3c609",
         "subcomponents": [],
-        "id": "expectation-value-of-an-observable-02d3c609"
+        "id": "expectation-value-of-an-observable-02d3c609",
+        "intuitive_summary": ""
     },
     "spatial-index-range-definition-be50abd2": {
         "title": "Spatial Index Range Definition",
@@ -2203,7 +2200,8 @@
         "status": "published",
         "parent_formula_id": "thermodynamic-link-29e26808",
         "subcomponents": [],
-        "id": "spatial-index-range-definition-be50abd2"
+        "id": "spatial-index-range-definition-be50abd2",
+        "intuitive_summary": ""
     },
     "multi-qubit-computational-basis-state-74c19e8f": {
         "title": "Multi-Qubit Computational Basis State",
@@ -2239,7 +2237,8 @@
         "status": "published",
         "parent_formula_id": "ghz-state-plus-alternative-notation",
         "subcomponents": [],
-        "id": "multi-qubit-computational-basis-state-74c19e8f"
+        "id": "multi-qubit-computational-basis-state-74c19e8f",
+        "intuitive_summary": ""
     },
     "permeability-times-enclosed-current-cc11682c": {
         "title": "Permeability Times Enclosed Current",
@@ -2269,7 +2268,8 @@
         "status": "published",
         "parent_formula_id": "integral-circulation-law-bd12bab5",
         "subcomponents": [],
-        "id": "permeability-times-enclosed-current-cc11682c"
+        "id": "permeability-times-enclosed-current-cc11682c",
+        "intuitive_summary": ""
     },
     "negative-scalar-length-parameter-8ef89942": {
         "title": "Negative Scalar Length Parameter",
@@ -2293,7 +2293,8 @@
         "status": "published",
         "parent_formula_id": "equation-of-a-circle",
         "subcomponents": [],
-        "id": "negative-scalar-length-parameter-8ef89942"
+        "id": "negative-scalar-length-parameter-8ef89942",
+        "intuitive_summary": ""
     },
     "difference-of-successive-bifurcation-parameters-0274e64e": {
         "title": "Difference of Successive Bifurcation Parameters",
@@ -2323,7 +2324,8 @@
         "status": "published",
         "parent_formula_id": "feigenbaum-constant-delta-ratio-0c9ec79a",
         "subcomponents": [],
-        "id": "difference-of-successive-bifurcation-parameters-0274e64e"
+        "id": "difference-of-successive-bifurcation-parameters-0274e64e",
+        "intuitive_summary": ""
     },
     "equality-of-perpendicular-and-parallel-time-intervals-c5301baa": {
         "title": "Equality of Perpendicular and Parallel Time Intervals",
@@ -2353,7 +2355,8 @@
         "status": "published",
         "parent_formula_id": "michelson-morley-cc54ee39",
         "subcomponents": [],
-        "id": "equality-of-perpendicular-and-parallel-time-intervals-c5301baa"
+        "id": "equality-of-perpendicular-and-parallel-time-intervals-c5301baa",
+        "intuitive_summary": ""
     },
     "cube-of-planck-length-81cc1bf8": {
         "title": "Cube of Planck Length",
@@ -2377,31 +2380,33 @@
         "status": "published",
         "parent_formula_id": "minimum-volume-1afd8ce0",
         "subcomponents": [],
-        "id": "cube-of-planck-length-81cc1bf8"
+        "id": "cube-of-planck-length-81cc1bf8",
+        "intuitive_summary": ""
     },
     "adiabatic-index-factor-103bc300": {
         "title": "Adiabatic Index Factor",
         "description": "This factor, involving the adiabatic index, quantifies the relationship between temperature and pressure changes in an adiabatic process.",
-        "conceptual_definition": "In thermodynamics, this factor arises in expressions describing adiabatic processes, where no heat is exchanged with the surroundings. It directly incorporates the adiabatic index (ratio of specific heats) to characterize how temperature changes with pressure or volume. It is a dimensionless quantity that modulates the overall adiabatic temperature gradient.",
-        "interpretation": "Physically, the term $\\left( 1 - \\frac{1}{\\gamma}$ \\right)$represents the fraction of the ideal gas constant that contributes to the temperature change per unit pressure change in an adiabatic process. A larger value of this factor (implying a larger$\\gamma$) indicates a more significant temperature response to pressure changes. For instance, monatomic gases have a higher$\\gamma$ than diatomic gases, leading to a larger adiabatic temperature change for the same pressure change. This factor is crucial in atmospheric physics and astrophysics for understanding phenomena like convection and stellar structure.",
-        "limits_and_boundary": "For all stable gases, the adiabatic index $\\gamma$ is always greater than 1. If $\\gamma = 1$ (an isothermal process, not truly adiabatic for a gas), this factor becomes 0, implying no temperature change. As $\\gamma \\to \\infty$ (e.g., for an incompressible fluid), this factor approaches 1, indicating a maximum possible temperature response to pressure changes under adiabatic conditions.",
-        "symmetry_origin": "This factor is a direct consequence of the First Law of Thermodynamics, which expresses the conservation of energy. Its form is derived from the relationship between internal energy, work, and heat exchange under the specific condition of zero heat exchange (adiabatic process), combined with the definitions of specific heats at constant pressure and volume.",
+        "conceptual_definition": "This dimensionless factor, appearing in the equation for the adiabatic temperature gradient, relates the change in temperature to the change in pressure for a gas undergoing an adiabatic process. It is defined solely by the adiabatic index $\\gamma$.",
+        "interpretation": "The factor $\\left( 1 - \\frac{1}{\\gamma} \\right)$ represents the thermodynamic efficiency of converting a change in pressure into a change in temperature during an adiabatic process. A larger value of this factor, which corresponds to a larger adiabatic index $\\gamma$, indicates a stronger temperature response to pressure variations. For example, monatomic gases ($\\gamma \\approx 5/3$) have a larger factor than diatomic gases ($\\gamma \\approx 7/5$), causing them to heat up more for the same adiabatic compression. This term is fundamental in atmospheric science for calculating the dry adiabatic lapse rate and in astrophysics for modeling stellar interiors.",
+        "limits_and_boundary": "1. For all stable gases, $\\gamma > 1$, which ensures the factor is positive and less than 1.\n2. In the limit of an isothermal process, one can formally consider $\\gamma \\to 1$, causing the factor to approach 0, correctly implying no temperature change with pressure.\n3. In the hypothetical limit of an infinitely rigid substance, $\\gamma \\to \\infty$, and the factor approaches 1. This represents the maximum possible temperature response to pressure changes.",
+        "symmetry_origin": "This factor is a direct consequence of the First Law of Thermodynamics, which is the statement of conservation of energy for a thermodynamic system. Its specific form is derived by combining the first law ($dU = \\delta Q - \\delta W$) with the ideal gas law and the definitions of specific heats, under the adiabatic condition $\\delta Q = 0$.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "thermodynamic-relations",
         "semantic_variables": {
-            "gamma": {
-                "name": "gamma",
-                "type": "variable",
+            "\\gamma": {
+                "name": "Adiabatic Index",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "Adiabatic index (ratio of specific heats), dimensionless. It is defined as $C_p / C_v$, where $C_p$ is the specific heat at constant pressure and $C_v$ is the specific heat at constant volume."
+                "description": "The ratio of specific heats at constant pressure ($C_p$) to constant volume ($C_v$), i.e., $\\gamma = C_p / C_v$. It characterizes the thermodynamic properties of a gas."
             }
         },
-        "equation": "\\left( 1 - \\frac{1}{\\gamma} \\right)",
-        "status": "published",
+        "equation": "1 - \\frac{1}{\\gamma}",
+        "status": "platinum",
         "parent_formula_id": "adiabatic-temperature-gradient-bd19cf0d",
         "subcomponents": [],
-        "id": "adiabatic-index-factor-103bc300"
+        "id": "adiabatic-index-factor-103bc300",
+        "intuitive_summary": "This factor quantifies how efficiently work done on or by a gas changes its temperature when no heat is allowed to enter or leave."
     },
     "angle-of-perpendicular-jet-incidence-e6b52468": {
         "title": "Angle of Perpendicular Jet Incidence",
@@ -2431,7 +2436,8 @@
         "status": "published",
         "parent_formula_id": "jet-pressure-equation",
         "subcomponents": [],
-        "id": "angle-of-perpendicular-jet-incidence-e6b52468"
+        "id": "angle-of-perpendicular-jet-incidence-e6b52468",
+        "intuitive_summary": ""
     },
     "base-10-logarithm-of-stellar-luminosity-ratio-32c051d0": {
         "title": "Base-10 Logarithm of Stellar Luminosity Ratio",
@@ -2461,7 +2467,8 @@
         "status": "published",
         "parent_formula_id": "mechanical-pulse-a787a305",
         "subcomponents": [],
-        "id": "base-10-logarithm-of-stellar-luminosity-ratio-32c051d0"
+        "id": "base-10-logarithm-of-stellar-luminosity-ratio-32c051d0",
+        "intuitive_summary": ""
     },
     "displacement-under-constant-acceleration-67503b29": {
         "title": "Displacement under Constant Acceleration",
@@ -2491,7 +2498,8 @@
         "status": "published",
         "parent_formula_id": "the-master-formula-98a3cd69",
         "subcomponents": [],
-        "id": "displacement-under-constant-acceleration-67503b29"
+        "id": "displacement-under-constant-acceleration-67503b29",
+        "intuitive_summary": ""
     },
     "ground-state-energy-of-3d-quantum-harmonic-oscillator-32a1769f": {
         "title": "Ground State Energy of 3D Quantum Harmonic Oscillator",
@@ -2527,7 +2535,8 @@
         "status": "published",
         "parent_formula_id": "energy-levels-3d-quantum-harmonic-oscillator",
         "subcomponents": [],
-        "id": "ground-state-energy-of-3d-quantum-harmonic-oscillator-32a1769f"
+        "id": "ground-state-energy-of-3d-quantum-harmonic-oscillator-32a1769f",
+        "intuitive_summary": ""
     },
     "christoffel-symbol-of-the-second-kind-8fc11c3e": {
         "title": "Christoffel Symbol of the Second Kind",
@@ -2551,7 +2560,8 @@
         "status": "published",
         "parent_formula_id": "christoffel-symbols-64d17c83",
         "subcomponents": [],
-        "id": "christoffel-symbol-of-the-second-kind-8fc11c3e"
+        "id": "christoffel-symbol-of-the-second-kind-8fc11c3e",
+        "intuitive_summary": ""
     },
     "hamiltons-principle-action-integral-8445f886": {
         "title": "Hamilton's Principle Action Integral",
@@ -2611,7 +2621,8 @@
         "status": "published",
         "parent_formula_id": "form-invariance-0416c073",
         "subcomponents": [],
-        "id": "hamiltons-principle-action-integral-8445f886"
+        "id": "hamiltons-principle-action-integral-8445f886",
+        "intuitive_summary": ""
     },
     "polarization-sum-for-massive-vector-bosons-7932a43a": {
         "title": "Polarization Sum for Massive Vector Bosons",
@@ -2665,7 +2676,8 @@
         "status": "published",
         "parent_formula_id": "longitudinal-polarization-mass-ident-9d6cc46b",
         "subcomponents": [],
-        "id": "polarization-sum-for-massive-vector-bosons-7932a43a"
+        "id": "polarization-sum-for-massive-vector-bosons-7932a43a",
+        "intuitive_summary": ""
     },
     "stress-energy-momentum-conservation-with-external-force-8a4cb5ca": {
         "title": "Stress-Energy-Momentum Conservation with External Force",
@@ -2701,7 +2713,8 @@
         "status": "published",
         "parent_formula_id": "thermodynamic-link-29e26808",
         "subcomponents": [],
-        "id": "stress-energy-momentum-conservation-with-external-force-8a4cb5ca"
+        "id": "stress-energy-momentum-conservation-with-external-force-8a4cb5ca",
+        "intuitive_summary": ""
     },
     "total-kinetic-energy-of-system-85cbfdd9": {
         "title": "Total Kinetic Energy of System",
@@ -2743,7 +2756,8 @@
         "status": "published",
         "parent_formula_id": "kinetic-energy-tensor",
         "subcomponents": [],
-        "id": "total-kinetic-energy-of-system-85cbfdd9"
+        "id": "total-kinetic-energy-of-system-85cbfdd9",
+        "intuitive_summary": ""
     },
     "radial-density-power-law-profile-fe5dbc40": {
         "title": "Radial Density Power Law Profile",
@@ -2779,7 +2793,8 @@
         "status": "published",
         "parent_formula_id": "density-spike-43fdf542",
         "subcomponents": [],
-        "id": "radial-density-power-law-profile-fe5dbc40"
+        "id": "radial-density-power-law-profile-fe5dbc40",
+        "intuitive_summary": ""
     },
     "four-dimensional-dirac-delta-function-16405c56": {
         "title": "Four-Dimensional Dirac Delta Function",
@@ -2809,6 +2824,7 @@
         "status": "published",
         "parent_formula_id": "field-operator-acting-on-test-function",
         "subcomponents": [],
-        "id": "four-dimensional-dirac-delta-function-16405c56"
+        "id": "four-dimensional-dirac-delta-function-16405c56",
+        "intuitive_summary": ""
     }
 }

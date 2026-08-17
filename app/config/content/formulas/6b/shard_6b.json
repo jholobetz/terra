@@ -55,39 +55,39 @@
     },
     "strong-shock-rule-783bbc34": {
         "title": "Strong Shock Rule",
-        "equation": "\\frac{P_2}{P_1}  = \\frac{2\\gamma M^2 - (\\gamma - 1)}{\\gamma + 1}",
+        "equation": "\\frac{P_2}{P_1} = \\frac{2\\gamma M_1^2 - (\\gamma - 1)}{\\gamma + 1}",
         "semantic_variables": {
             "P_2": {
-                "name": "Pressure behind the shock",
+                "name": "Downstream Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The thermodynamic pressure of the fluid immediately downstream of the shock wave."
+                "description": "The static pressure of the fluid immediately downstream (behind) the shock wave."
             },
             "P_1": {
-                "name": "Pressure ahead of the shock",
+                "name": "Upstream Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The thermodynamic pressure of the fluid immediately upstream of the shock wave."
+                "description": "The static pressure of the fluid immediately upstream (ahead) of the shock wave."
             },
             "\\gamma": {
-                "name": "Ratio of specific heats",
+                "name": "Ratio of Specific Heats",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The ratio of the specific heat at constant pressure to the specific heat at constant volume for the fluid. It is a thermodynamic property of the gas."
+                "description": "The adiabatic index of the fluid, equal to the ratio of the specific heat at constant pressure to the specific heat at constant volume."
             },
-            "M": {
-                "name": "Upstream Mach number",
+            "M_1": {
+                "name": "Upstream Mach Number",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The ratio of the fluid velocity upstream of the shock to the local speed of sound in the undisturbed fluid."
+                "description": "The ratio of the fluid velocity upstream of the shock to the local speed of sound in the undisturbed (upstream) fluid."
             }
         },
-        "interpretation": "This equation quantifies the pressure increase across a strong shock wave. The term $\\frac{P_2}{P_1}$ represents the ratio of the pressure immediately behind the shock wave ( $P_2$) to the pressure immediately ahead of the shock wave ( $P_1$). The variable $\\gamma$ is the ratio of specific heats (also known as the adiabatic index) of the fluid, a constant that depends on the fluid's composition and thermodynamic state. The variable $M$ is the upstream Mach number, which is the ratio of the flow speed upstream of the shock to the local speed of sound in the undisturbed fluid. The formula shows that as the upstream Mach number $M$ becomes large (indicating a strong shock), the pressure ratio $\\frac{P_2}{P_1}$ approaches$a value proportional to$M^2$, modified by the specific heat ratio$\\gamma$. This indicates that for powerful shocks, the upstream conditions (specifically, the Mach number) are the dominant factor in determining the pressure jump.",
-        "symmetry_origin": "This relation is derived from the conservation laws of mass, momentum, and energy across the shock discontinuity, applying the assumption of a strong shock where upstream pressure is negligible. It stems from the Rankine-Hugoniot relations, simplified for the strong shock limit.",
-        "limits_and_boundary": "As the upstream Mach number $M$ approaches infinity (representing an infinitely strong shock), the pressure ratio $\\frac{P_2}{P_1}$ approaches \\frac{2\\gamma }{\\gamma + 1 }$M^2 . If the upstream Mach number$M$approaches 1 (a weak shock), this strong shock approximation breaks down, and the pressure ratio approaches 1, indicating a very small pressure jump, which is consistent with the weak shock relations$.",
+        "interpretation": "This equation quantifies the pressure increase across a strong shock wave. The term $P_2/P_1$ represents the ratio of the static pressure immediately behind the shock wave ($P_2$) to the static pressure immediately ahead of it ($P_1$). The variable $\\gamma$ is the ratio of specific heats (adiabatic index) of the fluid, a thermodynamic property. The variable $M_1$ is the upstream Mach number, the ratio of the upstream flow speed to the local speed of sound. The formula shows that as $M_1$ becomes large (a strong shock), the pressure ratio $P_2/P_1$ grows quadratically with $M_1$, indicating that the upstream Mach number is the dominant factor in determining the pressure jump.",
+        "symmetry_origin": "This relation is derived from the fundamental conservation laws of mass, momentum, and energy (the Euler equations) applied across a shock discontinuity. These conservation laws themselves originate from the symmetries of the underlying fluid dynamics via Noether's theorem (e.g., conservation of momentum from translational invariance). The specific form is an algebraic consequence of the Rankine-Hugoniot relations in the strong shock limit ($M_1 \\gg 1$).",
+        "limits_and_boundary": "Strong Shock Limit ($M_1 \\to \\infty$): In the limit of an infinitely strong shock, the pressure ratio simplifies to $\\frac{P_2}{P_1} \\approx \\frac{2\\gamma}{\\gamma + 1} M_1^2$. In this limit, the upstream pressure $P_1$ becomes negligible compared to the dynamic pressure $\\rho_1 u_1^2$.\nWeak Shock Limit ($M_1 \\to 1$): As the Mach number approaches 1 from above, the shock becomes a sound wave. The formula correctly predicts that the pressure ratio approaches 1, as $\\frac{2\\gamma(1)^2 - (\\gamma - 1)}{\\gamma + 1} = \\frac{2\\gamma - \\gamma + 1}{\\gamma + 1} = 1$, indicating no pressure jump.",
         "status": "platinum",
-        "conceptual_definition": "The Strong Shock Rule, also known as the strong shock relation for pressure, describes the ratio of the pressure behind a strong shock wave to the pressure ahead of it. This formula is derived under the assumption that the shock wave is 'strong,' meaning that the upstream pressure is negligible compared to the pressure jump across the shock. It establishes a direct relationship between the pressure ratio and the upstream Mach number and the specific heat ratio of the fluid.",
-        "intuitive_summary": "For very intense shock waves, the pressure behind the shock increases dramatically with the square of the flow's Mach number upstream.",
+        "conceptual_definition": "The Strong Shock Rule, a specific form of the Rankine-Hugoniot relations, gives the static pressure ratio across a normal shock wave as a function of the upstream Mach number and the fluid's specific heat ratio. It is valid in the limit where the shock is strong, meaning the upstream Mach number is much greater than one.",
+        "intuitive_summary": "For very intense shock waves, the pressure behind the shock increases dramatically, scaling with the square of the flow's upstream Mach number.",
         "subcomponents": [
             "rest-mass-squared-term-e09d672d",
             "probability-of-state-1-03b63231",
@@ -96,99 +96,33 @@
     },
     "apparent-drift-2a57446d": {
         "title": "Apparent Drift",
-        "equation": "B_{secular} = V_\\odot \\Delta t \\approx 4.2 \\text{ AU/year}",
+        "equation": "d_{\\text{drift}} = v_{\\odot, \\perp} \\Delta t",
         "semantic_variables": {
-            "B_{\\text{secular}}": {
+            "d_{\\text{drift}}": {
                 "name": "Apparent Drift",
                 "type": "variable",
-                "unit": "AU/year",
-                "description": "The apparent angular or spatial displacement of a celestial object over a given time, due to its transverse motion relative to the observer. In this context, it is often related to the tangential velocity."
+                "unit": "AU",
+                "description": "The apparent displacement of a celestial object resulting from the observer's transverse motion over a time interval."
             },
-            "V_\\odot": {
+            "v_{\\odot, \\perp}": {
                 "name": "Sun's Transverse Velocity",
                 "type": "variable",
                 "unit": "AU/year",
-                "description": "The component of the Sun's velocity perpendicular to the line of sight relative to the local standard of rest. It represents the speed at which the Sun moves through the galaxy, contributing to the apparent motion of other stars."
+                "description": "The component of the Sun's velocity perpendicular to the line of sight, relative to the Local Standard of Rest."
             },
             "\\Delta t": {
                 "name": "Time Interval",
-                "type": "operator",
+                "type": "variable",
                 "unit": "year",
-                "description": "The duration of time over which the apparent drift is observed or measured. This is the period during which the relative motion between the observer and the celestial object accumulates."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
-            },
-            "V": {
-                "name": "Electric Potential",
-                "type": "variable",
-                "unit": "V",
-                "description": "The amount of work energy needed to move a unit of electric charge from a reference point to a specific point in an electric field."
-            },
-            "\\odot": {
-                "name": "\\odot Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "\\Delta": {
-                "name": "Laplacian / Change Operator",
-                "type": "operator",
-                "unit": "operator",
-                "description": "Represents spatial second derivatives, or finite difference increment."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "\\approx": {
-                "name": "\\approx Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "A": {
-                "name": "Area / Vector Potential",
-                "type": "variable",
-                "unit": "m² or V·s/m",
-                "description": "The measure of a 2D surface, or the electrodynamic magnetic vector potential."
-            },
-            "U": {
-                "name": "Potential Energy",
-                "type": "variable",
-                "unit": "J",
-                "description": "Position-dependent stored energy of a system."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
+                "description": "The duration of time over which the apparent drift is observed or measured."
             }
         },
-        "interpretation": "In the given formula, $B_{\\text{secular}}$ represents the apparent drift, often referred to as the secular parallax or tangential velocity component, measured in astronomical units per year (AU/year). The term $V_\\odot$ symbolizes the transverse velocity of the Sun relative to the local standard of rest, which is approximated as a constant value. The term $\\Delta t$ denotes the time interval over which the drift is observed. The equation states that the apparent drift is approximately equal to the product of the Sun's transverse velocity and the time interval. The value $4.2 \\text{ AU/year}$ is a commonly cited approximate value for the Sun's velocity component perpendicular to our line of sight, which contributes to the apparent drift of other stars relative to us.",
-        "symmetry_origin": "This formula arises from the concept of relative motion. If we consider the Sun to be moving with a velocity $V_\\odot$ through a static distribution of stars, an observer on the Sun will perceive these stars as moving in the opposite direction. The component of this perceived motion perpendicular to the line of sight is the apparent drift. This is a consequence of the Galilean transformation of velocities in a non-relativistic context.",
-        "limits_and_boundary": "As the time interval $\\Delta t$ approaches zero, the apparent drift $B_{\\text{secular}}$ also approaches zero, meaning no observable drift occurs over an infinitesimally short period. If $\\Delta t$ becomes very large, the apparent drift can become significant, representing a substantial change in the apparent position of celestial objects. The formula is an approximation and assumes a constant transverse velocity $V_\\odot$; in reality, velocities change over very long timescales, and $V_\\odot$ itself is an average or projected value.",
+        "interpretation": "This formula describes the apparent displacement, $d_{\\text{drift}}$, of a celestial object due to the observer's own motion. It is a simple kinematic relation where the displacement is the product of the transverse velocity, $v_{\\odot, \\perp}$, and the time interval, $\\Delta t$. In the context of stellar astronomy, this often refers to the secular parallax caused by the Sun's peculiar motion relative to the Local Standard of Rest. The Sun's transverse velocity, $v_{\\odot, \\perp}$, is approximately $20 \\, \\mathrm{km/s}$, which corresponds to about $4.2 \\, \\mathrm{AU/year}$. This motion causes nearby stars to appear to drift in the opposite direction.",
+        "symmetry_origin": "The formula is a direct consequence of the principle of Galilean relativity for non-relativistic speeds. In the reference frame of the Sun, a stationary external object appears to move with a velocity equal in magnitude and opposite in direction to the Sun's own velocity. This apparent motion is a manifestation of the coordinate transformation between inertial reference frames.",
+        "limits_and_boundary": "1. In the limit of a very short time interval, $\\Delta t \\to 0$, the apparent drift $d_{\\text{drift}} \\to 0$, as expected.\n2. The formula assumes the transverse velocity $v_{\\odot, \\perp}$ is constant, which is an excellent approximation over human history but not over galactic timescales.\n3. This is a non-relativistic approximation, valid only when the relative velocities are much less than the speed of light, $v \\ll c$.",
         "status": "platinum",
-        "conceptual_definition": "The formula for apparent drift, denoted as $B_{\\text{secular}}$, quantifies the apparent motion of a celestial object relative to a fixed reference frame over a given time interval. It is particularly used to describe the apparent transverse velocity of stars due to their motion through the galaxy. The equation approximates this drift as the product of the object's transverse velocity and the time elapsed.",
-        "intuitive_summary": "The apparent drift of a star is simply how far it seems to move across the sky over time, determined by its actual speed through space.",
+        "conceptual_definition": "The apparent drift is the angular or spatial displacement of a celestial object across the sky over a period of time, resulting from the transverse component of its velocity relative to the observer.",
+        "intuitive_summary": "A star's apparent drift is how far it appears to move across the sky over time, which is simply its sideways speed multiplied by the time elapsed.",
         "subcomponents": [
             "quantum-electrodynamic-critical-magnetic-field-da135dbf",
             "solar-peculiar-velocity-a829ae7d"
@@ -243,40 +177,34 @@
         "intuitive_summary": "In regions devoid of sources or sinks, the influence of a point source diminishes proportionally with the inverse of the distance from that source."
     },
     "harmonic-mean-2c2e8b1a": {
-        "title": "Harmonic Mean",
+        "title": "Reduced Mass",
         "equation": "\\mu = \\frac{m_1 m_2}{m_1 + m_2}",
         "semantic_variables": {
-            "μ": {
-                "name": "Harmonic Mean",
+            "\\mu": {
+                "name": "Reduced Mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The result of the harmonic mean calculation, representing a composite value derived from the reciprocals of the input quantities. In contexts like effective mass, its unit would be that of mass (kg)."
+                "description": "The effective inertial mass of the relative motion in a two-body system."
             },
             "m_1": {
-                "name": "First Quantity (e.g., Mass)",
+                "name": "Mass of the first body",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The first of the two quantities whose harmonic mean is being calculated. In typical physics contexts, this might represent a mass, but the formula is applicable to any two positive scalar quantities combined through reciprocals. Its unit is kg, assuming it represents mass."
+                "description": "The mass of the first object in the two-body system."
             },
             "m_2": {
-                "name": "Second Quantity (e.g., Mass)",
+                "name": "Mass of the second body",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The second of the two quantities whose harmonic mean is being calculated. Similar to m_1, its unit is kg if it represents mass. The formula is symmetric with respect to m_1 and m_2."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
+                "description": "The mass of the second object in the two-body system."
             }
         },
-        "interpretation": "In this formula, μ is the harmonic mean of the two quantities m_1 and m_2 . The quantities m_1 and m_2 are typically positive scalar values. The formula is constructed such that the harmonic mean μ is always less than or equal to the arithmetic mean ($\\frac{m_1 + m_2}{2}$) and greater than or equal to the geometric mean ( √{m_1 m_2} ). It highlights the influence of smaller values more strongly than the arithmetic mean does, making it suitable for averaging rates or when dealing with inverse relationships, such as in parallel resistor or capacitor combinations, or in calculating the effective mass of a system where the inverse of inertia plays a role.",
-        "symmetry_origin": "The formula for the harmonic mean arises from averaging rates or quantities that combine in an inverse manner. For instance, if one were to travel a distance d at two different speeds v_1 and v_2 , the average speed would be the harmonic mean of v_1 and v_2 . The derivation involves recognizing that time taken is inversely proportional to speed ( t = \\frac{d}{v}$), and the total time is the sum of individual times. In this formula's context, if m_1 and m_2 represent quantities whose reciprocals are additive (like conductances or inverse masses in certain oscillatory systems), then their harmonic mean represents the effective combined quantity. It can also be seen as a result of ensuring symmetry in averaging procedures where inverse relationships are dominant.",
-        "limits_and_boundary": "As m_1 approaches infinity, while m_2 remains finite, the harmonic mean μ approaches m_2 . Specifically, μ = \\frac{m_1 m_2}{m_1 + m_2} = \\frac{m_2}{1 +\\frac{m_2}{m_1}$}$. As m_1 \\to ∞ , \\frac{m_2}{m_1} \\to $0$, so μ \\to \\frac{m_2}{1 + 0}$= m_2 . Similarly, if m_2 approaches infinity, μ approaches m_1 . If both m_1 and m_2 approach zero, the harmonic mean also approaches zero. If m_1 = m_2 = m , then μ = \\frac{m \\times m}{m + m} = \frac{m^2}{2m} = \frac{m}{2}$, which is half of the value, demonstrating that the harmonic mean is always less than or equal to the individual values (unless they are all equal).",
+        "interpretation": "The formula defines the reduced mass, $\\mu$, for a system of two bodies with masses $m_1$ and $m_2$. It arises when analyzing the dynamics of two interacting bodies (e.g., via gravity or an electrostatic force). By separating the system's motion into the motion of the center of mass and the relative motion between the bodies, the complex two-body problem simplifies. The relative motion can be described by a single equation for a particle of mass $\\mu$ moving in the potential field of the interaction, as if orbiting a fixed center. Mathematically, the reciprocal of the reduced mass is the sum of the reciprocals of the individual masses: $1/\\mu = 1/m_1 + 1/m_2$.",
+        "symmetry_origin": "The concept of reduced mass is a direct result of exploiting the continuous translational symmetry of the two-body problem in the absence of external forces. By Noether's theorem, this symmetry implies the conservation of total linear momentum. This conservation law allows for the separation of the trivial, constant-velocity motion of the center of mass from the non-trivial internal dynamics of relative motion, which are governed by the reduced mass.",
+        "limits_and_boundary": "1. If one mass is much larger than the other (e.g., $m_1 \\gg m_2$), the reduced mass approaches the smaller mass: $\\mu \\approx m_2$. This is the case for a planet orbiting a star, where the system's reduced mass is nearly identical to the planet's mass.\n2. If the two masses are equal ($m_1 = m_2 = m$), the reduced mass is half of the individual mass: $\\mu = m/2$.\n3. The reduced mass $\\mu$ is always less than or equal to the smaller of the two masses, $m_1$ and $m_2$.",
         "status": "platinum",
-        "conceptual_definition": "The formula provided, μ = \\frac{m_1 m_2}{m_1 + m_2}$, represents the harmonic mean of two quantities, often used in physics when dealing with systems involving reciprocal relationships or parallel combinations. While the symbols m_1 and m_2 typically denote masses, this specific harmonic mean formula is most commonly encountered in scenarios like calculating the effective mass in oscillations or in certain electrical circuit analogies, where it doesn't directly represent a physical mass but rather a composite property derived from reciprocal contributions.",
-        "intuitive_summary": "The harmonic mean of two quantities is the reciprocal of the average of their reciprocals, useful when averaging rates or inversely proportional quantities."
+        "conceptual_definition": "The reduced mass is the effective inertial mass that appears in the equations of motion for the relative coordinate of a two-body system, allowing the problem to be analyzed as a single-body problem.",
+        "intuitive_summary": "Reduced mass simplifies a two-body system, like a planet orbiting a star, into an equivalent one-body problem where a single particle with this 'reduced' mass orbits a stationary center."
     },
     "gauge-rule-e062fed5": {
         "title": "Gauge Rule",
@@ -404,69 +332,45 @@
     },
     "gas-drag-ee1ff6c9": {
         "title": "Gas Drag",
-        "equation": "F_{ram} \\approx \\rho v^2 \\quad (\\text{Gas drag})",
+        "equation": "F_D = \\frac{1}{2} \\rho v^2 C_D A",
         "semantic_variables": {
-            "F_{\\text{ram}}": {
-                "name": "Ram Drag Force",
+            "F_D": {
+                "name": "Drag Force",
                 "type": "variable",
                 "unit": "N",
-                "description": "The component of the total drag force on an object that is primarily due to the pressure distribution around the object, especially significant at high velocities, resulting from the inertia of the fluid being pushed aside."
+                "description": "The resistance force exerted by a fluid on an object moving through it."
             },
             "\\rho": {
                 "name": "Fluid Density",
                 "type": "variable",
-                "unit": "kg/m^3",
-                "description": "The mass of the fluid per unit volume. This represents how 'much' fluid the object has to push through."
+                "unit": "kg/m³",
+                "description": "The mass per unit volume of the fluid through which the object is moving."
             },
             "v": {
                 "name": "Relative Velocity",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The speed of the object relative to the fluid. This is the velocity at which the object is moving through the medium."
+                "description": "The velocity of the object relative to the undisturbed fluid."
             },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
-            },
-            "\\approx": {
-                "name": "\\approx Parameter",
+            "C_D": {
+                "name": "Drag Coefficient",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "description": "A dimensionless coefficient that accounts for the object's geometry and surface roughness, as well as flow conditions like the Reynolds number."
             },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
+            "A": {
+                "name": "Reference Area",
                 "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "g": {
-                "name": "Gravitational Acceleration",
-                "type": "constant",
-                "unit": "m/s²",
-                "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
+                "unit": "m²",
+                "description": "The characteristic area of the object, typically the cross-sectional area perpendicular to the direction of motion."
             }
         },
-        "interpretation": "In the gas drag equation $F_{\\text{ram}} \\approx \\rho v^2$, the variable $F_{\\text{ram}}$, representing the ram drag force, is directly proportional to the density of the fluid, denoted by $\\rho$. This means that denser fluids will exert a larger drag force on an object moving through them. The force also depends quadratically on the relative velocity between the object and the fluid, represented by $v$. This squared dependence indicates that the drag force increases dramatically as the object's speed increases. For instance, doubling the velocity would quadruple the drag force, assuming $\\rho$ remains constant. This specific form arises from considering the momentum transfer between the object and the fluid particles it encounters. At high speeds, the object effectively 'hits' and deflects a column of fluid, and the force required to do this is proportional to the mass of the fluid being deflected per unit time and its change in momentum, which leads to the $\\rho$ v^2$relationship. A more complete formulation often includes a drag coefficient$C_d$and the cross-sectional area$A$of the object, leading to$F_d = \\frac{1}{2} \\rho v^2 C_d A$, but the$\\rho$v^2$ term captures the fundamental dependence on fluid density and velocity for high Reynolds numbers$.",
-        "symmetry_origin": "This approximation arises from dimensional analysis and considerations of momentum conservation in the context of fluid dynamics at high Reynolds numbers (i.e., when inertial forces are much larger than viscous forces). It is derived by considering the momentum exchange between the object and the fluid it must displace. The force resisting motion is related to the rate at which momentum is transferred to the fluid. For a unit area, the mass of fluid encountered per unit time is proportional to $\\rho v$, and the change in velocity imparted to this fluid is proportional to $v$, leading to a force per unit area proportional to $\\rho v^2$.",
-        "limits_and_boundary": "As the velocity $v$ approaches zero, the drag force $F_{\\text{ram}}$, based on this approximation, also approaches zero. However, for very low velocities, viscous drag (proportional to $v$, described by Stokes' Law for certain conditions) becomes dominant, and this $\\rho v^2$ formula is no longer valid. As the fluid density $\\rho$ approaches zero (approaching a vacuum), the drag force also approaches zero, which is expected as there are no particles to exert a drag force. As $\\rho$ becomes very large, the drag force increases proportionally. This formula is best suited for high velocities where inertial effects dominate over viscous effects; it breaks down at very low velocities or for highly viscous fluids where the Reynolds number is low.",
+        "interpretation": "The drag equation, $F_D = \\frac{1}{2} \\rho v^2 C_D A$, describes the force resisting an object's motion through a fluid. $F_D$ is the drag force. The term $\\frac{1}{2} \\rho v^2$ is the dynamic pressure of the fluid, where $\\rho$ is the fluid density and $v$ is the relative velocity between the object and the fluid. The force scales quadratically with velocity, meaning doubling the speed quadruples the drag. $A$ is the reference area, typically the object's cross-sectional area perpendicular to the flow. $C_D$ is the dimensionless drag coefficient, an empirically determined factor that accounts for the object's shape and the flow's characteristics like turbulence.",
+        "symmetry_origin": "The drag equation is derived from principles of fluid dynamics and dimensional analysis, specifically in the high Reynolds number regime where inertial forces dominate viscous forces. The force $F_D$ arises from the rate of momentum transfer required to displace the fluid in the object's path. The term $\\rho A v$ represents the mass of fluid encountered per unit time, and imparting a velocity proportional to $v$ to this mass results in a force proportional to $(\\rho A v) \\times v = \\rho A v^2$. The factor of $1/2$ and the drag coefficient $C_D$ account for the complex geometry and flow details.",
+        "limits_and_boundary": "1. Low Reynolds Number (v -> 0 or high viscosity): The equation fails as viscous forces become dominant. In this limit, drag is better described by Stokes' Law, where force is proportional to velocity ($F_D \\propto v$).\n2. Incompressible Flow: The formula assumes the fluid density $\\rho$ is constant, a good approximation for liquids and for gases at speeds well below the speed of sound. For supersonic flows, compressibility effects become significant.\n3. Vacuum Limit ($\\rho$ -> 0): As the fluid density approaches zero, the drag force correctly vanishes, as there is no medium to provide resistance.",
         "status": "platinum",
-        "conceptual_definition": "The formula $F_{\\text{ram}} \\approx \\rho v^2$ describes the drag force exerted by a fluid (like air or water) on an object moving through it. This particular form, often referred to as the ram drag or pressure drag, is a simplified approximation that is valid for objects moving at high speeds relative to the fluid, where inertial effects dominate over viscous effects. It quantizes the force that resists the motion of the object due to the continuous impact and displacement of fluid particles.",
-        "intuitive_summary": "The drag force on a fast-moving object is proportional to the density of the fluid and the square of its velocity, as more fluid must be pushed aside with greater force at higher speeds.",
+        "conceptual_definition": "The drag equation quantifies the resistance force experienced by an object moving through a fluid. This force, dominant at high speeds (high Reynolds number), is proportional to the fluid density, the object's cross-sectional area, and the square of its relative velocity.",
+        "intuitive_summary": "The resistance an object feels moving through a fluid increases dramatically with speed and is greater in denser fluids.",
         "subcomponents": [
             "rest-frame-source-frequency-eb8890df",
             "critical-dynamo-number-5ceb2a51",
@@ -960,52 +864,52 @@
         ]
     },
     "probability-conservation-c9885ce7": {
-        "title": "Probability Conservation",
-        "equation": "i\\hbar \\frac{\\partial}{\\partial t} \\psi = \\hat{H}\\psi",
+        "title": "Time-Dependent Schrödinger Equation",
+        "equation": "i\\hbar \\frac{\\partial \\psi}{\\partial t} = \\hat{H}\\psi",
         "semantic_variables": {
             "i": {
                 "name": "Imaginary Unit",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The imaginary unit, where $i^2 = -1$. It is essential for describing the wave-like nature of quantum particles and the phase of the wavefunction."
+                "description": "The imaginary unit, defined as $i^2 = -1$, essential for describing the phase and wave-like nature of quantum states."
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "Joule-second (J s)",
-                "description": "The reduced Planck constant, $\\hbar = h / (2\\pi)$, where $h$ is the Planck constant. It relates the energy of a photon to its frequency and is a fundamental constant in quantum mechanics."
+                "unit": "J·s",
+                "description": "The Planck constant divided by $2\\pi$, denoted $\\hbar = h/(2\\pi)$. It is the fundamental constant of quantum mechanics, relating energy to frequency."
             },
-            "\\frac{\\partial}{\\partial t}": {
-                "name": "Partial Derivative with respect to Time",
-                "type": "operator",
-                "unit": "s^{-1}",
-                "description": "Represents the instantaneous rate of change of a quantity (in this case, the wavefunction $\\psi$) with respect to time."
-            },
-            "\\hat{H}": {
-                "name": "Hamiltonian Operator",
-                "type": "operator",
-                "unit": "Joule (J)",
-                "description": "The Hamiltonian operator, which represents the total energy of the quantum system. It typically includes terms for kinetic energy and potential energy. Its eigenvalues represent the possible energy levels of the system."
+            "\\psi": {
+                "name": "Wave Function",
+                "type": "variable",
+                "unit": "m⁻³/²",
+                "description": "A complex-valued probability amplitude describing the quantum state of a particle. Its squared modulus $|\\psi|^2$ represents the probability density of finding the particle at a given position. The unit shown is for a single particle in 3D space."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
+                "description": "The time coordinate, representing the evolution parameter of the system."
             },
-            "H": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "A/m",
-                "description": "The auxiliary magnetic field vector representing magnetization effects in media."
+            "\\hat{H}": {
+                "name": "Hamiltonian Operator",
+                "type": "operator",
+                "unit": "J",
+                "description": "The operator corresponding to the total energy of the system, typically the sum of kinetic and potential energy operators: $\\hat{H} = \\hat{T} + \\hat{V}$."
+            },
+            "\\frac{\\partial}{\\partial t}": {
+                "name": "Partial Time Derivative",
+                "type": "operator",
+                "unit": "s⁻¹",
+                "description": "The operator that computes the rate of change of the wave function with respect to time."
             }
         },
-        "interpretation": "The equation is written as $i\\hbar \\frac{\\partial}{\\partial t} \\psi = \\hat{H} \\psi . Here,$i$is the imaginary unit. \\hbar (h-bar) is the reduced Planck constant, a fundamental constant of nature relating a particle's energy to its frequency. \\frac{\\partial}{\\partial t}$ is the partial derivative with respect to time, signifying the rate of change. \\psi (psi) represents the wavefunction of the quantum system, a complex-valued function that contains all probabilistic information about the system. The term $\\hat{H}$ is the Hamiltonian operator, which corresponds to the total energy of the system, including kinetic and potential energies. The equation essentially states that the time evolution of the wavefunction is governed by the system's Hamiltonian operator. If the Hamiltonian is time-independent, the evolution is straightforward, leading to stationary states. If it is time-dependent, the quantum state can change in more complex ways$.",
-        "symmetry_origin": "This equation arises from the postulates of quantum mechanics and is deeply connected to the conservation of probability. The probability of finding the particle somewhere in space must remain constant over time. This can be shown by multiplying the Schrödinger equation by $\\psi^*$ (the complex conjugate of $\\psi$) and subtracting the complex conjugate of the equation multiplied by $\\psi$. The resulting equation, when integrated over all space, yields $\\frac{d}{dt} \\int |\\psi|^2 dV = 0$, which is the mathematical statement of probability conservation. This conservation principle is a consequence of the unitary evolution of quantum states, which in turn is linked to the symmetry of the Hamiltonian under time translation (for time-independent Hamiltonians).",
-        "limits_and_boundary": "In the limit of very large times or for systems with a constant Hamiltonian, the wavefunction evolves in a predictable manner, often exhibiting oscillatory behavior or remaining in stationary states. As the energy $E$ of a system (related to the eigenvalues of $\\hat{H}$) becomes very large, the wavelength associated with the particle becomes very small, and quantum effects may become less pronounced, approaching classical behavior in certain regimes (correspondence principle). Conversely, for very small energies or at very low temperatures, quantum effects dominate.",
+        "interpretation": "The equation $i\\hbar \\frac{\\partial \\psi}{\\partial t} = \\hat{H}\\psi$ dictates the dynamics of a quantum state. Here, $i$ is the imaginary unit, necessary for the wave-like behavior. $\\hbar$ is the reduced Planck constant, the fundamental quantum of action. The term $\\frac{\\partial \\psi}{\\partial t}$ represents the instantaneous rate of change of the wave function $\\psi$ with time. The wave function $\\psi(\\mathbf{r}, t)$ is a complex-valued probability amplitude from which all measurable properties of the particle can be derived. On the right side, $\\hat{H}$ is the Hamiltonian operator, which corresponds to the total energy of the system (kinetic plus potential). The equation asserts that the Hamiltonian is the generator of time translations for the quantum state.",
+        "symmetry_origin": "The Schrödinger equation ensures the conservation of probability, a consequence of the unitarity of time evolution in quantum mechanics. This can be shown by deriving the quantum continuity equation, $\\frac{\\partial |\\psi|^2}{\\partial t} + \\nabla \\cdot \\mathbf{j} = 0$, where $\\mathbf{j}$ is the probability current. This conservation law stems from the requirement that the Hamiltonian operator $\\hat{H}$ be Hermitian. For a time-independent Hamiltonian, this corresponds to a continuous time-translation symmetry, which, by Noether's theorem, implies the conservation of energy.",
+        "limits_and_boundary": "1. Classical Limit ($\\hbar \\to 0$): In this limit, quantum effects vanish. The Ehrenfest theorem shows that the expectation values of quantum operators evolve according to classical equations of motion.\n2. Non-relativistic Limit ($v \\ll c$): The Schrödinger equation is inherently non-relativistic. For particles at relativistic speeds, it must be replaced by equations from relativistic quantum mechanics, such as the Dirac or Klein-Gordon equations.\n3. Free Particle ($V(\\mathbf{r})=0$): For a free particle, the Hamiltonian simplifies to the kinetic energy operator, $\\hat{H} = -\\frac{\\hbar^2}{2m}\\nabla^2$, and the solutions are plane waves representing particles with definite momentum.",
         "status": "platinum",
-        "conceptual_definition": "The presented formula is the time-dependent Schrödinger equation, a fundamental equation in quantum mechanics. It describes how the quantum state of a physical system changes over time. The equation dictates the evolution of the wavefunction, ͇, which encapsulates all the information about a quantum system. It asserts that the rate of change of the wavefunction with respect to time is directly proportional to the action of the Hamiltonian operator on the wavefunction. This implies that the dynamics of a quantum system are governed by its total energy.",
-        "intuitive_summary": "The way a quantum system's state evolves in time is determined by its energy.",
+        "conceptual_definition": "The time-dependent Schrödinger equation is a fundamental postulate of quantum mechanics that governs the evolution of a quantum system's wave function over time. It states that the temporal rate of change of the wave function is determined by the system's total energy, represented by the Hamiltonian operator.",
+        "intuitive_summary": "The way a quantum system's state evolves in time is determined by its total energy.",
         "subcomponents": [
             "partial-time-derivative-operator-af3af168",
             "complex-conjugate-of-wave-function-72b71c36",
@@ -1080,57 +984,27 @@
     },
     "hubble-time-definition-scale-f2345a03": {
         "title": "The Hubble Time Scale",
-        "equation": "REG",
-        "interpretation": "The Hubble Time Scale, denoted as $t_H$, is calculated by taking the inverse of the Hubble constant, $H_0$. The Hubble constant $H_0$ quantifies the rate at which the universe is expanding. It relates the recessional velocity $v$ of a distant galaxy to its distance d$through Hubble's Law:$v = H_0 d$. Therefore,$t_H = 1/H_0$. If we imagine running the expansion of the universe backward in time, a galaxy at distance$d$moving with velocity v would have been at our location at time t_H = d/v$. This provides a simple, though approximate, estimate for the age of the universe, assuming a constant expansion rate. The SI units for $H_0$ are typically inverse seconds (s⁻¹), which means $t_H$ is in seconds. However, it is often expressed in kilometers per second per megaparsec (km/s/Mpc), requiring conversion to SI units for time calculation.",
-        "symmetry_origin": "The Hubble Time Scale is derived from Hubble's Law, which is a macroscopic observation of the large-scale structure and dynamics of the universe. It doesn't stem directly from a fundamental symmetry principle but rather from an empirical observation about the expansion of spacetime itself. The concept assumes the Cosmological Principle, which states that on large scales, the universe is homogeneous and isotropic, implying that the expansion rate is the same everywhere.",
-        "limits_and_boundary": "As the Hubble constant $H_0$ approaches zero (implying no expansion), the Hubble Time Scale $t_H$ approaches infinity, which is consistent with a static universe having an indeterminate age. Conversely, as $H_0$ becomes very large (implying extremely rapid expansion), $t_H$ approaches zero, suggesting a universe that has existed for a very short time. It's important to note that the actual age of the universe depends on the expansion history, and $t_H$ is an approximation assuming a constant Hubble parameter.",
+        "equation": "t_H = \\frac{1}{H_0}",
+        "interpretation": "The Hubble Time, denoted $t_H$, is calculated by taking the inverse of the Hubble constant, $H_0$. The Hubble constant quantifies the present-day rate of cosmic expansion, relating a distant galaxy's recessional velocity $v$ to its proper distance $d$ through Hubble's Law, $v = H_0 d$. Assuming the velocity has been constant over cosmic history, the time taken to travel a distance $d$ would be $t = d/v$. Substituting Hubble's Law gives $t = d/(H_0 d) = 1/H_0$, which is the Hubble Time. This provides a simple, though approximate, estimate for the age of the universe. The SI unit for $H_0$ is inverse seconds ($s^{-1}$), making the unit of $t_H$ seconds. In practice, $H_0$ is often measured in kilometers per second per megaparsec (km/s/Mpc), which requires conversion for this calculation.",
+        "symmetry_origin": "The Hubble Time is derived from the empirical observation of Hubble's Law, which is a direct consequence of the uniform expansion of spacetime. This expansion is consistent with the Cosmological Principle, a fundamental assumption in modern cosmology. The Cosmological Principle asserts that on large scales, the universe is homogeneous (the same everywhere) and isotropic (the same in all directions), which are fundamental spacetime symmetries.",
+        "limits_and_boundary": "1. In the limit of a non-expanding, static universe, the Hubble constant $H_0 \\to 0$, and the Hubble Time $t_H \\to \\infty$. \n2. For an extremely rapid expansion, $H_0 \\to \\infty$, which implies a Hubble Time $t_H \\to 0$, suggesting a very recent origin. \n3. The Hubble Time equals the true age of the universe only in a model with no matter or cosmological constant (an empty, coasting universe). In the standard cosmological model (Lambda-CDM), the expansion rate was faster in the past, so the actual age of the universe is of the same order but slightly different from $t_H$.",
         "semantic_variables": {
             "t_H": {
-                "name": "Hubble Time Scale",
+                "name": "Hubble Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The characteristic time scale of the universe's expansion, calculated as the inverse of the Hubble constant. It represents an estimate of the age of the universe assuming a constant expansion rate."
+                "description": "The characteristic time scale of the universe's expansion, representing an estimate of the age of the universe assuming a constant expansion rate."
             },
             "H_0": {
                 "name": "Hubble Constant",
                 "type": "constant",
-                "unit": "s⁻¹",
-                "description": "The present-day value of the Hubble parameter, which measures the rate at which the universe is expanding. It is the proportionality constant in Hubble's Law relating recessional velocity to distance."
-            },
-            "v": {
-                "name": "Recessional Velocity",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The velocity at which a distant galaxy is moving away from an observer due to the expansion of the universe."
-            },
-            "d": {
-                "name": "Distance",
-                "type": "variable",
-                "unit": "m",
-                "description": "The distance of a distant galaxy from the observer. In cosmology, this is often the proper distance at the present time."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "s^{-1}",
+                "description": "The present-day value of the Hubble parameter, which measures the rate of expansion of the universe."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Hubble Time Scale represents the characteristic time scale over which the expansion of the universe has occurred, assuming a constant rate of expansion. It is derived from Hubble's Law, which states that galaxies are receding from us at a speed proportional to their distance. By inverting this relationship, we can estimate the age of the universe.",
-        "intuitive_summary": "If the universe has been expanding at a constant rate, the Hubble Time is simply the time it would have taken for galaxies to reach their current distances from us.",
+        "conceptual_definition": "The Hubble Time is the characteristic time scale of the universe's expansion, defined as the reciprocal of the Hubble constant. It provides a first-order estimate for the age of the universe under the simplifying assumption of a constant expansion rate.",
+        "intuitive_summary": "If the universe's expansion were constant, the Hubble Time is how long it would have taken for galaxies to reach their current positions.",
         "subcomponents": [
             "hubble-constant-present-day-e65765be",
             "hawking-temperature-of-a-black-hole-473d2a26",
@@ -1669,7 +1543,8 @@
         "status": "published",
         "parent_formula_id": "geometric-consistency-6ab2b1c4",
         "subcomponents": [],
-        "id": "spacetime-derivative-of-a-scalar-field-703f7296"
+        "id": "spacetime-derivative-of-a-scalar-field-703f7296",
+        "intuitive_summary": ""
     },
     "ricci-scalar-contraction-definition-e14f8692": {
         "title": "Ricci Scalar Contraction Definition",
@@ -1705,7 +1580,8 @@
         "status": "published",
         "parent_formula_id": "ricci-scalar-curvature-ident-e14f8692",
         "subcomponents": [],
-        "id": "ricci-scalar-contraction-definition-e14f8692"
+        "id": "ricci-scalar-contraction-definition-e14f8692",
+        "intuitive_summary": ""
     },
     "riemann-tensor-spacetime-indices-82732ae3": {
         "title": "Riemann Tensor Spacetime Indices",
@@ -1747,7 +1623,8 @@
         "status": "published",
         "parent_formula_id": "vanishing-riemann-tensor-2",
         "subcomponents": [],
-        "id": "riemann-tensor-spacetime-indices-82732ae3"
+        "id": "riemann-tensor-spacetime-indices-82732ae3",
+        "intuitive_summary": ""
     },
     "quantum-state-ket-vector-notation-bc81b08e": {
         "title": "Quantum State Ket Vector Notation",
@@ -1777,7 +1654,8 @@
         "status": "published",
         "parent_formula_id": "unitarity-link-7ef53a7f",
         "subcomponents": [],
-        "id": "quantum-state-ket-vector-notation-bc81b08e"
+        "id": "quantum-state-ket-vector-notation-bc81b08e",
+        "intuitive_summary": ""
     },
     "gravitational-potential-dimensionless-term-5ad860e0": {
         "title": "Gravitational Potential Dimensionless Term",
@@ -1819,7 +1697,8 @@
         "status": "published",
         "parent_formula_id": "relativistic-reddening-2071010d",
         "subcomponents": [],
-        "id": "gravitational-potential-dimensionless-term-5ad860e0"
+        "id": "gravitational-potential-dimensionless-term-5ad860e0",
+        "intuitive_summary": ""
     },
     "squared-shear-tensor-invariant-194c79cf": {
         "title": "Squared Shear Tensor Invariant",
@@ -1849,7 +1728,8 @@
         "status": "published",
         "parent_formula_id": "focusing-theorem-identity-1-63aeee43-30e78f33",
         "subcomponents": [],
-        "id": "squared-shear-tensor-invariant-194c79cf"
+        "id": "squared-shear-tensor-invariant-194c79cf",
+        "intuitive_summary": ""
     },
     "constant-magnetic-flux-condition-192f5651": {
         "title": "Constant Magnetic Flux Condition",
@@ -1885,7 +1765,8 @@
         "status": "published",
         "parent_formula_id": "energy-bound-349d7995",
         "subcomponents": [],
-        "id": "constant-magnetic-flux-condition-192f5651"
+        "id": "constant-magnetic-flux-condition-192f5651",
+        "intuitive_summary": ""
     },
     "holonomy-of-connection-along-edge-09b927c8": {
         "title": "Holonomy of Connection along Edge",
@@ -1921,7 +1802,8 @@
         "status": "published",
         "parent_formula_id": "quantum-states-of-geometry-identity-1-5fd67ebf-ed727eda",
         "subcomponents": [],
-        "id": "holonomy-of-connection-along-edge-09b927c8"
+        "id": "holonomy-of-connection-along-edge-09b927c8",
+        "intuitive_summary": ""
     },
     "feynman-propagator-for-scalar-fields-831c85f6": {
         "title": "Feynman Propagator for Scalar Fields",
@@ -1957,7 +1839,8 @@
         "status": "published",
         "parent_formula_id": "algebraic-reduction-a0e57281",
         "subcomponents": [],
-        "id": "feynman-propagator-for-scalar-fields-831c85f6"
+        "id": "feynman-propagator-for-scalar-fields-831c85f6",
+        "intuitive_summary": ""
     },
     "principle-of-stationary-action-feebf4c3": {
         "title": "Principle of Stationary Action",
@@ -1987,7 +1870,8 @@
         "status": "published",
         "parent_formula_id": "the-path-integral-ab6eacde",
         "subcomponents": [],
-        "id": "principle-of-stationary-action-feebf4c3"
+        "id": "principle-of-stationary-action-feebf4c3",
+        "intuitive_summary": ""
     },
     "anticommutator-of-supercharges-926e9eca": {
         "title": "Anticommutator of Supercharges",
@@ -2017,7 +1901,8 @@
         "status": "published",
         "parent_formula_id": "supersymmetric-commutation-relation",
         "subcomponents": [],
-        "id": "anticommutator-of-supercharges-926e9eca"
+        "id": "anticommutator-of-supercharges-926e9eca",
+        "intuitive_summary": ""
     },
     "total-proton-mass-contribution-4cce9d53": {
         "title": "Total Proton Mass Contribution",
@@ -2047,7 +1932,8 @@
         "status": "published",
         "parent_formula_id": "mass-defect-87f1adbf",
         "subcomponents": [],
-        "id": "total-proton-mass-contribution-4cce9d53"
+        "id": "total-proton-mass-contribution-4cce9d53",
+        "intuitive_summary": ""
     },
     "vacuum-expectation-value-notation-c71408ec": {
         "title": "Vacuum Expectation Value Notation",
@@ -2083,7 +1969,8 @@
         "status": "published",
         "parent_formula_id": "ssb-condition-bb56820f",
         "subcomponents": [],
-        "id": "vacuum-expectation-value-notation-c71408ec"
+        "id": "vacuum-expectation-value-notation-c71408ec",
+        "intuitive_summary": ""
     },
     "operator-involution-identity-dc72756f": {
         "title": "Operator Involution Identity",
@@ -2113,7 +2000,8 @@
         "status": "published",
         "parent_formula_id": "symmetry-eigenvalue-law-d29ba105",
         "subcomponents": [],
-        "id": "operator-involution-identity-dc72756f"
+        "id": "operator-involution-identity-dc72756f",
+        "intuitive_summary": ""
     },
     "non-zero-charge-consistency-parameter-3b3b3f7c": {
         "title": "Non-Zero Charge Consistency Parameter",
@@ -2137,7 +2025,8 @@
         "status": "published",
         "parent_formula_id": "charge-consistency-c2c1ad37",
         "subcomponents": [],
-        "id": "non-zero-charge-consistency-parameter-3b3b3f7c"
+        "id": "non-zero-charge-consistency-parameter-3b3b3f7c",
+        "intuitive_summary": ""
     },
     "geodesic-equation-in-general-relativity-b5579cb7": {
         "title": "Geodesic Equation in General Relativity",
@@ -2179,7 +2068,8 @@
         "status": "published",
         "parent_formula_id": "4d-tracking-158b0de0",
         "subcomponents": [],
-        "id": "geodesic-equation-in-general-relativity-b5579cb7"
+        "id": "geodesic-equation-in-general-relativity-b5579cb7",
+        "intuitive_summary": ""
     },
     "canonical-momentum-density-operator-ac778e06": {
         "title": "Canonical Momentum Density Operator",
@@ -2215,7 +2105,8 @@
         "status": "published",
         "parent_formula_id": "exclusion-postulate-9fab4f17",
         "subcomponents": [],
-        "id": "canonical-momentum-density-operator-ac778e06"
+        "id": "canonical-momentum-density-operator-ac778e06",
+        "intuitive_summary": ""
     },
     "dirac-equation-covariant-form-55ee2f08": {
         "title": "Dirac Equation (Covariant Form)",
@@ -2275,7 +2166,8 @@
         "status": "published",
         "parent_formula_id": "dirac-equation",
         "subcomponents": [],
-        "id": "dirac-equation-covariant-form-55ee2f08"
+        "id": "dirac-equation-covariant-form-55ee2f08",
+        "intuitive_summary": ""
     },
     "magnetic-force-perpendicular-to-velocity-3b053396": {
         "title": "Magnetic Force Perpendicular to Velocity",
@@ -2305,6 +2197,7 @@
         "status": "published",
         "parent_formula_id": "magnetic-force-perpendicular-to-velocity",
         "subcomponents": [],
-        "id": "magnetic-force-perpendicular-to-velocity-3b053396"
+        "id": "magnetic-force-perpendicular-to-velocity-3b053396",
+        "intuitive_summary": ""
     }
 }

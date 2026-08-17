@@ -429,48 +429,36 @@
         "title": "Calculation Rule",
         "equation": "\\Delta d \\approx \\frac{B}{p^2} \\Delta p",
         "semantic_variables": {
-            "Δd": {
-                "name": "Change in Quantity d",
+            "\\Delta d": {
+                "name": "Change in quantity d",
                 "type": "variable",
-                "unit": "N/A",
-                "description": "Represents a small increment or change in the quantity denoted by 'd'."
+                "unit": "[d]",
+                "description": "A small, finite change in the physical quantity $d$. Its units are the same as the units of $d$."
             },
             "B": {
                 "name": "Proportionality Constant",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "A constant of proportionality that links the changes in 'd' and 'p'. Its units depend on the specific physical context."
+                "type": "constant",
+                "unit": "[d] [p]^2",
+                "description": "A constant of proportionality specific to the physical system. Its units are those of $d$ multiplied by the square of the units of $p$."
             },
             "p": {
-                "name": "Reference Value of Quantity p",
+                "name": "Quantity p",
                 "type": "variable",
-                "unit": "N/A",
-                "description": "A characteristic or reference value for the quantity 'p'. The exact units depend on the physical scenario."
+                "unit": "[p]",
+                "description": "A physical quantity, evaluated at the point around which the change is being approximated."
             },
-            "Δp": {
-                "name": "Change in Quantity p",
+            "\\Delta p": {
+                "name": "Change in quantity p",
                 "type": "variable",
-                "unit": "N/A",
-                "description": "Represents a small increment or change in the quantity denoted by 'p'."
-            },
-            "\\Delta": {
-                "name": "Laplacian / Change Operator",
-                "type": "operator",
-                "unit": "operator",
-                "description": "Represents spatial second derivatives, or finite difference increment."
-            },
-            "\\approx": {
-                "name": "\\approx Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "unit": "[p]",
+                "description": "A small, finite change in the physical quantity $p$. Its units are the same as the units of $p$."
             }
         },
-        "interpretation": "The formula $\\Deltad$ ≈ $\\frac{B}{p^2} \\Deltap relates a$ small change in a quantity d, denoted as $\\Deltad$, to a small change in another quantity p, denoted as $\\Deltap$. The proportionality is governed by the parameter B and the square of a reference value p. The term p represents a characteristic scale or magnitude of the quantity p. A larger value of B or a smaller reference value p will result in a larger change $\\Deltad$ for a given change $\\Deltap$. Conversely, a larger reference value p will diminish the impact of $\\Deltap$ on $\\Deltad.",
-        "symmetry_origin": "This relationship can often arise from thermodynamic considerations, particularly involving potentials and their derivatives. For instance, if d is related to the free energy and p is related to pressure or volume, the inverse square dependence might stem from integrating over certain degrees of freedom or from fundamental thermodynamic identities. In some contexts, it might be derived from Taylor expansions of state functions around equilibrium points.",
-        "limits_and_boundary": "As $\\Deltap$ approaches zero, $\\Deltad$ also approaches zero, consistent with the idea that small changes in one variable lead to proportionally small changes in another near a point of reference. If p approaches zero (and is not identically zero for $\\Deltap$), the relationship would become singular, suggesting that the system becomes highly sensitive to changes in p. If B approaches zero, then $\\Deltad$ will also approach zero for any finite $\\Deltap$, indicating no correlation or a decoupled system.",
+        "interpretation": "The formula $\\Delta d \\approx \\frac{B}{p^2} \\Delta p$ expresses an approximate relationship for a small change, $\\Delta d$, in a physical quantity $d$ resulting from a small change, $\\Delta p$, in another quantity $p$. This is a linearized approximation, valid for $\\Delta p \\ll p$. The term $B$ is a constant of proportionality whose physical meaning and units depend on the specific context. The inverse square dependence on $p$ indicates that the sensitivity of $d$ to changes in $p$ decreases rapidly as the magnitude of $p$ increases. This type of relation can be derived from a Taylor series expansion of a function $d(p)$ around a point $p_0$, where the first derivative $\\frac{\\mathrm{d}d}{\\mathrm{d}p}$ is proportional to $1/p^2$. For example, if $d(p) = -B/p$, then its derivative is $\\frac{\\mathrm{d}d}{\\mathrm{d}p} = B/p^2$, and for small changes, $\\Delta d \\approx \\frac{\\mathrm{d}d}{\\mathrm{d}p} \\Delta p = \\frac{B}{p^2} \\Delta p$.",
+        "symmetry_origin": "The origin of such a relationship is not tied to a fundamental spacetime or gauge symmetry but rather emerges from the specific dynamics or statistical properties of a system. It often appears as a result of a Taylor expansion of a more complex function around a specific operating point or equilibrium state. The specific form, particularly the $1/p^2$ dependence, is determined by the underlying physical model, such as an inverse-square force law integrated over some variable, or a specific form of a potential in thermodynamics or field theory.",
+        "limits_and_boundary": "1. In the limit $\\Delta p \\to 0$, it follows that $\\Delta d \\to 0$, indicating a continuous relationship between $d$ and $p$.\n2. As $p \\to \\infty$, the factor $1/p^2 \\to 0$, implying that the quantity $d$ becomes insensitive to changes in $p$ at very large values of $p$.\n3. As $p \\to 0$ (for $p \\neq 0$), the relationship diverges, suggesting a breakdown of this linear approximation or a physical singularity where the system becomes extremely sensitive to changes in $p$.\n4. If the constant $B=0$, then $\\Delta d \\approx 0$ for any $\\Delta p$, indicating that the quantities $d$ and $p$ are independent to first order.",
         "status": "platinum",
-        "conceptual_definition": "This formula, often encountered in the context of statistical mechanics or thermodynamics, describes how a small change in a quantity dp (like pressure or energy) relates to a small change in another quantity dd (like volume or temperature), mediated by a parameter B and the square of a reference value p.",
+        "conceptual_definition": "This formula describes an approximate linear relationship between a small change in a quantity `d` and a small change in another quantity `p`, where the proportionality is inversely dependent on the square of `p`'s magnitude.",
         "intuitive_summary": "A small change in one quantity is proportional to the change in another quantity, inversely scaled by the square of a reference value and a proportionality constant."
     },
     "operator-source-e1b06520": {
@@ -592,56 +580,38 @@
     },
     "proper-time-law-26508cf2": {
         "title": "Proper Time Law",
-        "equation": "ds^2 = g_{\\mu\\nu} dx^\\mu dx^\\nu > 0",
+        "equation": "\\mathrm{d}s^2 = g_{\\mu\\nu} \\mathrm{d}x^\\mu \\mathrm{d}x^\\nu",
         "semantic_variables": {
-            "ds^2": {
-                "name": "Square of the Proper Time Interval",
-                "type": "variable",
-                "unit": "s^2",
-                "description": "The square of the infinitesimal interval of proper time between two infinitesimally separated events in spacetime. Proper time is the time measured by an observer moving along a timelike path."
+            "\\mathrm{d}s^2": {
+                "name": "Squared Line Element",
+                "type": "differential scalar",
+                "unit": "m^2",
+                "description": "The square of the invariant spacetime interval between two infinitesimally separated events. It is a scalar under coordinate transformations."
             },
-            "g_{μν}": {
+            "g_{\\mu\\nu}": {
                 "name": "Metric Tensor",
-                "type": "variable",
+                "type": "tensor field",
                 "unit": "dimensionless",
-                "description": "A tensor that defines the metric of spacetime, determining the distances and angles between points in spacetime. It encodes the gravitational field and the local geometry of spacetime. The indices μ and ν range from 0 to 3, representing the four spacetime dimensions."
+                "description": "The components of the metric tensor, which defines the local geometry of spacetime and acts as the gravitational potential."
             },
-            "dx^μ": {
-                "name": "Infinitesimal Spacetime Displacement (Contravariant Vector)",
-                "type": "variable",
+            "\\mathrm{d}x^\\mu": {
+                "name": "Infinitesimal Coordinate Displacement",
+                "type": "differential 4-vector",
                 "unit": "m",
-                "description": "An infinitesimal change in the spacetime coordinates. For μ = 0, it represents an infinitesimal time interval (multiplied by the speed of light, c); for μ = 1, 2, 3, it represents infinitesimal spatial displacements."
+                "description": "The contravariant components of the infinitesimal displacement four-vector between two spacetime events. The index $\\mu$ runs from 0 to 3."
             },
-            "dx^ν": {
-                "name": "Infinitesimal Spacetime Displacement (Contravariant Vector)",
-                "type": "variable",
-                "unit": "m",
-                "description": "An infinitesimal change in the spacetime coordinates, used in the contraction with dx^μ."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "g": {
-                "name": "Gravitational Acceleration",
-                "type": "constant",
-                "unit": "m/s²",
-                "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
-            },
-            "\\nu": {
-                "name": "Kinematic Viscosity",
-                "type": "variable",
-                "unit": "m²/s",
-                "description": "The ratio of dynamic viscosity to density, representing a fluid's resistance to shear flow under gravity."
+            "\\mu, \\nu": {
+                "name": "Spacetime Indices",
+                "type": "index",
+                "unit": "N/A",
+                "description": "Indices that label the components of tensors and vectors in spacetime, running from 0 (time) to 3 (space). A repeated upper and lower index implies summation over all four values."
             }
         },
-        "interpretation": "The equation, written as $ds^2 = g_{μν} dx^μ dx^ν > 0$, represents the square of the infinitesimal proper time interval, denoted by $ds$. This interval is an invariant quantity in spacetime, meaning its value is independent of the observer's frame of reference. The term $g_{μν}$ is the metric tensor, which describes the curvature of spacetime and its local geometry; in flat spacetime (Minkowski spacetime), it reduces to the Minkowski metric. The indices μ and ν represent spacetime coordinates (e.g., time and the three spatial dimensions), taking values from 0 to 3. The terms $dx^μ$ and $dx^ν$ represent infinitesimal displacements along these spacetime coordinates. The summation implied by the Einstein summation convention (where repeated indices are summed over) means we are considering the squared interval in four dimensions. The condition $ds^2 > 0$ specifically denotes a timelike interval, meaning that the two events are causally connected and can be traversed by a physical object moving slower than the speed of light. For spacelike intervals, $ds^2 < 0$, and for lightlike (null) intervals, $ds^2 = 0.",
-        "symmetry_origin": "This formula originates from the principle of relativity and the constancy of the speed of light, which led to the development of Lorentz transformations in special relativity. In special relativity, the spacetime interval is invariant under Lorentz transformations, reflecting the symmetry of spacetime. In general relativity, the metric tensor $g_{μν}$ is generalized to account for the curvature of spacetime caused by mass and energy, and the invariance of the proper time interval is maintained under general coordinate transformations, representing the diffeomorphism invariance of the theory.",
-        "limits_and_boundary": "As the spacetime separation between the two events approaches zero ($dx^μ \\to 0$), the proper time interval $ds$ also approaches zero. In the limit of a very weak gravitational field and low velocities, the spacetime approaches flat Minkowski spacetime, and the metric tensor $g_{μν}$ approaches the Minkowski metric $η_{μν}$, simplifying the calculation of the interval to that of special relativity.",
+        "interpretation": "The equation $\\mathrm{d}s^2 = g_{\\mu\\nu} \\mathrm{d}x^\\mu \\mathrm{d}x^\\nu$ defines the square of the infinitesimal spacetime interval, or line element, $\\mathrm{d}s$. This quantity is a scalar invariant under general coordinate transformations. The term $g_{\\mu\\nu}$ is the metric tensor, a symmetric rank-2 tensor that characterizes the local geometry of spacetime. The terms $\\mathrm{d}x^\\mu$ and $\\mathrm{d}x^\\nu$ are the components of the infinitesimal displacement four-vector between two nearby spacetime events. The repeated indices $\\mu$ and $\\nu$ are summed over from 0 to 3, according to the Einstein summation convention. The sign of $\\mathrm{d}s^2$ classifies the nature of the interval (using the $(+,-,-,-)$ metric signature): a timelike interval ($\\mathrm{d}s^2 > 0$) can be traversed by a massive particle and its proper time is $\\mathrm{d}\\tau = \\sqrt{\\mathrm{d}s^2}/c$; a spacelike interval ($\\mathrm{d}s^2 < 0$) represents a space-like separation where events are causally disconnected; a null or lightlike interval ($\\mathrm{d}s^2 = 0$) is the path taken by a massless particle.",
+        "symmetry_origin": "The invariance of the spacetime interval is a cornerstone of relativity. In Special Relativity, $\\mathrm{d}s^2$ is invariant under the continuous spacetime symmetries of the Poincaré group (Lorentz transformations and translations), reflecting the homogeneity and isotropy of flat spacetime. In General Relativity, this principle is generalized: the form of the line element is invariant under general coordinate transformations (diffeomorphisms). This diffeomorphism invariance is a fundamental gauge symmetry of General Relativity, from which the conservation of the stress-energy tensor, $\\nabla_\\mu T^{\\mu\\nu} = 0$, can be derived via Noether's second theorem.",
+        "limits_and_boundary": "1. In the limit of a weak gravitational field and low velocities, General Relativity reduces to Special Relativity. The metric tensor $g_{\\mu\\nu}$ approaches the flat Minkowski metric $\\eta_{\\mu\\nu}$, and the line element becomes $\\mathrm{d}s^2 = c^2 \\mathrm{d}t^2 - \\mathrm{d}x^2 - \\mathrm{d}y^2 - \\mathrm{d}z^2$.\n2. In the non-relativistic limit where particle velocities $v \\ll c$, the proper time interval $\\mathrm{d}\\tau$ approaches the coordinate time interval $\\mathrm{d}t$, as $\\mathrm{d}\\tau = \\mathrm{d}t \\sqrt{1 - v^2/c^2} \\approx \\mathrm{d}t$.\n3. For infinitesimally separated events, where $\\mathrm{d}x^\\mu \\to 0$, the interval $\\mathrm{d}s^2 \\to 0$.",
         "status": "platinum",
-        "conceptual_definition": "The Proper Time Law, often referred to as the spacetime interval or line element in the context of general relativity, quantifies the invariant spacetime separation between two infinitesimally close events. It is a fundamental concept in special and general relativity, defining the geometry of spacetime itself. The invariant nature of the proper time means that all observers, regardless of their relative motion or gravitational environment, will agree on the value of this interval, although they will disagree on the spatial and temporal distances separately.",
+        "conceptual_definition": "The spacetime line element defines the infinitesimal, invariant separation between two events in spacetime, determined by the metric tensor which encodes the geometry and gravitational field. For timelike-separated events, this interval is proportional to the square of the elapsed proper time, the time measured by a clock moving between the events.",
         "intuitive_summary": "The proper time law defines an invariant measure of spacetime distance between two events, which is the same for all observers.",
         "subcomponents": [
             "null-spacetime-interval-condition-9ad02782",
@@ -730,58 +700,52 @@
         "intuitive_summary": "A quantum system's state at any time is a combination of its fundamental energy components, each evolving at a rate determined by its energy."
     },
     "transformation-bridge-4e985f85": {
-        "title": "Transformation Bridge",
-        "equation": "\\{Q_i, P_j\\}_{q,p} = \\delta_{ij}",
+        "title": "Fundamental Poisson Bracket",
+        "equation": "\\{Q_i, P_j\\} = \\delta_{ij}",
         "semantic_variables": {
             "Q_i": {
                 "name": "Generalized Coordinate",
                 "type": "variable",
-                "unit": "m",
+                "unit": "Varies",
                 "description": "The i-th generalized coordinate representing the configuration of the system. For example, it could be a position (in meters), an angle (in radians), or another suitable variable defining the system's state."
             },
             "P_j": {
                 "name": "Canonical Momentum",
                 "type": "variable",
-                "unit": "kg m/s",
-                "description": "The j-th canonical momentum conjugate to the generalized coordinate Q_j. It is typically defined as P_j = \\partial L / \\partial $\\dot{Q}$_j, where L is the Lagrangian of the system. Its SI unit is kilogram-meter per second."
+                "unit": "Varies",
+                "description": "The j-th canonical momentum conjugate to the generalized coordinate $Q_j$. It is defined via the Lagrangian $L$ as $P_j = \\partial L / \\partial \\dot{Q}_j$."
             },
-            "\\{\\cdot, \\cdot\\}_{q,p}": {
+            "\\{\\cdot, \\cdot\\}": {
                 "name": "Poisson Bracket",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The Poisson bracket operator, defined with respect to the canonical coordinates (q) and momenta (p) of the system. It is a fundamental operation in Hamiltonian mechanics used to describe the time evolution of dynamical variables and their relationships."
+                "type": "operator",
+                "unit": "Context-dependent",
+                "description": "The Poisson bracket operator, a fundamental operation in Hamiltonian mechanics defined as $\\{A, B\\} = \\sum_k (\\frac{\\partial A}{\\partial Q_k}\\frac{\\partial B}{\\partial P_k} - \\frac{\\partial A}{\\partial P_k}\\frac{\\partial B}{\\partial Q_k})$. It describes the time evolution of dynamical variables and their fundamental relationships."
             },
             "\\delta_{ij}": {
                 "name": "Kronecker Delta",
-                "type": "constant",
+                "type": "tensor",
                 "unit": "dimensionless",
-                "description": "The Kronecker delta function, which equals 1 if i = j and 0 if i eq j. It signifies the orthogonality or independence between non-conjugate canonical variables."
+                "description": "A second-rank tensor that equals 1 if the indices are equal ($i = j$) and 0 otherwise ($i \\neq j$). It signifies the orthogonality of the canonical basis vectors in phase space."
             },
             "i": {
-                "name": "Index for Degree of Freedom",
-                "type": "variable",
+                "name": "Degree of Freedom Index",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "An index running over the degrees of freedom of the system, used to distinguish between different generalized coordinates and their conjugate momenta."
+                "description": "An integer index running over the degrees of freedom of the system, used to distinguish between different generalized coordinates."
             },
             "j": {
-                "name": "Index for Degree of Freedom",
-                "type": "variable",
+                "name": "Degree of Freedom Index",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "An index running over the degrees of freedom of the system, used to distinguish between different generalized coordinates and their conjugate momenta."
-            },
-            "Q": {
-                "name": "Total Charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "The net electrical charge of a system."
+                "description": "An integer index running over the degrees of freedom of the system, used to distinguish between different canonical momenta."
             }
         },
-        "interpretation": "In this equation, $Q_i$ represents the generalized coordinate of the $i$ th degree of freedom, which specifies the configuration of the system$.P_j$ represents the corresponding canonical momentum conjugate to $Q_i$ . The subscript$(q,p)$after the Poisson bracket $\\{\\cdot$, \\cdot \\}_{q,p}$indicates that the bracket is taken with respect to the canonical coordinates and momenta of the system. The term \\delta_{ij} is the Kronecker delta, which is 1 if$i = j $and 0 if$i$eq j$ . Therefore, the equation states that the Poisson bracket of a coordinate $Q_i$ with its conjugate momentum $P_i$ is 1, while the Poisson bracket of a coordinate $Q_i$ with a different momentum $P_j$(where $i$ eq j$) is 0. This signifies that conjugate position and momentum variables are fundamentally independent in terms of their Poisson bracket structure, a critical property for the evolution of the system's phase space trajectory.",
-        "symmetry_origin": "This relation originates from the fundamental structure of Hamiltonian mechanics. Specifically, it is derived from Hamilton's equations of motion, which are $\\dot{Q}_i = \\frac{\\partial H}{\\partial P_i} and \\dot{P}_i = - \\frac{ \\partial H}{ \\partial Q_i}$ , where H is the Hamiltonian of the system. The Poisson bracket is defined as $\\left \\{A, B \\right \\}_{q,p} = \\sum_k \\left ( \\frac{ \\partial A}{ \\partial Q_k} \\frac{\\partial B}{\\partial P_k} - \\frac{ \\partial A}{\\partial P_k}\\frac{\\partial B}{\\partial Q_k} \\right )$. When$A = Q_i and B = P_j$, the bracket evaluates to $\\sum_k \\left ( \\frac{ \\partial Q_i}{ \\partial Q_k} \\frac{\\partial P_j}{\\partial P_k} - \\frac${ $\\partial Q_i}{ \\partial P_k} \\frac{\\partial P_j}{\\partial Q_k} \\right$ ) = $\\sum_k \\left$ ( $\\delta_{ik} \\delta_{jk}$ - 0 \\cdot 0 $\\right$ ) = $\\delta_{ij} . This relationship is invariant under canonical transformations, which are transformations of coordinates and momenta that preserve the form of Hamilton's equations.",
-        "limits_and_boundary": "In the context of classical mechanics, the variables $Q_i$ and $P_j$ can, in principle, take any real value, and the Poisson bracket relation $\\left$\\{Q_i, P_j $\\right$\\}_{q,p} = $\\delta_{ij}$holds universally. However, this equation forms a direct analogy to the fundamental commutation relations in quantum mechanics,$[ \\hat{Q} _i$, $\\hat{P}_j] = i \\hbar \\delta_{ij} . In the limit where \\hbar \\to 0$(the classical limit of quantum mechanics), the commutation relation approaches the classical Poisson bracket relation,$[\\hat{Q}_i, \\hat{P}_j] \\to 0$for$i eq j and [\\hat{Q}_i, \\hat{P}_i] \\to 0$(when considering the structure without the $i\\hbar$ factor, as the classical Poisson bracket is dimensionless and dimensionless operators would be required for a direct comparison). This highlights how classical mechanics emerges from quantum mechanics as a limiting case.",
+        "interpretation": "The variables $Q_i$ and $P_j$ are the generalized coordinates and canonical momenta, respectively, which define the state of a system in phase space. The Poisson bracket, defined for any two functions $A, B$ on phase space as $\\{A, B\\} = \\sum_k (\\frac{\\partial A}{\\partial Q_k}\\frac{\\partial B}{\\partial P_k} - \\frac{\\partial A}{\\partial P_k}\\frac{\\partial B}{\\partial Q_k})$, is a central operation in Hamiltonian mechanics. This specific relation, $\\{Q_i, P_j\\} = \\delta_{ij}$, is a foundational statement about the structure of phase space itself. The Kronecker delta $\\delta_{ij}$ on the right-hand side means the bracket is 1 if $i=j$ (a coordinate and its conjugate momentum) and 0 if $i \\neq j$. This orthogonality is what makes them a 'canonical' pair and is essential for Hamilton's equations to correctly describe the system's dynamics.",
+        "symmetry_origin": "The fundamental Poisson bracket relation is preserved under canonical transformations, which are the symmetry transformations of Hamiltonian mechanics. A transformation from $(Q, P)$ to a new set of coordinates $(Q', P')$ is canonical if it preserves the form of Hamilton's equations, which is equivalent to preserving the Poisson bracket structure: $\\{Q'_i, P'_j\\} = \\delta_{ij}$. This invariance reflects the underlying symplectic geometry of phase space. The time evolution of the system, generated by the Hamiltonian $H$, is itself a continuous canonical transformation.",
+        "limits_and_boundary": "1. **Classical Limit of Quantum Mechanics:** The fundamental Poisson bracket is the classical analogue of the quantum mechanical canonical commutation relation, $[\\hat{Q}_i, \\hat{P}_j] = i\\hbar\\delta_{ij}$. The correspondence principle states that in the classical limit ($\\hbar \\to 0$), the quantum commutator of two operators becomes proportional to the classical Poisson bracket of the corresponding variables: $\\frac{1}{i\\hbar}[\\hat{A}, \\hat{B}] \\to \\{A, B\\}$.\n2. **Field Theory Limit:** In classical field theory, the discrete indices $i, j$ are replaced by continuous spatial coordinates $\\mathbf{x}, \\mathbf{y}$, and the Kronecker delta becomes a Dirac delta function: $\\{\\phi(\\mathbf{x}, t), \\pi(\\mathbf{y}, t)\\} = \\delta^{(3)}(\\mathbf{x} - \\mathbf{y})$, where $\\phi$ is a field and $\\pi$ is its conjugate momentum density.",
         "status": "platinum",
-        "conceptual_definition": "The equation $\\left$\\{Q_i, P_j $\\right$\\}_{q,p} = $\\delta_{ij}$ represents the fundamental commutation relations in classical Hamiltonian mechanics, expressed using the Poisson bracket formalism. It asserts that the Poisson bracket between a canonical coordinate $Q_i$ and a canonical momentum $P_j$ is equal to the Kronecker delta $\\delta_{ij}$ . This relationship is a cornerstone of Hamiltonian mechanics and provides a bridge to quantum mechanics, where it is reinterpreted as the fundamental commutation relations.",
-        "intuitive_summary": "The canonical position and momentum variables are the fundamental building blocks of Hamiltonian mechanics, and their Poisson bracket relationship dictates how they are intrinsically linked and how they evolve.",
+        "conceptual_definition": "This equation defines the fundamental Poisson bracket in Hamiltonian mechanics, stating that the Poisson bracket of a generalized coordinate with its conjugate momentum is unity, while it is zero for any non-conjugate pair. This algebraic structure governs the time evolution of physical quantities and forms the classical analogue of the quantum mechanical commutation relations.",
+        "intuitive_summary": "A generalized coordinate and its own conjugate momentum are fundamentally linked, while a coordinate is independent of all other non-conjugate momenta.",
         "subcomponents": [
             "generalized-coordinate-in-classical-mechanics-da326f72",
             "generalized-momentum-component-eca91c83",
@@ -962,16 +926,16 @@
     },
     "quasi-static-equilibrium-identity-1-ca6e8a07-26b3270b": {
         "title": "Quasi-Static Stellar Energy Equation",
-        "equation": "\\frac{dL}{dr} = 4\\pi r^2 \\rho \\left( \\epsilon - T \\frac{ds}{dt} \\right)",
-        "interpretation": "$dL/dr$ is the radial rate of change of luminosity, $r$ is the distance from the stellar core, $\\rho$ is the local density, $\\epsilon$ is the nuclear energy generation rate per unit mass, $T$ is the local temperature, and $ds/dt$ is the material derivative of specific entropy with respect to time.",
-        "symmetry_origin": "Conservation of energy (the first law of thermodynamics) applied to a spherically symmetric fluid shell.",
-        "limits_and_boundary": "In strict thermodynamic equilibrium (a static star, where $ds/dt = 0$), the equation simplifies to the standard equation of stellar energy generation: $\\frac{dL}{dr} = 4\\pi r^2 \\rho \\epsilon.",
+        "equation": "\\frac{\\mathrm{d}L}{\\mathrm{d}r} = 4\\pi r^2 \\rho \\left( \\epsilon - T \\frac{\\mathrm{d}s}{\\mathrm{d}t} \\right)",
+        "interpretation": "This equation is one of the fundamental equations of stellar structure, expressing the principle of energy conservation. The term $\\mathrm{d}L/\\mathrm{d}r$ represents the change in luminosity across a thin spherical shell at radius $r$. This change must equal the total energy generated within that shell. The right-hand side gives this energy source: $4\\pi r^2 \\rho$ is the mass of the shell per unit thickness. The term in parentheses, $\\epsilon - T \\frac{\\mathrm{d}s}{\\mathrm{d}t}$, is the net energy released per unit mass. $\\epsilon$ is the energy from nuclear reactions. The term $-T \\frac{\\mathrm{d}s}{\\mathrm{d}t}$ represents the energy released from gravitational contraction (if $\\mathrm{d}s/\\mathrm{d}t < 0$) or absorbed during expansion (if $\\mathrm{d}s/\\mathrm{d}t > 0$), as described by the first law of thermodynamics ($\\mathrm{d}q = T\\mathrm{d}s$).",
+        "symmetry_origin": "This equation is a direct consequence of the first law of thermodynamics, which embodies the principle of energy conservation (a consequence of time-translation symmetry via Noether's theorem). It is applied to a fluid element within the star, and the assumption of spherical symmetry simplifies the general energy conservation law into this one-dimensional (radial) form.",
+        "limits_and_boundary": "1. **Thermal Equilibrium:** For a star in perfect thermal equilibrium (not contracting or expanding), the entropy of a mass element does not change with time, so $\\mathrm{d}s/\\mathrm{d}t = 0$. The equation simplifies to $\\frac{\\mathrm{d}L}{\\mathrm{d}r} = 4\\pi r^2 \\rho \\epsilon$, where luminosity change is sourced only by nuclear reactions. This applies to most main-sequence stars.\n2. **Adiabatic Evolution:** In a region with no nuclear burning ($\\epsilon = 0$) that is evolving adiabatically ($\\mathrm{d}s/\\mathrm{d}t = 0$), the equation becomes $\\frac{\\mathrm{d}L}{\\mathrm{d}r} = 0$, implying that luminosity is constant with radius.\n3. **Boundary Conditions:** At the center of the star ($r=0$), the luminosity must be zero, so $L(0) = 0$. At the surface ($r=R$), the luminosity $L(R)$ is the total observed luminosity of the star.",
         "semantic_variables": {
             "L": {
                 "name": "Stellar Luminosity",
                 "type": "variable",
                 "unit": "W",
-                "description": "The total energy radiated by the star per unit time through a sphere of radius r."
+                "description": "The total energy radiated per unit time through a sphere of radius r."
             },
             "r": {
                 "name": "Radial Distance",
@@ -995,29 +959,35 @@
                 "name": "Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The local thermodynamic temperature."
+                "description": "The local thermodynamic temperature of the stellar material."
             },
             "s": {
                 "name": "Specific Entropy",
                 "type": "variable",
-                "unit": "J/(kg K)",
+                "unit": "J/(kg·K)",
                 "description": "The entropy per unit mass of the stellar gas."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The time coordinate."
+                "description": "The time coordinate, with respect to which the material derivative of entropy is taken."
             },
             "\\pi": {
-                "name": "Pi constant",
+                "name": "Pi",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The ratio of a circle's circumference to its diameter (approx. 3.14159)."
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
+            },
+            "\\mathrm{d}": {
+                "name": "Differential",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "The differential operator, used to form derivatives representing rates of change. For example, $\\mathrm{d}L/\\mathrm{d}r$ is the rate of change of luminosity with respect to radius."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "In stellar astrophysics, the quasi-static energy equation describes the local change in luminosity $L$ along the radial direction $r$ inside a star. For a star in quasi-static (slowly evolving) equilibrium, the energy generated per unit volume includes both nuclear energy generation $\\epsilon$ and gravitational thermodynamics (entropy changes $T \\frac{ds}{dt}$). The factor $4\\pi r^2 \\rho$ converts this per-mass energy change to a radial derivative.",
+        "conceptual_definition": "This equation describes the radial gradient of luminosity within a star undergoing slow, quasi-static evolution. It states that the change in energy flow is sourced by the net energy generation rate per unit mass, which includes both nuclear fusion and thermodynamic changes due to contraction or expansion.",
         "intuitive_summary": "The change in a star's brightness at any radial layer is determined by the balance between nuclear energy production and the heat absorbed or released during slow expansion or contraction."
     },
     "hamiltonian-operator-identity-1-5b14c9cf-2c83c65a": {
@@ -1123,8 +1093,8 @@
         ]
     },
     "maxwell-static-limits": {
-        "title": "Static Limits of Maxwell's Equations",
-        "equation": "\\nabla \\times \\mathbf{E} \\to 0, \\quad \\nabla \\times \\mathbf{B} \\to \\mu_0 \\mathbf{J}",
+        "title": "Static Limits of Maxwell's Equations (Electrostatics and Magnetostatics)",
+        "equation": "\\begin{aligned} \\nabla \\cdot \\mathbf{E} &= \\frac{\\rho}{\\epsilon_0} \\\\ \\nabla \\cdot \\mathbf{B} &= 0 \\\\ \\nabla \\times \\mathbf{E} &= 0 \\\\ \\nabla \\times \\mathbf{B} &= \\mu_0 \\mathbf{J} \\end{aligned}",
         "parent_formula_id": "ampere-maxwell-law-with-bound-currents",
         "derivation_type": "LIMIT_CASE",
         "constraints": {
@@ -1134,54 +1104,103 @@
         "related_formula_ids": [
             "ampere-maxwell-law-with-bound-currents"
         ],
-        "conceptual_definition": "The steady-state or static limits of Maxwell's equations govern electromagnetic phenomena when charge distributions and currents are non-varying in time.",
-        "intuitive_summary": "Under static conditions where fields do not change over time, Faraday's law reveals that the electric field is irrotational (curl-free), while Ampère's law shows magnetic fields are generated purely by steady electric current density.",
-        "interpretation": "In the static limit, the induced electric field from changing magnetic fields vanishes ( \n\\nabla $\\times \\mathbf{E} = 0), allowing the electric field to be represented as the gradient of a scalar electrostatic potential ( \\mathbf{E} = - \\nabla V). Simultaneously, the displacement current term vanishes, causing the curl of the magnetic field to depend exclusively on static current density ( \\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J}$).",
-        "symmetry_origin": "Originates from time-translation invariance ($\\partial / \\partial t = 0$) and local gauge symmetry under steady current distributions.",
-        "limits_and_boundary": "Valid in non-radiating, low-frequency, or zero-frequency steady-state electrodynamics where inductive and displacement currents are negligible.",
+        "conceptual_definition": "The static limits of Maxwell's equations, which form the basis of electrostatics and magnetostatics, describe electric and magnetic fields under steady-state conditions where charge distributions and currents do not vary in time.",
+        "intuitive_summary": "In a static world with no changing fields, electric fields originate from charges and are curl-free, while magnetic fields are divergenceless and curl around steady currents.",
+        "interpretation": "The static limit is defined by setting all time derivatives to zero ($ \\partial / \\partial t = 0 $). This simplifies the full Maxwell's equations by decoupling the electric and magnetic fields. Faraday's law of induction, $ \\nabla \\times \\mathbf{E} = -\\partial \\mathbf{B} / \\partial t $, becomes $ \\nabla \\times \\mathbf{E} = 0 $, which implies the electrostatic field is conservative and can be expressed as the negative gradient of a scalar potential, $ \\mathbf{E} = -\\nabla V $. The Ampère-Maxwell law, $ \\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\partial \\mathbf{E} / \\partial t $, reduces to Ampère's circuital law, $ \\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} $, where the magnetic field is generated solely by steady currents. The two Gauss's laws, $ \\nabla \\cdot \\mathbf{E} = \\rho / \\epsilon_0 $ and $ \\nabla \\cdot \\mathbf{B} = 0 $, remain unchanged as they do not contain time derivatives.",
+        "symmetry_origin": "These equations manifest from imposing time-translation invariance on the full Maxwell's equations, reflecting a system in a steady state. The underlying gauge and Lorentz symmetries of electromagnetism are still present but simplify in this non-dynamical limit. For example, the static condition simplifies the gauge transformations for the potentials.",
+        "limits_and_boundary": "1. This limit applies when all time derivatives of the fields and their sources are zero ($ \\partial / \\partial t = 0 $), corresponding to the zero-frequency ($ \\omega \\to 0 $) limit of electrodynamics.\n2. It is valid for non-radiating systems where phenomena like electromagnetic waves, inductive coupling, and displacement currents are absent or negligible.\n3. The decoupling of electric and magnetic phenomena in this limit allows for the separate and simpler treatment of electrostatics (concerning static charges and electric fields) and magnetostatics (concerning steady currents and magnetic fields).",
         "unit_system": "SI",
-        "status": "published",
-        "semantic_variables": {}
-    },
-    "ampere-maxwell-law-with-bound-currents": {
-        "title": "Ampere-Maxwell law with free and bound currents",
-        "equation": "\\nabla \\times \\mathbf{B} = \\mu_0(\\mathbf{J}_f + \\mathbf{J}_b)",
-        "conceptual_definition": "The Ampere-Maxwell law, in its generalized form presented here, establishes a fundamental relationship between magnetic fields and the currents that generate them. It states that the curl of the magnetic field ( \n\\nabla $imes \\bf{B}) is directly proportional to the total current density flowing through a surface, which includes both free currents (\\bf{J}_f) and bound currents (\\bf{J}_b). This law is one of the four Maxwell's equations, forming the bedrock of classical electromagnetism and describing how electric and magnetic fields are generated and interact.",
-        "intuitive_summary": "Magnetic fields curl around total currents, whether those currents are freely moving charges or internal molecular currents within materials.",
-        "interpretation": "The equation \n\\nabla $imes$ extbf{B} = $\\boldsymbol{ u}_0$(extbf{J}_f + extbf{J}_b) relates the circulation of the magnetic field $\\bf{B}$ (represented by its curl, $\\nabla imes \\bf{B}) to the total current density. The term extbf{J}_f represents the density of free currents, which are currents due to the motion of charges that are not bound to atoms, such as the current in a wire or electron beams. The term extbf{J}_b represents the density of bound currents, which arise from the alignment or motion of microscopic current loops within materials, such as the orbital or spin magnetic moments of electrons in a magnetized substance. \\boldsymbol{$u}_0$is the permeability of free space, a fundamental constant that quantifies how easily magnetic fields can permeate a vacuum. This equation signifies that both free and bound currents act as sources for the magnetic field, and the total current density dictates the strength and direction of the magnetic field's circulation.",
-        "symmetry_origin": "This equation is one of Maxwell's equations and is derived from empirical observations and theoretical considerations of electromagnetism. It extends Ampere's Law by incorporating the effects of bound currents, which are crucial for understanding magnetism in materials. It is invariant under Lorentz transformations, highlighting its relativistic nature.",
-        "limits_and_boundary": "In a region devoid of magnetic materials or where bound currents are negligible (extbf{J}_b ightarrow 0), the equation reduces to Ampere's Law for free currents: \n\\nabla $imes$ extbf{B} = $\\boldsymbol{ u}_0\\bf{J}_f$. In vacuum where there are no free charges or currents ($\\bf{J}_f$ = 0 and $\\bf{J}_b$ = 0), the curl of the magnetic field is zero, implying that static magnetic fields in vacuum must be divergence-free (consistent with $\\nabla imes \\bf{B} = 0 if there are no currents). However, this equation is particularly important in the presence of magnetic materials where extbf{J}_b is non-zero.",
         "status": "platinum",
         "semantic_variables": {
-            "\\nabla \\times \\mathbf{B}": {
-                "name": "Curl of Magnetic Field",
+            "\\nabla \\cdot": {
+                "name": "Divergence Operator",
                 "type": "operator",
-                "unit": "T/m",
-                "description": "The curl of the magnetic field vector extbf{B}. It quantifies the circulation of the magnetic field at a point in space. A non-zero curl indicates the presence of currents."
+                "unit": "m^{-1}",
+                "description": "A vector operator that measures the magnitude of a vector field's source or sink at a given point."
             },
-            "\\boldsymbol{\\nu}_0": {
-                "name": "Permeability of Free Space",
-                "type": "constant",
-                "unit": "T m / A",
-                "description": "A fundamental physical constant representing the ability of a vacuum to support the formation of a magnetic field. It relates magnetic field strength to electric current."
+            "\\nabla \\times": {
+                "name": "Curl Operator",
+                "type": "operator",
+                "unit": "m^{-1}",
+                "description": "A vector operator that describes the infinitesimal circulation of a vector field at a point."
             },
-            "\\textbf{J}_f": {
-                "name": "Free Current Density",
+            "\\mathbf{E}": {
+                "name": "Electric Field",
                 "type": "variable",
-                "unit": "A/m^2",
-                "description": "The density of free currents, which are the currents due to the net motion of free charges (e.g., electrons in a conductor). This is the current that can be directly measured by an ammeter."
-            },
-            "\\textbf{J}_b": {
-                "name": "Bound Current Density",
-                "type": "variable",
-                "unit": "A/m^2",
-                "description": "The density of bound currents, which arise from the microscopic magnetic moments within materials. These are often associated with the orbital motion of electrons around atomic nuclei and electron spin. In a bulk material, these microscopic currents can sum up to a net macroscopic current density."
+                "unit": "V/m or N/C",
+                "description": "A vector field representing the electric force per unit charge exerted on a stationary test charge."
             },
             "\\mathbf{B}": {
                 "name": "Magnetic Field",
                 "type": "variable",
-                "unit": "T",
-                "description": "The magnetic field vector, representing the strength and direction of the magnetic field at a given point in space. It is measured in Tesla (T)."
+                "unit": "T (Tesla)",
+                "description": "A vector field describing the magnetic influence on moving electric charges, electric currents, and magnetic materials."
+            },
+            "\\rho": {
+                "name": "Electric Charge Density",
+                "type": "variable",
+                "unit": "C/m^3",
+                "description": "The amount of electric charge per unit volume."
+            },
+            "\\mathbf{J}": {
+                "name": "Electric Current Density",
+                "type": "variable",
+                "unit": "A/m^2",
+                "description": "The amount of charge per unit time flowing through a unit surface area."
+            },
+            "\\epsilon_0": {
+                "name": "Vacuum Permittivity",
+                "type": "constant",
+                "unit": "F/m",
+                "description": "A fundamental physical constant representing the capability of a vacuum to permit electric field lines."
+            },
+            "\\mu_0": {
+                "name": "Vacuum Permeability",
+                "type": "constant",
+                "unit": "H/m",
+                "description": "A fundamental physical constant representing the capability of a vacuum to support the formation of a magnetic field."
+            }
+        }
+    },
+    "ampere-maxwell-law-with-bound-currents": {
+        "title": "Ampère's Law in Matter (Magnetostatic Form)",
+        "equation": "\\nabla \\times \\mathbf{B} = \\mu_0 (\\mathbf{J}_f + \\mathbf{J}_b)",
+        "conceptual_definition": "In magnetostatics, Ampère's law in matter states that the curl of the magnetic field $\\mathbf{B}$ is proportional to the total current density, which is the sum of the free current density $\\mathbf{J}_f$ and the bound current density $\\mathbf{J}_b$.",
+        "intuitive_summary": "Magnetic fields curl around total currents, whether those currents are from freely moving charges or from the microscopic atomic currents within a material.",
+        "interpretation": "The equation $ \\nabla \\times \\mathbf{B} = \\mu_0(\\mathbf{J}_f + \\mathbf{J}_b) $ relates the circulation of the magnetic field $ \\mathbf{B} $ at a point to the total current density at that point. The term $ \\mathbf{J}_f $ represents the density of free currents, such as electrons flowing in a wire, which can be directly measured. The term $ \\mathbf{J}_b $ represents the density of bound currents, which arise from the collective effect of microscopic magnetic dipoles (electron orbital motion and spin) within a material when it becomes magnetized. The constant $ \\mu_0 $ is the vacuum permeability. This law shows that both macroscopic charge transport and microscopic atomic phenomena act as sources for the magnetic field in matter.",
+        "symmetry_origin": "This equation is the magnetostatic limit of the full Ampere-Maxwell law, and as such, it respects time-translation invariance ($ \\partial / \\partial t = 0 $). It is also invariant under spatial rotations. The equation implies the conservation of steady currents, $ \\nabla \\cdot (\\mathbf{J}_f + \\mathbf{J}_b) = 0 $, since the divergence of a curl is always zero.",
+        "limits_and_boundary": "1. In vacuum or in non-magnetic materials, the magnetization is zero, so the bound current density vanishes ($ \\mathbf{J}_b = \\nabla \\times \\mathbf{M} = 0 $). The equation then simplifies to the standard Ampère's law for free currents: $ \\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J}_f $.\n2. In a region with no currents of any kind ($ \\mathbf{J}_f = 0 $ and $ \\mathbf{J}_b = 0 $), the curl of the magnetic field is zero ($ \\nabla \\times \\mathbf{B} = 0 $), meaning the field is irrotational.\n3. This equation is strictly valid only for magnetostatics. It does not include Maxwell's displacement current term ($ \\mu_0 \\epsilon_0 \\partial \\mathbf{E} / \\partial t $), and therefore does not describe phenomena involving time-varying electric fields, such as electromagnetic waves.",
+        "status": "platinum",
+        "semantic_variables": {
+            "\\nabla \\times": {
+                "name": "Curl Operator",
+                "type": "operator",
+                "unit": "m^{-1}",
+                "description": "A vector operator that describes the infinitesimal circulation of a vector field at a point."
+            },
+            "\\mathbf{B}": {
+                "name": "Magnetic Field",
+                "type": "variable",
+                "unit": "T (Tesla)",
+                "description": "The fundamental magnetic field vector, representing the magnetic influence in a region of space."
+            },
+            "\\mu_0": {
+                "name": "Vacuum Permeability",
+                "type": "constant",
+                "unit": "H/m",
+                "description": "A fundamental physical constant representing the ability of a vacuum to support the formation of a magnetic field."
+            },
+            "\\mathbf{J}_f": {
+                "name": "Free Current Density",
+                "type": "variable",
+                "unit": "A/m^2",
+                "description": "The density of current due to the flow of free charges, such as electrons in a conductor."
+            },
+            "\\mathbf{J}_b": {
+                "name": "Bound Current Density",
+                "type": "variable",
+                "unit": "A/m^2",
+                "description": "The effective current density arising from the spatial variation of magnetization within a material, defined as $ \\mathbf{J}_b = \\nabla \\times \\mathbf{M} $."
             }
         }
     },
@@ -1501,18 +1520,18 @@
     "taylor-expansion-of-square-root": {
         "title": "Taylor Expansion of Square Root",
         "equation": "\\sqrt{1 + x} \\approx 1 + \\frac{1}{2}x - \\frac{1}{8}x^2",
-        "conceptual_definition": "The formula represents the first few terms of the Taylor expansion of the function $f(x) = \\sqrt{1+x}$ around the point $x=0$. The Taylor expansion is a method of approximating a function as an infinite sum of terms calculated from the function's derivatives at a single point. This particular expansion provides a polynomial approximation for the square root function, which is useful when direct calculation is complex or when a simpler form is needed for analysis, especially for small values of $x.",
+        "conceptual_definition": "The formula provides a second-order polynomial approximation for the function $f(x) = \\sqrt{1+x}$ around $x=0$, derived from its Taylor series expansion. This approximation is highly accurate for values of $x$ much smaller than 1.",
         "intuitive_summary": "For small deviations $x$ from unity, the square root of $1+x$ can be closely approximated by a simple polynomial.",
-        "interpretation": "The equation $\\sqrt{1 + x} \\approx 1 + \\frac{1}{2} x - \\frac{1}{8} x^2$ approximates the square root of $(1+x)$ using a Taylor series expansion. The first term, $1$, is the value of the function at $x=0$. The second term, $\\frac{1}{2}x$, represents the linear approximation, where the slope of the tangent line at $x=0$ is $\\frac{1}{2}$. The third term, $-\\frac{1}{8} x^2$, is the quadratic correction term, which refines the approximation by accounting for the curvature of the function. As $x$ becomes smaller, the higher-order terms in the Taylor series (which are omitted here) become increasingly negligible, leading to a more accurate approximation. The variable $x$ here is dimensionless, representing a fractional change or deviation from 1.",
-        "symmetry_origin": "This formula originates from the mathematical technique of Taylor series expansion, which is derived from calculus. The derivation involves taking successive derivatives of the function $f(x) = \\sqrt{1+x}$ with respect to $x$ and evaluating them at a specific point (in this case, $x=0$). The general form of the Taylor series of a function $f(x)$ around a point $a$ is given by: $f(x) = f(a) + f'(a)(x-a) + \\frac{f''(a)}{2!}$(x-a)^2 + $\\frac{f'''(a)}{3!}$(x-a)^3 + $\\dots For$f(x) = $\\sqrt{1+x}$ and $a=0$, we have $f(0) = 1$, $f'(x) = \\frac{1}{2\\sqrt{1+x} }$, so $f'(0) = \\frac{1}{2} , and$f''(x) = -$\\frac{1}{4}$(1+x)^{-3/2}, so $f''(0) = - \\frac{1}{4} . Plugging these into the Taylor series formula gives \\sqrt{1+x} \\approx 1 + \\frac{1}{2} x + \\frac{-1/4}{2!}$ x^2$= 1 + \\frac{1}{2} x - \\frac{1}{8}$ x^2.",
-        "limits_and_boundary": "As $x \\to 0$, the approximation becomes exact: $\\lim_{x$o 0} $\\sqrt{1+x}$ = 1 $and \\lim_{x$o 0} (1 + $\\frac{1}{2}$ x - \\frac{1}{8} x^2$) = 1$. Thus, \\sqrt{1+x} \\approx 1 + \\frac{1}{2} x - \\frac{1}{8}$x^2$ holds true for $x$ close to zero. As $x \\to \\infty$, the approximation breaks down. The left side $\\sqrt{1+x}$ grows like $x^{1/2}$, while the right side $1 + \\frac{1}{2} x - \\frac{1}{8}$ x^2$is dominated by the$- \\frac{1}{8} x^2 term, which grows as $x^2$ and becomes negative for large $x$. This indicates the Taylor expansion is only valid for a limited range of $x$ around the expansion point ($x=0).",
+        "interpretation": "The equation $\\sqrt{1 + x} \\approx 1 + \\frac{1}{2} x - \\frac{1}{8} x^2$ approximates the square root of $(1+x)$ using a Taylor series expansion. The first term, $1$, is the value of the function at $x=0$. The second term, $\\frac{1}{2}x$, represents the linear approximation from the tangent line at $x=0$. The third term, $-\\frac{1}{8} x^2$, is the quadratic correction, which accounts for the function's curvature. As $x$ becomes smaller, higher-order terms become negligible, making this a very accurate approximation for $|x| \\ll 1$.",
+        "symmetry_origin": "This formula is a direct result of applying Taylor's theorem from calculus, which expresses a function as an infinite sum of terms based on its derivatives at a single point. The approximation arises from truncating the series for $f(x) = \\sqrt{1+x}$ around $x=0$ after the quadratic term. There are no direct physical symmetries involved; its origin is purely mathematical, based on the analytic properties of the function.",
+        "limits_and_boundary": "1. In the limit as $x \\to 0$, the approximation becomes exact, as all higher-order terms vanish faster than the included terms.\n2. The approximation is valid for $|x| < 1$, which is the radius of convergence for the binomial series of $(1+x)^{1/2}$.\n3. As $x \\to \\infty$, the approximation fails completely; the function grows as $\\sqrt{x}$, while the quadratic polynomial approximation grows as $-x^2$.",
         "status": "platinum",
         "semantic_variables": {
             "x": {
-                "name": "Variable Parameter",
+                "name": "Dimensionless Parameter",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The independent variable in the expansion. It represents a small deviation or perturbation from a reference value of 1. In many physical contexts, this $x$ might represent a small strain, a relative change in mass, or a small velocity relative to the speed of light, which is then dimensionless."
+                "description": "A small, dimensionless variable representing a fractional deviation from 1. In physics, it often represents ratios like $v/c$ or small strains."
             }
         },
         "subcomponents": [
@@ -1739,7 +1758,8 @@
         "status": "published",
         "parent_formula_id": "time-derivative-generalized-force-hamiltonian",
         "subcomponents": [],
-        "id": "canonical-coordinate-momentum-pair-b79cd060"
+        "id": "canonical-coordinate-momentum-pair-b79cd060",
+        "intuitive_summary": ""
     },
     "functional-integration-measure-100e0707": {
         "title": "Functional Integration Measure",
@@ -1763,7 +1783,8 @@
         "status": "published",
         "parent_formula_id": "path-integral-partition-function",
         "subcomponents": [],
-        "id": "functional-integration-measure-100e0707"
+        "id": "functional-integration-measure-100e0707",
+        "intuitive_summary": ""
     },
     "timelike-spacetime-interval-component-0b7e667f": {
         "title": "Timelike Spacetime Interval Component",
@@ -1793,43 +1814,51 @@
         "status": "published",
         "parent_formula_id": "flrw-spacetime-identity-b8a4fdcc",
         "subcomponents": [],
-        "id": "timelike-spacetime-interval-component-0b7e667f"
+        "id": "timelike-spacetime-interval-component-0b7e667f",
+        "intuitive_summary": ""
     },
     "infinitesimal-spacetime-interval-element-db330970": {
-        "title": "Infinitesimal Spacetime Interval Element",
+        "title": "Infinitesimal Spacetime Interval",
         "description": "This expression represents the infinitesimal squared distance or interval element between two infinitesimally separated events in spacetime, defined by the metric tensor. It is a fundamental component in defining spacetime geometry and causality.",
-        "conceptual_definition": "In General Relativity, the metric tensor $g_{\\mu u}$ defines the geometry of spacetime. This term, $g_{\\mu u} dx^\\mu dx^ u$, is the fundamental building block for calculating spacetime intervals, which are invariant under coordinate transformations. It generalizes the concept of distance from Euclidean space to curved spacetime, incorporating both spatial and temporal separation, and is often denoted as $ds^2.",
-        "interpretation": "This quantity, $ds^2$, determines the nature of the separation between two events. If $ds^2 > 0$, the interval is timelike, representing a possible path for a massive particle. If $ds^2 < 0$, it's spacelike, meaning the events are causally disconnected. If $ds^2 = 0$, it's a null or lightlike interval, representing the path of light. It is crucial for defining proper time along timelike paths and proper distance along spacelike paths, and forms the core of geodesic equations.",
-        "limits_and_boundary": "This expression is inherently an infinitesimal quantity, representing the local geometry at a point in spacetime. Its validity extends across all regions where the principles of General Relativity are applicable, provided the metric tensor $g_{\\mu u}$ is well-defined and non-degenerate. It forms the basis for integrating along paths to find finite spacetime intervals.",
-        "symmetry_origin": "The form of this expression is a direct consequence of the principle of general covariance, which states that the laws of physics must take the same form in all coordinate systems. It also embodies local Lorentz invariance, ensuring that locally, spacetime appears flat and obeys special relativistic principles.",
+        "conceptual_definition": "The infinitesimal spacetime interval, $\\mathrm{d}s^2$, is the invariant measure of separation between two infinitesimally close events in spacetime. It is defined by the metric tensor $g_{\\mu\\nu}$, which encodes the geometry of spacetime, and the coordinate separation $\\mathrm{d}x^\\mu$.",
+        "interpretation": "The quantity $\\mathrm{d}s^2$ is an invariant scalar that characterizes the causal relationship between two infinitesimally separated events. Its sign depends on the metric signature convention: in the $(+,-,-,-)$ convention, $\\mathrm{d}s^2 > 0$ is a timelike interval (causally connected, traversable by massive objects), $\\mathrm{d}s^2 < 0$ is a spacelike interval (causally disconnected), and $\\mathrm{d}s^2 = 0$ is a lightlike or null interval (traversable only by massless particles like photons). The interval is fundamental for calculating proper time ($\\mathrm{d}\\tau^2 = \\mathrm{d}s^2/c^2$ for timelike paths) and for deriving the geodesic equation, which describes the paths of freely falling particles.",
+        "limits_and_boundary": "1. In the limit of flat spacetime (Minkowski space), the metric tensor becomes $g_{\\mu\\nu} \\to \\eta_{\\mu\\nu} = \\mathrm{diag}(1, -1, -1, -1)$, and the interval reduces to the one from Special Relativity: $\\mathrm{d}s^2 = c^2 \\mathrm{d}t^2 - \\mathrm{d}x^2 - \\mathrm{d}y^2 - \\mathrm{d}z^2$.\n2. The expression is local and defines the geometry at a point. To find the finite interval between two distant points A and B, one must integrate along a specific path $\\gamma$: $s = \\int_A^B \\sqrt{|g_{\\mu\\nu} \\frac{\\mathrm{d}x^\\mu}{\\mathrm{d}\\lambda} \\frac{\\mathrm{d}x^\\nu}{\\mathrm{d}\\lambda}|} \\mathrm{d}\\lambda$.",
+        "symmetry_origin": "The form of this expression is a direct consequence of the principle of general covariance, which states that the laws of physics must take the same form in all coordinate systems. Its invariance under coordinate transformations makes it a scalar. It also embodies local Lorentz invariance, ensuring that in an infinitesimal region, spacetime appears flat and obeys the principles of Special Relativity.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity-fundamentals",
         "semantic_variables": {
+            "\\mathrm{d}s^2": {
+                "name": "Squared Spacetime Interval",
+                "type": "variable",
+                "unit": "m^2",
+                "description": "The infinitesimal squared invariant interval between two spacetime events. Its value is independent of the observer's coordinate system."
+            },
             "g_{\\mu\\nu}": {
-                "name": "g_{\\mu\\nu}",
+                "name": "Metric Tensor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The metric tensor, a symmetric rank-2 tensor that defines the geometry of spacetime. It has units of (length) ^2 and determines the infinitesimal distance between points."
+                "description": "A symmetric rank-2 tensor that defines the geometry of spacetime. It functions as a generalized inner product for four-vectors, determining the local structure of spacetime."
             },
-            "dx^\\mu": {
-                "name": "dx^\\mu",
+            "\\mathrm{d}x^\\mu": {
+                "name": "Infinitesimal Coordinate Displacement",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The infinitesimal displacement four-vector in spacetime, representing an infinitesimal change in the \\mu-th coordinate. In SI units, its components typically have units of meters (for spatial coordinates) or seconds (for the temporal coordinate, often multiplied by the speed of light to have consistent units of length)."
+                "unit": "m",
+                "description": "A four-vector representing the infinitesimal change in spacetime coordinates $(\\mathrm{d}x^0, \\mathrm{d}x^1, \\mathrm{d}x^2, \\mathrm{d}x^3)$. The time component $x^0$ is often set to $ct$ to ensure consistent units of length across all components."
             },
-            "dx^\\nu": {
-                "name": "dx^\\nu",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The infinitesimal displacement four-vector in spacetime, representing an infinitesimal change in the \\nu-th coordinate. In SI units, its components typically have units of meters (for spatial coordinates) or seconds (for the temporal coordinate, often multiplied by the speed of light to have consistent units of length)."
+            "\\mu, \\nu": {
+                "name": "Spacetime Indices",
+                "type": "index",
+                "unit": "n/a",
+                "description": "Indices ranging from 0 to 3, representing the time (0) and spatial (1, 2, 3) dimensions. The repeated indices imply summation according to the Einstein summation convention."
             }
         },
-        "equation": "g_{\\mu\\nu} dx^\\mu dx^\\nu",
-        "status": "published",
+        "equation": "\\mathrm{d}s^2 = g_{\\mu\\nu} \\mathrm{d}x^\\mu \\mathrm{d}x^\\nu",
+        "status": "platinum",
         "parent_formula_id": "boost-stability-e46f8863",
         "subcomponents": [],
-        "id": "infinitesimal-spacetime-interval-element-db330970"
+        "id": "infinitesimal-spacetime-interval-element-db330970",
+        "intuitive_summary": "The spacetime interval is a generalization of distance to four-dimensional spacetime that all observers agree on, regardless of their motion."
     },
     "mass-density-to-four-thirds-power-6f8a0645": {
         "title": "Mass Density to Four-Thirds Power",
@@ -1853,7 +1882,8 @@
         "status": "published",
         "parent_formula_id": "degeneracy-pressure-c86abffa",
         "subcomponents": [],
-        "id": "mass-density-to-four-thirds-power-6f8a0645"
+        "id": "mass-density-to-four-thirds-power-6f8a0645",
+        "intuitive_summary": ""
     },
     "bloch-wave-phase-factor-fec21ae9": {
         "title": "Bloch Wave Phase Factor",
@@ -1895,7 +1925,8 @@
         "status": "published",
         "parent_formula_id": "bloch-translation-phase-relation-b6b07bd9",
         "subcomponents": [],
-        "id": "bloch-wave-phase-factor-fec21ae9"
+        "id": "bloch-wave-phase-factor-fec21ae9",
+        "intuitive_summary": ""
     },
     "index-range-definition-for-3d-components-ea73928d": {
         "title": "Index Range Definition for 3D Components",
@@ -1919,7 +1950,8 @@
         "status": "published",
         "parent_formula_id": "tensor-mapping-48d27fd0",
         "subcomponents": [],
-        "id": "index-range-definition-for-3d-components-ea73928d"
+        "id": "index-range-definition-for-3d-components-ea73928d",
+        "intuitive_summary": ""
     },
     "certain-joint-probability-of-events-77867fa6": {
         "title": "Certain Joint Probability of Events",
@@ -1961,7 +1993,8 @@
         "status": "published",
         "parent_formula_id": "math-rule-1d635de5",
         "subcomponents": [],
-        "id": "certain-joint-probability-of-events-77867fa6"
+        "id": "certain-joint-probability-of-events-77867fa6",
+        "intuitive_summary": ""
     },
     "temperature-deviation-from-curie-temperature-2ead1185": {
         "title": "Temperature Deviation from Curie Temperature",
@@ -1991,7 +2024,8 @@
         "status": "published",
         "parent_formula_id": "curie-weiss-law-d7f2cc2b",
         "subcomponents": [],
-        "id": "temperature-deviation-from-curie-temperature-2ead1185"
+        "id": "temperature-deviation-from-curie-temperature-2ead1185",
+        "intuitive_summary": ""
     },
     "hubble-parameter-component-from-cosmological-constant-2d400a3b": {
         "title": "Hubble Parameter Component from Cosmological Constant",
@@ -2027,7 +2061,8 @@
         "status": "published",
         "parent_formula_id": "future-limit-8ea1f198",
         "subcomponents": [],
-        "id": "hubble-parameter-component-from-cosmological-constant-2d400a3b"
+        "id": "hubble-parameter-component-from-cosmological-constant-2d400a3b",
+        "intuitive_summary": ""
     },
     "four-velocity-component-6fcd1b1a": {
         "title": "Four-Velocity Component",
@@ -2051,7 +2086,8 @@
         "status": "published",
         "parent_formula_id": "lagrangian-relativistic-particle-curved-spacetime",
         "subcomponents": [],
-        "id": "four-velocity-component-6fcd1b1a"
+        "id": "four-velocity-component-6fcd1b1a",
+        "intuitive_summary": ""
     },
     "distance-normalized-by-10-parsecs-9734f52c": {
         "title": "Distance Normalized by 10 Parsecs",
@@ -2075,61 +2111,51 @@
         "status": "published",
         "parent_formula_id": "10-parsec-base-8408e63e",
         "subcomponents": [],
-        "id": "distance-normalized-by-10-parsecs-9734f52c"
+        "id": "distance-normalized-by-10-parsecs-9734f52c",
+        "intuitive_summary": ""
     },
     "geodesic-equation-affine-parameter-358187d9": {
         "title": "Geodesic Equation (Affine Parameter)",
         "description": "This equation describes the path of a free particle in curved spacetime, representing its 'straightest possible' trajectory.",
-        "conceptual_definition": "The geodesic equation is the relativistic generalization of Newton's first law of motion, stating that an object not subject to external forces will follow a geodesic. In general relativity, gravity is not a force but a manifestation of spacetime curvature, and particles move along geodesics in this curved spacetime. This equation defines these paths as those that extremize the proper time between two events.",
-        "interpretation": "The first term, $\\frac{d^2x^\\mu}{d\\tau^2}$, represents the four-acceleration of the particle. The second term, involving the Christoffel symbols $\\Gamma$^$\\mu$_{$\\alpha \\beta }, accounts for the 'force' due to the curvature of spacetime, effectively guiding the particle along its geodesic. The equation states that in the absence of non-gravitational forces, the four-acceleration of a particle is entirely determined by the spacetime curvature, ensuring it follows the 'straightest' path available in the curved geometry.",
-        "limits_and_boundary": "This equation is fundamental to general relativity and applies to test particles (particles whose mass is negligible compared to the source of the gravitational field). In the limit of flat spacetime (where $\\Gamma$^$\\mu$_{$\\alpha \\beta } = 0), it reduces to \\frac{d^2x^\\mu}{d\\tau^2} = 0, which describes uniform motion in a straight line, consistent with Newton's first law. It requires a differentiable manifold and a metric tensor.",
-        "symmetry_origin": "The geodesic equation can be derived from a variational principle, specifically by minimizing the proper time (or proper length) between two points in spacetime. This principle is analogous to Fermat's principle of least time in optics. Symmetries of the spacetime, represented by Killing vectors, lead to conserved quantities along geodesics, such as energy and angular momentum.",
+        "conceptual_definition": "The geodesic equation describes the path of a free-falling particle in curved spacetime, generalizing Newton's first law of motion. It defines the 'straightest possible' trajectory an object follows when only subject to gravity, which is interpreted as the curvature of spacetime.",
+        "interpretation": "The term $\\frac{\\mathrm{d}^2x^\\mu}{\\mathrm{d}\\tau^2}$ represents the four-acceleration of the particle along its world line. The second term, $\\Gamma^\\mu_{\\alpha\\beta} \\frac{\\mathrm{d}x^\\alpha}{\\mathrm{d}\\tau} \\frac{\\mathrm{d}x^\\beta}{\\mathrm{d}\\tau}$, involves the Christoffel symbols $\\Gamma^\\mu_{\\alpha\\beta}$ and accounts for the fictitious 'gravitational force' arising from spacetime curvature. The equation sets the covariant acceleration to zero, meaning that in the absence of non-gravitational forces, a particle's path is solely determined by the geometry of spacetime, following the straightest possible line (a geodesic).",
+        "limits_and_boundary": "1. **Flat Spacetime Limit**: In the absence of gravity (i.e., in flat Minkowski spacetime), all Christoffel symbols vanish, $\\Gamma^\\mu_{\\alpha\\beta} = 0$. The equation simplifies to $\\frac{\\mathrm{d}^2x^\\mu}{\\mathrm{d}\\tau^2} = 0$, which describes motion in a straight line at a constant velocity, recovering Newton's first law.\n2. **Non-Relativistic Limit**: In the weak-field, low-velocity limit ($v \\ll c$), the spatial components of the geodesic equation reduce to Newton's law of universal gravitation, $\\frac{\\mathrm{d}^2\\mathbf{x}}{\\mathrm{d}t^2} = -\\nabla\\Phi$, where $\\Phi$ is the Newtonian gravitational potential.\n3. **Boundary Conditions**: The equation is a second-order differential equation requiring two initial conditions, typically the initial position $x^\\mu(0)$ and initial four-velocity $\\frac{\\mathrm{d}x^\\mu}{\\mathrm{d}\\tau}(0)$, to determine a unique geodesic.",
+        "symmetry_origin": "The geodesic equation is derived from the principle of extremal action, by finding the path that extremizes the proper time $\\int \\mathrm{d}\\tau$ between two spacetime events. This is a direct consequence of the principle of general covariance. If the spacetime metric possesses a continuous symmetry (isometry), described by a Killing vector field, Noether's theorem guarantees a corresponding conserved quantity (e.g., energy, momentum) along the geodesic.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity",
         "semantic_variables": {
             "x^\\mu": {
-                "name": "x^\\mu",
+                "name": "Spacetime four-position",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Spacetime coordinates (e.g., (ct, x, y, z)) in meters (m)."
+                "unit": "m",
+                "description": "The four-vector representing the coordinates $(ct, x, y, z)$ of an event in spacetime."
             },
             "\\tau": {
-                "name": "\\tau",
+                "name": "Proper time",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Proper time, the time measured by a clock moving with the particle, in seconds (s)."
+                "unit": "s",
+                "description": "An affine parameter along a timelike world line, representing the time measured by a clock moving with the particle."
             },
             "\\Gamma^\\mu_{\\alpha\\beta}": {
-                "name": "\\Gamma^\\mu_{\\alpha\\beta}",
+                "name": "Christoffel symbol",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Christoffel symbols of the second kind, representing the connection coefficients of the spacetime metric, in inverse meters (m^-1)."
-            },
-            "\\frac{dx^\\mu}{d\\tau}": {
-                "name": "\\frac{dx^\\mu}{d\\tau}",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Four-velocity of the particle, representing its velocity in spacetime, in meters per second (m/s)."
-            },
-            "\\frac{d^2x^\\mu}{d\\tau^2}": {
-                "name": "\\frac{d^2x^\\mu}{d\\tau^2}",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Four-acceleration of the particle, representing its acceleration in spacetime, in meters per second squared (m/s^2)."
+                "unit": "m^{-1}",
+                "description": "The connection coefficients derived from the spacetime metric tensor, which describe the effects of spacetime curvature."
             },
             "\\mu, \\alpha, \\beta": {
-                "name": "\\mu, \\alpha, \\beta",
-                "type": "variable",
+                "name": "Spacetime indices",
+                "type": "index",
                 "unit": "dimensionless",
-                "description": "Spacetime indices, ranging from 0 to 3 (or 1 to 4), representing the components of vectors and tensors, dimensionless."
+                "description": "Indices that range from 0 to 3, representing the components of four-vectors and tensors in spacetime."
             }
         },
-        "equation": "\\frac{d^2x^\\mu}{d\\tau^2} + \\Gamma^\\mu_{\\alpha\\beta} \\frac{dx^\\alpha}{d\\tau} \\frac{dx^\\beta}{d\\tau} = 0",
-        "status": "published",
+        "equation": "\\frac{\\mathrm{d}^2x^\\mu}{\\mathrm{d}\\tau^2} + \\Gamma^\\mu_{\\alpha\\beta} \\frac{\\mathrm{d}x^\\alpha}{\\mathrm{d}\\tau} \\frac{\\mathrm{d}x^\\beta}{\\mathrm{d}\\tau} = 0",
+        "status": "platinum",
         "parent_formula_id": "the-geodesic-equation-358187d9",
         "subcomponents": [],
-        "id": "geodesic-equation-affine-parameter-358187d9"
+        "id": "geodesic-equation-affine-parameter-358187d9",
+        "intuitive_summary": "This equation describes the path of a free particle in curved spacetime, representing its 'straightest possible' trajectory."
     },
     "quantum-entanglement-entropy-3283607b": {
         "title": "Quantum Entanglement Entropy",
@@ -2153,7 +2179,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-3d86dd07",
         "subcomponents": [],
-        "id": "quantum-entanglement-entropy-3283607b"
+        "id": "quantum-entanglement-entropy-3283607b",
+        "intuitive_summary": ""
     },
     "infinitesimal-pressure-volume-work-703b8ff9": {
         "title": "Infinitesimal Pressure-Volume Work",
@@ -2189,7 +2216,8 @@
         "status": "published",
         "parent_formula_id": "adiabatic-temperature-gradient-rule-e6aaab5c",
         "subcomponents": [],
-        "id": "infinitesimal-pressure-volume-work-703b8ff9"
+        "id": "infinitesimal-pressure-volume-work-703b8ff9",
+        "intuitive_summary": ""
     },
     "normal-derivative-of-electric-potential-ac5fd979": {
         "title": "Normal Derivative of Electric Potential",
@@ -2219,7 +2247,8 @@
         "status": "published",
         "parent_formula_id": "flux-gradient-electric-field-enclosed-charge",
         "subcomponents": [],
-        "id": "normal-derivative-of-electric-potential-ac5fd979"
+        "id": "normal-derivative-of-electric-potential-ac5fd979",
+        "intuitive_summary": ""
     },
     "quantization-condition-for-phase-space-area-d83bda13": {
         "title": "Quantization Condition for Phase Space Area",
@@ -2249,7 +2278,8 @@
         "status": "published",
         "parent_formula_id": "area-quantization-103507df",
         "subcomponents": [],
-        "id": "quantization-condition-for-phase-space-area-d83bda13"
+        "id": "quantization-condition-for-phase-space-area-d83bda13",
+        "intuitive_summary": ""
     },
     "polar-angle-value-for-kerr-singularity-8222df31": {
         "title": "Polar Angle Value for Kerr Singularity",
@@ -2273,7 +2303,8 @@
         "status": "published",
         "parent_formula_id": "kerr-singularity-condition-7bee9eaf",
         "subcomponents": [],
-        "id": "polar-angle-value-for-kerr-singularity-8222df31"
+        "id": "polar-angle-value-for-kerr-singularity-8222df31",
+        "intuitive_summary": ""
     },
     "classical-poisson-bracket-of-field-and-conjugate-momentum-e20d7d81": {
         "title": "Classical Poisson Bracket of Field and Conjugate Momentum",
@@ -2333,7 +2364,8 @@
         "status": "published",
         "parent_formula_id": "exclusion-postulate-9fab4f17",
         "subcomponents": [],
-        "id": "classical-poisson-bracket-of-field-and-conjugate-momentum-e20d7d81"
+        "id": "classical-poisson-bracket-of-field-and-conjugate-momentum-e20d7d81",
+        "intuitive_summary": ""
     },
     "right-handed-neutrino-mass-vanishing-limit-d2ef087e": {
         "title": "Right-Handed Neutrino Mass Vanishing Limit",
@@ -2357,7 +2389,8 @@
         "status": "published",
         "parent_formula_id": "seesaw-origin-8443c598",
         "subcomponents": [],
-        "id": "right-handed-neutrino-mass-vanishing-limit-d2ef087e"
+        "id": "right-handed-neutrino-mass-vanishing-limit-d2ef087e",
+        "intuitive_summary": ""
     },
     "infinite-displacement-limit-c5b36054": {
         "title": "Infinite Displacement Limit",
@@ -2387,7 +2420,8 @@
         "status": "published",
         "parent_formula_id": "translation-operator-displacement",
         "subcomponents": [],
-        "id": "infinite-displacement-limit-c5b36054"
+        "id": "infinite-displacement-limit-c5b36054",
+        "intuitive_summary": ""
     },
     "relativistic-mass-76ee5dec": {
         "title": "Relativistic Mass",
@@ -2417,37 +2451,45 @@
         "status": "published",
         "parent_formula_id": "temporal-rate-326f6e6f",
         "subcomponents": [],
-        "id": "relativistic-mass-76ee5dec"
+        "id": "relativistic-mass-76ee5dec",
+        "intuitive_summary": ""
     },
     "path-integral-functional-measure-101d08bc": {
         "title": "Path Integral Functional Measure",
         "description": "Represents the integration over all possible paths a system can take in a path integral formulation.",
-        "conceptual_definition": "In quantum mechanics, the path integral formulation describes the amplitude for a particle to propagate from an initial state to a final state as a sum over all possible paths connecting these states. The term $\\int$\\mathcal{D}$x(t) represents the functional integral measure, which formally denotes this 'sum over all paths'. It is a generalization of ordinary integration to an infinite-dimensional space of functions (paths), essential for defining the path integral.",
-        "interpretation": "This symbol is not an ordinary Riemann or Lebesgue integral but a formal notation for integration over a space of functions, specifically the space of all possible trajectories $x(t)$ that a particle can follow between two spacetime points. It signifies the 'summing up' or 'integrating over' all such paths. While formally written, its rigorous mathematical definition often involves a limit of multi-dimensional integrals (e.g., via time-slicing or lattice regularization) to make it well-defined, especially in quantum field theory.",
-        "limits_and_boundary": "The functional integration is typically performed over all continuous paths $x(t)$ defined over a time interval $[t_i, t_f]$, subject to fixed boundary conditions $x(t_i) = x_i$ and $x(t_f) = x_f$. These boundary conditions are crucial for defining the specific physical process being described by the path integral, such as a particle propagating from point $x_i$ at time $t_i$ to point $x_f$ at time $t_f.",
-        "symmetry_origin": "The path integral formulation, including its measure, is intrinsically linked to the principle of least action and Lagrangian mechanics. For the path integral to be well-defined and physically meaningful, the measure $\\mathcal{D}x(t) must be chosen to be invariant under relevant symmetries of the underlying physical theory, such as time translation, spatial translation, or Lorentz invariance, depending on the context. This ensures consistency with conservation laws.",
+        "conceptual_definition": "The path integral functional measure represents the formal 'sum' over all possible classical paths a system can take between two points in spacetime. It is a generalization of standard integration to the infinite-dimensional space of functions (paths), forming the core of the Feynman path integral formulation of quantum mechanics.",
+        "interpretation": "The symbol $\\int \\mathcal{D}x(t)$ is not an ordinary Riemann or Lebesgue integral but a formal notation for integration over a function space, specifically the space of all possible trajectories $x(t)$ a particle can follow. It signifies a 'sum over all histories'. Rigorously, it is defined as a limit of a product of ordinary integrals over the particle's position at discrete time slices, $\\mathcal{D}x(t) \\propto \\lim_{N\\to\\infty} \\prod_{i=1}^{N-1} \\mathrm{d}x_i$, a procedure known as time-slicing, which is essential for calculations in quantum mechanics and quantum field theory.",
+        "limits_and_boundary": "1. **Boundary Conditions**: The integration is performed over the space of all paths $x(t)$ that connect a specified initial state $x_i$ at time $t_i$ to a final state $x_f$ at time $t_f$. That is, all paths must satisfy the boundary conditions $x(t_i) = x_i$ and $x(t_f) = x_f$.\n2. **Classical Limit**: In the classical limit where the action $S$ is much larger than the reduced Planck constant ($\\hbar \\to 0$), the path integral is dominated by the single path that extremizes the action. This is the principle of least action, and all other paths interfere destructively, recovering classical mechanics.\n3. **Mathematical Rigor**: The measure is formally defined via a limiting process, such as time-slicing or lattice regularization, which discretizes the path space into a high-dimensional integral that can be evaluated.",
+        "symmetry_origin": "The path integral formulation is built upon the principle of least action. The functional measure $\\mathcal{D}x(t)$ must be constructed to be invariant under the symmetries of the action. For example, in a Lorentz-invariant theory, the measure must respect Lorentz transformations. This invariance, as formalized by the Faddeev-Popov procedure in gauge theories, is crucial for ensuring that the quantum theory respects the classical symmetries and their associated conservation laws.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-mechanics",
         "semantic_variables": {
-            "x(t)": {
-                "name": "x(t)",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A specific path or trajectory of a particle in configuration space as a function of time, typically measured in meters (m)."
-            },
             "\\mathcal{D}x(t)": {
-                "name": "\\mathcal{D}x(t)",
+                "name": "Functional measure",
+                "type": "operator",
+                "unit": "formal",
+                "description": "The integration measure over the space of all possible paths $x(t)$. It is formally defined as a product of infinitesimal measures at each point in time and its units are typically absorbed into a normalization constant."
+            },
+            "x(t)": {
+                "name": "Path variable",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The functional measure, representing an infinitesimal 'volume element' in the infinite-dimensional space of all possible paths $x(t)$. It is a formal construct and is dimensionless."
+                "unit": "m",
+                "description": "A function representing a possible trajectory of a particle through configuration space over time."
+            },
+            "t": {
+                "name": "Time",
+                "type": "variable",
+                "unit": "s",
+                "description": "The time parameter along a given path."
             }
         },
         "equation": "\\int \\mathcal{D}x(t)",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "variational-link-45499374",
         "subcomponents": [],
-        "id": "path-integral-functional-measure-101d08bc"
+        "id": "path-integral-functional-measure-101d08bc",
+        "intuitive_summary": "It is a mathematical instruction to consider and sum up the contributions of every possible trajectory a particle could take."
     },
     "negative-ricci-curvature-for-timelike-observers-49b056c4": {
         "title": "Negative Ricci Curvature for Timelike Observers",
@@ -2483,7 +2525,8 @@
         "status": "published",
         "parent_formula_id": "timeline-limit-f7d93b75",
         "subcomponents": [],
-        "id": "negative-ricci-curvature-for-timelike-observers-49b056c4"
+        "id": "negative-ricci-curvature-for-timelike-observers-49b056c4",
+        "intuitive_summary": ""
     },
     "coordinate-time-definition-ded28a86": {
         "title": "Coordinate Time Definition",
@@ -2519,7 +2562,8 @@
         "status": "published",
         "parent_formula_id": "zero-connection-0bf66671",
         "subcomponents": [],
-        "id": "coordinate-time-definition-ded28a86"
+        "id": "coordinate-time-definition-ded28a86",
+        "intuitive_summary": ""
     },
     "quantum-angular-momentum-operator-component-84aa6e3d": {
         "title": "Quantum Angular Momentum Operator Component",
@@ -2561,36 +2605,46 @@
         "status": "published",
         "parent_formula_id": "path-topology-b8914488",
         "subcomponents": [],
-        "id": "quantum-angular-momentum-operator-component-84aa6e3d"
+        "id": "quantum-angular-momentum-operator-component-84aa6e3d",
+        "intuitive_summary": ""
     },
     "generalized-force-component-lagrangian-definition": {
         "id": "generalized-force-component-lagrangian-definition",
         "title": "Generalized Force Component (Lagrangian Definition)",
-        "equation": "F_i = \\frac{\\partial L}{\\partial q_i}",
-        "conceptual_definition": "This equation defines the $i$-th component of the generalized force, $F_i$, as the partial derivative of the system's Lagrangian $L$ with respect to the $i$-th generalized coordinate $q_i.",
-        "intuitive_summary": "It quantifies how the system's dynamics, encoded in the Lagrangian, 'pushes' or 'pulls' along a specific generalized coordinate, representing the force associated with that coordinate.",
-        "interpretation": "In Lagrangian mechanics, the term $F_i = \\frac{\\partial L}{\\partial q_i}$ represents the $i$-th component of the generalized force. For conservative systems, where the Lagrangian is typically defined as $L = T - V$ (kinetic energy minus potential energy), this term corresponds to the generalized force derived from the potential energy. Specifically, if the kinetic energy $T$ does not explicitly depend on $q_i$, then $F_i = -\\frac{\\partial V}{\\partial q_i}$, which is the negative gradient of the potential energy with respect to $q_i$, a standard definition for a conservative force component. This definition is a fundamental part of the Euler-Lagrange equations, which describe the motion of a system in terms of generalized coordinates.",
-        "symmetry_origin": "This definition arises within the framework of Lagrangian mechanics, which is inherently invariant under point transformations of coordinates. The term $\\frac{\\partial L}{\\partial q_i}$ is a direct component of the Euler-Lagrange equations. If $L$ is independent of a particular generalized coordinate $q_i$ (meaning $\\frac{\\partial L}{\\partial q_i} = 0$), then $q_i$ is a cyclic or ignorable coordinate. By Noether's theorem, this symmetry (invariance under translation in $q_i$) implies the conservation of the conjugate momentum $p_i = \\frac{\\partial L}{\\partial \\dot{q}$_i}.",
-        "limits_and_boundary": "1. **Conservative Systems**: For systems where all forces are derivable from a potential $V$, the Lagrangian is $L = T - V$. If $V$ does not explicitly depend on $q_i$, then $F_i = -\\frac{\\partial V}{\\partial q_i}$, representing the generalized conservative force. 2. **Cyclic Coordinates**: If $\\frac{\\partial L}{\\partial q_i} = 0$, then $q_i$ is a cyclic coordinate, and its conjugate momentum $p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$ is a conserved quantity. 3. **Non-Conservative Forces**: In the presence of non-conservative forces, the Euler-Lagrange equation is often extended to $\\frac{d}{dt}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = Q_i^{\\text{nc}}$, where $Q_i^{\\text{nc}}$ is the generalized non-conservative force. In this context, $F_i = \\frac{\\partial L}{\\partial q_i}$ still represents the generalized force component arising from the conservative part of the system's dynamics.",
+        "equation": "Q_i = \\frac{\\partial L}{\\partial q_i}",
+        "conceptual_definition": "Defines the i-th component of the generalized force $Q_i$ as the partial derivative of the system's Lagrangian $L$ with respect to the corresponding generalized coordinate $q_i$. This term represents the rate of change of the Lagrangian with respect to a change in position along that coordinate.",
+        "intuitive_summary": "This quantity represents the effective 'force' driving the system's motion along a specific generalized coordinate, as determined by the system's energy landscape.",
+        "interpretation": "In Lagrangian mechanics, the term $Q_i = \\frac{\\partial L}{\\partial q_i}$ is identified as the generalized force within the context of the Euler-Lagrange equations, $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) = \\frac{\\partial L}{\\partial q_i}$. This form is analogous to Newton's second law, where the time derivative of the generalized momentum $p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$ equals the generalized force $Q_i$. For a standard Lagrangian $L = T - V$, where kinetic energy $T$ is independent of position $q_i$, this term becomes $Q_i = -\\frac{\\partial V}{\\partial q_i}$, which is the definition of a conservative force derived from a potential $V$.",
+        "symmetry_origin": "This definition is a core component of the Euler-Lagrange equations, which embody the principle of stationary action. If the Lagrangian $L$ is independent of a coordinate $q_i$, such that $\\frac{\\partial L}{\\partial q_i} = 0$, then $q_i$ is a cyclic or ignorable coordinate. This indicates a translational symmetry in the $q_i$ direction. By Noether's theorem, this symmetry implies the conservation of the corresponding generalized momentum, $p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$, since its time derivative is zero.",
+        "limits_and_boundary": "1. **Conservative Systems**: For systems where all forces are derivable from a potential $V$, the Lagrangian is $L = T - V$. If $T$ does not explicitly depend on $q_i$, then $Q_i = -\\frac{\\partial V}{\\partial q_i}$, representing the generalized conservative force.\n2. **Cyclic Coordinates**: If $\\frac{\\partial L}{\\partial q_i} = 0$, then $q_i$ is a cyclic coordinate, and its conjugate momentum $p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$ is a conserved quantity.\n3. **Non-Conservative Forces**: In the presence of non-conservative forces, the Euler-Lagrange equation is extended to $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = Q_i^{\\text{nc}}$, where $Q_i^{\\text{nc}}$ is the generalized non-conservative force. In this context, $\\frac{\\partial L}{\\partial q_i}$ still represents the generalized force component arising from the conservative part of the system's dynamics described by $L$.",
         "unit_system": "SI",
         "parent_formula_id": "euler-lagrange-equation",
         "derivation_type": "EQUIVALENT_FORM",
-        "status": "published",
+        "status": "platinum",
         "semantic_variables": {
-            "F_i": {
+            "Q_i": {
                 "name": "Generalized Force Component",
-                "unit": "SI unit depends on the nature of $q_i$ (e.g., Newton for linear $q_i$, Newton-meter for angular $q_i$)",
-                "description": "The $i$-th component of the generalized force acting on the system, corresponding to the generalized coordinate $q_i."
+                "type": "variable",
+                "unit": "N or N·m",
+                "description": "The i-th component of the generalized force corresponding to the generalized coordinate $q_i$. Its units depend on $q_i$ (e.g., Newtons for linear coordinates, Newton-meters for angular coordinates)."
             },
             "L": {
                 "name": "Lagrangian",
-                "unit": "Joule",
-                "description": "The Lagrangian of the system, defined as the difference between kinetic energy $T$ and potential energy $V$, $L = T - V."
+                "type": "scalar field",
+                "unit": "J",
+                "description": "The Lagrangian of the system, a function of generalized coordinates and velocities, typically defined as kinetic energy minus potential energy ($L = T - V$)."
             },
             "q_i": {
                 "name": "Generalized Coordinate",
-                "unit": "SI unit depends on the nature of the coordinate (e.g., meter for linear displacement, radian for angular displacement)",
-                "description": "The $i$-th generalized coordinate, representing a degree of freedom of the system."
+                "type": "variable",
+                "unit": "m or rad",
+                "description": "The i-th generalized coordinate, representing an independent degree of freedom of the system. Its units can be length, angle, or another quantity."
+            },
+            "\\partial": {
+                "name": "Partial Derivative",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "The partial derivative operator, which computes the rate of change of a multivariable function with respect to one of its variables, holding others constant."
             }
         }
     }

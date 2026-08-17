@@ -831,69 +831,57 @@
     },
     "compressible-bernoulli-enthalpy-ident-a5306d90": {
         "title": "Bernoulli Constant (Compressible)",
-        "equation": "REG",
-        "interpretation": "The equation for the Bernoulli constant in compressible flow, along a streamline, can be generally expressed as: $\\frac{1}{2} \\rho v^2 + P + \\rho gh + \\rho u = \\text{constant}$ where $\\rho$ is the fluid density (in kg/m³), $v$ is the fluid velocity (in m/s), $P$ is the static pressure (in Pa), $g$ is the acceleration due to gravity (in m/s²), $h$ is the height above a reference level (in m), and $u$ is the specific internal energy of the fluid (in J/kg). Each term represents a different form of energy per unit volume, except for the internal energy term, which is conventionally expressed as specific internal energy (energy per unit mass). For consistency in units, the term $\\rho u$ has units of (kg/m³) * (J/kg) = J/m³, representing internal energy per unit volume. The constant arises from the application of the first law of thermodynamics and the principle of conservation of mass and momentum, assuming steady, adiabatic, and inviscid flow along a streamline. When density changes significantly, the $\\frac{1}{2} \\rho v^2$ term and the $P$ term must be carefully considered together, as changes in pressure directly influence density, and vice versa, in compressible fluids.",
-        "symmetry_origin": "The Bernoulli constant for compressible flow is derived from the Euler equations for inviscid flow, which are themselves a consequence of Newton's second law applied to fluid elements. By integrating the equation of motion along a streamline under specific conditions (steady flow, adiabatic process, inviscid fluid), and incorporating the first law of thermodynamics, the constant of integration is identified as the Bernoulli constant. It signifies the conservation of mechanical and internal energy per unit volume along a streamline.",
-        "limits_and_boundary": "In the limit of very low Mach numbers, where the fluid can be considered incompressible ($\\rho \\approx \\text{constant}$), and assuming constant specific internal energy $u$ (which is a reasonable approximation for many liquids and low-speed gases), the compressible Bernoulli equation reduces to the familiar form for incompressible flow: $\\frac{1}{2} \\rho v^2 + P + \\rho gh = \\text{constant}$. As the fluid velocity $v$ approaches zero (stagnation point), the pressure $P$ rises to a maximum value (stagnation pressure), assuming other terms are constant. In extreme cases of highly compressible flow with significant temperature and internal energy changes, the $\\rho u$ term becomes dominant and its variation along a streamline dictates the change in other energy terms.",
+        "equation": "\\frac{1}{2}v^2 + h + gz = \\mathrm{constant}",
+        "interpretation": "This equation is the Bernoulli principle extended to compressible flows. Each term represents energy per unit mass (a 'specific' energy). The term $\\frac{1}{2}v^2$ is the specific kinetic energy. The term $gz$ is the specific potential energy due to gravity. The crucial term for compressible flow is the specific enthalpy, $h$, defined as $h = u + P/\\rho$, where $u$ is the specific internal energy, $P$ is the pressure, and $\\rho$ is the density. Enthalpy accounts for both the internal thermal energy of the fluid ($u$) and the 'flow work' ($P/\\rho$) done by the fluid to maintain its pressure in the flow. The constancy of this sum along a streamline is a direct consequence of the first law of thermodynamics applied to a fluid element under steady, frictionless, and adiabatic conditions.",
+        "symmetry_origin": "This equation is an integral form of the Euler equations of fluid motion, which express conservation of momentum. When combined with the conservation of mass and the first law of thermodynamics under the assumption of steady flow (time-invariance), it yields this conserved quantity along a streamline. The underlying symmetry is time-translation invariance of the system's governing laws, which, by Noether's theorem, leads to the conservation of energy.",
+        "limits_and_boundary": "1. Incompressible Limit: If the fluid density $\\rho$ is assumed to be constant, and specific internal energy $u$ is also constant, the specific enthalpy $h$ can be written as $u_{const} + P/\\rho$. The constant $u_{const}$ can be absorbed into the Bernoulli constant, and the equation reduces to the familiar incompressible form: $\\frac{1}{2}v^2 + P/\\rho + gz = \\mathrm{constant}$.\n2. Ideal Gas Limit: For a calorically perfect gas, specific enthalpy is given by $h = c_p T$, where $c_p$ is the specific heat capacity at constant pressure and $T$ is the absolute temperature. The equation becomes $\\frac{1}{2}v^2 + c_p T + gz = \\mathrm{constant}$, a form widely used in gas dynamics and aerodynamics.\n3. Stagnation Point: At a point in the flow where the velocity $v$ is zero (a stagnation point), the kinetic energy is converted into enthalpy. This defines the stagnation enthalpy, $h_0 = h + \\frac{1}{2}v^2$, which is constant throughout an adiabatic, inviscid flow field (not just along a streamline).",
         "semantic_variables": {
-            "\\rho": {
-                "name": "Density",
-                "type": "variable",
-                "unit": "kg/m³",
-                "description": "The mass per unit volume of the fluid. It is a key property that varies with pressure and temperature in compressible flows."
-            },
             "v": {
-                "name": "Velocity",
+                "name": "Fluid Velocity",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The speed of the fluid flow along the streamline."
+                "description": "The speed of the fluid at a point on a streamline."
+            },
+            "h": {
+                "name": "Specific Enthalpy",
+                "type": "variable",
+                "unit": "J/kg",
+                "description": "The total energy of a fluid per unit mass, defined as $h = u + P/\\rho$, accounting for both internal energy and flow work."
             },
             "g": {
                 "name": "Acceleration due to Gravity",
                 "type": "constant",
                 "unit": "m/s²",
-                "description": "The standard acceleration due to gravity, approximately 9.81 m/s² near the Earth's surface. This term accounts for potential energy changes in gravitational fields."
+                "description": "The local acceleration of free fall, typically approximated as 9.81 m/s² near Earth's surface."
             },
-            "h": {
-                "name": "Height",
+            "z": {
+                "name": "Vertical Height",
                 "type": "variable",
                 "unit": "m",
-                "description": "The vertical distance of the fluid element above a chosen reference level, accounting for gravitational potential energy."
+                "description": "The elevation of the fluid point above a specified reference datum."
             },
             "u": {
                 "name": "Specific Internal Energy",
                 "type": "variable",
                 "unit": "J/kg",
-                "description": "The internal energy of the fluid per unit mass. It is a function of temperature and often pressure in compressible substances, reflecting the molecular kinetic and potential energies within the fluid."
+                "description": "The internal energy of the fluid per unit mass, related to its temperature and molecular state. A component of specific enthalpy."
             },
-            "\\rho u": {
-                "name": "Internal Energy per Unit Volume",
+            "P": {
+                "name": "Static Pressure",
                 "type": "variable",
-                "unit": "J/m³",
-                "description": "The internal energy of the fluid per unit volume, obtained by multiplying specific internal energy by density. This term represents the contribution of internal energy to the total energy per unit volume in the Bernoulli equation for compressible flow."
+                "unit": "Pa",
+                "description": "The thermodynamic pressure of the fluid. A component of specific enthalpy."
             },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
+            "\\rho": {
+                "name": "Fluid Density",
                 "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+                "unit": "kg/m³",
+                "description": "The mass per unit volume of the fluid. A component of specific enthalpy."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Bernoulli constant for compressible flow, often denoted as $B$ or $\\mathcal{B}$, is a quantity that remains constant along a streamline in certain idealized flow conditions. Unlike the simpler form for incompressible, inviscid flow, the compressible Bernoulli constant incorporates the effects of internal energy and pressure variations due to density changes, along with kinetic and potential energy contributions.",
-        "intuitive_summary": "In a compressible flow, the sum of kinetic energy per unit volume, potential energy per unit volume, and enthalpy per unit volume remains constant along a streamline, provided energy is conserved.",
+        "conceptual_definition": "For a steady, inviscid, and adiabatic flow of a compressible fluid, the sum of the specific kinetic energy, specific enthalpy, and specific potential energy remains constant along any given streamline. This is a statement of the conservation of energy per unit mass for the fluid.",
+        "intuitive_summary": "For a steady, ideal compressible fluid, the total energy per unit mass—comprising kinetic, potential, and thermal (enthalpy) contributions—is conserved along its path.",
         "subcomponents": [
             "dynamic-pressure-term-f7c67255",
             "bernoullis-incompressible-flow-constant-ff90fb4b"
@@ -1152,49 +1140,43 @@
     },
     "jacobian-determinant-deformation": {
         "title": "Jacobian Determinant of Deformation",
-        "equation": "J = \\det(\\nabla \\mathbf{\\Phi})",
-        "conceptual_definition": "The Jacobian determinant of deformation, denoted by J , quantifies the local scaling factor of volume elements under a coordinate transformation or a deformation mapping. Specifically, it is the determinant of the Jacobian matrix, which contains the partial derivatives of the components of the deformation map with respect to the original coordinates. In essence, it tells us how much a small volume in the initial configuration is stretched or compressed when mapped to the final configuration.",
-        "intuitive_summary": "The Jacobian determinant represents the local volume scaling factor during a continuous deformation or coordinate change.",
-        "interpretation": "In the equation J = ⁡et(∇ $\\gamma$Φ) , J is the Jacobian determinant. The symbol ∇ $\\gamma$Φ represents the Jacobian matrix of the deformation map Φ . The deformation map Φ is a function that maps points from an initial configuration (e.g., reference coordinates x ) to a deformed configuration (e.g., physical coordinates y ). If Φ maps from n -dimensional space to n -dimensional space, i.e., y = Φ(x) , where y = (y_1, y_2, ..., y_n) and x = (x_1, x_2, ..., x_n) , then the Jacobian matrix is given by: (∇ $\\gamma$Φ)_{ij} = \\frac{∂ y_i}{∂ x_j}$. The Jacobian determinant J is the determinant of this matrix. It signifies how an infinitesimal volume element in the initial space is scaled in the deformed space. If J > 0 , the orientation of the space is preserved. If J < 0 , the orientation is reversed (e.g., a reflection has occurred). If J = 0 , the deformation collapses a volume to a lower dimension (e.g., a plane or a line). The units of J are the units of volume raised to the power of the dimension of the space (e.g., m^3 for 3D space).",
-        "symmetry_origin": "The Jacobian determinant arises from the need to transform integrals from one coordinate system to another, a fundamental concept in multivariable calculus and differential geometry. It is a consequence of the chain rule applied to vector-valued functions. When changing integration variables in multiple integrals, the differential volume element must be scaled by the Jacobian determinant of the transformation to account for the distortion of space. Its derivation is rooted in the properties of linear approximations of transformations and the behavior of determinants under linear transformations, specifically how they represent the scaling factor of volume under such transformations.",
-        "limits_and_boundary": "As the deformation becomes infinitesimally small (i.e., the partial derivatives ∂ y_i / ∂ x_j approach zero, which implies the deformation map Φ approaches the identity map), the Jacobian determinant J approaches 1. This is because an infinitesimal deformation ideally preserves volume locally, and the determinant of the identity matrix is 1. Conversely, if the deformation causes significant stretching or compression, J can deviate significantly from 1. If the deformation leads to a collapse of dimensionality (e.g., mapping a 3D volume to a 2D plane), the Jacobian determinant will tend towards 0.",
+        "equation": "J = \\det(\\mathbf{F})",
+        "conceptual_definition": "The Jacobian determinant of deformation, J, quantifies the local, dimensionless scaling factor of volume elements under a deformation mapping. It is the determinant of the deformation gradient tensor, which measures the local deformation of the material.",
+        "intuitive_summary": "The Jacobian determinant measures how much a tiny piece of a material swells or shrinks during deformation.",
+        "interpretation": "In continuum mechanics, a deformation maps points from a reference configuration, with coordinates $\\mathbf{X}$, to a current configuration, with coordinates $\\mathbf{x} = \\mathbf{\\phi}(\\mathbf{X}, t)$. The local deformation is described by the deformation gradient tensor, $\\mathbf{F} = \\frac{\\partial \\mathbf{x}}{\\partial \\mathbf{X}}$. The Jacobian determinant, $J = \\det(\\mathbf{F})$, relates an infinitesimal volume element $dV_0$ in the reference configuration to the corresponding volume element $dV$ in the current configuration via the relation $dV = J dV_0$. A value of $J=1$ signifies an isochoric (volume-preserving) deformation, while $J>1$ indicates local expansion and $0 < J < 1$ indicates local compression. The physical requirement that matter cannot interpenetrate itself imposes the constraint $J > 0$.",
+        "symmetry_origin": "The Jacobian determinant is a fundamental quantity in tensor calculus and differential geometry that arises from the mathematical requirement to correctly transform volume integrals between different coordinate systems (e.g., the reference and current configurations). While not originating from a physical symmetry in the sense of Noether's theorem, its properties are essential for formulating physical laws, such as conservation of mass, in a way that is independent of the observer's reference frame (material frame-indifference).",
+        "limits_and_boundary": "1. No Deformation: If there is no deformation, the mapping is the identity, $\\mathbf{x} = \\mathbf{X}$. The deformation gradient becomes the identity matrix, $\\mathbf{F} = \\mathbf{I}$, and the Jacobian is $J = \\det(\\mathbf{I}) = 1$.\n2. Incompressibility: For an incompressible material, volume is conserved locally at all times. This imposes the kinematic constraint $J = 1$ for all possible deformations.\n3. Physical Admissibility: To prevent a reversal of orientation or the interpenetration of matter, the Jacobian must remain strictly positive, $J > 0$. A value of $J \\to 0$ would imply a collapse of a volume element to a surface, line, or point.",
         "status": "platinum",
         "semantic_variables": {
             "J": {
                 "name": "Jacobian Determinant",
                 "type": "variable",
-                "unit": "dimensionless (or volume units^n)",
-                "description": "The determinant of the Jacobian matrix, representing the local volume scaling factor of a deformation."
+                "unit": "dimensionless",
+                "description": "The local ratio of the deformed volume element to the reference volume element, $dV/dV_0$."
             },
-            "∇ Φ": {
-                "name": "Jacobian Matrix",
+            "\\det": {
+                "name": "Determinant",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "A mathematical operator that computes a scalar value from a square matrix, representing the volume scaling factor of the corresponding linear transformation."
+            },
+            "\\mathbf{F}": {
+                "name": "Deformation Gradient Tensor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The matrix of partial derivatives of the deformation map Φ. Its elements are given by (∇ Φ)_{ij} = ∂ y_i / ∂ x_j, where y_i are the components of the deformed coordinates and x_j are the components of the original coordinates."
+                "description": "A second-order tensor that describes the local deformation of a material, defined by its components $F_{ij} = \\partial x_i / \\partial X_j$."
             },
-            "Φ": {
-                "name": "Deformation Map",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A function that describes the mapping of points from an initial reference configuration to a deformed configuration. It is typically expressed as y = Φ(x)."
-            },
-            "y": {
-                "name": "Deformed Coordinates",
+            "\\mathbf{x}": {
+                "name": "Spatial Coordinates",
                 "type": "variable",
                 "unit": "m",
-                "description": "The coordinates of points in the deformed configuration."
+                "description": "The position vector of a material point in the current (deformed) configuration."
             },
-            "x": {
-                "name": "Original Coordinates",
+            "\\mathbf{X}": {
+                "name": "Material Coordinates",
                 "type": "variable",
                 "unit": "m",
-                "description": "The coordinates of points in the initial reference configuration."
-            },
-            "∂ y_i / ∂ x_j": {
-                "name": "Partial Derivative of Deformation",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The partial derivative of the i-th component of the deformed coordinates with respect to the j-th component of the original coordinates. These form the elements of the Jacobian matrix."
+                "description": "The position vector of a material point in the initial (reference) configuration."
             }
         }
     },
@@ -1345,7 +1327,8 @@
         "status": "published",
         "parent_formula_id": "cosmological-redshift-identity-1-414ce7cd-ef091390",
         "subcomponents": [],
-        "id": "wavelength-as-observed-by-a-detector-cf761c8f"
+        "id": "wavelength-as-observed-by-a-detector-cf761c8f",
+        "intuitive_summary": ""
     },
     "elementary-charge-constant-value-b5c9a162": {
         "title": "Elementary Charge Constant Value",
@@ -1369,7 +1352,8 @@
         "status": "published",
         "parent_formula_id": "standard-unit-7b7a9d4f",
         "subcomponents": [],
-        "id": "elementary-charge-constant-value-b5c9a162"
+        "id": "elementary-charge-constant-value-b5c9a162",
+        "intuitive_summary": ""
     },
     "virial-coefficient-for-quadratic-potentials-2d4dcf10": {
         "title": "Virial Coefficient for Quadratic Potentials",
@@ -1393,7 +1377,8 @@
         "status": "published",
         "parent_formula_id": "equilibrium-balance-1300e66a",
         "subcomponents": [],
-        "id": "virial-coefficient-for-quadratic-potentials-2d4dcf10"
+        "id": "virial-coefficient-for-quadratic-potentials-2d4dcf10",
+        "intuitive_summary": ""
     },
     "lepton-number-for-a-particle-state-ab3c80bf": {
         "title": "Lepton Number for a Particle State",
@@ -1417,7 +1402,8 @@
         "status": "published",
         "parent_formula_id": "quantum-leakage-ab06bdec",
         "subcomponents": [],
-        "id": "lepton-number-for-a-particle-state-ab3c80bf"
+        "id": "lepton-number-for-a-particle-state-ab3c80bf",
+        "intuitive_summary": ""
     },
     "partial-derivative-with-respect-to-time-a015732b": {
         "title": "Partial Derivative with Respect to Time",
@@ -1441,7 +1427,8 @@
         "status": "published",
         "parent_formula_id": "time-independent-limit",
         "subcomponents": [],
-        "id": "partial-derivative-with-respect-to-time-a015732b"
+        "id": "partial-derivative-with-respect-to-time-a015732b",
+        "intuitive_summary": ""
     },
     "zero-conditional-probability-of-event-dd41a769": {
         "title": "Zero Conditional Probability of Event",
@@ -1477,31 +1464,57 @@
         "status": "published",
         "parent_formula_id": "precision-zone-5da45666",
         "subcomponents": [],
-        "id": "zero-conditional-probability-of-event-dd41a769"
+        "id": "zero-conditional-probability-of-event-dd41a769",
+        "intuitive_summary": ""
     },
     "neutron-capture-timescale-336f131d": {
         "title": "Neutron Capture Timescale",
         "description": "Represents the average time an atomic nucleus takes to capture a free neutron.",
-        "conceptual_definition": "In nuclear astrophysics, the neutron capture timescale ($\\tau_{capture}$) quantifies the characteristic time required for a nucleus to undergo a neutron capture reaction. It is typically expressed as $\\tau_{capture} = 1 / (n_n \\langle \\sigma v \\rangle)$, where $n_n$ is the neutron number density and $\\langle \\sigma v \\rangle$ is the Maxwellian-averaged neutron capture cross-section. This timescale is crucial for understanding nucleosynthesis pathways, particularly in stellar environments like those responsible for the s-process.",
-        "interpretation": "This equation represents the rate-limiting step for neutron capture reactions in a given environment. In the slow neutron capture process (s-process), the condition $\\tau_{capture} \\gg \\tau_{\\beta}$ signifies that a nucleus typically undergoes beta decay before it can capture another neutron. This allows the s-process to build heavier elements along the valley of stability, as unstable isotopes have time to decay to stable ones before further neutron addition.",
-        "limits_and_boundary": "For the s-process to occur, $\\tau_{capture}$ must be significantly longer than the typical beta decay timescales ($\\tau_{\\beta}$) of unstable isotopes. If $\\tau_{capture}$ is comparable to or shorter than $\\tau_{\\beta}$, the rapid neutron capture process (r-process) would dominate, leading to the synthesis of neutron-rich isotopes far from stability.",
-        "symmetry_origin": "Nuclear reaction rates are governed by the strong nuclear force, which exhibits approximate isospin symmetry. However, the timescale itself is a macroscopic average derived from statistical mechanics and quantum mechanical cross-sections, rather than a direct manifestation of a fundamental symmetry of the underlying forces. It reflects the probability of interaction.",
+        "conceptual_definition": "The neutron capture timescale is the characteristic time for a target nucleus to capture a free neutron within a stellar plasma. It is the inverse of the neutron capture reaction rate, determined by the neutron number density and the thermally-averaged product of the capture cross-section and relative velocity.",
+        "interpretation": "The equation defines the timescale as the inverse of the total reaction rate per target nucleus. The term $n_\\mathrm{n}$ represents the density of available projectiles (neutrons), while $\\langle \\sigma v \\rangle$ is the Maxwellian-averaged reaction rate, which averages the quantum mechanical probability of capture ($\\sigma$) over the thermal velocity distribution ($v$) of particles in the stellar gas at a given temperature. This timescale is a critical parameter in nucleosynthesis, as it competes with other timescales, most notably the beta-decay timescale ($\\tau_{\\beta^-}$), to determine the path of element formation.",
+        "limits_and_boundary": "1. s-process (slow neutron capture): Occurs when $\\tau_\\mathrm{n} \\gg \\tau_{\\beta^-}$. Nuclei have time to beta-decay back to the valley of stability before capturing another neutron.\n2. r-process (rapid neutron capture): Occurs when $\\tau_\\mathrm{n} \\ll \\tau_{\\beta^-}$. Multiple neutrons are captured before beta-decay can occur, producing very neutron-rich isotopes far from stability.\n3. High Neutron Density: As $n_\\mathrm{n} \\to \\infty$, the capture timescale $\\tau_\\mathrm{n} \\to 0$, favoring the r-process.\n4. Low Reactivity: As the reaction rate $\\langle \\sigma v \\rangle \\to 0$ (due to low temperature or small cross-section), the capture timescale $\\tau_\\mathrm{n} \\to \\infty$, effectively halting neutron capture nucleosynthesis.",
+        "symmetry_origin": "The underlying interaction is governed by the strong and electroweak forces. The cross-section $\\sigma$ is a quantum mechanical quantity determined by nuclear structure and the properties of these forces. However, the timescale $\\tau_\\mathrm{n}$ is a macroscopic statistical quantity derived from kinetic theory, not directly from a symmetry principle via Noether's theorem. It represents an emergent property of a many-body system in local thermodynamic equilibrium.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "nuclear-astrophysics-nucleosynthesis",
         "semantic_variables": {
-            "tau_capture": {
-                "name": "tau_capture",
+            "\\tau_\\mathrm{n}": {
+                "name": "Neutron Capture Timescale",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Neutron Capture Timescale (seconds, s). The average time an atomic nucleus takes to capture a free neutron in a given environment."
+                "unit": "s",
+                "description": "The average time for a target nucleus to capture a neutron."
+            },
+            "n_\\mathrm{n}": {
+                "name": "Neutron Number Density",
+                "type": "variable",
+                "unit": "m^{-3}",
+                "description": "The number of free neutrons per unit volume in the plasma."
+            },
+            "\\langle \\sigma v \\rangle": {
+                "name": "Maxwellian-Averaged Reaction Rate",
+                "type": "variable",
+                "unit": "m^3 s^{-1}",
+                "description": "The reaction cross-section ($\\sigma$) multiplied by the relative velocity ($v$), averaged over the Maxwell-Boltzmann distribution of particle velocities at a given temperature."
+            },
+            "\\sigma": {
+                "name": "Neutron Capture Cross-Section",
+                "type": "variable",
+                "unit": "m^2",
+                "description": "The effective area a target nucleus presents for a neutron capture reaction to occur. It is a measure of the reaction probability."
+            },
+            "v": {
+                "name": "Relative Velocity",
+                "type": "variable",
+                "unit": "m s^{-1}",
+                "description": "The relative velocity between a neutron and a target nucleus."
             }
         },
-        "equation": "\\tau_{capture}",
-        "status": "published",
+        "equation": "\\tau_\\mathrm{n} = (n_\\mathrm{n} \\langle \\sigma v \\rangle)^{-1}",
+        "status": "platinum",
         "parent_formula_id": "slow-rule-71df3cfb",
         "subcomponents": [],
-        "id": "neutron-capture-timescale-336f131d"
+        "id": "neutron-capture-timescale-336f131d",
+        "intuitive_summary": "The neutron capture timescale is the average waiting time for a nucleus to absorb a free neutron in a stellar plasma."
     },
     "shear-tensor-component-58e663b1": {
         "title": "Shear Tensor Component",
@@ -1525,7 +1538,8 @@
         "status": "published",
         "parent_formula_id": "raychaudhuri-source-term-3b7e759f",
         "subcomponents": [],
-        "id": "shear-tensor-component-58e663b1"
+        "id": "shear-tensor-component-58e663b1",
+        "intuitive_summary": ""
     },
     "first-order-linear-differential-equation-96988d3a": {
         "title": "First-Order Linear Differential Equation",
@@ -1561,7 +1575,8 @@
         "status": "published",
         "parent_formula_id": "positive-real-part-condition",
         "subcomponents": [],
-        "id": "first-order-linear-differential-equation-96988d3a"
+        "id": "first-order-linear-differential-equation-96988d3a",
+        "intuitive_summary": ""
     },
     "eddington-luminosity-limit-ab48521e": {
         "title": "Eddington Luminosity Limit",
@@ -1609,7 +1624,8 @@
         "status": "published",
         "parent_formula_id": "energy-density-5289497a",
         "subcomponents": [],
-        "id": "eddington-luminosity-limit-ab48521e"
+        "id": "eddington-luminosity-limit-ab48521e",
+        "intuitive_summary": ""
     },
     "average-absolute-radial-velocity-48aeba91": {
         "title": "Average Absolute Radial Velocity",
@@ -1633,7 +1649,8 @@
         "status": "published",
         "parent_formula_id": "isotropic-principle-082476f2",
         "subcomponents": [],
-        "id": "average-absolute-radial-velocity-48aeba91"
+        "id": "average-absolute-radial-velocity-48aeba91",
+        "intuitive_summary": ""
     },
     "vanishing-new-generalized-coordinate-bc5f2e92": {
         "title": "Vanishing New Generalized Coordinate",
@@ -1657,7 +1674,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-5c9bf032",
         "subcomponents": [],
-        "id": "vanishing-new-generalized-coordinate-bc5f2e92"
+        "id": "vanishing-new-generalized-coordinate-bc5f2e92",
+        "intuitive_summary": ""
     },
     "difference-of-two-variables-52f2909e": {
         "title": "Difference of Two Variables",
@@ -1687,7 +1705,8 @@
         "status": "published",
         "parent_formula_id": "energy-function",
         "subcomponents": [],
-        "id": "difference-of-two-variables-52f2909e"
+        "id": "difference-of-two-variables-52f2909e",
+        "intuitive_summary": ""
     },
     "indexed-scalar-power-term-910de419": {
         "title": "Indexed Scalar Power Term",
@@ -1711,7 +1730,8 @@
         "status": "published",
         "parent_formula_id": "exponential-mapping-identity-eb51a032",
         "subcomponents": [],
-        "id": "indexed-scalar-power-term-910de419"
+        "id": "indexed-scalar-power-term-910de419",
+        "intuitive_summary": ""
     },
     "partial-gradient-operator-for-particle-coordinates-b9da8405": {
         "title": "Partial Gradient Operator for Particle Coordinates",
@@ -1735,24 +1755,39 @@
         "status": "published",
         "parent_formula_id": "interparticle-force-potential",
         "subcomponents": [],
-        "id": "partial-gradient-operator-for-particle-coordinates-b9da8405"
+        "id": "partial-gradient-operator-for-particle-coordinates-b9da8405",
+        "intuitive_summary": ""
     },
     "mathml-normal-identifier-element-0a8ec5be": {
-        "title": "MathML Normal Identifier Element",
+        "title": "Galilean Acceleration Invariance",
         "description": "This MathML element specifies that an identifier should be rendered using an upright, normal font style, distinguishing it from italicized variables.",
-        "conceptual_definition": "In scientific and mathematical typesetting, it is a standard convention to render variables in an italic font and operators, units, or descriptive text in an upright (normal) font. The `mi mathvariant=\"normal\"` tag explicitly enforces this upright rendering for identifiers within MathML, ensuring clarity and adherence to established typographic practices. This distinction helps readers differentiate between mathematical variables and other textual components of an equation.",
-        "interpretation": "While not representing a physical quantity or a mathematical operation, this element plays a crucial role in the correct visual representation of scientific formulas. Its presence ensures that specific textual components, such as the 'Acceleration Invariance link' in the master formula `$\\mathbf{a}' = \\mathbf{a} \\quad (\\text{Acceleration Invariance link})`, are displayed in a non-italicized font. This typographic choice prevents misinterpretation, as italicized text is typically reserved for variables, thereby maintaining the integrity and readability of complex mathematical expressions$.",
-        "limits_and_boundary": "This element is a purely presentational MathML tag and does not possess physical limits, asymptotic behaviors, or boundary conditions. Its function is confined to dictating the rendering style of an identifier within a mathematical expression, independent of any physical system or domain.",
-        "symmetry_origin": "As a typographic instruction, this MathML element is not associated with any physical symmetries, conservation laws, or fundamental principles of physics. Its origin lies in the conventions of mathematical notation and document rendering standards.",
+        "conceptual_definition": "The acceleration of an object is identical in all inertial reference frames, where inertial frames are those moving at a constant velocity relative to one another.",
+        "interpretation": "Consider two inertial frames, $S$ and $S'$, where $S'$ moves with a constant velocity $\\mathbf{v}$ relative to $S$. The positions are related by the Galilean transformation $\\mathbf{r}' = \\mathbf{r} - \\mathbf{v}t$. Differentiating with respect to time gives the velocity transformation: $\\mathbf{u}' = \\frac{\\mathrm{d}\\mathbf{r}'}{\\mathrm{d}t} = \\frac{\\mathrm{d}\\mathbf{r}}{\\mathrm{d}t} - \\mathbf{v} = \\mathbf{u} - \\mathbf{v}$. Differentiating again yields the acceleration: $\\mathbf{a}' = \\frac{\\mathrm{d}\\mathbf{u}'}{\\mathrm{d}t} = \\frac{\\mathrm{d}\\mathbf{u}}{\\mathrm{d}t} - \\frac{\\mathrm{d}\\mathbf{v}}{\\mathrm{d}t}$. Since the relative velocity $\\mathbf{v}$ is constant, its time derivative is zero, leading to the invariance $\\mathbf{a}' = \\mathbf{a}$. This invariance ensures that Newton's Second Law, $\\mathbf{F} = m\\mathbf{a}$, retains its form in all inertial frames, a cornerstone of Newtonian mechanics known as the principle of Galilean relativity.",
+        "limits_and_boundary": "1. This principle is valid in the non-relativistic limit, where all speeds are much less than the speed of light ($v \\ll c$).\n2. It applies exclusively to inertial reference frames, which are frames not undergoing acceleration themselves.\n3. In special relativity, which governs high-speed phenomena, acceleration is not an invariant quantity and transforms according to the more complex Lorentz transformations.",
+        "symmetry_origin": "This invariance is a direct consequence of the spacetime symmetries of the Galilean group, specifically Galilean boosts (transformations between frames in uniform relative motion). It reflects the principle that the laws of mechanics are the same for all inertial observers.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "mathematical-notation",
-        "semantic_variables": {},
-        "equation": "math xmlns=\"http://www.w3.org/1998/Math/MathML\"mi mathvariant=\"normal\"",
-        "status": "published",
+        "semantic_variables": {
+            "\\mathbf{a}'": {
+                "name": "Acceleration in moving frame",
+                "type": "variable",
+                "unit": "m s^{-2}",
+                "description": "The acceleration vector of an object as measured in the moving inertial frame $S'$."
+            },
+            "\\mathbf{a}": {
+                "name": "Acceleration in stationary frame",
+                "type": "variable",
+                "unit": "m s^{-2}",
+                "description": "The acceleration vector of the same object as measured in the stationary inertial frame $S$."
+            }
+        },
+        "equation": "\\mathbf{a}' = \\mathbf{a}",
+        "status": "platinum",
         "parent_formula_id": "maxwell-link-24a8999b",
         "subcomponents": [],
-        "id": "mathml-normal-identifier-element-0a8ec5be"
+        "id": "mathml-normal-identifier-element-0a8ec5be",
+        "intuitive_summary": "An object's acceleration is the same regardless of the constant speed of the observer measuring it."
     },
     "raising-an-index-with-metric-tensor-f107583c": {
         "title": "Raising an Index with Metric Tensor",
@@ -1788,7 +1823,8 @@
         "status": "published",
         "parent_formula_id": "contraction-b554a42d",
         "subcomponents": [],
-        "id": "raising-an-index-with-metric-tensor-f107583c"
+        "id": "raising-an-index-with-metric-tensor-f107583c",
+        "intuitive_summary": ""
     },
     "positive-local-energy-condition-d327cf4c": {
         "title": "Positive Local Energy Condition",
@@ -1824,7 +1860,8 @@
         "status": "published",
         "parent_formula_id": "raychaudhuri-source-term-3b7e759f",
         "subcomponents": [],
-        "id": "positive-local-energy-condition-d327cf4c"
+        "id": "positive-local-energy-condition-d327cf4c",
+        "intuitive_summary": ""
     },
     "vector-magnitude-from-orthogonal-components-55fdc342": {
         "title": "Vector Magnitude from Orthogonal Components",
@@ -1860,7 +1897,8 @@
         "status": "published",
         "parent_formula_id": "total-radiation-bf891e8d",
         "subcomponents": [],
-        "id": "vector-magnitude-from-orthogonal-components-55fdc342"
+        "id": "vector-magnitude-from-orthogonal-components-55fdc342",
+        "intuitive_summary": ""
     },
     "second-variation-of-action-principle-ee1e505d": {
         "title": "Second Variation of Action Principle",
@@ -1902,7 +1940,8 @@
         "status": "published",
         "parent_formula_id": "the-s-integral-20595d65",
         "subcomponents": [],
-        "id": "second-variation-of-action-principle-ee1e505d"
+        "id": "second-variation-of-action-principle-ee1e505d",
+        "intuitive_summary": ""
     },
     "radial-velocity-gradient-7daf36a6": {
         "title": "Radial Velocity Gradient",
@@ -1932,7 +1971,8 @@
         "status": "published",
         "parent_formula_id": "parker-isothermal-wind-equation-15a41e6b",
         "subcomponents": [],
-        "id": "radial-velocity-gradient-7daf36a6"
+        "id": "radial-velocity-gradient-7daf36a6",
+        "intuitive_summary": ""
     },
     "reduced-density-matrix-definition-e0387009": {
         "title": "Reduced Density Matrix Definition",
@@ -1980,7 +2020,8 @@
         "status": "published",
         "parent_formula_id": "information-filtering-18094d35",
         "subcomponents": [],
-        "id": "reduced-density-matrix-definition-e0387009"
+        "id": "reduced-density-matrix-definition-e0387009",
+        "intuitive_summary": ""
     },
     "non-negativity-of-von-neumann-entropy-03216c23": {
         "title": "Non-negativity of von Neumann Entropy",
@@ -2010,7 +2051,8 @@
         "status": "published",
         "parent_formula_id": "information-content-a4118087",
         "subcomponents": [],
-        "id": "non-negativity-of-von-neumann-entropy-03216c23"
+        "id": "non-negativity-of-von-neumann-entropy-03216c23",
+        "intuitive_summary": ""
     },
     "electrostatic-multipole-expansion-potential-de903d3a": {
         "title": "Electrostatic Multipole Expansion Potential",
@@ -2058,7 +2100,8 @@
         "status": "published",
         "parent_formula_id": "angular-basis-de903d3a",
         "subcomponents": [],
-        "id": "electrostatic-multipole-expansion-potential-de903d3a"
+        "id": "electrostatic-multipole-expansion-potential-de903d3a",
+        "intuitive_summary": ""
     },
     "retarded-wave-function-component-9b4664c9": {
         "title": "Retarded Wave Function Component",
@@ -2088,43 +2131,45 @@
         "status": "published",
         "parent_formula_id": "backward-propagation-ce1b6df3",
         "subcomponents": [],
-        "id": "retarded-wave-function-component-9b4664c9"
+        "id": "retarded-wave-function-component-9b4664c9",
+        "intuitive_summary": ""
     },
     "calabi-yau-euler-characteristic-formula-b47c92b8": {
         "title": "Calabi-Yau Euler Characteristic Formula",
         "description": "This formula defines the Euler characteristic of a Calabi-Yau manifold in terms of its Hodge numbers, specifically h^(1,1) and h^(2,1).",
-        "conceptual_definition": "The Euler characteristic ( $\\chi$) is a topological invariant, a number that describes the shape or structure of a topological space, independent of how it is bent or stretched. For a Calabi-Yau manifold, it is defined using its Hodge numbers, which count the number of independent harmonic forms of certain types. Specifically, h^(1,1) is the number of independent (1,1)-forms, and h^(2,1) is the number of independent (2,1)-forms.",
-        "interpretation": "In the context of string theory compactifications, Calabi-Yau manifolds are crucial for compactifying the extra spatial dimensions. The Euler characteristic, derived from the Hodge numbers, plays a vital role in determining the number of generations of fundamental particles in the resulting low-energy effective theory. A non-zero Euler characteristic is often associated with chiral fermions, and its magnitude is directly related to the number of generations, as seen in the master formula N_{gen} = \\frac{1}{2}$|$\\chi$|. This formula thus links the geometry of the compactified space to observable particle physics.",
-        "limits_and_boundary": "This formula is specifically applicable to compact, complex, Kähler manifolds with trivial canonical bundle, known as Calabi-Yau manifolds. The Hodge numbers h^(1,1) and h^(2,1) are non-negative integers. For a Calabi-Yau 3-fold, h^(1,1) and h^(2,1) are the only non-trivial Hodge numbers besides h^(0,0)=1 and h^(3,3)=1. The Euler characteristic $\\chi$ must be an even integer for Calabi-Yau manifolds.",
-        "symmetry_origin": "The Euler characteristic is a topological invariant, meaning it is preserved under continuous deformations of the manifold. Its definition via Hodge numbers arises from the Hodge decomposition theorem and Serre duality for complex manifolds, which relate cohomology groups to harmonic forms and establish symmetries between certain Hodge numbers.",
+        "conceptual_definition": "The Euler characteristic of a Calabi-Yau 3-fold is a topological invariant, defined as twice the difference between its two non-trivial Hodge numbers, $h^{1,1}$ and $h^{2,1}$.",
+        "interpretation": "In string theory, extra spatial dimensions are often modeled as a compact Calabi-Yau manifold $M$. The manifold's geometry dictates the physics of the observable 4D universe. The Hodge numbers $h^{1,1}$ and $h^{2,1}$ count the number of massless scalar fields (moduli) related to the manifold's size and shape, respectively. The Euler characteristic $\\chi$ is physically significant because it determines the net number of particle generations in the resulting low-energy effective theory via the relation $N_{\\mathrm{gen}} = \\frac{1}{2} |\\chi(M)|$. This formula provides a direct link between the abstract topology of the compactified space and a potentially observable quantity in particle physics.",
+        "limits_and_boundary": "1. This specific formula applies to compact, complex, 3-dimensional Kähler manifolds with a trivial first Chern class (Calabi-Yau 3-folds).\n2. The Hodge numbers $h^{p,q}$ are, by definition, non-negative integers.\n3. For a Calabi-Yau manifold, the Euler characteristic $\\chi$ must be an even integer.",
+        "symmetry_origin": "The Euler characteristic is a topological invariant, meaning it is unchanged by continuous deformations (diffeomorphisms) of the manifold. Its formulation in terms of Hodge numbers stems from the Hodge decomposition theorem for complex manifolds and Serre duality, which establishes a symmetry $h^{p,q} = h^{n-p, n-q}$ for an n-dimensional Calabi-Yau manifold, leading to $h^{2,1} = h^{1,2}$ for a 3-fold.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "string-theory-compactification",
         "semantic_variables": {
-            "chi": {
-                "name": "chi",
+            "\\chi(M)": {
+                "name": "Euler Characteristic",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The Euler characteristic (dimensionless), a topological invariant of the Calabi-Yau manifold."
+                "description": "A topological invariant of the Calabi-Yau manifold $M$, which constrains the particle spectrum in string theory compactifications."
             },
-            "h_1_1": {
-                "name": "h_1_1",
+            "h^{1,1}(M)": {
+                "name": "Hodge Number (1,1)",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The Hodge number h^(1,1) (dimensionless), representing the number of independent (1,1)-forms on the Calabi-Yau manifold. It corresponds to the number of independent Kähler moduli, which govern the size and shape of the manifold's Kähler form."
+                "description": "The dimension of the Dolbeault cohomology group $H^{1,1}(M)$, counting the number of Kähler moduli which correspond to the size and shape parameters of the manifold."
             },
-            "h_2_1": {
-                "name": "h_2_1",
+            "h^{2,1}(M)": {
+                "name": "Hodge Number (2,1)",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The Hodge number h^(2,1) (dimensionless), representing the number of independent (2,1)-forms on the Calabi-Yau manifold. It corresponds to the number of independent complex structure moduli, which govern the complex structure of the manifold."
+                "description": "The dimension of the Dolbeault cohomology group $H^{2,1}(M)$, counting the number of complex structure moduli which correspond to the shape deformation parameters of the manifold."
             }
         },
-        "equation": "\\chi = 2(h^{1,1} - h^{2,1})",
-        "status": "published",
+        "equation": "\\chi(M) = 2(h^{1,1}(M) - h^{2,1}(M))",
+        "status": "platinum",
         "parent_formula_id": "generation-counting-law-ec040b47",
         "subcomponents": [],
-        "id": "calabi-yau-euler-characteristic-formula-b47c92b8"
+        "id": "calabi-yau-euler-characteristic-formula-b47c92b8",
+        "intuitive_summary": "The net 'shape complexity' of a Calabi-Yau space, crucial for string theory, is determined by the difference between its number of size/shape parameters and its number of complex structure parameters."
     },
     "gauge-invariance-of-field-strength-tensor-d3cb85f3": {
         "title": "Gauge Invariance of Field Strength Tensor",
@@ -2154,78 +2199,80 @@
         "status": "published",
         "parent_formula_id": "gauge-transformation-vector-potential-abelian",
         "subcomponents": [],
-        "id": "gauge-invariance-of-field-strength-tensor-d3cb85f3"
+        "id": "gauge-invariance-of-field-strength-tensor-d3cb85f3",
+        "intuitive_summary": ""
     },
     "the-gradient-operator-d22951bb": {
         "title": "The Gradient Operator",
         "description": "The gradient operator, denoted by \\(\\nabla\\) in 3D space or \\(\\partial_\\mu\\) in spacetime, is a vector differential operator that acts on a scalar field to produce a vector (or covector) field. It quantifies the direction and magnitude of the maximum rate of increase of the scalar field.",
-        "conceptual_definition": "In vector calculus and differential geometry, the gradient operator is a fundamental differential operator. When applied to a scalar function $f$, it yields a vector (or covector) whose components are the partial derivatives of $f$ with respect to each coordinate. For a 3D scalar field $f(x,y,z)$, the gradient is $\\nabla$ f = \\frac{\\partial f}{\\partial x} $\\mathbf{i}$ + \\frac{\\partial f}{\\partial y} $\\mathbf{j}$ + \\frac{\\partial f}{\\partial z} $\\mathbf{k}. In spacetime, the four-gradient$\\partial_\\mu$f$ represents the partial derivative of $f$ with respect to the \\mu^{th} spacetime coordinate. This resulting field points in the direction of the steepest ascent of the scalar field, and its magnitude represents the rate of change in that direction$.",
-        "interpretation": "Physically, the gradient of a scalar potential field (e.g., electric potential, gravitational potential, temperature) represents a force field or a flux. For instance, the negative gradient of electric potential gives the electric field. In relativistic contexts, the four-gradient $\\partial_\\mu$ is crucial for defining covariant derivatives and expressing fundamental laws in a Lorentz-covariant manner, such as in the gauge transformation of vector potential where it acts on the scalar gauge function $\\theta$.",
-        "limits_and_boundary": "The gradient operator is applicable to scalar fields that are differentiable. Its definition and components depend on the chosen coordinate system (e.g., Cartesian, cylindrical, spherical, or Minkowski spacetime coordinates), but the resulting vector field it produces is coordinate-independent in its intrinsic meaning. It is undefined for non-differentiable scalar fields or at points where the field is discontinuous.",
-        "symmetry_origin": "The gradient operator is a fundamental differential operator that transforms appropriately under coordinate transformations (e.g., as a vector under rotations, or as a covector under general coordinate transformations), ensuring that the physical quantity it represents is independent of the chosen coordinate system. Its definition arises from the concept of directional derivatives and the desire to find the direction of maximum change of a scalar field, which is inherently a geometric property invariant under such transformations.",
+        "conceptual_definition": "The gradient is a vector differential operator that, when applied to a scalar field, produces a vector field whose magnitude at any point is the maximum rate of change of the scalar field and whose direction is the direction of that maximum rate of change. It generalizes the concept of a derivative to multivariable functions.",
+        "interpretation": "The gradient operator, denoted $\\nabla$, acts on a scalar function $f(x, y, z)$ to produce a vector field. Each component of the resulting vector is the partial derivative of the function with respect to the corresponding coordinate, such as $\\partial f / \\partial x$. Physically, the gradient of a potential field (e.g., electric potential, gravitational potential, temperature) represents a physical vector field like a force or a flux. For example, the electric field $\\mathbf{E}$ is the negative gradient of the electric potential $V$, expressed as $\\mathbf{E} = -\\nabla V$. In spacetime, the four-gradient $\\partial_\\mu$ is a covector that is fundamental to formulating physical laws in a Lorentz-covariant manner.",
+        "limits_and_boundary": "1. The gradient operator is defined for scalar fields that are differentiable at the point of interest.\n2. Its component representation depends on the chosen coordinate system (e.g., Cartesian, cylindrical, spherical), but the physical vector it represents is coordinate-independent.\n3. The operator is undefined at points of discontinuity or where the field is non-differentiable.",
+        "symmetry_origin": "The gradient operator's definition arises from the geometric requirement to find the direction of maximum change of a scalar field, an intrinsic property independent of the coordinate system. The resulting gradient vector transforms as a vector under rotations and as a covector under general coordinate transformations, ensuring that physical laws expressed using the gradient are covariant.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "differential-operators",
         "semantic_variables": {
             "\\nabla": {
-                "name": "\\nabla",
+                "name": "Nabla Operator",
                 "type": "operator",
-                "unit": "dimensionless",
-                "description": "The 3D gradient operator symbol (dimensionless, but implies units of 1/length when applied)."
-            },
-            "\\partial_\\mu": {
-                "name": "\\partial_\\mu",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "The four-gradient operator symbol, where $\\mu$ is a spacetime index (dimensionless, but implies units of 1/length when applied)."
+                "unit": "m^{-1}",
+                "description": "The vector differential operator, also known as del, which in 3D Cartesian coordinates is $(\\partial/\\partial x, \\partial/\\partial y, \\partial/\\partial z)$."
             },
             "f": {
-                "name": "f",
+                "name": "Scalar Field",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A scalar field, representing a physical quantity that varies in space or spacetime (e.g., electric potential in Volts, temperature in Kelvin, a scalar gauge function $\\theta$ in radians)."
+                "unit": "Varies",
+                "description": "A scalar function of position $f(x, y, z)$ representing a physical quantity like temperature (K), potential (V), or pressure (Pa)."
+            },
+            "\\partial": {
+                "name": "Partial Derivative",
+                "type": "operator",
+                "unit": "Varies",
+                "description": "The partial derivative operator, which computes the rate of change of a multivariable function with respect to one of its variables, holding others constant."
             },
             "x": {
-                "name": "x",
+                "name": "x-coordinate",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Spatial Cartesian coordinate along the x-axis (length, meters)."
+                "unit": "m",
+                "description": "The Cartesian spatial coordinate along the x-axis."
             },
             "y": {
-                "name": "y",
+                "name": "y-coordinate",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Spatial Cartesian coordinate along the y-axis (length, meters)."
+                "unit": "m",
+                "description": "The Cartesian spatial coordinate along the y-axis."
             },
             "z": {
-                "name": "z",
+                "name": "z-coordinate",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Spatial Cartesian coordinate along the z-axis (length, meters)."
+                "unit": "m",
+                "description": "The Cartesian spatial coordinate along the z-axis."
             },
-            "\\mathbf{i}": {
-                "name": "\\mathbf{i}",
-                "type": "variable",
+            "\\mathbf{\\hat{i}}": {
+                "name": "x-direction Unit Vector",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "Unit vector in the x-direction (dimensionless)."
+                "description": "The unit vector in the positive direction of the x-axis."
             },
-            "\\mathbf{j}": {
-                "name": "\\mathbf{j}",
-                "type": "variable",
+            "\\mathbf{\\hat{j}}": {
+                "name": "y-direction Unit Vector",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "Unit vector in the y-direction (dimensionless)."
+                "description": "The unit vector in the positive direction of the y-axis."
             },
-            "\\mathbf{k}": {
-                "name": "\\mathbf{k}",
-                "type": "variable",
+            "\\mathbf{\\hat{k}}": {
+                "name": "z-direction Unit Vector",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "Unit vector in the z-direction (dimensionless)."
+                "description": "The unit vector in the positive direction of the z-axis."
             }
         },
-        "equation": ". The gradient operator",
-        "status": "published",
+        "equation": "\\nabla f = \\frac{\\partial f}{\\partial x} \\mathbf{\\hat{i}} + \\frac{\\partial f}{\\partial y} \\mathbf{\\hat{j}} + \\frac{\\partial f}{\\partial z} \\mathbf{\\hat{k}}",
+        "status": "platinum",
         "parent_formula_id": "gauge-transformation-vector-potential-abelian",
         "subcomponents": [],
-        "id": "the-gradient-operator-d22951bb"
+        "id": "the-gradient-operator-d22951bb",
+        "intuitive_summary": "The gradient of a scalar field points in the direction of the steepest uphill slope, with its length representing how steep that slope is."
     }
 }

@@ -1,19 +1,43 @@
 {
     "coordinate-source-36035468": {
-        "title": "Coordinate Source (Principle of Virtual Work)",
+        "title": "Generalized Force (from Virtual Work)",
         "equation": "Q_j = \\sum_i \\mathbf{F}_i \\cdot \\frac{\\partial \\mathbf{r}_i}{\\partial q_j}",
         "semantic_variables": {
             "Q_j": {
                 "name": "Generalized Force",
                 "type": "variable",
-                "unit": "Varies (e.g., N, N m)",
+                "unit": "Varies (e.g., N, N·m)",
                 "description": "The generalized force corresponding to the j-th generalized coordinate $q_j$. It quantifies the 'effective' force or torque tending to change $q_j$."
             },
+            "j": {
+                "name": "Index for Generalized Coordinates",
+                "type": "index",
+                "unit": "dimensionless",
+                "description": "An integer index that labels the specific generalized coordinate and corresponding generalized force."
+            },
+            "i": {
+                "name": "Index for Particles/Forces",
+                "type": "index",
+                "unit": "dimensionless",
+                "description": "An integer index that labels the individual particles or points of force application in the system."
+            },
             "\\mathbf{F}_i": {
-                "name": "Force Vector on i-th Particle",
+                "name": "Applied Force Vector",
                 "type": "variable",
                 "unit": "N",
                 "description": "The vector representing the i-th physical force acting on the i-th particle or point of application within the system."
+            },
+            "\\cdot": {
+                "name": "Dot Product",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The scalar product operator, which projects one vector onto another."
+            },
+            "\\partial": {
+                "name": "Partial Derivative Operator",
+                "type": "operator",
+                "unit": "Varies",
+                "description": "The operator for partial differentiation, which calculates the rate of change with respect to one variable while holding others constant."
             },
             "\\mathbf{r}_i": {
                 "name": "Position Vector of i-th Particle",
@@ -22,72 +46,18 @@
                 "description": "The position vector of the i-th particle, expressed as a function of the generalized coordinates $q_1, q_2, \\ldots, q_N$."
             },
             "q_j": {
-                "name": "j-th Generalized Coordinate",
+                "name": "Generalized Coordinate",
                 "type": "variable",
                 "unit": "Varies (e.g., m, rad)",
-                "description": "The j-th independent coordinate used to uniquely describe the configuration of the mechanical system, often chosen to simplify constraints."
-            },
-            "\\sum_i": {
-                "name": "Summation over Particles",
-                "type": "operator",
-                "unit": "none",
-                "description": "A mathematical operator indicating the sum of contributions from all individual particles (or forces) in the system."
-            },
-            "\\cdot": {
-                "name": "Dot Product",
-                "type": "constant",
-                "unit": "none",
-                "description": "A mathematical operator representing the scalar product of two vectors, yielding the magnitude of one vector projected onto the direction of the other."
-            },
-            "\\frac{\\partial}{\\partial q_j}": {
-                "name": "Partial Derivative with respect to q_j",
-                "type": "operator",
-                "unit": "1/unit of q_j",
-                "description": "A mathematical operator that describes the rate of change of a multi-variable function with respect to one variable, while all other variables are held constant."
-            },
-            "Q": {
-                "name": "Total Charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "The net electrical charge of a system."
-            },
-            "j": {
-                "name": "Current Density / Index",
-                "type": "variable",
-                "unit": "A/m²",
-                "description": "The flow of electric current per unit cross-sectional area."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "q": {
-                "name": "Electric Charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "A physical property of matter that causes it to experience a force when placed in an electromagnetic field."
+                "description": "The j-th independent coordinate used to uniquely describe the configuration of the mechanical system."
             }
         },
-        "interpretation": "The equation $Q_j = \\sum_i \\mathbf{F}_i \\cdot \\frac {\\partial \\mathbf{r}_i}{\\partial q_j} calculates the$j$-th generalized force$Q_j$. Here, \\mathbf{F} _i$ represents the $i$-th physical force vector (e.g., gravitational, spring, applied force) acting on the $i$-th particle or point of application within the system. The position of each particle $\\mathbf{r}_i is expressed as a function of the generalized coordinates, \\mathbf{r} _i$(q_1, q_2, $\\ldots$, q_N)$. The term \\frac{ \\partial \\mathbf{r}$ _i}{\\partial q_j}$is a vector known as the 'velocity transformation vector' or 'configuration gradient.' It describes how the position of the$i$-th particle would change if only the generalized coordinate$q_j$were varied by an infinitesimal amount, while all other generalized coordinates remained fixed. This vector essentially points in the direction of the virtual displacement$\\delta $\\mathbf{r}_i$ that corresponds to a virtual change \\delta q_j$. The dot product\\mathbf{F}_i$\\cdot \\frac{ \\partial $\\mathbf{r}$ _i}{\\partial q_j} calculates the component of the force $\\mathbf{F}_i$ that acts along the direction of this virtual displacement. Finally, the summation \\sum_i aggregates these contributions from all individual forces acting on all particles in the system, yielding the total generalized force $Q_j$ corresponding to the coordinate $q_j$. This $Q_j$ represents the net tendency for the system to move along the $q_j$ direction$.",
-        "symmetry_origin": "This formula originates from the Principle of Virtual Work, a fundamental concept in mechanics. For a static system in equilibrium, the total virtual work done by all forces (excluding ideal constraint forces) for any virtual displacement consistent with the constraints is zero. In dynamics, this principle is extended by D'Alembert's principle, which includes inertial forces ($-m_i \\ddot{\\mathbf{r}}_i$) alongside applied forces, allowing the virtual work formulation to be applied to accelerating systems. Generalized coordinates $q_j$ are chosen to simplify the description of system configurations and implicitly satisfy any holonomic constraints, thereby reducing the number of independent variables. The definition of the generalized force $Q_j$ is such that the total virtual work $\\delta W$ for a system can be expressed as $\\delta W = \\sum_j Q_j \\delta q_j$, making it a natural consequence of transforming from Cartesian coordinates to generalized coordinates while preserving the concept of work.",
-        "limits_and_boundary": "In the limit where a force $\\mathbf{F}_i$ is always perpendicular to the virtual displacement vector $\\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$, its contribution to the generalized force $Q_j$ will be zero due to the properties of the dot product. This often applies to ideal constraint forces (e.g., tension in an inextensible string, normal force on a frictionless surface) if they do no work. If all applied forces $\\mathbf{F}_i$ are zero, then all generalized forces $Q_j$ will necessarily be zero, indicating no external influence on the system's motion along any generalized coordinate. Conversely, if a system is held stationary such that all $\\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$ are zero (e.g., due to rigid clamping), then all $Q_j$ will also be zero, irrespective of the applied forces. In systems where $q_j$ represents a translational degree of freedom, $Q_j$ will have units of force (Newtons). If $q_j$ represents a rotational degree of freedom, $Q_j$ will have units of torque (Newton-meters).",
+        "interpretation": "The equation $Q_j = \\sum_i \\mathbf{F}_i \\cdot \\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$ calculates the $j$-th generalized force $Q_j$. Here, $\\mathbf{F}_i$ represents the $i$-th physical force vector (e.g., gravitational, spring, applied force) acting on the $i$-th particle or point of application within the system. The position of each particle $\\mathbf{r}_i$ is expressed as a function of the generalized coordinates, $\\mathbf{r}_i(q_1, q_2, \\ldots, q_N)$. The term $\\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$ is a vector known as the 'velocity transformation vector' or 'configuration gradient.' It describes how the position of the $i$-th particle would change if only the generalized coordinate $q_j$ were varied by an infinitesimal amount, while all other generalized coordinates remained fixed. This vector points in the direction of the virtual displacement $\\delta\\mathbf{r}_i$ that corresponds to a virtual change $\\delta q_j$. The dot product $\\mathbf{F}_i \\cdot \\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$ calculates the component of the force $\\mathbf{F}_i$ that acts along the direction of this virtual displacement. Finally, the summation $\\sum_i$ aggregates these contributions from all individual forces acting on all particles in the system, yielding the total generalized force $Q_j$ corresponding to the coordinate $q_j$. This $Q_j$ represents the net tendency for the system to move along the $q_j$ direction.",
+        "symmetry_origin": "This formula originates from the Principle of Virtual Work. For a static system in equilibrium, the total virtual work done by all forces (excluding ideal constraint forces) for any virtual displacement consistent with the constraints is zero. In dynamics, this is extended by D'Alembert's principle, which includes inertial forces ($-m_i \\ddot{\\mathbf{r}}_i$) alongside applied forces. Generalized coordinates $q_j$ are chosen to simplify the description of system configurations and implicitly satisfy holonomic constraints. The definition of the generalized force $Q_j$ is such that the total virtual work $\\delta W$ can be expressed as $\\delta W = \\sum_j Q_j \\delta q_j$, making it a natural consequence of transforming from Cartesian to generalized coordinates while preserving the concept of work.",
+        "limits_and_boundary": "1. If a force $\\mathbf{F}_i$ is perpendicular to the virtual displacement vector $\\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$, its contribution to the generalized force $Q_j$ is zero. This is characteristic of ideal, workless constraint forces.\n2. If all applied forces $\\mathbf{F}_i$ are zero, then all generalized forces $Q_j$ are necessarily zero, indicating no external influence on the system's motion along any generalized coordinate.\n3. The physical units of $Q_j$ depend on the units of the corresponding generalized coordinate $q_j$. If $q_j$ is a length, $Q_j$ is a force (N); if $q_j$ is an angle, $Q_j$ is a torque (N·m).",
         "status": "platinum",
-        "conceptual_definition": "This formula defines the generalized force, $Q_j$, associated with a specific generalized coordinate, $q_j$, in a mechanical system. It is derived from the Principle of Virtual Work, which provides a powerful method for analyzing the equilibrium or dynamics of constrained systems without explicitly dealing with constraint forces. Essentially, it quantifies the effective force or torque driving the motion along a particular generalized coordinate.",
-        "intuitive_summary": "The generalized force for a given generalized coordinate is the sum of the components of all acting physical forces projected onto the direction of virtual displacement corresponding to that coordinate.",
+        "conceptual_definition": "The generalized force is the net effective force or torque that drives the change in a system's corresponding generalized coordinate. It is derived by projecting all applied physical forces onto the direction of virtual displacement associated with that coordinate, providing a way to formulate dynamics without explicit constraint forces.",
+        "intuitive_summary": "The generalized force is the effective 'push' or 'twist' along a chosen coordinate direction, calculated by adding up how much each physical force contributes to motion in that direction.",
         "subcomponents": [
             "force-on-the-i-th-particle-826b061f",
             "generalized-position-coordinate-ca4dc869",
@@ -682,14 +652,20 @@
         ]
     },
     "the-reality-lock-bab7427a": {
-        "title": "The Reality Lock",
-        "equation": "\\nabla^2 G(\\mathbf{r}, \\mathbf{r}') = \\delta(\\mathbf{r} - \\mathbf{r}') \\quad (\\text{Green's Function link})",
+        "title": "Green's Function for the Laplacian",
+        "equation": "\\nabla^2 G(\\mathbf{r}, \\mathbf{r}') = -4\\pi\\delta(\\mathbf{r} - \\mathbf{r}')",
         "semantic_variables": {
-            "G(\\mathbf{r}, \\mathbf{r}')": {
+            "\\nabla^2": {
+                "name": "Laplacian Operator",
+                "type": "operator",
+                "unit": "m⁻²",
+                "description": "The divergence of the gradient of a scalar function, representing the flux density of the gradient flow out of an infinitesimal volume."
+            },
+            "G": {
                 "name": "Green's Function",
                 "type": "variable",
-                "unit": "m\\text{^-1}",
-                "description": "The Green's function itself, representing the response at an observation point $\\mathbf{r}$ due to a point source at $\\mathbf{r}'$."
+                "unit": "Varies (e.g., m⁻¹ in 3D)",
+                "description": "The impulse response of the system, representing the field at an observation point $\\mathbf{r}$ due to a point source at $\\mathbf{r}'$."
             },
             "\\mathbf{r}": {
                 "name": "Observation Position Vector",
@@ -703,90 +679,24 @@
                 "unit": "m",
                 "description": "The position vector of the point where the infinitesimal source or impulse is located."
             },
-            "\\delta(\\mathbf{r} - \\mathbf{r}')": {
+            "\\delta": {
                 "name": "Dirac Delta Function",
-                "type": "variable",
-                "unit": "m\\text{^-3}",
-                "description": "A distribution representing an idealized point source of unit strength located at $\\mathbf{r}'$. It is zero everywhere except at $\\mathbf{r} = \\mathbf{r}'$, where it is infinitely large such that its integral over all space is one."
+                "type": "distribution",
+                "unit": "m⁻³",
+                "description": "A generalized function representing an idealized point source of unit strength located where its argument is zero. It is zero everywhere else and its integral over all space is one."
             },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
-            },
-            "u": {
-                "name": "Velocity Component / Specific Internal Energy",
-                "type": "variable",
-                "unit": "m/s or J/kg",
-                "description": "Speed along a particular coordinate direction, or internal energy per unit mass."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "i": {
-                "name": "Imaginary Unit",
+            "\\pi": {
+                "name": "Pi",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "l": {
-                "name": "Length / Angular Quantum Number",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
-            },
-            "k": {
-                "name": "Spring Stiffness (Hooke's Constant)",
-                "type": "variable",
-                "unit": "N/m",
-                "description": "The rigidity of a spring or elastic medium, defining restoring force per unit of displacement: $F = -kx$."
+                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
             }
         },
-        "interpretation": "This equation states that when the Laplacian operator $\\nabla^2 acts on the Green's function$G($\\mathbf{r}$, $\\mathbf{r}$')$, the result is a Dirac delta function \\delta (\\mathbf{r} - \\mathbf{r}')$. The Laplacian operator $\\nabla^2 (often expressed as \\frac{\\partial^2}{\\partial x^2} + \\frac{ \\partial ^2}{ \\partial y^2} + \\frac{\\partial^2}{\\partial z^2}$ in Cartesian coordinates) represents the divergence of the gradient of a scalar field, quantifying how much the value of a function at a point differs from its average value in an infinitesimal neighborhood. The Green's function $G(\\mathbf{r},\\mathbf{r}')$ is a scalar field that depends on both the observation point $\\mathbf{r}$ and the source point $\\mathbf{r}'. The Dirac delta function$\\delta$(\\mathbf{r} - \\mathbf{r}')$ represents an infinitely localized point source at $\\mathbf{r}' with unit$' strength'. Thus, the equation essentially says that the Green$' s function is the field generated by an infinitesimal, localized point source. Solving this equation for G$ effectively provides the 'building block' solution from which more complex solutions for distributed sources can be constructed by integration$.",
-        "symmetry_origin": "The Green's function for the Laplacian in an infinite, homogeneous, isotropic medium inherently possesses translational and rotational symmetry. The Laplacian operator $\\nabla^2$ itself is invariant under translations and rotations of the coordinate system. Consequently, the Green's function $G(\\mathbf{r}, \\mathbf{r}')$ for this operator in free space only depends on the relative distance between the observation point and the source point, i.e., $|\\mathbf{r} - \\mathbf{r}'|$. This spatial symmetry is a direct reflection of the underlying homogeneity and isotropy of the physical space in which the phenomenon described by the Laplacian operates (e.g., electrostatics, heat conduction).",
-        "limits_and_boundary": "In the limit as the observation point $\\mathbf{r} approaches the source point \\mathbf{r} ', the Green$' s function G($\\mathbf{r}$, $\\mathbf{r}$')$typically diverges. For example, in three dimensions,$G$is proportional to$1/|$\\mathbf{r} - \\mathbf{r}$'|$, reflecting the singular nature of a point source. Conversely, as the observation point \\mathbf{r}$ moves infinitely far away from the source point $\\mathbf{r}$' (i.e., $|\\mathbf{r} - \\mathbf{r}'| \\to \\infty$), the Green's function generally approaches zero, indicating that the influence of a localized point source diminishes with distance. In practical applications, the Green's function must also satisfy specific boundary conditions imposed by the physical system (e.g., Dirichlet, Neumann, or mixed conditions on a finite domain), which modify its form compared to the free-space solution.",
+        "interpretation": "This equation defines the Green's function $G(\\mathbf{r}, \\mathbf{r}')$ for the Laplacian operator $\\nabla^2$. The Laplacian, often expressed as $\\nabla^2 = \\frac{\\partial^2}{\\partial x^2} + \\frac{\\partial^2}{\\partial y^2} + \\frac{\\partial^2}{\\partial z^2}$ in Cartesian coordinates, quantifies the divergence of the gradient of a scalar field. The Green's function $G(\\mathbf{r}, \\mathbf{r}')$ is a scalar field that depends on both the observation point $\\mathbf{r}$ and the source point $\\mathbf{r}'$. The Dirac delta function $\\delta(\\mathbf{r} - \\mathbf{r}')$ represents an infinitely localized point source at $\\mathbf{r}'$. The equation states that the Green's function is the field whose Laplacian is a point source. The factor of $-4\\pi$ is a common convention in physics (e.g., electrostatics, gravity) that simplifies the resulting solution in 3D to $G(\\mathbf{r}, \\mathbf{r}') = 1/|\\mathbf{r} - \\mathbf{r}'|$. Solving this equation for $G$ provides the fundamental 'building block' solution from which solutions for distributed sources can be constructed by integration.",
+        "symmetry_origin": "The Laplacian operator $\\nabla^2$ is invariant under translations and rotations of the coordinate system (a consequence of the homogeneity and isotropy of Euclidean space). Therefore, the Green's function for the Laplacian in an infinite, homogeneous, isotropic medium must also possess this symmetry. This implies that the Green's function $G(\\mathbf{r}, \\mathbf{r}')$ can only depend on the relative distance between the observation and source points, i.e., on the magnitude $|\\mathbf{r} - \\mathbf{r}'|$.",
+        "limits_and_boundary": "1. In the limit $\\mathbf{r} \\to \\mathbf{r}'$, the Green's function $G(\\mathbf{r}, \\mathbf{r}')$ diverges (e.g., as $1/|\\mathbf{r} - \\mathbf{r}'|$ in 3D), reflecting the singularity of a point source.\n2. In the limit $|\\mathbf{r} - \\mathbf{r}'| \\to \\infty$ in free space, the Green's function typically vanishes, $G(\\mathbf{r}, \\mathbf{r}') \\to 0$, meaning the influence of a localized source diminishes with distance.\n3. For finite domains, the Green's function must be modified to satisfy specific boundary conditions (e.g., Dirichlet or Neumann conditions on the boundary surface), which can be accomplished using the method of images or other techniques.",
         "status": "platinum",
-        "conceptual_definition": "The equation $\\nabla$^2 G($\\mathbf{r}$, $\\mathbf{r}$') = $\\delta$($\\mathbf{r} - \\mathbf{r}$')$defines the Green's function for the Laplacian operator. Conceptually, a Green's function is the impulse response or fundamental solution of a linear partial differential equation. It describes the effect at an observation point \\mathbf{r} due to a point source or instantaneous impulse located at a source point \\mathbf{r}$'. By the principle of superposition, the Green$' s function allows for the calculation of the solution to any inhomogeneous linear differential equation, given any arbitrary source distribution, by integrating the Green's function over that source$.",
+        "conceptual_definition": "The Green's function for the Laplacian is the fundamental solution to Poisson's equation, representing the potential field generated by an idealized point source. It serves as an impulse response, allowing the solution for any arbitrary source distribution to be found via convolution.",
         "intuitive_summary": "Green's function describes the specific response of a linear system at one location due to a concentrated, point-like disturbance at another location.",
         "subcomponents": [
             "laplacian-operator-683590a0",
@@ -1779,7 +1689,8 @@
         "status": "published",
         "parent_formula_id": "yukawa-mass-scaling-vev-1aba5583",
         "subcomponents": [],
-        "id": "yukawa-coupling-constant-for-fermion-f-2ab4db43"
+        "id": "yukawa-coupling-constant-for-fermion-f-2ab4db43",
+        "intuitive_summary": ""
     },
     "non-abelian-gauge-field-self-interaction-term-c46c83b0": {
         "title": "Non-Abelian Gauge Field Self-Interaction Term",
@@ -1833,7 +1744,8 @@
         "status": "published",
         "parent_formula_id": "yang-mills-curvature-general-3f6b1546",
         "subcomponents": [],
-        "id": "non-abelian-gauge-field-self-interaction-term-c46c83b0"
+        "id": "non-abelian-gauge-field-self-interaction-term-c46c83b0",
+        "intuitive_summary": ""
     },
     "interaction-hamiltonian-in-interaction-picture-edb7df53": {
         "title": "Interaction Hamiltonian in Interaction Picture",
@@ -1863,7 +1775,8 @@
         "status": "published",
         "parent_formula_id": "qft-s-matrix-dyson-109f2c08",
         "subcomponents": [],
-        "id": "interaction-hamiltonian-in-interaction-picture-edb7df53"
+        "id": "interaction-hamiltonian-in-interaction-picture-edb7df53",
+        "intuitive_summary": ""
     },
     "expectation-value-of-energy-08904f69": {
         "title": "Expectation Value of Energy",
@@ -1887,7 +1800,8 @@
         "status": "published",
         "parent_formula_id": "quantum-speed-37d63c29",
         "subcomponents": [],
-        "id": "expectation-value-of-energy-08904f69"
+        "id": "expectation-value-of-energy-08904f69",
+        "intuitive_summary": ""
     },
     "maximum-photoelectron-kinetic-energy-7c548aa2": {
         "title": "Maximum Photoelectron Kinetic Energy",
@@ -1923,7 +1837,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-4500a388",
         "subcomponents": [],
-        "id": "maximum-photoelectron-kinetic-energy-7c548aa2"
+        "id": "maximum-photoelectron-kinetic-energy-7c548aa2",
+        "intuitive_summary": ""
     },
     "condition-for-parallel-transport-of-a-vector-field-4b0d02b8": {
         "title": "Condition for Parallel Transport of a Vector Field",
@@ -1965,7 +1880,8 @@
         "status": "published",
         "parent_formula_id": "causal-edge-8a7ae5a7",
         "subcomponents": [],
-        "id": "condition-for-parallel-transport-of-a-vector-field-4b0d02b8"
+        "id": "condition-for-parallel-transport-of-a-vector-field-4b0d02b8",
+        "intuitive_summary": ""
     },
     "cosmological-deceleration-parameter-258027d7": {
         "title": "Cosmological Deceleration Parameter",
@@ -2007,7 +1923,8 @@
         "status": "published",
         "parent_formula_id": "weight-of-force-c84ee88b",
         "subcomponents": [],
-        "id": "cosmological-deceleration-parameter-258027d7"
+        "id": "cosmological-deceleration-parameter-258027d7",
+        "intuitive_summary": ""
     },
     "higgs-boson-mass-from-higgs-potential-cf895d46": {
         "title": "Higgs Boson Mass from Higgs Potential",
@@ -2043,7 +1960,8 @@
         "status": "published",
         "parent_formula_id": "the-h-particle-02ebacd8",
         "subcomponents": [],
-        "id": "higgs-boson-mass-from-higgs-potential-cf895d46"
+        "id": "higgs-boson-mass-from-higgs-potential-cf895d46",
+        "intuitive_summary": ""
     },
     "rate-of-change-of-kinetic-energy-9e1b7c2c": {
         "title": "Rate of Change of Kinetic Energy",
@@ -2073,7 +1991,8 @@
         "status": "published",
         "parent_formula_id": "external-power-rotating-frame",
         "subcomponents": [],
-        "id": "rate-of-change-of-kinetic-energy-9e1b7c2c"
+        "id": "rate-of-change-of-kinetic-energy-9e1b7c2c",
+        "intuitive_summary": ""
     },
     "adiabatic-index-for-monatomic-ideal-gases-ccce1fb3": {
         "title": "Adiabatic Index for Monatomic Ideal Gases",
@@ -2097,7 +2016,8 @@
         "status": "published",
         "parent_formula_id": "thermodynamic-isolation-c04c4026",
         "subcomponents": [],
-        "id": "adiabatic-index-for-monatomic-ideal-gases-ccce1fb3"
+        "id": "adiabatic-index-for-monatomic-ideal-gases-ccce1fb3",
+        "intuitive_summary": ""
     },
     "salpeter-initial-mass-function-normalization-constant-eb8fbeef": {
         "title": "Salpeter Initial Mass Function Normalization Constant",
@@ -2121,7 +2041,8 @@
         "status": "published",
         "parent_formula_id": "birth-distribution-9605a291",
         "subcomponents": [],
-        "id": "salpeter-initial-mass-function-normalization-constant-eb8fbeef"
+        "id": "salpeter-initial-mass-function-normalization-constant-eb8fbeef",
+        "intuitive_summary": ""
     },
     "momentum-mass-equivalence-at-unit-velocity-a9d738e6": {
         "title": "Momentum-Mass Equivalence at Unit Velocity",
@@ -2151,7 +2072,8 @@
         "status": "published",
         "parent_formula_id": "maupertuis-form-bb3ba80b",
         "subcomponents": [],
-        "id": "momentum-mass-equivalence-at-unit-velocity-a9d738e6"
+        "id": "momentum-mass-equivalence-at-unit-velocity-a9d738e6",
+        "intuitive_summary": ""
     },
     "square-root-of-energy-term-672a46b5": {
         "title": "Square Root of Energy Term",
@@ -2175,7 +2097,8 @@
         "status": "published",
         "parent_formula_id": "high-energy-supply-2245bef9",
         "subcomponents": [],
-        "id": "square-root-of-energy-term-672a46b5"
+        "id": "square-root-of-energy-term-672a46b5",
+        "intuitive_summary": ""
     },
     "quantum-mechanical-propagator-kernel-c1d48513": {
         "title": "Quantum Mechanical Propagator Kernel",
@@ -2223,7 +2146,8 @@
         "status": "published",
         "parent_formula_id": "the-path-integral-ab6eacde",
         "subcomponents": [],
-        "id": "quantum-mechanical-propagator-kernel-c1d48513"
+        "id": "quantum-mechanical-propagator-kernel-c1d48513",
+        "intuitive_summary": ""
     },
     "bell-state-phi-plus-6f78f188": {
         "title": "Bell State Phi Plus",
@@ -2277,7 +2201,8 @@
         "status": "published",
         "parent_formula_id": "speed-limit-c8ebcf6c",
         "subcomponents": [],
-        "id": "bell-state-phi-plus-6f78f188"
+        "id": "bell-state-phi-plus-6f78f188",
+        "intuitive_summary": ""
     },
     "photon-momentum-energy-relation-58e162b9": {
         "title": "Photon Momentum-Energy Relation",
@@ -2313,7 +2238,8 @@
         "status": "published",
         "parent_formula_id": "photon-momentum-identity-0874876e",
         "subcomponents": [],
-        "id": "photon-momentum-energy-relation-58e162b9"
+        "id": "photon-momentum-energy-relation-58e162b9",
+        "intuitive_summary": ""
     },
     "scalar-vector-product-for-directional-displacement-e0368e33": {
         "title": "Scalar-Vector Product for Directional Displacement",
@@ -2343,7 +2269,8 @@
         "status": "published",
         "parent_formula_id": "dot-product-link-e9e0590d",
         "subcomponents": [],
-        "id": "scalar-vector-product-for-directional-displacement-e0368e33"
+        "id": "scalar-vector-product-for-directional-displacement-e0368e33",
+        "intuitive_summary": ""
     },
     "covariant-derivative-of-a-scalar-field-ae3c22df": {
         "title": "Covariant Derivative of a Scalar Field",
@@ -2373,7 +2300,8 @@
         "status": "published",
         "parent_formula_id": "geometric-consistency-6ab2b1c4",
         "subcomponents": [],
-        "id": "covariant-derivative-of-a-scalar-field-ae3c22df"
+        "id": "covariant-derivative-of-a-scalar-field-ae3c22df",
+        "intuitive_summary": ""
     },
     "transformed-contravariant-rank-2-tensor-67928014": {
         "title": "Transformed Contravariant Rank-2 Tensor",
@@ -2397,7 +2325,8 @@
         "status": "published",
         "parent_formula_id": "lorentz-tensor-transformation-2236e558",
         "subcomponents": [],
-        "id": "transformed-contravariant-rank-2-tensor-67928014"
+        "id": "transformed-contravariant-rank-2-tensor-67928014",
+        "intuitive_summary": ""
     },
     "spacetime-metric-tensor-9ae6c1b0": {
         "title": "Spacetime Metric Tensor",
@@ -2421,7 +2350,8 @@
         "status": "published",
         "parent_formula_id": "induced-metric",
         "subcomponents": [],
-        "id": "spacetime-metric-tensor-9ae6c1b0"
+        "id": "spacetime-metric-tensor-9ae6c1b0",
+        "intuitive_summary": ""
     },
     "vanishing-correlation-condition-f49b94ee": {
         "title": "Vanishing Correlation Condition",
@@ -2457,7 +2387,8 @@
         "status": "published",
         "parent_formula_id": "bell-s-original-inequality-d2123870",
         "subcomponents": [],
-        "id": "vanishing-correlation-condition-f49b94ee"
+        "id": "vanishing-correlation-condition-f49b94ee",
+        "intuitive_summary": ""
     },
     "vector-field-from-scalar-gradient-product-18cf1c08": {
         "title": "Vector Field from Scalar-Gradient Product",
@@ -2499,7 +2430,8 @@
         "status": "published",
         "parent_formula_id": "the-2nd-identity-919acdae",
         "subcomponents": [],
-        "id": "vector-field-from-scalar-gradient-product-18cf1c08"
+        "id": "vector-field-from-scalar-gradient-product-18cf1c08",
+        "intuitive_summary": ""
     },
     "exterior-derivative-of-lagrangian-1-form-b64a27ba": {
         "title": "Exterior Derivative of Lagrangian 1-Form",
@@ -2529,7 +2461,8 @@
         "status": "published",
         "parent_formula_id": "hamiltonian-jacobi-alternative-form",
         "subcomponents": [],
-        "id": "exterior-derivative-of-lagrangian-1-form-b64a27ba"
+        "id": "exterior-derivative-of-lagrangian-1-form-b64a27ba",
+        "intuitive_summary": ""
     },
     "total-infinitesimal-work-by-internal-pairwise-forces-4dea0258": {
         "title": "Total Infinitesimal Work by Internal Pairwise Forces",
@@ -2571,7 +2504,8 @@
         "status": "published",
         "parent_formula_id": "work-done-pairwise-force",
         "subcomponents": [],
-        "id": "total-infinitesimal-work-by-internal-pairwise-forces-4dea0258"
+        "id": "total-infinitesimal-work-by-internal-pairwise-forces-4dea0258",
+        "intuitive_summary": ""
     },
     "gausss-law-for-electric-displacement-field": {
         "id": "gausss-law-for-electric-displacement-field",

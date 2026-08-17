@@ -55,56 +55,32 @@
     },
     "instrumental-bias-7eda424d": {
         "title": "Instrumental Bias",
-        "equation": "N_{obs} = N_{true} \\cdot P(\\text{detect})",
+        "equation": "N_{\\mathrm{obs}} = N_{\\mathrm{true}} \\times P(\\mathrm{detect})",
         "semantic_variables": {
-            "N_{obs}": {
+            "N_{\\mathrm{obs}}": {
                 "name": "Observed Number of Events",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The count of physical events, objects, or phenomena that have been successfully detected and recorded by a measurement instrument or during an observation period."
+                "description": "The count of physical events or objects successfully detected and recorded by a measurement instrument."
             },
-            "N_{true}": {
+            "N_{\\mathrm{true}}": {
                 "name": "True Number of Events",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The actual, underlying total number of events, objects, or phenomena that exist in the system being studied, irrespective of whether they were detected."
+                "description": "The actual, total number of events or objects present in the system being studied, irrespective of detection."
             },
-            "P(\\text{detect})": {
+            "P(\\mathrm{detect})": {
                 "name": "Probability of Detection",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The likelihood, expressed as a number between 0 and 1, that any single event (from $N_{true}$) will be successfully detected and registered by the instrument. This probability often depends on the instrument's sensitivity, the signal strength of the event, and environmental conditions."
-            },
-            "N": {
-                "name": "Number of Particles / Normal Force",
-                "type": "variable",
-                "unit": "dimensionless or N",
-                "description": "The total count of atoms/molecules, or perpendicular contact force."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
+                "description": "The probability that any single event from the true population will be successfully detected by the instrument. This is also known as detection efficiency."
             }
         },
-        "interpretation": "The equation establishes a fundamental relationship between the observed count, the true underlying count, and the efficiency of the detection process. Here, $N_{obs}$ represents the number of events or objects that an observer or instrument actually registers. This value is what is directly measured in an experiment or observation. $N_{true}$ signifies the actual, underlying number of events or objects that exist in reality, some of which might not be detectable by the instrument. The core of the instrumental bias is captured by $P(\\text{detect})$, which is the probability (a value between 0 and 1, inclusive) that any single event, if present, will be successfully detected. If $P(\\text{detect}) = 1$, the instrument is perfectly efficient, and $N_{obs} = N_{true}$. However, if $P(\\text{detect}) < 1$, then $N_{obs}$ will always be less than $N_{true}$, indicating that some events went unobserved due to the instrument's limitations or experimental conditions. This implies that to infer $N_{true}$ from $N_{obs}$, one must accurately determine $P(\\text{detect})$.",
-        "symmetry_origin": "This formula originates from the foundational principles of probability theory and statistical sampling, rather than from a fundamental physical symmetry or conservation law. It describes a statistical relationship in observational measurement processes. It is a direct consequence of treating detection as a Bernoulli trial for each potential event, where the aggregate observed count is the sum of these trials, scaled by the true number of events.",
-        "limits_and_boundary": "1. If $P(\\text{detect}) = 1$ (perfect detection efficiency), then $N_{obs} = N_{true}$, indicating no instrumental bias and a complete census of events. 2. If $P(\\text{detect}) = 0$ (zero detection efficiency), then $N_{obs} = 0$, meaning no events are observed regardless of how many truly exist. 3. If $N_{true} = 0$ (no true events), then $N_{obs} = 0$ for any $P(\\text{detect})$, as nothing can be observed if it doesn't exist. 4. As $P(\\text{detect})$ approaches 0 from above (e.g., $P(\\text{detect}) \\to \\epsilon$ for small $\\epsilon > 0$), then $N_{obs} \\to N_{true} \\cdot \\epsilon$, indicating that very few events will be observed even if many exist. 5. As $P(\\text{detect})$ approaches 1 from below (e.g., $P(\\text{detect}) \\to 1 - \\epsilon$ for small $\\epsilon > 0$), then $N_{obs} \\to N_{true} \\cdot (1 - \\epsilon)$, meaning almost all events are observed.",
+        "interpretation": "The equation establishes a fundamental relationship between the observed count, the true underlying count, and the efficiency of the detection process. Here, $N_{\\mathrm{obs}}$ represents the number of events or objects that an observer or instrument actually registers, which is the value directly measured. $N_{\\mathrm{true}}$ signifies the actual, underlying number of events or objects that exist in reality, some of which might not be detectable. The core of the instrumental bias is captured by $P(\\mathrm{detect})$, which is the probability (a value between 0 and 1) that any single event, if present, will be successfully detected. If $P(\\mathrm{detect}) = 1$, the instrument is perfectly efficient, and $N_{\\mathrm{obs}} = N_{\\mathrm{true}}$. However, if $P(\\mathrm{detect}) < 1$, then $N_{\\mathrm{obs}}$ will be systematically less than $N_{\\mathrm{true}}$, indicating that some events went unobserved. To infer the true population $N_{\\mathrm{true}}$ from the observed count $N_{\\mathrm{obs}}$, one must accurately determine the detection probability $P(\\mathrm{detect})$.",
+        "symmetry_origin": "This formula originates from the foundational principles of probability theory and statistical sampling, rather than from a fundamental physical symmetry or conservation law. It describes a statistical relationship inherent in observational measurement processes. The equation is a direct consequence of treating the detection of each potential event as an independent Bernoulli trial, where the aggregate observed count is the expected value of the sum of these trials.",
+        "limits_and_boundary": "1. Perfect Detection: If $P(\\mathrm{detect}) = 1$, then $N_{\\mathrm{obs}} = N_{\\mathrm{true}}$, indicating no instrumental bias and a complete census of events.\n2. Zero Detection: If $P(\\mathrm{detect}) = 0$, then $N_{\\mathrm{obs}} = 0$, meaning no events are observed regardless of how many truly exist.\n3. No True Events: If $N_{\\mathrm{true}} = 0$, then $N_{\\mathrm{obs}} = 0$ for any valid $P(\\mathrm{detect})$, as nothing can be observed if it does not exist.\n4. Low Efficiency Limit: As $P(\\mathrm{detect}) \\to 0$, the observed count $N_{\\mathrm{obs}}$ also approaches zero, indicating that very few events will be observed even if many exist.\n5. High Efficiency Limit: As $P(\\mathrm{detect}) \\to 1$, the observed count $N_{\\mathrm{obs}}$ approaches the true count $N_{\\mathrm{true}}$, meaning almost all events are observed.",
         "status": "platinum",
-        "conceptual_definition": "Instrumental bias, in the context of observational science, refers to the systematic deviation between the true underlying number of physical events or objects and the number that are actually observed or detected by an instrument or survey. This bias arises because no detector is perfectly efficient, meaning there is always a probability less than one that an existing event will be successfully recorded. The formula quantifies this relationship, showing that the observed count is directly proportional to the true count, with the constant of proportionality being the detection probability.",
+        "conceptual_definition": "Instrumental bias quantifies the systematic deviation between the true number of physical events and the number observed by an instrument, arising from the detector's non-perfect efficiency. The observed count is the product of the true count and the probability of detection.",
         "intuitive_summary": "The number of events actually observed by an instrument is the true total number of events scaled by the instrument's probability of successfully detecting each one.",
         "subcomponents": [
             "zero-net-flux-condition-695696f7",
@@ -259,58 +235,40 @@
         ]
     },
     "point-source-response-6a0a64e1": {
-        "title": "Point-Source Response",
-        "equation": "\\nabla^2 \\Phi = -\\rho / \\varepsilon_0 \\quad (\\text{Poisson})",
+        "title": "Poisson's Equation for Electrostatics",
+        "equation": "\\nabla^2 \\Phi = - \\frac{\\rho}{\\varepsilon_0}",
         "semantic_variables": {
+            "\\nabla^2": {
+                "name": "Laplacian Operator",
+                "type": "operator",
+                "unit": "m^{-2}",
+                "description": "A differential operator that measures the divergence of the gradient of a scalar function, representing its local curvature."
+            },
             "\\Phi": {
                 "name": "Electrostatic Potential",
                 "type": "variable",
-                "unit": "V (Volts) or J/C",
-                "description": "A scalar field representing the amount of potential energy per unit charge at a given location in an electric field. The electric field is the negative gradient of the electrostatic potential."
+                "unit": "V (Volts)",
+                "description": "A scalar field representing the potential energy per unit charge at a given location in an electric field. The electric field is its negative gradient."
             },
             "\\rho": {
-                "name": "Charge Density",
+                "name": "Volume Charge Density",
                 "type": "variable",
                 "unit": "C/m^3",
-                "description": "The amount of electric charge per unit volume at a specific point in space. It is the source of the electrostatic potential."
+                "description": "The amount of electric charge per unit volume at a specific point in space, acting as the source of the electrostatic field."
             },
             "\\varepsilon_0": {
                 "name": "Vacuum Permittivity",
                 "type": "constant",
-                "unit": "F/m (Farads per meter) or C^2/(N·m^2)",
-                "description": "A fundamental physical constant representing the ability of a vacuum to permit electric field lines or, equivalently, its capacity to store electric energy. It relates electric fields to their sources in free space."
-            },
-            "\\epsilon_0": {
-                "name": "Vacuum Permittivity",
-                "type": "constant",
-                "unit": "F/m",
-                "description": "The capability of the vacuum to permit electric field lines."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
+                "unit": "F/m (Farads per meter)",
+                "description": "A fundamental physical constant representing the capability of a classical vacuum to permit electric field lines."
             }
         },
-        "interpretation": "The equation $\\nabla$^2 $\\Phi$ = -$\\rho$ / $\\varepsilon_0 describes how a scalar potential field, \\Phi , is influenced by a source distribution, \\rho . The term \\nabla ^2 is the Laplacian operator, which measures the local 'curvature' or 'concavity' of the potential field \\Phi . A negative Laplacian (i.e., \\nabla ^2 \\Phi < 0$) indicates a local maximum in potential, while a positive Laplacian ($\\nabla^2 \\Phi > 0$) indicates a local minimum. The charge density $\\rho represents the volume density of electric charge, acting as the 'source' or 'sink' of the potential. A positive charge density \\rho > 0$results in a negative Laplacian for $\\Phi$, meaning positive charges are associated with potential 'sinks' (local minima if the potential is defined to be positive for positive charges). The constant $\\varepsilon_0$, the vacuum permittivity, scales the relationship between charge and potential in a vacuum. It is a measure of how well a vacuum permits electric field lines.",
-        "symmetry_origin": "Poisson's equation is derived directly from two foundational principles of electromagnetism: the differential form of Gauss's Law ($\\nabla \\cdot \\mathbf{E} = \\rho / \\varepsilon_0$), which states that the divergence of the electric field is proportional to the charge density, and the definition of the electrostatic potential in terms of the electric field ($\\mathbf{E} = - \\nabla \\Phi$), which expresses that the electric field is the negative gradient of the scalar potential. Substituting the latter into the former yields Poisson's equation. Its form is invariant under rotations and translations of the coordinate system, reflecting the isotropy and homogeneity of space.",
-        "limits_and_boundary": "In regions where there is no net charge, i.e., $\\rho$ = 0$, Poisson's equation reduces to Laplace's equation: \\nabla^2 \\Phi = 0$. Solutions to Laplace's equation are called harmonic functions, describing potentials in charge-free regions. For a single point charge $q$ located at the origin, the charge density is given by $\\rho$($\\mathbf{r}$) = q $\\delta$($\\mathbf{r}$)$, where \\delta ( \\mathbf{r} ) is the Dirac delta function. The solution to Poisson's equation for a point charge is the well-known Coulomb potential: \\Phi$($\\mathbf{r}$) = \\frac{q}{4\\pi\\varepsilon_0 r} , which also represents the 'point-source response' or Green's function for the Laplacian operator. As the distance $r$ from a localized charge distribution approaches infinity, the potential \\Phi typically approaches zero. The specific solution to Poisson's equation depends on the boundary conditions, such as Dirichlet boundary conditions (where \\Phi is specified on the boundary) or Neumann boundary conditions (where the normal derivative of \\Phi is specified on the boundary$).",
+        "interpretation": "Poisson's equation, $\\nabla^2 \\Phi = - \\rho / \\varepsilon_0$, describes how a scalar potential field $\\Phi$ is generated by a source distribution $\\rho$. The term $\\nabla^2$ is the Laplacian operator, which measures the local concavity of the potential field. Where $\\nabla^2 \\Phi < 0$, the potential has a local maximum, and where $\\nabla^2 \\Phi > 0$, it has a local minimum. The source term $\\rho$ is the volume density of electric charge. A positive charge density ($\\rho > 0$) results in a negative Laplacian ($\\nabla^2 \\Phi < 0$), indicating that positive charges are sources of the electric field and correspond to local maxima of the electrostatic potential $\\Phi$. Conversely, negative charges ($\\rho < 0$) correspond to local minima. The constant $\\varepsilon_0$, the vacuum permittivity, is a fundamental constant that scales the relationship between charge and potential in free space.",
+        "symmetry_origin": "Poisson's equation is derived from two of Maxwell's equations in their static form: Gauss's Law ($\\nabla \\cdot \\mathbf{E} = \\rho / \\varepsilon_0$) and the irrotationality of the static electric field ($\\nabla \\times \\mathbf{E} = 0$), which allows the field to be expressed as the gradient of a scalar potential ($\\mathbf{E} = - \\nabla \\Phi$). Substituting the potential definition into Gauss's law yields Poisson's equation. Its form is invariant under translations and rotations (Euclidean group), reflecting the homogeneity and isotropy of empty space.",
+        "limits_and_boundary": "1. Charge-Free Region: In regions where there is no net charge ($\\rho = 0$), Poisson's equation reduces to Laplace's equation, $\\nabla^2 \\Phi = 0$. Solutions to Laplace's equation are called harmonic functions and describe the potential in empty space.\n2. Point Source (Green's Function): For a single point charge $q$ at the origin, the charge density is a Dirac delta function, $\\rho(\\mathbf{r}) = q \\delta(\\mathbf{r})$. The solution to Poisson's equation is then the Coulomb potential, $\\Phi(\\mathbf{r}) = \\frac{q}{4\\pi\\varepsilon_0 r}$, which is the fundamental point-source response or Green's function for the Laplacian operator in 3D.\n3. Boundary Conditions: The specific solution to Poisson's equation for a given charge distribution is determined by boundary conditions. For example, Dirichlet boundary conditions specify the value of $\\Phi$ on a boundary surface, while Neumann boundary conditions specify its normal derivative, $\\partial \\Phi / \\partial n$.",
         "status": "platinum",
-        "conceptual_definition": "Poisson's equation is a second-order partial differential equation that relates the electrostatic potential $\\Phi to$ the charge density $\\rho$ that creates it. It is a fundamental equation in electrostatics, serving as a generalization of Gauss's Law in differential form, and is crucial for calculating electric fields and potentials arising from arbitrary charge distributions.",
-        "intuitive_summary": "The curvature of the electrostatic potential at any point is directly proportional to the local charge density at that point, with a negative sign indicating that positive charges create 'dips' in the potential field.",
+        "conceptual_definition": "Poisson's equation is a second-order partial differential equation that relates the electrostatic potential $\\Phi$ to the volume charge density $\\rho$ that creates it. It is a fundamental equation in electrostatics, serving as a generalization of Gauss's Law in differential form.",
+        "intuitive_summary": "The local curvature of the electrostatic potential is proportional to the negative of the charge density, meaning positive charges create local maxima (or 'hills') in the potential field.",
         "subcomponents": [
             "vacuum-permittivity-constant-51a5e402",
             "laplacian-operator-683590a0",
@@ -494,8 +452,8 @@
         ]
     },
     "epistemic-boundary-8f3c20ee": {
-        "title": "Epistemic Boundary (John von Neumann and the Measurement Problem)",
-        "equation": "S = -k_B \\text{Tr}(\\rho \\ln \\rho)",
+        "title": "von Neumann Entropy",
+        "equation": "S = -k_\\mathrm{B} \\mathrm{Tr}(\\rho \\ln \\rho)",
         "semantic_variables": {
             "S": {
                 "name": "von Neumann Entropy",
@@ -503,52 +461,34 @@
                 "unit": "J/K",
                 "description": "A measure of the statistical uncertainty, mixedness, or lack of information about a quantum mechanical system's state. It is zero for a pure state and maximal for a maximally mixed state."
             },
-            "k_B": {
+            "k_\\mathrm{B}": {
                 "name": "Boltzmann Constant",
                 "type": "constant",
                 "unit": "J/K",
-                "description": "A fundamental physical constant that relates the average kinetic energy of particles in a gas with the temperature of the gas. In entropy formulas, it converts information-theoretic entropy into thermodynamic entropy units."
+                "description": "A fundamental physical constant that relates temperature to energy. In this context, it converts the dimensionless information-theoretic entropy into thermodynamic units."
             },
             "\\rho": {
-                "name": "Density Operator (or Density Matrix)",
+                "name": "Density Operator",
                 "type": "variable",
                 "unit": "Dimensionless",
-                "description": "A mathematical operator that completely describes the quantum state of a system. It is particularly useful for representing mixed states (statistical ensembles of pure states) or subsystems of entangled systems. It is Hermitian, positive-semidefinite, and has trace 1."
+                "description": "A Hermitian, positive-semidefinite operator with trace one that describes the statistical state of a quantum system. It generalizes the concept of a state vector to include mixed states."
             },
-            "k": {
-                "name": "Spring Stiffness (Hooke's Constant)",
-                "type": "variable",
-                "unit": "N/m",
-                "description": "The rigidity of a spring or elastic medium, defining restoring force per unit of displacement: $F = -kx$."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
-            },
-            "T": {
-                "name": "Tension / Period",
-                "type": "variable",
-                "unit": "N or s",
-                "description": "In dynamics, tension force in a string/cable, or period (time per cycle) of periodic motion."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
+            "\\mathrm{Tr}": {
+                "name": "Trace Operator",
+                "type": "operator",
+                "unit": "Dimensionless",
+                "description": "A linear map from the space of square matrices to the underlying scalar field, calculated by summing the elements on the main diagonal. In quantum mechanics, it provides a basis-independent sum over all states in the Hilbert space."
             },
             "\\ln": {
-                "name": "\\ln Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "name": "Natural Logarithm Operator",
+                "type": "operator",
+                "unit": "Dimensionless",
+                "description": "The operator logarithm, defined via the spectral theorem. If an operator $A$ has spectral decomposition $A = \\sum_i \\lambda_i |v_i\\rangle\\langle v_i|$, then $\\ln A = \\sum_i (\\ln \\lambda_i) |v_i\\rangle\\langle v_i|$."
             }
         },
-        "interpretation": "The formula for von Neumann entropy, $S = -k_B \\text{Tr}(\\rho \\ln \\rho)$, serves to quantify the information content or 'disorder' of a quantum system. Here, $S$ represents the entropy of the quantum state. The Boltzmann constant, $k_B$, scales the entropy to standard thermodynamic units. The central component is the density operator, $\\rho$, which completely describes the quantum state, encompassing both pure states (where the system is in a definite superposition) and mixed states (where the system is in a statistical ensemble of pure states). For a pure state, $\\rho = |\\psi\\rangle\\langle\\psi|$, while for a mixed state, $\\rho = \\sum_i p_i |\\psi_i\\rangle\\langle\\psi_i|$, where $p_i$ are probabilities. The $\\ln$ operator acts on the density matrix, typically defined through its spectral decomposition: if $\\rho = \\sum_j \\lambda_j |j\\rangle\\langle j|$, then $\\ln \\rho = \\sum_j (\\ln \\lambda_j) |j\\rangle\\langle j|$. The $\\text{Tr}$ (trace) operation sums the diagonal elements of the resulting operator $\\rho \\ln \\rho$ in any complete orthonormal basis. Effectively, the formula calculates $-k_B \\sum_j \\lambda_j \\ln \\lambda_j$, where $\\lambda_j$ are the eigenvalues of the density matrix, which can be interpreted as probabilities of finding the system in its respective eigenstate. A higher value of $S$ indicates greater mixedness or uncertainty.",
-        "symmetry_origin": "The von Neumann entropy originates from the principles of statistical mechanics and information theory extended to quantum systems. While not directly derived from a continuous spacetime symmetry like Noether's theorem, its definition is invariant under unitary transformations, reflecting that the inherent mixedness or purity of a quantum state is an objective property, independent of the chosen basis. It is a fundamental concept in quantum information theory, providing a quantum analogue to the classical Gibbs entropy, and is crucial for the quantification of entanglement and decoherence.",
-        "limits_and_boundary": "The von Neumann entropy exhibits specific behaviors at its limits. For a **pure quantum state**, where the system is in a definite, non-statistical superposition and $\\rho^2 = \\rho$ (meaning one eigenvalue is 1 and all others are 0), the entropy $S = 0$. This indicates complete knowledge of the system's state and no statistical uncertainty. Conversely, for a **maximally mixed state** in an $N$-dimensional Hilbert space (e.g., $\\rho = \\frac{1}{N}$ I $, where$ I is the identity matrix, implying all states are equally probable), the entropy reaches its maximum value,$S = k_B \\ln N$. This signifies the highest possible uncertainty about the system's exact state. In the **classical limit**, where quantum coherence and entanglement effects are negligible, the density matrix becomes diagonal in a particular basis, and its eigenvalues $\\lambda_j$ can be interpreted as classical probabilities $p_j$. In this scenario, the von Neumann entropy reduces to the Gibbs (or Shannon) entropy:$ S = -k_B \\sum_j p_j \\ln p_j.",
+        "interpretation": "The formula for von Neumann entropy, $S = -k_\\mathrm{B} \\mathrm{Tr}(\\rho \\ln \\rho)$, quantifies the information content or 'disorder' of a quantum system. Here, $S$ is the entropy, $k_\\mathrm{B}$ is the Boltzmann constant scaling the entropy to thermodynamic units, and $\\rho$ is the density operator which completely describes the quantum state. For a pure state, $\\rho = |\\psi\\rangle\\langle\\psi|$, while for a mixed state, $\\rho = \\sum_i p_i |\\psi_i\\rangle\\langle\\psi_i|$, where $p_i$ are probabilities. The logarithm of the operator, $\\ln \\rho$, is defined via its spectral decomposition: if $\\rho = \\sum_j \\lambda_j |j\\rangle\\langle j|$, then $\\ln \\rho = \\sum_j (\\ln \\lambda_j) |j\\rangle\\langle j|$. The trace operation, $\\mathrm{Tr}$, sums the diagonal elements of the operator $\\rho \\ln \\rho$ in any complete orthonormal basis. This results in the expression $S = -k_\\mathrm{B} \\sum_j \\lambda_j \\ln \\lambda_j$, where the eigenvalues $\\lambda_j$ of the density matrix represent the probabilities of finding the system in its respective eigenstates. A higher value of $S$ indicates greater mixedness or uncertainty.",
+        "symmetry_origin": "The von Neumann entropy is invariant under unitary transformations of the quantum state, meaning the entropy is independent of the basis chosen to represent the state. This reflects that the inherent mixedness or purity of a quantum state is an objective physical property. While not derived from a continuous spacetime symmetry via Noether's theorem, its form is required by consistency with the classical Gibbs entropy in the appropriate limit and fundamental principles of quantum statistical mechanics and information theory.",
+        "limits_and_boundary": "1. **Pure State Limit**: For a pure quantum state, where the system is in a definite state (e.g., $|\\psi\rangle$) and the density operator is a projector $\\rho = |\\psi\rangle\\langle\\psi|$, one eigenvalue is 1 and all others are 0. In this case, the entropy is zero, $S = 0$, signifying complete knowledge of the system's state.\n2. **Maximally Mixed State**: For a maximally mixed state in an $N$-dimensional Hilbert space, where all pure states are equally probable, the density operator is $\\rho = \\frac{1}{N} I$ (where $I$ is the identity matrix). The entropy reaches its maximum possible value, $S = k_\\mathrm{B} \\ln N$, signifying maximum uncertainty.\n3. **Classical Limit**: In the limit where quantum coherence is negligible, the density matrix becomes diagonal in a preferred basis. Its eigenvalues $\\lambda_j$ can be interpreted as classical probabilities $p_j$, and the von Neumann entropy reduces to the classical Gibbs (or Shannon) entropy: $S = -k_\\mathrm{B} \\sum_j p_j \\ln p_j$.",
         "status": "platinum",
         "conceptual_definition": "The von Neumann entropy, a quantum mechanical generalization of the classical Gibbs entropy, quantifies the amount of uncertainty, mixedness, or lack of information inherent in a quantum state described by a density matrix. It serves as a measure of the statistical indistinguishability of a quantum system from other possible states.",
         "intuitive_summary": "The von Neumann entropy measures the intrinsic uncertainty or 'mixedness' of a quantum system's state, indicating how much information is genuinely unknown about it.",
@@ -1107,26 +1047,26 @@
         ]
     },
     "alpha-nu-zero": {
-        "title": "Alpha Nu is Zero",
+        "title": "Zero Acceleration Component",
         "equation": "\\alpha_\\nu = 0",
-        "conceptual_definition": "The formula $\\alpha_ u = 0$ signifies a state where a specific physical quantity, denoted by $\\alpha_ u$, is identically zero. In many physical contexts, $\\alpha$ often represents an acceleration or a related rate of change, and the subscript $u$ might denote a specific direction or type of motion. Therefore, this equation asserts that there is no acceleration in that particular degree of freedom or for that specific component of motion. This implies that the velocity in the direction or type corresponding to $u$ is constant.",
-        "intuitive_summary": "The system is not accelerating in the $\\nu$ direction or aspect.",
-        "interpretation": "In this formula, $\\alpha_u represents a component of acceleration, possibly in a specific spatial direction (e.g.,$u$could be an index for x, y, or z) or a specific mode of motion. The subscript$u$distinguishes this particular acceleration from others that might exist in the system. The equation \\alpha$_$u = 0$ directly states that the acceleration in this specific direction or mode is zero. Mathematically, acceleration is the second time derivative of position, or the first time derivative of velocity. Thus, $\\alpha_$ u = \\frac{d^2 r_ u}{dt^2} = \\frac{d v_ u}{dt} = 0$. This implies that the velocity component$v_ u$is constant over time, i.e.,$v_ u(t) = v_ u(0)$. If this holds for all components of motion, the object is moving with constant velocity (or is at rest if the initial velocity is zero), implying no net force is acting on it in the$u$direction, according to Newton's second law of motion,$F_ u = m \\alpha_ u$.",
-        "symmetry_origin": "The origin of $\\alpha_ u = 0$ can stem from various physical principles. Most commonly, it arises from the absence of a net force acting on a system in the direction specified by $u$. According to Newton's first law (the law of inertia), an object will remain at rest or in uniform motion in a straight line unless acted upon by an external force. If $u$ represents a direction and there is no force in that direction, then the acceleration in that direction is zero. Alternatively, in more advanced physics, such as in Lagrangian or Hamiltonian mechanics, $\\alpha_ u = 0$ could represent a conserved quantity or a specific constraint on the system's dynamics, potentially related to symmetries of the system's Lagrangian or Hamiltonian. For instance, if a coordinate associated with $u$ is ignorable (cyclic), the corresponding generalized momentum is conserved, which can lead to specific kinematic behaviors implying zero acceleration in certain generalized directions.",
-        "limits_and_boundary": "The condition $\\alpha_$ u = 0$is often a specific case or boundary condition rather than a limit. If we consider a scenario where forces acting on a system are gradually reduced or balanced, the acceleration components will approach zero. For example, if a net force$F_ u$approaches zero, and the mass$m$is finite, then \\alpha _ u = F_ u / m$ approaches zero. Conversely, if $\\alpha$_ u$were to become infinitely large, it would imply either an infinite force or an infinitesimally small mass, both of which are typically unphysical in classical mechanics. In the context of a system's evolution, \\alpha _ u = 0$ signifies a quiescent state in terms of acceleration along $u$, meaning the velocity along $u$ remains constant, neither increasing nor decreasing.",
+        "conceptual_definition": "The equation signifies a state where a specific physical quantity, the acceleration component denoted by alpha-nu, is identically zero. This implies that the velocity in the corresponding degree of freedom is constant.",
+        "intuitive_summary": "The system is not accelerating in the nu direction or aspect.",
+        "interpretation": "In this formula, $\\alpha_\\nu$ represents a component of acceleration, possibly in a specific spatial direction (e.g., $\\nu$ could be an index for $x, y,$ or $z$) or a generalized coordinate. The subscript $\\nu$ distinguishes this particular acceleration from others that might exist in the system. The equation $\\alpha_\\nu = 0$ directly states that the acceleration in this specific direction or mode is zero. Mathematically, acceleration is the second time derivative of position, or the first time derivative of velocity. Thus, $\\alpha_\\nu = \\frac{\\mathrm{d}^2 r_\\nu}{\\mathrm{d}t^2} = \\frac{\\mathrm{d} v_\\nu}{\\mathrm{d}t} = 0$. This implies that the velocity component $v_\\nu$ is constant over time, i.e., $v_\\nu(t) = v_\\nu(0)$. If this holds for all components of motion, the object is in uniform motion (or at rest), implying no net force acts on it, according to Newton's second law, $F_\\nu = m \\alpha_\\nu$.",
+        "symmetry_origin": "This condition typically arises from a symmetry of the physical system. In Newtonian mechanics, $\\alpha_\\nu = 0$ is a direct consequence of Newton's First Law (the law of inertia) when the net force component $F_\\nu$ is zero. In Lagrangian and Hamiltonian mechanics, if a generalized coordinate $q_\\nu$ is 'cyclic' or 'ignorable' (meaning the Lagrangian does not explicitly depend on it), then by Noether's theorem, the corresponding canonical momentum $p_\\nu$ is conserved. While this does not always mean the acceleration $\\ddot{q}_\\nu$ is zero, it imposes a strong constraint on the dynamics that can lead to this condition in specific cases, reflecting a translational or other symmetry in the system.",
+        "limits_and_boundary": "1. **Zero Force Limit**: In classical dynamics, as the net force component $F_\\nu$ acting on a body of constant mass $m$ approaches zero, the acceleration component $\\alpha_\\nu = F_\\nu / m$ also approaches zero. The equation $\\alpha_\\nu = 0$ represents the exact condition of zero net force in that direction.\n2. **Inertial Frame Condition**: The equation holds true for any free body in an inertial frame of reference. The very definition of an inertial frame is one in which an object with no forces acting on it has zero acceleration.\n3. **Static or Dynamic Equilibrium**: The condition $\\alpha_\\nu = 0$ for all $\\nu$ characterizes a state of mechanical equilibrium, which can be static (zero velocity) or dynamic (constant velocity).",
         "status": "platinum",
         "semantic_variables": {
             "\\alpha_\\nu": {
-                "name": "Alpha Nu",
+                "name": "Acceleration Component",
                 "type": "variable",
                 "unit": "m/s^2",
-                "description": "Represents the component of acceleration in a specific direction or mode denoted by the index $u$. It is the rate of change of velocity in that particular direction or mode."
+                "description": "Represents the component of acceleration in a specific direction or mode denoted by the index $\\nu$. It is the rate of change of velocity in that particular direction or mode."
             },
             "\\nu": {
-                "name": "Nu Index",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A subscript or index used to specify a particular component, direction, or mode of motion for which the acceleration $\\alpha$ is being considered. It could represent a spatial coordinate (e.g., x, y, z), a generalized coordinate, or a specific type of perturbation."
+                "name": "Component Index",
+                "type": "index",
+                "unit": "Dimensionless",
+                "description": "A subscript or index used to specify a particular component, direction (e.g., x, y, z), or generalized coordinate for which the acceleration $\\alpha$ is being considered."
             }
         },
         "subcomponents": [
@@ -1331,24 +1271,39 @@
         "status": "published",
         "parent_formula_id": "quantum-phase-identity-87a65bb2",
         "subcomponents": [],
-        "id": "reduced-planck-constant-value-2d0a86ad"
+        "id": "reduced-planck-constant-value-2d0a86ad",
+        "intuitive_summary": ""
     },
     "numerical-factor-in-strong-force-potential-87069d0b": {
-        "title": "Numerical Factor in Strong Force Potential",
+        "title": "QCD Color Factor for Fundamental Representation",
         "description": "A fundamental dimensionless constant appearing in the short-range Coulomb-like term of the strong interaction potential between quarks.",
-        "conceptual_definition": "In Quantum Chromodynamics (QCD), the strong interaction potential between color-charged particles, such as quarks, includes a short-range attractive component. The $4/3$ factor is a specific numerical coefficient that quantifies the strength of this attractive part, arising from the underlying SU(3) color gauge symmetry.",
-        "interpretation": "This dimensionless constant, $4/3$, is a crucial coefficient in the one-gluon exchange potential, which describes the short-distance interaction between quarks. It is derived from the color algebra of the SU(3) gauge group, specifically from the Casimir invariant for the fundamental representation of color charges. Its presence is essential for accurately modeling the attractive force between quarks at close proximity, analogous to how coupling constants and geometric factors appear in other fundamental forces.",
-        "limits_and_boundary": "As a pure numerical constant, $4/3$ does not possess physical limits or boundary conditions. Its significance is confined to the context of the strong interaction potential, particularly in the short-distance regime where the one-gluon exchange mechanism is dominant and the potential exhibits a Coulomb-like behavior.",
-        "symmetry_origin": "The factor $4/3$ originates directly from the SU(3) color gauge symmetry of Quantum Chromodynamics (QCD). It arises from the calculation of the color factor for quark-antiquark or quark-quark interactions mediated by gluons, specifically from the product of color generators in the fundamental representation, leading to the value $C_F = (N_c^2 - 1)/(2N_c) = (3^2 - 1)/(2*3) = 8/6 = 4/3$ for $N_c=3$ colors.",
+        "conceptual_definition": "A dimensionless coefficient in the one-gluon exchange potential of Quantum Chromodynamics (QCD) that quantifies the strength of the attractive force between a quark and an antiquark in a color-singlet state. This factor arises from the color algebra of the SU(3) gauge group.",
+        "interpretation": "The factor $C_F$ is the value of the quadratic Casimir invariant for the fundamental representation of the SU($N_c$) color gauge group. In the one-gluon exchange potential, $V(r) = -C_F \\frac{\\alpha_s \\hbar c}{r}$, this factor represents the 'color charge' contribution to the interaction strength. The calculation involves summing over all possible gluon exchanges. For a quark-antiquark pair in a color-singlet meson, this simplifies to the given formula. For the SU(3) symmetry of QCD, where the number of colors $N_c=3$, the value is $C_F = (3^2 - 1)/(2 \\cdot 3) = 8/6 = 4/3$.",
+        "limits_and_boundary": "The value is fixed by the SU(3) group structure and does not change under physical limits (e.g., non-relativistic, classical).\nIts relevance is primarily in the high-energy (short-distance) limit of QCD where perturbative one-gluon exchange is the dominant interaction.",
+        "symmetry_origin": "The factor originates from the non-Abelian SU(N_c) color gauge symmetry of Quantum Chromodynamics. It is the eigenvalue of the quadratic Casimir operator, $C_F = \\sum_a (T^a)^2$, in the fundamental representation (quarks). Its specific value of 4/3 is a direct consequence of the structure of the SU(3) group, its three color charges ($N_c=3$), and its eight generators (gluons).",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-chromodynamics",
-        "semantic_variables": {},
-        "equation": "4/3",
-        "status": "published",
+        "semantic_variables": {
+            "C_F": {
+                "name": "Quadratic Casimir Invariant (Fundamental)",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The color factor for interactions involving a quark, representing the strength of its coupling to gluons."
+            },
+            "N_c": {
+                "name": "Number of Colors",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The number of distinct color charges in Quantum Chromodynamics, which is experimentally determined to be 3."
+            }
+        },
+        "equation": "C_F = \\frac{N_c^2 - 1}{2N_c}",
+        "status": "platinum",
         "parent_formula_id": "self-sticking-d2bc7554",
         "subcomponents": [],
-        "id": "numerical-factor-in-strong-force-potential-87069d0b"
+        "id": "numerical-factor-in-strong-force-potential-87069d0b",
+        "intuitive_summary": "This number, which evaluates to 4/3 in our universe, sets the fundamental strength of the attractive strong force between quarks at very short distances."
     },
     "number-of-colors-in-quantum-chromodynamics-ae0eef8c": {
         "title": "Number of Colors in Quantum Chromodynamics",
@@ -1372,7 +1327,8 @@
         "status": "published",
         "parent_formula_id": "vacuum-polarization-antiscreening-ident-ad9cccac",
         "subcomponents": [],
-        "id": "number-of-colors-in-quantum-chromodynamics-ae0eef8c"
+        "id": "number-of-colors-in-quantum-chromodynamics-ae0eef8c",
+        "intuitive_summary": ""
     },
     "lie-algebra-generator-xb-27a595ea": {
         "title": "Lie Algebra Generator X_b",
@@ -1396,7 +1352,8 @@
         "status": "published",
         "parent_formula_id": "commutation-relation-generators",
         "subcomponents": [],
-        "id": "lie-algebra-generator-xb-27a595ea"
+        "id": "lie-algebra-generator-xb-27a595ea",
+        "intuitive_summary": ""
     },
     "action-integral-definition-46ec742c": {
         "title": "Action Integral Definition",
@@ -1432,7 +1389,8 @@
         "status": "published",
         "parent_formula_id": "stationary-action-46ec742c",
         "subcomponents": [],
-        "id": "action-integral-definition-46ec742c"
+        "id": "action-integral-definition-46ec742c",
+        "intuitive_summary": ""
     },
     "work-done-by-a-variable-force-af77b726": {
         "title": "Work Done by a Variable Force",
@@ -1468,7 +1426,8 @@
         "status": "published",
         "parent_formula_id": "classical-kinetic-energy",
         "subcomponents": [],
-        "id": "work-done-by-a-variable-force-af77b726"
+        "id": "work-done-by-a-variable-force-af77b726",
+        "intuitive_summary": ""
     },
     "stationary-state-condition-a8c972b7": {
         "title": "Stationary State Condition",
@@ -1492,7 +1451,8 @@
         "status": "published",
         "parent_formula_id": "time-independent-limit",
         "subcomponents": [],
-        "id": "stationary-state-condition-a8c972b7"
+        "id": "stationary-state-condition-a8c972b7",
+        "intuitive_summary": ""
     },
     "relative-velocity-of-original-frame-d328da7d": {
         "title": "Relative Velocity of Original Frame",
@@ -1522,24 +1482,51 @@
         "status": "published",
         "parent_formula_id": "fixed-ruler-00a2e217",
         "subcomponents": [],
-        "id": "relative-velocity-of-original-frame-d328da7d"
+        "id": "relative-velocity-of-original-frame-d328da7d",
+        "intuitive_summary": ""
     },
     "planck-length-numerical-value-2da4b2e7": {
-        "title": "Planck Length Numerical Value",
+        "title": "Planck Length",
         "description": "The approximate numerical value of the Planck length in meters.",
-        "conceptual_definition": "The Planck length ( $\\ell_P$) is a fundamental unit of length in the system of natural units known as Planck units. It is the length scale at which quantum gravitational effects are expected to become significant, representing the smallest meaningful length in theoretical physics. It is derived from fundamental physical constants: the speed of light ( $c$), the gravitational constant ( $G$), and the reduced Planck constant ( $\\hbar$). This specific value is its approximate magnitude in SI units.",
-        "interpretation": "This numerical constant represents the approximate magnitude of the Planck length ( $\\ell_P$), a critical scale in quantum gravity. It signifies the scale below which current theories of physics, particularly general relativity, are expected to break down and quantum effects of gravity become dominant. It is often considered the smallest possible measurable length, although its direct measurement is currently beyond experimental capabilities. Its presence in formulas like the 'Scalar Potential Term' highlights the role of fundamental quantum gravitational scales in theoretical models.",
-        "limits_and_boundary": "The Planck length defines a fundamental lower limit to length scales in physics. Below this scale, the classical notions of space-time are expected to cease to be valid, and a full theory of quantum gravity is required. It serves as a boundary condition for the applicability of classical space-time geometry.",
-        "symmetry_origin": "The Planck length ( $\\ell_P$) arises from the interplay of fundamental constants ($c, G, \\hbar$), which are themselves related to fundamental symmetries: Lorentz invariance ( $c$), general covariance ( $G$), and quantum mechanics ( $\\hbar$). While not directly a symmetry itself, its existence points to a fundamental scale where these symmetries might be unified or modified in a quantum gravity theory.",
+        "conceptual_definition": "The Planck length is the fundamental unit of length in the system of Planck units, representing the scale at which the effects of quantum gravity become strong. It is derived from three fundamental physical constants: the reduced Planck constant, the speed of light in a vacuum, and the gravitational constant.",
+        "interpretation": "The Planck length, $\\ell_P$, is constructed by combining the fundamental constants of quantum mechanics ($\\hbar$), general relativity ($G$), and special relativity ($c$) in the only way that yields a unit of length. Its approximate value is $1.616 \\times 10^{-35}$ meters. Physically, it represents the length scale at which a particle's Compton wavelength becomes comparable to its Schwarzschild radius, implying that both quantum mechanics and general relativity are required for its description. Below this scale, the classical concepts of space and time are expected to break down.",
+        "limits_and_boundary": "The Planck length defines the boundary of applicability for our current, separate theories of gravity and quantum mechanics.\nIn the formal limit $\\ell_P \\to 0$ (which can be achieved by taking $G \\to 0$ or $\\hbar \\to 0$), quantum gravitational effects vanish, and spacetime can be treated as a smooth, classical continuum.\nIt represents a fundamental lower bound on any physical length that can be operationally defined or measured within the known laws of physics.",
+        "symmetry_origin": "The Planck length emerges from the combination of constants associated with three fundamental theories and their symmetries. The speed of light, $c$, is the invariant speed from Lorentz/Poincaré symmetry. The gravitational constant, $G$, is the coupling constant in general relativity, associated with diffeomorphism invariance (general covariance). The reduced Planck constant, $\\hbar$, quantifies quantum effects and is related to the canonical commutation relations underlying unitary time evolution in quantum mechanics.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-gravity-scales",
-        "semantic_variables": {},
-        "equation": "1.616 imes 10^{-35}",
-        "status": "published",
+        "semantic_variables": {
+            "\\ell_P": {
+                "name": "Planck Length",
+                "type": "constant",
+                "unit": "m",
+                "description": "The fundamental unit of length in the Planck system of units, representing the scale where quantum gravitational effects become significant."
+            },
+            "\\hbar": {
+                "name": "Reduced Planck Constant",
+                "type": "constant",
+                "unit": "J·s",
+                "description": "The quantum of angular momentum, defined as the Planck constant divided by 2π."
+            },
+            "G": {
+                "name": "Newtonian Gravitational Constant",
+                "type": "constant",
+                "unit": "m³·kg⁻¹·s⁻²",
+                "description": "The empirical physical constant quantifying the magnitude of the gravitational force between two bodies."
+            },
+            "c": {
+                "name": "Speed of Light in Vacuum",
+                "type": "constant",
+                "unit": "m·s⁻¹",
+                "description": "The universal speed limit for all massless particles and information in a vacuum."
+            }
+        },
+        "equation": "\\ell_P = \\sqrt{\\frac{\\hbar G}{c^3}}",
+        "status": "platinum",
         "parent_formula_id": "scalar-potential-term",
         "subcomponents": [],
-        "id": "planck-length-numerical-value-2da4b2e7"
+        "id": "planck-length-numerical-value-2da4b2e7",
+        "intuitive_summary": "The Planck length is the universe's absolute smallest meaningful length scale, where the smooth fabric of spacetime is thought to dissolve into a quantum foam."
     },
     "flat-spacetime-condition-6b33a30f": {
         "title": "Flat Spacetime Condition",
@@ -1563,7 +1550,8 @@
         "status": "published",
         "parent_formula_id": "local-limit-9cc78e33",
         "subcomponents": [],
-        "id": "flat-spacetime-condition-6b33a30f"
+        "id": "flat-spacetime-condition-6b33a30f",
+        "intuitive_summary": ""
     },
     "relativistic-time-dilation-factor-50bf9797": {
         "title": "Relativistic Time Dilation Factor",
@@ -1587,31 +1575,33 @@
         "status": "published",
         "parent_formula_id": "transverse-doppler-identity-1-37d9b06b-b87e8ac7",
         "subcomponents": [],
-        "id": "relativistic-time-dilation-factor-50bf9797"
+        "id": "relativistic-time-dilation-factor-50bf9797",
+        "intuitive_summary": ""
     },
     "conjugate-cabibbo-kobayashi-maskawa-matrix-element-vus-ef082dbe": {
         "title": "Conjugate Cabibbo-Kobayashi-Maskawa Matrix Element V_us^*",
         "description": "The complex conjugate of the CKM matrix element V_us, representing the amplitude for an up quark to transition into a strange quark.",
-        "conceptual_definition": "In the Standard Model of particle physics, the Cabibbo-Kobayashi-Maskawa (CKM) matrix describes the mixing of quark flavor eigenstates with their weak interaction eigenstates. V_us specifically quantifies the strength of the weak interaction coupling between an up quark and a strange quark. Its complex conjugate, V_us^*, is essential for ensuring the unitarity of the CKM matrix and for describing CP violation phenomena.",
-        "interpretation": "The CKM matrix element V_us is a complex number, and its magnitude |V_us| represents the probability amplitude for a weak interaction to transform an up quark into a strange quark, or vice-versa. The phase of V_us (and its conjugate V_us^*) is crucial for understanding CP violation in the quark sector. In the context of the Jarlskog Invariant, V_us^* contributes to the imaginary part of a product of CKM elements, which is a fundamental measure of CP violation.",
-        "limits_and_boundary": "The magnitude |V_us| is experimentally determined to be approximately 0.225. As a CKM matrix element, it must satisfy unitarity conditions, meaning that the sum of the squares of the magnitudes of elements in any row or column must be 1. For example, |V_ud|^2 + |V_us|^2 + |V_ub|^2 = 1. The phase of V_us is constrained by experimental measurements of CP violation.",
-        "symmetry_origin": "The CKM matrix and its elements arise from the mismatch between the mass eigenstates and the weak interaction eigenstates of quarks. This mixing is a consequence of the spontaneous breaking of electroweak symmetry. The complex phases within the CKM matrix, including that of V_us^*, are the sole source of CP violation within the Standard Model, which is a violation of charge-parity symmetry.",
+        "conceptual_definition": "The complex conjugate of the CKM matrix element V_us, which represents the amplitude for a weak interaction transition between an up quark and a strange quark. It is a fundamental parameter in the Standard Model's description of quark mixing and CP violation.",
+        "interpretation": "The Cabibbo-Kobayashi-Maskawa (CKM) matrix element $V_{us}$ is a complex number whose magnitude, $|V_{us}|$, gives the probability amplitude for a weak interaction to transform an up quark into a strange quark. The complex conjugate, $V_{us}^*$, has the same magnitude but an opposite phase. This phase is a crucial source of Charge-Parity (CP) violation in the Standard Model. The unitarity of the CKM matrix requires that for any row $i$ or column $j$, $\\sum_j |V_{ij}|^2 = 1$ and $\\sum_i |V_{ij}|^2 = 1$. For the first row, this implies $|V_{ud}|^2 + |V_{us}|^2 + |V_{ub}|^2 = 1$. The term $V_{us}^*$ appears in calculations of CP-violating observables, such as the Jarlskog invariant, which provides a rephasing-invariant measure of CP violation.",
+        "limits_and_boundary": "1. **Experimental Value**: The magnitude is experimentally measured to be $|V_{us}| \\approx 0.2245$.\n2. **Unitarity Constraint**: As part of a unitary matrix, it must satisfy the condition $\\sum_i |V_{ik}|^2 = \\sum_j |V_{kj}|^2 = 1$. Specifically for the first row, $|V_{ud}|^2 + |V_{us}|^2 + |V_{ub}|^2 = 1$.\n3. **CP Violation**: The phase of $V_{us}^*$ is constrained by global fits to experimental data on CP-violating processes, such as kaon and B-meson decays.",
+        "symmetry_origin": "The CKM matrix originates from the misalignment between the mass eigenstates and the weak interaction eigenstates of quarks, a consequence of spontaneous electroweak symmetry breaking. The complex phase of $V_{us}^*$ (and other elements) is the source of Charge-Parity (CP) symmetry violation in the quark sector of the Standard Model. The unitarity of the CKM matrix is a consequence of the conservation of probability in quantum mechanics.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "particle-physics-standard-model",
         "semantic_variables": {
             "V_{us}^*": {
-                "name": "V_{us}^*",
+                "name": "Conjugate CKM Matrix Element V_us",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The complex conjugate of the Cabibbo-Kobayashi-Maskawa (CKM) matrix element V_us. It is a dimensionless complex number representing the amplitude for a weak interaction transition between an up quark and a strange quark, with its phase contributing to CP violation."
+                "description": "The complex conjugate of the Cabibbo-Kobayashi-Maskawa (CKM) matrix element $V_{us}$. It is a dimensionless complex number representing the amplitude for a weak interaction transition between an up quark and a strange quark."
             }
         },
         "equation": "V_{us}^*",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "jarlskog-invariant-cp-violation-ident-2f2f2397",
         "subcomponents": [],
-        "id": "conjugate-cabibbo-kobayashi-maskawa-matrix-element-vus-ef082dbe"
+        "id": "conjugate-cabibbo-kobayashi-maskawa-matrix-element-vus-ef082dbe",
+        "intuitive_summary": "This value's magnitude squared gives the probability of a weak force interaction changing an up quark into a strange quark, while its phase is a key ingredient for matter-antimatter asymmetry."
     },
     "equation-of-state-for-cosmological-constant-9d673e37": {
         "title": "Equation of State for Cosmological Constant",
@@ -1647,7 +1637,8 @@
         "status": "published",
         "parent_formula_id": "non-diluting-density-39e76d7d",
         "subcomponents": [],
-        "id": "equation-of-state-for-cosmological-constant-9d673e37"
+        "id": "equation-of-state-for-cosmological-constant-9d673e37",
+        "intuitive_summary": ""
     },
     "index-equality-condition-for-components-9e416d7d": {
         "title": "Index Equality Condition for Components",
@@ -1677,7 +1668,8 @@
         "status": "published",
         "parent_formula_id": "canonical-momenta-and-position-commutation",
         "subcomponents": [],
-        "id": "index-equality-condition-for-components-9e416d7d"
+        "id": "index-equality-condition-for-components-9e416d7d",
+        "intuitive_summary": ""
     },
     "normalization-of-probability-amplitudes-eb93fc76": {
         "title": "Normalization of Probability Amplitudes",
@@ -1713,7 +1705,8 @@
         "status": "published",
         "parent_formula_id": "probability-normalization",
         "subcomponents": [],
-        "id": "normalization-of-probability-amplitudes-eb93fc76"
+        "id": "normalization-of-probability-amplitudes-eb93fc76",
+        "intuitive_summary": ""
     },
     "absolute-permeability-of-material-892ad545": {
         "title": "Absolute Permeability of Material",
@@ -1749,7 +1742,8 @@
         "status": "published",
         "parent_formula_id": "permeability-892ad545",
         "subcomponents": [],
-        "id": "absolute-permeability-of-material-892ad545"
+        "id": "absolute-permeability-of-material-892ad545",
+        "intuitive_summary": ""
     },
     "spatial-components-of-four-current-1b0c8d70": {
         "title": "Spatial Components of Four-Current",
@@ -1791,7 +1785,8 @@
         "status": "published",
         "parent_formula_id": "charge-flow-3984a917",
         "subcomponents": [],
-        "id": "spatial-components-of-four-current-1b0c8d70"
+        "id": "spatial-components-of-four-current-1b0c8d70",
+        "intuitive_summary": ""
     },
     "amplitude-power-relation-for-input-wave-4be60c01": {
         "title": "Amplitude-Power Relation for Input Wave",
@@ -1827,7 +1822,8 @@
         "status": "published",
         "parent_formula_id": "signal-strength-96beb911",
         "subcomponents": [],
-        "id": "amplitude-power-relation-for-input-wave-4be60c01"
+        "id": "amplitude-power-relation-for-input-wave-4be60c01",
+        "intuitive_summary": ""
     },
     "approximate-mean-molecular-weight-calculation-51bee9f1": {
         "title": "Approximate Mean Molecular Weight Calculation",
@@ -1851,7 +1847,8 @@
         "status": "published",
         "parent_formula_id": "mean-molecular-weight-f1e09c91",
         "subcomponents": [],
-        "id": "approximate-mean-molecular-weight-calculation-51bee9f1"
+        "id": "approximate-mean-molecular-weight-calculation-51bee9f1",
+        "intuitive_summary": ""
     },
     "sum-of-two-radii-45cce4a7": {
         "title": "Sum of Two Radii",
@@ -1881,7 +1878,8 @@
         "status": "published",
         "parent_formula_id": "coulomb-interaction-energy-between-two-charged-spheres",
         "subcomponents": [],
-        "id": "sum-of-two-radii-45cce4a7"
+        "id": "sum-of-two-radii-45cce4a7",
+        "intuitive_summary": ""
     },
     "negative-potential-energy-change-150a1750": {
         "title": "Negative Potential Energy Change",
@@ -1911,7 +1909,8 @@
         "status": "published",
         "parent_formula_id": "work-conservative-force",
         "subcomponents": [],
-        "id": "negative-potential-energy-change-150a1750"
+        "id": "negative-potential-energy-change-150a1750",
+        "intuitive_summary": ""
     },
     "triple-negative-elementary-charge-2b4e1c36": {
         "title": "Triple Negative Elementary Charge",
@@ -1935,24 +1934,45 @@
         "status": "published",
         "parent_formula_id": "standard-unit-7b7a9d4f",
         "subcomponents": [],
-        "id": "triple-negative-elementary-charge-2b4e1c36"
+        "id": "triple-negative-elementary-charge-2b4e1c36",
+        "intuitive_summary": ""
     },
     "typical-astrophysical-accretion-rate-constant-8f0ba538": {
         "title": "Typical Astrophysical Accretion Rate Constant",
         "description": "This value represents a characteristic mass accretion rate often observed in astrophysical systems, particularly for stable accretion onto compact objects or young stellar objects.",
-        "conceptual_definition": "In astrophysics, mass accretion rate ($\\dot{M}$) quantifies the rate at which mass is accumulated onto a central object from its surroundings. This specific numerical value, $10^{-7} \\, M_\\odot \\text{yr}^{-1}$, serves as a typical or characteristic scale for stable accretion processes, often appearing in theoretical models and observational estimates for systems like protostars or accreting binaries. It provides a reference point for understanding the efficiency and stability of mass transfer in cosmic environments.",
-        "interpretation": "This numerical constant signifies a benchmark for the rate at which a star or compact object gains mass from its environment. An accretion rate of $10^{-7}$ solar masses per year means that the central object gains mass equivalent to one ten-millionth of our Sun's mass every year. This rate is often associated with stable, long-term accretion phases, distinguishing it from highly episodic or very low accretion regimes. It provides a crucial scale for understanding the evolution of accreting systems and the energy output associated with mass infall, often implying a balance between gravitational forces and outward pressure or radiation.",
-        "limits_and_boundary": "This value represents a typical order of magnitude for stable accretion, but actual rates can vary by many orders of magnitude depending on the specific astrophysical system (e.g., protostars, X-ray binaries, active galactic nuclei). It does not represent a strict physical limit but rather a common observed or theoretically predicted value for certain stable accretion scenarios. Higher rates can lead to instabilities (e.g., super-Eddington accretion), while much lower rates might indicate quiescent phases or very inefficient accretion.",
-        "symmetry_origin": "This specific numerical value does not directly arise from fundamental symmetries or conservation laws in the same way a physical constant like $c$ or $G$ does. Instead, it emerges from the complex interplay of various physical processes (e.g., gravitational potential, gas dynamics, radiative cooling, magnetic fields) that govern accretion in specific astrophysical environments, often as an empirical or semi-empirical constant in models. It reflects a typical outcome of these processes rather than a fundamental invariant.",
+        "conceptual_definition": "A characteristic mass accretion rate representing a typical value for stable mass transfer onto compact objects or young stellar objects in astrophysics. This benchmark value of approximately one ten-millionth of a solar mass per year is widely used in theoretical models and observational comparisons.",
+        "interpretation": "This value, $\\dot{M}_{\\text{typ}} \\approx 10^{-7} \\, M_{\\odot} \\, \\mathrm{yr}^{-1}$, serves as a canonical scale for astrophysical accretion rates. It signifies that the central object gains mass equivalent to one ten-millionth of the Sun's mass each year. This rate is characteristic of stable, long-term accretion, such as that found in T Tauri stars or quiescent cataclysmic variables. It is often used as a reference point to distinguish between different accretion regimes: rates significantly higher may lead to super-Eddington luminosities and powerful outflows, while much lower rates signify a quiescent or inefficient accretion phase. The energy released during accretion, the accretion luminosity $L_{\\text{acc}}$, is directly proportional to this rate, making it a key parameter in modeling the evolution and observational appearance of these systems.",
+        "limits_and_boundary": "1. **System Dependence**: Actual accretion rates span many orders of magnitude, from $\\sim 10^{-12} \\, M_{\\odot} \\, \\mathrm{yr}^{-1}$ in quiescent systems to $> 10^{-4} \\, M_{\\odot} \\, \\mathrm{yr}^{-1}$ in ultraluminous X-ray sources or the central engines of active galactic nuclei (AGN).\n2. **Eddington Limit**: For a given central mass, there is a maximum accretion rate, the Eddington accretion rate, above which radiation pressure from the accretion process would halt further infall. This value is typically much higher than the $10^{-7}$ benchmark for stellar-mass objects.\n3. **Observational Benchmark**: This value serves as a useful order-of-magnitude estimate for interpreting observations of systems where the accretion rate cannot be directly measured, such as in modeling the lifetimes of protoplanetary disks.",
+        "symmetry_origin": "This value is not derived from a fundamental symmetry or conservation law. It is an emergent, empirical scale that arises from the complex interplay of gravity, gas dynamics, angular momentum transport, and radiative processes that govern accretion disks in typical astrophysical environments like young stellar systems or binary star systems.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "astrophysical-accretion",
-        "semantic_variables": {},
-        "equation": "10^{-7} \\, M_\\odot \\text{yr}^{-1}",
-        "status": "published",
+        "semantic_variables": {
+            "\\dot{M}_{\\text{typ}}": {
+                "name": "Typical Accretion Rate",
+                "type": "constant",
+                "unit": "kg s⁻¹",
+                "description": "A characteristic value for the mass accretion rate in stable astrophysical systems."
+            },
+            "M_{\\odot}": {
+                "name": "Solar Mass",
+                "type": "constant",
+                "unit": "kg",
+                "description": "The mass of the Sun, a standard unit of mass in astronomy, approximately $1.989 \\times 10^{30}$ kg."
+            },
+            "\\mathrm{yr}": {
+                "name": "Year",
+                "type": "unit",
+                "unit": "s",
+                "description": "A unit of time, typically defined as 365.25 days, approximately $3.15576 \\times 10^7$ seconds."
+            }
+        },
+        "equation": "\\dot{M}_{\\text{typ}} \\approx 10^{-7} \\, M_{\\odot} \\, \\mathrm{yr}^{-1}",
+        "status": "platinum",
         "parent_formula_id": "stable-accretion-law-12e26c52",
         "subcomponents": [],
-        "id": "typical-astrophysical-accretion-rate-constant-8f0ba538"
+        "id": "typical-astrophysical-accretion-rate-constant-8f0ba538",
+        "intuitive_summary": "This value is a common rule-of-thumb for how quickly objects like black holes or young stars gain mass from their surroundings."
     },
     "kinetic-energy-of-drifting-particle-322d4ed8": {
         "title": "Kinetic Energy of Drifting Particle",
@@ -1994,7 +2014,8 @@
         "status": "published",
         "parent_formula_id": "kinetic-energy-electric-drift",
         "subcomponents": [],
-        "id": "kinetic-energy-of-drifting-particle-322d4ed8"
+        "id": "kinetic-energy-of-drifting-particle-322d4ed8",
+        "intuitive_summary": ""
     },
     "photoelectric-energy-balance-equation-391ebd26": {
         "title": "Photoelectric Energy Balance Equation",
@@ -2036,7 +2057,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-4500a388",
         "subcomponents": [],
-        "id": "photoelectric-energy-balance-equation-391ebd26"
+        "id": "photoelectric-energy-balance-equation-391ebd26",
+        "intuitive_summary": ""
     },
     "squared-mass-parameter-2ec33449": {
         "title": "Squared Mass Parameter",
@@ -2060,7 +2082,8 @@
         "status": "published",
         "parent_formula_id": "klein-gordon-equation-mass",
         "subcomponents": [],
-        "id": "squared-mass-parameter-2ec33449"
+        "id": "squared-mass-parameter-2ec33449",
+        "intuitive_summary": ""
     },
     "radial-derivative-of-scalar-potential-0b8aa7e7": {
         "title": "Radial Derivative of Scalar Potential",
@@ -2096,7 +2119,8 @@
         "status": "published",
         "parent_formula_id": "symmetry-breaker-8473ca37",
         "subcomponents": [],
-        "id": "radial-derivative-of-scalar-potential-0b8aa7e7"
+        "id": "radial-derivative-of-scalar-potential-0b8aa7e7",
+        "intuitive_summary": ""
     },
     "neutron-electric-dipole-moment-upper-bound-30d7f2c6": {
         "title": "Neutron Electric Dipole Moment Upper Bound",
@@ -2120,7 +2144,8 @@
         "status": "published",
         "parent_formula_id": "electric-dipole-moment-bound",
         "subcomponents": [],
-        "id": "neutron-electric-dipole-moment-upper-bound-30d7f2c6"
+        "id": "neutron-electric-dipole-moment-upper-bound-30d7f2c6",
+        "intuitive_summary": ""
     },
     "virtual-work-of-an-actual-force-a4b72fa7": {
         "title": "Virtual Work of an Actual Force",
@@ -2150,7 +2175,8 @@
         "status": "published",
         "parent_formula_id": "principle-of-virtual-work-aeaf1c35",
         "subcomponents": [],
-        "id": "virtual-work-of-an-actual-force-a4b72fa7"
+        "id": "virtual-work-of-an-actual-force-a4b72fa7",
+        "intuitive_summary": ""
     },
     "condition-for-static-equilibrium-96446675": {
         "title": "Condition for Static Equilibrium",
@@ -2174,7 +2200,8 @@
         "status": "published",
         "parent_formula_id": "principle-of-virtual-work-aeaf1c35",
         "subcomponents": [],
-        "id": "condition-for-static-equilibrium-96446675"
+        "id": "condition-for-static-equilibrium-96446675",
+        "intuitive_summary": ""
     },
     "lorentz-factor-and-non-relativistic-limit-df9fc44b": {
         "title": "Lorentz Factor and Non-Relativistic Limit",
@@ -2210,7 +2237,8 @@
         "status": "published",
         "parent_formula_id": "relativity-overview-identity-1-lorentz-boost-6b2b8091",
         "subcomponents": [],
-        "id": "lorentz-factor-and-non-relativistic-limit-df9fc44b"
+        "id": "lorentz-factor-and-non-relativistic-limit-df9fc44b",
+        "intuitive_summary": ""
     },
     "partial-derivative-operator-1650ef9c": {
         "title": "Partial Derivative Operator",
@@ -2234,7 +2262,8 @@
         "status": "published",
         "parent_formula_id": "commutation-of-second-partial-derivatives",
         "subcomponents": [],
-        "id": "partial-derivative-operator-1650ef9c"
+        "id": "partial-derivative-operator-1650ef9c",
+        "intuitive_summary": ""
     },
     "electric-potential-of-a-point-charge-3b4ae657": {
         "title": "Electric Potential of a Point Charge",
@@ -2276,7 +2305,8 @@
         "status": "published",
         "parent_formula_id": "point-source-response-6a0a64e1",
         "subcomponents": [],
-        "id": "electric-potential-of-a-point-charge-3b4ae657"
+        "id": "electric-potential-of-a-point-charge-3b4ae657",
+        "intuitive_summary": ""
     },
     "change-in-antiderivative-value-19c64a26": {
         "title": "Change in Antiderivative Value",
@@ -2324,6 +2354,7 @@
         "status": "published",
         "parent_formula_id": "fundamental-theorem-calculus-integrals",
         "subcomponents": [],
-        "id": "change-in-antiderivative-value-19c64a26"
+        "id": "change-in-antiderivative-value-19c64a26",
+        "intuitive_summary": ""
     }
 }

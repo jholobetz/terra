@@ -1,105 +1,69 @@
 {
     "field-feedback-dd4a4d48": {
-        "title": "Field Feedback",
-        "equation": "\\rho \\frac{D\\mathbf{v}}{Dt} = -\\nabla P + \\frac{1}{\\mu_0} (\\nabla \\times \\mathbf{B}) \\times \\mathbf{B} + \\rho \\mathbf{g}",
+        "title": "MHD Momentum Equation",
+        "equation": "\\rho \\frac{\\mathrm{D}\\mathbf{v}}{\\mathrm{D}t} = -\\nabla P + \\frac{1}{\\mu_0} (\\nabla \\times \\mathbf{B}) \\times \\mathbf{B} + \\rho \\mathbf{g}",
         "semantic_variables": {
             "\\rho": {
-                "name": "Density",
+                "name": "Fluid Mass Density",
                 "type": "variable",
-                "unit": "kg/m^3",
-                "description": "The mass per unit volume of the fluid."
+                "unit": "kg/m³",
+                "description": "The mass per unit volume of the conducting fluid."
             },
-            "\\frac{D\\mathbf{v}}{Dt}": {
-                "name": "Material Derivative of Velocity",
-                "type": "variable",
-                "unit": "m/s^2",
-                "description": "The total acceleration of a fluid element, accounting for both local acceleration and convective acceleration."
+            "\\frac{\\mathrm{D}}{\\mathrm{D}t}": {
+                "name": "Material Derivative",
+                "type": "operator",
+                "unit": "s^{-1}",
+                "description": "The total time derivative following a fluid element, combining local and convective changes: D/Dt = ∂/∂t + (v⋅∇)."
             },
             "\\mathbf{v}": {
-                "name": "Velocity Vector",
+                "name": "Fluid Velocity",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The velocity of the fluid element."
+                "description": "The macroscopic velocity vector of the fluid."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The independent time variable."
+                "description": "The independent temporal coordinate."
             },
-            "\\nabla P": {
-                "name": "Pressure Gradient",
+            "\\nabla": {
+                "name": "Nabla Operator",
                 "type": "operator",
-                "unit": "Pa/m",
-                "description": "The spatial rate of change of pressure, indicating the direction and magnitude of the steepest pressure increase."
+                "unit": "m^{-1}",
+                "description": "The vector differential operator, used here to compute the gradient of pressure (∇P) and the curl of the magnetic field (∇×B)."
             },
             "P": {
-                "name": "Pressure",
+                "name": "Fluid Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The thermodynamic pressure of the fluid."
+                "description": "The scalar thermodynamic pressure within the fluid."
             },
             "\\mu_0": {
                 "name": "Permeability of Free Space",
                 "type": "constant",
-                "unit": "T m/A",
-                "description": "A fundamental physical constant representing the magnetic field that results from a magnetic dipole moment."
-            },
-            "\\nabla \\times \\mathbf{B}": {
-                "name": "Curl of Magnetic Field",
-                "type": "operator",
-                "unit": "T/m",
-                "description": "A vector operator that describes the infinitesimal rotation of the magnetic field."
+                "unit": "H/m",
+                "description": "A fundamental physical constant representing the ability of a vacuum to support a magnetic field."
             },
             "\\mathbf{B}": {
-                "name": "Magnetic Field Vector",
+                "name": "Magnetic Field",
                 "type": "variable",
                 "unit": "T",
-                "description": "The magnetic field at a point in space."
+                "description": "The magnetic field vector within the fluid."
             },
             "\\mathbf{g}": {
-                "name": "Gravitational Acceleration Vector",
-                "type": "variable",
-                "unit": "m/s^2",
-                "description": "The acceleration due to gravity at a point in space."
-            },
-            "D": {
-                "name": "Electric Displacement Field",
-                "type": "variable",
-                "unit": "C/m²",
-                "description": "The displacement flux density representing electric charge polarization in media."
-            },
-            "v": {
-                "name": "Speed / Velocity Magnitude",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The rate of change of position with respect to time, representing the speed of a particle."
-            },
-            "\\times": {
-                "name": "\\times Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
-            },
-            "g": {
                 "name": "Gravitational Acceleration",
-                "type": "constant",
+                "type": "variable",
                 "unit": "m/s²",
-                "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
+                "description": "The vector representing the acceleration due to an external gravitational field."
             }
         },
-        "interpretation": "The left-hand side of the equation, $\\rho \\frac {D\\bold{v}}{Dt}$, represents the inertial force per unit volume. Here, $\\rho$ is the fluid density (in kg/m^3), and $\\frac{D \\bold{v} }{Dt} is the material derivative of the fluid velocity \\bold{v} (in m/s). The material derivative accounts for both the local acceleration of the fluid and the acceleration due to the fluid moving to a region with a different velocity, and is defined as \\frac{D \\bold{v} }{Dt} = \\frac{$ypeof $\\bold{v}$ }{$ypeof t} + ( \\bold{v} \\boldsymbol{ \\nabla} ) \\bold{v} . On the right-hand side, the first term, - \\nabla P, represents the force per unit volume due to the pressure gradient, where P is the pressure (in Pa). This term drives fluid flow from high-pressure regions to low-pressure regions. The second term, \\frac{1}$ { $\\boldsymbol$ {$u$}_0} ( $\\nabla \\times \\bold{B}$ ) $\\times \\bold{B}$ , is the magnetic force per unit volume, also known as the Lorentz force density, acting on the conducting fluid. Here, $\\boldsymbol$ {$u}_0 is the permeability of free space (a constant, approximately 4 \\boldsymbol {$u$} \\times 10^{-7} \\text{ T} \\boldsymbol {$u$} \\text{m/A} ), and \\bold{B} is the magnetic field vector (in T). This term is crucial as it describes how magnetic fields can exert forces on conducting fluids, influencing their motion and vice versa. The third term, \\rho \\bold{g} , is the gravitational force per unit volume, where \\bold{g} is the gravitational acceleration (in m/s^2). This term accounts for the effect of gravity on the fluid element.",
-        "symmetry_origin": "This equation is derived from fundamental principles of classical mechanics (Newton's second law) and electromagnetism (Maxwell's equations, specifically the Lorentz force law). It is a consequence of the conservation of momentum for a conducting fluid in the presence of electromagnetic fields and gravity. The equation is generally written in a covariant form, implying invariance under coordinate transformations, though specific forms might depend on the chosen coordinate system.",
-        "limits_and_boundary": "In the limit where the magnetic field $\\bold{B}$ is zero or negligible, the equation reduces to the Navier-Stokes equation for an incompressible fluid: $\\rho \\frac {D\\bold{v}}{Dt}$= - $\\nabla$ P +$\\rho \\bold {g}, which describes fluid motion under pressure gradients and gravity without magnetic effects. If the fluid is a perfect conductor (infinite conductivity), the magnetic field is 'frozen' into the fluid, leading to different dynamics. In the limit of very low density \\rho or very weak gravitational acceleration \\bold{g}, these terms become negligible, and the magnetic forces and pressure gradients dominate the fluid motion$.",
+        "interpretation": "This equation governs the dynamics of a conducting fluid, such as a plasma or liquid metal. The left side, $\\rho \\frac{\\mathrm{D}\\mathbf{v}}{\\mathrm{D}t}$, represents the rate of change of momentum per unit volume (mass density $\\rho$ times acceleration). The material derivative, $\\frac{\\mathrm{D}\\mathbf{v}}{\\mathrm{D}t} = \\frac{\\partial \\mathbf{v}}{\\partial t} + (\\mathbf{v} \\cdot \\nabla)\\mathbf{v}$, accounts for both the local acceleration of the fluid at a fixed point and the convective acceleration as the fluid moves. The right side sums the forces per unit volume: $-\\nabla P$ is the force from the pressure gradient, pushing the fluid from high to low pressure; $\\frac{1}{\\mu_0} (\\nabla \\times \\mathbf{B}) \\times \\mathbf{B}$ is the Lorentz force, where the fluid's internal currents (represented by $\\nabla \\times \\mathbf{B}$ via Ampère's law) interact with the magnetic field $\\mathbf{B}$; and $\\rho \\mathbf{g}$ is the gravitational force.",
+        "symmetry_origin": "The equation is an expression of the conservation of momentum for a fluid continuum coupled to an electromagnetic field. It is derived from Newton's second law and the Lorentz force law. The equation is Galilean invariant in its non-relativistic form and must be formulated covariantly to be consistent with special relativity. Its structure respects the fundamental symmetries of classical mechanics and electromagnetism.",
+        "limits_and_boundary": "1. In the absence of a magnetic field ($\\mathbf{B} = 0$), the equation reduces to the Euler equation for an ideal, non-conducting fluid: $\\rho \\frac{\\mathrm{D}\\mathbf{v}}{\\mathrm{D}t} = -\\nabla P + \\rho \\mathbf{g}$.\n2. In a static equilibrium state ($\\mathbf{v} = 0$ and time derivatives are zero), the equation describes magnetohydrostatic balance: $\\nabla P = \\frac{1}{\\mu_0} (\\nabla \\times \\mathbf{B}) \\times \\mathbf{B} + \\rho \\mathbf{g}$.\n3. In the limit of a very strong magnetic field, the magnetic forces can dominate, leading to phenomena like magnetic confinement where the plasma pressure is balanced by magnetic pressure and tension.",
         "status": "platinum",
-        "conceptual_definition": "This equation, often referred to as the magnetohydrodynamic (MHD) momentum equation or the induction equation for a fluid, describes the motion of a conducting fluid under the influence of pressure gradients, magnetic forces, and gravity. It is a statement of Newton's second law applied to a fluid element, accounting for the complex interplay between fluid dynamics and electromagnetism.",
-        "intuitive_summary": "The acceleration of a fluid element is driven by pressure differences, the magnetic Lorentz force acting on the fluid, and gravitational forces."
+        "conceptual_definition": "The magnetohydrodynamic (MHD) momentum equation is a statement of Newton's second law per unit volume for an electrically conducting fluid, describing how the fluid's inertia is balanced by forces from pressure gradients, magnetic fields (Lorentz force), and gravity.",
+        "intuitive_summary": "The acceleration of a conducting fluid is determined by the combined push from pressure differences, the magnetic force acting on currents within the fluid, and the pull of gravity."
     },
     "centrifugal-drive-36887814": {
         "title": "Centrifugal Drive",
@@ -457,38 +421,38 @@
     },
     "modified-fail-95646fd7": {
         "title": "Modified Fail",
-        "equation": "M_{total} \\approx 10 M_{visible}",
+        "equation": "M_{\\mathrm{total}} \\approx 10 M_{\\mathrm{visible}}",
         "semantic_variables": {
-            "M_{total}": {
+            "M_{\\mathrm{total}}": {
                 "name": "Total Mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The estimated total mass of an astronomical system, including both visible and dark matter."
+                "description": "The total gravitating mass of an astronomical system, inferred from its gravitational effects, including both baryonic and dark matter."
             },
-            "M_{visible}": {
+            "M_{\\mathrm{visible}}": {
                 "name": "Visible Mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The mass of the observable, luminous matter within an astronomical system (e.g., stars, gas, dust)."
-            },
-            "M": {
-                "name": "Total Mass / Magnetization",
-                "type": "variable",
-                "unit": "kg or A/m",
-                "description": "The total inertial mass of a system, or net magnetic dipole moment density."
+                "description": "The total mass of the visible, baryonic matter (stars, gas, dust) within an astronomical system, determined from its luminosity."
             },
             "\\approx": {
-                "name": "\\approx Parameter",
-                "type": "variable",
+                "name": "Approximately Equal To",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Indicates that the two sides of the relation are approximately equal. This is an empirical observation, not a strict equality."
+            },
+            "10": {
+                "name": "Empirical Mass Ratio",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "description": "An empirically determined approximate ratio of total mass to visible mass in many large astronomical systems. The currently accepted cosmological value for the ratio of dark matter to baryonic matter is closer to 5.3, so this factor is a rough order-of-magnitude estimate."
             }
         },
-        "interpretation": "In this approximation, $M_{total}$ represents the estimated total mass of an astronomical system, which includes both visible (luminous) matter and dark matter. The unit for mass in the International System of Units (SI) is kilograms (kg). $M_{visible}$ denotes the mass of the observable, luminous matter within the system, such as stars, gas, and dust that emit or reflect electromagnetic radiation. This also has units of kilograms (kg). The factor of 10 indicates the approximate ratio of dark matter to visible matter. This relationship is not a fundamental law of physics but rather an empirical observation derived from various cosmological measurements, including galaxy rotation curves and gravitational lensing, which suggest a significant mass discrepancy.",
+        "interpretation": "In this approximation, $M_{\\mathrm{total}}$ represents the estimated total mass of an astronomical system, which includes both visible (luminous) matter and dark matter. The unit for mass in the International System of Units (SI) is kilograms (kg). $M_{\\mathrm{visible}}$ denotes the mass of the observable, luminous matter within the system, such as stars, gas, and dust that emit or reflect electromagnetic radiation. This also has units of kilograms (kg). The factor of 10 indicates the approximate ratio of dark matter to visible matter. This relationship is not a fundamental law of physics but rather an empirical observation derived from various cosmological measurements, including galaxy rotation curves and gravitational lensing, which suggest a significant mass discrepancy.",
         "symmetry_origin": "This empirical relationship does not stem from a fundamental symmetry or conservation law in the same way as Newton's laws or conservation of energy. Instead, it arises from observational evidence. The discrepancy between the gravitational effects observed in galaxies and galaxy clusters and the mass accounted for by visible matter led to the hypothesis of dark matter. Studies of galaxy rotation curves, for instance, show that stars farther from the galactic center orbit much faster than expected if only visible matter were present, implying the existence of a massive, invisible halo of dark matter. The factor of 10 is an average value derived from fitting various cosmological models and observations, with ongoing research refining these estimates.",
-        "limits_and_boundary": "As an empirical approximation, this formula doesn't have strict mathematical limits in the sense of asymptotic behavior for variables approaching zero or infinity. However, its applicability is limited to systems where the dark matter-to-visible matter ratio is approximately 10:1. For systems with significantly different ratios, the approximation would be inaccurate. For example, in very small, diffuse gas clouds or very dense stellar clusters with less dark matter, the ratio could deviate substantially. Conversely, in the most massive galaxy clusters, the ratio might be even higher than 10:1, making this formula an underestimate.",
+        "limits_and_boundary": "1. System Scale: The approximation is most applicable to large, gravitationally bound systems like spiral galaxies and galaxy clusters. It breaks down for smaller objects (e.g., star clusters) or larger superstructures where the dark matter distribution may differ.\n2. Cosmological Epoch: The ratio of dark to baryonic matter has evolved over cosmic time. This specific ratio is representative of the current universe and would not apply in the very early universe.\n3. Baryonic Physics: The ratio can vary locally depending on baryonic feedback processes like supernova explosions or active galactic nuclei (AGN) jets, which can expel gas from the central regions of galaxies, altering the local $M_{\\mathrm{visible}}$.",
         "status": "platinum",
-        "conceptual_definition": "The formula $M_{total} \\approx 10 M_{visible}$ is an empirical approximation often used in astrophysics and cosmology to estimate the total mass of astronomical systems, such as galaxies or galaxy clusters, based on the mass of the luminous matter they contain. It suggests that the unseen, non-luminous mass (often referred to as dark matter) is roughly ten times greater than the mass of the visible, baryonic matter (stars, gas, dust).",
+        "conceptual_definition": "An empirical approximation in cosmology stating that the total gravitating mass of a large astronomical system, like a galaxy, is roughly ten times its visible mass composed of stars, gas, and dust. This discrepancy is the primary evidence for the existence of dark matter.",
         "intuitive_summary": "The total mass of an astronomical system is approximately ten times the mass of the matter we can see.",
         "subcomponents": [
             "total-gravitating-mass-9a8b3d6b"
@@ -856,38 +820,38 @@
     },
     "indistinguishability-factor-2a86c673": {
         "title": "Indistinguishability Factor",
-        "equation": "\\Omega_{quantum} = \\frac{\\Omega_{classical}}{N!}",
+        "equation": "\\Omega_{\\mathrm{quantum}} = \\frac{\\Omega_{\\mathrm{classical}}}{N!}",
         "semantic_variables": {
-            "Ω_{quantum}": {
+            "\\Omega_{\\mathrm{quantum}}": {
                 "name": "Quantum Number of Microstates",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The number of distinct microstates accessible to a quantum mechanical system, accounting for particle indistinguishability."
+                "description": "The number of distinct microstates accessible to a quantum mechanical system of identical particles, correctly accounting for their indistinguishability."
             },
-            "Ω_{classical}": {
+            "\\Omega_{\\mathrm{classical}}": {
                 "name": "Classical Number of Microstates",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The number of microstates accessible to a system as calculated by classical statistical mechanics, where particles are treated as distinguishable."
+                "description": "The number of microstates calculated in classical statistical mechanics, which incorrectly treats identical particles as distinguishable."
             },
             "N": {
                 "name": "Number of Identical Particles",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The total count of identical particles within the system being considered."
+                "description": "The total count of identical, indistinguishable particles within the system."
             },
             "!": {
                 "name": "Factorial Operator",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical operation of multiplying a given integer by all the positive integers smaller than it. For example, 5! = 5 * 4 * 3 * 2 * 1 = 120."
+                "type": "operator",
+                "unit": "N/A",
+                "description": "A mathematical operator that computes the product of all positive integers up to a given integer N. N! represents the number of ways to permute N items."
             }
         },
-        "interpretation": "In this formula, Ω_{quantum} represents the number of distinct microstates in a quantum system, while Ω_{classical} denotes the number of microstates calculated using classical mechanics. The term N! is the factorial of N, where N is the total number of identical particles in the system. The equation signifies that the quantum mechanical count of microstates is smaller than the classical count by a factor of N!. This correction is crucial when dealing with systems where particle identity is fundamental, such as in the behavior of gases composed of identical atoms or molecules. The division by N! ensures that permutations of identical particles do not lead to the enumeration of redundant states, aligning the statistical description with the quantum mechanical principle of indistinguishability.",
-        "symmetry_origin": "The origin of this formula lies in the symmetry properties of the wavefunction describing a system of identical particles. In quantum mechanics, the wavefunction must be either symmetric (for bosons) or antisymmetric (for fermions) under the exchange of any two identical particles. This requirement of symmetry or antisymmetry implies that physically distinct configurations can only arise from permutations that do not result in a change of the overall wavefunction state, effectively reducing the number of unique microstates by a factor of N! compared to a classical system where particles are treated as distinct.",
-        "limits_and_boundary": "As the number of particles N approaches 1, N! approaches 1, and Ω_{quantum} approaches Ω_{classical}. This is expected, as with only one particle, the concept of indistinguishability is trivial. For large N, the factorial N! grows extremely rapidly, meaning that Ω_{quantum} becomes significantly smaller than Ω_{classical}, highlighting the pronounced effect of indistinguishability in macroscopic systems.",
+        "interpretation": "In this formula, $\\Omega_{\\mathrm{quantum}}$ represents the number of distinct microstates in a quantum system, while $\\Omega_{\\mathrm{classical}}$ denotes the number of microstates calculated using classical mechanics. The term $N!$ is the factorial of $N$, where $N$ is the total number of identical particles in the system. The equation signifies that the quantum mechanical count of microstates is smaller than the classical count by a factor of $N!$. This correction is crucial when dealing with systems where particle identity is fundamental, such as in the behavior of gases composed of identical atoms or molecules. The division by $N!$ ensures that permutations of identical particles do not lead to the enumeration of redundant states, aligning the statistical description with the quantum mechanical principle of indistinguishability.",
+        "symmetry_origin": "The origin of this formula lies in the permutation symmetry of the wavefunction describing a system of identical particles. In quantum mechanics, the total wavefunction must be either symmetric (for bosons) or antisymmetric (for fermions) under the exchange of any two identical particles. This symmetry requirement implies that permutations of identical particles do not lead to a new, physically distinct state, thus reducing the number of unique microstates by a factor of $N!$ compared to a classical system where particles are treated as distinguishable.",
+        "limits_and_boundary": "1. Single Particle Limit (N=1): When N=1, N! = 1, and the equation reduces to $\\Omega_{\\mathrm{quantum}} = \\Omega_{\\mathrm{classical}}$. This is correct, as the concept of indistinguishability is meaningless for a single particle.\n2. Classical Limit (High Temperature / Low Density): This correction is valid in the semi-classical limit where quantum effects are minimal, except for indistinguishability. It forms the basis for the Sackur-Tetrode equation for the entropy of an ideal gas. At very low temperatures, full quantum statistics (Fermi-Dirac or Bose-Einstein) must be used, and this simple division is no longer sufficient as energy level occupancies become constrained by the Pauli exclusion principle or Bose enhancement.\n3. Distinguishable Particles: If the particles are in principle distinguishable (e.g., fixed in a crystal lattice), the $N!$ factor is not applied, and $\\Omega_{\\mathrm{quantum}} = \\Omega_{\\mathrm{classical}}$.",
         "status": "platinum",
-        "conceptual_definition": "The formula Ω_{quantum} = \\frac{Ω_{classical}$}{N!}$ describes the quantum mechanical correction to the number of accessible microstates (Ω), particularly relevant in statistical mechanics for systems of identical particles. It accounts for the fact that in quantum mechanics, identical particles are indistinguishable, meaning that swapping two identical particles does not lead to a new, distinct microstate. The classical formula overcounts these states by a factor of N!, where N is the number of identical particles$.",
+        "conceptual_definition": "In statistical mechanics, this formula corrects the classical counting of microstates for a system of N identical particles by dividing by N!, the number of permutations of those particles. This accounts for the quantum mechanical principle that identical particles are fundamentally indistinguishable, and swapping them does not produce a new physical state.",
         "intuitive_summary": "Quantum mechanics reduces the number of distinct states by a factor of N! because identical particles are indistinguishable."
     },
     "leptogenesis-cp-asymmetry-decay-rate-7213c456": {
@@ -1295,19 +1259,19 @@
     },
     "zero-curvature-flat-spacetime": {
         "title": "Zero Curvature (Flat Spacetime)",
-        "equation": "k = 0",
-        "conceptual_definition": "The equation $k = 0$ represents the condition for spacetime to be flat, meaning it has zero curvature. In the context of Einstein's theory of General Relativity, curvature is a manifestation of the presence of mass and energy. When $k = 0$, spacetime is locally indistinguishable from the Euclidean geometry of flat space. This condition simplifies many calculations and describes the behavior of gravity in regions devoid of significant gravitational sources, or in the idealized case of a universe with no matter or energy.",
+        "equation": "R_{\\mu\\nu\\rho\\sigma} = 0",
+        "conceptual_definition": "The condition for a spacetime to be flat, meaning it possesses zero intrinsic curvature. In such a spacetime, the geometry is locally indistinguishable from Minkowski space, and the paths of freely moving objects (geodesics) behave as straight lines.",
         "intuitive_summary": "Spacetime is perfectly flat, like a boundless, un-warped sheet of paper, when its curvature is zero.",
-        "interpretation": "In this formula, $k$ represents the Gaussian curvature (or more generally, a scalar component of the Riemann curvature tensor in higher dimensions) which quantifies the intrinsic curvature of spacetime. The equation $k = 0$ states that this curvature is zero. In Euclidean geometry, parallel lines never meet, and the sum of angles in a triangle is always 180 degrees. Similarly, in flat spacetime, the paths of freely moving objects (geodesics) behave according to these Euclidean principles. For instance, if two initially parallel geodesic paths are followed, they will remain parallel and never converge or diverge due to the geometry of spacetime itself. The vanishing of curvature is a direct consequence of the absence of stress-energy-momentum. If the stress-energy tensor, denoted by $T_{\\mu u}$, is zero everywhere, then the Einstein field equations, $G_{\\mu u} = \\frac{8\\pi G}{c^4} T_{\\mu \\nu}$, imply that the Einstein tensor $G_{\\mu \\nu}$ must also be zero, which in turn means the spacetime is flat (i.e., the Riemann curvature tensor is zero).",
-        "symmetry_origin": "The condition $k = 0$ is deeply related to symmetries. A spacetime with zero curvature is maximally symmetric. In the context of Einstein's field equations, $G_{\\mu u} = \\frac{8\\pi G}{c^4} T_{\\mu \\nu}$, if the stress-energy tensor $T_{\\mu \\nu}$vanishes, then the Einstein tensor $G_{\\mu \\nu}$must also vanish. A vanishing Einstein tensor implies that the Riemann curvature tensor is zero, leading to a flat spacetime. This corresponds to a space where the laws of physics are invariant under translations and rotations in all directions. The coordinate system can be chosen such that the metric tensor is simply the Minkowski metric,$\\eta_{\\mu \\nu}$, and all components of the Riemann tensor, Ricci tensor, and scalar curvature are zero.",
-        "limits_and_boundary": "When $k$ approaches zero, spacetime transitions from a curved state towards a flat state. If $k$ were to approach infinity (in certain models), it would imply extremely high curvature, such as at the singularity of a black hole or in the very early universe. The limit $k=0$ represents the most symmetric and simplest geometric configuration for spacetime, serving as a baseline against which curved spacetimes are often compared. In cosmological models, the parameter $k$ is often related to the spatial curvature of the universe; $k=0$ corresponds to a spatially flat universe, which is a key prediction of the standard cosmological model (Lambda-CDM) if the total energy density equals the critical density.",
+        "interpretation": "This equation states that the Riemann curvature tensor, $R_{\\mu\\nu\\rho\\sigma}$, is zero everywhere. The Riemann tensor fully characterizes the curvature of spacetime, quantifying tidal forces and the path dependence of parallel transport. Its vanishing implies that spacetime is locally identical to the flat Minkowski space of special relativity. In the context of the Einstein field equations, $G_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}$, a complete absence of matter and energy ($T_{\\mu\\nu} = 0$) leads to a vanishing Einstein tensor ($G_{\\mu\\nu} = 0$), which in turn requires the Riemann tensor to be zero. Consequently, geodesics (the paths of freely falling particles) that are initially parallel will remain parallel indefinitely.",
+        "symmetry_origin": "A flat spacetime possesses maximal symmetry, described by the Poincaré group, which includes all translations, rotations, and boosts. This corresponds to the conservation of linear momentum, angular momentum, and the uniform velocity of the center of mass, as dictated by Noether's theorem. The equation $R_{\\mu\\nu\\rho\\sigma} = 0$ is the geometric manifestation of this maximal symmetry, where the laws of physics are invariant under the full group of spacetime isometries of Minkowski space.",
+        "limits_and_boundary": "1. In the weak-field limit, far from any sources of mass-energy, spacetime curvature approaches zero, and general relativity reduces to special relativity.\n2. In cosmological models based on the Friedmann-Lemaître-Robertson-Walker (FLRW) metric, the specific condition for a spatially flat universe is represented by the curvature parameter $k=0$.\n3. This equation represents the vacuum solution in the absence of any gravitational sources, serving as the background for perturbative calculations in quantum field theory and gravitational wave analysis.",
         "status": "platinum",
         "semantic_variables": {
-            "k": {
-                "name": "Curvature Parameter",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "A scalar quantity representing the intrinsic curvature of spacetime. In the context of the Friedmann equations for cosmology, k can be +1 (closed universe), -1 (open universe), or 0 (flat universe). Here, it specifically denotes the case of zero curvature, implying flat spacetime."
+            "R_{\\mu\\nu\\rho\\sigma}": {
+                "name": "Riemann Curvature Tensor",
+                "type": "tensor",
+                "unit": "m^{-2}",
+                "description": "A rank-4 tensor that fully characterizes the curvature of spacetime by quantifying tidal forces and the failure of vectors to remain parallel when transported along closed loops."
             }
         },
         "subcomponents": [
@@ -1591,7 +1555,8 @@
         "status": "published",
         "parent_formula_id": "total-kinetic-energy-of-a-system-of-particles",
         "subcomponents": [],
-        "id": "velocity-of-the-i-th-particle-1df181ea"
+        "id": "velocity-of-the-i-th-particle-1df181ea",
+        "intuitive_summary": ""
     },
     "qcd-strong-coupling-constant-8fc59a5f": {
         "title": "QCD Strong Coupling Constant",
@@ -1615,7 +1580,8 @@
         "status": "published",
         "parent_formula_id": "dimensional-transmutation-lambda-qcd-ec3c1781",
         "subcomponents": [],
-        "id": "qcd-strong-coupling-constant-8fc59a5f"
+        "id": "qcd-strong-coupling-constant-8fc59a5f",
+        "intuitive_summary": ""
     },
     "raychaudhuri-source-term-non-negativity-06dec5ed": {
         "title": "Raychaudhuri Source Term Non-negativity",
@@ -1645,7 +1611,8 @@
         "status": "published",
         "parent_formula_id": "raychaudhuri-source-term-3b7e759f",
         "subcomponents": [],
-        "id": "raychaudhuri-source-term-non-negativity-06dec5ed"
+        "id": "raychaudhuri-source-term-non-negativity-06dec5ed",
+        "intuitive_summary": ""
     },
     "probability-of-quantum-state-measurement-7864f390": {
         "title": "Probability of Quantum State Measurement",
@@ -1675,7 +1642,8 @@
         "status": "published",
         "parent_formula_id": "coefficient-projection-db0be712",
         "subcomponents": [],
-        "id": "probability-of-quantum-state-measurement-7864f390"
+        "id": "probability-of-quantum-state-measurement-7864f390",
+        "intuitive_summary": ""
     },
     "expectation-value-of-product-of-observables-ad3aadb3": {
         "title": "Expectation Value of Product of Observables",
@@ -1705,7 +1673,8 @@
         "status": "published",
         "parent_formula_id": "bell-chsh-inequality-a9d6c165",
         "subcomponents": [],
-        "id": "expectation-value-of-product-of-observables-ad3aadb3"
+        "id": "expectation-value-of-product-of-observables-ad3aadb3",
+        "intuitive_summary": ""
     },
     "wavelength-of-peak-blackbody-emission-5810c925": {
         "title": "Wavelength of Peak Blackbody Emission",
@@ -1729,7 +1698,8 @@
         "status": "published",
         "parent_formula_id": "stable-state-255e5951",
         "subcomponents": [],
-        "id": "wavelength-of-peak-blackbody-emission-5810c925"
+        "id": "wavelength-of-peak-blackbody-emission-5810c925",
+        "intuitive_summary": ""
     },
     "quantum-basis-state-ket-vector-9a19230b": {
         "title": "Quantum Basis State Ket Vector",
@@ -1765,7 +1735,8 @@
         "status": "published",
         "parent_formula_id": "entropy-peak-371df26a",
         "subcomponents": [],
-        "id": "quantum-basis-state-ket-vector-9a19230b"
+        "id": "quantum-basis-state-ket-vector-9a19230b",
+        "intuitive_summary": ""
     },
     "index-lowering-operation-for-vectors-9aafa0ec": {
         "title": "Index Lowering Operation for Vectors",
@@ -1801,7 +1772,8 @@
         "status": "published",
         "parent_formula_id": "index-lowering-operation-d9dc1833",
         "subcomponents": [],
-        "id": "index-lowering-operation-for-vectors-9aafa0ec"
+        "id": "index-lowering-operation-for-vectors-9aafa0ec",
+        "intuitive_summary": ""
     },
     "metric-tensor-inverse-identity-2607ae48": {
         "title": "Metric Tensor Inverse Identity",
@@ -1843,7 +1815,8 @@
         "status": "published",
         "parent_formula_id": "algebraic-duality-4db70c80",
         "subcomponents": [],
-        "id": "metric-tensor-inverse-identity-2607ae48"
+        "id": "metric-tensor-inverse-identity-2607ae48",
+        "intuitive_summary": ""
     },
     "zero-value-of-action-angle-variable-27b3533b": {
         "title": "Zero Value of Action-Angle Variable",
@@ -1867,7 +1840,8 @@
         "status": "published",
         "parent_formula_id": "time-derivative-generalized-force-hamiltonian",
         "subcomponents": [],
-        "id": "zero-value-of-action-angle-variable-27b3533b"
+        "id": "zero-value-of-action-angle-variable-27b3533b",
+        "intuitive_summary": ""
     },
     "squared-unit-of-speed-827653d0": {
         "title": "Squared Unit of Speed",
@@ -1897,7 +1871,8 @@
         "status": "published",
         "parent_formula_id": "kinetic-energy-two-particles",
         "subcomponents": [],
-        "id": "squared-unit-of-speed-827653d0"
+        "id": "squared-unit-of-speed-827653d0",
+        "intuitive_summary": ""
     },
     "incremented-differential-form-degree-6f3ec104": {
         "title": "Incremented Differential Form Degree",
@@ -1921,43 +1896,45 @@
         "status": "published",
         "parent_formula_id": "generalized-stokes-theorem-manifold-ident-5c15055c",
         "subcomponents": [],
-        "id": "incremented-differential-form-degree-6f3ec104"
+        "id": "incremented-differential-form-degree-6f3ec104",
+        "intuitive_summary": ""
     },
     "ricci-tensor-scalar-curvature-relation-1fc569a3": {
         "title": "Ricci Tensor-Scalar Curvature Relation",
         "description": "This equation expresses the Ricci tensor in terms of the scalar curvature and the metric tensor, representing a fundamental geometric relationship in Riemannian geometry and general relativity.",
-        "conceptual_definition": "In general relativity, the Ricci tensor, $R_{\\mu u}$, describes how the volume of a small ball of test particles changes from its flat-space value, indicating the presence of tidal forces. The scalar curvature, $R$, is the trace of the Ricci tensor, $R = g^{\\mu u}R_{\\mu u}$, providing a single number that characterizes the curvature at a point. The metric tensor, $g_{\\mu u}$, defines the spacetime interval and thus the geometry of spacetime. This equation represents a specific geometric constraint on spacetime curvature.",
-        "interpretation": "This specific form of the equation, $R_{\\mu u} = \\frac{1}{2}Rg_{\\mu u}$, is a direct consequence of the vacuum Einstein field equations, $G_{\\mu u} = 0$, where $G_{\\mu u}$ is the Einstein tensor. In 4-dimensional spacetime, this equation is mathematically equivalent to the Ricci-flat condition, $R_{\\mu u} = 0$. This equivalence arises because taking the trace of this equation in 4D implies $R=0$, which then reduces the original equation to $R_{\\mu u} = 0$. Therefore, this equation describes spacetimes that are free of matter and energy, such as the exterior of a spherically symmetric mass (Schwarzschild solution) or gravitational waves in vacuum.",
-        "limits_and_boundary": "This equation is a local differential geometric identity valid at every point in a differentiable manifold. It is particularly relevant in regions of spacetime where the stress-energy tensor is zero (vacuum solutions), as it is a direct consequence of the vacuum Einstein field equations. It does not inherently impose boundary conditions but is applied within the domain of a given spacetime manifold.",
-        "symmetry_origin": "The equation arises from the fundamental principles of general relativity, particularly general covariance, which dictates that physical laws must take the same form in all coordinate systems. It is a direct consequence of the Einstein field equations, which themselves are derived from the principle of least action (Einstein-Hilbert action) and the requirement of local Lorentz invariance.",
+        "conceptual_definition": "A geometric equation relating the Ricci tensor, which measures how volumes deviate from Euclidean behavior, to the scalar curvature and the metric tensor. In four spacetime dimensions, this relation is mathematically equivalent to the vacuum Einstein field equations.",
+        "interpretation": "This equation is a direct consequence of the vacuum Einstein field equations, $G_{\\mu\\nu} = 0$, where the Einstein tensor is defined as $G_{\\mu\\nu} = R_{\\mu\\nu} - \\frac{1}{2} R g_{\\mu\\nu}$. Setting $G_{\\mu\\nu}$ to zero immediately yields $R_{\\mu\\nu} = \\frac{1}{2} R g_{\\mu\\nu}$. In a four-dimensional spacetime ($d=4$), this relation implies that the spacetime is Ricci-flat ($R_{\\mu\\nu} = 0$). This can be shown by taking the trace of the equation: contracting with $g^{\\mu\\nu}$ gives $g^{\\mu\\nu}R_{\\mu\\nu} = \\frac{1}{2} R g^{\\mu\\nu}g_{\\mu\\nu}$, which simplifies to $R = \\frac{1}{2} R \\delta^\\mu_\\mu = \\frac{1}{2} R (4) = 2R$. The only solution to $R=2R$ is $R=0$. Substituting $R=0$ back into the original equation gives $R_{\\mu\\nu} = 0$. Therefore, this equation describes vacuum solutions like the Schwarzschild spacetime outside a black hole or gravitational waves.",
+        "limits_and_boundary": "1. This equation holds exactly in any vacuum region of spacetime, such as the space outside a star or planet, or for propagating gravitational waves.\n2. It does not apply inside matter or energy distributions where the stress-energy tensor $T_{\\mu\\nu}$ is non-zero.\n3. In spacetime dimensions other than four ($d \\neq 4$), this equation is not equivalent to the Ricci-flat condition ($R_{\\mu\\nu}=0$) and describes a more general class of spacetimes known as Einstein manifolds.",
+        "symmetry_origin": "This equation respects the principle of general covariance (diffeomorphism invariance), meaning it retains its form under arbitrary coordinate transformations. It is derived from the Einstein-Hilbert action under the condition of a vanishing stress-energy tensor. The underlying symmetry leads to the contracted Bianchi identity, $\\nabla^\\mu G_{\\mu\\nu} = 0$, which is automatically satisfied when $G_{\\mu\\nu}=0$, ensuring the self-consistency of the vacuum field equations.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity",
         "semantic_variables": {
             "R_{\\mu\\nu}": {
-                "name": "R_{\\mu\\nu}",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Ricci tensor (inverse length squared, $m^{-2}$). A symmetric tensor that describes the curvature of spacetime, specifically how the volume of a small ball of test particles changes from its flat-space value."
+                "name": "Ricci Curvature Tensor",
+                "type": "tensor",
+                "unit": "m^{-2}",
+                "description": "A symmetric rank-2 tensor that measures the change in volume element due to tidal forces, obtained by contracting two indices of the Riemann tensor."
             },
             "R": {
-                "name": "R",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Scalar curvature (inverse length squared, $m^{-2}$). The trace of the Ricci tensor, $R = g^{\\mu\\nu}R_{\\mu\\nu}$, providing a scalar measure of the curvature of spacetime at a point."
+                "name": "Ricci Scalar Curvature",
+                "type": "scalar",
+                "unit": "m^{-2}",
+                "description": "The trace of the Ricci tensor with respect to the metric ($R = g^{\\mu\\nu}R_{\\mu\\nu}$), providing a single scalar measure of the curvature at a point."
             },
             "g_{\\mu\\nu}": {
-                "name": "g_{\\mu\\nu}",
-                "type": "variable",
+                "name": "Metric Tensor",
+                "type": "tensor",
                 "unit": "dimensionless",
-                "description": "Metric tensor (dimensionless). A symmetric tensor that defines the spacetime interval, dictating distances and time intervals in spacetime, and thus the geometry of the manifold."
+                "description": "A symmetric rank-2 tensor that defines the geometry of spacetime, including distances, time intervals, and angles."
             }
         },
-        "equation": "R_{\\mu\\nu} = \\frac{1}{2}Rg_{\\mu\\nu}",
-        "status": "published",
+        "equation": "R_{\\mu\\nu} = \\frac{1}{2} R g_{\\mu\\nu}",
+        "status": "platinum",
         "parent_formula_id": "ricci-flat-constraint-923432a4",
         "subcomponents": [],
-        "id": "ricci-tensor-scalar-curvature-relation-1fc569a3"
+        "id": "ricci-tensor-scalar-curvature-relation-1fc569a3",
+        "intuitive_summary": "This equation describes the geometry of a spacetime that is empty of matter and energy, where the local curvature is constrained in a very specific way."
     },
     "hamiltons-equation-for-generalized-velocity-d6f81c3a": {
         "title": "Hamilton's Equation for Generalized Velocity",
@@ -1999,7 +1976,8 @@
         "status": "published",
         "parent_formula_id": "velocity-limit-zero",
         "subcomponents": [],
-        "id": "hamiltons-equation-for-generalized-velocity-d6f81c3a"
+        "id": "hamiltons-equation-for-generalized-velocity-d6f81c3a",
+        "intuitive_summary": ""
     },
     "astrometric-error-cd22052c": {
         "title": "Astrometric Error",
@@ -2023,7 +2001,8 @@
         "status": "published",
         "parent_formula_id": "astrometric-error-approaching-zero",
         "subcomponents": [],
-        "id": "astrometric-error-cd22052c"
+        "id": "astrometric-error-cd22052c",
+        "intuitive_summary": ""
     },
     "flat-spacetime-derivative-equivalence-8943cb96": {
         "title": "Flat Spacetime Derivative Equivalence",
@@ -2053,7 +2032,8 @@
         "status": "published",
         "parent_formula_id": "geometric-correction-fbb36892",
         "subcomponents": [],
-        "id": "flat-spacetime-derivative-equivalence-8943cb96"
+        "id": "flat-spacetime-derivative-equivalence-8943cb96",
+        "intuitive_summary": ""
     },
     "spatial-dimension-exponent-in-entanglement-56ee8538": {
         "title": "Spatial Dimension Exponent in Entanglement",
@@ -2083,7 +2063,8 @@
         "status": "published",
         "parent_formula_id": "entanglement-entropy-scaling",
         "subcomponents": [],
-        "id": "spatial-dimension-exponent-in-entanglement-56ee8538"
+        "id": "spatial-dimension-exponent-in-entanglement-56ee8538",
+        "intuitive_summary": ""
     },
     "position-operator-component-7fc3d465": {
         "title": "Position Operator Component",
@@ -2107,7 +2088,8 @@
         "status": "published",
         "parent_formula_id": "the-sharp-point-f3f84bfc",
         "subcomponents": [],
-        "id": "position-operator-component-7fc3d465"
+        "id": "position-operator-component-7fc3d465",
+        "intuitive_summary": ""
     },
     "electromagnetic-field-tensor-definition-f5a7efe5": {
         "title": "Electromagnetic Field Tensor Definition",
@@ -2149,7 +2131,8 @@
         "status": "published",
         "parent_formula_id": "shadow-elimination-d843e1e2",
         "subcomponents": [],
-        "id": "electromagnetic-field-tensor-definition-f5a7efe5"
+        "id": "electromagnetic-field-tensor-definition-f5a7efe5",
+        "intuitive_summary": ""
     },
     "covariant-derivative-of-a-scalar-field-0c1679c5": {
         "title": "Covariant Derivative of a Scalar Field",
@@ -2185,7 +2168,8 @@
         "status": "published",
         "parent_formula_id": "vacuum-weight-a8a70398",
         "subcomponents": [],
-        "id": "covariant-derivative-of-a-scalar-field-0c1679c5"
+        "id": "covariant-derivative-of-a-scalar-field-0c1679c5",
+        "intuitive_summary": ""
     },
     "time-independent-schrdinger-equation-3c88d709": {
         "title": "Time-Independent Schrödinger Equation",
@@ -2221,7 +2205,8 @@
         "status": "published",
         "parent_formula_id": "technical-relation-d57b4aa1",
         "subcomponents": [],
-        "id": "time-independent-schrdinger-equation-3c88d709"
+        "id": "time-independent-schrdinger-equation-3c88d709",
+        "intuitive_summary": ""
     },
     "contravariant-covariant-vector-contraction-e8b312ea": {
         "title": "Contravariant-Covariant Vector Contraction",
@@ -2257,7 +2242,8 @@
         "status": "published",
         "parent_formula_id": "contraction-b554a42d",
         "subcomponents": [],
-        "id": "contravariant-covariant-vector-contraction-e8b312ea"
+        "id": "contravariant-covariant-vector-contraction-e8b312ea",
+        "intuitive_summary": ""
     },
     "natural-angular-frequency-of-mass-spring-system-74744acd": {
         "title": "Natural Angular Frequency of Mass-Spring System",
@@ -2293,7 +2279,8 @@
         "status": "published",
         "parent_formula_id": "resonance-condition",
         "subcomponents": [],
-        "id": "natural-angular-frequency-of-mass-spring-system-74744acd"
+        "id": "natural-angular-frequency-of-mass-spring-system-74744acd",
+        "intuitive_summary": ""
     },
     "sum-of-time-derivatives-of-individual-momenta-1bd74f65": {
         "title": "Sum of Time Derivatives of Individual Momenta",
@@ -2323,7 +2310,8 @@
         "status": "published",
         "parent_formula_id": "conservation-total-momentum-internal-forces",
         "subcomponents": [],
-        "id": "sum-of-time-derivatives-of-individual-momenta-1bd74f65"
+        "id": "sum-of-time-derivatives-of-individual-momenta-1bd74f65",
+        "intuitive_summary": ""
     },
     "zero-actual-force-on-a-particle-071993dc": {
         "title": "Zero Actual Force on a Particle",
@@ -2347,24 +2335,39 @@
         "status": "published",
         "parent_formula_id": "principle-of-virtual-work-aeaf1c35",
         "subcomponents": [],
-        "id": "zero-actual-force-on-a-particle-071993dc"
+        "id": "zero-actual-force-on-a-particle-071993dc",
+        "intuitive_summary": ""
     },
     "binary-quantum-measurement-outcomes-e54624db": {
         "title": "Binary Quantum Measurement Outcomes",
         "description": "This set defines the two possible, discrete outcomes for a binary quantum measurement, typically representing spin or polarization states.",
-        "conceptual_definition": "In quantum mechanics, certain observables, when measured, yield discrete eigenvalues. For a binary observable, such as the spin of a particle along a specific axis or the polarization of a photon, the measurement outcomes are restricted to two distinct values. This set explicitly lists these two possible results.",
-        "interpretation": "Physically, the values +1 and -1 represent the two mutually exclusive states that a binary quantum system can collapse into upon measurement. For instance, in a spin-1/2 system, +1 might correspond to 'spin up' along the measurement axis, and -1 to 'spin down'. In photon polarization, +1 could be 'horizontal' and -1 'vertical' (or vice-versa), depending on the experimental setup and convention. These values are dimensionless and represent the quantized nature of the observable.",
-        "limits_and_boundary": "The outcomes of the measurement are strictly confined to these two discrete values; no other result is possible for a perfect binary measurement. This represents the fundamental quantization of the observable.",
-        "symmetry_origin": "The binary nature of these outcomes arises from the fundamental properties of spin-1/2 particles or two-level quantum systems, which possess a discrete Z2 symmetry under certain transformations, leading to two distinct eigenstates for a given observable.",
+        "conceptual_definition": "For a quantum system with a binary observable, such as the spin projection of a spin-1/2 particle, measurement outcomes are restricted to a set of two discrete eigenvalues. This set represents these two possible, mutually exclusive results.",
+        "interpretation": "The set $\\{-1, +1\\}$ represents the complete set of possible outcomes when measuring a binary quantum observable. These values are the eigenvalues of the corresponding Hermitian operator, for example, the Pauli Z-matrix $\\sigma_z = \\begin{pmatrix} 1 & 0 \\\\ 0 & -1 \\end{pmatrix}$. Upon measurement, the quantum system's state vector is projected onto one of the two orthogonal eigenstates corresponding to these eigenvalues. For a spin-1/2 particle, $+1$ and $-1$ (often multiplied by $\\hbar/2$) correspond to 'spin up' and 'spin down' along the measurement axis, respectively.",
+        "limits_and_boundary": "1. The measurement outcomes are strictly quantized and confined to the values $\\{-1, +1\\}$; no intermediate values are possible in an ideal measurement.\n2. This model applies to ideal, projective measurements on isolated two-level quantum systems.",
+        "symmetry_origin": "The two-valued nature of the outcome stems from the underlying two-dimensional Hilbert space of the system, which has a fundamental SU(2) symmetry group structure. For observables like spin projection, this manifests as two distinct eigenstates, often related by a discrete $Z_2$ symmetry (e.g., spin up vs. spin down).",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "quantum-measurement-theory",
-        "semantic_variables": {},
+        "semantic_variables": {
+            "+1": {
+                "name": "Positive Eigenvalue",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "One of two possible discrete outcomes of a binary quantum measurement, often corresponding to 'spin up' or 'horizontal polarization'."
+            },
+            "-1": {
+                "name": "Negative Eigenvalue",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The other of two possible discrete outcomes of a binary quantum measurement, often corresponding to 'spin down' or 'vertical polarization'."
+            }
+        },
         "equation": "\\{-1, +1\\}",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "bell-chsh-inequality-philosophy-4615a8aa",
         "subcomponents": [],
-        "id": "binary-quantum-measurement-outcomes-e54624db"
+        "id": "binary-quantum-measurement-outcomes-e54624db",
+        "intuitive_summary": "A binary quantum measurement, like checking a particle's spin, can only result in one of two opposite values, such as +1 or -1."
     },
     "poisson-bracket-via-symplectic-form": {
         "id": "poisson-bracket-via-symplectic-form",

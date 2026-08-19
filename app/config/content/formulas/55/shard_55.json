@@ -2410,47 +2410,62 @@
         "intuitive_summary": ""
     },
     "probability-continuity-equation-4c9de9fa": {
-        "title": "Probability Continuity Equation",
-        "description": "This equation expresses the local conservation of probability density in a system, stating that the rate of change of probability density at a point is balanced by the divergence of the probability current.",
-        "conceptual_definition": "In quantum mechanics, this equation is a fundamental statement of probability conservation. It relates the time evolution of the probability density $P$ of finding a particle at a given position to the flow of probability, represented by the probability current density $\\mathbf{J}$. It ensures that probability is neither created nor destroyed locally.",
-        "interpretation": "Physically, if the probability density $P$ at a certain point in space decreases over time ($\\partial P / \\partial t < 0$), it means that probability is flowing out of that region, as quantified by the divergence of the probability current ($\\nabla \\cdot \\mathbf{J} > 0$). Conversely, if $P$ increases, probability is flowing into that region. Integrated over all space, this equation implies that the total probability of finding the particle, $\\int P$ dV, remains constant (typically normalized to 1) for a closed system.",
-        "limits_and_boundary": "This equation is valid for systems where the total probability is conserved, such as in non-relativistic quantum mechanics with Hermitian Hamiltonians. Boundary conditions often require the probability current $\\mathbf{J}$ to be zero at spatial infinity or at impenetrable barriers, ensuring no probability flows into or out of the system from these boundaries.",
-        "symmetry_origin": "The conservation of probability is a direct consequence of the unitarity of the time evolution operator in quantum mechanics, which in turn arises from the Hermiticity of the Hamiltonian. This ensures that the norm of the state vector, representing total probability, remains constant over time.",
-        "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
-        "equation_family": "quantum-mechanics",
+        "title": "Quantum Probability Current Density",
+        "equation": "\\mathbf{J} = \\frac{\\hbar}{2mi} \\left(\\psi^* \\nabla \\psi - \\psi \\nabla \\psi^*\\right)",
         "semantic_variables": {
-            "P": {
-                "name": "P",
+            "\\mathbf{J}": {
+                "name": "Probability Current Density",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Probability density (probability per unit volume). Units: $m^{-3}$."
+                "unit": "1/(m^2·s)",
+                "description": "The vector field representing the flow rate of quantum probability per unit area per unit time."
             },
-            "t": {
-                "name": "t",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Time. Units: $s$."
+            "\\hbar": {
+                "name": "Reduced Planck Constant",
+                "type": "constant",
+                "unit": "J·s",
+                "description": "Fundamental quantum constant of action."
             },
-            "J": {
-                "name": "J",
+            "m": {
+                "name": "Particle Mass",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Probability current density (probability flow per unit area per unit time). Units: $m^{-2}s^{-1}$."
+                "unit": "kg",
+                "description": "The inertial mass of the quantum particle."
             },
-            "nabla": {
-                "name": "nabla",
-                "type": "variable",
+            "i": {
+                "name": "Imaginary Unit",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "Del operator (vector differential operator). Represents spatial derivatives. No specific units, but its application implies inverse length units."
+                "description": "The imaginary unit satisfying $i^2 = -1$."
+            },
+            "\\psi": {
+                "name": "Quantum Wavefunction",
+                "type": "variable",
+                "unit": "m^{-3/2}",
+                "description": "The complex-valued probability amplitude of the quantum state."
+            },
+            "\\psi^*": {
+                "name": "Complex Conjugate Wavefunction",
+                "type": "variable",
+                "unit": "m^{-3/2}",
+                "description": "The complex conjugate of the wavefunction."
+            },
+            "\\nabla": {
+                "name": "Del Gradient Operator",
+                "type": "operator",
+                "unit": "1/m",
+                "description": "Spatial gradient differential operator."
             }
         },
-        "equation": "\\frac{\\partial P}{\\partial t} + \\nabla \\cdot \\mathbf{J} = 0",
-        "status": "published",
-        "parent_formula_id": "continuity-equation-4c9de9fa",
-        "subcomponents": [],
-        "id": "probability-continuity-equation-4c9de9fa",
-        "intuitive_summary": ""
+        "interpretation": "In quantum mechanics, the probability current density $\\mathbf{J} = \\frac{\\hbar}{2mi} (\\psi^* \\nabla \\psi - \\psi \\nabla \\psi^*) = \\frac{\\hbar}{m} \\operatorname{Im}(\\psi^* \\nabla \\psi)$ describes the spatial transport of probability amplitude. When combined with the Born probability density $P = |\\psi|^2$, the time-dependent Schrödinger equation enforces exact local probability conservation via the continuity equation $\\frac{\\partial P}{\\partial t} + \\nabla \\cdot \\mathbf{J} = 0$. For stationary bound states with real wavefunctions, $\\mathbf{J} = \\mathbf{0}$, whereas for a traveling plane wave $\\psi = A e^{i(\\mathbf{k}\\cdot\\mathbf{r} - \\omega t)}$, the current reduces to $\\mathbf{J} = |A|^2 \\frac{\\hbar \\mathbf{k}}{m} = P \\mathbf{v}$, precisely matching the classical flux of particles.",
+        "symmetry_origin": "Originates from the global $U(1)$ phase invariance of the Schrödinger Lagrangian ($\\\\psi \\to e^{i\\theta}\\psi$). By Noether's theorem, this continuous symmetry generates the conserved probability current $J^\\mu = (c|\\psi|^2, \\mathbf{J})$.",
+        "limits_and_boundary": "1. Classical limit: For semiclassical wavepackets $\\psi = \\sqrt{P} e^{iS/\\hbar}$, as $\\hbar \\to 0$, $\\mathbf{J} \\to P \\frac{\\nabla S}{m} = P \\mathbf{v}$. 2. Bound states: For non-degenerate bound states with uniform phase, $\\mathbf{J} = \\mathbf{0}$. 3. Electromagnetic coupling: In a magnetic field with vector potential $\\mathbf{A}$, the gauge-invariant current becomes $\\mathbf{J} = \\frac{1}{m} \\operatorname{Re}\\left[\\psi^* (-i\\hbar \\nabla - q\\mathbf{A}) \\psi\\right]$.",
+        "status": "platinum",
+        "conceptual_definition": "The probability current density defines the flux vector characterizing the local flow of quantum probability amplitude through space.",
+        "intuitive_summary": "The probability current measures the speed and direction in which quantum probability flows through space.",
+        "parent_formula_id": "time-dependent-schrodinger-equation",
+        "subcomponents": [
+            "time-dependent-schrodinger-equation"
+        ]
     },
     "infinite-density-limit-condition-46aa3470": {
         "title": "Infinite Density Limit Condition",

@@ -2425,18 +2425,28 @@ const EquationExplainer = {
     renderKnowledgeGraphCard(formula) {
         const card = document.getElementById('knowledge-graph-card');
         const details = document.getElementById('knowledge-graph-details');
+        const canvasContainer = document.getElementById('formula-lineage-graph-canvas');
         if (!card || !details) return;
 
-        const hasParent = formula && (formula.parent_formula || formula.parent_formula_id);
-        const hasSubcomponents = formula && Array.isArray(formula.subcomponents) && formula.subcomponents.length > 0;
-        const hasOtherMetadata = formula && (formula.derivation_type || formula.constraints);
-
-        if (!hasParent && !hasSubcomponents && !hasOtherMetadata) {
+        if (!formula || !formula.id) {
             card.style.display = 'none';
             return;
         }
 
         card.style.display = 'flex';
+
+        // Initialize / Load interactive Formula Lineage Graph
+        if (window.FormulaLineageGraph && canvasContainer) {
+            if (!this.lineageGraph) {
+                this.lineageGraph = new window.FormulaLineageGraph('formula-lineage-graph-canvas', {
+                    onNodeClick: (node) => {
+                        this.loadFormulaById(node.id);
+                    }
+                });
+            }
+            this.lineageGraph.loadFormula(formula.id);
+        }
+
         let html = '';
 
         if (formula.derivation_type) {

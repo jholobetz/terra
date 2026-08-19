@@ -443,6 +443,67 @@ class PhysicsController
     }
 
     /**
+     * API action returning local derivation & lineage subgraph for an equation.
+     */
+    public function apiFormulaGraph(string $id)
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        try {
+            $depth = (int) (Flight::request()->query->depth ?? 2);
+            if ($depth < 1) $depth = 1;
+            if ($depth > 4) $depth = 4;
+            require_once __DIR__ . '/../logic/FormulaGraphService.php';
+            $subgraph = \App\Logic\FormulaGraphService::getFormulaSubgraph($id, $depth);
+            echo json_encode([
+                'success' => true,
+                'data' => $subgraph
+            ]);
+        } catch (\Throwable $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * API action finding shortest derivation path between two formulas.
+     */
+    public function apiFormulaPath()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        try {
+            $start = Flight::request()->query->start ?? '';
+            $end = Flight::request()->query->end ?? '';
+            if (empty($start) || empty($end)) {
+                echo json_encode(['success' => false, 'error' => 'Both start and end parameters required']);
+                return;
+            }
+            require_once __DIR__ . '/../logic/FormulaGraphService.php';
+            $path = \App\Logic\FormulaGraphService::findDerivationPath($start, $end);
+            echo json_encode([
+                'success' => true,
+                'data' => $path
+            ]);
+        } catch (\Throwable $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * View action rendering the interactive Physics Universe Knowledge Graph.
+     */
+    public function universeGraph()
+    {
+        $this->renderWithLayout('physics/universe_graph', [
+            'title' => "Physics Universe Graph - Mathematical Lineage & Derivations"
+        ]);
+    }
+
+    /**
      * View action rendering the interactive Noether's Vault (Symmetry-to-Conservation Mapping).
      */
     public function noethersVault()

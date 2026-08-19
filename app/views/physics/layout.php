@@ -85,6 +85,10 @@
                             <span class="module-title">Equation Explainer</span>
                             <span class="module-desc">Deconstruct LaTeX identities</span>
                         </a>
+                        <a href="/physics/universe-graph" class="nav-module-link">
+                            <span class="module-title">Universe Graph</span>
+                            <span class="module-desc">13,773 formula derivation map</span>
+                        </a>
                         <a href="/physics/simulations" class="nav-module-link">
                             <span class="module-title">Simulations</span>
                             <span class="module-desc">Interactive physics sandboxes</span>

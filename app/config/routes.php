@@ -52,6 +52,9 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/api/search', [ $app->physicsController(), 'apiSearch' ]);
 		$router->get('/api/semantic-search', [ $app->physicsController(), 'apiSemanticSearch' ]);
 		$router->get('/api/related-subtopics/@slug', [ $app->physicsController(), 'apiRelatedSubtopics' ]);
+		$router->get('/api/formula-graph/@id', [ $app->physicsController(), 'apiFormulaGraph' ]);
+		$router->get('/api/formula-path', [ $app->physicsController(), 'apiFormulaPath' ]);
+		$router->get('/universe-graph', [ $app->physicsController(), 'universeGraph' ]);
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 
 		// Multi-Tier Auth & Formula Review API Routes

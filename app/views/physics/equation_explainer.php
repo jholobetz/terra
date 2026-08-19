@@ -158,11 +158,15 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         <!-- JS populated -->
                     </div>
 
-                    <!-- Knowledge Graph Ancestry & Family Tree Card -->
-                    <div id="knowledge-graph-card" style="display: none; background: rgba(100, 255, 218, 0.04); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 12px; padding: 20px; flex-direction: column; gap: 12px;">
-                        <h4 style="font-size: 0.82rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
-                            🕸️ Formula Family Tree &amp; Structural Components
-                        </h4>
+                    <!-- Interactive Formula Lineage & Derivation Graph -->
+                    <div id="knowledge-graph-card" style="display: none; background: rgba(100, 255, 218, 0.03); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 12px; padding: 20px; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <h4 style="font-size: 0.86rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif;">
+                                🌌 Mathematical Lineage &amp; Derivation Map
+                            </h4>
+                            <span style="font-size: 0.72rem; color: #94a3b8;">Click any node to navigate</span>
+                        </div>
+                        <div id="formula-lineage-graph-canvas" style="height: 380px; width: 100%; position: relative;"></div>
                         <div id="knowledge-graph-details" style="font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
                             <!-- JS populated -->
                         </div>
@@ -566,5 +570,6 @@ window.INITIAL_DOMAIN = <?= json_encode($domain) ?>;
 window.CURRENT_USER = <?= json_encode($currentUser ?? (object)['role' => 'guest', 'display_name' => 'Guest']) ?>;
 </script>
 
+<script src="/js/formula_graph.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/formula_graph.js') ?>" defer></script>
 <script src="/js/equation_explainer.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/equation_explainer.js') ?>" defer></script>
 

@@ -91,9 +91,36 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         this.g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         this.svg.appendChild(this.g);
 
-        // Tooltip container
+        // Tooltip container (interactive & clickable)
         this.tooltip = document.createElement('div');
-        this.tooltip.style.cssText = 'position: absolute; display: none; z-index: 50; pointer-events: none; background: rgba(3, 7, 18, 0.95); border: 1px solid rgba(100, 255, 218, 0.4); border-radius: 8px; padding: 10px 14px; max-width: 280px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); backdrop-filter: blur(8px);';
+        this.tooltip.style.cssText = 'position: absolute; display: none; z-index: 50; pointer-events: auto; cursor: pointer; background: rgba(3, 7, 18, 0.96); border: 1px solid rgba(100, 255, 218, 0.4); border-radius: 10px; padding: 12px 16px; max-width: 300px; box-shadow: 0 12px 30px rgba(0,0,0,0.7), 0 0 15px rgba(100,255,218,0.15); backdrop-filter: blur(10px); transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;';
+        
+        this.tooltip.addEventListener('mouseenter', () => {
+            if (this.hideTimeout) {
+                clearTimeout(this.hideTimeout);
+                this.hideTimeout = null;
+            }
+            this.tooltip.style.borderColor = 'var(--accent-default, #64ffda)';
+            this.tooltip.style.boxShadow = '0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(100,255,218,0.3)';
+            this.tooltip.style.transform = 'translateY(-2px)';
+        });
+
+        this.tooltip.addEventListener('mouseleave', () => {
+            this.tooltip.style.transform = 'none';
+            this.hideTooltip();
+        });
+
+        this.tooltip.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (this.hoveredNode) {
+                if (this.options.onNodeClick) {
+                    this.options.onNodeClick(this.hoveredNode);
+                } else {
+                    window.location.href = `/physics/equation-explainer?id=${encodeURIComponent(this.hoveredNode.id)}`;
+                }
+            }
+        });
+
         this.container.appendChild(this.tooltip);
 
         // Bind interactive event listeners
@@ -316,13 +343,19 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
             // Hover Events
             gNode.addEventListener('mouseenter', (e) => {
+                if (this.hideTimeout) {
+                    clearTimeout(this.hideTimeout);
+                    this.hideTimeout = null;
+                }
                 circle.setAttribute('r', isRoot ? '22' : '16');
                 this.showTooltip(node, e);
             });
 
             gNode.addEventListener('mouseleave', () => {
                 circle.setAttribute('r', isRoot ? '18' : '12');
-                this.hideTooltip();
+                this.hideTimeout = setTimeout(() => {
+                    this.hideTooltip();
+                }, 300);
             });
 
             // Click navigation
@@ -340,33 +373,40 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
     }
 
     showTooltip(node, evt) {
+        this.hoveredNode = node;
         const rect = this.container.getBoundingClientRect();
         const x = evt.clientX - rect.left + 15;
         const y = evt.clientY - rect.top - 20;
 
         const domainCfg = this.domainColors[node.domain] || { fill: '#64ffda' };
 
-        this.tooltip.style.left = `${Math.min(x, rect.width - 290)}px`;
-        this.tooltip.style.top = `${Math.max(10, Math.min(y, rect.height - 140))}px`;
+        this.tooltip.style.left = `${Math.min(x, rect.width - 310)}px`;
+        this.tooltip.style.top = `${Math.max(10, Math.min(y, rect.height - 160))}px`;
         this.tooltip.style.display = 'block';
 
         this.tooltip.innerHTML = `
-            <div style="font-size: 0.68rem; text-transform: uppercase; color: ${domainCfg.fill}; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 3px;">
-                ${node.domain_label || node.domain}
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 0.68rem; text-transform: uppercase; color: ${domainCfg.fill}; font-weight: 700; letter-spacing: 0.05em;">
+                    ${node.domain_label || node.domain}
+                </span>
+                <span style="font-size: 0.68rem; color: #64ffda; font-weight: 700;">
+                    Click to Open ➔
+                </span>
             </div>
-            <div style="font-size: 0.88rem; font-weight: 600; color: #ffffff; margin-bottom: 6px; line-height: 1.3;">
+            <div style="font-size: 0.92rem; font-weight: 600; color: #ffffff; margin-bottom: 6px; line-height: 1.3;">
                 ${node.title}
             </div>
             ${node.equation ? `
-                <div style="font-size: 0.85rem; color: #ffd700; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 4px; margin-bottom: 6px; overflow-x: auto; font-family: monospace;">
+                <div style="font-size: 0.88rem; color: #ffd700; background: rgba(0,0,0,0.5); padding: 5px 9px; border-radius: 6px; margin-bottom: 6px; overflow-x: auto; font-family: monospace; border: 1px solid rgba(255,255,255,0.06);">
                     $${node.equation}$
                 </div>
             ` : ''}
             <div style="font-size: 0.76rem; color: #94a3b8; line-height: 1.4;">
-                ${node.summary || 'Click to examine this formula in the Equation Explainer.'}
+                ${node.summary || 'Click anywhere on this card to examine this formula in the Equation Explainer.'}
             </div>
-            <div style="margin-top: 8px; font-size: 0.68rem; color: #64ffda; text-align: right; font-weight: 600;">
-                Click to explore ➔
+            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.72rem; color: var(--accent-default, #64ffda); display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-weight: 600;">
+                <span>Explore Full Derivation</span>
+                <span style="font-size: 0.85rem;">➔</span>
             </div>
         `;
 
@@ -377,5 +417,6 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
     hideTooltip() {
         this.tooltip.style.display = 'none';
+        this.hoveredNode = null;
     }
 };

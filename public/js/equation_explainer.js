@@ -931,9 +931,9 @@ const EquationExplainer = {
 
     init() {
         this.activeDomain = '';
+        this.cacheElements();
         this.loadReferrerContext();
         this.loadUserCustomizations();
-        this.cacheElements();
         this.bindEvents();
         this.loadInitialState();
     },
@@ -1140,7 +1140,8 @@ const EquationExplainer = {
             }
         });
 
-        const activeCluster = SEMANTIC_CLUSTERS.find(c => c.domain === this.activeDomain);
+        const effectiveDomain = this.activeDomain || this.detectDomainFromLatex(latex) || 'classical_mechanics';
+        const activeCluster = SEMANTIC_CLUSTERS.find(c => c.domain === effectiveDomain);
         if (activeCluster) {
             Object.entries(activeCluster.overrides).forEach(([sym, val]) => {
                 if (!overrides[sym]) {
@@ -1172,6 +1173,7 @@ const EquationExplainer = {
 
     resolveSymbolInfo(symbol, type = null) {
         let cleanSymbol = symbol.trim().replace(/^\\(mathbf|vec|hat|bar|dot|ddot|tilde|boldsymbol)\{([a-zA-Z\\]+)\}$/, '$2').replace(/[\{\}]/g, '');
+        const effectiveDomain = this.activeDomain || (this.currentLatex ? this.detectDomainFromLatex(this.currentLatex) : null) || 'classical_mechanics';
         
         // 0. Check active fallback binder overrides
         if (this.activeBinder && this.activeBinder.variableOverrides) {
@@ -1213,38 +1215,19 @@ const EquationExplainer = {
             }
         }
 
-        // 2. Check constants first
+        // 2. Check fundamental constants first
         const constants = window.PHYSICS_CONSTANTS || {};
+        const constantEquations = {
+            'c': [{ name: "Mass-Energy Equivalence", latex: "E = mc^2" }, { name: "Speed of Light Relation", latex: "c = \\frac{1}{\\sqrt{\\epsilon_0 \\mu_0}}" }],
+            'hbar': [{ name: "Schrödinger Equation", latex: "i \\hbar \\frac{\\partial}{\\partial t}\\Psi = \\hat{H}\\Psi" }, { name: "Heisenberg Uncertainty Principle", latex: "\\Delta x \\Delta p \\ge \\frac{\\hbar}{2}" }],
+            'G': [{ name: "Universal Gravitation", latex: "F = G \\frac{m_1 m_2}{r^2}" }, { name: "Einstein Field Equations", latex: "G_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}" }],
+            'k_B': [{ name: "Boltzmann Entropy Formula", latex: "S = k_B \\ln \\Omega" }, { name: "Ideal Gas Law", latex: "P V = N k_B T" }],
+            'epsilon_0': [{ name: "Gauss's Law", latex: "\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\epsilon_0}" }, { name: "Speed of Light Relation", latex: "c = \\frac{1}{\\sqrt{\\epsilon_0 \\mu_0}}" }],
+            'mu_0': [{ name: "Ampere's Law", latex: "\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\\partial \\mathbf{E}}{\\partial t}" }, { name: "Speed of Light Relation", latex: "c = \\frac{1}{\\sqrt{\\epsilon_0 \\mu_0}}" }]
+        };
+
         for (const [key, details] of Object.entries(constants)) {
             if (details.symbol === symbol || details.symbol === cleanSymbol) {
-                // Predefine prominent featured equations for constants
-                const constantEquations = {
-                    'h-bar': [
-                        { name: "Schrödinger Equation", latex: "i \\hbar \\frac{\\partial}{\\partial t}\\Psi = \\hat{H}\\Psi" },
-                        { name: "Heisenberg Uncertainty Principle", latex: "\\Delta x \\Delta p \\ge \\frac{\\hbar}{2}" }
-                    ],
-                    'c': [
-                        { name: "Mass-Energy Equivalence", latex: "E = m c^2" },
-                        { name: "Einstein Field Equations", latex: "G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}" }
-                    ],
-                    'G': [
-                        { name: "Universal Gravitation", latex: "\\mathbf{F}_g = -G \\frac{m_1 m_2}{r^2} \\hat{\\mathbf{r}}" },
-                        { name: "Einstein Field Equations", latex: "G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}" }
-                    ],
-                    'k-B': [
-                        { name: "Ideal Gas Law", latex: "P V = N k_B T" },
-                        { name: "Boltzmann Entropy Formula", latex: "S = k_B \\ln \\Omega" }
-                    ],
-                    'epsilon-0': [
-                        { name: "Gauss's Law", latex: "\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\epsilon_0}" },
-                        { name: "Coulomb's Law", latex: "F_e = \\frac{1}{4\\pi\\epsilon_0} \\frac{q_1 q_2}{r^2}" }
-                    ],
-                    'mu-0': [
-                        { name: "Ampere's Law", latex: "\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J}" },
-                        { name: "Speed of Light Relation", latex: "c = \\frac{1}{\\sqrt{\\epsilon_0 \\mu_0}}" }
-                    ]
-                };
-
                 return {
                     name: details.name,
                     type: 'constant',
@@ -1260,8 +1243,8 @@ const EquationExplainer = {
         const dictEntry = this.variableDictionary[cleanSymbol] || this.variableDictionary[symbol];
         if (dictEntry) {
             let activeCtx = null;
-            if (this.activeDomain && dictEntry.contexts && dictEntry.contexts[this.activeDomain]) {
-                activeCtx = dictEntry.contexts[this.activeDomain];
+            if (effectiveDomain && dictEntry.contexts && dictEntry.contexts[effectiveDomain]) {
+                activeCtx = dictEntry.contexts[effectiveDomain];
             } else if (dictEntry.contexts) {
                 const firstCtxKey = Object.keys(dictEntry.contexts)[0];
                 activeCtx = dictEntry.contexts[firstCtxKey];
@@ -1282,7 +1265,7 @@ const EquationExplainer = {
             let activeLegacy = legacyEntry;
             let match = null;
             if (legacyEntry.alternatives) {
-                match = legacyEntry.alternatives.find(alt => alt.domain === this.activeDomain);
+                match = legacyEntry.alternatives.find(alt => alt.domain === effectiveDomain);
             }
             if (match) {
                 activeLegacy = {
@@ -1291,7 +1274,7 @@ const EquationExplainer = {
                     unit: match.unit || legacyEntry.unit,
                     desc: match.desc || legacyEntry.desc
                 };
-            } else if (legacyEntry.domain === this.activeDomain) {
+            } else if (legacyEntry.domain === effectiveDomain) {
                 activeLegacy = legacyEntry;
             }
             
@@ -2601,7 +2584,7 @@ const EquationExplainer = {
         
         // 1. Syntactic / Structural Anchor Detection (Rule-Based overrides)
         // Relativistic field theory / Gauge theory / General Relativity: D_\mu, \partial_\mu, \gamma^\mu, \Gamma^\mu, g_{\mu\nu}, R_{\mu\nu}, etc.
-        if (/(?:D|\\partial|\\gamma|\\Gamma|g|R|G|W|B)_(?:\\mu|\\nu|\\alpha|\\beta)/.test(latex) || /(?:D|\\partial|\\gamma|\\Gamma|g|R|G|W|B)\^(?:\\mu|\\nu|\\alpha|\\beta)/.test(latex)) {
+        if (/(?:D|\\partial|\\gamma|\\Gamma|g|R|G|W|B)_(?:\\mu|\\nu|\\alpha|\\beta|\\sigma|\\rho)/.test(latex) || /(?:D|\\partial|\\gamma|\\Gamma|g|R|G|W|B)\^(?:\\mu|\\nu|\\alpha|\\beta|\\sigma|\\rho)/.test(latex)) {
             return 'quantum_mechanics';
         }
         
@@ -2633,12 +2616,28 @@ const EquationExplainer = {
             return 'thermodynamics';
         }
         
-        // 2. Co-occurrence / Match Counts
-        // Define anchor symbols for each domain
+        // Helper to check if a specific symbol is present in the LaTeX string with safe boundary checks
+        const hasSymbol = (sym) => {
+            if (sym.startsWith('\\')) {
+                const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                return new RegExp(escaped + '(?![a-zA-Z])').test(latex);
+            }
+            return new RegExp('(?<![a-zA-Z\\\\])' + sym + '(?![a-zA-Z])').test(latex);
+        };
+
+        const counts = {
+            classical_mechanics: 0,
+            thermodynamics: 0,
+            electromagnetism: 0,
+            quantum_mechanics: 0,
+            optics: 0,
+            philosophy_of_physics: 0
+        };
+        
+        // Check for domain anchors with boundary safety
         const ANCHORS = {
             philosophy_of_physics: [
-                '\\forall', '\\exists', '\\vdash', '\\models', '\\iff', '\\implies', '\\in', 'T', 'O', 'E', 'o',
-                '\\subset', '\\subseteq', '\\cup', '\\cap', '\\equiv', '\\models'
+                '\\forall', '\\exists', '\\vdash', '\\models', '\\iff', '\\implies', '\\subset', '\\subseteq', '\\cup', '\\cap', '\\equiv'
             ],
             thermodynamics: [
                 'T', 'S', 'Q', 'U', 'H', '\\Omega', '\\ln', 'k_B', 'R', 'P', 'V',
@@ -2647,124 +2646,56 @@ const EquationExplainer = {
             electromagnetism: [
                 '\\mathbf{E}', '\\mathbf{B}', '\\mathbf{J}', '\\rho', '\\epsilon_0',
                 '\\mu_0', '\\Phi', '\\mathbf{A}', 'q', 'e', 'E_x', 'E_y', 'E_z',
-                'B_x', 'B_y', 'B_z', '\\nabla \\times', '\\nabla \\cdot'
+                'B_x', 'B_y', 'B_z', '\\nabla'
             ],
             quantum_mechanics: [
                 '\\hbar', '\\Psi', '\\psi', '\\hat{H}', '\\phi', '\\hat{p}', '\\hat{x}',
-                '\\mid', '\\rangle', '\\langle', 'i', '\\psi^*', '\\Psi^*', '\\hat{A}',
-                '\\hat{B}', '\\psi_n', 'E_n', '\\dagger'
+                '\\mid', '\\rangle', '\\langle', 'i', '\\hat{A}',
+                '\\hat{B}', '\\dagger'
             ],
             optics: [
                 'n', '\\lambda', 'f', '\\theta', '\\omega', 'k', 'I', 'I_0',
-                '\\sin', '\\cos', '\\lambda', '\\nu'
+                '\\sin', '\\cos', '\\nu'
+            ],
+            classical_mechanics: [
+                'x', 'v', 'a', 'F', 'm', 'p', 't', '\\tau', 'g', 'r', 'L', 'K'
             ]
         };
-        
-        const counts = {
-            classical_mechanics: 0,
-            thermodynamics: 0,
-            electromagnetism: 0,
-            quantum_mechanics: 0,
-            optics: 0
-        };
-        
-        // Count matches for each domain
+
         for (const [domain, symbols] of Object.entries(ANCHORS)) {
             symbols.forEach(sym => {
-                const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                const pattern = /^[a-zA-Z0-9]+$/.test(sym) 
-                    ? new RegExp('\\b' + escaped + '\\b', 'g')
-                    : new RegExp(escaped, 'g');
-                    
-                const matches = latex.match(pattern);
-                if (matches) {
-                    counts[domain] += matches.length;
+                if (hasSymbol(sym)) {
+                    counts[domain] = (counts[domain] || 0) + 1;
                 }
             });
         }
         
-        // Check for classical mechanics anchors
-        const classicalAnchors = ['x', 'v', 'a', 'F', 'm', 'p', 't', '\\tau', 'g', 'r'];
-        classicalAnchors.forEach(sym => {
-            const pattern = new RegExp('\\b' + sym + '\\b', 'g');
-            const matches = latex.match(pattern);
-            if (matches) {
-                counts.classical_mechanics += matches.length;
-            }
-        });
-        
-        // Helper to check if a specific symbol is present in the LaTeX string
-        const hasSymbol = (sym) => {
-            const escaped = sym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            const pattern = /^[a-zA-Z0-9]+$/.test(sym) 
-                ? new RegExp('\\b' + escaped + '\\b')
-                : new RegExp(escaped);
-            return pattern.test(latex);
-        };
-
-        // Apply co-occurrence multipliers (Tier 2 HCR)
-        
-        // Classical Mechanics:
+        // Apply co-occurrence multipliers
         if (hasSymbol('T') && hasSymbol('V') && (hasSymbol('L') || hasSymbol('\\mathcal{L}'))) {
-            counts.classical_mechanics += 3.0; // Lagrangian system indicators
+            counts.classical_mechanics += 4.0;
         }
         if (hasSymbol('F') && hasSymbol('m') && hasSymbol('a')) {
-            counts.classical_mechanics += 2.0; // Newton's Second Law indicators
+            counts.classical_mechanics += 4.0;
         }
-        if (hasSymbol('r') && hasSymbol('p') && (hasSymbol('L') || hasSymbol('I'))) {
-            counts.classical_mechanics += 2.0; // Angular momentum indicators
-        }
-        
-        // Thermodynamics:
         if (hasSymbol('P') && hasSymbol('V') && hasSymbol('T')) {
-            counts.thermodynamics += 3.0; // Ideal gas law / EOS indicators
+            counts.thermodynamics += 4.0;
         }
         if (hasSymbol('k_B') && hasSymbol('T')) {
-            counts.thermodynamics += 2.0; // Thermal energy indicators
+            counts.thermodynamics += 3.0;
         }
-        if (hasSymbol('U') && hasSymbol('S') && hasSymbol('T')) {
-            counts.thermodynamics += 2.5; // Thermodynamic potentials indicators
-        }
-        if (hasSymbol('S') && hasSymbol('Q') && hasSymbol('T')) {
-            counts.thermodynamics += 3.0; // Second law indicators
-        }
-        
-        // Electromagnetism:
-        if (hasSymbol('\\epsilon_0') && hasSymbol('\\mu_0')) {
-            counts.electromagnetism += 3.0; // Maxwell speed of light indicators
-        }
-        if (hasSymbol('\\epsilon_0')) {
-            counts.electromagnetism += 1.5; // Permittivity of free space indicator
-        }
-        if (hasSymbol('\\epsilon_0') && (hasSymbol('\\mathbf{E}') || hasSymbol('E'))) {
-            counts.electromagnetism += 3.0; // Electrostatic field energy/force indicators
+        if (hasSymbol('\\epsilon_0') || hasSymbol('\\mu_0')) {
+            counts.electromagnetism += 4.0;
         }
         if (hasSymbol('\\mathbf{E}') && hasSymbol('\\mathbf{B}')) {
-            counts.electromagnetism += 2.5; // Electromagnetic fields co-occurrence
+            counts.electromagnetism += 4.0;
         }
-        if (hasSymbol('q') && (hasSymbol('\\mathbf{E}') || hasSymbol('\\mathbf{B}'))) {
-            counts.electromagnetism += 2.0; // Lorentz force components
-        }
-        
-        // Quantum Mechanics:
         if (hasSymbol('\\hbar') && (hasSymbol('\\psi') || hasSymbol('\\Psi'))) {
-            counts.quantum_mechanics += 3.0; // Schrodinger equation components
+            counts.quantum_mechanics += 5.0;
         }
-        if (hasSymbol('i') && hasSymbol('\\hbar') && hasSymbol('\\partial')) {
-            counts.quantum_mechanics += 2.5; // Quantum time evolution indicator
-        }
-        if (hasSymbol('\\hat{H}') && hasSymbol('E')) {
-            counts.quantum_mechanics += 2.0; // Eigenvalue equation indicator
-        }
-        
-        // Optics:
         if (hasSymbol('n') && hasSymbol('\\lambda')) {
-            counts.optics += 2.0; // Wavelength index dependence
+            counts.optics += 3.0;
         }
-        if (hasSymbol('\\omega') && hasSymbol('k')) {
-            counts.optics += 2.0; // Dispersion relation components
-        }
-        
+
         let bestDomain = null;
         let maxCount = 0;
         for (const [domain, count] of Object.entries(counts)) {
@@ -2774,10 +2705,13 @@ const EquationExplainer = {
             }
         }
         
-        return bestDomain;
+        return bestDomain || 'classical_mechanics';
     },
 
     renderElementsBreakdown(latex, officialVariables) {
+        if (this.symbolsBreakdown) {
+            this.symbolsBreakdown.style.display = 'block';
+        }
         this.symbolsList.innerHTML = '';
         if (this.operatorsList) {
             this.operatorsList.innerHTML = '';
@@ -2839,17 +2773,7 @@ const EquationExplainer = {
             }
         }
         
-        // Run domain auto-detection if activeDomain is empty
-        if (!this.activeDomain && latex) {
-            const detected = this.detectDomainFromLatex(latex);
-            if (detected) {
-                this.activeDomain = detected;
-                if (this.activeDomainSelect) {
-                    this.activeDomainSelect.value = detected;
-                }
-                console.log(`Auto-detected active domain: ${detected}`);
-            }
-        }
+        const effectiveDomain = this.activeDomain || this.detectDomainFromLatex(latex) || 'classical_mechanics';
 
         const tokens = this.extractAllMathTokens(latex, this.officialVariables);
         
@@ -3076,7 +3000,7 @@ const EquationExplainer = {
                     // Check if there is an override matching the active domain
                     let match = null;
                     if (dictEntry.alternatives) {
-                        match = dictEntry.alternatives.find(alt => alt.domain === this.activeDomain);
+                        match = dictEntry.alternatives.find(alt => alt.domain === effectiveDomain);
                     }
                     if (match) {
                         activeEntry = {
@@ -3086,7 +3010,7 @@ const EquationExplainer = {
                             desc: match.desc || dictEntry.desc,
                             alternatives: dictEntry.alternatives
                         };
-                    } else if (dictEntry.domain === this.activeDomain) {
+                    } else if (dictEntry.domain === effectiveDomain) {
                         activeEntry = dictEntry;
                     }
                     

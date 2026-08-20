@@ -69,7 +69,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 
 
                 <!-- Tokenized Symbols Breakdown Section -->
-                <div id="symbols-breakdown" style="display: none; margin-bottom: 25px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px;">
+                <div id="symbols-breakdown" style="<?= (!empty($formula) || !empty($latex)) ? 'display: block;' : 'display: none;' ?> margin-bottom: 25px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px;">
                     <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 15px 0; font-family: 'Space Grotesk', sans-serif;">
                         Equation Component Breakdown
                     </h4>

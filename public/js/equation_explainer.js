@@ -1648,8 +1648,12 @@ const EquationExplainer = {
                             this.currentLatex = data.formula.latex_source || this.getCleanLatexFromEq(data.formula.equation);
                             this.latexInput.value = this.currentLatex;
                             this.compileMathJax(this.currentLatex);
+                            this.renderFormula(data.formula, []);
                             this.fetchSubtopicsForFormula(data.formula.id).then(subtopics => {
-                                this.renderFormula(data.formula, subtopics);
+                                if (this.currentId === data.formula.id) {
+                                    this.currentSubtopics = subtopics;
+                                    this.renderBridges(subtopics);
+                                }
                             });
                         }
                     });
@@ -1797,13 +1801,16 @@ const EquationExplainer = {
         // 1. Compile MathJax preview
         this.compileMathJax(latex);
 
-        // 2. Route single symbols directly
+        // 2. Immediately render local component breakdown (0ms instant UI feedback)
+        this.renderElementsBreakdown(latex, this.officialVariables || {});
+
+        // 3. Route single symbols directly
         if (this.isSingleSymbol(latex)) {
             this.renderSymbolExplanation(latex);
             return;
         }
 
-        // 3. Perform database lookup
+        // 4. Perform database lookup
         this.lookupFormulaByLatex(latex);
     },
 
@@ -1929,13 +1936,13 @@ const EquationExplainer = {
 
         this.mathRenderTarget.textContent = mathMarkup;
 
-        if (window.MathJax) {
-            if (window.MathJax.typesetClear) {
-                try {
-                    window.MathJax.typesetClear([this.mathRenderTarget]);
-                } catch (e) {}
-            }
-            if (window.MathJax.typesetPromise) {
+        const runCompile = (retryCount = 0) => {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                if (window.MathJax.typesetClear) {
+                    try {
+                        window.MathJax.typesetClear([this.mathRenderTarget]);
+                    } catch (e) {}
+                }
                 window.MathJax.typesetPromise([this.mathRenderTarget])
                     .then(() => {
                         this.setCompilerStatus('Ready', '#10b981');
@@ -1944,7 +1951,7 @@ const EquationExplainer = {
                         console.error('MathJax Compilation Error:', err);
                         this.setCompilerStatus('Syntax Error', '#ef4444');
                     });
-            } else if (window.MathJax.startup && window.MathJax.startup.promise) {
+            } else if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
                 this.setCompilerStatus('Loading Engine...', '#f59e0b');
                 window.MathJax.startup.promise.then(() => {
                     if (window.MathJax.typesetClear) {
@@ -1961,40 +1968,47 @@ const EquationExplainer = {
                             this.setCompilerStatus('Syntax Error', '#ef4444');
                         });
                 });
+            } else if (retryCount < 30) {
+                this.setCompilerStatus('Loading Engine...', '#f59e0b');
+                setTimeout(() => runCompile(retryCount + 1), 100);
             } else {
                 this.setCompilerStatus('Renderer Offline', '#f59e0b');
             }
-        } else {
-            this.setCompilerStatus('Renderer Offline', '#f59e0b');
-        }
+        };
+
+        runCompile();
     },
 
     triggerTypeset(elements) {
-        if (!window.MathJax) {
-            console.warn('MathJax not loaded yet.');
-            return;
-        }
-        if (window.MathJax.typesetClear) {
-            try {
-                window.MathJax.typesetClear(elements);
-            } catch (err) {
-                console.warn('MathJax typesetClear failed:', err);
-            }
-        }
-        if (window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise(elements)
-                .catch(err => console.warn('MathJax typesetting failed:', err));
-        } else if (window.MathJax.startup && window.MathJax.startup.promise) {
-            window.MathJax.startup.promise.then(() => {
+        if (!elements || elements.length === 0) return;
+
+        const runTypeset = (retryCount = 0) => {
+            if (window.MathJax && window.MathJax.typesetPromise) {
                 if (window.MathJax.typesetClear) {
                     try {
                         window.MathJax.typesetClear(elements);
-                    } catch (e) {}
+                    } catch (err) {
+                        console.warn('MathJax typesetClear failed:', err);
+                    }
                 }
                 window.MathJax.typesetPromise(elements)
-                    .catch(err => console.warn('MathJax typesetting failed (deferred):', err));
-            });
-        }
+                    .catch(err => console.warn('MathJax typesetting failed:', err));
+            } else if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
+                window.MathJax.startup.promise.then(() => {
+                    if (window.MathJax.typesetClear) {
+                        try {
+                            window.MathJax.typesetClear(elements);
+                        } catch (e) {}
+                    }
+                    window.MathJax.typesetPromise(elements)
+                        .catch(err => console.warn('MathJax typesetting failed (deferred):', err));
+                });
+            } else if (retryCount < 30) {
+                setTimeout(() => runTypeset(retryCount + 1), 100);
+            }
+        };
+
+        runTypeset();
     },
 
     setCompilerStatus(text, color) {
@@ -2019,9 +2033,15 @@ const EquationExplainer = {
                     // Match found! Load official sharded content
                     this.currentId = data.formula.id;
                     
-                    // Fetch referencing subtopics
+                    // Render formula immediately
+                    this.renderFormula(data.formula, []);
+
+                    // Fetch referencing subtopics in background
                     this.fetchSubtopicsForFormula(data.formula.id).then(subtopics => {
-                        this.renderFormula(data.formula, subtopics);
+                        if (this.currentId === data.formula.id) {
+                            this.currentSubtopics = subtopics;
+                            this.renderBridges(subtopics);
+                        }
                     });
                 } else {
                     // Unregistered equation: parse variables and constants locally
@@ -2310,6 +2330,38 @@ const EquationExplainer = {
             });
     },
 
+    loadFormulaById(id) {
+        if (!id) return;
+        fetch(`${BASE_URL}/physics/api/explain?id=${encodeURIComponent(id)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.formula) {
+                    this.currentId = data.formula.id;
+                    this.currentLatex = data.formula.latex_source || this.getCleanLatexFromEq(data.formula.equation);
+                    if (this.latexInput) {
+                        this.latexInput.value = this.currentLatex;
+                    }
+                    this.compileMathJax(this.currentLatex);
+                    
+                    // Render formula immediately
+                    this.renderFormula(data.formula, []);
+
+                    this.fetchSubtopicsForFormula(data.formula.id).then(subtopics => {
+                        if (this.currentId === data.formula.id) {
+                            this.currentSubtopics = subtopics;
+                            this.renderBridges(subtopics);
+                        }
+                    });
+                    
+                    const url = new URL(window.location);
+                    url.searchParams.set('id', data.formula.id);
+                    url.searchParams.delete('latex');
+                    window.history.pushState({}, '', url);
+                }
+            })
+            .catch(err => console.warn('Could not load formula by id:', err));
+    },
+
     renderFormula(formula, subtopics) {
         this.currentFormula = formula;
         this.currentSubtopics = subtopics;
@@ -2430,6 +2482,7 @@ const EquationExplainer = {
             this.lineageGraph.loadFormula(formula.id);
         }
 
+        const hasSubcomponents = Array.isArray(formula.subcomponents) && formula.subcomponents.length > 0;
         let html = '';
 
         if (formula.derivation_type) {
@@ -4441,7 +4494,9 @@ const EquationExplainer = {
                 this.drawScaling(ctx, w, h, time, this.sandboxParams['input']);
             }
 
-            this.sandboxAnimationId = requestAnimationFrame(render);
+            if (typeof window !== 'undefined' && window.requestAnimationFrame) {
+                this.sandboxAnimationId = window.requestAnimationFrame(render);
+            }
         };
 
         render();

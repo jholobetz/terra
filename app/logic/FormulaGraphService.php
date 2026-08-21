@@ -91,11 +91,14 @@ class FormulaGraphService {
 
         // 2. Traverse Downstream (Subcomponents / Limiting Cases / Consequences)
         $currentLayer = [$formulaId];
+        $maxPerLayer = 30;
         for ($d = 1; $d <= $depth; $d++) {
             $nextLayer = [];
             foreach ($currentLayer as $currId) {
                 $children = $downstream[$currId] ?? [];
+                $addedCount = 0;
                 foreach ($children as $c) {
+                    if ($addedCount >= $maxPerLayer) break;
                     $cid = $c['id'];
                     $edgeKey = "$currId->$cid";
                     if (!isset($seenLinks[$edgeKey])) {
@@ -111,6 +114,7 @@ class FormulaGraphService {
                     if (!isset($visitedNodes[$cid])) {
                         $visitedNodes[$cid] = $d;
                         $nextLayer[] = $cid;
+                        $addedCount++;
                     }
                 }
             }

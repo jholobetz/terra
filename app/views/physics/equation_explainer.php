@@ -158,20 +158,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         <!-- JS populated -->
                     </div>
 
-                    <!-- Interactive Formula Lineage & Derivation Graph -->
-                    <div id="knowledge-graph-card" style="display: none; background: rgba(100, 255, 218, 0.03); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 12px; padding: 20px; flex-direction: column; gap: 16px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <h4 style="font-size: 0.86rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif;">
-                                🌌 Mathematical Lineage &amp; Derivation Map
-                            </h4>
-                            <span style="font-size: 0.72rem; color: #94a3b8;">Click any node to navigate</span>
-                        </div>
-                        <div id="formula-lineage-graph-canvas" style="height: 380px; width: 100%; position: relative;"></div>
-                        <div id="knowledge-graph-details" style="font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
-                            <!-- JS populated -->
-                        </div>
-                    </div>
-
                     <!-- Section 3: Physical Meaning & Scenarios -->
                     <div id="ai-scenarios-section" style="display: none; flex-direction: column; gap: 12px;">
                         <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px;">
@@ -247,6 +233,20 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Full-Width Bottom Section: Mathematical Lineage & Derivation Map -->
+    <div id="knowledge-graph-card" class="glass-card" style="display: none; margin-top: 30px; background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.15); border-radius: 16px; padding: 24px; flex-direction: column; gap: 18px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h4 style="font-size: 0.95rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif;">
+                🌌 Mathematical Lineage &amp; Derivation Map
+            </h4>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Click any node to navigate • Scroll to zoom • Drag to pan</span>
+        </div>
+        <div id="formula-lineage-graph-canvas" style="height: 520px; width: 100%; position: relative;"></div>
+        <div id="knowledge-graph-details" style="font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
+            <!-- JS populated -->
         </div>
     </div>
 </div>

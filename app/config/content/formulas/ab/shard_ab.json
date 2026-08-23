@@ -1186,66 +1186,58 @@
     "carbon-oxygen-white-dwarf-identity-1-f6e773d2-3f20d1d8": {
         "title": "White Dwarf Plasma Crystallization Parameter",
         "equation": "\\Gamma = \\frac{Z^2 e^2}{a_i k_B T} \\approx 178",
-        "interpretation": "The formula $\\Gamma = \\frac{Z^2 e^2}{a_i k_B T} describes the balance between the ordering forces (electrostatic attraction/repulsion) and the disordering forces (thermal motion) among the ions in a plasma. The numerator,$Z^2 e^2 / a_i$, represents the typical electrostatic potential energy between two ions, each with an effective charge$Ze$, separated by the average inter-ion spacing$a_i$. Here,$Z$is the average charge number of the ions, and$e$is the elementary charge in coulombs (C). The denominator,$k_B T$, represents the average thermal kinetic energy of an ion, where$k_B$is the Boltzmann constant in joules per kelvin (J/K), and$T$is the temperature in kelvin (K). A high value of \\Gamma signifies that the electrostatic potential energy strongly dominates the thermal kinetic energy, leading to strong correlations between ions and their eventual crystallization into a lattice. Conversely, a low \\Gamma indicates that thermal motion overcomes electrostatic forces, resulting in a disordered, gas-like plasma. The critical value \\Gamma \\approx 178$ is the approximate threshold above which the plasma of a white dwarf is expected to crystallize, transitioning from a fluid to a solid state.",
-        "symmetry_origin": "The White Dwarf Plasma Crystallization Parameter does not directly originate from a fundamental symmetry or conservation law in the sense of Noether's theorem. Instead, it is a phenomenological parameter derived from statistical mechanics, characterizing the competition between the inter-particle potential energy and the thermal kinetic energy within a strongly coupled Coulomb system. The specific critical value $\\Gamma \\approx 178$ is determined through detailed numerical simulations (e.g., molecular dynamics) and theoretical models, particularly for a One-Component Plasma (OCP) model, and signifies the condition for a phase transition from a liquid to a solid state.",
-        "limits_and_boundary": "As the temperature $T$ approaches infinity, the thermal kinetic energy $k_B T$ dominates, causing $\\Gamma$ to approach zero. In this limit, the plasma is weakly coupled and behaves like a gas. Conversely, as $T$ approaches zero, the thermal kinetic energy becomes negligible, and $\\Gamma$ approaches infinity, indicating extremely strong coupling and favoring crystallization, assuming the ions can still rearrange. If the average inter-ion spacing $a_i$ approaches infinity (very low density), the electrostatic potential energy becomes negligible, and $\\Gamma$ approaches zero, leading to a weakly coupled plasma. If $a_i$ approaches zero (extremely high density), electrostatic interactions become dominant, causing $\\Gamma$ to approach infinity, thus promoting crystallization. If the average charge number $Z$ approaches zero, the electrostatic interaction vanishes, and $\\Gamma$ approaches zero, resulting in a gaseous state.",
+        "description": "Defines the dimensionless Coulomb plasma coupling parameter determining the crystallization threshold of ionic lattices in cooling degenerate white dwarfs.",
+        "interpretation": "The formula $\\Gamma = \\frac{Z^2 e^2}{a_i k_B T}$ describes the thermodynamic competition between electrostatic Coulomb ordering energy and thermal kinetic disruption among ions in a dense degenerate plasma. The numerator $\\frac{Z^2 e^2}{a_i}$ represents the characteristic electrostatic potential energy between adjacent ions of atomic charge $Ze$ separated by the ion-sphere radius $a_i = \\left(\\frac{3}{4\\pi n_i}\\right)^{1/3}$. The denominator $k_B T$ represents the characteristic thermal kinetic energy per particle at core temperature $T$. When $\\Gamma \\ll 1$, the plasma behaves as an ideal gas; as the white dwarf cools and reaches the critical threshold $\\Gamma \\approx 178$, the strongly coupled one-component plasma undergoes a first-order phase transition into a body-centered cubic (BCC) crystal lattice.",
+        "symmetry_origin": "Arises from the statistical mechanics of strongly coupled one-component Coulomb plasmas (OCP) and the translational lattice symmetries of body-centered cubic (BCC) crystal structures formed under minimum electrostatic energy configurations.",
+        "limits_and_boundary": "In the high-temperature limit $T \\to \\infty$ (or low density $a_i \\to \\infty$), $\\Gamma \\to 0$, recovering the weakly coupled ideal Boltzmann gas regime. As $T \\to 0$ (or ultra-dense matter $a_i \\to 0$), $\\Gamma \\to \\infty$, driving the ionic plasma deeply into the quantum zero-point crystal lattice regime.",
         "semantic_variables": {
             "\\Gamma": {
-                "name": "Circulation",
+                "name": "Coulomb Coupling Parameter",
                 "type": "variable",
-                "unit": "m²/s",
-                "description": "The line integral of fluid velocity around a closed curve, measuring local rotation."
+                "unit": "dimensionless",
+                "description": "Dimensionless ratio of electrostatic potential energy to thermal kinetic energy in the plasma."
             },
             "Z": {
-                "name": "Atomic Number / Partition Function",
+                "name": "Ionic Charge Number",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Protons in a nucleus, or the statistical sum over microstates."
+                "description": "Average atomic number/charge state of core ions (e.g., $Z=6$ for carbon, $Z=8$ for oxygen)."
             },
             "e": {
-                "name": "Elementary Charge / Euler's Number",
+                "name": "Elementary Charge",
                 "type": "constant",
                 "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
+                "description": "Fundamental physical constant of electric charge ($1.602176634 \\times 10^{-19}\\text{ C}$)."
             },
-            "i": {
-                "name": "Imaginary Unit",
+            "a_i": {
+                "name": "Ion-Sphere Radius",
+                "type": "variable",
+                "unit": "m",
+                "description": "Average inter-ionic spacing defined by Wigner-Seitz radius $a_i = \\left(\\frac{3}{4\\pi n_i}\\right)^{1/3}$."
+            },
+            "k_B": {
+                "name": "Boltzmann Constant",
                 "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "k": {
-                "name": "Spring Stiffness (Hooke's Constant)",
-                "type": "variable",
-                "unit": "N/m",
-                "description": "The rigidity of a spring or elastic medium, defining restoring force per unit of displacement: $F = -kx$."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
+                "unit": "J/K",
+                "description": "Thermodynamic conversion constant relating temperature to energy scale ($1.380649 \\times 10^{-23}\\text{ J/K}$)."
             },
             "T": {
-                "name": "Tension / Period",
+                "name": "Core Temperature",
                 "type": "variable",
-                "unit": "N or s",
-                "description": "In dynamics, tension force in a string/cable, or period (time per cycle) of periodic motion."
-            },
-            "\\approx": {
-                "name": "\\approx Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "unit": "K",
+                "description": "Thermodynamic interior core temperature of the cooling white dwarf."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The White Dwarf Plasma Crystallization Parameter, often denoted as $\\Gamma$, is a dimensionless quantity that characterizes the degree of coupling in a plasma. It quantifies the ratio of the typical electrostatic potential energy between ions to their average thermal kinetic energy. This parameter is crucial for determining the phase state of a plasma, indicating whether it behaves like a gas (weakly coupled), a liquid, or a solid (strongly coupled crystal lattice). For white dwarf interiors, where matter is highly compressed and ions are fully ionized, $\\Gamma$ dictates when the ions will arrange into a crystalline structure.",
-        "intuitive_summary": "The White Dwarf Plasma Crystallization Parameter essentially measures whether the electrostatic forces pulling and pushing ions are strong enough to overcome their random thermal jiggling, causing them to lock into a rigid crystal structure within the star.",
+        "conceptual_definition": "The White Dwarf Plasma Crystallization Parameter $\\Gamma = \\frac{Z^2 e^2}{a_i k_B T}$ is a dimensionless metric in stellar plasma physics that quantifies the ratio of ion-ion Coulomb potential energy to thermal kinetic energy. In degenerate white dwarf cores where electrons provide hydrostatic degeneracy pressure, ion cooling past $\\Gamma \\approx 178$ initiates crystallization, releasing latent heat and altering stellar cooling rates.",
+        "intuitive_summary": "Measures when electrostatic Coulomb repulsion between dense atomic nuclei overpowers thermal kinetic motion, locking the interior of a cooling white dwarf into a solid crystalline lattice.",
+        "parent_formula_id": "equation-of-state-15ca0bc3",
+        "derivation_type": "DERIVED_FROM",
         "subcomponents": [
-            "the-fundamental-boltzmann-constant-a65e5fea",
+            "debye-t3-law-identity-1-c1b8f3d0-bd2efbae",
+            "single-degenerate-model-identity-1-002f314f-1cda9162",
             "thermal-energy-scale-2bd0fd64",
-            "observable-measurement-outcome-component-693a3b97"
+            "the-fundamental-boltzmann-constant-a65e5fea"
         ]
     },
     "force-from-potential": {

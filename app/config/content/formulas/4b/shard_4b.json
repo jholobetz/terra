@@ -1106,83 +1106,58 @@
     "method-of-images-e1a26b80": {
         "title": "Method of Images",
         "equation": "V(\\mathbf{r}) = \\int \\rho(\\mathbf{r}') G(\\mathbf{r}, \\mathbf{r}') d\\tau'",
+        "description": "Calculates the electrostatic potential using the Green's function integral representation and equivalent fictitious image charge distributions.",
         "semantic_variables": {
             "V(\\mathbf{r})": {
-                "name": "Potential",
+                "name": "Electric Potential",
                 "type": "variable",
                 "unit": "V",
-                "description": "The electric potential at the observation point $\\mathbf{r}$ (measured in Volts, V)."
+                "description": "The electrostatic potential at observation point $\\mathbf{r}$."
             },
             "\\mathbf{r}": {
                 "name": "Observation Position Vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The position vector in 3D space where the potential is being calculated."
+                "description": "The position vector where the electrostatic potential is evaluated."
             },
             "\\rho(\\mathbf{r}')": {
-                "name": "Charge Density",
+                "name": "Source Charge Density",
                 "type": "variable",
                 "unit": "C/m^3",
-                "description": "The volume charge density at the source point $\\mathbf{r}'$ (measured in Coulombs per cubic meter, C/m^3)."
+                "description": "The continuous charge distribution at source coordinate $\\mathbf{r}'$."
             },
             "\\mathbf{r}'": {
                 "name": "Source Position Vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The position vector in 3D space where the charge density $\\rho$ is located."
+                "description": "The coordinate vector of the source charge distribution."
             },
             "G(\\mathbf{r}, \\mathbf{r}')": {
                 "name": "Green's Function",
                 "type": "variable",
-                "unit": "V \\cdot m^3 / C",
-                "description": "The Green's function for the problem, representing the potential at $\\mathbf{r}$ due to a unit point source at $\\mathbf{r}'$, incorporating boundary conditions."
+                "unit": "m^-1",
+                "description": "The Dirichlet Green's function satisfying the boundary conditions of the electrostatic domain."
             },
             "d\\tau'": {
-                "name": "Volume Element",
+                "name": "Source Volume Element",
                 "type": "variable",
                 "unit": "m^3",
-                "description": "An infinitesimal volume element in the source space, over which the integration is performed."
-            },
-            "V": {
-                "name": "Electric Potential",
-                "type": "variable",
-                "unit": "V",
-                "description": "The amount of work energy needed to move a unit of electric charge from a reference point to a specific point in an electric field."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "\\rho": {
-                "name": "Charge Density",
-                "type": "variable",
-                "unit": "C/m³",
-                "description": "The quantity of electric charge per unit volume."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
-            },
-            "\\tau": {
-                "name": "Infinitesimal Volume Element",
-                "type": "variable",
-                "unit": "m³",
-                "description": "An infinitesimal region of space over which a volume integration is performed."
+                "description": "The infinitesimal volume element of integration over the source domain."
             }
         },
-        "interpretation": "The equation $V(\\mathbf{r}) = \\int \\rho(\\mathbf{r}') G(\\mathbf{r}, \\mathbf{r}') d\\tau$' is a general expression for the potential $V$ at a position $\\mathbf{r} in space, arising from a continuous distribution of charge \\rho$($\\mathbf{r}$')$located at positions \\mathbf{r} ', integrated over the volume$d$\\tau '. The function$G($\\mathbf{r}$, $\\mathbf{r}$')$is the Green's function, which encapsulates the influence of a point source at \\mathbf{r}$' on the potential at $\\mathbf{r}$, and crucially, it incorporates the boundary conditions of the problem. In the context of the Method of Images, we replace the charge distribution $\\rho(\\mathbf{r}')$ and the complex boundary with an equivalent, simpler distribution of 'real' and 'image' charges in an unbounded medium. The Green's function $G(\\mathbf{r}, \\mathbf{r}')$ would then typically be the free-space Green's function, which is the potential due to a point charge. The power of the method lies in finding an arrangement of image charges such that the potential produced by the *total* charge distribution (original charges + image charges) satisfies the given boundary conditions precisely where the original charges are located, without needing to explicitly solve for $G(\\mathbf{r}, \\mathbf{r}')$ with those boundaries.",
-        "symmetry_origin": "The origin of the Method of Images is rooted in the uniqueness theorems for solutions to Laplace's and Poisson's equations. These theorems state that a solution to these equations is uniquely determined by the values of the potential (or its normal derivative) on the boundaries of the domain. By introducing image charges, we construct a new potential distribution in an extended (often unbounded) region that satisfies these same boundary conditions on the original boundaries. The physics exploited is often symmetry (e.g., planar, spherical, or cylindrical symmetry) which allows for the construction of these equivalent image charge configurations.",
-        "limits_and_boundary": "As the charge distribution $\\rho(\\mathbf{r}')$ approaches zero, the potential $V(\\mathbf{r})$ also approaches zero, assuming the Green's function remains finite and the boundary conditions are homogeneous (e.g., potential is zero on the boundary). In the limit of infinite separation between the observation point $\\mathbf{r}$ and the charge distribution $\\rho( \\mathbf{r} ')$, the potential will typically fall off as $1/r$ for a total finite charge, where $r = |r - r'|$ is the distance between the points. The Green's function itself determines the specific behavior.",
+        "interpretation": "The equation $V(\\mathbf{r}) = \\int \\rho(\\mathbf{r}') G(\\mathbf{r}, \\mathbf{r}') d\\tau'$ expresses the electrostatic potential $V$ at observation point $\\mathbf{r}$ arising from a continuous charge density $\\rho(\\mathbf{r}')$ integrated over volume element $d\\tau'$. The kernel $G(\\mathbf{r}, \\mathbf{r}')$ is the Dirichlet Green's function, encapsulating the electrostatic impulse response of a unit point source while satisfying boundary conditions on conducting surfaces. Under the Method of Images, the complex boundary is replaced by equivalent fictitious image charges in an unbounded domain, reducing the Green's function calculation to a superposition of elementary Coulomb potentials.",
+        "symmetry_origin": "Rooted in the uniqueness theorems of Laplace's and Poisson's equations, where boundary value solutions are uniquely specified by Dirichlet boundary conditions. Geometric symmetries (planar, spherical, or cylindrical) allow mirror image charges to reproduce surface equipotentials identically.",
+        "limits_and_boundary": "As the distance $|\\mathbf{r} - \\mathbf{r}'| \\to \\infty$, the Green's function approaches the free-space potential $\\frac{1}{4\\pi\\varepsilon_0 |\\mathbf{r} - \\mathbf{r}'|}$, recovering the standard multipole potential of localized charge distributions.",
         "status": "platinum",
-        "conceptual_definition": "The Method of Images is a powerful technique used primarily in electrostatics and other fields governed by Laplace's or Poisson's equation. It simplifies boundary value problems by introducing fictitious 'image' charges or sources outside the region of interest. These image charges are strategically placed and have specific magnitudes such that they satisfy the boundary conditions of the original problem without altering the potential or field within the actual domain. The equation provided, $V(\\mathbf{r}) = \\int \\rho(\\mathbf{r}') G(\\mathbf{r}, \\mathbf{r}') d\\tau$', represents the general solution for the potential $V$ at a point $\\mathbf{r}$ due to a continuous charge distribution $\\rho( \\mathbf{r} ')$, where $G( \\mathbf{r} , \\mathbf{r} ')$ is the Green's function. The Method of Images effectively transforms the problem of finding $V( \\mathbf{r} )$ with complicated boundary conditions into finding the potential due to a simpler, augmented charge distribution (original + image charges) in free space, where the Green's function might be known or simpler to derive.",
-        "intuitive_summary": "It simplifies complex boundary value problems by replacing physical boundaries with 'image' sources that mimic the boundary's effect, allowing for a simpler calculation of the potential.",
+        "conceptual_definition": "The Method of Images is an analytical technique in electrostatics that solves Poisson's equation $\\nabla^2 V = -\\frac{\\rho}{\\varepsilon_0}$ subject to conducting boundary conditions by substituting the physical boundary with strategic fictitious 'image' charges outside the region of interest. The integral $V(\\mathbf{r}) = \\int \\rho(\\mathbf{r}') G(\\mathbf{r}, \\mathbf{r}') d\\tau'$ represents the general potential solution in terms of the domain Green's function.",
+        "intuitive_summary": "The Method of Images simplifies boundary-value electrostatic problems by replacing physical conducting boundaries with fictitious mirror charges that identically reproduce the boundary conditions.",
+        "parent_formula_id": "poissons-and-laplaces-equations-3d29b9ae",
+        "derivation_type": "SPECIAL_CASE",
         "subcomponents": [
-            "inverse-distance-potential-term-30583754",
             "greens-function-for-the-laplacian-5ab6a6be",
+            "surface-density-0b7c0fb1",
+            "technical-relation-1c6725f1",
+            "inverse-distance-potential-term-30583754",
             "volume-charge-density-at-source-point-de2accf7"
         ]
     },

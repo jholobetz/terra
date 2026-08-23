@@ -19,6 +19,13 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(_
 FORMULAS_DIR = os.path.join(PROJECT_ROOT, 'app', 'config', 'content', 'formulas')
 GCP_CREDS_PATH = os.path.join(PROJECT_ROOT, 'gcp-credentials.json')
 
+# Import Lineage Discovery & Resolution Engine
+sys.path.insert(0, os.path.join(PROJECT_ROOT, 'scripts', 'maintenance'))
+try:
+    from lineage_resolver import discover_lineage
+except ImportError:
+    discover_lineage = None
+
 # Import google.genai SDK
 try:
     from google import genai
@@ -224,7 +231,25 @@ def generate_definition(latex_str):
         "semantic_variables": data.get('semantic_variables', {})
     }
 
-    return formula_obj
+    # Auto-resolve and verify derivation lineage
+    lineage_info = {}
+    if discover_lineage:
+        try:
+            lineage_info = discover_lineage(
+                title=title,
+                equation=latex_str,
+                conceptual_definition=formula_obj.get("conceptual_definition", ""),
+                interpretation=formula_obj.get("interpretation", ""),
+                existing_parent=formula_obj.get("parent_formula_id", "")
+            )
+            if lineage_info:
+                formula_obj["parent_formula_id"] = lineage_info.get("parent_formula_id", "")
+                formula_obj["derivation_type"] = lineage_info.get("derivation_type", "DERIVED_FROM")
+                formula_obj["subcomponents"] = lineage_info.get("subcomponents", [])
+        except Exception:
+            pass
+
+    return formula_obj, lineage_info
 
 def parent_exists(parent_id):
     if not parent_id:
@@ -316,6 +341,11 @@ def save_and_sync(formula_obj):
     sync_cmd = ['php', cli_sync_path]
     subprocess.run(sync_cmd, capture_output=True, text=True)
 
+    # Rebuild formula derivation graph
+    build_graph_script = os.path.join(PROJECT_ROOT, 'scripts', 'build_formula_graph.py')
+    if os.path.exists(build_graph_script):
+        subprocess.run([sys.executable, build_graph_script], cwd=PROJECT_ROOT, capture_output=True, text=True)
+
     # Commit cleanly to local Git repository
     git_committed = commit_to_git(target_shard, formula_obj)
 
@@ -327,13 +357,14 @@ def main():
     args = parser.parse_args()
 
     try:
-        formula_obj = generate_definition(args.latex)
+        formula_obj, lineage_info = generate_definition(args.latex)
         target_shard, git_committed = save_and_sync(formula_obj)
         result = {
             "success": True,
             "shard_file": os.path.basename(target_shard),
             "git_committed": git_committed,
-            "formula": formula_obj
+            "formula": formula_obj,
+            "lineage": lineage_info
         }
         print(json.dumps(result, ensure_ascii=False))
     except Exception as e:

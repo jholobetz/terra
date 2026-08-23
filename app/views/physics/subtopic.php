@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/_topic_icons.php';
 
-// Resolve parent topic slug from breadcrumbs for category-specific theming
+// Resolve parent topic slug from breadcrumbs or parents for category-specific theming
 $parentSlug = null;
 if (!empty($breadcrumbs) && is_array($breadcrumbs)) {
     foreach ($breadcrumbs as $crumb) {
@@ -9,11 +9,45 @@ if (!empty($breadcrumbs) && is_array($breadcrumbs)) {
             $parentSlug = str_replace('/physics/topic/', '', $crumb['url']);
             break;
         }
+        if (!empty($crumb['is_multi']) && !empty($crumb['links'])) {
+            foreach ($crumb['links'] as $link) {
+                if (isset($link['url']) && strpos($link['url'], '/physics/topic/') === 0) {
+                    $parentSlug = str_replace('/physics/topic/', '', $link['url']);
+                    break 2;
+                }
+            }
+        }
+    }
+}
+
+if (empty($parentSlug) && !empty($parents)) {
+    foreach ((array)$parents as $p) {
+        if (is_string($p) && !empty($p)) {
+            $parentSlug = $p;
+            break;
+        }
     }
 }
 
 $meta = get_topic_icon_and_class($parentSlug ?? '');
 $theme = $meta['theme'] ?? 'default';
+
+$facultyTitles = [
+    'classical' => 'CLASSICAL MECHANICS',
+    'electromagnetism' => 'ELECTROMAGNETISM & OPTICS',
+    'relativity' => 'RELATIVITY & GRAVITATION',
+    'quantum' => 'QUANTUM MECHANICS',
+    'astrophysics' => 'ASTROPHYSICS & COSMOLOGY',
+    'thermodynamics' => 'THERMODYNAMICS & STATISTICAL PHYSICS',
+    'fluids' => 'FLUID DYNAMICS & NONLINEAR SYSTEMS',
+    'condensed' => 'CONDENSED MATTER PHYSICS',
+    'standard-model' => 'HIGH ENERGY & PARTICLE PHYSICS',
+    'theoretical' => 'THEORETICAL PHYSICS',
+    'math-methods' => 'MATHEMATICAL PHYSICS',
+    'philosophy' => 'PHILOSOPHY OF PHYSICS',
+    'default' => 'PHYSICAL SCIENCES'
+];
+$facultyLabel = $facultyTitles[$theme] ?? (strtoupper(str_replace('-', ' ', $theme)) ?: 'PHYSICAL SCIENCES');
 ?>
 
 <article class="subtopic-content" style="--accent-color: var(--accent-<?= $theme ?>);">
@@ -41,7 +75,7 @@ $theme = $meta['theme'] ?? 'default';
             <span style="opacity: 1; color: var(--accent-color, #64ffda); font-weight: 500;"><?= htmlspecialchars($title) ?></span>
         </nav>
 
-        <div class="header-badge-tag">FACULTY OF <?= strtoupper(str_replace('-', ' ', $theme)) ?> // MANIFOLD SUBTOPIC</div>
+        <div class="header-badge-tag">FACULTY OF <?= htmlspecialchars($facultyLabel) ?> // MANIFOLD SUBTOPIC</div>
         <h1 class="topic-title"><?= htmlspecialchars($title ?? 'Subtopic') ?></h1>
 
         <?php if (!empty($verification)): ?>

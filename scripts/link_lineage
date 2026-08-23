@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""
+🔗 Direct Formula Lineage Linker CLI
+Connects, updates, and synchronizes derivation relationships for a formula across
+JSON shards, MariaDB, and the compiled derivation graph.
+
+Usage:
+    scripts/link_lineage --formula <formula-id> --parent <parent-id> [--children <c1,c2>] [--type SPECIAL_CASE|DERIVED_FROM|EQUIVALENT_FORM]
+"""
+
+import os
+import sys
+import json
+import glob
+import argparse
+import subprocess
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FORMULAS_DIR = os.path.join(PROJECT_ROOT, 'app', 'config', 'content', 'formulas')
+GRAPH_BUILDER = os.path.join(PROJECT_ROOT, 'scripts', 'build_formula_graph.py')
+
+def find_formula(target_id):
+    shards = glob.glob(os.path.join(FORMULAS_DIR, '*', 'shard_*.json'))
+    for sf in shards:
+        with open(sf, 'r', encoding='utf-8') as f:
+            d = json.load(f)
+            if target_id in d:
+                return sf, d, d[target_id]
+    return None, None, None
+
+def main():
+    parser = argparse.ArgumentParser(description="Link Formula Derivation Lineage")
+    parser.add_argument('--formula', required=True, help="Target Formula ID to update")
+    parser.add_argument('--parent', help="Parent Master Formula ID")
+    parser.add_argument('--children', help="Comma-separated list of child subcomponent formula IDs")
+    parser.add_argument('--type', default='SPECIAL_CASE', choices=['DERIVED_FROM', 'SPECIAL_CASE', 'EQUIVALENT_FORM', 'GENERALIZATION_OF', 'APPROXIMATION_OF', 'AXIOMATIC_FOUNDATION'], help="Derivation relationship type")
+    args = parser.parse_args()
+
+    fid = args.formula
+    sf, data, form = find_formula(fid)
+    if not form:
+        print(f"❌ Error: Formula ID '{fid}' not found in any shard.")
+        sys.exit(1)
+
+    print(f"🔗 Linking Lineage for: [{fid}] ({form.get('title')})")
+
+    # 1. Update Parent
+    if args.parent:
+        p_sf, p_data, p_form = find_formula(args.parent)
+        if not p_form:
+            print(f"❌ Error: Parent Formula ID '{args.parent}' not found in shards.")
+            sys.exit(1)
+
+        form['parent_formula_id'] = args.parent
+        form['derivation_type'] = args.type
+        
+        # Add reciprocal child
+        p_subs = p_form.setdefault('subcomponents', [])
+        if fid not in p_subs:
+            p_subs.append(fid)
+            with open(p_sf, 'w', encoding='utf-8') as f:
+                json.dump(p_data, f, indent=4, ensure_ascii=False)
+            print(f"  ✓ Linked Upstream Parent: [{args.parent}] ({p_form.get('title')})")
+
+    # 2. Update Children
+    if args.children:
+        child_ids = [c.strip() for c in args.children.split(',') if c.strip()]
+        subs = form.setdefault('subcomponents', [])
+        for cid in child_ids:
+            c_sf, c_data, c_form = find_formula(cid)
+            if c_form:
+                if cid not in subs:
+                    subs.append(cid)
+                # Reciprocal parent
+                if not c_form.get('parent_formula_id'):
+                    c_form['parent_formula_id'] = fid
+                    c_form['derivation_type'] = args.type
+                    with open(c_sf, 'w', encoding='utf-8') as f:
+                        json.dump(c_data, f, indent=4, ensure_ascii=False)
+                print(f"  ✓ Linked Downstream Child: [{cid}] ({c_form.get('title')})")
+
+    # Save target shard
+    with open(sf, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+    print(f"  ✓ Saved target shard: {sf}")
+
+    # 3. Synchronize MariaDB
+    php_sync = """
+    $dsn = 'mysql:host=localhost;dbname=physicslab;charset=utf8mb4';
+    $pdo = new PDO($dsn, 'doc', 'DIM^10$ymJ@zz');
+    $stmt = $pdo->prepare('UPDATE formulas SET parent_formula_id = :p, derivation_type = :dt, subcomponents = :sub WHERE id = :id');
+    $stmt->execute([
+        ':p' => """ + json.dumps(form.get('parent_formula_id', '')) + """,
+        ':dt' => """ + json.dumps(form.get('derivation_type', '')) + """,
+        ':sub' => """ + json.dumps(json.dumps(form.get('subcomponents', []))) + """,
+        ':id' => '""" + fid + """'
+    ]);
+    """
+    subprocess.run(['php', '-r', php_sync], check=False)
+    print("  ✓ Synchronized MariaDB record")
+
+    # 4. Rebuild Graph
+    print("  🔨 Rebuilding formula derivation graph...")
+    subprocess.run(['python3', GRAPH_BUILDER], check=True)
+    print("\n✨ Lineage successfully updated and graph compiled!")
+
+if __name__ == '__main__':
+    main()

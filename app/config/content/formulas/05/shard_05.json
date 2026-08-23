@@ -1333,70 +1333,64 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "supernova-energy-source-identity-1-8d8ed5a2-50ea187d": {
-        "title": "Radioactive Decay Heating Rate for Supernova Ejecta",
+        "title": "Radioactive Decay Heating Rate from Nickel-56 and Cobalt-56 in Supernova Ejecta",
         "equation": "\\epsilon_{\\text{nuc}}(t) = \\epsilon_{\\text{Ni}} e^{-t/\\tau_{\\text{Ni}}} + \\epsilon_{\\text{Co}} e^{-t/\\tau_{\\text{Co}}}",
-        "interpretation": "The formula describes the total nuclear heating rate per unit mass, er_{nuc}(t), as a function of time, t, after the supernova explosion. It is composed of two terms, representing the contributions from the decay chains of Nickel-56 ($\\text{Ni}$-56) and Cobalt-56 ($\\text{Co}$-56). The term er_{Ni} is the initial heating rate per unit mass from er{Ni}-56 decay, and er{Co} is the initial heating rate per unit mass from er{Co}-56 decay. The quantities er{$\\tau_{Ni}}$ and er{$\\tau_{Co}}$ are the characteristic decay timescales (mean lifetimes) for er{Ni}-56 and er{Co}-56, respectively. The exponential terms represent the fraction of the original radioactive material remaining at time t. er{Ni}-56 decays to er{Co}-56, which then decays further, so their decay timescales and contributions to heating are linked. The total heating rate is the sum of the energy released from both decay processes.",
-        "symmetry_origin": "This formula is derived from the principles of nuclear physics, specifically the rates of radioactive decay (governed by the weak nuclear force) and energy conservation. The exponential decay law itself arises from the probabilistic nature of nuclear disintegration, where the rate of decay is proportional to the number of unstable nuclei present.",
-        "limits_and_boundary": "As time t approaches zero (immediately after the supernova), the heating rate approaches its maximum value: er_{nuc}(0) = er_{Ni} + er_{Co}. As time t approaches infinity, both exponential terms go to zero, and the heating rate asymptotically approaches zero: er_{nuc}(t \\to er{$\\infty$}) \\to 0. This signifies that eventually, all the radioactive isotopes will have decayed into stable elements.",
+        "interpretation": "The formula $\\epsilon_{\\text{nuc}}(t) = \\epsilon_{\\text{Ni}} e^{-t/\\tau_{\\text{Ni}}} + \\epsilon_{\\text{Co}} e^{-t/\\tau_{\\text{Co}}}$ describes the total nuclear heating rate per unit mass in supernova ejecta as a function of time $t$. \n- $\\epsilon_{\\text{nuc}}(t)$: The total nuclear heating rate per unit mass at time $t$, representing the energy released per unit mass per unit time from radioactive decay. Its SI unit is $\\text{W kg}^{-1}$ or $\\text{J s}^{-1} \\text{kg}^{-1}$.\n- $\\epsilon_{\\text{Ni}}$: The initial heating rate per unit mass from the decay of Nickel-56 ($\\text{Ni}$-56) at $t=0$. Its SI unit is $\\text{W kg}^{-1}$.\n- $e^{-t/\\tau_{\\text{Ni}}}$: The exponential decay factor for Nickel-56, representing the fraction of initial $\\text{Ni}$-56 heating remaining at time $t$. It is dimensionless.\n- $t$: The time elapsed since the supernova explosion. Its SI unit is seconds ($\\text{s}$). \n- $\\tau_{\\text{Ni}}$: The mean lifetime (or characteristic decay timescale) of Nickel-56 ($\\text{Ni}$-56) decay. Its SI unit is seconds ($\\text{s}$). \n- $\\epsilon_{\\text{Co}}$: The initial heating rate per unit mass from the decay of Cobalt-56 ($\\text{Co}$-56) at $t=0$. In the context of supernova ejecta, $\\text{Co}$-56 is primarily produced by the decay of $\\text{Ni}$-56. This term, therefore, represents the heating from $\\text{Co}$-56 that has accumulated and is decaying, with its effective initial value often derived from the $\\text{Ni}$-56 decay chain. Its SI unit is $\\text{W kg}^{-1}$.\n- $e^{-t/\\tau_{\\text{Co}}}$: The exponential decay factor for Cobalt-56, representing the fraction of initial $\\text{Co}$-56 heating remaining at time $t$. It is dimensionless.\n- $\\tau_{\\text{Co}}$: The mean lifetime (or characteristic decay timescale) of Cobalt-56 ($\\text{Co}$-56) decay. Its SI unit is seconds ($\\text{s}$). \nThe total heating rate is the sum of the energy released from both decay processes, which are the primary energy sources for the optical light curves of Type Ia supernovae.",
+        "symmetry_origin": "Not applicable. This formula describes a specific physical process (radioactive decay) rather than arising from a fundamental symmetry principle.",
+        "limits_and_boundary": "- At $t=0$: The heating rate is $\\epsilon_{\\text{nuc}}(0) = \\epsilon_{\\text{Ni}} + \\epsilon_{\\text{Co}}$, representing the initial combined heating from both isotopes.\n- As $t \\to \\infty$: Both exponential terms approach $0$, so $\\epsilon_{\\text{nuc}}(t) \\to 0$. This signifies that all radioactive material eventually decays, and the heating ceases.\n- For $t \\ll \\tau_{\\text{Ni}}$ and $t \\ll \\tau_{\\text{Co}}$: The exponential terms are approximately $1$, and the heating rate is close to its initial value.\n- For $t \\gg \\tau_{\\text{Ni}}$ but $t \\lesssim \\tau_{\\text{Co}}$: The $\\text{Ni}$-56 term becomes negligible, and the heating is dominated by the $\\text{Co}$-56 decay, which itself is produced by $\\text{Ni}$-56 decay. The formula as written is a common approximation for fitting supernova light curves.",
         "semantic_variables": {
-            "\\epsilon_{\\text{nuc}}(t)": {
-                "name": "Nuclear Heating Rate",
+            "\\epsilon_{\\text{nuc}}": {
+                "name": "Nuclear Heating Rate per Unit Mass",
                 "type": "variable",
-                "unit": "W/kg",
-                "description": "The rate of energy generation per unit mass due to radioactive decay as a function of time t."
-            },
-            "\\epsilon_{\\text{Ni}}": {
-                "name": "Initial Heating Rate from Nickel-56 Decay",
-                "type": "variable",
-                "unit": "W/kg",
-                "description": "The initial contribution to the heating rate per unit mass from the decay of \\text{Ni}-56, evaluated at t=0."
-            },
-            "\\tau_{\\text{Ni}}": {
-                "name": "Decay Timescale for Nickel-56",
-                "type": "constant",
-                "unit": "s",
-                "description": "The mean lifetime of \\text{Ni}-56, which characterizes the rate at which it decays. It is related to the half-life by \\tau = t_{1/2} / \\ln(2)."
-            },
-            "\\epsilon_{\\text{Co}}": {
-                "name": "Initial Heating Rate from Cobalt-56 Decay",
-                "type": "variable",
-                "unit": "W/kg",
-                "description": "The initial contribution to the heating rate per unit mass from the decay of \\text{Co}-56, evaluated at t=0. Note that \\text{Co}-56 is primarily produced from the decay of \\text{Ni}-56."
-            },
-            "\\tau_{\\text{Co}}": {
-                "name": "Decay Timescale for Cobalt-56",
-                "type": "constant",
-                "unit": "s",
-                "description": "The mean lifetime of \\text{Co}-56, which characterizes the rate at which it decays. It is related to the half-life by \\tau = t_{1/2} / \\ln(2)."
+                "unit": "W kg$^{-1}$",
+                "description": "The total energy generation rate per unit mass from radioactive decay in supernova ejecta."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The elapsed time since the supernova explosion."
+                "description": "Time elapsed since the supernova explosion."
             },
-            "\\epsilon": {
-                "name": "Permittivity / Emissivity",
+            "\\epsilon_{\\text{Ni}}": {
+                "name": "Initial Nickel-56 Heating Rate per Unit Mass",
                 "type": "variable",
-                "unit": "F/m or dimensionless",
-                "description": "The measure of a medium's resistance to an electric field."
+                "unit": "W kg$^{-1}$",
+                "description": "The initial energy generation rate per unit mass from Nickel-56 decay at $t=0$."
+            },
+            "\\tau_{\\text{Ni}}": {
+                "name": "Nickel-56 Mean Lifetime",
+                "type": "constant",
+                "unit": "s",
+                "description": "The characteristic mean lifetime for the radioactive decay of Nickel-56 ($\\text{Ni}$-56)."
+            },
+            "\\epsilon_{\\text{Co}}": {
+                "name": "Initial Cobalt-56 Heating Rate per Unit Mass",
+                "type": "variable",
+                "unit": "W kg$^{-1}$",
+                "description": "The initial energy generation rate per unit mass from Cobalt-56 decay at $t=0$. This term often represents the heating from $\\text{Co}$-56 produced by $\\text{Ni}$-56 decay."
+            },
+            "\\tau_{\\text{Co}}": {
+                "name": "Cobalt-56 Mean Lifetime",
+                "type": "constant",
+                "unit": "s",
+                "description": "The characteristic mean lifetime for the radioactive decay of Cobalt-56 ($\\text{Co}$-56)."
             },
             "e": {
-                "name": "Elementary Charge / Euler's Number",
+                "name": "Euler's Number",
                 "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "\\tau": {
-                "name": "Infinitesimal Volume Element",
-                "type": "variable",
-                "unit": "m³",
-                "description": "An infinitesimal region of space over which a volume integration is performed."
+                "unit": "dimensionless",
+                "description": "The base of the natural logarithm, approximately $2.71828$."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "This formula quantifies the rate at which energy is released due to radioactive decay within the material ejected from a supernova. This energy heats the ejecta, influencing its subsequent expansion and evolution.",
-        "intuitive_summary": "The heating rate from radioactive decay decreases exponentially over time as unstable isotopes decay into stable ones, with different isotopes contributing at different rates."
+        "conceptual_definition": "The total nuclear heating rate per unit mass, $\\epsilon_{\\text{nuc}}(t)$, in supernova ejecta at time $t$ is the sum of the instantaneous heating rates from the radioactive decay of Nickel-56 ($\\text{Ni}$-56) and Cobalt-56 ($\\text{Co}$-56). Each component follows an exponential decay law, characterized by an initial heating rate and a mean lifetime.",
+        "intuitive_summary": "After a supernova explosion, the expanding debris (ejecta) glows brightly. This glow isn't just residual heat; it's primarily powered by the radioactive decay of elements like Nickel-56, which was synthesized during the explosion. Nickel-56 decays into Cobalt-56, which then decays further. This formula tells us how much heat these decaying elements are continuously releasing into the ejecta over time, directly dictating how the supernova's brightness evolves.",
+        "description": "This formula quantifies the thermal energy generation rate per unit mass in supernova ejecta, primarily from the radioactive decay chains of Nickel-56 and Cobalt-56. This energy powers the optical light curve of Type Ia supernovae.",
+        "derivation_type": "DEFINITION",
+        "subcomponents": [
+            "nickel-56-decay-timescale",
+            "energy-yield-identity-c60e77bd"
+        ]
     },
     "einstein-field-equations-simplified": {
         "title": "Einstein Field Equations (Simplified)",

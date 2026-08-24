@@ -1,296 +1,219 @@
 {
     "surface-force-610f9b19": {
-        "title": "Magnetic Surface Pressure",
+        "title": "Magnetic Pressure on a Surface Boundary",
         "equation": "p_{\\text{mag}} = \\frac{1}{2\\mu_0}(B_n^2 - B_t^2)",
         "semantic_variables": {
             "p_{\\text{mag}}": {
-                "name": "Magnetic Surface Pressure",
+                "name": "Magnetic Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The normal force per unit area (pressure) exerted by a magnetic field on a surface."
-            },
-            "B_n": {
-                "name": "Normal Component of Magnetic Field",
-                "type": "variable",
-                "unit": "T",
-                "description": "The component of the magnetic field vector that is perpendicular (normal) to the surface."
-            },
-            "B_t": {
-                "name": "Tangential Component of Magnetic Field",
-                "type": "variable",
-                "unit": "T",
-                "description": "The component of the magnetic field vector that is parallel (tangential) to the surface."
+                "description": "The force per unit area exerted by a magnetic field on a surface."
             },
             "\\mu_0": {
                 "name": "Vacuum Permeability",
                 "type": "constant",
-                "unit": "H/m",
-                "description": "A fundamental physical constant representing the magnetic permeability of free space, defined as exactly $4\\pi \\times 10^{-7}$ H/m."
+                "unit": "N/A^2",
+                "description": "A fundamental physical constant representing the magnetic permeability of classical vacuum."
+            },
+            "B_n": {
+                "name": "Normal Magnetic Field Component",
+                "type": "variable",
+                "unit": "T",
+                "description": "The component of the magnetic field vector perpendicular to the surface."
+            },
+            "B_t": {
+                "name": "Tangential Magnetic Field Component",
+                "type": "variable",
+                "unit": "T",
+                "description": "The component of the magnetic field vector parallel to the surface."
             }
         },
-        "interpretation": "The formula states that the magnetic pressure, denoted as $p_{\\text{mag}}$, is proportional to the difference between the square of the normal magnetic field component $B_n$ and the square of the tangential magnetic field component $B_t$, all divided by twice the vacuum permeability $\\mu_0$. The term $\\frac{B^2}{2\\mu_0}$ represents magnetic energy density, which also has units of pressure. A normal component $B_n$ creates an outward pressure, pushing surfaces apart. Conversely, a tangential component $B_t$ creates a tension along the field lines, which results in an inward pressure (a negative contribution to the outward force). Therefore, the net pressure on the surface depends on the balance between the outward-pushing normal component and the inward-pulling tangential component of the magnetic field.",
-        "symmetry_origin": "This formula is derived from the magnetic part of the Maxwell stress tensor, $\\sigma_{ij} = \\frac{1}{\\mu_0} (B_i B_j - \\frac{1}{2}\\delta_{ij}B^2)$, which itself arises from the conservation of momentum for the electromagnetic field as dictated by Noether's theorem applied to spacetime translation symmetry. The force per unit area on a surface is the traction vector, found by contracting the stress tensor with the surface normal vector. This specific form for pressure represents the normal component of that traction vector.",
-        "limits_and_boundary": "1. If the magnetic field is purely normal to the surface ($B_t = 0$), the pressure is $p_{\\text{mag}} = \\frac{B_n^2}{2\\mu_0}$, indicating a net outward push.\n2. If the magnetic field is purely tangential to the surface ($B_n = 0$), the pressure is $p_{\\text{mag}} = -\\frac{B_t^2}{2\\mu_0}$, indicating a net inward pull (tension).\n3. If there is no magnetic field at the surface ($B_n = 0, B_t = 0$), then $p_{\\text{mag}} = 0$, as expected.",
+        "interpretation": "The formula $p_{\\text{mag}} = \\frac{1}{2\\mu_0}(B_n^2 - B_t^2)$ calculates the magnetic pressure $p_{\\text{mag}}$ on a boundary, such as the surface of a plasma or a perfect conductor. The term $\\frac{B^2}{2\\mu_0}$ represents the magnetic energy density, which has units of pressure. The component of the magnetic field normal to the surface, $B_n$, contributes a positive pressure term $\\frac{B_n^2}{2\\mu_0}$, representing an outward force. Conversely, the component of the magnetic field tangential to the surface, $B_t$, contributes a negative pressure term $-\\frac{B_t^2}{2\\mu_0}$. This term represents a magnetic tension along the field lines, which results in an inward force (a negative contribution to the outward pressure). The net pressure is the balance of these two effects.",
+        "symmetry_origin": "U(1) gauge invariance of electromagnetism and spacetime translation invariance, as manifested in the conservation of the electromagnetic stress-energy tensor from which this pressure relation is derived.",
+        "limits_and_boundary": "If the magnetic field is purely normal to the surface ($B_t = 0$), the pressure is purely outward and maximal for a given field strength: $p_{\\text{mag}} = \\frac{B_n^2}{2\\mu_0}$. If the magnetic field is purely tangential ($B_n = 0$), the pressure is negative, $p_{\\text{mag}} = -\\frac{B_t^2}{2\\mu_0}$, indicating a net tension or inward pull. In the classical limit where $\\hbar \\to 0$, this formula remains valid as it is a result of classical electrodynamics. The formula assumes a sharp boundary with a surface current; for a diffuse boundary, one must integrate the force density $\\mathbf{J} \\times \\mathbf{B}$ across the boundary layer.",
         "status": "platinum",
-        "conceptual_definition": "The magnetic surface pressure formula quantifies the normal force per unit area (pressure) exerted on a boundary by a magnetic field. This pressure arises from the gradient of magnetic energy density and is a component of the Maxwell stress tensor, representing the momentum flux of the electromagnetic field.",
-        "intuitive_summary": "Magnetic pressure is the outward push from the magnetic field component perpendicular to a surface, minus the inward pull (tension) from the component parallel to it.",
-        "parent_formula_id": "ampere-maxwell-law",
-        "derivation_type": "SPECIAL_CASE"
+        "conceptual_definition": "The magnetic pressure, $p_{\\text{mag}}$, on a surface separating two regions is the net force per unit area acting on that surface. It is derived by integrating the Maxwell stress tensor across an infinitesimal 'pillbox' straddling the boundary. The pressure is determined by the difference in the squares of the magnetic field components normal ($B_n$) and tangential ($B_t$) to the surface, scaled by the vacuum permeability $\\mu_0$.",
+        "intuitive_summary": "Imagine magnetic field lines as elastic bands. Field lines perpendicular to a surface push it outward, creating pressure. Field lines running parallel to a surface pull along it, creating tension that effectively pulls the surface inward. The net effect is a competition between this outward push and inward pull.",
+        "parent_formula_id": "magnetic-force-decomposition-ident-af22fa1d",
+        "derivation_type": "DERIVED_FROM",
+        "description": "This formula quantifies the net pressure exerted by a magnetic field on a surface, arising from the difference between the outward pressure from the normal field component and the inward tension from the tangential field component.",
+        "subcomponents": [
+            "magnetic-energy-density-in-vacuum-8eebab9b",
+            "elastic-rule-b26013be",
+            "magnetic-force-decomposition-ident-af22fa1d"
+        ]
     },
     "infinitesimal-shift-law-8b3350dd": {
-        "title": "Infinitesimal Shift Law",
+        "title": "Hamilton's Equation of Motion for an Observable",
         "equation": "\\frac{df}{dt} = \\{f, H\\}",
         "semantic_variables": {
+            "\\frac{d}{dt}": {
+                "name": "Total Time Derivative",
+                "type": "operator",
+                "unit": "1/s",
+                "description": "The rate of change of a function with respect to time, accounting for changes in its underlying variables."
+            },
             "f": {
-                "name": "Physical Observable",
+                "name": "Observable",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A physical quantity or observable of the system, which can be a function of generalized coordinates and momenta, e.g., position, momentum, energy."
+                "unit": "Varies",
+                "description": "An arbitrary physical quantity expressed as a function on phase space, e.g., position, momentum, or energy."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The independent variable representing time."
+                "description": "The temporal coordinate."
             },
             "H": {
                 "name": "Hamiltonian",
                 "type": "variable",
                 "unit": "J",
-                "description": "The Hamiltonian of the system, typically representing the total energy. It is a function of the generalized coordinates and their conjugate momenta."
+                "description": "The Hamiltonian of the system, representing its total energy and acting as the generator of time evolution."
             },
-            "\\frac{df}{dt}": {
-                "name": "Time Derivative of f",
-                "type": "variable",
-                "unit": "dimensionless/s",
-                "description": "The instantaneous rate of change of the observable f with respect to time."
-            },
-            "\\lbrace f, H \\rbrace": {
+            "\\{ , \\}": {
                 "name": "Poisson Bracket",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The Poisson bracket between the observable f and the Hamiltonian H, defined as $\\sum_{i} \\left($\\frac{\\partial f}{\\partial q_i}\\frac{\\partial H}{\\partial p_i} - \\frac{\\partial f}{\\partial p_i}\\frac{\\partial H}{\\partial q_i}$\\right)$."
-            },
-            "q_i": {
-                "name": "Generalized Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "The i-th generalized coordinate describing the configuration of the system."
-            },
-            "p_i": {
-                "name": "Conjugate Momentum",
-                "type": "variable",
-                "unit": "kg m/s",
-                "description": "The i-th conjugate momentum corresponding to the generalized coordinate q_i."
-            },
-            "\\frac{\\partial f}{\\partial q_i}": {
-                "name": "Partial Derivative of f w.r.t. q_i",
                 "type": "operator",
-                "unit": "dimensionless",
-                "description": "The partial derivative of the observable f with respect to the i-th generalized coordinate."
-            },
-            "\\frac{\\partial H}{\\partial p_i}": {
-                "name": "Partial Derivative of H w.r.t. p_i",
-                "type": "operator",
-                "unit": "J / (kg m/s)",
-                "description": "The partial derivative of the Hamiltonian with respect to the i-th conjugate momentum."
-            },
-            "\\frac{\\partial f}{\\partial p_i}": {
-                "name": "Partial Derivative of f w.r.t. p_i",
-                "type": "operator",
-                "unit": "dimensionless / (kg m/s)",
-                "description": "The partial derivative of the observable f with respect to the i-th conjugate momentum."
-            },
-            "\\frac{\\partial H}{\\partial q_i}": {
-                "name": "Partial Derivative of H w.r.t. q_i",
-                "type": "operator",
-                "unit": "J/m",
-                "description": "The partial derivative of the Hamiltonian with respect to the i-th generalized coordinate."
+                "unit": "N/A",
+                "description": "A binary operation on functions in phase space, fundamental to Hamiltonian mechanics. Defined as $\\{A, B\\} = \\sum_i (\\partial A/\\partial q_i \\cdot \\partial B/\\partial p_i - \\partial A/\\partial p_i \\cdot \\partial B/\\partial q_i)$."
             }
         },
-        "interpretation": "In the equation $\\frac{df}{dt}$ = \\{f, H\\}, the left side, $\\frac{df}{dt}$, represents the instantaneous rate of change of a physical observable, denoted by $f$, with respect to time $t$. The right side involves the Poisson bracket, $\\lbrace$ f, H $\\rbrace$, which is a mathematical operation defined for two functions of the system's generalized coordinates and momenta. Here, $f$ is the physical quantity whose time evolution we are interested in, and $H$ is the Hamiltonian of the system. The Hamiltonian, $H$, typically represents the total energy of the system (kinetic plus potential energy) and is a function of the generalized coordinates $q_i$ and their conjugate momenta $p_i$. The Poisson bracket is defined as $\\lbrace f, H \\rbrace = \\sum_{i} \\left( \\frac{ \\partial f}{ \\partial q_i} \\frac{ \\partial H}{ \\partial p_i} - \\frac{ \\partial f}{ \\partial p_i} \\frac{ \\partial H}{ \\partial q_i} \\right$)$. This equation elegantly connects the time evolution of any observable to the Hamiltonian, which encapsulates the system's dynamics. If$f$is the Hamiltonian itself, i.e.,$f = H$, then \\frac{dH}{dt} = \\lbrace$ H, H $\\rbrace$ = 0$, implying that the Hamiltonian (and thus the total energy) is conserved if it does not explicitly depend on time$.",
-        "symmetry_origin": "This equation originates from the Hamiltonian formulation of classical mechanics, which is derived from the principle of least action. The Poisson bracket is a fundamental concept in this formulation. Conservation laws are directly linked to symmetries through Noether's theorem, and the Infinitesimal Shift Law provides the dynamic evolution consistent with these symmetries. Specifically, if a quantity $f$ commutes with the Hamiltonian under the Poisson bracket (i.e., $\\lbrace f, H \\rbrace = 0$), then $\\frac{df}{dt} = 0$, meaning $f$ is a conserved quantity.",
-        "limits_and_boundary": "As the Hamiltonian $H$ approaches zero, the rate of change of any quantity $f$ also approaches zero, meaning the system is static or frozen in time. In scenarios where the Hamiltonian is very large (highly energetic systems), the rates of change can become very rapid, leading to complex dynamics. If the quantity $f$ is independent of the canonical variables (i.e., $f$ is a constant, not a function of $q_i$ or $p_i$), then $\\frac{\\partial f}{\\partial q_i} = 0$ and $\\frac{\\partial f}{\\partial p_i} = 0$, making $\\lbrace f, H \\rbrace = 0$ and $\\frac{df}{dt} = 0$, as expected for a constant.",
+        "interpretation": "The equation $\\frac{df}{dt} = \\{f, H\\}$ relates the total time derivative of a physical observable $f$ to its Poisson bracket with the system's Hamiltonian, $H$. The observable $f$ is a function of the generalized coordinates $q_i$ and their conjugate momenta $p_i$. The Hamiltonian $H(q_i, p_i)$ represents the total energy of the system. The Poisson bracket is defined as $\\{f, H\\} = \\sum_{i} \\left( \\frac{ \\partial f}{ \\partial q_i} \\frac{ \\partial H}{ \\partial p_i} - \\frac{ \\partial f}{ \\partial p_i} \\frac{ \\partial H}{ \\partial q_i} \\right)$. This equation is a cornerstone of classical mechanics, providing a general prescription for finding the time evolution of any quantity. If an observable $f$ is conserved, its value is constant in time, meaning $\\frac{df}{dt} = 0$, which implies $\\{f, H\\} = 0$. A crucial special case is the Hamiltonian itself: if $H$ has no explicit time dependence, then $\\frac{dH}{dt} = \\{H, H\\} = 0$, which expresses the law of conservation of energy.",
+        "symmetry_origin": "This law arises from the continuous time-translation symmetry of a physical system. The Hamiltonian, $H$, is the conserved quantity (Noether charge) associated with this symmetry and acts as the generator of infinitesimal time translations in phase space. The equation formalizes this generator role.",
+        "limits_and_boundary": "In the classical limit where Planck's constant $\\hbar \\to 0$, this equation is exact. It serves as the classical counterpart to the Heisenberg equation of motion in quantum mechanics, with the Poisson bracket $\\{f, H\\}$ corresponding to the quantum commutator $\\frac{1}{i\\hbar}[\\hat{f}, \\hat{H}]$. If an observable $f$ 'commutes' with the Hamiltonian (i.e., $\\{f, H\\} = 0$), it is a constant of motion. If the system is isolated and the Hamiltonian $H$ has no explicit time dependence, then energy is conserved as $\\{H, H\\} = 0$.",
         "status": "platinum",
-        "conceptual_definition": "The Infinitesimal Shift Law, also known as the fundamental equation of motion in Hamiltonian mechanics, describes how any physical quantity evolves over time in a system governed by Hamiltonian dynamics. It states that the time rate of change of a quantity is equal to the Poisson bracket of that quantity with the Hamiltonian of the system. This equation is a cornerstone of classical mechanics, bridging the gap between the symmetries of a system and its dynamics.",
-        "intuitive_summary": "The rate at which a physical property changes over time is determined by how it interacts with the system's total energy.",
+        "conceptual_definition": "In Hamiltonian mechanics, the state of a system is described by a point in phase space with coordinates $(q_i, p_i)$. The Hamiltonian $H(q_i, p_i, t)$ generates the time evolution of the system. For any function $f(q_i, p_i)$ that does not explicitly depend on time, its value changes as the system evolves according to the equation $\\frac{df}{dt} = \\{f, H\\}$. Here, $\\{f, H\\}$ is the Poisson bracket, which effectively measures how much $f$ changes along the flow generated by $H$.",
+        "intuitive_summary": "Imagine the state of a physical system as a boat on a river. The Hamiltonian defines the river's current everywhere. This equation tells you how any property of the boat (like its temperature) changes over time simply by knowing the local current (the Hamiltonian) and how that property varies across the river (the observable's gradients).",
         "subcomponents": [
-            "generalized-coordinate-in-classical-mechanics-da326f72",
-            "generalized-momentum-component-eca91c83",
-            "total-time-derivative-of-a-function-f29b7e15",
-            "condition-for-canonical-variable-independence-d3973747",
-            "condition-for-a-constant-of-motion-1a384a9c",
-            "function-identical-to-hamiltonian-dedb08c6"
-        ]
+            "energy-conservation-law-741879b0",
+            "infinitesimal-displacement-in-generalized-coordinates-5c7564f9",
+            "generalized-force-law-014c3b75"
+        ],
+        "description": "A fundamental equation in Hamiltonian mechanics that describes the time evolution of any physical observable. It states that the total rate of change of an observable is given by its Poisson bracket with the system's Hamiltonian.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "existence-bias-cd89ac90": {
-        "title": "Existence Bias",
+        "title": "Bayes' Theorem",
         "equation": "P(A | B) = \\frac{P(B | A) P(A)}{P(B)} \\quad (\\text{Bayesian correction})",
         "semantic_variables": {
             "P(A | B)": {
                 "name": "Posterior Probability",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The probability of event A occurring given that event B has occurred. This represents the updated belief or probability after considering the evidence B."
+                "description": "The probability of hypothesis A being true, given that evidence B has been observed."
             },
             "P(B | A)": {
                 "name": "Likelihood",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The probability of event B occurring given that event A has occurred. This quantifies how well the evidence B supports hypothesis A."
+                "description": "The probability of observing evidence B, given that hypothesis A is true."
             },
             "P(A)": {
                 "name": "Prior Probability",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The initial probability of event A occurring before any new evidence (B) is considered. This represents our prior belief or knowledge about A."
+                "description": "The initial probability of hypothesis A being true, before considering the evidence."
             },
             "P(B)": {
-                "name": "Marginal Probability of Evidence",
+                "name": "Marginal Likelihood (Evidence)",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The total probability of event B occurring, irrespective of event A. It acts as a normalizing constant, ensuring that the posterior probability P(A|B) is a valid probability distribution."
+                "description": "The total probability of observing the evidence B, used as a normalization constant."
             },
             "A": {
-                "name": "Area / Vector Potential",
+                "name": "Hypothesis",
                 "type": "variable",
-                "unit": "m² or V·s/m",
-                "description": "The measure of a 2D surface, or the electrodynamic magnetic vector potential."
+                "unit": "N/A",
+                "description": "A proposition or event whose probability is being assessed."
             },
             "B": {
-                "name": "Magnetic Field Strength",
+                "name": "Evidence",
                 "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
+                "unit": "N/A",
+                "description": "The observed data or event used to update the probability of the hypothesis."
             }
         },
-        "interpretation": "The formula states that the probability of event A occurring given that event B has occurred, denoted as $P(A | B)$, is equal to the probability of event B occurring given that event A has occurred, $P(B | A)$, multiplied by the prior probability of event A, $P(A)$, and then divided by the total probability of event B, $P(B)$. In a physics context, $A$ could represent a hypothesis about a physical system (e.g., a particle has a certain property), and $B$ could be the observed data from an experiment. $P(A)$ is our initial belief in hypothesis $A$ before the experiment. $P(B | A)$ is the likelihood of observing the data $B$ if hypothesis $A$ were true. $P(B)$ is the overall probability of observing the data $B$, regardless of whether $A$ is true or not. The theorem essentially updates our belief in $A$ (to $P(A | B)$) in light of the experimental evidence $B$.",
-        "symmetry_origin": "Bayes' theorem is derived from the basic axioms of probability and the definition of conditional probability. Specifically, it arises from the relationship between joint probabilities: $P(A \\text{ and } B) = P(A | B) P(B) = P(B | A) P(A)$. Rearranging this equality leads directly to Bayes' theorem. It does not stem from a physical symmetry or conservation law in the same way that formulas in classical mechanics or field theory do.",
-        "limits_and_boundary": "In the limit where $P(B | A) = 0$ (i.e., the evidence $B$ is impossible if $A$ were true), then $P(A | B) = 0$. If $P(A) = 0$ (i.e., hypothesis $A$ was initially considered impossible), then $P(A | B) = 0$ as well, unless $P(B) = 0$. If $P(B | A)$ is very high and $P(A)$ is significant, while $P(B)$ is relatively small, then $P(A | B)$ can become very large, indicating strong support for hypothesis $A$ from evidence $B$. Conversely, if $P(B | A)$ is low or $P(A)$ is small, $P(A | B)$ will be small, suggesting that evidence $B$ does not support hypothesis $A$.",
+        "interpretation": "The formula $P(A | B) = \\frac{P(B | A) P(A)}{P(B)}$ is a cornerstone of statistical inference in physics. The term $P(A|B)$ is the 'posterior probability,' representing our updated belief in hypothesis $A$ after observing data $B$. The term $P(A)$ is the 'prior probability,' our initial degree of belief in $A$ before the experiment. The term $P(B|A)$ is the 'likelihood,' which quantifies how probable the observed data $B$ is, assuming hypothesis $A$ is true; this is typically derived from a physical model. Finally, $P(B)$ is the 'marginal likelihood' or 'evidence,' which is the total probability of observing the data $B$ over all possible hypotheses. It acts as a normalization factor, ensuring the posterior probabilities sum to one.",
+        "symmetry_origin": "Bayes' Theorem is not derived from a physical symmetry like those described by Noether's theorem. It is a foundational theorem of probability theory, derived from the definition of conditional probability. Its 'symmetry' is purely mathematical, showing the relationship between the two conditional probabilities $P(A|B)$ and $P(B|A)$. It represents a fundamental principle of logical inference under uncertainty.",
+        "limits_and_boundary": "The theorem's behavior is governed by the values of the input probabilities. If the prior belief is absolute, $P(A)=0$ or $P(A)=1$, the posterior $P(A|B)$ remains fixed at $0$ or $1$ respectively (assuming $P(B) > 0$), meaning evidence cannot sway absolute certainty. If the likelihood $P(B|A)=0$, the hypothesis $A$ is falsified by the evidence $B$, resulting in a posterior of $P(A|B)=0$. The theorem is inapplicable if the evidence itself is impossible, i.e., if $P(B)=0$.",
         "status": "platinum",
-        "conceptual_definition": "The provided formula, known as Bayes' theorem, is a fundamental principle in probability theory that describes how to update the probability of a hypothesis based on new evidence. While often used in statistical inference and machine learning, its application in physics can relate to updating our beliefs about the state of a system given observational data or experimental results. The term 'Existence Bias' is not a standard physics term directly associated with this formula; rather, Bayes' theorem is a tool that can be used to correct for various biases, including those related to the likelihood of observing certain phenomena or states.",
-        "intuitive_summary": "Bayes' theorem allows us to revise our prior beliefs about an event's likelihood when presented with new, related information.",
+        "conceptual_definition": "Bayes' Theorem provides a mathematical framework for performing inference. It relates the conditional probability of a hypothesis $A$ given evidence $B$, known as the posterior probability $P(A|B)$, to the prior probability of the hypothesis $P(A)$ and the likelihood of the evidence given the hypothesis $P(B|A)$. The relationship is given by $P(A|B) = [P(B|A)P(A)] / P(B)$, where $P(B)$ is the marginal probability of the evidence.",
+        "intuitive_summary": "Bayes' Theorem is a formal method for updating our beliefs in light of new data. It tells us how to rationally adjust our confidence in a theory (the 'prior') after an experiment yields a particular result (the 'evidence'). If the evidence is what the theory predicted, our confidence increases; if the evidence was unlikely under the theory, our confidence decreases.",
         "subcomponents": [
-            "probability-of-an-impossible-event-ef8cdc12",
-            "zero-probability-of-an-event-d257709d",
-            "zero-conditional-probability-of-event-dd41a769"
-        ]
+            "the-bias-check-8629f61b",
+            "planck-check-17202c73",
+            "wave-decomposition-2ca27629"
+        ],
+        "description": "A fundamental theorem of probability theory that describes how to update the probability for a hypothesis based on new evidence.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "emf-generator-e6152ec8": {
-        "title": "EMF Generator",
+        "title": "Faraday's Law of Induction (Integral Form)",
         "equation": "\\mathcal{E} = \\oint \\mathbf{E} \\cdot d\\mathbf{l} = -\\frac{d}{dt}\\iint \\mathbf{B} \\cdot d\\mathbf{a}",
         "semantic_variables": {
             "\\mathcal{E}": {
-                "name": "Electromotive Force",
+                "name": "Electromotive Force (EMF)",
                 "type": "variable",
-                "unit": "V",
-                "description": "The line integral of the electric field around a closed loop, representing the potential difference or work done per unit charge. Its SI unit is the Volt (V)."
+                "unit": "Volts (V)",
+                "description": "The work done per unit charge by a non-electrostatic force, which drives current in a closed circuit."
             },
             "\\mathbf{E}": {
-                "name": "Electric Field",
+                "name": "Electric Field Vector",
                 "type": "variable",
-                "unit": "V/m",
-                "description": "The electric field vector. Its SI unit is Volts per meter (V/m)."
+                "unit": "Volts/meter (V/m)",
+                "description": "A vector field representing the force per unit charge exerted on a stationary positive test charge. In this context, it includes non-conservative (induced) components."
             },
             "d\\mathbf{l}": {
-                "name": "Differential Length Element",
-                "type": "variable",
-                "unit": "m",
-                "description": "An infinitesimal vector element along the closed path of integration. Its SI unit is meter (m)."
+                "name": "Differential Path Length Vector",
+                "type": "operator",
+                "unit": "meters (m)",
+                "description": "An infinitesimal vector element tangent to the closed path of integration."
             },
             "\\mathbf{B}": {
-                "name": "Magnetic Field",
+                "name": "Magnetic Field Vector",
                 "type": "variable",
-                "unit": "T",
-                "description": "The magnetic field vector. Its SI unit is the Tesla (T)."
+                "unit": "Tesla (T)",
+                "description": "A vector field that describes the magnetic influence on moving electric charges, electric currents, and magnetic materials."
             },
             "d\\mathbf{a}": {
-                "name": "Differential Area Element",
-                "type": "variable",
-                "unit": "m^2",
-                "description": "An infinitesimal vector element of surface area, with its direction perpendicular to the surface. Its SI unit is square meters (m^2)."
+                "name": "Differential Area Vector",
+                "type": "operator",
+                "unit": "meters squared (m^2)",
+                "description": "An infinitesimal vector element of a surface, with magnitude equal to the area and direction normal to the surface."
             },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The time variable. Its SI unit is seconds (s)."
+            "\\frac{d}{dt}": {
+                "name": "Total Time Derivative",
+                "type": "operator",
+                "unit": "per second (s^-1)",
+                "description": "The rate of change with respect to time, accounting for both explicit time dependence of the field and motion of the integration boundary."
             },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
+            "\\oint": {
+                "name": "Closed Loop Line Integral",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "An integral performed along a closed path or loop."
             },
-            "l": {
-                "name": "Length / Angular Quantum Number",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
+            "\\iint": {
+                "name": "Surface Integral",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "An integral performed over a two-dimensional surface."
             }
         },
-        "interpretation": "The equation ${\\mathcal E} = {\\oint \\mathbf E \\cdot d\\mathbf l} = -\\frac{d}{dt}{\\iint \\mathbf$ B \\cdot d $\\mathbf$ a} is a fundamental expression in electromagnetism, encompassing both the definition of EMF in terms of electric fields and Faraday's Law of Induction. The left side, ${\\mathcal E} =${$\\oint \\mathbf$ E \\cdot d $\\mathbf$ l}, defines the electromotive force (${\\mathcal E}) as the line integral of the electric field ({\\mathbf E}) around a closed path (${d $\\mathbf$ l}). This integral represents the total work done per unit charge in moving a charge around this path, thus providing the 'voltage' or 'driving force' for current. The right side, ${\\mathcal E} = -\\frac{d}{dt}{\\iint \\mathbf$ B \\cdot d $\\mathbf$ a}, equates this EMF to the negative time rate of change of the magnetic flux (${\\Phi_B}) through any surface (${d $\\mathbf$ a}) bounded by the closed path. The magnetic flux is given by the surface integral of the magnetic field ({$\\mathbf$ B}) over the surface. The negative sign indicates Lenz's Law, which states that the induced current will flow in a direction that opposes the change in magnetic flux that produced it. Thus, a changing magnetic environment creates an electrical potential difference (EMF).",
-        "symmetry_origin": "This equation is a macroscopic formulation of Faraday's Law of Induction, which is one of Maxwell's equations. It arises from the fundamental interactions between electric and magnetic fields. Its differential form, { \n\\nabla \\times E} = -$\\frac{\\partial B}{\\partial t}$, is gauge invariant and shows that time-varying magnetic fields generate non-conservative electric fields. The integral form is derived from this using Stokes' Theorem.",
-        "limits_and_boundary": "In the limit where the magnetic field ${\\mathbf B} is constant in time (${$\\frac{d\\Phi_B}{dt}$ = 0}), the induced EMF {$\\mathcal$ E} is zero, meaning no voltage is generated by a static magnetic field. Conversely, as the rate of change of magnetic flux {$\\frac{d\\Phi_B}{dt}}$ approaches infinity (e.g., very rapid changes in ${\\mathbf B} or very large surface area${A}), the induced EMF {$\\mathcal$ E} becomes very large. If the electric field {$\\mathbf$ E} is conservative (i.e., {$\\mathbf$ E = - \n\\nabla V}), the line integral {$\\oint \\mathbf$ E \\cdot d $\\mathbf$ l} around any closed loop is zero. However, the EMF generated by a changing magnetic flux is not necessarily zero because the electric field it induces is non-conservative.",
+        "interpretation": "The equation $\\mathcal{E} = \\oint \\mathbf{E} \\cdot d\\mathbf{l} = -\\frac{d}{dt}\\iint \\mathbf{B} \\cdot d\\mathbf{a}$ is a cornerstone of classical electromagnetism, known as the integral form of Faraday's Law of Induction. The term $\\mathcal{E} = \\oint \\mathbf{E} \\cdot d\\mathbf{l}$ defines the electromotive force ($\\mathcal{E}$) as the line integral of the non-conservative electric field ($\\mathbf{E}$) around a closed loop. This integral represents the total work done per unit charge on a test charge moving along the closed path. The term $-\\frac{d}{dt}\\iint \\mathbf{B} \\cdot d\\mathbf{a}$ equates this $\\mathcal{E}$ to the negative time derivative of the magnetic flux, $\\Phi_B = \\iint \\mathbf{B} \\cdot d\\mathbf{a}$, through any surface bounded by the loop. The magnetic field is denoted by $\\mathbf{B}$, and $d\\mathbf{a}$ is the differential area vector of the surface. The negative sign is a manifestation of Lenz's Law, which dictates that the induced EMF drives a current whose magnetic field opposes the change in magnetic flux that created it, ensuring the conservation of energy.",
+        "symmetry_origin": "This law is a fundamental component of Maxwell's equations, which are invariant under Lorentz transformations and exhibit U(1) gauge symmetry. It expresses the dynamic coupling between electric and magnetic fields, a core feature of relativistic field theory.",
+        "limits_and_boundary": "In the static limit where the magnetic field is constant, $\\frac{d\\mathbf{B}}{dt} = 0$, the induced EMF is zero, $\\mathcal{E} = 0$. This recovers the conservative nature of electrostatic fields, where $\\oint \\mathbf{E} \\cdot d\\mathbf{l} = 0$. The formula is a classical approximation and does not account for quantum phenomena like the Aharonov-Bohm effect, where the vector potential $\\mathbf{A}$ has direct physical significance. It is fully valid within special relativity for inertial frames.",
         "status": "platinum",
-        "conceptual_definition": "The formula describes the electromotive force (EMF) generated in a closed loop. It states that the EMF, which is the work done per unit charge to move charges around a closed loop, can be calculated in two ways. The first way relates EMF to the line integral of the electric field {$\\mathbf$ E} along the loop. The second way, derived from Faraday's law of induction, relates EMF to the rate of change of magnetic flux {$\\Phi_B}$ through the surface bounded by the loop.",
-        "intuitive_summary": "A changing magnetic field through a loop induces an electric field that drives current, manifesting as an electromotive force.",
-        "parent_formula_id": "ampere-maxwell-law",
-        "derivation_type": "SPECIAL_CASE"
+        "conceptual_definition": "The electromotive force, $\\mathcal{E}$, defined as the line integral of the electric field $\\mathbf{E}$ around a closed path, is equal to the negative total time derivative of the magnetic flux, $\\Phi_B = \\iint \\mathbf{B} \\cdot d\\mathbf{a}$, through the surface enclosed by the path.",
+        "intuitive_summary": "A changing magnetic field creates a 'swirling' electric field. The total 'push' (voltage or EMF) this electric field gives to charges around a closed loop is directly proportional to how quickly the magnetic flux through that loop is changing.",
+        "parent_formula_id": "faradays-law-induction",
+        "derivation_type": "DERIVED_FROM",
+        "description": "Relates the electromotive force (EMF) generated in a closed loop to the rate of change of magnetic flux passing through the surface bounded by that loop.",
+        "subcomponents": [
+            "emf-integral-definition-a3d86b92",
+            "stokes-circulation-law-fba99a97",
+            "generalized-flux-rule-for-moving-circuits-349d7995"
+        ]
     },
     "phase-shift-1694fda8": {
         "title": "Phase shift",
@@ -1122,24 +1045,36 @@
         ]
     },
     "viscosity-limit": {
-        "title": "Viscosity Limit",
+        "title": "Inviscid Fluid Limit",
         "equation": "\\mu \\to 0",
-        "conceptual_definition": "The formula $\\mu → 0$ represents the limit where the dynamic viscosity of a fluid approaches zero. Viscosity is a measure of a fluid's resistance to shear flow. As viscosity tends towards zero, the fluid behaves as an ideal fluid, meaning it has no internal friction and offers no resistance to deformation. This idealized state is crucial in simplifying fluid dynamics problems and understanding phenomena where viscous effects are negligible.",
-        "intuitive_summary": "A fluid with zero viscosity flows without any internal resistance, like an idealized perfect liquid.",
-        "interpretation": "In this context, $\\mu$ (μ) symbolizes the dynamic viscosity of a fluid. Dynamic viscosity is a physical property that quantifies the fluid's resistance to shear flow. It is defined as the ratio of shear stress to the rate of shear strain. The equation $\\mu → 0 signifies a$ mathematical limit where this resistance becomes infinitesimally small. In such a limit, the fluid is considered inviscid or ideal. This idealization is often used to simplify complex fluid flow problems, allowing for analytical solutions in scenarios where viscous forces (like drag and turbulence) are insignificant compared to other forces, such as inertial forces or pressure gradients.",
-        "symmetry_origin": "The concept of inviscid flow, often invoked when $\\mu$ → 0, arises from simplifying the Navier-Stokes equations by neglecting the viscous terms. This simplification is often justified when the Reynolds number (ext{Re}), which is proportional to velocity and characteristic length, and inversely proportional to viscosity, is very large. The resulting Euler equations for inviscid flow exhibit certain symmetries and conservation laws, such as the conservation of vorticity for irrotational flows.",
-        "limits_and_boundary": "As $\\mu$ → 0, the fluid's resistance to flow vanishes. This means that shear stresses within the fluid become zero, and the fluid can be accelerated or deformed without any energy dissipation due to internal friction. In practical applications, this limit is approached by highly non-viscous fluids like gases at low densities or by considering flows at very high Reynolds numbers where viscous effects are confined to very thin boundary layers.",
+        "conceptual_definition": "The inviscid fluid limit is a theoretical construct in fluid dynamics where the dynamic viscosity, $\\mu$, is assumed to approach zero ($\\mu \\to 0$). This approximation simplifies the Navier-Stokes equations to the Euler equations, describing a fluid with no internal friction or resistance to shear deformation.",
+        "intuitive_summary": "Imagine water flowing without any stickiness or thickness at all. This is the 'inviscid limit'—a perfect, frictionless fluid that slides past surfaces and itself without any drag, making complex flow problems much easier to solve.",
+        "interpretation": "In the expression $\\mu \\to 0$, the symbol $\\mu$ represents the dynamic viscosity of a fluid, a measure of its intrinsic resistance to shear flow. The limit operation, $\\to 0$, signifies a mathematical idealization where this resistance becomes vanishingly small. A fluid in this limit is termed an 'inviscid fluid' or 'ideal fluid'. This approximation is fundamental for simplifying complex flow problems, particularly in scenarios where inertial or pressure forces dominate over viscous forces, such as in high Reynolds number flows far from solid boundaries.",
+        "symmetry_origin": "Not applicable; this is a simplifying approximation for modeling, not derived from a fundamental symmetry principle. It represents a choice to neglect dissipative effects.",
+        "limits_and_boundary": "The primary consequence of the limit $\\mu \\to 0$ is the simplification of the Navier-Stokes equations to the Euler equations, which neglect viscous terms. This implies that for an inviscid fluid, there is no shear stress on a solid boundary (the 'no-slip' condition is relaxed to a 'no-penetration' condition), and mechanical energy is conserved along a streamline (as per Bernoulli's principle). However, this idealization fails to predict boundary layer phenomena, drag, and turbulence, which are inherently viscous effects.",
         "status": "platinum",
         "semantic_variables": {
             "\\mu": {
                 "name": "Dynamic Viscosity",
                 "type": "variable",
                 "unit": "Pa·s",
-                "description": "The dynamic viscosity (\\mu) is a measure of a fluid's internal resistance to flow. It represents the tangential force per unit area required to move one layer of fluid past another at a unit velocity, separated by a unit distance. The SI unit for dynamic viscosity is Pascal-second (Pa·s), which is equivalent to kg/(m·s)."
+                "description": "A measure of a fluid's resistance to shear deformation when a shear force is applied. It quantifies the 'thickness' or internal friction of a fluid."
+            },
+            "\\to": {
+                "name": "Limit operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Indicates that a variable approaches a specified value or condition."
             }
         },
-        "parent_formula_id": "incompressibility-condition-fluid",
-        "derivation_type": "SPECIAL_CASE"
+        "parent_formula_id": "limit-of-epsilon-approaching-zero",
+        "derivation_type": "LIMITING_CASE",
+        "description": "The mathematical limit where a fluid's dynamic viscosity approaches zero, defining an idealized inviscid fluid with no resistance to shear.",
+        "subcomponents": [
+            "limit-of-epsilon-approaching-zero",
+            "limit-zero-viscosity",
+            "classical-limit-hbar-zero"
+        ]
     },
     "constant-scale-factor": {
         "title": "Constant Scale Factor",
@@ -1179,60 +1114,72 @@
         "derivation_type": "DERIVED_FROM"
     },
     "integral-property-deforming-volume": {
-        "title": "Integral Property over a Deforming Volume",
+        "title": "Total Extensive Property in a Time-Varying Volume",
         "equation": "B(t) = \\int_{\\Omega(t)} \\rho(\\mathbf{x}, t) \\beta(\\mathbf{x}, t) \\, dV",
-        "conceptual_definition": "This formula quantifies a property, denoted by ​B(t) ​ , that is distributed over a volume ​Ω(t) ​ which is itself changing with time. The property ​B ​ is a sum or integral of an intensive quantity ​β ​ weighted by a density ​ρ ​ across the entire deforming volume.",
-        "intuitive_summary": "It represents the total amount of a quantity distributed within a space that is changing shape over time.",
-        "interpretation": "The equation ​B(t) = ∫_{Ω(t)} ρ(̱x̱, t) β(̱x̱, t) dV ​ calculates a total bulk property ​B ​ at a given time ​t ​. This property is determined by integrating over a volume ​Ω ​, which may be deforming, thus its definition depends on time ​t ​. The integrand is the product of two functions: ​ρ(̱x̱, t) ​, the density of some quantity at position ​̱x̱ ​ and time ​t ​, and ​β(̱x̱, t) ​, an intensive property (a property per unit of ​ρ ​ or per unit mass, for example) at the same position and time. The differential volume element ​dV ​ represents an infinitesimal piece of the deforming volume. Essentially, we are summing up the product of local density and local intensive property over the entire evolving spatial domain.",
-        "symmetry_origin": "This formula arises from the need to describe physical quantities distributed within a continuous medium that is undergoing arbitrary motion and deformation. It is a direct application of the definition of a volume integral for a quantity where the integration domain is not fixed. The derivation relies on the principles of calculus and the definition of integration over a time-dependent domain. In many physical contexts, such as fluid dynamics or solid mechanics, the integral represents a conserved quantity or a state variable of the system.",
-        "limits_and_boundary": "As the density ​ρ ​ approaches zero throughout the volume ​Ω(t) ​, the integral ​B(t) ​ will approach zero, assuming ​β ​ remains finite. If the volume ​Ω(t) ​ shrinks to a point or vanishes, the integral will also go to zero. Conversely, if the density and intensive property are very large and the volume is extensive, ​B(t) ​ can become very large. If the function ​ρ(̱x̱, t) β(̱x̱, t) ​ is constant throughout a large, expanding volume, ​B(t) ​ will grow proportionally to the volume.",
+        "conceptual_definition": "This formula defines the total amount of an extensive property, $B(t)$, contained within a time-dependent spatial domain $\\Omega(t)$. It is computed by integrating the product of a volumetric density $\rho(\\mathbf{x}, t)$ (e.g., mass density) and a specific intensive property $\beta(\\mathbf{x}, t)$ (e.g., energy per unit mass) over the entire volume. This formulation is fundamental to continuum mechanics for tracking properties like mass, momentum, and energy in a control volume.",
+        "intuitive_summary": "Imagine a cloud of smoke that is moving and changing shape. This formula provides a way to calculate the total amount of a certain property within that cloud at any instant, for example, its total mass or total kinetic energy. It does this by summing up the property's value in every tiny parcel of the cloud's volume.",
+        "interpretation": "The equation $B(t) = \\int_{\\Omega(t)} \\rho(\\mathbf{x}, t) \\beta(\\mathbf{x}, t) \\, dV$ calculates a total bulk property $B$ at a specific time $t$. This property is determined by integrating over a volume $\\Omega(t)$, which may be deforming, hence its dependence on time $t$. The integrand is the product of two functions: $\\rho(\\mathbf{x}, t)$, the density of some quantity (like mass) at position $\\mathbf{x}$ and time $t$, and $\\beta(\\mathbf{x}, t)$, an intensive property (a property per unit of $\\rho$, such as velocity or specific energy) at the same position and time. The integration is performed over all infinitesimal volume elements $dV$ that constitute the deforming volume $\\Omega(t)$.",
+        "symmetry_origin": "This is a definitional construct within continuum mechanics. It is the mathematical object upon which conservation laws, derived from fundamental spacetime symmetries via Noether's theorem (e.g., conservation of energy from time-translation invariance), are applied in an integral form for a control volume.",
+        "limits_and_boundary": "This is a general, classical definition. If the volume $\\Omega(t)$ shrinks to zero, then $B(t) \\to 0$. If the volume is static, $\\Omega(t) = \\Omega_0$, the time dependence is only within the integrand. The formula is a cornerstone of non-relativistic fluid dynamics and continuum mechanics and does not have inherent relativistic ($v \\to c$) or quantum ($\\hbar \\to 0$) limits; its relativistic generalization involves integration over a 4-volume in spacetime.",
         "status": "platinum",
         "semantic_variables": {
-            "B(t)": {
-                "name": "Bulk Property",
+            "B": {
+                "name": "Total extensive property",
                 "type": "variable",
-                "unit": "SI units depend on ρ and β",
-                "description": "The total quantity being calculated, integrated over the deforming volume at time ​t ​."
-            },
-            "Ω(t)": {
-                "name": "Deforming Volume",
-                "type": "variable",
-                "unit": "m^3",
-                "description": "The spatial region over which the integration is performed, which changes with time ​t ​."
-            },
-            "ρ(̱x̱, t)": {
-                "name": "Density",
-                "type": "variable",
-                "unit": "kg/m^3",
-                "description": "The density of some quantity (e.g., mass density, charge density) at position ​̱x̱ ​ and time ​t ​."
-            },
-            "β(̱x̱, t)": {
-                "name": "Intensive Property",
-                "type": "variable",
-                "unit": "J/kg (example, depends on context)",
-                "description": "An intensive physical property per unit of ​ρ ​ (e.g., specific energy, specific momentum) at position ​̱x̱ ​ and time ​t ​."
-            },
-            "̱x̱": {
-                "name": "Position Vector",
-                "type": "variable",
-                "unit": "m",
-                "description": "The position vector representing a point in space within the volume ​Ω ​."
+                "unit": "[Property dependent]",
+                "description": "The total amount of the extensive property contained within the volume $\\Omega(t)$."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The independent variable representing time."
+                "description": "The instant in time at which the property is evaluated."
             },
-            "dV": {
-                "name": "Differential Volume Element",
+            "\\Omega(t)": {
+                "name": "Time-dependent volume",
                 "type": "variable",
                 "unit": "m^3",
-                "description": "An infinitesimal element of volume within the region ​Ω(t) ​."
+                "description": "The control volume of integration, which can deform and move over time."
+            },
+            "\\rho": {
+                "name": "Volumetric density field",
+                "type": "variable",
+                "unit": "kg/m^3",
+                "description": "A scalar field representing the amount of a substance per unit volume, e.g., mass density."
+            },
+            "\\beta": {
+                "name": "Specific intensive property field",
+                "type": "variable",
+                "unit": "[Property dependent]/kg",
+                "description": "An intensive property per unit of density, e.g., specific enthalpy (J/kg) or velocity (m/s)."
+            },
+            "\\mathbf{x}": {
+                "name": "Position vector",
+                "type": "variable",
+                "unit": "m",
+                "description": "The spatial coordinate vector within the integration domain."
+            },
+            "dV": {
+                "name": "Differential volume element",
+                "type": "operator",
+                "unit": "m^3",
+                "description": "An infinitesimal element of the volume $\\Omega(t)$."
+            },
+            "\\int_{\\Omega(t)}": {
+                "name": "Volume integral",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "The operator that sums the integrand over the entire volume $\\Omega(t)$."
             }
         },
-        "parent_formula_id": "big-bang-start-4da62fa5",
-        "derivation_type": "DERIVED_FROM"
+        "parent_formula_id": "internal-consistency-54c78c4a",
+        "derivation_type": "GENERALIZATION",
+        "description": "Defines the total amount of an extensive physical property within a volume that may be changing in time, calculated by integrating a specific property weighted by a density field.",
+        "subcomponents": [
+            "volume-integral-of-density-61ba02ae",
+            "d-dimensional-volume-integral",
+            "eulerian-view-67c9b284"
+        ]
     },
     "wavefunction-position-representation": {
         "title": "Wavefunction in the Position Representation",
@@ -1424,66 +1371,81 @@
         ]
     },
     "position-vector-of-particle-j-27445841": {
-        "title": "Position Vector of Particle j",
-        "description": "Represents the position vector of the j-th particle in a given coordinate system.",
-        "conceptual_definition": "In physics, the position vector $\\mathbf{r}_j$ specifies the location of a point particle $j$ relative to the origin of a chosen coordinate system. It is a vector quantity, meaning it has both magnitude (distance from the origin) and direction. This vector is fundamental for describing the kinematics and dynamics of individual particles within a system.",
-        "interpretation": "The position vector $\\mathbf{r}_j$ provides the instantaneous spatial coordinates of particle $j$ at a specific moment. Its components typically correspond to Cartesian (x, y, z) or other curvilinear coordinates, depending on the chosen system. Changes in $\\mathbf{r}_j$ over time describe the particle's trajectory, and its time derivatives yield velocity and acceleration. It serves as the foundational element for defining relative positions and distances between multiple particles.",
-        "limits_and_boundary": "The position vector is defined within the chosen coordinate system. Its magnitude can range from zero (at the origin) to infinity, depending on the physical extent of the system being described. For classical mechanics, it is typically assumed to be a continuous and differentiable function of time.",
-        "symmetry_origin": "Translational symmetry implies that the laws of physics are independent of the choice of origin for the coordinate system, meaning that a constant shift in all position vectors does not change the physical interactions. Rotational symmetry dictates how position vectors transform under rotations, preserving the magnitude of the vector and the dot product between vectors.",
+        "title": "Position Vector of the j-th Particle",
+        "description": "A vector in a chosen coordinate system that specifies the location of the j-th particle in a multi-particle system relative to a fixed origin.",
+        "conceptual_definition": "The position vector $\\mathbf{r}_j$ is a vector in Euclidean space $\\mathbb{R}^3$ that points from the origin of a coordinate system to the location of the $j$-th particle. It is generally a function of time, $\\mathbf{r}_j(t)$, and its components in a Cartesian system are given by $\\mathbf{r}_j = (x_j, y_j, z_j)$.",
+        "interpretation": "The vector $\\mathbf{r}_j$ is the fundamental kinematic variable for the $j$-th particle in classical mechanics. Its time derivative, $\\dot{\\mathbf{r}}_j = d\\mathbf{r}_j/dt$, defines the particle's velocity $\\mathbf{v}_j$, and its second time derivative, $\\ddot{\\mathbf{r}}_j = d^2\\mathbf{r}_j/dt^2$, defines its acceleration $\\mathbf{a}_j$. For a system of $N$ particles, the configuration of the system at any instant is described by the set of all position vectors $\\{\\mathbf{r}_1, \\mathbf{r}_2, ..., \\mathbf{r}_N\\}$. The vector $\\mathbf{r}_j$ is an element of a vector space, enabling operations like vector addition and scalar multiplication, which are essential for defining quantities like relative position $\\mathbf{r}_{ij} = \\mathbf{r}_i - \\mathbf{r}_j$.",
+        "limits_and_boundary": "In the non-relativistic limit ($v_j \\ll c$), $\\mathbf{r}_j$ provides a complete description of a particle's location. As a particle's speed $v_j \\to c$, this description must be superseded by the relativistic four-vector $x_j^\\mu = (ct, \\mathbf{r}_j)$. In the classical limit ($\\hbar \\to 0$), $\\mathbf{r}_j$ is a precisely determined quantity. In quantum mechanics, it is promoted to a position operator $\\hat{\\mathbf{r}}_j$ whose components do not commute, leading to the Heisenberg Uncertainty Principle.",
+        "symmetry_origin": "Invariance of the physical laws under a global spatial translation, where every particle's position vector is shifted by the same constant vector ($\\mathbf{r}_j \\to \\mathbf{r}_j + \\mathbf{a}$), reflects the homogeneity of space. By Noether's theorem, this continuous symmetry implies the conservation of the total linear momentum of an isolated system.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "DEFINITION",
         "equation_family": "classical-kinematics",
         "semantic_variables": {
-            "r_j": {
-                "name": "r_j",
+            "\\mathbf{r}_j": {
+                "name": "Position Vector of Particle j",
+                "type": "variable",
+                "unit": "m",
+                "description": "A vector from the origin of a coordinate system to the location of the j-th particle."
+            },
+            "j": {
+                "name": "Particle Index",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Position vector of particle j (meters, m)"
+                "description": "An integer index that labels a specific particle within a multi-particle system."
             }
         },
         "equation": "\\mathbf{r}_j",
         "status": "published",
-        "parent_formula_id": "distance-between-particles",
-        "subcomponents": [],
+        "parent_formula_id": "particle-position-vector-definition-c7f43e86",
+        "subcomponents": [
+            "relative-position-vector-between-two-particles",
+            "general-translation",
+            "transformation-to-cm-frame",
+            "partial-derivative-of-position-vector-3659bd3b"
+        ],
         "id": "position-vector-of-particle-j-27445841",
-        "intuitive_summary": ""
+        "intuitive_summary": "Imagine an arrow drawn from a fixed reference point (the origin) directly to where particle 'j' is located in space. In a system with many particles, like planets or electrons, each one gets its own unique position arrow, labeled by an index such as $j$."
     },
     "squared-four-velocity-in-curved-spacetime-08649493": {
-        "title": "Squared Four-Velocity in Curved Spacetime",
-        "description": "This term represents the squared magnitude of the four-velocity of a particle in curved spacetime, scaled by the metric tensor. It is a Lorentz scalar.",
-        "conceptual_definition": "In general relativity, the motion of a particle is described by its four-velocity, $\\dot{x}^\\mu = dx^\\mu/d\\tau$, where $\\tau$ is proper time. The metric tensor $g_{\\mu u}$ defines the geometry of spacetime and is used to define scalar products. This expression calculates the scalar product of the four-velocity with itself, effectively giving its squared magnitude, but with a negative sign convention often used in relativistic Lagrangians.",
-        "interpretation": "This term is crucial for defining the proper time interval along a particle's worldline. For a massive particle, the squared magnitude of its four-velocity, $g_{\\mu u} \\dot{x}^\\mu \\dot{x}^ u$, is always negative in a spacetime with a $(-,+,+,+)$ metric signature, and its absolute value is related to the square of the speed of light, $c^2$. The negative sign in front of the expression ensures that the square root in the Lagrangian yields a real value, as $\\sqrt{-g_{\\mu u} \\dot{x}^\\mu \\dot{x}^ u}$ is proportional to $c$ for a massive particle. It essentially measures the 'length' of the four-velocity vector in the curved spacetime.",
-        "limits_and_boundary": "This expression is valid for massive particles in any curved spacetime described by a metric tensor $g_{\\mu u}$. For a massive particle, the invariant quantity $g_{\\mu u} \\dot{x}^\\mu \\dot{x}^ u = -c^2$, where $c$ is the speed of light. In flat spacetime (Minkowski spacetime), $g_{\\mu u}$ reduces to the Minkowski metric $\\eta_{\\mu u}$, and the expression becomes $-\\eta_{\\mu u} \\dot{x}^\\mu \\dot{x}^ u$.",
-        "symmetry_origin": "This term is a Lorentz scalar, meaning it is invariant under general coordinate transformations (diffeomorphisms) and, in flat spacetime, under Lorentz transformations. This invariance reflects the fundamental principle that physical laws should be independent of the chosen coordinate system.",
+        "title": "Squared Magnitude of the Four-Velocity in Curved Spacetime",
+        "description": "Defines the squared magnitude of the tangent vector to a particle's worldline in curved spacetime. This Lorentz scalar quantity is fundamental for constructing the action of a free particle in general relativity.",
+        "conceptual_definition": "In general relativity, a particle's trajectory is a worldline $x^\\mu(\\lambda)$ parameterized by an arbitrary scalar $\\lambda$. The tangent vector to this worldline is $\\dot{x}^\\mu = dx^\\mu/d\\lambda$. The squared magnitude of this vector is defined by the inner product $-g_{\\mu\\nu} \\dot{x}^\\mu \\dot{x}^\\nu$, where $g_{\\mu\\nu}$ is the metric tensor. This quantity is a scalar, invariant under general coordinate transformations. For a massive particle on a timelike path, this value is positive, and its square root equals $d\\tau/d\\lambda$ (in units where $c=1$), the rate of change of proper time with respect to the parameter $\\lambda$.",
+        "interpretation": "The expression $-g_{\\mu\\nu} \\dot{x}^\\mu \\dot{x}^\\nu$ is a core component of the Lagrangian for a free particle in curved spacetime. The term $\\dot{x}^\\mu$ represents the components of the four-velocity, defined as $dx^\\mu/d\\lambda$ for an arbitrary worldline parameter $\\lambda$. The metric tensor $g_{\\mu\\nu}$ defines the spacetime geometry and facilitates the inner product. The entire expression is a scalar under coordinate transformations. For a massive particle, its worldline is timelike, meaning $g_{\\mu\\nu} dx^\\mu dx^\\nu < 0$ (using the $(-,+,+,+)$ signature). Consequently, $-g_{\\mu\\nu} \\dot{x}^\\mu \\dot{x}^\\nu$ is positive. If the parameter $\\lambda$ is chosen to be the proper time $\\tau$, then the four-velocity is $U^\\mu = dx^\\mu/d\\tau$, and the expression normalizes to a constant: $-g_{\\mu\\nu} U^\\mu U^\\nu = c^2$.",
+        "limits_and_boundary": "In the limit of a weak gravitational field, spacetime becomes flat, and the metric tensor $g_{\\mu\\nu}$ approaches the Minkowski metric $\\eta_{\\mu\\nu}$. The expression becomes $-\\eta_{\\mu\\nu} \\dot{x}^\\mu \\dot{x}^\\nu$. If parameterized by proper time $\\tau$, the expression becomes $-\\eta_{\\mu\\nu} U^\\mu U^\\nu = c^2$, recovering the constant squared norm of the four-velocity from special relativity.",
+        "symmetry_origin": "General Covariance. The expression is constructed as a scalar by contracting a rank-2 tensor ($g_{\\mu\\nu}$) with two rank-1 contravariant vectors ($\\dot{x}^\\mu$, $\\dot{x}^\\nu$), ensuring its value is independent of the chosen coordinate system (diffeomorphism invariance).",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "general-relativity-dynamics",
         "semantic_variables": {
             "g_{\\mu\\nu}": {
-                "name": "g_{\\mu\\nu}",
+                "name": "Metric Tensor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The metric tensor, a symmetric rank-2 tensor that describes the geometry of spacetime. It determines distances and time intervals in curved spacetime. Dimensionless."
+                "description": "Components of the rank-2 symmetric tensor that defines the geometry of spacetime and the inner product of four-vectors."
             },
             "\\dot{x}^\\mu": {
-                "name": "\\dot{x}^\\mu",
+                "name": "Worldline Tangent Vector",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The four-velocity vector, defined as the derivative of the four-position $x^\\mu$ with respect to proper time $\\tau$. It represents the velocity of the particle in four-dimensional spacetime. Units: meters per second (m/s)."
+                "unit": "[length]/[parameter]",
+                "description": "The $\\mu$-th component of the tangent vector to the worldline $x^\\mu(\\lambda)$, where the dot denotes differentiation with respect to an arbitrary affine parameter $\\lambda$."
             },
-            "\\mu, \\nu": {
-                "name": "\\mu, \\nu",
-                "type": "variable",
+            "\\mu,\\nu": {
+                "name": "Spacetime Indices",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "Spacetime indices, ranging from 0 to 3, representing the time and spatial components of the four-vector or tensor. Dimensionless."
+                "description": "Indices ranging from 0 to 3, representing spacetime components. Einstein summation convention is implied."
             }
         },
         "equation": "-g_{\\mu\\nu} \\dot{x}^\\mu \\dot{x}^\\nu",
         "status": "published",
-        "parent_formula_id": "lagrangian-for-a-massive-relativistic-particle-in-curved-spacetime",
-        "subcomponents": [],
+        "parent_formula_id": "infinitesimal-spacetime-interval-in-curved-spacetime-ef80318a",
+        "subcomponents": [
+            "four-velocity-norm-squared-in-flat-spacetime",
+            "covariant-four-velocity-definition-a4bc1ddb",
+            "einstein-locality-physics-identity-1-e828eb89-109e9891"
+        ],
         "id": "squared-four-velocity-in-curved-spacetime-08649493",
-        "intuitive_summary": ""
+        "intuitive_summary": "This formula calculates the squared 'length' of a particle's four-dimensional velocity vector within the curved geometry of spacetime. For a massive particle, this 'length' is always a positive constant, which allows us to define a consistent 'tick rate' for a clock carried by the particle, known as proper time, regardless of its motion or the surrounding gravity."
     },
     "hamiltons-principal-function-separation-of-variables-b8a5eebc": {
         "title": "Separation of Variables for Hamilton's Principal Function in Conservative Systems",
@@ -1539,66 +1501,75 @@
         "intuitive_summary": "For a system with conserved energy, the 'action' landscape evolves simply by decreasing uniformly in value at a rate equal to the system's total energy. This equation separates the static 'shape' of the landscape, $W(q)$, from its simple, linear time-dependent shift, $-Et$."
     },
     "spacetime-interval-for-lightlike-separation-cbe2c19c": {
-        "title": "Spacetime Interval for Lightlike Separation",
-        "description": "This equation defines a lightlike (null) separation between two events in spacetime, where the spacetime interval is zero.",
-        "conceptual_definition": "In special relativity, the spacetime interval $s^2$ quantifies the separation between two events in a way that is invariant under Lorentz transformations. When $s^2=0$, it means that the two events are connected by a light ray, implying that a signal traveling at the speed of light can connect them.",
-        "interpretation": "Physically, $s^2=0$ signifies that the two events lie on each other's light cone. This implies that an observer at one event can receive a light signal from the other event, or send a light signal to it. For particles, this condition is met by massless particles (photons) traveling between the events. It defines the boundary between timelike and spacelike separations.",
-        "limits_and_boundary": "This equation is valid within the framework of special relativity and flat spacetime (Minkowski spacetime). It specifically describes events that are causally connected by light. It serves as the boundary condition for the light cone, separating regions where events can be causally connected (timelike) from regions where they cannot (spacelike).",
-        "symmetry_origin": "This equation is a direct consequence of the Lorentz invariance of the spacetime interval. The spacetime interval $s^2$ itself is invariant under Lorentz transformations, reflecting the fundamental symmetry of spacetime in special relativity. The condition $s^2=0$ specifically highlights this invariance for light propagation.",
+        "title": "Condition for a Lightlike (Null) Spacetime Interval",
+        "description": "This equation establishes the condition for a lightlike, or null, separation between two events in spacetime, where the invariant spacetime interval between them is precisely zero.",
+        "conceptual_definition": "A lightlike or null interval is defined by the condition $(\\Delta s)^2 = (c\\Delta t)^2 - (\\Delta x)^2 - (\\Delta y)^2 - (\\Delta z)^2 = 0$. This signifies that the spatial distance between two events, $\\sqrt{(\\Delta x)^2 + (\\Delta y)^2 + (\\Delta z)^2}$, is exactly equal to the distance light can travel in the time interval $\\Delta t$ separating them.",
+        "interpretation": "The condition $s^2=0$ (or more explicitly $(\\Delta s)^2=0$) defines a null separation between two spacetime events. This means the events lie on each other's light cone and can be connected by a light signal. An observer at one event can either see the other event occur or send a light signal that will arrive at the exact time and place of the other event. The worldline of a massless particle, such as a photon, is a sequence of such null intervals. This condition forms the boundary in Minkowski spacetime separating timelike intervals ($(\\Delta s)^2 > 0$), which are causally connected for massive particles, from spacelike intervals ($(\\Delta s)^2 < 0$), which are not causally connected.",
+        "limits_and_boundary": "The condition $s^2=0$ defines the light cone, which is the absolute boundary separating causally connected events (timelike, $(\\Delta s)^2 > 0$) from causally disconnected events (spacelike, $(\\Delta s)^2 < 0$), assuming the $(+,-,-,-)$ metric signature. For any two events, if their separation approaches this null condition from a timelike path, it means the velocity $v$ required to connect them approaches the speed of light, $v \\to c$. The path of a light ray itself is a null geodesic, representing a continuous sequence of infinitesimal null intervals.",
+        "symmetry_origin": "The invariance of the spacetime interval, and thus the condition $s^2=0$, is a direct consequence of the postulates of special relativity, specifically the constancy of the speed of light for all inertial observers. It reflects the fundamental geometric structure of Minkowski spacetime, which is invariant under the Poincaré group (Lorentz transformations and translations).",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "SPECIAL_CASE",
         "equation_family": "relativistic-kinematics",
         "semantic_variables": {
-            "s^2": {
-                "name": "s^2",
+            "s": {
+                "name": "Spacetime Interval",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The squared spacetime interval (units of length squared, e.g., $m^2$). It represents the invariant separation between two events in spacetime. For $s^2=0$, it specifically denotes a lightlike or null separation."
+                "unit": "meters",
+                "description": "The invariant quantity that characterizes the separation between two events in spacetime. For a lightlike interval, its value is zero."
             }
         },
         "equation": "s^2=0",
         "status": "published",
-        "parent_formula_id": "spacetime-interval-light-cone",
-        "subcomponents": [],
+        "parent_formula_id": "spacetime-interval-squared",
+        "subcomponents": [
+            "lightlike-interval-identity-1-bc55ffe5",
+            "spacetime-null-interval-condition-57ee4d19",
+            "timelike-spacetime-interval-condition-331aed0f",
+            "condition-for-spacelike-spacetime-interval-20b5d88e"
+        ],
         "id": "spacetime-interval-for-lightlike-separation-cbe2c19c",
-        "intuitive_summary": ""
+        "intuitive_summary": "Imagine a flash of light. Any two points on the expanding sphere of that light flash are separated by a 'lightlike' interval. The distance between them in space is exactly the distance light travels in the time that passes between them."
     },
     "time-derivative-of-magnetic-vector-potential-977d2b91": {
-        "title": "Time Derivative of Magnetic Vector Potential",
-        "description": "This term represents the contribution of a time-varying magnetic vector potential to the electric field, as described by Faraday's law of induction.",
-        "conceptual_definition": "In classical electromagnetism, the electric field $\\mathbf{E}$ can be expressed in terms of a scalar potential $\\phi$ and a magnetic vector potential $\\mathbf{A}$. This specific term, $-\\frac{\\partial \\mathbf{A}}{\\partial t}$, directly relates the rate of change of the magnetic vector potential over time to a component of the electric field. It is a fundamental part of how changing magnetic fields induce electric fields.",
-        "interpretation": "This term is a direct manifestation of Faraday's law of induction in its potential formulation. It signifies that a time-varying magnetic vector potential $\\mathbf{A}$ generates an electric field. This induced electric field is non-conservative and is responsible for phenomena like electromagnetic induction in circuits and the propagation of electromagnetic waves. Its presence ensures the consistency of Maxwell's equations and the conservation of energy in electromagnetic systems.",
-        "limits_and_boundary": "This term is valid in classical electromagnetism and does not account for quantum effects. It applies in regions where the magnetic vector potential $\\mathbf{A}$ is well-defined and differentiable with respect to time. In static magnetic fields, where $\\frac{\\partial \\mathbf{A}$}{$\\partial t} = 0, this term vanishes, and the electric field is purely conservative$.",
-        "symmetry_origin": "This term arises from the gauge invariance of electromagnetism and the underlying Lorentz symmetry. Specifically, it is a consequence of Faraday's law, which itself reflects the symmetry between electric and magnetic fields under certain transformations, and the conservation of magnetic flux.",
+        "title": "Inductive Electric Field from Vector Potential",
+        "description": "Defines the non-conservative (inductive) component of the electric field, arising from the temporal rate of change of the magnetic vector potential $\\mathbf{A}$.",
+        "conceptual_definition": "In electrodynamics, the total electric field $\\mathbf{E}$ is not always conservative. Faraday's law of induction, $\\nabla \\times \\mathbf{E} = -\\frac{\\partial \\mathbf{B}}{\\partial t}$, implies that a time-varying magnetic field $\\mathbf{B}$ induces a curling electric field. When expressing fields in terms of the scalar potential $\\Phi$ and vector potential $\\mathbf{A}$ (where $\\mathbf{B} = \\nabla \\times \\mathbf{A}$), the total electric field is given by $\\mathbf{E} = -\\nabla \\Phi - \\frac{\\partial \\mathbf{A}}{\\partial t}$. The term $-\\frac{\\partial \\mathbf{A}}{\\partial t}$ represents the inductive, non-conservative part of the electric field, $\\mathbf{E}_{\\text{ind}}$, which is generated directly by the change in the magnetic vector potential over time.",
+        "interpretation": "The expression $-\\frac{\\partial \\mathbf{A}}{\\partial t}$ represents the inductive electric field, often denoted $\\mathbf{E}_{\\text{ind}}$. The negative sign is crucial for consistency with Lenz's law, indicating that the induced field opposes the change that creates it. The partial derivative with respect to time, $\\frac{\\partial}{\\partial t}$, signifies that it is the rate of change of the magnetic vector potential $\\mathbf{A}$ at a fixed point in space that generates this field. This term is a fundamental component in the full expression for the electric field, $\\mathbf{E} = -\\nabla \\Phi - \\frac{\\partial \\mathbf{A}}{\\partial t}$, distinguishing the conservative part ($-\\nabla \\Phi$) from the non-conservative, inductive part.",
+        "limits_and_boundary": "In the static limit (magnetostatics), where time derivatives are zero, this term vanishes: $\\frac{\\partial \\mathbf{A}}{\\partial t} \\to \\mathbf{0}$. In this case, the electric field becomes purely conservative (electrostatic), given by $\\mathbf{E} = -\\nabla \\Phi$. This term is essential for describing electromagnetic waves, where the time derivatives of $\\mathbf{E}$ and $\\mathbf{B}$ (and thus $\\mathbf{A}$) are non-zero and mutually sustaining.",
+        "symmetry_origin": "U(1) Gauge Invariance of Electromagnetism. This term is required to keep the electric field $\\mathbf{E}$ invariant under a time-dependent gauge transformation of the potentials: $\\mathbf{A} \\to \\mathbf{A} + \\nabla \\chi$ and $\\Phi \\to \\Phi - \\frac{\\partial \\chi}{\\partial t}$.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "classical-electrodynamics",
         "semantic_variables": {
             "\\mathbf{A}": {
-                "name": "\\mathbf{A}",
+                "name": "Magnetic Vector Potential",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Magnetic Vector Potential (SI unit: Tesla-meter, T\\cdot m, or Weber/meter, Wb/m). A vector field whose curl gives the magnetic field $\\mathbf{B}$ (i.e., $\\mathbf{B} = \\nabla \\times \\mathbf{A}$). Its time derivative contributes to the electric field."
+                "unit": "V·s·m⁻¹",
+                "description": "A vector field in classical electromagnetism whose curl is equal to the magnetic field: $\\mathbf{B} = \\nabla \\times \\mathbf{A}$."
             },
             "t": {
-                "name": "t",
+                "name": "Time",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Time (SI unit: second, s). The independent variable representing the progression of physical events."
+                "unit": "s",
+                "description": "The temporal coordinate."
             },
             "\\frac{\\partial}{\\partial t}": {
-                "name": "\\frac{\\partial}{\\partial t}",
+                "name": "Partial Time Derivative",
                 "type": "operator",
-                "unit": "dimensionless",
-                "description": "Partial derivative with respect to time. Represents the rate of change of a quantity over time, holding spatial coordinates constant."
+                "unit": "s⁻¹",
+                "description": "The operator for the partial derivative with respect to time, measuring the rate of change of a function at a fixed position."
             }
         },
         "equation": "-\\frac{\\partial \\mathbf{A}}{\\partial t}",
         "status": "published",
-        "parent_formula_id": "e-field-stability-bd23b472",
-        "subcomponents": [],
+        "parent_formula_id": "electric-field-from-potentials",
+        "subcomponents": [
+            "magnetic-vector-potential-current-distribution",
+            "partial-derivative-of-a-vector-function-d7734305",
+            "curl-of-electric-field-and-vector-potential-3ff8418e"
+        ],
         "id": "time-derivative-of-magnetic-vector-potential-977d2b91",
-        "intuitive_summary": ""
+        "intuitive_summary": "Just as a changing magnetic flux through a loop creates a voltage, a changing magnetic vector potential at a point in space creates an electric field at that same point. This is the 'local' version of Faraday's law of induction."
     },
     "translational-kinetic-energy-formula-0bff9b78": {
         "title": "Translational Kinetic Energy Formula",
@@ -1680,40 +1651,44 @@
     },
     "divergence-of-mass-flux-80fdf7e0": {
         "title": "Divergence of Mass Flux",
-        "description": "This term represents the net outflow of mass per unit volume from an infinitesimal region. It is a key component of the continuity equation in fluid dynamics.",
-        "conceptual_definition": "In fluid dynamics, the product $\\rho \\mathbf{v}$ defines the mass flux density, which quantifies the rate of mass flow per unit area. The divergence operator ( \n\\nabla \\cdot ) applied to this vector field calculates the net outward flux of mass per unit volume at a given point. A positive value indicates a net outflow of mass, while a negative value indicates a net inflow.",
-        "interpretation": "Physically, \n\\nabla \\cdot ($\\rho \\mathbf{v})$ measures how much mass is accumulating or depleting at a specific point in space due to fluid motion. If this term is non-zero, it implies a change in the local mass density over time, unless there are sources or sinks of mass. In the context of the continuity equation, it balances the time rate of change of mass density. It is a volumetric source/sink term for mass.",
-        "limits_and_boundary": "This term is typically defined for continuous fluid media where density and velocity fields are differentiable. It applies within the bulk of the fluid. Boundary conditions often specify the mass flux across surfaces, e.g., no-slip conditions for velocity at solid boundaries, or prescribed inflow/outflow rates. It assumes no creation or annihilation of mass within the infinitesimal volume, only transport.",
-        "symmetry_origin": "This term is fundamentally linked to the principle of mass conservation. The continuity equation, which includes this term, is a direct mathematical statement of the conservation of mass for a continuous medium.",
+        "description": "Represents the net rate of mass outflow per unit volume from an infinitesimal region in space. This scalar field is a fundamental component of the continuity equation for mass conservation in fluid dynamics and continuum mechanics.",
+        "conceptual_definition": "The expression $\\nabla \\cdot (\\rho \\mathbf{v})$ is the divergence of the mass flux vector field, where the mass flux is defined as $\\mathbf{J} = \\rho \\mathbf{v}$. This term quantifies the strength of the source or sink of mass at a point, measuring the rate at which mass is flowing out of an infinitesimal volume.",
+        "interpretation": "The scalar field $\\nabla \\cdot (\\rho \\mathbf{v})$ provides a local measure of mass change due to transport. The vector field $\\rho \\mathbf{v}$ is the mass flux density, representing the mass per unit area per unit time flowing at a point. A positive value, $\\nabla \\cdot (\\rho \\mathbf{v}) > 0$, signifies a net outflow of mass from an infinitesimal volume, acting as a mass 'source' and causing local density $\\rho$ to decrease. Conversely, a negative value, $\\nabla \\cdot (\\rho \\mathbf{v}) < 0$, signifies a net inflow, acting as a mass 'sink' and causing $\\rho$ to increase. A value of zero, $\\nabla \\cdot (\\rho \\mathbf{v}) = 0$, indicates that the mass flow is solenoidal, with inflow perfectly balancing outflow.",
+        "limits_and_boundary": "In the static limit where the fluid velocity $\\mathbf{v} = \\mathbf{0}$, the term vanishes: $\\nabla \\cdot (\\rho \\mathbf{v}) = 0$. For an incompressible fluid, where mass density $\\rho$ is a constant, the expression simplifies via the product rule to $\\rho (\\nabla \\cdot \\mathbf{v})$. In this case, mass conservation implies volume conservation, $\\nabla \\cdot \\mathbf{v} = 0$. This is a non-relativistic concept; in relativity, it is replaced by the divergence of a component of the stress-energy tensor.",
+        "symmetry_origin": "This term arises from the principle of local conservation of mass. It is the mathematical expression for the spatial change in mass current that must be balanced by a temporal change in mass density to ensure mass is neither created nor destroyed at any point, only transported.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "fluid-dynamics-continuity",
         "semantic_variables": {
-            "\\nabla": {
-                "name": "\\nabla",
+            "\\nabla \\cdot": {
+                "name": "Divergence Operator",
                 "type": "operator",
-                "unit": "dimensionless",
-                "description": "Nabla operator (vector differential operator), dimensionless."
+                "unit": "1/m",
+                "description": "Measures the magnitude of a vector field's source or sink at a given point."
             },
             "\\rho": {
-                "name": "\\rho",
+                "name": "Mass Density",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Mass density (kilogram per cubic meter, kg/m^3)."
+                "unit": "kg/m^3",
+                "description": "Mass per unit volume of a substance at a point in space."
             },
             "\\mathbf{v}": {
-                "name": "\\mathbf{v}",
+                "name": "Velocity Field",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Fluid velocity vector (meter per second, m/s)."
+                "unit": "m/s",
+                "description": "A vector field describing the velocity of a fluid at each point in space and time."
             }
         },
         "equation": "\\nabla \\cdot (\\rho \\mathbf{v})",
         "status": "published",
-        "parent_formula_id": "time-independent-density",
-        "subcomponents": [],
+        "parent_formula_id": "general-continuity-equation-ident-b0a7fcc9",
+        "subcomponents": [
+            "gauss-s-divergence-law-fef2f62f",
+            "divergence-operator-law-e0e63b59",
+            "divergence-product-rule-for-scalar-and-vector-field-5170133b"
+        ],
         "id": "divergence-of-mass-flux-80fdf7e0",
-        "intuitive_summary": ""
+        "intuitive_summary": "Imagine a tiny, imaginary cube placed in a flowing river. The divergence of mass flux measures whether more mass is flowing out of the cube than is flowing in at any given instant. A positive value means the cube is 'emptying' (local density decreases), while a negative value means it's 'filling up' (local density increases)."
     },
     "infinite-hubble-parameter-limit-3bd16f88": {
         "title": "Infinite Hubble Parameter Limit",
@@ -2124,59 +2099,69 @@
         "intuitive_summary": "Imagine a vast, infinitely hot furnace. This is the 'hot reservoir'. Its temperature, $T_{hot}$, represents the upper limit for any engine drawing heat from it. The hotter this source is compared to the cold 'sink' where waste heat is dumped, the more useful work the engine can produce from the flow of heat."
     },
     "condition-for-timelike-spacetime-interval-4f79c970": {
-        "title": "Condition for Timelike Spacetime Interval",
-        "description": "This condition specifies that the squared infinitesimal spatial separation between two events is zero or negligible compared to their squared infinitesimal temporal separation, defining a timelike spacetime interval.",
-        "conceptual_definition": "A spacetime interval between two infinitesimally separated events is timelike if the square of their temporal separation, scaled by the speed of light squared, is greater than the square of their spatial separation. This condition allows for a massive object to travel between the events, establishing a potential cause-and-effect relationship.",
-        "interpretation": "The quantity $\\mathrm{d}s^2$ is the squared spacetime interval, a fundamental invariant in special relativity. The condition $\\mathrm{d}s^2 > 0$ defines the interior of the light cone in Minkowski spacetime. Any two events satisfying this condition are causally connected; one event is unambiguously in the future or past of the other for all inertial observers. Rearranging the inequality as $(\\mathrm{d}x^2 + \\mathrm{d}y^2 + \\mathrm{d}z^2) / \\mathrm{d}t^2 < c^2$ shows that the speed required to traverse the spatial separation $\\sqrt{\\mathrm{d}x^2 + \\mathrm{d}y^2 + \\mathrm{d}z^2}$ in time $\\mathrm{d}t$ is less than the speed of light, which is physically possible for particles with mass.",
-        "limits_and_boundary": "1. Lightlike (Null) Boundary: The boundary case is $\\mathrm{d}s^2 = 0$, defining a lightlike or null interval. This corresponds to events connected by a signal traveling exactly at the speed of light, such as a photon, which traces the surface of the light cone.\n2. Spacelike Condition: The opposite condition, $\\mathrm{d}s^2 < 0$, defines a spacelike interval. Events with a spacelike separation are causally disconnected, as a signal would need to travel faster than light to connect them. The time ordering of such events can be different for different observers.\n3. Non-Relativistic Limit ($c \\to \\infty$): As the speed of light approaches infinity, the term $c^2 \\mathrm{d}t^2$ dominates for any non-zero $\\mathrm{d}t$. In this limit, all events with temporal separation become timelike, recovering the Newtonian concept of absolute time and infinitely fast propagation of causal influence.",
-        "symmetry_origin": "The condition is a direct consequence of the structure of Minkowski spacetime and is invariant under the Poincaré group (Lorentz transformations and spacetime translations). The sign of $\\mathrm{d}s^2$ is a Lorentz invariant, meaning all inertial observers will agree on whether an interval is timelike, spacelike, or null. This preserves the fundamental causal structure of spacetime across all valid frames of reference.",
+        "title": "Condition for a Timelike Infinitesimal Spacetime Interval",
+        "description": "This inequality defines the condition for an infinitesimal spacetime interval, $\\mathrm{d}s^2$, to be timelike in Minkowski spacetime, signifying that the temporal separation between two infinitesimally close events is greater than their spatial separation.",
+        "conceptual_definition": "In special relativity, the spacetime interval is an invariant quantity for all inertial observers. A timelike interval, characterized by $\\mathrm{d}s^2 > 0$, connects two events where a causal relationship is possible. This means a massive object could travel from one event to the other, as the required speed would be less than the speed of light, $c$. Such events lie within each other's future or past light cones.",
+        "interpretation": "The quantity $\\mathrm{d}s^2$ represents the squared infinitesimal spacetime interval, a Lorentz invariant in special relativity. The condition $\\mathrm{d}s^2 > 0$ specifies that the interval is 'timelike', meaning the two events are causally connected and lie within each other's light cones. The term $c^2 \\mathrm{d}t^2$ is the squared temporal separation (in units of length squared), while $\\mathrm{d}x^2 + \\mathrm{d}y^2 + \\mathrm{d}z^2$ is the squared infinitesimal spatial separation. The inequality can be rearranged as $(\\mathrm{d}x^2 + \\mathrm{d}y^2 + \\mathrm{d}z^2) / \\mathrm{d}t^2 < c^2$, which shows that the speed $v$ required to traverse the spatial distance in the given time is less than the speed of light ($v^2 < c^2$), a condition required for any massive particle.",
+        "limits_and_boundary": "The boundary case, where $\\mathrm{d}s^2 = c^2 \\mathrm{d}t^2 - (\\mathrm{d}x^2 + \\mathrm{d}y^2 + \\mathrm{d}z^2) = 0$, defines a 'lightlike' or 'null' interval, corresponding to the path of a massless particle traveling at speed $c$. The opposite case, $\\mathrm{d}s^2 < 0$, defines a 'spacelike' interval, where the events are causally disconnected and their temporal ordering can be different for different observers.",
+        "symmetry_origin": "The invariance of the spacetime interval $\\mathrm{d}s^2$ is a direct consequence of the postulates of special relativity, which demand that the laws of physics are the same for all inertial observers. This invariance is mathematically captured by the Lorentz transformations, which form the symmetry group of Minkowski spacetime.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "SPECIAL_CASE",
         "equation_family": "spacetime-geometry",
         "semantic_variables": {
             "\\mathrm{d}s^2": {
-                "name": "Squared Spacetime Interval",
-                "type": "differential",
+                "name": "Squared infinitesimal spacetime interval",
+                "type": "variable",
                 "unit": "m^2",
-                "description": "The invariant measure of separation between two infinitesimally close events in spacetime. Its sign determines the causal relationship between the events."
+                "description": "The Lorentz-invariant squared interval between two infinitesimally separated events in spacetime. Its sign determines the causal nature of the separation."
             },
             "c": {
-                "name": "Speed of Light in Vacuum",
+                "name": "Speed of light in vacuum",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "A universal physical constant, the maximum speed at which all conventional matter, energy, or any signal carrying information can travel through space."
+                "description": "The universal speed limit in spacetime, at which all massless particles propagate."
             },
             "\\mathrm{d}t": {
-                "name": "Infinitesimal Time Separation",
-                "type": "differential",
+                "name": "Infinitesimal coordinate time separation",
+                "type": "variable",
                 "unit": "s",
                 "description": "The infinitesimal difference in the time coordinate between two events."
             },
             "\\mathrm{d}x": {
-                "name": "Infinitesimal Spatial Separation (x-axis)",
-                "type": "differential",
+                "name": "Infinitesimal x-coordinate separation",
+                "type": "variable",
                 "unit": "m",
-                "description": "The infinitesimal difference in the x-coordinate between two events."
+                "description": "The infinitesimal difference in the spatial x-coordinate between two events."
             },
             "\\mathrm{d}y": {
-                "name": "Infinitesimal Spatial Separation (y-axis)",
-                "type": "differential",
+                "name": "Infinitesimal y-coordinate separation",
+                "type": "variable",
                 "unit": "m",
-                "description": "The infinitesimal difference in the y-coordinate between two events."
+                "description": "The infinitesimal difference in the spatial y-coordinate between two events."
             },
             "\\mathrm{d}z": {
-                "name": "Infinitesimal Spatial Separation (z-axis)",
-                "type": "differential",
+                "name": "Infinitesimal z-coordinate separation",
+                "type": "variable",
                 "unit": "m",
-                "description": "The infinitesimal difference in the z-coordinate between two events."
+                "description": "The infinitesimal difference in the spatial z-coordinate between two events."
+            },
+            ">": {
+                "name": "Greater than",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "A binary operator indicating that the left-hand side is strictly greater than the right-hand side, defining the condition for a timelike interval."
             }
         },
         "equation": "\\mathrm{d}s^2 = c^2 \\mathrm{d}t^2 - (\\mathrm{d}x^2 + \\mathrm{d}y^2 + \\mathrm{d}z^2) > 0",
         "status": "platinum",
-        "parent_formula_id": "minkowski-spacetime-line-element",
-        "subcomponents": [],
+        "parent_formula_id": "infinitesimal-spacetime-interval-element-db330970",
+        "subcomponents": [
+            "timelike-interval-identity-1-3d84de06",
+            "causal-spacetime-interval-condition-3ba1d6cf",
+            "timelike-spacetime-interval-condition-ffeab4ab"
+        ],
         "id": "condition-for-timelike-spacetime-interval-4f79c970",
-        "intuitive_summary": "There is enough time for a physical object or signal traveling slower than light to get from one event to the other."
+        "intuitive_summary": "If you can travel between two very close points in spacetime without exceeding the speed of light, the path connecting them is 'timelike'. This means one event happens unambiguously after the other for all observers, allowing for cause and effect."
     },
     "symmetry-of-the-stress-tensor-05aa3f6a": {
         "id": "symmetry-of-the-stress-tensor-05aa3f6a",

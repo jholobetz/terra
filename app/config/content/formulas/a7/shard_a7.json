@@ -1338,62 +1338,53 @@
         "subcomponents": []
     },
     "legendre-duality-mapping-d484cb28": {
-        "title": "The Legendre Duality Mapping",
+        "title": "The Legendre Transformation",
         "equation": "g(p) = \\sup_x [px - f(x)]",
-        "interpretation": "The equation defines a function $g(p)$ which is the Legendre transform of a function $f(x)$. The expression $px - f(x)$ represents a family of lines with slope $p$ and y-intercept $-f(x)$. The Legendre transform $g(p)$ is the upper envelope (supremum) of these lines. Geometrically, if $f(x)$ is convex, the Legendre transform $g(p)$ finds the value $p$ such that the line $y = px - f(x)$ is tangent to the curve $y=f(x)$ at some point $x$. The variable $x$ can represent a position (in meters, m), and $p$ can represent a conjugate variable like momentum (in kg m/s). Alternatively, in thermodynamics, $x$ could be entropy (in J/K) and $p$ could be temperature (in K), or $x$ could be volume (in m^3) and $p$ could be pressure (in Pa). The function $f(x)$ typically represents an energy or action (in Joules, J), and its Legendre transform $g(p)$ will have units consistent with the product of its arguments, which is Joules in the mechanical context or Joules in the thermodynamic context if $p$ and $x$ are conjugate variables like $p$ and $x$ (momentum and position) or $T$ and $S$ (temperature and entropy).",
-        "symmetry_origin": "The Legendre transform is closely related to the concept of convex analysis and optimization. Its origin in physics is most famously seen in the transition from the Lagrangian formulation of mechanics to the Hamiltonian formulation. If $L(q, \\frac{dq}{dt} )$ is the Lagrangian, where $q$ is a generalized coordinate and $\\frac{dq}{dt}$ is its time derivative, the Hamiltonian $H(q, p)$ is obtained by performing a Legendre transform with respect to the generalized velocity $\\frac{dq}{dt}$. The conjugate momentum is defined as $p = \\frac{$ypeof{dL}}{$ypeof{d( \\frac{dq}{dt} )}}$. The Hamiltonian is then $H(q, p) = p \\frac{dq}{dt} - L(q, \\frac{dq}{dt} )$. This transform is crucial for passing from a description in terms of configuration space and velocities to one in terms of configuration space and momenta, which is fundamental for Hamiltonian mechanics and phase space concepts.",
-        "limits_and_boundary": "As $p \\to 0$, the term $px$ vanishes. If $f(x)$ has a minimum at $x=0$, then $g(0) = -f(0)$. If $p \\to \\tilde{p}$ where $\\tilde{p}$ is a value that maximizes $px - f(x)$, then $g(\\tilde{p}) = \\tilde{p}x_{opt} - f(x_{opt})$, where $x_{opt}$ is the value of $x$ that maximizes the expression. If $f(x)$ grows faster than linearly as $|x| \\to \\tilde{\\text{infinity}}$, then $g(p)$ is well-defined for all $p$. For example, if $f(x) = ax^2$ with $a>0$, then $g(p) = p^2/(4a)$, which is also a convex function.",
+        "interpretation": "The formula $g(p) = \\sup_x [px - f(x)]$ defines the Legendre transform $g(p)$ of a function $f(x)$. Here, $x$ is an independent variable (e.g., position, volume, entropy) and $f(x)$ is a convex function (e.g., potential energy, internal energy). The variable $p$ is the conjugate variable to $x$, defined by the slope of $f(x)$, i.e., $p = df/dx$. The expression $px - f(x)$ represents the negative of the y-intercept for a line with slope $p$ that is tangent to the curve $y=f(x)$. The supremum operator, $\\sup_x$, ensures that for a given slope $p$, we find the unique point $x$ where this tangency occurs, thus maximizing the intercept value. In classical mechanics, $f(x)$ is the Lagrangian $L(q, \\dot{q})$ as a function of generalized velocity $\\dot{q}$, and its transform $g(p)$ is the Hamiltonian $H(q, p)$ as a function of generalized momentum $p = \\partial L / \\partial \\dot{q}$.",
+        "symmetry_origin": "This transformation represents a mathematical duality, not a physical symmetry in the sense of Noether's theorem. It is a structure-preserving map (a symplectomorphism) between the tangent bundle and the cotangent bundle of the configuration manifold. This duality allows for a change of representation (e.g., from velocity-based Lagrangian mechanics to momentum-based Hamiltonian mechanics) while preserving the underlying physical content of the system.",
+        "limits_and_boundary": "The Legendre transformation is well-behaved and invertible (i.e., a double transform returns the original function, $f(x) = \\sup_p [px - g(p)]$) if and only if the original function $f(x)$ is convex. If $f(x)$ is not convex, the transform to $g(p)$ can lose information. For a simple quadratic function like a kinetic energy term $f(\\dot{q}) = \\frac{1}{2}m\\dot{q}^2$, the conjugate variable is momentum $p = m\\dot{q}$, and the transform is $g(p) = p\\dot{q} - f(\\dot{q}) = p(p/m) - \\frac{1}{2}m(p/m)^2 = \\frac{p^2}{2m}$, which is the kinetic energy expressed in terms of momentum.",
         "semantic_variables": {
             "g(p)": {
-                "name": "Legendre Transform of f(x)",
+                "name": "Legendre Transform Function",
                 "type": "variable",
-                "unit": "J",
-                "description": "The transformed function, often representing a different physical potential or description, derived from $f(x)$."
-            },
-            "p": {
-                "name": "Conjugate Variable",
-                "type": "variable",
-                "unit": "kg m/s",
-                "description": "The independent variable of the transformed function $g$. It is the conjugate variable to $x$, often representing momentum, temperature, or pressure, depending on the context."
-            },
-            "\\sup": {
-                "name": "Supremum Operator",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "Indicates the least upper bound. For a continuous and differentiable function $f(x)$, this is achieved when the derivative of $px - f(x)$ with respect to $x$ is zero, i.e., $p -$\\frac{\\typeof{df}}{\\typeof{dx}}$= 0$, or $p = \\frac{\\typeof{df}}{\\typeof{dx}}$."
-            },
-            "x": {
-                "name": "Original Variable",
-                "type": "variable",
-                "unit": "m",
-                "description": "The independent variable of the original function $f$. It can represent position, entropy, volume, etc., depending on the physical context."
+                "unit": "Depends on context (e.g., Joules)",
+                "description": "The transformed function, which depends on the conjugate variable $p$."
             },
             "f(x)": {
                 "name": "Original Function",
                 "type": "variable",
-                "unit": "J",
-                "description": "The function being transformed. It typically represents an energy, action, or another relevant potential in a given physical system."
+                "unit": "Depends on context (e.g., Joules)",
+                "description": "The original convex function to be transformed."
             },
-            "g": {
-                "name": "Gravitational Acceleration",
-                "type": "constant",
-                "unit": "m/s²",
-                "description": "The local acceleration imparted to objects due to gravity (approx. 9.81 m/s² on Earth)."
-            },
-            "f": {
-                "name": "Frequency",
+            "p": {
+                "name": "Conjugate Variable",
                 "type": "variable",
-                "unit": "Hz",
-                "description": "The number of occurrences of a repeating event per unit of time."
+                "unit": "Depends on context (e.g., kg⋅m/s)",
+                "description": "The variable of the transformed function, defined as the derivative of the original function with respect to its variable, $p = df/dx$."
+            },
+            "x": {
+                "name": "Original Variable",
+                "type": "variable",
+                "unit": "Depends on context (e.g., m)",
+                "description": "The independent variable of the original function."
+            },
+            "\\sup_x": {
+                "name": "Supremum Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "An operator that finds the least upper bound of the expression $[px - f(x)]$ by varying $x$."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Legendre duality mapping, also known as the Legendre transform, is a mathematical operation that transforms a convex function into another convex function. In physics, it is particularly powerful for converting between different representations of thermodynamic potentials or for transforming between position-space and momentum-space descriptions, most notably in classical and quantum mechanics. It is a fundamental tool in the transition from Lagrangian mechanics to Hamiltonian mechanics.",
-        "intuitive_summary": "Legendre duality provides a way to swap the role of variables in a function, often transforming a function of 'states' to a function of 'conjugate momenta' or 'dual variables'.",
+        "conceptual_definition": "The Legendre transformation defines a new function $g(p)$ as the dual to a convex function $f(x)$. The new variable $p$ is the derivative of the original function, $p = f'(x)$, representing the slope of $f(x)$. The value of the transformed function, $g(p) = \\sup_x [px - f(x)]$, is the negative of the y-intercept of the tangent line to $f(x)$ with slope $p$. This creates a dual representation of the information contained in $f(x)$, but parameterized by slope instead of position.",
+        "intuitive_summary": "Imagine describing a convex hill. You could list the height at every point on the ground $(x, f(x))$. Alternatively, you could describe the hill by specifying, for every possible steepness (slope $p$), the height of the straight-edge ruler that just touches the hill at that steepness. The Legendre transform is the mathematical machine that converts the first description (height vs. position) into the second (ruler-height vs. steepness).",
         "subcomponents": [
-            "spatial-origin-boundary-condition-e11729b0",
-            "time-derivative-of-generalized-coordinate-0e886375"
-        ]
+            "legendre-transform-08d8c224",
+            "structural-mapping-isomorphism-40096cb2",
+            "action-functional-mapping-97af7ff2"
+        ],
+        "description": "A fundamental mathematical operation that transforms a function of one variable into a function of its conjugate variable, crucial for switching between different formalisms in physics, such as from Lagrangian to Hamiltonian mechanics.",
+        "derivation_type": "DEFINITION"
     },
     "broken-symmetry-generator-condition-16ef70ae": {
         "title": "Broken Generator Condition",
@@ -1539,101 +1530,92 @@
         ]
     },
     "pulsar-energy-budget-identity-1-837fdf1c": {
-        "title": "Rate of Energy Transfer in Rotational Systems",
+        "title": "Power from Change in Rotational Kinetic Energy",
         "equation": "\\dot{E} = -I \\omega \\dot{\\omega}",
-        "interpretation": "The equation $\\dot{E} = -I \\omega \\dot{\\omega}$ represents a fundamental relationship in rotational dynamics concerning energy transfer. The term $I \\omega \\dot{\\omega}$ is precisely the time derivative of the rotational kinetic energy, $E_k = \\frac{1}{2} I \\omega^2$. Thus, the equation can be rewritten as $\\dot{E} = -\\dot{E}_k$. This implies that the energy $E$ is changing at a rate equal in magnitude but opposite in sign to the rate of change of the rotational kinetic energy. For instance, if a rotating body is decelerating ($\\dot{\\omega} < 0$), its rotational kinetic energy is decreasing ($\\dot{E}_k < 0$). In this scenario, $\\dot{E}$ would be positive, indicating that energy $E$ is increasing. This could represent the generation of thermal energy due to friction, the storage of energy in a connected system (e.g., winding a spring), or the conversion of rotational kinetic energy into another form. Conversely, if the body is accelerating ($\\dot{\\omega} > 0$), its rotational kinetic energy is increasing ($\\dot{E}_k > 0$), and $\\dot{E}$ would be negative, meaning energy $E$ is being consumed or transferred out of that form to fuel the rotational acceleration. This equation is crucial for analyzing energy conservation and dissipation in systems involving rotational motion.",
-        "symmetry_origin": "This equation is fundamentally derived from the definition of rotational kinetic energy, $E_k = \\frac{1}{2} I \\omega^2$. Taking the time derivative of $E_k$ yields $\\dot{E}_k = \\frac{d}{dt}(\\frac{1}{2} I \\omega^2) = I \\omega \\dot{\\omega}$. The given equation $\\dot{E} = -I \\omega \\dot{\\omega}$ therefore implies $\\dot{E} = -\\dot{E}_k$, representing a statement of energy conservation and transfer. While not directly stemming from a specific Noether symmetry, it is a consequence of the work-energy theorem applied to rotational motion, where the power associated with torques leads to changes in rotational kinetic energy. The moment of inertia $I$ implicitly assumes rotational symmetry about the axis of rotation or that the rotation occurs about a principal axis.",
-        "limits_and_boundary": "1. **Constant Angular Velocity ($\\dot{\\omega} = 0$)**: If the angular velocity is constant, then $\\dot{\\omega} = 0$, which implies $\\dot{E} = 0$. This indicates that if the rotational kinetic energy is not changing, then the energy $E$ is also not changing, consistent with energy conservation in a steady state. 2. **Zero Moment of Inertia ($I = 0$)**: For a point particle or a system with negligible rotational inertia, $I=0$, leading to $\\dot{E} = 0$. In this case, rotational energy transfer is not a factor. 3. **Rigid Body Assumption**: This equation assumes a rigid body, where the moment of inertia $I$ is constant. For deformable bodies, $I$ can change, and the derivative of rotational kinetic energy would be more complex, involving $\\dot{I}$. 4. **Non-relativistic Limit**: This equation is valid within the framework of classical mechanics, where angular velocities are much less than the speed of light.",
+        "interpretation": "The equation $\\dot{E} = -I \\omega \\dot{\\omega}$ establishes a direct relationship between the power $\\dot{E}$ generated by a rotating body and the rate of change of its rotational state. The term $\\dot{E}$ represents the rate of energy transfer out of the system's rotational kinetic energy reservoir. The right-hand side, $-I \\omega \\dot{\\omega}$, is the negative of the time derivative of the rotational kinetic energy, $E_k = \\frac{1}{2} I \\omega^2$. If the body is spinning down, its angular acceleration $\\dot{\\omega}$ is negative, making $\\dot{E}$ positive. This signifies that the loss of rotational kinetic energy is powering another process, such as the electromagnetic radiation from a pulsar. Conversely, if an external torque causes the body to spin up, $\\dot{\\omega}$ is positive, making $\\dot{E}$ negative. This indicates that power is being consumed by the system to increase its rotational kinetic energy.",
+        "symmetry_origin": "This formula is a direct consequence of the work-energy theorem applied to rotational systems. The underlying principle of energy conservation, which the theorem embodies, is fundamentally linked to the time-translation symmetry of physical laws, as described by Noether's theorem.",
+        "limits_and_boundary": "In the limit of zero angular velocity, $\\omega \\to 0$, the power transfer vanishes, $\\dot{E} \\to 0$, as there is no rotational energy to extract. Similarly, for a body rotating at a constant rate, $\\dot{\\omega} \\to 0$, the power transfer is zero, $\\dot{E} = 0$, as its kinetic energy is constant. This is a classical, non-relativistic formula and assumes the moment of inertia $I$ is constant. It is valid for rigid bodies rotating about a principal axis.",
         "semantic_variables": {
             "\\dot{E}": {
-                "name": "Spin-Down Luminosity",
+                "name": "Rate of Energy Transfer",
                 "type": "variable",
-                "unit": "W",
-                "description": "The rate at which rotational energy is lost by the compact object, typically due to electromagnetic radiation (e.g., magnetic dipole radiation) or particle winds. Measured in Watts (J/s)."
+                "unit": "J/s",
+                "description": "The power, or rate of energy change. A positive value indicates energy is being lost from the rotational system (e.g., radiated away)."
             },
             "I": {
                 "name": "Moment of Inertia",
                 "type": "variable",
-                "unit": "kg m^2",
-                "description": "A measure of an object's resistance to changes in its rotational motion. For a compact object like a neutron star, it depends on its mass distribution and radius."
+                "unit": "kg·m²",
+                "description": "A measure of an object's resistance to changes in its rotation, defined with respect to a specific axis of rotation."
             },
             "\\omega": {
                 "name": "Angular Velocity",
                 "type": "variable",
                 "unit": "rad/s",
-                "description": "The rate at which the compact object is rotating. Measured in radians per second."
+                "description": "The rate of change of angular displacement, representing how fast the object is spinning."
             },
             "\\dot{\\omega}": {
                 "name": "Angular Acceleration",
                 "type": "variable",
-                "unit": "rad/s^2",
-                "description": "The rate of change of the angular velocity. For spin-down, this value is negative, indicating deceleration."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
+                "unit": "rad/s²",
+                "description": "The time derivative of angular velocity, representing the rate at which the object's spin is changing."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "This formula quantifies the rate at which a rotating compact object, such as a neutron star or a white dwarf, loses rotational energy due to magnetic dipole radiation or other braking mechanisms. This energy loss manifests as a decrease in its angular velocity.",
-        "intuitive_summary": "A spinning object loses rotational energy at a rate proportional to its moment of inertia, its current spin rate, and how quickly it is slowing down.",
+        "conceptual_definition": "This equation represents the power, $\\dot{E}$, supplied by a rotating system as its angular velocity changes. It is derived from the time derivative of the rotational kinetic energy, $E_k = \\frac{1}{2} I \\omega^2$. Taking the derivative with respect to time yields $\\frac{dE_k}{dt} = \\frac{d}{dt}(\\frac{1}{2} I \\omega^2) = I \\omega \\frac{d\\omega}{dt} = I \\omega \\dot{\\omega}$. The formula $\\dot{E} = -I \\omega \\dot{\\omega}$ defines $\\dot{E}$ as the power lost from the rotational system, hence $\\dot{E} = -\\frac{dE_k}{dt}$. This is a statement of energy conservation for rotational motion.",
+        "intuitive_summary": "A spinning object, like a top or a neutron star, acts as a flywheel for energy. When it slows down, it releases energy into its surroundings (as heat, light, or radiation). When it speeds up, it must draw energy from its surroundings. This formula precisely calculates the power of this energy exchange.",
         "subcomponents": [
-            "angular-acceleration-562202c9"
-        ]
+            "rotational-kinetic-energy",
+            "rotational-work-energy",
+            "eulers-rotational-equation-component-1-299f94c5"
+        ],
+        "description": "Quantifies the rate of energy transfer (power) from a rotating rigid body as its rotational kinetic energy changes. It is fundamental to understanding energy budgets in systems like spinning-down pulsars.",
+        "parent_formula_id": "rotational-kinetic-energy",
+        "derivation_type": "DERIVED_FROM"
     },
     "anomalous-magnetic-moment-identity-1-34d4f69b-5a164abf": {
-        "title": "Schwinger Loop Correction to the Electron Magnetic Moment",
+        "title": "Schwinger's One-Loop Correction to the Electron Anomalous Magnetic Moment",
         "equation": "a_e = \\frac{g_e - 2}{2}  = \\frac{\\alpha}{2\\pi} + \\mathcal{O}(\\alpha^2)",
-        "interpretation": "$a_e$ is the anomalous magnetic moment, $g$ is the electron gyromagnetic ratio (predicted to be exactly 2 by Dirac theory), and $\\alpha$ is the fine-structure constant.",
-        "symmetry_origin": "Derived from QED perturbation theory using Feynman diagrams with a single vertex loop.",
-        "limits_and_boundary": "In the classical limit where the fine-structure constant $\\alpha \\to 0$, quantum loop corrections vanish, and the gyromagnetic ratio reduces back to the Dirac value of $g = 2$.",
+        "interpretation": "The formula $a_e = \\frac{g_e - 2}{2} = \\frac{\\alpha}{2\\pi} + \\mathcal{O}(\\alpha^2)$ equates the definition of the electron anomalous magnetic moment, $a_e$, with its theoretical prediction from QED. The term $a_e$ is a dimensionless measure of the anomaly. The gyromagnetic ratio, $g_e$, is experimentally measured. The fine-structure constant, $\\alpha \\approx 1/137$, is the coupling constant of the electromagnetic force. The term $\\frac{\\alpha}{2\\pi}$ is the leading-order (one-loop) theoretical prediction. The notation $\\mathcal{O}(\\alpha^2)$ signifies that there are additional, smaller corrections proportional to higher powers of $\\alpha$, corresponding to more complex multi-loop Feynman diagrams.",
+        "symmetry_origin": "The underlying theory is Quantum Electrodynamics (QED), which is defined by a local $U(1)$ gauge symmetry. While the Dirac equation for a free electron yields $g_e=2$, the interaction terms in the QED Lagrangian, mandated by this gauge symmetry, lead to quantum loop corrections. The anomalous moment $a_e$ is a direct physical consequence of these radiative corrections within the $U(1)$ gauge theory.",
+        "limits_and_boundary": "In the 'tree-level' or non-interacting limit where the fine-structure constant $\\alpha \\to 0$, the anomalous magnetic moment $a_e \\to 0$, and one recovers the Dirac equation's prediction that $g_e = 2$. This formula is a low-energy approximation. At energies comparable to or exceeding the electron mass ($E \\gtrsim m_e c^2$), the concept of a static magnetic moment is insufficient, and one must analyze the full momentum-dependent vertex function in scattering processes.",
         "semantic_variables": {
             "a_e": {
-                "name": "Anomalous Magnetic Moment",
+                "name": "Electron anomalous magnetic moment",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The fractional deviation of the gyromagnetic ratio from 2."
+                "description": "A measure of the deviation of the electron's magnetic moment from the value predicted by the Dirac equation."
             },
-            "g": {
-                "name": "Gyromagnetic Ratio",
+            "g_e": {
+                "name": "Electron g-factor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The ratio of the magnetic dipole moment to the angular momentum."
+                "description": "The gyromagnetic ratio of the electron, a proportional constant relating its magnetic moment to its spin angular momentum."
             },
             "\\alpha": {
-                "name": "Fine-Structure Constant",
+                "name": "Fine-structure constant",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The coupling constant of the electromagnetic interaction."
+                "description": "The fundamental coupling constant characterizing the strength of the electromagnetic interaction."
             },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "\\pi": {
-                "name": "Pi constant",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The ratio of a circle's circumference to its diameter (approx. 3.14159)."
-            },
-            "O": {
-                "name": "Operator / Big O Notation",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A mathematical action performed on a state vector, or asymptotic growth boundary."
+            "\\mathcal{O}": {
+                "name": "Big O notation",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Indicates that the neglected terms in the series expansion are of the order of $\\alpha^2$ or higher."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "This relation calculates the first-order quantum electrodynamic (QED) radiative correction to the electron's gyromagnetic ratio $g$, representing the anomalous magnetic moment $a_e$ computed by Julian Schwinger.",
-        "intuitive_summary": "Quantum fluctuations (virtual photon loops) slightly increase the magnetic strength of an electron beyond the value predicted by classical Dirac theory.",
+        "conceptual_definition": "The anomalous magnetic moment of the electron, $a_e$, is defined as the deviation of its gyromagnetic ratio, $g_e$, from the value of 2 predicted by the relativistic Dirac equation. This formula expresses $a_e$ as a perturbative expansion in the fine-structure constant, $\\alpha$. The leading term, $\\frac{\\alpha}{2\\pi}$, is the celebrated one-loop result first calculated by Julian Schwinger, representing the interaction of the electron with virtual photons.",
+        "intuitive_summary": "The Dirac equation suggests an electron's intrinsic magnet is perfectly twice as strong as you'd expect from its spin alone (a g-factor of 2). However, quantum field theory reveals that an electron is constantly interacting with a sea of 'virtual' particles. By briefly emitting and reabsorbing a virtual photon, the electron's magnetic properties are slightly altered. This formula quantifies the dominant part of that alteration, the 'anomaly', which was a major triumph for Quantum Electrodynamics (QED).",
         "subcomponents": [
-            "dirac-gyromagnetic-ratio-for-leptons-2531e2dc",
-            "electron-anomalous-magnetic-moment-409ced13"
-        ]
+            "muon-magnetic-moment-g-factor-341f045b",
+            "perturbation-theory-qft-identity-1-9f7d302d-d1ca6a1e",
+            "electron-anomalous-magnetic-moment-26a2cf45"
+        ],
+        "description": "This formula provides the first-order quantum electrodynamics (QED) correction to the electron's magnetic moment, showing its deviation from the Dirac equation's prediction as a power series in the fine-structure constant.",
+        "parent_formula_id": "muon-magnetic-moment-g-factor-341f045b",
+        "derivation_type": "DERIVED_FROM"
     },
     "metric-tensor-transformation": {
         "title": "Metric Tensor Transformation",
@@ -1933,95 +1915,105 @@
         "derivation_type": "DERIVED_FROM"
     },
     "mass-squared-formula-string-theory": {
-        "title": "Mass Squared Formula (String Theory)",
+        "title": "Mass-Squared Formula for Bosonic String Excitations",
         "equation": "M^2 = \\frac{4}{\\alpha'} \\left( N + \\tilde{N} - 2 \\right)",
-        "conceptual_definition": "The Mass Squared Formula in String Theory, $M^2 = \\frac{4}{\\alpha'} \\left$( N + $\\tilde{N}$ - 2 $\\right$)$, relates the mass squared of a string excitation to its internal quantum numbers. In string theory, fundamental particles are not point-like but rather one-dimensional vibrating strings. The way a string vibrates determines its properties, including its mass and spin. This formula quantifies the discrete spectrum of possible masses for these string states, indicating that only specific mass values are allowed for a given string configuration$.",
-        "intuitive_summary": "The mass of a vibrating string is quantized and depends on the number of vibrational modes it possesses.",
-        "interpretation": "In this formula, $M$ represents the mass of a string excitation, and $M^2$ is its mass squared. The term $\\alpha$' (alpha prime) is a fundamental constant in string theory, related to the string tension, with units of inverse mass squared (or length squared). It sets the fundamental mass scale of the theory. The integers $N$ and $\\tilde{N}$ are quantum numbers that describe the excitation level and internal symmetry state of the string, respectively. Specifically, $N$ counts the number of transverse oscillator modes that are excited, corresponding to the energy of the string state. $\\tilde{N}$ is related to the winding number or other conserved quantities associated with the string's configuration. The term $(N + \\tilde{N} - 2)$ represents the total 'quantum number' of the excitation, where the '-2' often arises from vacuum configurations or zero-point energies. This equation shows that the mass of a string state is directly proportional to the sum of these quantum numbers, implying that higher excitation levels correspond to more massive particles.",
-        "symmetry_origin": "This formula arises from the quantization of the bosonic string, particularly concerning the spectrum of states derived from the Virasoro algebra and conformal symmetry on the string worldsheet. The quantum numbers $N$ and $\\tilde{N}$ are essentially related to the conformal anomaly or the number of excited modes in the fermionic or bosonic sectors of the string, and their sum determines the mass of the resulting particle state according to constraints imposed by the underlying symmetries of string theory, such as Lorentz invariance. The constant $\\alpha$' is related to the dimensionful string coupling constant and ultimately determines the Planck scale.",
-        "limits_and_boundary": "As $N$ and $\\tilde{N}$ approach their minimum allowed values (typically 0 or 1 depending on the specific string theory and particle content, but the structure of the formula implies a minimum excitation), the mass squared $M^2$ approaches its minimum value. For instance, if $N + \\tilde{N} = 2$, $M^2 = 0$, corresponding to massless particles like the photon or graviton in certain string theories. As $N$ and $\\tilde{N}$ become very large, $M^2$ increases linearly with their sum, indicating a tower of increasingly massive states. If $\\alpha$' were to approach infinity, the mass scale would vanish, which is unphysical for a fundamental theory. Conversely, if $\\alpha$' approaches zero, the masses would become infinitely large, suggesting a breakdown of the theory at low energies.",
+        "conceptual_definition": "In bosonic string theory, the mass-squared operator $M^2$ is identified with the worldsheet Hamiltonian, subject to the Virasoro constraints which enforce reparametrization invariance. The quantization of the string's vibrational modes (oscillators) leads to a discrete spectrum of allowed mass states. This formula gives the value of $M^2$ for a physical state characterized by the number operators for left-moving ($N$) and right-moving ($\tilde{N}$) modes.",
+        "intuitive_summary": "Imagine a subatomic string vibrating in spacetime. Just as a guitar string's pitch depends on its vibration, a string's mass depends on its vibrational energy via $E=mc^2$. This formula is the rulebook: more complex vibrations (higher $N$ and $\tilde{N}$) create heavier particles. The formula's structure surprisingly predicts a 'tachyon' (a state with negative mass-squared), indicating an instability in this basic version of string theory, and a set of massless particles, including the graviton.",
+        "interpretation": "In this equation for a closed bosonic string, $M^2$ is the squared mass of a particular vibrational state. The parameter $\\alpha'$ (alpha prime), known as the Regge slope, is a fundamental constant of the theory related to the string tension $T_s$ via $\\alpha' = (2\\pi T_s)^{-1}$ (in natural units where $\\hbar=c=1$). It sets the characteristic energy scale of stringy phenomena. The quantities $N$ and $\\tilde{N}$ are non-negative integers, the eigenvalues of the number operators counting the excitation levels of the left-moving and right-moving modes on the string worldsheet, respectively. For a physical state, the 'level-matching' condition $N = \\tilde{N}$ must be satisfied. The constant term '$-2$' arises from the normal-ordering of the quantum Hamiltonian, representing the regularized zero-point energy of the infinite collection of quantum oscillators.",
+        "symmetry_origin": "The formula is a direct consequence of the symmetries of the Polyakov action, which describes the string's dynamics. Specifically, it arises from imposing the Virasoro constraints (e.g., $L_0 + \\tilde{L}_0 - 2 = 0$ and $L_0 - \\tilde{L}_0 = 0$ for closed strings) on the physical states. These constraints are the quantum mechanical manifestation of the classical worldsheet reparametrization (diffeomorphism) and Weyl invariances.",
+        "limits_and_boundary": "In the low-energy limit, where energy is much less than the string scale (i.e., $\\alpha' \\to 0$), the masses of all excited states ($N+\\tilde{N} > 2$) diverge, effectively decoupling them from the theory. Only the massless states ($N=\\tilde{N}=1$, giving $M^2=0$) and the tachyon ($N=\\tilde{N}=0$, giving $M^2 = -4/\\alpha'$) remain. The existence of the tachyon signifies a vacuum instability in bosonic string theory. The tower of massive states becomes accessible only at energies comparable to the Planck scale.",
         "status": "platinum",
         "semantic_variables": {
-            "M": {
-                "name": "Mass of String Excitation",
+            "M^2": {
+                "name": "Mass-squared",
                 "type": "variable",
-                "unit": "kg",
-                "description": "The mass of a particular vibrational state or excitation of a fundamental string. In string theory, different vibration modes of the string correspond to different fundamental particles with distinct masses."
+                "unit": "GeV^2/c^4",
+                "description": "The squared rest mass of a string excitation state."
             },
             "\\alpha'": {
-                "name": "Inverse String Tension",
+                "name": "Alpha prime (Regge slope)",
                 "type": "constant",
-                "unit": "m^2",
-                "description": "A fundamental constant in string theory, related to the tension of the string. It has dimensions of inverse mass squared (or length squared) and sets the fundamental mass scale of the theory. It is also known as the Regge slope."
+                "unit": "GeV^-2",
+                "description": "A fundamental constant in string theory related to the string tension, setting the characteristic length/energy scale."
             },
             "N": {
-                "name": "Excitation Level Quantum Number",
+                "name": "Left-moving excitation number",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A non-negative integer quantum number representing the number of excited transverse oscillator modes of the string. It is directly related to the energy content of the string state beyond its ground state."
+                "description": "An integer quantum number counting the total excitation level of the left-moving modes on the string worldsheet."
             },
             "\\tilde{N}": {
-                "name": "Internal State Quantum Number",
+                "name": "Right-moving excitation number",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A quantum number related to the internal structure or configuration of the string, often associated with winding numbers or charges related to compactified dimensions or internal symmetries. Its precise interpretation can depend on the specific string theory model."
+                "description": "An integer quantum number counting the total excitation level of the right-moving modes on the string worldsheet."
             }
         },
         "subcomponents": [
-            "rest-mass-squared-term-e09d672d",
-            "mass-squared-of-massless-particles-05ae74ae"
-        ]
+            "fields-theory-identity-1-bcee96a4-d3249ebd",
+            "relativistic-mass-parameter-squared-845f5655",
+            "action-for-scalar-field"
+        ],
+        "description": "This formula provides the quantized mass spectrum for the vibrational modes of a closed bosonic string, relating the mass-squared of a state to its excitation level and the fundamental string tension.",
+        "parent_formula_id": "fields-theory-identity-1-bcee96a4-d3249ebd",
+        "derivation_type": "DERIVED_FROM"
     },
     "relativistic-momentum-transformation-prime": {
-        "title": "Relativistic momentum transformation (prime observer)",
+        "title": "Lorentz Transformation for the x-component of Momentum",
         "equation": "p'_x = \\gamma(p_x - v E/c^2)",
-        "conceptual_definition": "The relativistic momentum transformation formula describes how the momentum of a particle, as measured by one observer, is related to the momentum measured by another observer who is moving at a constant velocity relative to the first. Specifically, this formula shows how the x-component of the momentum measured in a primed reference frame ( p'_x ) is related to the x-component of momentum ( p_x ), the total energy ( E ), the relative velocity ( v ) between the frames, and the speed of light ( c ) as measured in the unprimed frame.",
-        "intuitive_summary": "The momentum measured by a moving observer is a combination of the original momentum and a term related to the particle's energy and the relative velocity between observers.",
-        "interpretation": "This equation, derived from the Lorentz transformations, relates the momentum of a particle in one inertial reference frame to its momentum in another inertial reference frame moving with a constant velocity $v$ relative to the first. The primed frame is moving with velocity $v$ in the x-direction relative to the unprimed frame. The term $p'_x$ represents the x-component of the momentum of a particle as measured by an observer in the primed frame. The term $p_x$ is the x-component of the momentum of the same particle as measured by an observer in the unprimed frame. The total energy of the particle in the unprimed frame is denoted by $E$. The speed of light in vacuum is $c$. The Lorentz factor $\\gamma$ (often written as $\\gamma$ or $\\gamma$) is defined as $\\gamma$= 1 / √(1 - v^2/c^2)$, and it quantifies the relativistic effects that become significant at speeds approaching$c$. The equation shows that the momentum measured in the moving frame is not simply$p_x$but is modified by a term that depends on the particle's energy and the relative velocity. This modification is crucial for maintaining the consistency of physical laws across different inertial frames in special relativity$.",
-        "symmetry_origin": "This transformation arises from the Lorentz transformations, which are the fundamental transformations between inertial reference frames in special relativity. The Lorentz transformations preserve the form of Maxwell's equations and ensure that the speed of light is invariant for all inertial observers. The relativistic momentum transformation ensures that momentum is conserved in all inertial frames, consistent with Noether's theorem and the principle of relativity.",
-        "limits_and_boundary": "In the non-relativistic limit, where $v — c$ and $v — E/c^2$, the Lorentz factor $\\gamma$ approaches 1, and the term $v$ E/c^2$becomes negligible compared to$p_x$. In this limit, the equation reduces to$p'_x — p_x$, which is the classical definition of momentum transformation where momentum is invariant under a change of reference frame along the direction of motion. As$v — c$, the Lorentz factor \\gamma approaches infinity, and the term$v$E/c^2$ also becomes significant, leading to substantial deviations from classical mechanics.",
+        "conceptual_definition": "In special relativity, energy and momentum are components of a single four-vector, the four-momentum $P^\\mu = (E/c, \\mathbf{p})$. This equation is the component of the Lorentz transformation matrix acting on the four-momentum, specifically relating the spatial momentum component $p_x$ in one inertial frame to the corresponding component $p'_x$ in a frame moving with velocity $v$ along the x-axis. It reveals that momentum in one frame is a linear combination of momentum and energy in the other, a hallmark of spacetime mixing.",
+        "intuitive_summary": "Imagine you are on a fast-moving train and you measure the momentum of a ball. Your friend on the ground also measures it. This formula allows your friend to calculate your measurement without getting on the train. Crucially, they need to know not only the ball's momentum but also its total energy, because in relativity, momentum and energy are intertwined.",
+        "interpretation": "This equation relates the momentum of a particle in one inertial reference frame (the 'unprimed' frame $S$) to its momentum in another inertial reference frame (the 'primed' frame $S'$) moving with a constant velocity $v$ along the positive x-axis relative to $S$. The term $p'_x$ represents the x-component of the momentum as measured in frame $S'$. The term $p_x$ is the x-component of the momentum as measured in frame $S$. The total relativistic energy of the particle in frame $S$ is denoted by $E$. The speed of light in vacuum is $c$. The Lorentz factor, $\\gamma = 1 / \\sqrt{1 - v^2/c^2}$, quantifies the strength of relativistic effects. The equation shows that the transformed momentum $p'_x$ is not simply a Galilean-shifted value but is modified by a term proportional to the particle's energy $E$ and the relative velocity $v$, demonstrating the coupling of space and time, and consequently, momentum and energy.",
+        "symmetry_origin": "This transformation law is a direct consequence of the principle of relativity, which postulates that the laws of physics must have the same form in all inertial reference frames. This requirement imposes the symmetry of Lorentz transformations on the coordinates of spacetime, and by extension, on all physical four-vectors, including the four-momentum.",
+        "limits_and_boundary": "In the classical limit where the relative velocity $v$ is much less than the speed of light $c$ ($v \\ll c$), the Lorentz factor $\\gamma \\approx 1$ and the energy is dominated by rest mass, $E \\approx m_0c^2$. The term $vE/c^2 \\approx vm_0c^2/c^2 = vm_0$. The equation then reduces to $p'_x \\approx p_x - v m_0$, which is the Galilean transformation for momentum. In the ultra-relativistic limit ($v \\to c$), $\\gamma \\to \\infty$, and the mixing between energy and momentum becomes maximal, diverging significantly from classical predictions.",
         "status": "platinum",
         "semantic_variables": {
             "p'_x": {
-                "name": "Primed observer's x-component of momentum",
+                "name": "Momentum x-component in primed frame",
                 "type": "variable",
-                "unit": "kg m/s",
-                "description": "The component of the particle's momentum along the x-axis as measured by an observer in the primed reference frame."
+                "unit": "kg⋅m/s",
+                "description": "The x-component of the particle's relativistic momentum as measured in the moving inertial frame S'."
             },
-            "\\pi": {
+            "\\gamma": {
                 "name": "Lorentz factor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The relativistic factor defined as $= 1 / √(1 - v^2/c^2)$. It accounts for relativistic effects at high velocities."
+                "description": "A factor that quantifies the magnitude of relativistic effects, defined as $\\gamma = 1 / \\sqrt{1 - v^2/c^2}$."
             },
             "p_x": {
-                "name": "Unprimed observer's x-component of momentum",
+                "name": "Momentum x-component in unprimed frame",
                 "type": "variable",
-                "unit": "kg m/s",
-                "description": "The component of the particle's momentum along the x-axis as measured by an observer in the unprimed reference frame."
+                "unit": "kg⋅m/s",
+                "description": "The x-component of the particle's relativistic momentum as measured in the stationary inertial frame S."
             },
             "v": {
                 "name": "Relative velocity",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The relative velocity between the primed and unprimed inertial reference frames, directed along the x-axis."
+                "description": "The relative velocity between the two inertial frames, directed along the x-axis."
             },
             "E": {
-                "name": "Total energy",
+                "name": "Total relativistic energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total relativistic energy of the particle as measured in the unprimed reference frame. It is related to mass and momentum by $E^2 = (pc)^2 + (m_0c^2)^2$."
+                "description": "The total energy of the particle (rest energy + kinetic energy) as measured in the stationary inertial frame S."
             },
             "c": {
-                "name": "Speed of light in vacuum",
+                "name": "Speed of light",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "The universal constant representing the speed of light in a vacuum."
+                "description": "The speed of light in a vacuum."
             }
         },
         "subcomponents": [
-            "canonical-momentum-component-in-x-direction-82e7146a"
-        ]
+            "relativistic-energy-mass-equivalence",
+            "relativistic-momentum-equation-26846695",
+            "relativistic-energy-transformation-prime",
+            "relativistic-time-transformation-f42dc78d"
+        ],
+        "description": "Defines the transformation of the x-component of a particle's relativistic momentum between two inertial frames moving at a constant relative velocity.",
+        "parent_formula_id": "four-momentum-0df0b42f",
+        "derivation_type": "DERIVED_FROM"
     },
     "particle-exchange-operator": {
         "title": "Particle Exchange Operator",
@@ -2071,41 +2063,49 @@
         ]
     },
     "poisson-equation-electrostatic-potential": {
-        "title": "Poisson equation for electrostatic potential",
+        "title": "Poisson's Equation for Electrostatic Potential",
         "equation": "\\nabla^2 V = -\\frac{\\rho}{\\epsilon_0}",
-        "conceptual_definition": "The Poisson equation for electrostatic potential is a fundamental partial differential equation in electrostatics that relates the distribution of electric charge within a region to the electrostatic potential in that same region. It is a direct consequence of Gauss's Law for electricity and the definition of electrostatic potential. Essentially, it states that the Laplacian of the electric potential is proportional to the charge density.",
-        "intuitive_summary": "The curvature of the electric potential is directly proportional to the local density of electric charge.",
-        "interpretation": "The equation $\\nabla^2 V = -\\frac{\\rho}{\\epsilon_0}$, where $\\nabla^2$ is the Laplacian operator, $V$ is the electrostatic potential, $\\rho$ is the volume charge density, and $\\epsilon_0$ is the permittivity of free space, establishes a connection between charge distribution and electric potential. The Laplacian operator, $\\nabla^2 V$, quantifies the 'average curvature' or 'local deviation' of the potential field from its immediate surroundings. A positive charge density $\\rho$ (meaning more positive charge than negative charge) results in a negative Laplacian, indicating that the potential tends to decrease around positive charges (as expected, since potential decreases as you approach a positive source). Conversely, a negative charge density leads to a positive Laplacian, implying the potential increases around negative charges. The constant $\\epsilon_0$ dictates the proportionality and is a fundamental property of the vacuum that relates electric fields to their sources. This equation is crucial for solving for the electrostatic potential in regions containing charges, given the charge distribution.",
-        "symmetry_origin": "The Poisson equation is derived from Gauss's Law for electricity ($\\nabla \\times \\mathbf{E} = 0$ in electrostatics, and $\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\epsilon_0}$) combined with the relationship between the electric field and the electric potential, $\\mathbf{E} = -\\nabla V$. Substituting the latter into Gauss's Law yields $\\nabla \\cdot (-\\nabla V) = \\frac{\\rho}{\\epsilon_0}$, which simplifies to $\\nabla^2 V = -\\frac{\\rho}{\\epsilon_0}$. This derivation highlights its origin in the differential form of Gauss's Law, which itself stems from the inverse-square nature of the electrostatic force (Coulomb's Law). The equation is coordinate-invariant, meaning its form remains the same regardless of the chosen coordinate system (Cartesian, spherical, cylindrical, etc.), reflecting the underlying physical symmetries.",
-        "limits_and_boundary": "In regions where there is no charge ($\\rho = 0$), the Poisson equation reduces to Laplace's equation: $\\nabla^2 V = 0$. This equation governs the behavior of the electrostatic potential in charge-free regions and implies that the potential at any point is the average of the potentials of its neighbors. In the asymptotic limit where one moves infinitely far away from any charges, the charge density $\\rho$ approaches zero, and the potential $V$ also typically approaches zero (or a constant value, depending on the boundary conditions), and Laplace's equation would apply. For a localized charge distribution, as $r \\to \\infty$, $V \\to 0$.",
+        "conceptual_definition": "Poisson's equation, $\\nabla^2 V = -\\frac{\\rho}{\\epsilon_0}$, is a second-order partial differential equation that governs the electrostatic potential $V$ in a region of space containing a volume charge density $\\rho$. It is derived by combining Gauss's law for electricity ($\\nabla \\cdot \\mathbf{E} = \\rho/\\epsilon_0$) with the definition of the electrostatic potential in terms of the electric field ($\\mathbf{E} = -\\nabla V$).",
+        "intuitive_summary": "Imagine the electric potential as a flexible surface. Placing a positive charge creates a 'hill' (a local maximum with negative curvature), while a negative charge creates a 'well' (a local minimum with positive curvature). Poisson's equation is the mathematical rule that precisely describes how the shape of this potential surface is determined by the distribution of these charges.",
+        "interpretation": "The equation $\\nabla^2 V = -\\frac{\\rho}{\\epsilon_0}$ links a source, the volume charge density $\\rho$, to a field, the electrostatic potential $V$. The term $\\nabla^2$ is the Laplacian operator, which measures the local curvature of the potential $V$. Where the charge density $\\rho$ is positive, the Laplacian $\\nabla^2 V$ is negative, indicating that the potential function is concave down (like the peak of a hill). This means $V$ is at a local maximum, and its value decreases on average as one moves away from the positive charge. Conversely, where $\\rho$ is negative, $\\nabla^2 V$ is positive, indicating the potential is concave up (like the bottom of a valley), and $V$ is at a local minimum. The constant $\\epsilon_0$, the vacuum permittivity, is a fundamental constant that scales the strength of the electrostatic interaction.",
+        "symmetry_origin": "Derived from Gauss's Law, a cornerstone of classical electromagnetism which respects U(1) gauge symmetry. The potential $V$ itself is not gauge invariant (it can be shifted by a constant, $V \\to V + C$), but the resulting physical electric field $\\mathbf{E} = -\\nabla V$ is, preserving the underlying physics.",
+        "limits_and_boundary": "In a region with zero charge density ($\\rho = 0$), Poisson's equation reduces to Laplace's equation, $\\nabla^2 V = 0$. For a finite, localized charge distribution, a common boundary condition is that the potential vanishes at infinity, $V(\\mathbf{r}) \\to 0$ as $|\\mathbf{r}| \\to \\infty$. This equation is valid only for electrostatics (stationary charges); for time-dependent phenomena, it is generalized into the inhomogeneous wave equation for the potential.",
         "status": "platinum",
         "semantic_variables": {
             "\\nabla^2": {
                 "name": "Laplacian Operator",
                 "type": "operator",
-                "unit": "m^{-2}",
-                "description": "The Laplacian operator is a second-order differential operator defined as the divergence of the gradient. In Cartesian coordinates, it is given by $\\frac{\\partial^2}{\\partial x^2} + \\frac{\\partial^2}{\\partial y^2} + \\frac{\\partial^2}{\\partial z^2}$. It measures the 'curvature' or 'local average difference' of a scalar field."
+                "unit": "m^-2",
+                "description": "The divergence of the gradient of a scalar function, measuring its local curvature."
             },
             "V": {
                 "name": "Electrostatic Potential",
                 "type": "variable",
-                "unit": "V (volts)",
-                "description": "The electrostatic potential is a scalar quantity that represents the amount of electric potential energy per unit charge at a given point in an electric field. It is related to the electric field by $\\mathbf{E} = -\\nabla V$. Its SI unit is the volt (V), where 1 V = 1 J/C."
+                "unit": "V",
+                "description": "The scalar potential associated with the static electric field. The work required per unit charge to move a charge from a reference point to a specific point."
             },
             "\\rho": {
                 "name": "Volume Charge Density",
                 "type": "variable",
                 "unit": "C/m^3",
-                "description": "The volume charge density is the amount of electric charge per unit volume at a given point. It is defined as the limit of the ratio of charge dq to an infinitesimal volume element dV: $\\rho = \\frac{dq}{dV}$. Its SI unit is Coulombs per cubic meter (C/m^3)."
+                "description": "The amount of electric charge per unit volume at a given point in space."
             },
             "\\epsilon_0": {
-                "name": "Permittivity of Free Space",
+                "name": "Vacuum Permittivity",
                 "type": "constant",
-                "unit": "F/m (farads per meter)",
-                "description": "The permittivity of free space, denoted by $\\epsilon_0$, is a fundamental physical constant that quantifies the ability of a vacuum to permit electric fields. It relates electric charge density to the electric field strength. Its SI unit is Farads per meter (F/m), and its approximate value is $8.854 \\times 10^{-12}\\text{ F/m}$."
+                "unit": "F/m",
+                "description": "A fundamental physical constant representing the capability of a vacuum to permit electric field lines."
             }
         },
-        "subcomponents": []
+        "subcomponents": [
+            "electrostatic-fields-identity-1-e31b095e-6940fb43",
+            "action-scalar-potential-source",
+            "technical-relation-45df4bdb",
+            "poisson-equation-for-gravitational-potential-8481dc9c"
+        ],
+        "description": "A fundamental equation of electrostatics that relates the Laplacian of the electrostatic potential to the volume charge density, providing a method to calculate the potential field generated by a given charge distribution.",
+        "parent_formula_id": "electrostatic-fields-identity-1-e31b095e-6940fb43",
+        "derivation_type": "DERIVED_FROM"
     },
     "magnetic-field-from-vector-potential-curl": {
         "title": "Magnetic field as the curl of the vector potential",

@@ -87,55 +87,67 @@
         ]
     },
     "phase-boundary-ce013dfb": {
-        "title": "Out-of-Equilibrium Condition (Boltzmann Suppression)",
+        "title": "Out-of-Equilibrium Condition for Kinetically Trapped States",
         "equation": "n_\\mathrm{eq} \\propto e^{-M/(k_B T)} \\ll n_\\mathrm{actual}",
         "semantic_variables": {
             "n_\\mathrm{eq}": {
                 "name": "Equilibrium Number Density",
                 "type": "variable",
-                "unit": "m^{-3}",
-                "description": "The theoretical number density of particles in a specific state if the system were in thermodynamic equilibrium."
+                "unit": "m⁻³",
+                "description": "The number density of a particle species or state as predicted by statistical mechanics in thermal equilibrium."
             },
             "n_\\mathrm{actual}": {
                 "name": "Actual Number Density",
                 "type": "variable",
-                "unit": "m^{-3}",
-                "description": "The observed or measured number density of particles in that specific state."
+                "unit": "m⁻³",
+                "description": "The observed or actual number density of the particle species or state."
             },
             "M": {
-                "name": "Energy Barrier",
+                "name": "Mass-Energy or Activation Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The characteristic energy that must be overcome for the system to transition into the equilibrium state."
+                "description": "The energy of the state relative to a ground state, often the rest mass-energy ($Mc^2$) of a particle or an activation barrier."
             },
             "k_B": {
                 "name": "Boltzmann Constant",
                 "type": "constant",
-                "unit": "J/K",
-                "description": "A fundamental physical constant relating the average relative kinetic energy of particles in a gas with the thermodynamic temperature of the gas. Value is approximately 1.380649 x 10^{-23} J/K."
+                "unit": "J⋅K⁻¹",
+                "description": "A fundamental constant relating temperature to energy."
             },
             "T": {
-                "name": "Absolute Temperature",
+                "name": "Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "A measure of the average thermal energy available to the system."
+                "description": "The thermodynamic temperature of the thermal bath or background environment."
             },
-            "e": {
-                "name": "Euler's Number",
-                "type": "constant",
+            "\\ll": {
+                "name": "Much Less Than",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The base of the natural logarithm, a mathematical constant approximately equal to 2.71828."
+                "description": "Operator indicating that the left-hand side is several orders of magnitude smaller than the right-hand side."
+            },
+            "\\propto": {
+                "name": "Proportional To",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Operator indicating that the two sides are related by a constant multiplicative factor."
             }
         },
-        "interpretation": "This relation describes a condition for a system being far from thermodynamic equilibrium. The term $n_\\mathrm{eq}$ represents the theoretical number density of a state if the system were in thermal equilibrium, while $n_\\mathrm{actual}$ is the observed density. The equilibrium density is proportional to the Boltzmann factor, $e^{-M/(k_B T)}$, which gives the probability of a state with energy $M$ above a ground state being thermally occupied at a temperature $T$. The condition $n_\\mathrm{eq} \\ll n_\\mathrm{actual}$ signifies that the system is not relaxing to its lowest-energy configuration, often due to kinetic trapping behind the large energy barrier $M$ or because it is being continuously driven by an external source.",
-        "symmetry_origin": "This condition does not arise from a fundamental symmetry but is a consequence of applying statistical mechanics (specifically, the Boltzmann distribution) to non-equilibrium systems. The exponential form originates from the statistical weight of microstates in a canonical ensemble. The inequality signifies a breakdown of the assumptions of ergodicity or detailed balance that would otherwise lead the system to thermal equilibrium.",
-        "limits_and_boundary": "1. High Temperature Limit ($T \\to \\infty$): As temperature becomes very large, the exponent $M/(k_B T) \\to 0$, so $e^{-M/(k_B T)} \\to 1$. The equilibrium density is no longer exponentially suppressed, and the system can more easily overcome the barrier to reach equilibrium.\n2. Low Temperature Limit ($T \\to 0$): For a positive energy barrier $M > 0$, the exponent $M/(k_B T) \\to \\infty$, causing $e^{-M/(k_B T)} \\to 0$. The equilibrium density becomes vanishingly small, making it extremely difficult for the system to thermally populate the state.\n3. No Barrier Limit ($M \\to 0$): If the energy barrier is removed, the exponential factor becomes 1, and the primary driver for the out-of-equilibrium condition is removed, allowing the system to approach equilibrium more readily.",
+        "interpretation": "This relation describes a system that has fallen out of thermodynamic equilibrium. The term $n_\\mathrm{eq}$ represents the theoretical number density of a particle species or energy state if the system were in complete thermal and chemical equilibrium. Its value is proportional to the Boltzmann factor, $e^{-M/(k_B T)}$, which gives the probability of a state with energy $M$ being thermally occupied at a temperature $T$. The term $n_\\mathrm{actual}$ is the observed, non-equilibrium number density. The condition $n_\\mathrm{eq} \\ll n_\\mathrm{actual}$ signifies a profound departure from equilibrium, where a state remains highly populated even though its thermal equilibrium abundance is negligible. This typically occurs when processes that would deplete the state (e.g., particle decay or annihilation) become slower than another relevant timescale, such as the expansion of the universe ('freeze-out') or the cooling of a material, kinetically trapping the system in a metastable configuration.",
+        "symmetry_origin": "This condition arises not from a fundamental symmetry, but from the dynamical competition between microscopic interaction rates, which tend to drive the system towards equilibrium, and a macroscopic timescale (such as the expansion rate of the universe or a cooling rate), which can cause the system to fall out of equilibrium.",
+        "limits_and_boundary": "In the limit of low temperature, $T \\to 0$, the equilibrium density $n_\\mathrm{eq}$ vanishes exponentially due to the Boltzmann factor $e^{-M/(k_B T)} \\to 0$. If $n_\\mathrm{actual}$ remains finite because the system is kinetically trapped, the out-of-equilibrium condition $n_\\mathrm{eq} \\ll n_\\mathrm{actual}$ becomes extremely pronounced. Conversely, in the high-temperature limit, $T \\to \\infty$, the Boltzmann factor approaches 1, energetic suppression is negligible, and the system can easily maintain equilibrium, meaning this condition is not met. This inequality thus defines the boundary for 'freeze-out' phenomena.",
         "status": "platinum",
-        "conceptual_definition": "Describes a system far from thermodynamic equilibrium, where the actual number density of particles in a given state significantly exceeds the theoretical equilibrium density, which is exponentially suppressed by a large energy barrier relative to the thermal energy.",
-        "intuitive_summary": "A system is 'stuck' in a high-energy state because there's a large energy barrier preventing it from relaxing to its much less populated equilibrium state.",
+        "conceptual_definition": "A system is considered far from thermodynamic equilibrium when the observed number density of a particular state, $n_\\mathrm{actual}$, is substantially greater than the number density predicted by statistical mechanics for a system in thermal equilibrium, $n_\\mathrm{eq}$. The equilibrium density is proportional to the Boltzmann factor, $e^{-M/(k_B T)}$, where $M$ is the energy required to access the state (e.g., a mass or activation energy) and $T$ is the temperature of the thermal bath. The condition $n_\\mathrm{eq} \\ll n_\\mathrm{actual}$ indicates that the state is overpopulated relative to its thermal expectation, a phenomenon often referred to as 'freeze-out' or kinetic trapping.",
+        "intuitive_summary": "Imagine a valley with a small village ($n_\\mathrm{eq}$) and a high, isolated plateau with a large city ($n_\\mathrm{actual}$). At very low temperatures (low energy), it's almost impossible for people to climb up to the plateau, so you'd expect the village to be populated and the plateau to be empty. If you find the plateau is crowded, it means the system is not in its 'natural' lowest-energy state. The inhabitants are 'frozen' on the plateau, unable to descend, indicating the system is out of equilibrium.",
         "subcomponents": [
-            "equilibrium-number-density-of-particles-da450ba2"
-        ]
+            "thermal-equilibrium-condition-in-early-universe-bcdd3fcb",
+            "classical-limit-condition-for-fermi-dirac-statistics-56eb0d9c",
+            "boltzmann-h-functional-equilibrium-condition-6f21468b",
+            "past-hypothesis-cosmological-entropy-ident-0d4da675"
+        ],
+        "description": "This inequality defines a state of significant departure from thermodynamic equilibrium, where the actual population of a high-energy state vastly exceeds its expected thermal equilibrium value, which is suppressed by the Boltzmann factor.",
+        "parent_formula_id": "equilibrium-eraser-97a6dc77",
+        "derivation_type": "DERIVED_FROM"
     },
     "quantum-rotation-00ad48d1": {
         "title": "Quantum Rotation",
@@ -634,38 +646,49 @@
         "intuitive_summary": "A statement is considered meaningful if it's either logically true or verifiable by observation."
     },
     "mathematical-buffer-dca9f78d": {
-        "title": "Mathematical Buffer",
+        "title": "Prototypical Logarithmic Divergence Integral",
         "equation": "\\int_0^\\Lambda \\frac{dk}{k} = \\ln(\\Lambda)",
         "semantic_variables": {
-            "\\Lambda": {
-                "name": "Upper Limit of Integration",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The upper bound of the integration range for the variable $k$. In physical contexts, $\\Lambda$ often represents a maximum momentum, energy, or cutoff scale."
-            },
             "k": {
-                "name": "Integration Variable",
+                "name": "Scale Parameter",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The variable of integration. In physics, $k$ commonly represents a wavevector or momentum. For this integral to be dimensionless, $k$ must also be considered dimensionless or have units such that $dk/k$ is dimensionless. This often means $k$ represents a ratio of physical quantities or has units implicitly handled by context."
+                "unit": "Varies (e.g., 1/m, J, kg*m/s)",
+                "description": "A continuous integration variable representing a physical scale, such as momentum, wavevector, or energy."
+            },
+            "\\Lambda": {
+                "name": "Cutoff Scale",
+                "type": "variable",
+                "unit": "Varies (Same as k)",
+                "description": "The upper limit of integration, representing an ultraviolet (UV) cutoff or the maximum scale of validity for a physical theory."
+            },
+            "\\int": {
+                "name": "Integral Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "The operator for definite integration, summing infinitesimal contributions from a lower to an upper bound."
             },
             "\\ln": {
-                "name": "\\ln Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "name": "Natural Logarithm",
+                "type": "operator",
+                "unit": "Dimensionless",
+                "description": "The logarithm to the base $e$."
             }
         },
-        "interpretation": "The equation $\\int_0^\\Lambda \\frac{dk}{k} = \\ln(\\Lambda)$ involves the integration of the function $f(k) = 1/k$ with respect to $k$. The variable $k$ represents a continuous quantity, often interpreted as a momentum, wavevector, or some characteristic scale in physics. The integral from 0 to $\\Lambda$ signifies summing up infinitesimal contributions $dk/k$ over this range. The upper limit of integration is $\\Lambda$, which represents the maximum value of $k$ considered. The result of this integration, $\\ln(\\Lambda)$, is the natural logarithm of the upper limit. The term $dk/k$ is scale-invariant, meaning that if you change the unit of $k$ by a factor $a$, both $dk$ and $k$ change by $a$, leaving $dk/k$ unchanged. This is why the integral yields a dimensionless quantity (a logarithm). The divergence at $k=0$ implies that this formula, as written, is generally used in a context where $k$ has a physical lower bound $k_{min}$ greater than zero, or where the divergence is regulated. For example, in quantum field theory, such integrals appear when considering loop diagrams and are typically regulated by introducing a lower cutoff or using dimensional regularization.",
-        "symmetry_origin": "This integral represents a summation over scales. The integrand $1/k$ is scale-invariant in the sense that $(a \\frac{dk}{k} )) = \\frac{dk}{k} for a scaling factor$a$. This scale invariance is a fundamental concept in physics, related to symmetries. For instance, in renormalization group flow, the change in physical quantities as a function of scale is often described by equations where such logarithmic dependencies appear. The derivation originates from the fundamental calculus rule for integration: \\frac{d}{dx} \\text{ln}(x) = \\frac{1}{x} . Therefore, \\text {ln}(x) is the antiderivative of$1/x$. The definite integral is then evaluated using the fundamental theorem of calculus$.",
-        "limits_and_boundary": "As $\\Lambda \\to 0^+$, $\\ln(\\Lambda)$ approaches negative infinity, indicating that summing over an infinitesimally small range above zero leads to a diverging negative contribution. As $\\Lambda \\to ∞$, $\\ln(\\Lambda)$ approaches positive infinity, indicating that summing over an ever-increasing range of scales leads to an ever-increasing cumulative effect. The lower integration limit being 0 is problematic as $1/k$ diverges at $k=0$. A physically meaningful integral would typically have a lower limit $k_{min} > 0$, in which case the result is $\\ln(\\Lambda/k_{min})$. As $\\Lambda \\to k_{min}$, the integral approaches 0, as expected for a vanishing integration range.",
+        "interpretation": "The expression $\\int_0^\\Lambda \\frac{dk}{k} = \\ln(\\Lambda)$ is a foundational result in theories exhibiting scale invariance. The variable $k$ typically represents a physical scale like momentum, wavevector, or energy. The differential element $dk/k$ is the key feature, being invariant under a rescaling $k \\to a k$. The upper limit $\\Lambda$ is a cutoff, representing either a physical boundary where the theory breaks down (e.g., the Planck scale) or a mathematical tool (a regulator) to handle an ultraviolet divergence. The lower limit of $0$ causes the integral to diverge (an infrared divergence); in any physical application, an implicit or explicit lower cutoff $k_{min} > 0$ (like a mass $m$) is present, yielding $\\int_{k_{min}}^\\Lambda \\frac{dk}{k} = \\ln(\\Lambda/k_{min})$. The logarithmic dependence on the cutoff is a hallmark of renormalizable quantum field theories.",
+        "symmetry_origin": "The integral's structure originates from scale invariance. The measure $dk/k$ is invariant under the dilatation group transformation $k \\to \\alpha k$, where $\\alpha$ is a constant. This symmetry is central to conformal field theories and the renormalization group, where physical laws retain their form across different energy scales.",
+        "limits_and_boundary": "The integral exhibits two characteristic divergences. In the ultraviolet limit, as the cutoff $\\Lambda \\to \\infty$, the integral diverges as $\\ln(\\Lambda) \\to \\infty$. In the infrared limit, as the implicit lower bound $k_{min} \\to 0$, the integral diverges as $\\ln(1/k_{min}) \\to \\infty$. These logarithmic divergences are considered 'mild' in physics and are systematically handled by the procedure of renormalization.",
         "status": "platinum",
-        "conceptual_definition": "The formula $\\int_0^\\Lambda \\frac{dk}{k} = \\ln$( $\\Lambda$) is a mathematical identity representing the definite integral of $1/k$ from an unspecified lower limit (implicitly taken as 1 for the logarithmic form) to an upper limit $\\Lambda$. While presented here as a direct mathematical result, its physical significance often arises in contexts where $k$ represents a momentum or wavevector, and the integration represents a summation over a range of these quantities. The result indicates that the 'contribution' from summing over scales up to $\\Lambda$ grows logarithmically with $\\Lambda$. The notation $'\\int_0^\\Lambda$' in this specific context is problematic because the integrand $1/k$ diverges at $k=0$. A physically meaningful integral typically requires a non-zero lower limit, such as $\\int_{k_{min}}^\\Lambda \\frac{dk}{k} = \\ln$( $\\Lambda$) - $\\ln$(k_{min}) = $\\ln$( $\\Lambda$/k_{min})$. The presented equation is thus best understood as a symbolic representation or a limit where the divergence at the lower bound is handled by context or regularization$.",
-        "intuitive_summary": "The cumulative effect of summing contributions across a range of scales up to $\\Lambda$ grows proportionally to the logarithm of $\\Lambda$.",
+        "conceptual_definition": "This equation defines the definite integral of the function $f(k) = 1/k$ from a lower limit of $0$ to an upper cutoff scale $\\Lambda$. The integration measure $dk/k$ is equivalent to $d(\\ln k)$, signifying that the integral sums contributions weighted evenly across logarithmic intervals of the scale $k$. The result, $\\ln(\\Lambda)$, highlights the logarithmic divergence as the upper limit $\\Lambda \\to \\infty$ and the implicit divergence at the lower limit $k=0$.",
+        "intuitive_summary": "Imagine summing up effects across different scales, from tiny to vast. If each 'doubling' of the scale (e.g., from 1 to 2, then 2 to 4, then 4 to 8) contributes the same amount, the total sum doesn't explode but grows slowly, like the logarithm of the largest scale you consider. This integral is the mathematical embodiment of that slow, logarithmic accumulation.",
         "subcomponents": [
-            "flat-universe-curvature-condition-88ca2849",
-            "lambda-approaches-infinity-limit-108d209d"
-        ]
+            "scale-dependence-ontology-identity-1-6d6f4e59-1c4a252a",
+            "electrostatic-potential-line-charge",
+            "magnetic-vector-potential-straight-wire",
+            "resolution-limit-1db275f8"
+        ],
+        "description": "A fundamental integral representing the integration over a scale-invariant measure, which characteristically appears in physics to produce logarithmic dependencies on energy or momentum cutoffs, particularly in the context of renormalization.",
+        "parent_formula_id": "scale-dependence-ontology-identity-1-6d6f4e59-1c4a252a",
+        "derivation_type": "SPECIAL_CASE"
     },
     "commutation-relations-794c3c03": {
         "title": "Commutation Relations",
@@ -1312,37 +1335,42 @@
         ]
     },
     "sum-external-forces-zero": {
-        "title": "Sum of external forces is zero",
+        "title": "Condition for Translational Equilibrium",
         "equation": "\\sum \\mathbf{F}^{(ext)} = 0",
-        "conceptual_definition": "The formula $\\sum \\mathbf{F}^{(ext)} = 0$ represents Newton's first law of motion, also known as the law of inertia. It states that an object will remain at rest or continue to move with a constant velocity in a straight line unless acted upon by a net external force. In vector form, this means that if the vector sum of all forces acting on a system is zero, the system's state of motion will not change.",
-        "intuitive_summary": "If all pushes and pulls on an object cancel each other out perfectly, it will either stay still or keep moving at the same speed and direction.",
-        "interpretation": "The equation $\\sum \\mathbf{F}^{(ext)} = 0$ is a fundamental principle in classical mechanics. The symbol $\\sum$ denotes the summation or the vector sum of all forces. The term $\\mathbf{F}^{(ext)}$ represents an external force acting on the system of interest. 'External' signifies that these forces originate from sources outside the defined system. The superscript '(ext)' is used to distinguish external forces from internal forces, which act between components within the system. The bold font for $\\mathbf{F}^{(ext)}$ indicates that force is a vector quantity, possessing both magnitude and direction. Therefore, $\\sum \\mathbf{F}^{(ext)} = 0$ implies that the vector sum of all these external forces, when considering their directions, must result in a zero vector. This condition is met if the object is at rest or, if it is in motion, it continues to move with a constant velocity (i.e., constant speed and direction).",
-        "symmetry_origin": "This equation is a direct consequence of Newton's First Law of Motion. Its origin is empirical, based on observations of how objects behave. It is also deeply connected to the principle of conservation of linear momentum. If the net external force on a system is zero, then the total linear momentum of the system remains constant.",
-        "limits_and_boundary": "As the magnitude of the individual external forces approaches zero, their vector sum also approaches zero, satisfying the condition for constant velocity (including the case of zero velocity, i.e., rest). Conversely, if the sum of external forces is very large, the object will experience a significant change in its state of motion, leading to acceleration.",
+        "conceptual_definition": "The equation $\\sum \\mathbf{F}^{(ext)} = 0$ is the mathematical statement for translational equilibrium in classical mechanics. It dictates that if the vector sum of all forces originating from outside a defined system is the zero vector, the system's total linear momentum is conserved. Consequently, the system's center of mass will either remain at rest or move with a constant velocity.",
+        "intuitive_summary": "Imagine a multi-sided tug-of-war. If all the teams pulling on a central object are perfectly balanced, their forces cancel out, and the object doesn't accelerate. This equation is the universal rule for that balance: when all external pushes and pulls on a system sum to zero, its state of motion remains unchanged.",
+        "interpretation": "The formula $\\sum \\mathbf{F}^{(ext)} = 0$ represents a fundamental condition in Newtonian dynamics. The symbol $\\sum$ denotes the vector summation over all relevant forces. The term $\\mathbf{F}^{(ext)}$ represents an individual external force, which is a vector quantity possessing both magnitude and direction. The superscript '(ext)' is crucial, as it distinguishes these forces from internal forces (forces between particles within the system), which sum to zero by Newton's Third Law. The equation asserts that the net result of adding all external force vectors must be the zero vector, $\\mathbf{0}$. This is the necessary and sufficient condition for the total linear momentum $\\mathbf{P}$ of the system to be constant ($d\\mathbf{P}/dt = 0$), a state known as translational equilibrium.",
+        "symmetry_origin": "This condition is a direct consequence of the conservation of linear momentum, which, by Noether's theorem, arises from the fundamental symmetry of physical laws under spatial translation (homogeneity of space). The equation $\\sum \\mathbf{F}^{(ext)} = 0$ specifies the circumstance under which a system's momentum is conserved, even in the presence of external interactions.",
+        "limits_and_boundary": "This principle is a cornerstone of classical, non-relativistic mechanics, valid for velocities $v \\ll c$. In the relativistic limit ($v \\to c$), the concept is generalized using four-forces and four-momentum. The formula operates in the classical domain where quantum effects are negligible (the limit $\\hbar \\to 0$). It applies universally to macroscopic systems regardless of their scale, provided they can be analyzed within a single inertial reference frame.",
         "status": "platinum",
         "semantic_variables": {
-            "\\sum \\mathbf{F}^{(ext)}": {
-                "name": "Sum of External Forces",
-                "type": "operator",
-                "unit": "N",
-                "description": "The vector sum of all forces exerted on a system by its surroundings. It is a vector quantity representing the net effect of all external influences on the system's motion."
-            },
             "\\mathbf{F}^{(ext)}": {
                 "name": "External Force",
                 "type": "variable",
                 "unit": "N",
-                "description": "An individual force acting on the system from an agent outside the system's boundaries. This includes forces like gravity, tension, friction, normal force, applied forces, etc."
+                "description": "A force exerted on a component of the system by an agent outside the defined system."
+            },
+            "\\sum": {
+                "name": "Summation Operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "An operator that performs a vector sum over all specified external forces."
             },
             "0": {
                 "name": "Zero Vector",
                 "type": "constant",
                 "unit": "N",
-                "description": "Represents the absence of a net external force. It is a vector with zero magnitude and no specific direction, indicating that the vector sum of all external forces results in no change in the system's velocity."
+                "description": "The additive identity in the vector space of forces, a vector with zero magnitude."
             }
         },
         "subcomponents": [
-            "summation-operator-7231fa80"
-        ]
+            "external-force-on-particle-i-6d12a5dc",
+            "total-external-force",
+            "sum-internal-forces-newtons-third-law"
+        ],
+        "description": "Establishes the condition for a system's translational equilibrium, stating that the vector sum of all external forces acting on the system must be zero for its center of mass to have zero acceleration.",
+        "parent_formula_id": "net-external-force-law-fa53d667",
+        "derivation_type": "SPECIAL_CASE"
     },
     "total-derivative-function-positions": {
         "title": "Condition for a Stationary Point / Principle of Virtual Work",

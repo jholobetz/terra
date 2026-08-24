@@ -904,49 +904,42 @@
         "subcomponents": []
     },
     "heuristic-proof-1fdc23d6": {
-        "title": "Heuristic Proof",
+        "title": "Uniqueness Theorem for Laplace's Equation (Difference of Potentials)",
         "equation": "\\nabla^2 (V_1 - V_2) = 0",
         "semantic_variables": {
-            "∇²": {
+            "\\nabla^2": {
                 "name": "Laplacian Operator",
-                "type": "constant",
-                "unit": "1/m^2",
-                "description": "The Laplacian operator is a second-order differential operator, representing the divergence of the gradient of a scalar function. In Cartesian coordinates, it is given by ∇² = ∂²/∂x² + ∂²/∂y² + ∂²/∂z²."
+                "type": "operator",
+                "unit": "m^-2",
+                "description": "The divergence of the gradient of a scalar field, representing the flux density of the gradient flow."
             },
             "V_1": {
-                "name": "First Scalar Potential",
+                "name": "Scalar Potential Field 1",
                 "type": "variable",
                 "unit": "V",
-                "description": "The first scalar potential function. In electrostatics, this would be the electric potential (in Volts). It is assumed to be twice continuously differentiable and satisfy Laplace's equation (∇²V_1 = 0) within the domain of interest."
+                "description": "The first of two scalar potential fields, assumed to be a solution to Laplace's equation in the context of the uniqueness proof."
             },
             "V_2": {
-                "name": "Second Scalar Potential",
+                "name": "Scalar Potential Field 2",
                 "type": "variable",
                 "unit": "V",
-                "description": "The second scalar potential function. Similar to V_1, it represents a physical potential (e.g., electric potential). It is also assumed to be twice continuously differentiable and satisfy Laplace's equation (∇²V_2 = 0) within the domain of interest."
-            },
-            "(V_1 - V_2)": {
-                "name": "Difference of Scalar Potentials",
-                "type": "variable",
-                "unit": "V",
-                "description": "The difference between the two scalar potentials, V_1 and V_2. If V_1 and V_2 are harmonic functions, their difference is also a harmonic function, meaning its Laplacian is zero."
-            },
-            "V": {
-                "name": "Electric Potential",
-                "type": "variable",
-                "unit": "V",
-                "description": "The amount of work energy needed to move a unit of electric charge from a reference point to a specific point in an electric field."
+                "description": "The second of two scalar potential fields, assumed to be a solution to Laplace's equation in the context of the uniqueness proof."
             }
         },
-        "interpretation": "The equation ∇² (V_1 - V_2) = 0 describes a property of the Laplacian operator, denoted by ∇², when applied to the difference of two scalar functions, V_1 and V_2. The Laplacian operator is a second-order differential operator, defined in Cartesian coordinates as ∇² = ∂²/∂$x^2$ + ∂²/∂y² + ∂²/∂z². The equation states that the Laplacian of the difference (V_1 - V_2) is zero. A function whose Laplacian is zero is called a harmonic function. This equation has a crucial implication: if V_1 and V_2 are both harmonic functions (i.e., ∇²V_1 = 0 and ∇²V_2 = 0), then their difference (V_1 - V_2) must also be harmonic, because the Laplacian operator is linear. That is, ∇²(V_1 - V_2) = ∇²V_1 - ∇²V_2 = 0 - 0 = 0. Conversely, if the difference (V_1 - V_2) is harmonic and one of the potentials (say V_1) is also harmonic, then V_2 must also be harmonic.",
-        "symmetry_origin": "This equation arises from the linearity of the Laplacian operator, which is a direct consequence of the linearity of partial differentiation. If a function Φ is a solution to Laplace's equation (∇²Φ = 0), it implies that the function represents a physical quantity (like electric potential or fluid velocity potential) that has no sources or sinks within the domain of interest. The linearity of the Laplacian ensures that the difference between any two such source-free potentials is also a source-free potential. This is a fundamental property in potential theory and is used extensively in superposition principles.",
-        "limits_and_boundary": "In the context of potential theory, if V_1 and V_2 are harmonic functions within a domain, then their difference (V_1 - V_2) is also harmonic, meaning ∇²(V_1 - V_2) = 0 everywhere inside the domain. If we consider boundary conditions, the behavior of (V_1 - V_2) on the boundary is determined by the boundary conditions of V_1 and V_2. For instance, if V_1 and V_2 are solutions to the Dirichlet problem with the same boundary values, then (V_1 - V_2) will be zero everywhere within the domain, implying V_1 = V_2. If they satisfy the Neumann problem with zero normal derivative on the boundary, then the normal derivative of (V_1 - V_2) will also be zero, but the difference might not be zero everywhere, only constant within connected components of the domain.",
+        "interpretation": "This equation is the foundation of the first uniqueness theorem for Poisson's equation. Here, $\\nabla^2$ is the Laplacian operator, which measures the 'curvature' or local average of a field. $V_1$ and $V_2$ are two scalar potential fields, for example, two possible electrostatic potentials in a charge-free region. The equation states that the Laplacian of the difference potential, $V_d = V_1 - V_2$, is zero. This means $V_d$ is a harmonic function. If we further specify that $V_1$ and $V_2$ must match on the boundary of the region, then $V_d$ is a harmonic function that is zero everywhere on the boundary. By the maximum principle for harmonic functions, this implies $V_d$ must be zero everywhere inside the region, proving that $V_1 = V_2$ and the solution is unique.",
+        "symmetry_origin": "The validity of this equation stems from the mathematical property of linearity of the Laplacian operator ($\\nabla^2$), which is a second-order linear partial differential operator. It does not arise directly from a physical symmetry via Noether's theorem, but from the structure of the differential equations governing potential fields.",
+        "limits_and_boundary": "The primary application of this formula is in the context of boundary value problems. According to the uniqueness theorem, if two functions $V_1$ and $V_2$ satisfy Laplace's equation $\\nabla^2 V = 0$ within a volume $\\mathcal{V}$, and if $V_1 = V_2$ on the entire boundary surface $\\mathcal{S}$ of that volume, then $V_1$ must equal $V_2$ throughout the entire volume $\\mathcal{V}$. This is because their difference $V_d = V_1 - V_2$ satisfies $\\nabla^2 V_d = 0$ inside $\\mathcal{V}$ and $V_d = 0$ on $\\mathcal{S}$, which forces $V_d=0$ everywhere.",
         "status": "platinum",
-        "conceptual_definition": "The equation ∇² (V_1 - V_2) = 0 is a statement within potential theory, specifically relating to harmonic functions. It asserts that the difference between two scalar potentials, V_1 and V_2, is a harmonic function if and only if both V_1 and V_2 individually satisfy Laplace's equation, ∇²V = 0, within the domain where the difference is considered and assuming these potentials are well-behaved (e.g., twice continuously differentiable). This equation is fundamental in fields such as electrostatics and fluid dynamics where potentials are used to describe physical phenomena.",
-        "intuitive_summary": "The difference between two potentials that individually satisfy Laplace's equation is also a potential that satisfies Laplace's equation.",
+        "conceptual_definition": "The equation $\\nabla^2 (V_1 - V_2) = 0$ is a statement about the solutions to Laplace's equation. It follows directly from the linearity of the Laplacian operator, $\\nabla^2$. If two distinct scalar potentials, $V_1$ and $V_2$, are both harmonic functions (i.e., they satisfy Laplace's equation $\\nabla^2 V_1 = 0$ and $\\nabla^2 V_2 = 0$), then their difference, $V_d = V_1 - V_2$, must also be a harmonic function, as $\\nabla^2(V_1 - V_2) = \\nabla^2 V_1 - \\nabla^2 V_2 = 0 - 0 = 0$.",
+        "intuitive_summary": "Imagine two different rubber sheets stretched over the same frame. This principle is the mathematical core of the idea that if both sheets follow the same physical law (Laplace's equation) and are fixed to the same height at the edges (boundary conditions), they must have the exact same shape everywhere. Any difference between them would also have to obey the law, but since the difference is zero at the edges, it must be zero everywhere.",
         "subcomponents": [
-            "squared-spatial-displacement-component-32f5240d"
-        ]
+            "laplaces-equation-for-scalar-potential-03aa8511",
+            "energy-hill-aac310fe",
+            "existence-proof-8e245a22"
+        ],
+        "description": "This equation establishes that the difference between two solutions to Laplace's equation is itself a solution, a key step in proving the uniqueness of solutions to electrostatic and other potential theory problems given specific boundary conditions.",
+        "parent_formula_id": "laplaces-equation-for-scalar-potential-03aa8511",
+        "derivation_type": "DERIVED_FROM"
     },
     "geometric-repulsion-92d37f6e": {
         "title": "Geometric Repulsion",
@@ -1009,49 +1002,72 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "invariant-lagrangian-ce611aa8": {
-        "title": "Lorentz Invariance of the Lagrangian",
+        "title": "Lorentz Invariance of the Lagrangian Density",
         "equation": "\\mathcal{L}'(\\phi'(x'), \\partial'_{\\mu}\\phi'(x')) = \\mathcal{L}(\\phi(x), \\partial_{\\mu}\\phi(x))",
         "semantic_variables": {
             "\\mathcal{L}": {
                 "name": "Lagrangian Density",
                 "type": "variable",
-                "unit": "J/m³",
-                "description": "A scalar function of fields and their derivatives that defines the dynamics of a physical system. Its integral over spacetime is the action."
+                "unit": "J/m^3",
+                "description": "The Lagrangian per unit volume, a scalar function from which the system's equations of motion are derived."
+            },
+            "\\mathcal{L}'": {
+                "name": "Transformed Lagrangian Density",
+                "type": "variable",
+                "unit": "J/m^3",
+                "description": "The Lagrangian density as expressed in the new, Lorentz-transformed reference frame."
             },
             "\\phi": {
                 "name": "Field",
                 "type": "variable",
-                "unit": "field-dependent",
-                "description": "A physical quantity that has a value for each point in spacetime. It can be a scalar, vector, spinor, or tensor field."
+                "unit": "Varies by theory (e.g., energy in natural units for a scalar field in 4D)",
+                "description": "A physical quantity that has a value for each point in spacetime, e.g., a scalar, vector, or spinor field."
+            },
+            "\\phi'": {
+                "name": "Transformed Field",
+                "type": "variable",
+                "unit": "Varies by theory",
+                "description": "The field as it is represented in the new, Lorentz-transformed reference frame."
             },
             "x": {
-                "name": "Spacetime Four-Vector",
+                "name": "Spacetime 4-vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "A four-component vector $x = (ct, x, y, z)$ that specifies a point in Minkowski spacetime."
+                "description": "A vector in 4-dimensional Minkowski space representing a point in spacetime, $x = (ct, \\mathbf{x})$."
+            },
+            "x'": {
+                "name": "Transformed Spacetime 4-vector",
+                "type": "variable",
+                "unit": "m",
+                "description": "The spacetime coordinates in the new reference frame after a Lorentz transformation, $x' = \\Lambda x$."
             },
             "\\partial_{\\mu}": {
-                "name": "Four-Gradient",
+                "name": "Covariant 4-gradient",
                 "type": "operator",
-                "unit": "m⁻¹",
-                "description": "The four-dimensional gradient operator, $\\partial_{\\mu} = (\\frac{1}{c}\\frac{\\partial}{\\partial t}, \\nabla)$, which computes the rate of change of a quantity with respect to spacetime coordinates."
+                "unit": "m^-1",
+                "description": "The partial derivative operator with respect to the four spacetime coordinates $x^\\mu$, written as $(\\frac{\\partial}{\\partial(ct)}, \\nabla)$."
             },
-            "\\mathcal{L}', \\phi', x', \\partial'_{\\mu}": {
-                "name": "Transformed Quantities",
-                "type": "variable",
-                "unit": "same as unprimed",
-                "description": "The corresponding Lagrangian, field, spacetime coordinate, and gradient operator in a new inertial reference frame related to the original by a Lorentz transformation."
+            "\\partial'_{\\mu}": {
+                "name": "Transformed Covariant 4-gradient",
+                "type": "operator",
+                "unit": "m^-1",
+                "description": "The partial derivative operator with respect to the transformed spacetime coordinates $x'^{\\mu}$."
             }
         },
-        "interpretation": "This equation expresses the principle of Lorentz invariance for a Lagrangian field theory. The dynamics of a system of fields $\\phi(x)$ are encoded in the Lagrangian density, $\\mathcal{L}$, which is a function of the fields and their spacetime derivatives $\\partial_{\\mu}\\phi$. The total action $S$ is the integral of $\\mathcal{L}$ over all spacetime, $S = \\int \\mathcal{L} \\, \\mathrm{d}^4x$. For the laws of physics to be the same in all inertial reference frames, the action $S$ must be a Lorentz scalar (i.e., invariant under Lorentz transformations). This is guaranteed if the Lagrangian density $\\mathcal{L}$ itself transforms as a scalar field. A Lorentz transformation maps spacetime coordinates $x$ to $x' = \\Lambda x$ and fields $\\phi(x)$ to $\\phi'(x')$. The equation states that the new Lagrangian $\\mathcal{L}'$, expressed in terms of the new fields $\\phi'$ and their derivatives $\\partial'_{\\mu}\\phi'$ at the new point $x'$, has the same value as the original Lagrangian $\\mathcal{L}$ at the original point $x$. This invariance is the cornerstone of relativistic quantum field theory, including the Standard Model of particle physics.",
-        "symmetry_origin": "The origin is the principle of relativity, which postulates that the laws of physics are invariant under transformations between inertial reference frames. In special relativity, these transformations form the Poincaré group, which includes spacetime translations and Lorentz transformations (rotations and boosts). The invariance of the action under the continuous symmetries of the Poincaré group leads, via Noether's theorem, to fundamental conservation laws: invariance under time translation implies conservation of energy, invariance under spatial translations implies conservation of momentum, and invariance under rotations implies conservation of angular momentum.",
-        "limits_and_boundary": "1. In the non-relativistic limit, where all velocities are much smaller than the speed of light ($v \\ll c$), the Lorentz group 'contracts' to the Galilean group. A relativistic Lagrangian density, when integrated over space, should reduce to the familiar non-relativistic Lagrangian $L = T - V$ (kinetic minus potential energy).\n2. In the limit of flat spacetime (where the metric tensor $g_{\\mu\\nu}$ approaches the Minkowski metric $\\eta_{\\mu\\nu}$), this principle defines relativistic field theories in the framework of Special Relativity. The principle can be generalized to curved spacetime (General Relativity) by requiring the Lagrangian to be a scalar under general coordinate transformations, a principle known as general covariance.",
+        "interpretation": "The equation $\\mathcal{L}'(\\phi'(x'), \\partial'_{\\mu}\\phi'(x')) = \\mathcal{L}(\\phi(x), \\partial_{\\mu}\\phi(x))$ is a statement of scalar invariance. Here, $\\mathcal{L}(\\phi(x), \\partial_{\\mu}\\phi(x))$ is the Lagrangian density in an initial inertial frame, defined as a function of a field $\\phi$ and its four-gradient $\\partial_{\\mu}\\phi$ at a spacetime point $x$. The term $\\mathcal{L}'(\\phi'(x'), \\partial'_{\\mu}\\phi'(x'))$ represents the same physical system's Lagrangian density as observed in a new inertial frame. The coordinates $x'$ and fields $\\phi'$ are related to the original ones by a Lorentz transformation. For a scalar field, the transformation rule is simply $\\phi'(x') = \\phi(x)$. The equality asserts that the Lagrangian density behaves as a scalar field: its value at a physical point is independent of the inertial frame used to label that point. This invariance is a cornerstone of relativistic quantum field theory, as it guarantees the action $S$ is a Lorentz scalar, leading to equations of motion that are covariant.",
+        "symmetry_origin": "This is a direct consequence of the Principle of Relativity, which demands that the laws of physics are invariant under the geometric transformations of the Poincaré group (specifically, the Lorentz subgroup, which includes rotations and boosts).",
+        "limits_and_boundary": "In the low-velocity limit ($v \\ll c$), Lorentz transformations reduce to Galilean transformations, and this condition ensures consistency with non-relativistic physics. As $v \\to c$, this invariance is essential for maintaining a consistent description of phenomena like time dilation and length contraction. In the classical limit ($\\hbar \\to 0$), this principle remains fundamental, governing classical relativistic field theories such as Maxwell's electromagnetism. The condition is local and must hold at every point in spacetime for a theory to be considered fundamentally relativistic.",
         "status": "platinum",
-        "conceptual_definition": "For a physical theory to be consistent with special relativity, its Lagrangian density must be a Lorentz scalar. This means its functional form and value at a physical spacetime point are unchanged by a Lorentz transformation of the coordinates and fields.",
-        "intuitive_summary": "The fundamental equation describing the dynamics of a system must look the same to all observers moving at constant velocities.",
+        "conceptual_definition": "This equation expresses the principle of Lorentz invariance for a Lagrangian field theory. The dynamics of a system of fields $\\phi(x)$ are encoded in the Lagrangian density, $\\mathcal{L}$, which is a function of the fields and their spacetime derivatives $\\partial_{\\mu}\\phi$. For the laws of physics to be the same in all inertial reference frames, the action $S = \\int \\mathcal{L} \\, \\mathrm{d}^4x$ must be a Lorentz scalar. This is guaranteed if the Lagrangian density $\\mathcal{L}$ itself transforms as a scalar. A Lorentz transformation maps spacetime coordinates $x$ to $x' = \\Lambda x$ and fields $\\phi(x)$ to $\\phi'(x')$. The equation states that the new Lagrangian $\\mathcal{L}'$, expressed in terms of the new fields $\\phi'$ and their derivatives $\\partial'_{\\mu}\\phi'$ at the new point $x'$, has the same value as the original Lagrangian $\\mathcal{L}$ at the original point $x$.",
+        "intuitive_summary": "Imagine a physical law described by a function. If you look at this law from a different moving viewpoint (a Lorentz transformation), the function's value and form don't change. This ensures that the fundamental rules of the universe are consistent for all observers in uniform motion.",
         "subcomponents": [
-            "action-integral-definition-a264af77"
-        ]
+            "lagrangian-density-for-fields-630017df",
+            "action-for-scalar-field",
+            "real-scalar-field-lagrangian-density-f0153dc8"
+        ],
+        "description": "This equation establishes that the Lagrangian density, which governs a system's dynamics, must be a scalar under Lorentz transformations, ensuring the laws of physics are identical in all inertial reference frames.",
+        "parent_formula_id": "geometric-group-invariance-cf95e8f4",
+        "derivation_type": "SPECIAL_CASE"
     },
     "fermi-dirac-distribution-6b18fd8b": {
         "title": "Fermi-Dirac Distribution (Fermi-Dirac Statistics)",

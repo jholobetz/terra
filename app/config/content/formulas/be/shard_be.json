@@ -997,32 +997,43 @@
         ]
     },
     "gravitational-heating-law-f95d2b6b": {
-        "title": "Gravitational Heating Law",
+        "title": "Gravitational Virial Theorem (Heating Law)",
         "equation": "\\Delta E_{\\mathrm{int}} = -\\frac{1}{2} \\Delta V_{\\mathrm{grav}}",
         "semantic_variables": {
             "\\Delta E_{\\mathrm{int}}": {
                 "name": "Change in Internal Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The change in the total internal energy of the system, typically the sum of the kinetic energies of its constituent particles."
+                "description": "The change in the total internal energy of the system, which for an ideal gas corresponds to the change in its total thermal kinetic energy."
             },
             "\\Delta V_{\\mathrm{grav}}": {
                 "name": "Change in Gravitational Potential Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The change in the total gravitational potential energy of the system. For a contracting system, this value is negative."
+                "description": "The change in the total potential energy of the system due to mutual gravitational attraction. It becomes more negative as the system contracts."
+            },
+            "\\Delta": {
+                "name": "Change Operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Represents the change in a physical quantity, calculated as the final value minus the initial value."
             }
         },
-        "interpretation": "This equation is a specific application of the virial theorem to a system bound by gravity. The term $\\Delta E_{\\mathrm{int}}$ represents the change in the system's internal energy, which for a simple gas is the total kinetic energy of its constituent particles. The term $\\Delta V_{\\mathrm{grav}}$ is the change in the system's total gravitational potential energy. As the system contracts (e.g., a protostar forming from a molecular cloud), its components move closer together, causing the gravitational potential energy to become more negative, so $\\Delta V_{\\mathrm{grav}} < 0$. The equation dictates that the internal energy must increase, $\\Delta E_{\\mathrm{int}} > 0$, meaning the system heats up. The factor of $1/2$ reveals that only half of the released gravitational energy is converted into internal heat; the other half must be radiated away for the contraction to proceed in a stable, quasi-static manner, as dictated by the total energy change $\\Delta E = \\Delta E_{\\mathrm{int}} + \\Delta V_{\\mathrm{grav}} = \\frac{1}{2} \\Delta V_{\\mathrm{grav}}$.",
-        "symmetry_origin": "This law originates from the virial theorem, which itself can be derived from the fundamental equations of motion (Newton's second law). The specific form with the factor of $-1/2$ depends on the homogeneity of the gravitational potential, $V(r) \\propto r^{-1}$, which is a consequence of the geometry of three-dimensional space. The underlying physical principles are conservation of energy and momentum, which are linked via Noether's theorem to time-translation symmetry and spatial-translation symmetry, respectively.",
-        "limits_and_boundary": "1. Quasi-static Equilibrium: The law applies to systems that evolve slowly enough to be considered in virial equilibrium at each stage of their evolution.\n2. Non-Relativistic Limit: The derivation assumes non-relativistic particle speeds ($v \\ll c$) and weak gravitational fields (Newtonian gravity), making it inapplicable to objects like neutron stars or black holes where general relativity is required.\n3. Isolated System: The system is assumed to be gravitationally bound and isolated from external potentials or mechanical work, though it must be able to radiate energy to evolve.\n4. Inverse-Square Force: The numerical factor of $1/2$ is specific to the inverse-square nature of gravity. For a general potential $V \\propto r^n$, the relation would be $\\Delta E_{\\mathrm{int}} = (n/2) \\Delta V$.",
+        "interpretation": "This equation is a specific application of the virial theorem to a system bound by gravity. The term $\\Delta E_{\\mathrm{int}}$ represents the change in the system's internal energy, which for a simple monatomic gas is the total kinetic energy of its constituent particles. The term $\\Delta V_{\\mathrm{grav}}$ is the change in the system's total gravitational potential energy. As the system contracts (e.g., a protostar forming from a molecular cloud), its components move closer together, causing the gravitational potential energy to become more negative, so $\\Delta V_{\\mathrm{grav}} < 0$. The equation dictates that the internal energy must increase, $\\Delta E_{\\mathrm{int}} > 0$, meaning the system heats up. The factor of $1/2$ reveals that only half of the released gravitational energy is converted into internal heat; the other half must be radiated away for the contraction to proceed in a stable, quasi-static manner. This is seen by considering the total energy change $\\Delta E = \\Delta E_{\\mathrm{int}} + \\Delta V_{\\mathrm{grav}} = (-\\frac{1}{2} \\Delta V_{\\mathrm{grav}}) + \\Delta V_{\\mathrm{grav}} = \\frac{1}{2} \\Delta V_{\\mathrm{grav}}$. For the system to remain bound and continue contracting, this total energy must decrease ($\\Delta E < 0$), which requires energy to be lost from the system, typically through radiation.",
+        "symmetry_origin": "The virial theorem, from which this law is derived, is a statistical mechanics result that emerges from the time-invariance of the system's Hamiltonian. It connects the average kinetic energy to the potential energy based on the scaling properties of the potential ($V \\propto r^{-1}$ for gravity), which is a form of structural symmetry in the equations of motion.",
+        "limits_and_boundary": "This law applies to systems in quasi-static gravitational equilibrium. It breaks down during rapid, non-equilibrium collapse where kinetic energy is not thermalized. In the limit of a non-gravitating system ($V_{\\mathrm{grav}} \\to 0$), the relation becomes trivial. For relativistic systems, corrections are needed as the kinetic energy expression changes and the gravitational potential is described by General Relativity, leading to deviations from the simple $-1/2$ factor. The law assumes an ideal gas law for the internal energy; for degenerate matter (e.g., in white dwarfs or neutron stars), the pressure and internal energy are dominated by quantum effects, and this classical thermal relationship does not hold.",
         "status": "platinum",
-        "conceptual_definition": "For a stable, self-gravitating system in quasi-static equilibrium, the change in its internal energy is equal to negative one-half of the change in its gravitational potential energy. This relationship is a direct consequence of the virial theorem for an inverse-square force law.",
-        "intuitive_summary": "When a self-gravitating system like a gas cloud contracts, half of the lost gravitational potential energy is converted into kinetic energy of its particles, causing it to heat up, while the other half is radiated away.",
+        "conceptual_definition": "For a stable, gravitationally bound system of particles (like a star or gas cloud) in quasi-static equilibrium, the virial theorem relates the total internal kinetic energy, $E_{\\mathrm{int}}$, to the total gravitational potential energy, $V_{\\mathrm{grav}}$, via $2E_{\\mathrm{int}} = -V_{\\mathrm{grav}}$. This formula expresses the relationship in terms of changes ($\\Delta$) during a slow contraction or expansion, where $\\Delta E_{\\mathrm{int}} = -\\frac{1}{2} \\Delta V_{\\mathrm{grav}}$. This implies that as a system contracts and its gravitational potential energy becomes more negative, its internal energy must increase, causing it to heat up.",
+        "intuitive_summary": "When a cloud of gas collapses under its own gravity, it converts gravitational potential energy into other forms. This law reveals a cosmic bargain: exactly half of the released energy heats up the gas, increasing its temperature and pressure, while the other half must be radiated away into space for the collapse to continue.",
         "subcomponents": [
-            "virial-theorem-potential-exponent-for-inverse-square-forces-c10b30af",
-            "normalization-constant-for-majorana-mass-term-b5a9867e"
-        ]
+            "flux-balance-fa915e79",
+            "gravitational-energy-release-52193113",
+            "poisson-bracket-evolution-identity-33d0889f",
+            "higher-space-32912110"
+        ],
+        "description": "A direct consequence of the virial theorem for a quasi-static, self-gravitating system, stating that the change in internal (thermal) energy is equal to negative one-half the change in gravitational potential energy.",
+        "parent_formula_id": "pressure-link-a36c9c93",
+        "derivation_type": "SPECIAL_CASE"
     },
     "group-invariance-condition-6d2bbc83": {
         "title": "Group Invariance Condition",
@@ -1223,55 +1234,54 @@
         "subcomponents": []
     },
     "kelvin-helmholtz-timescale-identity-1-e8647871-78140058": {
-        "title": "Kelvin-Helmholtz Timescale Relation",
+        "title": "Kelvin-Helmholtz Timescale for a Uniform Density Sphere",
         "equation": "t_{\\text{KH}} = \\frac{3 G M^2}{10 R L}",
-        "interpretation": "$G$ is the gravitational constant, $M$ is the stellar mass, $R$ is the stellar radius, and $L$ is the luminosity.",
-        "symmetry_origin": "Conservation of energy applied to stellar structures in hydrostatic equilibrium (virial theorem).",
-        "limits_and_boundary": "For the Sun, $t_{\\text{KH}} \\approx 3 \\times 10^7$ years. It represents the lifetime of pre-main-sequence stars during their contraction phase.",
+        "interpretation": "In this relation, $t_{\\text{KH}}$ is the Kelvin-Helmholtz timescale. $G$ represents the universal gravitational constant. $M$ is the total mass of the star, $R$ is its radius, and $L$ is its luminosity (total energy radiated per second). The numerical factor $\\frac{3}{10}$ arises from a specific physical model assuming a uniform density sphere and the application of the virial theorem, which dictates that half of the released gravitational potential energy is radiated away while the other half increases the star's internal kinetic energy.",
+        "symmetry_origin": "This relation is a consequence of the principle of conservation of energy, applied to a self-gravitating system that is losing energy through radiation.",
+        "limits_and_boundary": "As luminosity $L \\to \\infty$, the timescale $t_{\\text{KH}} \\to 0$, as the energy reservoir is depleted rapidly. For a fixed mass $M$, as the radius $R \\to \\infty$, the star becomes gravitationally unbound, the potential energy approaches zero, and $t_{\\text{KH}} \\to 0$. The formula is a classical approximation and is superseded by nuclear timescales for main-sequence stars. It is invalid for objects supported by degeneracy pressure, such as white dwarfs or neutron stars.",
         "semantic_variables": {
             "t_{\\text{KH}}": {
                 "name": "Kelvin-Helmholtz Timescale",
                 "type": "variable",
                 "unit": "s",
-                "description": "The gravitational contraction lifetime."
+                "description": "The characteristic time for a star to radiate away its gravitational potential energy via contraction."
             },
             "G": {
                 "name": "Gravitational Constant",
                 "type": "constant",
-                "unit": "m^3/(kg s^2)",
-                "description": "Newton's gravitational constant."
+                "unit": "m^3 kg^-1 s^-2",
+                "description": "The Newtonian constant of gravitation."
             },
             "M": {
                 "name": "Stellar Mass",
-                "type": "constant",
+                "type": "variable",
                 "unit": "kg",
-                "description": "The mass of the star."
+                "description": "The total mass of the star."
             },
             "R": {
                 "name": "Stellar Radius",
-                "type": "constant",
+                "type": "variable",
                 "unit": "m",
-                "description": "The radius of the star."
+                "description": "The characteristic radius of the star."
             },
             "L": {
                 "name": "Stellar Luminosity",
-                "type": "constant",
-                "unit": "W",
-                "description": "The total power output of the star."
-            },
-            "t": {
-                "name": "Time",
                 "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
+                "unit": "W",
+                "description": "The total energy radiated by the star per unit time."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Kelvin-Helmholtz timescale $t_{\\text{KH}}$ estimates the time it would take a star to radiate away its entire reserve of gravitational potential energy at its current luminosity $L$.",
-        "intuitive_summary": "The timescale over which a star can shine by contracting under its own gravity before needing nuclear fusion.",
+        "conceptual_definition": "The Kelvin-Helmholtz timescale, $t_{\\text{KH}}$, estimates the duration a star can sustain its luminosity $L$ by converting its gravitational potential energy into radiation. This specific form, $t_{\\text{KH}} = \\frac{3 G M^2}{10 R L}$, is derived by applying the virial theorem to the gravitational potential energy of a uniform-density sphere, $U = -\\frac{3}{5} \\frac{G M^2}{R}$, where the radiated energy is half the change in potential energy, yielding a timescale of $|U|/(2L)$.",
+        "intuitive_summary": "This formula estimates a star's lifespan if it were powered solely by its own gravitational collapse, like a slowly deflating balloon releasing energy. It was a crucial pre-nuclear-fusion estimate for the Sun's age, highlighting a major discrepancy that led to the discovery of nuclear energy sources in stars.",
         "subcomponents": [
-            "cosmological-initial-time-parameter-0afa5da4"
-        ]
+            "impulse-response-4fcc7d95",
+            "red-giant-identity-1-ca10b504-e63ddf48",
+            "chandrasekhar-limit-identity-1-c9fe8ed6-2e96ed82"
+        ],
+        "description": "Calculates the timescale over which a star, modeled as a uniform density sphere, would radiate away its total gravitational potential energy at its current luminosity.",
+        "parent_formula_id": "kelvin-helmholtz-timescale-approximation-8331a9ba",
+        "derivation_type": "DERIVED_FROM"
     },
     "intertwiners-identity-1-1a267964-06ef3818": {
         "title": "Quantum Gauss Constraint for Intertwiners",
@@ -1360,53 +1370,66 @@
         "subcomponents": []
     },
     "hydrostatic-equilibrium-equation": {
-        "title": "Hydrostatic Equilibrium Equation",
+        "title": "Equation of Radial Motion for a Self-Gravitating Fluid",
         "equation": "\\ddot{r} = -\\frac{1}{\\rho} \\frac{\\partial P}{\\partial r} - \\frac{G M(r)}{r^2}",
-        "conceptual_definition": "The Hydrostatic Equilibrium Equation describes the balance of forces within a fluid or gas in a spherically symmetric, non-rotating body, such as a star or a planet. It dictates that the inward pull of gravity must be precisely counteracted by the outward push of pressure. This equation is fundamental to understanding the structure, stability, and evolution of celestial objects. It relates the rate of change of radial velocity (acceleration) of a fluid element to the opposing forces from pressure gradients and self-gravity.",
-        "intuitive_summary": "The acceleration of a fluid element is determined by the net force per unit mass acting on it, which is a balance between the outward pressure force and the inward gravitational force.",
-        "interpretation": "The equation r = -1/ρ ∂P/∂r - GM(r)/r^2 represents Newton's second law applied to a radially displaced fluid element. The left side, r, is the radial acceleration of the fluid element at a distance r from the center of the body. The first term on the right side, -1/ρ ∂P/∂r, represents the acceleration due to the pressure gradient. Here, ρ is the density of the fluid, and ∂P/∂r is the radial gradient of pressure. A positive pressure gradient (∂P/∂r > 0) means pressure increases with radius, creating an outward force, hence the negative sign. This term quantifies how differences in pressure across the fluid element push it outward. The second term, -G M(r)/r^2, represents the acceleration due to gravity. G is the gravitational constant, M(r) is the mass enclosed within radius r, and r^2 accounts for the inverse-square law of gravity. This term describes the inward pull of gravity from all mass interior to radius r. Hydrostatic equilibrium is achieved when the net acceleration r is zero, meaning the outward pressure force perfectly balances the inward gravitational force, leading to a stable structure.",
-        "symmetry_origin": "This equation is derived from Newton's second law of motion (F = ma) applied to a small, radially symmetric fluid element within a larger body. It assumes spherical symmetry, meaning that all physical quantities depend only on the radial distance r from the center, and not on angular position. This radial symmetry simplifies the force balance to a one-dimensional problem along the radial direction. The derivation involves considering the net force acting on a thin cylindrical shell of fluid due to pressure differences on its inner and outer surfaces, and the gravitational force exerted by the mass enclosed within its radius. In the context of stellar structure, this equation is a cornerstone, assuming that the star is not rotating or undergoing significant convection or other dynamic processes.",
-        "limits_and_boundary": "As r approaches zero (the center of the body), the gravitational term G M(r)/r^2 can become very large, particularly if M(r) does not tend to zero faster than r^2. However, in a realistic scenario, M(r) is proportional to r^3 near the center if the density is finite, making the gravitational acceleration proportional to r. The pressure gradient term 1/ρ ∂P/∂r must balance this. At very large radii (r → ∞), if the body is finite, the density ρ and pressure P tend to zero. The gravitational term G M(r)/r^2 approaches zero as r increases beyond the extent of the mass M (where M(r) becomes constant). In the absence of external forces, the pressure gradient term must also tend to zero, implying that the pressure is constant far from the body, typically zero at the boundary.",
+        "conceptual_definition": "The equation $\\ddot{r} = -\\frac{1}{\\rho} \\frac{\\partial P}{\\partial r} - \\frac{G M(r)}{r^2}$ is a formulation of Newton's second law ($F=ma$) applied to a unit mass of fluid in a spherical gravitational potential. It states that the radial acceleration, $\\ddot{r}$, of a fluid element is determined by the sum of the forces per unit mass acting upon it: the force due to the pressure gradient, $-\\frac{1}{\\rho} \\frac{\\partial P}{\\partial r}$, and the force due to gravity, $-\\frac{G M(r)}{r^2}$. The condition of hydrostatic equilibrium is achieved when the net acceleration is zero ($\\ddot{r}=0$), implying a perfect balance between the pressure gradient force and the gravitational force.",
+        "intuitive_summary": "Imagine a small parcel of gas inside a star. Gravity tries to crush it inward, while the immense pressure from the hotter, denser gas below pushes it outward. This equation calculates the parcel's resulting motion. If the push and pull are perfectly balanced, the star is stable (in hydrostatic equilibrium); if not, the parcel will accelerate inward or outward, causing the star to contract or expand.",
+        "interpretation": "The equation $\\ddot{r} = -\\frac{1}{\\rho} \\frac{\\partial P}{\\partial r} - \\frac{G M(r)}{r^2}$ represents Newton's second law applied to a radially displaced fluid element. The left side, $\\ddot{r}$, is the radial acceleration of the fluid element at a distance $r$ from the center of the body. The first term on the right side, $-\\frac{1}{\\rho} \\frac{\\partial P}{\\partial r}$, represents the acceleration due to the pressure gradient. Here, $\\rho$ is the density of the fluid, and $\\frac{\\partial P}{\\partial r}$ is the radial gradient of pressure. A positive pressure gradient ($\\frac{\\partial P}{\\partial r} > 0$) means pressure increases with radius, creating an outward force, hence the negative sign in the term. This term quantifies how differences in pressure across the fluid element generate a net force. The second term, $-\\frac{G M(r)}{r^2}$, represents the acceleration due to gravity. $G$ is the gravitational constant, $M(r)$ is the mass enclosed within radius $r$, and the $r^2$ in the denominator reflects the inverse-square law of gravity. This term describes the inward pull of gravity from all mass interior to the radius $r$. Hydrostatic equilibrium is the specific condition where the net acceleration $\\ddot{r}$ is zero. In this state, the outward pressure force perfectly balances the inward gravitational force, leading to a stable, static structure described by $\\frac{dP}{dr} = -\\frac{G M(r) \\rho(r)}{r^2}$.",
+        "symmetry_origin": "Derived from the principle of momentum conservation, which is a consequence of the spatial translation invariance of the laws of physics, as described by Noether's theorem. This specific form applies the principle in a spherically symmetric gravitational field.",
+        "limits_and_boundary": "In the limit of negligible gravity ($G \\to 0$), the equation reduces to a form of Euler's equation for fluid dynamics, $\\ddot{r} = -\\frac{1}{\\rho} \\frac{\\partial P}{\\partial r}$. In the limit of negligible pressure ($P \\to 0$), it describes gravitational free-fall, $\\ddot{r} = - \\frac{G M(r)}{r^2}$. The static limit, $\\ddot{r} = 0$, defines the condition of hydrostatic equilibrium. This equation is the non-relativistic limit of the Tolman-Oppenheimer-Volkoff (TOV) equation, valid when pressures and densities are much less than relativistic scales ($P \\ll \\rho c^2$).",
         "status": "platinum",
         "semantic_variables": {
+            "\\ddot{r}": {
+                "name": "Radial Acceleration",
+                "type": "variable",
+                "unit": "m/s^2",
+                "description": "The second time derivative of the radial position $r$, representing the acceleration of a fluid element."
+            },
             "r": {
-                "name": "Radial Position",
+                "name": "Radial Coordinate",
                 "type": "variable",
                 "unit": "m",
-                "description": "The distance of a fluid element from the center of the spherically symmetric body."
+                "description": "The distance from the center of the spherically symmetric mass distribution."
             },
-            "ρ": {
-                "name": "Density",
+            "\\rho": {
+                "name": "Mass Density",
                 "type": "variable",
                 "unit": "kg/m^3",
-                "description": "The mass per unit volume of the fluid at radius r."
+                "description": "The mass per unit volume of the fluid, which can be a function of radius, $\\rho(r)$."
             },
             "P": {
                 "name": "Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The thermodynamic pressure of the fluid at radius r."
+                "description": "The isotropic force per unit area within the fluid, which can be a function of radius, $P(r)$."
             },
-            "∂P/∂r": {
-                "name": "Pressure Gradient",
-                "type": "variable",
-                "unit": "Pa/m",
-                "description": "The rate of change of pressure with respect to radial distance. It quantifies how steeply pressure changes with position."
+            "\\frac{\\partial}{\\partial r}": {
+                "name": "Partial Derivative w.r.t. Radius",
+                "type": "operator",
+                "unit": "1/m",
+                "description": "The operator for the rate of change of a quantity with respect to the radial coordinate $r$."
             },
             "G": {
-                "name": "Gravitational Constant",
+                "name": "Newtonian Gravitational Constant",
                 "type": "constant",
-                "unit": "N m^2/kg^2",
-                "description": "The universal physical constant that governs the strength of gravitational attraction between masses."
+                "unit": "m^3*kg^-1*s^-2",
+                "description": "The fundamental constant of gravitation in Newton's law of universal gravitation."
             },
             "M(r)": {
                 "name": "Enclosed Mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The total mass contained within a sphere of radius r."
+                "description": "The total mass contained within a sphere of radius $r$, calculated as $M(r) = \\int_0^r 4\\pi r'^2 \\rho(r') dr'$."
             }
         },
-        "subcomponents": []
+        "subcomponents": [
+            "extreme-stellar-core-conditions-66d6b924",
+            "fluid-mass-conservation-form-07fd9f29",
+            "momentum-conservation-navier-stokes"
+        ],
+        "description": "This equation describes the radial acceleration of a fluid element within a spherically symmetric, self-gravitating body, balancing the inward pull of gravity against the outward push of a pressure gradient.",
+        "parent_formula_id": "navier-stokes-momentum-fluids-27e5bf4d",
+        "derivation_type": "SPECIAL_CASE"
     },
     "equation-of-state-degenerate-matter-5/3": {
         "title": "Equation of State (Non-relativistic Degenerate Matter)",
@@ -1447,35 +1470,38 @@
     "neutron-number": {
         "title": "Neutron Number",
         "equation": "N = A - Z",
-        "conceptual_definition": "The formula for the neutron number, denoted by $N$, quantifies the count of neutrons within an atomic nucleus. It is derived by subtracting the atomic number ( $Z$), which represents the number of protons, from the mass number ( $A$), which represents the total number of nucleons (protons and neutrons) in the nucleus.",
-        "intuitive_summary": "The number of neutrons in an atom's nucleus is simply the total count of particles (mass number) minus the count of protons (atomic number).",
-        "interpretation": "The neutron number, $N$, is a fundamental property of an atomic nucleus. The mass number, $A$, is the sum of the protons and neutrons in the nucleus, as both protons and neutrons are collectively referred to as nucleons and contribute to the mass of the atom. The atomic number, $Z$, by definition, is the number of protons in the nucleus, which uniquely identifies a chemical element. Therefore, by subtracting the number of protons ( $Z$) from the total number of nucleons ( $A$), we isolate and determine the number of neutrons ( $N$) present in the nucleus. This relationship is crucial in nuclear physics for understanding isotopes, nuclear stability, and nuclear reactions.",
-        "symmetry_origin": "This formula arises directly from the definition of the terms involved in nuclear composition. There isn't a direct symmetry or conservation law origin in the same way as, for instance, Noether's theorem, but rather it's a fundamental accounting principle for the constituents of an atomic nucleus. The number of protons defines the element, and the remaining nucleons must be neutrons.",
-        "limits_and_boundary": "For a nucleus to exist, the mass number $A$ must be greater than or equal to the atomic number $Z$ ($A \\ge Z$), implying that the neutron number $N$ must be non-negative ($N \\ge 0$). If $A = Z$, then $N = 0$, meaning the nucleus has no neutrons (e.g., Hydrogen-1). As $A$ increases while $Z$ remains constant, $N$ increases, which is characteristic of heavier isotopes of an element. The upper limit for $N$ is constrained by nuclear stability, as an excess of neutrons can lead to beta decay.",
+        "conceptual_definition": "The neutron number, denoted as $N$, is a fundamental integer property of an atomic nucleus. It is defined as the difference between the mass number $A$ (the total number of nucleons, i.e., protons and neutrons) and the atomic number $Z$ (the number of protons). The relationship $N = A - Z$ is an exact counting identity based on the constituent particles of the nucleus.",
+        "intuitive_summary": "Imagine a bag of marbles containing only red and blue ones. If you know the total number of marbles ($A$) and the number of red marbles ($Z$), you can find the number of blue marbles ($N$) by subtracting: $N = A - Z$. In an atom's nucleus, nucleons are the 'marbles', protons are 'red', and neutrons are 'blue'.",
+        "interpretation": "The formula $N = A - Z$ is a definitional relationship in nuclear physics. The term $A$, the mass number, represents the total count of nucleons (protons and neutrons) in a nucleus. The term $Z$, the atomic number, specifies the count of protons, which uniquely identifies the chemical element. By subtracting the number of protons ($Z$) from the total number of nucleons ($A$), the result is necessarily the number of neutrons, $N$. This simple integer arithmetic is crucial for identifying isotopes, which are nuclides of the same element (same $Z$) but with different numbers of neutrons ($N$) and therefore different mass numbers ($A$).",
+        "symmetry_origin": "This formula is a definitional identity based on the composition of the atomic nucleus. It is not derived from a continuous symmetry via Noether's theorem. However, it is fundamentally linked to the principle of baryon number conservation, as both protons and neutrons are baryons, each assigned a baryon number of +1.",
+        "limits_and_boundary": "This equation is an exact integer relationship and holds for any bound atomic nucleus where protons and neutrons are well-defined constituents. For a nucleus to exist, $N$ and $Z$ must be non-negative integers. The case $N=0$ corresponds to a nucleus with no neutrons, such as a lone proton (the nucleus of protium, $^1\\mathrm{H}$), where $A=1$ and $Z=1$. The case $Z=0$ would describe a hypothetical nucleus composed only of neutrons (a 'neutrite'), which is unstable except in the extreme gravitational conditions of a neutron star.",
         "status": "platinum",
         "semantic_variables": {
             "N": {
                 "name": "Neutron Number",
                 "type": "variable",
-                "unit": "1",
-                "description": "The number of neutrons in an atomic nucleus. It is a dimensionless quantity representing a count."
+                "unit": "dimensionless",
+                "description": "The number of neutrons in an atomic nucleus."
             },
             "A": {
                 "name": "Mass Number",
                 "type": "variable",
-                "unit": "1",
-                "description": "The total number of protons and neutrons (nucleons) in an atomic nucleus. It is a dimensionless quantity representing a count."
+                "unit": "dimensionless",
+                "description": "The total number of protons and neutrons (collectively known as nucleons) in an atomic nucleus."
             },
             "Z": {
                 "name": "Atomic Number",
                 "type": "variable",
-                "unit": "1",
-                "description": "The number of protons in an atomic nucleus, which uniquely identifies a chemical element. It is a dimensionless quantity representing a count."
+                "unit": "dimensionless",
+                "description": "The number of protons in an atomic nucleus, which defines the chemical element."
             }
         },
         "subcomponents": [
+            "baryon-number",
             "mass-number-equals-atomic-number-273cb421"
-        ]
+        ],
+        "description": "Defines the number of neutrons in an atomic nucleus as the difference between the mass number (total nucleons) and the atomic number (protons).",
+        "derivation_type": "DEFINITION"
     },
     "rotational-energy-levels": {
         "title": "Rotational Energy Levels",

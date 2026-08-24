@@ -43,41 +43,68 @@ def render_dashboard():
         print("Checkpoint is empty. Runner has not started yet.")
         return
 
+    # Classify processed by starting LHI
+    p1_done = sum(1 for m in processed.values() if m.get('old_lhi') == 0)
+    p2_done = sum(1 for m in processed.values() if 0 < m.get('old_lhi', 0) < 40)
+    p3_done = sum(1 for m in processed.values() if 40 <= m.get('old_lhi', 0) < 75)
+
+    p1_target = 2030
+    p2_target = 537
+    p3_target = 7039
+
     # Calculate statistics
-    timestamps = [m.get('timestamp', 0) for m in processed.values() if m.get('timestamp')]
+    timestamps = sorted([m.get('timestamp', 0) for m in processed.values() if m.get('timestamp')])
     gains = [m.get('new_lhi', 0) - m.get('old_lhi', 0) for m in processed.values() if 'new_lhi' in m]
     new_scores = [m.get('new_lhi', 0) for m in processed.values() if 'new_lhi' in m]
 
     avg_gain = sum(gains) / len(gains) if gains else 0
     avg_score = sum(new_scores) / len(new_scores) if new_scores else 0
 
+    # Recent speed (last 50 formulas or last 30 mins)
+    recent_ts = timestamps[-50:] if len(timestamps) >= 50 else timestamps
     speed_str = "Calculating..."
-    etc_str = "Calculating..."
-    if len(timestamps) >= 2:
-        span_secs = max(timestamps) - min(timestamps)
+    p2_etc_str = "Calculating..."
+    p3_etc_str = "Calculating..."
+    full_etc_str = "Calculating..."
+    if len(recent_ts) >= 2:
+        span_secs = recent_ts[-1] - recent_ts[0]
         if span_secs > 0:
-            f_per_sec = len(timestamps) / span_secs
+            f_per_sec = len(recent_ts) / span_secs
             f_per_min = f_per_sec * 60
             speed_str = f"{f_per_min:.1f} formulas/min ({f_per_sec:.2f} f/s)"
             
-            # Full corpus target: 12,608 formulas with LHI < 80
-            remaining_total = max(0, 12608 - total_processed)
-            etc_mins = (remaining_total / f_per_sec / 60) if f_per_sec > 0 else 0
-            etc_str = f"{etc_mins:.1f} minutes ({etc_mins/60:.2f} hours)"
+            p2_rem = max(0, p2_target - p2_done)
+            p2_etc_mins = (p2_rem / f_per_sec / 60) if f_per_sec > 0 else 0
+            p2_etc_str = f"{p2_etc_mins:.1f} mins ({p2_etc_mins/60:.2f} hrs)" if p2_rem > 0 else "✅ Complete"
 
-    pct_phase1 = min(100.0, (total_processed / 2030) * 100)
-    pct_full = (total_processed / 12608) * 100
+            p3_rem = max(0, p3_target - p3_done)
+            p3_etc_mins = (p3_rem / f_per_sec / 60) if f_per_sec > 0 else 0
+            p3_etc_str = f"{p3_etc_mins:.1f} mins ({p3_etc_mins/60:.2f} hrs)" if p3_rem > 0 else "✅ Complete"
 
-    print("=" * 68)
+            full_rem = max(0, 12608 - total_processed)
+            full_etc_mins = (full_rem / f_per_sec / 60) if f_per_sec > 0 else 0
+            full_etc_str = f"{full_etc_mins:.1f} mins ({full_etc_mins/60:.2f} hrs)" if full_rem > 0 else "✅ Complete"
+
+    p1_pct = min(100.0, (p1_done / p1_target) * 100) if p1_target > 0 else 100.0
+    p2_pct = min(100.0, (p2_done / p2_target) * 100) if p2_target > 0 else 100.0
+    p3_pct = min(100.0, (p3_done / p3_target) * 100) if p3_target > 0 else 100.0
+    total_pct = (total_processed / 12608) * 100
+
+    def make_bar(pct, length=20):
+        filled = int((pct / 100.0) * length)
+        return "█" * filled + "░" * (length - filled)
+
+    print("=" * 70)
     print("🚀 TERRA PHYSICS LAB - REAL-TIME VERTEX AI ENRICHMENT DASHBOARD")
-    print("=" * 68)
-    print(f"  • Total Enriched So Far:   {total_processed:,} formulas")
-    print(f"  • Average LHI Score:       {avg_score:.1f} / 100 (Avg Gain: +{avg_gain:.1f} pts)")
-    print(f"  • Processing Speed:        {speed_str}")
-    print(f"  • Phase 1 (Isolated):      ✅ 100% Complete ({min(total_processed, 2030):,}/2,030 formulas)")
-    print(f"  • Full Encyclopedia Queue: {total_processed:,} / 12,608 ({pct_full:.1f}%)")
-    print(f"  • Estimated Full ETC:      {etc_str}")
-    print("-" * 68)
+    print("=" * 70)
+    print(f"  • Total Enriched So Far:   {total_processed:,} formulas | Avg LHI: {avg_score:.1f}/100")
+    print(f"  • Current Live Speed:      {speed_str}")
+    print("-" * 70)
+    print(f"  📌 Phase 1 (Isolated):     [{make_bar(100.0)}] 2,030/2,030 (100.0%) ✅")
+    print(f"  📌 Phase 2 (Thin LHI 1-39): [{make_bar(p2_pct)}] {p2_done:,}/{p2_target:,} ({p2_pct:.1f}%) | ETC: {p2_etc_str}")
+    print(f"  📌 Phase 3 (Moderate):     [{make_bar(p3_pct)}] {p3_done:,}/{p3_target:,} ({p3_pct:.1f}%) | ETC: {p3_etc_str}")
+    print(f"  🌍 Full Corpus Queue:      [{make_bar(total_pct)}] {total_processed:,}/12,608 ({total_pct:.1f}%) | ETC: {full_etc_str}")
+    print("-" * 70)
     print("📜 Latest 5 Enriched Formulas:")
     
     items = list(processed.items())[-5:]
@@ -86,7 +113,7 @@ def render_dashboard():
         parent = meta.get('parent_id') or 'Axiom / First Principle'
         print(f"  [{t_str}] {fid}")
         print(f"          └─ LHI: {meta.get('old_lhi', 0)} ➔ {meta.get('new_lhi', 0)}/100 | Parent: {parent}")
-    print("=" * 68)
+    print("=" * 70)
 
 def main():
     parser = argparse.ArgumentParser(description="Check Real-Time Vertex AI Enrichment Progress")

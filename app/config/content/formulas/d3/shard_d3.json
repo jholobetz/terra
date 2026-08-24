@@ -1243,15 +1243,15 @@
     "feynman-phase-identity-1-b7250cb0-6a17377b": {
         "title": "Feynman Path Integral Action Phase Factor",
         "equation": "e^{\\frac{i S[q]}{\\hbar}}",
-        "interpretation": "In the path integral formulation, the total probability amplitude for a particle to transition between two points is the sum (or functional integral) over all possible paths connecting them. Each path, $q(t)$, is weighted by this complex phase factor, $e^{i S[q] / \\hbar}$. The term $S[q]$ is the classical action functional evaluated along the path $q(t)$. The imaginary unit $i$ places the factor on the unit circle in the complex plane, and $\\hbar$ sets the quantum scale. The interference of these phase factors for all possible paths determines the final amplitude; paths where the action is stationary interfere constructively, leading to the classical trajectory in the limit $\\hbar \\to 0$.",
-        "symmetry_origin": "The phase factor's structure is a direct consequence of the principle of superposition and the unitary time evolution of quantum states, described by the operator $e^{-iHt/\\hbar}$. The path integral is a method to compute the matrix elements of this operator. The unitarity of the evolution, which ensures probability conservation, is preserved by the fact that the phase factor has a magnitude of one.",
-        "limits_and_boundary": "1. Classical Limit ($\\hbar \\to 0$): As the reduced Planck constant approaches zero, the phase $S[q]/\\hbar$ oscillates extremely rapidly for any path that is not a stationary point of the action. This rapid oscillation causes destructive interference, and only paths in the immediate vicinity of the classical path (where $\\delta S = 0$) contribute significantly via the principle of stationary phase, thus recovering classical mechanics.",
+        "interpretation": "In the path integral formulation, the total probability amplitude for a particle to transition between two points is the functional integral over all possible paths $q(t)$ connecting them. Each path is weighted by this complex phase factor, $e^{i S[q] / \\hbar}$. The term $S[q]$ is the classical action functional, which is the time integral of the Lagrangian along the path $q(t)$. The imaginary unit $i$ ensures the factor is a pure phase (a point on the unit circle in the complex plane), and the reduced Planck constant $\\hbar$ sets the fundamental scale of quantum effects. The constructive and destructive interference of these phase factors over the space of all paths determines the final amplitude. Paths for which the action $S[q]$ is stationary ($\\delta S = 0$) contribute constructively, leading to the emergence of a single classical trajectory in the limit where $\\hbar \\to 0$.",
+        "symmetry_origin": "This phase factor is a cornerstone of the path integral's ability to produce unitary time evolution, which is equivalent to the conservation of probability. The structure $e^{i \\times \\text{real}/\\hbar}$ ensures the evolution operator constructed from the path integral is unitary. Furthermore, because the phase is determined by the classical action $S[q]$, any continuous symmetry of the Lagrangian (e.g., translation, rotation) leads to a conserved quantity via Noether's theorem, a property inherited by the quantum theory constructed from this principle.",
+        "limits_and_boundary": "In the classical limit, as the reduced Planck constant $\\hbar \\to 0$, the phase $S[q]/\\hbar$ becomes extremely large. For any path $q(t)$ that is not a stationary point of the action, even a small variation in the path leads to a large change in the phase. This causes the phase factors from neighboring non-classical paths to oscillate rapidly and interfere destructively, averaging to zero. The only paths that contribute significantly are those in an infinitesimal neighborhood of the classical path $q_{cl}$, where the action is stationary ($\\delta S = 0$). This is known as the stationary phase approximation and it explains how classical mechanics emerges from quantum mechanics.",
         "semantic_variables": {
             "e": {
-                "name": "Base of Natural Logarithm",
+                "name": "Euler's Number",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "Euler's number, the base of the natural logarithm, approximately 2.718."
+                "description": "The base of the natural logarithm, approximately 2.718."
             },
             "i": {
                 "name": "Imaginary Unit",
@@ -1261,29 +1261,34 @@
             },
             "S[q]": {
                 "name": "Action Functional",
-                "type": "functional",
-                "unit": "J⋅s",
-                "description": "The classical action, which is the integral of the Lagrangian over time along a specific path $q(t)$."
+                "type": "variable",
+                "unit": "Joule-second",
+                "description": "The classical action, a functional that takes a path $q(t)$ as its input and returns a scalar value. It is typically the time integral of the Lagrangian, $S[q] = \\int L(q, \\dot{q}, t) dt$."
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "J⋅s",
-                "description": "The Planck constant divided by $2\\pi$, representing the quantum of action."
+                "unit": "Joule-second",
+                "description": "The Planck constant $h$ divided by $2\\pi$. It is the quantum of angular momentum and sets the scale of quantum effects."
             },
             "q": {
                 "name": "Path",
                 "type": "variable",
-                "unit": "m",
-                "description": "A specific trajectory or history of the system in configuration space, e.g., the position $q(t)$ as a function of time. The unit depends on the specific generalized coordinate."
+                "unit": "meter",
+                "description": "A specific trajectory or history of the system's configuration variable as a function of time, denoted $q(t)$."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "This expression represents the complex phase factor associated with a specific path in the Feynman path integral formulation of quantum mechanics. Its phase is determined by the ratio of the classical action of the path to the reduced Planck constant.",
-        "intuitive_summary": "The probability amplitude of a quantum process is the sum of phase arrows from all possible histories, with each history's arrow angle determined by its classical action.",
+        "conceptual_definition": "The action phase factor, $e^{i S[q]/\\hbar}$, is a complex number of unit magnitude that weights the contribution of a specific path, $q(t)$, to the total quantum transition amplitude. The phase angle, $\\theta = S[q]/\\hbar$, is the classical action functional $S[q]$ for that path, rendered dimensionless by the reduced Planck constant $\\hbar$. The sum over all possible paths, each weighted by this factor, constitutes the path integral.",
+        "intuitive_summary": "Imagine a particle exploring every possible route from point A to B. Each route is assigned a tiny spinning arrow, or phasor. The final direction of this arrow is determined by the classical 'cost' (action) of the route. The action phase factor is this arrow. When summing up all routes, those with similar costs have their arrows aligned, reinforcing each other to define the most probable outcome. Routes with wildly different costs have their arrows pointing randomly, canceling each other out.",
         "subcomponents": [
-            "classical-limit-condition-for-action-4ac4e693"
-        ]
+            "action-in-units-of-hbar",
+            "imaginary-quantum-action-scaling-factor-661daea4",
+            "stationary-phase-classical-limit-2f9a2f2c"
+        ],
+        "description": "The complex weight, or phasor, assigned to each possible path in the Feynman path integral formulation of quantum mechanics. Its phase is determined by the classical action of the path in units of the reduced Planck constant.",
+        "parent_formula_id": "variational-link-identity-1-acd13873-93886d9d",
+        "derivation_type": "DEFINITION"
     },
     "confinement-potential-identity-1-9616f262-f77c787f": {
         "title": "The Cornell Confinement Potential",
@@ -1427,35 +1432,42 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "spatial-translation": {
-        "title": "Spatial translation",
+        "title": "Finite Spatial Translation of a Position Vector",
         "equation": "\\mathbf{x} \\to \\mathbf{x} + \\mathbf{a}",
-        "conceptual_definition": "The formula + describes a spatial translation, which is a fundamental geometric transformation. It signifies shifting every point in space by a fixed vector , irrespective of its original position . This transformation is a rigid motion, meaning it preserves distances and angles between points. In physics, spatial translation is deeply connected to the concept of symmetry and the conservation of linear momentum.",
-        "intuitive_summary": "This equation means that a point's new position is found by adding a fixed displacement vector to its original position.",
-        "interpretation": "In the equation + , represents the initial position vector of a point in space. This vector typically has components along orthogonal axes, such as = (x, y, z) in a Cartesian coordinate system, where each component has units of meters (m). The symbol is the translation vector, which specifies the magnitude and direction of the shift. This vector also has components, for instance, = (a_x, a_y, a_z), and its components are also measured in meters (m). The arrow () indicates that the initial position is transformed into a new position, denoted by the same symbol on the left side of the arrow. The transformation itself is the addition of the translation vector to the original position vector , resulting in the new position vector + . This operation ensures that the entire configuration of points is moved in unison by the displacement defined by .",
-        "symmetry_origin": "This formula is the mathematical expression of translational symmetry. If a physical system's laws of physics are invariant under spatial translations (i.e., they behave the same regardless of where in space an experiment is performed), then by Noether's theorem, there is a corresponding conserved quantity. For spatial translation symmetry, this conserved quantity is linear momentum. The derivation involves considering the action or Lagrangian of a system and demonstrating that it remains unchanged when all coordinates are shifted by a constant vector.",
-        "limits_and_boundary": "As the translation vector approaches the zero vector ( → ), the transformation becomes the identity transformation, meaning the position remains unchanged ( + → ). This limit represents no movement. There isn't a meaningful 'infinity' limit in the context of a single translation operation, as the translation vector defines a finite displacement. However, repeated application of translations with increasingly large vectors would lead to points moving arbitrarily far from their original positions.",
+        "conceptual_definition": "A spatial translation is a fundamental affine transformation that maps every point in Euclidean space, represented by a position vector $\\mathbf{x}$, to a new position $\\mathbf{x}'$ by the addition of a constant displacement vector $\\mathbf{a}$. The transformation is expressed as $\\mathbf{x} \\to \\mathbf{x}' = \\mathbf{x} + \\mathbf{a}$. As an isometry, this transformation preserves all distances and angles, corresponding to a rigid body motion.",
+        "intuitive_summary": "Imagine picking up an object and moving it to a new location without turning or resizing it. Every single point on that object has moved by the exact same amount and in the same direction. This uniform shift is a spatial translation.",
+        "interpretation": "The formula $\\mathbf{x} \\to \\mathbf{x} + \\mathbf{a}$ describes the transformation of a point in space. The term $\\mathbf{x}$ represents the initial position vector of the point, typically with components $(x, y, z)$ in a Cartesian coordinate system and units of meters (m). The vector $\\mathbf{a}$ is the constant translation vector, which specifies the direction and magnitude of the shift for all points; its components $(a_x, a_y, a_z)$ also have units of meters (m). The arrow $\\to$ signifies the mapping from the initial state to the final state. The expression $\\mathbf{x} + \\mathbf{a}$ is the new position vector, obtained by the standard vector addition of the initial position and the displacement vector.",
+        "symmetry_origin": "This transformation represents a fundamental continuous spatial symmetry of Euclidean space. According to Noether's theorem, if the Lagrangian of a physical system is invariant under such translations (i.e., the laws of physics are the same everywhere), then the total linear momentum of the system is a conserved quantity.",
+        "limits_and_boundary": "This is a foundational geometric transformation, valid in classical mechanics and special relativity (within a single inertial frame). In the quantum mechanical context, this transformation is generated by the momentum operator $\\hat{\\mathbf{p}}$. In the classical limit, where Planck's constant $\\hbar \\to 0$, the action of the quantum translation operator on expectation values of position reduces to this classical vector addition. The transformation is well-defined for any finite displacement vector $\\mathbf{a}$.",
         "status": "platinum",
         "semantic_variables": {
             "\\mathbf{x}": {
-                "name": "Position Vector",
+                "name": "Initial Position Vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The initial position vector of a point in space. It is a vector quantity, typically represented in a coordinate system (e.g., Cartesian) with components indicating the point's location relative to an origin."
+                "description": "The initial position vector of a point in space."
             },
             "\\mathbf{a}": {
                 "name": "Translation Vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The vector that specifies the displacement applied to the position vector. It defines the magnitude and direction of the spatial shift."
+                "description": "A constant vector specifying the magnitude and direction of the spatial displacement."
             },
-            "\\mathbf{x} \\to \\mathbf{x} + \\mathbf{a}": {
-                "name": "Transformed Position Vector",
-                "type": "variable",
-                "unit": "m",
-                "description": "The resulting position vector after the spatial translation has been applied. It is the sum of the initial position vector and the translation vector."
+            "\\to": {
+                "name": "Transformation Operator",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "Indicates a mapping or transformation from an initial state to a final state."
             }
         },
-        "subcomponents": []
+        "subcomponents": [
+            "infinitesimal-translation-transformation",
+            "translation-invariance-identity",
+            "quantum-translation-operator-momentum-724490c0",
+            "spatial-rotation-transformation"
+        ],
+        "description": "Defines the rigid displacement of a position vector by a constant vector, representing a uniform shift of an object or coordinate system without rotation or scaling.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "metric-tensor-perturbation": {
         "title": "Perturbation of Metric Tensor",

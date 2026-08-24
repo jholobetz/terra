@@ -1047,49 +1047,53 @@
         ]
     },
     "sedov-taylor-blast-radius-scaling-ed7792bd": {
-        "title": "Sedov-Taylor Blast Scaling",
+        "title": "Sedov-Taylor Blast Wave Radius Scaling Law",
         "equation": "R(t) = C_0 \\left( \\frac{E_0 t^2}{\\rho_0} \\right)^{1/5}",
-        "interpretation": "The Sedov-Taylor solution is derived from dimensional analysis or by solving the Euler equations under the assumption of self-similarity. The radius of the blast wave $R$ at time $t$ depends only on the initial energy released $E_0$ and the ambient medium density $\\rho_0$. By combining these variables to form a quantity with units of length, one arrives at the scaling law $R(t) = C_0 \\left( \\frac{E_0 t^2}{\\rho_0} \\right)^{1/5}$. Here, $C_0$ is a dimensionless constant of order unity that depends on the adiabatic index $\\gamma$ of the gas. The $t^{2/5}$ dependence shows that the shock front decelerates as it expands, with its velocity scaling as $v(t) = \\frac{\\mathrm{d}R}{\\mathrm{d}t} \\propto t^{-3/5}$.",
-        "symmetry_origin": "The solution is founded on the assumption of self-similarity, a continuous scaling symmetry where the problem's solution profile remains the same shape over time when appropriately scaled. This symmetry, combined with the problem's spherical symmetry in space, reduces the governing partial differential equations of fluid dynamics to a single ordinary differential equation. The scaling exponents are determined by the conservation of energy.",
-        "limits_and_boundary": "1. Strong Shock Condition: The solution is valid only when the pressure behind the shock is much greater than the ambient pressure of the surrounding medium, which can be treated as zero.\n2. Point Explosion: The energy is assumed to be released instantaneously at a single point ($t=0, r=0$).\n3. Adiabatic Flow: The model assumes no energy is lost from the system, for example, through radiation. The flow is adiabatic.\n4. Late-time Breakdown: At very late times, the shock weakens, the strong shock condition is violated, and the expansion is better described by acoustic wave propagation. Radiative cooling can also become significant, leading to the formation of a thin, dense shell (the snowplow phase).",
+        "interpretation": "The Sedov-Taylor solution is derived from dimensional analysis or by solving the Euler equations under the assumption of self-similarity. The radius of the blast wave $R(t)$ at time $t$ depends only on the initial energy released $E_0$ and the ambient medium density $\\rho_0$. By combining these variables to form a quantity with units of length, one arrives at the scaling law $R(t) = C_0 \\left( \\frac{E_0 t^2}{\\rho_0} \\right)^{1/5}$. Here, $C_0$ is a dimensionless constant of order unity that depends on the adiabatic index $\\gamma$ of the gas. The characteristic $t^{2/5}$ time dependence shows that the shock front decelerates as it expands, with its velocity scaling as $v(t) = \\frac{\\mathrm{d}R}{\\mathrm{d}t} \\propto t^{-3/5}$.",
+        "symmetry_origin": "The solution exhibits self-similarity, a form of scale invariance. The physical profiles of quantities like pressure, density, and velocity at different times are rescaled versions of each other. This symmetry allows the partial differential equations of fluid dynamics to be reduced to a set of ordinary differential equations.",
+        "limits_and_boundary": "This solution is valid in the limit where the energy of the explosion $E_0$ is much greater than the initial internal energy of the ambient medium, and the pressure behind the shock is much greater than the ambient pressure. It breaks down at very early times ($t \\to 0$) when the details of the energy deposition matter, and at very late times ($t \\to \\infty$) when the shock wave has weakened sufficiently that the ambient pressure is no longer negligible and the expansion transitions to a sound wave (the Sedov-Taylor phase ends).",
         "semantic_variables": {
             "R": {
                 "name": "Blast Wave Radius",
                 "type": "variable",
                 "unit": "m",
-                "description": "The radius of the spherical blast wave as a function of time."
+                "description": "The radius of the spherical shock wave front as a function of time, $R(t)$."
+            },
+            "C_0": {
+                "name": "Sedov-Taylor Constant",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "A dimensionless constant of order unity that depends on the adiabatic index $\\gamma$ of the medium."
+            },
+            "E_0": {
+                "name": "Initial Energy",
+                "type": "variable",
+                "unit": "J",
+                "description": "The total energy released in the explosion at time $t=0$."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The time elapsed since the initiation of the explosion."
-            },
-            "C_0": {
-                "name": "Dimensionless Constant",
-                "type": "constant",
-                "unit": "unitless",
-                "description": "A dimensionless constant of order unity determined by the self-similar solution, dependent on the adiabatic index of the gas."
-            },
-            "E_0": {
-                "name": "Initial Energy",
-                "type": "constant",
-                "unit": "J",
-                "description": "The total initial energy released by the explosion at t=0."
+                "description": "The time elapsed since the initial explosion."
             },
             "\\rho_0": {
-                "name": "Ambient Medium Density",
-                "type": "constant",
+                "name": "Ambient Density",
+                "type": "variable",
                 "unit": "kg/m^3",
-                "description": "The uniform density of the medium into which the blast wave is expanding."
+                "description": "The initial, unperturbed mass density of the medium into which the blast wave expands."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Sedov-Taylor solution describes the self-similar evolution of a strong shock wave propagating away from a point-like, instantaneous energy release in a cold, uniform medium. It provides a power-law scaling for the shock radius as a function of time, initial energy, and ambient density.",
-        "intuitive_summary": "The radius of a powerful explosion grows with time as a power-law, determined by the explosion's energy and the density of the surrounding gas.",
+        "conceptual_definition": "The Sedov-Taylor solution models the evolution of a strong explosion (e.g., a supernova or nuclear detonation) where the energy of the blast far exceeds the internal energy of the surrounding medium. It posits that the radius of the expanding shockwave, $R(t)$, can be determined solely through dimensional analysis of the key physical quantities: the energy released $E_0$, the time elapsed $t$, and the ambient density of the medium $\\rho_0$. The solution is self-similar, meaning the spatial profile of physical quantities like pressure and density scales with the shock radius over time.",
+        "intuitive_summary": "Imagine a powerful explosion, like a supernova, in a uniform gas cloud. This formula predicts how the radius of the resulting shockwave grows over time. The expansion is driven by the initial energy of the blast and slowed by the density of the gas it plows through. The radius grows as time to the 2/5 power, meaning the shockwave continuously decelerates as it expands.",
         "subcomponents": [
+            "blast-scaling-d4b702ed",
+            "thermonuclear-explosions-identity-1-abdec055-be3b27ae",
             "exponent-of-time-in-sedov-taylor-relation-5969ea43"
-        ]
+        ],
+        "description": "Describes the radius of a spherical shock wave front as a function of time, following an instantaneous, point-like release of a large amount of energy in a uniform medium.",
+        "derivation_type": "DERIVED_FROM"
     },
     "completeness-resolution-identity-8f33a2d7": {
         "title": "Resolution of the Identity (Hilbert Spaces)",

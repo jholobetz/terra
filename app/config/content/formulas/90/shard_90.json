@@ -114,37 +114,40 @@
         "intuitive_summary": "A barn is a very small unit of area, equivalent to one hundred-millionth of a trillionth of a square meter, often used to represent the target size for nuclear interactions."
     },
     "resolution-factor-9bd705e2": {
-        "title": "Resolution Factor",
+        "title": "Secular Resolution Factor in Celestial Mechanics",
         "equation": "B_{\\mathrm{secular}} = v_{\\odot} \\Delta t",
         "semantic_variables": {
             "B_{\\mathrm{secular}}": {
                 "name": "Secular Resolution Factor",
                 "type": "variable",
                 "unit": "m",
-                "description": "The characteristic distance over which secular perturbations act within a given time interval."
+                "description": "The characteristic length scale over which secular perturbations are effective."
             },
             "v_{\\odot}": {
                 "name": "Characteristic Relative Velocity",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The relative velocity of the celestial object, often taken as the peculiar velocity of the Sun (denoted by ☉) or a similar reference velocity in the system."
+                "description": "The mean relative velocity of a reference object (e.g., the Sun) over the time interval."
             },
             "\\Delta t": {
                 "name": "Time Interval",
                 "type": "variable",
                 "unit": "s",
-                "description": "The duration over which the secular effects are considered."
+                "description": "The timescale over which secular effects are being considered."
             }
         },
-        "interpretation": "The formula defines the secular resolution factor, $B_{\\mathrm{secular}}$, as the product of a characteristic relative velocity, $v_{\\odot}$, and a time interval, $\\Delta t$. This quantity represents the spatial extent over which secular (long-term) gravitational perturbations can influence an object's orbit. For instance, if $v_{\\odot}$ is the peculiar velocity of the Sun relative to the local standard of rest and $\\Delta t$ is the timescale of interest, $B_{\\mathrm{secular}}$ gives the distance the Sun travels in that time, effectively defining the 'reach' of these cumulative effects.",
-        "symmetry_origin": "This formula is a direct application of fundamental kinematics (distance = velocity × time). It is not derived from a deep symmetry principle via Noether's theorem but is consistent with the Galilean invariance of non-relativistic mechanics, which is the appropriate framework for most orbital dynamics problems. The concept of secular perturbations itself arises from time-averaging over fast orbital motions, a procedure that isolates the slow, long-term evolution of the system.",
-        "limits_and_boundary": "1. In the limit $\\Delta t \\to 0$, the secular resolution factor $B_{\\mathrm{secular}} \\to 0$. This signifies that over infinitesimally short time intervals, secular effects have no significant spatial reach.\n2. In the limit $\\Delta t \\to \\infty$ (for a non-zero $v_{\\odot}$), $B_{\\mathrm{secular}} \\to \\infty$. This implies that over very long timescales, secular perturbations can accumulate and influence orbital parameters over vast spatial scales, potentially leading to orbital instability.",
+        "interpretation": "The formula defines the secular resolution factor, $B_{\\mathrm{secular}}$, as the product of a characteristic relative velocity, $v_{\\odot}$, and a time interval, $\\Delta t$. This quantity represents the spatial extent over which secular (long-term) gravitational perturbations can influence an object's orbit. For instance, if $v_{\\odot}$ is the peculiar velocity of the Sun relative to the local standard of rest and $\\Delta t$ is the timescale of interest (e.g., the age of the solar system or the precession period of an orbit), then $B_{\\mathrm{secular}}$ gives the distance the Sun travels in that time. This distance effectively defines the 'reach' of these cumulative effects, setting a natural length scale for theoretical models and numerical simulations of long-term orbital dynamics.",
+        "symmetry_origin": "Homogeneity of spacetime (Galilean invariance in the non-relativistic limit), which establishes the linear relationship between distance, constant velocity, and time.",
+        "limits_and_boundary": "In the limit of a vanishing time interval, $\\Delta t \\to 0$, the resolution factor $B_{\\mathrm{secular}} \\to 0$. Conversely, as $\\Delta t \\to \\infty$, the factor $B_{\\mathrm{secular}} \\to \\infty$. The formula assumes a constant velocity $v_{\\odot}$ over the interval and is valid in the non-relativistic regime where $v_{\\odot} \\ll c$.",
         "status": "platinum",
-        "conceptual_definition": "The secular resolution factor quantifies the characteristic distance over which secular perturbations act on a celestial object within a given time interval. It is the product of the object's characteristic relative velocity and the duration of the time interval.",
-        "intuitive_summary": "The secular resolution factor represents the distance a body travels due to its secular motion within a specified time, indicating the spatial scale of long-term orbital influences.",
+        "conceptual_definition": "The formula $B_{\\mathrm{secular}} = v_{\\odot} \\Delta t$ is a fundamental kinematic relationship used in celestial mechanics to estimate a length scale. It defines the 'secular resolution factor', $B_{\\mathrm{secular}}$, which represents the spatial distance an object, such as the Sun, travels relative to a reference frame over a long timescale $\\Delta t$. This distance sets the scale for the cumulative effect of secular perturbations, which are slow, long-term changes in an orbit that do not average to zero over a single orbital period.",
+        "intuitive_summary": "Imagine you're trying to measure the slow, long-term drift of a planet's orbit. This formula tells you the 'reach' or 'blur' of those long-term effects. It's simply how far a reference object, like the Sun, moves during the time you're observing, defining the spatial scale over which these subtle gravitational nudges add up.",
         "subcomponents": [
-            "solar-peculiar-velocity-a829ae7d"
-        ]
+            "asymmetry-decay-3c017534",
+            "relativistic-work-integral-625b38e2"
+        ],
+        "description": "Defines the characteristic length scale over which long-term (secular) gravitational perturbations accumulate, determined by a characteristic velocity and a time interval.",
+        "derivation_type": "DEFINITION"
     },
     "the-inflaton-push-0cb035d8": {
         "title": "The Inflaton Push",
@@ -1039,55 +1042,49 @@
         ]
     },
     "hr-diagram-identity-1-fcf8da33-0554873d": {
-        "title": "Stellar Luminosity-Temperature-Radius Relation",
+        "title": "Stellar Luminosity from Black-Body Radiation",
         "equation": "L = 4\\pi R^2 \\sigma_{\\text{SB}} T^4",
-        "interpretation": "$L$ is the total stellar luminosity, $R$ is the stellar radius, $\\sigma_{\\text{SB}}$ is the Stefan-Boltzmann constant, and $T$ is the effective surface temperature.",
-        "symmetry_origin": "Spherical symmetry of stellar envelopes and local thermodynamic equilibrium of blackbody radiation.",
-        "limits_and_boundary": "Serves as the basis for the Hertzsprung-Russell (H-R) diagram, sorting stars into main sequence, giants, and dwarfs.",
+        "interpretation": "In the equation $L = 4\\pi R^2 \\sigma_{\\text{SB}} T^4$, the variable $L$ represents the total stellar luminosity (total energy radiated per unit time), $R$ is the stellar radius (typically the photospheric radius), $\\sigma_{\\text{SB}}$ is the Stefan-Boltzmann constant, and $T$ is the effective surface temperature of the star.",
+        "symmetry_origin": "Geometric invariance (spherical symmetry). The $4\\pi R^2$ term represents the surface area of a sphere, which is a direct consequence of assuming the star is spherically symmetric and its radiation is isotropic.",
+        "limits_and_boundary": "This relation holds for an idealized spherical black-body radiator. As the effective temperature $T \\to 0$, the luminosity $L \\to 0$. Similarly, for a fixed temperature, as the radius $R \\to 0$, the luminosity $L \\to 0$. The formula is an approximation; real stellar spectra deviate from a perfect black-body curve due to atmospheric absorption and emission lines.",
         "semantic_variables": {
             "L": {
                 "name": "Stellar Luminosity",
                 "type": "variable",
                 "unit": "W",
-                "description": "The total power output of the star."
+                "description": "Total electromagnetic energy emitted per unit time by the star."
             },
             "R": {
                 "name": "Stellar Radius",
                 "type": "variable",
                 "unit": "m",
-                "description": "The radius of the star's photosphere."
+                "description": "The radius of the star, typically defined at the photosphere where the optical depth is approximately 2/3."
             },
             "\\sigma_{\\text{SB}}": {
                 "name": "Stefan-Boltzmann Constant",
                 "type": "constant",
-                "unit": "W/(m^2 K^4)",
-                "description": "The blackbody radiation constant."
+                "unit": "W m⁻² K⁻⁴",
+                "description": "The constant of proportionality relating the total energy radiated per unit surface area of a black body to the fourth power of its thermodynamic temperature."
             },
             "T": {
                 "name": "Effective Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The effective blackbody temperature of the star's surface."
-            },
-            "\\pi": {
-                "name": "Pi constant",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The ratio of a circle's circumference to its diameter (approx. 3.14159)."
-            },
-            "\\sigma": {
-                "name": "Stefan-Boltzmann Constant",
-                "type": "constant",
-                "unit": "W⋅m⁻²⋅K⁻⁴",
-                "description": "The physical constant relating the total energy radiated per unit surface area of a black body per unit time to the fourth power of the thermodynamic temperature."
+                "description": "The temperature of a black body that would produce the same total amount of electromagnetic radiation as the star."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "This fundamental astrophysical relation calculates the total luminosity $L$ of a star modeled as a spherical blackbody of radius $R$ and effective surface temperature $T$, applying Stefan-Boltzmann's law integrated over the star's surface area.",
-        "intuitive_summary": "A star's total light output is determined by its physical size (surface area) and its surface temperature.",
+        "conceptual_definition": "A star's total power output, its luminosity $L$, is determined by integrating the energy flux from its entire spherical surface area. Assuming the star radiates as a perfect black body, the flux at any point on the surface is given by the Stefan-Boltzmann law, $\\mathcal{F} = \\sigma_{\\text{SB}} T^4$. Multiplying this flux by the star's surface area, $A = 4\\pi R^2$, yields the total luminosity $L = A \\mathcal{F}$.",
+        "intuitive_summary": "Hotter stars are brighter, and bigger stars are brighter. This formula quantifies this relationship, showing that luminosity increases very rapidly with temperature (as $T^4$) and with the square of the radius ($R^2$).",
         "subcomponents": [
-            "astrometric-error-cd22052c"
-        ]
+            "astronomical-flux-luminosity-distance-relation-69db110d",
+            "mass-identity-1-a4ce340e-a06c0d8a",
+            "scaling-rule-99b83676",
+            "mass-continuity-stellar-relation-c1b59288"
+        ],
+        "description": "Relates a star's total energy output (luminosity) to its size (radius) and surface temperature, by modeling the star as an idealized spherical black-body radiator.",
+        "parent_formula_id": "luminosity-relation",
+        "derivation_type": "DERIVED_FROM"
     },
     "ashtekar-barbero-connection-identity-1-21327353-c6cdb886": {
         "title": "Ashtekar-Barbero Gauge Connection Definition",

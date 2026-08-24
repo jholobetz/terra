@@ -477,31 +477,37 @@
             "E_k": {
                 "name": "Kinetic Energy",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The energy an object possesses due to its motion."
+                "unit": "J",
+                "description": "The energy of an object due to its motion."
             },
             "m": {
                 "name": "Mass",
                 "type": "variable",
-                "unit": "kilogram (kg)",
+                "unit": "kg",
                 "description": "The rest mass of the object, a measure of its inertia."
             },
             "v": {
                 "name": "Speed",
                 "type": "variable",
-                "unit": "meters per second (m/s)",
-                "description": "The magnitude of the velocity of the object."
+                "unit": "m/s",
+                "description": "The magnitude of the object's velocity."
             }
         },
-        "interpretation": "In classical mechanics, the formula $E_k = \\frac{1}{2} m v^2$ defines the kinetic energy ($E_k$) of an object. Here, $m$ represents the object's mass, a measure of its inertia, and $v$ denotes its speed, the magnitude of its velocity. The kinetic energy is directly proportional to the mass and, more significantly, to the square of the speed; doubling the speed quadruples the energy. This expression is derived from the work-energy theorem and serves as a low-speed approximation to the full relativistic formula, $E_k = (\\gamma - 1)mc^2$, where the Lorentz factor is $\\gamma = (1 - v^2/c^2)^{-1/2}$.",
-        "symmetry_origin": "The formula for kinetic energy is derived from the work-energy theorem, $W = \\Delta E_k$, within the framework of Newtonian mechanics. This framework is invariant under Galilean transformations, which relate inertial frames moving at constant velocity relative to one another. However, the expression $E_k = \\frac{1}{2}mv^2$ is not invariant under the Lorentz transformations of special relativity, which correctly describe physics at all speeds.",
-        "limits_and_boundary": "1. **Non-relativistic limit ($v \\ll c$):** The formula is highly accurate for speeds much less than the speed of light, $c$. In this regime, the relativistic kinetic energy $E_k = (\\gamma - 1)mc^2$ reduces to $\\frac{1}{2}mv^2$ via a Taylor expansion of the Lorentz factor $\\gamma$.\n2. **Stationary limit ($v \\to 0$):** As an object's speed approaches zero, its kinetic energy also approaches zero, correctly describing a stationary object as having no energy of motion.\n3. **Relativistic limit ($v \\to c$):** The classical formula incorrectly predicts a finite kinetic energy of $\\frac{1}{2}mc^2$ as speed approaches $c$. In reality, as required by special relativity, the kinetic energy approaches infinity, meaning a massive object can never reach the speed of light.",
+        "interpretation": "The formula $E_k = \\frac{1}{2} m v^2$ defines the kinetic energy ($E_k$) of an object in the non-relativistic regime. Here, $m$ represents the object's rest mass, a measure of its inertia, and $v$ denotes its speed, the magnitude of its velocity vector. The kinetic energy is directly proportional to the mass and, more significantly, to the square of the speed. This expression is derived from the work-energy theorem, $W = \\Delta E_k$, and serves as the first-order Taylor approximation to the full relativistic kinetic energy formula, $E_k = (\\gamma - 1)mc^2$, where the Lorentz factor is $\\gamma = (1 - v^2/c^2)^{-1/2}$.",
+        "symmetry_origin": "In the Lagrangian formulation of classical mechanics, the kinetic energy term is what remains for a free particle. The conservation of total energy, of which kinetic energy is a component, is a direct consequence of time-translation invariance via Noether's theorem.",
+        "limits_and_boundary": "This formula is valid only for speeds $v$ much less than the speed of light $c$ (i.e., $v \\ll c$). As $v \\to c$, the formula diverges from the true relativistic kinetic energy, which approaches infinity. In the limit of zero speed, $v \\to 0$, the kinetic energy correctly becomes zero, $E_k \\to 0$. This equation represents the classical limit ($\\hbar \\to 0$) of the quantum mechanical kinetic energy operator, $\\hat{T} = \\frac{\\hat{p}^2}{2m}$.",
         "status": "platinum",
-        "conceptual_definition": "Kinetic energy is the energy an object possesses due to its motion. This classical formula is an approximation valid for speeds much lower than the speed of light and is not invariant under Lorentz transformations.",
-        "intuitive_summary": "An object's motion inherently stores energy, proportional to its mass and the square of its speed.",
+        "conceptual_definition": "In classical mechanics, kinetic energy is the work required to accelerate a body of mass $m$ from rest to a specified speed $v$. It represents the energy an object possesses due to its motion relative to an inertial frame of reference.",
+        "intuitive_summary": "Kinetic energy is the energy of motion. It depends much more on an object's speed than its mass; doubling the speed will quadruple the kinetic energy, while doubling the mass only doubles it.",
         "subcomponents": [
-            "non-relativistic-kinetic-energy-5368cde7"
-        ]
+            "kinetic-energy-momentum-non-relativistic",
+            "non-relativistic-kinetic-lagrangian-2fe5ffb1",
+            "temperature-link-f5b2150a",
+            "second-order-relativistic-kinetic-energy-correction-37cac601"
+        ],
+        "description": "Defines the energy an object possesses due to its motion in the classical regime, valid for speeds much less than the speed of light.",
+        "parent_formula_id": "relativistic-kinetic-energy-4a0f6e8f",
+        "derivation_type": "APPROXIMATION"
     },
     "physical-proof-4d6623df": {
         "title": "Total Action in Field Theory",
@@ -837,61 +843,54 @@
         "derivation_type": "DERIVED_FROM"
     },
     "short-range-limit-e6a70b6b": {
-        "title": "Short-Range Limit",
+        "title": "Short-Range Repulsive Core of the Nuclear Potential",
         "equation": "V(r) = V_{att} + V_{rep} \\quad (r < 0.5 \\text{ fm})",
         "semantic_variables": {
             "V(r)": {
-                "name": "Interaction Potential Energy",
+                "name": "Total Potential Energy",
                 "type": "variable",
-                "unit": "J",
-                "description": "The potential energy of interaction between two particles as a function of their separation distance $r$. It represents the energy stored in the system due to their relative positions."
+                "unit": "MeV",
+                "description": "The total potential energy of the nucleon-nucleon system as a function of their separation distance $r$."
             },
             "r": {
                 "name": "Separation Distance",
                 "type": "variable",
-                "unit": "m",
-                "description": "The distance between the centers of the two interacting particles. In this context, the formula is valid for $r < 0.5 \\times 10^{-15} \\text{ m}$."
+                "unit": "fm",
+                "description": "The distance between the centers of the two interacting nucleons."
             },
             "V_{att}": {
                 "name": "Attractive Potential Component",
                 "type": "variable",
-                "unit": "J",
-                "description": "The component of the interaction potential energy that corresponds to attractive forces between the particles. This term contributes negatively to the total potential energy, stabilizing the system."
+                "unit": "MeV",
+                "description": "The attractive part of the nuclear potential, dominant at $\\sim 1$ fm and mediated by meson exchange."
             },
             "V_{rep}": {
                 "name": "Repulsive Potential Component",
                 "type": "variable",
-                "unit": "J",
-                "description": "The component of the interaction potential energy that corresponds to repulsive forces between the particles. This term contributes positively to the total potential energy, preventing the particles from getting too close."
+                "unit": "MeV",
+                "description": "The strongly repulsive part of the nuclear potential, dominant at $r < 0.5$ fm, creating a 'hard core'."
             },
-            "V": {
-                "name": "Electric Potential",
-                "type": "variable",
-                "unit": "V",
-                "description": "The amount of work energy needed to move a unit of electric charge from a reference point to a specific point in an electric field."
-            },
-            "f": {
-                "name": "Frequency",
-                "type": "variable",
-                "unit": "Hz",
-                "description": "The number of occurrences of a repeating event per unit of time."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
+            "\\text{fm}": {
+                "name": "Femtometer",
+                "type": "constant",
+                "unit": "m",
+                "description": "A unit of length equal to $10^{-15}$ meters, also known as a fermi, characteristic of nuclear scales."
             }
         },
-        "interpretation": "The equation $V(r) = V_{att} + V_{rep}$ for $r < 0.5 \\text{ fm}$ expresses the total potential energy $V(r)$ as a sum of two components: an attractive potential $V_{att}$ and a repulsive potential $V_{rep}$. This form is characteristic of the nuclear force. While attractive at typical internucleon distances (around 1 fm), the nuclear force exhibits a very strong, short-range repulsion at distances below approximately 0.5 fm. This repulsion is thought to arise from the Pauli exclusion principle and the underlying quark structure of nucleons, preventing nucleons from occupying the same quantum state and effectively making them",
-        "symmetry_origin": "The mathematical form of the attractive and repulsive potentials, $V_{att}$ and $V_{rep}$, is derived from empirical observations and theoretical models of the strong nuclear force, which is mediated by the exchange of mesons. The short-range repulsion is a crucial feature that arises from fundamental quantum mechanical principles (like the Pauli Exclusion Principle for fermions) and the composite nature of nucleons (quarks and gluons). The distance dependence of these potentials is not derived from simple symmetry principles but from the complex dynamics of quantum chromodynamics (QCD) at low energies.",
-        "limits_and_boundary": "The formula is explicitly defined for $r < 0.5 \\text{ fm}$. As $r$ approaches zero (i.e., $r \\to 0^+$), the repulsive component $V_{rep}$ typically dominates and tends to $+\\infty$, representing an infinitely strong repulsion preventing particles from occupying the same space. The attractive component $V_{att}$ may still be present but is overwhelmed by the rapid increase of $V_{rep}$. For distances $r \\ge 0.5 \\text{ fm}$, this specific formula is not applicable, and the interaction potential is typically described by different models where the attraction might be more dominant or a different balance between attraction and repulsion exists.",
+        "interpretation": "The equation $V(r) = V_{att} + V_{rep}$ expresses the total potential energy $V(r)$ between two nucleons as a sum of two components within the short-range domain of $r < 0.5$ fm. $V_{att}$ represents the attractive potential, typically modeled by a Yukawa potential mediated by pion exchange, which is responsible for binding nucleons at distances of $\\sim 1$ fm. $V_{rep}$ represents the powerful repulsive potential that dominates at very short distances, preventing nucleons from occupying the same space. This repulsive core is understood to be a consequence of the Pauli exclusion principle applied to the nucleons' constituent quarks and the exchange of vector mesons (e.g., the $\\omega$ and $\\rho$ mesons).",
+        "symmetry_origin": "The potential arises as a residual effect of the fundamental $SU(3)$ color gauge symmetry of Quantum Chromodynamics (QCD). The repulsive core component is a direct consequence of the fermionic nature of quarks and the Pauli exclusion principle, which stems from the requirement that the total wavefunction of identical fermions be antisymmetric under particle exchange.",
+        "limits_and_boundary": "In the limit as the separation distance $r \\to 0$, the potential $V(r) \\to +\\infty$ due to the hard-core nature of the $V_{rep}$ term. As $r$ increases beyond this domain (e.g., towards $1$ fm), the attractive $V_{att}$ term, which decays exponentially, becomes dominant, creating the potential well responsible for nuclear binding. In the classical limit where $\\hbar \\to 0$, the quantum mechanical origins of this potential (meson exchange and Pauli exclusion) are lost, and it would be treated as an empirical classical force.",
         "status": "platinum",
-        "conceptual_definition": "The formula describes the interaction potential energy, denoted by $V(r)$, between two particles at extremely short distances, specifically when their separation $r$ is less than 0.5 femtometers (fm). At these sub-femtometer scales, the total potential is the sum of an attractive component, $V_{att}$, and a repulsive component, $V_{rep}$. This formula is particularly relevant in nuclear physics to model forces between nucleons (protons and neutrons) where short-range repulsion becomes dominant, preventing the nucleus from collapsing.",
-        "intuitive_summary": "At very close distances within a nucleus, the total force between particles is a combination of attraction and a strong repulsion that keeps them from overlapping.",
+        "conceptual_definition": "The equation $V(r) = V_{att} + V_{rep}$ for separation distances $r < 0.5$ fm models the internucleon potential $V(r)$ as a superposition of an attractive component $V_{att}$ and a dominant repulsive component $V_{rep}$. This 'hard core' repulsion is a critical feature of the residual strong force, originating from the Pauli exclusion principle acting on the constituent quarks of the nucleons and the exchange of heavy vector mesons.",
+        "intuitive_summary": "Imagine two powerful magnets that attract each other from a distance. If you place a very stiff spring between them, they will pull together until the spring's compression force becomes overwhelmingly strong, preventing them from touching. The nuclear force acts similarly: nucleons are attracted until they get extremely close ($< 0.5$ fm), at which point a powerful repulsive 'core' pushes them apart.",
         "subcomponents": [
-            "positive-infinity-limit-9ab03473"
-        ]
+            "residual-range-d991f521",
+            "packing-limit-af9a3e65",
+            "chaos-limit-41647f8f"
+        ],
+        "description": "A phenomenological model describing the total nucleon-nucleon potential at sub-femtometer distances, where a strong repulsive force dominates over the nuclear attraction, preventing nuclear collapse.",
+        "parent_formula_id": "residual-range-d991f521",
+        "derivation_type": "SPECIAL_CASE"
     },
     "intensity-energy-separation-6a3db801": {
         "title": "Intensity-Energy Separation",
@@ -942,37 +941,42 @@
         "intuitive_summary": "Power is the rate at which energy is delivered, which for quantized energy carriers like photons, is the total energy of all photons emitted divided by the time taken."
     },
     "potential-difference-59b71f56": {
-        "title": "Potential Difference",
+        "title": "Electric Potential Difference from Work and Charge",
         "equation": "\\Delta V = \\frac{W}{q}",
         "semantic_variables": {
             "\\Delta V": {
-                "name": "Potential Difference (Voltage)",
+                "name": "Electric Potential Difference",
                 "type": "variable",
-                "unit": "V",
-                "description": "The difference in electric potential between two points, representing the work done per unit charge to move a charge between them."
+                "unit": "V (Volts)",
+                "description": "The difference in electric potential between two points in space, also known as voltage."
             },
             "W": {
                 "name": "Work Done",
                 "type": "variable",
-                "unit": "J",
-                "description": "The energy transferred by an external force to move a charge against the electric field between two points."
+                "unit": "J (Joules)",
+                "description": "The work done by an external force to move a charge between two points against the electrostatic field."
             },
             "q": {
                 "name": "Electric Charge",
                 "type": "variable",
-                "unit": "C",
-                "description": "The magnitude of the electric charge being moved through the potential difference."
+                "unit": "C (Coulombs)",
+                "description": "The magnitude of the test charge being moved."
             }
         },
-        "interpretation": "The equation $\\Delta V = \\frac{W}{q}$ defines the potential difference, $\\Delta V$ (measured in Volts, V), between two points as the ratio of the work done, $W$ (in Joules, J), by an external force to the magnitude of the charge, $q$ (in Coulombs, C), moved between those points. $\\Delta V$ represents the change in electric potential from an initial to a final point. $W$ is the work done against the conservative electrostatic field. If the field itself does the work, $W$ is negative, resulting in a decrease in potential for a positive charge. This definition is foundational to electrostatics and circuit theory, where potential difference is commonly called voltage.",
-        "symmetry_origin": "The concept of electric potential and potential difference stems from the conservative nature of the electrostatic field, which is a manifestation of U(1) gauge symmetry in electromagnetism. For a static field, the curl of the electric field is zero ($\\nabla \\times \\vec{E} = 0$), which allows it to be expressed as the negative gradient of a scalar potential, $\\vec{E} = -\\nabla V$. Consequently, the work done moving a charge between two points, $W = \\int \\vec{F} \\cdot \\mathrm{d}\\vec{l} = -q \\int \\vec{E} \\cdot \\mathrm{d}\\vec{l}$, is independent of the path taken, allowing for a unique potential difference $W/q = V_f - V_i = \\Delta V$.",
-        "limits_and_boundary": "In the limit of a vanishingly small test charge ($q \\to 0$), the potential difference $\\Delta V$ remains well-defined, as it is a property of the electric field itself, not the charge used to probe it.\nIf the work done $W$ is zero for a non-zero charge $q$, the potential difference $\\Delta V$ is zero, meaning the initial and final points lie on an equipotential surface.\nFor fields generated by idealized point charges, the work required to move a charge to the location of the source charge is infinite, resulting in a divergent potential at that point.",
+        "interpretation": "The equation $\\Delta V = W/q$ defines the potential difference, $\\Delta V$ (measured in Volts, V), between two points as the ratio of the work done, $W$ (in Joules, J), by an external force to move a test charge, $q$ (in Coulombs, C), between those points. $\\Delta V$ represents the change in electric potential, $\\Delta V = V_f - V_i$, from an initial point $i$ to a final point $f$. The work $W$ is specifically the work done *against* the conservative electrostatic field. If the field itself does the work (e.g., a positive charge moving towards a negative charge), $W$ is negative, corresponding to a decrease in potential energy and thus a negative potential difference for a positive charge. This definition is a cornerstone of electrostatics and is fundamental to understanding electric circuits, where potential difference drives current.",
+        "symmetry_origin": "U(1) gauge invariance. The electric potential $V$ is defined up to an arbitrary constant, meaning the physics (the electric field $\\mathbf{E} = -\\nabla V$) is unchanged by a global shift $V \\to V + C$. The potential *difference* $\\Delta V$ is therefore the physically meaningful, gauge-invariant quantity.",
+        "limits_and_boundary": "This formula is valid in the quasi-static limit, where charges are moved slowly enough that radiation effects are negligible. It assumes a test charge $q$ that is small enough not to significantly perturb the source electric field. As the distance between the points approaches zero, $\\Delta V \\to 0$. In the classical limit where $\\hbar \\to 0$, quantum effects like tunneling are ignored. The definition holds for any conservative field, but in electrodynamics with time-varying fields, the work done is path-dependent, and the simple scalar potential must be augmented by the magnetic vector potential $\\mathbf{A}$.",
         "status": "platinum",
-        "conceptual_definition": "The potential difference between two points in an electric field is the work done per unit charge required to move a test charge between those two points. It quantifies the change in electric potential energy per unit charge.",
-        "intuitive_summary": "Potential difference is the work required to move a unit of electric charge between two locations in an electric field.",
+        "conceptual_definition": "Electric potential difference, often called voltage, is a measure of the change in electric potential energy per unit charge. The formula $\\Delta V = W/q$ quantifies this relationship, where $\\Delta V$ is the potential difference, $W$ is the work done by an external force to move a charge $q$ from a point of lower potential to a point of higher potential within an electric field.",
+        "intuitive_summary": "Imagine lifting a ball against gravity; the work you do increases its gravitational potential energy. Similarly, moving a positive charge against an electric field requires work, increasing its electric potential energy. Voltage, or potential difference ($\\Delta V$), is like the 'height difference' in this electrical landscape, telling you how much energy each unit of charge ($q$) gains or loses.",
         "subcomponents": [
-            "electric-field-from-scalar-potential-e04ad8af"
-        ]
+            "potential-difference-identity-1-5421da4d",
+            "potential-difference-in-uniform-electric-field-4cdab822",
+            "retarded-scalar-potential-charge-density"
+        ],
+        "description": "Defines the electric potential difference between two points as the work required per unit charge to move a test charge between them against the electrostatic field.",
+        "parent_formula_id": "potential-difference-identity-1-5421da4d",
+        "derivation_type": "DEFINITION"
     },
     "density-profile-545c6841": {
         "title": "Navarro-Frenk-White (NFW) Density Profile",

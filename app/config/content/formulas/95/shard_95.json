@@ -294,49 +294,54 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "time-invariance-e114a535": {
-        "title": "Energy Conservation from Time Invariance",
+        "title": "Rate of Energy Change from Explicit Lagrangian Time Dependence",
         "equation": "\\frac{\\mathrm{d}E}{\\mathrm{d}t} = -\\frac{\\partial L}{\\partial t}",
         "semantic_variables": {
             "E": {
-                "name": "Total Energy",
+                "name": "Energy",
                 "type": "variable",
-                "unit": "J",
-                "description": "The total energy of the physical system. In many conservative systems, this is the sum of kinetic and potential energy and is equivalent to the Hamiltonian."
-            },
-            "L": {
-                "name": "Lagrangian",
-                "type": "variable",
-                "unit": "J",
-                "description": "A function of the system's generalized coordinates, velocities, and time, defined as kinetic energy minus potential energy ($L=T-V$)."
+                "unit": "Joules (J)",
+                "description": "The total energy of the physical system, often equivalent to the Hamiltonian for standard Lagrangians."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
-                "unit": "s",
-                "description": "The independent variable representing the progression of events."
+                "unit": "seconds (s)",
+                "description": "The independent time variable."
+            },
+            "L": {
+                "name": "Lagrangian",
+                "type": "variable",
+                "unit": "Joules (J)",
+                "description": "The Lagrangian of the system, defined as kinetic energy minus potential energy, $L = T - V$."
             },
             "\\frac{\\mathrm{d}}{\\mathrm{d}t}": {
                 "name": "Total Time Derivative",
                 "type": "operator",
                 "unit": "1/s",
-                "description": "The operator that computes the rate of change of a function with respect to time, accounting for both explicit and implicit time dependencies through the system's coordinates."
+                "description": "The operator for the total derivative with respect to time, which acts on all implicit and explicit time dependencies."
             },
             "\\frac{\\partial}{\\partial t}": {
                 "name": "Partial Time Derivative",
                 "type": "operator",
                 "unit": "1/s",
-                "description": "The operator that computes the rate of change of a function with respect to time, treating all other variables as independent constants."
+                "description": "The operator for the partial derivative with respect to time, which acts only on explicit time dependence."
             }
         },
-        "interpretation": "This equation is a fundamental result in Lagrangian mechanics. The term $\\mathrm{d}E/\\mathrm{d}t$ is the total time derivative of the system's energy $E$ (which for many systems is equivalent to the Hamiltonian, $H$). The term $\\partial L/\\partial t$ is the partial derivative of the Lagrangian $L = T - V$ (kinetic minus potential energy) with respect to time. The equation shows that the system's energy changes only if the Lagrangian explicitly depends on time, for instance, through a time-varying potential. If the Lagrangian has no explicit time dependence, $\\partial L/\\partial t = 0$, the system possesses time-translation symmetry, and the equation simplifies to $\\mathrm{d}E/\\mathrm{d}t = 0$, which is the law of conservation of energy.",
-        "symmetry_origin": "This law is a direct consequence of Noether's Theorem, which connects continuous symmetries to conserved quantities. The continuous symmetry of time translation—the invariance of physical laws with respect to shifts in time—gives rise to the conservation of energy. Mathematically, if the Lagrangian $L$ is invariant under an infinitesimal time shift, meaning it has no explicit time dependence ($\\partial L / \\partial t = 0$), then the corresponding conserved quantity is the energy (or more formally, the Hamiltonian).",
-        "limits_and_boundary": "1. Time-Invariant System ($\\partial L / \\partial t = 0$): In a system with time-translation symmetry (e.g., an isolated system with no time-dependent external fields), the total energy is strictly conserved, $\\mathrm{d}E/\\mathrm{d}t = 0$.\n2. Time-Dependent System ($\\partial L / \\partial t \\neq 0$): In a system driven by external time-dependent forces or potentials, energy is not conserved. The rate of energy change is precisely given by $-\\partial L/\\partial t$.",
+        "interpretation": "The term $\\frac{\\mathrm{d}E}{\\mathrm{d}t}$ represents the total rate of change of the system's energy $E$, accounting for all implicit and explicit time dependencies of the coordinates and velocities. The term $-\\frac{\\partial L}{\\partial t}$ isolates the rate of change of energy due solely to an explicit time dependence within the Lagrangian $L = T - V$. For example, a time-varying external potential $V(q, t)$ would make $\\frac{\\partial L}{\\partial t} = -\\frac{\\partial V}{\\partial t}$ non-zero, leading to a change in the system's total energy. The equation thus provides the precise condition for energy conservation in the Lagrangian framework.",
+        "symmetry_origin": "Noether's Theorem: The conservation of energy is the direct consequence of the continuous symmetry of the laws of physics under time translation.",
+        "limits_and_boundary": "In the case of a time-invariant system, where the Lagrangian $L$ has no explicit time dependence, $\\frac{\\partial L}{\\partial t} = 0$. This directly implies $\\frac{\\mathrm{d}E}{\\mathrm{d}t} = 0$, which is the law of conservation of energy. This principle is foundational to classical mechanics and has a direct analogue in quantum mechanics, where a time-independent Hamiltonian $\\hat{H}$ leads to stationary energy eigenstates.",
         "status": "platinum",
-        "conceptual_definition": "This equation states that the rate of change of a system's total energy is equal to the negative of the explicit partial derivative of its Lagrangian with respect to time. It demonstrates that energy is a conserved quantity if and only if the Lagrangian is invariant under time translations.",
-        "intuitive_summary": "If the rules governing a system do not change over time, then the total energy of the system remains constant.",
+        "conceptual_definition": "This equation is a direct expression of Noether's theorem for time-translation symmetry. It states that the total time derivative of a system's energy, $E$, is equal to the negative of the partial derivative of its Lagrangian, $L$, with respect to time. A system's energy is conserved, meaning $\\frac{\\mathrm{d}E}{\\mathrm{d}t} = 0$, if and only if the Lagrangian is time-invariant, i.e., $\\frac{\\partial L}{\\partial t} = 0$. For many systems, the energy $E$ is identified with the Hamiltonian $H = \\sum_i p_i \\dot{q}_i - L$.",
+        "intuitive_summary": "Imagine the laws of physics for a system are written in a book (the Lagrangian). If the book's text itself doesn't change from one moment to the next, the total energy of the system must stay constant. This formula shows that the only way for the system's energy to change is if someone is actively rewriting the rules in the book as time passes.",
         "subcomponents": [
-            "lagrangian-definition-in-classical-mechanics-0db99f83"
-        ]
+            "form-invariance-0416c073",
+            "scalar-laws-01d54036",
+            "poisson-bracket-conservation-78ec4617"
+        ],
+        "description": "A cornerstone of Lagrangian mechanics, this equation demonstrates that a system's total energy is conserved if and only if its Lagrangian has no explicit dependence on time.",
+        "parent_formula_id": "hamiltonian-time-invariance-b93448d8",
+        "derivation_type": "DERIVED_FROM"
     },
     "poisson-s-equation-a76f00fd": {
         "title": "Poisson's Equation",
@@ -502,148 +507,93 @@
         "intuitive_summary": "Galaxies don't just move apart due to cosmic expansion; they also jostle around due to local gravity, and this formula gives a sense of how fast they typically \"jostle\"."
     },
     "observable-link-d48affe7": {
-        "title": "Observable link",
+        "title": "Probabilistic Correspondence of Observation to Reality",
         "equation": "B(T) = \\text{Belief that } T_{obs} = \\text{True}",
         "semantic_variables": {
-            "B(T)": {
-                "name": "Observable Link",
+            "B": {
+                "name": "Belief Function",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A measure of confidence or belief that an observed quantity $T_{obs}$ accurately reflects the true underlying physical state."
+                "unit": "Probability (dimensionless)",
+                "description": "The posterior probability, or confidence level, that a proposition $T$ about a physical state is true, given an observation."
+            },
+            "P": {
+                "name": "Conditional Probability",
+                "type": "operator",
+                "unit": "Probability (dimensionless)",
+                "description": "Represents the probability of the event preceding the bar `|` occurring, given that the event following the bar has occurred."
+            },
+            "T_{true}": {
+                "name": "True State Hypothesis",
+                "type": "variable",
+                "unit": "Boolean (dimensionless)",
+                "description": "A proposition asserting that the underlying, unobserved physical state corresponds to the state described by $T$."
             },
             "T_{obs}": {
-                "name": "Observed Quantity",
+                "name": "Observation",
                 "type": "variable",
-                "unit": "various",
-                "description": "The specific value or outcome of a measurement or observation, representing empirical data."
-            },
-            "True": {
-                "name": "True State",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "Represents the actual, underlying physical reality or state of the system being observed, which is often not directly accessible."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
-            },
-            "T": {
-                "name": "Tension / Period",
-                "type": "variable",
-                "unit": "N or s",
-                "description": "In dynamics, tension force in a string/cable, or period (time per cycle) of periodic motion."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "l": {
-                "name": "Length / Angular Quantum Number",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "f": {
-                "name": "Frequency",
-                "type": "variable",
-                "unit": "Hz",
-                "description": "The number of occurrences of a repeating event per unit of time."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "h": {
-                "name": "Planck Constant",
-                "type": "constant",
-                "unit": "J·s",
-                "description": "The quantum of electromagnetic action relating photon energy to frequency."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "u": {
-                "name": "Velocity Component / Specific Internal Energy",
-                "type": "variable",
-                "unit": "m/s or J/kg",
-                "description": "Speed along a particular coordinate direction, or internal energy per unit mass."
+                "unit": "Depends on observable",
+                "description": "The data or outcome obtained from a specific measurement intended to test the proposition $T$."
             }
         },
-        "interpretation": "In this formula, $B($T$)$ represents the 'Belief' or confidence level associated with a particular observable quantity $T$ being a true indicator of a physical state. The expression $\\text{Belief that } T_{obs} = \\text{True}$ is a probabilistic statement. It signifies the probability, given the observed data or measurement $T_{obs}$, that the underlying physical reality (the 'True' state) corresponds to what is being observed. There are no explicit variables with SI units in the typical sense of physical quantities like mass or velocity, as this formula operates in the domain of probability and epistemology, relating observed phenomena to inferred reality.",
-        "symmetry_origin": "This concept originates from Bayesian inference and probabilistic reasoning, where the goal is to update our beliefs about a hypothesis (in this case, that the observation is 'True') based on new evidence (the observation $T_{obs}$ itself). It does not derive from a physical symmetry or conservation law but rather from logical deduction and probability theory.",
-        "limits_and_boundary": "If the probability that the observation $T_{obs}$ is true approaches 1 (i.e., $\\text{Belief that } T_{obs} = \\text{True} \\to 1$), then the 'Observable Link' $B($T$)$ becomes maximal, indicating a very strong, almost certain connection between the observation and the true state. Conversely, if the probability approaches 0 (i.e., $\\text{Belief that } T_{obs} = \\text{True} \\to 0$), the 'Observable Link' $B($T$)$ approaches zero, suggesting that the observation is highly unreliable or misleading regarding the true state.",
+        "interpretation": "This formula provides an epistemological link between observation and reality. The term $B(T)$ represents the 'Belief' or confidence level in a proposition $T$. It is not a physical quantity but a measure of credence, ranging from 0 to 1. The right side, $P(T_{true} | T_{obs})$, is the posterior probability from Bayesian inference. $T_{obs}$ is the evidence obtained from an experiment or observation. $T_{true}$ is the hypothesis that the actual state of the universe accords with the proposition $T$. The formula posits that rational belief should be identified with this conditional probability.",
+        "symmetry_origin": "Epistemic Invariance under Bayesian Updating. The framework does not arise from a physical symmetry in the sense of Noether's theorem, but from a principle of logical consistency: rational beliefs must update according to the rules of probability calculus as new evidence is acquired.",
+        "limits_and_boundary": "This is a principle of inference, not a physical law with typical limits. However, in the limit of a perfect measurement where the observation $T_{obs}$ is only possible if the state is $T_{true}$ (i.e., $P(T_{obs} | T_{true}) = 1$ and $P(T_{obs} | \\neg T_{true}) = 0$), the belief $B(T)$ approaches 1 (certainty). Conversely, if an observation is completely uncorrelated with the true state, the posterior belief $B(T)$ reverts to the prior probability $P(T_{true})$.",
         "status": "platinum",
-        "conceptual_definition": "The formula for the 'Observable Link' mathematically quantifies the degree of belief that a specific observable quantity, denoted as $T_{obs}$, actually reflects a true underlying physical state or phenomenon.",
-        "intuitive_summary": "This formula states that the strength of the link between an observation and reality is precisely the probability that the observation correctly represents the true state of affairs.",
+        "conceptual_definition": "The belief, $B(T)$, in the veracity of a proposition $T$ concerning a physical system is defined as the conditional probability that the underlying state is true, $T_{true}$, given a specific observation, $T_{obs}$. This is a foundational concept in Bayesian epistemology, expressed as $B(T) = P(T_{true} | T_{obs})$.",
+        "intuitive_summary": "How much should we trust our measurement? This principle states that our confidence in a physical proposition should be precisely the probability that the proposition is actually true, given the data we've collected. It's a formal way of updating our beliefs based on evidence.",
         "subcomponents": [
-            "observed-cosmic-timescale-for-biological-evolution-a65d73c6"
-        ]
+            "pragmatic-use-455485f3",
+            "standard-observable-6844d54f",
+            "epistemic-boundary-77668850",
+            "interactive-link-d35a8807"
+        ],
+        "description": "This formula defines the epistemic belief in an observation's truthfulness as a conditional probability, formally linking empirical data to a hypothesis about the true state of a physical system.",
+        "parent_formula_id": "predictive-probability-advantage-b460e6d3",
+        "derivation_type": "DEFINITION"
     },
     "core-luminosity-relation-a035b146": {
-        "title": "Core-Luminosity Relation",
+        "title": "Luminosity-Mass-Temperature Relation for Stellar Cores",
         "equation": "L \\propto M T_c^{7/2}",
         "semantic_variables": {
             "L": {
                 "name": "Luminosity",
                 "type": "variable",
                 "unit": "W",
-                "description": "The total amount of energy radiated by a star per unit time. It is a measure of a star's intrinsic brightness."
+                "description": "Total energy radiated by a star per unit time."
             },
             "M": {
-                "name": "Mass",
+                "name": "Stellar Mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The total mass of the star. It is a fundamental property that influences gravity, internal pressure, and nuclear fusion rates."
+                "description": "Total mass of the star."
             },
             "T_c": {
                 "name": "Core Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The temperature at the very center of the star, where nuclear fusion reactions primarily occur. This is a critical factor in determining the rate of energy generation."
+                "description": "The temperature at the center of the star's core."
             },
             "\\propto": {
-                "name": "\\propto Parameter",
-                "type": "variable",
+                "name": "Proportionality",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "Physics variable or parameter."
-            },
-            "T": {
-                "name": "Tension / Period",
-                "type": "variable",
-                "unit": "N or s",
-                "description": "In dynamics, tension force in a string/cable, or period (time per cycle) of periodic motion."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
+                "description": "Indicates that the left-hand side is directly proportional to the right-hand side, differing only by a constant factor."
             }
         },
-        "interpretation": "The equation states that the luminosity, denoted by $L$, is directly proportional to the mass of the star, $M$, and the 7/2 power of its core temperature, $T_c$. This implies that for a star, increasing its mass generally increases its luminosity. More significantly, the luminosity is extremely sensitive to the core temperature; a small increase in $T_c$ leads to a substantial rise in $L$. This strong dependence on $T_c$ arises from the fact that nuclear fusion rates, which are the primary energy source for stars, are highly temperature-dependent, typically following a power-law relationship with temperature. The exponent 7/2 suggests a specific dominant fusion process (e.g., the CNO cycle or pp-chain under certain conditions) and assumptions about energy transport (e.g., radiative transport).",
-        "symmetry_origin": "This relationship is not derived from a fundamental symmetry principle in the same way as conservation laws. Instead, it emerges from the complex interplay of physical processes governing stellar structure and evolution, including hydrostatic equilibrium, energy generation via nuclear fusion, and energy transport (radiation and convection). Its origin lies in solving the equations of stellar structure under certain approximations. For example, it can be derived by considering the pressure and temperature profiles within a star, the fusion rate equations, and energy transport mechanisms, often assuming a fully radiative envelope.",
-        "limits_and_boundary": "As the mass $M$ approaches zero, the luminosity $L$ would also approach zero, as there would be insufficient gravity to initiate or sustain significant nuclear fusion. Similarly, as the core temperature $T_c$ approaches zero, the luminosity $L$ approaches zero because nuclear fusion rates become negligible. The proportionality $L \\propto M T_c^{7/2}$ is most applicable to main-sequence stars where the core conditions are relatively stable and governed by nuclear fusion. It may not accurately describe stars in advanced evolutionary stages (e.g., giants, white dwarfs) where different energy generation or transport mechanisms dominate.",
+        "interpretation": "The equation $L \\propto M T_c^{7/2}$ states that the luminosity, $L$, is directly proportional to the mass of the star, $M$, and the 7/2 power of its core temperature, $T_c$. This implies that for a star, increasing its mass $M$ generally increases its luminosity $L$. More significantly, the luminosity is extremely sensitive to the core temperature; a small increase in $T_c$ leads to a substantial rise in $L$. This strong dependence on $T_c$ arises from the fact that nuclear fusion rates, which are the primary energy source for stars, are highly temperature-dependent. The exponent $7/2$ is a specific result derived from combining the equation of radiative transport (where opacity is modeled by Kramers' law, $\\kappa \\propto \\rho T^{-3.5}$) with the equation of hydrostatic equilibrium for an ideal gas. It is a simplified model and the actual exponent can vary depending on the dominant fusion process (e.g., pp-chain vs. CNO cycle) and the dominant energy transport mechanism (radiative vs. convective).",
+        "symmetry_origin": "This relation is not a direct consequence of a fundamental symmetry in the sense of Noether's theorem. Instead, it emerges from the interplay of physical laws governing stellar structure, namely hydrostatic equilibrium (balancing gravity and pressure) and the physics of energy transport (radiative diffusion), applied to a self-gravitating sphere of gas.",
+        "limits_and_boundary": "As the core temperature $T_c \\to 0$, the luminosity $L \\to 0$, as nuclear fusion ceases. The relation is not applicable in the relativistic limit ($v \\to c$) or the quantum limit ($\\hbar \\to 0$ is not a meaningful limit here). This model breaks down for very low-mass stars where convection dominates the core, or for very high-mass stars where radiation pressure becomes dominant over gas pressure. It also assumes a specific opacity law (Kramers' opacity) which may not hold under all stellar conditions.",
         "status": "platinum",
-        "conceptual_definition": "The Core-Luminosity Relation is an empirical or derived relationship in astrophysics that describes how the luminosity of a star is related to its mass and the temperature at its core. This particular form, L $\\propto$ M T_c^{7/2}, is a simplified representation that captures key dependencies, often derived under specific assumptions about stellar structure and energy transport mechanisms.",
-        "intuitive_summary": "A star's brightness is primarily determined by its mass and the temperature at its central furnace, with higher mass and hotter cores leading to significantly greater luminosity.",
+        "conceptual_definition": "The Core-Luminosity Relation, expressed as $L \\propto M T_c^{7/2}$, is a theoretical scaling law derived under the assumption of radiative energy transport within a star. It posits that the total energy output per unit time, or luminosity ($L$), is proportional to the star's mass ($M$) and its central core temperature ($T_c$) raised to the power of 7/2. This relation is a simplified model that combines principles of hydrostatic equilibrium, radiative transfer, and the temperature dependence of nuclear reaction rates.",
+        "intuitive_summary": "Think of a star's core as its engine. This formula tells us that making the engine slightly hotter (increasing $T_c$) dramatically revs it up, producing a huge increase in power (luminosity, $L$). A bigger engine (more mass, $M$) also adds power, but the temperature effect is much more explosive.",
         "subcomponents": [
-            "curie-temperature-0036ac1e"
-        ]
+            "scaling-rule-99b83676",
+            "photoelectric-cross-section-scaling-ef80d21a",
+            "mass-luminosity-relation-for-main-sequence-stars-a47edc63"
+        ],
+        "description": "A scaling relation in stellar astrophysics that links a star's luminosity to its total mass and core temperature, highlighting the extreme sensitivity of energy generation to thermal conditions.",
+        "parent_formula_id": "stellar-mass-luminosity-power-law-abfe6ccc",
+        "derivation_type": "DERIVED_FROM"
     },
     "poisson-bracket-def-canonical-4b143ee8": {
         "title": "The Poisson Bracket Definition",
@@ -793,80 +743,84 @@
         "intuitive_summary": "The QCD scale represents the energy where the strong force becomes dominant, binding quarks together."
     },
     "sturm-liouville-orthogonality-relation-f0a882e7": {
-        "title": "Sturm-Liouville Orthogonality",
+        "title": "Sturm-Liouville Orthogonality Relation",
         "equation": "\\int_a^b y_m(x) y_n(x) w(x) dx = 0, \\quad m \\neq n",
-        "interpretation": "In the given equation, $\\int_a^b y_m(x) y_n(x) w(x) dx = 0$ for $m$ eq n$, the integral represents a weighted inner product of two distinct eigenfunctions,$y_m(x) $and$ y_n(x)$, of a Sturm-Liouville operator over the interval$[a, b]$. The term$y_m(x)$represents the$m$-th eigenfunction, and$y_n(x)$represents the$n$-th eigenfunction. The function$w(x)$is the weight function, which is positive on the interval of integration and accounts for how different parts of the interval contribute to the inner product; it often arises naturally from the differential equation itself. The interval of integration is defined by the limits$a$and$b$. The condition$m$eq n$ is crucial, signifying that the orthogonality holds only for distinct eigenfunctions. When this integral evaluates to zero, it implies that these eigenfunctions are orthogonal in a weighted sense, meaning they are linearly independent and can form a basis for the space of functions on which the operator acts.",
-        "symmetry_origin": "The Sturm-Liouville orthogonality arises from the self-adjoint nature of the Sturm-Liouville differential operator. A differential operator is self-adjoint if its inner product with another function, integrated over the domain, is equal to the inner product of the first function with the operator applied to the second function. This self-adjoint property is often derived from conservation laws or symmetries in the physical system being modeled. For instance, in quantum mechanics, the Hamiltonian operator is self-adjoint, leading to orthogonal energy eigenstates. In wave mechanics, the operators associated with wave equations often possess this property, ensuring orthogonality of modes or frequencies.",
-        "limits_and_boundary": "The limits of integration, $a$ and $b$, and the boundary conditions imposed on the eigenfunctions are critical for the Sturm-Liouville problem and its orthogonality. If the interval is infinite (e.g., $[-\\infty, \\infty]$), the integral must converge. For finite intervals, specific boundary conditions (e.g., Dirichlet, Neumann, or mixed) at $x=a$ and $x=b$ are required for the operator to be self-adjoint and for the eigenfunctions to exist and be orthogonal. The nature of these boundary conditions directly impacts the set of possible eigenfunctions and their properties. Asymptotic behavior of eigenfunctions as $x \\to a$ or $x \\to b$ is governed by the differential equation and boundary conditions.",
+        "interpretation": "The equation $\\int_a^b y_m(x) y_n(x) w(x) dx = 0$ for $m \\neq n$ defines a weighted inner product of two distinct eigenfunctions. The integral over the interval $[a, b]$ sums the product of the functions at each point $x$. The functions $y_m(x)$ and $y_n(x)$ are distinct solutions (eigenfunctions) to a Sturm-Liouville differential equation, corresponding to different eigenvalues $\\lambda_m$ and $\\lambda_n$. The function $w(x)$, known as the weight or density function, is a positive function on $[a, b]$ that determines the 'importance' of each point in the inner product. The condition $m \\neq n$ ensures we are comparing two different eigenfunctions. When the integral evaluates to zero, it signifies that $y_m(x)$ and $y_n(x)$ are orthogonal in the function space defined by the weight function $w(x)$. This property is a cornerstone for constructing basis sets used to solve linear partial differential equations in physics and engineering.",
+        "symmetry_origin": "The orthogonality of eigenfunctions is a direct consequence of the self-adjoint (Hermitian) property of the Sturm-Liouville operator, $\\mathcal{L} = \\frac{1}{w(x)} \\left( -\\frac{d}{dx} [p(x) \\frac{d}{dx}] + q(x) \\right)$. For an operator to be self-adjoint, specific boundary conditions must be met, which cause the boundary surface terms that arise during integration by parts to vanish. This hermiticity guarantees that the eigenvalues are real and that eigenfunctions corresponding to distinct eigenvalues are orthogonal.",
+        "limits_and_boundary": "This orthogonality relation is contingent upon the boundary conditions of the Sturm-Liouville problem. The derivation requires that the boundary term, often called the 'conjunct' or 'surface term', $[p(x)(y_m'(x) y_n(x) - y_n'(x) y_m(x))]_a^b$, evaluates to zero. This is satisfied by common boundary conditions such as Dirichlet ($y(a)=0, y(b)=0$), Neumann ($y'(a)=0, y'(b)=0$), or periodic boundary conditions ($y(a)=y(b), p(a)y'(a)=p(b)y'(b)$).",
         "semantic_variables": {
             "y_m(x)": {
                 "name": "m-th Eigenfunction",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The m-th solution (eigenfunction) of a Sturm-Liouville differential equation that satisfies specific boundary conditions."
+                "description": "The m-th eigenfunction solution to the Sturm-Liouville equation."
             },
             "y_n(x)": {
                 "name": "n-th Eigenfunction",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The n-th solution (eigenfunction) of a Sturm-Liouville differential equation that satisfies specific boundary conditions. Assumed to be distinct from y_m(x)."
+                "description": "The n-th eigenfunction solution to the Sturm-Liouville equation."
             },
             "w(x)": {
                 "name": "Weight Function",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A positive function defined over the interval [a, b] that modifies the standard inner product, arising from the Sturm-Liouville differential equation."
+                "unit": "dependent on context",
+                "description": "A positive function defining the inner product space."
+            },
+            "x": {
+                "name": "Independent Variable",
+                "type": "variable",
+                "unit": "m",
+                "description": "Typically represents a spatial coordinate."
             },
             "a": {
-                "name": "Lower Limit of Integration",
+                "name": "Lower Integration Bound",
                 "type": "variable",
                 "unit": "m",
-                "description": "The lower bound of the spatial interval over which the orthogonality condition is evaluated."
+                "description": "The lower limit of the interval."
             },
             "b": {
-                "name": "Upper Limit of Integration",
+                "name": "Upper Integration Bound",
                 "type": "variable",
                 "unit": "m",
-                "description": "The upper bound of the spatial interval over which the orthogonality condition is evaluated."
+                "description": "The upper limit of the interval."
             },
             "m": {
                 "name": "Eigenfunction Index",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "An integer index distinguishing one eigenfunction from another. Orthogonality holds when m is not equal to n."
+                "description": "An integer index labeling the m-th eigenfunction."
             },
             "n": {
                 "name": "Eigenfunction Index",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "An integer index distinguishing one eigenfunction from another. Orthogonality holds when n is not equal to m."
+                "description": "An integer index labeling the n-th eigenfunction, with the condition that m is not equal to n."
             },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
+            "\\int_a^b": {
+                "name": "Definite Integral",
+                "type": "operator",
+                "unit": "dependent on integrand",
+                "description": "The integral operator over the interval from a to b."
+            },
+            "dx": {
+                "name": "Differential Element",
+                "type": "operator",
                 "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
-            },
-            "w": {
-                "name": "Width / Angular Velocity Component",
-                "type": "variable",
-                "unit": "m or rad/s",
-                "description": "Horizontal size, or rate of rotation along a particular axis."
-            },
-            "\\neq": {
-                "name": "\\neq Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "description": "The differential element of the independent variable x."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Sturm-Liouville orthogonality relation states that the eigenfunctions, denoted by $y_m(x)$ and $y_n(x)$, of a Sturm-Liouville differential operator are orthogonal with respect to a positive weight function $w(x)$ over a given interval $[a, b]$, provided that the indices $m$ and $n$ are distinct ($m eq n$). This orthogonality is a fundamental property that arises when solving boundary value problems involving linear differential equations that can be cast into the Sturm-Liouville form. Such problems frequently appear in physics, particularly in areas like quantum mechanics, wave phenomena, and heat conduction, where the solutions (eigenfunctions) represent physically meaningful states or modes.",
-        "intuitive_summary": "Distinct solutions (eigenfunctions) to certain differential equations are independent and form a complete basis, much like perpendicular vectors in geometry.",
+        "conceptual_definition": "The Sturm-Liouville orthogonality relation is a fundamental property of the solutions (eigenfunctions) to Sturm-Liouville eigenvalue problems. It states that any two eigenfunctions, $y_m(x)$ and $y_n(x)$, corresponding to distinct eigenvalues, $\\lambda_m \\neq \\lambda_n$, are orthogonal over an interval $[a, b]$ with respect to a weight function $w(x)$. This orthogonality is expressed as a weighted inner product being equal to zero: $\\int_a^b y_m(x) y_n(x) w(x) dx = 0$ for $m \\neq n$. This property allows for the expansion of arbitrary functions in a series of these eigenfunctions, analogous to a Fourier series.",
+        "intuitive_summary": "Imagine a set of perfectly perpendicular axes, like the x, y, and z axes in 3D space. Any point can be described by its coordinates along these axes. The Sturm-Liouville eigenfunctions are like an infinite set of 'perpendicular axes' for a space of functions. The orthogonality relation guarantees they are mutually 'perpendicular', but in a way defined by a specific 'weighting' $w(x)$. This allows any well-behaved function to be broken down and represented as a sum of these fundamental eigenfunction 'components'.",
         "subcomponents": [
-            "point-location-definition-50a20ce0",
-            "fixed-spatial-boundary-definition-e89da0c0"
-        ]
+            "sturm-liouville-eigenvalue-methods-d8f21012",
+            "right-angle-rule-0c05bfbb",
+            "time-split-e35634e0"
+        ],
+        "description": "Establishes that eigenfunctions of a regular Sturm-Liouville operator corresponding to distinct eigenvalues are orthogonal with respect to a specified weight function over a given interval.",
+        "parent_formula_id": "sturm-liouville-eigenvalue-methods-d8f21012",
+        "derivation_type": "DERIVED_FROM"
     },
     "hydrodynamic-stability-identity-1-2331b432-0e706a9a": {
         "title": "Incompressible Navier-Stokes Equations",
@@ -1390,58 +1344,62 @@
         ]
     },
     "time-derivative-zero": {
-        "title": "Time derivative approaches zero",
+        "title": "Condition for a Static or Stationary Field",
         "equation": "\\partial_0 \\to 0",
-        "conceptual_definition": "The notation ∂₀ → 0 signifies that a particular rate of change with respect to a specific coordinate is approaching zero. In physics, particularly in fields involving spacetime or fields that evolve over time, ∂₀ is often used to represent the partial derivative with respect to time (t). Therefore, ∂₀ → 0 implies that the quantity being differentiated is not changing significantly over time, or that the system is in a steady state with respect to time.",
-        "intuitive_summary": "The system is not changing with respect to time.",
-        "interpretation": "In the equation ∂₀ → 0, the symbol ∂₀ represents the partial derivative operator with respect to the coordinate indexed by 0. In the context of four-vectors in special relativity, the index 0 typically corresponds to the time component. Thus, ∂₀ is commonly interpreted as ∂/∂t, the rate of change with respect to time. The arrow → indicates an approach or a limit. So, ∂₀ → 0 signifies that the time rate of change of the quantity upon which this operator acts is approaching zero. This condition implies that the physical system described by the equation is in a state of temporal equilibrium or is undergoing very slow temporal evolution. For example, if we consider a field Φ(x°, x¹, $x^2$, x³), then ∂₀ Φ → 0 means ∂Φ/∂t → 0. This implies that the field is not changing with time, leading to a steady-state solution.",
-        "symmetry_origin": "The notation ∂₀ is derived from the concept of four-gradients in spacetime. In relativistic physics, spacetime coordinates are often represented as a four-vector, typically ​xᵗ = (x⁰, x¹, $x^2$, x³) = (ct, x, y, z), where c is the speed of light. The covariant derivative operator, ∂ᵗ, is then (∂/∂x⁰, ∂/∂x¹, ∂/∂$x^2$, ∂/∂x³). The condition ∂₀ → 0 implies a decoupling or invariance with respect to the time coordinate, which can arise from symmetries like time translation invariance, leading to conservation laws (though not directly a conservation law itself, it often simplifies dynamics towards conserved quantities or steady states). In some contexts, it can also arise from specific approximations, like the quasi-static approximation in thermodynamics or electromagnetism.",
-        "limits_and_boundary": "When ∂₀ → 0, it implies that the temporal evolution of the system is negligible. This scenario typically leads to steady-state solutions where the system's properties are constant over time. For instance, in fluid dynamics, if the time derivative of velocity components approaches zero, it suggests a steady flow. In electromagnetism, if the time derivative of the magnetic field approaches zero (∂ᵇ/∂t → 0), the electric field becomes conservative (related to Faraday's law of induction). Conversely, if ∂₀ were to approach infinity (a scenario not directly represented by this notation, but for contrast), it would imply extremely rapid temporal changes.",
+        "conceptual_definition": "The condition $\\partial_0 \\to 0$ asserts that the partial derivative with respect to the time coordinate, $x^0 = ct$, of a physical field or quantity approaches zero. This is the mathematical statement of a static (time-independent) or stationary (possessing a time-like Killing vector field) state, where the system's properties are time-invariant. In non-relativistic contexts, this is equivalent to the condition $\\frac{\\partial}{\\partial t} \\to 0$.",
+        "intuitive_summary": "Imagine taking a photograph of a flowing river. If the river is perfectly still or in a steady, unchanging flow, a movie of it would look just like a single photograph. The condition $\\partial_0 \\to 0$ is the mathematical way of saying 'the movie looks like a single snapshot'—nothing is changing over time.",
+        "interpretation": "The operator $\\partial_0$ represents the partial derivative with respect to the zeroth component of a spacetime four-vector, $\\partial_0 \\equiv \\frac{\\partial}{\\partial x^0}$. In special relativity, the spacetime coordinates are $(x^0, x^1, x^2, x^3)$, where $x^0 = ct$ is the time coordinate scaled by the speed of light $c$. Therefore, the condition $\\partial_0 \\to 0$ implies that the quantity it acts upon is not changing in time. For a field $\\Phi(x^\\mu)$, this means $\\frac{\\partial \\Phi}{\\partial t} \\to 0$. This is the foundational assumption for simplifying time-dependent theories into their static or stationary counterparts, such as deriving electrostatics and magnetostatics from Maxwell's equations.",
+        "symmetry_origin": "This condition defines a system that possesses continuous time-translation symmetry. By Noether's theorem, such a symmetry in the Lagrangian of a system implies the conservation of energy. This condition is imposed to find solutions (like static fields or stationary states) that exhibit this symmetry.",
+        "limits_and_boundary": "This condition is the basis for the static limit in many physical theories. For instance, applying $\\partial_0 \\to 0$ to the field strength tensor $F^{\\mu\\nu}$ in Maxwell's equations, $\\partial_\\mu F^{\\mu\\nu} = \\mu_0 J^\\nu$, separates them into the time-independent equations of electrostatics and magnetostatics. In cosmology, the condition $\\dot{a} \\to 0$ on the scale factor $a(t)$ describes a static universe, as in the original Einstein static universe model.",
         "status": "platinum",
         "semantic_variables": {
-            "∂₀": {
-                "name": "Partial Derivative with Respect to Time",
+            "\\partial_0": {
+                "name": "Partial derivative with respect to time coordinate",
+                "type": "operator",
+                "unit": "1/m",
+                "description": "The partial derivative operator with respect to the zeroth component of a four-vector, $x^0$. In Minkowski spacetime, this corresponds to $x^0 = ct$, where $c$ is the speed of light and $t$ is time."
+            }
+        },
+        "subcomponents": [
+            "time-derivative-approaches-zero-static",
+            "time-derivative-vector-potential-approaches-zero",
+            "rate-of-change-of-scale-factor-approaches-zero"
+        ],
+        "description": "A fundamental condition in physics stating that the rate of change of a physical quantity with respect to the time coordinate is zero. This is the defining characteristic of static or stationary systems.",
+        "derivation_type": "DEFINITION"
+    },
+    "position-z-zero": {
+        "title": "Definition of the z=0 Plane in Cartesian Coordinates",
+        "equation": "z=0",
+        "conceptual_definition": "In a three-dimensional Cartesian coordinate system $(x, y, z)$, the equation $z=0$ defines the set of all points $(x, y, 0)$ for all real values of $x$ and $y$. This set constitutes a two-dimensional plane, commonly referred to as the $xy$-plane, which is perpendicular to the $z$-axis and passes through the origin $(0,0,0)$.",
+        "intuitive_summary": "Imagine a perfectly flat, infinite sheet of paper. This equation describes that sheet, representing the 'ground level' or 'sea level' in a 3D space. Any point on this sheet has no height and no depth relative to this fundamental reference plane.",
+        "interpretation": "The equation $z=0$ is a constraint equation. The variable $z$ represents the coordinate along the vertical or $z$-axis in a standard right-handed Cartesian system. The value $0$ represents the origin point along this axis. Therefore, the statement $z=0$ constrains any point $\\mathbf{r} = (x, y, z)$ to lie on the plane where its vertical component is zero. This plane is orthogonal to the basis vector $\\mathbf{\\hat{k}}$ (or $\\mathbf{\\hat{z}}$) and contains the $x$ and $y$ axes.",
+        "symmetry_origin": "This equation represents a specific choice of coordinate system origin, breaking the continuous translational symmetry along the z-axis ($T_z$). While physical laws are invariant under translations, solving a specific problem often requires fixing a reference frame, and $z=0$ is a common choice for a reference plane.",
+        "limits_and_boundary": "As a boundary condition, $z=0$ is frequently used in problems involving interfaces, surfaces, or reflection symmetry. For example, in electrostatics, it might represent a grounded conducting plane. In quantum mechanics, it could be the location of an infinite potential barrier, forcing the wavefunction $\\psi(x,y,z)$ to be zero for $z \\le 0$. The equation itself is scale-invariant and does not change under physical limits like $\\hbar \\to 0$ or $v \\to c$.",
+        "status": "platinum",
+        "semantic_variables": {
+            "z": {
+                "name": "Position coordinate along the z-axis",
                 "type": "variable",
-                "unit": "1/s",
-                "description": "Represents the partial derivative of a physical quantity with respect to time (∂/∂t), where the index 0 typically signifies the time component in relativistic contexts. The condition ∂₀ → 0 indicates that the rate of change of the quantity with respect to time is approaching zero, signifying a steady state."
-            },
-            "→": {
-                "name": "Approaches",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "This symbol indicates that the quantity on the left is approaching the value on the right, signifying a limiting process. In this case, it means the time derivative is becoming infinitesimally small."
+                "unit": "m",
+                "description": "Represents the displacement along the vertical axis in a three-dimensional Cartesian coordinate system."
             },
             "0": {
                 "name": "Zero",
                 "type": "constant",
-                "unit": "N/A",
-                "description": "Represents the value zero. The condition ∂₀ → 0 means that the time rate of change is tending towards zero."
-            }
-        },
-        "subcomponents": [
-            "squared-spatial-displacement-component-32f5240d"
-        ]
-    },
-    "position-z-zero": {
-        "title": "Position along the z-axis is zero",
-        "equation": "z=0",
-        "conceptual_definition": "The formula $z=0$ signifies a specific location or plane within a three-dimensional Cartesian coordinate system. In this context, it denotes the condition where an object or point has no displacement along the z-axis. This is often used to define a reference plane, such as the xy-plane, which serves as the 'ground' or a fundamental level from which other vertical positions are measured.",
-        "intuitive_summary": "The equation $z=0$ simply states that the height or vertical position of an object is precisely at the reference level.",
-        "interpretation": "In this equation, $z$ represents the coordinate along the vertical axis in a three-dimensional Cartesian system. The equation $z=0$ asserts that the position of interest lies exactly on the plane where the z-coordinate is zero. This plane is commonly referred to as the xy-plane, and it serves as a universal reference for vertical displacement. Any object or point situated at $z=0$ is considered to be at the origin's vertical level, with no height above or depth below this defined plane. The value of $z$ is typically measured in meters (m).",
-        "symmetry_origin": "The concept of $z=0$ arises from the fundamental choice of a coordinate system. In physics, coordinate systems are arbitrary tools used to describe physical phenomena. The origin (0,0,0) and its associated planes, such as the $z=0$ plane, are defined by convention. This choice is often made to simplify calculations or to align with intuitive notions of 'ground level' or a reference surface. For instance, in problems involving gravity near the Earth's surface, the xy-plane is frequently set at sea level, and $z$ represents altitude.",
-        "limits_and_boundary": "The equation $z=0$ represents a specific boundary or condition, not an asymptotic limit. As $z$ approaches 0, it indicates that a point is getting closer to this reference plane. If $z$ were to approach infinity (positive or negative), it would mean the point is moving infinitely far away from the $z=0$ plane in the vertical direction. However, $z=0$ itself is a fixed location, not a limit that can be approached in the same way a variable approaches infinity.",
-        "status": "platinum",
-        "semantic_variables": {
-            "z": {
-                "name": "Z-coordinate",
-                "type": "variable",
                 "unit": "m",
-                "description": "The coordinate representing the position along the vertical axis in a three-dimensional Cartesian coordinate system. In this equation, $z=0$ specifies that the position is at the reference plane, often the xy-plane."
+                "description": "The scalar value zero, representing the origin of the z-axis and the reference point for vertical displacement."
             }
         },
         "subcomponents": [
-            "zero-z-coordinate-plane-8fcd01a1"
-        ]
+            "contravariant-spacetime-position-four-vector-component-44ac717d",
+            "tev-brane-location-in-randall-sundrum-model-596093e0",
+            "position-z-neg-d",
+            "zero-displacement-translation-operator-f9f179c0"
+        ],
+        "description": "This equation defines a two-dimensional plane in a three-dimensional Cartesian coordinate system where the vertical displacement, represented by the z-coordinate, is identically zero.",
+        "parent_formula_id": "contravariant-spacetime-position-four-vector-component-44ac717d",
+        "derivation_type": "SPECIAL_CASE"
     },
     "pairwise-electron-ion-coulomb-like-interaction-from-hamiltonian-8a553347": {
         "title": "Pairwise Electron-Ion Coulomb-like Interaction (from Hamiltonian)",

@@ -1663,31 +1663,49 @@
         ]
     },
     "charge-conjugation-property": {
-        "title": "Charge Conjugation Property",
+        "title": "Majorana Condition",
         "equation": "\\psi = C/ \\bar{\\psi}^T",
-        "conceptual_definition": "The charge conjugation property describes how a physical field transforms under the operation of charge conjugation. Charge conjugation is a symmetry operation that replaces all particles with their corresponding antiparticles. For fermionic fields, this transformation relates a field to its complex conjugate, transposed, and multiplied by a charge conjugation operator.",
-        "intuitive_summary": "This equation mathematically defines the charge-conjugated state of a fermion by relating the original fermion field to its transpose multiplied by the charge conjugation operator.",
-        "interpretation": "In this equation, $\\gamma$ represents the Dirac spinor field of a fermion, which describes its quantum state. The symbol $\\gamma$t$is the transpose of this spinor. The symbol \\gamma is the charge conjugation operator, a matrix that, when acting on a fermion field, transforms it into its antiparticle. Specifically, it flips the sign of all charges (electric charge, baryon number, lepton number, etc.) while leaving other properties like mass and spin unchanged. The equation \\gamma = \\gamma$t$posits that the charge-conjugated field \\gamma is obtained by transposing the original field \\gamma$ and then applying the charge conjugation operator $\\gamma$.",
-        "symmetry_origin": "The charge conjugation property arises from the fundamental symmetries of quantum field theory, specifically Lorentz invariance and the CPT theorem. The CPT theorem states that any local quantum field theory that is Lorentz invariant and satisfies microcausality must also be invariant under the combined operation of charge conjugation (C), parity inversion (P), and time reversal ( $T$). The charge conjugation symmetry itself implies that for every particle, there must exist a corresponding antiparticle with the same mass and spin but opposite charges.",
-        "limits_and_boundary": "This equation describes the relationship between a particle and its antiparticle, which is a fundamental property of the field and does not typically approach limits of zero or infinity in the same way as a classical physical system. However, in the context of field theory, one might consider the behavior of the fields in certain limits, such as when the momentum of the particles approaches zero or infinity, which would affect the specific form of the spinor and the operator. The charge conjugation operator itself is a fixed matrix for a given representation of the Dirac algebra.",
+        "conceptual_definition": "A fermion field $\\psi$ is classified as a Majorana field if it is identical to its charge-conjugated counterpart, $\\psi_c$. This fundamental property is expressed by the equation $\\psi = C \\bar{\\psi}^T$, where $C$ is the charge conjugation matrix and $\\bar{\\psi}^T$ is the transpose of the Dirac adjoint spinor. This constraint implies that the particle described by the field carries no conserved quantum numbers (like electric charge) and is its own antiparticle.",
+        "intuitive_summary": "Imagine a particle that, when viewed in a 'charge mirror' which flips properties like electric charge, appears completely unchanged. This is a Majorana fermion. Unlike an electron, which becomes a positron in this mirror, a Majorana particle is its own reflection, its own antiparticle.",
+        "interpretation": "The equation $\\psi = C \\bar{\\psi}^T$ is the Majorana condition. Here, $\\psi$ is the four-component Dirac spinor field describing the fermion. The operator $C$ is the charge conjugation matrix, which in the Dirac basis is $C = i\\gamma^2\\gamma^0$. The term $\\bar{\\psi}$ is the Dirac adjoint, defined as $\\bar{\\psi} = \\psi^\\dagger \\gamma^0$, where $\\psi^\\dagger$ is the Hermitian conjugate of the spinor. The superscript $T$ denotes the transpose operation. The entire equation imposes a reality condition on the spinor field, effectively halving the number of independent degrees of freedom compared to a Dirac fermion.",
+        "symmetry_origin": "This condition is a constraint on the spinor representation of the Lorentz group that identifies a particle with its antiparticle. It is not derived from a continuous symmetry but is a defining property that can be imposed on a field, often to construct Lagrangians with specific properties, such as the Majorana mass term which is crucial in theories like the see-saw mechanism for neutrino masses.",
+        "limits_and_boundary": "The Majorana condition is a fundamental property within the framework of quantum field theory and does not have a classical analogue; the limit $\\hbar \\to 0$ is not meaningful. The condition is Lorentz covariant and holds in all inertial reference frames. It is a defining characteristic of the field itself, independent of energy scales, although the physical manifestation (e.g., a Majorana mass term) may become relevant at specific energy scales.",
         "status": "platinum",
         "semantic_variables": {
-            "\\pi": {
-                "name": "Charge Conjugation Operator",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "A matrix operator that transforms a particle into its antiparticle. For Dirac spinors, it is typically represented by i, where , , , and are the Dirac gamma matrices."
-            },
-            "t": {
-                "name": "Transpose Operation",
+            "\\psi": {
+                "name": "Majorana spinor field",
                 "type": "variable",
+                "unit": "spinor",
+                "description": "A four-component spinor field that satisfies the Majorana condition, representing a particle that is its own antiparticle."
+            },
+            "C": {
+                "name": "Charge conjugation matrix",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "Indicates the transpose of the matrix or vector it is applied to. In this context, it applies to the Dirac spinor ."
+                "description": "A matrix that transforms a spinor field into its charge-conjugated counterpart. In the Dirac basis, $C = i\\gamma^2\\gamma^0$."
+            },
+            "\\bar{\\psi}": {
+                "name": "Dirac adjoint spinor",
+                "type": "variable",
+                "unit": "spinor",
+                "description": "The Dirac adjoint of the spinor $\\psi$, defined as $\\bar{\\psi} = \\psi^\\dagger \\gamma^0$."
+            },
+            "^T": {
+                "name": "Transpose",
+                "type": "operator",
+                "unit": "N/A",
+                "description": "The matrix transpose operator, which swaps the row and column indices of the spinor."
             }
         },
         "subcomponents": [
-            "lorentz-factor-squared-31958256"
-        ]
+            "charge-conjugate-spinor",
+            "majorana-mass-lagrangian-3290a41c",
+            "right-handed-neutrino-charge-conjugation",
+            "dirac-mass-term-for-chiral-fermions-5274ec6c"
+        ],
+        "description": "The defining property of a Majorana fermion, a particle that is its own antiparticle, expressed as the equality of the fermion field with its charge conjugate.",
+        "parent_formula_id": "charge-conjugate-spinor",
+        "derivation_type": "SPECIAL_CASE"
     },
     "quantum-energy-difference-calculation": {
         "title": "Quantum Energy Difference Calculation",
@@ -1761,55 +1779,60 @@
         ]
     },
     "hawking-temperature-approaching-zero": {
-        "title": "Hawking temperature approaching zero",
+        "title": "Limiting Case: Vanishing Hawking Temperature for Supermassive Black Holes",
         "equation": "T \\to 0",
-        "conceptual_definition": "The formula T \\to 0 describes the limiting behavior of the Hawking temperature of a black hole as its physical properties approach a state where its temperature becomes vanishingly small. This generally occurs for black holes with extremely large masses, or in specific theoretical scenarios where other parameters lead to a null temperature.",
-        "intuitive_summary": "As a black hole grows immensely large, its Hawking temperature, a measure of its thermal radiation, approaches absolute zero.",
-        "interpretation": "The Hawking temperature, denoted by $T$, is a fundamental property of black holes predicted by Stephen Hawking. It quantifies the temperature at which a black hole radiates particles due to quantum effects near its event horizon. The formula $T \\to 0$ indicates that the temperature of the black hole is approaching zero. The Hawking temperature is inversely proportional to the mass of the black hole. Therefore, as the mass of the black hole, represented by $M$, increases, the Hawking temperature $T$ decreases. Specifically, the Hawking temperature is given by the equation $T = \\frac{\\hbar c^3}{8 \\pi G M k_B}$, where $\\hbar$ is the reduced Planck constant, $c$ is the speed of light, $G$ is the gravitational constant, and $k_B$ is the Boltzmann constant. As $M \\to \\infty$, the entire fraction approaches zero, hence $T \\to 0$.",
-        "symmetry_origin": "The Hawking temperature arises from quantum field theory in curved spacetime. It is a consequence of the vacuum fluctuations near the event horizon of a black hole. The derivation involves considering the behavior of quantum fields in the extreme gravitational environment close to the black hole, particularly the Bogoliubov transformations between the states of observers at infinity and those near the horizon. The temperature is related to the surface gravity of the black hole, which in turn is determined by its mass, charge, and angular momentum.",
-        "limits_and_boundary": "The limit $T \\to 0$ is approached as the mass of the black hole, $M$, approaches infinity ($M \\to \\infty$). For a black hole with an infinitely large mass, its Hawking temperature would be zero. Conversely, as the mass of the black hole approaches zero ($M \\to 0$), the Hawking temperature approaches infinity ($T \\to \\infty$). This latter scenario is associated with the complete evaporation of a black hole over extremely long timescales, leaving behind only radiation.",
+        "conceptual_definition": "The Hawking temperature, denoted $T_H$, is a quantum thermodynamic property of a black hole, representing the temperature of the black-body radiation it emits. The condition $T \to 0$ signifies the theoretical limit where this temperature becomes negligible. This occurs as the black hole's mass, $M$, approaches infinity ($M \to \\infty$), because the temperature is inversely proportional to the mass.",
+        "intuitive_summary": "Imagine a black hole as a 'cosmic radiator'. The bigger and more massive it gets, the colder it becomes. In the extreme case of an infinitely massive black hole, it would be so cold that it effectively stops radiating altogether, reaching a temperature of absolute zero.",
+        "interpretation": "The statement $T \to 0$ represents the limiting behavior of the Hawking temperature, $T_H$, for a Schwarzschild black hole. The full formula is $T_H = \\frac{\\hbar c^3}{8 \\pi G M k_B}$. In this equation, $T_H$ is the Hawking temperature, $\\hbar$ is the reduced Planck constant, $c$ is the speed of light, $G$ is the gravitational constant, $k_B$ is the Boltzmann constant, and $M$ is the mass of the black hole. Since all terms in the numerator ($\\hbar, c^3$) and the denominator's constants ($8, \\pi, G, k_B$) are positive constants, the temperature $T_H$ is solely dependent on the inverse of the mass, $T_H \\propto 1/M$. Therefore, as the mass $M$ becomes arbitrarily large ($M \\to \\infty$), the denominator grows infinitely, causing the entire fraction to approach zero. This leads to the conclusion that $T_H \\to 0$ for supermassive black holes.",
+        "symmetry_origin": "This phenomenon is not a direct consequence of a symmetry via Noether's theorem but emerges from the application of quantum field theory principles in the curved spacetime geometry of a black hole, as described by general relativity. It is fundamentally linked to the properties of the quantum vacuum state as perceived by observers in different reference frames (the Unruh effect).",
+        "limits_and_boundary": "This formula itself is a limiting case. As the mass $M \\to \\infty$, the Hawking temperature $T_H \\to 0$. Conversely, as the mass $M$ approaches the Planck mass ($M \\to m_P$), the Hawking temperature becomes extremely high, and the semi-classical approximation used to derive it breaks down, requiring a full theory of quantum gravity. In the hypothetical limit of $M \\to 0$, the temperature would diverge ($T_H \\to \\infty$), leading to a rapid, explosive evaporation of the black hole.",
         "status": "platinum",
         "semantic_variables": {
             "T": {
                 "name": "Hawking Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The thermodynamic temperature of a black hole, representing the rate at which it emits thermal radiation."
+                "description": "The thermodynamic temperature of a black hole, corresponding to the black-body radiation it emits due to quantum effects at the event horizon. Often denoted as $T_H$."
             },
             "M": {
-                "name": "Mass of the Black Hole",
+                "name": "Black Hole Mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The total mass contained within the black hole, which determines its gravitational pull and, consequently, its Hawking temperature."
+                "description": "The mass of the Schwarzschild black hole, which is inversely proportional to its Hawking temperature."
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "J s",
-                "description": "A fundamental physical constant relating the energy of a photon to its frequency, and appearing in quantum mechanics equations."
+                "unit": "J·s",
+                "description": "The Planck constant divided by 2π, a fundamental constant in quantum mechanics."
             },
             "c": {
-                "name": "Speed of Light in Vacuum",
+                "name": "Speed of Light",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "The speed at which all massless particles and gravitational waves propagate in vacuum."
+                "description": "The speed of light in a vacuum, a fundamental constant in relativity."
             },
             "G": {
                 "name": "Gravitational Constant",
                 "type": "constant",
-                "unit": "N m^2 / kg^2",
-                "description": "A fundamental constant that determines the strength of the gravitational force between two bodies."
+                "unit": "m³·kg⁻¹·s⁻²",
+                "description": "Newton's universal gravitational constant, which determines the strength of the gravitational force."
             },
             "k_B": {
                 "name": "Boltzmann Constant",
                 "type": "constant",
                 "unit": "J/K",
-                "description": "A fundamental constant that relates the average kinetic energy of particles in a gas with the thermodynamic temperature of the gas."
+                "description": "A proportionality factor that relates the average relative kinetic energy of particles in a gas with the thermodynamic temperature of the gas."
             }
         },
         "subcomponents": [
-            "the-fundamental-boltzmann-constant-a65e5fea"
-        ]
+            "hawking-radiation-79daa0ea",
+            "hawking-temperature-surface-gravity-f5efc8ad",
+            "absolute-zero-temperature-limit"
+        ],
+        "description": "Describes the asymptotic limit where the Hawking temperature of a black hole approaches absolute zero as its mass becomes infinitely large.",
+        "parent_formula_id": "hawking-radiation-79daa0ea",
+        "derivation_type": "LIMITING_CASE"
     },
     "delta-v-small-mass-change": {
         "title": "Delta-v for small mass change",

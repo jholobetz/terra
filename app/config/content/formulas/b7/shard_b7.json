@@ -1113,23 +1113,23 @@
         "intuitive_summary": "The Fourier transform converts a spatial signal or wavefunction into its spectrum of spatial frequencies or momentum states."
     },
     "thermal-transport-identity-1-1b811744-c6086e36": {
-        "title": "Radiative Heat Flux Equation",
+        "title": "Radiative Heat Flux Equation (Diffusion Approximation)",
         "equation": "F = -\\frac{4 a c T^3}{3 \\kappa \\rho} \\frac{dT}{dr}",
-        "interpretation": "$F$ is the radiative flux, $a$ is the radiation constant, $c$ is the speed of light, $T$ is the temperature, $\\kappa$ is the opacity, $\\rho$ is the density, and $dT/dr$ is the temperature gradient.",
-        "symmetry_origin": "Radiative transfer equation under the diffusion approximation (local thermodynamic equilibrium).",
-        "limits_and_boundary": "As opacity $\\kappa$ or density $\\rho$ approaches infinity, the radiative heat flux goes to zero, representing a perfectly insulated medium.",
+        "interpretation": "The radiative flux $F$ is the net energy transported by photons per unit area per unit time. It is proportional to the negative of the temperature gradient $\\frac{dT}{dr}$, indicating that energy flows from hotter to cooler regions. The proportionality constant depends on the radiation constant $a$, the speed of light $c$, the local temperature $T$, the mass density $\\rho$, and the Rosseland mean opacity $\\kappa$, which quantifies the material's resistance to radiative energy flow.",
+        "symmetry_origin": "This is a phenomenological transport equation derived from the principles of statistical mechanics and energy conservation. It is an application of the diffusion approximation to the radiative transfer equation, analogous to Fourier's law of heat conduction or Fick's law of diffusion.",
+        "limits_and_boundary": "This equation is valid in the optically thick limit, where the photon mean free path is much smaller than the characteristic length scale of temperature variation. If the temperature gradient $\\frac{dT}{dr} \\to 0$, the flux $F \\to 0$ (isothermal equilibrium). If the opacity $\\kappa \\to \\infty$, the flux $F \\to 0$, indicating radiation is trapped. The approximation breaks down in the optically thin limit ($\\kappa \\to 0$), where photons stream freely and a different transport model is required.",
         "semantic_variables": {
             "F": {
-                "name": "Radiative Heat Flux",
+                "name": "Radiative Flux",
                 "type": "variable",
                 "unit": "W/m^2",
-                "description": "The radiative energy flux flowing through a unit surface area."
+                "description": "Net energy transported by radiation per unit area per unit time."
             },
             "a": {
                 "name": "Radiation Constant",
                 "type": "constant",
-                "unit": "J/(m^3 K^4)",
-                "description": "The radiation density constant related to Stefan-Boltzmann constant by a = 4sigma/c."
+                "unit": "J m⁻³ K⁻⁴",
+                "description": "A physical constant related to the Stefan-Boltzmann constant $\\sigma$ by $a = 4\\sigma/c$."
             },
             "c": {
                 "name": "Speed of Light",
@@ -1141,39 +1141,44 @@
                 "name": "Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The local temperature of the stellar plasma."
+                "description": "Absolute temperature of the medium."
             },
             "\\kappa": {
                 "name": "Rosseland Mean Opacity",
                 "type": "variable",
-                "unit": "m^2/kg",
-                "description": "The mass opacity coefficient of stellar matter."
+                "unit": "m²/kg",
+                "description": "A frequency-averaged measure of the material's opacity, representing its resistance to the flow of radiation."
             },
             "\\rho": {
                 "name": "Mass Density",
                 "type": "variable",
-                "unit": "kg/m^3",
-                "description": "The local mass density of the stellar material."
-            },
-            "\\frac{dT}{dr}": {
-                "name": "Radial Temperature Gradient",
-                "type": "variable",
-                "unit": "K/m",
-                "description": "The rate of change of temperature with respect to stellar radius."
+                "unit": "kg/m³",
+                "description": "The mass per unit volume of the medium."
             },
             "r": {
-                "name": "Radial Distance / Radius",
+                "name": "Radial Coordinate",
                 "type": "variable",
                 "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
+                "description": "The radial distance from the center in a spherically symmetric system."
+            },
+            "\\frac{d}{dr}": {
+                "name": "Radial Derivative Operator",
+                "type": "operator",
+                "unit": "1/m",
+                "description": "The operator for the first derivative with respect to the radial coordinate $r$."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "In stellar astrophysics, energy transport by radiation in the stellar interior is described by the radiative diffusion equation. The radiative heat flux $F$ (energy passing through a unit area per unit time) is proportional to the local temperature gradient $dT/dr$. The constant of proportionality depends on the radiation constant $a$, the speed of light $c$, the temperature $T$, the Rosseland mean opacity $\\kappa$, and the local density $\\rho$. The negative sign indicates that heat flows from hotter core regions to cooler surface regions.",
-        "intuitive_summary": "The flow of heat by radiation through a star is driven by the temperature gradient, limited by the opacity and density of the stellar gas.",
+        "conceptual_definition": "This equation models radiative energy transport as a diffusion process, valid in optically thick media where photons undergo a random walk. The net energy flow, or radiative flux $F$, is proportional to the negative gradient of the radiation energy density. Since the black-body radiation energy density is $U = aT^4$, its gradient is related to the temperature gradient $\\frac{dT}{dr}$. The term $\\frac{4 a c T^3}{3 \\kappa \\rho}$ serves as the thermal diffusivity for radiation.",
+        "intuitive_summary": "Imagine heat trying to escape from the dense, hot core of a star. The photons carrying this heat can't travel straight out; they are constantly absorbed and re-emitted in random directions. This equation describes this slow, diffusive 'leakage' of energy, showing that the heat flow is strongest where the temperature drops most sharply and where the stellar material is more transparent (lower opacity).",
         "subcomponents": [
-            "radial-temperature-gradient-0d441963"
-        ]
+            "sec-perfect-fluid-pressure-limit-53782061",
+            "mass-conservation-equation-identity-1-d4c37e8e-39d7f586",
+            "stellar-pressure-f27cab52"
+        ],
+        "description": "Describes the transport of energy by radiation through an optically thick medium, where the radiative flux is driven by the temperature gradient. This is a cornerstone equation for modeling stellar interiors.",
+        "parent_formula_id": "diffusion-rule-82d9b0d3",
+        "derivation_type": "SPECIAL_CASE"
     },
     "fourier-analysis-identity-1-c83f26ec-15c86132": {
         "title": "Quantum Mechanical Fourier Transform",
@@ -1511,25 +1516,31 @@
         }
     },
     "xi-value-zero": {
-        "title": "Value of xi",
+        "title": "Zero-Value Condition for a Physical Parameter ξ",
         "equation": "\\xi = 0",
-        "conceptual_definition": "The formula $\\xi = 0$ typically signifies a condition of perfect symmetry or a null state within a specific physical context. The symbol $\\xi$ itself is not universally defined but is often employed in various fields of physics to represent quantities related to symmetry parameters, order parameters, or specific field configurations. When $\\xi = 0$, it implies that the system either possesses a certain type of symmetry that results in this value, or it is in a state where a particular observable or parameter is identically zero, indicating a lack of deviation from a baseline or symmetric state.",
-        "intuitive_summary": "A system is in a perfectly symmetric or baseline state when the parameter $\\xi$ equals zero.",
-        "interpretation": "In this equation, $\\xi$ represents a parameter that quantifies a specific physical property or symmetry. The equation $\\xi = 0$ is a statement that this parameter is precisely zero. The physical meaning of $\\xi$ depends entirely on the context in which it is used. For instance, in the study of phase transitions, $\\xi$ might be an order parameter that is zero in the disordered phase and non-zero in the ordered phase. In the context of gauge theories, $\\xi$ could relate to gauge fixing conditions. When $\\xi = 0$, it indicates the absence of an ordered state or the fulfillment of a specific gauge condition, implying a high degree of symmetry or a trivial configuration of the field or property being described.",
-        "symmetry_origin": "The origin of the condition $\\xi = 0$ is typically rooted in symmetry principles. Many physical theories are constructed based on symmetries, and certain states or configurations naturally correspond to the highest symmetry point. For example, in the context of spontaneous symmetry breaking, the symmetric phase of a system is characterized by an order parameter being zero. This value arises from the fundamental symmetries of the underlying Lagrangian or Hamiltonian, where the state with $\\xi = 0$ is invariant under the symmetry operations.",
-        "limits_and_boundary": "As $\\xi$ approaches zero, the system approaches a state of perfect symmetry or a trivial configuration. Conversely, if $\\xi$ can deviate from zero, its magnitude and sign would indicate the degree and nature of symmetry breaking or the specific non-trivial configuration. The equation $\\xi = 0$ itself represents a specific boundary or critical point in the parameter space of the system, often separating distinct phases or configurations.",
+        "conceptual_definition": "The equation $\\xi = 0$ is a fundamental statement that sets a specific parameter, $\\xi$, to zero. In theoretical physics, $\\xi$ is a placeholder for a quantity whose meaning is defined by the specific theory under consideration. For example, in Landau theory of phase transitions, $\\xi$ could be the order parameter, where $\\xi=0$ signifies the symmetric (disordered) phase. In quantum field theory, it could be a gauge-fixing parameter, where the choice $\\xi=0$ corresponds to the Landau gauge. In general relativity, $\\xi^\\mu$ can represent a deviation vector between geodesics, and $\\xi^\\mu=0$ would mean the geodesics are identical.",
+        "intuitive_summary": "Imagine a dial that measures a certain property, like 'orderliness' or a specific type of field interaction. Setting this dial to zero, as in $\\xi = 0$, means that property is completely absent or the system is in its most symmetric, 'default' state.",
+        "interpretation": "The equation $\\xi = 0$ is a specific instance of a more general parameter assignment. The symbol $\\xi$ (xi) represents a scalar, vector, or tensor parameter whose physical interpretation is highly context-dependent. The statement $\\xi = 0$ imposes a constraint on the system. For instance: 1. **Order Parameter:** In condensed matter physics, if $\\xi$ is an order parameter (e.g., magnetization), $\\xi = 0$ indicates the system is in the disordered phase above the critical temperature. 2. **Gauge Fixing Parameter:** In quantum electrodynamics (QED) or other gauge theories, $\\xi$ is often used in $R_\\xi$ gauges to fix the gauge of the photon propagator. The specific choice $\\xi = 0$ defines the Landau gauge, which is manifestly Lorentz covariant and useful for proving renormalizability. 3. **Geodesic Deviation:** In general relativity, $\\xi^\\mu$ can be the deviation vector connecting two nearby geodesics. The condition $\\xi^\\mu = 0$ simply means the two geodesics coincide. The dynamics are governed by the geodesic deviation equation, which describes how $\\xi^\\mu$ evolves.",
+        "symmetry_origin": "The condition $\\xi = 0$ frequently signifies a point of enhanced or restored symmetry. For example, in spontaneous symmetry breaking, the state with a non-zero order parameter ($\\xi \\neq 0$) has less symmetry than the underlying Lagrangian, while the state $\\xi = 0$ (often the high-temperature phase) respects the full symmetry of the Lagrangian. In gauge theories, the choice of $\\xi$ is related to gauge freedom, a fundamental redundancy in the description of the system.",
+        "limits_and_boundary": "The condition $\\xi = 0$ is often a boundary or initial condition, or a specific value chosen for calculational convenience. For example, in the context of an order parameter $\\xi(T)$ which depends on temperature $T$, the high-temperature limit often yields $\\lim_{T \\to \\infty} \\xi(T) = 0$, representing the transition to a disordered phase. In gauge fixing, the value of $\\xi$ is a free parameter, and physical observables must be independent of its choice. The limit $\\xi \\to 0$ (Landau gauge) or $\\xi \\to 1$ (Feynman gauge) are common choices.",
         "status": "platinum",
         "semantic_variables": {
             "\\xi": {
-                "name": "Symmetry Parameter or Order Parameter",
+                "name": "xi",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A variable representing a quantity that characterizes a symmetry of a system or its deviation from a symmetric state. Its specific meaning is context-dependent, but $\\xi = 0$ generally denotes a state of maximum symmetry or a null condition."
+                "unit": "context-dependent",
+                "description": "A generic physical parameter, whose specific nature (e.g., order parameter, gauge-fixing parameter, deviation vector) is determined by the context of the physical theory."
             }
         },
         "subcomponents": [
-            "lane-emden-dimensionless-radial-origin-8902ee7c"
-        ]
+            "zero-vacuum-expectation-value-of-scalar-field-d715f8ad",
+            "lie-derivative-scalar-field-zero",
+            "curl-of-gradient-zero",
+            "second-covariant-derivative-of-geodesic-deviation-6089e1c6"
+        ],
+        "description": "This equation establishes the condition where a context-dependent physical parameter, denoted by ξ, is exactly zero. This often signifies a state of higher symmetry, a specific gauge choice, or the absence of a particular physical effect.",
+        "parent_formula_id": "xi-value-xi1",
+        "derivation_type": "SPECIAL_CASE"
     },
     "number-of-planck-areas": {
         "title": "Number of Planck Areas",
@@ -1625,95 +1636,110 @@
         ]
     },
     "generalized-coordinate-dependence": {
-        "title": "Generalized Coordinate Dependence",
+        "title": "Functional Dependence on Generalized Coordinates",
         "equation": "Q = Q(q)",
-        "conceptual_definition": "The formula \"Q = Q(q)\" represents the concept of generalized coordinate dependence in physics, particularly within the framework of Lagrangian and Hamiltonian mechanics. It states that a generalized coordinate or a function of these coordinates, denoted as Q, is explicitly dependent on the generalized coordinates themselves, denoted by q. This dependence signifies how physical quantities or configurations in a system can be expressed in terms of a minimal set of independent variables that define the system's state.",
-        "intuitive_summary": "A system's property Q can be fully described by its dependence on the fundamental configuration variables q.",
-        "interpretation": "In this formula, $q$ represents a set of generalized coordinates, which are a minimal set of independent variables required to completely specify the configuration of a dynamical system. These coordinates could be Cartesian coordinates, angles, or any other suitable parameters. $Q$ represents a generalized quantity, which could be a generalized force, a position, a velocity, or even the Lagrangian or Hamiltonian of the system. The expression $Q(q)$ explicitly indicates that the value of $Q$ is determined solely by the current values of the generalized coordinates $q$. This relationship is fundamental for describing the dynamics of complex systems, especially when using non-Cartesian coordinate systems, where forces might not be directly applied but are derived from potential energy functions that depend on $q$. For instance, a potential energy $V$ is typically a function of generalized coordinates $V(q_1, q_2, ..., q_n)$, and generalized forces can be derived from it.",
-        "symmetry_origin": "This dependence arises from the principle of configuration space, where the state of a mechanical system is defined by a set of generalized coordinates. Any observable or configuration quantity in classical mechanics can, in principle, be expressed as a function of these generalized coordinates and possibly their time derivatives. This formulation is key to deriving the equations of motion using variational principles, such as Hamilton's principle, which itself relies on expressing the action as a function of generalized coordinates and velocities.",
-        "limits_and_boundary": "As the generalized coordinates $q$ approach certain values (e.g., zero, or extreme values defining boundaries of motion), the value of $Q$ will change according to its functional dependence $Q(q)$. If $Q$ represents a physical quantity like position or momentum, its limits are governed by the physical constraints of the system. If $Q$ is a derived quantity like energy or force, its limits will reflect the behavior of the system at those specific configurations.",
+        "conceptual_definition": "In analytical mechanics, the configuration of a system is completely described by a set of $n$ independent generalized coordinates, denoted collectively as $q = (q_1, q_2, ..., q_n)$. A generalized quantity $Q$, which can represent scalar fields (like potential energy $V$), vector components (like generalized forces $Q_j$), or the Lagrangian $L$ itself, is expressed as a function of these coordinates, written as $Q(q)$. This signifies that the value of $Q$ is determined at each point in the system's configuration space.",
+        "intuitive_summary": "Imagine a hiker on a mountain. Their altitude (a physical quantity) depends only on their current position on the map, defined by latitude and longitude (the generalized coordinates). This formula is the abstract version of that idea: a system's property depends on its current configuration.",
+        "interpretation": "The notation $Q = Q(q)$ is a statement of functional dependence. The symbol $q$ represents a set of generalized coordinates, $q = \\{q_1, q_2, ..., q_n\\}$, which form a minimal set of independent variables required to uniquely specify the configuration of a dynamical system. These coordinates are not necessarily Cartesian; they can be angles, distances, or any other parameters that suit the system's constraints. The symbol $Q$ represents a generalized quantity. This is a broad term that can refer to various physical properties. For example, if $Q$ is the potential energy $V$, the expression becomes $V(q)$, indicating that the potential energy depends only on the system's position. If $Q$ is a generalized force $Q_j$, it is often derived from a potential via $Q_j = -\\frac{\\partial V}{\\partial q_j}$, showing its dependence on the coordinates $q$. In the context of canonical transformations, a new coordinate $Q_i$ can be a function of the old coordinates and momenta, $Q_i(q, p, t)$. The core idea is that the configuration space, spanned by the coordinates $q$, acts as the domain for functions describing the system's physical properties.",
+        "symmetry_origin": "Foundational principle of configuration space in analytical mechanics, upon which symmetry analyses (like Noether's theorem) are built. It does not itself arise from a specific symmetry.",
+        "limits_and_boundary": "The limiting behavior is not universal but depends on the specific physical quantity $Q$ and the system's potential energy landscape. For a system with a potential $V(q)$, the behavior as a coordinate $q_i \\to \\infty$ depends on the form of $V$. For example, in a harmonic oscillator with $V(q) = \\frac{1}{2}kq^2$, $V \\to \\infty$ as $q \\to \\infty$. For a gravitational potential $V(r) = -GMm/r$, $V \\to 0$ as the coordinate $r \\to \\infty$.",
         "status": "platinum",
         "semantic_variables": {
             "Q": {
                 "name": "Generalized Quantity",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A generalized quantity in a physical system, which could represent a generalized force, position, velocity, energy, or any other relevant physical measure that is being described. Its value is determined by the configuration of the system."
+                "unit": "Context-dependent",
+                "description": "A physical quantity (e.g., potential energy, generalized force, Lagrangian) expressed as a function of the system's coordinates."
             },
             "q": {
                 "name": "Generalized Coordinates",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A set of independent variables that completely specify the configuration of a dynamical system. These are not necessarily Cartesian coordinates but can be any set of parameters (e.g., angles, distances) that define the system's state. For a system with n degrees of freedom, q would typically represent $(q_1, q_2, ..., q_n)$."
+                "unit": "Context-dependent",
+                "description": "A set of independent parameters, $q = (q_1, ..., q_n)$, that uniquely define the configuration of a system. Units can be length, angle, etc."
             }
         },
         "subcomponents": [
-            "potential-energy-function-in-generalized-coordinates-fbbc1b44"
-        ]
+            "generalized-coordinate-component-070b6f5f",
+            "partial-derivative-with-respect-to-a-generalized-coordinate-730714c4",
+            "partial-derivative-lagrangian-position",
+            "new-generalized-coordinate-type-2-generating-function-598d9d87"
+        ],
+        "description": "This equation expresses the fundamental principle that a generalized physical quantity, such as potential energy or a generalized force, is a function of the system's generalized coordinates.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "lagrangian-with-lagrange-multipliers": {
-        "title": "Lagrangian with Lagrange Multipliers",
+        "title": "Augmented Lagrangian for Holonomic Constraints",
         "equation": "L' = L(q, \\dot{q}, t) + \\sum_{j=1}^k \\lambda_j f_j(q, t)",
-        "conceptual_definition": "The Lagrangian with Lagrange multipliers is a powerful technique used in analytical mechanics and variational calculus to find the equations of motion for a system subject to constraints. It extends the standard Lagrangian by incorporating additional terms that enforce these constraints, allowing for the solution of constrained optimization problems.",
-        "intuitive_summary": "This formula modifies the standard Lagrangian by adding penalty terms controlled by Lagrange multipliers, which enforce the system's constraints.",
-        "interpretation": "The formula defines a new Lagrangian, denoted as L', which is composed of the original Lagrangian L and a sum of constraint terms. The original Lagrangian, L($q, \\dot{q}, t)$, typically represents the difference between the kinetic and potential energy of the system, where $q$ are the generalized coordinates, $\\dot{q}$ are the generalized velocities, and $t$ is time. The second part of the equation, $\\sum_{j=1}^k \\lambda_j f_j(q, t)$, introduces the constraints. Here, $k$ is the number of independent constraints. Each term consists of a Lagrange multiplier, $\\lambda_j$, multiplied by a constraint function, $f_j(q, t)$. The constraint functions describe the restrictions on the system's configuration, often expressed in the form $f_j(q, t) = 0$. The Lagrange multipliers, $\\lambda_j$, are auxiliary variables that are determined along with the system's generalized coordinates during the minimization (or maximization) process of the action. They effectively act as scaling factors that ensure the constraints are satisfied.",
-        "symmetry_origin": "This formulation originates from the calculus of variations, specifically Dido's problem and Fermat's principle. The principle of stationary action states that the path a system takes between two points in configuration space is the one for which the action (the integral of the Lagrangian over time) is stationary. When constraints are present, the standard Euler-Lagrange equations are insufficient. Lagrange multipliers are introduced to handle these constraints by effectively adding degrees of freedom (the multipliers themselves) and corresponding equations of motion that force the constraints to be met.",
-        "limits_and_boundary": "In the limit where the constraints are always satisfied for any configuration, the constraint functions $f_j(q, t)$ are identically zero. In such a case, the added terms vanish, and L' reduces to the original Lagrangian L. If the system is unconstrained, $k=0$, and the sum over $j$ is empty, thus L' = L. In the limit of very strong constraints (e.g., attempting to move a rigid body), the Lagrange multipliers would take on values that enforce these rigid connections, potentially becoming very large if the constraint is significantly violated.",
+        "conceptual_definition": "The augmented Lagrangian, denoted $L'$, is defined for a system subject to $k$ holonomic constraints of the form $f_j(q, t) = 0$. It is constructed by taking the original Lagrangian of the unconstrained system, $L(q, \\dot{q}, t)$, and adding to it a linear combination of the constraint functions, $f_j$. Each constraint function is multiplied by an undetermined coefficient, $\\lambda_j$, known as a Lagrange multiplier. This formulation allows the constraints to be handled systematically within the variational framework of the principle of least action.",
+        "intuitive_summary": "Imagine a bead sliding on a wire. The standard Lagrangian describes the bead's tendency to move based on its kinetic and potential energy. The wire imposes a constraint. The augmented Lagrangian adds a 'penalty term' for any motion that would violate this constraint. The Lagrange multiplier is the 'price' of this penalty, which the system's dynamics automatically adjust to the exact value needed to keep the bead on the wire, representing the physical constraint force.",
+        "interpretation": "The formula defines a new, effective Lagrangian $L'$ for a constrained system. It is composed of two parts: the original Lagrangian $L(q, \\dot{q}, t)$, which is typically the kinetic minus potential energy ($T-V$), and a sum of constraint terms $\\sum_{j=1}^k \\lambda_j f_j(q, t)$. Here, $q$ represents the set of generalized coordinates, $\\dot{q}$ their time derivatives (generalized velocities), and $t$ is time. The system is subject to $k$ independent holonomic constraints, each expressed by an equation $f_j(q, t) = 0$. The variables $\\lambda_j$ are the Lagrange multipliers, which are treated as new dynamical variables. When the Euler-Lagrange equations are applied to $L'$, the multipliers $\\lambda_j$ are determined such that the constraints are satisfied. Physically, the term $\\sum_j \\lambda_j \\frac{\\partial f_j}{\\partial q_i}$ corresponds to the generalized force of constraint for the $i$-th coordinate.",
+        "symmetry_origin": "This formalism is not derived from a symmetry but is a mathematical method for enforcing geometric constraints on the configuration space of a physical system. It ensures the path of the system remains on the submanifold defined by the constraint equations.",
+        "limits_and_boundary": "In the limit where there are no constraints (i.e., $k=0$), the summation term vanishes, and the augmented Lagrangian $L'$ reduces to the original Lagrangian $L$. The dynamics of the system then revert to those of standard, unconstrained Lagrangian mechanics. The method is primarily applicable to holonomic constraints, which are constraints on the coordinates and time, $f(q, t) = 0$.",
         "status": "platinum",
         "semantic_variables": {
             "L'": {
-                "name": "Modified Lagrangian",
+                "name": "Augmented Lagrangian",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The Lagrangian augmented with terms for constraints."
+                "unit": "Joules (J)",
+                "description": "The effective Lagrangian for the constrained system, used in the variational principle."
             },
             "L": {
-                "name": "Standard Lagrangian",
+                "name": "Original Lagrangian",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The difference between the kinetic and potential energy of the system, L = T - V."
+                "unit": "Joules (J)",
+                "description": "The Lagrangian of the system in the absence of constraints, typically $T-V$."
             },
             "q": {
                 "name": "Generalized Coordinates",
                 "type": "variable",
-                "unit": "meter (m) or other appropriate unit depending on the coordinate system",
-                "description": "A set of independent variables that completely describe the configuration of the system. For example, position (x, y, z), angles (theta, phi), etc."
+                "unit": "Varies (e.g., m, rad)",
+                "description": "A set of independent coordinates that describe the configuration of the system."
             },
             "\\dot{q}": {
                 "name": "Generalized Velocities",
                 "type": "variable",
-                "unit": "meter per second (m/s) or other appropriate unit",
-                "description": "The time derivatives of the generalized coordinates, representing the velocities of the system in its generalized coordinates."
+                "unit": "Varies (e.g., m/s, rad/s)",
+                "description": "The time derivatives of the generalized coordinates."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
-                "unit": "second (s)",
-                "description": "The independent variable representing time."
-            },
-            "k": {
-                "name": "Number of Constraints",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The total count of independent constraints imposed on the system."
+                "unit": "Seconds (s)",
+                "description": "The time coordinate."
             },
             "\\lambda_j": {
                 "name": "Lagrange Multiplier",
                 "type": "variable",
-                "unit": "Joule (J) per unit of the constraint function",
-                "description": "An auxiliary variable associated with each constraint, which is determined as part of the solution. It represents a scaling factor for the constraint's influence."
+                "unit": "Varies (context-dependent)",
+                "description": "An auxiliary variable associated with the j-th constraint, physically related to the force of constraint."
             },
-            "f_j(q, t)": {
-                "name": "Constraint Function",
+            "f_j": {
+                "name": "Holonomic Constraint Function",
                 "type": "variable",
-                "unit": "dimensionless (if constraint is equality)",
-                "description": "A function of the generalized coordinates and possibly time that defines the j-th constraint. Typically, constraints are expressed in the form f_j(q, t) = 0."
+                "unit": "Varies (typically dimensionless)",
+                "description": "A function of coordinates and time that defines the j-th constraint via the equation $f_j(q, t) = 0$."
+            },
+            "k": {
+                "name": "Number of Constraints",
+                "type": "variable",
+                "unit": "Dimensionless",
+                "description": "The total number of independent holonomic constraints on the system."
+            },
+            "j": {
+                "name": "Summation Index",
+                "type": "variable",
+                "unit": "Dimensionless",
+                "description": "An index that runs from 1 to $k$, enumerating the constraints."
             }
         },
         "subcomponents": [
-            "flat-universe-curvature-condition-88ca2849",
-            "eigenvalues-of-the-density-matrix-ebcbe1b0"
-        ]
+            "form-invariance-0416c073",
+            "lagranges-equations-motion-constraints",
+            "lagrangian-for-free-particle"
+        ],
+        "description": "A mathematical construction in Lagrangian mechanics that incorporates holonomic constraints into the system's dynamics by augmenting the standard Lagrangian with a weighted sum of the constraint equations.",
+        "parent_formula_id": "principle-least-action-constraints-lagrange",
+        "derivation_type": "DEFINITION"
     },
     "violation-weak-energy-condition": {
         "title": "Violation of weak energy condition",

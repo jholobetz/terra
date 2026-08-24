@@ -329,8 +329,8 @@ Provide the complete enriched formula JSON object with these exact keys:
   }}
 }}
 """
-    max_retries = 3
-    backoff = 2
+    max_retries = 4
+    backoff = 3
     for attempt in range(max_retries):
         try:
             response = client.models.generate_content(
@@ -344,7 +344,9 @@ Provide the complete enriched formula JSON object with these exact keys:
             return robust_json_decode(response.text)
         except Exception as e:
             if attempt < max_retries - 1:
-                time.sleep(backoff)
+                # Add extra delay if 429 rate limit
+                sleep_time = backoff + (5 if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e) else 0)
+                time.sleep(sleep_time)
                 backoff *= 2
             else:
                 print(f"  [ERROR] Vertex AI generation failed for {fid} after {max_retries} attempts: {e}", flush=True)

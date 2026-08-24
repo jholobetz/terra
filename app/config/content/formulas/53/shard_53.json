@@ -906,62 +906,73 @@
         "derivation_type": "DERIVED_FROM"
     },
     "euler-lagrange-equation": {
-        "title": "Euler-Lagrange Equation",
+        "title": "Euler-Lagrange Equation of Motion",
         "equation": "\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = 0",
-        "conceptual_definition": "The Euler-Lagrange equation is the fundamental equation of motion in Lagrangian mechanics, derived from Hamilton's principle of stationary action. It describes the dynamics of a system using generalized coordinates and their time derivatives, providing a powerful alternative to Newtonian mechanics, especially for systems with constraints.",
-        "intuitive_summary": "The time rate of change of a system's generalized momentum equals the generalized force acting on it.",
-        "interpretation": "The Euler-Lagrange equation, $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = 0$, governs the dynamics of a physical system described by a Lagrangian $L = T - V$, the difference between kinetic energy $T$ and potential energy $V$. The variable $q_i$ is the $i$-th generalized coordinate (e.g., position, angle), and $\\dot{q}_i = \\frac{\\mathrm{d}q_i}{\\mathrm{d}t}$ is the corresponding generalized velocity. The term $p_i \\equiv \\frac{\\partial L}{\\partial \\dot{q}_i}$ is defined as the generalized momentum conjugate to $q_i$, while the term $\\frac{\\partial L}{\\partial q_i}$ is the generalized force. The equation thus states that the time rate of change of the generalized momentum equals the generalized force, which is a restatement of Newton's second law in a generalized framework.",
-        "symmetry_origin": "The equation arises from the principle of stationary action, which states that the physical path taken by a system between two points in time is one for which the action integral $S = \\int L(q_i, \\dot{q}_i, t) \\, \\mathrm{d}t$ is stationary. Through Noether's theorem, any continuous symmetry of the Lagrangian $L$ corresponds to a conserved quantity. For example, invariance under time translation implies conservation of energy, invariance under spatial translation implies conservation of linear momentum, and invariance under rotation implies conservation of angular momentum.",
-        "limits_and_boundary": "1. Free Particle Limit: For a free particle, the potential $V=0$, so $L=T$. The Euler-Lagrange equation becomes $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial T}{\\partial \\dot{q}_i}\\right) = 0$, which implies that the generalized momentum is conserved.\n2. Static Equilibrium Limit: For a static system, all generalized velocities are zero ($\\dot{q}_i = 0$), so $T=0$ and $L = -V(q_i)$. The Euler-Lagrange equation reduces to $\\frac{\\partial L}{\\partial q_i} = -\\frac{\\partial V}{\\partial q_i} = 0$, the condition for an extremum of the potential energy, which defines points of static equilibrium.\n3. Non-Conservative Systems: The equation can be extended to include non-conservative generalized forces $Q_i$ (e.g., friction) by setting the right-hand side equal to them: $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = Q_i$.",
+        "conceptual_definition": "The Euler-Lagrange equation, given by $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = 0$, is a second-order differential equation whose solutions are the paths for which the action functional $S = \\int L(q_i, \\dot{q}_i, t) \\, \\mathrm{d}t$ is stationary. It represents the condition for a system to follow a trajectory that extremizes the action.",
+        "intuitive_summary": "Imagine a system moving from point A to point B. The Euler-Lagrange equation tells us that the actual path taken by the system is the one that makes a quantity called 'action' as small (or as large) as possible, like finding the shortest path between two points on a surface. It's a powerful way to find the equations of motion without directly using forces.",
+        "interpretation": "The Euler-Lagrange equation, $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = 0$, governs the dynamics of a physical system:\n*   $L$: The **Lagrangian** of the system, a function of generalized coordinates, generalized velocities, and time, defined as $L = T - V$, where $T$ is the kinetic energy and $V$ is the potential energy. Unit: Joules (J).\n*   $q_i$: The $i$-th **generalized coordinate**, representing an independent degree of freedom of the system (e.g., position $x$, angle $\theta$). Unit: Varies (e.g., meters (m), radians (rad)).\n*   $\\dot{q}_i$: The $i$-th **generalized velocity**, defined as the time derivative of the generalized coordinate, $\\dot{q}_i = \\frac{\\mathrm{d}q_i}{\\mathrm{d}t}$. Unit: Varies (e.g., meters per second (m/s), radians per second (rad/s)).\n*   $t$: **Time**. Unit: Seconds (s).\n*   $\\frac{\\partial L}{\\partial \\dot{q}_i}$: The **generalized momentum** conjugate to $q_i$, often denoted as $p_i$. Unit: Varies (e.g., kg\\cdot m/s, J\\cdot s/rad).\n*   $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right)$: The **total time derivative of the generalized momentum**. This term represents the rate of change of generalized momentum. Unit: Varies (e.g., Newtons (N), N\\cdot m/rad).\n*   $\\frac{\\partial L}{\\partial q_i}$: The **generalized force** associated with the coordinate $q_i$. Unit: Varies (e.g., Newtons (N), N\\cdot m/rad).\n*   The equation states that the time rate of change of the generalized momentum is equal to the generalized force, which is a direct generalization of Newton's second law of motion, $\\mathbf{F} = \\frac{\\mathrm{d}\\mathbf{p}}{\\mathrm{d}t}$, to a system of generalized coordinates.",
+        "symmetry_origin": "The Euler-Lagrange equation is intimately connected to **Noether's Theorem**. If the Lagrangian $L$ is invariant under a continuous symmetry transformation of the generalized coordinates $q_i$, then there exists a corresponding conserved quantity (a constant of motion). For example, if $L$ does not explicitly depend on a generalized coordinate $q_k$ (i.e., $\\frac{\\partial L}{\\partial q_k} = 0$), then the Euler-Lagrange equation for that coordinate simplifies to $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_k}\\right) = 0$, implying that the generalized momentum $p_k = \\frac{\\partial L}{\\partial \\dot{q}_k}$ is conserved.",
+        "limits_and_boundary": "The Euler-Lagrange equation is a cornerstone of classical mechanics, but its formalism extends to various domains:\n*   **Classical Limit**: In the limit where quantum effects are negligible (i.e., $\\hbar \\to 0$), the path of a particle is precisely determined by the principle of least action, and thus by the Euler-Lagrange equations.\n*   **Relativistic Limit**: The Lagrangian formalism, and consequently the Euler-Lagrange equations, can be extended to relativistic mechanics by using a relativistic Lagrangian. For example, in special relativity, the Lagrangian for a free particle is $L = -mc^2 \\sqrt{1 - (\\dot{\\mathbf{r}}/c)^2}$.\n*   **Continuum Limit (Field Theory)**: The Euler-Lagrange equations generalize to field theory, becoming the Euler-Lagrange equations for fields, where the Lagrangian density $\\mathcal{L}$ replaces the Lagrangian $L$, and functional derivatives are used. This allows for the derivation of fundamental field equations, such as Maxwell's equations or the Klein-Gordon equation.",
         "status": "platinum",
         "semantic_variables": {
             "L": {
                 "name": "Lagrangian",
                 "type": "variable",
                 "unit": "J",
-                "description": "The Lagrangian of the system, defined as the difference between its kinetic energy and potential energy, $L = T - V$."
+                "description": "The Lagrangian of the system, defined as kinetic energy minus potential energy."
+            },
+            "q_i": {
+                "name": "Generalized Coordinate",
+                "type": "variable",
+                "unit": "varies",
+                "description": "The i-th independent generalized coordinate describing the system's configuration."
+            },
+            "\\dot{q}_i": {
+                "name": "Generalized Velocity",
+                "type": "variable",
+                "unit": "varies/s",
+                "description": "The time derivative of the i-th generalized coordinate."
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The independent variable representing time."
-            },
-            "q_i": {
-                "name": "Generalized Coordinate",
-                "type": "variable",
-                "unit": "m, rad, etc.",
-                "description": "The $i$-th generalized coordinate, one of a set of independent parameters that define the configuration of the system."
-            },
-            "\\dot{q}_i": {
-                "name": "Generalized Velocity",
-                "type": "variable",
-                "unit": "m/s, rad/s, etc.",
-                "description": "The time derivative of the $i$-th generalized coordinate, $\\dot{q}_i = \\mathrm{d}q_i/\\mathrm{d}t$."
+                "description": "The independent time variable."
             },
             "\\frac{\\mathrm{d}}{\\mathrm{d}t}": {
-                "name": "Total Time Derivative",
+                "name": "Total Time Derivative Operator",
                 "type": "operator",
-                "unit": "s^{-1}",
-                "description": "Operator that computes the rate of change of a quantity with respect to time, accounting for all explicit and implicit time dependencies."
+                "unit": "1/s",
+                "description": "Operator for the total derivative with respect to time."
             },
             "\\frac{\\partial}{\\partial q_i}": {
-                "name": "Partial Derivative w.r.t. Generalized Coordinate",
+                "name": "Partial Derivative Operator (q_i)",
                 "type": "operator",
-                "unit": "Unit of $q_i^{-1}$",
-                "description": "Operator that computes the rate of change of a function with respect to the generalized coordinate $q_i$, holding all other variables constant."
+                "unit": "1/varies",
+                "description": "Operator for the partial derivative with respect to the generalized coordinate $q_i$."
             },
             "\\frac{\\partial}{\\partial \\dot{q}_i}": {
-                "name": "Partial Derivative w.r.t. Generalized Velocity",
+                "name": "Partial Derivative Operator (dot{q}_i)",
                 "type": "operator",
-                "unit": "Unit of $\\dot{q}_i^{-1}$",
-                "description": "Operator that computes the rate of change of a function with respect to the generalized velocity $\\dot{q}_i$, holding all other variables constant."
+                "unit": "s/varies",
+                "description": "Operator for the partial derivative with respect to the generalized velocity $\\dot{q}_i$."
+            },
+            "0": {
+                "name": "Zero",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Represents the null value, indicating the extremum condition for the action."
             }
         },
         "subcomponents": [
-            "generalized-force-component-lagrangian-definition",
-            "newtons-second-law-from-lagrangian-mechanics-1d"
-        ]
+            "rate-of-change-of-generalized-momentum-bbbb807e",
+            "euler-lagrange-equation-left-hand-side-6699a9be",
+            "euler-lagrange-equation-cartesian-coordinates",
+            "field-equations-e42aff00"
+        ],
+        "description": "The Euler-Lagrange equation is a fundamental equation in classical mechanics derived from the Principle of Least Action, providing the equations of motion for a physical system described by a Lagrangian function. It describes the path a system takes between two states such that the action is minimized or extremized.",
+        "parent_formula_id": "operator-transfer-2d8d6a65",
+        "derivation_type": "DERIVED_FROM"
     },
     "inverse-temperature-statistical-mechanics": {
         "title": "Thermodynamic Beta Parameter (Inverse Temperature)",
@@ -1039,84 +1050,112 @@
         "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "eigenvector-equation": {
-        "title": "Eigenvector equation",
+        "title": "Defining Equation for Eigenvectors and Eigenvalues of a Linear Operator",
         "equation": "\\mathbf{A}\\mathbf{v} = a\\mathbf{v}",
-        "conceptual_definition": "The eigenvector equation, $\\mathbf{A} \\mathbf{v}$ = a $\\mathbf{v}$ , is a fundamental concept in linear algebra and has profound implications across various branches of physics. It describes a special relationship between a linear transformation (represented by the matrix $\\mathbf{A}$ ) and a non-zero vector $\\mathbf{v}$ . When the matrix $\\mathbf{A}$ acts upon the vector $\\mathbf{v}$ , the resulting vector is simply a scaled version of the original vector $\\mathbf{v}$ , with the scaling factor given by the scalar $\\textit{a}$ . The vector $\\mathbf{v}$ is known as an eigenvector of the matrix $\\mathbf{A}$ , and the scalar $\\textit{a}$ is its corresponding eigenvalue.",
-        "intuitive_summary": "An eigenvector is a special direction that a linear transformation only stretches or shrinks without changing its orientation, and the eigenvalue quantifies this stretching or shrinking factor.",
-        "interpretation": "In the eigenvector equation $\\mathbf{A} \\mathbf{v}$ = a $\\mathbf{v}$ , $\\mathbf{A}$ represents a linear transformation, typically depicted as a square matrix. This transformation can be thought of as an operation that maps vectors in a space to other vectors in the same space. $\\mathbf{v}$ is a non-zero vector, known as an eigenvector. The defining characteristic of an eigenvector is that when the linear transformation $\\mathbf{A}$ is applied to it, the output vector $\\mathbf{A} \\mathbf{v}$ is parallel to the original vector $\\mathbf{v}$ . The scalar quantity $\\textit{a}$ is the eigenvalue associated with the eigenvector $\\mathbf{v}$ . It represents the factor by which the eigenvector is scaled (stretched, shrunk, or inverted if negative) by the transformation $\\mathbf{A}$ . Mathematically, the equation can be rewritten as $\\mathbf{A} \\mathbf{v}$ - a $\\mathbf{v} = \\mathbf{0}$ , or ($\\mathbf{A}$ - a $\\mathbf{I}$) $\\mathbf{v} = \\mathbf{0}$ , where $\\mathbf{I}$ is the identity matrix. For a non-trivial solution (i.e., $\\mathbf{v}$ eq $\\mathbf{0}$ ), the matrix ($\\mathbf{A}$ - a $\\mathbf{I}$) must be singular, meaning its determinant is zero: $\\det$($\\mathbf{A}$ - a $\\mathbf{I}$) = 0 . Solving this characteristic equation yields the eigenvalues $\\textit{a}$ , and for each eigenvalue, one can then solve the system of linear equations to find the corresponding eigenvectors $\\mathbf{v}$ .",
-        "symmetry_origin": "The concept of eigenvectors and eigenvalues arises naturally when analyzing linear transformations, particularly in contexts involving symmetry, stability analysis, and invariant properties. For instance, in quantum mechanics, the states of a system are represented by vectors, and physical observables (like energy or momentum) are represented by operators (which are often linear transformations). The eigenvector equation $\\hat{H} \\psi$ = E $\\psi$ , where $\\hat{H}$ is the Hamiltonian operator (representing energy) and $\\psi$ is a state vector (wavefunction), signifies that $\\psi$ is a stationary state of the system, and $\\textit{E}$ is the corresponding energy eigenvalue. This implies that the energy of the system is conserved when it is in such a state. The origin can also be traced to the desire to find coordinate systems in which a linear transformation takes a simple diagonal form, revealing its fundamental action.",
-        "limits_and_boundary": "If the eigenvalue $\\textit{a}$ is equal to 0, then $\\mathbf{A} \\mathbf{v} = \\mathbf{0} . This means that the eigenvector \\mathbf{v} is mapped to the zero vector by the transformation \\mathbf{A}$ , implying that $\\mathbf{v}$ lies in the null space (kernel) of $\\mathbf{A} . If the eigenvalue \\textit{a} is equal to 1, then \\mathbf{A} \\mathbf{v} = \\mathbf{v} . This signifies that the eigenvector \\mathbf{v}$ is unchanged by the transformation $\\mathbf{A}$ ; it is a fixed point under the transformation. As the magnitude of the eigenvalue |a| approaches infinity, the effect of the transformation on the corresponding eigenvector becomes increasingly dominant, leading to significant stretching or expansion. Conversely, as |a| approaches zero, the transformation increasingly compresses the eigenvector towards the origin.",
+        "conceptual_definition": "The eigenvector equation, expressed as $\\mathbf{A}\\mathbf{v} = a\\mathbf{v}$, establishes the relationship where a linear operator $\\mathbf{A}$ (often represented by a square matrix) transforms a non-zero vector $\\mathbf{v}$ (the eigenvector) into a scalar multiple of itself, with $a$ being the eigenvalue. This implies that the direction of the eigenvector remains unchanged under the transformation $\\mathbf{A}$, only its magnitude (and possibly its orientation if $a$ is negative) is altered.",
+        "intuitive_summary": "Imagine stretching or shrinking a rubber band. An eigenvector is like a special direction in that rubber band that only gets stretched or shrunk, but doesn't twist or turn. The eigenvalue tells you how much it's stretched or shrunk.",
+        "interpretation": "The eigenvector equation, $\\mathbf{A}\\mathbf{v} = a\\mathbf{v}$, defines the special relationship between a linear transformation and certain vectors. Here, $\\mathbf{A}$ represents a linear operator, often a square matrix, that maps vectors within a space to other vectors in the same space. The vector $\\mathbf{v}$ is a non-zero eigenvector, characterized by the property that when $\\mathbf{A}$ acts upon it, the resulting vector $\\mathbf{A}\\mathbf{v}$ is perfectly parallel to the original vector $\\mathbf{v}$. The scalar $a$ is the eigenvalue corresponding to $\\mathbf{v}$, indicating the factor by which $\\mathbf{v}$ is scaled (stretched, shrunk, or inverted if $a$ is negative) by the transformation $\\mathbf{A}$. The equation can be rearranged to $(\\mathbf{A} - a\\mathbf{I})\\mathbf{v} = \\mathbf{0}$, where $\\mathbf{I}$ is the identity operator. For a non-trivial eigenvector solution (i.e., $\\mathbf{v} \neq \\mathbf{0}$), the operator $(\\mathbf{A} - a\\mathbf{I})$ must be singular, meaning its determinant is zero: $\\det(\\mathbf{A} - a\\mathbf{I}) = 0$. This characteristic equation is solved to find the eigenvalues $a$, and subsequently, the corresponding eigenvectors $\\mathbf{v}$ for each $a$.",
+        "symmetry_origin": "The concept of eigenvectors and eigenvalues arises from the study of linear transformations and their geometric invariance. An eigenvector represents a direction that is invariant under the transformation, meaning it is only scaled, not rotated or sheared. This can be seen as a form of geometric symmetry or invariance with respect to the specific linear operator $\\mathbf{A}$.",
+        "limits_and_boundary": "For finite-dimensional vector spaces, the existence of eigenvectors and eigenvalues is guaranteed for certain types of matrices (e.g., symmetric or Hermitian matrices always have real eigenvalues and a complete set of orthogonal eigenvectors). In infinite-dimensional spaces, such as function spaces, the concept extends to eigenfunctions and eigenvalues of linear operators (e.g., differential operators), where the spectrum of eigenvalues can be continuous or discrete. The equation $\\det(\\mathbf{A} - a\\mathbf{I}) = 0$ is the characteristic equation, which is used to find the eigenvalues $a$. For non-trivial solutions, the eigenvector $\\mathbf{v}$ must be non-zero.",
         "status": "platinum",
         "semantic_variables": {
-            "A": {
-                "name": "Matrix of Linear Transformation",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A square matrix representing a linear transformation in a vector space. Its dimensions determine the dimensionality of the vectors it acts upon."
+            "\\mathbf{A}": {
+                "name": "Linear Operator / Matrix",
+                "type": "operator",
+                "unit": "context-dependent (e.g., s^-1 for Hamiltonian, m^-2 for Laplacian)",
+                "description": "Represents a linear transformation acting on a vector space, typically a square matrix in finite dimensions or a differential operator in infinite dimensions."
             },
-            "v": {
+            "\\mathbf{v}": {
                 "name": "Eigenvector",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A non-zero vector that, when a linear transformation is applied to it, results in a scaled version of itself. Eigenvectors represent directions that are invariant under the transformation, apart from scaling."
+                "unit": "context-dependent (e.g., m^-3/2 for quantum wavefunctions, m for position vectors)",
+                "description": "A non-zero vector whose direction remains unchanged (up to a sign) when a linear transformation $\\mathbf{A}$ is applied to it."
             },
             "a": {
                 "name": "Eigenvalue",
                 "type": "variable",
+                "unit": "context-dependent (e.g., J for energy, s^-1 for frequency)",
+                "description": "The scalar factor by which the eigenvector $\\mathbf{v}$ is scaled when the linear transformation $\\mathbf{A}$ is applied."
+            },
+            "\\mathbf{0}": {
+                "name": "Zero Vector",
+                "type": "constant",
+                "unit": "context-dependent (same as $\\mathbf{v}$)",
+                "description": "The additive identity in a vector space, representing a vector with zero magnitude and no specific direction."
+            },
+            "\\mathbf{I}": {
+                "name": "Identity Matrix / Operator",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "A scalar value representing the factor by which the corresponding eigenvector is scaled by the linear transformation. It quantifies the stretching or shrinking effect of the transformation along the direction of the eigenvector."
+                "description": "A square matrix (or operator) that leaves any vector unchanged when multiplied by it, i.e., $\\mathbf{I}\\mathbf{v} = \\mathbf{v}$."
+            },
+            "\\det": {
+                "name": "Determinant Operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "A scalar value that can be computed from the elements of a square matrix, indicating properties of the linear transformation, such as invertibility. For a singular matrix, $\\det(\\mathbf{M}) = 0$."
             }
         },
-        "subcomponents": [],
+        "subcomponents": [
+            "zero-eigenvalue-condition-7337b257",
+            "offer-wave-identity-1-6186b4a2-223be70d",
+            "poissons-equation-for-scalar-potential-e0595b6d",
+            "laplace-equation-vector-potential"
+        ],
         "parent_formula_id": "ampere-maxwell-law",
-        "derivation_type": "SPECIAL_CASE"
+        "derivation_type": "DEFINITION",
+        "description": "This fundamental equation defines an eigenvector as a non-zero vector that, when acted upon by a linear transformation, is merely scaled by a scalar factor, known as its eigenvalue."
     },
     "partial-derivative-lagrangian-velocity": {
-        "title": "Generalized Momentum Definition",
+        "title": "Canonical (Generalized) Momentum Definition",
         "equation": "p_i \\equiv \\frac{\\partial L}{\\partial \\dot{q}_i}",
-        "conceptual_definition": "In Lagrangian mechanics, the partial derivative of the Lagrangian with respect to a generalized velocity defines the generalized momentum conjugate to the corresponding generalized coordinate. This quantity is fundamental for transitioning to the Hamiltonian formulation and for identifying conserved quantities via Noether's theorem.",
-        "intuitive_summary": "The way a system's energy function changes with its speed defines its momentum in that direction.",
-        "interpretation": "The equation $p_i \\equiv \\frac{\\partial L}{\\partial \\dot{q}_i}$ provides the definition for the generalized momentum $p_i$ conjugate to the generalized coordinate $q_i$. The Lagrangian $L$ is a function of the generalized coordinates, generalized velocities, and time, $L(q_i, \\dot{q}_i, t)$, typically defined as the kinetic energy $T$ minus the potential energy $V$. For a simple particle of mass $m$ moving in one dimension with coordinate $x$, the Lagrangian is $L = T - V = \\frac{1}{2}m\\dot{x}^2 - V(x)$. Applying the definition, the momentum conjugate to $x$ is $p_x = \\frac{\\partial L}{\\partial \\dot{x}} = \\frac{\\partial}{\\partial \\dot{x}} \\left( \\frac{1}{2}m\\dot{x}^2 - V(x) \\right) = m\\dot{x}$. This result is the familiar linear momentum, demonstrating that the generalized momentum is a broader concept applicable to any choice of coordinates.",
-        "symmetry_origin": "This definition is central to Noether's theorem. If the Lagrangian $L$ is invariant under a continuous translation of a generalized coordinate $q_i$ (i.e., $q_i$ is a 'cyclic' or 'ignorable' coordinate, such that $\\frac{\\partial L}{\\partial q_i} = 0$), then the corresponding generalized momentum $p_i$ is a conserved quantity. The Euler-Lagrange equation, $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = 0$, directly implies $\\frac{\\mathrm{d}p_i}{\\mathrm{d}t} = 0$. This establishes a direct link between a continuous spatial symmetry and a conservation law.",
-        "limits_and_boundary": "1. Non-Relativistic Systems: For most classical systems, kinetic energy is a quadratic function of generalized velocities ($T \\propto \\dot{q}^2$). In this common case, the generalized momentum $p_i$ is a linear function of the generalized velocity $\\dot{q}_i$.\n2. Relativistic Systems: For a free relativistic particle, the Lagrangian is $L = -mc^2\\sqrt{1 - v^2/c^2}$. The conjugate momentum is $p = \\frac{\\partial L}{\\partial v} = \\gamma m v$, where $\\gamma = (1-v^2/c^2)^{-1/2}$. This correctly reduces to the non-relativistic momentum $mv$ in the limit $v \\ll c$.\n3. Zero Velocity: In the absence of velocity-dependent potentials (like magnetic fields), a system at rest (all $\\dot{q}_i = 0$) will have zero generalized momenta.",
+        "conceptual_definition": "The generalized momentum $p_i$ conjugate to a generalized coordinate $q_i$ is defined as the partial derivative of the Lagrangian $L$ with respect to the generalized velocity $\\dot{q}_i$.",
+        "intuitive_summary": "Generalized momentum quantifies how sensitive the system's dynamics (described by the Lagrangian) are to changes in the rate of a particular generalized coordinate. It extends the familiar concept of linear momentum to arbitrary coordinate systems, providing a conserved quantity under certain symmetries.",
+        "interpretation": "The equation $p_i \\equiv \frac{\\partial L}{\\partial \\dot{q}_i}$ formally defines the generalized momentum.\n*   $p_i$: Represents the generalized momentum conjugate to the $i$-th generalized coordinate $q_i$. Its SI unit is typically $\\text{kg} \\cdot \\text{m/s}$ for linear momentum or $\\text{kg} \\cdot \\text{m}^2/\\text{s}$ for angular momentum, but can vary depending on the nature of $q_i$.\n*   $L$: Denotes the Lagrangian of the system, a function of generalized coordinates $q_i$, generalized velocities $\\dot{q}_i$, and possibly time $t$, i.e., $L(q_i, \\dot{q}_i, t)$. The SI unit for the Lagrangian is Joules ($\\text{J}$). For conservative systems, $L = T - V$, where $T$ is the kinetic energy and $V$ is the potential energy.\n*   $\\dot{q}_i$: Represents the generalized velocity corresponding to the $i$-th generalized coordinate $q_i$, defined as the time derivative $\\frac{dq_i}{dt}$. Its SI unit depends on the nature of $q_i$ (e.g., $\\text{m/s}$ for linear velocity, $\\text{rad/s}$ for angular velocity).\n*   $q_i$: Represents the $i$-th generalized coordinate, which can be any set of independent coordinates that completely describe the configuration of the system. Its SI unit depends on the physical quantity it represents (e.g., meters for position, radians for angle).\n*   $\\frac{\\partial}{\\partial \\dot{q}_i}$: This is the partial derivative operator with respect to the generalized velocity $\\dot{q}_i$. It indicates how the Lagrangian changes with an infinitesimal variation in $\\dot{q}_i$, while all other generalized coordinates $q_j$ and generalized velocities $\\dot{q}_j$ (for $j \\neq i$) are held constant. This definition is crucial for transitioning from Lagrangian to Hamiltonian mechanics, where generalized momenta become independent canonical variables. For a free particle of mass $m$ moving in one dimension, $L = \\frac{1}{2}m\\dot{x}^2$, and the generalized momentum $p_x = \\frac{\\partial L}{\\partial \\dot{x}} = m\\dot{x}$, which is the familiar linear momentum.",
+        "symmetry_origin": "This definition is intimately connected to Noether's Theorem. If the Lagrangian $L$ is invariant under a continuous transformation of a generalized coordinate $q_k$ (i.e., $\\frac{\\partial L}{\\partial q_k} = 0$), then the generalized momentum $p_k$ conjugate to that coordinate is conserved, meaning $\\frac{dp_k}{dt} = 0$. Such a coordinate $q_k$ is called a cyclic or ignorable coordinate.",
+        "limits_and_boundary": "*   **Non-relativistic limit**: In the non-relativistic limit, for a particle with mass $m$ and potential $V(q)$, the Lagrangian is $L = T - V = \\frac{1}{2}m\\dot{q}^2 - V(q)$. The generalized momentum becomes $p = \\frac{\\partial L}{\\partial \\dot{q}} = m\\dot{q}$, which is the classical linear momentum.\n*   **Relativistic limit**: In relativistic mechanics, the Lagrangian takes a different form, typically involving the Lorentz factor $\\gamma$. For a free particle, $L = -mc^2/\\gamma$. The generalized momentum would then be $p = \\frac{\\partial L}{\\partial \\dot{q}} = \\gamma m \\dot{q}$, which is the relativistic momentum.\n*   **Quantum Mechanics**: In quantum mechanics, the generalized momentum operator $\\hat{p}_i$ is related to the spatial derivative operator, often given by $\\hat{p}_i = -i\\hbar \\frac{\\partial}{\\partial q_i}$ in the position representation. The classical definition serves as the foundation for canonical quantization.",
         "status": "platinum",
         "semantic_variables": {
             "p_i": {
                 "name": "Generalized Momentum",
                 "type": "variable",
-                "unit": "kg⋅m/s",
-                "description": "The momentum conjugate to the generalized coordinate $q_i$. It is a conserved quantity if $q_i$ is a cyclic coordinate."
+                "unit": "kg m/s (or J s/rad)",
+                "description": "The generalized momentum conjugate to the generalized coordinate $q_i$."
             },
             "L": {
                 "name": "Lagrangian",
                 "type": "variable",
                 "unit": "J",
-                "description": "The Lagrangian of a system, defined as the difference between its kinetic energy and potential energy, $L = T - V$."
+                "description": "The Lagrangian of the system, typically defined as kinetic energy minus potential energy, $L = T - V$."
             },
             "\\dot{q}_i": {
                 "name": "Generalized Velocity",
                 "type": "variable",
-                "unit": "m/s or rad/s",
-                "description": "The time derivative of the generalized coordinate $q_i$, representing the rate of change of that coordinate."
+                "unit": "m/s (or rad/s)",
+                "description": "The time derivative of the generalized coordinate $q_i$."
             },
-            "\\frac{\\partial}{\\partial \\dot{q}_i}": {
+            "q_i": {
+                "name": "Generalized Coordinate",
+                "type": "variable",
+                "unit": "m (or rad)",
+                "description": "The $i$-th independent coordinate describing the system's configuration."
+            },
+            "\\partial": {
                 "name": "Partial Derivative Operator",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "The operator for the partial derivative with respect to the generalized velocity $\\dot{q}_i$."
-            },
-            "i": {
-                "name": "Index",
-                "type": "notation",
                 "unit": "dimensionless",
-                "description": "An index that labels the degrees of freedom of the system."
+                "description": "Operator indicating differentiation with respect to a specific variable while holding others constant."
             }
         },
         "subcomponents": [
-            "lagrangian-definition-in-classical-mechanics-0db99f83",
-            "generalized-momentum-definition-2f3dc5b8",
-            "translational-kinetic-energy-formula-0bff9b78"
-        ]
+            "time-derivative-of-generalized-momentum-4a677c12",
+            "cyclic-conservation-law-9e7b4a3c",
+            "generalized-angular-momentum-definition-bbbd0a29",
+            "hamiltons-equation-for-generalized-momentum-4b316f1b"
+        ],
+        "description": "This formula defines the generalized momentum, also known as canonical momentum, as the partial derivative of the Lagrangian with respect to its corresponding generalized velocity. It is a fundamental concept in Lagrangian and Hamiltonian mechanics.",
+        "parent_formula_id": "generalized-momentum-definition-6c138f34",
+        "derivation_type": "DEFINITION"
     },
     "maxwell-equation-dual-differential": {
         "title": "Inhomogeneous Maxwell's Equation (Exterior Calculus Form)",
@@ -2209,41 +2248,45 @@
         "intuitive_summary": "Imagine two objects interacting, like two billiard balls colliding. This vector, $\\Delta \\mathbf{u}_{rel}$, captures the total change in how fast and in what direction one ball appears to be moving from the perspective of the other ball, from just before the collision to just after."
     },
     "cosmic-scale-factor-expansion-rate-3eeef478": {
-        "title": "Cosmic Scale Factor Expansion Rate",
-        "description": "This equation defines the instantaneous fractional rate of change of the cosmic scale factor, representing the expansion rate of the universe.",
-        "conceptual_definition": "In cosmology, the cosmic scale factor a( $T$) describes the relative expansion of the universe as a function of cosmic time T. This expression, $\\frac{\\dot{a}(T$)}{a( $T$)}, quantifies the rate at which distances between comoving objects are increasing, normalized by the current size of the universe. It is fundamentally the definition of the Hubble parameter H( $T$).",
-        "interpretation": "This quantity, known as the Hubble parameter H( $T$), measures the expansion velocity per unit distance at a given cosmic time T. A larger value indicates a faster expansion of space. It is not a constant, but evolves with the energy content of the universe, decreasing in matter- and radiation-dominated eras and potentially approaching a constant in a dark energy-dominated (de Sitter-like) era. It is a crucial observable in cosmology, directly linking the dynamics of the universe to its geometry and energy density.",
-        "limits_and_boundary": "In the early universe, H( $T$) was significantly larger, indicating a much faster expansion rate. In a flat, matter-dominated universe, H( $T$) scales as T^{-1}. In a flat, radiation-dominated universe, H( $T$) scales as T^{-1}. In a de Sitter universe (dominated by a cosmological constant), H( $T$) approaches a constant value. For an expanding universe, H( $T$) must be positive.",
-        "symmetry_origin": "The concept of the cosmic scale factor and its time derivative arises from the Friedmann equations, which are derived from Einstein's field equations of general relativity. These equations are based on the cosmological principle, which posits that the universe is spatially homogeneous and isotropic on large scales. These symmetries (translational and rotational invariance) are fundamental to the existence and interpretation of the scale factor.",
+        "title": "Hubble Parameter: Instantaneous Cosmic Expansion Rate",
+        "description": "This formula defines the Hubble parameter $H(T)$, representing the instantaneous fractional rate of change of the cosmic scale factor $a(T)$, which quantifies the expansion rate of the universe at a given cosmic time $T$.",
+        "conceptual_definition": "The Hubble parameter, denoted as $H(T)$, is defined as the ratio of the time derivative of the cosmic scale factor, $\\dot{a}(T)$, to the scale factor itself, $a(T)$. It provides a measure of how rapidly the universe is expanding at a specific cosmic epoch $T$.",
+        "interpretation": "The equation $\frac{\\dot{a}(T)}{a(T)}$ defines the Hubble parameter $H(T)$.\n- $\\dot{a}(T)$: This term represents the time derivative of the cosmic scale factor $a(T)$, indicating the absolute rate at which the universe's characteristic size is changing with respect to cosmic time $T$. Its unit is length per unit time, typically $\\text{m/s}$.\n- $a(T)$: This is the cosmic scale factor, a dimensionless quantity that describes the relative expansion of the universe. It is normalized such that $a(T_0) = 1$ at the present cosmic time $T_0$. It represents the 'size' of the universe at time $T$ relative to a reference time.\n- $T$: This symbol denotes cosmic time, measured from the Big Bang. Its unit is seconds (s).\n- The ratio $\frac{\\dot{a}(T)}{a(T)}$ yields the Hubble parameter $H(T)$, which has units of inverse time (e.g., $\\text{s}^{-1}$ or $\\text{km s}^{-1} \\text{Mpc}^{-1}$). It quantifies the expansion velocity per unit distance.",
+        "limits_and_boundary": "In the early universe (radiation-dominated era), $a(T) \\propto T^{1/2}$, leading to $H(T) \\propto T^{-1}$. In a matter-dominated era, $a(T) \\propto T^{2/3}$, resulting in $H(T) \\propto T^{-1}$. In a dark energy-dominated (de Sitter-like) era, $a(T) \\propto e^{\\Lambda T}$, causing $H(T)$ to approach a constant value, $H = \\sqrt{\\Lambda/3}$, where $\\Lambda$ is the cosmological constant. As $T \\to \\infty$ in a de Sitter universe, $H(T)$ becomes constant, implying exponential expansion. In a contracting universe (hypothetical future scenario or past before the Big Bang if time were reversed), $\\dot{a}(T)$ would be negative, leading to a negative $H(T)$.",
+        "symmetry_origin": "This formula is a kinematic definition within the framework of the Friedmann-Lemaître-Robertson-Walker (FLRW) metric, which assumes a spatially homogeneous and isotropic universe. It does not directly arise from a Noether's theorem or a fundamental gauge symmetry, but rather from the geometric properties of an expanding spacetime.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "DEFINITION",
         "equation_family": "cosmology",
         "semantic_variables": {
-            "a(T)": {
-                "name": "a(T)",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The cosmic scale factor, a dimensionless quantity representing the relative expansion of the universe at cosmic time T. It is typically normalized such that a(T_0) = 1 at the present epoch T_0."
-            },
             "\\dot{a}(T)": {
-                "name": "\\dot{a}(T)",
+                "name": "Time derivative of the cosmic scale factor",
+                "type": "variable",
+                "unit": "m/s",
+                "description": "The instantaneous rate of change of the cosmic scale factor with respect to cosmic time $T$."
+            },
+            "a(T)": {
+                "name": "Cosmic scale factor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The first time derivative of the cosmic scale factor a(T), representing the rate of change of the scale factor with respect to cosmic time T. Its units are inverse time (e.g., s^{-1})."
+                "description": "A dimensionless factor describing the relative expansion of the universe at cosmic time $T$, normalized to $a(T_0)=1$ at the present epoch."
             },
             "T": {
-                "name": "T",
+                "name": "Cosmic time",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Cosmic time, the proper time measured by a comoving observer in a homogeneous and isotropic universe. Its units are time (e.g., seconds)."
+                "unit": "s",
+                "description": "The time elapsed since the Big Bang, representing the age of the universe at a given epoch."
             }
         },
         "equation": "\\frac{\\dot{a}(T)}{a(T)}",
         "status": "published",
-        "parent_formula_id": "hubble-parameter-reaction-rate-relation",
-        "subcomponents": [],
+        "parent_formula_id": "squared-cosmic-expansion-rate-743373d6",
+        "subcomponents": [
+            "rate-of-change-of-cosmic-scale-factor-78dda712",
+            "cosmological-redshift-identity-1-414ce7cd-ef091390",
+            "hubble-parameter-and-scale-factor-relation-5e5d8897"
+        ],
         "id": "cosmic-scale-factor-expansion-rate-3eeef478",
-        "intuitive_summary": ""
+        "intuitive_summary": "Imagine the universe as a stretching rubber sheet. The Hubble parameter tells you how fast that sheet is stretching at any given moment, relative to its current size. A bigger value means faster stretching."
     },
     "real-scalar-field-lagrangian-density-f0153dc8": {
         "title": "Real Scalar Field Lagrangian Density",

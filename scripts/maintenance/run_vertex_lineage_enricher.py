@@ -50,24 +50,11 @@ global_state_lock = threading.Lock()
 # -------------------------------------------------------------------------
 # Vertex AI / Gemini Client Initialization
 # -------------------------------------------------------------------------
-def get_gemini_client(model_choice='gemini-2.5-flash'):
+def get_gemini_client(model_choice='gemini-2.5-flash', provider='auto'):
     if not HAS_GENAI_SDK:
         raise RuntimeError("google-genai SDK not installed. Run: pip install google-genai")
 
-    # 1. GCP Service Account Credentials (Vertex AI mode)
-    if os.path.exists(GCP_CREDS_PATH):
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GCP_CREDS_PATH
-        try:
-            with open(GCP_CREDS_PATH, 'r', encoding='utf-8') as f:
-                creds_data = json.load(f)
-                project_id = creds_data.get('project_id', 'gen-lang-client-0170965498')
-        except Exception:
-            project_id = 'gen-lang-client-0170965498'
-
-        client = genai.Client(vertexai=True, project=project_id, location='us-central1')
-        return client, model_choice
-
-    # 2. Standard GEMINI_API_KEY environment variable or .env
+    # 1. Check for standard GEMINI_API_KEY (Google AI Studio Free Tier)
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
         dotenv_path = os.path.join(PROJECT_ROOT, '.env')
@@ -81,14 +68,33 @@ def get_gemini_client(model_choice='gemini-2.5-flash'):
     if not api_key and keyring:
         try:
             key = keyring.get_password("physics_lab", "gemini_api_key")
-            if key and key.startswith('AIzaSy'):
+            if key:
                 api_key = key
         except Exception:
             pass
 
+    if provider == 'aistudio' or (provider == 'auto' and api_key and not os.path.exists(GCP_CREDS_PATH)):
+        if not api_key:
+            raise RuntimeError("Google AI Studio mode selected but no GEMINI_API_KEY found in .env or environment.")
+        client = genai.Client(api_key=api_key)
+        return client, model_choice, "Google AI Studio (Free Tier)"
+
+    # 2. GCP Service Account Credentials (Vertex AI mode)
+    if (provider == 'vertex' or provider == 'auto') and os.path.exists(GCP_CREDS_PATH):
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GCP_CREDS_PATH
+        try:
+            with open(GCP_CREDS_PATH, 'r', encoding='utf-8') as f:
+                creds_data = json.load(f)
+                project_id = creds_data.get('project_id', 'gen-lang-client-0170965498')
+        except Exception:
+            project_id = 'gen-lang-client-0170965498'
+
+        client = genai.Client(vertexai=True, project=project_id, location='us-central1')
+        return client, model_choice, f"Vertex AI (GCP Project: {project_id})"
+
     if api_key:
         client = genai.Client(api_key=api_key)
-        return client, model_choice
+        return client, model_choice, "Google AI Studio (Free Tier)"
 
     raise RuntimeError("No Vertex AI credentials (gcp-credentials.json) or GEMINI_API_KEY found.")
 
@@ -449,7 +455,9 @@ def main():
     parser.add_argument('--concurrency', type=int, default=8, help="Number of worker threads (default: 8)")
     parser.add_argument('--dry-run', action='store_true', help="Simulate without writing updates to shards")
     parser.add_argument('--rebuild-graph', action='store_true', help="Rebuild derivation graph and sync MariaDB between batches")
-    parser.add_argument('--model', type=str, default='gemini-2.5-flash', help="Vertex AI model name (default: gemini-2.5-flash)")
+    parser.add_argument('--provider', choices=['auto', 'aistudio', 'vertex'], default='auto',
+                        help="API Provider: 'aistudio' (Google AI Studio Free Tier via GEMINI_API_KEY) or 'vertex' (GCP Vertex AI)")
+    parser.add_argument('--model', type=str, default='gemini-2.5-flash', help="Gemini model name (default: gemini-2.5-flash)")
     args = parser.parse_args()
 
     print("=" * 65)
@@ -460,8 +468,8 @@ def main():
     formulas, file_map, parent_map, child_map = load_all_shards()
     print(f"[INFO] Loaded {len(formulas):,} formulas across 256 shards.")
 
-    client, model_name = get_gemini_client(args.model)
-    print(f"[INFO] Initialized Vertex AI Client ({model_name}).")
+    client, model_name, provider_desc = get_gemini_client(args.model, args.provider)
+    print(f"[INFO] Initialized Engine Client ({model_name}) via {provider_desc}.")
 
     checkpoint = load_checkpoint()
     already_processed = set(checkpoint.get('processed_ids', {}).keys())

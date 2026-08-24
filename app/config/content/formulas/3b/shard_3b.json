@@ -46,118 +46,140 @@
         ]
     },
     "radiative-balance-267859a0": {
-        "title": "Total Mass of a Polytrope",
+        "title": "Total Mass of a Polytropic Star",
         "equation": "M = -4\\pi \\left[ \\frac{(n+1)P_c}{4\\pi G \\rho_c^2} \\right]^{3/2} \\rho_c \\left( \\xi^2 \\frac{\\mathrm{d}\\theta}{\\mathrm{d}\\xi} \\right)_{\\xi=\\xi_1}",
         "semantic_variables": {
             "M": {
                 "name": "Total Mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The total mass of the polytropic sphere."
-            },
-            "\\pi": {
-                "name": "Pi",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
+                "description": "The total mass of the polytropic star."
             },
             "n": {
                 "name": "Polytropic Index",
-                "type": "variable",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "A constant that characterizes the polytropic equation of state, $P = K\\rho^{1+1/n}$."
+                "description": "A dimensionless constant characterizing the equation of state of the stellar material, where $P = K \\rho^{1+1/n}$."
             },
             "P_c": {
                 "name": "Central Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The pressure at the center ($\\xi=0$) of the polytropic sphere."
+                "description": "The pressure at the center of the polytropic star."
             },
             "G": {
-                "name": "Gravitational Constant",
+                "name": "Newtonian Gravitational Constant",
                 "type": "constant",
-                "unit": "m^3 kg^-1 s^-2",
-                "description": "The empirical physical constant quantifying the magnitude of the gravitational force between two bodies."
+                "unit": "N m^2 kg^-2",
+                "description": "The fundamental constant describing the strength of gravitational interaction."
             },
-            "\\rho_c": {
-                "name": "Central Density",
+            "rho_c": {
+                "name": "Central Mass Density",
                 "type": "variable",
-                "unit": "kg/m^3",
-                "description": "The mass density at the center ($\\xi=0$) of the polytropic sphere."
+                "unit": "kg m^-3",
+                "description": "The mass density at the center of the polytropic star."
             },
-            "\\xi": {
-                "name": "Dimensionless Radius",
+            "xi": {
+                "name": "Dimensionless Radial Coordinate",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The dimensionless radial coordinate in the Lane-Emden equation, defined by $r = \\alpha\\xi$ where $\\alpha$ is a characteristic length scale."
+                "description": "A dimensionless radial coordinate used in the Lane-Emden equation, related to physical radius $r$ by $r = \\alpha \\xi$."
             },
-            "\\theta": {
+            "theta": {
                 "name": "Lane-Emden Function",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The dimensionless function in the Lane-Emden equation, related to the local density $\\rho$ by $\\rho = \\rho_c \\theta^n$."
+                "description": "A dimensionless function describing the density profile of the polytrope, such that $\\rho = \\rho_c \\theta^n$."
             },
-            "\\xi_1": {
+            "xi_1": {
                 "name": "Dimensionless Surface Radius",
-                "type": "variable",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "The value of the dimensionless radial coordinate $\\xi$ at the surface of the star, defined by the first zero of the Lane-Emden function, $\\theta(\\xi_1)=0$."
+                "description": "The first zero of the Lane-Emden function $\\theta(\\xi)$, representing the dimensionless radius where the polytrope's density drops to zero."
+            },
+            "d/dxi": {
+                "name": "Derivative with respect to xi",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Mathematical operator for differentiation with respect to the dimensionless radial coordinate $\\xi$."
+            },
+            "pi": {
+                "name": "Pi",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The mathematical constant pi, approximately 3.14159."
             }
         },
-        "interpretation": "This formula for the total mass $M$ is a direct result of integrating the mass continuity equation for a spherically symmetric object, using the dimensionless variables of the Lane-Emden theory. The term $\\alpha = \\left[ \\frac{(n+1)P_c}{4\\pi G \\rho_c^2} \\right]^{1/2}$ is a characteristic length scale. The total mass is given by the integral $M = \\int_0^R 4\\pi r^2 \\rho \\, \\mathrm{d}r$. By substituting the Lane-Emden variables $r = \\alpha\\xi$ and $\\rho = \\rho_c \\theta^n$, and using the Lane-Emden equation itself, $\\frac{1}{\\xi^2}\\frac{\\mathrm{d}}{\\mathrm{d}\\xi}\\left(\\xi^2 \\frac{\\mathrm{d}\\theta}{\\mathrm{d}\\xi}\\right) = -\\theta^n$, the integral can be solved. The result expresses the total mass $M$ in terms of the central conditions ($P_c$, $\\rho_c$), the polytropic index $n$, and the value of the derivative of the Lane-Emden function $\\theta$ at the dimensionless surface radius $\\xi_1$, which is defined by the first zero of the function, $\\theta(\\xi_1)=0$.",
-        "symmetry_origin": "The formula is derived under the assumption of spherical symmetry for the mass distribution, which simplifies the gravitational potential and hydrostatic equilibrium equations into a single ordinary differential equation, the Lane-Emden equation. This symmetry allows for the separation of radial dependence. The structure of the equation is a consequence of the balance between the gravitational force and the internal pressure gradient in a static, self-gravitating fluid sphere.",
-        "limits_and_boundary": "1. The surface of the star is defined by the point where the density and pressure drop to zero, which corresponds to the first zero of the Lane-Emden function, $\\theta(\\xi_1) = 0$. The value of $\\xi_1$ and the surface derivative $(\\mathrm{d}\\theta/\\mathrm{d}\\xi)_{\\xi_1}$ depend solely on the polytropic index $n$. \n2. For $n=0$, the model describes an incompressible fluid of constant density $\\rho_c$, and the mass is simply $M = (4/3)\\pi R^3 \\rho_c$. The formula correctly reproduces this. \n3. For $n=5$, the solution extends to $\\xi_1 \\to \\infty$ and the star has infinite radius and mass, which is considered an unphysical limit for a single star but is relevant for certain cluster models. \n4. As $n \\to \\infty$, the model approaches an isothermal gas sphere, which also has infinite extent and mass.",
+        "interpretation": "The formula $M = -4\\pi \\left[ \\frac{(n+1)P_c}{4\\pi G \\rho_c^2} \\right]^{3/2} \\rho_c \\left( \\xi^2 \\frac{\\mathrm{d}\\theta}{\\mathrm{d}\\xi} \\right)_{\\xi=\\xi_1}$ provides the total mass of a polytropic star. Here, $M$ is the total mass of the polytropic star, measured in kilograms ($\\mathrm{kg}$). The term $n$ is the polytropic index, a dimensionless constant characterizing the equation of state $P = K \\rho^{1+1/n}$. $P_c$ is the central pressure of the polytropic star, measured in Pascals ($\\mathrm{Pa}$). $\\rho_c$ is the central mass density of the polytropic star, measured in kilograms per cubic meter ($\\mathrm{kg} \\cdot \\mathrm{m}^{-3}$). $G$ is the Newtonian gravitational constant, approximately $6.674 \\times 10^{-11} \\, \\mathrm{N} \\cdot \\mathrm{m}^2 \\cdot \\mathrm{kg}^{-2}$. $\\xi$ is the dimensionless radial coordinate, related to the physical radius $r$ by $r = \\alpha \\xi$. $\\theta$ is the dimensionless Lane-Emden function, which describes the density profile of the polytrope such that $\\rho = \\rho_c \\theta^n$. $\\xi_1$ is the first zero of the Lane-Emden function $\\theta(\\xi)$, representing the dimensionless radius of the polytropic star where its density drops to zero. The term $\\left( \\xi^2 \\frac{\\mathrm{d}\\theta}{\\mathrm{d}\\xi} \\right)_{\\xi=\\xi_1}$ is the value of the derivative of the Lane-Emden function multiplied by $\\xi^2$ at the surface of the star, $\\xi=\\xi_1$, which is a dimensionless quantity. The characteristic length scale $\\alpha = \\left[ \\frac{(n+1)P_c}{4\\pi G \\rho_c^2} \\right]^{1/2}$ is measured in meters ($\\mathrm{m}$).",
+        "symmetry_origin": "This formula is a direct consequence of solving the Lane-Emden equation, which itself is derived from the equations of hydrostatic equilibrium and mass conservation under the fundamental assumption of spherical symmetry. Therefore, its origin is rooted in the spherical symmetry of the self-gravitating fluid body.",
+        "limits_and_boundary": "For a polytropic index $n=0$, the formula describes a uniform density sphere, and the total mass $M$ simplifies to $M = \\frac{4}{3}\\pi R^3 \\rho_c$. For $n=1$, the Lane-Emden function is $\\theta(\\xi) = \\frac{\\sin \\xi}{\\xi}$, and its first zero is at $\\xi_1 = \\pi$. The derivative term becomes $\\left( \\xi^2 \\frac{\\mathrm{d}\\theta}{\\mathrm{d}\\xi} \\right)_{\\xi=\\pi} = -\\pi$. For $n=5$, the polytrope has infinite radius and infinite mass, meaning this formula is not applicable for a finite star, as this index corresponds to a relativistic degenerate gas where the pressure support is insufficient to confine the mass.",
         "status": "platinum",
-        "conceptual_definition": "This equation calculates the total mass of a self-gravitating, spherically symmetric body modeled as a polytrope, where pressure and density are related by P = Kρ^(1+1/n). The mass is expressed in terms of the central conditions (pressure P_c, density ρ_c) and the solution to the Lane-Emden equation at the stellar surface.",
-        "intuitive_summary": "The total mass of a star in this model is determined by its central pressure and density, and how sharply its internal structure changes at its surface."
+        "conceptual_definition": "The total mass $M$ of a polytropic star is derived by integrating the mass density $\rho$ over its volume, using the dimensionless variables $\\xi$ and $\theta$ from the Lane-Emden theory. It relates the star's total mass to its central pressure $P_c$, central density $\rho_c$, polytropic index $n$, and the derivative of the Lane-Emden function $\theta$ at the dimensionless surface radius $\\xi_1$.",
+        "intuitive_summary": "This formula tells us the total amount of matter in a star that follows a simple pressure-density relationship (a polytrope). It links the star's overall mass to its conditions at the very center and how its density profile, described by the Lane-Emden function, tapers off towards its edge.",
+        "description": "This formula calculates the total mass $M$ of a spherically symmetric, self-gravitating fluid body (a polytrope) in hydrostatic equilibrium, expressed in terms of its central conditions and the properties of the Lane-Emden solution.",
+        "parent_formula_id": "lane-emden-equation-stellar-basis-2e0cf25c",
+        "derivation_type": "DERIVED_FROM",
+        "subcomponents": [
+            "lane-emden-equation-stellar-basis-2e0cf25c",
+            "polytropic-relations-lane-emden-abc1858d",
+            "star-edge-c61abbbd"
+        ]
     },
     "energy-transfer-7296a75d": {
-        "title": "Energy Transfer (Cosmic Inflation)",
+        "title": "Number of e-folds in Cosmic Inflation",
         "equation": "\\mathcal{N} = \\ln(a_{end}/a_{init}) \\ge 60",
         "semantic_variables": {
             "\\mathcal{N}": {
                 "name": "Number of e-folds",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The number of doublings (specifically, exponential growth by a factor of e) the universe underwent during cosmic inflation. It is a measure of the total expansion during this period."
-            },
-            "a_{end}": {
-                "name": "Scale factor at the end of inflation",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The value of the cosmic scale factor at the moment inflation ceased. The scale factor is a measure of the relative expansion of the universe."
-            },
-            "a_{init}": {
-                "name": "Scale factor at the beginning of inflation",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The value of the cosmic scale factor at the moment inflation began. This represents the initial size of the universe before the rapid exponential expansion."
-            },
-            "N": {
-                "name": "Number of Particles / Normal Force",
-                "type": "variable",
-                "unit": "dimensionless or N",
-                "description": "The total count of atoms/molecules, or perpendicular contact force."
+                "description": "A dimensionless quantity representing the total amount of exponential expansion of the universe during inflation."
             },
             "\\ln": {
-                "name": "\\ln Parameter",
+                "name": "Natural logarithm",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The natural logarithm function, used to convert an exponential expansion factor into an additive number of e-folds."
+            },
+            "a_{end}": {
+                "name": "Scale factor at end of inflation",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "description": "The value of the cosmic scale factor at the end of the inflationary epoch."
+            },
+            "a_{init}": {
+                "name": "Scale factor at beginning of inflation",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The value of the cosmic scale factor at the beginning of the inflationary epoch."
             },
             "\\ge": {
-                "name": "\\ge Parameter",
-                "type": "variable",
+                "name": "Greater than or equal to",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "description": "Mathematical inequality indicating that the number of e-folds must be at least 60."
+            },
+            "60": {
+                "name": "Minimum e-folds",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The minimum number of e-folds required for inflation to solve the horizon and flatness problems, consistent with CMB observations."
             }
         },
-        "interpretation": "The formula $\\mathcal{N} = \\ln(a_{end}/a_{init}) \\ge 60 relates the number of e-folds ( \\mathcal{N} ) to the ratio of the scale factor of the universe at the end of inflation ($a$_{end}) to the scale factor at the beginning of inflation ($a$_{init}). The scale factor,$a$(t), describes the relative expansion of the universe over time; a larger value means the universe has expanded more. The natural logarithm (\\ln) is used because during an exponential expansion, the scale factor grows as$a$(t) \\propto e^{Ht}, where H is the Hubble parameter. Thus, the ratio of scale factors becomes$a$_{end}/$a$_{init} = e^{\\Delta t \\cdot H}, and taking the natural logarithm yields \\mathcal{N}$ = H $\\Delta$ t, where $\\Delta$ t is the duration of inflation. The inequality \\ge 60 signifies that observations of the cosmic microwave background (CMB) indicate that the universe must have expanded by a factor of at least e^{60} during inflation to smooth out initial inhomogeneities and flatten the spacetime geometry to the degree observed.",
-        "symmetry_origin": "The concept of the scale factor $a$(t) is directly related to the symmetries of spacetime within the framework of General Relativity. The Friedmann-Lema\\^a2tre equations, which describe the evolution of a homogeneous and isotropic universe, are derived from Einstein's field equations and possess coordinate invariance. The expansion of the universe itself is a consequence of these underlying symmetries and the dynamics dictated by the energy content of the universe. The number of e-folds is a measure of this expansion, which must be substantial to reconcile the observable universe with the predictions of cosmological models that include inflation.",
-        "limits_and_boundary": "As the ratio of the final to initial scale factor ( $a$_{end}/$a$_{init}) approaches 1 (meaning minimal expansion), $\\ln$( $a$_{end}/$a$_{init}) approaches 0. This implies $\\mathcal{N}$ approaches 0, indicating no significant inflation. As the ratio $a$_{end}/$a$_{init} approaches infinity (representing an infinitely large expansion), $\\ln$( $a$_{end}/$a$_{init}) also approaches infinity, implying an unbounded number of e-folds. The condition $\\mathcal{N} \\ge$ 60 sets a lower bound on the required expansion, directly derived from observational constraints on the smoothness and flatness of the universe.",
+        "interpretation": "The formula $\\mathcal{N} = \\ln(a_{end}/a_{init}) \\ge 60$ relates the number of e-folds to the ratio of the scale factor of the universe at the end of inflation to the scale factor at the beginning of inflation.\n*   $\\mathcal{N}$: This represents the number of e-folds, a dimensionless quantity that quantifies the amount of exponential expansion during the inflationary epoch. One e-fold corresponds to the universe expanding by a factor of $e \\approx 2.718$.\n*   $\\ln$: This is the natural logarithm function, which is used because the scale factor $a(t)$ grows exponentially during inflation, typically as $a(t) \\propto e^{Ht}$, where $H$ is the Hubble parameter. Taking the natural logarithm of the ratio of scale factors converts the multiplicative expansion factor into an additive number of e-folds.\n*   $a_{end}$: This is the scale factor of the universe at the end of the inflationary period. The scale factor, $a(t)$, is a dimensionless parameter that describes the relative expansion of the universe; a larger value indicates a more expanded universe.\n*   $a_{init}$: This is the scale factor of the universe at the beginning of the inflationary period.\n*   $a_{end}/a_{init}$: This ratio represents the total expansion factor of the universe during inflation. For example, if $a_{end}/a_{init} = e^{60}$, the universe expanded by a factor of approximately $10^{26}$.\n*   $\\ge 60$: This inequality represents a lower bound on the required number of e-folds. Observations of the Cosmic Microwave Background (CMB) anisotropy and the large-scale structure of the universe strongly suggest that inflation must have lasted for at least $60$ e-folds (though the exact number can vary slightly depending on the specific inflationary model and reheating temperature). This minimum expansion is necessary to solve the horizon problem, the flatness problem, and to generate the observed nearly scale-invariant primordial fluctuations.",
+        "symmetry_origin": "This formula is primarily a kinematic definition and an observational constraint within the framework of inflationary cosmology, rather than being directly derived from a fundamental symmetry principle like Noether's theorem. The underlying dynamics of inflation, however, are often described by scalar field theories which can possess symmetries.",
+        "limits_and_boundary": "The lower bound of $\\mathcal{N} \\ge 60$ is a critical boundary condition derived from observational cosmology. If $\\mathcal{N}$ were significantly less than $60$, the universe would not appear as flat and homogeneous as observed today, and the horizon problem would not be adequately resolved. For instance, if $\\mathcal{N} \\ll 60$, the observable universe would contain many causally disconnected regions, leading to a highly anisotropic CMB, contrary to observations. There is no strict upper limit, but excessively large $\\mathcal{N}$ (e.g., $\\mathcal{N} \\gg 100$) can lead to other cosmological issues, such as the 'eta problem' in some models, or make it difficult to end inflation gracefully.",
         "status": "platinum",
-        "conceptual_definition": "The formula $\\mathcal{N} = \\ln(a_{end}/a_{init}) \\ge 60 quantifies the number of e-folds of expansion required during cosmic inflation. Cosmic inflation is a hypothetical period of exponential expansion of the universe in the very early stages of its existence, proposed to solve several cosmological puzzles such as the horizon problem, the flatness problem, and the magnetic monopole problem. The number of e-folds, \\mathcal{N} , represents the logarithm of the ratio of the universe's size at the end of inflation to its size at the beginning of inflation. The condition \\mathcal{N} \\ge$ 60 is a minimum requirement derived from observations, particularly the homogeneity and isotropy of the cosmic microwave background radiation.",
-        "intuitive_summary": "This formula measures how much the universe expanded exponentially during its earliest moments, ensuring it became smooth and large enough to match what we observe today."
+        "conceptual_definition": "The number of e-folds, $\\mathcal{N}$, quantifies the exponential expansion of the universe during the inflationary epoch, defined as the natural logarithm of the ratio of the final to initial scale factors, $a_{end}/a_{init}$. Cosmological observations, particularly of the Cosmic Microwave Background, necessitate that this expansion must be at least $60$ e-folds, i.e., $\\mathcal{N} = \\ln(a_{end}/a_{init}) \\ge 60$.",
+        "intuitive_summary": "Imagine the universe as a balloon. Inflation is like blowing up that balloon incredibly fast, making it vastly larger in a tiny fraction of a second. The 'number of e-folds' tells us *how much* bigger it got, measured in powers of $e$. The formula says it had to expand by at least $e^{60}$ times its original size to explain why our universe looks so flat and uniform today.",
+        "description": "This formula defines the number of e-folds, $\\mathcal{N}$, as the natural logarithm of the ratio of the universe's scale factor at the end of inflation to its value at the beginning, establishing a minimum expansion required by cosmological observations.",
+        "derivation_type": "DEFINITION",
+        "subcomponents": [
+            "energy-momentum-source-6c43948d",
+            "higgs-field-energy-16abd72a",
+            "timeline-limit-f7d93b75",
+            "boltzmann-entropy-formula"
+        ]
     },
     "non-stationary-boundary-9285bee4": {
         "title": "Non-Stationary Boundary",
@@ -950,70 +972,65 @@
         ]
     },
     "the-doublet-d00c3795": {
-        "title": "The Doublet",
+        "title": "General Complex Scalar Doublet Field",
         "equation": "\\Phi = \\frac{1}{\\sqrt{2}} \\begin{pmatrix} \\phi_1 + i\\phi_2 \\ \\phi_3 + i\\phi_4 \\end{pmatrix}",
         "semantic_variables": {
-            "Θ": {
-                "name": "Doublet Field",
+            "\\Phi": {
+                "name": "Complex Scalar Doublet Field",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The quantum field represented as a two-component complex vector, also known as a doublet. It is a fundamental entity in quantum field theory that can describe particles or states that transform as a specific representation of a symmetry group."
+                "unit": "mass",
+                "description": "A two-component complex scalar field, typically transforming as a doublet under SU(2) gauge symmetry."
             },
-            "½": {
-                "name": "Normalization Factor",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "A constant factor, typically 1/sqrt(2), used for normalization. This specific value often arises from conventions in defining field operators and their commutation relations in quantum field theory to ensure consistency and simplify calculations, particularly in relation to probability amplitudes or energy densities."
-            },
-            "Φ_1": {
-                "name": "First Real Component",
+            "\\phi_1": {
+                "name": "Real Scalar Field Component 1",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The first real scalar field component that contributes to the doublet. It represents one aspect of the quantum field's state."
+                "unit": "mass",
+                "description": "The first real scalar field component of the complex doublet."
             },
-            "Φ_2": {
-                "name": "Second Real Component",
+            "\\phi_2": {
+                "name": "Real Scalar Field Component 2",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The second real scalar field component that contributes to the doublet. It represents another aspect of the quantum field's state, linked to Φ_1 via the complex structure."
+                "unit": "mass",
+                "description": "The second real scalar field component of the complex doublet."
             },
-            "Φ_3": {
-                "name": "Third Real Component",
+            "\\phi_3": {
+                "name": "Real Scalar Field Component 3",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The third real scalar field component that contributes to the doublet. It represents one aspect of the quantum field's state, linked to Φ_4 via the complex structure."
+                "unit": "mass",
+                "description": "The third real scalar field component of the complex doublet."
             },
-            "Φ_4": {
-                "name": "Fourth Real Component",
+            "\\phi_4": {
+                "name": "Real Scalar Field Component 4",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The fourth real scalar field component that contributes to the doublet. It represents another aspect of the quantum field's state, linked to Φ_3 via the complex structure."
+                "unit": "mass",
+                "description": "The fourth real scalar field component of the complex doublet."
             },
             "i": {
                 "name": "Imaginary Unit",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The imaginary unit, defined as the square root of -1. It is fundamental in constructing complex numbers and plays a critical role in quantum mechanics and field theory, often relating to phase, oscillations, and the representation of wave functions and fields."
+                "description": "The imaginary unit, $i = \\sqrt{-1}$."
             },
-            "\\Phi": {
-                "name": "Magnetic Flux / Potential Function",
-                "type": "variable",
-                "unit": "Wb or V",
-                "description": "Total magnetic field lines through a surface, or general field potential."
-            },
-            "\\phi": {
-                "name": "Azimuth Angle / Scalar Potential",
-                "type": "variable",
-                "unit": "rad or V",
-                "description": "The horizontal coordinate angle, or electrostatic scalar potential."
+            "1/\\sqrt{2}": {
+                "name": "Normalization Constant",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "A normalization constant, often arising from conventions for kinetic terms or field redefinitions."
             }
         },
-        "interpretation": "The formula defines a quantum field Θ, represented as a column vector. This vector has two components, given by Φ_1 + iΦ_2 and Φ_3 + iΦ_4. The factor of ½ is a normalization constant, often arising from conventions in quantum field theory. Each Φ_j (for j=1, 2, 3, 4) represents a real scalar field. The combination of these real fields into complex numbers and then into a vector structure is crucial for describing particles that carry a certain type of charge (like weak isospin) and transform non-trivially under a gauge symmetry. For instance, in the Standard Model, left-handed fermions (like quarks and leptons) often appear in left-handed doublets, meaning they transform as a pair under the weak SU(2) symmetry. The complex structure signifies that the two components are not independent but are related by the underlying symmetry.",
-        "symmetry_origin": "This type of doublet structure naturally arises from the requirement that physical laws should be invariant under certain symmetry transformations. In the context of particle physics, this often relates to gauge symmetries, such as the SU(2)_L gauge symmetry associated with the weak interaction. When fields are subjected to these gauge transformations, they must transform in a specific way to preserve the form of the Lagrangian (the function that describes the dynamics of the system). The doublet representation of SU(2) dictates how the two components of the field transform together under rotations in the abstract 'isospin space'.",
-        "limits_and_boundary": "In the limit where the individual real fields Φ_j approach zero, the entire doublet field Θ also approaches the zero vector, indicating a vacuum state or a state with no excitation. As the field excitations grow, the structure of the doublet dictates how these excitations propagate and interact, governed by the specific symmetry group and the associated dynamics.",
+        "interpretation": "$\\Phi$: The complex scalar doublet field. In quantum field theory, this represents a fundamental field whose excitations are scalar particles. $\\frac{1}{\\sqrt{2}}$: A normalization constant, often included for canonical kinetic terms in the Lagrangian or for specific field redefinitions. $\\begin{pmatrix} \\dots \\\\ \\dots \\end{pmatrix}$: Denotes a column vector, indicating that $\\Phi$ is a doublet, meaning it has two components that transform together under a specific symmetry group. $\\phi_1, \\phi_2, \\phi_3, \\phi_4$: These are four independent real scalar fields. They are the fundamental building blocks of the complex doublet. $i$: The imaginary unit, $i = \\sqrt{-1}$, which combines the real scalar fields into complex scalar fields for each component of the doublet. The complex structure is essential for describing charged particles or fields with internal degrees of freedom.",
+        "symmetry_origin": "This field structure is designed to transform as a doublet under the SU(2) gauge symmetry group, which is a fundamental component of the electroweak symmetry in the Standard Model. The specific transformation properties under SU(2) dictate how the components $\\phi_1, \\phi_2, \\phi_3, \\phi_4$ mix, ensuring the theory remains invariant under these gauge transformations. It also carries a specific weak hypercharge, making it a doublet under SU(2)$_L \\times$ U(1)$_Y$.",
+        "limits_and_boundary": "As a fundamental field definition, this formula does not have typical asymptotic limits like $T \\to 0$ or $v \\to c$. However, its behavior is constrained by the requirements of quantum field theory, such as Lorentz invariance and gauge invariance. In the context of spontaneous symmetry breaking, the vacuum expectation value of such a doublet (e.g., the Higgs doublet) defines a specific ground state, leading to massive particles.",
         "status": "platinum",
-        "conceptual_definition": "The formula describes a complex doublet, a fundamental concept in particle physics, particularly in the context of quantum field theory and gauge symmetries. It represents a field that transforms as a specific representation of a symmetry group, often the weak isospin group SU(2). The doublet structure indicates that the field is composed of two related components, which can be understood as different states of the same fundamental entity, such as a particle and its antiparticle, or different charge states of a fermion.",
-        "intuitive_summary": "This equation defines a two-component quantum field, where the components are intricately linked by complex numbers, signifying a unified entity under certain symmetries."
+        "conceptual_definition": "The formula $\\Phi = \\frac{1}{\\sqrt{2}} \\begin{pmatrix} \\phi_1 + i\\phi_2 \\\\ \\phi_3 + i\\phi_4 \\end{pmatrix}$ defines a complex scalar field organized into a doublet structure. Each component of the doublet is a complex scalar field, constructed from two real scalar fields. This structure is fundamental for describing particles that carry quantum numbers like weak isospin and transform under non-abelian gauge symmetries, such as the SU(2) group in the electroweak theory.",
+        "intuitive_summary": "Imagine a particle that isn't just one type, but a pair of related types, and each type itself has a 'real' and 'imaginary' part, like a complex number. This formula bundles these four real 'ingredients' into a single mathematical object, a 'doublet', which behaves as a unit under certain fundamental forces, like the weak nuclear force. The Higgs field is a famous example of such a doublet.",
+        "description": "This formula defines a general complex scalar doublet field $\\Phi$, represented as a two-component column vector, crucial for theories like the Standard Model where fields transform non-trivially under gauge symmetries, such as the electroweak SU(2) symmetry.",
+        "parent_formula_id": "complex-scalar-field",
+        "derivation_type": "GENERALIZATION",
+        "subcomponents": [
+            "higgs-field-vacuum-expansion-6847d92c",
+            "goldstone-link-21420e0b"
+        ]
     },
     "atomic-guard-635fe4ea": {
         "title": "Atomic Guard",
@@ -1231,142 +1248,98 @@
         ]
     },
     "coupling-strength-79d73d64": {
-        "title": "Fine-Structure Constant",
+        "title": "Fine-Structure Constant (Electromagnetic Coupling)",
         "equation": "\\alpha = \\frac{e^2}{4\\pi\\epsilon_0\\hbar c} \\approx \\frac{1}{137.036}",
         "semantic_variables": {
             "\\alpha": {
                 "name": "Fine-Structure Constant",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The fundamental physical constant characterizing the strength of the electromagnetic interaction between elementary charged particles."
+                "description": "Dimensionless coupling constant for the electromagnetic interaction."
             },
             "e": {
                 "name": "Elementary Charge",
                 "type": "constant",
                 "unit": "C",
-                "description": "The magnitude of the electric charge of a single proton or electron."
-            },
-            "\\pi": {
-                "name": "Pi",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
+                "description": "The magnitude of the charge of a single proton or electron."
             },
             "\\epsilon_0": {
                 "name": "Vacuum Permittivity",
                 "type": "constant",
                 "unit": "F/m",
-                "description": "A physical constant representing the capability of a classical vacuum to permit electric field lines."
+                "description": "The dielectric permittivity of classical vacuum, relating electric displacement to electric field strength."
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "J·s",
-                "description": "The quantum of angular momentum, used to describe the scale of quantum effects. It is Planck's constant divided by 2π."
+                "unit": "J s",
+                "description": "The Planck constant divided by $2\\pi$, representing the quantum of angular momentum."
             },
             "c": {
                 "name": "Speed of Light in Vacuum",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "The universal speed limit at which all massless particles and associated fields, including electromagnetic radiation such as light, propagate in vacuum."
+                "description": "The universal speed limit for all matter and information in a vacuum."
             }
         },
-        "interpretation": "The formula defines the fine-structure constant, $\\alpha$, as a dimensionless combination of fundamental physical constants. It involves the elementary charge $e$, the speed of light $c$, the reduced Planck constant $\\hbar$, and the vacuum permittivity $\\epsilon_0$. The quantity $\\alpha$ is the coupling constant for the electromagnetic force, meaning its value determines the strength of interactions between charged particles and photons. In quantum electrodynamics (QED), the probability of processes like an electron emitting a photon is proportional to $\\alpha$. Its small value, approximately $1/137$, is crucial because it allows physicists to calculate QED processes using perturbation theory, where each successive order of interaction is suppressed by a factor of $\\alpha$.",
-        "symmetry_origin": "The existence of the electromagnetic coupling constant is a direct consequence of the local $U(1)$ gauge symmetry of quantum electrodynamics. This symmetry, by Noether's second theorem, requires the existence of a gauge field (the photon) that couples to a conserved current (the electric charge-current). The strength of this coupling is parameterized by the elementary charge $e$, from which $\\alpha$ is derived.",
-        "limits_and_boundary": "1. **Low-Energy Limit**: At everyday energy scales, $\\alpha$ is extremely well-approximated by its constant value of $\\approx 1/137.036$. \n2. **High-Energy Limit (Running Coupling)**: Due to quantum vacuum polarization effects, the effective strength of the electromagnetic interaction, and thus the value of $\\alpha$, increases logarithmically with increasing energy (or decreasing distance). For example, at the energy scale of the Z boson mass (~91 GeV), $\\alpha$ increases to approximately $1/128$.",
+        "interpretation": "The formula $\\alpha = \\frac{e^2}{4\\pi\\epsilon_0\\hbar c}$ defines the fine-structure constant, $\\alpha$, as a dimensionless combination of fundamental physical constants. Its approximate value is $\\approx 1/137.036$. \n*   $\\alpha$: The fine-structure constant itself, a dimensionless quantity that serves as the coupling constant for the electromagnetic force. Its value dictates the strength of interactions between charged particles and photons.\n*   $e$: The elementary charge, representing the magnitude of the charge of a single proton or electron. Its SI unit is Coulombs ($C$).\n*   $\\epsilon_0$: The vacuum permittivity, a fundamental physical constant relating electric displacement to electric field strength in a vacuum. Its SI unit is Farads per meter ($F/m$) or Coulombs squared per Newton per meter squared ($C^2 N^{-1} m^{-2}$). In natural units, $\\epsilon_0$ is often set to $1$.\n*   $\\hbar$: The reduced Planck constant (or Dirac constant), which is the Planck constant $h$ divided by $2\\pi$. It is the quantum of angular momentum and a fundamental constant in quantum mechanics. Its SI unit is Joule-seconds ($J \\cdot s$). In natural units, $\\hbar$ is often set to $1$.\n*   $c$: The speed of light in vacuum, a universal physical constant fundamental to electromagnetism and special relativity. Its SI unit is meters per second ($m/s$). In natural units, $c$ is often set to $1$.\nThe small value of $\\alpha$ is crucial for the applicability of perturbation theory in quantum electrodynamics (QED), where higher-order interaction terms are suppressed by powers of $\\alpha$.",
+        "symmetry_origin": "The existence of the electromagnetic coupling constant $\\alpha$ is intrinsically linked to the $U(1)$ gauge symmetry of quantum electrodynamics. This local gauge symmetry dictates the form of the interaction between charged particles and the electromagnetic field, leading to a conserved electric charge (Noether's theorem) and defining the strength of this interaction through $\\alpha$.",
+        "limits_and_boundary": "While $\\alpha$ is a fundamental constant, its small value ($\\alpha \\approx 1/137$) is a critical 'boundary condition' for the validity of perturbative expansions in quantum electrodynamics (QED). For processes where $\\alpha$ is much less than $1$, higher-order corrections to interaction probabilities become progressively smaller, allowing for accurate calculations. In the hypothetical limit where $\\alpha \\to 0$, electromagnetic interactions would cease, and the universe would be devoid of light and stable atoms. Conversely, if $\\alpha$ were significantly larger, QED would become strongly coupled, making perturbative calculations intractable and potentially altering the stability of matter.",
         "status": "platinum",
-        "conceptual_definition": "The fine-structure constant is a dimensionless physical constant that quantifies the strength of the electromagnetic interaction between elementary charged particles. It serves as the fundamental coupling constant for quantum electrodynamics (QED).",
-        "intuitive_summary": "The fine-structure constant sets the fundamental strength of all electromagnetic phenomena, from the light emitted by a bulb to the structure of atoms."
+        "conceptual_definition": "The fine-structure constant, denoted by $\\alpha$, is a fundamental dimensionless physical constant that characterizes the strength of the electromagnetic force. It is defined as a combination of the elementary charge $e$, the speed of light in vacuum $c$, the reduced Planck constant $\\hbar$, and the vacuum permittivity $\\epsilon_0$, as given by the formula $\\alpha = \\frac{e^2}{4\\pi\\epsilon_0\\hbar c}$.",
+        "intuitive_summary": "Think of the fine-structure constant as the 'dial setting' for how strong the electromagnetic force is. Its small value, about $1/137$, means electromagnetic interactions are relatively weak, allowing physicists to use approximations to calculate how light and matter interact.",
+        "description": "The fine-structure constant, $\\alpha$, quantifies the strength of the electromagnetic interaction between elementary charged particles, serving as the coupling constant for quantum electrodynamics (QED).",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
+        "subcomponents": [
+            "fine-structure-constant-approximate-value-c647f531",
+            "muon-g-2-identity-1-e4a71a72",
+            "fine-structure-constant-over-two-pi-534eb983"
+        ]
     },
     "technical-relation-be7ed547": {
-        "title": "Technical Relation (Spectral Decomposition)",
+        "title": "Spectral Decomposition Theorem (Continuous Form)",
         "equation": "\\hat{A} = \\int a d\\hat{P}(a) \\quad (\\text{Continuous Form})",
         "semantic_variables": {
             "\\hat{A}": {
-                "name": "Operator for Observable",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Represents a quantum mechanical operator corresponding to a physical observable (e.g., energy, momentum, position)."
+                "name": "Self-adjoint Operator",
+                "type": "operator",
+                "unit": "varies",
+                "description": "A self-adjoint operator representing a physical observable in quantum mechanics."
             },
             "a": {
                 "name": "Eigenvalue",
                 "type": "variable",
-                "unit": "Varies based on the observable (e.g., Joules for energy, kg*m/s for momentum)",
-                "description": "A possible value (eigenvalue) that the observable represented by$\\hat{A}$ can take when measured."
+                "unit": "varies",
+                "description": "A possible real-valued outcome (eigenvalue) of measuring the observable $\\hat{A}$."
             },
-            "\\hat{P}(a)": {
+            "d\\hat{P}(a)": {
                 "name": "Projection-Valued Measure",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "A measure that assigns a projection operator to subsets of the spectrum. It quantifies the 'amount' or probability associated with the eigenvalue $a$ in the spectral decomposition.$d\\hat{P}(a)$ represents an infinitesimal increment of this measure."
+                "description": "An infinitesimal projection operator associated with the spectral value $a$, projecting onto the corresponding eigenspace."
             },
-            "A": {
-                "name": "Area / Vector Potential",
-                "type": "variable",
-                "unit": "m² or V·s/m",
-                "description": "The measure of a 2D surface, or the electrodynamic magnetic vector potential."
-            },
-            "C": {
-                "name": "Capacitance / Heat Capacity",
-                "type": "variable",
-                "unit": "F or J/K",
-                "description": "The ability of a body to store electrical charge, or thermal energy needed to change temperature."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
+            "\\int": {
+                "name": "Integral",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "u": {
-                "name": "Velocity Component / Specific Internal Energy",
-                "type": "variable",
-                "unit": "m/s or J/kg",
-                "description": "Speed along a particular coordinate direction, or internal energy per unit mass."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
+                "description": "Represents a continuous summation over the spectrum of the operator."
             }
         },
-        "interpretation": "In this equation, $\\hat{A} represents a quantum mechanical operator, which corresponds to a physical observable such as position, momentum, or energy. The symbol$a$denotes the possible eigenvalues (or spectral values) that the observable \\hat{A} can take. These are the specific, quantifiable results one might obtain when measuring the observable. The integral \\int \\dots$d a$signifies a continuous summation over all possible values of$a$in its spectrum. The term$d $\\hat{P}$(a)$is a projection-valued measure. It acts as a weighting function, indicating the 'amount' or 'probability' associated with each eigenvalue$a$in the decomposition of \\hat{A}$. Effectively, the operator $\\hat{A}$ is reconstructed by summing up all its characteristic values $a$, each scaled by the measure of its occurrence.",
-        "symmetry_origin": "This formula arises from the spectral theorem for operators on Hilbert spaces, which is a fundamental result in functional analysis and quantum mechanics. The spectral theorem demonstrates that self-adjoint operators (which represent physical observables) can be uniquely decomposed in terms of their eigenvalues and corresponding projections. This decomposition is intrinsically linked to the symmetries of the system. For instance, if an observable commutes with a symmetry operator, its spectral decomposition will be invariant under that symmetry transformation.",
-        "limits_and_boundary": "In the context of spectral decomposition, the limits are typically associated with the range of the spectrum of the operator $\\hat{A}. If the spectrum is bounded, the integration limits will be finite. For operators with continuous spectra, the integration extends over an infinite range. As$a$approaches the edges of its spectrum, the contribution to the integral from$d $\\hat{P} (a)$ will diminish, reflecting the fact that values at the spectral extremities are less probable or have a vanishing measure in the decomposition.",
+        "interpretation": "In this equation, $\\hat{A}$ represents a self-adjoint quantum mechanical operator, which corresponds to a physical observable (e.g., position $\\hat{X}$, momentum $\\hat{P}$, energy $\\hat{H}$). In quantum mechanics, observables are represented by self-adjoint operators whose eigenvalues correspond to the possible measurement outcomes. The symbol $a$ denotes a possible eigenvalue (or spectral value) that the observable $\\hat{A}$ can take. These are the specific, quantifiable results one might obtain when measuring the observable. For continuous spectra, $a$ ranges over a continuous set of values. The integral $\\int \\dots da$ signifies a continuous summation (integration) over all possible values of $a$ in the spectrum of $\\hat{A}$. This is analogous to summing over discrete eigenvalues in the discrete case. The term $d\\hat{P}(a)$ is a projection-valued measure (PVM). For a continuous spectrum, $d\\hat{P}(a)$ is an infinitesimal projection operator associated with the spectral interval $[a, a+da]$. It projects onto the subspace spanned by the generalized eigenvectors corresponding to the eigenvalue $a$. The collection of all $d\\hat{P}(a)$ forms a resolution of the identity.",
+        "symmetry_origin": "This theorem is not directly tied to a specific symmetry in the Noether sense, but rather arises from the fundamental mathematical structure of self-adjoint operators in Hilbert spaces, which are essential for representing observables in quantum mechanics. It reflects the inherent spectral properties of such operators.",
+        "limits_and_boundary": "If the spectrum of $\\hat{A}$ is discrete, the integral reduces to a sum: $\\hat{A} = \\sum_n a_n \\hat{P}_n$, where $a_n$ are the discrete eigenvalues and $\\hat{P}_n$ are the projection operators onto the corresponding eigenspaces. In the classical limit ($\\hbar \to 0$), quantum operators $\\hat{A}$ correspond to classical observables $A$. The spectral decomposition theorem, being a statement about the operator's structure, does not have a direct classical analogue in this form, as classical observables are functions, not operators with spectra. However, the eigenvalues $a$ would correspond to the possible values of the classical observable.",
         "status": "platinum",
-        "conceptual_definition": "The formula $\\hat{A} = \\int a d \\hat{P} (a) \\quad$ ($\\text{Continuous Form}$) represents a spectral decomposition of an operator $\\hat{A}$ . In quantum mechanics, operators represent observable physical quantities. This equation expresses such an operator as a continuous sum of its possible eigenvalues $a$, weighted by a projection-valued measure $d\\hat{P}(a)$. This measure essentially describes the probability distribution of obtaining the eigenvalue $a$ when the observable is measured. It allows us to understand the operator not just as a single entity, but as a collection of its constituent spectral components.",
-        "intuitive_summary": "This equation decomposes a physical observable (represented by operator \n$\\hat{A}$) into a continuous spectrum of its possible values \n$a$, weighted by the likelihood \n$d \\hat{P} (a)$ of observing each value."
+        "conceptual_definition": "The spectral decomposition theorem states that any self-adjoint operator $\\hat{A}$ acting on a Hilbert space can be expressed as an integral over its spectrum, where each spectral value $a$ is weighted by a projection-valued measure $d\\hat{P}(a)$. This generalizes the diagonalization of matrices to infinite-dimensional spaces and continuous spectra.",
+        "intuitive_summary": "Imagine an operator as a complex machine. The spectral decomposition tells us that this machine can be broken down into its fundamental 'operating modes' (the eigenvalues $a$), each associated with a specific 'filter' or 'projector' ($d\\hat{P}(a)$) that picks out that mode. The operator's total action is then a continuous sum of all these modes.",
+        "description": "This theorem provides a fundamental representation for self-adjoint operators in quantum mechanics, expressing them as an integral over their continuous spectrum weighted by a projection-valued measure.",
+        "parent_formula_id": "technical-relation-d11180cc",
+        "derivation_type": "GENERALIZATION",
+        "subcomponents": [
+            "matrix-construction-3d03662c",
+            "technical-relation-08064b48",
+            "technical-relation-d11180cc",
+            "calculational-psi-709588ea"
+        ]
     },
     "integral-form-magnetism-4120f91f": {
         "title": "Gauss's Law for Magnetism (Integral Form)",
@@ -1407,58 +1380,61 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "conjugate-field-momentum-density-5147eb9c": {
-        "title": "Conjugate Momentum Density Identity",
+        "title": "Canonical Momentum Density in Lagrangian Field Theory",
         "equation": "\\Pi(x) = \\frac{\\partial \\mathcal{L}}{\\partial \\dot{\\phi}(x)}",
-        "interpretation": "In this equation, (x) represents the conjugate momentum density at spacetime point x, which has units of Joules per cubic meter (J/m^3) or equivalently kilogram-meter per second squared (kg/(m·s^2)). (x) is a field variable, a function of spacetime position x, such as the scalar field in scalar field theory. The term (x) is the Lagrangian density, which is a scalar function of the field (x) and its derivatives, typically including the time derivative (x) and spatial derivatives. The derivative ((x)) signifies the partial derivative of the Lagrangian density with respect to the time derivative of the field (x), evaluated at the specific spacetime point x. This operation isolates how the Lagrangian density changes as the field evolves in time at that point, yielding the conjugate momentum density.",
-        "symmetry_origin": "This identity arises from the principle of least action and the definition of the Lagrangian density. Specifically, it is a direct consequence of the Euler-Lagrange equations of motion derived from the action, S = ∫ d^4x (x). The conjugate momentum is essential for constructing the Hamiltonian density, (x) = (x) - (x), which is the generator of time translations and is related to energy conservation. By Noether's theorem, symmetries of the Lagrangian density lead to conserved currents and charges, and the conjugate momentum plays a key role in identifying these conserved quantities.",
-        "limits_and_boundary": "As the time derivative of the field (x) approaches zero, the conjugate momentum density (x) will also approach zero, provided that the Lagrangian density (x) does not explicitly depend on (x) in a way that produces a non-zero constant term upon differentiation. If the Lagrangian density scales linearly with (x) as (x) → ∞, then (x) will tend to infinity, indicating an infinite momentum response. In cases where the field itself is static ((x) = 0) and there are no explicit time dependencies in (x), the conjugate momentum density (x) will be zero.",
+        "interpretation": "$\\Pi(x)$: This represents the canonical momentum density at the spacetime point $x$. It is a field quantity, meaning it has a value at every point in spacetime. Its SI unit is typically action density (Joules-second per cubic meter, $\\text{J} \\cdot \\text{s} \\cdot \\text{m}^{-3}$) when $\\phi(x)$ is dimensionless. The specific unit depends on the chosen units for the field $\\phi(x)$.\n$\\mathcal{L}$: This is the Lagrangian density, a scalar function of the field $\\phi(x)$ and its derivatives, typically including the time derivative $\\dot{\\phi}(x)$ and spatial derivatives $\\nabla \\phi(x)$. It has units of energy density (Joules per cubic meter, $\\text{J} \\cdot \\text{m}^{-3}$). \n$\\dot{\\phi}(x)$: This denotes the time derivative of the field $\\phi(x)$ at the spacetime point $x$, often referred to as the 'field velocity'. For a dimensionless scalar field, its unit is $\\text{s}^{-1}$. Its unit generally depends on the unit of $\\phi(x)$.\n$\\phi(x)$: This represents the field variable itself, a function of the spacetime position $x$. For example, it could be a scalar field in scalar field theory. Its unit depends on the specific field theory (e.g., dimensionless for some scalar fields, or with specific mass/energy dimensions in natural units).\n$x$: This represents a spacetime point, typically a four-vector $x^\\mu = (ct, \\mathbf{x})$, where $c$ is the speed of light, $t$ is time, and $\\mathbf{x}$ is the spatial position.\n$\\frac{\\partial}{\\partial \\dot{\\phi}(x)}$: This signifies the partial derivative of the Lagrangian density $\\mathcal{L}$ with respect to the time derivative of the field $\\dot{\\phi}(x)$. This operation isolates how the Lagrangian density changes as the field evolves in time at that specific point $x$.",
+        "symmetry_origin": "This formula is a fundamental definition within the Lagrangian formalism of classical and quantum field theory. While not directly a symmetry origin itself, the canonical momentum density $\\Pi(x)$ is a crucial component in Noether's theorem, which links continuous symmetries of the Lagrangian density to conserved quantities, such as energy (from time translation symmetry) and momentum (from spatial translation symmetry).",
+        "limits_and_boundary": "This definition is applicable within the framework of classical and quantum field theory, where a Lagrangian density $\\mathcal{L}$ can be formulated. It assumes that the Lagrangian density is a function of the field $\\phi(x)$ and its first derivatives, and that $\\mathcal{L}$ is differentiable with respect to $\\dot{\\phi}(x)$. Its validity extends to relativistic field theories. In the non-relativistic limit or for systems with discrete degrees of freedom, it reduces to the canonical momentum definition $p_i = \\frac{\\partial L}{\\partial \\dot{q}_i}$.",
         "semantic_variables": {
             "\\Pi(x)": {
-                "name": "Conjugate Momentum Density",
+                "name": "Canonical Momentum Density",
                 "type": "variable",
-                "unit": "J/m^3",
-                "description": "The canonical momentum density conjugate to the field (x). It represents the density of momentum associated with the field's temporal evolution and is crucial for Hamiltonian formulations of field theory."
+                "unit": "J s m^-3",
+                "description": "The canonical momentum density of the field $\\phi(x)$ at spacetime point $x$. Its physical interpretation and units depend on the specific field $\\phi(x)$."
             },
-            "\\mathcal{L}(x)": {
+            "\\mathcal{L}": {
                 "name": "Lagrangian Density",
                 "type": "variable",
-                "unit": "J/m^3",
-                "description": "A scalar function that depends on the field (x) and its derivatives. It encapsulates the dynamics of the field and its interactions, and its integral over spacetime gives the action."
+                "unit": "J m^-3",
+                "description": "The Lagrangian density of the field system, a scalar function of the field $\\phi(x)$ and its derivatives."
             },
             "\\dot{\\phi}(x)": {
-                "name": "Time Derivative of the Field",
+                "name": "Field Velocity",
                 "type": "variable",
-                "unit": "1/s",
-                "description": "The partial derivative of the field (x) with respect to time, representing the rate of change of the field at spacetime point x."
+                "unit": "s^-1",
+                "description": "The time derivative of the field $\\phi(x)$ at spacetime point $x$. For a dimensionless scalar field, its unit is $\\text{s}^{-1}$."
             },
             "\\phi(x)": {
-                "name": "Field",
+                "name": "Field Variable",
                 "type": "variable",
-                "unit": "N/A",
-                "description": "The fundamental field variable of the system, a function of spacetime coordinates x. For example, it could be a scalar field, vector field, or spinor field."
+                "unit": "dimensionless",
+                "description": "The field variable (e.g., scalar field) at spacetime point $x$. Its unit depends on the specific field theory, often dimensionless or with specific mass/energy dimensions in natural units."
             },
             "x": {
                 "name": "Spacetime Point",
                 "type": "variable",
                 "unit": "m",
-                "description": "A point in spacetime, typically represented by four coordinates (t, x, y, z) or (t, ℍ)."
+                "description": "A four-vector representing a point in spacetime, $x^\\mu = (ct, \\mathbf{x})$."
             },
-            "\\Pi": {
-                "name": "Product Operator / Pion Group",
+            "\\partial": {
+                "name": "Partial Derivative Operator",
                 "type": "operator",
-                "unit": "operator",
-                "description": "Discrete multiplication product, or pion triplet states."
-            },
-            "\\phi": {
-                "name": "Azimuth Angle / Scalar Potential",
-                "type": "variable",
-                "unit": "rad or V",
-                "description": "The horizontal coordinate angle, or electrostatic scalar potential."
+                "unit": "dimensionless",
+                "description": "The partial derivative operator."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Conjugate Momentum Density Identity is a fundamental relation in classical and quantum field theory that defines the canonical momentum density conjugate to a field. It is derived from the Lagrangian density, which encapsulates the dynamics of a physical system. This identity is crucial for formulating Hamilton's equations for fields and for understanding conserved quantities via Noether's theorem.",
-        "intuitive_summary": "The momentum density conjugate to a field is precisely the rate at which the system's total energy changes with respect to the field's time rate of change."
+        "conceptual_definition": "The canonical momentum density, denoted by $\\Pi(x)$, is defined as the partial derivative of the Lagrangian density $\\mathcal{L}$ with respect to the time derivative of the field $\\dot{\\phi}(x)$. It quantifies the response of the Lagrangian density to changes in the field's 'velocity' at a given spacetime point $x$.",
+        "intuitive_summary": "In field theory, just as a particle has momentum related to its velocity, a field has a 'momentum density' at each point in spacetime. This formula provides the recipe to calculate this momentum density by examining how sensitive the Lagrangian density (which describes the field's dynamics and energy) is to the rate of change of the field itself at that point.",
+        "description": "This formula defines the canonical momentum density $\\Pi(x)$ associated with a field $\\phi(x)$ in Lagrangian field theory, representing the field's 'momentum' at a specific spacetime point $x$. It is fundamental for formulating the Hamiltonian density and for Noether's theorem.",
+        "parent_formula_id": "generalized-conjugate-momentum-9d0a572e",
+        "derivation_type": "GENERALIZATION",
+        "subcomponents": [
+            "lagrangian-density-derivative-with-respect-to-field-velocity-4565c8cc",
+            "real-scalar-field-lagrangian-density-f0153dc8",
+            "hamiltonian-density-legendre-0aedfc8b",
+            "canonical-momentum-density-field-476ba1a5"
+        ]
     },
     "jacobi-identity-algebraic-consistency-ident-7d52e0b9": {
         "title": "Jacobi Identity",
@@ -1602,34 +1578,43 @@
         ]
     },
     "hamiltonian": {
-        "title": "Hamiltonian",
+        "title": "Classical Hamiltonian (Total Mechanical Energy)",
         "equation": "H = T + V",
-        "conceptual_definition": "The Hamiltonian represents the total energy of a physical system, defined as the sum of the system's kinetic energy and potential energy. As a central quantity in the Hamiltonian formulation of classical mechanics, it governs the time evolution of a system and provides a bridge to quantum and statistical mechanics.",
-        "intuitive_summary": "The Hamiltonian is simply the total energy of a system, comprising its energy of motion plus its stored energy due to position or configuration.",
-        "interpretation": "The Hamiltonian $H$ is defined as the sum of the kinetic energy $T$ and the potential energy $V$ of a system. The kinetic energy $T$ quantifies the energy associated with the motion of the system's constituent parts, typically depending on their masses and velocities. The potential energy $V$, on the other hand, represents the energy stored in the system due to its configuration or position within a force field, such as gravitational or electrostatic potential energy. The Hamiltonian is a scalar quantity and provides a complete description of the system's total energy. In Hamiltonian mechanics, the Hamiltonian function $H(q, p, t)$ is used to derive the equations of motion for the system's generalized coordinates $q$ and momenta $p$ via Hamilton's equations.",
-        "symmetry_origin": "The Hamiltonian formulation arises from a Legendre transformation of the Lagrangian $L$. By Noether's theorem, if the Hamiltonian is explicitly independent of time, meaning $\\partial H / \\partial t = 0$, then energy is conserved. This time-translation symmetry of the system's dynamics corresponds to the conservation of the total energy, which is the value of the Hamiltonian.",
-        "limits_and_boundary": "For a system at rest, the kinetic energy $T=0$, and the Hamiltonian becomes equal to the potential energy, $H = V$.\nIn a region with no potential energy (or where $V$ is defined as zero), the Hamiltonian equals the kinetic energy, $H = T$.\nIn relativistic mechanics, the simple additive form $H=T+V$ is modified. The Hamiltonian for a free particle is $H = \\sqrt{(pc)^2 + (m_0c^2)^2}$.\nIn quantum mechanics, the Hamiltonian is promoted to an operator $\\hat{H}$ whose eigenvalues are the possible energy levels of the system.",
+        "conceptual_definition": "The Hamiltonian $H$ is defined as the sum of the kinetic energy $T$ and the potential energy $V$ of a system, i.e., $H = T + V$. The kinetic energy $T$ quantifies the energy associated with the motion of the system's constituent parts, typically depending on their masses and velocities. The potential energy $V$ represents the energy stored in the system due to its configuration or position within a force field.",
+        "intuitive_summary": "Think of the Hamiltonian as the total energy budget of a system. It tells you how much energy is tied up in movement (kinetic) and how much is stored due to position or configuration (potential). For many systems, this total energy remains constant over time.",
+        "interpretation": "The equation $H = T + V$ defines the Hamiltonian $H$ as the sum of kinetic energy $T$ and potential energy $V$.\n- $H$: The Hamiltonian, representing the total mechanical energy of the system. It is a scalar quantity, typically expressed in Joules (J).\n- $T$: The kinetic energy of the system, which is the energy associated with motion. For a single particle of mass $m$ and velocity $v$, it is typically given by $T = \frac{1}{2}mv^2$. Its unit is Joules (J).\n- $V$: The potential energy of the system, which is the energy stored due to its position or configuration in a force field. Examples include gravitational potential energy $V = mgh$ or elastic potential energy $V = \frac{1}{2}kx^2$. Its unit is Joules (J).",
+        "symmetry_origin": "In systems where the Hamiltonian $H$ is explicitly independent of time (i.e., $\\frac{\\partial H}{\\partial t} = 0$), Noether's theorem implies that the total energy of the system is a conserved quantity. This conservation of energy arises from the time-translation symmetry of the system's dynamics.",
+        "limits_and_boundary": "This formula $H=T+V$ is most directly applicable to conservative systems where forces can be derived from a scalar potential $V$, such that $\\mathbf{F} = -\\nabla V$. For non-conservative forces, the total mechanical energy $T+V$ is generally not conserved.\n- **Non-relativistic limit**: This formula is inherently non-relativistic, as $T$ is typically defined as $\\frac{1}{2}mv^2$. For speeds approaching the speed of light $c$, a relativistic Hamiltonian (e.g., $H = \\sqrt{p^2c^2 + m^2c^4} + V$) must be used.\n- **Classical limit**: In the classical limit (where Planck's constant $\\hbar \\to 0$), the quantum mechanical Hamiltonian operator reduces to its classical counterpart $H=T+V$.",
         "status": "platinum",
         "semantic_variables": {
             "H": {
                 "name": "Hamiltonian",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The total energy of the system."
+                "unit": "J",
+                "description": "The total mechanical energy of the system."
             },
             "T": {
                 "name": "Kinetic Energy",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The energy of the system due to its motion."
+                "unit": "J",
+                "description": "The energy associated with the motion of the system's constituent parts."
             },
             "V": {
                 "name": "Potential Energy",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The energy stored in the system due to its configuration or position in a force field."
+                "unit": "J",
+                "description": "The energy stored in the system due to its configuration or position within a force field."
             }
-        }
+        },
+        "description": "The Hamiltonian, in its most fundamental classical form for conservative systems, represents the total mechanical energy of a system, defined as the sum of its kinetic energy and potential energy. It serves as a central quantity in both classical and quantum mechanics.",
+        "parent_formula_id": "legendre-transformation-0ab35037",
+        "derivation_type": "SPECIAL_CASE",
+        "subcomponents": [
+            "hamiltonian-free-particle",
+            "hamiltonian-operator-schrodinger",
+            "relativistic-hamiltonian",
+            "many-body-electronic-hamiltonian"
+        ]
     },
     "symmetry-beta-functions": {
         "title": "Symmetry of Beta Functions",
@@ -1771,34 +1756,48 @@
         ]
     },
     "product-of-states": {
-        "title": "Product of States",
+        "title": "Product State of a Composite Quantum System",
         "equation": "\\Omega = \\prod_j \\Omega_j",
-        "conceptual_definition": "The formula = _j _j represents the product of several distinct states, where is the overall state and _j are individual states. This mathematical construct is fundamental in fields like quantum mechanics and statistical mechanics, where the total state of a composite system is often described by combining the states of its subsystems. For instance, in quantum computing, the state of multiple qubits is a product of the states of individual qubits.",
-        "intuitive_summary": "The combined state of a system is found by multiplying the states of its independent parts.",
-        "interpretation": "In this equation, denotes the overall state of a system. The symbol _j represents the state of the j-th subsystem or component of the larger system. The subscript $j$ indicates that we are considering a collection of states, indexed by $j$, which could range from 1 to some number N. The product symbol ∏ signifies that the total state is obtained by multiplying together each of these individual states _j. This implies that the states _j are independent of each other, and the overall description of the system's state space is the tensor product of the state spaces of its subsystems. For example, if _1 represents the spin state of electron 1 and _2 represents the spin state of electron 2, then = _1 m _2 would describe the combined spin state of both electrons.",
-        "symmetry_origin": "The origin of this formula lies in the principle of composition of systems, particularly in linear spaces such as Hilbert spaces used in quantum mechanics. When systems are independent, their state spaces combine via a tensor product (often represented as a direct product in notation for simplicity when dealing with specific state representations). This composition is invariant under permutations of the subsystems if the systems are identical and treated symmetrically, but the product form itself arises from the structure of the combined state space.",
-        "limits_and_boundary": "As the number of subsystems (indexed by j) approaches zero, the product would conventionally approach 1, representing an identity state or the absence of any contributing states. As the number of subsystems tends towards infinity, the nature of the total state depends heavily on the specific properties of the individual states _j. In quantum field theory, this can lead to concepts like Fock spaces which describe states with an arbitrary number of particles.",
+        "conceptual_definition": "The formula $\\Omega = \\prod_j \\Omega_j$ defines a separable state of a composite quantum system. It represents the overall state $\\Omega$ as the tensor product of the states $\\Omega_j$ of its individual, non-entangled subsystems, implying that the subsystems are statistically independent.",
+        "intuitive_summary": "When multiple quantum systems are independent and not entangled, their combined state can be described by simply 'multiplying' (in the sense of a tensor product) their individual states together.",
+        "interpretation": "The symbol $\\Omega$ represents the overall state of the composite quantum system. The symbol $\\prod_j$ denotes a product over an index $j$, which, in the context of quantum mechanics and composite systems, implicitly represents a tensor product ($\\otimes_j$). The term $\\Omega_j$ signifies the state of the $j$-th subsystem or component of the larger system. The subscript $j$ indicates that we are considering a collection of states, indexed by $j$, which could range from $1$ to some number $N$. This formula describes a *separable* state, where the total state of the composite system is obtained by the tensor product of the individual states $\\Omega_j$ of its independent subsystems. This implies that the subsystems are statistically independent, and the overall state space is the tensor product of the state spaces of its subsystems.",
+        "symmetry_origin": "This formula is foundational to the description of composite systems in quantum mechanics, arising from the mathematical structure of Hilbert spaces and the postulate that the state space of a composite system is the tensor product of the state spaces of its constituents. It is not directly derived from a specific symmetry, but rather defines a class of states.",
+        "limits_and_boundary": "This formula is valid for describing *separable* states, where the subsystems are independent and not entangled. It does not apply to entangled states, which cannot be written as a simple product (tensor product) of individual subsystem states. For entangled states, a superposition of product states is required, such as $\\sum_k c_k \\prod_j \\Omega_{j,k}$.",
         "status": "platinum",
         "semantic_variables": {
-            "\\pi": {
-                "name": "Overall State",
+            "\\Omega": {
+                "name": "Overall State of Composite System",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Represents the total state of a composite system, which is a combination of the states of its individual subsystems."
+                "description": "The quantum state (e.g., state vector or density matrix) of the entire composite system."
             },
-            "_j": {
-                "name": "Individual State",
-                "type": "variable",
+            "\\prod": {
+                "name": "Product Operator",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "Represents the state of the j-th subsystem or component of the composite system."
+                "description": "In this context, it represents the tensor product ($\\otimes$) operation over the indexed states."
             },
             "j": {
                 "name": "Subsystem Index",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "An index that iterates over the different subsystems or components contributing to the overall state. It typically ranges from 1 to N, where N is the total number of subsystems."
+                "description": "An index identifying a specific subsystem within the composite system."
+            },
+            "\\Omega_j": {
+                "name": "State of j-th Subsystem",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The quantum state (e.g., state vector or density matrix) of the j-th individual subsystem."
             }
-        }
+        },
+        "description": "This formula describes how the state of a composite quantum system, composed of independent subsystems, is represented as the tensor product of the individual states of its constituents.",
+        "parent_formula_id": "tensor-product-hilbert-spaces",
+        "derivation_type": "DEFINITION",
+        "subcomponents": [
+            "tensor-product-of-basis-states-ffebbc21",
+            "ordered-tensor-product-of-quantum-states-ce06b68d",
+            "tensor-product-of-n-zero-states-dbdd354f"
+        ]
     },
     "four-gradient": {
         "title": "Four-Gradient",
@@ -1840,52 +1839,73 @@
         ]
     },
     "phase-space-velocity": {
-        "title": "Phase Space Velocity",
+        "title": "Phase Space Velocity Vector",
         "equation": "\\mathbf{v} = (\\dot{q}_1, \\dots, \\dot{q}_f, \\dot{p}_1, \\dots, \\dot{p}_f)",
-        "conceptual_definition": "Phase space velocity, denoted by the vector , is a fundamental concept in Hamiltonian mechanics that describes the instantaneous rate of change of a system's state within its phase space. Phase space is a multi-dimensional abstract space where each point represents a unique state of the system, defined by its generalized coordinates and generalized momenta. The phase space velocity vector encapsulates how this state evolves over time. Its components are the time derivatives of the generalized coordinates () and the time derivatives of the generalized momenta (). Understanding phase space velocity is crucial for analyzing the dynamics of conservative and non-conservative systems, visualizing trajectories, and exploring concepts like Liouville's theorem.",
-        "intuitive_summary": "The phase space velocity vector shows how a system's configuration and momentum change moment by moment, tracing its path through all possible states.",
-        "interpretation": "The phase space velocity is a vector in a 2f-dimensional space, where f is the number of degrees of freedom of the system. The first f components of this vector are the time derivatives of the generalized coordinates, , which represent the velocities of the system in its configuration space. The subsequent f components are the time derivatives of the generalized momenta, . In Hamiltonian mechanics, these time derivatives are governed by Hamilton's equations of motion. Specifically, = ∂/∂ and = -∂/∂, where is the Hamiltonian of the system. The phase space velocity vector thus directly describes the flow of the system's state within phase space, indicating the direction and speed at which the system transitions from one microstate to another.",
-        "symmetry_origin": "The concept of phase space velocity is intrinsically linked to the Hamiltonian formulation of classical mechanics. Hamilton's equations, which dictate the components of the phase space velocity, arise from the principle of least action applied to the Lagrangian. The structure of Hamilton's equations reveals certain symmetries and conservation laws. For instance, if the Hamiltonian does not explicitly depend on time (∂/∂t = 0), then the Hamiltonian itself (which often represents the total energy of the system) is conserved along the phase space trajectory, a direct consequence of Noether's theorem. The symplectic structure of phase space, which preserves volumes under Hamiltonian evolution, also plays a crucial role in the interpretation of phase space velocity and is related to Liouville's theorem.",
-        "limits_and_boundary": "As the system approaches equilibrium or a stationary state, the phase space velocity components will tend towards zero. This means that the generalized coordinates and generalized momenta cease to change with time, indicating that the system remains fixed in its phase space representation. Conversely, for systems with high energies or rapid changes in generalized coordinates or momenta, the magnitude of the phase space velocity will be large, indicating a rapid traversal of phase space. In the limit of a vanishing Hamiltonian (e.g., for a system at absolute zero temperature with no external potentials), the phase space velocity might also be zero or exhibit specific degenerate behaviors depending on the system's constraints.",
+        "conceptual_definition": "The phase space velocity, denoted by $\\mathbf{v}$, is a vector in the $2f$-dimensional phase space that represents the instantaneous rate of change of the system's state. Its components are the time derivatives of the generalized coordinates $q_i$ and generalized momenta $p_i$, forming a vector $\\mathbf{v} = (\\dot{q}_1, \\dots, \\dot{q}_f, \\dot{p}_1, \\dots, \\dot{p}_f)$.",
+        "intuitive_summary": "Imagine a point representing the exact state of a system (its positions and momenta) moving through a vast, abstract space. The phase space velocity is simply the arrow that shows where that point is heading and how fast it's moving at any given instant. It's the 'speedometer and direction indicator' for a system's evolution in its complete state space.",
+        "interpretation": "The phase space velocity $\\mathbf{v}$ is a $2f$-dimensional vector, where $f$ represents the number of degrees of freedom of the system. The first $f$ components, $(\\dot{q}_1, \\dots, \\dot{q}_f)$, are the time derivatives of the generalized coordinates $q_i$, which correspond to the velocities of the system in its configuration space. The subsequent $f$ components, $(\\dot{p}_1, \\dots, \\dot{p}_f)$, are the time derivatives of the generalized momenta $p_i$. In Hamiltonian mechanics, these time derivatives are precisely defined by Hamilton's canonical equations of motion: $\\dot{q}_i = \\frac{\\partial H}{\\partial p_i}$ and $\\dot{p}_i = -\\frac{\\partial H}{\\partial q_i}$, where $H$ is the Hamiltonian of the system. Thus, the phase space velocity vector $\\mathbf{v}$ directly describes the \"flow\" of the system's state within phase space, indicating the direction and speed at which the system transitions from one microstate to another.",
+        "symmetry_origin": "The concept of phase space velocity itself does not directly arise from a specific symmetry. Instead, it is a kinematic description of the evolution of a system's state in phase space, with its dynamics (the specific values of $\\dot{q}_i$ and $\\dot{p}_i$) being governed by the Hamiltonian $H$, which may or may not possess symmetries leading to conserved quantities via Noether's theorem.",
+        "limits_and_boundary": "In the classical limit (e.g., $\\hbar \\to 0$), the phase space velocity describes the deterministic trajectory of a system. For systems with a finite number of degrees of freedom $f$, the phase space is $2f$-dimensional. In the context of Liouville's theorem, the divergence of the phase space velocity field, $\\nabla \\cdot \\mathbf{v}$, is zero for Hamiltonian systems, implying that the phase space flow is incompressible and preserves phase space volume.",
         "status": "platinum",
         "semantic_variables": {
             "\\mathbf{v}": {
-                "name": "Phase Space Velocity",
+                "name": "Phase space velocity vector",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The vector representing the instantaneous rate of change of the system's state in phase space. Its dimension is 2f, where f is the number of degrees of freedom."
+                "unit": "mixed units",
+                "description": "A $2f$-dimensional vector representing the instantaneous rate of change of the system's state in phase space. Its components have mixed units (e.g., $m/s$ for $\\dot{q}_i$ and $kg \\cdot m/s^2$ or $J$ for $\\dot{p}_i$)."
             },
             "\\dot{q}_i": {
-                "name": "Generalized Velocity",
+                "name": "Time derivative of the i-th generalized coordinate",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The time derivative of the i-th generalized coordinate $q_i$, representing the velocity component associated with the i-th degree of freedom of the system."
+                "unit": "varies",
+                "description": "The instantaneous velocity associated with the $i$-th generalized coordinate. Units vary (e.g., $m/s$ for position, $rad/s$ for angle)."
             },
             "\\dot{p}_i": {
-                "name": "Time Derivative of Generalized Momentum",
+                "name": "Time derivative of the i-th generalized momentum",
                 "type": "variable",
-                "unit": "N",
-                "description": "The time derivative of the i-th generalized momentum $p_i$, representing how the momentum associated with the i-th degree of freedom changes over time."
-            },
-            "q_i": {
-                "name": "Generalized Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "The i-th generalized coordinate describing the configuration of the system. For a system with f degrees of freedom, there are f such coordinates."
-            },
-            "p_i": {
-                "name": "Generalized Momentum",
-                "type": "variable",
-                "unit": "kg m/s",
-                "description": "The i-th generalized momentum conjugate to the i-th generalized coordinate $q_i$. For a system with f degrees of freedom, there are f such momenta."
+                "unit": "varies",
+                "description": "The instantaneous rate of change of the $i$-th generalized momentum. Units vary (e.g., $kg \\cdot m/s^2$ for linear momentum, $J$ for angular momentum)."
             },
             "f": {
-                "name": "Number of Degrees of Freedom",
+                "name": "Number of degrees of freedom",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The number of independent generalized coordinates required to specify the configuration of the system."
+                "description": "The number of independent parameters that define the configuration of a system."
+            },
+            "H": {
+                "name": "Hamiltonian function",
+                "type": "variable",
+                "unit": "J",
+                "description": "The total energy of the system expressed in terms of generalized coordinates and momenta."
+            },
+            "q_i": {
+                "name": "i-th generalized coordinate",
+                "type": "variable",
+                "unit": "varies",
+                "description": "An independent parameter describing the configuration of the system (e.g., position, angle)."
+            },
+            "p_i": {
+                "name": "i-th generalized momentum",
+                "type": "variable",
+                "unit": "varies",
+                "description": "The canonical momentum conjugate to the generalized coordinate $q_i$ (e.g., linear momentum, angular momentum)."
+            },
+            "\\partial": {
+                "name": "Partial derivative operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "An operator indicating differentiation with respect to a single variable while holding others constant."
             }
-        }
+        },
+        "description": "The phase space velocity describes the instantaneous rate of change of a system's state in its $2f$-dimensional phase space, where $f$ is the number of degrees of freedom. It is a vector whose components are the time derivatives of the generalized coordinates and generalized momenta, governed by Hamilton's equations.",
+        "parent_formula_id": "phase-space-velocity-vector",
+        "derivation_type": "DEFINITION",
+        "subcomponents": [
+            "phase-space-coordinates",
+            "phase-space-orbit-identity-1-a501cf00-c37e5e3c",
+            "incompressible-fluid-phase-space-identity-1-651a5d6d-6a594341",
+            "technical-relation-ae35c2cd"
+        ]
     },
     "stationary-state-probability-density": {
         "title": "Stationary State Probability Density",
@@ -1955,34 +1975,43 @@
         ]
     },
     "eigenvalue-equation-potential": {
-        "title": "Eigenvalue Equation for Potential",
+        "title": "Eigenvalue Equation for the Potential Energy Operator",
         "equation": "\\hat{V}_v \\Psi = v_i \\Psi",
-        "conceptual_definition": "The Eigenvalue Equation for Potential describes a fundamental concept in quantum mechanics, specifically how a system's potential energy influences its quantum state. It is a specific case of the more general eigenvalue equation for a quantum operator. In this context, the potential energy operator hat{V}_v acts on a wavefunction Psi, and if the wavefunction is an eigenfunction of the potential, the action of the operator results in the same wavefunction multiplied by a scalar constant, v_i. This constant, v_i, represents the specific energy associated with that particular quantum state Psi when subjected to the potential hat{V}_v.",
-        "intuitive_summary": "When a quantum system is in a specific state, its potential energy operator simply scales that state's wavefunction by a constant value, which is the energy of that state within that potential.",
-        "interpretation": "In the eigenvalue equation for a potential, hat{V}_v represents the potential energy operator. This operator acts on the quantum state of a system, which is described by its wavefunction, Psi. The equation hat{V}_v Psi = v_i Psi states that if Psi is an eigenfunction of the potential energy operator hat{V}_v, then applying the operator to Psi simply returns the same wavefunction Psi scaled by a constant factor v_i. This scalar factor v_i is known as the eigenvalue corresponding to the eigenfunction Psi and physically represents the potential energy value associated with that specific quantum state. This is a simplified version of the time-independent Schrödinger equation (hat{H} Psi = E Psi) where the Hamiltonian operator hat{H} includes kinetic and potential energy terms, and v_i would correspond to the total energy E if the potential energy operator is the only term being considered.",
-        "symmetry_origin": "This equation arises from the requirement that the physical observables, such as energy, must be independent of the observer's arbitrary choice of the zero point for potential energy. While the potential energy operator itself is often derived from physical laws and interactions, the eigenvalue equation highlights that only specific, quantized energy levels (eigenvalues) are physically realized for a given potential, a consequence of quantum mechanics' inherent quantization and the wave nature of particles.",
-        "limits_and_boundary": "In systems where the potential energy hat{V}_v approaches zero (e.g., in free space far from any sources of potential), the equation simplifies significantly. If hat{V}_v is identically zero, then v_i = 0, meaning the wavefunction is an eigenfunction of the zero operator with an eigenvalue of zero. As the potential energy hat{V}_v becomes infinitely large in certain regions (e.g., infinite potential wells), the wavefunction Psi must be zero in those regions to maintain normalization and satisfy boundary conditions, implying that the probability of finding the particle there is zero. The specific behavior of v_i depends entirely on the nature of the potential hat{V}_v and the associated boundary conditions.",
+        "conceptual_definition": "The eigenvalue equation for a potential operator, $\\hat{V}_v \\Psi = v_i \\Psi$, defines the specific quantum states (eigenfunctions $\\Psi$) for which the potential energy operator $\\hat{V}_v$ yields a definite, measurable value ($v_i$), representing the system's potential energy in that state.",
+        "intuitive_summary": "Imagine a quantum particle in a specific potential field. This equation tells us that for certain 'special' quantum states (wavefunctions), the particle will always have a precise, unchanging potential energy value. These special states are the 'eigenstates' of the potential, and their corresponding energy values are the 'eigenvalues'.",
+        "interpretation": "In the eigenvalue equation for a potential, $\\hat{V}_v$ represents the potential energy operator. This operator acts on the quantum state of a system, which is described by its wavefunction, $\\Psi$. The equation $\\hat{V}_v \\Psi = v_i \\Psi$ states that if $\\Psi$ is an eigenfunction of the potential energy operator $\\hat{V}_v$, then applying the operator to $\\Psi$ simply returns the same wavefunction $\\Psi$ scaled by a constant factor $v_i$. This scalar factor $v_i$ is known as the eigenvalue corresponding to the eigenfunction $\\Psi$ and physically represents the potential energy value associated with that specific quantum state. This is a simplified version of the time-independent Schrödinger equation ($\\hat{H} \\Psi = E \\Psi$) where the Hamiltonian operator $\\hat{H}$ includes kinetic and potential energy terms, and $v_i$ would correspond to the total energy $E$ if the potential energy operator is the only term being considered.",
+        "symmetry_origin": "Not directly associated with a fundamental physical symmetry; rather, it is a mathematical statement defining the measurable values of the potential energy observable in quantum mechanics. The existence of such an equation is a consequence of the postulate that physical observables are represented by Hermitian operators.",
+        "limits_and_boundary": "In the classical limit ($\\hbar \\to 0$), the concept of a quantum operator and its eigenvalues for a wavefunction typically reduces to the classical potential energy $V(\\mathbf{x})$ being a definite function of position. The eigenvalue $v_i$ would correspond to the classical potential energy $V(\\mathbf{x})$ at a given position. For a free particle, where the potential energy $V(\\mathbf{x}) = 0$, the potential energy operator $\\hat{V}_v$ is zero, leading to $0 \\cdot \\Psi = v_i \\Psi$, which implies $v_i = 0$ for any non-trivial $\\Psi$. This means a free particle has zero potential energy.",
         "status": "platinum",
         "semantic_variables": {
             "\\hat{V}_v": {
                 "name": "Potential Energy Operator",
-                "type": "variable",
+                "type": "operator",
                 "unit": "J",
-                "description": "This is an operator in quantum mechanics that represents the potential energy of a system. When it acts on a wavefunction, it modifies it according to the potential it encodes. The subscript 'v' may denote a specific form or configuration of the potential."
+                "description": "The quantum mechanical operator corresponding to the potential energy of the system. Its form depends on the specific potential $V(\\mathbf{x})$. For a position-dependent potential, it is typically a multiplicative operator $V(\\mathbf{x})$. The subscript $v$ indicates it's the potential energy operator."
             },
             "\\Psi": {
                 "name": "Wavefunction",
                 "type": "variable",
-                "unit": "1",
-                "description": "The wavefunction is a mathematical function that describes the quantum state of a particle or system. Its square modulus gives the probability density of finding the particle at a particular point in space and time. It is typically a complex-valued function."
+                "unit": "m^{-3/2}",
+                "description": "The quantum mechanical wavefunction describing the state of the system. It is an eigenfunction of the potential energy operator in this equation."
             },
             "v_i": {
-                "name": "Eigenvalue of Potential Energy",
+                "name": "Potential Energy Eigenvalue",
                 "type": "variable",
                 "unit": "J",
-                "description": "This is a scalar constant representing a specific, quantized value of potential energy that the system can possess when in the state described by the eigenfunction Psi. The subscript 'i' indicates that there can be multiple such allowed energy values, each corresponding to a different eigenfunction."
+                "description": "The specific, discrete or continuous value of potential energy that the system can possess when it is in the eigenstate $\\Psi$. It is a real scalar."
             }
-        }
+        },
+        "description": "This equation defines the eigenfunctions and eigenvalues of the potential energy operator $\\hat{V}_v$ in quantum mechanics. It describes the quantum states where the potential energy has a precisely determined value $v_i$.",
+        "parent_formula_id": "stable-phase-a0196774",
+        "derivation_type": "SPECIAL_CASE",
+        "subcomponents": [
+            "laplaces-equation-for-scalar-potential-03aa8511",
+            "poissons-equation-for-scalar-potential-e0595b6d",
+            "poissons-equation-electrostatic-potential",
+            "poissons-equation-for-electrostatic-potential-6d487608"
+        ]
     },
     "alpha-to-one": {
         "title": "Alpha goes to one",

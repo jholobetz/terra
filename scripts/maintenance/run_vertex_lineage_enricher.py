@@ -291,6 +291,9 @@ def robust_json_decode(text):
     except Exception as e:
         raise ValueError(f"Unable to parse JSON: {e}\nRaw output:\n{text[:200]}...")
 
+import socket
+socket.setdefaulttimeout(45.0)
+
 def generate_enrichment(client, model_name, fid, form, candidates):
     cand_str = "\n".join([f"- ID: {c[1]} | Title: {c[2]} | Equation: {c[3]}" for c in candidates])
 
@@ -326,19 +329,26 @@ Provide the complete enriched formula JSON object with these exact keys:
   }}
 }}
 """
-    try:
-        response = client.models.generate_content(
-            model=model_name,
-            contents=[SYSTEM_PROMPT, prompt],
-            config=types.GenerateContentConfig(
-                temperature=0.1,
-                response_mime_type="application/json"
+    max_retries = 3
+    backoff = 2
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=[SYSTEM_PROMPT, prompt],
+                config=types.GenerateContentConfig(
+                    temperature=0.1,
+                    response_mime_type="application/json"
+                )
             )
-        )
-        return robust_json_decode(response.text)
-    except Exception as e:
-        print(f"  [ERROR] Vertex AI generation failed for {fid}: {e}")
-        return None
+            return robust_json_decode(response.text)
+        except Exception as e:
+            if attempt < max_retries - 1:
+                time.sleep(backoff)
+                backoff *= 2
+            else:
+                print(f"  [ERROR] Vertex AI generation failed for {fid} after {max_retries} attempts: {e}", flush=True)
+                return None
 
 # -------------------------------------------------------------------------
 # Worker Function & Shard File Updater
@@ -398,7 +408,31 @@ def process_formula(fid, client, model_name, formulas, file_map, parent_map, chi
     for cid in valid_subcomponents:
         child_map.setdefault(fid, []).append(cid)
 
+    # Save to checkpoint
+    with global_state_lock:
+        checkpoint = load_checkpoint()
+        checkpoint['processed_ids'][fid] = {
+            'timestamp': int(time.time()),
+            'old_lhi': cur_lhi,
+            'new_lhi': new_lhi,
+            'parent_id': p_id
+        }
+        save_checkpoint(checkpoint)
+
     return True, cur_lhi, new_lhi
+
+def load_checkpoint():
+    if os.path.exists(CHECKPOINT_FILE):
+        try:
+            with open(CHECKPOINT_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {'processed_ids': {}}
+
+def save_checkpoint(data):
+    with open(CHECKPOINT_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
 # -------------------------------------------------------------------------
 # Main Execution CLI
@@ -408,16 +442,17 @@ def main():
     parser.add_argument('--filter', choices=['isolated', 'thin', 'moderate', 'all'], default='isolated',
                         help="Filter target formulas by LHI score: isolated (0), thin (1-39), moderate (40-74), all")
     parser.add_argument('--target-id', type=str, help="Target a specific formula ID directly")
-    parser.add_argument('--limit', type=int, default=10, help="Maximum number of formulas to process (default: 10)")
-    parser.add_argument('--concurrency', type=int, default=4, help="Number of worker threads (default: 4)")
+    parser.add_argument('--limit', type=int, default=0, help="Maximum formulas to process (0 = all matching in filter)")
+    parser.add_argument('--batch-size', type=int, default=8, help="Batch chunk size for graph sync and progress reporting (default: 8)")
+    parser.add_argument('--concurrency', type=int, default=8, help="Number of worker threads (default: 8)")
     parser.add_argument('--dry-run', action='store_true', help="Simulate without writing updates to shards")
-    parser.add_argument('--rebuild-graph', action='store_true', help="Rebuild derivation graph and sync MariaDB when complete")
+    parser.add_argument('--rebuild-graph', action='store_true', help="Rebuild derivation graph and sync MariaDB between batches")
     parser.add_argument('--model', type=str, default='gemini-2.5-flash', help="Vertex AI model name (default: gemini-2.5-flash)")
     args = parser.parse_args()
 
     print("=" * 65)
     print("🚀 Terra Physics Lab - Vertex AI Lineage & Derivation Engine")
-    print(f"Mode: {'DRY RUN' if args.dry_run else 'LIVE ATOMIC UPDATE'} | Model: {args.model}")
+    print(f"Mode: {'DRY RUN' if args.dry_run else 'LIVE ATOMIC UPDATE'} | Model: {args.model} | Concurrency: {args.concurrency}")
     print("=" * 65)
 
     formulas, file_map, parent_map, child_map = load_all_shards()
@@ -425,6 +460,11 @@ def main():
 
     client, model_name = get_gemini_client(args.model)
     print(f"[INFO] Initialized Vertex AI Client ({model_name}).")
+
+    checkpoint = load_checkpoint()
+    already_processed = set(checkpoint.get('processed_ids', {}).keys())
+    if already_processed:
+        print(f"[INFO] Loaded checkpoint with {len(already_processed):,} previously enriched formulas.")
 
     # Select target formulas
     target_ids = []
@@ -436,6 +476,8 @@ def main():
             sys.exit(1)
     else:
         for fid, form in formulas.items():
+            if fid in already_processed:
+                continue
             lhi = calculate_lhi(fid, form, formulas, parent_map, child_map)
             if args.filter == 'isolated' and lhi == 0:
                 target_ids.append(fid)
@@ -447,44 +489,78 @@ def main():
                 if lhi < 80:
                     target_ids.append(fid)
 
-        print(f"[INFO] Found {len(target_ids):,} formulas matching filter '{args.filter}'.")
-        target_ids = target_ids[:args.limit]
+        print(f"[INFO] Found {len(target_ids):,} unprocessed formulas matching filter '{args.filter}'.")
+        if args.limit > 0:
+            target_ids = target_ids[:args.limit]
+            print(f"[INFO] Limit applied: processing first {len(target_ids)} formulas.")
 
-    print(f"[INFO] Starting processing of {len(target_ids)} target formulas (Concurrency: {args.concurrency})...\n")
+    if not target_ids:
+        print("✓ No target formulas to process. Everything in this filter is already enriched!")
+        return
 
-    start_time = time.time()
-    results = []
+    print(f"[INFO] Total Queue: {len(target_ids)} formulas (Chunk Size: {args.batch_size}, Concurrency: {args.concurrency})\n")
 
-    with ThreadPoolExecutor(max_workers=args.concurrency) as executor:
-        futures = {
-            executor.submit(process_formula, fid, client, model_name, formulas, file_map, parent_map, child_map, args.dry_run): fid
-            for fid in target_ids
-        }
-        for fut in as_completed(futures):
-            fid = futures[fut]
-            try:
-                success, old_s, new_s = fut.result()
-                results.append((fid, success, old_s, new_s))
-            except Exception as exc:
-                print(f"[ERROR] Worker exception on {fid}: {exc}")
+    overall_start = time.time()
+    last_heartbeat_time = overall_start
+    total_processed = 0
+    total_successful = 0
+    total_lhi_gain = 0
 
-    elapsed = time.time() - start_time
-    successful = [r for r in results if r[1]]
-    avg_gain = sum(r[3] - r[2] for r in successful) / len(successful) if successful else 0
+    chunks = [target_ids[i:i + args.batch_size] for i in range(0, len(target_ids), args.batch_size)]
+
+    for chunk_idx, chunk in enumerate(chunks, 1):
+        chunk_start = time.time()
+        results = []
+
+        with ThreadPoolExecutor(max_workers=args.concurrency) as executor:
+            futures = {
+                executor.submit(process_formula, fid, client, model_name, formulas, file_map, parent_map, child_map, args.dry_run): fid
+                for fid in chunk
+            }
+            for fut in as_completed(futures):
+                fid = futures[fut]
+                try:
+                    success, old_s, new_s = fut.result()
+                    results.append((fid, success, old_s, new_s))
+                except Exception as exc:
+                    print(f"[ERROR] Worker exception on {fid}: {exc}")
+
+        chunk_elapsed = time.time() - chunk_start
+        chunk_success = [r for r in results if r[1]]
+        chunk_gain = sum(r[3] - r[2] for r in chunk_success)
+
+        total_processed += len(results)
+        total_successful += len(chunk_success)
+        total_lhi_gain += chunk_gain
+
+        now = time.time()
+        elapsed_total = now - overall_start
+        speed = total_processed / elapsed_total if elapsed_total > 0 else 0
+        avg_gain = total_lhi_gain / total_successful if total_successful else 0
+        remaining = len(target_ids) - total_processed
+        etc_mins = (remaining / speed / 60) if speed > 0 else 0
+        pct = (total_processed / len(target_ids)) * 100
+
+        # Emit 30s heartbeat or chunk summary
+        if now - last_heartbeat_time >= 30 or chunk_idx == len(chunks) or chunk_idx <= 3:
+            time_str = time.strftime('%H:%M:%S')
+            print(f"[{time_str}] ⏱️ Chunk [{chunk_idx}/{len(chunks)}] | Done: {total_processed}/{len(target_ids)} ({pct:.1f}%) | Speed: {speed:.2f} f/s | Avg LHI: +{avg_gain:.1f} pts | ETC: {etc_mins:.1f}m")
+            last_heartbeat_time = now
+
+        if args.rebuild_graph and not args.dry_run and chunk_success:
+            os.system("python3 scripts/build_formula_graph.py > /dev/null 2>&1")
+            os.system("php scripts/sync_formulas_to_mariadb.php > /dev/null 2>&1")
+
+    total_elapsed = time.time() - overall_start
+    overall_avg_gain = total_lhi_gain / total_successful if total_successful else 0
 
     print("\n" + "=" * 65)
-    print("📊 BATCH PROCESSING COMPLETE")
-    print(f"  • Total Processed: {len(results)}")
-    print(f"  • Successful:      {len(successful)}")
-    print(f"  • Average LHI Gain: +{avg_gain:.1f} points")
-    print(f"  • Elapsed Time:    {elapsed:.2f}s ({(elapsed/len(results) if results else 0):.2f}s/formula)")
+    print("🏁 ALL BATCH CHUNKS COMPLETE")
+    print(f"  • Total Processed:   {total_processed}")
+    print(f"  • Total Successful:  {total_successful}")
+    print(f"  • Average LHI Gain:  +{overall_avg_gain:.1f} points")
+    print(f"  • Total Elapsed:     {total_elapsed:.2f}s ({total_elapsed/60:.2f} minutes)")
     print("=" * 65)
-
-    if args.rebuild_graph and not args.dry_run and successful:
-        print("\n🔨 Recompiling Global Derivation Graph and Syncing MariaDB...")
-        os.system("python3 scripts/build_formula_graph.py")
-        os.system("php scripts/sync_formulas_to_mariadb.php")
-        print("✓ Graph and MariaDB synchronization complete.")
 
 if __name__ == '__main__':
     main()

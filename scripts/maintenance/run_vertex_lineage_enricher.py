@@ -48,39 +48,46 @@ shard_file_locks = {}
 global_state_lock = threading.Lock()
 
 # -------------------------------------------------------------------------
-# Vertex AI / Gemini Client Initialization
+# Vertex AI / Gemini Client Initialization (3-Profile Architecture)
 # -------------------------------------------------------------------------
-def get_gemini_client(model_choice='gemini-2.5-flash', provider='auto'):
+def _load_env_keys():
+    keys = {}
+    dotenv_path = os.path.join(PROJECT_ROOT, '.env')
+    if os.path.exists(dotenv_path):
+        with open(dotenv_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    k, v = line.split('=', 1)
+                    keys[k.strip()] = v.strip().strip('"').strip("'")
+    return keys
+
+def get_gemini_client(model_choice='gemini-3.7-flash', provider='free'):
     if not HAS_GENAI_SDK:
         raise RuntimeError("google-genai SDK not installed. Run: pip install google-genai")
 
-    # 1. Check for standard GEMINI_API_KEY (Google AI Studio Free Tier)
-    api_key = os.environ.get('GEMINI_API_KEY')
-    if not api_key:
-        dotenv_path = os.path.join(PROJECT_ROOT, '.env')
-        if os.path.exists(dotenv_path):
-            with open(dotenv_path, 'r', encoding='utf-8') as f:
-                for line in f:
-                    if line.startswith('GEMINI_API_KEY='):
-                        api_key = line.split('=', 1)[1].strip().strip('"').strip("'")
-                        break
+    env_keys = _load_env_keys()
+    free_key = os.environ.get('GEMINI_FREE_API_KEY') or env_keys.get('GEMINI_FREE_API_KEY') or os.environ.get('GEMINI_API_KEY') or env_keys.get('GEMINI_API_KEY')
+    prepaid_key = os.environ.get('GEMINI_PREPAID_API_KEY') or env_keys.get('GEMINI_PREPAID_API_KEY')
 
-    if not api_key and keyring:
-        try:
-            key = keyring.get_password("physics_lab", "gemini_api_key")
-            if key:
-                api_key = key
-        except Exception:
-            pass
+    # Profile 1: Pure Free Tier (Google AI Studio - $0.00 unbilled)
+    if provider in ['free', 'aistudio', 'auto']:
+        if not free_key:
+            raise RuntimeError("Pure Free Tier requested, but GEMINI_FREE_API_KEY not found in .env.")
+        client = genai.Client(api_key=free_key)
+        return client, model_choice, "Google AI Studio (Pure Free Tier - $0.00)"
 
-    if provider == 'aistudio' or (provider == 'auto' and api_key and not os.path.exists(GCP_CREDS_PATH)):
-        if not api_key:
-            raise RuntimeError("Google AI Studio mode selected but no GEMINI_API_KEY found in .env or environment.")
-        client = genai.Client(api_key=api_key)
-        return client, model_choice, "Google AI Studio (Free Tier)"
+    # Profile 2: Prepaid Account Key
+    if provider == 'prepaid':
+        if not prepaid_key:
+            raise RuntimeError("Prepaid Account requested, but GEMINI_PREPAID_API_KEY not found in .env.")
+        client = genai.Client(api_key=prepaid_key)
+        return client, model_choice, "Google AI Studio (Prepaid Account)"
 
-    # 2. GCP Service Account Credentials (Vertex AI mode)
-    if (provider == 'vertex' or provider == 'auto') and os.path.exists(GCP_CREDS_PATH):
+    # Profile 3: GCP Service Account Credentials (Vertex AI mode)
+    if provider == 'vertex':
+        if not os.path.exists(GCP_CREDS_PATH):
+            raise RuntimeError(f"Vertex AI requested, but {GCP_CREDS_PATH} not found.")
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GCP_CREDS_PATH
         try:
             with open(GCP_CREDS_PATH, 'r', encoding='utf-8') as f:
@@ -92,11 +99,7 @@ def get_gemini_client(model_choice='gemini-2.5-flash', provider='auto'):
         client = genai.Client(vertexai=True, project=project_id, location='us-central1')
         return client, model_choice, f"Vertex AI (GCP Project: {project_id})"
 
-    if api_key:
-        client = genai.Client(api_key=api_key)
-        return client, model_choice, "Google AI Studio (Free Tier)"
-
-    raise RuntimeError("No Vertex AI credentials (gcp-credentials.json) or GEMINI_API_KEY found.")
+    raise RuntimeError(f"Unknown provider: {provider}. Choices are: free, prepaid, vertex.")
 
 # -------------------------------------------------------------------------
 # Fast In-Memory Shard Database & Candidate Grounding Index
@@ -279,21 +282,46 @@ def robust_json_decode(text):
     except Exception:
         pass
 
-    # 3. Aggressive fallback for TeX JSON payloads
+    # 3. Aggressive character-level TeX backslash parser
     try:
-        # Escape all single backslashes in property values
-        def repl(m):
-            s = m.group(0)
-            return s.replace('\\', '\\\\')
-        
-        fixed_lines = []
-        for line in text.splitlines():
-            if ':' in line:
-                k, v = line.split(':', 1)
-                fixed_lines.append(f"{k}:{re.sub(r'(?<!\\\\)\\\\(?![\"\\\\/bfnrtu])', r'\\\\\\\\', v)}")
+        # Replace unescaped backslashes inside JSON strings
+        out = []
+        in_string = False
+        escaped = False
+        i = 0
+        while i < len(text):
+            char = text[i]
+            if char == '"' and not escaped:
+                in_string = not in_string
+                out.append(char)
+            elif in_string:
+                if char == '\\':
+                    next_char = text[i+1] if i + 1 < len(text) else ''
+                    if next_char in ['"', '\\', '/']:
+                        out.append(char)
+                    elif next_char in ['b', 'f', 'n', 'r', 't']:
+                        # Preserve standard whitespace escapes, escape all others
+                        out.append(char)
+                    elif next_char == 'u' and i + 5 < len(text) and all(c in '0123456789abcdefABCDEF' for c in text[i+2:i+6]):
+                        out.append(char)
+                    else:
+                        out.append('\\\\')
+                else:
+                    out.append(char)
             else:
-                fixed_lines.append(line)
-        return json.loads('\n'.join(fixed_lines), strict=False)
+                out.append(char)
+            escaped = (char == '\\' and not escaped)
+            i += 1
+        return json.loads("".join(out), strict=False)
+    except Exception:
+        pass
+
+    # 4. Fallback using dirty-json / regex substitution
+    try:
+        sanitized = text.replace('\\\\', '\uFFFF')
+        sanitized = re.sub(r'\\([a-zA-Z])', r'\\\\\1', sanitized)
+        sanitized = sanitized.replace('\uFFFF', '\\\\')
+        return json.loads(sanitized, strict=False)
     except Exception as e:
         raise ValueError(f"Unable to parse JSON: {e}\nRaw output:\n{text[:200]}...")
 
@@ -455,9 +483,9 @@ def main():
     parser.add_argument('--concurrency', type=int, default=8, help="Number of worker threads (default: 8)")
     parser.add_argument('--dry-run', action='store_true', help="Simulate without writing updates to shards")
     parser.add_argument('--rebuild-graph', action='store_true', help="Rebuild derivation graph and sync MariaDB between batches")
-    parser.add_argument('--provider', choices=['auto', 'aistudio', 'vertex'], default='auto',
-                        help="API Provider: 'aistudio' (Google AI Studio Free Tier via GEMINI_API_KEY) or 'vertex' (GCP Vertex AI)")
-    parser.add_argument('--model', type=str, default='gemini-2.5-flash', help="Gemini model name (default: gemini-2.5-flash)")
+    parser.add_argument('--provider', choices=['free', 'aistudio', 'prepaid', 'vertex', 'auto'], default='free',
+                        help="API Provider: 'free' (Pure $0.00 Free Tier via GEMINI_FREE_API_KEY), 'prepaid' (Prepaid Project Key), or 'vertex' (GCP Service Account)")
+    parser.add_argument('--model', type=str, default='gemini-3.7-flash', help="Gemini model name (default: gemini-3.7-flash)")
     args = parser.parse_args()
 
     print("=" * 65)

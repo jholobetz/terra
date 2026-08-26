@@ -50,208 +50,139 @@
         "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "noether-charge-2bb016dd": {
-        "title": "Noether Charge",
+        "title": "Poisson Bracket Formulation of Hamilton's Equations",
         "equation": "\\{q_i, H\\} = \\dot{q}_i, \\; \\{p_i, H\\} = \\dot{p}_i",
         "semantic_variables": {
-            "q_i": {
-                "name": "Generalized Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "Represents the generalized position or configuration variables of a system. For example, in a simple pendulum, q could be the angle of displacement from the vertical. The index 'i' denotes a specific coordinate within a multi-dimensional system."
+            "\\{q_i, H\\}": {
+                "name": "Poisson Bracket of Coordinate with Hamiltonian",
+                "type": "operator",
+                "unit": "s^{-1} \\cdot \\text{unit}(q_i)",
+                "description": "Poisson bracket generating the time derivative of the generalized coordinate q_i"
             },
-            "p_i": {
-                "name": "Conjugate Momentum",
-                "type": "variable",
-                "unit": "kg*m/s",
-                "description": "The momentum conjugate to the generalized coordinate q_i. It is defined such that it satisfies Hamilton's equations. For a Cartesian coordinate x, the conjugate momentum is the linear momentum in that direction (p_x = m*v_x)."
-            },
-            "H": {
-                "name": "Hamiltonian",
-                "type": "variable",
-                "unit": "J",
-                "description": "The Hamiltonian of the system, which is typically the total energy of the system expressed in terms of generalized coordinates and their conjugate momenta. It governs the time evolution of the system via Hamilton's equations."
+            "\\{p_i, H\\}": {
+                "name": "Poisson Bracket of Momentum with Hamiltonian",
+                "type": "operator",
+                "unit": "s^{-1} \\cdot \\text{unit}(p_i)",
+                "description": "Poisson bracket generating the time derivative of the conjugate momentum p_i"
             },
             "\\dot{q}_i": {
                 "name": "Time Derivative of Generalized Coordinate",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The time rate of change of the generalized coordinate q_i, representing the generalized velocity."
+                "unit": "\\text{unit}(q_i) \\cdot \\text{s}^{-1}",
+                "description": "Velocity or time rate of change of the generalized coordinate q_i"
             },
             "\\dot{p}_i": {
                 "name": "Time Derivative of Conjugate Momentum",
                 "type": "variable",
-                "unit": "kg*m/s^2",
-                "description": "The time rate of change of the conjugate momentum p_i, representing the generalized force or torque."
+                "unit": "\\text{unit}(p_i) \\cdot \\text{s}^{-1}",
+                "description": "Force or time rate of change of the conjugate momentum p_i"
             },
-            "\\{A, B\\}": {
-                "name": "Poisson Bracket",
+            "q_i": {
+                "name": "Generalized Coordinate",
                 "type": "variable",
-                "unit": "N*m",
-                "description": "A binary operation on two functions (typically observables in classical mechanics) that defines a fundamental relationship in Hamiltonian mechanics. For A=A(q,p) and B=B(q,p), it is defined as \\{A, B\\} = \\sum_j (\\partial A / \\partial q_j * \\partial B / \\partial p_j - \\partial A / \\partial p_j * \\partial B / \\partial q_j). It plays a role analogous to the commutator in quantum mechanics."
+                "unit": "m or rad",
+                "description": "Configuration space coordinate describing the system state"
             },
-            "q": {
-                "name": "Electric Charge",
+            "p_i": {
+                "name": "Conjugate Momentum",
                 "type": "variable",
-                "unit": "C",
-                "description": "A physical property of matter that causes it to experience a force when placed in an electromagnetic field."
+                "unit": "\\text{J}\\cdot\\text{s}\\cdot\\text{unit}(q_i)^{-1}",
+                "description": "Canonical momentum corresponding to the generalized coordinate q_i"
             },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
+            "H": {
+                "name": "Hamiltonian",
+                "type": "function",
+                "unit": "\\text{J}",
+                "description": "Total energy function of the system expressed in terms of phase space coordinates"
             }
         },
-        "interpretation": "The equations $\\begin${equation*} \\{q_i, H\\} = $\\dot{q}_i \\end{equation*}$ \\ $\\begin{equation*}$ \\{p_i, H\\} = $\\dot{p}_i \\end{equation*}$ are Hamilton's equations. Here,$\\{A, B\\} = \\sum_j \\left( \\frac{ \\partial A}{ \\partial q_j} \\frac{ \\partial B}{ \\partial p_j} - \\frac{ \\partial A}{ \\partial p_j} \\frac{ \\partial B}{ \\partial q_j} \\right$) is the Poisson bracket. The variable$q_i is the generalized coordinate (e.g., position, angle), representing the configuration of the system. The variable$ p_i is the conjugate momentum corresponding to $q_i$. The variable$H is the Hamiltonian of the system, which typically represents the total energy of the system and is a function of$ q_i $,$ p_i $, and possibly time. The term \\dot{q}_i$ is the time derivative of the generalized coordinate, representing its velocity, and $\\dot{p}_i is the time derivative of the conjugate momentum. These equations fundamentally link the dynamics of the system (time evolution) to its energetic properties ($ H $) and its configuration ($ q_i, p_i $). While these are not Noether charges themselves, they are the foundational equations used to derive and understand conserved quantities, including Noether charges, via Noether's theorem$.",
-        "symmetry_origin": "Noether's theorem, which connects continuous symmetries to conserved quantities (Noether charges), is a cornerstone of theoretical physics. It is derived from the principle of least action and the calculus of variations. If the action of a system is invariant under a continuous transformation (a symmetry), then a corresponding conserved current and charge exist. For instance, if the Hamiltonian $H$ is time-independent, meaning $\\frac{ \\partial H}{ \\partial t} = 0$, then by Hamilton's equations, $\\dot{H} = \\frac{ \\partial H}{ \\partial t}$ = 0 $, implying that the Hamiltonian itself is conserved. This conservation of energy is a direct consequence of time-translation symmetry$.",
-        "limits_and_boundary": "In the context of Hamilton's equations: - If $H$ is independent of a particular coordinate $q_k$ (i.e., $\\frac{ \\partial H}{ \\partial q_k} = 0$), then $\\dot{p}_k = - \\frac{ \\partial H}{ \\partial q_k}$= 0$, which means the conjugate momentum$p_k$is conserved. This is a direct implication of a symmetry related to the coordinate$q_k$. - If$H$is independent of a particular momentum$p_k$(i.e., \\frac{ \\partial H}{ \\partial p_k}$ = 0$), then \\dot{q}_k = \\frac{ \\partial H}{ \\partial p_k}$ = 0 $, meaning the generalized coordinate$ q_k is constant. This scenario is less common for typical physical systems where$H is explicitly dependent on$ p_k $. - If$ H is independent of time ( $\\frac{ \\partial H}{ \\partial t} = 0$), as mentioned, then $\\dot{H} = 0$, and the Hamiltonian (energy) is conserved. This relates to time-translation symmetry .",
+        "interpretation": "The expression $\\{q_i, H\\} = \\dot{q}_i$ states that the time evolution of the generalized coordinate $q_i$ is generated by the Poisson bracket with the Hamiltonian $H$. Similarly, $\\{p_i, H\\} = \\dot{p}_i$ governs the time evolution of the conjugate momentum $p_i$. Here, the Poisson bracket $\\{A, B\\} = \\sum_j \\left( \frac{\\partial A}{\\partial q_j} \frac{\\partial B}{\\partial p_j} - \frac{\\partial A}{\\partial p_j} \frac{\\partial B}{\\partial q_j} \right)$ defines the fundamental symplectic geometry of phase space. The variable $q_i$ is the generalized coordinate representing the spatial or configuration state, $p_i$ is the corresponding conjugate momentum, and $H$ is the total Hamiltonian of the system. The dot notation $\\dot{q}_i$ and $\\dot{p}_i$ denotes the respective time derivatives representing phase space velocities.",
+        "symmetry_origin": "Invariance under time translation symmetry generated by the Hamiltonian, leading to conservation laws via Noether's theorem and Liouville's theorem in phase space.",
+        "limits_and_boundary": "In the limit $\\hbar \to 0$, classical Poisson brackets transition directly into quantum mechanical commutators via Dirac's correspondence principle, $\\{A, B\\} \to \frac{1}{i\\hbar}[\\hat{A}, \\hat{B}].$",
         "status": "platinum",
-        "conceptual_definition": "The provided equations, $\\begin${equation*} \\{q_i, H\\} = $\\dot{q}_i \\end{equation*}$ \\ $\\begin{equation*}$ \\{p_i, H\\} = $\\dot{p}_i \\end{equation*}$ , are not the direct definition of a Noether charge. Instead, they are fundamental relations in Hamiltonian mechanics known as Hamilton's equations. These equations describe how the canonical coordinates ( $q_i$) and their conjugate momenta ( $p_i$) evolve in time under the influence of the Hamiltonian ( $H$). The concept of a Noether charge arises from Noether's theorem, which states that for every continuous symmetry of a physical system, there exists a corresponding conserved quantity. The Noether charge is this conserved quantity associated with a specific symmetry.",
-        "intuitive_summary": "Hamilton's equations describe the time evolution of generalized coordinates and momenta dictated by the system's energy (Hamiltonian), while the Noether charge is a conserved quantity arising from a system's symmetry.",
+        "conceptual_definition": "The equations of motion in Hamiltonian mechanics can be expressed entirely via Poisson brackets as $\\{q_i, H\\} = \\dot{q}_i$ and $\\{p_i, H\\} = \\dot{p}_i$, where the time derivative of any phase space observable is driven by its bracket with the Hamiltonian $H$.",
+        "intuitive_summary": "The Hamiltonian acts as the infinitesimal generator of time translation in phase space, governing how every position and momentum coordinate flows dynamically over time.",
         "subcomponents": [
-            "generalized-coordinate-in-classical-mechanics-da326f72",
-            "generalized-momentum-component-eca91c83",
-            "generalized-velocity-component-432764a7",
-            "generalized-coordinate-component-1fcf841b",
-            "time-independence-of-hamiltonian-14fde916",
-            "canonical-momentum-component-37776ef0",
-            "canonical-coordinate-momentum-pair-b79cd060",
-            "time-derivative-of-generalized-momentum-70b43ff3",
-            "cyclic-coordinate-condition-db40664c"
-        ]
+            "hamilton-canonical-equations-5314f032",
+            "stability-check-98d4234a"
+        ],
+        "description": "Expresses the time evolution of generalized coordinates and conjugate momenta in classical Hamiltonian mechanics using Poisson brackets.",
+        "parent_formula_id": "hamilton-canonical-equations-5314f032",
+        "derivation_type": "DERIVED_FROM"
     },
     "stability-limit-9ccc5c7a": {
-        "title": "Stability Limit (Stability)",
+        "title": "Schwarzschild Criterion for Convective Stability",
         "equation": "\\nabla_{rad} < \\nabla_{ad} \\quad (\\text{Stability})",
         "semantic_variables": {
             "\\nabla_{rad}": {
                 "name": "Radiative Temperature Gradient",
-                "type": "operator",
-                "unit": "1",
-                "description": "The logarithmic temperature gradient with respect to pressure due to radiative energy transport. It is defined as $\\frac{d \\text{log} T}{d \\text{log} P}$."
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Actual logarithmic temperature gradient $\frac{d \\ln T}{d \\ln P}$ required to transport the stellar flux by radiation alone."
             },
             "\\nabla_{ad}": {
                 "name": "Adiabatic Temperature Gradient",
-                "type": "operator",
-                "unit": "1",
-                "description": "The logarithmic temperature gradient with respect to pressure that a parcel of gas would maintain if it moved adiabatically. It is defined as $\\frac{d \\text{log} T}{d \\text{log} P}|_{ad}$ and depends on the adiabatic index of the gas."
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Logarithmic temperature gradient $\\left(\frac{d \\ln T}{d \\ln P}\right)_{ad}$ experienced by a fluid element undergoing adiabatic displacement."
             },
             "T": {
                 "name": "Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The thermodynamic temperature of the fluid. Used in the definition of the gradients."
+                "description": "Local absolute thermodynamic temperature of the fluid."
             },
             "P": {
                 "name": "Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The thermodynamic pressure of the fluid. Used in the definition of the gradients."
-            },
-            "S": {
-                "name": "Poynting Vector",
-                "type": "variable",
-                "unit": "W/m²",
-                "description": "The directional energy flux density of an electromagnetic field."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "b": {
-                "name": "Impact Parameter / Constant",
-                "type": "variable",
-                "unit": "m",
-                "description": "Perpendicular distance between the path of a projectile and the center of a potential field."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "l": {
-                "name": "Length / Angular Quantum Number",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
+                "description": "Local total pressure (gas plus radiation pressure) in the fluid."
             }
         },
-        "interpretation": "This inequality is a fundamental condition for determining whether energy transport in a fluid, particularly in stars, occurs primarily through radiation or convection. $\\nabla_{rad}$ represents the actual temperature gradient, defined as $\\nabla_{rad} = \\frac{d \\text{log} T}{d \\text{log} P}$, where $T$ is temperature and $P$ is pressure. This gradient describes how temperature changes with pressure in the star's interior due to radiative energy transfer $. \\nabla_{ad} represents the adiabatic temperature gradient, defined as \\nabla_{ad} = \\frac{d \\text{log}$ T}{d $\\text{log}$ P}|_{ad}$. This gradient describes the temperature change that would occur if a parcel of gas were to move vertically through the star and expand or contract adiabatically (without exchanging heat with its surroundings). The condition \\nabla_{rad} \\nabla_{ad}$ signifies that the star is stable because if a small parcel of gas were to be displaced upwards, it would find itself in a region that is cooler than its surroundings (at the same pressure), and thus it would tend to sink back to its original position. Conversely, if $\\nabla_{rad} \\nabla_{ad} , the gas parcel displaced upwards would be hotter than its surroundings, making it buoyant and causing it to rise further, initiating convection. Similarly, if displaced downwards, it would be cooler than its surroundings, causing it to sink further. This drives vigorous convective overturning$.",
-        "symmetry_origin": "The derivation of this stability criterion originates from the study of fluid dynamics and thermodynamics, specifically the analysis of buoyancy-driven instabilities in stratified fluids. It is derived by considering the forces acting on a small, displaced parcel of fluid in a gravitational field, taking into account pressure, density, and temperature gradients. The concept of adiabatic processes is central, arising from the first law of thermodynamics and conservation of energy for systems in isolation. The condition is independent of the specific coordinate system used to describe the fluid motion, reflecting its basis in fundamental physical principles of force balance and thermodynamic equilibrium.",
-        "limits_and_boundary": "In the limit where $\\nabla_{rad}$ approaches zero, it implies a very shallow temperature gradient, characteristic of regions far from heat sources, which would certainly be stable. As $\\nabla_{rad}$ becomes much larger than $\\nabla_{ad}$ (approaching infinity), the system becomes highly unstable to convection. The adiabatic gradient $\\nabla_{ad}$ itself depends on the properties of the gas (e.g., its adiabatic index $\\gamma$) and is generally a positive value, indicating that temperature increases with pressure in stellar interiors. The boundary case, $\\nabla_{rad} = \\nabla_{ad}$, represents the threshold of marginal stability, where convection is just beginning to be significantly driven.",
+        "interpretation": "This inequality governs energy transport in stellar interiors. Here, $\nabla_{rad} = \frac{d \\ln T}{d \\ln P}$ represents the actual temperature gradient required to transport luminosity entirely by radiation, where $T$ is temperature and $P$ is pressure. Conversely, $\nabla_{ad} = \\left(\frac{d \\ln T}{d \\ln P}\right)_{ad}$ represents the adiabatic temperature gradient that a displaced gas parcel experiences. When $\nabla_{rad} < \nabla_{ad}$, the displaced parcel is colder than its new environment and buoyancy forces restore it to its origin. When $\nabla_{rad} > \nabla_{ad}$, the parcel is warmer, generating positive buoyancy that triggers convection.",
+        "symmetry_origin": "Derived from hydrostatic equilibrium and the laws of thermodynamics under spherical symmetry and local thermodynamic equilibrium in stars.",
+        "limits_and_boundary": "In the limit where opacity approaches infinity or radiative transport becomes inefficient, $\nabla_{rad}$ grows arbitrarily large, strongly violating the inequality and forcing the stellar interior into an adiabatic convective regime where $\nabla \\approx \nabla_{ad}$.",
         "status": "platinum",
-        "conceptual_definition": "The stability limit condition, given by $\\nabla_{rad} < \\nabla_{ad}$, describes the criterion for convective stability in stellar interiors and other fluid systems. It states that the radiative temperature gradient must be less than the adiabatic temperature gradient for the system to be stable against convection. If the radiative gradient exceeds the adiabatic one, buoyancy forces will drive convective motions.",
-        "intuitive_summary": "A star is stable against convection if the temperature rises more slowly with depth than it would if the gas were moving adiabatically.",
+        "conceptual_definition": "The stability limit is expressed by the inequality $\nabla_{rad} < \nabla_{ad}$, where the actual radiative temperature gradient $\nabla_{rad}$ is less than the adiabatic temperature gradient $\nabla_{ad}$, ensuring stable stratification against convective overturning.",
+        "intuitive_summary": "If a fluid element displaced upward is cooler and denser than its surroundings, it sinks back down, maintaining stability. If it is hotter and lighter, it continues to rise, driving convection.",
         "subcomponents": [
-            "adiabatic-temperature-pressure-gradient-589952ec",
-            "dimensionless-radiative-temperature-gradient-f66ebd7a",
-            "schwarzschild-criterion-for-convective-stability-3d9da823"
-        ]
+            "schwarzschild-criterion-for-convective-stability-3d9da823",
+            "convection-identity-1-c372f46c-774c2412",
+            "convection-trigger-8b715f27"
+        ],
+        "description": "The fundamental criterion determining whether a fluid layer, particularly in stellar interiors, maintains radiative equilibrium or develops convective instability.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "geometric-expansion-1c97c592": {
-        "title": "Geometric Expansion",
+        "title": "Cosmic Expansion Criterion",
         "equation": "\\dot{a} > 0 \\implies \\text{Expansion}",
         "semantic_variables": {
-            "\\implies": {
-                "name": "\\implies Parameter",
+            "\\dot{a}": {
+                "name": "Scale Factor Rate of Change",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "unit": "\\text{s}^{-1}",
+                "description": "Time derivative of the cosmological scale factor"
             },
-            "E": {
-                "name": "Electric Field Strength",
+            "a": {
+                "name": "Cosmological Scale Factor",
                 "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
-            },
-            "p": {
-                "name": "Linear Momentum ($p$)",
-                "type": "variable",
-                "unit": "kg·m/s",
-                "description": "The magnitude of linear momentum, representing the quantity of motion of a particle."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
+                "unit": "\\text{dimensionless}",
+                "description": "Relative measure of the size of the universe in the FLRW metric"
             }
         },
-        "interpretation": "In the context of the Friedmann–Lemaître–Robertson–Walker (FLRW) metric, which is a standard model for a homogeneous and isotropic universe, the scale factor (t) describes the relative expansion or contraction of space over time. It's a dimensionless quantity that scales distances. The time derivative of the scale factor, , represents the *rate* at which this scaling is changing. A positive value, > 0, signifies that distances between comoving points in the universe are increasing with time. This increase in scale corresponds to the physical phenomenon of cosmic expansion. Conversely, if < 0, the universe would be contracting. If = 0, the universe would be in a state of 'coasting,' with no net expansion or contraction at that instant.",
-        "symmetry_origin": "The concept of a scale factor arises from the assumption of homogeneity and isotropy in the universe, as described by the FLRW metric. This metric is invariant under spatial translations, rotations, and boosts, reflecting the universe's large-scale uniformity. The time evolution of the scale factor is governed by the Friedmann equations, which are derived from Einstein's field equations of general relativity, thus grounding this formula in the fundamental principles of gravity and spacetime dynamics.",
-        "limits_and_boundary": "As the scale factor approaches zero, it implies a potentially singular state (like the Big Bang if interpreted as an initial condition). If approaches infinity, it suggests an infinitely large universe. The condition > 0 indicates expansion, and as time goes to infinity, the universe continues to expand.",
+        "interpretation": "In the context of the Friedmann–Lemaître–Robertson–Walker (FLRW) metric, the scale factor $a(t)$ describes the relative expansion or contraction of space over time. Its time derivative, $\\dot{a}$, represents the rate of change of this scaling. A positive value, $\\dot{a} > 0$, signifies that proper distances between comoving points in the universe are increasing with time, corresponding to cosmic expansion. Conversely, $\\dot{a} < 0$ implies contraction, and $\\dot{a} = 0$ corresponds to a static or instantaneous turning point.",
+        "symmetry_origin": "Spatial homogeneity and isotropy described by cosmological solutions of General Relativity under spatial translation and rotation symmetries.",
+        "limits_and_boundary": "In the limit where $\\dot{a} \to 0$, the spacetime approaches a static state. In the limit $\\dot{a} \to \\infty$ or $a \to 0$, extreme dynamical regimes such as gravitational singularities or inflationary epochs are encountered.",
         "status": "platinum",
-        "conceptual_definition": "The formula ` > 0 ➞ $\\text{Expansion}$` describes a fundamental concept in cosmology and the study of dynamic spacetime. It states that if the time derivative of the scale factor, denoted by , is positive, then the universe (or any system described by this scale factor) is undergoing expansion.",
-        "intuitive_summary": "If the rate at which the universe's scale is stretching is positive, then the universe is indeed getting bigger.",
-        "parent_formula_id": "causal-metric-spacetime-interval-b2aee666",
-        "derivation_type": "SPECIAL_CASE"
+        "conceptual_definition": "The condition for spatial expansion in a homogeneous and isotropic universe is given by $\\dot{a} > 0$, where $a(t)$ represents the cosmological scale factor.",
+        "intuitive_summary": "If the spatial ruler of the universe grows larger with cosmic time, physical distances between unaccelerated observers grow correspondingly, signaling space itself is expanding.",
+        "parent_formula_id": "causal-origin-31acad59",
+        "derivation_type": "DEFINITION",
+        "description": "Criterion defining cosmic expansion via the positivity of the time derivative of the scale factor within cosmological spacetimes.",
+        "subcomponents": [
+            "causal-origin-31acad59",
+            "space-growth-4aea9efb"
+        ]
     },
     "lorentz-law-6487c39f": {
         "title": "Lorentz Law (Magnetism of Moving Charges)",
@@ -331,86 +262,48 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "dynamic-stats-9f51a17e": {
-        "title": "Dynamic Stats",
+        "title": "Born Rule for Discrete Quantum Measurements",
         "equation": "P(a_i) = |\\langle a_i | \\psi \\rangle|^2 \\quad (\\text{Discrete})",
         "semantic_variables": {
             "P(a_i)": {
-                "name": "Probability of state a_i",
+                "name": "Measurement Probability",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The probability of measuring the quantum system and finding it in the discrete state $a_i$."
+                "description": "Probability of obtaining the discrete measurement outcome corresponding to eigenvalue $a_i$"
             },
             "a_i": {
-                "name": "Discrete state",
+                "name": "Discrete State",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "A specific, discrete outcome or eigenstate of a quantum mechanical observable. For example, the spin up state of an electron or a specific energy level of an atom."
+                "unit": "various",
+                "description": "Discrete eigenstate or eigenvalue index representing a specific measurement outcome"
             },
             "\\psi": {
-                "name": "Quantum state vector",
+                "name": "Quantum State Vector",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The quantum mechanical state of the system before measurement. It is a vector in a Hilbert space and can be represented as a superposition of other states."
+                "description": "State vector of the quantum system in Hilbert space before measurement"
             },
             "\\langle a_i | \\psi \\rangle": {
-                "name": "Probability amplitude",
+                "name": "Probability Amplitude",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The inner product (or projection) of the state $\\psi$ onto the state $a_i$. This is a complex number whose squared magnitude gives the probability of finding the system in state $a_i$ upon measurement."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "D": {
-                "name": "Electric Displacement Field",
-                "type": "variable",
-                "unit": "C/m²",
-                "description": "The displacement flux density representing electric charge polarization in media."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
+                "description": "Complex inner product representing the projection of the state vector onto the eigenstate"
             }
         },
-        "interpretation": "In this formula, $P(a_i)$ represents the probability of measuring the system and finding it in the discrete state $a_i$. The symbol $\\psi$ denotes the quantum state vector of the system before measurement, typically represented in a Hilbert space. The term $\\langle a_i | \\psi \\rangle$ is known as a 'projection' or 'amplitude' of the state $\\psi$ onto the state $a_i$. It is a complex number that quantifies how much of the state $\\psi$ 'lies in the direction' of the state $a_i$. The absolute value squared, |...|^2, ensures that the probability is a real, non-negative number, as required for any probability. The physical interpretation is that the probability of observing a particular outcome is the squared magnitude of the probability amplitude for that outcome.",
-        "symmetry_origin": "This formula is a direct consequence of the postulates of quantum mechanics, specifically the Born rule, which relates the quantum mechanical description of a system to the probabilities of observable outcomes. It arises from the requirement that quantum states must be normalized (i.e., the total probability of finding the system in any possible state must be 1) and that the mathematical framework should be consistent with experimental observations. The $|< a_i | ? | ||| |||| |||| | |||| ||||||||||||| |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| is a superposition of eigenstates of an observable, then the act of measurement causes the state to collapse into one of these eigenstates$.",
-        "limits_and_boundary": "As the state $\\psi$ becomes perfectly aligned with a specific eigenstate $a_i$, meaning $\\psi$ is proportional to $a_i$, the overlap $\\langle a_i | \\psi \\rangle$ approaches 1 (after normalization), and thus $P(a_i)$ approaches 1. Conversely, if $\\psi$ is orthogonal to $a_i$, meaning $\\langle a_i | \\psi \\rangle = 0$, then $P(a_i) = 0$, indicating that the state $a_i$ cannot be observed.",
+        "interpretation": "In this formulation, $P(a_i)$ represents the dimensionless probability of finding the quantum system in the discrete state $a_i$ upon measurement, bounded between $0$ and $1$. The symbol $|\\psi\rangle$ is the normalized quantum state vector residing in the Hilbert space $\\mathcal{H}$. The inner product $\\langle a_i | \\psi \rangle$ defines the complex-valued probability amplitude for observing state $a_i$ given that the system is prepared in state $|\\psi\rangle$. Taking the squared magnitude $|\\dots|^2$ yields a real, non-negative probability value.",
+        "symmetry_origin": "Originates from the foundational axioms of quantum mechanics, ensuring total probability conservation (unitarity) under state transformations.",
+        "limits_and_boundary": "In the limit where the state vector $|\\psi\rangle$ is orthogonal to the eigenstate $|a_i\rangle$, the overlap vanishes and $P(a_i) \to 0$. Conversely, if $|\\psi\rangle = |a_i\rangle$, the probability evaluates to $1$. In the continuous limit, sums are replaced by integrals over continuous spectra.",
         "status": "platinum",
-        "conceptual_definition": "The formula describes the probability of obtaining a specific outcome, represented by a discrete state $a_i$, when a quantum system in a state $\\psi$ is measured. In quantum mechanics, measurements do not deterministically yield a single value but rather a probability distribution over possible outcomes. This formula quantifies that probability for discrete, measurable quantities.",
-        "intuitive_summary": "The probability of measuring a specific state is proportional to the square of the overlap between that state and the system's current state.",
+        "conceptual_definition": "The probability $P(a_i)$ of measuring a discrete eigenvalue $a_i$ for a quantum system is given by the squared absolute value of the inner product between the corresponding eigenstate $|a_i\rangle$ and the state vector $|\\psi\rangle$, expressed as $P(a_i) = |\\langle a_i | \\psi \rangle|^2$.",
+        "intuitive_summary": "It translates abstract quantum probability amplitudes in Hilbert space into concrete, observable real-world measurement probabilities.",
         "subcomponents": [
-            "observable-measurement-outcome-component-693a3b97",
-            "probability-of-measurement-outcome-a1baf00c"
-        ]
+            "idealization-7e362e97",
+            "representation-shift-2526136d",
+            "probabilistic-2f24c297"
+        ],
+        "description": "The Born rule calculates the probability of obtaining a specific discrete eigenvalue outcome when measuring a quantum observable.",
+        "parent_formula_id": "light-source-f67d26ab",
+        "derivation_type": "GENERALIZATION"
     },
     "field-link-d2faeecc": {
         "title": "Field Link",
@@ -608,444 +501,308 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "null-identity-e06a3d7b": {
-        "title": "Null Identity",
+        "title": "Rigid Body Rotation and Fluid Vorticity Identity",
         "equation": "\\text{curl}(\\mathbf{v}) = 2 \\mathbf{\\omega}",
         "semantic_variables": {
             "\\mathbf{v}": {
-                "name": "Fluid Velocity Vector",
+                "name": "Velocity Vector Field",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The vector representing the velocity of the fluid at a given point in space and time. It has units of meters per second."
+                "unit": "m \\cdot s^{-1}",
+                "description": "The local velocity field of the fluid continuum."
             },
-            "\\omega": {
-                "name": "Angular Velocity Vector of Rotating Frame",
+            "\\mathbf{\\omega}": {
+                "name": "Angular Velocity Vector",
                 "type": "variable",
-                "unit": "rad/s",
-                "description": "The vector representing the angular velocity of the rotating reference frame. Its magnitude indicates the speed of rotation, and its direction specifies the axis of rotation. It has units of radians per second."
-            },
-            "\\text{curl}(\\mathbf{v})": {
-                "name": "Vorticity Vector",
-                "type": "variable",
-                "unit": "1/s",
-                "description": "The curl of the fluid velocity vector, representing the local angular velocity of fluid elements. It quantifies the intensity and axis of rotation of the fluid flow. Its units are inverse seconds (e.g., s^{-1})."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
-            },
-            "u": {
-                "name": "Velocity Component / Specific Internal Energy",
-                "type": "variable",
-                "unit": "m/s or J/kg",
-                "description": "Speed along a particular coordinate direction, or internal energy per unit mass."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "l": {
-                "name": "Length / Angular Quantum Number",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
-            },
-            "v": {
-                "name": "Speed / Velocity Magnitude",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The rate of change of position with respect to time, representing the speed of a particle."
+                "unit": "rad \\cdot s^{-1}",
+                "description": "The angular velocity vector of the non-inertial rotating reference frame."
             }
         },
-        "interpretation": "In this equation, $\\text{curl}(\\mathbf{v})$ represents the vorticity of the fluid flow, which is a vector quantity measuring the local rotation or circulation of the fluid. Mathematically, it is the curl of the velocity vector field $\\mathbf{v}$. The vector $\\mathbf{\\omega}$ represents the angular velocity of the rotating reference frame. The factor of 2 indicates that the vorticity induced by the frame's rotation is twice the frame's angular velocity. This relationship is crucial because it quantifies how the inertial forces (specifically the Coriolis and centrifugal forces, which are manifestations of the non-inertial frame) manifest as apparent rotation within the fluid, independent of any actual forces acting on the fluid itself. The equation highlights that even in the absence of external forces causing circulation, a fluid in a rotating frame will exhibit a curl proportional to the frame's rotation.",
-        "symmetry_origin": "This relationship arises from transforming the Navier-Stokes equations or the equations of motion for a rigid body into a rotating coordinate system. The transformation introduces fictitious forces, such as the Coriolis force and the centrifugal force, which depend on the angular velocity of the rotating frame. The curl of the velocity field in the rotating frame is related to these fictitious forces. Specifically, this equation is a simplified form that isolates the contribution to vorticity solely from the frame's rotation, often derived from the definition of the Coriolis acceleration in a rotating frame, which is given by $-2 \\mathbf{\\omega} \\times \\mathbf{v}. The curl of this term reveals the direct relationship$.",
-        "limits_and_boundary": "As the angular velocity of the rotating frame $\\mathbf{\\omega} approaches zero (i.e., the frame becomes inertial), the curl of the velocity field \\text{curl}$($\\mathbf{v}$)$also approaches zero, indicating that there is no frame-induced vorticity. In the limit of very large \\mathbf{\\omega} , the vorticity of the fluid is dominated by the rotation of the reference frame, meaning \\text{curl}$($\\mathbf{v}$) \\approx 2 $\\mathbf{\\omega}$. This implies that the fluid tends to 'lock' into the rotation of the frame.",
+        "interpretation": "In this equation, $\text{curl}(\\mathbf{v})$ represents the vorticity vector of the fluid flow, measuring the local rotation rate of fluid elements with dimensions of inverse time ($\text{s}^{-1}$). The vector $\\mathbf{\\omega}$ represents the angular velocity of the rotating reference frame with dimensions of inverse time ($\text{s}^{-1}$). The factor of $2$ is an exact geometric scaling factor arising from the kinematic relationship between rotational velocity components and Cartesian spatial derivatives.",
+        "symmetry_origin": "Invariance under spatial rotations (SO(3) group symmetry) in non-inertial reference frames.",
+        "limits_and_boundary": "In the limit where the angular velocity $\\mathbf{\\omega} \to \\mathbf{0}$, the system transitions to an inertial frame where $\text{curl}(\\mathbf{v}) = \\mathbf{0}$ for uniform or irrotational flow.",
         "status": "platinum",
-        "conceptual_definition": "The formula $\\text{curl}$($\\mathbf{v}) = 2 \\mathbf{ \\omega$} describes a fundamental relationship between the vorticity of a$fluid flow and the angular velocity of a rotating reference frame. Specifically, it states that the curl of the velocity field \\mathbf{v} of a fluid, when observed from a non-inertial rotating frame, is directly proportional to twice the angular velocity vector \\mathbf{\\omega}$ of that frame. This equation is a component of the broader framework of fluid dynamics in rotating coordinate systems, particularly relevant in contexts like meteorology and oceanography.",
-        "intuitive_summary": "In a rotating frame of reference, the swirling motion of a fluid (its curl) is directly caused by the rotation of the frame itself."
+        "conceptual_definition": "The relation states that the curl of the velocity vector field $\text{curl}(\\mathbf{v})$ equals twice the angular velocity vector $\\mathbf{\\omega}$ of the rotating reference frame.",
+        "intuitive_summary": "In a solidly rotating system, any local fluid parcel spins at twice the angular velocity of the coordinate frame itself, highlighting the geometric connection between spatial derivatives of velocity and rotational kinematics.",
+        "description": "Relates the kinematic curl of a velocity field to twice the angular velocity vector in a rotating reference frame.",
+        "parent_formula_id": "vorticity-identity-1-ec25fd0a-64b865f8",
+        "derivation_type": "SPECIAL_CASE",
+        "subcomponents": [
+            "vorticity-identity-1-ec25fd0a-64b865f8",
+            "vector-differential-operators-def-e1e086bb"
+        ]
     },
     "the-dark-era-12f30c8e": {
-        "title": "The Dark Era",
+        "title": "Asymptotic Thermodynamic Evolution Toward Maximum Entropy (The Dark Era)",
         "equation": "S_{total} \\to S_{max}",
         "semantic_variables": {
             "S_{total}": {
                 "name": "Total Entropy",
                 "type": "variable",
-                "unit": "J/K",
-                "description": "The total measure of disorder or the number of microscopic configurations accessible to the universe as a whole. It is a measure of the universe's thermodynamic state."
+                "unit": "J \\cdot K^{-1}",
+                "description": "The current total entropy of the universe as a function of time."
             },
             "S_{max}": {
                 "name": "Maximum Entropy",
-                "type": "variable",
-                "unit": "J/K",
-                "description": "The highest possible value that the total entropy of the universe can attain. This state represents thermodynamic equilibrium and maximum disorder, where no further spontaneous macroscopic processes can occur."
-            },
-            "S": {
-                "name": "Poynting Vector",
-                "type": "variable",
-                "unit": "W/m²",
-                "description": "The directional energy flux density of an electromagnetic field."
+                "type": "constant",
+                "unit": "J \\cdot K^{-1}",
+                "description": "The maximum possible entropy bound for the universe in complete thermal equilibrium."
             }
         },
-        "interpretation": "In this formula, $S_{total}$ represents the total entropy of the universe, a measure of disorder or the number of possible microstates corresponding to a given macrostate. Entropy is a state function, and according to the Second Law of Thermodynamics, it can only increase or stay constant in an isolated system. The arrow \\to indicates a tendency over time, implying a process of evolution. $S_{max}$ denotes the maximum possible entropy that the universe can attain. This maximum is reached when the system is in a state of thermodynamic equilibrium, where temperature, pressure, and chemical potential are uniform throughout, and there are no net flows of energy or matter. At this point, all available energy has been dispersed, and no work can be extracted from the system. The universe effectively ceases to evolve in a meaningful thermodynamic sense.",
-        "symmetry_origin": "The origin of this principle is the Second Law of Thermodynamics, which is a fundamental law of physics. It is not derived from a symmetry principle in the same way as conservation laws (like conservation of energy arising from time-translation symmetry). Instead, it is a statistical law based on the overwhelming probability of systems moving from less probable (more ordered) states to more probable (more disordered) states. While individual microscopic interactions are often time-reversible, the macroscopic behavior of systems with a large number of particles strongly favors increasing entropy.",
-        "limits_and_boundary": "As time approaches infinity, the total entropy of the universe, $S_{total}$, approaches its maximum possible value, $S_{max}$. This is an asymptotic limit. $S_{total}$ will never exceed $S_{max}$ in a closed system. If the universe is considered a closed system, this implies that $S_{total}$ increases towards $S_{max}$ and eventually reaches it. In the limit of $S_{total} = S_{max}$, the universe is in a state of thermodynamic equilibrium, with uniform temperature and no gradients, hence no further macroscopic changes or work extraction are possible.",
+        "interpretation": "In this formulation, $S_{total}$ represents the total entropy of the universe, quantifying the degree of microscopic disorder and the number of accessible microstates. The asymptotic convergence symbol $\to$ signifies the irreversible temporal evolution over cosmological time scales. Finally, $S_{max}$ denotes the absolute upper bound of entropy attainable by the system, corresponding to complete thermodynamic equilibrium.",
+        "symmetry_origin": "Rooted in the time-asymmetry and arrow of time dictated by the Second Law of Thermodynamics, reflecting the non-conservation of macroscopic state availability and irreversibility under time-reversal transformations.",
+        "limits_and_boundary": "In the limit as time $t \to \\infty$, the system approaches the absolute thermodynamic equilibrium boundary, minimizing free energy differences and halting all macroscopic work production.",
         "status": "platinum",
-        "conceptual_definition": "The 'Dark Era' formula, denoted as $S_{total} \\to S_{max}$, describes a fundamental principle in cosmology and thermodynamics concerning the ultimate fate of the universe. It posits that the total entropy of a closed system, such as the universe itself, tends to increase over time and approaches a maximum possible value. This maximum entropy state signifies a condition of thermal equilibrium and maximum disorder, where no further spontaneous processes can occur, leading to a state of thermodynamic equilibrium often referred to as 'heat death'.",
-        "intuitive_summary": "Over vast cosmic timescales, the universe naturally progresses towards a state of maximum disorder and uniform energy distribution, beyond which no further change is possible.",
+        "conceptual_definition": "The formula $S_{total} \to S_{max}$ describes the long-term asymptotic behavior of an isolated thermodynamic system like the universe, stating that the total entropy $S_{total}$ continually increases due to irreversible processes until it asymptotically reaches the upper bound of maximum possible entropy $S_{max}$.",
+        "intuitive_summary": "Over unfathomable timescales, all organized structures, stars, and black holes dissipate or decay, driving the universe into a featureless state of maximum thermodynamic disorder where no further work can be extracted.",
         "subcomponents": [
-            "maximum-entropy-state-01c93494",
-            "total-entropy-of-the-universe-25042baf"
-        ]
+            "cosmological-density-parameter-convergence-10826f2a",
+            "asymptotic-dark-energy-equation-of-state-6ea82e4e"
+        ],
+        "description": "Represents the ultimate thermodynamic fate of the universe in the far future where the total entropy approaches its theoretical maximum as usable energy is exhausted.",
+        "parent_formula_id": "ultimate-equilibrium-8e15ae54",
+        "derivation_type": "LIMITING_CASE"
     },
     "independent-parts-ba5a2b3d": {
-        "title": "Independent Parts (Locality in Physics)",
+        "title": "Kinematic Speed Limit for Signal Propagation",
         "equation": "v_{signal} \\le c",
         "semantic_variables": {
             "v_{signal}": {
                 "name": "Signal Speed",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The speed at which information, an effect, or a physical influence propagates through space."
+                "unit": "\\text{m/s}",
+                "description": "Propagation speed of physical information, energy, or causal influences."
             },
             "c": {
                 "name": "Speed of Light in Vacuum",
                 "type": "constant",
-                "unit": "m/s",
-                "description": "A universal physical constant representing the speed at which all massless particles and electromagnetic waves, including light, propagate in vacuum. It is the ultimate speed limit in the universe."
-            },
-            "v": {
-                "name": "Speed / Velocity Magnitude",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The rate of change of position with respect to time, representing the speed of a particle."
-            },
-            "\\le": {
-                "name": "\\le Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "unit": "\\text{m/s}",
+                "description": "Universal invariant speed of massless particles in a vacuum."
             }
         },
-        "interpretation": "In this inequality, $v_{signal}$ represents the speed at which information, an effect, or any physical influence propagates through space. This could be the speed of an electromagnetic wave (like light itself), the speed of a particle, or the speed at which a force propagates. The symbol $c$ stands for the speed of light in a vacuum, a universal physical constant with a value of approximately $299,792,458$ meters per second (m/s). The inequality $v_{signal} ≤ c$ asserts that no physical process, no matter how energetic or how it is manipulated, can transmit information or cause an effect at a speed greater than $c$. This means that events separated in space cannot influence each other instantaneously, upholding the principle of causality.",
-        "symmetry_origin": "This inequality is a direct consequence of the postulates of special relativity, particularly the postulate that the speed of light in a vacuum is constant for all inertial observers. It is deeply connected to the Lorentz invariance of the laws of physics, which implies that the laws of physics are the same in all inertial frames of reference. The speed of light $c$ emerges as a fundamental speed limit, defining the causal structure of spacetime. If signals could travel faster than light, it would be possible to send information back in time, leading to paradoxes and violations of causality.",
-        "limits_and_boundary": "The upper limit is $v_{signal} = c$. This limit is achieved by massless particles, such as photons (which mediate electromagnetic forces) and gluons (which mediate the strong nuclear force), and also by the propagation of gravitational waves. It also represents the maximum speed at which information can be transmitted. The lower limit is $v_{signal} = 0$, which signifies no motion or no propagation of influence, a state achievable by stationary objects or states where no interaction is occurring. Any speed $v_{signal}$ between $0$ and $c$ is permissible for massive particles or signals, such as the speed of a sound wave or the speed of a physical object.",
+        "interpretation": "In this inequality, $v_{signal}$ represents the propagation velocity of information, energy, or causal influence through space, bounded by the universal constant $c$, which denotes the speed of light in vacuum. This establishes the light cone structure of Minkowski spacetime, maintaining strict relativistic causality.",
+        "symmetry_origin": "Originates from Lorentz invariance and the isotropic geometry of spacetime under the Poincaré group.",
+        "limits_and_boundary": "In the non-relativistic limit where $c \to \\infty$, the upper bound vanishes, recovering Newtonian instantaneous action at a distance. As $v_{signal} \to c$, physical systems approach the ultrarelativistic regime characteristic of massless particles.",
         "status": "platinum",
-        "conceptual_definition": "The inequality $v_{signal} ≤ c$ posits a fundamental constraint in physics, stating that the speed of any signal or information transfer, denoted by $v_{signal}$, cannot exceed the speed of light in a vacuum, denoted by $c$. This principle is a cornerstone of Einstein's theory of special relativity and has profound implications for causality and the structure of spacetime.",
-        "intuitive_summary": "No information or influence can travel faster than the speed of light in a vacuum."
+        "conceptual_definition": "The speed of signal propagation $v_{signal}$ is strictly bounded above by the invariant speed of light in vacuum $c$, formally expressed as $v_{signal} \\le c$.",
+        "intuitive_summary": "Nothing in the universe can travel faster than light, ensuring that cause always precedes effect and preventing causal paradoxes.",
+        "description": "Establishes the fundamental upper bound for the transmission of physical information and causal influences in relativistic spacetimes.",
+        "parent_formula_id": "einstein-locality-physics-identity-1-e828eb89-109e9891",
+        "derivation_type": "LIMITING_CASE",
+        "subcomponents": [
+            "einstein-locality-physics-identity-1-e828eb89-109e9891",
+            "signal-cap-151c13ec"
+        ]
     },
     "force-detector-e71395ed": {
-        "title": "Force Detector",
+        "title": "Geodesic Equation of Motion (Force Detector Form)",
         "equation": "\\nabla_{\\mathbf{U}} \\mathbf{U} = 0 \\quad (\\text{Geodesic Form})",
         "semantic_variables": {
             "\\mathbf{U}": {
                 "name": "Four-Velocity",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The four-velocity of a particle in spacetime. It is a four-vector, often written as $U^\\mu = (\\gamma c, \\gamma v_x, \\gamma v_y, \\gamma v_z)$, where $\\gamma = 1/\\sqrt{1 - v^2/c^2}$ is the Lorentz factor, $c$ is the speed of light, and $v$ is the spatial velocity. In units where $c=1$, it is often normalized such that $U^\\mu U_\\mu = -1$."
+                "unit": "m/s (dimensionless in geometric units where c=1)",
+                "description": "The tangent four-vector to the particle's worldline in spacetime."
             },
             "\\nabla_{\\mathbf{U}}": {
-                "name": "Covariant Derivative along Four-Velocity",
+                "name": "Covariant Derivative Operator",
                 "type": "operator",
-                "unit": "1/s",
-                "description": "The covariant derivative operator applied along the direction of the four-velocity $\\mathbf{U}$. It measures the rate of change of a vector field along a given curve, taking into account the curvature of the spacetime. In local inertial frames, it approximates the ordinary derivative, but in curved spacetime, it includes terms involving Christoffel symbols."
-            },
-            "\\tau": {
-                "name": "Proper Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The proper time is the time measured by a clock that is moving with the particle. It is an invariant quantity and serves as the affine parameter along the geodesic."
-            },
-            "U": {
-                "name": "Potential Energy",
-                "type": "variable",
-                "unit": "J",
-                "description": "Position-dependent stored energy of a system."
-            },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
-            },
-            "F": {
-                "name": "Force Magnitude",
-                "type": "variable",
-                "unit": "N",
-                "description": "The magnitude of an interaction that causes an object with mass to accelerate."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
+                "unit": "1/m",
+                "description": "The directional covariant derivative along the four-velocity vector field."
             }
         },
-        "interpretation": "In this equation, $\\nabla_{\\mathbf{U}}$ represents the covariant derivative along the direction of the four-velocity $\\mathbf{U}$, and $\\mathbf{U}$ itself is the four-velocity of the particle. The four-velocity is a four-vector (a vector in spacetime) whose components describe the particle's velocity in three spatial dimensions and its rate of passage through time. The equation $\\nabla_{\\mathbf{U}} \\mathbf{U} = 0$ signifies that the four-velocity is parallel-transported along the path. Mathematically, this means that the rate of change of the four-velocity, as perceived by an observer moving with the particle, is zero. In a flat spacetime, this equation reduces to the familiar Newtonian law of inertia, where a particle moves with constant velocity in the absence of forces. However, in curved spacetime, the curvature itself can cause the four-velocity to change, thus describing the effect of gravity. The covariant derivative accounts for the changing basis vectors in curved spacetime, ensuring that the notion of parallel transport is well-defined.",
-        "symmetry_origin": "This equation originates from the principle of general covariance, which states that the laws of physics should take the same form in all coordinate systems, including non-inertial ones. In the context of general relativity, gravity is understood as a manifestation of spacetime curvature. Free particles, unaffected by non-gravitational forces, follow geodesics, which are the 'straightest possible' paths in this curved geometry. The geodesic equation is derived by minimizing the proper time interval $\\int d\\tau$ between two spacetime events, which is an application of the calculus of variations. The vanishing of the covariant derivative of the four-velocity is a direct consequence of the particle following such an extremal path.",
-        "limits_and_boundary": "In the limit of a flat spacetime (where the metric tensor is Minkowskian and spacetime curvature is zero), the covariant derivative simplifies, and the geodesic equation reduces to $dU^\\mu / d\\tau = 0$ for each component $U^\\mu$ of the four-velocity. This means that the four-velocity is constant, which corresponds to inertial motion in Newtonian physics. As the curvature of spacetime increases (e.g., near massive objects), the geodesic equation captures the accelerated motion due to gravity. There are no explicit boundaries to variables in this fundamental equation; it is a differential equation describing motion throughout spacetime.",
+        "interpretation": "In this formulation, $\nabla_{\\mathbf{U}}$ represents the covariant derivative operator along the particle's worldline, while $\\mathbf{U}$ is the four-velocity vector field tangent to the particle's trajectory. The condition $\nabla_{\\mathbf{U}} \\mathbf{U} = 0$ signifies that the four-velocity is parallel-transported along the curve, meaning no external proper acceleration acts upon the observer.",
+        "symmetry_origin": "Invariance under general coordinate transformations ( diffeomorphism invariance ) and the principle of equivalence.",
+        "limits_and_boundary": "In the limit of flat Minkowski spacetime where the metric connection coefficients vanish, this equation reduces to straight-line motion at constant coordinate velocity, corresponding to the Newtonian limit of zero external force.",
         "status": "platinum",
         "latex": "\\nabla_{\\mathbf{U}} \\mathbf{U} = 0 \\quad (\\text{Geodesic Form})",
-        "conceptual_definition": "The equation $\\nabla_{\\mathbf{U}} \\mathbf{U} = 0$, often referred to as the Geodesic Form, is a fundamental equation in differential geometry and general relativity. It describes the path of a free particle in spacetime. In a curved spacetime, where gravity is described as the curvature of spacetime, a free particle follows a path called a geodesic. This equation states that the covariant derivative of the particle's four-velocity $\\mathbf{U}$ with respect to its proper time $\\tau$ is zero, meaning that the four-velocity remains parallel to itself along the geodesic. This is equivalent to saying that the particle experiences no external forces other than those arising from the curvature of spacetime itself.",
-        "intuitive_summary": "A free-falling object follows the straightest possible path through curved spacetime.",
+        "conceptual_definition": "The equation states that the covariant derivative of the four-velocity $\\mathbf{U}$ along the direction of $\\mathbf{U}$ itself vanishes, expressed in TeX as $\nabla_{\\mathbf{U}} \\mathbf{U} = 0$, defining the straightest possible paths in a pseudo-Riemannian manifold.",
+        "intuitive_summary": "An unaccelerated particle in curved spacetime follows a geodesic path, which acts as the generalization of Newton's first law of motion to general relativity where gravity is modeled as spacetime curvature rather than a classical external force.",
         "subcomponents": [
-            "relativistic-four-velocity-component-9f2eeba8",
-            "total-proper-time-interval-4416c7c6",
-            "condition-for-parallel-transport-of-a-vector-field-4b0d02b8",
-            "covariant-derivative-along-vector-field-u-10a3dda3"
-        ]
+            "causal-edge-8a7ae5a7",
+            "force-coupling-288cafaa"
+        ],
+        "description": "The geodesic equation describes the trajectory of a test particle moving freely under the influence of curved spacetime geometry alone, experiencing no non-gravitational proper forces.",
+        "parent_formula_id": "path-only-motion-493de7d6",
+        "derivation_type": "DERIVED_FROM"
     },
     "frequency-stability-396f1041": {
-        "title": "Frequency Stability",
+        "title": "Equation of Motion for a Simple Harmonic Oscillator",
         "equation": "m \\ddot{x} + kx = 0",
         "semantic_variables": {
             "m": {
                 "name": "Mass",
                 "type": "variable",
-                "unit": "kg",
-                "description": "The mass of the oscillating object, representing the inertia of the system."
+                "unit": "\\text{kg}",
+                "description": "Inertial mass of the oscillating body"
+            },
+            "\\ddot{x}": {
+                "name": "Acceleration",
+                "type": "variable",
+                "unit": "\\text{m}\\cdot\\text{s}^{-2}",
+                "description": "Second time derivative of the displacement"
             },
             "k": {
                 "name": "Spring Constant",
                 "type": "constant",
-                "unit": "N/m",
-                "description": "The stiffness of the restoring force, quantifying the force per unit displacement."
+                "unit": "\\text{N}\\cdot\\text{m}^{-1}",
+                "description": "Stiffness coefficient of the restoring force"
             },
             "x": {
                 "name": "Displacement",
                 "type": "variable",
-                "unit": "m",
-                "description": "The instantaneous displacement of the object from its equilibrium position as a function of time, $x(t)$."
-            },
-            "\\ddot{x}": {
-                "name": "Acceleration",
-                "type": "operator",
-                "unit": "m/s^2",
-                "description": "The second derivative of the displacement with respect to time, $\\mathrm{d}^2x/\\mathrm{d}t^2$, representing the instantaneous acceleration of the object."
+                "unit": "\\text{m}",
+                "description": "Displacement coordinate from the equilibrium position"
             }
         },
-        "interpretation": "This equation is a second-order linear homogeneous ordinary differential equation that models a simple harmonic oscillator. The term $m \\ddot{x}$ represents the inertial force according to Newton's second law, where $m$ is the mass and $\\ddot{x}$ is its acceleration. The term $kx$ represents the linear restoring force described by Hooke's Law, where $k$ is the spring constant and $x$ is the displacement from equilibrium. The equation states that the sum of these forces is zero, indicating an isolated, undamped system. The solution is sinusoidal motion $x(t) = A \\cos(\\omega t + \\phi)$, where the natural angular frequency of oscillation is determined by the system's properties as $\\omega = \\sqrt{k/m}$.",
-        "symmetry_origin": "The equation embodies time-translation symmetry, as its form is independent of the time origin, which leads to the conservation of energy via Noether's theorem. The total energy, a sum of kinetic energy $E_k = \\frac{1}{2} m \\dot{x}^2$ and potential energy $E_p = \\frac{1}{2} k x^2$, is a constant of motion. The periodic nature of the solution reflects a discrete time-translation symmetry for shifts by the period $T = 2\\pi/\\omega$.",
-        "limits_and_boundary": "1. In the limit of a massless spring ($k \\to 0$), the restoring force vanishes. The equation becomes $m \\ddot{x} = 0$, implying the mass moves with constant velocity (unaccelerated motion), and the oscillation frequency $\\omega = \\sqrt{k/m} \\to 0$.\n2. In the limit of a massless object ($m \\to 0$), the inertia vanishes. The frequency $\\omega = \\sqrt{k/m} \\to \\infty$, implying infinitely fast oscillations, which is unphysical for a classical object.\n3. If damping were introduced (e.g., a term $c\\dot{x}$), the system would no longer be a perfect oscillator, and the amplitude would decay over time.",
+        "interpretation": "The term $m \\ddot{x}$ represents the inertial force derived from Newton's second law, where $m$ is the mass and $\\ddot{x}$ is the acceleration. The term $kx$ represents the linear restoring force given by Hooke's Law, with $k$ as the spring stiffness and $x$ denoting the displacement from equilibrium. The homogeneous sum equals zero, signifying a closed, energy-conserving system oscillating at a natural frequency.",
+        "symmetry_origin": "Time-translation invariance via Noether's theorem leads directly to the conservation of total mechanical energy for this conservative potential.",
+        "limits_and_boundary": "In the limit where the mass $m \to 0$ or stiffness $k \to \\infty$, the characteristic frequency $\\omega = \\sqrt{k/m}$ diverges, resulting in instantaneous relaxation without oscillation.",
         "status": "platinum",
-        "conceptual_definition": "This equation describes simple harmonic motion, the idealized oscillatory motion of an object where the net restoring force is directly proportional to its displacement from an equilibrium position and acts in the opposite direction.",
-        "intuitive_summary": "A mass attached to a spring oscillates back and forth with a constant frequency, dictated by its mass and the spring's stiffness.",
+        "conceptual_definition": "The equation of motion equates the inertial force $m \\ddot{x}$ to the negative of the restoring force $-kx$, encapsulating the dynamic balance of an isolated harmonic system.",
+        "intuitive_summary": "When a system is displaced from its stable equilibrium, competing inertial and restoring tendencies establish a perpetual, sinusoidal exchange of kinetic and potential energy.",
         "subcomponents": [
-            "newtons-second-law-of-motion-91e94378",
-            "hookes-law-for-elastic-force-212bf522",
-            "angular-frequency-of-simple-harmonic-oscillator-0e024938",
-            "newtons-second-law-of-motion-97a86f06",
-            "elastic-potential-energy-of-a-spring-433023d0"
-        ]
+            "rest-energy-angular-frequency",
+            "angular-frequency-energy-relation"
+        ],
+        "description": "A second-order linear homogeneous differential equation modeling undamped mechanical oscillations under a linear restoring force.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "quantification-75f14355": {
-        "title": "Quantification (Entanglement Entropy)",
+        "title": "Quantification of Entanglement Entropy via Schmidt Eigenvalues",
         "equation": "S = -\\sum_{i} \\lambda_i \\ln \\lambda_i",
         "semantic_variables": {
             "S": {
                 "name": "Entanglement Entropy",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The measure of entanglement in a quantum system, quantifying the quantum correlations between a subsystem and its environment. It is typically expressed in units of nats (if using natural logarithm) or bits (if using base-2 logarithm)."
+                "unit": "dimensionless (nats)",
+                "description": "The measure of quantum entanglement for the subsystem."
             },
             "\\lambda_i": {
-                "name": "Eigenvalue of the Reduced Density Matrix",
+                "name": "Schmidt Eigenvalues",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The $i$-th eigenvalue of the reduced density matrix of a subsystem. These eigenvalues represent the probabilities of finding the subsystem in certain pure states when decomposed, and they must satisfy $\\sum_i \\lambda_i = 1$ and $0 \\le \\lambda_i \\le 1$."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "\\lambda": {
-                "name": "Wavelength / Linear Density",
-                "type": "variable",
-                "unit": "m or kg/m",
-                "description": "The distance between consecutive identical crests of a wave, or mass per unit length."
-            },
-            "\\ln": {
-                "name": "\\ln Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "description": "The eigenvalues of the reduced density matrix, representing probabilities summing to 1."
             }
         },
-        "interpretation": "The formula $S = -\\sum_{i} \\lambda_i \\ln \\lambda_i$ represents the entanglement entropy, denoted by $S$. The terms $\\lambda_i$ are the eigenvalues of the reduced density matrix of a subsystem. The density matrix $\\rho$ of a quantum state contains all information about the system. For a pure state of a composite system A+B, if we consider subsystem A, its state is described by the reduced density matrix $\\rho_A = \\text{Tr}_B(\\rho)$, where $\\text{Tr}_B$ denotes the partial trace over subsystem B. The eigenvalues $\\lambda_i$ are probabilities summing to 1, and they represent the probabilities of finding the subsystem in specific pure states that form a decomposition of the mixed state. The natural logarithm $\\ln$ is used because it connects probability distributions to information theory and thermodynamics. The negative sign ensures that the entropy is non-negative, as $\\lambda_i$ are between 0 and 1, making $\\ln \\lambda_i$ non-positive. A higher value of $S$ indicates a greater degree of entanglement between the subsystem and its environment.",
-        "symmetry_origin": "This formula originates from quantum information theory and statistical mechanics. It is derived from the definition of the von Neumann entropy for a density matrix $\\rho$, which is $S(\\rho) = -\\text{Tr}(\\rho \\ln \\rho)$. If $\\rho$ has eigenvalues $\\lambda_i$, then $\\rho \\ln \\rho$ has eigenvalues $\\lambda_i \\ln \\lambda_i$, leading to the sum form $S = -\\sum_{i} \\lambda_i \\ln \\lambda_i$. Its application to entanglement arises when $\\rho$ is a reduced density matrix of a subsystem of an entangled pure state.",
-        "limits_and_boundary": "In the limit where $\\lambda_i$ approaches 1 for a single $i$ and all other $\\lambda_j$ approach 0 (pure state for the subsystem), the entropy $S$ approaches 0. This signifies no entanglement. In the opposite limit, where all $\\lambda_i$ are equal (e.g., for a maximally entangled state, $\\lambda_i = 1/d$ where $d$ is the dimension of the subsystem), the entropy is maximized, $S = \\ln d$, indicating maximal entanglement.",
+        "interpretation": "The formula $S = -\\sum_{i} \\lambda_i \\ln \\lambda_i$ represents the entanglement entropy, denoted by $S$. The terms $\\lambda_i$ are the eigenvalues of the reduced density matrix of a subsystem. The density matrix $\rho$ of a quantum state contains all information about the system. For a pure state of a composite system $A+B$, if we consider subsystem $A$, its state is described by the reduced density matrix $\rho_A = \text{Tr}_B(\rho)$, where $\text{Tr}_B$ denotes the partial trace over subsystem $B$. The eigenvalues $\\lambda_i$ are probabilities summing to $1$, and they represent the probabilities of finding the subsystem in specific pure states that form a decomposition of the mixed state. The natural logarithm $\\ln$ is used because it connects probability distributions to information theory and thermodynamics. The negative sign ensures that the entropy is non-negative, as $\\lambda_i$ are between $0$ and $1$, making $\\ln \\lambda_i$ non-positive. A higher value of $S$ indicates a greater degree of entanglement between the subsystem and its environment.",
+        "symmetry_origin": "Originates from the invariance of the von Neumann entropy under global unitary transformations acting on the total Hilbert space $\\mathcal{H}_A \\otimes \\mathcal{H}_B$.",
+        "limits_and_boundary": "In the limit where the subsystem is in a pure state, there is only one non-zero eigenvalue $\\lambda_0 = 1$, yielding $S = 0$. For a maximally mixed subsystem of dimension $d$, $\\lambda_i = 1/d$ for all $i$, yielding the maximum entropy $S = \\ln d$.",
         "status": "platinum",
-        "conceptual_definition": "The formula provided, $S = -\\sum_{i} \\lambda_i \\ln \\lambda_i$, is a general form of the von Neumann entropy, which quantifies the entanglement entropy of a quantum system. In quantum mechanics, entanglement is a phenomenon where two or more particles become linked in such a way that they share the same fate, regardless of the distance separating them. When a quantum system is in a mixed state (a probabilistic combination of pure states), its entanglement can be quantified by calculating the entropy of its reduced density matrix. If a total system is in a pure state, and it is traced over a subsystem, the resulting subsystem state is generally mixed. The entanglement entropy is defined as the von Neumann entropy of this reduced density matrix. It measures the degree of quantum correlations or entanglement present in the subsystem relative to the rest of the system.",
-        "intuitive_summary": "Entanglement entropy quantifies the 'mixedness' or information scrambled away from a subsystem due to quantum correlations with its environment.",
+        "conceptual_definition": "Entanglement entropy $S$ is defined as the von Neumann entropy restricted to a subsystem $A$, expressed in terms of the eigenvalues $\\lambda_i$ of the subsystem's reduced density matrix $\rho_A$, representing the degree of quantum entanglement with its complement.",
+        "intuitive_summary": "It measures how much quantum information is hidden from an observer who only has access to a portion of a larger entangled system, reflecting the lack of complete knowledge about the subsystem's exact pure state.",
         "subcomponents": [
-            "schmidt-coefficient-squared-5614371f",
-            "quantum-electrodynamic-critical-magnetic-field-da135dbf",
-            "eigenvalues-of-the-density-matrix-ebcbe1b0",
-            "quantum-state-density-logarithm-term-44434544",
-            "equality-of-reduced-density-matrix-ranks-8c06c4ef",
-            "von-neumann-entropy-formula-a4118087",
-            "logarithm-of-reduced-density-matrix-eigenvalue-895cf7a1",
-            "eigenvalue-from-inverse-degeneracy-f8cd9b9a"
-        ]
+            "schmidt-decomposition-entanglement-ident-81116b23",
+            "probability-weighted-log-probability-term-afea45f3"
+        ],
+        "description": "The formula $S = -\\sum_{i} \\lambda_i \\ln \\lambda_i$ quantifies the entanglement entropy of a bipartite quantum subsystem by evaluating the Shannon-like entropy of the Schmidt coefficients or eigenvalues of its reduced density matrix.",
+        "parent_formula_id": "von-neumann-entanglement-entropy-0bad856c",
+        "derivation_type": "SPECIAL_CASE"
     },
     "non-linearity-ed66c7ba": {
-        "title": "Non-Linearity (Non-Abelian Algebra of Rotations)",
+        "title": "Non-Commutativity of 3D Rotations (Non-Abelian Algebra)",
         "equation": "\\mathbf{R}_x \\mathbf{R}_y \\neq \\mathbf{R}_y \\mathbf{R}_x",
         "semantic_variables": {
             "\\mathbf{R}_x": {
-                "name": "Rotation Matrix about x-axis",
-                "type": "variable",
+                "name": "Rotation Matrix about X-Axis",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "A matrix representing a rotation by a certain angle around the x-axis. The specific angle is implied by the context in which this matrix is used, but it is a parameter that defines the transformation."
+                "description": "Orthogonal matrix representing a rotation of a specific angle about the coordinate x-axis."
             },
             "\\mathbf{R}_y": {
-                "name": "Rotation Matrix about y-axis",
-                "type": "variable",
+                "name": "Rotation Matrix about Y-Axis",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "A matrix representing a rotation by a certain angle around the y-axis. Similar to $\\mathbf{R}$_x, the angle is context-dependent and defines the specific rotation."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
-            },
-            "\\neq": {
-                "name": "\\neq Parameter",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Physics variable or parameter."
+                "description": "Orthogonal matrix representing a rotation of a specific angle about the coordinate y-axis."
             }
         },
-        "interpretation": "In this formula, $math xmlns=\"http://www.w3.org/1998/Math/MathML\"msubmi \\mathbfpRp /mimi \\textxp /mi/msub$ represents a rotation matrix about the x-axis, and $math$ xmlns=\"http://www.w3.org/1998/Math/MathML\"msubmi $\\mathbfpRp$/mimi $\\textyp$/mi/msub$represents a rotation matrix about the y-axis. The multiplication of these matrices,$math xmlns=\"http://www.w3.org/1998/Math/MathML\"msubmi $\\mathbfpRp$/mimi $\\textxp$/mi/msubmsubmi $\\mathbfpRp$/mimi $\\textyp$/mi/msub$, denotes the successive application of these rotations. The inequality$math$xmlns=\"http://www.w3.org/1998/Math/MathML\"msubmi \\mathbfpRp /mimi \\textxp /mi/msubmsubmi \\mathbfpRp /mimi \\textyp /mi/msubmo$eq$/momsubmi \\mathbfpRp /mimi \\textyp /mi/msubmsubmi \\mathbfpRp /mimi \\textxp /mi/msub$ signifies that the order of applying these rotations matters. For instance, if you rotate a book 90 degrees around its top edge (x-axis) and then 90 degrees around its side edge (y-axis), the final position of the book will be different compared to rotating it 90 degrees around its side edge first and then 90 degrees around its top edge. This non-commutativity is a hallmark of non-Abelian groups, and the group of 3D rotations, SO(3), is a prime example.",
-        "symmetry_origin": "This property arises from the fundamental geometric structure of rotations in three-dimensional Euclidean space. It is not directly derived from a conservation law or coordinate invariance in the same way as, for example, Noether's theorem links symmetries to conserved quantities. Instead, it is an intrinsic property of the group of rotations, SO(3), which is a Lie group. The non-commutativity can be demonstrated by considering the effect of sequential rotations on specific points or vectors in space. For example, applying a rotation about the x-axis and then about the y-axis to a vector $math$ xmlns=\"http://www.w3.org/1998/Math/MathML\"mi $\\mathbfvp$/mi/math$yields a different resultant vector than applying the y-axis rotation first, followed by the x-axis rotation$.",
-        "limits_and_boundary": "As the angles of rotation approach zero, the rotation matrices approach the identity matrix. In this limit, the commutation relation approaches zero, meaning that for infinitesimally small rotations, the order of operations becomes negligible. Mathematically, for small angles $math$ xmlns=\"http://www.w3.org/1998/Math/MathML\"$\\Delta \\theta /math$, the rotation operator $math$ xmlns=\"http://www.w3.org/1998/Math/MathML\"$\\mathbfpRp /mi$ is approximately $math$ xmlns=\"http://www.w3.org/1998/Math/MathML\"$\\mathbfpIp + mi \\mathbfpJp \\Delta \\theta /math$, where $math$ xmlns=\"http://www.w3.org/1998/Math/MathML\"$\\mathbfpIp$ is the identity matrix and $math$ xmlns=\"http://www.w3.org/1998/Math/MathML\"$\\mathbfpJp$ is the generator of rotations. The commutator [$math xmlns=\"http://www.w3.org/1998/Math/MathML\"\\mathbfpJp_x,\\mathbfpJp_y$/math$] =$math xmlns=\"http://www.w3.org/1998/Math/MathML\"$\\mathbfpip \\mathbfpJp_z /math$ shows that the generators themselves do not commute, reflecting the non-Abelian nature. There are no infinite limits in the context of rotation matrices as they are typically bounded operators representing finite transformations.",
+        "interpretation": "In this relation, $\\mathbf{R}_x$ represents a finite rotation matrix about the x-axis, and $\\mathbf{R}_y$ represents a finite rotation matrix about the y-axis. The composite products $\\mathbf{R}_x \\mathbf{R}_y$ and $\\mathbf{R}_y \\mathbf{R}_x$ denote the successive execution of these distinct spatial transformations in reverse order. The inequality $\\mathbf{R}_x \\mathbf{R}_y \neq \\mathbf{R}_y \\mathbf{R}_x$ demonstrates the failure of commutativity, serving as a primary hallmark of non-Abelian symmetry groups.",
+        "symmetry_origin": "Invariance under the continuous transformation group $\text{SO}(3)$, where the non-trivial commutation relations of the Lie algebra generators dictate the curvature and topological properties of the rotation group manifold.",
+        "limits_and_boundary": "In the limit of infinitesimal rotation angles ($\theta \to 0$), the commutator approaches zero up to higher-order terms, restoring local commutativity at the level of the Lie algebra $\\mathfrak{so}(3)$ via $[\\mathcal{J}_i, \\mathcal{J}_j] = i \\epsilon_{ijk} \\mathcal{J}_k$.",
         "status": "platinum",
-        "conceptual_definition": "The formula $math$ xmlns=\"http://www.w3.org/1998/Math/MathML\"mrowmsubmi $\\mathbfpRp$}$/mimi \\textxp /mi/msubmsubmi \\mathbfpRp /mimi \\textyp /mi/msubmo$eq$/momsubmi \\mathbfpRp /mimi \\textyp /mi/msubmsubmi \\mathbfpRp /mimi \\textxp /mi/msub/mrow/math$ represents a fundamental property of rotations in three-dimensional space, specifically that the order in which rotations are performed matters. It illustrates that the group of rotations SO(3) is non-Abelian, meaning that the composition of rotation operations is not commutative. This non-commutativity arises from the inherent structure of rotational transformations, where sequential rotations around different axes do not yield the same final orientation as performing the same rotations in the reverse order. This mathematical characteristic is crucial in understanding angular momentum, quantum mechanics, and the kinematics of rigid bodies.",
-        "intuitive_summary": "Rotating an object first around the x-axis and then around the y-axis results in a different final orientation than rotating it first around the y-axis and then around the x-axis.",
+        "conceptual_definition": "The algebraic non-commutativity of rotation operators in three-dimensional Euclidean space, defined as $\\mathbf{R}_x \\mathbf{R}_y \neq \\mathbf{R}_y \\mathbf{R}_x$, which implies that the group structure of $\text{SO}(3)$ is non-Abelian.",
+        "intuitive_summary": "Performing two different rotations in opposing orders results in entirely different orientations in space, demonstrating why finite rotations cannot be treated as simple vectors.",
         "subcomponents": [
-            "partial-derivative-of-position-with-respect-to-generalized-coordinate-833ca246",
-            "division-by-a-generic-scalar-quantity-ea1e2217",
-            "angular-frequency-definition-60aa52f0",
-            "particle-mass-54ddaded",
-            "abstract-symbolic-placeholder-2a9e86ba",
-            "test-charge-in-electric-field-definition-a4fd1d86",
-            "permeability-of-free-space-constant-2db5274b",
-            "magnetic-field-normal-component-definition-84dc25cc",
-            "mass-of-the-i-th-particle-4dc77bc3",
-            "generic-mathematical-identifier-39b8b9bb"
-        ]
+            "non-abelian-covariant-derivative-definition-7094b483",
+            "non-abelian-field-strength-tensor",
+            "adjoint-representation-transformation-4c0162b8"
+        ],
+        "description": "Expresses the foundational non-Abelian property of finite three-dimensional rotations, where the successive composition of rotations depends intrinsically on the applied sequence.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "density-matrix-reduction-d48b216a": {
-        "title": "Density Matrix Reduction",
+        "title": "Density Matrix Reduction via Projective Measurement",
         "equation": "\\rho \\to \\sum_n \\hat{P}_n \\rho \\hat{P}_n",
         "semantic_variables": {
             "\\rho": {
                 "name": "Density Matrix",
-                "type": "variable",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The density matrix representing the quantum state of the system before measurement. It is a positive semi-definite Hermitian operator with unit trace."
+                "description": "Operator describing the statistical state of a quantum system."
             },
             "\\hat{P}_n": {
                 "name": "Projection Operator",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "A projection operator associated with the nth possible outcome of a quantum measurement. These operators form a complete and orthogonal set, meaning $\\sum_n \\hat{P}_n =$ and $\\hat{P}_m \\hat{P}_n = δ_{mn} \\hat{P}_n$, where is the identity operator and $\\u03B4_{mn}$ is the Kronecker delta."
+                "description": "Projector onto the subspace corresponding to the measurement outcome $n$."
             },
-            "\\sum_n \\hat{P}_n \\rho \\hat{P}_n": {
-                "name": "Reduced Density Matrix",
-                "type": "operator",
+            "n": {
+                "name": "Outcome Index",
+                "type": "variable",
                 "unit": "dimensionless",
-                "description": "The density matrix of the system after the measurement has been performed, reflecting the collapse of the quantum state into one of the possible outcomes. This is the result of the density matrix reduction."
+                "description": "Discrete index labeling the possible outcomes of the quantum measurement."
             }
         },
-        "interpretation": "In this formula, $\\rho$ represents the density matrix of a quantum system before the measurement. The density matrix is a mathematical tool used to describe the state of a quantum system, especially when it is in a mixed state (a probabilistic combination of pure states) or when we have incomplete information about its state. The terms $\\hat{P}_n$ are projection operators. For a given measurement with a set of possible outcomes, these operators form a complete, orthogonal set, meaning that $\\sum_n \\hat{P}_n =$ (the identity operator) and $\\hat{P}_m \\hat{P}_n = δ_{mn} \\hat{P}_n$, where $\\u03B4_{mn}$ is the Kronecker delta. Each $\\hat{P}_n$ corresponds to a specific measurement outcome. The operation $\\hat{P}_n \\rho \\hat{P}_n$ projects the initial density matrix $\\rho$ onto the subspace corresponding to the outcome $n$. The sum $\\sum_n \\hat{P}_n \\rho \\hat{P}_n$ represents the resulting density matrix $\\rho$' after the measurement. It$' s important to note that this sum, when considered as the state *after* a specific outcome$n$has occurred, is usually normalized by the probability of that outcome, which is given by the trace \\text {Tr}(\\hat{P}_n \\rho \\hat{P}_n)$. However, the formula as written, $\\rho \\to \\sum_n \\hat{P}_n \\rho \\hat{P}_n$, describes the evolution of the density matrix in a more general sense, encompassing all possible outcomes and their contributions to the post-measurement state before a specific outcome is identified, or it can be seen as a formal representation of the averaging over possible measurement outcomes.",
-        "symmetry_origin": "This formula arises from the postulates of quantum mechanics regarding measurements. When a measurement is performed on a quantum system, the state of the system collapses into one of the eigenstates of the observable being measured. The projection operators $\\hat{P}_n$ capture this collapse. The completeness and orthogonality of the projection operators are crucial for ensuring that the overall state space is covered and that the outcomes are distinct and unambiguous, reflecting the underlying Hilbert space structure.",
-        "limits_and_boundary": "If the system is initially in a pure state $|ψ\\rangle$, the density matrix is $\\rho = |ψ\\rangle\\langleψ|$. After reduction, the new state would correspond to the projection of $|ψ\\rangle$ onto the subspace of the measured outcome. If a particular outcome $n$ is selected, the post-measurement state is $\\rho' = \\frac{\\hat{P}_n \\rho \\hat{P}_n}{\\text{Tr}(\\hat{P}_n \\rho \\hat{P}_n)}$. If $\\rho$ is already a projection onto a specific subspace, and the measurement corresponds to that subspace, then $\\hat{P}_n \\rho \\hat{P}_n = \\rho$ for the corresponding $n$, and the state might not change if it's already in a definite state relative to that measurement. The formula describes the transformation of the density matrix as a whole, representing the system's state conditioned on the measurement process.",
+        "interpretation": "The symbol $\rho$ represents the initial density matrix of the quantum system. The arrow $\to$ denotes the dynamical update or channel map corresponding to measurement without record extraction. The projection operators $\\hat{P}_n$ satisfy completeness $\\sum_n \\hat{P}_n = \\hat{I}$ and orthogonality $\\hat{P}_m \\hat{P}_n = \\delta_{mn} \\hat{P}_n$, projecting the state into subspace $n$ with probability $\\mathrm{Tr}(\\hat{P}_n \rho \\hat{P}_n)$.",
+        "symmetry_origin": "Originates from the postulates of quantum mechanics concerning measurement theory, quantum operations, and completely positive trace-preserving (CPTP) maps.",
+        "limits_and_boundary": "In the limit where a single specific outcome $n$ is known, the reduction simplifies to the conditional update $\rho' = \frac{\\hat{P}_n \rho \\hat{P}_n}{\\mathrm{Tr}(\\hat{P}_n \rho \\hat{P}_n)}$. If $\rho$ is already diagonal in the basis of $\\hat{P}_n$, the operation leaves the density matrix invariant $\rho \to \rho$.",
         "status": "platinum",
-        "conceptual_definition": "The equation $\\rho \\to \\sum_n \\hat{P}_n \\rho \\hat{P}_n$ describes the process of density matrix reduction, also known as a quantum measurement or projection. In quantum mechanics, the state of a system can be described by a density matrix $\\rho$. When a measurement is performed on the system, the density matrix generally changes, reflecting the collapse of the quantum state into one of the possible outcomes of the measurement. This specific form of reduction is associated with a complete set of orthogonal projection operators $\\hat{P}_n$ that represent the possible outcomes of the measurement.",
-        "intuitive_summary": "Performing a quantum measurement projects the system's state onto one of the possible measurement outcomes, updating the density matrix accordingly.",
+        "conceptual_definition": "The map $\rho \to \\sum_n \\hat{P}_n \rho \\hat{P}_n$ transforms the pre-measurement density operator $\rho$ into the post-measurement mixed state by summing over all mutually orthogonal projection operators $\\hat{P}_n$ corresponding to possible measurement outcomes.",
+        "intuitive_summary": "When a quantum measurement is performed but the specific outcome is discarded or unknown, the system's state loses quantum coherence between different measurement outcomes, transforming into a classical probabilistic mixture.",
         "subcomponents": [
-            "quantum-projection-operator-for-eigenstate-n-06183318",
-            "probability-from-quantum-density-matrix-41f56bb8"
-        ]
+            "probability-from-quantum-density-matrix-41f56bb8",
+            "projective-measurement-outcome-state-5276266e"
+        ],
+        "description": "Describes the quantum state evolution of a density matrix under an unread or averaged projective measurement across all possible outcomes.",
+        "parent_formula_id": "ensemble-expectation-trace-02d3c609",
+        "derivation_type": "GENERALIZATION"
     },
     "weak-hypercharge-relation-gell-mann-51ed43a0": {
-        "title": "Weak Hypercharge Relation",
+        "title": "Weak Hypercharge Relation in Electroweak Theory",
         "equation": "Y_W = 2(Q - T_3)",
-        "interpretation": "As 'REG' is not a defined physical formula, the interpretation of its variables and their relationships is not possible. In physics, formulas are typically represented by symbols like E=mc^2 or F=ma, where each symbol has a precise meaning. Without knowing what 'REG' represents, its constituent parts and their physical significance remain unknown.",
-        "symmetry_origin": "The origin of the 'REG' formula is unknown, as it does not correspond to any established physical principle or symmetry in current physics.",
-        "limits_and_boundary": "The behavior of 'REG' at its limits (e.g., as certain implicit variables approach zero or infinity) cannot be determined without knowing the formula's definition.",
+        "interpretation": "The variable $Y_W$ represents the weak hypercharge of the particle field. The variable $Q$ is the electric charge operator in units of the elementary charge $e$. The variable $T_3$ denotes the third component of the weak isospin, which dictates how particles transform under $SU(2)_L$ weak interactions.",
+        "symmetry_origin": "Originates from the gauge symmetry group of the electroweak interaction $SU(2)_L \times U(1)_Y$, where electric charge is generated by a linear combination of the diagonal weak isospin generator and weak hypercharge.",
+        "limits_and_boundary": "Applies universally across all Standard Model fermions and gauge bosons. In the limit of unbroken $SU(2)_L \times U(1)_Y$ symmetry, particles are classified directly by their exact weak hypercharge and weak isospin eigenvalues.",
         "semantic_variables": {
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "E": {
-                "name": "Electric Field Strength",
+            "Y_W": {
+                "name": "Weak Hypercharge",
                 "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
+                "unit": "dimensionless",
+                "description": "The charge associated with the U(1)_Y electroweak gauge symmetry."
             },
-            "G": {
-                "name": "Gravitational Constant",
-                "type": "constant",
-                "unit": "m³⋅kg⁻¹⋅s⁻²",
-                "description": "The empirical physical constant involved in the calculation of gravitational effects in Newton's law of universal gravitation and Einstein's theory of general relativity."
+            "Q": {
+                "name": "Electric Charge",
+                "type": "operator",
+                "unit": "elementary charge e",
+                "description": "The electromagnetic charge operator for the particle."
+            },
+            "T_3": {
+                "name": "Weak Isospin Third Component",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "The diagonal generator of the SU(2)_L weak isospin group."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Weak Hypercharge Relation is not a standard, universally recognized formula in fundamental physics literature denoted by 'REG'. The symbol 'REG' does not correspond to a known fundamental equation or constant in the Standard Model of particle physics or general relativity. It is possible that 'REG' represents a placeholder, a typo, or a specific relation within a niche or theoretical framework not widely adopted. Without further context or clarification on what 'REG' signifies, a detailed physics explanation cannot be provided. If 'REG' is intended to represent a specific concept or equation, please provide its correct notation or definition.",
-        "intuitive_summary": "Due to the ambiguity of 'REG', no intuitive summary can be provided."
+        "conceptual_definition": "The weak hypercharge relation links the generator of the $U(1)_Y$ gauge symmetry, denoted as $Y_W$, to the electromagnetic charge operator $Q$ and the diagonal generator of the $SU(2)_L$ weak isospin group $T_3$ via $Y_W = 2(Q - T_3)$.",
+        "intuitive_summary": "This relation establishes how electric charge and weak isospin are unified under the electroweak force, showing that weak hypercharge acts as the bridging quantum number between the two.",
+        "description": "Defines the weak hypercharge $Y_W$ in terms of the electric charge $Q$ and the third component of the weak isospin $T_3$ within the Standard Model gauge group $SU(2)_L \times U(1)_Y$.",
+        "parent_formula_id": "gell-mannnishijima-formula-a32c97cc",
+        "derivation_type": "GENERALIZATION",
+        "subcomponents": [
+            "electric-charge-formula",
+            "gell-mann-nishijima-quark-charge-92fd5756",
+            "gell-mannnishijima-formula-a32c97cc"
+        ]
     },
     "static-metric-potential-relation-99de0c40": {
         "title": "Static Metric Potential Relation",
@@ -1096,147 +853,113 @@
     "analytical-mechanics-stationary-action-3068fb9c": {
         "title": "Hamilton's Principle of Stationary Action (Analytical)",
         "equation": "\\delta S = \\delta \\int_{t_1}^{t_2} L(q_i, \\dot{q}_i, t) \\, \\mathrm{d}t = 0",
-        "interpretation": "The core of Hamilton's principle is the action integral, $S = \\int_{t_1}^{t_2} L(q_i, \\dot{q}_i, t) \\, \\mathrm{d}t$. Here, $L$ is the Lagrangian of the system, a function of the generalized coordinates $q_i$, their time derivatives (generalized velocities) $\\dot{q}_i$, and time $t$. The principle asserts that the true physical path taken by the system from a configuration at time $t_1$ to a configuration at time $t_2$ is one for which the first-order variation of the action, $\\delta S$, is zero. Applying the calculus of variations to the condition $\\delta S = 0$ with fixed endpoints $\\delta q_i(t_1) = \\delta q_i(t_2) = 0$ directly yields the Euler-Lagrange equations of motion for the system, $\\frac{\\mathrm{d}}{\\mathrm{d}t} \\left( \\frac{\\partial L}{\\partial \\dot{q}_i} \\right) - \\frac{\\partial L}{\\partial q_i} = 0$.",
-        "symmetry_origin": "Through Noether's theorem, Hamilton's principle provides a profound connection between continuous symmetries of the Lagrangian and conservation laws. If the Lagrangian is invariant under a continuous transformation (a symmetry), then there exists a corresponding conserved quantity. For example, invariance under time translation implies conservation of energy; invariance under spatial translation implies conservation of linear momentum; and invariance under rotation implies conservation of angular momentum.",
-        "limits_and_boundary": "1. Classical Limit (\\hbar \\to 0): The principle of stationary action is the classical limit of the quantum mechanical path integral formulation. In quantum mechanics, a particle explores all possible paths, but as \\hbar \\to 0, destructive interference cancels out all paths except those in the immediate vicinity of the path of stationary action.\n2. Non-Relativistic Limit (v \\ll c): The standard Lagrangian $L = T - V$ is valid for speeds much less than the speed of light. For relativistic speeds, the Lagrangian must be modified to be Lorentz invariant, e.g., $L = -m_0 c^2 \\sqrt{1 - v^2/c^2} - V(q)$.\n3. Boundary Conditions: The principle is typically applied with the requirement that the variations of the generalized coordinates vanish at the initial and final times, i.e., $\\delta q_i(t_1) = 0$ and $\\delta q_i(t_2) = 0$. The system's configuration is fixed at the start and end of the path.",
+        "interpretation": "The action $S = \\int_{t_1}^{t_2} L(q_i, \\dot{q}_i, t) \\, \\mathrm{d}t$ is a functional of the generalized coordinates $q_i$, their time derivatives $\\dot{q}_i$, and time $t$. The Lagrangian $L$ represents the difference between kinetic and potential energies. The variation $\\delta S$ measures the change in action resulting from a virtual displacement $\\delta q_i(t)$ of the trajectory. Setting $\\delta S = 0$ with fixed boundary conditions $\\delta q_i(t_1) = \\delta q_i(t_2) = 0$ yields the Euler-Lagrange equations of motion.",
+        "symmetry_origin": "Originates from time-translation and space-translation symmetries via Noether's theorem, as well as general coordinate invariance under configuration space diffeomorphisms.",
+        "limits_and_boundary": "Applies to classical mechanics where the action is much greater than Planck's constant ($\\hbar$). In the limit $\\hbar \to 0$, quantum mechanical path integrals concentrate around the stationary paths dictated by this principle.",
         "semantic_variables": {
-            "\\delta": {
-                "name": "Variational Operator",
+            "\\delta S": {
+                "name": "Variation of the Action",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "Represents a small, first-order variation of a functional or path."
+                "unit": "J \\cdot s",
+                "description": "The first-order functional derivative or variation of the action integral"
             },
             "S": {
                 "name": "Action",
                 "type": "variable",
-                "unit": "Joule-second (J·s)",
-                "description": "A scalar functional representing the time integral of the Lagrangian; its stationarity determines the system's path."
+                "unit": "J \\cdot s",
+                "description": "The action functional defined as the time integral of the Lagrangian"
+            },
+            "t_1": {
+                "name": "Initial Time",
+                "type": "variable",
+                "unit": "s",
+                "description": "The starting time of the trajectory"
+            },
+            "t_2": {
+                "name": "Final Time",
+                "type": "variable",
+                "unit": "s",
+                "description": "The ending time of the trajectory"
             },
             "L": {
                 "name": "Lagrangian",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "A scalar function of the system's state, defined as kinetic energy minus potential energy ($L = T - V$)."
+                "unit": "J",
+                "description": "The Lagrangian function of the system, typically kinetic minus potential energy"
             },
             "q_i": {
                 "name": "Generalized Coordinates",
                 "type": "variable",
-                "unit": "Varies (e.g., m, rad)",
-                "description": "A set of independent parameters that uniquely define the configuration of the system."
+                "unit": "various",
+                "description": "The set of independent coordinates describing the configuration of the system"
             },
             "\\dot{q}_i": {
                 "name": "Generalized Velocities",
                 "type": "variable",
-                "unit": "Varies (e.g., m/s, rad/s)",
-                "description": "The time derivatives of the generalized coordinates, $\\mathrm{d}q_i/\\mathrm{d}t$."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "second (s)",
-                "description": "The independent variable representing the evolution of the system."
-            },
-            "t_1": {
-                "name": "Initial Time",
-                "type": "parameter",
-                "unit": "second (s)",
-                "description": "The start time of the system's evolution path."
-            },
-            "t_2": {
-                "name": "Final Time",
-                "type": "parameter",
-                "unit": "second (s)",
-                "description": "The end time of the system's evolution path."
-            },
-            "\\mathrm{d}t": {
-                "name": "Differential of Time",
-                "type": "operator",
-                "unit": "second (s)",
-                "description": "An infinitesimal increment of time used in integration."
-            }
-        },
-        "status": "platinum",
-        "conceptual_definition": "Hamilton's principle states that the trajectory of a physical system between two specified states at two specified times is the one for which the action is stationary. The action is the time integral of the Lagrangian, which is defined as the kinetic energy minus the potential energy.",
-        "intuitive_summary": "A physical system will evolve between two points along a path that makes the total 'effort' (action) an extremum, typically a minimum.",
-        "subcomponents": [
-            "final-time-endpoint-76a9c0f8",
-            "initial-time-parameter-69ac4931",
-            "principle-of-stationary-entropy-variation-b286d854",
-            "second-order-entropy-variation-ab01b859",
-            "definition-of-time-interval-dbfa4c25",
-            "action-integral-definition-b9df0aaf"
-        ]
-    },
-    "stationary-states-identity-1-7c522ea0-107bbb02": {
-        "title": "Stationary State Time-Evolution Relation",
-        "equation": "\\Psi(x,t) = \\psi_n(x) e^{-\\frac{i E_n t}{\\hbar}}",
-        "interpretation": "$\\Psi(x,t)$ is the time-dependent wavefunction, $\\psi_n(x)$ is the stationary spatial eigenfunction, $E_n$ is the energy eigenvalue of the state, and $\\hbar$ is the reduced Planck constant.",
-        "symmetry_origin": "Time translation invariance of the Hamiltonian.",
-        "limits_and_boundary": "As $t \\to 0$, the wavefunction simplifies to its spatial part $\\psi_n(x)$.",
-        "semantic_variables": {
-            "\\Psi(x,t)": {
-                "name": "Time-Dependent Wavefunction",
-                "type": "variable",
-                "unit": "1/m^(1/2)",
-                "description": "The complete time-dependent wavefunction of the stationary state."
-            },
-            "\\psi_n(x)": {
-                "name": "Spatial Wavefunction",
-                "type": "variable",
-                "unit": "1/m^(1/2)",
-                "description": "The energy eigenfunction of the n-th quantum state."
-            },
-            "E_n": {
-                "name": "Energy Eigenvalue",
-                "type": "variable",
-                "unit": "J",
-                "description": "The energy of the n-th stationary state."
+                "unit": "various / s",
+                "description": "The time derivatives of the generalized coordinates"
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The elapsed coordinate time."
-            },
-            "x": {
-                "name": "Position Coordinate",
+                "description": "Independent time variable"
+            }
+        },
+        "status": "platinum",
+        "conceptual_definition": "The principle of stationary action is formulated through the calculus of variations, asserting that the first-order variation of the action functional $S$ vanishes, $\\delta S = 0$, under infinitesimal path variations that vanish at the fixed temporal boundaries $t_1$ and $t_2$.",
+        "intuitive_summary": "Nature optimizes its path through configuration space by choosing trajectories where small perturbations to the path yield no change in total action to first order.",
+        "subcomponents": [
+            "action-integral-functional-09f64cc6",
+            "operator-transfer-2d8d6a65",
+            "hamiltons-principle-b2058d09"
+        ],
+        "description": "Hamilton's principle states that the actual path taken by a mechanical system between two specified states at times $t_1$ and $t_2$ is one for which the action functional is stationary.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
+    },
+    "stationary-states-identity-1-7c522ea0-107bbb02": {
+        "title": "Stationary State Time-Evolution Relation",
+        "equation": "\\Psi(x,t) = \\psi_n(x) e^{-\\frac{i E_n t}{\\hbar}}",
+        "interpretation": "The term $\\Psi(x,t)$ represents the full time-dependent wavefunction in space and time, $\\psi_n(x)$ is the time-independent spatial eigenfunction corresponding to the $n$-th energy level, $E_n$ is the discrete energy eigenvalue of the stationary state, and $\\hbar$ is the reduced Planck constant serving as the fundamental quantum of action.",
+        "symmetry_origin": "Originates from time-translation symmetry in quantum mechanics via Stone's theorem, where the Hamiltonian acts as the generator of time translations.",
+        "limits_and_boundary": "As $\\hbar \to 0$, the oscillation frequency diverges, reflecting the classical limit where quantum phase relations become unobservable rapidly varying quantities. As $t \to 0$, the equation reduces to the pure spatial eigenfunction $\\psi_n(x)$.",
+        "semantic_variables": {
+            "\\Psi": {
+                "name": "Time-Dependent Wavefunction",
                 "type": "variable",
-                "unit": "m",
-                "description": "The spatial position coordinate."
+                "unit": "\\text{m}^{-1/2}",
+                "description": "The complete quantum state amplitude as a function of position and time"
+            },
+            "\\psi_n": {
+                "name": "Spatial Eigenfunction",
+                "type": "variable",
+                "unit": "\\text{m}^{-1/2}",
+                "description": "The time-independent stationary state wavefunction for the $n$-th energy level"
+            },
+            "E_n": {
+                "name": "Energy Eigenvalue",
+                "type": "constant",
+                "unit": "\\text{J}",
+                "description": "The definite energy of the $n$-th stationary state"
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "J s",
-                "description": "Dirac's constant."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
+                "unit": "\\text{J}\\cdot\\text{s}",
+                "description": "The fundamental quantum of angular momentum and action divided by $2\\pi$"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "In quantum mechanics, a stationary state is an eigenvector of the time-independent Schrödinger equation. The corresponding time-dependent wavefunction $\\Psi(x,t)$ is obtained by multiplying the spatial eigenfunction $\\psi_n(x)$ by a phase factor that evolves periodically in time with frequency $\\omega = E_n / \\hbar$. Although the wavefunction itself is time-dependent, all physical observables (such as the probability density $|\\Psi(x,t)|^2 = |\\psi_n(x)|^2$) remain completely stationary and constant in time.",
-        "intuitive_summary": "A stationary quantum state oscillates in time with a constant phase factor, meaning its spatial probability distribution does not change.",
+        "conceptual_definition": "The time evolution of a quantum state $\\Psi(x,t)$ when the system resides in a definite energy eigenstate $\\psi_n(x)$ with energy eigenvalue $E_n$, governed by the time-independent Hamiltonian.",
+        "intuitive_summary": "While the absolute phase of a stationary state oscillates at a frequency determined by its energy, observable probability densities and expectation values remain completely invariant in time.",
         "subcomponents": [
-            "energy-eigenvalue-for-discrete-states-f6820797",
-            "quantum-wave-function-in-position-space-0384894a",
-            "stationary-state-probability-density-equality-6fc40791"
-        ]
+            "energy-steps-b964e4ed",
+            "time-dependent-wave-function-for-stationary-states-64f0bb4d",
+            "standing-state-1cc5b940"
+        ],
+        "description": "Defines the exact time-dependence of a quantum-mechanical stationary state by acquiring a global phase factor proportional to its energy eigenvalue.",
+        "parent_formula_id": "state-vector-identity-1-eb62c446-39c0e53b",
+        "derivation_type": "SPECIAL_CASE"
     },
     "coupling-duality-identity-1-8171f2f9-1b3f512e": {
         "title": "S-Duality: Strong-Weak Coupling Inversion in String Theory",
@@ -1359,199 +1082,251 @@
         "derivation_type": "GENERALIZATION"
     },
     "scattering-wave-function": {
-        "title": "Scattering Wave Function",
+        "title": "Asymptotic Scattering Wave Function",
         "equation": "\\psi(\\mathbf{r}) \\approx e^{i\\mathbf{k}\\cdot\\mathbf{r}} + f(\\theta,\\phi)\\frac{e^{ikr}}{r}",
-        "conceptual_definition": "The scattering wave function describes the behavior of a quantum mechanical particle after it has interacted with a scattering center (a potential). It represents the superposition of an incoming plane wave and an outgoing spherical wave, which characterizes the scattered particle.",
-        "intuitive_summary": "The wave function after scattering is the sum of the original incoming wave and a new wave spreading outwards from the scattering point.",
-        "interpretation": "The scattering wave function, denoted by $\\psi(\\mathbf{r})$, is expressed as a sum of two components. The first term, $e^{i\\mathbf{k}\\cdot\\mathbf{r}}$, represents the incident wave. This is a plane wave propagating in the direction of the wave vector $\\mathbf{k}$, characterized by its wave number $k = | \\mathbf{k} |$. This term describes the particle approaching the scattering potential before interaction. The second term, $f(\\theta,\\phi)\\frac{e^{ikr}}{r}$, describes the scattered wave. $f(\\theta,\\phi)$ is the scattering amplitude, a complex-valued function that depends on the scattering angles $\\theta$ and $\\phi$ (in spherical coordinates). It quantifies the probability amplitude of scattering in a particular direction. The factor $e^{ikr}/r$ represents an outgoing spherical wave originating from the scattering center, with $r$ being the distance from the scattering center. The $1/r$ dependence ensures that the probability current is conserved.",
-        "symmetry_origin": "This formula is derived from solving the time-independent Schrödinger equation in the presence of a localized potential, typically in the asymptotic region far from the scattering center. The spherical symmetry of the outgoing wave is a consequence of the source of the scattered wave being localized at the origin, and the wave nature of the particle implies radial propagation.",
-        "limits_and_boundary": "As the distance from the scattering center $r \\to \\infty$, the first term $e^{i\\mathbf{k}\\cdot\\mathbf{r}}$, representing the incident plane wave, remains significant and can be thought of as a constant background or a wave that passes by the scattering center without interacting. The second term, $f(\\theta,\\phi)\\frac{e^{ikr}}{r}$, represents the scattered wave, which decays as $1/r$. This decay is crucial for probability conservation, as the flux of scattered particles decreases with distance from the source. In the limit where there is no scattering (i.e., the potential is zero), the scattering amplitude $f(\\theta,\\phi) = 0$, and the wave function reduces to just the incident plane wave $\\psi(\\mathbf{r}) = e^{i\\mathbf{k}\\cdot\\mathbf{r}}$.",
+        "conceptual_definition": "The scattering wave function $\\psi(\\mathbf{r})$ is approximated far from the scattering center as $\\psi(\\mathbf{r}) \\approx e^{i\\mathbf{k}\\cdot\\mathbf{r}} + f(\theta,\\phi)\frac{e^{ikr}}{r}$, representing the coherent sum of an incoming plane wave and a spherically scattered wave.",
+        "intuitive_summary": "When a particle or wave encounters a localized potential, it continues somewhat in its original direction (incident plane wave) while simultaneously radiating energy or probability in all directions (outgoing spherical wave), whose angular distribution is determined by the scattering amplitude.",
+        "interpretation": "The total scattering wave function $\\psi(\\mathbf{r})$ is composed of two primary terms. The first term, $e^{i\\mathbf{k}\\cdot\\mathbf{r}}$, represents the unperturbed incident plane wave governed by the wave vector $\\mathbf{k}$. The second term, $f(\theta,\\phi)\frac{e^{ikr}}{r}$, describes the outgoing scattered wave where $f(\theta,\\phi)$ is the complex scattering amplitude depending on the polar angle $\theta$ and azimuthal angle $\\phi$, and $r$ is the radial distance from the interaction region.",
+        "symmetry_origin": "Spatial translation and rotational invariance asymptotically far from a localized scattering potential, leading to conservation of probability current.",
+        "limits_and_boundary": "In the limit of large distance from the scatterer ($r \to \\infty$), the asymptotic form becomes exact for short-range potentials. In the limit of vanishing potential, the scattering amplitude $f(\theta,\\phi) \to 0$, reducing the wave function to a pure plane wave $e^{i\\mathbf{k}\\cdot\\mathbf{r}}.",
         "status": "platinum",
         "semantic_variables": {
             "\\psi(\\mathbf{r})": {
                 "name": "Scattering Wave Function",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The total wave function of the particle after interacting with a scattering potential, including both the incident and scattered waves. It is a complex-valued function of position $\\mathbf{r}$."
+                "unit": "m^{-3/2}",
+                "description": "Total quantum mechanical wave function in position space at position $\\mathbf{r}$."
+            },
+            "\\mathbf{r}": {
+                "name": "Position Vector",
+                "type": "variable",
+                "unit": "m",
+                "description": "Spatial coordinate vector relative to the scattering center."
             },
             "\\mathbf{k}": {
                 "name": "Wave Vector",
                 "type": "variable",
-                "unit": "1/m",
-                "description": "A vector representing the direction and magnitude of the incident plane wave's propagation. Its magnitude, $k$, is the wave number, related to the particle's momentum $p = \\hbar k$."
-            },
-            "r": {
-                "name": "Radial Distance",
-                "type": "variable",
-                "unit": "m",
-                "description": "The distance from the scattering center to the point where the wave function is being evaluated."
+                "unit": "m^{-1}",
+                "description": "Wave vector of the incident particle, defining its momentum and direction of propagation."
             },
             "f(\\theta,\\phi)": {
                 "name": "Scattering Amplitude",
                 "type": "variable",
                 "unit": "m",
-                "description": "A complex-valued function describing the strength and angular distribution of the scattered wave. Its squared magnitude, $|f(\\theta,\\phi)|^2$, is proportional to the differential scattering cross-section."
+                "description": "Complex-valued function determining the probability amplitude of scattering into the solid angle defined by $\theta$ and $\\phi$."
+            },
+            "r": {
+                "name": "Radial Distance",
+                "type": "variable",
+                "unit": "m",
+                "description": "Magnitude of the position vector $\\mathbf{r}$, representing the distance from the scattering center."
+            },
+            "k": {
+                "name": "Wavenumber",
+                "type": "variable",
+                "unit": "m^{-1}",
+                "description": "Magnitude of the wave vector $\\mathbf{k}$, given by $k = |\\mathbf{k}|$."
             },
             "\\theta": {
-                "name": "Polar Scattering Angle",
+                "name": "Polar Angle",
                 "type": "variable",
                 "unit": "rad",
-                "description": "The angle in spherical coordinates defining the scattering direction relative to the incident direction. Often considered the angle between $\\mathbf{k}$ and $\\mathbf{r}$."
+                "description": "Zenith angle in spherical coordinates relative to the incident beam axis."
             },
             "\\phi": {
-                "name": "Azimuthal Scattering Angle",
+                "name": "Azimuthal Angle",
                 "type": "variable",
                 "unit": "rad",
-                "description": "The azimuthal angle in spherical coordinates defining the scattering direction, typically the angle of rotation around the polar axis."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The imaginary unit, defined as $i^2 = -1$, essential for representing waves in quantum mechanics."
+                "description": "Azimuthal angle in spherical coordinates."
             }
         },
         "subcomponents": [
-            "inverse-distance-potential-term-30583754",
-            "position-space-wave-function-1d9cd311",
-            "bloch-wave-phase-factor-fec21ae9",
-            "wave-number-as-magnitude-of-wave-vector-e79ccfd9",
-            "spatial-component-of-a-plane-wave-d4be088c"
-        ]
+            "spatial-component-of-a-plane-wave-d4be088c",
+            "probability-current-density-c8663458"
+        ],
+        "description": "The asymptotic form of the stationary scattering wave function expressed as a superposition of an incident plane wave and an outgoing spherical wave modulated by the scattering amplitude.",
+        "parent_formula_id": "offer-wave-identity-1-6186b4a2-223be70d",
+        "derivation_type": "APPROXIMATION"
     },
     "scalar-field-density-vanishes": {
-        "title": "Condition for vanishing scalar field density",
+        "title": "Condition for Vanishing Scalar Field Density",
         "equation": "n_s \\to 0",
-        "conceptual_definition": "The condition for vanishing scalar field density, denoted as $n_s \\to 0$, signifies a state in a physical system where the concentration or number density of scalar field quanta becomes negligible. In quantum field theory, scalar fields are fundamental entities that permeate spacetime, and their excitations are often interpreted as particles (bosons) with zero spin. The scalar field density, $n_s$, is a measure of how densely these excitations are packed within a given volume. The condition $n_s \\to 0$ implies a vacuum-like state or a regime where the scalar field's influence due to its particle content is minimal. This can occur in various physical scenarios, such as the very early universe during inflation, the ground state of a system, or in specific effective field theories where certain scalar degrees of freedom are effectively 'frozen out' or suppressed.",
-        "intuitive_summary": "The scalar field density becoming zero means there are practically no scalar particles present in the system.",
-        "interpretation": "The formula $n_s \\to 0$ describes the limiting behavior of the scalar field density, $n_s$. The symbol $n_s$ represents the number density of scalar field excitations, which can be thought of as the number of scalar particles per unit volume. Its SI unit is typically $m^{-3}$ (inverse cubic meters). The arrow \\to signifies 'approaches', and 0 indicates the value of zero. Therefore, the expression $n_s \\to 0$ means that the scalar field density is approaching zero. This condition is not typically an equation that is solved for variables, but rather a statement about a state or limit within a larger physical model. For instance, in cosmological models, the slow-roll conditions for inflation often lead to a vanishing or suppressed scalar field density during certain epochs, allowing for specific dynamics like exponential expansion. In condensed matter physics, certain collective excitations might have a density that tends to zero under specific conditions, indicating a phase transition or a decoupling of that mode.",
-        "symmetry_origin": "The concept of scalar fields arises from the fundamental symmetries of spacetime and particle physics. In quantum field theory, scalar fields are often the simplest type of field, transforming trivially under Lorentz transformations (they are Lorentz scalars). The Lagrangian describing a scalar field is generally invariant under spacetime translations and rotations, leading to conservation of energy-momentum and angular momentum via Noether's theorem. The density $n_s$ itself can be derived from the scalar field's field strength or wavefunction, and its behavior is governed by the dynamics dictated by the scalar field's potential and kinetic terms, which are themselves constructed to respect the underlying symmetries of the theory.",
-        "limits_and_boundary": "The limit $n_s \\to 0$ implies that the system is approaching a state where there are virtually no scalar particles. In the context of a scalar field theory, this can correspond to the vacuum state, where the field is at the minimum of its potential and there are no excitations. If $n_s$ is already zero, it means the scalar field is in its ground state and there are no quanta of the field present. As $n_s$ approaches zero from a positive value, it indicates a depletion of scalar particles, which could happen, for example, if the field is decaying or if the conditions for its existence are no longer met. Conversely, if $n_s$ were to approach infinity (which is typically unphysical in many contexts unless it represents a singularity or a phase transition to a dense state), it would imply an extremely high concentration of scalar particles.",
+        "conceptual_definition": "The condition $n_s \to 0$ defines the physical regime in which the density of scalar particles or excitations $n_s$ vanishes in a given volume element.",
+        "intuitive_summary": "Indicates the depletion or absence of scalar field quanta, often corresponding to vacuum states or the extreme suppression of particle production.",
+        "interpretation": "The formula $n_s \to 0$ describes the limiting behavior of the scalar field density, $n_s$. The symbol $n_s$ represents the number density of scalar field excitations, which can be thought of as the number of scalar particles per unit volume, with SI unit $\\mathrm{m}^{-3}$. The arrow $\to$ signifies 'approaches', and $0$ indicates the value of zero.",
+        "symmetry_origin": "Emerges in vacuum states or configurations where particle-number changing operators suppress excitation number, preserving a trivial particle vacuum under specific field symmetries.",
+        "limits_and_boundary": "Corresponds to the exact vacuum limit where excitation density vanishes completely, such as $n_s \to 0$ at zero temperature ($T \to 0$) or in asymptotic cosmological epochs.",
         "status": "platinum",
         "semantic_variables": {
             "n_s": {
-                "name": "Scalar Field Density",
+                "name": "Scalar Field Number Density",
                 "type": "variable",
                 "unit": "m^{-3}",
-                "description": "The number density of scalar field excitations (quanta) per unit volume. It quantifies how 'populated' the scalar field is with its associated particles."
+                "description": "Number of scalar field excitations per unit volume"
             }
         },
         "subcomponents": [
-            "superconducting-electron-number-density-3a060de6",
-            "inverse-cube-of-particle-mass-factor-c47aa15b"
-        ]
+            "scalar-field-identity-1-8b807729-4c0dbd72",
+            "energy-density-scalar-field"
+        ],
+        "description": "Represents the asymptotic limiting condition where the number density of scalar field excitations approaches zero.",
+        "parent_formula_id": "scalar-field-density-covariant-90f4e4e7",
+        "derivation_type": "LIMITING_CASE"
     },
     "quantum-state-normalization-condition-2cd8c1e9": {
         "title": "Quantum State Normalization Condition",
-        "description": "This equation asserts that the total probability of finding a quantum system in any possible state is unity, a fundamental requirement for probabilistic interpretation.",
-        "conceptual_definition": "In quantum mechanics, the state of a system is described by a state vector |$\\Psi \\rangle$ or its corresponding wavefunction $\\Psi$. The inner product $\\langle \\Psi$|$\\Psi \\rangle$ represents the total probability density integrated over all possible configurations or space, which must equal 1 for any physically realizable quantum state. This condition ensures that the particle described by the wavefunction exists somewhere within the defined system.",
-        "interpretation": "This equation is the fundamental normalization condition for a quantum state. It ensures that when all possible outcomes of a measurement are considered, the sum or integral of their probabilities is exactly 100%. This is crucial for the consistent probabilistic interpretation of quantum mechanics, as probabilities must always sum to unity. It reflects the physical reality that a quantum system, such as a particle, must exist in some state at any given time.",
-        "limits_and_boundary": "This condition is universally applicable to all physically realizable quantum states, whether pure or mixed, in any number of dimensions. It is a foundational requirement for the probabilistic framework of quantum mechanics to remain consistent and physically meaningful.",
-        "symmetry_origin": "While not a direct consequence of a Noether's theorem-type symmetry, the normalization condition is intrinsically linked to the conservation of probability in quantum mechanics. It ensures that the total probability of finding a particle remains constant over time, reflecting a form of probability conservation.",
+        "description": "This equation asserts that the total probability of finding a quantum system in any possible state is unity, serving as a fundamental requirement for the probabilistic interpretation of quantum mechanics.",
+        "conceptual_definition": "The normalization condition requires that the inner product of a state vector $|\\Psi\rangle$ with itself, given by $\\langle\\Psi|\\Psi\rangle = 1$, equals one. This ensures total probability conservation across all possible measurement outcomes in the Hilbert space.",
+        "interpretation": "The state vector $|\\Psi\rangle$ represents the complete quantum state of the system, and its dual $\\langle\\Psi|$ represents its conjugate transpose. The inner product $\\langle\\Psi|\\Psi\rangle$ calculates the squared norm of the state in Hilbert space. For the probabilistic framework of quantum mechanics to be valid, this total probability sum must be time-independent and identically equal to $1$.",
+        "limits_and_boundary": "In the limit of an unnormalizable state (such as a plane wave in infinite space), the norm diverges, requiring box normalization or Dirac delta normalization. As $\\hbar \to 0$, quantum states transition to well-defined classical trajectories where probability densities approach Dirac delta distributions.",
+        "symmetry_origin": "Originates from the conservation of probability current and the unitarity of the time-evolution operator governed by the Schrödinger equation, ensuring probability measure is preserved under unitary transformations in Hilbert space.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
         "equation_family": "quantum-mechanics-fundamentals",
         "semantic_variables": {
-            "Psi": {
-                "name": "Psi",
+            "\\Psi": {
+                "name": "Quantum State Vector",
+                "type": "variable",
+                "unit": "dimensionless (unit norm in Hilbert space)",
+                "description": "State vector representing the quantum system in Hilbert space."
+            },
+            "\\langle\\Psi|": {
+                "name": "Bra Vector",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Conjugate transpose (adjoint) of the quantum state vector."
+            },
+            "|\\Psi\\rangle": {
+                "name": "Ket Vector",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The quantum state vector |\\Psi\\rangle or wavefunction \\Psi, representing the complete description of a quantum system. It is a complex-valued function or vector in Hilbert space, whose squared magnitude gives probability density."
+                "description": "Column vector representation of the quantum state."
             }
         },
         "equation": "\\langle\\Psi|\\Psi\\rangle = 1",
         "status": "published",
         "parent_formula_id": "schmidt-bases-7748d747",
-        "subcomponents": [],
+        "subcomponents": [
+            "convergence-link-7d03ace6",
+            "norm-squared-of-a-quantum-state-63013ded"
+        ],
         "id": "quantum-state-normalization-condition-2cd8c1e9",
-        "intuitive_summary": ""
+        "intuitive_summary": "If a particle exists, it has to be somewhere. This equation simply states that when you add up the probabilities of all possible locations or states, the total must equal $100\\%$ ($1$)."
     },
     "relative-velocity-of-i-th-particle-124e8be5": {
-        "title": "Relative Velocity of i-th Particle",
-        "description": "This vector represents the velocity of the i-th particle in a system, as observed from the system's center of mass frame. It is a crucial component in decomposing the total kinetic energy of a multi-particle system.",
-        "conceptual_definition": "In classical mechanics, for a system of particles, the velocity of an individual particle can be expressed as the sum of the center of mass velocity and its velocity relative to the center of mass. $\\vec{v}'_i specifically denotes this relative velocity, which is the velocity of the i-th particle as measured by an observer located at and moving with the center of mass of the system. It quantifies the motion of the particle within the system itself, independent of the system's overall translational motion$.",
-        "interpretation": "The term $\\vec{v}'_i captures the internal motion of the i-th particle within a system. When squared and summed over all particles (weighted by mass), it contributes to the 'relative kinetic energy' (K_{relative}), which is the kinetic energy due to the particles' motion with respect to their common center of mass. This component of velocity is essential for understanding phenomena like rotations, vibrations, and internal dynamics, as it isolates the motion that is intrinsic to the system's structure rather than its bulk translation$.",
-        "limits_and_boundary": "This formula applies within the framework of classical mechanics, where particle speeds are much less than the speed of light and quantum effects are negligible. For a rigid body, the relative velocities between particles are constrained by the body's fixed shape. If the system is a single particle, $\\vec{v}'_i would be zero if the center of mass is defined as the particle itself$.",
-        "symmetry_origin": "The concept of relative velocity is deeply connected to Galilean invariance, a fundamental symmetry in classical mechanics. The laws of physics remain the same in all inertial frames of reference, and relative velocities are invariant under Galilean transformations between such frames. This allows for the decomposition of kinetic energy into center of mass motion and relative motion, reflecting the translational symmetry of space and the homogeneity of time.",
+        "title": "Relative Velocity of the i-th Particle in Center of Mass Frame",
+        "description": "This vector represents the instantaneous velocity of the i-th particle in a multi-particle system as observed from the system's center of mass frame.",
+        "conceptual_definition": "The relative velocity $\\vec{v}'_i$ of the $i$-th particle is defined as the difference between its absolute velocity $\\vec{v}_i$ in the laboratory reference frame and the velocity of the center of mass $\\vec{V}_{cm}$, expressed as $\\vec{v}'_i = \\vec{v}_i - \\vec{V}_{cm}$.",
+        "interpretation": "The term $\\vec{v}'_i$ captures the internal motion of the $i$-th particle within a system. When squared and summed over all particles weighted by mass, it contributes to the relative kinetic energy $K_{relative}$, which is the kinetic energy due to the particles' motion with respect to their common center of mass. This component of velocity is essential for understanding phenomena like rotations, vibrations, and internal dynamics, as it isolates the motion that is intrinsic to the system's structure rather than its bulk translation.",
+        "limits_and_boundary": "In the limit where the system's total mass is concentrated in a single particle or in the center-of-mass frame itself, the center of mass velocity $\\vec{V}_{cm}$ matches $\\vec{v}_i$, causing the relative velocity $\\vec{v}'_i$ to vanish identically to $0$.",
+        "symmetry_origin": "Invariance under Galilean or Lorentz translations of the reference frame, reflecting the homogeneity of space.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "SPECIAL_CASE",
         "equation_family": "classical-kinematics",
         "semantic_variables": {
             "\\vec{v}'_i": {
-                "name": "\\vec{v}'_i",
+                "name": "Relative velocity of the i-th particle",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "The velocity vector of the i-th particle relative to the center of mass frame. Its SI unit is meters per second (m/s). This vector describes the instantaneous rate of change of the i-th particle's position with respect to the system's center of mass."
+                "unit": "m s^{-1}",
+                "description": "Velocity vector of the i-th particle measured in the center of mass frame"
             }
         },
         "equation": "\\vec{v}'_i",
         "status": "published",
-        "parent_formula_id": "k-nig-s-theorem-a8857941",
-        "subcomponents": [],
+        "parent_formula_id": "velocity-of-the-i-th-particle-c81816ec",
+        "subcomponents": [
+            "velocity-of-the-i-th-particle-c81816ec",
+            "first-moment-of-mass-relative-to-center-of-mass-e44b2d54"
+        ],
         "id": "relative-velocity-of-i-th-particle-124e8be5",
-        "intuitive_summary": ""
+        "intuitive_summary": "It measures how fast and in what direction an individual particle is moving relative to the collective average motion (the center of mass) of the entire system, effectively filtering out overall translational drift."
     },
     "proper-time-interval-502f910e": {
         "title": "Proper Time Interval",
-        "description": "Represents the infinitesimal or finite interval of proper time experienced by an object in spacetime.",
-        "conceptual_definition": "Proper time ( $\\tau$) is the time measured by an observer moving along a world line, i.e., by a clock carried by the object itself. It is an invariant quantity under Lorentz transformations, meaning all inertial observers agree on its value. $\\Delta \\tau$ specifically denotes a finite difference or interval of this proper time between two events.",
-        "interpretation": "$\\Delta \\tau$ quantifies the duration of an event or process as measured by a clock that is co-moving with the object or system undergoing the process. Unlike coordinate time (t), which depends on the observer's reference frame, proper time is an intrinsic property of the world line. It is the maximum possible time interval between two events that can be measured by any observer, hence its connection to the 'Maximum Interval Identity' ($\\delta \\int$ d $\\tau$ = 0). For an object at rest in its own frame, proper time is equivalent to coordinate time.",
-        "limits_and_boundary": "For massive particles, $\\Delta \\tau$ is always real and positive, representing a time-like interval. For massless particles (e.g., photons), $\\Delta \\tau$ = 0, meaning they experience no proper time between events, consistent with their world lines being null (light-like). In the non-relativistic limit (v $\\ll$ c), $\\Delta \\tau$ approaches the coordinate time interval $\\Delta$ t.",
-        "symmetry_origin": "The concept of proper time arises directly from the spacetime interval (ds^2 = -c^2 d $\\tau^2$), which is invariant under Lorentz transformations (a manifestation of Poincaré symmetry). This invariance reflects the fundamental principle that the laws of physics are the same for all inertial observers. The maximization of proper time in the 'Maximum Interval Identity' is a consequence of the principle of least action for free particles in special relativity.",
+        "description": "Represents the invariant interval of proper time experienced by an observer or clock along a timelike worldline in spacetime.",
+        "conceptual_definition": "The proper time interval $\\Delta \tau$ is the elapsed time measured by a clock following a specific worldline between two events, serving as a Lorentz-invariant measure of temporal duration in special and general relativity.",
+        "interpretation": "The symbol $\\Delta \tau$ represents the proper time interval measured in seconds ($\text{s}$). Unlike coordinate time $t$, which depends on the choice of the observer's reference frame, proper time is an intrinsic geometric property of the world line in spacetime. It relates directly to the spacetime interval $ds$ and is the maximum possible time interval between two events for any inertial observer.",
+        "limits_and_boundary": "In the limit where the relative velocity $v$ approaches zero ($v \to 0$), the proper time interval $\\Delta \tau$ approaches the coordinate time interval $\\Delta t$. In the limit where the velocity approaches the speed of light ($v \to c$), the proper time interval approaches zero for massless particles (null paths).",
+        "symmetry_origin": "Invariance under the Lorentz group $SO(1,3)$ in special relativity and general coordinate transformations ( diffeomorphism invariance) in general relativity.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "GENERALIZATION",
         "equation_family": "relativistic-kinematics",
         "semantic_variables": {
             "\\Delta\\tau": {
-                "name": "\\Delta\\tau",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Proper time interval, measured in seconds (s). It represents the time elapsed between two events as measured by a clock moving along the world line connecting those events."
+                "name": "Proper Time Interval",
+                "type": "variable",
+                "unit": "\\text{s}",
+                "description": "The elapsed proper time experienced by a co-moving clock between two events"
+            },
+            "t": {
+                "name": "Coordinate Time",
+                "type": "variable",
+                "unit": "\\text{s}",
+                "description": "Time coordinate measured in a specific reference frame"
+            },
+            "v": {
+                "name": "Velocity",
+                "type": "variable",
+                "unit": "\\text{m}\\cdot\\text{s}^{-1}",
+                "description": "Relative spatial velocity of the object in a given frame"
+            },
+            "c": {
+                "name": "Speed of Light in Vacuum",
+                "type": "constant",
+                "unit": "\\text{m}\\cdot\\text{s}^{-1}",
+                "description": "Fundamental speed of light constant"
             }
         },
         "equation": "\\Delta\\tau",
         "status": "published",
-        "parent_formula_id": "maximum-interval-identity-b3c9bc6a",
-        "subcomponents": [],
+        "parent_formula_id": "total-proper-time-interval-4416c7c6",
+        "subcomponents": [
+            "proper-time-interval",
+            "proper-time-differential",
+            "proper-time-interval-in-flat-spacetime-703ad433"
+        ],
         "id": "proper-time-interval-502f910e",
-        "intuitive_summary": ""
+        "intuitive_summary": "Think of proper time as the literal ticking of a wristwatch carried by an observer. While different observers moving relative to each other will disagree on coordinate time intervals ($\\Delta t$), they will all agree on the reading of that specific wristwatch between the two events where the watch is present."
     },
     "value-of-a-straight-angle-043007c6": {
         "title": "Value of a Straight Angle",
-        "description": "This value denotes an angle of 180 degrees, which corresponds to a straight line or a half-turn rotation.",
-        "conceptual_definition": "A straight angle represents a half-turn rotation, equivalent to 180 degrees or pi radians, which geometrically forms a straight line.",
-        "interpretation": "A straight angle, defined as $\\pi$ radians or $180^{\\circ}$, represents a complete reversal of direction. In vector mathematics, two vectors separated by a straight angle are 'antiparallel'; their dot product is the negative product of their magnitudes ($A \\cdot B = -|A||B|$), and their cross product is zero ($A \\times B = 0$). This has direct physical consequences, such as the vanishing of torque when a force is applied antiparallel to a lever arm, or the null force on a charge moving antiparallel to a magnetic field.",
-        "limits_and_boundary": "1. Geometric Constant: As a definitional value, it is a fixed constant and not a variable subject to physical limits.\n2. Physical Boundary: It serves as a critical boundary value in physical phenomena. For example, it is the phase difference required for maximally destructive interference between two coherent waves, and it is the scattering angle for a direct backscatter event.",
-        "symmetry_origin": "A straight angle is fundamental to point inversion and reflection symmetries. A system possessing rotational symmetry of order 2 ($C_2$ symmetry) is invariant under a rotation of $180^{\\circ}$ about an axis. This discrete symmetry is a key feature in many physical systems, including molecules and crystal lattices.",
+        "description": "This relation defines a straight angle as equivalent to $\\pi$ radians or $180^{\\circ}$, establishing the fundamental conversion between circular measure and degree measure.",
+        "conceptual_definition": "A straight angle is an angular magnitude that describes a half-turn rotation or a straight line configuration, mathematically formalized as $\\pi \\, \\mathrm{rad} = 180^{\\circ}$.",
+        "interpretation": "The expression equates the dimensionless angle measure in degrees ($180^{\\circ}$) with its arc-length-based radian measure ($\\pi \\, \\mathrm{rad}$). In vector mechanics, an angle of $\\pi$ radians signifies antiparallel vectors, where the dot product achieves its minimum value $-\\mathbf{A}\\cdot\\mathbf{B} = -|\\mathbf{A}||\\mathbf{B}|$ and the cross product vanishes $\\mathbf{A} \times \\mathbf{B} = 0$.",
+        "limits_and_boundary": "In the limit of infinitesimal rotations, the straight angle reduces to zero, whereas multiple stacked straight angles yield integer multiples of $180^{\\circ}$ or $\\pi \\, \\mathrm{rad}$.",
+        "symmetry_origin": "Rotational invariance and translational symmetry of a straight line under $SO(2)$ transformations.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "DEFINITION",
         "equation_family": "geometric-angles",
         "semantic_variables": {
             "\\pi": {
-                "name": "Pi",
+                "name": "Mathematical Constant Pi",
                 "type": "constant",
-                "unit": "Dimensionless",
-                "description": "A fundamental mathematical constant, the ratio of a circle's circumference to its diameter, approximately 3.14159."
+                "unit": "dimensionless",
+                "description": "The ratio of a circle's circumference to its diameter, approximately equal to $3.14159$."
             },
             "\\mathrm{rad}": {
                 "name": "Radian",
                 "type": "unit",
                 "unit": "rad",
-                "description": "The SI unit of angular measure, where $2\\pi$ radians corresponds to a full circle."
+                "description": "Standard SI unit for plane angle."
             },
-            "^{\\circ}": {
-                "name": "Degree",
-                "type": "unit",
-                "unit": "°",
-                "description": "A common unit of angular measure, where $360^{\\circ}$ corresponds to a full circle."
+            "180^{\\circ}": {
+                "name": "Degrees",
+                "type": "constant",
+                "unit": "deg",
+                "description": "Angle measurement corresponding to one-half of a complete $360^{\\circ}$ revolution."
             }
         },
         "equation": "\\pi \\, \\mathrm{rad} = 180^{\\circ}",
         "status": "platinum",
-        "parent_formula_id": "inductance-link-30f8051f",
-        "subcomponents": [],
+        "parent_formula_id": "value-of-a-straight-angle-706ed09e",
+        "subcomponents": [
+            "degree-to-radian-conversion-factor-341e2305",
+            "angle-for-antiparallel-vector-alignment-d511084b"
+        ],
         "id": "value-of-a-straight-angle-043007c6",
-        "intuitive_summary": "A straight angle is the angle formed when turning around to face the exact opposite direction."
+        "intuitive_summary": "Walking along a straight line and turning entirely around to face the opposite direction corresponds to a rotation of $180^{\\circ}$ or $\\pi$ radians."
     },
     "commutator-expression-of-two-operators-54c10aa7": {
         "title": "Commutator Expression of Two Operators",
@@ -1684,96 +1459,117 @@
     },
     "general-exponential-operator-a47a0783": {
         "title": "General Exponential Operator",
-        "description": "This equation defines the exponential of a general argument X, which can be a scalar, complex number, matrix, or operator, fundamental in various areas of physics.",
-        "conceptual_definition": "The exponential function $e^X$ is defined by its Taylor series expansion, $e^X = \\sum_{n=0}^{\\infty} \\frac{X^n}{n!}$. When X is a scalar, it represents continuous growth or decay. In physics, when X is an operator or matrix, this series defines the operator exponential, crucial for representing finite transformations from infinitesimal generators, solving differential equations, and defining elements of Lie groups.",
-        "interpretation": "Physically, when X is an operator, $e^X$ often represents a finite transformation or evolution generated by X. For instance, if X is a Hamiltonian operator, $e^{-iHt/\\hbar}$ is the time evolution operator. If X is a Lie algebra element, $e^X$ is a corresponding element of the Lie group, representing a symmetry transformation like a rotation or a Lorentz boost. It maps infinitesimal changes to finite, continuous transformations.",
-        "limits_and_boundary": "The power series for $e^X$ converges for all complex numbers X. For operators or matrices, convergence is guaranteed if X is a bounded operator on a Banach space, or for finite-dimensional matrices. A key boundary condition is $e^0 = I$, where I is the identity element (scalar 1, identity matrix, or identity operator).",
-        "symmetry_origin": "While $e^X$ itself is a mathematical function, its profound importance in physics stems from its role in generating symmetry transformations. When X is an element of a Lie algebra (the infinitesimal generators of a symmetry group), $e^X$ maps this generator to an element of the corresponding Lie group, which represents a finite symmetry transformation. Thus, it is intrinsically linked to continuous symmetries and their associated conservation laws via Noether's theorem.",
+        "description": "This equation defines the operator exponential $e^{X}$, which maps infinitesimal generators to finite continuous transformations across quantum mechanics and Lie theory.",
+        "conceptual_definition": "The exponential of an operator or matrix $X$ is mathematically defined via its convergent power series expansion: $e^{X} = \\sum_{n=0}^{\\infty} \frac{X^n}{n!} = I + X + \frac{1}{2!}X^2 + \frac{1}{3!}X^3 + \\dots$, where $I$ is the identity operator.",
+        "interpretation": "Physically, when $X$ is an operator, $e^X$ represents a finite transformation or evolution generated by $X$. For instance, if $X$ is the generator of time evolution or spatial translation, $e^X$ propagates quantum states continuously through spacetime. Here, $X$ is a generic operator or matrix, and $n$ is the summation index representing the order of the Taylor expansion.",
+        "limits_and_boundary": "In the limit where the operator norm $\\|X\\| \to 0$, the exponential operator approaches the linear approximation $e^X \\approx I + X$. As $\\hbar \to 0$ in quantum exponential operators like $e^{-i\\hat{H}t/\\hbar}$, classical mechanics recovers through stationary phase approximations.",
+        "symmetry_origin": "The operator exponential forms the fundamental bridge between Lie algebras and Lie groups, governing continuous spacetime symmetries such as translations, rotations, and boosts via Noether's theorem.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
         "equation_family": "group-theory-and-lie-algebras",
         "semantic_variables": {
             "X": {
-                "name": "X",
-                "type": "variable",
+                "name": "Operator Argument",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The argument of the exponential function. In physics, X can represent a scalar, a complex number, a matrix, or an operator (e.g., a generator of a Lie algebra, a Hamiltonian, or a momentum operator). Its units depend on the specific physical context, but the exponent itself is often dimensionless or has units that cancel out to make the overall expression dimensionless."
+                "description": "A general scalar, matrix, or differential operator acting on a vector space."
             },
             "e": {
-                "name": "e",
-                "type": "variable",
+                "name": "Euler's Number",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "Euler's number, the base of the natural logarithm, an irrational mathematical constant approximately equal to 2.71828. It is dimensionless."
+                "description": "The base of the natural logarithm, defining the exponential growth base."
             }
         },
         "equation": "e^{X}",
         "status": "published",
         "parent_formula_id": "exponential-mapping-identity-eb51a032",
-        "subcomponents": [],
+        "subcomponents": [
+            "quantum-time-evolution-operator-5230c913",
+            "quantum-translation-operator-exponential-form-724490c0"
+        ],
         "id": "general-exponential-operator-a47a0783",
-        "intuitive_summary": ""
+        "intuitive_summary": "Just as the standard exponential function maps additive changes to multiplicative growth, the operator exponential maps infinitesimal generators to finite transformations, such as translations, rotations, and quantum time evolutions."
     },
     "expectation-value-of-correlated-observables-7b48084a": {
         "title": "Expectation Value of Correlated Observables",
-        "description": "This term represents the quantum mechanical expectation value of the product of two observables, A and B', typically measured on entangled particles.",
-        "conceptual_definition": "In quantum mechanics, the expectation value $\\langle O \\rangle$ of an observable O is the probabilistic average of the outcomes of many measurements of O. For two observables A and B' measured on different parts of an entangled system, $\\langle A B' \\rangle$ quantifies the statistical correlation between their measurement outcomes. It is calculated as $\\text{Tr}(\\rho A B')$ where $\\rho$ is the state of the system.",
-        "interpretation": "Within the context of the Bell-CHSH inequality, $\\langle A B' \\rangle$ is one of the four correlation terms. It specifically measures the average product of the outcome of observable A (chosen by Alice) and observable B' (chosen by Bob) when they perform measurements on their respective entangled particles. Its value contributes to determining whether the correlations observed are consistent with local realism or require a quantum mechanical explanation involving entanglement.",
-        "limits_and_boundary": "For observables representing spin projections (e.g., $\\pm 1$), the expectation value $\\langle A B' \\rangle$ is bounded between -1 and 1. More generally, for bounded operators A and B', the expectation value is bounded by the product of their operator norms, i.e., $|\\langle A B' \\rangle| \\le ||A|| \\cdot ||B'||$.",
-        "symmetry_origin": "While not directly a symmetry, the specific choice of observables A and B' often relates to rotational symmetry in spin systems. The expectation value itself reflects the statistical symmetries inherent in quantum measurement outcomes and the underlying state's properties. The Bell-CHSH inequality tests the limits of correlations under local realism, which implicitly assumes certain symmetries in information propagation.",
+        "description": "This term represents the quantum mechanical expectation value of the product of two observables, $\\hat{A}$ and $\\hat{B}'$, typically measured on bipartite entangled systems to test local realism.",
+        "conceptual_definition": "The expectation value of correlated observables is defined as the quantum mechanical average of the joint measurement outcomes of two distinct operators $\\hat{A}$ and $\\hat{B}'$ acting on a composite Hilbert space $\\mathcal{H}_A \\otimes \\mathcal{H}_B$, given by $\\langle A B' \rangle = \text{Tr}(\\hat{\rho} \\, \\hat{A} \\otimes \\hat{B}')$ where $\\hat{\rho}$ is the density matrix.",
+        "interpretation": "Within the context of the Bell-CHSH inequality, $\\langle A B' \rangle$ is one of the four essential correlation terms. It measures the average product of the outcome of observable $\\hat{A}$ (chosen by Alice, with possible eigenvalues $\\pm 1$) and observable $\\hat{B}'$ (chosen by Bob, with possible eigenvalues $\\pm 1$) when they perform local measurements on their respective entangled particles. Its magnitude directly reflects non-classical correlations bounded by Tsirelson's limit rather than classical local hidden variable bounds.",
+        "limits_and_boundary": "In the limit of product states (zero entanglement), the expectation value factorizes such that $\\langle A B' \rangle = \\langle A \rangle \\langle B' \rangle$. In the limit of maximal entanglement (e.g., singlet states), it violates classical Bell inequalities up to Tsirelson's bound of $\\pm 1/\\sqrt{2}$ or $\\pm \\sqrt{2}$ depending on the specific CHSH combination.",
+        "symmetry_origin": "Rooted in the tensor product structure of composite quantum systems and global phase invariance under local unitary transformations $U(1)_A \times U(1)_B$.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "SPECIAL_CASE",
         "equation_family": "quantum-foundations",
         "semantic_variables": {
-            "A": {
-                "name": "A",
+            "\\langle A B' \\rangle": {
+                "name": "Correlated Expectation Value",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Observable A, representing a measurement outcome on one part of an entangled system (e.g., spin projection along a certain axis). Its units depend on the physical quantity it represents."
+                "description": "Quantum mechanical joint expectation value of observables A and B'"
+            },
+            "A": {
+                "name": "Observable A",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Hermitian operator corresponding to Alice's measurement"
             },
             "B'": {
-                "name": "B'",
-                "type": "variable",
+                "name": "Observable B Prime",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "Observable B-prime, representing a measurement outcome on the other part of the entangled system, distinct from B (e.g., spin projection along a different axis). Its units depend on the physical quantity it represents."
-            },
-            "\\langle A B' \\rangle": {
-                "name": "\\langle A B' \\rangle",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The quantum mechanical expectation value of the product of observables A and B'. It is a dimensionless quantity if A and B' are dimensionless (e.g., spin $\\pm 1$ outcomes), otherwise its units are the product of the units of A and B'."
+                "description": "Hermitian operator corresponding to Bob's alternative measurement"
             }
         },
         "equation": "\\langle A B' \\rangle",
         "status": "published",
-        "parent_formula_id": "bell-chsh-inequality-a9d6c165",
-        "subcomponents": [],
+        "parent_formula_id": "expectation-value-of-product-of-observables-c78c2cae",
+        "subcomponents": [
+            "ensemble-expectation-trace-02d3c609",
+            "expectation-value-of-an-operator-46c4b5e7"
+        ],
         "id": "expectation-value-of-correlated-observables-7b48084a",
-        "intuitive_summary": ""
+        "intuitive_summary": "It quantifies the statistical degree of correlation or entanglement between measurements performed by separate observers, such as Alice and Bob, on a shared quantum state."
     },
     "external-field-energy-2e5b3286": {
-        "title": "External Field Energy",
-        "description": "Represents the energy contribution to a system arising from its interaction with an externally applied magnetic field.",
-        "conceptual_definition": "In the context of magnetic materials, $E_{ext}$ quantifies the potential energy stored in the system due to the alignment (or misalignment) of the material's magnetic moments with an external magnetic field. This term is fundamental in understanding how external fields influence the magnetic state and behavior of a material, driving phenomena like magnetization and demagnetization.",
-        "interpretation": "This energy component reflects the work done by the external magnetic field on the magnetic moments within a material. A negative $E_{ext}$ indicates that the system's magnetic moments tend to align with the external field, leading to a lower energy state and increased stability. Conversely, a positive $E_{ext}$ would signify an unfavorable alignment. It is a crucial term in the total free energy of a magnetic system, influencing its equilibrium state and dynamic response to external stimuli.",
-        "limits_and_boundary": "The magnitude of $E_{ext}$ is bounded by the saturation magnetization of the material, where all magnetic moments are maximally aligned with the external field. At zero external field, $E_{ext}$ is zero. In the absence of a material (vacuum), $E_{ext}$ is also zero as there are no magnetic moments to interact with the field.",
-        "symmetry_origin": "The existence of $E_{ext}$ is linked to the rotational symmetry breaking introduced by an external magnetic field, which defines a preferred direction for magnetic moments. The system seeks to minimize this energy by aligning with the field, reflecting the conservation of energy in the interaction between the field and the material.",
+        "title": "External Field Energy in Magnetic Systems",
+        "description": "Represents the total potential energy contribution to a thermodynamic or micromagnetic system arising from its interaction with an externally applied magnetic field.",
+        "conceptual_definition": "The external field energy $E_{ext}$ quantifies the energetic cost or benefit of aligning a system's internal magnetic moments or magnetization distribution $\\mathbf{M}(\\mathbf{r})$ with an externally imposed magnetic field $\\mathbf{B}_{ext}$ or $\\mathbf{H}_{ext}$ integrated over the system volume $V$, expressed as $E_{ext} = -\\int_V \\mathbf{M} \\cdot \\mathbf{B}_{ext} \\, dV$.",
+        "interpretation": "The total external field energy $E_{ext}$ reflects the work done by the external magnetic field on the magnetic moments within the material. A negative $E_{ext}$ indicates that the system's magnetic moments tend to align with the external field, leading to a lower energy state and increased stability. Conversely, a positive $E_{ext}$ signifies an unfavorable anti-parallel or orthogonal alignment. It serves as a crucial variational term in the total free energy functional of a magnetic system, directly influencing its equilibrium micromagnetic state and dynamic response described by the Landau-Lifshitz-Gilbert equation under external stimuli.",
+        "limits_and_boundary": "In the limit where the external field magnitude $|\\mathbf{B}_{ext}| \to 0$, $E_{ext} \to 0$, reducing the total energy solely to internal contributions like exchange and magnetocrystalline anisotropy. As the external field becomes infinitely large, $E_{ext}$ dominates completely, forcing total saturation where all magnetic moments align parallel to the field.",
+        "symmetry_origin": "Breakdown of continuous rotational symmetry ($SO(3)$) of the internal magnetic moments due to the directional preference imposed by the external magnetic field vector.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "electromagnetism-energy",
         "semantic_variables": {
-            "E_ext": {
-                "name": "E_ext",
+            "E_{ext}": {
+                "name": "External Field Energy",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Energy contribution from external fields (Joules, J)"
+                "unit": "\\text{J}",
+                "description": "Total potential energy of the system due to the applied external magnetic field."
+            },
+            "\\mathbf{M}": {
+                "name": "Magnetization Vector",
+                "type": "variable",
+                "unit": "\\text{A/m}",
+                "description": "Density of magnetic dipole moments within the material."
+            },
+            "\\mathbf{B}_{ext}": {
+                "name": "External Magnetic Induction",
+                "type": "variable",
+                "unit": "\\text{T}",
+                "description": "Applied external magnetic flux density field."
             }
         },
         "equation": "E_{ext}",
         "status": "published",
         "parent_formula_id": "field-energy-18f6bca9",
-        "subcomponents": [],
+        "subcomponents": [
+            "magnetic-dipole-potential-energy-8df65147",
+            "potential-energy-of-magnetic-dipole-52fd2358"
+        ],
         "id": "external-field-energy-2e5b3286",
-        "intuitive_summary": ""
+        "intuitive_summary": "This energy term acts like a compass needle in the Earth's magnetic field: the system prefers to align its internal moments with the external field to minimize its energy, much like rolling down into a potential well."
     },
     "wavelength-quantization-in-a-1d-box-c4e82233": {
         "title": "Wavelength Quantization in a 1D Box",
@@ -2153,34 +1949,37 @@
     },
     "renormalization-group-fixed-point-condition-19eac290": {
         "title": "Renormalization Group Fixed Point Condition",
-        "description": "This equation defines a fixed point of the renormalization group beta function, where the running coupling constant becomes scale-invariant.",
-        "conceptual_definition": "In quantum field theory, the beta function describes how a coupling constant changes with the energy scale. A fixed point, denoted by $g_*$, is a specific value of the coupling constant where the beta function vanishes. At such a point, the system's behavior becomes scale-invariant, meaning its physical properties do not change under a change of observation scale.",
-        "interpretation": "Physically, $\\beta(g_*) = 0$ signifies a state where the quantum field theory exhibits scale invariance or even conformal invariance. If such a fixed point is attractive (IR stable), the theory flows towards it at low energies, describing a conformal field theory. If it's repulsive (UV stable), the theory flows away from it at high energies, potentially describing asymptotic freedom or triviality.",
-        "limits_and_boundary": "Fixed points can be classified as ultraviolet (UV) stable or infrared (IR) stable, depending on the sign of the derivative of the beta function at the fixed point. A UV stable fixed point implies the theory flows towards it at high energies, while an IR stable fixed point implies flow towards it at low energies. The existence and nature of these fixed points are crucial for understanding the long-distance and short-distance behavior of quantum field theories.",
-        "symmetry_origin": "The vanishing of the beta function at a fixed point implies scale invariance. If the theory is also Lorentz invariant and satisfies certain regularity conditions, this scale invariance often extends to full conformal invariance, which includes special conformal transformations.",
+        "description": "This equation defines a fixed point of the renormalization group beta function, where the running coupling constant becomes completely scale-invariant.",
+        "conceptual_definition": "The renormalization group fixed point condition is given by $\beta(g_*) = 0$, where the beta function $\beta(g)$ vanishes at the critical coupling value $g_*$, stopping any further evolution or running of the coupling parameter across energy scales $\\mu$.",
+        "interpretation": "Physically, $\beta(g_*) = 0$ signifies a state where the quantum field theory exhibits scale invariance or even conformal invariance. If such a fixed point is attractive (IR stable), the theory flows towards it at low energies, describing a conformal field theory. If it is repulsive (UV stable), the theory flows away from it at high energies, potentially describing asymptotic freedom or triviality. The variables include the beta function $\beta(g_*)$ and the fixed-point coupling constant $g_*$.",
+        "limits_and_boundary": "In the limit where the energy scale $\\mu \to 0$ or $\\mu \to \\infty$, if the system reaches a fixed point, the beta function vanishes identically, terminating the logarithmic scale dependence $\frac{dg}{d\\ln\\mu} = 0$.",
+        "symmetry_origin": "Scale invariance and conformal symmetry under dilatation transformations of the renormalization group flow.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "SPECIAL_CASE",
         "equation_family": "renormalization-group-theory",
         "semantic_variables": {
-            "beta(g_*)": {
-                "name": "beta(g_*)",
-                "type": "variable",
+            "\\beta(g_*)": {
+                "name": "Beta Function at Fixed Point",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The beta function evaluated at the fixed point coupling $g_*$. It represents the rate of change of the coupling constant with respect to the logarithm of the energy scale. Units: Dimensionless."
+                "description": "The renormalization group beta function evaluated at the critical coupling value, equal to zero."
             },
             "g_*": {
-                "name": "g_*",
+                "name": "Fixed Point Coupling Constant",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The fixed point value of the coupling constant. At this specific value, the beta function is zero, indicating that the coupling constant does not run with energy scale. Units: Dimensionless (for a dimensionless coupling constant)."
+                "description": "The particular value of the coupling constant where the theory becomes scale-invariant."
             }
         },
         "equation": "\\beta(g_*) = 0",
         "status": "published",
-        "parent_formula_id": "the-scale-law-36288521",
-        "subcomponents": [],
+        "parent_formula_id": "renormalization-group-fixed-point-condition-94718e71",
+        "subcomponents": [
+            "renormalization-group-beta-function-99efd24f",
+            "renormalization-group-fixed-point-coupling-f6e8ab28"
+        ],
         "id": "renormalization-group-fixed-point-condition-19eac290",
-        "intuitive_summary": ""
+        "intuitive_summary": "At a fixed point, the system looks the same at all length scales, meaning microscopic details become irrelevant and scale or conformal invariance emerges."
     },
     "time-time-component-of-flrw-metric-63b7d78e": {
         "title": "Time-Time Component of FLRW Metric",
@@ -2221,57 +2020,55 @@
     },
     "gauge-invariance-of-electromagnetic-fields-514e74fd": {
         "title": "Gauge Invariance of Electromagnetic Fields",
-        "description": "This concept describes how observable electric and magnetic fields remain unchanged under a gauge transformation of the electromagnetic potentials.",
-        "conceptual_definition": "Gauge invariance is a fundamental principle in electromagnetism, stating that the physical electric ($\\mathbf{E}) and magnetic ( \\mathbf{B} ) fields are invariant under specific transformations of the scalar potential ( \\phi ) and vector potential ( \\mathbf{A}$). This means that different choices of potentials, related by a gauge transformation, lead to the same observable physical reality. This invariance is crucial for the consistency of Maxwell's equations and the formulation of quantum electrodynamics.",
-        "interpretation": "The invariance of $\\mathbf{E} and \\mathbf{B} fields under gauge transformations implies that the potentials \\phi and \\mathbf{A}$ themselves are not directly observable quantities. Instead, they are mathematical constructs used to simplify the description of electromagnetism. The physical reality is solely determined by the electric and magnetic fields, which are uniquely defined regardless of the chosen gauge. This freedom in choosing the potentials, without altering the physics, is a powerful tool in solving electromagnetic problems and is a cornerstone of modern field theories, particularly in quantum field theory.",
-        "limits_and_boundary": "This principle holds universally for classical electromagnetism and extends to quantum electrodynamics. It is a local symmetry, meaning the transformation can vary in space and time. It applies to both static and time-varying fields and is a fundamental property of the U(1) gauge theory of electromagnetism.",
-        "symmetry_origin": "Gauge invariance is a local symmetry of the Lagrangian of electromagnetism. It is associated with the conservation of electric charge, although the direct link is more complex than Noether's theorem for global symmetries. It reflects the redundancy in the description of the electromagnetic field using potentials and is a consequence of the underlying U(1) gauge symmetry.",
+        "description": "This concept describes how observable electric and magnetic fields remain completely invariant under a local gauge transformation of the electromagnetic scalar and vector potentials.",
+        "conceptual_definition": "Under a gauge transformation defined by a scalar field $\\Lambda(\\mathbf{r}, t)$, the electric scalar potential $\\Phi$ and the magnetic vector potential $\\mathbf{A}$ transform as $\\Phi' = \\Phi - \frac{\\partial \\Lambda}{\\partial t}$ and $\\mathbf{A}' = \\mathbf{A} + \nabla \\Lambda$, while the resulting observable electromagnetic fields $\\mathbf{E}$ and $\\mathbf{B}$ remain unchanged.",
+        "interpretation": "The invariance of the electric field $\\mathbf{E}$ and magnetic field $\\mathbf{B}$ under gauge transformations implies that the potentials $\\Phi$ and $\\mathbf{A}$ themselves are not uniquely determined or directly observable quantities. Instead, they are mathematical constructs governed by $U(1)$ local gauge freedom. The physical reality is solely determined by field strengths, which are uniquely defined regardless of the chosen gauge function $\\Lambda(\\mathbf{r}, t)$.",
+        "limits_and_boundary": "In the static limit where $\frac{\\partial \\Lambda}{\\partial t} = 0$, the transformation reduces to spatial gauge freedom $\\mathbf{A}' = \\mathbf{A} + \nabla \\Lambda$ and $\\Phi' = \\Phi$, preserving electrostatic fields identically.",
+        "symmetry_origin": "Originates from the local $U(1)$ gauge symmetry of electromagnetism, reflecting redundancy in the description of the electromagnetic field potentials.",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "electromagnetism-field-theory",
         "semantic_variables": {
-            "E": {
-                "name": "E",
+            "\\mathbf{E}": {
+                "name": "Electric Field",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Electric field vector, measured in Newtons per Coulomb (N/C) or Volts per meter (V/m). It represents the force per unit charge experienced by a test charge and is an observable physical quantity."
+                "unit": "V/m",
+                "description": "The observable electric field vector"
             },
-            "B": {
-                "name": "B",
+            "\\mathbf{B}": {
+                "name": "Magnetic Field",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Magnetic field vector, measured in Tesla (T). It represents the force per unit current-carrying wire or moving charge and is an observable physical quantity."
+                "unit": "T",
+                "description": "The observable magnetic induction vector"
             },
-            "phi": {
-                "name": "phi",
+            "\\Phi": {
+                "name": "Electric Scalar Potential",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Scalar potential, measured in Volts (V). It is a mathematical construct, not directly observable, from which the electric field can be partially derived."
+                "unit": "V",
+                "description": "The scalar potential of the electromagnetic field"
             },
-            "A": {
-                "name": "A",
+            "\\mathbf{A}": {
+                "name": "Magnetic Vector Potential",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Vector potential, measured in Volts-second per meter (V\\cdot s/m) or Weber per meter (Wb/m). It is a mathematical construct, not directly observable, from which both electric and magnetic fields can be derived."
+                "unit": "T \\cdot \\text{m}",
+                "description": "The vector potential of the electromagnetic field"
             },
-            "A_mu": {
-                "name": "A_mu",
+            "\\Lambda": {
+                "name": "Gauge Function",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "Four-vector potential, a relativistic generalization combining the scalar potential (\\phi) and vector potential ($\\mathbf{A}$), measured in Volts-second per meter (V\\cdot s/m). It is the potential used in relativistic formulations of electromagnetism."
-            },
-            "theta": {
-                "name": "theta",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Gauge function, a scalar field that determines the specific gauge transformation, dimensionless. Its derivatives dictate how the potentials change under a gauge transformation."
+                "unit": "\\text{V} \\cdot \\text{s}",
+                "description": "An arbitrary differentiable scalar field defining the gauge transformation"
             }
         },
         "equation": ", invariant, meaning that the physically observable electric and magnetic fields, derived from",
         "status": "published",
-        "parent_formula_id": "gauge-transformation-vector-potential-abelian",
-        "subcomponents": [],
+        "parent_formula_id": "topological-bound-e644aff8",
+        "subcomponents": [
+            "electric-field-gauge-invariance-be48c62f",
+            "gauge-transformation-potential-time-dependent",
+            "gradient-of-a-scalar-gauge-function-0542cae4"
+        ],
         "id": "gauge-invariance-of-electromagnetic-fields-514e74fd",
-        "intuitive_summary": ""
+        "intuitive_summary": "The potentials are mathematical scaffolding used to calculate physical forces; because the physical reality depends solely on the observable fields $\\mathbf{E}$ and $\\mathbf{B}$, the specific choice of gauge does not alter physical measurements."
     }
 }

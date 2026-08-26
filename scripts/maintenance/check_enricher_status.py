@@ -60,8 +60,14 @@ def render_dashboard():
     avg_gain = sum(gains) / len(gains) if gains else 0
     avg_score = sum(new_scores) / len(new_scores) if new_scores else 0
 
-    # Recent speed (last 50 formulas or last 30 mins)
-    recent_ts = timestamps[-50:] if len(timestamps) >= 50 else timestamps
+    # Recent speed (filter out multi-hour pauses by taking active session window)
+    active_ts = []
+    for i in range(len(timestamps) - 1, 0, -1):
+        active_ts.insert(0, timestamps[i])
+        if len(active_ts) >= 30 or (timestamps[i] - timestamps[i-1] > 180):
+            break
+
+    recent_ts = active_ts if len(active_ts) >= 2 else timestamps[-10:]
     speed_str = "Calculating..."
     p2_etc_str = "Calculating..."
     p3_etc_str = "Calculating..."

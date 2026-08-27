@@ -27,7 +27,7 @@ JSON_FILES=$(echo "$STAGED_FILES" | grep -E '\.json$')
 if [ -n "$JSON_FILES" ]; then
     for file in $JSON_FILES; do
         if [ -f "$file" ]; then
-            php -r "json_decode(file_get_contents('$file')); if (json_last_error() !== JSON_ERROR_NONE) { echo '❌ Invalid JSON syntax in staged file: $file\n'; exit(1); }"
+            php -d memory_limit=512M -r "json_decode(file_get_contents('$file')); if (json_last_error() !== JSON_ERROR_NONE) { echo '❌ Invalid JSON syntax in staged file: $file\n'; exit(1); }"
             if [ $? -ne 0 ]; then
                 exit 1
             fi

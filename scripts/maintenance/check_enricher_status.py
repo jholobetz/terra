@@ -91,6 +91,25 @@ def render_dashboard():
             full_etc_mins = (full_rem / f_per_sec / 60) if f_per_sec > 0 else 0
             full_etc_str = f"{full_etc_mins:.1f} mins ({full_etc_mins/60:.2f} hrs)" if full_rem > 0 else "✅ Complete"
 
+    # Financial & Token Accounting
+    is_paid = data.get('is_paid_session', False)
+    session_spend = data.get('session_spend_usd', 0.0)
+    max_cost = data.get('max_cost_dollars', 0.0)
+    active_model = data.get('active_model', 'gemini-3.5-flash-lite')
+    
+    # Unit cost estimate (Gemini 3.7 Flash with Hybrid Reasoning = ~$0.00256 / formula)
+    if '3.7-flash' in active_model:
+        unit_cost_est = 0.00256
+    elif 'pro' in active_model:
+        unit_cost_est = 0.00488
+    else:
+        unit_cost_est = 0.00035
+
+    p3_rem_count = max(0, p3_target - p3_done)
+    full_rem_count = max(0, 12608 - total_processed)
+    p3_cost_est = p3_rem_count * unit_cost_est
+    full_cost_est = full_rem_count * unit_cost_est
+
     p1_pct = min(100.0, (p1_done / p1_target) * 100) if p1_target > 0 else 100.0
     p2_pct = min(100.0, (p2_done / p2_target) * 100) if p2_target > 0 else 100.0
     p3_pct = min(100.0, (p3_done / p3_target) * 100) if p3_target > 0 else 100.0
@@ -106,10 +125,24 @@ def render_dashboard():
     print(f"  • Total Enriched So Far:   {total_processed:,} formulas | Avg LHI: {avg_score:.1f}/100")
     print(f"  • Current Live Speed:      {speed_str}")
     print("-" * 70)
+    print("💵 LIVE DOLLAR METER & BUDGET:")
+    if is_paid:
+        cap_str = f" / ${max_cost:.2f} Limit" if max_cost > 0 else " (No Cap)"
+        pct_used_str = f" ({(session_spend / max_cost)*100:.1f}% used)" if max_cost > 0 else ""
+        rem_budget_str = f"${max_cost - session_spend:.4f}" if max_cost > 0 else "N/A"
+        print(f"  • Total Spent (This Run):  ${session_spend:.4f}{cap_str}{pct_used_str}")
+        print(f"  • Remaining Budget Left:   {rem_budget_str}")
+        print(f"  • Estimated Cost to Finish: Phase 3: ~${p3_cost_est:.2f} | Full Corpus: ~${full_cost_est:.2f}")
+    else:
+        print("  • Current Billing Mode:    🆓 Google AI Studio Free Tier ($0.00 Cost)")
+        print(f"  • Estimated Paid Cost:     Phase 3: ~${p3_cost_est:.2f} | Full Corpus: ~${full_cost_est:.2f}")
+    print("-" * 70)
+    p3_cost_tag = f" (${p3_cost_est:.2f})" if is_paid else ""
+    full_cost_tag = f" (${full_cost_est:.2f})" if is_paid else ""
     print(f"  📌 Phase 1 (Isolated):     [{make_bar(100.0)}] 2,030/2,030 (100.0%) ✅")
     print(f"  📌 Phase 2 (Thin LHI 1-39): [{make_bar(p2_pct)}] {p2_done:,}/{p2_target:,} ({p2_pct:.1f}%) | ETC: {p2_etc_str}")
-    print(f"  📌 Phase 3 (Moderate):     [{make_bar(p3_pct)}] {p3_done:,}/{p3_target:,} ({p3_pct:.1f}%) | ETC: {p3_etc_str}")
-    print(f"  🌍 Full Corpus Queue:      [{make_bar(total_pct)}] {total_processed:,}/12,608 ({total_pct:.1f}%) | ETC: {full_etc_str}")
+    print(f"  📌 Phase 3 (Moderate):     [{make_bar(p3_pct)}] {p3_done:,}/{p3_target:,} ({p3_pct:.1f}%) | ETC: {p3_etc_str}{p3_cost_tag}")
+    print(f"  🌍 Full Corpus Queue:      [{make_bar(total_pct)}] {total_processed:,}/12,608 ({total_pct:.1f}%) | ETC: {full_etc_str}{full_cost_tag}")
     print("-" * 70)
     print("📜 Latest 5 Enriched Formulas:")
     
@@ -117,22 +150,26 @@ def render_dashboard():
     for fid, meta in reversed(items):
         t_str = time.strftime('%H:%M:%S', time.localtime(meta.get('timestamp', time.time())))
         parent = meta.get('parent_id') or 'Axiom / First Principle'
-        print(f"  [{t_str}] {fid}")
+        cost_info = f" (${meta.get('cost_usd', 0.0):.5f})" if meta.get('cost_usd') else ""
+        print(f"  [{t_str}] {fid}{cost_info}")
         print(f"          └─ LHI: {meta.get('old_lhi', 0)} ➔ {meta.get('new_lhi', 0)}/100 | Parent: {parent}")
     print("=" * 70)
 
 def main():
     parser = argparse.ArgumentParser(description="Check Real-Time Vertex AI Enrichment Progress")
-    parser.add_argument('--watch', type=int, default=0, help="Live refresh interval in seconds (0 = single snapshot)")
+    parser.add_argument('interval', nargs='?', type=int, default=0, help="Optional refresh interval in seconds (e.g. scripts/checkprogress 3)")
+    parser.add_argument('--watch', '-w', type=int, default=0, help="Live refresh interval in seconds (0 = single snapshot)")
     args = parser.parse_args()
 
-    if args.watch > 0:
+    watch_interval = args.interval if args.interval > 0 else args.watch
+
+    if watch_interval > 0:
         try:
             while True:
                 os.system('clear')
                 render_dashboard()
-                print(f"\n[Watching live... Refreshing every {args.watch}s | Press Ctrl+C to exit]")
-                time.sleep(args.watch)
+                print(f"\n[Watching live... Refreshing every {watch_interval}s | Press Ctrl+C to exit]")
+                time.sleep(watch_interval)
         except KeyboardInterrupt:
             print("\nExited dashboard.")
     else:

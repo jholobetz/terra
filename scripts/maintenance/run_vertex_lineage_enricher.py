@@ -328,7 +328,35 @@ def robust_json_decode(text):
 import socket
 socket.setdefaulttimeout(45.0)
 
+# -------------------------------------------------------------------------
+# Financial & Token Rate Matrix (per 1,000,000 tokens)
+# -------------------------------------------------------------------------
+MODEL_RATES = {
+    'gemini-3.5-flash-lite': {'input': 0.075 / 1e6, 'output': 0.30 / 1e6},
+    'gemini-3.7-flash': {'input': 0.075 / 1e6, 'output': 0.30 / 1e6},
+    'gemini-3.6-flash': {'input': 0.075 / 1e6, 'output': 0.30 / 1e6},
+    'gemini-2.5-flash': {'input': 0.075 / 1e6, 'output': 0.30 / 1e6},
+    'gemini-2.5-pro': {'input': 1.25 / 1e6, 'output': 5.00 / 1e6},
+    'gemini-3.1-pro-preview': {'input': 1.25 / 1e6, 'output': 5.00 / 1e6},
+}
+
+quota_exhausted_event = threading.Event()
+budget_circuit_breaker_event = threading.Event()
+consecutive_429_count = 0
+consecutive_429_lock = threading.Lock()
+
+cost_accounting_lock = threading.Lock()
+cumulative_session_spend_usd = 0.0
+cumulative_prompt_tokens = 0
+cumulative_candidates_tokens = 0
+global_max_cost_dollars = 0.0
+is_paid_session = False
+
 def generate_enrichment(client, model_name, fid, form, candidates):
+    global consecutive_429_count, cumulative_session_spend_usd, cumulative_prompt_tokens, cumulative_candidates_tokens
+    if quota_exhausted_event.is_set() or budget_circuit_breaker_event.is_set():
+        return None, 0, 0, 0.0
+
     cand_str = "\n".join([f"- ID: {c[1]} | Title: {c[2]} | Equation: {c[3]}" for c in candidates])
 
     prompt = f"""Target Formula to Enrich:
@@ -338,10 +366,10 @@ def generate_enrichment(client, model_name, fid, form, candidates):
 - Existing Description: {form.get('description', '')}
 - Existing Interpretation: {form.get('interpretation', '')}
 
-Candidate Grounding Pool (Select Parent ID and Subcomponents from here):
-{cand_str if cand_str else "(No high-scoring matches - use fundamental first principles or create clean self-contained variables)"}
+Candidate Grounding Pool (TOP {len(candidates)} mathematically related formulas in encyclopedia):
+{cand_str}
 
-Provide the complete enriched formula JSON object with these exact keys:
+Respond with STRICT JSON format:
 {{
   "title": "string (refined academic title)",
   "description": "string (1-2 sentence core physics summary)",
@@ -366,6 +394,8 @@ Provide the complete enriched formula JSON object with these exact keys:
     max_retries = 4
     backoff = 3
     for attempt in range(max_retries):
+        if quota_exhausted_event.is_set() or budget_circuit_breaker_event.is_set():
+            return None, 0, 0, 0.0
         try:
             response = client.models.generate_content(
                 model=model_name,
@@ -375,16 +405,51 @@ Provide the complete enriched formula JSON object with these exact keys:
                     response_mime_type="application/json"
                 )
             )
-            return robust_json_decode(response.text)
+            with consecutive_429_lock:
+                consecutive_429_count = 0
+
+            # Extract token metadata from official response (including Thinking / Reasoning tokens)
+            p_tok = 0
+            c_tok = 0
+            t_tok = 0
+            if hasattr(response, 'usage_metadata') and response.usage_metadata:
+                p_tok = getattr(response.usage_metadata, 'prompt_token_count', 0) or 0
+                c_tok = getattr(response.usage_metadata, 'candidates_token_count', 0) or 0
+                t_tok = getattr(response.usage_metadata, 'thoughts_token_count', 0) or 0
+
+            # Google bills both candidates (visible output) and thoughts (reasoning) at the output token rate
+            total_billable_output_tokens = c_tok + t_tok
+            rates = MODEL_RATES.get(model_name, {'input': 0.075 / 1e6, 'output': 0.30 / 1e6})
+            formula_cost = (p_tok * rates['input']) + (total_billable_output_tokens * rates['output']) if is_paid_session else 0.0
+
+            with cost_accounting_lock:
+                cumulative_session_spend_usd += formula_cost
+                cumulative_prompt_tokens += p_tok
+                cumulative_candidates_tokens += total_billable_output_tokens
+                if global_max_cost_dollars > 0 and cumulative_session_spend_usd >= global_max_cost_dollars:
+                    budget_circuit_breaker_event.set()
+                    print(f"\n🛑 [CIRCUIT BREAKER] Hard Price Limit Reached: ${cumulative_session_spend_usd:.4f} >= ${global_max_cost_dollars:.2f}! Halting immediately.", flush=True)
+
+            parsed = robust_json_decode(response.text)
+            return parsed, p_tok, total_billable_output_tokens, formula_cost
         except Exception as e:
-            if attempt < max_retries - 1:
-                # Add extra delay if 429 rate limit
-                sleep_time = backoff + (5 if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e) else 0)
+            err_msg = str(e)
+            is_quota_err = ("429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "Quota exceeded" in err_msg)
+            if is_quota_err:
+                with consecutive_429_lock:
+                    consecutive_429_count += 1
+                    if consecutive_429_count >= 3:
+                        quota_exhausted_event.set()
+                        print("\n🛑 [QUOTA GUARD] Daily Free Tier Quota Limit Reached (HTTP 429 RESOURCE_EXHAUSTED). Stopping batch cleanly!", flush=True)
+                        return None, 0, 0, 0.0
+            if attempt < max_retries - 1 and not (quota_exhausted_event.is_set() or budget_circuit_breaker_event.is_set()):
+                sleep_time = backoff + (5 if is_quota_err else 0)
                 time.sleep(sleep_time)
                 backoff *= 2
             else:
-                print(f"  [ERROR] Vertex AI generation failed for {fid} after {max_retries} attempts: {e}", flush=True)
-                return None
+                if not (quota_exhausted_event.is_set() or budget_circuit_breaker_event.is_set()):
+                    print(f"  [ERROR] Vertex AI generation failed for {fid} after {max_retries} attempts: {e}", flush=True)
+                return None, 0, 0, 0.0
 
 # -------------------------------------------------------------------------
 # Worker Function & Shard File Updater
@@ -397,7 +462,7 @@ def process_formula(fid, client, model_name, formulas, file_map, parent_map, chi
     candidates = find_candidate_pool(fid, form, formulas, top_k=25)
 
     print(f"⚙️ [{fid}] Current LHI: {cur_lhi}/100 | Candidates: {len(candidates)}...")
-    enrichment = generate_enrichment(client, model_name, fid, form, candidates)
+    enrichment, p_tok, c_tok, f_cost = generate_enrichment(client, model_name, fid, form, candidates)
     if not enrichment:
         return False, cur_lhi, cur_lhi
 
@@ -420,7 +485,8 @@ def process_formula(fid, client, model_name, formulas, file_map, parent_map, chi
             merged[k] = v
 
     new_lhi = calculate_lhi(fid, merged, formulas, parent_map, child_map)
-    print(f"  ✅ [{fid}] Enriched LHI: {cur_lhi} ➔ {new_lhi}/100 (Parent: {p_id or 'Axiom'}, Subcomponents: {len(valid_subcomponents)})")
+    cost_tag = f" | Cost: ${f_cost:.5f}" if is_paid_session else ""
+    print(f"  ✅ [{fid}] Enriched LHI: {cur_lhi} ➔ {new_lhi}/100 (Parent: {p_id or 'Axiom'}, Subcomponents: {len(valid_subcomponents)}){cost_tag}")
 
     if dry_run:
         print(f"  [DRY-RUN] Would update {file_map[fid]}")
@@ -447,11 +513,22 @@ def process_formula(fid, client, model_name, formulas, file_map, parent_map, chi
     # Save to checkpoint
     with global_state_lock:
         checkpoint = load_checkpoint()
+        checkpoint['session_spend_usd'] = cumulative_session_spend_usd
+        checkpoint['session_prompt_tokens'] = cumulative_prompt_tokens
+        checkpoint['session_candidates_tokens'] = cumulative_candidates_tokens
+        checkpoint['max_cost_dollars'] = global_max_cost_dollars
+        checkpoint['is_paid_session'] = is_paid_session
+        checkpoint['active_model'] = model_name
+
         checkpoint['processed_ids'][fid] = {
             'timestamp': int(time.time()),
             'old_lhi': cur_lhi,
             'new_lhi': new_lhi,
-            'parent_id': p_id
+            'parent_id': p_id,
+            'model': model_name,
+            'cost_usd': f_cost,
+            'prompt_tokens': p_tok,
+            'candidates_tokens': c_tok
         }
         save_checkpoint(checkpoint)
 
@@ -486,11 +563,19 @@ def main():
     parser.add_argument('--provider', choices=['free', 'aistudio', 'prepaid', 'vertex', 'auto'], default='free',
                         help="API Provider: 'free' (Pure $0.00 Free Tier via GEMINI_FREE_API_KEY), 'prepaid' (Prepaid Project Key), or 'vertex' (GCP Service Account)")
     parser.add_argument('--model', type=str, default='gemini-3.7-flash', help="Gemini model name (default: gemini-3.7-flash)")
+    parser.add_argument('--max-cost-dollars', type=float, default=0.0,
+                        help="Hard Circuit Breaker: Stop instantly if cumulative spend reaches this dollar amount (0.0 = unlimited)")
     args = parser.parse_args()
+
+    global global_max_cost_dollars, is_paid_session
+    global_max_cost_dollars = args.max_cost_dollars
+    is_paid_session = (args.provider in ['prepaid', 'vertex'])
 
     print("=" * 65)
     print("🚀 Terra Physics Lab - Vertex AI Lineage & Derivation Engine")
+    cost_banner = f"${args.max_cost_dollars:.2f} Hard Limit" if args.max_cost_dollars > 0 else "Unconstrained"
     print(f"Mode: {'DRY RUN' if args.dry_run else 'LIVE ATOMIC UPDATE'} | Model: {args.model} | Concurrency: {args.concurrency}")
+    print(f"Provider: {args.provider} | Budget Cap: {cost_banner}")
     print("=" * 65)
 
     formulas, file_map, parent_map, child_map = load_all_shards()
@@ -582,12 +667,23 @@ def main():
         # Emit 30s heartbeat or chunk summary
         if now - last_heartbeat_time >= 30 or chunk_idx == len(chunks) or chunk_idx <= 3:
             time_str = time.strftime('%H:%M:%S')
-            print(f"[{time_str}] ⏱️ Chunk [{chunk_idx}/{len(chunks)}] | Done: {total_processed}/{len(target_ids)} ({pct:.1f}%) | Speed: {speed:.2f} f/s | Avg LHI: +{avg_gain:.1f} pts | ETC: {etc_mins:.1f}m")
+            spend_str = f" | Spent: ${cumulative_session_spend_usd:.4f}" if is_paid_session else " | $0.00 (Free)"
+            if is_paid_session and global_max_cost_dollars > 0:
+                spend_str += f" / ${global_max_cost_dollars:.2f}"
+            print(f"[{time_str}] ⏱️ Chunk [{chunk_idx}/{len(chunks)}] | Done: {total_processed}/{len(target_ids)} ({pct:.1f}%){spend_str} | Speed: {speed:.2f} f/s | Avg LHI: +{avg_gain:.1f} pts | ETC: {etc_mins:.1f}m")
             last_heartbeat_time = now
 
         if args.rebuild_graph and not args.dry_run and chunk_success:
             os.system("python3 scripts/build_formula_graph.py > /dev/null 2>&1")
             os.system("php scripts/sync_formulas_to_mariadb.php > /dev/null 2>&1")
+
+        if budget_circuit_breaker_event.is_set():
+            print(f"\n🛑 Circuit Breaker: Reached budget threshold (${cumulative_session_spend_usd:.4f} >= ${global_max_cost_dollars:.2f}). Stopping runner cleanly!")
+            break
+
+        if quota_exhausted_event.is_set():
+            print("\n🛑 Quota exhaustion detected across consecutive workers. Stopping runner gracefully!")
+            break
 
     total_elapsed = time.time() - overall_start
     overall_avg_gain = total_lhi_gain / total_successful if total_successful else 0
@@ -596,6 +692,10 @@ def main():
     print("🏁 ALL BATCH CHUNKS COMPLETE")
     print(f"  • Total Processed:   {total_processed}")
     print(f"  • Total Successful:  {total_successful}")
+    if is_paid_session:
+        print(f"  • Total Spent:       ${cumulative_session_spend_usd:.4f} (Tokens: {cumulative_prompt_tokens:,} prompt, {cumulative_candidates_tokens:,} comp)")
+    else:
+        print("  • Total Cost:        $0.00 (Pure Free Tier)")
     print(f"  • Average LHI Gain:  +{overall_avg_gain:.1f} points")
     print(f"  • Total Elapsed:     {total_elapsed:.2f}s ({total_elapsed/60:.2f} minutes)")
     print("=" * 65)

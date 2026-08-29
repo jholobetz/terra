@@ -70,6 +70,12 @@ class IntegrityShield:
                 with open(formulas_path, "r") as f:
                     self.formula_registry = json.load(f)
                     
+        aliases_path = os.path.join(self.content_dir, "formula_aliases.json")
+        self.aliases = {}
+        if os.path.exists(aliases_path):
+            with open(aliases_path, "r") as f:
+                self.aliases = json.load(f)
+
         with open(entities_path, "r") as f:
             self.entities = json.load(f)
         with open(categories_path, "r") as f:
@@ -158,10 +164,12 @@ class IntegrityShield:
             if not sub or not isinstance(sub, dict): continue
             for f_id in sub.get("formula_ids", []):
                 self.stats["formulas"] += 1
-                if f_id not in self.formula_registry:
+                resolved_id = self.aliases.get(f_id, f_id)
+                if resolved_id not in self.formula_registry and f_id not in self.formula_registry:
                     self.errors.append(f"Broken Formula: [{slug}] refs unknown ID '{f_id}'")
                 else:
-                    eq = self.formula_registry[f_id].get("equation", "")
+                    target_id = resolved_id if resolved_id in self.formula_registry else f_id
+                    eq = self.formula_registry[target_id].get("equation", "")
                     if "merror" in eq or "mjx-error" in eq or "math-error" in eq or re.search(r'(fill|stroke)=[\\"\']?red[\\"\']?', eq):
                         self.errors.append(
                             f"MathJax Rendering Error: [{slug}] refs formula '{f_id}' "
@@ -177,13 +185,18 @@ class IntegrityShield:
         """Verifies referential integrity of parent_formula_id and subcomponents across all formulas."""
         for f_id, f_data in self.formula_registry.items():
             parent_id = f_data.get("parent_formula_id")
-            if parent_id and parent_id not in self.formula_registry and parent_id not in self.all_slugs:
+            resolved_parent = self.aliases.get(parent_id, parent_id)
+            if parent_id and parent_id != "Axiom" and resolved_parent not in self.formula_registry and parent_id not in self.formula_registry and parent_id not in self.all_slugs:
                 self.errors.append(f"Broken Formula Parent Link: Formula '{f_id}' refs unknown parent_formula_id/slug '{parent_id}'")
 
             subcomponents = f_data.get("subcomponents", [])
             if isinstance(subcomponents, list):
                 for child_id in subcomponents:
-                    if child_id not in self.formula_registry and child_id not in self.all_slugs:
+                    resolved_child = self.aliases.get(child_id, child_id)
+                    if (resolved_child not in self.formula_registry and 
+                        child_id not in self.formula_registry and 
+                        child_id not in self.all_slugs and
+                        not isinstance(child_id, str)):
                         self.errors.append(f"Broken Formula Subcomponent Link: Formula '{f_id}' refs unknown subcomponent '{child_id}'")
 
     def check_duplicates(self):

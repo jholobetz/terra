@@ -460,61 +460,62 @@
         "equation": "H(q_i, p_i, t) = \\sum_{i} p_i \\dot{q}_i - L(q_i, \\dot{q}_i, t)",
         "semantic_variables": {
             "H": {
-                "name": "Hamiltonian",
+                "name": "Hamiltonian function",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The total energy function of the system in phase space coordinates."
+                "unit": "J",
+                "description": "Total energy function in canonical phase space coordinates"
             },
             "q_i": {
                 "name": "Generalized coordinate",
                 "type": "variable",
-                "unit": "meter, radian, etc.",
-                "description": "A set of independent parameters that define the configuration of a system."
+                "unit": "m",
+                "description": "Spatial or angular degree of freedom parameterizing configuration space"
             },
             "p_i": {
-                "name": "Generalized momentum",
+                "name": "Conjugate canonical momentum",
                 "type": "variable",
-                "unit": "kg⋅m/s, J⋅s, etc.",
-                "description": "The momentum conjugate to the generalized coordinate $q_i$, defined as $p_i = \\partial L / \\partial \\dot{q}_i$."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "second (s)",
-                "description": "The time coordinate."
-            },
-            "L": {
-                "name": "Lagrangian",
-                "type": "variable",
-                "unit": "Joule (J)",
-                "description": "The function that summarizes the dynamics of a system, typically defined as $L = T - V$ (kinetic minus potential energy)."
+                "unit": "kg*m/s",
+                "description": "Momentum canonically conjugate to coordinate $q_i$, defined as $\\partial L / \\partial \\dot{q}_i$"
             },
             "\\dot{q}_i": {
                 "name": "Generalized velocity",
                 "type": "variable",
-                "unit": "m/s, rad/s, etc.",
-                "description": "The time derivative of the generalized coordinate $q_i$."
+                "unit": "m/s",
+                "description": "First time derivative of the generalized coordinate"
             },
-            "\\sum_{i}": {
-                "name": "Summation",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "An operator that sums over the index $i$, representing all degrees of freedom of the system."
+            "L": {
+                "name": "Lagrangian function",
+                "type": "variable",
+                "unit": "J",
+                "description": "Difference between kinetic and potential energy in configuration space"
+            },
+            "t": {
+                "name": "Time",
+                "type": "variable",
+                "unit": "s",
+                "description": "Temporal coordinate parameterizing system evolution"
+            },
+            "i": {
+                "name": "Degree of freedom index",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Discrete index iterating over the $N$ independent degrees of freedom"
             }
         },
-        "interpretation": "The Hamiltonian, denoted by $H(q_i, p_i, t)$, is a function of the system's generalized coordinates $q_i$, their conjugate momenta $p_i$, and time $t$. It is formally defined via a Legendre transformation of the Lagrangian $L(q_i, \\dot{q}_i, t)$. This transformation replaces the generalized velocities $\\dot{q}_i$ as independent variables with the generalized momenta $p_i$, which are defined as $p_i \\equiv \\frac{\\partial L}{\\partial \\dot{q}_i}$. For scleronomic systems (where coordinate transformations do not explicitly depend on time) with potential energy $V$ depending only on coordinates, the Hamiltonian $H$ corresponds to the total energy of the system, $H = T + V$, where $T$ is the kinetic energy. This change of framework from Lagrangian to Hamiltonian mechanics replaces the $N$ second-order Lagrange equations with a set of $2N$ first-order differential equations, known as Hamilton's canonical equations: $\\dot{q}_i = \\frac{\\partial H}{\\partial p_i}$ and $\\dot{p}_i = -\\frac{\\partial H}{\\partial q_i}$.",
-        "symmetry_origin": "The Hamiltonian framework is central to understanding symmetries via Noether's theorem. If the Hamiltonian $H$ has no explicit time dependence ($\\partial H / \\partial t = 0$), it is a conserved quantity, corresponding to the system's time-translation invariance and the conservation of energy. More generally, any observable $f$ is a conserved quantity if its Poisson bracket with the Hamiltonian vanishes, $\\{f, H\\} = 0$, providing a powerful algebraic tool for identifying constants of motion.",
-        "limits_and_boundary": "As a foundational definition, its limits are reflected in the theories it describes. In the classical limit ($\\hbar \\to 0$), the quantum mechanical commutator is proportional to the classical Poisson bracket, $\\{A, B\\} = \\lim_{\\hbar \\to 0} \\frac{1}{i\\hbar}[\\hat{A}, \\hat{B}]$. In the non-relativistic limit ($v \\ll c$), the Hamiltonian for a free particle, $H = \\sqrt{p^2c^2 + m_0^2c^4}$, correctly reduces to the classical kinetic energy plus rest energy, $H \\approx m_0c^2 + \\frac{p^2}{2m_0}$. The definition itself holds across all domains of classical mechanics.",
+        "interpretation": "In this relation, $H(q_i, p_i, t)$ denotes the Hamiltonian function parameterized by generalized coordinates $q_i$, conjugate momenta $p_i$, and explicit time $t$. The term $\\sum_i p_i \\dot{q}_i$ represents the pairing between canonical momenta and generalized velocities. Subtracting the Lagrangian $L(q_i, \\dot{q}_i, t)$ completes the Legendre dualization. For scleronomic and natural systems where kinetic energy $T$ is homogeneous quadratic in $\\dot{q}_i$ and potential $V$ depends solely on coordinates, $H$ equals the total mechanical energy $E = T + V$.",
+        "symmetry_origin": "Rooted in time-translation symmetry via Noether's theorem; when $L$ contains no explicit time dependence ($\frac{\\partial L}{\\partial t} = 0$), the Hamiltonian is a constant of motion ($\frac{dH}{dt} = 0$). Geometrically, it arises from the canonical symplectic structure on the cotangent bundle $T^*Q$.",
+        "limits_and_boundary": "In the non-singular limit, the Hessian matrix (mass matrix) $W_{ij} = \frac{\\partial^2 L}{\\partial \\dot{q}_i \\partial \\dot{q}_j}$ must be strictly positive definite ($\\det(W_{ij}) \neq 0$) to invert $\\dot{q}_i(q, p, t)$; for degenerate or gauge theories where $\\det(W_{ij}) = 0$, primary Dirac constraints arise requiring Dirac-Bergmann constraint analysis.",
         "status": "platinum",
-        "conceptual_definition": "The Hamiltonian, $H$, is a function that describes the total energy of a system under specific conditions. It is formally constructed by applying a Legendre transformation to the Lagrangian, $L$. This mathematical operation systematically replaces the dependence on generalized velocities, $\\dot{q}_i$, with a dependence on their corresponding conjugate momenta, $p_i$, where $p_i \\equiv \\frac{\\partial L}{\\partial \\dot{q}_i}$. The resulting dynamical framework is situated in phase space.",
-        "intuitive_summary": "Imagine describing a car's motion. The Lagrangian approach uses its position and its current speed. The Hamiltonian approach switches perspectives, using the car's position and its momentum (mass times velocity). For many common physical systems, the Hamiltonian simply equals the total energy (kinetic plus potential), making it a very natural and powerful quantity for describing how things evolve.",
+        "conceptual_definition": "The Hamiltonian $H(q_i, p_i, t)$ is the fiber Legendre transform of the system's Lagrangian $L(q_i, \\dot{q}_i, t)$ with respect to generalized velocities $\\dot{q}_i$. By substituting the conjugate canonical momenta $p_i = \frac{\\partial L}{\\partial \\dot{q}_i}$ and inverting for $\\dot{q}_i(q, p, t)$, the Hamiltonian represents the dual generator of time evolution on symplectic manifolds: $H(q_i, p_i, t) = \\sum_{i} p_i \\dot{q}_i - L(q_i, \\dot{q}_i, t)$.",
+        "intuitive_summary": "While the Lagrangian expresses dynamics in terms of positions and velocities along paths, the Hamiltonian switches the velocity description to momentum, turning $N$ second-order differential equations into $2N$ symmetrical first-order geometric flow equations in phase space.",
         "subcomponents": [
-            "hamilton-canonical-equations-5314f032",
-            "lie-rules-65651e28",
-            "relationship-between-lagrangian-and-hamiltonian-time-derivatives-ba50aaa1"
+            "relationship-between-lagrangian-and-hamiltonian-time-derivatives",
+            "variation-of-the-hamiltonian",
+            "hamiltonian-from-lagrangian"
         ],
-        "description": "Defines the Hamiltonian ($H$) of a system as the Legendre transformation of its Lagrangian ($L$), transitioning the description of dynamics from configuration space (coordinates and velocities) to phase space (coordinates and momenta).",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the classical Hamiltonian function through a Legendre transformation of the Lagrangian, mapping dynamics from the tangent bundle (configuration space and velocities) to the cotangent bundle (phase space of coordinates and canonical conjugate momenta).",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "total-differential-lagrangian"
     },
     "michelson-morley-cc54ee39": {
         "title": "Michelson-Morley Experiment Null Result",

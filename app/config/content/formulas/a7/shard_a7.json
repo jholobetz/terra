@@ -884,53 +884,54 @@
         "derivation_type": "GENERALIZATION"
     },
     "legendre-duality-mapping-d484cb28": {
-        "title": "The Legendre Transformation",
+        "title": "The Legendre-Fenchel Transformation",
         "equation": "g(p) = \\sup_x [px - f(x)]",
-        "interpretation": "The formula $g(p) = \\sup_x [px - f(x)]$ defines the Legendre transform $g(p)$ of a function $f(x)$. Here, $x$ is an independent variable (e.g., position, volume, entropy) and $f(x)$ is a convex function (e.g., potential energy, internal energy). The variable $p$ is the conjugate variable to $x$, defined by the slope of $f(x)$, i.e., $p = df/dx$. The expression $px - f(x)$ represents the negative of the y-intercept for a line with slope $p$ that is tangent to the curve $y=f(x)$. The supremum operator, $\\sup_x$, ensures that for a given slope $p$, we find the unique point $x$ where this tangency occurs, thus maximizing the intercept value. In classical mechanics, $f(x)$ is the Lagrangian $L(q, \\dot{q})$ as a function of generalized velocity $\\dot{q}$, and its transform $g(p)$ is the Hamiltonian $H(q, p)$ as a function of generalized momentum $p = \\partial L / \\partial \\dot{q}$.",
-        "symmetry_origin": "This transformation represents a mathematical duality, not a physical symmetry in the sense of Noether's theorem. It is a structure-preserving map (a symplectomorphism) between the tangent bundle and the cotangent bundle of the configuration manifold. This duality allows for a change of representation (e.g., from velocity-based Lagrangian mechanics to momentum-based Hamiltonian mechanics) while preserving the underlying physical content of the system.",
-        "limits_and_boundary": "The Legendre transformation is well-behaved and invertible (i.e., a double transform returns the original function, $f(x) = \\sup_p [px - g(p)]$) if and only if the original function $f(x)$ is convex. If $f(x)$ is not convex, the transform to $g(p)$ can lose information. For a simple quadratic function like a kinetic energy term $f(\\dot{q}) = \\frac{1}{2}m\\dot{q}^2$, the conjugate variable is momentum $p = m\\dot{q}$, and the transform is $g(p) = p\\dot{q} - f(\\dot{q}) = p(p/m) - \\frac{1}{2}m(p/m)^2 = \\frac{p^2}{2m}$, which is the kinetic energy expressed in terms of momentum.",
+        "interpretation": "In the relation $g(p) = \\sup_x [px - f(x)]$, $x$ denotes the primal independent variable (e.g., generalized velocity $\\dot{q}$), $f(x)$ is the primal convex potential (e.g., Lagrangian $L$), $p$ is the dual conjugate variable defined by the differential slope $p = \\frac{\\partial f}{\\partial x}$ (e.g., canonical momentum), and $g(p)$ is the resulting dual potential (e.g., Hamiltonian $H$). The supremum operator $\\sup_x$ identifies the unique contact point where the slope of $f(x)$ matches $p$, ensuring an involutive and bijective mapping between the dual coordinate systems.",
+        "symmetry_origin": "Duality invariance under the Legendre transformation represents an involutive canonical isomorphism on symplectic manifolds $T^*Q \\cong T(TQ)$ preserving the geometric contact structure.",
+        "limits_and_boundary": "For non-strictly convex functions (where the Hessian $\\frac{\\partial^2 f}{\\partial x^2}$ has vanishing eigenvalues or fails to be positive definite), the transformation yields the convex envelope (biconjugate $f^{**}$) rather than a bijective invertible map, leading to singular or constrained systems requiring Dirac constraint analysis. In linear limits $f(x) \\propto x$, the dual conjugate $g(p)$ collapses to a point constraint.",
         "semantic_variables": {
-            "g(p)": {
-                "name": "Legendre Transform Function",
+            "g": {
+                "name": "dual function",
                 "type": "variable",
-                "unit": "Depends on context (e.g., Joules)",
-                "description": "The transformed function, which depends on the conjugate variable $p$."
-            },
-            "f(x)": {
-                "name": "Original Function",
-                "type": "variable",
-                "unit": "Depends on context (e.g., Joules)",
-                "description": "The original convex function to be transformed."
+                "unit": "dimensionless or J",
+                "description": "Legendre-Fenchel dual transform of the primal function"
             },
             "p": {
-                "name": "Conjugate Variable",
+                "name": "conjugate dual variable",
                 "type": "variable",
-                "unit": "Depends on context (e.g., kg⋅m/s)",
-                "description": "The variable of the transformed function, defined as the derivative of the original function with respect to its variable, $p = df/dx$."
+                "unit": "dimensionless or kg*m/s",
+                "description": "Dual variable representing the derivative or slope of the primal function"
             },
             "x": {
-                "name": "Original Variable",
+                "name": "primal variable",
                 "type": "variable",
-                "unit": "Depends on context (e.g., m)",
-                "description": "The independent variable of the original function."
+                "unit": "dimensionless or m/s",
+                "description": "Independent variable of the primal functional domain"
             },
-            "\\sup_x": {
-                "name": "Supremum Operator",
+            "f": {
+                "name": "primal function",
+                "type": "variable",
+                "unit": "dimensionless or J",
+                "description": "Convex differentiable function defined on the primal domain"
+            },
+            "\\sup": {
+                "name": "supremum operator",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "An operator that finds the least upper bound of the expression $[px - f(x)]$ by varying $x$."
+                "unit": "dimensionless",
+                "description": "Least upper bound operator over the primal domain"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Legendre transformation defines a new function $g(p)$ as the dual to a convex function $f(x)$. The new variable $p$ is the derivative of the original function, $p = f'(x)$, representing the slope of $f(x)$. The value of the transformed function, $g(p) = \\sup_x [px - f(x)]$, is the negative of the y-intercept of the tangent line to $f(x)$ with slope $p$. This creates a dual representation of the information contained in $f(x)$, but parameterized by slope instead of position.",
-        "intuitive_summary": "Imagine describing a convex hill. You could list the height at every point on the ground $(x, f(x))$. Alternatively, you could describe the hill by specifying, for every possible steepness (slope $p$), the height of the straight-edge ruler that just touches the hill at that steepness. The Legendre transform is the mathematical machine that converts the first description (height vs. position) into the second (ruler-height vs. steepness).",
+        "conceptual_definition": "The Legendre-Fenchel transform $g(p)$ of a convex function $f(x)$ maps the domain from the primal variable $x$ to the dual conjugate variable $p$ via the supremum $g(p) = \\sup_x [px - f(x)]$. When $f(x)$ is strictly convex and differentiable, the supremum is attained at the stationary point satisfying $p = f'(x)$, encoding the identical geometric information of the primal curve through supporting tangent hyperplanes.",
+        "intuitive_summary": "Instead of defining a curve as a collection of $(x, f(x))$ coordinate points, the Legendre transformation defines the same curve by the envelope of its tangent lines characterized by their slopes $p$ and vertical intercepts $-g(p)$.",
         "subcomponents": [
-            "legendre-transform-08d8c224",
-            "structural-mapping-isomorphism-40096cb2",
-            "action-functional-mapping-97af7ff2"
+            "dual-mapping-a390133b",
+            "legendre-transformation-0ab35037",
+            "gibbs-potential-definition-3d59c430",
+            "hamiltonian-density-legendre-0aedfc8b"
         ],
-        "description": "A fundamental mathematical operation that transforms a function of one variable into a function of its conjugate variable, crucial for switching between different formalisms in physics, such as from Lagrangian to Hamiltonian mechanics.",
-        "derivation_type": "DEFINITION"
+        "description": "A fundamental convex-analytic operation that maps a function to its dual representation in terms of its conjugate derivative variable, serving as the mathematical bridge across canonical formalisms in classical mechanics, field theory, and thermodynamics.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "broken-symmetry-generator-condition-16ef70ae": {
         "title": "Broken Symmetry Generator Condition in Quantum Field Theory",

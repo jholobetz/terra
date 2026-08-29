@@ -150,55 +150,44 @@
         "equation": "\\int_{C_1} \\mathbf{F} \\cdot d\\mathbf{r} = \\int_{C_2} \\mathbf{F} \\cdot d\\mathbf{r}",
         "semantic_variables": {
             "\\mathbf{F}": {
-                "name": "Force Field",
+                "name": "Conservative force field",
                 "type": "variable",
                 "unit": "N",
-                "description": "A vector field that assigns a force vector to every point in space."
+                "description": "Spatial vector field representing the force exerted on a test particle at position $\\mathbf{r}$."
             },
             "d\\mathbf{r}": {
-                "name": "Infinitesimal Displacement Vector",
+                "name": "Differential displacement vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "An infinitesimal vector representing a segment of the path of integration."
+                "description": "Infinitesimal displacement vector directed tangentially along the integration trajectory."
             },
             "C_1": {
-                "name": "Path 1",
+                "name": "First trajectory path",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The first path of integration between two points A and B."
+                "description": "Oriented curve connecting initial position $\\mathbf{r}_A$ to final position $\\mathbf{r}_B$."
             },
             "C_2": {
-                "name": "Path 2",
+                "name": "Second trajectory path",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The second, different path of integration between the same two points A and B."
-            },
-            "\\int": {
-                "name": "Line Integral",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The operator that sums the values of a function along a curve."
-            },
-            "\\cdot": {
-                "name": "Dot Product",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The scalar product of two vectors, projecting one onto the other."
+                "description": "Alternative oriented curve connecting the same endpoints $\\mathbf{r}_A$ and $\\mathbf{r}_B$."
             }
         },
-        "interpretation": "The equation $\\int_{C_1} \\mathbf{F} \\cdot d\\mathbf{r} = \\int_{C_2} \\mathbf{F} \\cdot d\\mathbf{r}$ establishes the path independence of the line integral for a conservative force field $\\mathbf{F}$. Here, $\\mathbf{F}$ is a vector field assigning a force vector to each point in space. The term $d\\mathbf{r}$ represents an infinitesimal displacement vector along a path. The dot product $\\mathbf{F} \\cdot d\\mathbf{r}$ is the infinitesimal work done by the force $\\mathbf{F}$ over this displacement. The integral $\\int_{C} \\mathbf{F} \\cdot d\\mathbf{r}$ sums these infinitesimal contributions to find the total work done along a specific path $C$. The equality holds if and only if the field $\\mathbf{F}$ is conservative, and the paths $C_1$ and $C_2$ connect the same initial and final points.",
-        "symmetry_origin": "This path independence is a direct consequence of the force field $\\mathbf{F}$ being derivable from a scalar potential, i.e., $\\mathbf{F} = -\\nabla V$. This structure implies that the total energy of a system subject only to this force is conserved, which, by Noether's theorem, corresponds to a time-translation symmetry of the system's Lagrangian.",
-        "limits_and_boundary": "This equality holds only for conservative vector fields. For non-conservative fields, such as friction or a time-varying magnetic field, the work done is path-dependent, and the equality fails. An equivalent statement for a conservative field is that the line integral over any closed loop is zero: $\\oint_C \\mathbf{F} \\cdot d\\mathbf{r} = 0$. This is a direct consequence of Stokes' theorem if the curl of the field is zero, $\\nabla \\times \\mathbf{F} = 0$.",
+        "interpretation": "The symbol $\\mathbf{F}$ denotes the spatial force vector field acting on a particle. The differential element $d\\mathbf{r}$ represents an infinitesimal displacement tangent to the path. The line integrals $\\int_{C_1} \\mathbf{F} \\cdot d\\mathbf{r}$ and $\\int_{C_2} \\mathbf{F} \\cdot d\\mathbf{r}$ quantify the total mechanical work accumulated along two distinct trajectories $C_1$ and $C_2$. Their equality is equivalent to the vanishing of the circulation $\\oint_{\\mathcal{C}} \\mathbf{F} \\cdot d\\mathbf{r} = 0$ over the closed loop formed by $C_1 - C_2$, establishing the existence of a single-valued scalar potential $V(\\mathbf{r})$ such that $\\mathbf{F} = -\\nabla V$.",
+        "symmetry_origin": "Topological invariance of exact 1-forms on simply connected domains (de Rham cohomology $H^1(M) = 0$), corresponding to continuous spatial symmetry and time-translation invariance leading to mechanical energy conservation.",
+        "limits_and_boundary": "Valid on simply connected domains without non-conservative dissipative forces (such as friction where work depends on path length) and in static or curl-free force fields where $\\nabla \\times \\mathbf{F} = \\mathbf{0}$.",
         "status": "platinum",
-        "conceptual_definition": "A force field $\\mathbf{F}$ is defined as conservative if the work done, calculated as the line integral $\\int \\mathbf{F} \\cdot d\\mathbf{r}$, between any two points $A$ and $B$ is the same regardless of the path $C$ taken between them. This equation expresses this path independence by equating the work done along two distinct paths, $C_1$ and $C_2$, that share the same start and end points.",
-        "intuitive_summary": "Imagine moving an object in a gravitational field. The total change in its potential energy depends only on the starting and ending heights, not on the specific winding road taken. This formula captures that core idea: for conservative forces like gravity, the work done is a property of the endpoints, not the journey itself.",
-        "description": "This equation provides the defining condition for a conservative force field, stating that the work done by the force between two points is independent of the path taken.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "A vector field $\\mathbf{F}(\\mathbf{r})$ is conservative if and only if the line integral $\\int_{C} \\mathbf{F} \\cdot d\\mathbf{r}$ depends solely on the initial point $\\mathbf{r}_A$ and final point $\\mathbf{r}_B$, making the integral invariant under continuous deformations of the path: $\\int_{C_1} \\mathbf{F} \\cdot d\\mathbf{r} = \\int_{C_2} \\mathbf{F} \\cdot d\\mathbf{r}$ for any curves $C_1, C_2$ sharing the same boundary conditions $\\partial C_1 = \\partial C_2 = \\mathbf{r}_B - \\mathbf{r}_A$.",
+        "intuitive_summary": "Moving an object between two fixed locations in a conservative field costs or yields the exact same total energy regardless of the specific route taken.",
+        "description": "States that the mechanical work performed by a conservative force field between two endpoints is identical along any piecewise smooth curve connecting them.",
+        "derivation_type": "DERIVED_FROM",
         "subcomponents": [
             "work-done-by-a-variable-force-af77b726",
-            "potential-energy-integral",
-            "potential-link-e212d3b8"
-        ]
+            "work-conservative-force-closed-loop",
+            "potential-energy-integral"
+        ],
+        "parent_formula_id": "work-conservative-force-closed-loop"
     },
     "cosmic-timing-720ab189": {
         "title": "Cosmic Timing",
@@ -260,53 +249,47 @@
         "derivation_type": "DERIVED_FROM"
     },
     "network-logic-558e9513": {
-        "title": "Quantum Interaction Information",
+        "title": "Quantum Interaction Information and Multi-Party Total Correlation",
         "equation": "I_{context} = S(\\rho_{total}) - \\sum S(\\rho_i)",
         "semantic_variables": {
-            "I_{\\text{context}}": {
-                "name": "Contextual Information",
+            "I_{context}": {
+                "name": "Quantum interaction information",
                 "type": "variable",
-                "unit": "Information Units (e.g., bits, nats)",
-                "description": "A measure of the total correlation in a multipartite system. Also known as interaction information or the negative of multi-information."
+                "unit": "nat",
+                "description": "Discrepancy measure of multi-party quantum correlations, equal to the negative total correlation"
             },
             "S": {
-                "name": "Von Neumann Entropy",
+                "name": "von Neumann entropy functional",
                 "type": "operator",
-                "unit": "Information Units (e.g., bits, nats)",
-                "description": "A functional $S(\\rho) = -\\text{Tr}(\\rho \\log \\rho)$ that quantifies the statistical uncertainty or information content of a quantum state $\\rho$."
+                "unit": "nat",
+                "description": "Functional mapping a quantum density operator to its statistical uncertainty via $S(\\rho) = -\\text{Tr}(\\rho \\ln \\rho)$"
             },
-            "\\rho_{\\text{total}}": {
-                "name": "Total System Density Matrix",
+            "\\rho_{total}": {
+                "name": "Total composite density operator",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The density operator that describes the quantum state of the entire composite system."
+                "unit": "dimensionless",
+                "description": "Positive semi-definite, unit-trace density matrix representing the full multipartite quantum state"
             },
             "\\rho_i": {
-                "name": "Reduced Density Matrix",
+                "name": "Reduced density operator of subsystem $i$",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The density operator for subsystem $i$, obtained by taking the partial trace of $\\rho_{\\text{total}}$ over all other subsystems."
-            },
-            "\\sum": {
-                "name": "Summation",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "Operator that sums the entropies of the individual subsystems."
+                "unit": "dimensionless",
+                "description": "Marginal density operator of the $i$-th subsystem obtained by partial tracing over the environment $\\mathcal{H}_{\\neg i}$"
             }
         },
-        "interpretation": "In the formula $I_{\\text{context}} = S(\\rho_{\\text{total}}) - \\sum S(\\rho_i)$, the term $S(\\rho)$ represents the von Neumann entropy of a quantum state $\\rho$, given by $S(\\rho) = -\\text{Tr}(\\rho \\log \\rho)$, which measures the statistical uncertainty of the state. The variable $\\rho_{\\text{total}}$ is the density matrix describing the state of the entire composite system. Each $\\rho_i$ is the reduced density matrix of the $i$-th subsystem, obtained by performing a partial trace over all other subsystems: $\\rho_i = \\text{Tr}_{\\neg i}(\\rho_{\\text{total}})$. The summation $\\sum S(\\rho_i)$ represents the total information content if all subsystems were treated as independent entities. Due to the subadditivity of entropy, $S(\\rho_{\\text{total}}) \\le \\sum S(\\rho_i)$, the value of $I_{\\text{context}}$ is non-positive. A value of $I_{\\text{context}} = 0$ occurs if and only if the system is a product state ($\\rho_{\\text{total}} = \\bigotimes_i \\rho_i$), indicating no correlations. A negative value signifies the presence of correlations (both classical and quantum) that make the whole system more predictable than the sum of its parts.",
-        "symmetry_origin": "This formula is not derived from a physical symmetry via Noether's theorem. It is a fundamental definition in quantum information theory, arising from the mathematical structure of Hilbert spaces, the properties of the density matrix ($\\rho$), and the definition of von Neumann entropy ($S$) as a measure of uncertainty.",
-        "limits_and_boundary": "For a fully uncorrelated product state, $\\rho_{\\text{total}} = \\bigotimes_i \\rho_i$, the additivity of entropy ensures $S(\\rho_{\\text{total}}) = \\sum S(\\rho_i)$, thus $I_{\\text{context}} = 0$. For any correlated state, including entangled states, the subadditivity property $S(\\rho_{\\text{total}}) < \\sum S(\\rho_i)$ implies $I_{\\text{context}} < 0$. In the case of a pure entangled state for the total system, $S(\\rho_{\\text{total}}) = 0$, leading to $I_{\\text{context}} = -\\sum S(\\rho_i)$, where $S(\\rho_i)$ is the entanglement entropy of subsystem $i$.",
+        "interpretation": "In the relation $I_{\\text{context}} = S(\\rho_{\\text{total}}) - \\sum_i S(\\rho_i)$, $S(\\rho) = -\\text{Tr}(\\rho \\ln \\rho)$ represents the von Neumann entropy measuring the quantum state uncertainty. The term $\\rho_{\\text{total}}$ is the density operator of the multipartite Hilbert space $\\mathcal{H} = \\bigotimes_i \\mathcal{H}_i$, while $\\rho_i = \\text{Tr}_{\\neg i}(\\rho_{\\text{total}})$ is the reduced state obtained via partial trace over all complementary subsystems $\\neg i$. The negative difference $-I_{\\text{context}}$ corresponds to the total correlation (or multi-party quantum mutual information), capturing both classical correlations and quantum entanglement.",
+        "symmetry_origin": "Invariance under local unitary transformations $\\rho_{\\text{total}} \\mapsto (\\bigotimes_i U_i) \\rho_{\\text{total}} (\\bigotimes_i U_i^\\dagger)$, reflecting the conservation of local informational invariants.",
+        "limits_and_boundary": "For pure entangled bipartite states $|\\psi\\rangle_{AB}$, $S(\\rho_{AB}) = 0$ while $S(\\rho_A) = S(\\rho_B) > 0$, yielding $I_{\\text{context}} = -2 S(\\rho_A) < 0$. In the classical limit with uncorrelated product states $\\rho = \\bigotimes_i \\rho_i$, $I_{\\text{context}} \\to 0$.",
         "status": "platinum",
-        "conceptual_definition": "The interaction information, $I_{\text{context}}$, quantifies the net correlation in a multipartite system. It is defined as the von Neumann entropy of the total system, $S(\\rho_{\\text{total}})$, minus the sum of the von Neumann entropies of its individual subsystems, $\\sum S(\\rho_i)$. This quantity is also known as the negative of 'total correlation' or 'multi-information'.",
-        "intuitive_summary": "This formula measures the 'synergy' of a system. It quantifies how much information is encoded in the relationships *between* the parts, rather than within the parts themselves. A negative value indicates the presence of correlations (like entanglement) that reduce the total system's uncertainty compared to the sum of uncertainties of its isolated components.",
+        "conceptual_definition": "The quantum interaction information $I_{\\text{context}} = S(\\rho_{\\text{total}}) - \\sum_{i} S(\\rho_i)$ measures the discrepancy between the joint entropy of a composite quantum system $\\rho_{\\text{total}}$ and the sum of the von Neumann entropies of its individual reduced density matrices $\\rho_i = \\text{Tr}_{\\neg i}(\\rho_{\\text{total}})$. By the subadditivity of quantum von Neumann entropy, $I_{\\text{context}} \\le 0$, where the equality $I_{\\text{context}} = 0$ holds strictly for uncorrelated product states $\\rho_{\\text{total}} = \\bigotimes_i \\rho_i$.",
+        "intuitive_summary": "In quantum mechanics, the whole can be more ordered and predictable than the sum of its isolated parts; when subsystems are correlated or entangled, knowing the complete system state provides more information than analyzing each part independently.",
         "subcomponents": [
-            "density-matrix-composite-system",
-            "total-energy-density-of-the-universe-643987be",
-            "total-probability-sum"
+            "planck-discreteness-5d36c1b4",
+            "super-quantum-logic-b3d0ac5f"
         ],
-        "description": "Defines the total correlation (quantum and classical) within a composite quantum system, measured as the discrepancy between the total system's entropy and the sum of its parts' entropies.",
-        "derivation_type": "DEFINITION"
+        "description": "Quantifies the total correlation (quantum entanglement plus classical correlation) across multipartite quantum subsystems, defined as the difference between the total von Neumann entropy and the sum of marginal subsystem entropies.",
+        "derivation_type": "GENERALIZATION",
+        "parent_formula_id": "planck-discreteness-5d36c1b4"
     },
     "the-average-bend-3ebddbe1": {
         "title": "Ricci Curvature Tensor",

@@ -235,44 +235,43 @@
         "equation": "p_i = \\frac{\\partial L}{\\partial \\dot{q}^i}",
         "semantic_variables": {
             "p_i": {
-                "name": "Generalized Momentum",
+                "name": "Generalized (canonical) momentum",
                 "type": "variable",
-                "unit": "J⋅s⋅m⁻¹ or J⋅s⋅rad⁻¹",
-                "description": "The component of generalized momentum canonically conjugate to the generalized coordinate $q^i$."
+                "unit": "kg*m/s",
+                "description": "Canonical momentum conjugate to the generalized coordinate q^i (units depend on generalized coordinate dimension)"
             },
             "L": {
                 "name": "Lagrangian",
                 "type": "variable",
-                "unit": "Joule",
-                "description": "The Lagrangian of the system, typically defined as kinetic energy minus potential energy, $L = T - V$."
+                "unit": "J",
+                "description": "Scalar Lagrangian function of coordinates, velocities, and time"
             },
             "\\dot{q}^i": {
-                "name": "Generalized Velocity",
+                "name": "Generalized velocity",
                 "type": "variable",
-                "unit": "m/s, rad/s, etc.",
-                "description": "The time derivative of the generalized coordinate $q^i$, representing the rate of change of that coordinate."
+                "unit": "m/s",
+                "description": "Time derivative of the generalized coordinate q^i"
             },
             "\\frac{\\partial}{\\partial \\dot{q}^i}": {
-                "name": "Partial Derivative Operator",
+                "name": "Partial derivative with respect to generalized velocity",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "The partial derivative with respect to the generalized velocity $\\dot{q}^i$."
+                "unit": "s/m",
+                "description": "Differential operator acting on velocity coordinates on the tangent bundle"
             }
         },
-        "interpretation": "The equation $p_i = \\frac{\\partial L}{\\partial \\dot{q}^i}$ defines the generalized momentum $p_i$, also known as the canonical momentum, which is 'canonically conjugate' to the generalized coordinate $q^i$. The Lagrangian $L$ is a scalar function, $L(q, \\dot{q}, t)$, representing the dynamics of the system, typically as the difference between kinetic energy $T$ and potential energy $V$, so $L = T - V$. The term $\\dot{q}^i$ represents the generalized velocity, the time derivative of the generalized coordinate $q^i$. The operator $\\frac{\\partial}{\\partial \\dot{q}^i}$ signifies a partial derivative with respect to this generalized velocity. The definition measures the sensitivity of the Lagrangian to a change in a specific generalized velocity. This operation is a key step in the Legendre transformation that transitions the description of a system from configuration space (using coordinates $q^i$ and velocities $\\dot{q}^i$) to phase space (using coordinates $q^i$ and momenta $p_i$), which is the foundation of Hamiltonian mechanics.",
-        "symmetry_origin": "This definition provides the mathematical expression for the conserved quantity (the Noether charge) associated with a continuous spatial translation symmetry of the Lagrangian. If the Lagrangian is invariant under a shift in a generalized coordinate $q^i$ (i.e., $\\frac{\\partial L}{\\partial q^i} = 0$), then by the Euler-Lagrange equations, the corresponding generalized momentum $p_i$ is conserved ($\\dot{p}_i = 0$).",
-        "limits_and_boundary": "In the non-relativistic limit for a particle in Cartesian coordinates, where $L = \\frac{1}{2}m\\dot{\\mathbf{r}}^2 - V(\\mathbf{r})$, this definition correctly reduces to the standard linear momentum $\\mathbf{p} = m\\dot{\\mathbf{r}}$. For a system undergoing rotation where the generalized coordinate is an angle $\\theta$, the corresponding generalized momentum $p_\\theta$ becomes the angular momentum. The definition is fundamental to classical mechanics and is the direct classical analogue that is promoted to a quantum mechanical operator, e.g., $\\hat{p}_i = -i\\hbar \\frac{\\partial}{\\partial q^i}$, in the process of canonical quantization.",
+        "interpretation": "In the relation $p_i = \\frac{\\partial L}{\\partial \\dot{q}^i}$, $p_i$ is the $i$-th component of the generalized (canonical) momentum, $L$ is the Lagrangian of the physical system (commonly $L = T - V$ in non-relativistic classical mechanics), and $\\dot{q}^i = \\frac{\\mathrm{d}q^i}{\\mathrm{d}t}$ is the generalized velocity associated with the generalized coordinate $q^i$. If $L$ is independent of $q^i$ (a cyclic coordinate), the Euler-Lagrange equations $\\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}^i}\\right) - \\frac{\\partial L}{\\partial q^i} = 0$ directly imply the conservation of $p_i$, namely $\\dot{p}_i = 0$. In the presence of electromagnetic velocity-dependent potentials, $p_i$ includes the gauge potential contribution $p_i = m v_i + q A_i$.",
+        "symmetry_origin": "Rooted in continuous spatial translation invariance via Noether's theorem; when the Lagrangian is invariant under continuous shifts along coordinate $q^i$, the canonical momentum $p_i$ is the corresponding conserved Noether charge.",
+        "limits_and_boundary": "In the non-relativistic limit with velocity-independent potentials, $p_i$ reduces to standard mechanical momentum $m \\dot{x}_i$. In relativistic mechanics, $p_i = \\gamma m \\dot{x}_i + q A_i$. In singular systems where the Hessian matrix $\\frac{\\partial^2 L}{\\partial \\dot{q}^i \\partial \\dot{q}^j}$ is non-invertible, primary Dirac constraints arise.",
         "status": "platinum",
-        "conceptual_definition": "In Lagrangian mechanics, for a system described by a set of generalized coordinates $q^i$ and a Lagrangian $L(q^i, \\dot{q}^i, t)$, the generalized momentum $p_i$ conjugate to the coordinate $q^i$ is defined as the partial derivative of the Lagrangian with respect to the corresponding generalized velocity $\\dot{q}^i$. This definition is the cornerstone of the transition from the Lagrangian to the Hamiltonian formulation of classical mechanics via a Legendre transformation.",
-        "intuitive_summary": "Generalized momentum is the 'natural' momentum associated with any degree of freedom in a system. If the system's dynamics (the Lagrangian) are independent of a particular coordinate, its corresponding generalized momentum is conserved. For linear motion, this is standard momentum; for rotation, it's angular momentum.",
+        "conceptual_definition": "The canonical momentum $p_i$ measures the sensitivity of the system's Lagrangian $L(q, \\dot{q}, t)$ to changes in the generalized velocity $\\dot{q}^i$. It serves as the primary conjugate variable enabling the Legendre transformation from the tangent bundle (configuration velocity space $(q^i, \\dot{q}^i)$) to the cotangent bundle (phase space $(q^i, p_i)$) in Hamiltonian mechanics.",
+        "intuitive_summary": "Generalized momentum generalizes classical linear momentum to any choice of generalized coordinates, representing the rate at which kinetic content shifts with coordinate velocity.",
         "subcomponents": [
-            "lagrangian-derivative-with-respect-to-generalized-velocity-448c83bc",
-            "rate-of-change-of-generalized-momentum-bbbb807e",
-            "position-shift-8d2f4e0d",
-            "generalized-angular-momentum-definition-bbbd0a29"
+            "cyclic-conservation-law-9e7b4a3c",
+            "generalized-angular-momentum-definition-bbbd0a29",
+            "lagranges-equations-conserved-quantity"
         ],
-        "description": "Defines the generalized momentum $p_i$ as the quantity canonically conjugate to a generalized coordinate $q^i$, obtained by taking the partial derivative of the system's Lagrangian $L$ with respect to the corresponding generalized velocity $\\dot{q}^i$.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the generalized (canonical) momentum $p_i$ canonically conjugate to a generalized coordinate $q^i$ as the partial derivative of the system's Lagrangian $L$ with respect to the corresponding generalized velocity $\\dot{q}^i$.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "integral-link-f1f3aad4": {
         "title": "Work Done by a Conservative Force as Change in Potential Energy",
@@ -1579,42 +1578,42 @@
         "derivation_type": "DEFINITION"
     },
     "exterior-derivative-of-a-form": {
-        "title": "Exterior Derivative of a Differential 1-Form",
+        "title": "Exterior Derivative of a Differential 1-Form (Abelian Field Strength)",
         "equation": "F = dA",
-        "conceptual_definition": "In the language of differential geometry, the exterior derivative $d$ is an operator that maps a differential $p$-form to a $(p+1)$-form. The equation $F = dA$ represents the specific case where a potential 1-form $A$ (such as the electromagnetic four-potential $A_\\mu dx^\\mu$) is mapped to a field strength 2-form $F$ (the electromagnetic field tensor $F_{\\mu\\nu}$). The components of $F$ are antisymmetric combinations of the partial derivatives of the components of $A$, thereby generalizing the concept of the curl from vector calculus to arbitrary manifolds.",
-        "intuitive_summary": "Imagine a landscape described by a potential field $A$. The exterior derivative $d$ calculates the 'local circulation' or 'vorticity' of this potential at every point. The resulting field $F$ quantifies the strength of these 'vortices', which can be measured by integrating $A$ around an infinitesimally small closed loop. In essence, $F$ is the local 'curl' of $A$.",
-        "interpretation": "The equation $F = dA$ establishes a local relationship between a potential and its corresponding field strength. Here, $A$ is a differential 1-form, which in physics often represents a potential like the electromagnetic four-potential. The operator $d$ is the exterior derivative, which acts on $A$ to produce $F$, a differential 2-form representing the physical field strength (e.g., the electromagnetic field tensor). A crucial property of the exterior derivative is its nilpotency, $d^2 = 0$. This implies that any field $F$ defined as an exterior derivative is automatically 'closed', meaning $dF = d(dA) = 0$. In electromagnetism, this single geometric statement compactly represents the two homogeneous Maxwell's equations (Gauss's law for magnetism and Faraday's law of induction).",
-        "symmetry_origin": "This definition is central to the principle of gauge invariance. The field strength $F$ remains invariant under a gauge transformation of the potential of the form $A \\to A' = A + d\\lambda$, where $\\lambda$ is an arbitrary scalar field (a 0-form). This is because $F' = d(A + d\\lambda) = dA + d^2\\lambda = dA = F$, due to the nilpotency of the exterior derivative ($d^2=0$). Physical observables, described by $F$, are independent of the choice of gauge.",
-        "limits_and_boundary": "As a local, differential definition, this equation holds at all points on a smooth manifold where the potential $A$ is differentiable. It is a fundamental geometric identity, independent of physical scales or constants like $\\hbar$ or $c$ in its abstract form. Its validity is a prerequisite for the geometric formulation of modern field theories.",
+        "conceptual_definition": "In exterior calculus and differential geometry, the exterior derivative $d$ maps a differential $k$-form to a $(k+1)$-form. Acting on a gauge potential 1-form $A = A_\\mu dx^\\mu$, the exterior derivative yields the field strength 2-form $F = dA = \frac{1}{2} F_{\\mu\nu} dx^\\mu \\wedge dx^\nu$, where $F_{\\mu\nu} = \\partial_\\mu A_\nu - \\partial_\nu A_\\mu$. Due to the nilpotency of the exterior derivative ($d^2 = 0$), $F$ is identically closed ($dF = 0$), which geometrically realizes the homogeneous Maxwell equations without requiring dynamic equations of motion.",
+        "intuitive_summary": "The field strength measures the local 'twist' or circulation of the potential 1-form per unit area, naturally generalizing curl to arbitrary dimensions while guaranteeing the absence of magnetic monopoles via exactness.",
+        "interpretation": "The equation $F = dA$ represents the structural definition of an exact 2-form $F$ generated by a 1-form $A$. Here, $A$ serves as the electromagnetic four-potential 1-form, while $F$ represents the Faraday electromagnetic field tensor 2-form. The linear differential operator $d$ denotes the exterior derivative. Under an Abelian gauge transformation $A \to A + d\\lambda$, the field strength remains strictly gauge-invariant because $F \to d(A + d\\lambda) = dA + d^2\\lambda = dA = F$.",
+        "symmetry_origin": "Rooted in $U(1)$ local gauge invariance and the topological Poincaré lemma on contractible manifolds, which states that closed forms are locally exact.",
+        "limits_and_boundary": "In non-Abelian gauge theories (such as Yang-Mills or $SU(N)$ theories), this expression generalizes to $F = dA + g A \\wedge A$. In topologically non-trivial spaces (e.g., around a Dirac monopole or Aharonov-Bohm flux line), $A$ may not be globally well-defined as a single 1-form despite $F$ being globally defined.",
         "status": "platinum",
         "semantic_variables": {
             "F": {
-                "name": "Field Strength Tensor",
+                "name": "Field strength 2-form",
                 "type": "variable",
-                "unit": "Field Strength",
-                "description": "A differential 2-form representing the physical field strength, such as the electromagnetic tensor. Its components are the observable fields (e.g., electric and magnetic)."
+                "unit": "V*s / m^2",
+                "description": "The curvature 2-form representing the electromagnetic field strength tensor"
             },
             "d": {
-                "name": "Exterior Derivative",
+                "name": "Exterior derivative operator",
                 "type": "operator",
-                "unit": "Inverse Length",
-                "description": "An operator that maps a p-form to a (p+1)-form, generalizing gradient, curl, and divergence."
+                "unit": "1/m",
+                "description": "The nilpotent differential operator mapping differential $k$-forms to $(k+1)$-forms"
             },
             "A": {
-                "name": "Potential 1-Form",
+                "name": "Gauge potential 1-form",
                 "type": "variable",
-                "unit": "Potential",
-                "description": "A differential 1-form representing a potential field, such as the electromagnetic four-potential. It is a gauge-dependent quantity."
+                "unit": "V*s / m",
+                "description": "The connection 1-form representing the electromagnetic four-potential"
             }
         },
         "subcomponents": [
-            "nilpotency-of-the-exterior-derivative-350f399e",
-            "integral-of-exterior-derivative-over-a-manifold-d5ee5ccc",
             "exterior-derivative-of-field-strength-vanishes-cbffc43d",
-            "exterior-derivative-antisymmetry-ident-4c99b949"
+            "field-strength-from-gauge-potential-447e6eb4",
+            "the-sign-flip-ed50a57a"
         ],
-        "description": "Defines the field strength 2-form $F$ as the exterior derivative of the potential 1-form $A$. This is a fundamental definitional relationship in differential geometry and gauge theory, particularly in the formulation of electromagnetism.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the curvature or field strength 2-form $F$ as the exterior derivative of a gauge connection 1-form $A$, fundamentally encoding the local kinematics of Abelian gauge theories such as electromagnetism.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "holonomy-link-78c9a5e6"
     },
     "boltzmann-h-functional-equilibrium-condition-6f21468b": {
         "title": "Equilibrium Condition of the Boltzmann H-Theorem",

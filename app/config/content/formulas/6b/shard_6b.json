@@ -63,39 +63,41 @@
                 "name": "Downstream Static Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The static pressure of the fluid in the region immediately after (downstream of) the shock wave."
+                "description": "Static pressure immediately behind (downstream of) the normal shock wave."
             },
             "P_1": {
                 "name": "Upstream Static Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The static pressure of the fluid in the region immediately before (upstream of) the shock wave."
+                "description": "Static pressure immediately ahead of (upstream of) the normal shock wave."
             },
             "\\gamma": {
-                "name": "Adiabatic Index",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The ratio of specific heats ($C_p/C_v$) for the fluid, a measure of its thermodynamic properties."
+                "name": "Heat Capacity Ratio (Adiabatic Index)",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Ratio of specific heats at constant pressure and constant volume, C_p / C_v."
             },
             "M_1": {
                 "name": "Upstream Mach Number",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The ratio of the upstream fluid velocity to the local speed of sound in the upstream medium."
+                "unit": "dimensionless",
+                "description": "Ratio of the upstream flow velocity relative to the shock wave to the upstream speed of sound."
             }
         },
-        "interpretation": "This equation quantifies the pressure increase across a normal shock wave. The term $\\frac{P_2}{P_1}$ represents the ratio of the static pressure immediately behind the shock wave ($P_2$) to the static pressure immediately ahead of it ($P_1$). The variable $\\gamma$ is the ratio of specific heats (the adiabatic index) of the fluid, a dimensionless thermodynamic property. The variable $M_1$ is the upstream Mach number, defined as the ratio of the upstream flow speed to the local speed of sound. The formula shows that for any supersonic upstream flow ($M_1 > 1$), the pressure ratio $\\frac{P_2}{P_1}$ is greater than one. In the limit of a very strong shock where $M_1 \\gg 1$, the pressure ratio grows quadratically with $M_1$, indicating that the upstream Mach number is the dominant factor in determining the pressure jump.",
-        "symmetry_origin": "The Rankine-Hugoniot relations are derived from the Euler equations, which express the conservation of mass, momentum, and energy. These conservation laws are direct consequences of fundamental spacetime symmetries via Noether's theorem: invariance under temporal translation (energy conservation) and spatial translation (momentum conservation).",
-        "limits_and_boundary": "In the limit of a vanishingly weak shock, where the upstream Mach number $M_1 \\to 1$, the numerator $2\\gamma M_1^2 - (\\gamma - 1)$ approaches $2\\gamma - \\gamma + 1 = \\gamma + 1$. Thus, the pressure ratio $\\frac{P_2}{P_1} \\to 1$, signifying no change in pressure, as expected. In the strong shock limit, where $M_1 \\to \\infty$, the constant terms become negligible, and the relation asymptotically approaches $\\frac{P_2}{P_1} \\approx \\frac{2\\gamma M_1^2}{\\gamma + 1}$. This shows that for strong shocks, the pressure ratio increases with the square of the Mach number.",
+        "interpretation": "In this relation, $P_2$ is the downstream static pressure behind the shock and $P_1$ is the upstream static pressure. The dimensionless ratio $P_2/P_1$ is governed by the incoming Mach number $M_1 = u_1/a_1$ (where $u_1$ is flow speed and $a_1$ is the upstream speed of sound) and the adiabatic index $\\gamma = C_p/C_v$. For supersonic flow ($M_1 > 1$), the pressure ratio strictly exceeds unity ($P_2/P_1 > 1$), representing compressive irreversible entropy generation.",
+        "symmetry_origin": "Derived from the spacetime translational invariance (leading to conservation of mass, linear momentum, and energy via Noether's theorem) applied across a 1D discontinuity boundary in continuum fluid mechanics.",
+        "limits_and_boundary": "In the acoustic limit ($M_1 \\to 1$), the pressure jump vanishes ($P_2/P_1 \\to 1$). In the hypersonic strong-shock limit ($M_1 \\gg 1$), the pressure ratio scales quadratically as $P_2/P_1 \\approx \\frac{2\\gamma}{\\gamma + 1} M_1^2$. For an unphysical subsonic condition ($M_1 < 1$), the relation would yield $P_2/P_1 < 1$ (expansion shock), which is strictly forbidden by the Second Law of Thermodynamics (entropy decrease).",
         "status": "platinum",
-        "conceptual_definition": "The Normal Shock Pressure Jump Condition describes the relationship between the static pressure upstream ($P_1$) and downstream ($P_2$) of a normal shock wave. It is derived from the conservation of mass, momentum, and energy for a compressible, inviscid fluid. The magnitude of the pressure jump is shown to be a function of the upstream Mach number ($M_1$) and the adiabatic index ($\\gamma$) of the fluid, providing a fundamental link between the flow's kinetic properties and its thermodynamic state change across the shock.",
-        "intuitive_summary": "When a fluid flowing at supersonic speed encounters a shock wave, it abruptly slows down and compresses. This formula precisely calculates how much the fluid's pressure suddenly increases, showing that the faster the initial flow (higher Mach number), the more intense the pressure spike.",
+        "conceptual_definition": "The normal shock pressure jump relation is an analytical solution to the 1D steady compressible Navier-Stokes jump equations (Rankine-Hugoniot conditions) enforcing mass, momentum, and energy conservation across an infinitesimally thin shock discontinuity in a calorically perfect gas.",
+        "intuitive_summary": "As supersonic gas collides with a normal shock, its kinetic energy rapidly thermalizes into static enthalpy, causing an abrupt compression and steep pressure rise proportional to the square of the incoming Mach number.",
         "subcomponents": [
             "rankine-hugoniot-density-jump-relation-decf28fc",
-            "energy-transfer-aa8e44c3"
+            "shock-temperature-jump-condition-97571dc5",
+            "impact-force-543222a0"
         ],
-        "description": "This equation, one of the Rankine-Hugoniot relations, quantifies the discontinuous increase in static pressure across a normal shock wave as a function of the upstream Mach number and the fluid's specific heat ratio.",
-        "derivation_type": "DERIVED_FROM"
+        "description": "Calculates the discontinuous ratio of downstream static pressure to upstream static pressure across a 1D normal shock wave in an ideal gas as a function of the upstream Mach number and heat capacity ratio.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "sec-perfect-fluid-pressure-limit-53782061"
     },
     "apparent-drift-2a57446d": {
         "title": "Apparent Drift Displacement",
@@ -185,38 +187,38 @@
         "equation": "\\mu = \\frac{m_1 m_2}{m_1 + m_2}",
         "semantic_variables": {
             "\\mu": {
-                "name": "Reduced Mass",
+                "name": "reduced mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The effective inertial mass of a two-body system."
+                "description": "Effective inertial mass governing the relative coordinate motion of the two-body system"
             },
             "m_1": {
-                "name": "Mass of body 1",
+                "name": "mass of first particle",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The mass of the first object in the two-body system."
+                "description": "Inertial mass of the primary interacting particle"
             },
             "m_2": {
-                "name": "Mass of body 2",
+                "name": "mass of second particle",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The mass of the second object in the two-body system."
+                "description": "Inertial mass of the secondary interacting particle"
             }
         },
-        "interpretation": "The formula defines the reduced mass, $\\mu$, for a system of two bodies with masses $m_1$ and $m_2$. It arises when analyzing the dynamics of two interacting bodies, for example, via gravity or an electrostatic force. By separating the system's motion into the motion of the center of mass and the relative motion between the bodies, the complex two-body problem simplifies. The relative motion can be described by a single equation for a particle of mass $\\mu$ moving in the potential field of the interaction, as if orbiting a fixed center. Mathematically, the reciprocal of the reduced mass is the sum of the reciprocals of the individual masses: $1/\\mu = 1/m_1 + 1/m_2$. This form highlights that the reduced mass is dominated by the smaller of the two masses.",
-        "symmetry_origin": "Translational invariance of space. The separation of the center-of-mass motion, which moves with constant velocity due to the conservation of total momentum (a consequence of translational symmetry), allows the remaining relative motion to be described by an effective one-body problem using the reduced mass.",
-        "limits_and_boundary": "If one mass is significantly larger than the other, e.g., $m_1 \\gg m_2$, the reduced mass $\\mu$ approaches the smaller mass, $m_2$. This can be seen from the formula: $\\mu = \\frac{m_1 m_2}{m_1 + m_2} = \\frac{m_2}{1 + m_2/m_1} \\approx m_2$. This is the case for a planet orbiting a star, where the reduced mass is very close to the planet's mass. If the masses are equal, $m_1 = m_2 = m$, the reduced mass is $\\mu = m^2 / (2m) = m/2$.",
+        "interpretation": "In this relation, $\\mu$ denotes the reduced mass of the system in $\\mathrm{kg}$, while $m_1$ and $m_2$ denote the respective inertial masses of the two interacting particles in $\\mathrm{kg}$. The algebraic structure arises directly from Newton's second law $\\ddot{\\mathbf{r}} = \\ddot{\\mathbf{r}}_1 - \\ddot{\\mathbf{r}}_2 = -\\mathbf{F}\\left(\\frac{1}{m_1} + \\frac{1}{m_2}\\right) = -\\frac{\\mathbf{F}}{\\mu}$, demonstrating that the relative acceleration matches that of a particle of mass $\\mu$ subject to the mutual interaction force $\\mathbf{F}$.",
+        "symmetry_origin": "Galilean invariance and continuous spatial translation invariance (Noether's theorem), which ensure the conservation of total linear momentum and decouple the center-of-mass degrees of freedom from internal relative degrees of freedom.",
+        "limits_and_boundary": "In the equal mass limit $m_1 = m_2 = m$, the reduced mass is exactly half of the individual mass: $\\mu = m/2$. In the extreme mass ratio limit $m_1 \\gg m_2$, $\\mu \\to m_2$, reducing the system to a fixed-center problem with mass $m_2$. If either mass vanishes ($m_1 \\to 0$ or $m_2 \\to 0$), then $\\mu \\to 0$.",
         "status": "platinum",
-        "conceptual_definition": "The reduced mass, denoted by $\\mu$, is a mathematical construct that simplifies the analysis of a two-body system interacting via a central force. It allows the complex motion of two bodies, with masses $m_1$ and $m_2$, to be described by a single equation of motion for a hypothetical particle of mass $\\mu$ moving relative to a fixed center.",
-        "intuitive_summary": "Imagine two objects orbiting each other, like a planet and a star. Instead of tracking both, we can pretend a single, lighter 'reduced mass' object is orbiting a fixed point. This makes the math much easier. The reduced mass is always smaller than either of the original masses.",
-        "description": "The effective inertial mass in the two-body problem, allowing the system's dynamics to be modeled as the motion of a single particle.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "The reduced mass $\\mu$ is defined as the harmonic mean divided by two (or the reciprocal sum of inverses) of two interacting masses $m_1$ and $m_2$: $\\mu = \\frac{m_1 m_2}{m_1 + m_2}$. In Newtonian mechanics and quantum mechanics, it represents the effective inertial mass governing the relative position vector $\\mathbf{r} = \\mathbf{r}_1 - \\mathbf{r}_2$ when the center-of-mass motion is decoupled from the internal interaction dynamics.",
+        "intuitive_summary": "When two bodies orbit or interact with one another, both accelerate toward their mutual barycenter. The reduced mass acts as a single fictitious particle's mass moving in a fixed central force potential, scaling down to match the lighter body's inertia when one mass is overwhelmingly heavy.",
+        "description": "Calculates the effective inertial mass of a two-body system, allowing relative coordinate dynamics to be mapped exactly to an equivalent single-body problem.",
+        "derivation_type": "DERIVED_FROM",
         "subcomponents": [
             "reciprocal-reduced-mass",
-            "kinetic-energy-reduced-mass",
-            "reduced-mass-approximation-for-unequal-masses-f367d866",
-            "chirp-mass"
-        ]
+            "total-mass",
+            "kinetic-energy-cm-relative-coords"
+        ],
+        "parent_formula_id": "reciprocal-reduced-mass"
     },
     "gauge-rule-e062fed5": {
         "title": "Local U(1) Gauge Transformation of a Charged Matter Field",
@@ -1175,45 +1177,46 @@
     "effective-energy-density": {
         "title": "Active Gravitational Mass-Energy Density",
         "equation": "\\rho_{\\text{act}} = \\rho + \\frac{3P}{c^2}",
-        "conceptual_definition": "In General Relativity, the source of spacetime curvature is the stress-energy tensor, $T_{\\mu\\nu}$. The active gravitational mass-energy density, $\\rho_{\\text{act}}$, is the specific combination of energy density ($\\rho$) and pressure ($P$) that sources gravitational attraction in the Newtonian limit. It is defined as $\\rho_{\\text{act}} = \\rho + 3P/c^2$, encapsulating the principle that not only energy but also pressure contributes to the gravitational field.",
-        "intuitive_summary": "In Einstein's theory of gravity, it's not just the amount of 'stuff' (energy density, $\\rho$) in a region that creates a gravitational field, but also how much that 'stuff' is pushing outward (pressure, $P$). This formula calculates the total 'gravitational charge' by adding the gravitational effect of pressure to the standard energy density. A high-pressure system, like the early universe, pulls harder gravitationally than a zero-pressure cloud of dust with the same energy density.",
-        "interpretation": "The equation $\\rho_{\\text{act}} = \\rho + \\frac{3P}{c^2}$ defines the active gravitational mass-energy density, $\\rho_{\\text{act}}$, which acts as the source for the gravitational field in General Relativity. It is composed of the standard energy density, $\\rho$ (associated with the $T_{00}$ component of the stress-energy tensor), and a term proportional to the fluid's isotropic pressure, $P$. In the weak-field limit of General Relativity, the Poisson equation for the gravitational potential is sourced by $\\rho_{\\text{act}}$, not just $\\rho$. The factor of 3 arises from the trace of the spatial stress components ($T_{xx} + T_{yy} + T_{zz} = 3P$) for an isotropic perfect fluid. This demonstrates a key prediction of General Relativity: pressure itself generates gravity. For instance, for a photon gas where $P = \\frac{1}{3}\\rho c^2$, the active density becomes $\\rho_{\\text{act}} = 2\\rho$, meaning radiation gravitates twice as strongly as one might naively expect from its energy content alone.",
-        "symmetry_origin": "This relation is a direct consequence of the fundamental principles of General Relativity, specifically that the source of gravity is the full stress-energy tensor ($T_{\\mu\\nu}$), a requirement stemming from diffeomorphism invariance and the Equivalence Principle.",
-        "limits_and_boundary": "In the non-relativistic limit for 'dust' matter, pressure $P \\to 0$, and the formula reduces to $\\rho_{\\text{act}} \\to \\rho$, recovering the Newtonian picture where only mass-energy density sources gravity. For a radiation-dominated fluid, the equation of state is $P = \\frac{1}{3}\\rho c^2$, yielding $\\rho_{\\text{act}} = 2\\rho$. For a cosmological constant (dark energy) with $P = -\\rho c^2$, the active density becomes $\\rho_{\\text{act}} = -2\\rho$, which sources gravitational repulsion and cosmic acceleration.",
+        "conceptual_definition": "The active gravitational mass-energy density, denoted as $\\rho_{\\text{act}}$, represents the effective source term for the gravitational field in the Newtonian/weak-field limit derived from the trace-reversed Einstein field equations $R_{\\mu\\nu} = \\frac{8\\pi G}{c^4} \\left(T_{\\mu\\nu} - \\frac{1}{2}g_{\\mu\\nu}T\\right)$. For a perfect fluid described by energy-momentum tensor $T^{\\mu\\nu} = (\\rho + P/c^2)u^\\mu u^\\nu + P g^{\\mu\\nu}$, the effective source entering the Poisson equation $\\nabla^2 \\Phi = 4\\pi G \\rho_{\\text{act}}$ is given by $\\rho_{\\text{act}} = \\rho + \\frac{3P}{c^2}$.",
+        "intuitive_summary": "In General Relativity, gravity is sourced not merely by rest mass or energy density, but by all forms of stress-energy. Because spatial pressure resists or drives volume expansion along three spatial dimensions, isotropic pressure contributes three times its energy-equivalent value to the gravitational attraction.",
+        "interpretation": "In this equation, $\\rho_{\\text{act}}$ is the effective gravitational density sourcing spacetime curvature in the low-velocity, weak-field regime. The term $\\rho$ denotes the total mass-energy density measured in the fluid rest frame, corresponding to $T_{00}/c^2$. The term $P$ represents the isotropic thermodynamic pressure. The numerical factor of $3$ arises from the trace of the spatial components of the energy-momentum tensor $\\sum_{i=1}^3 T_{ii} = 3P$. The speed of light $c$ serves as the conversion factor between mechanical pressure and equivalent mass density.",
+        "symmetry_origin": "General covariance (diffeomorphism invariance) and local Lorentz invariance dictate that the source of spacetime curvature is the symmetric, rank-2 stress-energy-momentum tensor $T_{\\mu\\nu}$, whose spatial trace components actively gravitate.",
+        "limits_and_boundary": "For dust or pressureless matter ($P \\to 0$), the formula recovers standard Newtonian mass density $\\rho_{\\text{act}} = \\rho$. For ultra-relativistic radiation with equation of state $P = \\frac{1}{3}\\rho c^2$, the active density becomes $\\rho_{\\text{act}} = 2\\rho$, doubling the effective gravitational attraction compared to static rest mass. For dark energy or vacuum energy with $P = -\\rho c^2$, $\\rho_{\\text{act}} = -2\\rho < 0$, leading to repulsive gravitational acceleration.",
         "status": "platinum",
         "semantic_variables": {
             "\\rho_{\\text{act}}": {
-                "name": "Active gravitational mass-energy density",
+                "name": "Active Gravitational Mass-Energy Density",
                 "type": "variable",
                 "unit": "kg/m^3",
-                "description": "The effective density that sources the gravitational field, including contributions from both energy and pressure."
+                "description": "Effective density sourcing the Newtonian limit gravitational Poisson equation"
             },
             "\\rho": {
-                "name": "Energy density",
+                "name": "Rest-Frame Energy/Mass Density",
                 "type": "variable",
                 "unit": "kg/m^3",
-                "description": "The energy per unit volume, equivalent to mass density via E=mc^2. Corresponds to the T_00 component of the stress-energy tensor."
+                "description": "Proper energy density divided by c^2, corresponding to the T_00 component of the fluid"
             },
             "P": {
-                "name": "Pressure",
+                "name": "Isotropic Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The isotropic thermodynamic pressure of the fluid or medium. Corresponds to the diagonal spatial components of the stress-energy tensor."
+                "description": "Isotropic thermodynamic pressure of the perfect fluid"
             },
             "c": {
-                "name": "Speed of light in vacuum",
+                "name": "Speed of Light in Vacuum",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "A fundamental constant of nature representing the maximum speed of causal influence."
+                "description": "Universal physical constant relating energy, mass, and relativistic spacetime structure"
             }
         },
-        "description": "Defines the effective energy density that acts as the source of the gravitational field in General Relativity, incorporating contributions from both standard energy density and thermodynamic pressure.",
+        "description": "Defines the effective mass-energy density that acts as the source for the gravitational potential in General Relativity, combining proper energy density and isotropic thermodynamic pressure.",
         "derivation_type": "DEFINITION",
         "subcomponents": [
-            "relativistic-energy-density-term-in-friedmann-equations-896d2b09",
-            "energy-density-change-1125d63c",
-            "constant-density-17a35602"
-        ]
+            "active-gravitational-mass-78743724",
+            "effective-mass-energy-density-794a07ba",
+            "deceleration-rule-d55c5775"
+        ],
+        "parent_formula_id": "effective-gravitational-source-term-890cf5c6"
     },
     "hamiltonian-magnetic-dipole": {
         "title": "Hamiltonian for magnetic dipole in magnetic field",

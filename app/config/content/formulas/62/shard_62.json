@@ -542,46 +542,53 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "equivalence-classes-e0511f0b": {
-        "title": "W-State for a Three-Qubit System",
+        "title": "Three-Qubit W-State",
         "equation": "|W\\rangle = \\frac{1}{\\sqrt{3}}(|100\\rangle + |010\\rangle + |001\\rangle)",
         "semantic_variables": {
             "|W\\rangle": {
-                "name": "W-state vector",
+                "name": "Three-Qubit W-State Vector",
                 "type": "variable",
-                "unit": "dimensionless (state in Hilbert space)",
-                "description": "A state vector representing the W-state for a three-qubit system, a specific class of multipartite entangled state."
+                "unit": "dimensionless",
+                "description": "Normalized state vector describing the tripartite entangled W-state in $(\\mathbb{C}^2)^{\\otimes 3}$"
             },
             "|100\\rangle": {
-                "name": "Computational basis state",
+                "name": "First-Qubit Excited Basis State",
                 "type": "variable",
-                "unit": "dimensionless (state in Hilbert space)",
-                "description": "A basis vector in the three-qubit Hilbert space, representing the state where the first qubit is in state |1> and the second and third are in state |0>. Formally, $|1\\rangle \\otimes |0\\rangle \\otimes |0\\rangle$."
+                "unit": "dimensionless",
+                "description": "Tensor product computational basis state $|1\\rangle \\otimes |0\\rangle \\otimes |0\\rangle$"
             },
             "|010\\rangle": {
-                "name": "Computational basis state",
+                "name": "Second-Qubit Excited Basis State",
                 "type": "variable",
-                "unit": "dimensionless (state in Hilbert space)",
-                "description": "A basis vector in the three-qubit Hilbert space, representing the state where the second qubit is in state |1> and the first and third are in state |0>. Formally, $|0\\rangle \\otimes |1\\rangle \\otimes |0\\rangle$."
+                "unit": "dimensionless",
+                "description": "Tensor product computational basis state $|0\\rangle \\otimes |1\\rangle \\otimes |0\\rangle$"
             },
             "|001\\rangle": {
-                "name": "Computational basis state",
+                "name": "Third-Qubit Excited Basis State",
                 "type": "variable",
-                "unit": "dimensionless (state in Hilbert space)",
-                "description": "A basis vector in the three-qubit Hilbert space, representing the state where the third qubit is in state |1> and the first and second are in state |0>. Formally, $|0\\rangle \\otimes |0\\rangle \\otimes |1\\rangle$."
+                "unit": "dimensionless",
+                "description": "Tensor product computational basis state $|0\\rangle \\otimes |0\\rangle \\otimes |1\\rangle$"
+            },
+            "\\frac{1}{\\sqrt{3}}": {
+                "name": "Normalization Amplitude",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Probability amplitude ensuring the total quantum state norm is unity"
             }
         },
-        "interpretation": "The equation defines the quantum state $|W\\rangle$ as a linear combination (superposition) of three distinct basis states for a three-qubit system: $|100\\rangle$, $|010\\rangle$, and $|001\\rangle$. Each basis state, such as $|100\\rangle$, represents a configuration where the first qubit is in state $|1\\rangle$ and the other two are in state $|0\\rangle$. The term $\\frac{1}{\\sqrt{3}}$ is a normalization factor ensuring the total probability is 1. The probability of measuring the system in any one of these basis states is the squared magnitude of its coefficient: $P(|100\\rangle) = \\left|\\frac{1}{\\sqrt{3}}\\right|^2 = \\frac{1}{3}$. The same probability applies to measuring $|010\\rangle$ and $|001\\rangle$. The total probability is $P_{total} = \\frac{1}{3} + \\frac{1}{3} + \\frac{1}{3} = 1$. The state $|W\\rangle$ is entangled because it cannot be factored into a tensor product of three single-qubit states, i.e., $|W\\rangle \\neq |\\psi_1\\rangle \\otimes |\\psi_2\\rangle \\otimes |\\psi_3\\rangle$.",
-        "symmetry_origin": "The W-state exhibits permutation symmetry. It is invariant under the action of any element of the symmetric group $S_3$ that permutes the three qubits. This reflects the indistinguishability of the qubits' roles within the entangled system.",
-        "limits_and_boundary": "In the classical limit where quantum coherence is lost (conceptually, as $\\hbar \\to 0$ or through decoherence from environmental interaction), the superposition collapses. The system would be found in one of the definite states $|100\\rangle$, $|010\\rangle$, or $|001\\rangle$ with a classical probability of $1/3$ for each, losing all entanglement. The state is defined in a finite-dimensional Hilbert space, so spatial limits like $r \\to \\infty$ are not applicable.",
+        "interpretation": "In this equation, $|W\\rangle$ represents the normalized state vector in the three-qubit Hilbert space $\\mathcal{H} = (\\mathbb{C}^2)^{\\otimes 3}$. The states $|100\\rangle$, $|010\\rangle$, and $|001\\rangle$ are orthogonal computational basis states representing single-qubit excitation configurations where exactly one subsystem occupies the state $|1\\rangle$ while the other two occupy $|0\\rangle$. The factor $\\frac{1}{\\sqrt{3}}$ is the quantum state normalization constant ensuring $\\langle W|W \\rangle = 1$. Measuring the state in the computational basis yields each configuration with equal probability $P = |\\frac{1}{\\sqrt{3}}|^2 = \\frac{1}{3}$.",
+        "symmetry_origin": "Permutation symmetry under the symmetric group $S_3$, being invariant under any exchange of qubit subsystem indices, and conservation of total excitation number (eigenstate of the total spin projection operator $J_z = \\sum_{i=1}^3 \\sigma_z^{(i)}/2$ with eigenvalue $-1/2$).",
+        "limits_and_boundary": "Tracing out any single qubit subsystem yields a mixed two-qubit state with non-zero concurrence $\\mathcal{C} = 2/3$, demonstrating maximal robustness against single-qubit erasure. In contrast, measuring any single qubit in the computational basis collapses the remaining two qubits either to an unentangled product state $|00\\rangle$ (with probability $1/3$) or to a maximally entangled Bell state $\\frac{1}{\\sqrt{2}}(|10\\rangle + |01\\rangle)$ (with probability $2/3$).",
         "status": "platinum",
-        "conceptual_definition": "The W-state, denoted $|W\\rangle$, is a specific quantum state for a three-qubit system. It is defined as the normalized, equal-superposition of the three computational basis states where exactly one qubit is in the state $|1\\rangle$ and the other two are in the state $|0\\rangle$. This state is a fundamental example of multipartite entanglement and belongs to a distinct equivalence class of states under local operations and classical communication (LOCC), separate from the GHZ state.",
-        "intuitive_summary": "Imagine three light switches that are quantum-mechanically linked. The W-state describes a situation where you know for certain that exactly one of the three switches is 'on', but you don't know which one. If you check one switch and find it 'off', the system remains entangled—there's still a 50/50 chance for each of the other two to be the 'on' one. This 'robust' entanglement, which survives the measurement of one particle, is a key feature of the W-state.",
+        "conceptual_definition": "The three-qubit W-state, denoted $|W\\rangle$, represents one of the two inequivalent classes of genuine tripartite entanglement under Stochastic Local Operations and Classical Communication (SLOCC). It is defined as the normalized, permutation-symmetric superposition of all computational basis states with total Hamming weight equal to one: $|W\\rangle = \\frac{1}{\\sqrt{3}}(|100\\rangle + |010\\rangle + |001\\rangle)$. Unlike the GHZ-state, the entanglement of the W-state is exceptionally robust against particle loss, retaining bipartite entanglement upon tracing out any single subsystem.",
+        "intuitive_summary": "The W-state shares a single excitation equally across three quantum systems, ensuring that if any one qubit is lost, the remaining pair remains partially entangled.",
         "subcomponents": [
-            "long-lived-neutral-kaon-7e7e77bb",
-            "quark-color-triplet-representation-d28ac847"
+            "technical-relation-9b737479",
+            "ghz-state-plus-alternative-notation",
+            "density-matrix-specific-two-state"
         ],
-        "description": "Defines the W-state, a canonical example of a genuinely multipartite entangled state for three qubits, characterized by a superposition of states where exactly one qubit is in the excited state $|1\\rangle$.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the canonical three-qubit W-state, a genuinely multipartite entangled state characterized by a symmetric superposition where exactly one qubit is in the excited state $|1\\rangle$.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "anomalous-moment-4071ed69": {
         "title": "Definition of the Leptonic Anomalous Magnetic Moment",
@@ -1421,29 +1428,30 @@
         "derivation_type": "APPROXIMATION"
     },
     "wavelength-specification": {
-        "title": "Characteristic Wavelength of Nd:YAG Laser Emission",
+        "title": "Characteristic Emission Wavelength of Neodymium-Doped Yttrium Aluminum Garnet (Nd:YAG) Laser",
         "equation": "\\lambda = 1064 \\text{ nm}",
-        "conceptual_definition": "This equation defines a specific, constant value for the wavelength $\\lambda$ of electromagnetic radiation. The value of $1064$ nanometers corresponds to a particular physical process, namely the primary laser transition ($^4F_{3/2} \\to ^4I_{11/2}$) in a Neodymium-doped Yttrium Aluminum Garnet (Nd:YAG) crystal.",
-        "intuitive_summary": "Think of this specific wavelength as the unique 'color' or spectral fingerprint of an Nd:YAG laser. Just as a specific radio station broadcasts at a fixed frequency, this type of laser emits light predominantly at this precise infrared wavelength, determined by the quantum energy levels of the atoms inside the laser medium.",
-        "interpretation": "The symbol $\\lambda$ represents the wavelength of the emitted electromagnetic radiation. The equation $\\lambda = 1064 \\text{ nm}$ asserts that this wavelength has a fixed value of $1064$ nanometers. A nanometer ($\\text{nm}$) is a unit of length equal to $10^{-9}$ meters. This value falls within the near-infrared part of the electromagnetic spectrum, just beyond the range of human vision. This specific wavelength corresponds to the primary stimulated emission transition ($^4F_{3/2} \\to ^4I_{11/2}$) of the trivalent neodymium ion ($\\text{Nd}^{3+}$) within a Yttrium Aluminum Garnet ($\\text{Y}_3\\text{Al}_5\\text{O}_{12}$) crystal lattice. This makes it a defining characteristic of Nd:YAG lasers, which are ubiquitous in materials processing, medicine, and scientific research.",
-        "symmetry_origin": "The specific value of the wavelength is not a direct consequence of a fundamental continuous symmetry (like gauge or spacetime symmetry). Instead, it arises from the discrete energy level spectrum of the neodymium ion ($\\text{Nd}^{3+}$) within the YAG crystal host. This spectrum is determined by the quantum mechanical Hamiltonian of the system, which respects the underlying symmetries of electromagnetism (U(1) gauge symmetry) and the crystal lattice.",
-        "limits_and_boundary": "As a specified constant, this value does not have mathematical limits. Physically, the emission at $\\lambda = 1064 \\text{ nm}$ is dominant under specific operating conditions for an Nd:YAG laser, such as appropriate temperature and pump energy. Deviations from these conditions can lead to wavelength shifts or the emergence of other, weaker emission lines. The value is a consequence of quantum mechanics and is independent of classical limits like $\\hbar \\to 0$ or relativistic limits like $v \\to c$.",
+        "conceptual_definition": "The wavelength $\\lambda = 1064\\text{ nm}$ represents the standard central emission wavelength in the near-infrared spectrum for a solid-state Nd:YAG laser. This discrete spectral line arises from the stimulated emission between Stark-split crystalline sublevels of the $^4F_{3/2}$ and $^4I_{11/2}$ manifolds of $\\text{Nd}^{3+}$ dopant ions, governed by the photon energy relation $\\Delta E = hc/\\lambda$.",
+        "intuitive_summary": "Nd:YAG lasers produce an exact characteristic infrared beam at $1064\\text{ nm}$ due to specific quantized energy drops of neodymium ions trapped within the crystal lattice.",
+        "interpretation": "The variable $\\lambda$ denotes the free-space optical wavelength of the emitted laser radiation, fixed at $1064\\text{ nm}$ ($1.064 \\times 10^{-6}\\text{ m}$). The exact energy transition $\\Delta E \\approx 1.165\\text{ eV}$ occurs between the lowest Stark level of the $^4F_{3/2}$ upper laser manifold and the third Stark level of the $^4I_{11/2}$ lower manifold in the $\\text{Y}_3\\text{Al}_5\\text{O}_{12}$ crystal field.",
+        "symmetry_origin": "Governed by atomic rotation and inversion symmetries broken by the local $D_2$ point group crystal field of the YAG lattice, enabling electric dipole transitions via Laporte rule mixing.",
+        "limits_and_boundary": "Subject to thermal drift where $\\frac{d\\lambda}{dT} \\approx +0.004\\text{ nm/K}$; at cryogenic temperatures $T \\to 0\\text{ K}$, linewidth homogeneous broadening collapses toward the lifetime-limited spontaneous emission boundary.",
         "status": "platinum",
         "semantic_variables": {
             "\\lambda": {
-                "name": "Wavelength",
-                "type": "variable",
+                "name": "laser emission wavelength",
+                "type": "constant",
                 "unit": "m",
-                "description": "The spatial period of a periodic wave; the distance over which the wave's shape repeats."
+                "description": "Characteristic vacuum wavelength of the primary stimulated emission transition in Nd:YAG"
             }
         },
-        "description": "This equation specifies the principal emission wavelength of a Neodymium-doped Yttrium Aluminum Garnet (Nd:YAG) laser, a value determined by the electronic transitions within the neodymium ions in the YAG crystal host.",
-        "derivation_type": "DEFINITION",
+        "description": "Specifies the fundamental near-infrared vacuum emission wavelength of a Nd:YAG laser resulting from the electronic $^4F_{3/2} \\to {}^4I_{11/2}$ laser transition of trivalent neodymium ions ($\\text{Nd}^{3+}$) embedded in a $\\text{Y}_3\\text{Al}_5\\text{O}_{12}$ crystal host.",
+        "derivation_type": "SPECIAL_CASE",
         "subcomponents": [
             "wave-particle-duality-identity-1-574a3af1-c2161826",
-            "stability-measure-59a6cde1",
-            "carrier-weight-dcd50df1"
-        ]
+            "wavelength",
+            "si-ii-rest-identity-ff693346"
+        ],
+        "parent_formula_id": "wave-particle-duality-identity-1-574a3af1-c2161826"
     },
     "negative-wave-number": {
         "title": "Negative Wave Number Convention for Propagation Direction",

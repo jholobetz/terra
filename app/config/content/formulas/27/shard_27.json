@@ -171,59 +171,54 @@
         ]
     },
     "nfw-identity-d81a630c": {
-        "title": "Einasto Profile",
+        "title": "Einasto Dark Matter Density Profile",
         "equation": "\\rho_{Einasto}(r) = \\rho_s \\exp(-2n[(r/r_s)^{1/n} - 1])",
         "semantic_variables": {
-            "\\rho_{Einasto}": {
-                "name": "Einasto Density Profile",
+            "\\rho_{Einasto}(r)": {
+                "name": "Einasto density profile",
                 "type": "variable",
-                "unit": "kg/m^3",
-                "description": "The mass density of the dark matter halo as a function of radius."
-            },
-            "r": {
-                "name": "Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The spherical radius from the center of the halo."
+                "unit": "kg / m^3",
+                "description": "Mass density of the halo as a function of radial distance from the center"
             },
             "\\rho_s": {
-                "name": "Scale Density",
+                "name": "Characteristic scale density",
                 "type": "variable",
-                "unit": "kg/m^3",
-                "description": "A characteristic density parameter of the halo, defined at the scale radius."
+                "unit": "kg / m^3",
+                "description": "Mass density at the characteristic scale radius r_s"
             },
-            "r_s": {
-                "name": "Scale Radius",
+            "r": {
+                "name": "Radial coordinate",
                 "type": "variable",
                 "unit": "m",
-                "description": "The characteristic radius where the logarithmic slope of the density profile equals -2."
+                "description": "Spherical radial distance from the halo center"
+            },
+            "r_s": {
+                "name": "Scale radius",
+                "type": "variable",
+                "unit": "m",
+                "description": "Radius at which the logarithmic density slope d(ln rho)/d(ln r) is equal to -2"
             },
             "n": {
-                "name": "Einasto Index",
+                "name": "Einasto index (shape parameter)",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A shape parameter that controls the degree of curvature of the density profile."
-            },
-            "\\exp": {
-                "name": "Exponential Function",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The exponential function, e^x."
+                "description": "Dimensionless parameter controlling the curvature of the logarithmic density profile"
             }
         },
-        "interpretation": "The equation models the dark matter density, denoted by $\\rho_{Einasto}(r)$, as a function of the spherical radius $r$ from the center of the dark matter halo. The parameter $\\rho_s$ represents the characteristic density at the scale radius $r_s$. The exponential term $\\exp(-2n[(r/r_s)^{1/n} - 1])$ governs the radial dependence, where the exponent $n$ is a crucial dimensionless shape parameter. A smaller value of $n$ indicates a steeper central region, while a larger $n$ leads to a shallower, more cored profile. The factor of $2n$ in the exponent is a normalization chosen such that $r_s$ is the radius at which the logarithmic slope of the density profile, $d(\\ln \\rho) / d(\\ln r)$, is exactly $-2$. Unlike the Navarro-Frenk-White (NFW) profile, the Einasto profile has a finite density at $r = 0$ and a logarithmic slope that is not fixed, providing a superior fit to the results of high-resolution dark matter simulations.",
-        "symmetry_origin": "The formula assumes spherical symmetry for the dark matter halo. This is a geometric simplification based on the results of cosmological N-body simulations of gravitational collapse, not a fundamental symmetry of spacetime or a conservation law.",
-        "limits_and_boundary": "In the limit as the radius approaches the center ($r \\to 0$), the density approaches a finite, non-singular value: $\\rho_{Einasto}(0) = \\rho_s \\exp(2n)$. This contrasts with the central cusp predicted by the NFW profile. As the radius approaches infinity ($r \\to \\infty$), the density falls off as a stretched exponential, $\\rho \\propto \\exp(-C r^{1/n})$, which is a faster decline than any simple power law. The value of the Einasto index $n$ is found from simulations to correlate with halo mass, with typical values ranging from $n \\approx 5$ for galaxy-sized halos to $n \\approx 8$ for cluster-sized halos.",
+        "interpretation": "The parameter $\\rho_{\\text{Einasto}}(r)$ denotes the mass density at radius $r$. The parameter $r_s$ is the characteristic scale radius at which the logarithmic slope equals $-2$, and $\\rho_s$ is the local density at $r = r_s$. The shape parameter $n$ (often denoted as $\\alpha = 1/n$) regulates how quickly the logarithmic slope changes with radius; typical cosmological halos exhibit values of $n \\approx 5$ (or $\\alpha \\approx 0.16$ to $0.25$), providing a superior empirical fit to collisionless $N$-body simulations compared to double-power-law profiles.",
+        "symmetry_origin": "Spherical symmetry $SO(3)$ governing isotropic, spherically averaged mass distributions in virialized gravitational systems.",
+        "limits_and_boundary": "As $r \\to 0$, the density converges to a finite central maximum $\\rho(0) = \\rho_s e^{2n}$, avoiding the central singularity of the NFW profile. As $r \\to \\infty$, the density exhibits a super-exponential cutoff $\\rho(r) \\sim \\exp[-2n(r/r_s)^{1/n}]$, ensuring finite total enclosed mass when integrated over all space.",
         "status": "platinum",
-        "conceptual_definition": "The Einasto profile models the mass density $\\rho(r)$ of a spherically symmetric dark matter halo as a function of radius $r$. It is characterized by a power-law exponential form, where the shape of the profile is governed by the Einasto index $n$. This profile provides a more accurate fit to high-resolution N-body simulations compared to simpler models like the NFW profile, as its logarithmic slope varies continuously with radius.",
-        "intuitive_summary": "Imagine a cosmic cloud of invisible dark matter. The Einasto profile is a flexible mathematical recipe for describing how the density of this cloud thins out as you move away from its center. A special parameter, the Einasto index $n$, acts like a knob that adjusts the cloud's shape, allowing it to have either a sharply concentrated core or a more diffuse, spread-out center, providing a better match to what we see in computer simulations of galaxy formation.",
+        "conceptual_definition": "The Einasto profile defines the spherical mass density distribution $\\rho(r)$ of a self-gravitating astrophysical system such as a dark matter halo or elliptical galaxy, characterized by a power-law logarithmic density slope $\\mathrm{d}\\ln\\rho/\\mathrm{d}\\ln r = -2(r/r_s)^{1/n}$ that continuously steepens with radius without converging to a central power-law cusp.",
+        "intuitive_summary": "Unlike cusp-core models like NFW that have fixed inner and outer power-law slopes, the Einasto profile smoothly curves on a log-log plot, transitioning continuously from a finite core at the center to a rapidly falling exponential outer envelope.",
         "subcomponents": [
             "the-1-r-rule-a546ccff",
-            "nfw-characteristic-density-parameter-fc611019",
-            "density-profile-545c6841"
+            "nfw-density-profile-6396e571",
+            "structural-anchor-7103594b"
         ],
-        "description": "An empirical three-parameter function that describes the spatial density distribution of dark matter halos in cosmological simulations.",
-        "derivation_type": "DEFINITION"
+        "description": "An empirical three-parameter functional form describing the radial mass density distribution of relaxed cold dark matter halos in cosmological N-body simulations.",
+        "derivation_type": "GENERALIZATION",
+        "parent_formula_id": "the-1-r-rule-a546ccff"
     },
     "motion-correction-4854a0d8": {
         "title": "Motion correction (Heaviside-Feynman Fields)",
@@ -653,71 +648,52 @@
         "derivation_type": "DEFINITION"
     },
     "rectangular-barrier-transmission-216afbe1": {
-        "title": "Rectangular Barrier Transmission Coefficient",
+        "title": "Quantum Transmission Coefficient for a Finite Rectangular Potential Barrier",
         "equation": "T = \\left[ 1 + \\frac{V_0^2 \\sinh^2(\\kappa L)}{4E(V_0 - E)} \\right]^{-1}",
-        "interpretation": "The transmission coefficient $T$ represents the probability that a particle with energy $E$ (where $E < V_0$) will successfully tunnel through a rectangular potential barrier of height $V_0$ and width $L$. The term $\\kappa$, defined as $\\kappa = \\frac{\\sqrt{2m(V_0 - E)}}{\\hbar}$, is the inverse decay length inside the barrier, characterizing the exponential decay of the wavefunction's amplitude. The $\\sinh^2(\\kappa L)$ term shows that the transmission probability decreases exponentially for large barrier widths, as $\\sinh(x) \\approx e^x/2$ for large $x$. The denominator term $4E(V_0 - E)$ indicates that transmission is suppressed when the particle's energy $E$ is very low ($E \\to 0$) or very close to the barrier height, with a maximum for a given barrier at an intermediate energy. The entire expression is structured such that $T$ is a dimensionless value between 0 and 1, consistent with its interpretation as a probability.",
-        "symmetry_origin": "Derived from the time-independent Schrödinger equation, which is a consequence of time-translation symmetry of the Hamiltonian and the corresponding conservation of energy. The solution's form is constrained by the continuity of the wavefunction and its first derivative, a postulate ensuring the conservation of probability current.",
-        "limits_and_boundary": "In the limit of a thick or high barrier ($\\kappa L \\to \\infty$), the transmission probability $T \\to 0$, recovering the classical result. Specifically, $T \\approx \\frac{16E(V_0-E)}{V_0^2}e^{-2\\kappa L}$, matching the exponential decay predicted by the WKB approximation. For a thin barrier ($L \\to 0$), $T \\to 1$, as there is no obstacle. As the particle energy approaches the barrier height ($E \\to V_0$), the transmission coefficient approaches a finite value $T \\to \\left[1 + \\frac{mV_0L^2}{2\\hbar^2}\\right]^{-1}$, a purely quantum phenomenon.",
+        "interpretation": "The transmission probability $T$ depends on the barrier width $L$, barrier height $V_0$, and incident particle energy $E$. The parameter $\\kappa = \\sqrt{2m(V_0 - E)}/\\hbar$ characterizes the exponential spatial decay rate of the wave function within the barrier $[0, L]$. The hyperbolic sine function $\\sinh^2(\\kappa L)$ causes $T$ to fall off exponentially with increasing thickness $L$, while the denominator factor $4E(V_0 - E)$ introduces energetic weighting that vanishes as $E \\to 0$ or $E \\to V_0$.",
+        "symmetry_origin": "Time-translation invariance (leading to stationary energy eigenstates) and $U(1)$ gauge symmetry preserving probability current density conservation across continuous interfaces.",
+        "limits_and_boundary": "In the limit $\\kappa L \\gg 1$ (thick or high barrier), $\\sinh(\\kappa L) \\approx \\frac{1}{2} e^{\\kappa L}$, reproducing the exponential WKB attenuation $T \\approx \\frac{16E(V_0 - E)}{V_0^2} e^{-2\\kappa L}$. As $L \\to 0$ or $V_0 \\to 0$, $T \\to 1$. In the classical limit $\\hbar \\to 0$, $\\kappa \\to \\infty$, yielding $T \\to 0$ for $E < V_0$.",
         "semantic_variables": {
             "T": {
-                "name": "Transmission Coefficient",
+                "name": "Transmission coefficient",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The probability that a particle will tunnel through the potential barrier."
+                "description": "Probability that the incident quantum particle tunnels through the potential barrier"
             },
             "V_0": {
-                "name": "Potential Barrier Height",
-                "type": "variable",
+                "name": "Potential barrier height",
+                "type": "constant",
                 "unit": "J",
-                "description": "The energy height of the rectangular potential barrier."
-            },
-            "E": {
-                "name": "Particle Energy",
-                "type": "variable",
-                "unit": "J",
-                "description": "The total energy of the incident particle, assumed to be less than V_0."
-            },
-            "L": {
-                "name": "Barrier Width",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical width of the rectangular potential barrier."
+                "description": "Height of the rectangular potential barrier"
             },
             "\\kappa": {
-                "name": "Barrier Decay Constant",
+                "name": "Barrier decay constant",
                 "type": "variable",
-                "unit": "m⁻¹",
-                "description": "The wave number inside the barrier, determining the exponential decay rate of the wavefunction."
+                "unit": "m^{-1}",
+                "description": "Wave vector magnitude / inverse attenuation length within the barrier region"
             },
-            "\\sinh": {
-                "name": "Hyperbolic Sine",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "The hyperbolic sine function, defined as sinh(x) = (e^x - e^-x)/2."
-            },
-            "m": {
-                "name": "Particle Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "The mass of the tunneling particle."
-            },
-            "\\hbar": {
-                "name": "Reduced Planck Constant",
+            "L": {
+                "name": "Barrier width",
                 "type": "constant",
-                "unit": "J·s",
-                "description": "The Planck constant divided by 2π."
+                "unit": "m",
+                "description": "Spatial thickness of the rectangular barrier along the coordinate of motion"
+            },
+            "E": {
+                "name": "Particle energy",
+                "type": "variable",
+                "unit": "J",
+                "description": "Total kinetic plus potential energy of the incident particle ($E < V_0$)"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "For a quantum particle of energy $E$ incident upon a one-dimensional rectangular potential barrier of height $V_0$ and width $L$, where $E < V_0$, this formula gives the transmission coefficient $T$. The coefficient $T$ is defined as the ratio of the transmitted probability flux to the incident probability flux, derived by solving the time-independent Schrödinger equation and applying continuity boundary conditions at the barrier interfaces.",
-        "intuitive_summary": "Contrary to classical physics, a quantum particle has a non-zero chance of passing through an energy barrier it 'shouldn't' be able to overcome. This 'tunneling' probability decreases exponentially as the barrier gets wider or higher, but it is a fundamental feature of wave mechanics and is never strictly zero for a finite barrier.",
+        "conceptual_definition": "The transmission coefficient $T$ quantifies the probability of a non-relativistic quantum particle of mass $m$ and total energy $E$ traversing a localized rectangular potential barrier of height $V_0$ and width $L$ where $E < V_0$. Obtained via wave-matching boundary conditions on the stationary Schrödinger equation, it captures finite-barrier quantum tunneling.",
+        "intuitive_summary": "Quantum mechanics allows a particle to penetrate and emerge from classically forbidden potential regions via wave-amplitude attenuation across the barrier.",
         "subcomponents": [
             "tunneling-decay-constant-245aec05",
-            "wkb-transmission-coefficient-4ed00873",
-            "quantum-tunneling-nuclear-identity-1-f6787f07-b094643d"
+            "wkb-transmission-coefficient-4ed00873"
         ],
-        "description": "Provides the exact quantum mechanical probability for a non-relativistic particle to tunnel through a potential barrier of finite height and width.",
-        "derivation_type": "DERIVED_FROM"
+        "description": "Calculates the exact quantum mechanical tunneling probability for a non-relativistic particle incident on a one-dimensional finite rectangular potential barrier with energy below the barrier height.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "gauss-law-gauge-charge-f09ec3e9": {
         "title": "Gauss-Law Charge Source",
@@ -776,46 +752,46 @@
     "causal-separation-classification-c945655d": {
         "title": "Causal Characterization of Spacetime Intervals",
         "equation": "\\text{sgn}(ds^2) \\in \\{-1, 0, 1\\}",
-        "interpretation": "The expression $\\text{sgn}(ds^2)$ evaluates the sign of the infinitesimal spacetime interval squared, $ds^2$, which is defined by the metric tensor $g_{\\mu\\nu}$ and infinitesimal coordinate displacements $dx^\\mu$ as $ds^2 = g_{\\mu\\nu} dx^\\mu dx^\\nu$. The resulting sign classifies the causal relationship: 1. $\\text{sgn}(ds^2) = 1$ (implying $ds^2 > 0$ in a $(+, -, -, -)$ convention) signifies a **time-like** separation. A massive object can traverse the path between the events, allowing for direct causal influence. The temporal order of these events is invariant across all reference frames. 2. $\\text{sgn}(ds^2) = 0$ (implying $ds^2 = 0$) signifies a **light-like** (or null) separation. The events are connected by a path that a massless particle, like a photon, would take. This defines the light cone, the boundary of causal influence. 3. $\\text{sgn}(ds^2) = -1$ (implying $ds^2 < 0$) signifies a **space-like** separation. No causal signal can connect the events, as this would require superluminal travel. The temporal ordering of space-like separated events is relative and observer-dependent. The specific metric signature convention (e.g., $(+, -, -, -)$ vs. $(-, +, +, +)$) swaps the signs for time-like and space-like intervals, but the physical classification remains unchanged.",
-        "symmetry_origin": "The classification scheme is a direct consequence of the structure of Minkowski spacetime and is invariant under Lorentz transformations. The invariance of the spacetime interval $ds^2$ for all inertial observers, a postulate of special relativity, ensures that the causal character (time-like, light-like, or space-like) of an interval is an absolute property agreed upon by all observers.",
-        "limits_and_boundary": "This classification is a foundational principle of local spacetime geometry. The critical boundary is the light-like condition, $ds^2 = 0$, which defines the light cone. The light cone separates the time-like region, where events can be causally influenced, from the space-like region, where they cannot. For any finite separation $\\Delta s^2$ between two events, as the spatial distance $|\\Delta \\mathbf{x}|$ approaches the light-travel distance $c|\\Delta t|$, the interval approaches the null boundary: $\\Delta s^2 \\to 0$.",
+        "interpretation": "The signum function $\\text{sgn}$ maps the infinitesimal invariant interval squared $ds^2 = g_{\\mu\\nu} dx^\\mu dx^\\nu$ to the discrete set $\\{-1, 0, 1\\}$. The causal classification assumes a Lorentzian metric $g_{\\mu\\nu}$ with signature $(+,-,-,-)$. For $\\text{sgn}(ds^2) = 1$, the separation $dx^\\mu$ lies strictly inside the light cone ($ds^2 > 0$), preserving temporal ordering under proper orthochronous Lorentz transformations. For $\\text{sgn}(ds^2) = 0$, $dx^\\mu$ lies on the light cone ($ds^2 = 0$). For $\\text{sgn}(ds^2) = -1$, $dx^\\mu$ lies outside the light cone ($ds^2 < 0$), where no signal propagating at or below the speed of light $c$ can mediate interaction.",
+        "symmetry_origin": "Invariance of the causal structure originates from local Lorentz symmetry $\\mathrm{SO}(1,3)$ and general covariance $\\mathrm{Diff}(\\mathcal{M})$, ensuring that the causal classification $\\text{sgn}(ds^2)$ is an invariant scalar under all coordinate transformations.",
+        "limits_and_boundary": "In the non-relativistic limit where $c \\to \\infty$, the light cone opens entirely: null and timelike intervals collapse into absolute Newtonian time simultaneity surfaces, eliminating spacelike horizons. For flat Minkowski spacetime, $g_{\\mu\\nu} \\to \\eta_{\\mu\\nu} = \\text{diag}(1,-1,-1,-1)$.",
         "semantic_variables": {
-            "ds^2": {
-                "name": "Squared Infinitesimal Spacetime Interval",
-                "type": "variable",
-                "unit": "m^2",
-                "description": "The square of the 'distance' between two infinitesimally separated events in spacetime, which is invariant under Lorentz transformations."
-            },
             "\\text{sgn}": {
-                "name": "Signum Function",
+                "name": "Signum function",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "An operator that extracts the sign of a real number, returning -1, 0, or 1."
+                "description": "Mathematical sign function returning $-1$, $0$, or $1$ depending on the argument's sign."
+            },
+            "ds^2": {
+                "name": "Squared infinitesimal spacetime interval",
+                "type": "variable",
+                "unit": "m^2",
+                "description": "Invariant quadratic differential form determined by the metric tensor and coordinate differentials."
             },
             "g_{\\mu\\nu}": {
-                "name": "Metric Tensor",
+                "name": "Spacetime metric tensor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A rank-2 tensor field that defines the geometry of spacetime, including distances, angles, and the causal structure."
+                "description": "Rank-2 symmetric pseudo-Riemannian tensor defining the local geometry and causal structure of spacetime."
             },
             "dx^\\mu": {
-                "name": "Infinitesimal Coordinate Displacement",
+                "name": "Infinitesimal coordinate displacement contravariant four-vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "A four-vector representing the infinitesimal change in spacetime coordinates, e.g., $(c dt, dx, dy, dz)$."
+                "description": "Infinitesimal separation vector between two adjacent events in four-dimensional spacetime."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The causal nature of the separation between two infinitesimally close events in spacetime is classified by the sign of the squared spacetime interval, $ds^2 = g_{\\mu\\nu} dx^\\mu dx^\\nu$. The sign function, $\\text{sgn}(ds^2)$, maps the interval to the set $\\{-1, 0, 1\\}$, corresponding to space-like, light-like, and time-like separations, respectively (assuming a $(+, -, -, -)$ metric signature).",
-        "intuitive_summary": "This formula is the universe's fundamental rule for cause and effect. It determines if two nearby events are close enough in time for one to influence the other (time-like), if they are connected only by a beam of light (light-like), or if they are too far apart in space for any signal to travel between them (space-like).",
+        "conceptual_definition": "In pseudo-Riemannian geometry and general relativity, the sign of the squared line element $\\text{sgn}(ds^2) = \\text{sgn}(g_{\\mu\\nu} dx^\\mu dx^\\nu)$ establishes the causal connectivity of spacetime. Under the timelike-positive convention $(+,-,-,-)$, an interval with $\\text{sgn}(ds^2) = 1$ is timelike, allowing causal influence by massive worldlines; $\\text{sgn}(ds^2) = 0$ is null or lightlike, defining the boundary of causal propagation populated by massless particles; and $\\text{sgn}(ds^2) = -1$ is spacelike, signifying absolute causal disconnection.",
+        "intuitive_summary": "The sign of the squared spacetime interval acts as a causal traffic light: positive allows massive particles to travel between events, zero is reserved for light traveling on the causal boundary, and negative forbids any physical signal from connecting the events.",
         "subcomponents": [
-            "timeline-b6477f98",
-            "limit-of-reach-859e06ea",
-            "causal-path-4d312fba",
-            "achronality-ctc-prevention-ident-a28218f8"
+            "spacetime-interval-causal-signature-ba250ab5",
+            "causal-boundary-e0d0c2b1",
+            "immediate-influence-2f5f4050"
         ],
-        "description": "A fundamental classification in relativity where the sign of the squared spacetime interval, $ds^2$, determines if the separation between two events is time-like (causally connected), light-like (connected by light), or space-like (causally disconnected).",
-        "derivation_type": "DEFINITION"
+        "description": "Classifies the causal relationship between infinitesimal spacetime events into timelike, null (lightlike), and spacelike regimes based on the sign of the squared spacetime interval.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "causal-metric-spacetime-interval-b2aee666"
     },
     "redshift-astronomy-identity-1-41971863-dc701e1d": {
         "title": "Relativistic Doppler Redshift Relation",
@@ -947,26 +923,28 @@
     "chemical-potential-is-zero": {
         "title": "Condition for Zero Chemical Potential",
         "equation": "\\mu = 0",
-        "conceptual_definition": "The chemical potential, $\\mu$, is the change in a system's free energy per particle added at constant temperature and volume, often expressed as $\\mu = (\\partial F / \\partial N)_{T,V}$. The condition $\\mu = 0$ signifies that adding a particle to the system incurs no energy cost. This state is characteristic of systems where particle number is not conserved (e.g., a photon gas) or systems at the critical point of a phase transition like Bose-Einstein condensation.",
-        "intuitive_summary": "Imagine a reservoir of particles that you can add to or take from your system for free. When the 'price' to add a particle drops to zero, the system is at the $\\mu=0$ condition. This happens for particles like photons, which can be created or destroyed effortlessly, or when a system is on the verge of a major state change, like a Bose gas condensing.",
-        "interpretation": "The equation $\\mu = 0$ specifies a critical thermodynamic condition. The chemical potential, $\\mu$, represents the change in free energy when a particle is added to a system at constant temperature and volume. When $\\mu = 0$, there is no energy cost to add or remove a particle, indicating equilibrium with respect to particle number fluctuations. This condition is fundamental in several contexts: (1) For systems where particle number is not conserved, such as a gas of photons or phonons, the chemical potential is identically zero ($\\mu \\equiv 0$). (2) In quantum statistics, it marks the onset of Bose-Einstein condensation for a gas of massive bosons; as the temperature $T$ is lowered to the critical temperature $T_c$, the chemical potential approaches zero from below. (3) For a system of non-interacting fermions at absolute zero temperature ($T=0$), the chemical potential is equal to the Fermi energy, $\\mu = E_F$. The condition $\\mu=0$ would thus imply a system with its Fermi level at the zero-energy reference point.",
-        "symmetry_origin": "This condition arises from the principle of maximizing entropy in the grand canonical ensemble for systems where particle number is not a conserved charge (e.g., photons) or at a critical point of a phase transition (e.g., Bose-Einstein Condensation).",
-        "limits_and_boundary": "For an ideal Bose gas, the chemical potential $\\mu$ approaches zero from below as the temperature $T$ decreases towards the critical temperature for Bose-Einstein condensation, $T_c$. For all temperatures $T \\le T_c$, the chemical potential is pinned at $\\mu=0$. For a gas of massless bosons like photons or phonons, whose number is not conserved, the chemical potential is $\\mu=0$ at all temperatures. In the classical limit ($\\hbar \\to 0$), the quantum phenomena associated with $\\mu=0$ (like BEC) disappear, but the condition still represents chemical equilibrium for reactions involving particle creation/annihilation.",
+        "conceptual_definition": "The condition $\\mu = 0$ defines thermodynamic equilibrium in systems where particle number $N$ is not conserved by a global symmetry, such that the free energy satisfies $(\\partial F / \\partial N)_{T,V} = 0$, or represents the critical threshold where the macroscopic ground state occupation diverges in ideal Bose gases.",
+        "intuitive_summary": "When the chemical potential is zero, adding or removing a particle from the system costs no thermodynamic free energy.",
+        "interpretation": "The chemical potential $\\mu$ measures the change in Helmholtz free energy $F$ (or Gibbs free energy $G$) when adding a particle at fixed temperature $T$ and volume $V$. Setting $\\mu = 0$ applies directly to: (1) Quasiparticles and gauge bosons with non-conserved number such as photons and phonons, where minimization of free energy requires $(\\partial F / \\partial N)_{T,V} = \\mu = 0$; (2) An ideal Bose gas at and below the critical condensation temperature $T \\le T_c$ in the thermodynamic limit, where the lowest single-particle energy level is approached as $\\mu \\to 0^-$; and (3) Phase boundaries in relativistic quantum field theories where pair creation/annihilation freely occurs.",
+        "symmetry_origin": "Absence of a continuous global $U(1)$ phase symmetry associated with particle number conservation implies that particle number is not a conserved Noether charge, fixing $\\mu = 0$ in thermal equilibrium.",
+        "limits_and_boundary": "For a massless photon gas, $\\mu = 0$ holds identically for all temperatures $T > 0$. For an ideal massive Bose gas, $\\mu < 0$ for $T > T_c$, and $\\mu \\to 0$ as $T \\to T_c$ from above in the thermodynamic limit $V \\to \\infty$. In classical limits where $(E - \\mu) \\gg k_B T$, $\\mu$ becomes large and negative, departing far from zero.",
         "status": "platinum",
         "semantic_variables": {
             "\\mu": {
-                "name": "Chemical Potential",
+                "name": "chemical potential",
                 "type": "variable",
                 "unit": "J",
-                "description": "The thermodynamic potential representing the change in energy of a system when one particle is added, at constant entropy and volume."
+                "description": "Thermodynamic chemical potential representing the free energy change per particle"
             }
         },
         "subcomponents": [
+            "chemical-equilibrium-condition-b055b728",
             "particle-energy-equals-chemical-potential-9ee5e687",
-            "neutron-beta-decay-chemical-potential-equilibrium-28668575"
+            "zero-chemical-potential-condition-64105bcc"
         ],
-        "description": "The condition where the chemical potential, $\\mu$, is zero, signifying equilibrium with respect to particle exchange. This state is crucial for describing phenomena such as Bose-Einstein condensation and the ground state of a photon gas.",
-        "derivation_type": "DEFINITION"
+        "description": "Specifies the thermodynamic state where the chemical potential vanishes, governing systems with unconstrained particle numbers or marking the transition threshold in Bose-Einstein condensation.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "chemical-equilibrium-condition-b055b728"
     },
     "electromagnetic-field-strength-tensor": {
         "title": "Electromagnetic field strength tensor",
@@ -1350,51 +1328,46 @@
     "beta-equals-angular-velocity": {
         "title": "Specific Angular Momentum Vector",
         "equation": "\\beta = \\mathbf{r} \\times \\mathbf{v}",
-        "conceptual_definition": "The equation $\\mathbf{l} = \\mathbf{r} \\times \\mathbf{v}$ defines the specific angular momentum vector $\\mathbf{l}$ of a particle. It is calculated as the cross product of the particle's position vector $\\mathbf{r}$ relative to an origin and its velocity vector $\\mathbf{v}$. The original formulation $\\beta = \\mathbf{r} \\times \\mathbf{v}$ is mathematically inconsistent as it incorrectly equates a scalar quantity $\\beta$ to a vector quantity.",
-        "intuitive_summary": "Imagine a planet orbiting a star. The specific angular momentum measures the 'amount of rotation' the planet has around the star. It's a vector pointing along the orbit's axis, and its length depends on the planet's distance, speed, and trajectory angle. This quantity remains constant if no external twisting forces (torques) are applied, explaining the stability and planar nature of orbits.",
-        "interpretation": "The equation $\\mathbf{l} = \\mathbf{r} \\times \\mathbf{v}$ provides the definition for the specific angular momentum vector $\\mathbf{l}$. The term $\\mathbf{r}$ is the position vector of the particle from the origin of the coordinate system. The term $\\mathbf{v}$ is the linear velocity vector of the particle. The operator $\\times$ denotes the vector cross product. The resulting vector $\\mathbf{l}$ is a pseudovector whose magnitude is $|\\mathbf{l}| = |\\mathbf{r}| |\\mathbf{v}| \\sin(\\theta)$, where $\\theta$ is the angle between $\\mathbf{r}$ and $\\mathbf{v}$. The direction of $\\mathbf{l}$ is perpendicular to the plane containing both $\\mathbf{r}$ and $\\mathbf{v}$, determined by the right-hand rule. Equating this vector result to a scalar, as in the notional form $\\beta = \\mathbf{r} \\times \\mathbf{v}$, is a type error, as a scalar cannot be equal to a vector.",
-        "symmetry_origin": "The conservation of angular momentum, for which specific angular momentum $\\mathbf{l}$ is a proxy, is a direct consequence of the isotropy of space (rotational invariance) via Noether's theorem. If the laws of physics are the same regardless of how the system is oriented in space, then angular momentum is conserved.",
-        "limits_and_boundary": "If the motion is purely radial (i.e., $\\mathbf{v}$ is parallel to $\\mathbf{r}$), then the angle $\\theta$ between them is $0$ or $\\pi$, and the cross product is zero, $\\mathbf{l} = \\mathbf{0}$, indicating no angular motion. For circular motion at constant speed, where $\\mathbf{r}$ is perpendicular to $\\mathbf{v}$, $\\sin(\\theta) = 1$, and the magnitude of the specific angular momentum is maximized for given $|\\mathbf{r}|$ and $|\\mathbf{v}|$, with $|\\mathbf{l}| = r v$. As $r \\to \\infty$ for a fixed non-zero angular velocity $\\omega$, the linear velocity $v = \\omega r$ and specific angular momentum $|\\mathbf{l}| = r^2 \\omega$ also approach infinity.",
+        "conceptual_definition": "The specific angular momentum $\\boldsymbol{\\beta}$ (frequently denoted $\\mathbf{h}$ in astrodynamics and classical mechanics) represents the kinematic orbital angular momentum per unit mass of a particle, defined by the exterior cross product $\\boldsymbol{\\beta} = \\mathbf{r} \\times \\mathbf{v}$, where $\\mathbf{r}$ is the instantaneous position vector relative to an origin and $\\mathbf{v}$ is the linear velocity vector.",
+        "intuitive_summary": "Specific angular momentum measures the rate at which an object sweeps out area relative to a focal point, independent of the object's mass.",
+        "interpretation": "In the relation $\\boldsymbol{\\beta} = \\mathbf{r} \\times \\mathbf{v}$, $\\boldsymbol{\\beta}$ denotes the specific angular momentum vector (a pseudovector oriented perpendicular to the instantaneous orbital plane), $\\mathbf{r}$ is the position vector from the chosen coordinate origin to the particle, and $\\mathbf{v}$ is the kinematic velocity vector $\\dot{\\mathbf{r}}$. The vector cross product $\\times$ yields a magnitude $|\\boldsymbol{\\beta}| = |\\mathbf{r}| |\\mathbf{v}| \\sin\\theta$, which is directly proportional to the areal velocity $\\frac{dA}{dt} = \\frac{1}{2}|\\boldsymbol{\\beta}|$.",
+        "symmetry_origin": "Continuous rotational symmetry of the Hamiltonian under spatial rotations (via Noether's theorem) ensures the conservation of orbital angular momentum $\\mathbf{L}$ and specific angular momentum $\\boldsymbol{\\beta}$ under central force potentials.",
+        "limits_and_boundary": "In the limit of purely radial motion ($\\theta \\to 0$ or $\\theta \\to \\pi$), $\\boldsymbol{\\beta} \\to \\mathbf{0}$. For rectilinear motion with non-zero impact parameter $b$, $|\\boldsymbol{\\beta}| = v_{\\infty} b$ remains constant. As $|\\mathbf{r}| \\to \\infty$ at fixed angular speed $\\omega$, $|\\boldsymbol{\\beta}| \\to \\infty$.",
         "status": "platinum",
         "semantic_variables": {
             "\\beta": {
-                "name": "Beta",
-                "type": "variable",
-                "unit": "dimensionless (inconsistent)",
-                "description": "A placeholder for a scalar quantity, which leads to a mathematically inconsistent equation when equated to the vector cross product."
-            },
-            "\\mathbf{l}": {
-                "name": "Specific Angular Momentum",
+                "name": "specific angular momentum vector",
                 "type": "variable",
                 "unit": "m^2/s",
-                "description": "The angular momentum per unit mass of a particle, a vector quantity representing the amount of rotational motion."
+                "description": "Kinematic angular momentum per unit mass with respect to a reference origin"
             },
             "\\mathbf{r}": {
-                "name": "Position Vector",
+                "name": "position vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The vector from the origin of a coordinate system to the position of a particle."
+                "description": "Spatial displacement vector of the particle from the reference origin"
             },
             "\\mathbf{v}": {
-                "name": "Velocity Vector",
+                "name": "velocity vector",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The rate of change of the position vector of a particle with respect to time."
+                "description": "First time derivative of the position vector in an inertial frame"
             },
             "\\times": {
-                "name": "Cross Product",
+                "name": "vector cross product operator",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "A binary operation on two vectors in three-dimensional space that results in a vector which is perpendicular to the two input vectors."
+                "unit": "dimensionless",
+                "description": "Binary operator on two 3D vectors producing an orthogonal pseudovector"
             }
         },
         "subcomponents": [
-            "orbital-angular-momentum-operator",
-            "global-conservation-ccbedd6e",
-            "curl-vector-field-cartesian"
+            "orbital-angular-momentum-afe05d2a",
+            "angular-momentum-derivative-general",
+            "cross-product-of-velocity-and-momentum-4a85f6c9"
         ],
-        "description": "This formula defines the specific angular momentum vector for a point particle, which is its angular momentum per unit mass. It is a fundamental quantity in rotational dynamics.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the specific angular momentum vector (angular momentum per unit mass) of a particle as the cross product of its position and velocity vectors.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "speed-relation-67756662"
     },
     "component-of-riemann-tensor": {
         "title": "Component of Riemann Tensor",

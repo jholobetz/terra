@@ -230,34 +230,35 @@
                 "name": "Mean Free Path",
                 "type": "variable",
                 "unit": "m",
-                "description": "The average distance a particle (e.g., a photon) travels between interactions in a medium."
+                "description": "Average physical distance traveled by a photon between interaction events."
             },
             "\\kappa": {
-                "name": "Opacity (Mass Attenuation Coefficient)",
+                "name": "Mass Opacity",
                 "type": "variable",
-                "unit": "m^2/kg",
-                "description": "The effective cross-sectional area for absorption or scattering per unit mass of the medium."
+                "unit": "m^2 kg^-1",
+                "description": "Mass extinction cross-section per unit mass of the medium."
             },
             "\\rho": {
                 "name": "Mass Density",
                 "type": "variable",
-                "unit": "kg/m^3",
-                "description": "The mass of the medium per unit volume."
+                "unit": "kg m^-3",
+                "description": "Local mass density of the interacting medium."
             }
         },
-        "interpretation": "In the equation $\\lambda = 1 / (\\kappa \\rho)$, the term $\\lambda$ represents the mean free path, measured in meters (m). It is the characteristic length scale for photon interaction within a medium. The variable $\\kappa$ is the opacity, also known as the mass attenuation coefficient, with SI units of square meters per kilogram ($\\text{m}^2/\\text{kg}$). It represents the effective cross-sectional area for interaction per unit mass of the medium. The symbol $\\rho$ denotes the mass density of the medium, measured in kilograms per cubic meter ($\\text{kg}/\\text{m}^3$). The product $\\kappa \\rho$ is the linear attenuation coefficient (units of $\\text{m}^{-1}$), representing the probability of interaction per unit path length. The formula shows that the mean free path $\\lambda$ is inversely proportional to both the opacity $\\kappa$ and the density $\\rho$.",
-        "symmetry_origin": "This relationship is not derived from a fundamental symmetry via Noether's theorem. It is a statistical and phenomenological definition arising from transport theory, based on the assumption of a macroscopically homogeneous and isotropic medium where scattering/absorption centers are randomly distributed.",
-        "limits_and_boundary": "In the limit of a vacuum where the density $\\rho \\to 0$, the mean free path $\\lambda \\to \\infty$, meaning a photon travels indefinitely without interaction. Similarly, for a perfectly transparent medium where the opacity $\\kappa \\to 0$, the mean free path $\\lambda \\to \\infty$. Conversely, in the limit of an infinitely opaque or dense medium, where either $\\kappa \\to \\infty$ or $\\rho \\to \\infty$, the mean free path $\\lambda \\to 0$, indicating that interactions occur almost instantaneously.",
+        "interpretation": "In the relation $\\lambda = \\frac{1}{\\kappa \\rho}$, $\\lambda$ is the photon mean free path (in $\\text{m}$). The variable $\\kappa$ is the mass opacity or mass attenuation coefficient (in $\\text{m}^2 \\cdot \\text{kg}^{-1}$), representing the effective cross-sectional area per unit mass. The parameter $\\rho$ is the mass density of the interacting medium (in $\\text{kg} \\cdot \\text{m}^{-3}$). Their product, $\\alpha = \\kappa \\rho$, yields the macroscopic linear attenuation coefficient (in $\\text{m}^{-1}$), corresponding to the interaction probability per unit length.",
+        "symmetry_origin": "Derived from spatial translational invariance of homogeneous Poissonian scattering processes, governing exponential decay of beam intensity along the line of sight.",
+        "limits_and_boundary": "In the transparent or vacuum limit where $\\rho \\to 0$ or $\\kappa \\to 0$, the mean free path diverges ($\to \\infty$), yielding an optically thin medium (optical depth $\\tau \\to 0$). Conversely, in the dense or highly opaque regime where $\\rho \\to \\infty$ or $\\kappa \\to \\infty$, $\\lambda \\to 0$, corresponding to the optically thick diffusion limit where radiation transport transitions into radiative heat conduction.",
         "status": "platinum",
-        "conceptual_definition": "The mean free path, $\\lambda$, of a particle (such as a photon) in a medium is the average distance it travels between successive interactions (e.g., absorption or scattering). It is defined as the inverse of the linear attenuation coefficient, which is given by the product of the opacity (mass attenuation coefficient), $\\kappa$, and the mass density of the medium, $\\rho$.",
-        "intuitive_summary": "Imagine walking through a forest. The average distance you can walk in a straight line before hitting a tree is your 'mean free path'. If the trees are thicker (higher opacity $\\kappa$) or packed more closely together (higher density $\\rho$), this distance becomes shorter. This formula quantifies the same concept for photons traveling through a material like a star's interior.",
-        "description": "This formula defines the mean free path of a photon or particle within a medium as the inverse of the product of the medium's opacity and its mass density.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "The mean free path $\\lambda$ represents the average physical distance traversed by a photon between successive absorption or scattering events in a medium. In radiative transfer theory, it is defined as the inverse of the linear attenuation coefficient $\\alpha = \\kappa \\rho$, where $\\kappa$ denotes the specific mass opacity (extinction coefficient per unit mass) and $\\rho$ denotes the local mass density of the medium: $\\lambda = \\frac{1}{\\kappa \\rho}$.",
+        "intuitive_summary": "In a denser or more opaque medium, photons collide and scatter much more frequently, leading to a drastically shorter distance traveled between interactions.",
+        "description": "Defines the photon mean free path within a continuous medium as the reciprocal of the linear extinction coefficient, formulated via mass opacity and mass density.",
+        "derivation_type": "SPECIAL_CASE",
         "subcomponents": [
-            "thermodynamic-state-c2189aa3",
-            "structural-type-1f354e6a",
-            "electron-degeneracy-pressure-scalings-befc65d1"
-        ]
+            "transparency-measure-e2b6f4b5",
+            "radiative-support-dca9ee72",
+            "thermodynamic-state-c2189aa3"
+        ],
+        "parent_formula_id": "transparency-measure-e2b6f4b5"
     },
     "quantum-floor-0a881544": {
         "title": "Degeneracy Pressure of a Non-Relativistic Fermi Gas",
@@ -267,39 +268,47 @@
                 "name": "Non-relativistic degeneracy pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The pressure exerted by a degenerate Fermi gas in the non-relativistic limit."
+                "description": "Degeneracy pressure exerted by the non-relativistic fermion gas at absolute zero"
             },
             "\\hbar": {
                 "name": "Reduced Planck constant",
                 "type": "constant",
-                "unit": "J s",
-                "description": "The quantum of angular momentum, equal to the Planck constant divided by 2π."
+                "unit": "J*s",
+                "description": "Fundamental quantum of action divided by 2*pi"
             },
             "m_n": {
-                "name": "Fermion mass",
-                "type": "variable",
+                "name": "Fermion rest mass",
+                "type": "constant",
                 "unit": "kg",
-                "description": "The mass of a single fermion in the gas (e.g., an electron, proton, or neutron)."
+                "description": "Rest mass of the individual constituent fermion"
             },
             "n_n": {
                 "name": "Fermion number density",
                 "type": "variable",
-                "unit": "m^{-3}",
-                "description": "The number of fermions per unit volume."
+                "unit": "m^-3",
+                "description": "Number of fermions per unit spatial volume"
+            },
+            "\\pi": {
+                "name": "Archimedes' constant",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Ratio of a circle's circumference to its diameter"
             }
         },
-        "interpretation": "The non-relativistic degeneracy pressure, denoted by $P_{nr}$, is a function of fundamental constants and the properties of the fermion gas. The term $\\frac{(3\\pi^2)^{2/3}}{5}$ is a dimensionless constant derived from integrating the particle momentum distribution over a spherical volume in phase space (the Fermi sphere). The reduced Planck constant, $\\hbar$, signifies the quantum mechanical origin of this pressure. The pressure is inversely proportional to the mass of the constituent fermion, $m_n$, indicating that lighter particles like electrons exert a much greater degeneracy pressure than heavier ones like neutrons at the same density. The pressure scales with the number density of fermions, $n_n$, raised to the power of $5/3$. This specific exponent is a hallmark of a non-relativistic, three-dimensional degenerate gas and reflects how the system's total energy scales with its volume.",
-        "symmetry_origin": "The formula is a direct consequence of the Pauli Exclusion Principle, which originates from the exchange anti-symmetry requirement for the wavefunction of a multi-fermion system. This is a fundamental postulate of quantum mechanics, formalized by the spin-statistics theorem, which connects particle spin to its exchange symmetry.",
-        "limits_and_boundary": "In the classical limit where $\\hbar \\to 0$, the pressure $P_{nr} \\to 0$, confirming its purely quantum nature. This pressure is the dominant source of support in cold, dense objects like white dwarfs (electron degeneracy) and neutron stars (neutron degeneracy), as it persists at zero temperature ($T \\to 0$). The formula is valid only in the non-relativistic regime ($v \\ll c$). For extremely high densities where the Fermi energy becomes comparable to the particle's rest mass energy, the gas becomes relativistic, and the pressure scales as $P_{rel} \\propto n_n^{4/3}$ instead.",
+        "interpretation": "The non-relativistic degeneracy pressure $P_{\\text{nr}}$ depends on fundamental constants and thermodynamic state variables: the factor $(3\\pi^2)^{2/3}/5$ is a geometric phase-space integration coefficient for three dimensions; $\\hbar$ represents the reduced Planck constant governing quantum confinement; $m_n$ is the mass of the constituent fermion (e.g., neutron or electron); and $n_n$ is the fermion number density. Because $P_{\\text{nr}} \\propto m_n^{-1}$, lighter fermions produce significantly higher degeneracy pressure at a given density.",
+        "symmetry_origin": "Permutation antisymmetry of the total fermionic wave function under exchange of identical particles (Fermi-Dirac statistics), combined with spatial translational and rotational invariance of isotropic three-dimensional momentum space.",
+        "limits_and_boundary": "In the classical limit $\\hbar \\to 0$ or high-temperature regime $k_B T \\gg E_F$, quantum degeneracy pressure vanishes and is replaced by the classical ideal gas law $P = n k_B T$. In the ultra-relativistic limit where the Fermi momentum satisfies $p_F = \\hbar(3\\pi^2 n_n)^{1/3} \\gg m_n c$, the equation of state softens from a polytrope of index $\\gamma = 5/3$ ($P \\propto n^{5/3}$) to $\\gamma = 4/3$ ($P \\propto n^{4/3}$).",
         "status": "platinum",
-        "conceptual_definition": "In a system of fermions at or near absolute zero temperature, the Pauli Exclusion Principle dictates that no two particles can occupy the same quantum state. Consequently, particles are forced into successively higher energy levels, up to a maximum known as the Fermi energy. This distribution of momenta results in a net outward pressure, known as degeneracy pressure, which exists even in the absence of thermal energy. The formula provides the magnitude of this pressure for a non-relativistic gas, where particle speeds are much less than the speed of light.",
-        "intuitive_summary": "Imagine trying to cram fermions into a box. Quantum mechanics forbids them from piling on top of each other in the lowest energy state. They must stack into higher and higher energy rungs, creating a powerful 'quantum floor' of pressure that resists further compression. This is not due to heat or electric charge, but a fundamental rule of quantum crowding.",
+        "conceptual_definition": "For an ideal non-relativistic Fermi gas at absolute zero ($T = 0\\text{ K}$), fermions fill all available single-particle quantum states up to the Fermi energy $E_F$. The resulting degeneracy pressure $P_{\\text{nr}}$ arises from the thermodynamic relation $P = -\\left(\\frac{\\partial U}{\\partial V}\\right)_{N,S} = \\frac{2}{3}\\mathcal{E}$, where $\\mathcal{E}$ is the ground-state kinetic energy density obtained by integrating the density of states across the Fermi sphere.",
+        "intuitive_summary": "Even at absolute zero, quantum mechanics forbids identical fermions from occupying the same state. Confining fermions into a smaller volume forces them into higher momentum states, creating an irreducible outward quantum pressure that resists compression independent of thermal motion.",
         "subcomponents": [
-            "quantum-resistance-identity-1-875292e2-c360c085",
-            "the-3d-map-34006bb0"
+            "fermi-gas-energy-exponent-282378af",
+            "state-limit-4ae0365a",
+            "atomic-shield-01dc3ae6"
         ],
-        "description": "This formula quantifies the pressure in a cold, dense gas of fermions (such as electrons or neutrons) that arises from the Pauli Exclusion Principle, a cornerstone of quantum mechanics.",
-        "derivation_type": "DERIVED_FROM"
+        "description": "Quantifies the quantum mechanical pressure exerted by a zero-temperature, non-relativistic gas of fermions resulting from the Pauli exclusion principle. The pressure scales with the particle density as $n^{5/3}$ and inversely with the constituent fermion mass.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "residual-motion-47d1d1d4"
     },
     "perfect-shield-8fe5c1fd": {
         "title": "Perfect Shield",
@@ -549,33 +558,35 @@
                 "name": "Number Operator",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "A Hermitian operator whose eigenvalues correspond to the number of particles in a given quantum state."
+                "description": "Observable operator representing the number of quanta in a mode"
             },
             "a^\\dagger": {
                 "name": "Creation Operator",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "An operator that increases the number of particles in a given quantum state by one. It is the Hermitian adjoint of the annihilation operator."
+                "description": "Operator that raises the excitation or particle count of the mode by one"
             },
             "a": {
                 "name": "Annihilation Operator",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "An operator that decreases the number of particles in a given quantum state by one."
+                "description": "Operator that lowers the excitation or particle count of the mode by one"
             }
         },
-        "interpretation": "The equation $\\hat{N} = a^\\dagger a$ defines the particle number operator, $\\hat{N}$. The operator $a^\\dagger$ is the creation operator; when it acts on a quantum state, it adds one quantum of excitation (a particle) to the corresponding mode. Conversely, the operator $a$ is the annihilation operator, which removes one quantum of excitation from the same mode. The combined action of $a^\\dagger a$ on an eigenstate $|n\\rangle$ with $n$ particles is $\\hat{N}|n\\rangle = a^\\dagger a |n\\rangle = n|n\\rangle$. This demonstrates that $|n\\rangle$ is an eigenstate of the number operator $\\hat{N}$ with the eigenvalue $n$. The eigenvalues of $\\hat{N}$ are the non-negative integers \\{$0, 1, 2, ...\\}$, which represent the physically observable number of particles or quanta in a given state.",
-        "symmetry_origin": "Conservation of particle number is a direct consequence of a global U(1) gauge symmetry, as described by Noether's theorem. The invariance of a system's Lagrangian under a global phase transformation of the quantum field (e.g., $\\psi \\to e^{i\\alpha}\\psi$) leads to a conserved charge, which is the total particle number.",
-        "limits_and_boundary": "In the classical limit where $\\hbar \\to 0$, the discrete quantum nature of particles vanishes, and the number operator loses its meaning as a quantifier of discrete quanta; the system is described by continuous classical fields. In a theory of free (non-interacting) fields, the number operator for each mode, $\\hat{N}_k$, commutes with the total Hamiltonian, $[\\hat{N}_k, \\hat{H}] = 0$, implying that the number of particles in each mode is a conserved quantity. In interacting theories, the total number operator may or may not commute with the Hamiltonian, depending on whether the interactions conserve particle number.",
+        "interpretation": "The operator $\\hat{N}$ denotes the number operator whose spectrum comprises the non-negative integers $\\{0, 1, 2, \\dots\\}$ for bosonic modes (or $\\{0, 1\\}$ for fermionic modes). The annihilation operator $a$ lowers the particle number state according to $a|n\\rangle = \\sqrt{n}|n-1\\rangle$, whereas the creation operator $a^\\dagger$ raises it via $a^\\dagger|n-1\\rangle = \\sqrt{n}|n\\rangle$. Their composition $\\hat{N} = a^\\dagger a$ preserves the state while scaling it by the eigenvalue $n$.",
+        "symmetry_origin": "Global $U(1)$ phase rotation invariance $\\psi \\to e^{i\\alpha}\\psi$ of the underlying quantum field or wave function, which via Noether's theorem implies the conservation of total particle number $[\\hat{N}, \\hat{H}] = 0$ in closed, non-interacting systems.",
+        "limits_and_boundary": "In the vacuum state $|0\\rangle$, the expectation value vanishes identically: $\\langle 0| \\hat{N} |0\\rangle = 0$. In the classical or macroscopic correspondence limit where $\\langle \\hat{N} \\rangle \\gg 1$, quantum fluctuations become negligible relative to the total amplitude, matching classical field intensity.",
         "status": "platinum",
-        "conceptual_definition": "In the formalism of second quantization, the number operator $\\hat{N}$ is a Hermitian operator that, when acting on a Fock state, returns an eigenvalue equal to the number of particles occupying the single-particle state associated with the creation operator $a^\\dagger$ and annihilation operator $a$.",
-        "intuitive_summary": "Imagine a counter for quantum particles. The annihilation operator $a$ first attempts to remove a particle from a system. If it succeeds, the creation operator $a^\\dagger$ immediately puts an identical particle back. The 'strength' of this successful operation is directly proportional to the number of particles that were there to begin with, effectively counting them without changing the state's particle number.",
-        "description": "Defines the observable for the number of particles in a given quantum state, constructed from the product of the creation and annihilation operators for that state.",
+        "conceptual_definition": "The particle number operator $\\hat{N} = a^\\dagger a$ is a positive self-adjoint operator on Fock space constructed from the creation operator $a^\\dagger$ and annihilation operator $a$. It acts diagonally on Fock basis states $|n\\rangle$ such that $\\hat{N}|n\\rangle = n|n\\rangle$, yielding the integer occupancy of the corresponding single-particle quantum state.",
+        "intuitive_summary": "First removing a quantum and then immediately adding it back leaves the physical state intact while measuring the integer multiplicity of particles present in that specific mode.",
+        "description": "Defines the quantum observable representing the total count of discrete excitations or particles in a mode, expressed as the product of creation and annihilation operators.",
         "derivation_type": "DEFINITION",
         "subcomponents": [
-            "canonical-commutator-identity-1-1cc5012a-87a74ff1",
-            "self-adjoint-rule-84437f73"
-        ]
+            "particle-counter-95b66e07",
+            "quantization-of-light-identity-1-51503149-1880b713",
+            "hermiticity-identity-1-7c4c73d8-6628a68c"
+        ],
+        "parent_formula_id": "number-operator-definition-c874f608"
     },
     "technical-relation-45258d25": {
         "title": "Cosmological Constant Fluctuation in Causal Set Theory",
@@ -1170,115 +1181,111 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "cosmological-eos-88d98df2-dadf4940": {
-        "title": "Dimensionless Equation of State for a Cosmological Perfect Fluid",
+        "title": "Dimensionless Equation of State Parameter for a Cosmological Perfect Fluid",
         "equation": "w = \\frac{p}{\\rho c^2}",
-        "interpretation": "The formula $w = \\frac{p}{\\rho c^2}$ defines the dimensionless equation of state parameter $w$. In this context, $p$ represents the isotropic pressure of the cosmological fluid, and the denominator $\\rho c^2$ represents its total energy density, $\\epsilon$. The variable $\\rho$ is the mass density of the fluid, and $c$ is the speed of light in a vacuum. The value of $w$ is constant for many idealized fluids: for non-relativistic matter (dust), $w \\approx 0$; for relativistic matter (radiation), $w = 1/3$; and for a cosmological constant (vacuum energy), $w = -1$.",
-        "symmetry_origin": "This relation is a phenomenological definition used within the framework of General Relativity. It is constrained by the Cosmological Principle, which assumes a homogeneous and isotropic universe as described by the Friedmann–Lemaître–Robertson–Walker (FLRW) metric. The form of the stress-energy tensor for a perfect fluid, $T^{\\mu\\nu} = (\\rho c^2 + p)u^\\mu u^\\nu + p g^{\\mu\\nu}$, which respects these symmetries, naturally leads to this characterization.",
-        "limits_and_boundary": "The parameter $w$ can take various values characterizing different cosmic epochs or components. For non-relativistic matter ('dust'), where pressure is negligible ($p \\ll \\rho c^2$), the limit is $w \\to 0$. For an ultra-relativistic fluid or radiation, the pressure is $p = \\frac{1}{3}\\rho c^2$, yielding $w = 1/3$. For a cosmological constant or vacuum energy, the pressure is negative, $p = -\\rho c^2$, resulting in $w = -1$. Theoretical models also explore 'phantom energy' where $w < -1$, which leads to a 'Big Rip' singularity. The case $w > 1$ is generally considered unphysical as it would imply a speed of sound greater than the speed of light, violating causality.",
+        "interpretation": "In the relation $w = \\frac{p}{\rho c^2}$, $w$ is the dimensionless equation of state parameter. The numerator $p$ denotes the isotropic thermodynamic pressure of the cosmological fluid (measured in $\\mathrm{Pa}$ or $\\mathrm{J\\cdot m^{-3}}$). The denominator $\\rho c^2$ represents the total volumetric energy density $\\varepsilon$, where $\\rho$ is the equivalent mass density (in $\\mathrm{kg\\cdot m^{-3}}$) and $c$ is the invariant speed of light in vacuum (in $\\mathrm{m\\cdot s^{-1}}$). Specific canonical values correspond to dust/cold dark matter ($w = 0$), ultra-relativistic radiation/photons ($w = 1/3$), spatial curvature ($w = -1/3$), and vacuum energy or a cosmological constant ($w = -1$).",
+        "symmetry_origin": "Spatial isotropy and homogeneity under the Cosmological Principle (maximally symmetric spatial slices in FLRW geometry) enforce the off-diagonal components of the stress-energy tensor to vanish and the spatial stress components to be purely isotropic ($T^i_j = p \\delta^i_j$).",
+        "limits_and_boundary": "For non-relativistic matter (thermal velocity $v \\ll c$), $p \\approx 0$, giving $w \\to 0$. In the ultra-relativistic limit ($v \\approx c$ or massless particles), kinetic theory yields $p = \\frac{1}{3}\\rho c^2$, yielding $w \\to 1/3$. For vacuum energy/cosmological constant, Lorentz invariance requires $T_{\\mu\\nu} = -\\rho_{\\Lambda} c^2 g_{\\mu\\nu}$, producing $p = -\\rho c^2$ and $w = -1$. Regimes with $w < -1$ violate the null energy condition (phantom energy).",
         "semantic_variables": {
             "w": {
-                "name": "Equation of State Parameter",
+                "name": "Dimensionless Equation of State Parameter",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless parameter that characterizes the relationship between pressure and energy density of a fluid."
+                "description": "Ratio of fluid isotropic pressure to energy density determining cosmic background evolution"
             },
             "p": {
-                "name": "Pressure",
+                "name": "Isotropic Pressure",
                 "type": "variable",
-                "unit": "J/m^3",
-                "description": "The isotropic pressure exerted by the cosmological fluid."
+                "unit": "Pa",
+                "description": "Isotropic hydrostatic pressure exerted by the cosmic fluid"
             },
             "\\rho": {
                 "name": "Mass Density",
                 "type": "variable",
                 "unit": "kg/m^3",
-                "description": "The mass density of the cosmological fluid. The term $\\rho c^2$ represents the energy density."
+                "description": "Effective volumetric mass density of the cosmological fluid"
             },
             "c": {
-                "name": "Speed of Light",
+                "name": "Speed of Light in Vacuum",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "The speed of light in a vacuum."
+                "description": "Universal physical constant denoting the speed of light in vacuum"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The equation of state parameter, denoted by $w$, is defined as the ratio of the pressure $p$ exerted by a cosmological fluid to its energy density $\\epsilon$. Since energy density is related to mass density $\\rho$ by Einstein's mass-energy equivalence, $\\epsilon = \\rho c^2$, the parameter is given by the formula $w = \\frac{p}{\\rho c^2}$. This dimensionless quantity classifies different cosmic components, such as matter, radiation, or dark energy, and dictates their effect on the expansion of the universe as described by the Friedmann equations.",
-        "intuitive_summary": "The parameter $w$ is a simple number that tells us how much 'springiness' or pressure a cosmic substance has relative to its energy content. A value of $w=0$ corresponds to pressureless dust, $w=1/3$ to energetic radiation like light, and $w=-1$ to the mysterious dark energy that causes negative pressure and accelerates cosmic expansion.",
+        "conceptual_definition": "In standard Friedmann-Lemaître-Robertson-Walker (FLRW) cosmology, the stress-energy tensor of a homogeneous and isotropic universe is modeled as a perfect fluid $T^\\mu_\nu = \\mathrm{diag}(-\rho c^2, p, p, p)$. The dimensionless equation of state parameter $w$ is defined by the linear relation $w = \\frac{p}{\rho c^2} = \\frac{p}{\\varepsilon}$, directly relating the isotropic pressure $p$ to the fluid rest-frame energy density $\\varepsilon = \\rho c^2$.",
+        "intuitive_summary": "The parameter $w$ acts as a thermodynamic scaling factor that determines how rapidly the energy density of a cosmic component dilutes as the universe expands: dilution scales as $a^{-3(1+w)}$, where $a$ is the cosmological scale factor.",
         "subcomponents": [
-            "cosmological-acceleration-parameter-8c600133",
-            "energy-density-change-1125d63c",
-            "equation-of-state-for-pressure-0c070485",
-            "pressure-of-relativistic-fluid-ed74859c"
+            "pressure-of-relativistic-fluid-ed74859c",
+            "equation-of-state-for-cosmic-fluid-b02cbf55",
+            "equation-of-state-cosmological-constant"
         ],
-        "description": "Defines the dimensionless equation of state parameter, $w$, which relates the pressure to the energy density of a perfect fluid in cosmology, determining its influence on the expansion of the universe.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the dimensionless equation of state parameter $w$ as the ratio of isotropic pressure to total energy density for a cosmic perfect fluid, governing cosmological expansion dynamics via the Friedmann and continuity equations.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "cosmological-fluid-equation-21b5f0cc"
     },
     "spallation-physics-identity-1-2cfb2778-4a170230": {
-        "title": "Cosmic Ray Spallation Production Rate",
+        "title": "Cosmic Ray Spallation Volumetric Production Rate",
         "equation": "R_i = \\sum_j n_j \\int_0^\\infty \\sigma_{ji}(E) \\Phi_j(E) \\, dE",
-        "interpretation": "The term $R_i$ represents the total production rate of nuclide species $i$ per unit volume, with units of atoms $\\cdot$ m$^{-3} \\cdot$ s$^{-1}$. The summation $\\sum_j$ runs over all relevant reaction channels, where a channel $j$ specifies a projectile-target pair (e.g., a proton hitting an oxygen nucleus). The variable $n_j$ is the number density of the target nuclei for channel $j$ in the medium, in units of atoms $\\cdot$ m$^{-3}$. The integral is performed over the kinetic energy $E$ of the cosmic ray projectiles. The term $\\sigma_{ji}(E)$ is the energy-dependent cross-section for reaction channel $j$ to produce nuclide $i$, with units of m$^2$. Finally, $\\Phi_j(E)$ is the differential flux of the projectile species for channel $j$ at energy $E$, in units of particles $\\cdot$ m$^{-2} \\cdot$ s$^{-1} \\cdot$ J$^{-1}$.",
-        "symmetry_origin": "This formula is not derived from a fundamental symmetry principle like a Noether conservation law. Instead, it is a phenomenological and statistical mechanics construct based on the principles of collision theory and particle transport, describing an irreversible process of nucleosynthesis.",
-        "limits_and_boundary": "In the limit of zero cosmic ray flux, $\\Phi_j(E) \\to 0$, the production rate $R_i \\to 0$. Similarly, if the target density $n_j \\to 0$, then $R_i \\to 0$. The integral has a practical lower bound defined by the threshold energy for the spallation reaction, below which $\\sigma_{ji}(E) = 0$. The formula is valid for optically thin media where the cosmic ray flux $\\Phi_j(E)$ is not significantly attenuated. For thick targets, a depth-dependent flux $\\Phi_j(E, z)$ must be used.",
+        "interpretation": "The quantity $R_i$ denotes the volumetric production rate of nuclide $i$ (in units of $\\text{m}^{-3}\\,\\text{s}^{-1}$). The index $j$ identifies distinct reaction channels consisting of a specific target species (with ambient number density $n_j$ in $\\text{m}^{-3}$) and an incident projectile species. The term $\\sigma_{ji}(E)$ represents the energy-dependent micro-scale reaction cross section for channel $j$ to fragment into product nuclide $i$ (in $\\text{m}^2$). The differential flux $\\Phi_j(E)$ denotes the number of cosmic ray projectiles of channel $j$ passing through unit area per unit time per unit energy interval (in $\\text{m}^{-2}\\,\\text{s}^{-1}\\,\\text{J}^{-1}$). Integrating over kinetic energy $E$ from zero to infinity accounts for all projectile energies capable of exceeding the reaction threshold.",
+        "symmetry_origin": "Rooted in fundamental conservation laws of relativistic nuclear interactions, specifically the conservation of total four-momentum, baryon number, electric charge, and energy-momentum conservation across each individual nuclear collision channel.",
+        "limits_and_boundary": "In the limit where the incident particle energy $E$ falls below the reaction threshold $E_{\\text{th}}$, the cross section vanishes $\\sigma_{ji}(E < E_{\\text{th}}) = 0$, yielding zero contribution from low energies. In the asymptotic high-energy limit $E \\to \\infty$, the cosmic ray flux falls off as a power law $\\Phi(E) \\propto E^{-\\gamma}$ (with spectral index $\\gamma \\approx 2.7$), ensuring convergence of the integral. If the target density vanishes ($n_j \\to 0$) or the cosmic ray flux goes to zero ($\\Phi_j \\to 0$), the production rate identically vanishes ($R_i \\to 0$).",
         "semantic_variables": {
             "R_i": {
-                "name": "Production Rate of Nuclide i",
+                "name": "Volumetric production rate of nuclide species i",
                 "type": "variable",
-                "unit": "m^{-3} s^{-1}",
-                "description": "The number of nuclei of species i produced per unit volume per unit time."
-            },
-            "\\sum_j": {
-                "name": "Summation over Reaction Channels",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Sum over all reaction channels j, each defined by a specific projectile and target pair."
+                "unit": "m^-3 s^-1",
+                "description": "Total number of nuclide nuclei of type i produced per unit volume per unit time."
             },
             "n_j": {
-                "name": "Target Number Density for Channel j",
+                "name": "Target number density",
                 "type": "variable",
-                "unit": "m^{-3}",
-                "description": "The number density of the target species corresponding to reaction channel j."
+                "unit": "m^-3",
+                "description": "Number density of ambient target nuclei involved in reaction channel j."
             },
             "\\sigma_{ji}(E)": {
-                "name": "Cross-section for Channel j to Produce i",
+                "name": "Partial spallation cross section",
                 "type": "variable",
                 "unit": "m^2",
-                "description": "The energy-dependent cross-section for the reaction channel j to produce the final nuclide i."
+                "description": "Energy-dependent nuclear reaction cross section for channel j yielding daughter product i."
             },
             "\\Phi_j(E)": {
-                "name": "Projectile Flux for Channel j",
+                "name": "Differential cosmic ray flux",
                 "type": "variable",
-                "unit": "m^{-2} s^{-1} J^{-1}",
-                "description": "The differential energy flux of the projectile species corresponding to reaction channel j."
+                "unit": "m^-2 s^-1 J^-1",
+                "description": "Differential flux of cosmic ray projectile species in channel j per unit energy at energy E."
             },
             "E": {
-                "name": "Projectile Kinetic Energy",
+                "name": "Projectile kinetic energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The kinetic energy of the incident cosmic ray projectile."
+                "description": "Kinetic energy of the incident cosmic ray particle in the rest frame of the target nucleus."
             },
-            "i": {
-                "name": "Product Nuclide Index",
-                "type": "variable",
+            "\\sum_j": {
+                "name": "Summation over reaction channels",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "An index representing the specific nuclide species being produced."
+                "description": "Discrete summation across all relevant projectile-target interaction channels."
             },
-            "j": {
-                "name": "Reaction Channel Index",
-                "type": "variable",
+            "\\int": {
+                "name": "Energy integral",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "An index representing a specific combination of a cosmic ray projectile and a target nucleus."
+                "description": "Definite integral over all incident cosmic ray projectile kinetic energies."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The production rate, $R_i$, of a nuclide species $i$ is calculated by summing over all possible reaction channels $j$, where each channel is defined by a specific cosmic ray projectile and a specific target nucleus. For each channel, the rate is determined by the number density of its target nuclei, $n_j$, and the reaction rate per target. This reaction rate is an integral over all projectile energies $E$ of the product of the energy-dependent spallation cross-section, $\\sigma_{ji}(E)$, and the differential flux of the corresponding cosmic ray projectile, $\\Phi_j(E)$.",
-        "intuitive_summary": "This formula acts as a cosmic accounting equation for creating new atomic nuclei. It tallies the total 'birth rate' of a specific nuclide ($R_i$) by considering all possible creation pathways. For each pathway, it multiplies the number of available 'parent' nuclei ($n_j$), the intensity of incoming cosmic 'projectiles' at all energies ($\\Phi_j(E)$), and the probability that a collision will successfully create the desired 'daughter' nuclide ($\\sigma_{ji}(E)$).",
+        "conceptual_definition": "The cosmic ray spallation production rate $R_i$ defines the instantaneous rate per unit volume at which a specific daughter nuclide $i$ is generated by inelastic collisions between incident energetic cosmic ray particles (such as protons and $\\alpha$-particles) and ambient target nuclei (such as carbon, nitrogen, or oxygen in the interstellar medium or planetary atmospheres). It is obtained by convoluting the energy-dependent partial nuclear reaction cross-section $\\sigma_{ji}(E)$ with the differential cosmic ray projectile flux $\\Phi_j(E)$ over all kinetic energies $E$, summed over all interacting target-projectile channel pairs $j$ weighted by the target number density $n_j$.",
+        "intuitive_summary": "High-energy cosmic rays shatter heavier atomic nuclei in space like microscopic projectiles. To find how rapidly a rare light element (like lithium, beryllium, or boron) is created, one multiplies how many target atoms are present by the intensity of incoming cosmic rays at each energy, scales by the probability of that collision breaking the target into the desired fragment, and integrates over all possible collision energies.",
         "subcomponents": [
             "non-stellar-source-707b33a4",
             "impact-breakup-b7c2fa25",
-            "lithium-beryllium-boron-identity-1-e5e7cf60-979b1f28"
+            "lithium-beryllium-boron-identity-1-e5e7cf60-979b1f28",
+            "cosmic-ray-spallation-nuclide-abundance-979b1f28"
         ],
-        "description": "Calculates the rate of production for a specific nuclide species resulting from the collision of high-energy cosmic rays with target nuclei in a medium.",
-        "derivation_type": "DEFINITION"
+        "description": "Computes the total volumetric production rate of a specific nuclide isotope synthesized via cosmic ray nuclear spallation reactions over an incident energy spectrum.",
+        "derivation_type": "GENERALIZATION",
+        "parent_formula_id": "non-stellar-source-707b33a4"
     },
     "gw170817-astrophysics-identity-1-af762e57-1def3760": {
         "title": "Chirp Mass of a Binary System",
@@ -1319,85 +1326,92 @@
         "derivation_type": "DEFINITION"
     },
     "phase-difference": {
-        "title": "Phase Difference",
+        "title": "Phase Difference Between Oscillatory States",
         "equation": "\\Delta\\theta = \\theta_2 - \\theta_1",
-        "conceptual_definition": "The phase difference, denoted $\\Delta\\theta$, between two periodic processes is the difference in their respective phase angles, $\\theta_1$ and $\\theta_2$. The phase angle $\\theta$ of a single process describes its position within a complete cycle. This difference $\\Delta\\theta$ is a measure of how much one process leads or lags the other.",
-        "intuitive_summary": "Imagine two runners on a circular track. Their phase difference is the angle between them, as seen from the center of the track. If they are side-by-side, the difference is zero; if they are on opposite sides, the difference is half a circle ($\\pi$ radians or 180 degrees).",
-        "interpretation": "The formula $\\Delta\\theta = \\theta_2 - \\theta_1$ provides the quantitative measure of the phase difference $\\Delta\\theta$. The quantities $\\theta_1$ and $\\theta_2$ represent the phase angles of two distinct oscillatory or wave-like phenomena, typically measured in radians. The phase angle itself, $\\theta$, specifies the state of an oscillation (e.g., position in a simple harmonic motion cycle or point on a propagating wave). A phase difference of $\\Delta\\theta = 0$ (or any integer multiple of $2\\pi$) signifies that the two phenomena are 'in phase,' leading to constructive interference in waves. A phase difference of $\\Delta\\theta = \\pi$ (or any odd integer multiple of $\\pi$) means they are 'out of phase' or in 'antiphase,' leading to destructive interference. This concept is fundamental to wave optics, signal processing, AC circuit analysis, and quantum mechanics, where the phase of a wavefunction governs interference effects.",
-        "symmetry_origin": "The physical significance of phase difference is rooted in U(1) gauge symmetry. While the absolute phase of a system (like a quantum wavefunction) is not an observable quantity and can be arbitrarily redefined (a global phase shift), the relative phase difference between two states or paths is gauge-invariant and determines physically measurable outcomes, such as interference patterns.",
-        "limits_and_boundary": "The phase difference $\\Delta\\theta$ is periodic. A phase difference of $\\Delta\\theta$ is physically indistinguishable from $\\Delta\\theta + 2\\pi n$ for any integer $n$. Therefore, the phase difference is typically considered within the principal value range of $(-\\pi, \\pi]$ or $[0, 2\\pi)$. In the context of waves, as the path length difference between two coherent sources approaches zero, the phase difference also approaches zero, i.e., $\\Delta d \\to 0 \\implies \\Delta\\theta \\to 0$.",
+        "conceptual_definition": "The phase difference $\\Delta\\theta$ measures the relative shift between two harmonic or wave states with respective phase angles $\\theta_1$ and $\\theta_2$. Defined as $\\Delta\\theta = \\theta_2 - \\theta_1$, it governs the interference regime of superposed waves and relative synchronization in coupled oscillatory dynamical systems.",
+        "intuitive_summary": "Phase difference tells you how far along in its cycle one wave or oscillator is compared to another, determining whether they combine constructively or destructively.",
+        "interpretation": "In the relation $\\Delta\\theta = \\theta_2 - \\theta_1$, the quantity $\\Delta\\theta$ represents the total relative phase angle between two states. The arguments $\\theta_1$ and $\\theta_2$ denote the instantaneous phase coordinates of the respective waveforms or oscillators, typically expressed in radians. When $\\Delta\\theta = 2\\pi n$ for $n \\in \\mathbb{Z}$, the oscillators are in phase (yielding constructive interference in linear superposition), whereas $\\Delta\\theta = (2n + 1)\\pi$ corresponds to complete anti-phase (destructive interference).",
+        "symmetry_origin": "Global $U(1)$ gauge invariance and temporal translation invariance of harmonic systems, where physical observables in linear superposition depend strictly on relative phase differences rather than absolute phase offsets.",
+        "limits_and_boundary": "In the limit where $\\theta_2 \\to \\theta_1$, $\\Delta\\theta \\to 0$, recovering fully coherent in-phase alignment. For stationary monochromatic waves of identical angular frequency $\\omega$, $\\Delta\\theta$ is strictly constant over time $t$, whereas frequency detuning $\\Delta\\omega = \\omega_2 - \\omega_1 \\neq 0$ yields a linearly drifting phase difference $\\Delta\\theta(t) = \\Delta\\omega t + \\Delta\\delta$.",
         "status": "platinum",
         "semantic_variables": {
             "\\Delta\\theta": {
-                "name": "Phase Difference",
+                "name": "phase difference",
                 "type": "variable",
                 "unit": "rad",
-                "description": "The difference in phase between two periodic phenomena."
+                "description": "Angular difference between the instantaneous phases of two periodic states"
             },
             "\\theta_1": {
-                "name": "Phase Angle 1",
+                "name": "first phase angle",
                 "type": "variable",
                 "unit": "rad",
-                "description": "The phase angle of the first periodic phenomenon."
+                "description": "Instantaneous phase angle of the first oscillator or wave"
             },
             "\\theta_2": {
-                "name": "Phase Angle 2",
+                "name": "second phase angle",
                 "type": "variable",
                 "unit": "rad",
-                "description": "The phase angle of the second periodic phenomenon."
+                "description": "Instantaneous phase angle of the second oscillator or wave"
             }
         },
-        "description": "Defines the phase difference as the arithmetic difference between the phase angles of two periodic phenomena, quantifying their relative position within their respective cycles.",
+        "description": "Quantifies the angular offset between the instantaneous phases of two periodic or wave phenomena.",
         "derivation_type": "DEFINITION",
         "subcomponents": [
-            "phase-speed-c934ecda",
             "zero-phase-difference-condition-b4f9d95a",
             "half-cycle-phase-difference-condition-a773f621",
-            "resonance-rule-e405168a"
-        ]
+            "phase-difference-quantization-condition-f6822236"
+        ],
+        "parent_formula_id": "resonance-rule-e405168a"
     },
     "energy-levels-potential-well": {
-        "title": "Total Energy at Classical Turning Points",
+        "title": "Classical Turning Points in a Potential Well",
         "equation": "E = V(r_1) = V(r_2)",
-        "conceptual_definition": "In classical mechanics, for a particle with a constant total energy $E$ moving in a one-dimensional potential $V(r)$, the classical turning points, denoted by $r_1$ and $r_2$, are the spatial coordinates where the particle's motion reverses direction. At these specific points, the kinetic energy of the particle is momentarily zero. Consequently, the total energy $E$, which is the sum of kinetic and potential energy, must be equal to the potential energy $V(r)$ at these locations.",
-        "intuitive_summary": "Imagine a ball rolling in a valley. The highest points it can reach on either side are its 'turning points.' At that exact peak moment, the ball stops moving (zero kinetic energy), and all its energy is stored as potential energy due to its height. This equation states that the ball's total energy is equal to the potential energy at these turnaround spots.",
-        "interpretation": "This equation, $E = V(r_1) = V(r_2)$, establishes the condition for the classical turning points of a bound particle. Here, $E$ represents the constant total energy of the particle, conserved due to the system's time-translation invariance. The function $V(r)$ is the potential energy as a function of position $r$. The positions $r_1$ and $r_2$ are the classical turning points. At these specific locations, the particle's kinetic energy becomes zero. Since total energy is the sum of kinetic and potential energy ($E = T + V$), if the kinetic energy $T=0$, then the total energy $E$ must be equal to the potential energy $V$. For any position $r$ between $r_1$ and $r_2$, the particle has positive kinetic energy ($T > 0$), implying $E > V(r)$. For positions outside this range ($r < r_1$ or $r > r_2$), the region is classically forbidden because it would require negative kinetic energy.",
-        "symmetry_origin": "Conservation of energy, which arises from the time-translation invariance of the physical laws governing the system according to Noether's theorem.",
-        "limits_and_boundary": "In the classical limit ($\\hbar \\to 0$), this definition is exact. In quantum mechanics, a particle's wavefunction can penetrate the classically forbidden region where $E < V(r)$, exhibiting exponential decay. The turning points $r_1$ and $r_2$ mark the transition from oscillatory to evanescent (decaying) behavior of the wavefunction. For unbound states where the total energy $E$ exceeds the potential barrier height, there may be one or no turning points, and the particle is not confined.",
+        "conceptual_definition": "In classical Hamiltonian mechanics, the turning points $r_1$ and $r_2$ bound the physically accessible region of motion for a particle of total conserved energy $E$ moving in a one-dimensional or central potential $V(r)$. At these boundary coordinates, the particle's instantaneous momentum and kinetic energy vanish ($T = 0$), setting $E = V(r_1) = V(r_2)$ and reversing the direction of motion.",
+        "intuitive_summary": "At the turning points, a particle exhausts all its kinetic energy climbing the potential hill, momentarily coming to rest before being accelerated back toward the center of the potential well.",
+        "interpretation": "The parameter $E$ represents the constant total mechanical energy of the particle, conserved over time. The scalar field $V(r)$ is the potential energy as a function of the spatial coordinate $r$. The positions $r_1$ and $r_2$ represent the spatial roots of the equation $E - V(r) = 0$. In the classically allowed domain $r_1 \\le r \\le r_2$, the kinetic energy satisfies $T(r) = E - V(r) \\ge 0$. In the classically forbidden regions $r < r_1$ and $r > r_2$, the kinetic energy would be negative in classical physics, though quantum mechanical wavefunctions may tunnel across these barriers.",
+        "symmetry_origin": "Time-translation invariance via Noether's theorem, which guarantees the conservation of total mechanical energy $E$.",
+        "limits_and_boundary": "In the limit as total energy approaches the local potential minimum $E \\to V_{\\min}$, the turning points coalesce ($r_1 \\to r_2$), reducing the motion to a stationary equilibrium state. In the quantum limit $\\hbar \\to 0$ (WKB approximation), the connection formulas at $r_1$ and $r_2$ define the phase matching conditions for quantized bound state energy levels.",
         "status": "platinum",
         "semantic_variables": {
             "E": {
-                "name": "Total Energy",
+                "name": "Total Mechanical Energy",
                 "type": "variable",
-                "unit": "Joules (J)",
-                "description": "The total mechanical energy of the particle, which is the sum of its kinetic and potential energy."
+                "unit": "J",
+                "description": "Conserved total mechanical energy of the particle"
             },
-            "V": {
-                "name": "Potential Energy Function",
+            "V(r_1)": {
+                "name": "Potential Energy at Inner Turning Point",
                 "type": "variable",
-                "unit": "Joules (J)",
-                "description": "A function $V(r)$ that describes the potential energy of the particle at a given position $r$."
+                "unit": "J",
+                "description": "Value of the potential energy evaluated at the inner boundary position $r_1$"
+            },
+            "V(r_2)": {
+                "name": "Potential Energy at Outer Turning Point",
+                "type": "variable",
+                "unit": "J",
+                "description": "Value of the potential energy evaluated at the outer boundary position $r_2$"
             },
             "r_1": {
-                "name": "First Classical Turning Point",
+                "name": "Inner Classical Turning Point",
                 "type": "variable",
-                "unit": "meters (m)",
-                "description": "The position coordinate where a particle moving in a potential well momentarily stops and reverses direction."
+                "unit": "m",
+                "description": "Inner coordinate boundary where kinetic energy vanishes"
             },
             "r_2": {
-                "name": "Second Classical Turning Point",
+                "name": "Outer Classical Turning Point",
                 "type": "variable",
-                "unit": "meters (m)",
-                "description": "The position coordinate on the opposite side of the potential well where the particle momentarily stops and reverses direction."
+                "unit": "m",
+                "description": "Outer coordinate boundary where kinetic energy vanishes"
             }
         },
         "subcomponents": [
-            "work-energy-theorem-integral",
-            "geometric-orthogonality-4c2293f9",
-            "energy-hill-aac310fe"
+            "total-energy-as-potential-dbb4b9be",
+            "classical-turning-points-definition-90a17fd3",
+            "kinetic-energy-component-93fcecb9"
         ],
-        "description": "This equation defines the classical turning points for a particle in a one-dimensional potential well, where the particle's total energy equals the potential energy, and its kinetic energy is zero.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the inner and outer classical turning points for a bound particle in a potential well where total energy equals potential energy and kinetic energy vanishes.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "classical-total-energy-of-a-particle-6f03466f"
     },
     "two-body-interparticle-force": {
         "title": "Force on Particle i from a Central Potential due to Particle j",

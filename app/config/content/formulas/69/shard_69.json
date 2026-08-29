@@ -303,84 +303,85 @@
         "description": "One of the four Maxwell's equations, this law states that the magnetic field is a solenoidal (divergence-free) vector field, implying the non-existence of magnetic monopoles."
     },
     "lane-emden-basis-fc18ebf9": {
-        "title": "Polytropic Equation of State",
+        "title": "Polytropic Equation of State (Lane-Emden Form)",
         "equation": "P = K\\rho^{1+1/n}",
         "semantic_variables": {
             "P": {
                 "name": "Pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "The thermodynamic pressure of the polytropic fluid."
+                "description": "Hydrostatic pressure within the fluid"
             },
             "K": {
-                "name": "Polytropic constant",
+                "name": "Polytropic Constant",
                 "type": "constant",
-                "unit": "m^5 kg^{-1} s^{-2} (for n=1.5)",
-                "description": "A proportionality constant related to the entropy and composition of the fluid. Its units depend on the value of n."
+                "unit": "m^(3+2/n) s^-2 kg^(-1/n)",
+                "description": "Proportionality constant determined by fluid entropy or degeneracy parameters"
             },
             "\\rho": {
-                "name": "Density",
+                "name": "Mass Density",
                 "type": "variable",
                 "unit": "kg/m^3",
-                "description": "The mass density of the polytropic fluid."
+                "description": "Local mass density of the self-gravitating fluid"
             },
             "n": {
-                "name": "Polytropic index",
+                "name": "Polytropic Index",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "A dimensionless number that characterizes the polytropic process and the stiffness of the equation of state."
+                "description": "Dimensionless index characterizing fluid compressibility and stiffness"
             }
         },
-        "interpretation": "In the equation $P = K \\rho^{1+1/n}$, the pressure $P$ represents the thermodynamic pressure within a self-gravitating fluid, such as a star, which counteracts the inward pull of gravity. The density $\\rho$ is the mass per unit volume of the fluid at a given point. The constant $K$ is the polytropic constant, a proportionality factor that depends on the specific entropy and composition of the fluid. The exponent $1 + 1/n$ defines the 'stiffness' of the equation of state. The dimensionless parameter $n$ is the polytropic index, which parameterizes the relationship. Different values of $n$ correspond to different physical models for the stellar interior: $n=0$ models an incompressible fluid with constant density; $n=1.5$ (corresponding to an adiabatic index $\\gamma = 5/3$) models a non-relativistic degenerate gas, as found in white dwarfs; and $n=3$ (corresponding to $\\gamma = 4/3$) models a highly relativistic degenerate gas or a star dominated by radiation pressure, relevant for massive white dwarfs and the cores of neutron stars.",
-        "symmetry_origin": "This equation is not derived from a fundamental symmetry. It is a phenomenological or effective model (a constitutive relation) that simplifies complex microphysics into a macroscopic relationship between pressure and density. It is an assumed property of the fluid under consideration.",
-        "limits_and_boundary": "For $n \\to \\infty$, the exponent $1+1/n \\to 1$, yielding $P = K\\rho$. This corresponds to an isothermal gas. For $n=0$, the model represents an incompressible fluid where density $\\rho$ is constant, and the pressure is determined by hydrostatic equilibrium, not this equation. The model is physically relevant for polytropic indices in the range $0 \\le n < 5$. For $n \\ge 5$, the solution to the Lane-Emden equation yields a star with infinite radius, which is unphysical.",
+        "interpretation": "In the relation $P = K \rho^{1+1/n}$, $P$ denotes the local hydrostatic pressure supporting the stellar configuration. The mass density $\rho$ quantifies the local mass per unit volume. The coefficient $K$ represents the polytropic constant determined by the fluid's specific entropy or quantum degeneracy properties. The exponent $1 + 1/n$ governs the thermodynamic stiffness of the fluid, where $n$ is the dimensionless polytropic index. Specific cases include $n=0$ (incompressible fluid), $n=1.5$ (non-relativistic degenerate electron gas or monoatomic convective envelope), and $n=3$ (ultra-relativistic degenerate gas or radiation-dominated stellar core).",
+        "symmetry_origin": "Scale invariance (homology symmetry) under continuous Lie group scalings of mass, radius, and density in self-gravitating hydrostatic configurations.",
+        "limits_and_boundary": "In the limit $n \to 0$ ($\\gamma \to \\infty$), the fluid becomes incompressible with constant density $\rho = \rho_c$. In the limit $n \to \\infty$ ($\\gamma \to 1$), the equation reduces to the isothermal ideal gas equation of state $P \\propto \rho$. As $\rho \to 0$, $P \to 0$, defining the stellar surface boundary.",
         "status": "platinum",
-        "conceptual_definition": "The polytropic equation of state, expressed as $P = K\\rho^{1+1/n}$, provides a simplified model for the relationship between pressure $P$ and density $\\rho$ within a fluid, particularly in astrophysical contexts like stars. It assumes that the pressure is proportional to the density raised to a constant power, where the exponent is determined by the polytropic index $n$. This relation is a foundational assumption for deriving the Lane-Emden equation, which describes the structure of a polytropic sphere in hydrostatic equilibrium.",
-        "intuitive_summary": "Imagine squeezing a ball of gas. This formula describes a simple rule for how much the pressure inside increases as you compress it (increase its density). The specific 'stiffness' of the gas—how much pressure builds up for a given compression—is captured by a single number, the polytropic index $n$.",
+        "conceptual_definition": "The polytropic equation of state parameterizes the relation between fluid pressure $P$ and mass density $\rho$ via $P = K \rho^{1 + 1/n} = K \rho^{\\gamma}$, where $K$ is the polytropic constant and $n$ is the polytropic index ($n = 1/(\\gamma - 1)$). This relation decouples hydrostatic equilibrium equations from thermal energy transport in stellar structure modeling, capturing adiabatic convection, degenerate electron gases, and isothermal gas spheres.",
+        "intuitive_summary": "By linking pressure directly to density through a single stiffness exponent, the polytropic equation of state allows the complex interior structure of stars and fluid planets to be modeled without tracking detailed energy transport.",
         "subcomponents": [
-            "lane-emden-equation-a15ab42d-cc3dced4",
-            "polytropic-relations-lane-emden-abc1858d",
-            "lane-emden-link-bb1bcbd8"
+            "equation-of-state-degenerate-matter-5/3",
+            "linear-polytropic-pressure-density-relation-5d86030b"
         ],
-        "description": "A thermodynamic equation of state that models a self-gravitating fluid by relating its pressure to its density through a power law, characterized by a constant polytropic index.",
-        "derivation_type": "DEFINITION"
+        "description": "A power-law thermodynamic relation expressing pressure as a function of mass density parameterized by a polytropic index $n$, serving as the constitutive relation for self-gravitating polytropic fluid spheres.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "polytropic-eos-fluid-relation-8cd6b0e6"
     },
     "contour-of-constant-phase-ca83865e": {
-        "title": "Phase Velocity",
+        "title": "Phase Velocity of a Monochromatic Plane Wave",
         "equation": "v_p = \\frac{\\omega}{k} \\quad (\\text{Phase Speed})",
         "semantic_variables": {
             "v_p": {
-                "name": "Phase Velocity",
+                "name": "Phase velocity",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The velocity at which a point of constant phase of a wave propagates."
+                "description": "Rate at which the phase of the wave propagates through space"
             },
             "\\omega": {
-                "name": "Angular Frequency",
+                "name": "Angular frequency",
                 "type": "variable",
                 "unit": "rad/s",
-                "description": "The rate of change of the wave's phase with respect to time, equal to $2\\pi$ times the frequency $f$."
+                "description": "Temporal rate of change of the wave phase"
             },
             "k": {
-                "name": "Angular Wavenumber",
+                "name": "Angular wavenumber",
                 "type": "variable",
                 "unit": "rad/m",
-                "description": "The spatial frequency of the wave, equal to $2\\pi$ divided by the wavelength $\\lambda$."
+                "description": "Spatial frequency of the wave indicating phase cycles per unit distance"
             }
         },
-        "interpretation": "The equation for phase speed is given by $v_p = \\frac{\\omega}{k}$. Here, $\\omega$ represents the angular frequency of the wave, measured in radians per second (rad/s), which quantifies the rate of phase change in time. The variable $k$ is the angular wavenumber, measured in radians per meter (rad/m), which quantifies the rate of phase change in space. The wavenumber is related to the wavelength $\\lambda$ by the equation $k = 2\\pi/\\lambda$. The phase speed $v_p$ is fundamentally the ratio of the wave's temporal oscillation rate to its spatial oscillation rate. Its units are meters per second (m/s).",
-        "symmetry_origin": "The existence of well-defined frequency $\\omega$ and wavenumber $k$ for a plane wave is a direct consequence of translational symmetry in time and space, respectively. Via Noether's theorem, these symmetries correspond to the conservation of energy and momentum, to which $\\omega$ and $k$ are proportional in quantum mechanics ($E=\\hbar\\omega$, $\\mathbf{p}=\\hbar\\mathbf{k}$).",
-        "limits_and_boundary": "In a non-dispersive medium, the ratio $\\omega/k$ is constant, so the phase velocity $v_p$ is independent of frequency. In a dispersive medium, $\\omega(k)$ is a non-linear function, making $v_p$ frequency-dependent. For electromagnetic waves in a vacuum, $v_p = c$. For a relativistic massive particle with velocity $v$, its de Broglie wave has a phase velocity $v_p = E/p = (\\gamma m c^2) / (\\gamma m v) = c^2/v$, which is always greater than $c$. This does not violate causality, as information propagates at the group velocity $v_g$, not the phase velocity.",
+        "interpretation": "In the phase velocity relation $v_p = \\frac{\\omega}{k}$, $v_p$ represents the phase speed along the wave propagation direction in units of meters per second ($\\text{m/s}$). The angular frequency $\\omega$ denotes the temporal rate of phase oscillation in radians per second ($\\text{rad/s}$), while $k$ is the spatial angular wavenumber in radians per meter ($\\text{rad/m}$), defined via the wavelength as $k = \\frac{2\\pi}{\\lambda}$. In dispersive media, $\\omega = \\omega(k)$, causing $v_p$ to become frequency-dependent.",
+        "symmetry_origin": "Originates from continuous spacetime translation symmetry $\\mathbb{R}^{1,1}$, which dictates that harmonic plane waves $e^{i(kx - \\omega t)}$ are simultaneous eigenstates of temporal and spatial translation operators.",
+        "limits_and_boundary": "In a non-dispersive vacuum, $\\omega(k) = c k$, causing $v_p = c$ for all $k$. In anomalous dispersion regions or plasma media where $\\omega(k) = \\sqrt{\\omega_p^2 + c^2 k^2}$, $v_p > c$ as $k \\to 0$, which does not violate relativistic causality since no superluminal signal is transmitted.",
         "status": "platinum",
-        "conceptual_definition": "The phase velocity $v_p$ is defined as the speed at which a point of constant phase, $\\phi(x, t) = kx - \\omega t = \\text{const}$, propagates. By taking the total time derivative and setting it to zero, $\\frac{d\\phi}{dt} = 0$, we find $\\frac{\\partial \\phi}{\\partial x}\\frac{dx}{dt} + \\frac{\\partial \\phi}{\\partial t} = 0$. Substituting the partial derivatives yields $k \\frac{dx}{dt} - \\omega = 0$. Since $\\frac{dx}{dt}$ is the velocity of this constant-phase point, we identify it as $v_p$, leading directly to the relation $v_p = \\omega/k$.",
-        "intuitive_summary": "Imagine a series of waves on water. The phase velocity is the speed of a single crest or trough. It's the speed you would need to travel to stay 'locked' onto a specific point of the wave's shape as it moves.",
+        "conceptual_definition": "The phase velocity $v_p$ characterizes the speed at which a single Fourier harmonic mode of constant phase $\\phi(x, t) = k x - \\omega t + \\phi_0$ propagates through space. Formally, setting $d\\phi = 0$ yields $k \\, dx - \\omega \\, dt = 0$, leading directly to $v_p \\equiv \\frac{dx}{dt} = \\frac{\\omega}{k}$.",
+        "intuitive_summary": "Phase velocity is the tracking speed of a single crest or trough along a continuous wave train. Unlike group velocity, it does not necessarily represent the transfer rate of energy or information.",
         "subcomponents": [
             "the-spectrum-6f5e3c9c",
-            "photon-rule-379e96d9",
-            "phase-speed-c934ecda"
+            "speed-of-light-in-medium",
+            "photon-rule-379e96d9"
         ],
-        "description": "Defines the propagation speed of a point of constant phase for a monochromatic wave, relating its temporal frequency to its spatial frequency.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the propagation velocity of surfaces of constant phase for a monochromatic wave, expressing the ratio of angular frequency to angular wavenumber.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "phase-velocity"
     },
     "vacuum-tunneling-f7885b09": {
         "title": "Baryon Number Violation Rate via Sphaleron Tunneling",
@@ -489,48 +490,41 @@
         "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "algebraic-duality-4db70c80": {
-        "title": "Metric Tensor Inverse Definition",
+        "title": "Inverse Metric Tensor Orthogonality Definition",
         "equation": "g^{\\mu\\alpha} g_{\\alpha\\nu} = \\delta^\\mu_\\nu",
         "semantic_variables": {
             "g^{\\mu\\alpha}": {
-                "name": "Contravariant Metric Tensor",
+                "name": "Contravariant metric tensor",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The inverse of the covariant metric tensor, used to raise indices and define the inner product on the cotangent space."
+                "unit": "dimensionless",
+                "description": "Inverse metric tensor components used for raising indices and measuring inner products in the cotangent bundle."
             },
             "g_{\\alpha\\nu}": {
-                "name": "Covariant Metric Tensor",
+                "name": "Covariant metric tensor",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "A rank-2 tensor that defines the geometry and inner product on the tangent space of a manifold."
+                "unit": "dimensionless",
+                "description": "Metric tensor components defining the Riemannian/Lorentzian distance and angles on the tangent bundle."
             },
             "\\delta^\\mu_\\nu": {
-                "name": "Kronecker Delta",
-                "type": "operator",
-                "unit": "Dimensionless",
-                "description": "The identity tensor; equals 1 if indices are identical ($\\mu=\\nu$) and 0 otherwise."
-            },
-            "\\mu,\\nu,\\alpha": {
-                "name": "Spacetime Indices",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "Indices representing spacetime components, typically running from 0 (time) to 3 (space), with the repeated index $\\alpha$ implying Einstein summation."
+                "name": "Kronecker delta tensor",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Mixed identity rank-2 tensor, evaluating to unity when upper and lower indices match and zero otherwise."
             }
         },
-        "interpretation": "The equation $g^{\\mu\\alpha} g_{\\alpha\\nu} = \\delta^\\mu_\\nu$ establishes the defining relationship between the covariant metric tensor $g_{\\alpha\\nu}$ and its inverse, the contravariant metric tensor $g^{\\mu\\alpha}$. The Greek indices $\\mu$, $\\alpha$, and $\\nu$ are spacetime indices, typically running from 0 to 3. The Einstein summation convention is implied for the repeated index $\\alpha$, signifying a sum over all its values. The term on the right, $\\delta^\\mu_\\nu$, is the Kronecker delta, which equals 1 if $\\mu = \\nu$ and 0 if $\\mu \\neq \\nu$. In matrix terms, this equation states that the matrix of components $[g^{\\mu\\alpha}]$ is the inverse of the matrix $[g_{\\alpha\\nu}]$. This property is fundamental for raising and lowering indices of tensors (e.g., $V^\\mu = g^{\\mu\\nu} V_\\nu$), a cornerstone of calculations in general relativity.",
-        "symmetry_origin": "This identity is a fundamental statement of algebraic and geometric consistency on a pseudo-Riemannian manifold. It ensures that the operations of raising and lowering indices are mutually inverse, a property that must hold for the geometric structure to be well-defined and for scalar quantities, such as the inner product $V^\\mu V_\\mu = g_{\\mu\\nu} V^\\mu V^\\nu$, to be invariant.",
-        "limits_and_boundary": "This is a definitional identity and holds universally in any coordinate system. In the special case of flat Minkowski spacetime with Cartesian coordinates, the metric tensor $g_{\\mu\\nu}$ becomes the Minkowski metric $\\eta_{\\mu\\nu}$. Its inverse is $\\eta^{\\mu\\nu} = \\eta_{\\mu\\nu}$, and the identity becomes $\\eta^{\\mu\\alpha} \\eta_{\\alpha\\nu} = \\delta^\\mu_\\nu$. For a standard Euclidean space, $g_{ij} = \\delta_{ij}$, and the identity is the trivial matrix multiplication $\\delta^{i\\alpha} \\delta_{\\alpha j} = \\delta^i_j$.",
+        "interpretation": "In this identity, $g_{\\alpha\nu}$ represents the components of the covariant metric tensor, while $g^{\\mu\\alpha}$ denotes the components of the contravariant (inverse) metric tensor. The repeated Greek index $\\alpha$ invokes Einstein summation convention over all manifold dimensions (typically $0, 1, 2, 3$ in four-dimensional spacetime). The resulting quantity $\\delta^\\mu_\nu$ is the Kronecker delta (identity tensor), which equals $1$ when $\\mu = \nu$ and $0$ when $\\mu \neq \nu$.",
+        "symmetry_origin": "General covariance under smooth coordinate transformations (diffeomorphism invariance) and metric compatibility ($\nabla_\rho g_{\\mu\nu} = 0$).",
+        "limits_and_boundary": "In flat Minkowski spacetime, the metric tensor reduces to the constant Minkowski metric $\\eta_{\\mu\nu} = \text{diag}(-1, 1, 1, 1)$, such that $\\eta^{\\mu\\alpha} \\eta_{\\alpha\nu} = \\delta^\\mu_\nu$. Non-degeneracy requires $\\det(g_{\\mu\nu}) \neq 0$ at all regular spacetime points.",
         "status": "platinum",
-        "conceptual_definition": "In differential geometry, the metric tensor $g_{\\mu\\nu}$ is a non-degenerate symmetric rank-2 tensor defining the inner product on a manifold. Its inverse, the contravariant metric tensor $g^{\\mu\\nu}$, is uniquely defined by the property that their tensor contraction yields the identity tensor, represented by the mixed Kronecker delta $\\delta^\\mu_\\nu$. This relationship is the algebraic foundation for raising and lowering indices.",
-        "intuitive_summary": "Imagine the metric tensor $g_{\\mu\\nu}$ is a specific 'language' for describing geometric relationships in spacetime. The inverse metric $g^{\\mu\\nu}$ is the perfect 'translator' back to the original frame of reference. Applying both in succession, $g^{\\mu\\alpha} g_{\\alpha\\nu}$, is like translating a phrase to another language and then back again—you end up with the original, which is represented by the identity operation $\\delta^\\mu_\\nu$.",
+        "conceptual_definition": "On a pseudo-Riemannian manifold, the covariant metric tensor $g_{\\alpha\nu}$ is non-degenerate, possessing a unique inverse tensor $g^{\\mu\\alpha}$ in the dual space. The contraction of the contravariant metric with the covariant metric across a common index yields the mixed identity tensor (Kronecker delta), $g^{\\mu\\alpha} g_{\\alpha\nu} = \\delta^\\mu_\nu$, providing the canonical isomorphism between the tangent space $T_p M$ and cotangent space $T_p^* M$ (musical isomorphisms $\\sharp$ and $\flat$).",
+        "intuitive_summary": "Multiplying the metric matrix by its inverse matrix produces the identity matrix, establishing the fundamental algebraic mechanism for raising and lowering tensor indices.",
         "subcomponents": [
-            "variation-metric-tensor-inverse",
-            "geometric-duality-86a9761a",
-            "poynting-link-5e5f7323",
-            "particle-origin-aac45dc2"
+            "contravariant-metric-tensor-component-5b0127da",
+            "covariant-metric-tensor-component-7d207d2c",
+            "inverse-metric-tensor-component-272a8cd5"
         ],
-        "description": "This equation defines the contravariant metric tensor as the matrix inverse of the covariant metric tensor, a fundamental algebraic identity in tensor calculus and general relativity.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the contravariant metric tensor as the matrix inverse and algebraic dual of the covariant metric tensor on a pseudo-Riemannian manifold.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "repulsive-gravity-3202861e": {
         "title": "Vacuum Energy Density (Cosmological Constant)",
@@ -765,139 +759,156 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "nearly-free-electron-central-equation-89f54ae3": {
-        "title": "The Central Equation of the Nearly-Free Electron Model",
+        "title": "Central Equation of the Nearly-Free Electron Model",
         "equation": "(\\lambda_{\\mathbf{k}-\\mathbf{G}} - E) C_{\\mathbf{k}-\\mathbf{G}} + \\sum_{\\mathbf{G'}} V_{\\mathbf{G}-\\mathbf{G'}} C_{\\mathbf{k}-\\mathbf{G'}} = 0",
-        "interpretation": "The equation $(\\lambda_{\\mathbf{k}-\\mathbf{G}} - E) C_{\\mathbf{k}-\\mathbf{G}} + \\sum_{\\mathbf{G'}} V_{\\mathbf{G}-\\mathbf{G'}} C_{\\mathbf{k}-\\mathbf{G'}} = 0$ represents a system of coupled linear secular equations for the expansion coefficients $C_{\\mathbf{k}-\\mathbf{G}}$ of a Bloch electron wavefunction. The kinetic energy term $(\\lambda_{\\mathbf{k}-\\mathbf{G}} - E) C_{\\mathbf{k}-\\mathbf{G}}$ represents the unperturbed free-electron energy $\\lambda_{\\mathbf{k}-\\mathbf{G}} = \\frac{\\hbar^2 |\\mathbf{k} - \\mathbf{G}|^2}{2m}$ relative to the total energy $E$. The summation term $\\sum_{\\mathbf{G'}} V_{\\mathbf{G}-\\mathbf{G'}} C_{\\mathbf{k}-\\mathbf{G'}}$ calculates the effect of Bragg scattering, which couples plane-wave components $C_{\\mathbf{k}-\\mathbf{G'}}$ via the Fourier components $V_{\\mathbf{G}-\\mathbf{G'}}$ of the periodic lattice potential $V(\\mathbf{r})$. Non-trivial solutions for the coefficients $C$ exist only when the secular determinant of the system vanishes, a condition that yields the allowed energy eigenvalues $E(\\mathbf{k})$ and reveals the formation of energy band gaps at the Brillouin zone boundaries.",
-        "symmetry_origin": "The equation is a direct consequence of the discrete translational symmetry of the crystal lattice. This symmetry, formalized by Bloch's Theorem, dictates that the electronic wavefunction must be a plane wave modulated by a periodic function. The use of a Fourier series over reciprocal lattice vectors ($\\mathbf{G}$) to represent the potential and wavefunction is the mathematical embodiment of this periodicity.",
-        "limits_and_boundary": "In the limit where the periodic potential vanishes ($V_{\\mathbf{G}-\\mathbf{G'}} \\to 0$), the coupling term disappears. The equation reduces to $(\\lambda_{\\mathbf{k}} - E)C_{\\mathbf{k}} = 0$, which yields the parabolic energy-momentum relation $E(\\mathbf{k}) = \\frac{\\hbar^2 k^2}{2m}$ of a free electron. At the boundaries of the Brillouin zone (e.g., where $k \\approx \\pi/a$), the free-electron energies $\\lambda_{\\mathbf{k}}$ and $\\lambda_{\\mathbf{k}-\\mathbf{G}}$ become degenerate, leading to strong mixing by the potential $V$ and the opening of an energy band gap.",
+        "interpretation": "The first term $(\\lambda_{\\mathbf{k}-\\mathbf{G}} - E) C_{\\mathbf{k}-\\mathbf{G}}$ represents the kinetic energy defect of the plane-wave component with wavevector $\\mathbf{k}-\\mathbf{G}$, where $\\lambda_{\\mathbf{k}-\\mathbf{G}} = \frac{\\hbar^2 |\\mathbf{k}-\\mathbf{G}|^2}{2m}$ is the free-electron energy and $E$ is the total energy eigenvalue. The summation term $\\sum_{\\mathbf{G'}} V_{\\mathbf{G}-\\mathbf{G'}} C_{\\mathbf{k}-\\mathbf{G'}}$ accounts for inter-band scattering induced by the crystal potential, where $V_{\\mathbf{G}-\\mathbf{G'}}$ is the Fourier component of the periodic lattice potential coupling states $|\\mathbf{k}-\\mathbf{G}\rangle$ and $|\\mathbf{k}-\\mathbf{G'}\rangle$. The non-trivial vanishing of the secular determinant yields the electronic energy bands $E(\\mathbf{k})$.",
+        "symmetry_origin": "Discrete spatial translation symmetry of the crystal lattice, leading to conservation of crystal momentum modulo a reciprocal lattice vector $\\mathbf{G}$ by Bloch's theorem.",
+        "limits_and_boundary": "In the limit of vanishing crystal potential $V_{\\mathbf{G}} \to 0$, the equation decouples into individual free-electron parabolas $E = \\lambda_{\\mathbf{k}-\\mathbf{G}}$. Near the Brillouin zone boundary where $\\lambda_{\\mathbf{k}} \\approx \\lambda_{\\mathbf{k}-\\mathbf{G}}$, a two-band truncation yields an energy gap $\\Delta E = 2 |V_{\\mathbf{G}}|$.",
         "semantic_variables": {
             "\\lambda_{\\mathbf{k}-\\mathbf{G}}": {
-                "name": "Free-electron kinetic energy",
+                "name": "free electron kinetic energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The kinetic energy of a free-electron plane wave with wavevector $\\mathbf{k}-\\mathbf{G}$."
+                "description": "Kinetic energy of a free electron with wavevector $\\mathbf{k}-\\mathbf{G}$, given by $\\hbar^2 |\\mathbf{k}-\\mathbf{G}|^2 / (2m)$"
             },
             "E": {
-                "name": "Energy eigenvalue",
+                "name": "electronic energy eigenvalue",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total energy of the electron in the crystal, which is to be solved for."
+                "description": "Total energy eigenvalue of the Bloch electron state"
             },
             "C_{\\mathbf{k}-\\mathbf{G}}": {
-                "name": "Fourier coefficient",
+                "name": "Fourier expansion coefficient",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The expansion coefficient for the plane wave component with wavevector $\\mathbf{k}-\\mathbf{G}$ in the Bloch wavefunction."
+                "description": "Amplitude of the plane wave component with wavevector $\\mathbf{k}-\\mathbf{G}$ in the Bloch wavefunction expansion"
             },
             "V_{\\mathbf{G}-\\mathbf{G'}}": {
-                "name": "Potential Fourier component",
+                "name": "Fourier component of crystal potential",
                 "type": "variable",
                 "unit": "J",
-                "description": "The Fourier coefficient of the periodic lattice potential, which couples plane wave states differing by the reciprocal lattice vector $\\mathbf{G}-\\mathbf{G'}$."
+                "description": "Fourier transform component of the periodic lattice potential corresponding to reciprocal lattice vector difference $\\mathbf{G}-\\mathbf{G'}$"
             },
             "\\mathbf{k}": {
-                "name": "Crystal momentum wavevector",
+                "name": "crystal wavevector",
                 "type": "variable",
-                "unit": "m⁻¹",
-                "description": "The wavevector of the electron, typically restricted to the first Brillouin zone."
+                "unit": "m^{-1}",
+                "description": "Reduced wavevector of the electron within the first Brillouin zone"
             },
             "\\mathbf{G}": {
-                "name": "Reciprocal lattice vector",
+                "name": "reciprocal lattice vector",
                 "type": "variable",
-                "unit": "m⁻¹",
-                "description": "A vector in the reciprocal lattice, defining the periodicity of the Fourier expansion."
-            },
-            "\\sum_{\\mathbf{G'}}": {
-                "name": "Summation operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "A sum over all reciprocal lattice vectors $\\mathbf{G'}$."
-            },
-            "\\hbar": {
-                "name": "Reduced Planck constant",
-                "type": "constant",
-                "unit": "J·s",
-                "description": "The quantum of angular momentum, fundamental in quantum mechanics. Implicit in the definition of $\\lambda$."
-            },
-            "m": {
-                "name": "Electron mass",
-                "type": "constant",
-                "unit": "kg",
-                "description": "The rest mass of the electron. Implicit in the definition of $\\lambda$."
+                "unit": "m^{-1}",
+                "description": "Vector in the reciprocal lattice corresponding to the periodic translation symmetry of the crystal"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "This equation is the time-independent Schrödinger equation for an electron in a periodic potential, transformed into reciprocal (momentum) space. It presents the Hamiltonian as an infinite matrix acting on a vector of Fourier coefficients, $C_{\\mathbf{k}-\\mathbf{G}}$, which represent the amplitudes of plane waves comprising the electron's Bloch state. The eigenvalues of this matrix equation are the allowed electron energies $E(\\mathbf{k})$.",
-        "intuitive_summary": "Imagine an electron moving freely through space as a simple wave. When this electron enters a crystal, its wave is scattered by the periodic array of atoms. This equation describes how all the scattered versions of the electron wave mix together. When the electron's wavelength perfectly matches the spacing of the atoms (a condition for Bragg diffraction), the mixing is very strong, and it opens up a 'band gap'—a range of energies the electron is forbidden to have.",
-        "description": "The secular equation governing the Fourier components of an electronic wavefunction in a weak periodic crystal potential, which determines the electronic band structure and energy gaps in solids.",
+        "conceptual_definition": "The central equation represents the stationary time-independent Schrödinger equation expanded in a basis of reciprocal lattice plane waves $|\\mathbf{k}-\\mathbf{G}\rangle$. In a weak periodic crystal potential $V(\\mathbf{r}) = \\sum_{\\mathbf{G}} V_{\\mathbf{G}} e^{i\\mathbf{G}\\cdot\\mathbf{r}}$, the wavefunctions take the Bloch form $\\psi_{\\mathbf{k}}(\\mathbf{r}) = \\sum_{\\mathbf{G}} C_{\\mathbf{k}-\\mathbf{G}} e^{i(\\mathbf{k}-\\mathbf{G})\\cdot\\mathbf{r}}$, transforming the differential eigenvalue problem into a coupled set of algebraic equations for the expansion amplitudes $C_{\\mathbf{k}-\\mathbf{G}}$.",
+        "intuitive_summary": "In a crystal, an electron's plane-wave state mixes with other plane waves whose wavevectors differ by reciprocal lattice vectors $\\mathbf{G}$, opening up forbidden energy gaps at the Brillouin zone boundaries due to Bragg reflection.",
+        "description": "The matrix secular equation in reciprocal space governing the Fourier expansion coefficients of a Bloch state in a periodic crystal potential, detailing band structure and band gap formation.",
         "subcomponents": [
-            "pairwise-electron-ion-coulomb-like-interaction-from-hamiltonian-8a553347",
-            "harmonic-expansion-potential-identity-1-be927e34-fb586382"
+            "active-boundary-edde9937",
+            "pairwise-electron-ion-coulomb-like-interaction-from-hamiltonian-8a553347"
         ],
-        "derivation_type": "DERIVED_FROM"
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "jarlskog-invariant-cp-phase-be333aaf": {
-        "title": "The Jarlskog Invariant: A Rephasing-Invariant Measure of CP Violation",
+        "title": "Jarlskog Invariant in the Standard Model CKM Quark-Mixing Sector",
         "equation": "J = \\operatorname{Im}\\left( V_{ud} V_{cs} V_{us}^* V_{cd}^* \\right) = c_{12} c_{23} c_{13}^2 s_{12} s_{23} s_{13} \\sin\\delta_{13}",
-        "interpretation": "The quantity $J$ is a rephasing-invariant measure of CP violation, meaning its value is independent of the phase conventions chosen for the quark fields. The elements $V_{ij}$ belong to the 3x3 unitary Cabibbo-Kobayashi-Maskawa (CKM) matrix, which describes the mixing between the weak and mass eigenstates of quarks. A non-zero value of $J$ requires at least three generations of quarks and a non-trivial complex phase in the CKM matrix, which is the sole source of CP violation in the Standard Model's quark sector. The expression $c_{12} c_{23} c_{13}^2 s_{12} s_{23} s_{13} \\sin\\delta_{13}$ represents $J$ in the standard Particle Data Group (PDG) parameterization of the CKM matrix, where $c_{ij} = \\cos\\theta_{ij}$ and $s_{ij} = \\sin\\theta_{ij}$ are the cosines and sines of the mixing angles $\\theta_{ij}$, and $\\delta_{13}$ is the CP-violating phase.",
-        "symmetry_origin": "The existence of a non-zero Jarlskog invariant $J$ arises from the complex phase in the Cabibbo-Kobayashi-Maskawa (CKM) matrix, which is a physical parameter that cannot be removed by rephasing the quark fields. This phase breaks the Charge-Parity (CP) symmetry, a discrete symmetry combining charge conjugation (C) and parity inversion (P).",
-        "limits_and_boundary": "If any of the mixing angles $\\theta_{ij}$ were zero or $\\pi/2$, or if the CP-violating phase $\\delta_{13}$ were zero or $\\pi$, the Jarlskog invariant $J$ would be zero, and there would be no CP violation in the quark sector of the Standard Model. The existence of CP violation requires all three generations of quarks to mix with each other ($s_{12}, s_{23}, s_{13} \\neq 0$) and a non-trivial phase ($\\sin\\delta_{13} \\neq 0$). In a hypothetical two-generation model, the CKM matrix can always be made real, resulting in $J=0$.",
+        "interpretation": "The parameter $J$ is constructed from four CKM matrix elements: $V_{ud}$, $V_{cs}$, $V_{us}^*$, and $V_{cd}^*$. In the standard Particle Data Group (PDG) parameterization, it is expressed as $c_{12} c_{23} c_{13}^2 s_{12} s_{23} s_{13} \\sin\\delta_{13}$, where $c_{ij} = \\cos\\theta_{ij}$ and $s_{ij} = \\sin\\theta_{ij}$ represent mixing angles between quark generations $i$ and $j$, and $\\delta_{13}$ is the irreducible Dirac CP-violating phase. CP symmetry is conserved in the quark sector if and only if $J = 0$.",
+        "symmetry_origin": "Originates from the breaking of discrete CP symmetry by the Yukawa couplings in the electroweak gauge group $\\mathrm{SU}(2)_L \\times \\mathrm{U}(1)_Y$, subject to invariance under quark field rephasing $q_j \\to e^{i\\alpha_j} q_j$.",
+        "limits_and_boundary": "In the limit where any mixing angle $\\theta_{ij} \\to 0$ or $\\pi/2$, or when the Dirac phase $\\delta_{13} \\to 0$ or $\\pi$, $J \\to 0$, restoring exact CP conservation in the quark sector. Similarly, if any two up-type or down-type quark masses are degenerate, $J$ effectively vanishes from physical observables.",
         "semantic_variables": {
             "J": {
-                "name": "Jarlskog Invariant",
+                "name": "Jarlskog invariant",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A rephasing-invariant measure of the magnitude of CP violation in the quark sector."
+                "description": "Rephasing-invariant measure of CP violation in the quark sector"
             },
-            "\\operatorname{Im}": {
-                "name": "Imaginary Part Operator",
-                "type": "operator",
-                "unit": "n/a",
-                "description": "Takes the imaginary part of a complex number."
-            },
-            "V_{ij}": {
-                "name": "CKM Matrix Element",
+            "V_{ud}": {
+                "name": "Up-down CKM matrix element",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "An element of the Cabibbo-Kobayashi-Maskawa matrix, describing the mixing probability between quark generations $i$ and $j$."
+                "description": "Coupling amplitude between up and down quarks mediated by W bosons"
             },
-            "V_{ij}^*": {
-                "name": "Complex Conjugate of CKM Matrix Element",
+            "V_{cs}": {
+                "name": "Charm-strange CKM matrix element",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The complex conjugate of the CKM matrix element $V_{ij}$."
+                "description": "Coupling amplitude between charm and strange quarks mediated by W bosons"
             },
-            "c_{ij}": {
-                "name": "Cosine of Mixing Angle",
+            "V_{us}": {
+                "name": "Up-strange CKM matrix element",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Abbreviation for $\\cos\\theta_{ij}$, where $\\theta_{ij}$ is the mixing angle between quark generations $i$ and $j$ in the standard CKM parameterization."
+                "description": "Coupling amplitude between up and strange quarks mediated by W bosons"
             },
-            "s_{ij}": {
-                "name": "Sine of Mixing Angle",
+            "V_{cd}": {
+                "name": "Charm-down CKM matrix element",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Abbreviation for $\\sin\\theta_{ij}$, where $\\theta_{ij}$ is the mixing angle between quark generations $i$ and $j$ in the standard CKM parameterization."
+                "description": "Coupling amplitude between charm and down quarks mediated by W bosons"
+            },
+            "c_{12}": {
+                "name": "Cosine of theta_12",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Cosine of the mixing angle between the first and second generations"
+            },
+            "c_{23}": {
+                "name": "Cosine of theta_23",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Cosine of the mixing angle between the second and third generations"
+            },
+            "c_{13}": {
+                "name": "Cosine of theta_13",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Cosine of the mixing angle between the first and third generations"
+            },
+            "s_{12}": {
+                "name": "Sine of theta_12",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Sine of the mixing angle between the first and second generations"
+            },
+            "s_{23}": {
+                "name": "Sine of theta_23",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Sine of the mixing angle between the second and third generations"
+            },
+            "s_{13}": {
+                "name": "Sine of theta_13",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Sine of the mixing angle between the first and third generations"
             },
             "\\delta_{13}": {
-                "name": "CP-Violating Phase",
+                "name": "CP-violating phase",
                 "type": "variable",
-                "unit": "radians",
-                "description": "The complex phase in the standard CKM matrix parameterization responsible for CP violation."
+                "unit": "rad",
+                "description": "Dirac phase responsible for CP symmetry violation in the standard CKM parameterization"
             },
-            "\\sin": {
-                "name": "Sine Function",
+            "\\operatorname{Im}": {
+                "name": "Imaginary part operator",
                 "type": "operator",
-                "unit": "n/a",
-                "description": "The trigonometric sine function."
+                "unit": "dimensionless",
+                "description": "Operator extracting the imaginary component of a complex number"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Jarlskog Invariant, denoted by $J$, is a specific combination of elements from the Cabibbo-Kobayashi-Maskawa (CKM) matrix $V$ that quantifies the strength of CP violation. It is defined as the imaginary part of a particular quartet of CKM elements: $J = \\operatorname{Im}(V_{ij} V_{kl} V_{il}^* V_{kj}^*)$, where $i,j,k,l$ are distinct quark generation indices. For three generations, this simplifies to the canonical form $J = \\operatorname{Im}(V_{ud} V_{cs} V_{us}^* V_{cd}^*)$. Its value is independent of any phase redefinitions of the quark fields, making it a physically observable quantity. A non-zero value of $J$ is a necessary condition for CP violation in the Standard Model's quark sector.",
-        "intuitive_summary": "Imagine the mixing between different types of quarks as a complex rotation in an abstract space. The Jarlskog Invariant, $J$, measures the 'twist' or 'non-planarity' of this rotation. If all the rotations happened in a single flat plane (no complex phase), $J$ would be zero, and matter and antimatter would behave identically. A non-zero $J$ signifies a fundamental, measurable asymmetry, which is a key ingredient for explaining why the universe is dominated by matter.",
-        "subcomponents": [],
-        "description": "A fundamental quantity in particle physics that provides a phase-convention-independent measure of the magnitude of Charge-Parity (CP) violation in the quark sector of the Standard Model, derived from the elements of the Cabibbo-Kobayashi-Maskawa (CKM) matrix.",
-        "derivation_type": "DEFINITION"
+        "conceptual_definition": "The Jarlskog invariant $J$ quantifies the strength of CP violation arising from the weak interaction. Defined algebraically by $\\operatorname{Im}(V_{i\\alpha} V_{j\\beta} V_{i\\beta}^* V_{j\\alpha}^*) = J \\sum_{\\gamma, k} \\epsilon_{ijk} \\epsilon_{\\alpha\\beta\\gamma}$, it corresponds to twice the area of any of the six unitarity triangles in the complex plane and is invariant under arbitrary global phase redefinitions of quark mass eigenstates.",
+        "intuitive_summary": "CP violation requires complex coupling constants in the weak interaction. The Jarlskog invariant captures the irreducible physical phase that cannot be eliminated by redefining the phases of the quark fields.",
+        "subcomponents": [
+            "jarlskog-cp-invariant-model-9d3e88bb",
+            "asymmetry-measure-b9f0530e",
+            "ckm-phase-96a3f5b0"
+        ],
+        "description": "The Jarlskog invariant $J$ is the unique, rephasing-invariant measure of CP violation in the Standard Model quark sector, parameterized via the elements and mixing angles of the $3 \\times 3$ Cabibbo-Kobayashi-Maskawa (CKM) matrix.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "jarlskog-invariant-cp-violation-ident-2f2f2397"
     },
     "mass-discrepancy-identity-1-a3086ae8-22e72b44": {
         "title": "MOND Interpolating Function for Mass Discrepancy",

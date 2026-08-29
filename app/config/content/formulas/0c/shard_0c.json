@@ -188,65 +188,48 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "time-split-e35634e0": {
-        "title": "Orthonormality Condition for Quantum States",
+        "title": "Orthonormality Condition for Configuration-Space Quantum Wavefunctions",
         "equation": "\\int \\psi_m^* \\psi_n d\\tau = \\delta_{mn} \\quad (\\text{Orthogonality})",
         "semantic_variables": {
             "\\psi_n": {
-                "name": "Wavefunction of state n",
+                "name": "State Wavefunction",
                 "type": "variable",
-                "unit": "m^(-3/2)",
-                "description": "A complex-valued probability amplitude describing the quantum state labeled by the quantum number n. Its square modulus represents a probability density."
+                "unit": "m^{-3/2}",
+                "description": "Spatial probability amplitude distribution corresponding to quantum state $n$"
             },
             "\\psi_m^*": {
-                "name": "Complex conjugate of wavefunction of state m",
+                "name": "Complex Conjugate Wavefunction",
                 "type": "variable",
-                "unit": "m^(-3/2)",
-                "description": "The complex conjugate of the wavefunction for the quantum state labeled by m."
+                "unit": "m^{-3/2}",
+                "description": "Complex conjugate of the spatial probability amplitude for quantum state $m$"
             },
             "d\\tau": {
-                "name": "Differential volume element",
-                "type": "operator",
+                "name": "Configuration Space Volume Element",
+                "type": "variable",
                 "unit": "m^3",
-                "description": "A differential element of volume in the configuration space of the system (e.g., dxdydz in 3D Cartesian coordinates)."
-            },
-            "\\int": {
-                "name": "Integral",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The integral taken over all of configuration space."
+                "description": "Differential integration volume over all relevant spatial or generalized coordinates"
             },
             "\\delta_{mn}": {
                 "name": "Kronecker Delta",
-                "type": "function",
-                "unit": "Dimensionless",
-                "description": "A function of two integer indices, equal to 1 if m=n and 0 if m is not equal to n."
-            },
-            "m": {
-                "name": "Quantum number m",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "An index, typically an integer or a set of quantum numbers, labeling a specific quantum state."
-            },
-            "n": {
-                "name": "Quantum number n",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "An index, typically an integer or a set of quantum numbers, labeling a specific quantum state."
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Discrete delta function yielding 1 for equal indices ($m = n$) and 0 for distinct indices ($m \\neq n$)"
             }
         },
-        "interpretation": "The formula $\\int \\psi_m^* \\psi_n d\\tau = \\delta_{mn}$ represents the inner product of two quantum states, $\\psi_m$ and $\\psi_n$, in the position representation. The term $\\psi_n$ is the wavefunction for a quantum state labeled by the index $n$. The term $\\psi_m^*$ is the complex conjugate of the wavefunction for state $m$. The integral $\\int d\\tau$ is performed over the entire configuration space of the system (e.g., all 3D space for a single particle). The result is the Kronecker delta, $\\delta_{mn}$, which is defined to be $1$ if $m=n$ and $0$ if $m \\neq n$. The case $m \\neq n$ gives $\\int \\psi_m^* \\psi_n d\\tau = 0$, which is the condition for orthogonality. The case $m=n$ gives $\\int \\psi_n^* \\psi_n d\\tau = \\int |\\psi_n|^2 d\\tau = 1$, which is the condition for normalization.",
-        "symmetry_origin": "This property is a direct consequence of the Hermiticity of operators corresponding to physical observables, such as the Hamiltonian operator $\\hat{H}$. A fundamental theorem of linear algebra states that eigenfunctions of a Hermitian operator that correspond to distinct eigenvalues are necessarily orthogonal. This mathematical structure ensures that measurements of physical quantities yield real numbers and that probability is conserved over time.",
-        "limits_and_boundary": "This relation holds for discrete, square-integrable wavefunctions (i.e., where $\\int |\\psi|^2 d\\tau < \\infty$), which typically represent bound states in a potential well. For states in a continuous spectrum, such as free particles, the wavefunctions are not square-integrable in the same way. In this continuous case, the orthonormality condition is expressed using the Dirac delta function $\\delta(k-k')$ instead of the Kronecker delta $\\delta_{mn}$, where $k$ and $k'$ are continuous variables like momentum or energy.",
+        "interpretation": "The integral evaluates the inner product $\\langle \\psi_m | \\psi_n \\rangle$ in the coordinate representation. The term $\\psi_n$ represents the spatial wavefunction of the $n$-th state, and $\\psi_m^*$ is the complex conjugate of the $m$-th state wavefunction. The differential volume element $d\\tau$ integrates over the complete multi-dimensional configuration space. The Kronecker delta $\\delta_{mn}$ evaluates to $1$ when $m = n$ (unit total probability) and $0$ when $m \\neq n$ (complete mutual distinguishability).",
+        "symmetry_origin": "Unitary invariance of the Hilbert space inner product under spatial translations and global $U(1)$ gauge transformations.",
+        "limits_and_boundary": "In the continuous spectrum limit (e.g., free particles), the discrete Kronecker delta $\\delta_{mn}$ transitions into the Dirac delta distribution $\\delta(k - k')$, representing generalized improper eigenstates outside the standard $L^2$ Hilbert space.",
         "status": "platinum",
-        "conceptual_definition": "In the Hilbert space formulation of quantum mechanics, physical states are represented by vectors. This formula expresses the orthonormality condition for a discrete basis of state vectors, often the eigenfunctions $\\{\\psi_n\\}$ of a system's Hamiltonian. It combines two fundamental concepts: orthogonality, where the inner product of two distinct states ($m \\neq n$) is zero, signifying they are geometrically perpendicular in the abstract state space; and normalization, where the inner product of a state with itself ($m = n$) is one, ensuring the total probability of finding the system in that state is unity. This property is essential for the spectral theorem and for expanding arbitrary states as a linear combination of these basis states.",
-        "intuitive_summary": "Imagine quantum states as perfectly perpendicular unit vectors in an abstract, high-dimensional space, like the axes of a coordinate system. This formula is a mathematical check: projecting one axis onto a different one gives zero overlap (orthogonality), while projecting an axis onto itself gives a perfect overlap of length one (normalization).",
+        "conceptual_definition": "In non-relativistic quantum mechanics, the set of eigenfunctions $\\{\\psi_n\\}$ belonging to a discrete spectrum of a Hermitian operator forms an orthonormal basis in the Hilbert space $L^2(\\mathbb{R}^d)$. The condition $\\int \\psi_m^* \\psi_n d\\tau = \\delta_{mn}$ simultaneously enforces the probability conservation axiom (normalization when $m = n$) and quantum mutual exclusivity (orthogonality when $m \\neq n$).",
+        "intuitive_summary": "Two quantum states that are physically distinguishable have zero geometric overlap in state space, while any single state possesses a total integrated probability of exact certainty.",
         "subcomponents": [
+            "normalization-integral-unity-f360debd",
             "orthogonality-of-distinct-quantum-states-c2e6c074",
-            "calculational-psi-709588ea",
-            "time-stability-b7b94930"
+            "orthonormality-of-quantum-wavefunctions-50a370d2"
         ],
-        "description": "This equation defines the orthonormality condition for a set of quantum state wavefunctions, stating that distinct states are orthogonal and each state is normalized to unity.",
-        "derivation_type": "DEFINITION"
+        "description": "Expresses the inner product between discrete quantum state wavefunctions over the full configuration space, requiring distinct eigenstates to be orthogonal and identical states to be normalized to unity.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "vector-splitting-fb2be198"
     },
     "galilean-transformation-fc7fb797": {
         "title": "General Galilean Transformation",
@@ -885,45 +868,40 @@
     "wave-equation-gravitational-perturbations": {
         "title": "Homogeneous Wave Equation for Gravitational Perturbations in Vacuum",
         "equation": "\\Box h_{\\mu\\nu} = 0",
-        "conceptual_definition": "This equation is the result of linearizing the Einstein Field Equations in a vacuum ($T_{\\mu\nu}=0$) under the weak-field approximation ($g_{\\mu\nu} = \\eta_{\\mu\nu} + h_{\\mu\nu}$ with $|h_{\\mu\nu}| \\ll 1$). It demonstrates that small perturbations to flat spacetime propagate as waves.",
-        "intuitive_summary": "Imagine spacetime as the surface of a calm pond. An accelerating massive object, like two orbiting black holes, is like a stone dropped into it, creating ripples. This equation describes how those ripples—gravitational waves—travel outward across the pond of spacetime at the speed of light.",
-        "interpretation": "In the equation $\\Box h_{\\mu\\nu} = 0$, the symbol $\\Box$ represents the d'Alembert operator, defined in Minkowski spacetime as $\\Box \\equiv \\eta^{\\alpha\\beta} \\partial_\\alpha \\partial_\\beta = \\frac{1}{c^2} \\frac{\\partial^2}{\\partial t^2} - \\nabla^2$. The term $h_{\\mu\\nu}$ is the metric perturbation tensor, representing a small deviation from the flat Minkowski metric $\\eta_{\\mu\\nu}$, such that the full spacetime metric is approximated by $g_{\\mu\\nu} \\approx \\eta_{\\mu\\nu} + h_{\\mu\\nu}$. The Greek indices $\\mu$ and $\\nu$ range from 0 to 3, corresponding to time and the three spatial dimensions. The equation is a wave equation, signifying that in a vacuum and under the weak-field approximation, these gravitational perturbations propagate as massless fields at the speed of light, $c$. This form of the equation is typically achieved after imposing a specific gauge condition, such as the Lorenz gauge on the trace-reversed perturbation, $\\partial^\\mu \\bar{h}_{\\mu\\nu} = 0$.",
-        "symmetry_origin": "This equation inherits its structure from the diffeomorphism invariance (general covariance) of General Relativity. The solutions for $h_{\\mu\\nu}$ possess a residual gauge freedom corresponding to infinitesimal coordinate transformations, which is used to eliminate unphysical degrees of freedom, leaving only the two transverse physical polarizations of the gravitational wave.",
-        "limits_and_boundary": "This equation is valid in the weak-field limit, where the perturbation $|h_{\\mu\\nu}| \\ll 1$. It breaks down near strong gravitational sources where non-linear self-interaction of gravity becomes significant. As distance $r$ from a source approaches infinity ($r \\to \\infty$), the wave amplitude decays as $|h_{\\mu\\nu}| \\propto 1/r$. As a classical field equation, it corresponds to the $\\hbar \\to 0$ limit of a putative quantum theory of gravity.",
+        "conceptual_definition": "The homogeneous wave equation for gravitational perturbations, $\\Box h_{\\mu\\nu} = 0$, is obtained by linearizing the vacuum Einstein field equations $R_{\\mu\\nu} = 0$ around a flat Minkowski background $\\eta_{\\mu\\nu}$, such that $g_{\\mu\\nu} = \\eta_{\\mu\\nu} + h_{\\mu\\nu}$ with $|h_{\\mu\\nu}| \\ll 1$, and imposing the harmonic (Lorenz) gauge condition $\\partial^\\mu \\bar{h}_{\\mu\\nu} = 0$. In this regime, the metric perturbation components decouple into non-dispersive wave equations propagating at speed $c$.",
+        "intuitive_summary": "Far away from massive accelerating sources, gravitational ripples decouple from matter and propagate across the vacuum fabric of spacetime as transverse-traceless waves traveling at the speed of light.",
+        "interpretation": "The d'Alembertian operator $\\Box \\equiv \\eta^{\\alpha\\beta} \\partial_\\alpha \\partial_\\beta = -\\frac{1}{c^2} \\frac{\\partial^2}{\\partial t^2} + \\nabla^2$ acts on each component of the symmetric rank-2 metric perturbation tensor $h_{\\mu\\nu}$. The right-hand side is zero, reflecting the absence of stress-energy sources ($T_{\\mu\\nu} = 0$) in pure vacuum. With the transverse-traceless (TT) gauge constraints, only two physical polarization degrees of freedom ($h_+$ and $h_\\times$) remain non-zero.",
+        "symmetry_origin": "Originates from general coordinate invariance (diffeomorphism symmetry) linearized to background Poincaré invariance, combined with residual linear gauge symmetry $h_{\\mu\\nu} \\to h_{\\mu\\nu} - \\partial_\\mu \\xi_\\nu - \\partial_\\nu \\xi_\\mu$.",
+        "limits_and_boundary": "In the static limit ($\\partial_t h_{\\mu\\nu} \\to 0$), the equation reduces to Laplace's equation $\\nabla^2 h_{00} = 0$, matching Newtonian gravity in vacuum. As $r \\to \\infty$ from a localized source, radiative solutions scale asymptotically as $h_{\\mu\\nu} \\sim \\mathcal{O}(1/r)$.",
         "status": "platinum",
         "semantic_variables": {
             "\\Box": {
                 "name": "d'Alembert operator",
                 "type": "operator",
-                "unit": "m⁻²",
-                "description": "The four-dimensional wave operator, defined as $\\eta^{\\alpha\\beta} \\partial_\\alpha \\partial_\\beta$."
+                "unit": "m^-2",
+                "description": "Flat-spacetime wave operator defined by $\\eta^{\\alpha\\beta}\\partial_\\alpha\\partial_\\beta$"
             },
             "h_{\\mu\\nu}": {
-                "name": "Metric perturbation tensor",
+                "name": "metric perturbation tensor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A symmetric rank-2 tensor representing the small deviation of the spacetime metric from the flat Minkowski metric, $g_{\\mu\\nu} \\approx \\eta_{\\mu\\nu} + h_{\\mu\\nu}$."
+                "description": "Symmetric rank-2 tensor representing first-order deviations from flat Minkowski metric"
             },
-            "\\mu": {
-                "name": "Spacetime index",
-                "type": "variable",
+            "0": {
+                "name": "zero tensor",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "Index ranging from 0 to 3, representing the time (0) and spatial (1, 2, 3) dimensions."
-            },
-            "\\nu": {
-                "name": "Spacetime index",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Index ranging from 0 to 3, representing the time (0) and spatial (1, 2, 3) dimensions."
+                "description": "Vanishing source term denoting the absence of stress-energy in vacuum"
             }
         },
         "subcomponents": [
-            "dalembertian-of-gravitational-perturbation-43fa3b63",
-            "relativistic-wave-equation-1209a836",
-            "spacetime-wave-f694fe5a"
+            "wave-equation-massless-scalar",
+            "the-1-r-2-law-378456bc",
+            "gravity-source-bf15a15e"
         ],
-        "description": "Describes the propagation of gravitational waves as massless ripples in the fabric of spacetime, traveling at the speed of light in a vacuum, far from their source.",
-        "derivation_type": "APPROXIMATION"
+        "description": "Governs the propagation of linearized spacetime perturbations (gravitational waves) at the speed of light in vacuum under the Lorenz (harmonic) gauge.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "vacuum-gravitational-wave-equation-48fbd0d4"
     },
     "probability-density-condition-psi1": {
         "title": "Positivity of Quantum Probability Density",
@@ -1053,60 +1031,36 @@
     "variation-position-generalized-coordinates": {
         "title": "Virtual Displacement in Generalized Coordinates",
         "equation": "\\delta \\mathbf{r}_i = \\sum_{j=1}^{n} \\frac{\\partial \\mathbf{r}_i}{\\partial q_j} \\delta q_j",
-        "conceptual_definition": "This equation is the fundamental transformation rule for a virtual displacement, $\\delta \\mathbf{r}_i$, from Cartesian coordinates to a set of $n$ generalized coordinates $q_j$. It is a direct application of the chain rule for a multivariate function $\\mathbf{r}_i(q_1, ..., q_n)$ where time is held constant ($\\delta t = 0$). Each term $\\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$ is a vector tangent to the $j$-th coordinate curve on the configuration manifold, and the total virtual displacement is the vector sum of components along these tangent directions.",
-        "intuitive_summary": "Imagine a complex machine like a robotic arm. Its endpoint's position ($\\mathbf{r}_i$) is determined by various joint angles and extensions ($q_j$). If you slightly adjust a single joint ($ \\delta q_j $), the endpoint moves in a specific way. This formula states that any small, hypothetical movement of the endpoint ($\\delta \\mathbf{r}_i$) can be constructed by adding up the individual movements caused by slightly adjusting each joint.",
-        "interpretation": "The equation $\\delta \\mathbf{r}_i = \\sum_{j=1}^{n} \\frac{\\partial \\mathbf{r}_i}{\\partial q_j} \\delta q_j$ represents a virtual (infinitesimal, hypothetical) displacement of the $i$-th particle in Cartesian space. This displacement, $\\delta \\mathbf{r}_i$, is expressed as a linear combination of infinitesimal changes in the generalized coordinates, $\\delta q_j$. The coefficients of this linear combination are the partial derivatives $\\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$. These vector coefficients represent how the position vector $\\mathbf{r}_i$ of the $i$-th particle changes with respect to a small variation in the $j$-th generalized coordinate, $q_j$, while all other generalized coordinates are held constant. The summation is performed over all $j=1$ to $n$, where $n$ is the total number of degrees of freedom of the system, which is the number of independent generalized coordinates required to fully describe the system's configuration.",
-        "symmetry_origin": "This formula is not derived from a symmetry via Noether's theorem but is a fundamental geometric and kinematic definition. It defines the relationship between tangent vectors in Cartesian space and tangent vectors on the configuration manifold described by the generalized coordinates $q_j$. It is a cornerstone for formulating mechanics in a way that is manifestly covariant under point transformations.",
-        "limits_and_boundary": "This is a purely classical and local formula. It assumes the transformation from Cartesian to generalized coordinates, $\\mathbf{r}_i(\\mathbf{q})$, is a smooth, differentiable function ($C^1$ or higher). The relationship breaks down at any point where the Jacobian of the transformation is singular or the transformation is non-differentiable. As a kinematic identity, it does not have meaningful limits for $v \\to c$ or $\\hbar \\to 0$, as it contains no dynamics or quantum effects.",
+        "conceptual_definition": "A virtual displacement $\\delta \\mathbf{r}_i$ is an infinitesimal, hypothetical change in the position vector of the $i$-th particle compatible with holonomic constraints at a fixed instant of time $t$ ($δ t = 0$). By the chain rule on the coordinate transformation $\\mathbf{r}_i = \\mathbf{r}_i(q_1, \\dots, q_n, t)$, the virtual variation is given by the linear combination of generalized virtual displacements $\\delta q_j$ weighted by the tangent vectors $\\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$.",
+        "intuitive_summary": "While an actual displacement $d\\mathbf{r}_i$ occurs over elapsed time $dt$, a virtual displacement $\\delta \\mathbf{r}_i$ is a instantaneous 'snapshot' exploration of kinematically allowed neighboring configurations.",
+        "interpretation": "The symbol $\\delta \\mathbf{r}_i$ denotes the virtual displacement vector of the $i$-th particle in three-dimensional Euclidean space. The integer $n$ represents the total degrees of freedom of the system. The vector partial derivative $\\frac{\\partial \\mathbf{r}_i}{\\partial q_j}$ represents the natural tangent basis vector associated with the $j$-th generalized coordinate $q_j$, characterizing how the Cartesian position changes along that coordinate direction. The quantity $\\delta q_j$ is the infinitesimal virtual variation of the $j$-th generalized coordinate.",
+        "symmetry_origin": "Diffeomorphism invariance on the configuration manifold $\\mathcal{Q}$; virtual displacements span the tangent space $T_q\\mathcal{Q}$ at a fixed configuration point $q \\in \\mathcal{Q}$.",
+        "limits_and_boundary": "For scleronomous (time-independent) constraints, the virtual displacement $\\delta \\mathbf{r}_i$ coincides with the real physical displacement $d\\mathbf{r}_i$ if velocities satisfy $\\dot{q}_j = \\delta q_j / dt$. For rheonomous (explicitly time-dependent) systems, virtual displacements differ from actual displacements because the time variation $\\delta t = 0$ omits $\\frac{\\partial \\mathbf{r}_i}{\\partial t} dt$.",
         "status": "platinum",
         "semantic_variables": {
             "\\delta \\mathbf{r}_i": {
-                "name": "Virtual Displacement of i-th Particle",
+                "name": "Virtual displacement of particle i",
                 "type": "variable",
                 "unit": "m",
-                "description": "An infinitesimal, hypothetical displacement of the i-th particle's position vector, consistent with system constraints at a fixed instant of time."
-            },
-            "\\mathbf{r}_i": {
-                "name": "Position Vector of i-th Particle",
-                "type": "variable",
-                "unit": "m",
-                "description": "The position vector of the i-th particle in a Cartesian coordinate system."
-            },
-            "\\delta q_j": {
-                "name": "Virtual Displacement of j-th Generalized Coordinate",
-                "type": "variable",
-                "unit": "Varies (e.g., m, rad)",
-                "description": "An infinitesimal, hypothetical change in the j-th generalized coordinate."
-            },
-            "q_j": {
-                "name": "j-th Generalized Coordinate",
-                "type": "variable",
-                "unit": "Varies (e.g., m, rad)",
-                "description": "One of the $n$ independent coordinates that describe the configuration of the system."
+                "description": "Infinitesimal virtual displacement vector of the i-th particle in Cartesian coordinates at frozen time"
             },
             "\\frac{\\partial \\mathbf{r}_i}{\\partial q_j}": {
-                "name": "Partial Derivative of Position",
-                "type": "operator",
-                "unit": "Varies (e.g., m/m, m/rad)",
-                "description": "The rate of change of the i-th particle's position vector with respect to the j-th generalized coordinate. It forms a basis vector on the configuration manifold."
-            },
-            "i": {
-                "name": "Particle Index",
+                "name": "Tangent vector / Coordinate basis vector",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "An index that labels the particles in the system."
+                "unit": "m / [q_j]",
+                "description": "Partial derivative of the i-th position vector with respect to the j-th generalized coordinate"
             },
-            "j": {
-                "name": "Generalized Coordinate Index",
+            "\\delta q_j": {
+                "name": "Virtual displacement of generalized coordinate j",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "An index that labels the generalized coordinates, running from 1 to n."
+                "unit": "[q_j]",
+                "description": "Infinitesimal virtual variation of the j-th generalized coordinate"
             },
             "n": {
-                "name": "Number of Degrees of Freedom",
-                "type": "variable",
+                "name": "Degrees of freedom",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "The number of independent generalized coordinates required to specify the configuration of the system."
+                "description": "Total number of independent generalized coordinates characterizing the system"
             }
         },
         "subcomponents": [
@@ -1114,8 +1068,9 @@
             "generalized-force-law-014c3b75",
             "velocity-generalized-coordinates"
         ],
-        "description": "Defines the virtual displacement of a particle in Cartesian coordinates as a linear superposition of virtual displacements in the system's generalized coordinates.",
-        "derivation_type": "DEFINITION"
+        "description": "Expresses the virtual displacement of a particle's Cartesian position vector as a differential one-form over variations in generalized coordinates at a frozen instant of time.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "infinitesimal-displacement-in-generalized-coordinates-5c7564f9"
     },
     "definition-of-h-field": {
         "title": "Component-wise Constitutive Relation for Anisotropic Magnetic Media",

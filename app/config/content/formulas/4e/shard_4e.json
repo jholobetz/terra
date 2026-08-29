@@ -589,60 +589,50 @@
         "equation": "\\nabla_\\nu A^\\mu = \\partial_\\nu A^\\mu + \\Gamma^\\mu_{\\rho\\nu} A^\\rho",
         "semantic_variables": {
             "\\nabla_\\nu": {
-                "name": "Covariant Derivative Operator",
+                "name": "Covariant derivative operator",
                 "type": "operator",
-                "unit": "1/Length",
-                "description": "An operator that measures the rate of change of a tensor field along a coordinate direction, accounting for the curvature of spacetime."
+                "unit": "m^{-1}",
+                "description": "Directional covariant derivative operator along coordinate direction $\\nu$"
             },
             "A^\\mu": {
-                "name": "Contravariant Vector Field",
+                "name": "Contravariant vector field",
                 "type": "variable",
-                "unit": "Varies by context (e.g., m/s for four-velocity)",
-                "description": "A vector field whose components transform contravariantly under a change of coordinates. Represented by a column vector."
+                "unit": "dimensionless",
+                "description": "Components of the rank-1 contravariant vector field"
             },
             "\\partial_\\nu": {
-                "name": "Partial Derivative Operator",
+                "name": "Partial derivative operator",
                 "type": "operator",
-                "unit": "1/Length",
-                "description": "The standard derivative with respect to a single coordinate $x^\\nu$, holding all other coordinates constant."
+                "unit": "m^{-1}",
+                "description": "Coordinate partial derivative $\\frac{\\partial}{\\partial x^\\nu}$"
             },
             "\\Gamma^\\mu_{\\rho\\nu}": {
-                "name": "Christoffel Symbols of the Second Kind",
+                "name": "Christoffel symbol of the second kind",
                 "type": "variable",
-                "unit": "1/Length",
-                "description": "Connection coefficients that describe the effect of the curved geometry on the basis vectors. They are functions of the metric tensor and its derivatives."
+                "unit": "m^{-1}",
+                "description": "Affine connection coefficients encoding metric curvature and coordinate grid acceleration"
             },
-            "\\mu": {
-                "name": "Spacetime Index (Contravariant)",
+            "A^\\rho": {
+                "name": "Summed vector component",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "A free index representing the component of the resulting tensor."
-            },
-            "\\nu": {
-                "name": "Spacetime Index (Covariant)",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "A free index representing the direction of differentiation."
-            },
-            "\\rho": {
-                "name": "Spacetime Index (Summation)",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "A dummy index summed over according to the Einstein summation convention."
+                "unit": "dimensionless",
+                "description": "Dummy index vector component contracted over the connection"
             }
         },
-        "interpretation": "The formula defines the covariant derivative, $\\nabla_\\nu A^\\mu$, of a contravariant vector field $A^\\mu$. The term $\\partial_\\nu A^\\mu$ represents the partial derivative of the components of the vector field $A^\\mu$. This term alone does not transform as a tensor under a general coordinate transformation. The term $\\Gamma^\\mu_{\\rho\\nu} A^\\rho$ is the correction term that accounts for the change in the basis vectors. $\\Gamma^\\mu_{\\rho\\nu}$ are the Christoffel symbols (or connection coefficients), which encode the geometry of the manifold. $A^\\rho$ are the components of the vector field, and the index $\\rho$ is summed over (Einstein summation convention). The combination of these two terms ensures that the resulting quantity, $\\nabla_\\nu A^\\mu$, transforms as a mixed tensor of rank (1,1), making it a physically meaningful quantity independent of the chosen coordinate system.",
-        "symmetry_origin": "General Covariance. The covariant derivative is constructed specifically to ensure that physical laws written in terms of it are invariant under general coordinate transformations, a fundamental principle of General Relativity.",
-        "limits_and_boundary": "In a flat spacetime (Minkowski space), one can always choose a coordinate system (e.g., Cartesian) where the metric is constant and all Christoffel symbols $\\Gamma^\\mu_{\\rho\\nu}$ vanish. In this limit, the covariant derivative $\\nabla_\\nu A^\\mu$ reduces to the ordinary partial derivative $\\partial_\\nu A^\\mu$, recovering the familiar derivative from special relativity and flat-space field theory.",
+        "interpretation": "The component $\\nabla_\\nu A^\\mu$ denotes the rate of change of the contravariant vector $A^\\mu$ along the coordinate direction $x^\\nu$. The ordinary partial derivative $\\partial_\\nu A^\\mu = \\frac{\\partial A^\\mu}{\\partial x^\\nu}$ tracks component variations, while the connection term $\\Gamma^\\mu_{\\rho\\nu} A^\\rho$ accounts for the rotation and rescaling of the local coordinate frame $\\partial_\\rho$. Under a general coordinate transformation $x^\\mu \\to x'^\\mu$, the non-tensorial inhomogeneous terms arising from $\\partial_\\nu A^\\mu$ and $\\Gamma^\\mu_{\\rho\\nu}$ cancel identically, rendering $\\nabla_\\nu A^\\mu$ a true $(1,1)$-rank tensor.",
+        "symmetry_origin": "General covariance (invariance under the group of general coordinate transformations $\\mathrm{Diff}(M)$) and metric compatibility under the Levi-Civita affine connection.",
+        "limits_and_boundary": "In flat Minkowski spacetime or within local inertial frames (Riemann normal coordinates where $\\Gamma^\\mu_{\\rho\\nu} = 0$), the covariant derivative reduces to the standard partial derivative: $\\lim_{\\Gamma \\to 0} \\nabla_\\nu A^\\mu = \\partial_\\nu A^\\mu$.",
         "status": "platinum",
-        "conceptual_definition": "The covariant derivative generalizes the concept of a partial derivative to curved spaces (manifolds). For a contravariant vector field $A^\\mu$, its covariant derivative along the $\\nu$-th coordinate direction, denoted $\\nabla_\\nu A^\\mu$, is the sum of the ordinary partial derivative of its components, $\\partial_\\nu A^\\mu$, and a correction term, $\\Gamma^\\mu_{\\rho\\nu} A^\\rho$. This correction term accounts for the change in the basis vectors from point to point, which is encoded by the Christoffel symbols $\\Gamma^\\mu_{\\rho\\nu}$.",
-        "intuitive_summary": "Imagine trying to measure the change in a vector on the surface of a sphere. As you move it, you must account for both how the vector's components change and how your coordinate grid itself is twisting due to the sphere's curvature. The covariant derivative does this by adding a 'correction for curvature' (the Christoffel symbol term) to the simple component-wise change (the partial derivative).",
+        "conceptual_definition": "The covariant derivative $\\nabla_\\nu A^\\mu$ of a contravariant vector field $A^\\mu$ extends ordinary partial differentiation to curved manifolds by introducing an affine connection $\\Gamma^\\mu_{\\rho\\nu}$, yielding a tensor of type $(1, 1)$ according to $\\nabla_\\nu A^\\mu = \\partial_\\nu A^\\mu + \\Gamma^\\mu_{\\rho\\nu} A^\\rho$.",
+        "intuitive_summary": "Ordinary partial derivatives of vector components fail to transform as tensors because coordinate basis vectors change from point to point; the Christoffel connection term compensates for this basis variation.",
         "subcomponents": [
-            "christoffel-symbols-64d17c83",
+            "covariant-derivative-component-vector-9573e269",
+            "partial-derivative-of-contravariant-vector-component-d65447c4",
             "connection-term-for-vector-covariant-derivative-3540998f"
         ],
-        "description": "Defines the derivative of a contravariant vector field on a curved manifold, generalizing the partial derivative to ensure the result transforms as a tensor under coordinate changes.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the affine connection derivative of a contravariant vector field on a differentiable manifold, ensuring manifest tensor covariance under arbitrary coordinate transformations.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "riemannian-connection-covariant-gr-ed525852"
     },
     "standard-form-6b892372": {
         "title": "Position Operator in Position Representation",

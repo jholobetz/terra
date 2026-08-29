@@ -1099,60 +1099,59 @@
         "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "the-bridge-identity-1-ade7ec5e-fc6b0489": {
-        "title": "Canonical Ensemble Average of an Observable",
+        "title": "Canonical Ensemble Expectation Value of an Observable",
         "equation": "\\langle A \\rangle = \\frac{1}{Z} \\sum_i A_i e^{-\\beta E_i}",
-        "interpretation": "$\\langle A \\rangle$ is the ensemble average, or expectation value, of the observable $A$. The sum $\\sum_i$ is taken over all possible discrete microstates of the system. For each microstate $i$, $A_i$ is the value of the observable and $E_i$ is the total energy of that state. The term $\\beta$ is the inverse temperature, defined as $\\beta = 1/(k_B T)$, where $k_B$ is the Boltzmann constant and $T$ is the absolute temperature. $Z$ is the canonical partition function, which acts as a normalization constant.",
-        "symmetry_origin": "Derived from the principle of maximum entropy for a system with fixed average energy, under the assumption of ergodicity. The existence of well-defined energy states $E_i$ relies on the time-translation symmetry of the underlying Hamiltonian, which guarantees conservation of energy.",
-        "limits_and_boundary": "In the low-temperature limit ($T \\to 0$ or $\\beta \\to \\infty$), the system collapses to its ground state, and the average $\\langle A \\rangle$ approaches the ground state value $A_0$. In the high-temperature limit ($T \\to \\infty$ or $\\beta \\to 0$), all states become equally probable, and $\\langle A \\rangle$ becomes the simple arithmetic mean of $A_i$ over all states.",
+        "interpretation": "In this identity, $\\langle A \\rangle$ denotes the ensemble average of observable $A$. The discrete index $i$ enumerates the complete set of accessible stationary microstates. $A_i$ represents the value or eigenvalue of the physical observable in state $i$, and $E_i$ is the energy eigenvalue of that microstate. The parameter $\\beta \\equiv \\frac{1}{k_B T}$ is the inverse temperature, where $k_B$ is the Boltzmann constant and $T$ is the absolute temperature. The normalization constant $Z = \\sum_i e^{-\\beta E_i}$ is the canonical partition function.",
+        "symmetry_origin": "Rooted in time-translation invariance for stationary equilibrium states, maximum entropy under the constraint of fixed mean internal energy (Gibbs distribution), and unitary invariance under change of basis.",
+        "limits_and_boundary": "As $T \\to 0$ ($\\beta \\to \\infty$), the system freezes into its ground state ($E_0$), such that $\\langle A \\rangle \\to A_0$ (or the degenerate ground state average). As $T \\to \\infty$ ($\\beta \\to 0$), all microstates become equally probable, and $\\langle A \\rangle \\to \\frac{1}{N} \\sum_i A_i$, recovering the uniform microcanonical limit across a finite state space.",
         "semantic_variables": {
             "\\langle A \\rangle": {
-                "name": "Ensemble Average of A",
+                "name": "ensemble average of observable A",
                 "type": "variable",
-                "unit": "Depends on observable A",
-                "description": "The expectation value, or ensemble average, of the observable A for a system in the canonical ensemble."
+                "unit": "unit of A",
+                "description": "Thermal expectation value of the physical quantity A over the canonical distribution"
             },
             "Z": {
-                "name": "Canonical Partition Function",
+                "name": "canonical partition function",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The normalization constant for the probability distribution, calculated as the sum of Boltzmann factors over all microstates: $Z = \\sum_i e^{-\\beta E_i}$."
+                "unit": "dimensionless",
+                "description": "Sum over all microstates of the Boltzmann weights, serving as the normalization factor"
             },
             "A_i": {
-                "name": "Value of Observable in State i",
+                "name": "observable value in microstate i",
                 "type": "variable",
-                "unit": "Depends on observable A",
-                "description": "The value of the physical observable $A$ when the system is in the specific microstate $i$."
+                "unit": "unit of A",
+                "description": "Discrete value or eigenvalue of the observable corresponding to microstate i"
             },
             "\\beta": {
-                "name": "Thermodynamic Beta",
+                "name": "thermodynamic inverse temperature",
                 "type": "variable",
-                "unit": "J⁻¹",
-                "description": "The inverse temperature, defined as $\\beta = 1/(k_B T)$, where $k_B$ is the Boltzmann constant and $T$ is the absolute temperature."
+                "unit": "J^-1",
+                "description": "Statistical parameter defined as beta = 1 / (k_B * T)"
             },
             "E_i": {
-                "name": "Energy of State i",
+                "name": "energy of microstate i",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total energy of the system when it is in the microstate $i$."
+                "description": "Energy eigenvalue associated with the discrete microstate i"
             },
-            "\\sum_i": {
-                "name": "Summation over Microstates",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "A summation over all possible discrete microstates $i$ that are accessible to the system."
+            "i": {
+                "name": "microstate index",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Index labelling individual accessible quantum or discrete classical microstates"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The ensemble average $\\langle A \\rangle$ of an observable $A$ is calculated as a weighted sum of the observable's value $A_i$ in each microstate $i$. The weight for each state is its Boltzmann factor, $e^{-\\beta E_i}$, which represents the relative probability of that state occurring. This sum is normalized by the canonical partition function $Z = \\sum_i e^{-\\beta E_i}$, which is the sum of all Boltzmann factors, ensuring the total probability is unity.",
-        "intuitive_summary": "To find the average value of a property for a system at a certain temperature, we don't treat all possible states of the system equally. States with lower energy are more probable. This formula performs a weighted average, giving more importance to these more probable, lower-energy states, to find the most likely observable outcome.",
+        "conceptual_definition": "The canonical ensemble average $\\langle A \\rangle$ evaluates the thermal expectation value of an observable $A$ across all accessible microstates $i$, weighted by their corresponding Boltzmann probability factors $P_i = \\frac{1}{Z} e^{-\\beta E_i}$, where $Z$ is the canonical partition function normalizing total probability to unity.",
+        "intuitive_summary": "Each discrete microstate contributes to the macroscopic observable according to its intrinsic value $A_i$, exponentially penalized by the Boltzmann factor for states of high energy relative to the available thermal energy $k_B T$.",
         "subcomponents": [
-            "the-bridge-52cc7e2d",
-            "average-energy-from-partition-function",
-            "ehrenfests-theorem-identity-1-d54ef779-67d39f4b",
-            "fermi-dirac-distribution-6b18fd8b"
+            "statistical-mechanics-theory-identity-1-04f0c414-2ee0c370",
+            "macrostate-identity-1-6b42e8e9-9b411f1e"
         ],
-        "description": "Defines the expectation value of a physical observable for a system in thermal equilibrium with a heat bath, as a weighted average over all possible microstates.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the statistical expectation value of a physical observable for a discrete-state system in thermal equilibrium with a heat reservoir at inverse temperature $\\beta$.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "canonical-ensemble-identity-1-2ad2b050-97935ea9"
     },
     "mass-term-dirac-equation": {
         "title": "Chiral Decomposition of the Dirac Mass Term",
@@ -1521,38 +1520,40 @@
     "mass-ratio": {
         "title": "Mass Ratio of a Two-Component System",
         "equation": "f = M_2/M_1",
-        "conceptual_definition": "The mass ratio, denoted by $f$, is a dimensionless quantity defined as the ratio of the mass of a second object, $M_2$, to the mass of a first or reference object, $M_1$. It is a fundamental parameter in the study of two-body problems, binary star systems, and gravitational wave sources, quantifying the relative mass distribution between the components.",
-        "intuitive_summary": "The mass ratio tells you how many times heavier one object is than another. A ratio of 3 means one object is three times the mass of the other. Since it's just a number without units, it provides a pure comparison of 'heaviness'.",
-        "interpretation": "In the formula $f = M_2/M_1$, the symbol $f$ represents the dimensionless mass ratio. $M_2$ is the mass of the second object (or a component of a system), and $M_1$ is the mass of the first object (or a reference object). The formula calculates the ratio of $M_2$ to $M_1$. If $f > 1$, then $M_2$ is more massive than $M_1$. If $f < 1$, then $M_2$ is less massive than $M_1$. If $f = 1$, the masses are equal. This ratio is dimensionless because the units of mass (e.g., kilograms, $kg$) in the numerator and denominator cancel. In astrophysics, this ratio is often denoted by $q$ and is crucial for determining the stability and evolution of binary systems.",
-        "symmetry_origin": "The mass ratio is a scale-invariant quantity. The dynamics of a system described by this ratio often depend on the ratio itself, not the absolute scale of the masses, reflecting a form of scale invariance in the governing equations (e.g., in the two-body problem).",
-        "limits_and_boundary": "For a two-body system, if $f \\to 0$ (i.e., $M_2 \\ll M_1$), the system behaves like a test particle of mass $M_2$ orbiting a fixed central mass $M_1$. If $f = 1$ (i.e., $M_1 = M_2$), the system is symmetric, and the center of mass lies exactly halfway between the two objects. If $f \\to \\infty$ (i.e., $M_2 \\gg M_1$), the roles are reversed, and $M_1$ effectively orbits $M_2$.",
+        "conceptual_definition": "The mass ratio $f$ (often denoted $q$ in celestial mechanics) is the dimensionless quotient of two constituent inertial masses $M_2$ and $M_1$ within a binary or multi-particle system: $f = \\frac{M_2}{M_1}$. It characterizes the degree of asymmetry between the components and parameterizes the location of the center of mass.",
+        "intuitive_summary": "The mass ratio measures how unequal two interacting bodies are, dictating whether they orbit a shared midpoint or if the lighter body essentially orbits the center of the heavier one.",
+        "interpretation": "In the relation $f = M_2 / M_1$, $f$ is the dimensionless mass ratio. The term $M_2$ is the inertial mass of the secondary or designated second body, and $M_1$ is the inertial mass of the primary or reference body. When $f = 1$, the system is equal-mass and symmetric; when $f \\ll 1$ (or $f \\to 0$), the primary body remains nearly stationary at the center of mass, corresponding to test-particle dynamics in an external potential.",
+        "symmetry_origin": "Scale invariance of Newtonian gravity and scale-free kinematic mass parameterizations under global mass re-scalings $M_i \\to \\lambda M_i$.",
+        "limits_and_boundary": "In the limit $M_2 \\to 0$ (or $M_1 \\to \\infty$), $f \\to 0$, reducing the binary dynamics to test-mass motion around a fixed central potential. For $M_2 = M_1$, $f = 1$, exhibiting exact discrete exchange symmetry under particle interchange $1 \\leftrightarrow 2$.",
         "status": "platinum",
         "semantic_variables": {
             "f": {
-                "name": "Mass Ratio",
+                "name": "mass ratio",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The ratio of the mass of the second object to the first object."
+                "description": "Dimensionless ratio between the two constituent masses"
             },
             "M_1": {
-                "name": "Mass of the first object",
+                "name": "mass of primary component",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The mass of the reference or primary object in the system."
+                "description": "Inertial rest mass of the primary or reference body"
             },
             "M_2": {
-                "name": "Mass of the second object",
+                "name": "mass of secondary component",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The mass of the secondary object in the system."
+                "description": "Inertial rest mass of the secondary constituent body"
             }
         },
         "subcomponents": [
             "rest-mass-of-particle-one-377b1a53",
-            "total-mass-of-a-two-component-system-48d58b86"
+            "total-mass",
+            "reduced-mass"
         ],
-        "description": "Defines the dimensionless ratio of the mass of one component of a system to another, serving as a fundamental parameter in analyzing the dynamics and properties of binary systems.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the dimensionless ratio of the masses of two interacting bodies, serving as a primary parameter in orbital mechanics, binary stellar evolution, and gravitational-wave waveform modeling.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "total-mass"
     },
     "total-delta-v-multistage": {
         "title": "Total Delta-v for Multistage Rocket Systems",

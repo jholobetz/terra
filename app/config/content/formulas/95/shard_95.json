@@ -54,67 +54,68 @@
         "equation": "\\sigma_{ij} = -P \\delta_{ij} + \\eta (\\partial_j v_i + \\partial_i v_j - \\frac{2}{3} \\delta_{ij} \\nabla \\cdot \\mathbf{v})",
         "semantic_variables": {
             "\\sigma_{ij}": {
-                "name": "Cauchy Stress Tensor Component",
+                "name": "Cauchy stress tensor component",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "Component of the Cauchy stress tensor, representing force per unit area in direction $i$ on a surface with normal $j$."
+                "description": "Component of internal surface force per unit area acting on the plane normal to coordinate axis j in direction i"
             },
             "P": {
-                "name": "Thermodynamic Pressure",
+                "name": "Thermodynamic pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "Isotropic pressure component, representing the average normal force per unit area."
+                "description": "Local thermodynamic scalar pressure exerted isotropically by the fluid"
             },
             "\\delta_{ij}": {
-                "name": "Kronecker Delta",
+                "name": "Kronecker delta",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "A tensor component that is 1 if $i=j$ and 0 if $i \\neq j$."
+                "description": "Identity tensor mapping diagonal spatial indices"
             },
             "\\eta": {
-                "name": "Dynamic Viscosity",
-                "type": "variable",
-                "unit": "Pa·s",
-                "description": "A material property quantifying a fluid's resistance to shear flow and deformation."
+                "name": "Dynamic shear viscosity",
+                "type": "constant",
+                "unit": "Pa*s",
+                "description": "Fluid material property quantifying internal resistance to shear flow deformation"
             },
             "\\partial_j v_i": {
-                "name": "Velocity Gradient Component",
-                "type": "variable",
-                "unit": "s^{-1}",
-                "description": "Partial derivative of the $i$-th velocity component with respect to the $j$-th spatial coordinate."
+                "name": "Velocity gradient component",
+                "type": "operator",
+                "unit": "s^-1",
+                "description": "Spatial derivative of the i-th velocity component along the j-th spatial coordinate"
             },
             "\\partial_i v_j": {
-                "name": "Velocity Gradient Component",
-                "type": "variable",
-                "unit": "s^{-1}",
-                "description": "Partial derivative of the $j$-th velocity component with respect to the $i$-th spatial coordinate."
+                "name": "Velocity gradient component transpose",
+                "type": "operator",
+                "unit": "s^-1",
+                "description": "Spatial derivative of the j-th velocity component along the i-th spatial coordinate"
             },
             "\\nabla \\cdot \\mathbf{v}": {
-                "name": "Divergence of Velocity Field",
+                "name": "Velocity divergence",
                 "type": "operator",
-                "unit": "s^{-1}",
-                "description": "The rate of volume expansion per unit volume of a fluid element."
+                "unit": "s^-1",
+                "description": "Volumetric expansion rate per unit volume of the fluid parcel"
             },
             "\\mathbf{v}": {
-                "name": "Fluid Velocity Vector",
+                "name": "Fluid velocity vector",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The local velocity vector of the fluid."
+                "description": "Flow velocity vector field in Eulerian coordinates"
             }
         },
-        "interpretation": "$\\sigma_{ij}$: The components of the **Cauchy stress tensor** (Pa, N/m$^2$). This second-rank tensor describes the internal forces acting within a deformable body. The index $i$ denotes the direction of the force, and $j$ denotes the normal direction of the surface element on which the force acts.\n$P$: The **thermodynamic pressure** (Pa, N/m$^2$). This is the isotropic part of the stress, representing the average normal force per unit area exerted by the fluid. It acts equally in all directions.\n$\\delta_{ij}$: The **Kronecker delta** (dimensionless). This is a tensor component that is $1$ if $i=j$ and $0$ if $i \\neq j$. It ensures that the pressure term only contributes to the normal stress components (e.g., $\\sigma_{xx}, \\sigma_{yy}, \\sigma_{zz}$).\n$\\eta$: The **dynamic viscosity** (Pa·s, N·s/m$^2$). This material property quantifies a fluid's resistance to shear flow and deformation. Higher $\\eta$ means a \"thicker\" or more viscous fluid.\n$\\partial_j v_i$: The **partial derivative of velocity component $v_i$ with respect to coordinate $x_j$** (s$^{-1}$). These are components of the velocity gradient tensor, describing how the fluid velocity changes in space.\n$\\partial_i v_j$: The **partial derivative of velocity component $v_j$ with respect to coordinate $x_i$** (s$^{-1}$). Another component of the velocity gradient tensor. The sum $\\partial_j v_i + \\partial_i v_j$ forms the components of the rate-of-strain tensor, which describes the rate of deformation of a fluid element.\n$\\nabla \\cdot \\mathbf{v}$: The **divergence of the velocity vector field** (s$^{-1}$). This scalar quantity represents the rate of volume expansion per unit volume of a fluid element. For incompressible fluids, $\\nabla \\cdot \\mathbf{v} = 0$.\n$-\\frac{2}{3} \\delta_{ij} \\nabla \\cdot \\mathbf{v}$: This term accounts for the contribution of volume changes (compressibility) to the normal stresses. It ensures that the trace of the viscous stress tensor is zero for incompressible fluids, consistent with Stokes' hypothesis where the bulk viscosity is zero.",
-        "symmetry_origin": "This formula is a constitutive relation, not directly derived from a fundamental symmetry principle like Noether's theorem. However, the Cauchy stress tensor itself is a consequence of the conservation of linear and angular momentum in continuum mechanics. Its tensorial nature reflects the rotational invariance of physical laws. The specific form for a Newtonian fluid is an empirical observation and a simplification based on linearity between stress and strain rate.",
-        "limits_and_boundary": "Incompressible Fluid Limit ($\\nabla \\cdot \\mathbf{v} = 0$): For an incompressible fluid, the divergence of the velocity field is zero, i.e., $\\nabla \\cdot \\mathbf{v} = 0$. In this limit, the formula simplifies to $\\sigma_{ij} = -P \\delta_{ij} + \\eta (\\partial_j v_i + \\partial_i v_j)$. The term related to volume changes vanishes, and the viscous stress tensor becomes purely deviatoric (trace-free).\nInviscid Fluid Limit ($\\eta = 0$): For an ideal (inviscid) fluid, the dynamic viscosity is zero, i.e., $\\eta = 0$. In this limit, the formula reduces to $\\sigma_{ij} = -P \\delta_{ij}$, which is the stress tensor for a perfect fluid (Eulerian fluid), where only isotropic pressure forces are present.\nStatic Fluid Limit ($\\mathbf{v} = 0$): If the fluid is static, all velocity components and their derivatives are zero. The equation then becomes $\\sigma_{ij} = -P \\delta_{ij}$, representing hydrostatic pressure.",
+        "interpretation": "$\\sigma_{ij}$: Components of the total Cauchy stress tensor ($\\text{Pa}$), representing the $i$-directed internal force per unit area acting on a surface normal to the $j$-direction.\n$P$: Thermodynamic static pressure ($\\text{Pa}$), acting isotropically on all fluid elements.\n$\\delta_{ij}$: Kronecker delta tensor, ensuring the isotropic pressure contributes only to the diagonal (normal) stress components.\n$\\eta$: Dynamic shear viscosity coefficient ($\\text{Pa}\\cdot\\text{s}$), characterizing resistance to shear strain rates.\n$\\partial_j v_i + \\partial_i v_j$: Twice the symmetric strain-rate tensor $2S_{ij} = \\dot{\\varepsilon}_{ij}$ ($\\text{s}^{-1}$), describing the rate of angular and linear deformation.\n$\\nabla \\cdot \\mathbf{v}$: Divergence of the velocity field ($\\text{s}^{-1}$), measuring the fractional volumetric expansion rate of a fluid parcel.\n$-\\frac{2}{3} \\delta_{ij} \\nabla \\cdot \\mathbf{v}$: Dilatational stress correction under Stokes' hypothesis, which isolates the deviatoric (shear-dominated) rate-of-strain tensor.",
+        "symmetry_origin": "Rotational invariance (isotropy of the fluid in its rest frame) enforces that the constitutive relation depends only on symmetric combinations of velocity gradients, and conservation of angular momentum requires the Cauchy stress tensor to be symmetric ($\\sigma_{ij} = \\sigma_{ji}$).",
+        "limits_and_boundary": "In the inviscid limit ($\\eta \\to 0$), the relation reduces to the Euler hydrostatic stress tensor $\\sigma_{ij} = -P\\delta_{ij}$. In the incompressible limit ($\\nabla \\cdot \\mathbf{v} \\to 0$), the dilatational trace term vanishes, simplifying to $\\sigma_{ij} = -P\\delta_{ij} + \\eta(\\partial_j v_i + \\partial_i v_j)$.",
         "status": "platinum",
-        "conceptual_definition": "The Cauchy stress tensor $\\sigma_{ij}$ quantifies the internal forces acting within a continuous medium, representing the force per unit area on a surface element. For a Newtonian fluid, this tensor is defined as the sum of an isotropic pressure term and a viscous stress term that is linearly proportional to the rate of strain tensor, accounting for both normal and shear stresses arising from fluid deformation and flow.",
-        "intuitive_summary": "Imagine a tiny cube of fluid. The Cauchy stress tensor tells you all the forces acting on the faces of that cube from the surrounding fluid. It has two main parts: a pressure part that pushes equally on all sides (like hydrostatic pressure), and a viscous part that resists deformation, like when you try to shear honey. The viscous part depends on how quickly the fluid is deforming or flowing past itself.",
-        "description": "This formula defines the components of the Cauchy stress tensor $\\sigma_{ij}$ for a Newtonian fluid, expressing the internal forces per unit area as a sum of an isotropic pressure component and an anisotropic viscous component dependent on the fluid's velocity gradients.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "The Cauchy stress tensor $\\sigma_{ij}$ in an isotropic Newtonian fluid expresses the local internal force per unit area transmitted across surface elements. It is decomposed into an isotropic hydrostatic pressure term $-P \\delta_{ij}$ and a symmetric viscous stress tensor proportional to the dynamic shear viscosity $\\eta$. Under Stokes' hypothesis (zero bulk viscosity, $\\zeta = 0$), the second viscosity coefficient is constrained to $\\lambda = -\\frac{2}{3}\\eta$, rendering the viscous stress purely trace-free for volume-preserving deformations and ensuring that the mean normal stress equals the negative thermodynamic pressure $-P$ in incompressible flow.",
+        "intuitive_summary": "Internal forces in a fluid originate from two sources: static pressure pushing outward isotropically, and viscous friction resisting shearing and rapid compression.",
+        "description": "Defines the total Cauchy stress tensor for an isotropic Newtonian fluid assuming Stokes' hypothesis, separating hydrostatic thermodynamic pressure from deviatoric and dilatational viscous stresses.",
+        "derivation_type": "SPECIAL_CASE",
         "subcomponents": [
-            "constitutive-relation-for-a-newtonian-fluid-viscous-stress-tensor-9d40765f",
-            "divergence-operator-law-e0e63b59",
-            "fluid-mass-conservation-form-07fd9f29"
-        ]
+            "constitutive-relation-for-a-newtonian-fluid-viscous-stress-tensor",
+            "friction-source-f3ff6185",
+            "incompressibility-condition-fluid"
+        ],
+        "parent_formula_id": "constitutive-relation-for-a-newtonian-fluid-viscous-stress-tensor"
     },
     "statistical-reason-4109d9a5": {
         "title": "Law of Complementary Probability for Existence",
@@ -485,70 +486,57 @@
     "poisson-bracket-def-canonical-4b143ee8": {
         "title": "Canonical Poisson Bracket Definition",
         "equation": "\\{f, g\\} = \\sum_i \\left( \\frac{\\partial f}{\\partial q_i} \\frac{\\partial g}{\\partial p_i} - \\frac{\\partial f}{\\partial p_i} \\frac{\\partial g}{\\partial q_i} \\right)",
-        "interpretation": "The Poisson bracket, denoted by $\\{f, g\\}$, is defined for two functions, $f$ and $g$, which are typically observables in a dynamical system. These observables are functions of the generalized coordinates $q_i$ and their conjugate momenta $p_i$. The formula involves a summation over all degrees of freedom $i$. For each degree of freedom, it calculates the difference between two terms: the product of the partial derivative of $f$ with respect to $q_i$ and the partial derivative of $g$ with respect to $p_i$, and the product of the partial derivative of $f$ with respect to $p_i$ and the partial derivative of $g$ with respect to $q_i$. Mathematically, $\\frac{\\partial f}{\\partial q_i}$ represents how much the observable $f$ changes when the generalized position $q_i$ changes infinitesimally, and $\\frac{\\partial g}{\\partial p_i}$ represents how much the observable $g$ changes when the conjugate momentum $p_i$ changes infinitesimally. The entire expression describes the rate of change of $f$ as the system evolves under the Hamiltonian $g$ (or vice versa), and it plays a crucial role in expressing Hamilton's equations of motion. The term $\\sum_i$ indicates a sum over all degrees of freedom $i$. The variables $q_i$ are the generalized coordinates, and $p_i$ are their canonically conjugate momenta.",
-        "symmetry_origin": "The Poisson bracket is intrinsically linked to Noether's theorem. If the Poisson bracket of an observable $f$ with the Hamiltonian $H$ is zero, i.e., $\\{f, H\\} = 0$, then $f$ is a constant of motion (a conserved quantity). This reflects a continuous symmetry of the system's dynamics. For example, if the Hamiltonian is independent of a generalized coordinate $q_i$, then $p_i$ is conserved, and $\\{p_i, H\\} = 0$.",
-        "limits_and_boundary": "In the classical limit, the Poisson bracket corresponds to the commutator of quantum mechanics. Specifically, for two operators $\\hat{A}$ and $\\hat{B}$, their commutator is related to the Poisson bracket of their classical counterparts $A$ and $B$ by $[\\hat{A}, \\hat{B}] = i\\hbar \\{A, B\\}$. As $\\hbar \\to 0$, the commutator vanishes, reflecting the classical notion that observables can be measured simultaneously without interference. The form of the Poisson bracket is invariant under canonical transformations, which are coordinate changes in phase space that preserve the Hamiltonian equations of motion.",
+        "interpretation": "In this definition, $\\{f, g\\}$ represents the Poisson bracket of two scalar observables $f$ and $g$ defined on phase space. The index $i$ runs over all $N$ degrees of freedom of the physical system. The generalized coordinates are denoted by $q_i$, while $p_i$ represents the corresponding canonically conjugate momenta. The partial derivatives $\frac{\\partial f}{\\partial q_i}$ and $\frac{\\partial f}{\\partial p_i}$ describe the rate of change of $f$ along position and momentum directions respectively, while $\frac{\\partial g}{\\partial p_i}$ and $\frac{\\partial g}{\\partial q_i}$ specify the Hamiltonian flow induced by $g$.",
+        "symmetry_origin": "Symplectic invariance (canonical invariance): the Poisson bracket is invariant under all canonical transformations and preserves the underlying symplectic 2-form $\\omega = \\sum_i dq_i \\wedge dp_i$.",
+        "limits_and_boundary": "In the classical limit of quantum mechanics ($\\hbar \to 0$), the Dirac canonical quantization condition establishes the correspondence $\\lim_{\\hbar \to 0} \frac{1}{i\\hbar} [\\hat{f}, \\hat{g}] = \\{f, g\\}$. For non-canonical coordinates, the bracket generalizes via the Poisson bivector tensor $\\Pi^{jk} \\partial_j f \\partial_k g$.",
         "semantic_variables": {
             "\\{f, g\\}": {
-                "name": "Poisson Bracket",
+                "name": "Poisson bracket",
                 "type": "operator",
-                "unit": "varies",
-                "description": "A fundamental binary operation in Hamiltonian mechanics, quantifying the rate of change of one function with respect to the flow generated by another."
+                "unit": "unit(f)*unit(g)/(J*s)",
+                "description": "Symplectic Lie bracket evaluating the mutual differential variation of observables f and g across canonical phase space"
             },
             "f": {
-                "name": "First Observable Function",
+                "name": "First phase space observable",
                 "type": "variable",
-                "unit": "varies",
-                "description": "A function of generalized coordinates, conjugate momenta, and possibly time, representing a physical observable."
+                "unit": "arbitrary",
+                "description": "Smooth real-valued scalar function defined on the canonical phase space manifold"
             },
             "g": {
-                "name": "Second Observable Function",
+                "name": "Second phase space observable",
                 "type": "variable",
-                "unit": "varies",
-                "description": "A function of generalized coordinates, conjugate momenta, and possibly time, representing a physical observable."
-            },
-            "\\sum_i": {
-                "name": "Summation over Degrees of Freedom",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Indicates a sum over all independent degrees of freedom $i$ of the system."
-            },
-            "\\frac{\\partial}{\\partial q_i}": {
-                "name": "Partial Derivative with respect to Generalized Coordinate",
-                "type": "operator",
-                "unit": "1/[unit of $q_i$]",
-                "description": "The rate of change of a function with respect to the $i$-th generalized coordinate, holding all other variables constant."
-            },
-            "\\frac{\\partial}{\\partial p_i}": {
-                "name": "Partial Derivative with respect to Conjugate Momentum",
-                "type": "operator",
-                "unit": "1/[unit of $p_i$]",
-                "description": "The rate of change of a function with respect to the $i$-th conjugate momentum, holding all other variables constant."
+                "unit": "arbitrary",
+                "description": "Smooth real-valued scalar function acting as a generator or observable on phase space"
             },
             "q_i": {
-                "name": "Generalized Coordinate",
+                "name": "Generalized coordinate",
                 "type": "variable",
-                "unit": "m | rad",
-                "description": "The $i$-th generalized coordinate, typically representing a position or angle in configuration space."
+                "unit": "m",
+                "description": "Generalized position coordinate corresponding to the i-th dynamical degree of freedom"
             },
             "p_i": {
-                "name": "Conjugate Momentum",
+                "name": "Canonical momentum",
                 "type": "variable",
-                "unit": "kg m/s | kg m^2/s",
-                "description": "The $i$-th canonical momentum, conjugate to the generalized coordinate $q_i$."
+                "unit": "kg*m/s",
+                "description": "Conjugate momentum variable associated with generalized coordinate q_i"
+            },
+            "i": {
+                "name": "Degree of freedom index",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Discrete summation index iterating across all degrees of freedom of the dynamical system"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Poisson bracket of two phase space functions, $f(q_i, p_i, t)$ and $g(q_i, p_i, t)$, is defined as the sum over all degrees of freedom $i$ of the difference between two products of partial derivatives: $\\{f, g\\} = \\sum_i \\left( \\frac{\\partial f}{\\partial q_i} \\frac{\\partial g}{\\partial p_i} - \\frac{\\partial f}{\\partial p_i} \\frac{\\partial g}{\\partial q_i} \\right)$.",
-        "intuitive_summary": "Imagine you have two properties of a system, $f$ and $g$, that depend on its position and momentum. The Poisson bracket $\\{f, g\\}$ tells you how much these properties 'interfere' with each other's change. If $\\{f, g\\} = 0$, they are said to commute, meaning their changes are independent in a specific way. If $g$ is the system's energy (Hamiltonian $H$), then $\\{f, H\\}$ describes how $f$ changes over time.",
+        "conceptual_definition": "Given a symplectic manifold parameterized by canonical coordinates $(q_1, \\dots, q_N)$ and conjugate momenta $(p_1, \\dots, p_N)$, the Poisson bracket $\\{f, g\\}$ of two smooth phase-space functions $f(q, p, t)$ and $g(q, p, t)$ evaluates the symplectic pairing of their corresponding Hamiltonian vector fields: $\\{f, g\\} = \\omega(X_f, X_g) = \\sum_{i=1}^N \\left( \frac{\\partial f}{\\partial q_i} \frac{\\partial g}{\\partial p_i} - \frac{\\partial f}{\\partial p_i} \frac{\\partial g}{\\partial q_i} \right)$.",
+        "intuitive_summary": "The Poisson bracket measures how much the value of one observable $f$ changes along the phase-space trajectory dynamically generated by another observable $g$, serving as the classical precursor to quantum commutators.",
         "subcomponents": [
-            "classical-poisson-bracket-definition-5f322c3f",
             "product-of-partial-derivatives-canonical-variables-a151038d",
             "canonical-coordinate-poisson-bracket-definition-ccd29c2f",
-            "phase-space-advection-term-6ffab0e9"
+            "definition-of-canonical-momentum"
         ],
-        "description": "The Poisson bracket is a fundamental binary operation in Hamiltonian mechanics that defines the time evolution of observables and the algebraic structure of phase space. It quantifies the degree to which two functions of canonical coordinates and momenta fail to commute.",
-        "derivation_type": "DEFINITION"
+        "description": "The Poisson bracket is a fundamental bilinear, antisymmetric differential operator on the smooth functions of phase space that establishes the Lie algebra structure of Hamiltonian mechanics.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "qcd-scale-lambda-parameter-0949a70c": {
         "title": "Approximate Value of the Quantum Chromodynamics (QCD) Scale Parameter",
@@ -967,45 +955,37 @@
     "stirlings-approximation-for-factorial": {
         "title": "Stirling's Asymptotic Approximation for the Natural Logarithm of the Factorial",
         "equation": "\\ln N! \\approx N \\ln N - N",
-        "conceptual_definition": "The formula $\\ln N! \\approx N \\ln N - N$ offers an approximation for the natural logarithm of the factorial of a large integer $N$. This approximation becomes increasingly accurate as $N$ approaches infinity, making it invaluable for analyzing systems with a vast number of components.",
-        "intuitive_summary": "For very large numbers, calculating the factorial $N!$ is computationally intensive. Stirling's approximation provides a much simpler way to estimate its natural logarithm, $\\ln N!$, by relating it to $N \\ln N - N$, effectively transforming a product into a more manageable sum and simplifying its asymptotic behavior.",
-        "interpretation": "The formula $\\ln N! \\approx N \\ln N - N$ approximates the natural logarithm of $N!$. Here, $N$ represents a large positive integer, typically denoting the number of items or particles in a system. The term $\\ln N!$ signifies the natural logarithm of the factorial of $N$, which is defined as $\\ln(1 \times 2 \times \\dots \times N)$. The approximation states that for large $N$, this value is approximately equal to $N \\ln N - N$. The term $N \\ln N$ captures the dominant contribution to the logarithm of the factorial, reflecting the rapid multiplicative growth inherent in the factorial function. The subtractive term $-N$ provides a more refined correction, often derived through integral approximations of the sum $\\sum_{k=1}^N \\ln k$. The symbol $\\approx$ denotes an asymptotic approximation, meaning the ratio of the two sides approaches unity as $N \to \\infty$.",
-        "symmetry_origin": "Not directly applicable; Stirling's approximation is a mathematical asymptotic formula rather than a direct consequence of a physical symmetry or conservation law.",
-        "limits_and_boundary": "This approximation is valid for large positive integers $N$. As $N \to \\infty$, the relative error of the approximation $\frac{\\ln N! - (N \\ln N - N)}{\\ln N!}$ approaches zero. For small $N$, the approximation is less accurate, and the exact calculation of $\\ln N!$ should be used. More precise versions of Stirling's approximation include additional terms, such as $\frac{1}{2} \\ln(2\\pi N)$.",
+        "conceptual_definition": "Stirling's approximation is derived by expressing $\\ln N! = \\sum_{k=1}^N \\ln k$ and approximating the discrete sum by the continuous Riemann integral $\\int_1^N \\ln x \\, dx = N \\ln N - N + 1$. In the thermodynamic limit ($N \\to \\infty$), the leading order behavior is given by $\\ln N! \\approx N \\ln N - N$, providing the mathematical foundation for calculating microstate multiplicities, microcanonical entropy $S = k_B \\ln \\Omega$, and Maxwell-Boltzmann, Bose-Einstein, or Fermi-Dirac distributions.",
+        "intuitive_summary": "As the number of particles $N$ becomes macroscopic, multiplying numbers in a factorial behaves like integrating the continuous logarithm function, turning an intractable discrete product into a smooth, tractable algebraic expression.",
+        "interpretation": "In the equation $\\ln N! \\approx N \\ln N - N$, $N$ denotes a large positive dimensionless integer (such as the number of particles or microstates in a physical system). The term $\\ln N!$ is the natural logarithm of the factorial function $N! = \\prod_{k=1}^N k$. The leading term $N \\ln N$ represents the dominant multiplicative growth of the factorial, while $-N$ is the primary linear correction arising from the integration of $\\ln x$. The symbol $\\approx$ denotes asymptotic equivalence, satisfying $\\lim_{N \\to \\infty} \\frac{\\ln N!}{N \\ln N - N} = 1$.",
+        "symmetry_origin": "Scale invariance in the asymptotic continuum limit, where discrete summation over microstates smoothly transforms into continuous phase-space integration.",
+        "limits_and_boundary": "In the asymptotic thermodynamic limit $N \\to \\infty$, the relative error $\\frac{|\\ln N! - (N \\ln N - N)|}{\\ln N!} \\sim \\frac{\\ln N}{2 N \\ln N} \\to 0$. For small values of $N$ ($N \\sim \\mathcal{O}(1)$), the formula incurs significant truncation error unless higher-order asymptotic corrections (such as $+\\frac{1}{2}\\ln(2\\pi N)$) are included.",
         "status": "platinum",
         "semantic_variables": {
             "N": {
-                "name": "Number of Elements",
+                "name": "particle number or discrete integer",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A large positive integer representing the number of elements, particles, or items in a system."
-            },
-            "!": {
-                "name": "Factorial Operator",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "The factorial operator, where $N! = N \times (N-1) \times \\dots \times 1$."
+                "description": "Large positive integer representing system size, number of particles, or discrete combinatorial elements"
             },
             "\\ln": {
-                "name": "Natural Logarithm Operator",
+                "name": "natural logarithm operator",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "The natural logarithm, base $e$."
+                "description": "Logarithm base $e$"
             },
-            "\\approx": {
-                "name": "Approximately Equal To",
+            "!": {
+                "name": "factorial operator",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "Indicates an asymptotic approximation, valid for large $N$."
+                "description": "Product of all positive integers less than or equal to $N$"
             }
         },
-        "description": "Stirling's approximation provides an asymptotic formula for the natural logarithm of the factorial of a large integer $N$. It is a powerful mathematical tool widely used in statistical mechanics and probability theory to simplify calculations involving large numbers of elements.",
-        "derivation_type": "APPROXIMATION",
+        "description": "Stirling's approximation provides the leading asymptotic expansion for the natural logarithm of the factorial of a large integer $N$, fundamentally connecting discrete combinatorics to continuous mathematical physics and statistical thermodynamics.",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
         "subcomponents": [
             "logarithm-taylor-expansion",
-            "approximation-of-lorentz-factor-for-low-velocities",
-            "small-angle-approximation-for-sine-9ea2398f",
-            "small-angle-cosine-approximation-22bd3b96"
+            "semi-classical-approximation"
         ]
     },
     "conservation-of-energy-momentum": {
@@ -1272,27 +1252,28 @@
     "time-derivative-zero": {
         "title": "Condition for a Static or Stationary Field",
         "equation": "\\partial_0 \\to 0",
-        "conceptual_definition": "The condition $\\partial_0 \\to 0$ asserts that the partial derivative with respect to the time coordinate, $x^0 = ct$, of a physical field or quantity approaches zero. This is the mathematical statement of a static (time-independent) or stationary (possessing a time-like Killing vector field) state, where the system's properties are time-invariant. In non-relativistic contexts, this is equivalent to the condition $\\frac{\\partial}{\\partial t} \\to 0$.",
-        "intuitive_summary": "Imagine taking a photograph of a flowing river. If the river is perfectly still or in a steady, unchanging flow, a movie of it would look just like a single photograph. The condition $\\partial_0 \\to 0$ is the mathematical way of saying 'the movie looks like a single snapshot'—nothing is changing over time.",
-        "interpretation": "The operator $\\partial_0$ represents the partial derivative with respect to the zeroth component of a spacetime four-vector, $\\partial_0 \\equiv \\frac{\\partial}{\\partial x^0}$. In special relativity, the spacetime coordinates are $(x^0, x^1, x^2, x^3)$, where $x^0 = ct$ is the time coordinate scaled by the speed of light $c$. Therefore, the condition $\\partial_0 \\to 0$ implies that the quantity it acts upon is not changing in time. For a field $\\Phi(x^\\mu)$, this means $\\frac{\\partial \\Phi}{\\partial t} \\to 0$. This is the foundational assumption for simplifying time-dependent theories into their static or stationary counterparts, such as deriving electrostatics and magnetostatics from Maxwell's equations.",
-        "symmetry_origin": "This condition defines a system that possesses continuous time-translation symmetry. By Noether's theorem, such a symmetry in the Lagrangian of a system implies the conservation of energy. This condition is imposed to find solutions (like static fields or stationary states) that exhibit this symmetry.",
-        "limits_and_boundary": "This condition is the basis for the static limit in many physical theories. For instance, applying $\\partial_0 \\to 0$ to the field strength tensor $F^{\\mu\\nu}$ in Maxwell's equations, $\\partial_\\mu F^{\\mu\\nu} = \\mu_0 J^\\nu$, separates them into the time-independent equations of electrostatics and magnetostatics. In cosmology, the condition $\\dot{a} \\to 0$ on the scale factor $a(t)$ describes a static universe, as in the original Einstein static universe model.",
+        "conceptual_definition": "The condition $\\partial_0 \\to 0$ asserts that a field configuration exhibits continuous time-translation invariance along the temporal coordinate $x^0 = c t$. In spacetime geometry and relativistic field theory, setting the temporal component of the four-gradient operator $\\partial_\\mu$ to zero eliminates explicit time dependence, reducing four-dimensional dynamical field equations to their corresponding elliptic three-dimensional static or stationary boundary-value problems.",
+        "intuitive_summary": "Setting the zeroth coordinate derivative to zero freezes the time evolution of a system, taking a snapshot where all physical fields remain invariant under temporal translation.",
+        "interpretation": "The symbol $\\partial_0 \\equiv \\frac{\\partial}{\\partial x^0} = \\frac{1}{c}\\frac{\\partial}{\\partial t}$ denotes the partial derivative with respect to the zeroth (temporal) contravariant spacetime coordinate $x^0 = c t$, where $c$ is the speed of light in vacuum and $t$ is coordinate time. Acting on an arbitrary field $\\Phi(x^\\mu)$, the condition $\\partial_0 \\Phi = 0$ signifies that the field tensor or scalar profile has no explicit coordinate time evolution. In electrodynamics, applying $\\partial_0 \\to 0$ to the electromagnetic field strength tensor $F^{\\mu\\nu}$ decouples the Maxwell equations into decoupled sets of electrostatic and magnetostatic equations.",
+        "symmetry_origin": "Originates from continuous time-translation symmetry generated by the temporal Killing vector field $\\xi = \\partial_0 = \\partial_t$, corresponding to energy conservation via Noether's theorem in stationary spacetimes.",
+        "limits_and_boundary": "In the dynamical limit where characteristic timescales $\\tau \\to 0$, time derivatives dominate ($\\|\\partial_0\\| \\gg \\|\\partial_i\\|$). Conversely, in the stationary limit $\\tau \\gg L/c$ (where $L$ is system size), retardation effects vanish and $\\partial_0 \\to 0$, recovering the non-relativistic Poisson-type equations as $c \\to \\infty$.",
         "status": "platinum",
         "semantic_variables": {
             "\\partial_0": {
-                "name": "Partial derivative with respect to time coordinate",
+                "name": "Zeroth coordinate partial derivative operator",
                 "type": "operator",
-                "unit": "1/m",
-                "description": "The partial derivative operator with respect to the zeroth component of a four-vector, $x^0$. In Minkowski spacetime, this corresponds to $x^0 = ct$, where $c$ is the speed of light and $t$ is time."
+                "unit": "m^{-1}",
+                "description": "Partial derivative with respect to the temporal spacetime coordinate $x^0 = c t$"
             }
         },
         "subcomponents": [
             "time-derivative-approaches-zero-static",
-            "time-derivative-vector-potential-approaches-zero",
-            "rate-of-change-of-scale-factor-approaches-zero"
+            "time-derivative-field-strength",
+            "time-derivative-vector-potential-approaches-zero"
         ],
-        "description": "A fundamental condition in physics stating that the rate of change of a physical quantity with respect to the time coordinate is zero. This is the defining characteristic of static or stationary systems.",
-        "derivation_type": "DEFINITION"
+        "description": "Specifies the vanishing of the partial derivative with respect to the zeroth spacetime coordinate, defining the static or stationary limit of a field configuration in relativistic field theory.",
+        "derivation_type": "LIMITING_CASE",
+        "parent_formula_id": "time-independent-limit"
     },
     "position-z-zero": {
         "title": "Definition of the z=0 Plane in Cartesian Coordinates",
@@ -1824,62 +1805,50 @@
     },
     "time-component-of-four-velocity-92126957": {
         "title": "Time Component of the Contravariant Four-Velocity",
-        "description": "This equation defines the temporal component of the contravariant four-velocity vector as the rate of change of the time coordinate with respect to proper time, quantifying the time dilation effect in relativistic motion.",
-        "conceptual_definition": "The time component of the four-velocity, denoted as $U^0$, is defined as the derivative of the time coordinate $x^0$ (which is $ct$) with respect to the proper time $\tau$. It is directly related to the Lorentz factor $\\gamma$ by $U^0 = \\gamma c$.",
-        "interpretation": "The formula $U^0 = \\frac{dx^0}{d\\tau}$ defines the time component of the four-velocity:\n*   $U^0$: Represents the time component of the contravariant four-velocity vector. In SI units, it is typically expressed as $U^0 = \\gamma c$, where $c$ is the speed of light and $\\gamma$ is the Lorentz factor. It quantifies the rate at which an object's coordinate time progresses per unit of its proper time.\n*   $x^0$: Denotes the time coordinate in a given inertial frame. In standard relativistic notation, $x^0 = ct$, where $t$ is the coordinate time measured by an observer in that frame.\n*   $\\tau$: Represents the proper time, which is the time measured by a clock moving with the object (i.e., in its instantaneous rest frame). It is a Lorentz invariant scalar quantity.\n*   $d/d\\tau$: This is the derivative with respect to proper time, indicating the rate of change of a quantity as measured by a clock co-moving with the particle.\n*   $\\gamma$: The Lorentz factor, defined as $\\gamma = (1 - v^2/c^2)^{-1/2}$, where $v$ is the object's speed relative to the observer. It quantifies the relativistic effects of time dilation and length contraction.\n*   $c$: The speed of light in vacuum, a fundamental physical constant.",
-        "limits_and_boundary": "In the **non-relativistic limit** ($v \\ll c$), the object's speed $v$ is much smaller than the speed of light $c$. In this regime, the Lorentz factor $\\gamma$ approaches $1$. Consequently, the time component of the four-velocity $U^0 = \\gamma c$ approaches $c$. This also implies that $d\\tau \\approx dt$, so $U^0 = \\frac{dx^0}{d\\tau} = \\frac{c dt}{d\\tau} \\approx \\frac{c dt}{dt} = c$. This signifies that in the non-relativistic regime, the time component of four-velocity is approximately constant and equal to the speed of light, reflecting the classical notion of absolute time where coordinate time and proper time are nearly identical.",
-        "symmetry_origin": "This definition is intrinsically linked to the **Lorentz invariance** of spacetime, a fundamental symmetry of special relativity. The proper time $\\tau$ is a Lorentz invariant scalar, and the four-velocity $U^\\mu$ is a four-vector, transforming appropriately under Lorentz transformations. The existence of a universal speed limit $c$ and the invariance of the spacetime interval $ds^2 = -c^2 d\\tau^2 = -\\eta_{\\mu\\nu} dx^\\mu dx^\\nu$ underpin this formulation.",
+        "description": "Defines the zeroth (temporal) component of the contravariant four-velocity vector as the derivative of the temporal coordinate with respect to the invariant proper time.",
+        "conceptual_definition": "In relativistic kinematics, the four-velocity $U^\\mu$ is defined as the tangent vector to a massive particle's worldline parameterized by proper time $\\tau$. The temporal component $U^0 = \\frac{dx^0}{d\\tau}$ measures the rate of flow of coordinate time $x^0 = c t$ per unit proper time $\\tau$, directly yielding $U^0 = c\\gamma$ where $\\gamma = (1 - v^2/c^2)^{-1/2}$ is the Lorentz factor.",
+        "interpretation": "The equation $U^0 = \\frac{dx^0}{d\\tau}$ decomposes as follows:\n- $U^0$: The contravariant time component of the four-velocity vector, with dimensions of velocity ($\\text{m}\\cdot\\text{s}^{-1}$), equivalent to $c\\gamma$.\n- $x^0$: The zeroth contravariant spacetime coordinate, defined as $x^0 = c t$ where $t$ is the coordinate time in the chosen inertial reference frame.\n- $\\tau$: The proper time along the particle's timelike worldline, an invariant scalar given by $c d\\tau = \\sqrt{\\eta_{\\mu\\nu} dx^\\mu dx^\\nu}$.\n- $\\frac{d}{d\\tau}$: The differential operator representing differentiation with respect to proper time.",
+        "limits_and_boundary": "In the non-relativistic limit where spatial velocity $v \\ll c$, the Lorentz factor $\\gamma \\to 1$, leading to $U^0 \\to c$. In the ultra-relativistic limit $v \\to c$, $\\gamma \\to \\infty$, causing $U^0 \\to \\infty$. For massless particles (e.g., photons), $d\\tau = 0$, rendering $U^0$ undefined unless an affine parameter $\\lambda$ is used.",
+        "symmetry_origin": "Rooted in the Poincaré symmetry (Lorentz invariance) and the pseudo-Riemannian geometry of spacetime, where the worldline tangent vector is normalized under the Minkowski metric $\\eta_{\\mu\\nu} U^\\mu U^\\nu = c^2$.",
         "unit_system": "SI",
         "derivation_type": "SPECIAL_CASE",
         "equation_family": "relativistic-kinematics",
         "semantic_variables": {
             "U^0": {
-                "name": "Time Component of Contravariant Four-Velocity",
+                "name": "Time component of four-velocity",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The temporal component of the four-velocity vector, representing the rate of change of the time coordinate with respect to proper time. It is equal to $\\gamma c$."
+                "description": "Zeroth contravariant component of the relativistic four-velocity"
             },
             "x^0": {
-                "name": "Time Coordinate",
+                "name": "Zeroth spacetime coordinate",
                 "type": "variable",
                 "unit": "m",
-                "description": "The zeroth component of the four-position vector, typically defined as $ct$, where $c$ is the speed of light and $t$ is the coordinate time."
+                "description": "Temporal position coordinate in spacetime, defined as $ct$"
             },
             "\\tau": {
-                "name": "Proper Time",
+                "name": "Proper time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The time measured by a clock moving with the object, an invariant scalar quantity in spacetime."
+                "description": "Lorentz-invariant time measured by a clock comoving with the particle"
             },
-            "d/d\\tau": {
-                "name": "Proper Time Derivative Operator",
+            "\\frac{d}{d\\tau}": {
+                "name": "Proper time derivative operator",
                 "type": "operator",
-                "unit": "1/s",
-                "description": "The derivative with respect to proper time, indicating the rate of change of a quantity as measured in the object's instantaneous rest frame."
-            },
-            "\\gamma": {
-                "name": "Lorentz Factor",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "A factor that quantifies relativistic effects, defined as $\\gamma = (1 - v^2/c^2)^{-1/2}$, where $v$ is the object's speed."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The speed of light in vacuum, a fundamental physical constant approximately $2.998 \\times 10^8$ m/s."
+                "unit": "s^-1",
+                "description": "Rate of change with respect to proper time"
             }
         },
         "equation": "U^0 = \\frac{dx^0}{d\\tau}",
         "status": "published",
-        "parent_formula_id": "relativistic-four-velocity-definition-410796fd",
+        "parent_formula_id": "covariant-velocity-410796fd",
         "subcomponents": [
+            "contravariant-spacetime-position-four-vector-component-44ac717d",
             "time-component-four-velocity",
-            "time-component-of-four-velocity-at-rest-57363db3",
-            "time-component-of-four-velocity-non-relativistic-limit-363eb97a"
+            "time-component-of-four-velocity-at-rest-57363db3"
         ],
         "id": "time-component-of-four-velocity-92126957",
-        "intuitive_summary": "The time component of an object's four-velocity tells us how quickly its own internal clock (proper time) is advancing relative to a coordinate clock in a given reference frame. It's a direct measure of time dilation, showing how much slower an object's clock appears to run from an external perspective as its speed increases."
+        "intuitive_summary": "The time component of four-velocity reflects how quickly coordinate time elapses relative to an object's own wristwatch, scaling directly with the relativistic time dilation factor."
     },
     "electron-antineutrino-symbol-7dd3ed9a": {
         "title": "Electron Antineutrino Symbol ($\bar{\nu}_e$)",

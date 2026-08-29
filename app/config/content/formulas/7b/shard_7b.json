@@ -506,38 +506,38 @@
         "equation": "d\\mathbf{a} = \\hat{\\mathbf{n}} da",
         "semantic_variables": {
             "d\\mathbf{a}": {
-                "name": "Differential area vector",
+                "name": "differential area vector",
                 "type": "variable",
                 "unit": "m^2",
-                "description": "An infinitesimal vector representing a segment of a surface, with magnitude equal to the area and direction normal to the surface."
+                "description": "Oriented differential surface element vector"
             },
             "\\hat{\\mathbf{n}}": {
-                "name": "Unit normal vector",
+                "name": "unit normal vector",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A vector of magnitude one that is perpendicular to the surface at a given point."
+                "description": "Unit vector perpendicular to the local tangent plane of the surface"
             },
             "da": {
-                "name": "Scalar differential area",
+                "name": "scalar differential area element",
                 "type": "variable",
                 "unit": "m^2",
-                "description": "The infinitesimal scalar magnitude of the area element."
+                "description": "Scalar magnitude of the infinitesimal surface area element"
             }
         },
-        "interpretation": "In the equation $d\\mathbf{a} = \\hat{\\mathbf{n}} da$, the term $d\\mathbf{a}$ represents the differential area vector. This is a vector quantity whose magnitude is the infinitesimal scalar area element $da$, and whose direction is given by the unit normal vector $\\hat{\\mathbf{n}}$. The unit normal vector $\\hat{\\mathbf{n}}$, by definition, has a magnitude of one (i.e., $|\\hat{\\mathbf{n}}| = 1$) and serves exclusively to specify the orientation of the area element in three-dimensional space. The product of the scalar magnitude $da$ and the direction vector $\\hat{\\mathbf{n}}$ therefore fully specifies the differential area vector. This vector representation is essential for calculating the flux of vector fields (e.g., electric field $\\mathbf{E}$, magnetic field $\\mathbf{B}$) through surfaces, as seen in surface integrals of the form $\\int_S \\mathbf{F} \\cdot d\\mathbf{a}$.",
-        "symmetry_origin": "This is a fundamental geometric definition that facilitates the formulation of physical laws in a coordinate-invariant manner. It allows quantities like flux to be defined based on the intrinsic properties of a surface and a vector field, independent of the chosen coordinate system.",
-        "limits_and_boundary": "This formula is exact in the differential limit where the area element $da \\to 0$. For any finite, curved patch of a surface, the corresponding vector area $\\mathbf{A} = \\int_S d\\mathbf{a}$ is found by integrating these infinitesimal vectors. The approximation $\\Delta \\mathbf{A} \\approx \\hat{\\mathbf{n}} \\Delta A$ for a finite area $\\Delta A$ is only valid when the surface patch is approximately flat.",
+        "interpretation": "In the relation $d\\mathbf{a} = \\hat{\\mathbf{n}} da$, $d\\mathbf{a}$ denotes the differential area vector with dimension $[\\text{L}^2]$. The term $\\hat{\\mathbf{n}}$ is a dimensionless unit vector ($|\\hat{\\mathbf{n}}| = 1$) orthogonal to the tangent plane of the surface at the given point, with its sign dictated by surface orientation conventions (such as the right-hand rule for open surfaces or pointing outward for closed boundaries). The scalar factor $da$ represents the differential Riemannian metric area measure on the 2-manifold. This vector formulation allows surface flux integrals of an arbitrary vector field $\\mathbf{F}$ to be written compactly as $\\iint_S \\mathbf{F} \\cdot d\\mathbf{a}$.",
+        "symmetry_origin": "Invariance under $SO(3)$ spatial rotations and translations (Euclidean isometry). The orientation behavior reflects parity transformation $P$, where $d\\mathbf{a}$ transforms as a pseudovector or oriented 2-form under improper orthogonal transformations $O(3)$.",
+        "limits_and_boundary": "In the limit of vanishing surface curvature ($R \\to \\infty$), $\\hat{\\mathbf{n}}$ becomes spatially uniform, reducing surface integration to planar Cartesian integration $dx \\, dy$. For a closed surface $S = \\partial V$, the total geometric vector area vanishes identically: $\\oint_{\\partial V} d\\mathbf{a} = \\mathbf{0}$.",
         "status": "platinum",
-        "conceptual_definition": "The differential area vector $d\\mathbf{a}$ is defined as the product of a scalar infinitesimal area element $da$ and a unit vector $\\hat{\\mathbf{n}}$ that is locally perpendicular (normal) to the surface. This construction is fundamental for defining the flux of a vector field across a surface through surface integrals.",
-        "intuitive_summary": "Imagine a tiny, flat tile on a curved surface. The area of the tile is $da$. The direction it's facing is given by a little arrow $\\hat{\\mathbf{n}}$ sticking straight out from it. The area vector $d\\mathbf{a}$ combines the tile's size ($da$) and its orientation ($\\hat{\\mathbf{n}}$) into a single vector quantity.",
+        "conceptual_definition": "The differential area vector $d\\mathbf{a}$ represents an oriented infinitesimal surface element in three-dimensional Euclidean space. It is formally constructed as the product of the scalar differential area $da$ and the outward or chosen unit normal vector $\\hat{\\mathbf{n}}$, satisfying $d\\mathbf{a} = \\hat{\\mathbf{n}} da$. In parameterized surface geometry $\\mathbf{r}(u, v)$, it corresponds to the exterior vector product $d\\mathbf{a} = \\left( \\frac{\\partial \\mathbf{r}}{\\partial u} \\times \\frac{\\partial \\mathbf{r}}{\\partial v} \\right) du \\, dv$, serving as the fundamental geometric integration measure for vector field flux and boundary integrals in electrodynamics, fluid mechanics, and differential geometry.",
+        "intuitive_summary": "A flat patch of area has both an extent and a tilt in space; the differential area vector packages both its scalar footprint and its perpendicular orientation into a single geometric arrow.",
         "subcomponents": [
-            "standard-model-base-9b583e86",
+            "arrow-origin-3ae63146",
+            "the-plus-minus-rule-a1bb7389",
             "solid-angle-3a093ab0",
-            "net-loss-d2f14df6",
-            "steradian-base-12e9629e"
+            "flux-of-curl-through-a-surface-dcb3a24e"
         ],
-        "description": "Defines the differential area vector, an infinitesimal vector element of a surface, whose magnitude is the area and whose direction is normal to the surface.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the infinitesimal directed surface element vector, possessing a magnitude equal to the scalar area element and directed along the local unit normal to the surface.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "baryogenesis-tie-7cdb64d2": {
         "title": "Experimental Lower Bound on Proton Lifetime",
@@ -1329,32 +1329,26 @@
     "radial-velocity-limit": {
         "title": "Observational Threshold for Radial Velocity Exoplanet Detection",
         "equation": "P_{\\text{RV}} > 20",
-        "conceptual_definition": "The radial velocity method for exoplanet detection measures the periodic Doppler shift in a star's spectrum caused by its orbital motion around the common barycenter with a companion planet. The semi-amplitude of this velocity variation, denoted $P_{\\text{RV}}$ (or more commonly $K$), must surpass a certain threshold to be reliably distinguished from noise. The inequality $P_{\\text{RV}} > 20 \\, \\text{m/s}$ represents a common, though technology-dependent, observational limit for confident detection with high-precision spectrographs.",
-        "intuitive_summary": "Imagine trying to spot the tiny wobble of a large spinning top caused by a fly buzzing around it. The 'wobble' is the star's motion, and the 'fly' is the planet. If the wobble is too small, you can't be sure if it's real or just you blinking. This formula sets a practical 'minimum wobble size' (20 meters per second) that we can confidently measure with our current telescopes to confirm a planet's existence.",
-        "interpretation": "In this inequality, $P_{\\text{RV}}$ represents the semi-amplitude of the star's radial velocity variation, which is the maximum speed of the star towards or away from the observer along the line of sight, induced by the gravitational pull of an orbiting exoplanet. It is often denoted as $K$ in the literature. The inequality $P_{\\text{RV}} > 20 \\, \\text{m/s}$ establishes an empirical threshold. A signal with an amplitude greater than 20 meters per second is generally considered strong enough to be confidently attributed to a planetary companion, rather than being dismissed as instrumental noise or stellar 'jitter' (e.g., from starspots or convection). This value is not a fundamental constant of nature but a benchmark reflecting the state-of-the-art precision of spectrographs like HARPS or ESPRESSO in the early 21st century. As technology improves, this threshold value may decrease.",
-        "symmetry_origin": "Not applicable; this is an empirical, technology-dependent observational threshold, not a fundamental law derived from a symmetry principle.",
-        "limits_and_boundary": "The detectability of a planet via the radial velocity method is a function of the planet's mass ($m_p$), its orbital period ($P$), the star's mass ($M_*$), and the orbital inclination ($i$). The semi-amplitude $P_{\\text{RV}}$ is proportional to $m_p \\sin(i) / \\sqrt{M_*^2 P}$. Therefore, for a fixed detection threshold, massive planets in close-in orbits (large $m_p$, small $P$) are easiest to detect. As the inclination $i \\to 0$ (a face-on orbit), the radial velocity signature vanishes ($P_{\\text{RV}} \\to 0$), rendering the planet undetectable by this method regardless of its mass.",
+        "conceptual_definition": "In high-precision Doppler spectroscopy, the reflex motion of a host star induced by an orbiting companion manifests as a periodic variation in radial velocity with semi-amplitude $K$ (or $P_{\\text{RV}}$). The empirical criterion $P_{\\text{RV}} > 20\\,\\text{m/s}$ demarcates the observational boundary where orbital Doppler signatures can be routinely separated from intrinsic astrophysical noise (e.g., stellar granulation, magnetic activity, p-mode pulsations) and moderate-dispersion spectrograph calibration limits without requiring extensive Gaussian process activity filtering.",
+        "intuitive_summary": "To unequivocally claim an exoplanet discovery with standard Doppler methods, the planet's gravitational tug must pull the star fast enough—at least roughly 20 meters per second—to stand clearly above the boiling noise of the star's own surface.",
+        "interpretation": "The variable $P_{\\text{RV}}$ denotes the stellar radial velocity semi-amplitude $K$, measured in $\\text{m/s}$, which corresponds to half the peak-to-peak Doppler shift along the observer's line of sight. The value $20\\,\\text{m/s}$ serves as a practical observational threshold for detection confidence, reflecting the signal-to-noise barrier presented by astrophysical stellar jitter and conventional spectrographic error budgets.",
+        "symmetry_origin": "Galilean invariance and the Doppler effect under line-of-sight projection of classical orbital mechanics.",
+        "limits_and_boundary": "In the limit $M_p \\to 0$ or $a \\to \\infty$, the reflex velocity amplitude vanishes ($P_{\\text{RV}} \\to 0$), rendering the signal completely undetectable within noise. As spectrograph precision improves (e.g., extreme precision radial velocity instruments where $\\sigma_{\\text{inst}} < 0.1\\,\\text{m/s}$) and stellar activity models advance, the practical detection threshold decreases asymptotically toward fundamental astrophysical jitter floors.",
         "status": "platinum",
         "semantic_variables": {
             "P_{\\text{RV}}": {
-                "name": "Radial Velocity Semi-Amplitude",
+                "name": "Radial velocity semi-amplitude",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The maximum speed of a star along the observer's line-of-sight, induced by the gravitational pull of an orbiting body. Often denoted as K."
-            },
-            "20": {
-                "name": "Observational Threshold",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "An empirical benchmark for the minimum detectable radial velocity semi-amplitude, representing a typical noise floor for high-precision spectrographs."
+                "description": "The semi-amplitude of the periodic stellar Doppler reflex velocity along the line of sight"
             }
         },
-        "description": "A practical, empirical benchmark in observational astronomy stating that a stellar radial velocity semi-amplitude exceeding 20 m/s is typically required for the confident detection of an orbiting exoplanet against instrumental noise and stellar activity.",
-        "derivation_type": "DEFINITION",
+        "description": "An empirical detection criterion stating that a stellar radial velocity semi-amplitude must typically exceed 20 m/s for robust, unambiguous exoplanet identification above stellar jitter and baseline instrumental noise in standard spectroscopic surveys.",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
         "subcomponents": [
-            "gravitating-light-6fa7688f",
-            "radial-shift-0b38f1d1",
-            "thermal-limit-86060feb"
+            "velocity-threshold",
+            "technical-limit-f084eca9",
+            "detection-probability-limit-6fb20026"
         ]
     },
     "density-evolution-scale-factor": {
@@ -1459,53 +1453,36 @@
         ]
     },
     "vector-component": {
-        "title": "Kaluza-Klein Vector Component Definition",
+        "title": "Kaluza-Klein Vector Component Definition in Dimensional Reduction",
         "equation": "\\chi^{a4} = u^a_L",
-        "conceptual_definition": "In theories with extra spatial dimensions, this equation provides a definitional ansatz for a component of a higher-dimensional field, $\\chi$. It identifies the 'mixed' component $\\chi^{a4}$, which has one index $a$ in 4D spacetime and one index '4' in the extra dimension, with the component $u^a_L$ of a standard 4D vector field. The subscript $L$ typically denotes a left-chiral field.",
-        "intuitive_summary": "Imagine a 5D world where one dimension is curled up into a tiny circle. This equation states that the part of the 5D gravitational field that points from our 4D world into that tiny fifth dimension looks and acts just like a familiar 4D force field (like electromagnetism).",
-        "interpretation": "This equation is an explicit component definition from a dimensional reduction scheme. The term $\\chi^{a4}$ represents a component of a higher-dimensional field $\\chi$. The index $a$ is a contravariant spacetime index ($a=0,1,2,3$), while the index '4' specifies the component along a fifth, compactified dimension. The term $u^a_L$ is the $a$-th contravariant component of a four-dimensional vector field $u_L$. The subscript $L$ indicates that this is a left-chiral field, meaning it transforms under a specific representation of the Lorentz group. The equality establishes that the mixed components of the higher-dimensional field manifest as a vector field in the lower-dimensional effective theory.",
-        "symmetry_origin": "This definition arises from geometric invariance. It is part of a Kaluza-Klein decomposition which assumes the higher-dimensional spacetime manifold has a product structure like $M_4 \\times K$, where $K$ is a compact internal manifold. Symmetries of the internal manifold $K$ (e.g., a $U(1)$ isometry for a circle) are reinterpreted as gauge symmetries for the resulting 4D fields like $u^a_L$.",
-        "limits_and_boundary": "This is a definitional identity within a specific theoretical framework, not a dynamical equation with conventional limits. Its validity is tied to the assumptions of the dimensional reduction scheme. In the limit where the compactification radius $R$ of the extra dimension goes to zero ($R \\to 0$), the massive Kaluza-Klein excitation modes associated with the extra dimension become infinitely heavy and decouple, leaving only the 'zero-modes' like $u^a_L$. This equation defines that massless zero-mode.",
+        "conceptual_definition": "In higher-dimensional field theories and Grand Unified Theory (GUT) multiplet embeddings, a tensor or multiplet field $\\chi^{MN}$ defined over $D > 4$ spacetime dimensions decomposes into four-dimensional representations under the Lorentz subgroup $SO(1,3)$. The component $\\chi^{a4}$ with one four-dimensional Lorentz index $a \\in \\{0, 1, 2, 3\\}$ and one internal compactified index along the fifth dimension (index $4$) manifests in effective four-dimensional spacetime as a left-chiral vector field $u^a_L$.",
+        "intuitive_summary": "When extra dimensions are compactified, mixed components of higher-dimensional tensors with one leg in 4D spacetime and one leg along an extra dimension appear to a 4D observer as vector gauge fields or vector multiplets.",
+        "interpretation": "The symbol $\\chi^{a4}$ denotes the mixed contravariant component of the higher-dimensional tensor/multiplet field $\\chi$, where $a \\in \\{0,1,2,3\\}$ is a four-dimensional spacetime index and $4$ denotes the extra compact coordinate index. The quantity $u^a_L$ represents the $a$-th contravariant spacetime component of a four-dimensional left-handed vector field $u_L$, embodying the dimensional reduction mapping from the higher-dimensional manifold to the effective 4D Minkowski spacetime.",
+        "symmetry_origin": "Originates from the breaking and decomposition of higher-dimensional spacetime/internal symmetry $SO(1,D-1)$ into $SO(1,3) \\times U(1)$ or $SO(1,3) \\times G_{\\text{gauge}}$ via compactification.",
+        "limits_and_boundary": "In the decompactification limit where the compactification radius $R \\to \\infty$, $\\chi^{a4}$ restores full higher-dimensional Lorentz invariance and cannot be treated as an isolated 4D vector multiplet. In the zero-radius limit $R \\to 0$, massive Kaluza-Klein modes decouple, leaving only the massless chiral zero mode $u^a_L$.",
         "status": "platinum",
         "semantic_variables": {
             "\\chi^{a4}": {
-                "name": "Higher-Dimensional Field Component",
+                "name": "Mixed higher-dimensional field component",
                 "type": "variable",
-                "unit": "Context-dependent",
-                "description": "A component of a higher-dimensional tensor field $\\chi$, where 'a' is a 4D spacetime index and '4' indicates the extra (fifth) dimension."
+                "unit": "m^{-1}",
+                "description": "Contravariant component of the higher-dimensional field along 4D spacetime index $a$ and fifth dimension index $4$"
             },
             "u^a_L": {
-                "name": "Left-Chiral Vector Field Component",
+                "name": "Left-chiral four-dimensional vector field component",
                 "type": "variable",
-                "unit": "Context-dependent",
-                "description": "The 'a'-th contravariant component of a left-chiral four-vector field $u_L$. The subscript 'L' denotes its left-handed chirality."
-            },
-            "a": {
-                "name": "Spacetime Index",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A contravariant index running over the four spacetime dimensions (0, 1, 2, 3)."
-            },
-            "4": {
-                "name": "Extra Dimension Index",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "An index representing the fifth dimension in a Kaluza-Klein or similar higher-dimensional theory."
-            },
-            "L": {
-                "name": "Chirality Label",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "A subscript label indicating the left-chiral (Left-handed) projection of a field."
+                "unit": "m^{-1}",
+                "description": "Contravariant spacetime component of the left-handed four-dimensional vector field"
             }
         },
-        "description": "Defines a component of a higher-dimensional field in terms of a four-dimensional vector field, a foundational step in Kaluza-Klein compactification where extra dimensions give rise to gauge fields.",
+        "description": "Defines the mixed higher-dimensional field component along a compact spatial dimension as an effective four-dimensional chiral vector field in a Kaluza-Klein reduction scheme.",
         "derivation_type": "DEFINITION",
         "subcomponents": [
             "axial-vector-component",
-            "contravariant-killing-vector-field-component-227b8503",
-            "contravariant-spacetime-position-four-vector-component-44ac717d"
-        ]
+            "tensor-component",
+            "four-vector-component-decomposition-81af34dc"
+        ],
+        "parent_formula_id": "axial-vector-component"
     },
     "quantum-mutual-information-triangle-inequality": {
         "title": "Monogamy Inequality for Quantum Mutual Information",

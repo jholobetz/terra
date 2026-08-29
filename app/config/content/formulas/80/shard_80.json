@@ -159,46 +159,47 @@
                 "name": "Kinetic Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total kinetic energy of the system."
+                "description": "Total kinetic energy of the mechanical system."
             },
-            "g_{ij}": {
-                "name": "Metric Tensor Component",
+            "g_{ij}(q)": {
+                "name": "Configuration Metric Tensor Component",
                 "type": "variable",
-                "unit": "Varies (Generalized Inertia)",
-                "description": "The (i,j)-th component of the metric tensor of the configuration manifold, which is a function of the generalized coordinates $q$."
-            },
-            "q^i": {
-                "name": "Generalized Coordinate",
-                "type": "variable",
-                "unit": "Varies (e.g., m, rad)",
-                "description": "The i-th generalized coordinate describing a degree of freedom of the system."
+                "unit": "kg or kg m^2 (coordinate-dependent)",
+                "description": "Components of the Riemannian metric tensor on the configuration manifold representing system inertia."
             },
             "\\dot{q}^i": {
-                "name": "Generalized Velocity",
+                "name": "Generalized Velocity i",
                 "type": "variable",
-                "unit": "Varies (e.g., m/s, rad/s)",
-                "description": "The time derivative of the i-th generalized coordinate, $dq^i/dt$."
+                "unit": "m/s or rad/s (coordinate-dependent)",
+                "description": "Time rate of change of the i-th generalized coordinate."
             },
-            "\\sum_{i,j}": {
-                "name": "Summation",
-                "type": "operator",
-                "unit": "Dimensionless",
-                "description": "A double summation over the indices i and j, from 1 to the number of degrees of freedom."
+            "\\dot{q}^j": {
+                "name": "Generalized Velocity j",
+                "type": "variable",
+                "unit": "m/s or rad/s (coordinate-dependent)",
+                "description": "Time rate of change of the j-th generalized coordinate."
+            },
+            "q": {
+                "name": "Generalized Coordinate State Vector",
+                "type": "variable",
+                "unit": "dimensionless (tuple)",
+                "description": "Configuration space vector of generalized coordinates parameterizing the system."
             }
         },
-        "interpretation": "The formula $T = \\frac{1}{2} \\sum_{i,j} g_{ij}(q) \\dot{q}^i \\dot{q}^j$ represents the kinetic energy of a system in the language of generalized coordinates. Here, $T$ denotes the kinetic energy, measured in Joules (J). The summation $\\sum_{i,j}$ is performed over all pairs of indices $i$ and $j$, which run from 1 to $n$, where $n$ is the number of degrees of freedom of the system. The term $g_{ij}(q)$ represents the components of the metric tensor in the generalized coordinate system $q = (q^1, q^2, ..., q^n)$. These components generally depend on the configuration of the system, denoted by the generalized coordinates $q$. The metric tensor defines the geometry of the configuration space and is derived from the Cartesian masses and coordinate transformations. The term $\\dot{q}^i$ represents the time derivative of the generalized coordinate $q^i$, which is the generalized velocity. Its units depend on the nature of $q^i$ (e.g., m/s for a length, rad/s for an angle). The entire summation, multiplied by $\\frac{1}{2}$, calculates the total kinetic energy, which is fundamentally a quadratic function of the generalized velocities.",
-        "symmetry_origin": "The structure of the kinetic energy term is a consequence of the geometric properties of the configuration space, which is assumed to be a Riemannian manifold. The expression is invariant under arbitrary point transformations (diffeomorphisms) of the generalized coordinates, reflecting the principle that the laws of physics should not depend on the choice of coordinate system. When the Lagrangian $L=T-V$ has no explicit time dependence, time translation invariance leads to the conservation of energy via Noether's theorem.",
-        "limits_and_boundary": "This is a non-relativistic formula and is valid for velocities much less than the speed of light ($v \\ll c$). In the limit of zero velocity, $\\dot{q}^i \\to 0$, the kinetic energy correctly goes to zero, $T \\to 0$. This is a classical mechanics formula; its quantum mechanical analogue is the Laplace-Beltrami operator, $-\\frac{\\hbar^2}{2} \\nabla^2$, which acts on wavefunctions on the configuration manifold.",
+        "interpretation": "In the expression $T = \\frac{1}{2} \\sum_{i,j} g_{ij}(q) \\dot{q}^i \\dot{q}^j$, the quantity $T$ represents the total kinetic energy in Joules ($\\mathrm{J}$). The indices $i$ and $j$ run over all generalized degrees of freedom from $1$ to $n$. The components $g_{ij}(q)$ define the symmetric, positive-definite mass-metric tensor, which encodes both the geometric constraints and inertia distributions as functions of the generalized coordinates $q = (q^1, \\dots, q^n)$. The quantities $\\dot{q}^i$ and $\\dot{q}^j$ are the generalized velocities representing the time derivatives $\\frac{d q^i}{dt}$ and $\\frac{d q^j}{dt}$.",
+        "symmetry_origin": "Diffeomorphism invariance on the configuration manifold $Q$ and temporal translation symmetry via Noether's theorem for scleronomous constraints.",
+        "limits_and_boundary": "In the limit of stationary coordinates $\\dot{q}^i \\to 0$, $T \\to 0$. For non-relativistic limits where particle velocities $v \\ll c$, the quadratic approximation is exact; relativistic corrections require the Lorentz factor $\\gamma$. When Cartesian uncoupled coordinates are chosen, $g_{ij}(q) \\to m_i \\delta_{ij}$, recovering standard Newtonian kinetic energy.",
         "status": "platinum",
-        "conceptual_definition": "In Lagrangian mechanics, the state of a system with $n$ degrees of freedom is described by $n$ generalized coordinates $q^i$. The configuration space of the system can be viewed as an $n$-dimensional Riemannian manifold. The kinetic energy $T$ is defined as half the squared norm of the velocity vector $(\\dot{q}^1, ..., \\dot{q}^n)$ with respect to the manifold's metric tensor $g_{ij}(q)$. This geometric formulation provides a coordinate-invariant expression for kinetic energy.",
-        "intuitive_summary": "Imagine a bead sliding on a curved wire. Its kinetic energy depends not just on how fast it moves along the wire, but also on its position, because the 'path' itself dictates the relationship between speed and energy. The term $g_{ij}(q)$ acts like a position-dependent mass, encoding the geometry of the system's possible configurations (the 'curved wire') and determining how motion translates into energy.",
+        "conceptual_definition": "For a holonomic, scleronomous dynamical system with $n$ degrees of freedom, the configuration space forms a Riemannian manifold $Q$. The kinetic energy $T$ is defined as half the Riemannian inner product on the tangent bundle $TQ$, expressed locally as $T = \\frac{1}{2} \\sum_{i,j} g_{ij}(q) \\dot{q}^i \\dot{q}^j$, where $g_{ij}(q)$ represents the mass metric tensor induced by embedding the physical particle coordinates into the generalized coordinate system.",
+        "intuitive_summary": "Kinetic energy measures the geometric length-squared of the generalized velocity vector as measured by the system's mass metric tensor across the curved configuration space.",
         "subcomponents": [
+            "metric-tensor-generalized-coordinates",
             "velocity-generalized-coordinates",
-            "eigenvalues-7715b288",
-            "wobble-rule-9c43eda2"
+            "kinetic-metric-tensor-97fd28a6"
         ],
-        "description": "Defines the kinetic energy of a mechanical system as a quadratic form of its generalized velocities, where the coefficients are the components of the metric tensor on the configuration space manifold.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the classical kinetic energy of a scleronomous mechanical system as a positive-definite quadratic form of generalized velocities, parameterized by the Riemannian metric tensor of the configuration manifold.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "velocity-generalized-coordinates"
     },
     "stability-law-9709763d": {
         "title": "Temperature-Independent Quantized Property",
@@ -674,40 +675,41 @@
     "equation-of-state-parameter": {
         "title": "Dimensionless Equation of State Parameter",
         "equation": "w = p/\\rho",
-        "conceptual_definition": "The equation of state parameter, $w$, is defined as the dimensionless ratio of the pressure $p$ exerted by a perfect fluid to its energy density $\\rho$. This parameter is fundamental in the Friedmann equations for describing the dynamics of the universe, as it determines how the energy density of a given cosmic component evolves with the expansion of space.",
-        "intuitive_summary": "The parameter $w$ tells us how 'springy' a substance is on a cosmic scale. A value of zero means it's like pressureless dust, a positive value means it pushes back like a hot gas, and a negative value means it has a strange, repulsive 'tension' that drives cosmic acceleration.",
-        "interpretation": "The equation of state parameter $w$ is defined as the ratio of pressure $p$ to energy density $\\rho$. The pressure $p$ is typically measured in Pascals ($Pa$), which is equivalent to $N/m^2$ or $J/m^3$. The energy density $\\rho$ is measured in Joules per cubic meter ($J/m^3$). Therefore, $w$ is a dimensionless quantity. A high value of $w$ means that the pressure is large compared to the energy density, which often indicates a system with significant internal kinetic energy or repulsive interactions. Conversely, a low value implies that pressure is small relative to energy density, suggesting a system dominated by potential energy or rest mass. In the context of the universe's expansion, different components have characteristic values of $w$: non-relativistic matter (like dust or galaxies) has $w \\approx 0$, relativistic particles (like photons or neutrinos) have $w = 1/3$, and a cosmological constant (representing vacuum energy) has $w = -1$.",
-        "symmetry_origin": "Derived from the assumption of a perfect fluid, whose stress-energy tensor $T^{\\mu\\nu}$ is constrained by the cosmological principle (homogeneity and isotropy), a fundamental spacetime symmetry in the Friedmann-Lemaître-Robertson-Walker (FLRW) metric.",
-        "limits_and_boundary": "For non-relativistic matter ('dust'), where kinetic energy is negligible compared to rest mass energy ($k_B T \\ll mc^2$), the pressure $p \\to 0$, leading to $w \\to 0$. For ultra-relativistic matter ('radiation'), where rest mass is negligible ($k_B T \\gg mc^2$), the pressure is $p = \\rho/3$, yielding $w = 1/3$. For a cosmological constant, the pressure is negative and equal in magnitude to the energy density, $p = -\\rho$, resulting in $w = -1$. Values of $w < -1$ describe 'phantom energy' and violate the null energy condition, leading to exotic cosmological scenarios like the Big Rip.",
+        "conceptual_definition": "The cosmological equation of state parameter $w$ characterizes the thermodynamic behavior of a cosmic fluid component by specifying the linear proportionality between its isotropic pressure $p$ and its energy density $\rho$ (or $\rho c^2$ in standard SI units). It governs the cosmological dilution rate of energy density via the continuity equation $\\dot{\rho} + 3H(1 + w)\rho = 0$, directly dictating the cosmic expansion history through the Friedmann equations.",
+        "intuitive_summary": "The parameter $w$ measures how effectively a medium exerts outward pressure compared to its stored energy, determining whether the cosmic expansion decelerates ($w > -1/3$) or accelerates ($w < -1/3$).",
+        "interpretation": "The equation of state parameter $w$ is defined as the ratio $w = p/\rho$. The pressure $p$ has dimensions of force per unit area ($\\mathrm{Pa} = \\mathrm{N/m^2} = \\mathrm{J/m^3}$), while the volumetric energy density $\rho$ is expressed in energy per unit volume ($\\mathrm{J/m^3}$), rendering $w$ dimensionless. Standard cosmological regimes correspond to characteristic values: non-relativistic dust/cold matter has negligible kinetic pressure ($w = 0$), ultra-relativistic particles and radiation have $w = 1/3$, stiff matter has $w = 1$, and vacuum energy/cosmological constant exhibits negative pressure yielding $w = -1$. Regimes where $w < -1$ correspond to phantom dark energy, leading to super-acceleration.",
+        "symmetry_origin": "Rooted in the spatial isotropy and homogeneity of spacetime described by the Friedmann-Lemaître-Robertson-Walker (FLRW) metric, which constrains the stress-energy-momentum tensor of a cosmological fluid to the diagonal perfect fluid form $T^{\\mu}_{\nu} = \\mathrm{diag}(-\rho, p, p, p)$.",
+        "limits_and_boundary": "In the non-relativistic limit ($v \\ll c$, $T \to 0$), kinetic pressure vanishes compared to rest-mass energy density, yielding $w \to 0$. In the ultra-relativistic limit ($v \to c$, $m \to 0$), conformal invariance of the electromagnetic stress-energy tensor enforces a traceless tensor $T^{\\mu}_{\\mu} = 0$, giving $3p - \rho = 0 \\implies w = 1/3$. The dominant energy condition (DEC) establishes the stable boundary $-1 \\le w \\le 1$, where $w = 1$ matches the speed of sound $c_s = c$.",
         "status": "platinum",
         "semantic_variables": {
             "w": {
-                "name": "Equation of State Parameter",
+                "name": "equation of state parameter",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "A dimensionless quantity that relates the pressure of a fluid to its energy density."
+                "unit": "dimensionless",
+                "description": "Dimensionless ratio of isotropic pressure to volumetric energy density"
             },
             "p": {
-                "name": "Pressure",
+                "name": "isotropic pressure",
                 "type": "variable",
-                "unit": "Pascals (Pa) or Joules per cubic meter (J/m³)",
-                "description": "The force exerted per unit area by the fluid."
+                "unit": "Pa",
+                "description": "Isotropic hydrostatic pressure exerted by the cosmic fluid"
             },
             "\\rho": {
-                "name": "Energy Density",
+                "name": "volumetric energy density",
                 "type": "variable",
-                "unit": "Joules per cubic meter (J/m³)",
-                "description": "The amount of energy stored in a given system or region of space per unit volume. In this context, it includes both mass-energy and kinetic energy."
+                "unit": "J/m^3",
+                "description": "Total volumetric energy density of the fluid component"
             }
         },
         "subcomponents": [
             "dark-energy-equation-of-state-e30b2d17",
-            "equation-of-state-parameter-is-zero",
             "equation-of-state-for-vacuum-energy-7f06ba88",
-            "pressure-of-relativistic-fluid-ed74859c"
+            "pressure-of-relativistic-fluid-ed74859c",
+            "cosmic-budget-bad1521a"
         ],
-        "description": "A dimensionless parameter, denoted by $w$, that characterizes the relationship between the pressure $p$ and the energy density $\\rho$ of a perfect fluid, particularly in cosmology.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the dimensionless equation of state parameter $w$ relating the isotropic pressure $p$ to the volumetric energy density $\rho$ of a cosmic perfect fluid in natural units ($c = 1$).",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "equation-of-state-parameter-definition-ea2cf29b"
     },
     "minkowski-spacetime-coordinates": {
         "title": "Spacetime Coordinates in Minkowski Space",

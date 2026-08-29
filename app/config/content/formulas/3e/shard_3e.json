@@ -921,99 +921,103 @@
     "epistemic-identity-1-6e7c6fab": {
         "title": "Bayesian Ontic-State Probability Update",
         "equation": "p(\\lambda | M = m) = \\frac{P(M = m | \\lambda) p(\\lambda)}{\\int_{\\Lambda} P(M = m | \\lambda') p(\\lambda') d\\lambda'}",
-        "interpretation": "The equation calculates the posterior probability distribution, $p(\\lambda | M = m)$, which represents the updated probability of a specific ontic state $\\lambda$ given that a measurement $M$ yielded the outcome $m$. The numerator, $P(M = m | \\lambda) p(\\lambda)$, is the product of two components: the likelihood function, $P(M = m | \\lambda)$, which is the probability of observing outcome $m$ if the true underlying ontic state is $\\lambda$, and the prior probability distribution, $p(\\lambda)$, which represents our initial belief about the distribution of ontic states before the measurement. The denominator, $\\int_{\\Lambda} P(M = m | \\lambda') p(\\lambda') d\\lambda'$, is the marginal likelihood, often called the 'evidence'. It is a normalization constant found by integrating the numerator over all possible ontic states $\\lambda'$ in the state space $\\Lambda$. This ensures that the posterior distribution $p(\\lambda | M = m)$ is a valid probability distribution, i.e., its integral over all $\\lambda$ equals one.",
-        "symmetry_origin": "This formula is not derived from a physical symmetry in the sense of Noether's theorem. It is a fundamental principle of probabilistic inference and information theory, expressing the conservation and consistent updating of information in a logical, rather than physical, system.",
-        "limits_and_boundary": "If the prior distribution $p(\\lambda)$ is zero for a particular state $\\lambda_0$, the posterior $p(\\lambda_0 | M = m)$ will also be zero, regardless of the measurement outcome; a hypothesis with zero prior probability cannot be revived. Conversely, if the likelihood $P(M = m | \\lambda)$ is sharply peaked around a specific $\\lambda^*$, a sufficiently informative measurement will cause the posterior distribution to become highly concentrated around $\\lambda^*$, largely independent of the initial prior's shape, assuming the prior was non-zero at $\\lambda^*$.",
+        "interpretation": "The term $p(\\lambda | M = m)$ represents the posterior probability density of the ontic state $\\lambda$ conditioned on the measurement outcome $M = m$. The factor $P(M = m | \\lambda)$ is the likelihood function or response function specifying the probability of obtaining outcome $m$ given a precise ontic state $\\lambda$. The prior probability distribution $p(\\lambda)$ characterizes the initial preparation before measurement. The denominator $\\int_{\\Lambda} P(M = m | \\lambda') p(\\lambda') d\\lambda'$ denotes the total marginal probability (evidence) of outcome $m$, ensuring normalization over the ontic space $\\Lambda$ such that $\\int_{\\Lambda} p(\\lambda | M = m) d\\lambda = 1$.",
+        "symmetry_origin": "Conservation of total probability in measurable state spaces under Bayesian conditional updates and invariance under ontic-state space coordinate reparameterizations.",
+        "limits_and_boundary": "In the deterministic limit where the response function is sharp, $P(M = m | \\lambda) = \\delta_{m, f(\\lambda)}$, the posterior restricts support entirely to the partition $\\Lambda_m = \\{ \\lambda \\in \\Lambda : f(\\lambda) = m \\}$. If the outcome $m$ provides no information about $\\lambda$ such that $P(M = m | \\lambda) = P(M = m)$, the posterior collapses to the prior: $p(\\lambda | M = m) = p(\\lambda)$.",
         "semantic_variables": {
-            "p": {
-                "name": "Probability Density Function",
-                "type": "operator",
-                "unit": "Inverse of variable's unit",
-                "description": "Represents a probability density. Used for the prior $p(\\lambda)$ and posterior $p(\\lambda | M=m)$ distributions over the continuous ontic state space."
+            "p(\\lambda | M = m)": {
+                "name": "posterior ontic probability density",
+                "type": "variable",
+                "unit": "dimensionless (per unit ontic measure)",
+                "description": "Conditional probability density of the ontic state given measurement outcome m"
             },
-            "P": {
-                "name": "Probability Mass Function",
-                "type": "operator",
-                "unit": "Dimensionless",
-                "description": "Represents the probability of a discrete measurement outcome $m$ given an ontic state $\\lambda$, forming the likelihood function $P(M=m|\\lambda)$."
+            "P(M = m | \\lambda)": {
+                "name": "measurement response function",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Conditional probability of observing measurement outcome m given ontic state lambda"
+            },
+            "p(\\lambda)": {
+                "name": "prior ontic probability density",
+                "type": "variable",
+                "unit": "dimensionless (per unit ontic measure)",
+                "description": "Initial probability distribution over ontic states representing state preparation"
             },
             "\\lambda": {
-                "name": "Ontic State",
+                "name": "ontic state variable",
                 "type": "variable",
-                "unit": "State-specific",
-                "description": "A complete specification of the physical state of a system, often treated as a hidden variable."
-            },
-            "M": {
-                "name": "Measurement Event",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "The event of performing a measurement on the system."
-            },
-            "m": {
-                "name": "Measurement Outcome",
-                "type": "variable",
-                "unit": "Measurement-specific",
-                "description": "The specific result or value obtained from the measurement event $M$."
+                "unit": "dimensionless",
+                "description": "Complete physical state of the underlying system in the ontological model"
             },
             "\\Lambda": {
-                "name": "Ontic State Space",
+                "name": "ontic state space",
                 "type": "variable",
-                "unit": "State-specific",
-                "description": "The set of all possible ontic states $\\lambda$ for a given physical system."
+                "unit": "dimensionless",
+                "description": "Set of all possible ontic states of the physical system"
             },
-            "\\int_{\\Lambda}": {
-                "name": "Integral over Ontic Space",
-                "type": "operator",
-                "unit": "Varies",
-                "description": "Integration operator over the entire space $\\Lambda$ of possible ontic states, used for normalization."
+            "M": {
+                "name": "measurement observable",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The quantum measurement or experimental apparatus setting"
+            },
+            "m": {
+                "name": "measurement outcome",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Specific observed experimental result"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "This equation provides the rule for updating an epistemic state (knowledge) about an underlying ontic state, $\\lambda$, of a physical system. It states that the posterior probability distribution $p(\\lambda | M = m)$—the probability of the state being $\\lambda$ given a measurement outcome $m$—is proportional to the product of the prior probability distribution $p(\\lambda)$ and the likelihood $P(M = m | \\lambda)$ of obtaining that outcome from state $\\lambda$. The denominator serves as a normalization constant, ensuring the total probability integrates to one.",
-        "intuitive_summary": "Imagine the 'true' state of a quantum system is a hidden variable. This formula is a recipe for refining our guess about this hidden variable. We start with an initial guess (the prior), then we perform a measurement. The formula tells us exactly how to use the measurement result to update our initial guess into a more informed, new guess (the posterior).",
+        "conceptual_definition": "In the ontological models framework of quantum foundations (such as the Spekkens and Pusey-Barrett-Rudolph frameworks), a physical system possesses a real underlying ontic state $\\lambda \\in \\Lambda$. When a measurement $M$ yields an outcome $m$, the epistemic state $p(\\lambda)$ representing the observer's probability distribution over ontic states is updated via Bayes' rule: $p(\\lambda | M = m) = \\frac{P(M = m | \\lambda) p(\\lambda)}{\\int_{\\Lambda} P(M = m | \\lambda') p(\\lambda') d\\lambda'}$, where $P(M = m | \\lambda)$ represents the response function (likelihood) of the measurement apparatus.",
+        "intuitive_summary": "Observing a specific measurement outcome provides information about the underlying reality, refining our probability distribution over the system's hidden ontic states through standard Bayesian inference.",
         "subcomponents": [
             "conditional-probability-of-measurement-outcome-given-ontic-state-15b19311",
-            "ontological-identity-1-d97dba38"
+            "ontological-identity-1-d97dba38",
+            "overlap-integral-condition"
         ],
-        "description": "A formulation of Bayes' theorem applied to psi-ontic models in quantum foundations, defining how the probability distribution over hidden 'ontic' states is updated based on a measurement outcome.",
-        "derivation_type": "DEFINITION"
+        "description": "Formulation of Bayes' theorem within ontological models of quantum mechanics, describing the Bayesian conditional update of the epistemic probability distribution over hidden ontic states following a specific measurement outcome.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "conditional-probability-of-measurement-outcome-given-ontic-state-15b19311"
     },
     "relative-position-vector-between-two-particles": {
         "title": "Relative Position Vector Between Two Particles",
         "equation": "\\mathbf{r}_{ij} = \\mathbf{r}_i - \\mathbf{r}_j",
-        "conceptual_definition": "In a Euclidean space, the relative position vector $\\mathbf{r}_{ij}$ pointing from a particle $j$ to a particle $i$ is defined as the vector difference $\\mathbf{r}_{ij} = \\mathbf{r}_i - \\mathbf{r}_j$, where $\\mathbf{r}_i$ and $\\mathbf{r}_j$ are the position vectors of the particles from a shared, arbitrary origin.",
-        "intuitive_summary": "Imagine two ships at sea, each with its own GPS coordinates. The relative position vector is the direct heading and distance you would travel to get from ship J to ship I, a path that is independent of the GPS origin point.",
-        "interpretation": "The formula $\\mathbf{r}_{ij} = \\mathbf{r}_i - \\mathbf{r}_j$ defines the relative position vector, $\\mathbf{r}_{ij}$, between two particles, labeled $i$ and $j$. The term $\\mathbf{r}_i$ represents the position vector of particle $i$ with respect to a chosen origin, and $\\mathbf{r}_j$ is the position vector of particle $j$ from the same origin. The resulting vector $\\mathbf{r}_{ij}$ points from the location of particle $j$ to the location of particle $i$. Its magnitude, $|\\mathbf{r}_{ij}|$, gives the scalar distance between the particles, and its direction specifies the orientation of particle $i$ as seen from particle $j$. This concept is foundational for describing multi-body systems, as interaction forces, such as gravitational or electrostatic forces, often depend only on this relative vector, not on the absolute positions of the particles.",
-        "symmetry_origin": "The relative position vector $\\mathbf{r}_{ij}$ is invariant under global translations of the coordinate system. If the origin is shifted by a vector $\\mathbf{a}$, the new position vectors become $\\mathbf{r}'_i = \\mathbf{r}_i + \\mathbf{a}$ and $\\mathbf{r}'_j = \\mathbf{r}_j + \\mathbf{a}$, but their difference $\\mathbf{r}'_i - \\mathbf{r}'_j = (\\mathbf{r}_i + \\mathbf{a}) - (\\mathbf{r}_j + \\mathbf{a}) = \\mathbf{r}_i - \\mathbf{r}_j$ remains unchanged. This reflects the translational symmetry of Euclidean space.",
-        "limits_and_boundary": "This is a geometric definition in classical mechanics. In the limit where the particles coincide, $\\mathbf{r}_i \\to \\mathbf{r}_j$, the relative position vector approaches the zero vector, $\\mathbf{r}_{ij} \\to \\mathbf{0}$. The definition is valid for any separation distance. In special relativity, this concept is generalized to the four-vector separation $\\Delta x^\\mu = x_i^\\mu - x_j^\\mu$, which is invariant under Lorentz transformations, not just translations. The classical formula is the spatial part of this four-vector in the low-velocity limit ($v \\ll c$).",
+        "conceptual_definition": "In classical mechanics and vector geometry, the relative position vector $\\mathbf{r}_{ij}$ denotes the directed line segment originating at the spatial coordinates of particle $j$ and terminating at the spatial coordinates of particle $i$. It represents the difference $\\mathbf{r}_i - \\mathbf{r}_j$ between their absolute position vectors defined with respect to an arbitrary common origin.",
+        "intuitive_summary": "The relative position vector is the displacement vector seen by an observer sitting on particle $j$ looking toward particle $i$.",
+        "interpretation": "The vector $\\mathbf{r}_{ij}$ defines the relative displacement directed from particle $j$ to particle $i$. The vectors $\\mathbf{r}_i$ and $\\mathbf{r}_j$ denote the position vectors of particles $i$ and $j$, respectively, with respect to a chosen origin in an inertial frame. The magnitude $|\\mathbf{r}_{ij}|$ corresponds to the Euclidean distance between the two particles, while the unit vector $\\hat{\\mathbf{r}}_{ij} = \\mathbf{r}_{ij} / |\\mathbf{r}_{ij}|$ provides the line-of-sight direction, essential for central potential formulations.",
+        "symmetry_origin": "Translational invariance of Euclidean space: shifting the origin $\\mathbf{r} \\to \\mathbf{r} + \\mathbf{a}$ leaves the relative vector $\\mathbf{r}_{ij} = (\\mathbf{r}_i + \\mathbf{a}) - (\\mathbf{r}_j + \\mathbf{a}) = \\mathbf{r}_i - \\mathbf{r}_j$ strictly invariant, reflecting the homogeneity of space and leading to momentum conservation via Noether's theorem.",
+        "limits_and_boundary": "In the limit where particle positions coincide, $|\\mathbf{r}_i - \\mathbf{r}_j| \\to 0$, the relative position vector vanishes ($\\mathbf{r}_{ij} \\to \\mathbf{0}$), often leading to singularities in point-particle potentials (e.g., $V(r) \\sim 1/r$). As $|\\mathbf{r}_{ij}| \\to \\infty$, two-body interactions generally decay to zero.",
         "status": "platinum",
         "semantic_variables": {
             "\\mathbf{r}_{ij}": {
-                "name": "Relative Position Vector",
+                "name": "relative position vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The vector displacement from particle $j$ to particle $i$."
+                "description": "Displacement vector of particle $i$ relative to particle $j$"
             },
             "\\mathbf{r}_i": {
-                "name": "Position Vector of Particle i",
+                "name": "position vector of particle i",
                 "type": "variable",
                 "unit": "m",
-                "description": "The position vector of particle $i$ relative to a common origin."
+                "description": "Position vector of particle $i$ relative to the chosen reference origin"
             },
             "\\mathbf{r}_j": {
-                "name": "Position Vector of Particle j",
+                "name": "position vector of particle j",
                 "type": "variable",
                 "unit": "m",
-                "description": "The position vector of particle $j$ relative to the same common origin."
+                "description": "Position vector of particle $j$ relative to the chosen reference origin"
             }
         },
         "subcomponents": [
             "relative-position-vector-dc47c8ed",
             "relative-position-vector-difference-b9f8e7f7",
-            "vector-displacement-between-two-points-f40d1664"
+            "magnitude-of-relative-position-vector-7089a434",
+            "relative-position-unit-vector-220721a0"
         ],
-        "description": "Defines the vector that specifies the position of one particle with respect to another, calculated as the difference between their individual position vectors in a common reference frame.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the displacement vector specifying the position of particle $i$ relative to particle $j$ within an affine Euclidean space.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "absolute-position-identity-ca9b4fff"
     },
     "total-derivative-principal-function": {
         "title": "Total Time Derivative of Hamilton's Principal Function",

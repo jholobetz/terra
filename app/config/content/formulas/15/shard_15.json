@@ -314,31 +314,26 @@
         "equation": "\\sigma_m \\approx 0.01 \\text{ mag}",
         "semantic_variables": {
             "\\sigma_m": {
-                "name": "Standard Deviation of Magnitude",
+                "name": "Photometric magnitude uncertainty",
                 "type": "variable",
                 "unit": "mag",
-                "description": "The statistical uncertainty or standard error in a photometric measurement of a celestial object's brightness."
-            },
-            "\\text{mag}": {
-                "name": "Magnitude",
-                "type": "unit",
-                "unit": "mag",
-                "description": "A logarithmic unit of brightness used in astronomy, where smaller values indicate brighter objects. A change of 0.01 mag corresponds to an approximate 1% change in flux."
+                "description": "Standard deviation or standard error in the measured astronomical apparent magnitude"
             }
         },
-        "interpretation": "The term $\\sigma_m$ denotes the standard deviation of a photometric measurement, quantifying the statistical uncertainty or error in the measured magnitude. The unit 'mag' refers to astronomical magnitude, a logarithmic scale of brightness where a difference of 5 magnitudes corresponds to a factor of 100 in flux. An uncertainty of $\\sigma_m \\approx 0.01 \\text{ mag}$ corresponds to a flux uncertainty of approximately $1\\%$. Achieving this precision is a prerequisite for many modern astrophysical investigations. When measurement uncertainties significantly exceed this value, a condition described by $\\sigma_m \\gg 0.01 \\text{ mag}$, the signal-to-noise ratio becomes too low to make definitive scientific claims, potentially leading to a 'scientific crisis' where progress on fundamental questions stalls due to instrumental or methodological limitations.",
-        "symmetry_origin": "Not applicable; this is an empirical benchmark for instrumental precision and data quality, not a fundamental law of nature derived from a symmetry.",
-        "limits_and_boundary": "This expression is a boundary condition for data quality. For measurements where $\\sigma_m \\ll 0.01 \\text{ mag}$, the data is considered high-precision, suitable for detecting faint signals. Conversely, when $\\sigma_m \\gg 0.01 \\text{ mag}$, the data is noise-dominated for many cutting-edge applications, obscuring the underlying physical phenomena. The value $0.01$ is a technologically-dependent standard, not a fundamental constant.",
+        "interpretation": "The symbol $\\sigma_m$ denotes the standard deviation (statistical uncertainty) of a photometric magnitude measurement. Because astronomical magnitude is logarithmically related to radiant flux $F$ via $m = -2.5 \\log_{10}(F) + C$, the propagated fractional flux uncertainty is $\\sigma_F / F \\approx (\\ln 10 / 2.5) \\sigma_m \\approx \\sigma_m / 1.086$. Hence, an uncertainty of $\\sigma_m \\approx 0.01 \\text{ mag}$ equates directly to a fractional flux precision $\\sigma_F / F \\approx 0.92\\% \\approx 1\\%$.",
+        "symmetry_origin": "Rooted in photon Poisson statistics and translational invariance of the optical sensor baseline, where signal-to-noise scales as the square root of total collected photoelectrons.",
+        "limits_and_boundary": "In the Poisson-dominated photon-noise limit with photon count $N \\to \\infty$, $\\sigma_m \\to 0$. In contrast, when $\\sigma_m \\gg 0.01 \\text{ mag}$, photometric errors dominate, precluding the resolution of sub-percent astrophysical flux modulations.",
         "status": "platinum",
-        "conceptual_definition": "The formula $\\sigma_m \\approx 0.01 \\text{ mag}$ establishes a critical threshold for measurement uncertainty in astronomical photometry. It specifies that the standard deviation, $\\sigma_m$, in the apparent or absolute magnitude of a celestial object should be on the order of one-hundredth of a magnitude. This level of precision is a prerequisite for reliably detecting faint signals, such as exoplanet transits or the subtle variations of standard candles used in cosmology.",
-        "intuitive_summary": "Imagine trying to detect if a distant lighthouse's beam dims by just 1%. This formula sets that 1% change as the target precision for our instruments. If our measurements are less stable than this, we can't distinguish a real dimming event from random noise, preventing new discoveries.",
+        "conceptual_definition": "The high-precision photometric uncertainty standard specifies the operational threshold $\\sigma_m \\approx 0.01 \\text{ mag}$ required in observational astrophysics to resolve subtle variability, exoplanet transit signatures, and stellar population features against background noise.",
+        "intuitive_summary": "Achieving a precision of $0.01$ magnitudes means measuring a celestial object's brightness with roughly $1\\%$ accuracy, setting the standard threshold for high-precision modern astronomical surveys.",
         "subcomponents": [
-            "significant-measurement-uncertainty-condition-8b9912f4",
-            "historical-error-c4415d4d",
-            "total-kinematics-3e86b9d2"
+            "astronomical-magnitude-uncertainty-6169448e",
+            "photometric-magnitude-uncertainty-benchmark-d6e4611e",
+            "distance-scatter-identity-d456303f"
         ],
-        "description": "This equation defines the benchmark for high-precision astronomical photometry, where the measurement uncertainty, represented by the standard deviation $\\sigma_m$, must be approximately 0.01 magnitudes or less to resolve subtle astrophysical signals.",
-        "derivation_type": "DEFINITION"
+        "description": "Establishes the standard benchmark for millimagnitude-precision astronomical photometry, corresponding to an approximate one-percent relative flux uncertainty threshold.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "astronomical-magnitude-uncertainty-6169448e"
     },
     "exponential-shield-c983d536": {
         "title": "Yukawa Potential (Exponentially Screened Interaction)",
@@ -1106,52 +1101,47 @@
         "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "photospheric-boundary-approximation-9ad58585": {
-        "title": "Photospheric Boundary Approximation for Stellar Structure",
+        "title": "Photospheric Surface Boundary Conditions for Stellar Structure",
         "equation": "T(R) \\approx T_{eff}, \\quad P(R) \\approx 0",
         "semantic_variables": {
             "T": {
-                "name": "Temperature Profile",
+                "name": "Temperature",
                 "type": "variable",
-                "unit": "Kelvin",
-                "description": "The temperature of the stellar gas as a function of radial distance from the center, denoted as $T(r)$."
+                "unit": "K",
+                "description": "Local thermodynamic temperature as a function of radial coordinate"
             },
             "R": {
                 "name": "Stellar Radius",
                 "type": "variable",
-                "unit": "meters",
-                "description": "The radius of the star, defining the location of the photosphere or 'surface'."
+                "unit": "m",
+                "description": "Total radial extent defining the outer boundary or photosphere of the star"
             },
             "T_{eff}": {
                 "name": "Effective Temperature",
                 "type": "variable",
-                "unit": "Kelvin",
-                "description": "The temperature of a blackbody that would radiate the same total power as the star."
+                "unit": "K",
+                "description": "Blackbody equivalent temperature corresponding to the total emergent luminosity of the star"
             },
             "P": {
-                "name": "Pressure Profile",
+                "name": "Pressure",
                 "type": "variable",
-                "unit": "Pascals",
-                "description": "The pressure of the stellar gas as a function of radial distance from the center, denoted as $P(r)$."
-            },
-            "\\approx": {
-                "name": "Approximately Equal To",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Indicates that the two sides are approximately equal, used when simplifying assumptions are made."
+                "unit": "Pa",
+                "description": "Total pressure (gas plus radiation) at the stellar surface"
             }
         },
-        "interpretation": "This approximation specifies two key conditions at the stellar surface, defined by the stellar radius, $R$. The first condition, $T(R) \\approx T_{eff}$, posits that the temperature of the stellar material at the radius $R$ is approximately equal to the effective temperature of the star, $T_{eff}$. The effective temperature is a theoretical temperature that a blackbody of the same size as the star would have to emit the same total amount of radiant energy. This condition reflects the fact that the photosphere is the region where the optical depth approaches unity, allowing radiation to escape. The second condition, $P(R) \\approx 0$, assumes that the pressure at the stellar radius $R$ is negligible compared to the enormous pressures found in the stellar interior. This is a reasonable approximation because the density of the gas drops sharply in the outermost layers, leading to a rapid decrease in pressure. Both approximations simplify the complex physics at the star's edge, providing necessary boundary conditions for solving the system of stellar structure equations.",
-        "symmetry_origin": "Not applicable; this is a phenomenological boundary condition for simplifying differential equations in stellar modeling.",
-        "limits_and_boundary": "This approximation is valid for stars where the atmosphere is geometrically thin compared to the stellar radius ($R$), and the pressure scale height at the photosphere is much smaller than $R$. It breaks down for stars with very extended atmospheres, such as red supergiants, where the definitions of $R$ and the 'surface' become ambiguous and the pressure is non-negligible over a significant radial distance.",
+        "interpretation": "The first relation, $T(R) \\approx T_{\\text{eff}}$, anchors the thermal structure at the photosphere, representing the surface where the emergent radiative flux matches $\\sigma_{\\text{SB}} T_{\\text{eff}}^4$. The second relation, $P(R) \\approx 0$, is the zero-boundary condition reflecting the sharp drop of density and pressure across the stellar atmospheric scale height relative to the interior core pressure $P_c$. Together, they close the two-point boundary value problem when integrated alongside central core conditions ($M(0) = 0$, $L(0) = 0$).",
+        "symmetry_origin": "Spherical symmetry ($SO(3)$ spatial rotation invariance) of non-rotating, non-magnetic isolated stellar configurations.",
+        "limits_and_boundary": "In the limit of a detailed stellar atmosphere model, $P(R)$ is replaced by the Eddington approximation value $P(\\tau = 2/3) = \\frac{2}{3}\\frac{g}{\\kappa}$. In the asymptotic limit of infinite radius $r \\to \\infty$, both $P(r) \\to 0$ and $\\rho(r) \\to 0$.",
         "status": "platinum",
-        "conceptual_definition": "In stellar structure modeling, the photosphere represents the outermost layer of a star from which radiation can freely escape. The photospheric boundary approximation provides a simplified set of boundary conditions at the stellar radius, $R$. It posits that the gas temperature, $T(R)$, is approximately equal to the star's effective temperature, $T_{eff}$, and that the gas pressure, $P(R)$, is approximately zero. These conditions, expressed as $T(R) \\approx T_{eff}$ and $P(R) \\approx 0$, are crucial for integrating the differential equations that describe the star's interior structure.",
-        "intuitive_summary": "Imagine a star is like a campfire. The 'surface' isn't a hard edge, but the fuzzy boundary where the fire's glow becomes transparent. We approximate this boundary by saying its temperature is what you'd measure for the whole fire's glow ($T_{eff}$), and the air pressure right at this edge is essentially zero compared to the immense pressure inside the burning logs.",
+        "conceptual_definition": "In solving the four fundamental differential equations of stellar structure, outer boundary conditions are required at the stellar radius $r = R$. The simple photospheric approximation sets the outer boundary where the optical depth $\\tau \\approx 2/3$, equating the local thermodynamic temperature $T(R)$ to the star's effective temperature $T_{\\text{eff}}$, while treating the exterior gas and radiation pressure as vanishingly small compared to internal pressures: $P(R) \\approx 0$.",
+        "intuitive_summary": "At the visible edge of a star, the dense interior gives way to the near-vacuum of space, meaning the pressure drops virtually to zero and the radiation escaping into the cosmos exhibits the characteristic effective temperature of the stellar blackbody.",
         "subcomponents": [
             "photospheric-temperature-approximation-c874d5c2",
-            "neumann-boundary-condition"
+            "central-density-condition-aca63ea4"
         ],
-        "description": "A set of two boundary conditions used in stellar structure models, which approximates the temperature at the stellar radius as the effective temperature and the pressure as zero.",
-        "derivation_type": "APPROXIMATION"
+        "description": "A simplified pair of outer boundary conditions in stellar structure modeling that defines the stellar surface at radius $R$ where the temperature equals the effective temperature $T_{\\text{eff}}$ and the outer pressure vanishes.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "vogt-russell-theorem-identity-1-6fd81525-7b74403a"
     },
     "expectation-reality-identity-fee7528e": {
         "title": "Reality Condition for Expectation Values",
@@ -1242,46 +1232,41 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "extended-objects-identity-1-28846ed3-6d9a7ed2": {
-        "title": "Mass-Tension Relation for p-Branes in String Theory",
+        "title": "Mass-Tension Relation for BPS p-Branes in String Theory",
         "equation": "M_p \\propto \\frac{1}{g_s} T_p",
-        "interpretation": "The formula $M_p \\propto \\frac{1}{g_s} T_p$ states that the mass of a p-brane, denoted by $M_p$, is directly proportional to its tension, $T_p$, and inversely proportional to the string coupling constant, $g_s$. The tension $T_p$ represents the energy stored per unit of p-dimensional volume within the brane's worldvolume. A larger tension $T_p$ implies more energy is localized in the brane's structure, thus contributing more to its mass. The string coupling constant $g_s$ quantifies the fundamental interaction strength between strings. In the weak coupling limit ($g_s \\ll 1$), strings interact feebly, and branes can possess larger masses for a given tension. Conversely, in the strong coupling limit ($g_s \\gg 1$), string interactions are dominant, and branes tend to be lighter for the same tension, as the mass is effectively 'renormalized' by the strong coupling dynamics.",
-        "symmetry_origin": "The mass-tension relation for specific types of branes, particularly BPS branes, is a direct consequence of the supersymmetry algebra of the underlying string theory. BPS states saturate a bound relating mass, tension, and charge, making their properties stable against quantum corrections and directly tied to the central charges of the supersymmetry algebra.",
-        "limits_and_boundary": "In the weak coupling limit where the string coupling constant $g_s \\to 0$, the brane mass $M_p$ diverges ($M_p \\to \\infty$) for any non-zero tension $T_p$. This signifies that such non-perturbative objects become infinitely heavy and decouple from the perturbative string spectrum. Conversely, in the strong coupling limit ($g_s \\to \\infty$), the mass $M_p \\to 0$, suggesting the object becomes light and may have a different, possibly fundamental, description in a dual theory.",
+        "interpretation": "The formula relates the total mass $M_p$ of a $p$-dimensional spatial hypersurface to its fundamental tension $T_p$ and the dimensionless string coupling constant $g_s$. The tension $T_p$ represents energy density per unit $p$-volume. The factor $g_s^{-1}$ originates from the open string worldsheet with disk topology (Euler characteristic $\\chi = 1$), which governs the leading coupling to background spacetime fields.",
+        "symmetry_origin": "Maximal spacetime supersymmetry algebra with central extensions; the equality of mass and charge/tension is dictated by the Bogomol'nyi-Prasad-Sommerfield (BPS) condition preserving 16 supercharges.",
+        "limits_and_boundary": "In the weak coupling limit ($g_s \\to 0$), $M_p \\to \\infty$, meaning the branes become infinitely heavy non-dynamical boundaries where open strings attach. In the strong coupling limit ($g_s \\to \\infty$), non-perturbative dualities (such as S-duality where $g_s \\to 1/g_s$) map these heavy states into fundamental perturbative states.",
         "semantic_variables": {
             "M_p": {
-                "name": "p-Brane Mass",
+                "name": "Brane Mass",
                 "type": "variable",
                 "unit": "kg",
-                "description": "The total mass-energy of a p-dimensional brane, an extended dynamical object in string theory."
+                "description": "Total rest mass or integrated energy of the p-dimensional Dirichlet brane"
+            },
+            "T_p": {
+                "name": "p-Brane Tension",
+                "type": "variable",
+                "unit": "J m^{-p}",
+                "description": "Energy density per unit p-dimensional spatial worldvolume"
             },
             "g_s": {
                 "name": "String Coupling Constant",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless parameter that determines the strength of interactions between strings, such as splitting and joining."
-            },
-            "T_p": {
-                "name": "p-Brane Tension",
-                "type": "variable",
-                "unit": "J/m^p",
-                "description": "The energy per unit p-dimensional volume of the brane's worldvolume, representing its intrinsic energy density."
-            },
-            "\\propto": {
-                "name": "Proportionality Operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "Indicates that the left-hand side is directly proportional to the right-hand side, differing only by a constant factor."
+                "description": "Dimensionless string coupling constant determined by the dilaton vacuum expectation value g_s = \\exp(\\langle\\Phi\\rangle)"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The mass of a p-brane, denoted $M_p$, is a measure of its total energy content. This formula posits that this mass is fundamentally linked to the brane's tension $T_p$, which is the energy density per unit p-dimensional volume, scaled by the inverse of the dimensionless string coupling constant $g_s$. This relationship is central to understanding the dynamics and properties of extended objects in string theory.",
-        "intuitive_summary": "Imagine a p-brane as a cosmic rubber sheet. Its 'mass' ($M_p$) is like its total weight. This weight depends on how 'stiff' or 'tense' the sheet is ($T_p$). The string coupling constant ($g_s$) acts like a universal medium; a stronger coupling (larger $g_s$) makes everything 'lighter' or less massive for the same stiffness, while a weaker coupling (smaller $g_s$) makes it 'heavier'.",
+        "conceptual_definition": "In string theory, extended non-perturbative solitons known as $D_p$-branes carry Ramond-Ramond charge and preserve half of the spacetime supersymmetries (BPS state). The physical rest mass $M_p$ of a static, compactified $p$-brane of spatial volume $V_p$ is directly governed by its tension $T_p$, satisfying $M_p = T_p V_p \\propto g_s^{-1} T_p$, demonstrating the characteristic non-perturbative $g_s^{-1}$ mass behavior.",
+        "intuitive_summary": "Unlike ordinary string excitations whose masses are independent of the coupling or solitons with field-theory $g_s^{-2}$ scaling, $D$-branes behave as intermediate non-perturbative objects whose mass scales as $1/g_s$, becoming infinitely heavy and rigid in the weakly coupled string limit.",
         "subcomponents": [
-            "d-brane-tension-b6e44d2c",
-            "fermion-mass-origin-identity-1-9f0dc3ac-91a95b88"
+            "branes-mass-relation-a49ef49d",
+            "coupling-duality-identity-1-8171f2f9-1b3f512e"
         ],
-        "description": "In string theory, this relation establishes that the mass ($M_p$) of a p-brane is directly proportional to its tension ($T_p$) and inversely proportional to the string coupling constant ($g_s$).",
-        "derivation_type": "DEFINITION"
+        "description": "Establishes the non-perturbative mass scaling for Dirichlet $p$-branes ($D_p$-branes), where the total rest mass is proportional to the spatial volume tension and scales inversely with the string coupling constant.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "d-brane-tension-b6e44d2c"
     },
     "quinean-ontology-identity-1-43b30c9d-b14887ce": {
         "title": "Quine's Existential Quantifier Criterion for Ontological Commitment",

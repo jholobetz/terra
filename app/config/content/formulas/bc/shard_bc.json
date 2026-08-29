@@ -44,46 +44,47 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "data-depth-e58c11bf": {
-        "title": "Data Depth",
+        "title": "Total Scattering Cross-Section via Solid Angle Integration",
         "equation": "\\sigma_{search} = \\int \\frac{d\\sigma}{d\\Omega} d\\Omega",
         "semantic_variables": {
             "\\sigma_{search}": {
-                "name": "Total Scattering Cross-Section",
+                "name": "Total scattering cross-section",
                 "type": "variable",
                 "unit": "m^2",
-                "description": "The effective area that a target presents to an incoming particle for a specific interaction, integrated over all possible scattering directions. It represents the total probability of interaction per unit incident flux."
+                "description": "The integrated effective cross-sectional area for scattering across all solid angles."
             },
             "\\frac{d\\sigma}{d\\Omega}": {
-                "name": "Differential Scattering Cross-Section",
+                "name": "Differential scattering cross-section",
                 "type": "variable",
-                "unit": "m^2/sr",
-                "description": "The probability per unit incident flux per unit solid angle that a particle will be scattered into a specific direction. It describes the angular distribution of scattered particles."
+                "unit": "m^2 sr^-1",
+                "description": "Ratio of scattered flux per unit solid angle to incident particle flux intensity."
             },
             "d\\Omega": {
-                "name": "Infinitesimal Solid Angle Element",
+                "name": "Differential solid angle element",
                 "type": "variable",
                 "unit": "sr",
-                "description": "An infinitesimal element of solid angle, representing a small cone of directions in three-dimensional space. In spherical coordinates, it is typically expressed as \\sin(\\theta) d\\theta d\\phi."
+                "description": "Infinitesimal angular area on the unit sphere, defined as $\\sin\\theta \\, d\\theta \\, d\\phi$ in spherical polar coordinates."
             },
-            "\\Omega": {
-                "name": "Solid Angle",
-                "type": "variable",
-                "unit": "sr",
-                "description": "The integration domain representing the entire range of possible directions into which scattering can occur. For a complete sphere, the total solid angle is 4\\pi steradians."
-            },
-            "\\sigma": {
-                "name": "Stefan-Boltzmann Constant",
-                "type": "constant",
-                "unit": "W⋅m⁻²⋅K⁻⁴",
-                "description": "The physical constant relating the total energy radiated per unit surface area of a black body per unit time to the fourth power of the thermodynamic temperature."
+            "\\int": {
+                "name": "Definite integral operator over $S^2$",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Integration over the full $4\\pi$ steradians of solid angle."
             }
         },
-        "interpretation": "In this equation, \\͘_{search} is the total scattering cross-section, representing the effective area that a target presents to an incoming particle for a given interaction. The term \\͘͘͘/͘͘͘ is the differential cross-section, which quantifies the probability of scattering into a particular infinitesimal solid angle \\͘͘͘. The integration is performed over the entire solid angle space, denoted by ͘͘͘, which spans all possible directions into which the particle can scatter. The unit of cross-section is typically area, such as square meters (`m^2`) or barns (`b`, where `1 b = 10^{-28} m^2`). The differential cross-section would have units of area per solid angle (e.g., `m^2/sr`).",
-        "symmetry_origin": "This formula arises from the fundamental principles of probability and integration in continuous spaces. The integration over the solid angle implicitly accounts for the rotational symmetry of the scattering process if no preferred direction is introduced by the interaction potential or initial conditions. It is a direct application of the principle that a total probability (or cross-section) is the sum (integral) of probabilities over all disjoint, exhaustive outcomes.",
-        "limits_and_boundary": "As the differential cross-section approaches zero for all angles, the total cross-section will also approach zero, indicating no scattering occurs. If the differential cross-section is finite and non-zero over a significant range of solid angles, the total cross-section will be a positive, finite value. In scenarios with highly anisotropic scattering (e.g., forward-peaked scattering), the integral will still converge to a total cross-section, but the distribution of scattering probability across different angles will be non-uniform.",
+        "interpretation": "The symbol $\\sigma_{\\text{search}}$ denotes the total integrated scattering cross-section, with SI units of $\\text{m}^2$ (commonly measured in barns, where $1\\text{ b} = 10^{-28}\\text{ m}^2$). The quantity $\\frac{d\\sigma}{d\\Omega}$ is the differential scattering cross-section, representing the effective area scattered per unit solid angle with units $\\text{m}^2\\text{sr}^{-1}$. The differential solid angle $d\\Omega$ parameterizes the directional elements on the unit sphere, and the integral $\\int d\\Omega$ evaluates over the full $4\\pi\\text{ sr}$ domain.",
+        "symmetry_origin": "Rotational $SO(3)$ invariance of spherically symmetric potentials causes the differential cross-section $\\frac{d\\sigma}{d\\Omega}$ to be independent of the azimuthal angle $\\phi$, reducing the solid angle integral to $2\\pi \\int_0^\\pi \\frac{d\\sigma}{d\\Omega}(\\theta) \\sin\\theta \\, d\\theta$.",
+        "limits_and_boundary": "In the limit of a rigid hard sphere of radius $R$ at high energies (short wavelength $\\lambda \\to 0$), the classical geometric cross-section is $\\pi R^2$, whereas quantum diffraction around the edge doubles this value to $\\sigma_{\\text{tot}} \\to 2\\pi R^2$. In the long-wavelength low-energy limit ($k \\to 0$), $s$-wave scattering dominates, yielding $\\sigma_{\\text{tot}} \\to 4\\pi a_0^2$ where $a_0$ is the scattering length.",
         "status": "platinum",
-        "conceptual_definition": "The formula represents the total cross-section (\\͘_{search}) for a particular interaction or scattering process. It is obtained by integrating the differential cross-section (\\͘͘͘/͘͘͘), which describes the probability of scattering into a specific solid angle, over all possible solid angles (͘͘͘). In essence, it aggregates the likelihood of scattering into any direction.",
-        "intuitive_summary": "The total probability of a particle being scattered in any direction is the sum of the probabilities of it being scattered into each specific direction."
+        "conceptual_definition": "The total scattering cross-section $\\sigma_{\\text{search}}$ (or $\\sigma_{\\text{tot}}$) represents the effective transverse area presented by a target particle to an incident beam, quantifying the total probability of an interaction occurring in any direction. It is obtained by integrating the angular distribution of scattered flux, parameterized by the differential cross-section $\\frac{d\\sigma}{d\\Omega}$, over the full $4\\pi$ steradians of the differential solid angle element $d\\Omega = \\sin\\theta \\, d\\theta \\, d\\phi$.",
+        "intuitive_summary": "While the differential cross-section measures the brightness of scattered particles in a specific directional window, the total cross-section aggregates every scattered particle across all directions to determine the total effective target area.",
+        "description": "Calculates the total scattering cross-section by integrating the differential cross-section over the entire sphere of solid angle.",
+        "parent_formula_id": "nuclear-cross-sections-identity-1-660cc4b8-c0beb6f8",
+        "derivation_type": "DERIVED_FROM",
+        "subcomponents": [
+            "nuclear-cross-sections-identity-1-660cc4b8-c0beb6f8",
+            "collision-integral-link-f3551c9d"
+        ]
     },
     "far-field-decay-1bfd0490": {
         "title": "Magnetic Dipole Field (Far-Field Approximation)",
@@ -159,232 +160,123 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "information-map-22e53437": {
-        "title": "Information Map",
+        "title": "Mutual Information via Marginal and Joint Entropies",
         "equation": "I(A, B) = S(A) + S(B) - S(A, B) \\quad (\\text{Mutual Info})",
         "semantic_variables": {
             "I(A, B)": {
                 "name": "Mutual Information",
                 "type": "variable",
-                "unit": "bits",
-                "description": "The amount of information that one random variable (A) contains about another random variable (B). It is often measured in bits, where 1 bit corresponds to the information gained by observing an event with probability 1/2."
+                "unit": "bit or nat",
+                "description": "Quantification of the mutual dependence between two systems or variables"
             },
             "S(A)": {
-                "name": "Entropy of A",
+                "name": "Marginal Entropy of A",
                 "type": "variable",
-                "unit": "bits",
-                "description": "The Shannon entropy of the random variable A, quantifying the average uncertainty or information content of A. It is calculated as $S(A) = -$\\sum$_{a ∈ \\text{supp}(A)} p(a) \\text{log}_2(p(a))$, where $p(a)$ is the probability of outcome $a$."
+                "unit": "bit or J/K",
+                "description": "Information or von Neumann entropy of subsystem A"
             },
             "S(B)": {
-                "name": "Entropy of B",
+                "name": "Marginal Entropy of B",
                 "type": "variable",
-                "unit": "bits",
-                "description": "The Shannon entropy of the random variable B, quantifying the average uncertainty or information content of B. It is calculated as $S(B) = -$\\sum$_{b ∈ \\text{supp}(B)} p(b) \\text{log}_2(p(b))$, where $p(b)$ is the probability of outcome $b$."
+                "unit": "bit or J/K",
+                "description": "Information or von Neumann entropy of subsystem B"
             },
             "S(A, B)": {
-                "name": "Joint Entropy of A and B",
+                "name": "Joint Entropy",
                 "type": "variable",
-                "unit": "bits",
-                "description": "The Shannon entropy of the joint probability distribution of random variables A and B, quantifying the total uncertainty associated with the pair (A, B). It is calculated as $S(A, B) = -$\\sum$_{a ∈ ext{supp}(A)}$\\sum$_{b ∈ ext{supp}(B)} p(a, b) ext{log}_2(p(a, b))$, where $p(a, b)$ is the joint probability of outcomes $a$ and $b$."
-            },
-            "I": {
-                "name": "Electric Current / Moment of Inertia",
-                "type": "variable",
-                "unit": "A or kg·m²",
-                "description": "The rate of flow of electric charge, or resistance to rotational acceleration."
-            },
-            "A": {
-                "name": "Area / Vector Potential",
-                "type": "variable",
-                "unit": "m² or V·s/m",
-                "description": "The measure of a 2D surface, or the electrodynamic magnetic vector potential."
-            },
-            "B": {
-                "name": "Magnetic Field Strength",
-                "type": "variable",
-                "unit": "T",
-                "description": "The magnetic flux density representing electromagnetic field induction."
-            },
-            "S": {
-                "name": "Poynting Vector",
-                "type": "variable",
-                "unit": "W/m²",
-                "description": "The directional energy flux density of an electromagnetic field."
-            },
-            "M": {
-                "name": "Total Mass / Magnetization",
-                "type": "variable",
-                "unit": "kg or A/m",
-                "description": "The total inertial mass of a system, or net magnetic dipole moment density."
-            },
-            "u": {
-                "name": "Velocity Component / Specific Internal Energy",
-                "type": "variable",
-                "unit": "m/s or J/kg",
-                "description": "Speed along a particular coordinate direction, or internal energy per unit mass."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "l": {
-                "name": "Length / Angular Quantum Number",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
-            },
-            "f": {
-                "name": "Frequency",
-                "type": "variable",
-                "unit": "Hz",
-                "description": "The number of occurrences of a repeating event per unit of time."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
+                "unit": "bit or J/K",
+                "description": "Total joint entropy of the composite system (A, B)"
             }
         },
-        "interpretation": "In the formula for Mutual Information, $I(A, B)$, we have three key components related to information theory and probability distributions. $S(A)$ represents the entropy of variable A, which is a measure of the uncertainty or randomness associated with A. Similarly, $S(B)$ is the entropy of variable B, quantifying its uncertainty. $S(A, B)$ is the joint entropy of A and B, measuring the total uncertainty associated with the pair of variables (A, B) considered together. The formula $I(A, B) = S(A) + S(B) - S(A, B)$ effectively isolates the information that A and B share. By adding their individual entropies and subtracting their joint entropy, we cancel out the uncertainty that is unique to each variable, leaving only the information that is common to both. If A and B are independent, $S(A, B) = S(A) + S(B)$, and thus $I(A, B) = 0$, indicating no shared information. If A completely determines B (or vice versa), then $I(A, B)$ will be equal to the entropy of either variable, $S(A)$ or $S(B)$.",
-        "symmetry_origin": "The concept of mutual information originates from information theory, a branch of mathematics concerned with the quantification, storage, and communication of information. It is derived from the fundamental properties of probability distributions and entropy. The formula itself is a direct consequence of the additivity of entropies for independent variables and the way joint probabilities relate to marginal probabilities. There isn't a direct symmetry or conservation law from classical physics that this formula arises from, but it is a fundamental measure of statistical dependence.",
-        "limits_and_boundary": "If variables $A$ and $B$ are statistically independent, their joint entropy $S(A, B)$ equals the sum of their individual entropies, $S(A) + S(B)$. In this limit, $I(A, B) = S(A) + S(B) - (S(A) + S(B)) = 0$. This signifies that independent variables share no information. The maximum value of $I(A, B)$ is limited by the minimum of $S(A)$ and $S(B)$. For instance, if $B$ is completely determined by $A$, then $I(A, B) = S(B)$ (assuming $S(B) ≤ S(A)$). As the 'overlap' or commonality between the probability distributions of $A$ and $B$ increases, $I(A, B)$ increases.",
+        "interpretation": "The quantity $I(A, B)$ represents the mutual information between two subsystems or variables $A$ and $B$. $S(A)$ and $S(B)$ denote the marginal entropies of subsystems $A$ and $B$ respectively, measuring their isolated uncertainties. $S(A, B)$ represents the joint entropy of the composite system $(A, B)$. When $A$ and $B$ are statistically independent, $S(A, B) = S(A) + S(B)$, yielding $I(A, B) = 0$. In quantum information theory, where $S$ denotes the von Neumann entropy $S(\rho) = -\\mathrm{Tr}(\rho \\ln \rho)$, non-zero $I(A, B)$ captures both classical correlations and quantum entanglement.",
+        "symmetry_origin": "Permutation symmetry $I(A, B) = I(B, A)$ and invariance under local unitary or bijective coordinate transformations $A \to f(A)$ and $B \to g(B)$.",
+        "limits_and_boundary": "For completely independent subsystems $p(A, B) = p(A)p(B)$, $I(A, B) \to 0$. For completely correlated or deterministic mappings $B = f(A)$, $I(A, B) \to S(A) = S(B)$. By subadditivity of entropy, $I(A, B) \\ge 0$ always holds.",
         "status": "platinum",
-        "conceptual_definition": "The Information Map, also known as Mutual Information, quantifies the amount of information that one random variable contains about another. It measures the reduction in uncertainty about one variable that results from knowing the value of the other. Mathematically, it's expressed as the sum of the individual entropies of the two variables minus their joint entropy.",
-        "intuitive_summary": "Mutual Information is the shared information between two variables, representing how much knowing one reduces uncertainty about the other."
+        "conceptual_definition": "Mutual information $I(A, B)$ measures the information obtained about random variable or subsystem $A$ through observing variable or subsystem $B$. In terms of Shannon or von Neumann entropies, it is defined as $I(A, B) = S(A) + S(B) - S(A, B)$, representing the Kullback-Leibler divergence between the joint distribution $p(A, B)$ and the product of marginals $p(A)p(B)$.",
+        "intuitive_summary": "Mutual information measures the overlap of information between two systems; adding their individual uncertainties and subtracting the combined uncertainty isolates exactly what is shared.",
+        "description": "Quantifies the total shared statistical dependence and mutual correlation between two physical or informational subsystems $A$ and $B$ by taking the sum of their marginal entropies minus their joint entropy.",
+        "parent_formula_id": "thermodynamic-cost-63c8ee50",
+        "derivation_type": "DEFINITION",
+        "subcomponents": [
+            "calculational-cost-6f39c1d4",
+            "entanglement-mapping-d56bd6e6",
+            "planck-discreteness-5d36c1b4"
+        ]
     },
     "measurable-swirl-c30548de": {
-        "title": "Measurable Swirl",
+        "title": "Fluid Circulation along a Closed Contour",
         "equation": "\\Gamma = \\oint \\mathbf{v} \\cdot d\\mathbf{l}",
         "semantic_variables": {
-            "Γ": {
-                "name": "Circulation",
-                "type": "variable",
-                "unit": "m^2/s",
-                "description": "The circulation of the velocity field v around the closed contour C. It represents the net rotational flow along the path."
-            },
-            "v": {
-                "name": "Velocity Field",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "A vector field representing the velocity of the fluid or other physical quantity at each point in space. It is a function of position and potentially time."
-            },
-            "dl": {
-                "name": "Infinitesimal Displacement Vector",
-                "type": "variable",
-                "unit": "m",
-                "description": "An infinitesimal vector representing a small segment of the closed contour C. Its direction is tangent to the contour at that point."
-            },
-            "C": {
-                "name": "Closed Contour",
-                "type": "variable",
-                "unit": "m",
-                "description": "The closed path along which the line integral is performed. It is a one-dimensional curve in space."
-            },
             "\\Gamma": {
                 "name": "Circulation",
                 "type": "variable",
-                "unit": "m²/s",
-                "description": "The line integral of fluid velocity around a closed curve, measuring local rotation."
+                "unit": "m^2/s",
+                "description": "Scalar measure of macroscopic vortex strength and net tangential fluid flow along a closed curve"
             },
-            "l": {
-                "name": "Length / Angular Quantum Number",
+            "\\mathbf{v}": {
+                "name": "Velocity field",
+                "type": "variable",
+                "unit": "m/s",
+                "description": "Local Eulerian velocity vector field of the fluid medium"
+            },
+            "d\\mathbf{l}": {
+                "name": "Infinitesimal displacement element",
                 "type": "variable",
                 "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
+                "description": "Differential tangent vector along the closed path contour"
+            },
+            "\\oint": {
+                "name": "Closed contour line integral",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Integration operator over a closed one-dimensional loop"
             }
         },
-        "interpretation": "In the equation Γ = ∫ ̇ v ∙ dl, Γ (gamma) is the circulation, a scalar quantity representing the net rotational motion. The integral symbol $\\delta \\int$ ̇$indicates a line integral performed over a closed contour C. The vector v represents the velocity field at each point along the contour, with units of meters per second (m/s). The infinitesimal displacement vector along the contour is denoted by dl, also having units of meters (m). The dot product v ∙ dl extracts the component of the velocity that is tangent to the contour at each point. Integrating this tangential component over the entire closed path quantifies the total 'circulation' or rotational flow. If the velocity field is irrotational, the circulation around any closed loop will be zero. This formula is crucial for understanding phenomena like lift on an airfoil (via the Kutta-Joukowski theorem) and the magnetic field generated by currents (via Ampère's Law$).",
-        "symmetry_origin": "This formula arises from the definition of curl and is intrinsically linked to Stokes' Theorem, which relates a surface integral of the curl of a vector field to the line integral of the vector field itself around the boundary of that surface. Specifically, Stokes' Theorem states that $\\delta \\int$ ̇ (∇ x v) ∙ dA = ∫ ̇ v ∙ dl. If the curl ∇ x v is zero everywhere within a simply connected region, then the circulation Γ around any closed curve within that region must also be zero. This implies that the field is irrotational, a consequence of the symmetry of second partial derivatives in conservative fields.",
-        "limits_and_boundary": "As the closed contour C shrinks to a point (approaches zero size), the circulation Γ approaches zero if the velocity field is continuous and well-behaved. If the velocity field contains singularities, the circulation may remain finite or even diverge. In cases where the velocity field is uniform and non-zero, the circulation Γ is equal to the product of the velocity magnitude and the perimeter of the contour, provided the contour is aligned with the velocity. If the contour encloses a region with no net flow or rotation, the circulation will be zero.",
+        "interpretation": "In the relation $\\Gamma = \\oint \\mathbf{v} \\cdot d\\mathbf{l}$, the scalar $\\Gamma$ represents fluid circulation with units of $\\text{m}^2/\\text{s}$. The closed loop integration operator $\\oint$ runs continuously around the closed spatial path $C$. The vector field $\\mathbf{v}$ is the local fluid velocity evaluated at each point along the contour, and $d\\mathbf{l}$ is the infinitesimal tangential displacement vector along $C$. The scalar dot product $\\mathbf{v} \\cdot d\\mathbf{l}$ isolates the velocity component parallel to the path. In simply connected domains, $\\Gamma = 0$ signifies an irrotational flow field where $\\mathbf{v} = \\nabla \\phi$.",
+        "symmetry_origin": "Kelvin's circulation theorem arises from particle relabeling symmetry via Noether's theorem in ideal, inviscid, barotropic fluid dynamics, guaranteeing that the material derivative of $\\Gamma$ vanishes along material contours.",
+        "limits_and_boundary": "For purely irrotational potential flows in simply connected topologies, $\\Gamma = 0$. For multiply connected topologies (such as flow around an airfoil or a quantized vortex line in superfluids), $\\Gamma$ can attain nonzero values. In quantum superfluids (e.g., liquid Helium-4), the circulation is quantized in integer multiples of $\\kappa = h/m$.",
         "status": "platinum",
-        "conceptual_definition": "The formula Γ = ∫ ̇ v ∙ dl represents the circulation of a velocity field v around a closed curve C. Circulation is a fundamental concept in fluid dynamics and electromagnetism, quantifying the tendency of a vector field to 'swirl' or rotate about a given path. It is calculated by integrating the tangential component of the velocity field along the boundary of a closed contour.",
-        "intuitive_summary": "The total 'swirl' or rotational flow of a vector field along a closed path."
+        "conceptual_definition": "Circulation $\\Gamma$ is defined as the macroscopic line integral of the fluid velocity field $\\mathbf{v}$ around a closed, directed curve $C$: $\\Gamma = \\oint_C \\mathbf{v} \\cdot d\\mathbf{l}$. Through Stokes' theorem, this boundary line integral is mathematically equivalent to the total flux of the vorticity field $\\boldsymbol{\\omega} = \\nabla \\times \\mathbf{v}$ passing through any open surface $S$ bounded by $C$. It serves as a fundamental kinematic invariant in ideal barotropic fluids (Kelvin's circulation theorem) and plays a central role in generating aerodynamic lift via the Kutta-Joukowski theorem.",
+        "intuitive_summary": "Circulation measures the total tangential 'push' a fluid exerts along a closed circular or arbitrary loop, representing the net amount of fluid swirling around the enclosed area.",
+        "description": "Calculates the circulation $\\Gamma$ as the line integral of a velocity vector field $\\mathbf{v}$ around a closed macroscopic contour $C$, quantifying the macroscopic net rotation or swirl of the fluid.",
+        "parent_formula_id": "circulation-integral-definition-24dbfa06",
+        "derivation_type": "DEFINITION",
+        "subcomponents": [
+            "superfluid-rule-0d216a54",
+            "field-swirl-ad54b944",
+            "circulation-convention-5d3c9932"
+        ]
     },
     "the-local-bubble-4d391a90": {
-        "title": "The Local Bubble",
+        "title": "Radial Vanishing of the Time-Averaged Reactive Poynting Vector",
         "equation": "\\langle \\mathbf{S} \\rangle \\cdot \\hat{\\mathbf{r}} = 0 \\quad (\\text{Reactive})",
         "semantic_variables": {
             "\\langle \\mathbf{S} \\rangle": {
-                "name": "Average Reactive Flux Vector",
+                "name": "Time-Averaged Reactive Poynting Vector",
                 "type": "variable",
                 "unit": "W/m^2",
-                "description": "The average vector representing the flux density of energy or momentum, specifically considering only the reactive component, which is associated with energy storage or oscillatory exchange rather than net transport. In electrodynamics, this is related to the time-averaged Poynting vector excluding the net power flow component."
+                "description": "The time-averaged reactive (imaginary) component of the complex Poynting vector denoting localized energy oscillation density."
             },
             "\\hat{\\mathbf{r}}": {
                 "name": "Radial Unit Vector",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A unit vector pointing radially outward from a specified center or origin. It defines the radial direction in spherical coordinates."
-            },
-            "\\cdot": {
-                "name": "Dot Product",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The mathematical operator for the dot product between two vectors. It yields a scalar quantity representing the projection of one vector onto another, scaled by the magnitude of the second vector."
-            },
-            "0": {
-                "name": "Zero",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "Represents the absence of a quantity. In this context, it signifies that the radial component of the average reactive flux is zero, indicating no net radial flow of reactive energy or momentum."
-            },
-            "S": {
-                "name": "Poynting Vector",
-                "type": "variable",
-                "unit": "W/m²",
-                "description": "The directional energy flux density of an electromagnetic field."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
-                "type": "variable",
-                "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
-            },
-            "R": {
-                "name": "Ideal Gas Constant / Resistance / Radius",
-                "type": "constant",
-                "unit": "J/(mol·K) or Ω or m",
-                "description": "Universal gas constant, electrical resistance, or spatial radius."
-            },
-            "e": {
-                "name": "Elementary Charge / Euler's Number",
-                "type": "constant",
-                "unit": "C",
-                "description": "The electric charge carried by a single proton, or the mathematical base of natural logarithms."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
-            },
-            "t": {
-                "name": "Time",
-                "type": "variable",
-                "unit": "s",
-                "description": "The continuous, progressive sequence of events in which change occurs. It acts as the independent variable in dynamical equations of motion."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "v": {
-                "name": "Speed / Velocity Magnitude",
-                "type": "variable",
-                "unit": "m/s",
-                "description": "The rate of change of position with respect to time, representing the speed of a particle."
+                "description": "Dimensionless unit normal pointing outward in the radial direction from the source origin."
             }
         },
-        "interpretation": "The equation $\\mathbf{S}$ · $\\hat \\mathbf{r}$ ; = 0 ; ($\\text{Reactive}$} ) involves several key components. $\\mathbf{S}$ represents the average Poynting vector, which describes the directional energy flux density (power per unit area) of electromagnetic fields, or more generally, a vector representing the flux of energy or momentum. The subscript 'Reactive' indicates that we are considering only the reactive part of this flux, which is associated with energy storage or oscillatory behavior rather than net energy dissipation or transport. $\\hat$ ; $\\mathbf{r}$ ; is a unit vector pointing radially outward from a reference point. The dot product $\\mathbf{S}$ · $\\hat \\mathbf{r}$ ; calculates the component of the average reactive flux vector that is directed along the radial direction. The equation states that this radial component is zero. This implies that, on average, there is no net flow of reactive energy or momentum in the radial direction. Any reactive energy or momentum contributions are either balanced in opposite directions, or they are confined to tangential components, indicating a lack of directed radial transport of these reactive effects.",
-        "symmetry_origin": "This equation arises from considerations of symmetry and conservation laws. If a system possesses spherical symmetry, the average energy or momentum flux must be purely radial. However, the condition of zero radial flux for the reactive component suggests a specific type of dynamic equilibrium or a consequence of the nature of the interactions within the region. In electromagnetic theory, the Poynting vector ;$\\mathbf{S}$ ; = ; $\\frac{1}{\\mu}$ ; ( $\\mathbf{E}$ & \\times ; $\\mathbf{B}$ ) ; where ;$\\mathbf{E}$ ; is the electric field and ;$\\mathbf{B}$ ; is the magnetic field. The 'reactive' part often relates to the time-averaged products of oscillating fields where energy is exchanged but not permanently transferred. The zero radial component implies that such reactive energy exchange does not lead to a net radial propagation.",
-        "limits_and_boundary": "As the magnitude of the average reactive flux $\\mathbf{S} approaches zero, the dot product with any unit vector \\hat \\mathbf{r}$; will also approach zero, satisfying the equation. If the reactive flux has a significant component perpendicular to the radial direction, the radial component will be zero, satisfying the equation regardless of the magnitude of the tangential flux. If the system is isolated and conserves energy and momentum, the net flux integrated over a closed surface would be zero. This equation specifies a condition on the *radial* component of the *reactive* flux, not necessarily the total flux or the total energy.",
+        "interpretation": "The symbol $\\langle \\mathbf{S} \\rangle$ denotes the time-averaged reactive Poynting flux vector representing local reactive power density. The unit vector $\\hat{\\mathbf{r}}$ is the outward radial normal from the coordinate origin. The scalar product $\\langle \\mathbf{S} \\rangle \\cdot \\hat{\\mathbf{r}}$ measures the normal flux component across a sphere of radius $r$. Setting this quantity to $0$ confirms that reactive energy is purely bound or non-dissipative in the radial direction over a complete harmonic oscillation cycle.",
+        "symmetry_origin": "Time-translation symmetry and harmonic phase quadrature orthogonality between the electric field $\\mathbf{E}$ and magnetic field $\\mathbf{H}$ in the reactive near field.",
+        "limits_and_boundary": "In the radiative far-field limit as $r \\to \\infty$, reactive energy flux decays as $\\mathcal{O}(r^{-3})$ or faster compared to real radiating flux $\\mathcal{O}(r^{-2})$, naturally satisfying the zero-flux condition asymptotically.",
         "status": "platinum",
-        "conceptual_definition": "The equation : $\\mathbf{S}$ · $\\hat \\mathbf{r}$ ; = 0 ; ($\\text{Reactive}$} ) describes a condition related to the flow of energy or momentum in a system, specifically concerning the reactive component. In the context of the Local Bubble in astrophysics, this equation could relate to the absence of net radial energy or momentum flux from certain reactive processes within the bubble, implying that any energy or momentum generated is either absorbed locally or is not directed radially outward. It signifies a state of equilibrium or a specific type of dynamic balance where reactive effects do not contribute to a directional flow.",
-        "intuitive_summary": "The reactive part of the energy or momentum flow is not directed along any specific radial line."
+        "conceptual_definition": "In electrodynamics and antenna theory, the complex Poynting vector $\\mathbf{S}_c = \\frac{1}{2} \\mathbf{E} \\times \\mathbf{H}^*$ decomposes into a time-averaged real power flux $\\operatorname{Re}(\\mathbf{S}_c)$ and an imaginary reactive power flux $\\operatorname{Im}(\\mathbf{S}_c)$. The condition $\\langle \\mathbf{S} \\rangle_{\\text{reactive}} \\cdot \\hat{\\mathbf{r}} = 0$ specifies that the time-averaged net reactive energy flux along the outward unit radial vector $\\hat{\\mathbf{r}}$ is zero, establishing that stored non-propagating reactive field energy undergoes no net radial advection across closed boundaries.",
+        "intuitive_summary": "Reactive fields represent local sloshing of electromagnetic energy rather than radiated power. While energy dynamically exchanges between electric and magnetic fields within the near-field bubble, its net cycle-averaged radial escape is zero.",
+        "description": "States that the time-averaged radial component of the reactive electromagnetic energy flux (reactive Poynting vector) vanishes identically, signifying pure reactive energy storage without net radial transport.",
+        "parent_formula_id": "local-change-1edaba7f",
+        "derivation_type": "SPECIAL_CASE",
+        "subcomponents": [
+            "90-degree-law-8609a3c3",
+            "the-plus-minus-rule-a1bb7389"
+        ]
     },
     "gamma-scaling-394df3d5": {
         "title": "Gamma Scaling (Timelike Geodesics ($ds^2 > 0$))",
@@ -441,160 +333,91 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "flavor-mapping-db086353": {
-        "title": "Flavor Mapping",
+        "title": "Neutrino Flavor-to-Mass Basis Transformation",
         "equation": "|\\nu_\\alpha\\rangle = \\sum_{i=1}^3 U_{\\alpha i}^* |\\nu_i\\rangle",
         "semantic_variables": {
-            "|\nun_α⟩": {
-                "name": "Neutrino Flavor Eigenstate",
+            "|\\nu_\\alpha\\rangle": {
+                "name": "Neutrino flavor eigenstate",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A quantum mechanical state representing a neutrino with a definite flavor (e.g., electron, muon, or tau neutrino). This is an observable state detected in weak interactions."
+                "description": "Quantum state vector representing a neutrino produced or detected in a specific charged-current weak flavor eigenstate $\\alpha \\in \\{e, \\mu, \\tau\\}$"
             },
-            "|\\nu_i⟩": {
-                "name": "Neutrino Mass Eigenstate",
+            "|\\nu_i\\rangle": {
+                "name": "Neutrino mass eigenstate",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A quantum mechanical state representing a neutrino with a definite mass (m_i). These states are the eigenstates of the neutrino mass matrix and propagate with distinct masses."
+                "description": "Quantum state vector representing a neutrino in an eigenstate of the free propagation Hamiltonian with definite rest mass $m_i$ for $i \\in \\{1, 2, 3\\}$"
             },
-            "U*_{αi}": {
-                "name": "Complex Conjugate of M\nvte\nkovič Matrix Element",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The complex conjugate of the element in the α-th row and i-th column of the M vte kovič matrix. This element quantifies the amplitude and phase of the i-th mass eigenstate contributing to the α-th flavor eigenstate."
-            },
-            "α": {
-                "name": "Neutrino Flavor Index",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "An index representing the neutrino flavor, typically taking values e (electron), μ (muon), or τ (tau)."
-            },
-            "i": {
-                "name": "Neutrino Mass Eigenstate Index",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "An index representing the neutrino mass eigenstate, typically taking values 1, 2, or 3 for the three known neutrino masses."
-            },
-            "Σ": {
-                "name": "Summation Symbol",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Indicates the sum over all possible neutrino mass eigenstates (i = 1, 2, 3)."
-            },
-            "\\nu": {
-                "name": "Kinematic Viscosity",
-                "type": "variable",
-                "unit": "m²/s",
-                "description": "The ratio of dynamic viscosity to density, representing a fluid's resistance to shear flow under gravity."
-            },
-            "\\alpha": {
-                "name": "Fine-structure Constant",
+            "U_{\\alpha i}": {
+                "name": "PMNS matrix element",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The fundamental physical constant characterizing the strength of the electromagnetic interaction between elementary charged particles."
+                "description": "Element of the unitary Pontecorvo-Maki-Nakagawa-Sakata (PMNS) lepton mixing matrix connecting flavor $\\alpha$ to mass eigenstate $i$"
             },
-            "U": {
-                "name": "Potential Energy",
+            "\\alpha": {
+                "name": "Lepton flavor index",
                 "type": "variable",
-                "unit": "J",
-                "description": "Position-dependent stored energy of a system."
+                "unit": "dimensionless",
+                "description": "Electroweak flavor label corresponding to electron ($e$), muon ($\\mu$), or tau ($\\tau$)"
+            },
+            "i": {
+                "name": "Neutrino mass eigenstate index",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Discrete integer index labeling the three kinematic mass eigenstates ($i = 1, 2, 3$)"
             }
         },
-        "interpretation": "The equation | un_α⟩ = Σ_{i=1}^3 U*_{αi} | u_i⟩ relates the flavor eigenstates | un_α⟩ to the mass eigenstates | u_i⟩. Here, | un_α⟩ represents a neutrino of a specific flavor α, where α can be e (electron), μ (muon), or τ (tau). The | u_i⟩ states, with i = 1, 2, 3, represent the three neutrino mass eigenstates, each associated with a distinct mass m_i. The coefficients U*_{αi} are elements of the unitary M vte kovič matrix (often denoted as U). This matrix describes the mixing between flavor and mass eigenstates. The superscript ' *' denotes the complex conjugate, indicating that the transformation generally involves complex numbers, which are important for phase factors in quantum mechanics. The sum is over the three possible mass eigenstates.",
-        "symmetry_origin": "This formula arises from the fact that the weak interaction, which couples to neutrino flavors, is not diagonal in the mass basis. The mass term in the Lagrangian, however, is diagonal in the mass basis. The diagonalization of the mass matrix leads to a set of mass eigenstates that are different from the flavor eigenstates, necessitating a unitary transformation (the M vte kovič matrix) to relate them. This is analogous to how rotations can mix components of vectors in different coordinate systems.",
-        "limits_and_boundary": "In the hypothetical limit where flavor and mass eigenstates are identical (i.e., no mixing), the M vte kovič matrix would be the identity matrix. In this case, | un_α⟩ = | u_α⟩, meaning each flavor eigenstate is a pure mass eigenstate. As the mixing angles (which parameterize the M vte kovič matrix) approach values that cause destructive interference in specific processes, the apparent flavor content of a neutrino beam can change dramatically.",
+        "interpretation": "The state vector $|\nu_\\alpha\rangle$ denotes a neutrino state of definite leptonic flavor $\\alpha$. The state $|\nu_i\rangle$ is an eigenstate of the free Hamiltonian with definite mass $m_i$. The coefficient $U_{\\alpha i}^*$ is the complex conjugate of the $(\\alpha, i)$ matrix element of the unitary PMNS matrix $U$. The complex conjugation arises from the convention defining charged-current weak lagrangian interactions in quantum field theory.",
+        "symmetry_origin": "Mismatched diagonalizations of the charged lepton and neutrino Yukawa mass matrices, resulting in the non-conservation of individual lepton flavor numbers $U(1)_e \\times U(1)_\\mu \\times U(1)_\\tau$ while preserving overall $U(1)_{B-L}$ or $U(1)_L$ symmetry.",
+        "limits_and_boundary": "In the limit of vanishing mixing angles ($\\theta_{12}, \\theta_{23}, \\theta_{13} \\to 0$), the PMNS matrix reduces to the identity $U \\to \\mathbb{I}_{3\\times 3}$, leading to $|\nu_e\rangle = |\nu_1\rangle$, $|\nu_\\mu\rangle = |\nu_2\rangle$, and $|\nu_\\tau\rangle = |\nu_3\rangle$ with zero flavor transitions. If all three neutrino masses are exactly degenerate ($m_1 = m_2 = m_3$), any flavor superposition remains an energy eigenstate, yielding unobservable oscillation phases.",
         "status": "platinum",
-        "conceptual_definition": "The flavor mapping equation describes how the physically observed neutrino states, known as flavor eigenstates ( un_α⟩), are linear superpositions of the neutrino mass eigenstates (|ν_i⟩). In quantum mechanics, particles are described by states, and for neutrinos, there are two primary ways to define these states: by their flavor (electron, muon, or tau neutrino) or by their mass. The flavor mapping provides the transformation matrix that connects these two descriptions, which is crucial for understanding phenomena like neutrino oscillations.",
-        "intuitive_summary": "Physically detected neutrino flavors are mixtures of neutrinos with definite masses."
+        "conceptual_definition": "In the Standard Model extended with non-zero neutrino masses, the weak-interaction flavor eigenstates $|\nu_\\alpha\rangle$ ($\\alpha \\in \\{e, \\mu, \\tau\\}$) are not identical to the free propagation Hamiltonian mass eigenstates $|\nu_i\rangle$ ($i \\in \\{1, 2, 3\\}$). The transformation between the flavor basis and the mass basis is mediated by the unitary $3 \\times 3$ Pontecorvo-Maki-Nakagawa-Sakata (PMNS) matrix $U$, yielding $|\nu_\\alpha\rangle = \\sum_{i=1}^3 U_{\\alpha i}^* |\nu_i\rangle$.",
+        "intuitive_summary": "Neutrinos are produced and detected via the weak force in definite flavor states (electron, muon, tau), but propagate through space as superpositions of different mass states, giving rise to quantum flavor oscillations.",
+        "description": "Expresses a neutrino weak-interaction flavor eigenstate as a coherent quantum superposition of neutrino mass eigenstates weighted by the complex conjugate elements of the PMNS lepton mixing matrix.",
+        "parent_formula_id": "flavor-mass-unitary-mapping-fb95c65f",
+        "derivation_type": "SPECIAL_CASE",
+        "subcomponents": [
+            "pmns-matrix-element-46d7b89c",
+            "neutrino-oscillation-probability-law-e6dbb4c9"
+        ]
     },
     "formal-foundation-157a88bb": {
-        "title": "Formal Foundation",
+        "title": "Axiomatic Entailment of Physical Laws",
         "equation": "\\text{Axioms } \\Sigma \\vdash \\text{Physical Law } \\Psi",
         "semantic_variables": {
             "\\Sigma": {
-                "name": "Axiomatic Set",
+                "name": "Axiom Set",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Represents a set of fundamental axioms, postulates, or fundamental principles upon which a physical theory is based. These are assumed to be true and form the logical foundation for deriving other physical laws."
+                "description": "Foundational set of physical postulates, variational principles, and geometric symmetries defining the theory."
             },
             "\\Psi": {
-                "name": "Physical Law",
+                "name": "Derived Physical Law",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Represents a specific physical law, principle, or theorem that is being derived or proven within the context of a physical theory. It is a statement about the behavior or relationships of physical quantities."
+                "description": "Specific dynamical equation, conservation theorem, or relational law deduced from the axiom set."
             },
             "\\vdash": {
-                "name": "Logical Entailment",
-                "type": "constant",
+                "name": "Syntactic Entailment Operator",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "A symbol from formal logic representing deductive entailment or provability. It signifies that the statement on the right (the physical law \\Psi) can be logically derived from the statements on the left (the axioms \\Sigma)."
-            },
-            "A": {
-                "name": "Area / Vector Potential",
-                "type": "variable",
-                "unit": "m² or V·s/m",
-                "description": "The measure of a 2D surface, or the electrodynamic magnetic vector potential."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "o": {
-                "name": "Origin / Offset",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The starting point of a coordinate system, or baseline shift."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
-            },
-            "s": {
-                "name": "Seconds / Proper Time Interval",
-                "type": "variable",
-                "unit": "s",
-                "description": "The SI unit of time, or the invariant interval traversed by a clock."
-            },
-            "h": {
-                "name": "Planck Constant",
-                "type": "constant",
-                "unit": "J·s",
-                "description": "The quantum of electromagnetic action relating photon energy to frequency."
-            },
-            "y": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the vertical or transverse location of a particle in space."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The maximum speed at which all conventional matter and information in the universe can travel."
-            },
-            "l": {
-                "name": "Length / Angular Quantum Number",
-                "type": "variable",
-                "unit": "m",
-                "description": "The physical size of an object, or orbital angular momentum quantum number."
-            },
-            "w": {
-                "name": "Width / Angular Velocity Component",
-                "type": "variable",
-                "unit": "m or rad/s",
-                "description": "Horizontal size, or rate of rotation along a particular axis."
+                "description": "Formal logical turnstile indicating deductive derivability within the mathematical framework of the physical theory."
             }
         },
-        "interpretation": "In this formal statement, $\\Sigma$ represents a set of axioms or fundamental postulates that are assumed to be true within a given physical theory. These axioms are the bedrock upon which the theory is built, and they are often inspired by fundamental observations or principles like the principle of least action, conservation laws, or symmetry principles. $\\Psi$ denotes a specific physical law, which could be an equation of motion, a relation between fields, or a statement about the behavior of physical systems. The symbol $\\vdash$, read as 'entails' or 'proves', signifies a formal logical derivation. Therefore, $\\Sigma \\vdash \\Psi$ means that the physical law $\\Psi$ can be deduced from the axioms $\\Sigma$ using the rules of logic. For example, in Newtonian mechanics, the axioms might include Newton's laws of motion and the law of universal gravitation, from which one can derive specific laws for planetary orbits or projectile motion.",
-        "symmetry_origin": "The origin of this formulation lies in the philosophical and mathematical desire to ground physical theories in a rigorous, axiomatic system, akin to Euclidean geometry. The goal is to ensure that all derived physical laws are not arbitrary but are direct consequences of a minimal set of foundational principles. This approach allows for the identification of underlying symmetries and conservation laws, as Noether's theorem, for instance, demonstrates a direct link between continuous symmetries of the action (often derived from axioms) and conserved quantities, which are fundamental physical laws.",
-        "limits_and_boundary": "This formula operates within the realm of formal logic and axiomatic systems, so its 'limits and boundary' are defined by the consistency and completeness of the axiomatic set $\\Sigma$. If $\\Sigma$ is incomplete, there may be true physical laws $\\Psi$ that cannot be derived. If $\\Sigma$ is inconsistent, then any physical law (and its negation) can be derived, rendering the theory meaningless. In practice, the 'boundary' is encountered when attempting to extend a theory to regimes where the axioms may no longer hold (e.g., quantum gravity where general relativity's axioms might break down), requiring the formulation of new axioms and theories.",
+        "interpretation": "In this meta-theoretical relation, $\\Sigma$ represents the set of fundamental postulates, boundary assumptions, and constitutive principles defining a physical theory. The turnstile operator $\\vdash$ represents formal proof and mathematical derivation within the deductive apparatus of the theory. The proposition $\\Psi$ represents the resulting physical theorem or law (e.g., the Navier-Stokes equations from kinetic theory, or Maxwell's equations from $U(1)$ gauge invariance).",
+        "symmetry_origin": "Meta-theoretical symmetry: the deductive structure ensures that invariant transformation groups underlying the axiom set $\\Sigma$ are faithfully inherited by the derived physical laws $\\Psi$ via Noether's theorems and representation theory.",
+        "limits_and_boundary": "Subject to Gödelian incompleteness and effective field theory cutoffs: deductive validity $\\Sigma \\vdash \\Psi$ is bounded by the domain of applicability of the axiom set $\\Sigma$, breaking down when trans-Planckian or non-perturbative regimes invalidate the starting postulates.",
         "status": "platinum",
-        "conceptual_definition": "This formula, $\\text{Axioms } \\Sigma \\vdash \\text{Physical Law } \\Psi$, represents a fundamental concept in the formalization of physics. It states that a specific physical law, denoted by $\\Psi$, can be logically derived or proven from a set of fundamental axioms or postulates, denoted by $\\Sigma$. In essence, it is a statement of deductive reasoning within the framework of theoretical physics, asserting that observed or postulated physical phenomena ( $\\Psi$) are consistent with and follow from a foundational set of rules ( $\\Sigma$). This is the bedrock of theoretical physics, where complex theories are built upon a small number of elegant and powerful axioms.",
-        "intuitive_summary": "A physical law can be rigorously proven to be true if it logically follows from a set of fundamental, accepted truths (axioms)."
+        "conceptual_definition": "Within mathematical physics and epistemology, the relation $\\text{Axioms } \\Sigma \\vdash \\text{Physical Law } \\Psi$ formalizes theoretical physics as a deductive-nomological system. The symbol $\\Sigma$ denotes the foundational set of primitive axioms (such as symmetry principles, least action, or quantum state postulates), $\\vdash$ denotes syntactic consequence (formal deducibility), and $\\Psi$ represents the resultant physical equation of motion, conservation law, or dynamical theorem.",
+        "intuitive_summary": "All specialized laws in theoretical physics are rigorous logical consequences derived from a small, highly symmetric set of fundamental postulates.",
+        "description": "Represents the formal deductive derivation of a specific physical law from a foundational set of physical axioms or postulates via mathematical and logical consequence.",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
+        "subcomponents": [
+            "law-summary-dd6b6d77",
+            "law-force-a4d2f9fa",
+            "ramsey-sentence-form-82516356",
+            "physical-possibility-state-space-ident-0ac925fc"
+        ]
     },
     "technical-relation-92a81718": {
         "title": "Maximum Von Neumann Entropy of a Finite-Dimensional Quantum System",
@@ -745,82 +568,72 @@
         "derivation_type": "DEFINITION"
     },
     "wave-packet-identity-6a3850ea": {
-        "title": "Wave Packet Identity",
+        "title": "One-Dimensional Wave Packet Synthesis via Continuous Fourier Superposition",
         "equation": "\\psi(x, t) = \\frac{1}{\\sqrt{2\\pi}} \\int_{-\\infty}^{\\infty} A(k) e^{i(kx - \\omega(k)t)} \\mathrm{d}k",
         "semantic_variables": {
-            "\\psi": {
-                "name": "Wave Function",
+            "\\psi(x, t)": {
+                "name": "Wave packet field amplitude",
                 "type": "variable",
                 "unit": "m^{-1/2}",
-                "description": "The complex-valued wave function in one dimension, whose squared modulus $|\\psi(x,t)|^2$ gives the probability density of finding the particle at position $x$ and time $t$."
+                "description": "Total complex wave amplitude or quantum position-space wave function at position $x$ and time $t$"
             },
             "x": {
-                "name": "Position",
+                "name": "Spatial coordinate",
                 "type": "variable",
                 "unit": "m",
-                "description": "The spatial coordinate."
+                "description": "One-dimensional spatial position along the axis of propagation"
             },
             "t": {
-                "name": "Time",
+                "name": "Temporal coordinate",
                 "type": "variable",
                 "unit": "s",
-                "description": "The temporal coordinate."
+                "description": "Time elapsed since initial state preparation"
             },
             "k": {
-                "name": "Wave Number",
-                "type": "integration variable",
-                "unit": "rad m^{-1}",
-                "description": "The spatial frequency of a plane wave component, related to momentum $p$ by $p = \\hbar k$."
+                "name": "Wavenumber",
+                "type": "variable",
+                "unit": "rad/m",
+                "description": "Spatial angular frequency of an individual Fourier plane-wave mode"
             },
-            "\\omega": {
-                "name": "Angular Frequency",
-                "type": "function",
-                "unit": "rad s^{-1}",
-                "description": "The temporal frequency of a plane wave component, related to energy $E$ by $E = \\hbar \\omega$. It is a function of the wave number, specified by the dispersion relation $\\omega(k)$."
-            },
-            "A": {
-                "name": "Amplitude Spectrum",
-                "type": "function",
+            "A(k)": {
+                "name": "Spectral amplitude distribution",
+                "type": "variable",
                 "unit": "m^{1/2}",
-                "description": "The complex-valued function that specifies the amplitude and phase of each plane wave component in the superposition. It is the Fourier transform of the initial wave function $\\psi(x,0)$."
+                "description": "Complex Fourier weighting amplitude corresponding to wavenumber component $k$"
+            },
+            "\\omega(k)": {
+                "name": "Angular frequency dispersion relation",
+                "type": "variable",
+                "unit": "rad/s",
+                "description": "Dispersion relation specifying angular frequency as a function of wavenumber $k$"
             },
             "i": {
-                "name": "Imaginary Unit",
+                "name": "Imaginary unit",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The imaginary unit, defined as $i^2 = -1$."
-            },
-            "e": {
-                "name": "Euler's Number",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The base of the natural logarithm, approximately 2.718."
+                "description": "Fundamental imaginary unit satisfying $i^2 = -1$"
             },
             "\\pi": {
-                "name": "Pi",
+                "name": "Archimedes constant",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159."
-            },
-            "\\int": {
-                "name": "Integral",
-                "type": "operator",
-                "unit": "n/a",
-                "description": "The integral operator, summing over a continuous range of values."
-            },
-            "\\mathrm{d}": {
-                "name": "Differential",
-                "type": "operator",
-                "unit": "n/a",
-                "description": "Indicates the differential element of the integration variable."
+                "description": "Mathematical constant ratio of a circle's circumference to its diameter"
             }
         },
-        "interpretation": "The equation represents the wave function $\\psi(x, t)$ as an inverse Fourier transform. It describes how a wave packet, potentially localized in space, is constructed from a continuous superposition of plane waves, $e^{i(kx - \\omega(k)t)}$. The integral sums over all possible wave numbers $k$. The function $A(k)$ is the amplitude spectrum, which is the Fourier transform of the initial wave function $\\psi(x, 0)$, and it determines the weight and phase of each plane wave component in the superposition. The term $\\omega(k)$ is the dispersion relation, linking the temporal frequency $\\omega$ to the spatial frequency $k$. The factor $1/\\sqrt{2\\pi}$ is a normalization constant from Fourier transform conventions. The time evolution of the packet is governed by the phase factor $e^{-i\\omega(k)t}$, where different $k$ components can travel at different phase velocities, $\\omega(k)/k$, leading to the phenomenon of dispersion.",
-        "symmetry_origin": "The representation of a state as a superposition of plane waves arises from the translational symmetry of spacetime. In a system with translational invariance, momentum is conserved (by Noether's theorem), and the momentum eigenstates are plane waves, $e^{ikx}$. The wave packet identity is a direct application of Fourier analysis, which decomposes a function into these basis states of definite momentum. The time evolution is governed by the Hamiltonian, which reflects time-translation symmetry and energy conservation.",
-        "limits_and_boundary": "1. **Monochromatic Limit**: If $A(k)$ approaches a Dirac delta function, $A(k) \\to \\delta(k-k_0)$, the wave packet becomes a pure plane wave $e^{i(k_0x - \\omega(k_0)t)}$, which is completely delocalized in space.\n2. **Localization Limit**: If $A(k)$ is a broad function over a wide range of $k$, the wave packet $\\psi(x, t)$ becomes highly localized in position space, consistent with the uncertainty principle $\\Delta x \\Delta k \\ge 1/2$.\n3. **Non-dispersive Limit**: If the dispersion relation is linear, $\\omega(k) = v_p k$, all plane wave components travel at the same phase velocity $v_p$. The wave packet propagates without changing its shape, with a group velocity equal to the phase velocity.\n4. **Dispersive Limit**: For a general non-linear dispersion relation $\\omega(k)$, different components travel at different phase velocities. The wave packet's overall shape evolves and typically spreads out over time, a phenomenon known as dispersion.",
+        "interpretation": "The field $\\psi(x, t)$ denotes the spacetime-dependent wave amplitude or quantum wavefunction. The parameter $k$ is the spatial wavenumber, related to momentum by $p = \\hbar k$ in quantum systems. The spectral amplitude function $A(k)$ encodes the wavenumber distribution, determined uniquely by the initial profile $\\psi(x, 0)$ via the forward Fourier transform. The function $\\omega(k)$ represents the dispersion relation dictating the temporal frequency of each Fourier mode. The prefactor $1/\\sqrt{2\\pi}$ provides unitary normalization under symmetric Fourier transform conventions, while the kernel $e^{i(kx - \\omega(k)t)}$ represents harmonic plane waves propagating in time.",
+        "symmetry_origin": "Space translation symmetry implies conservation of wavenumber (canonical momentum $p$), and time translation symmetry implies conservation of angular frequency (energy $E$), making harmonic plane waves the fundamental irreducible representation (eigenmodes) of the linear wave operator.",
+        "limits_and_boundary": "In the dispersion-free limit $\\omega(k) = v k$, the packet translates rigidly without deformation: $\\psi(x, t) = \\psi(x - vt, 0)$. In the monochromatic limit $A(k) \\to \\delta(k - k_0)$, spatial localization is lost and the packet reduces to a pure plane wave of infinite extent. In the quadratic dispersion limit $\\omega(k) = \\hbar k^2 / (2m)$ (free non-relativistic particle), the spatial width spreads quadratically with time $\\sigma_x(t) = \\sigma_0 \\sqrt{1 + (\\hbar t / 2m\\sigma_0^2)^2}$.",
         "status": "platinum",
-        "conceptual_definition": "The wave packet identity expresses a general one-dimensional wave function as a continuous superposition of plane waves. Each plane wave component is weighted by a complex amplitude function, which is the Fourier transform of the initial wave function.",
-        "intuitive_summary": "A localized quantum wave is constructed by adding together many simple, infinitely long waves of different wavelengths, each with a specific amplitude."
+        "conceptual_definition": "A wave packet $\\psi(x, t)$ is synthesized in one dimension through the continuous superposition (inverse Fourier transform) of monochromatic plane waves $e^{i(kx - \\omega(k)t)}$ modulated by a spectral density amplitude $A(k)$. The integral synthesizes localized disturbances in linear wave mechanics and quantum mechanics by integrating over all accessible wavenumber modes $k \\in (-\\infty, \\infty)$.",
+        "intuitive_summary": "Individual infinite sinusoidal plane waves superpose constructively in a localized region while destructively interfering everywhere else; as time progresses, differences in component phase velocities $\\omega(k)/k$ cause the overall packet to translate and disperse.",
+        "description": "Represents a time-dependent, spatially localized wave packet as a continuous integral superposition of plane-wave modes weighted by a spectral amplitude distribution and evolved via a dispersion relation.",
+        "parent_formula_id": "offer-wave-identity-1-6186b4a2-223be70d",
+        "derivation_type": "DERIVED_FROM",
+        "subcomponents": [
+            "wave-packet-integral-0d17064d",
+            "fourier-synthesis-integral-492f9d24",
+            "wave-decomposition-2ca27629"
+        ]
     },
     "von-neumann-equation-d91c4ab1": {
         "title": "Von Neumann Equation",
@@ -877,100 +690,98 @@
         "derivation_type": "DERIVED_FROM"
     },
     "poisson-bracket-invariant-canonical-5fb257c1": {
-        "title": "Canonical Bracket Invariance",
+        "title": "Canonical Bracket Invariance Under Coordinate Transformations",
         "equation": "\\{Q_i, P_j\\}_{q,p} = \\delta_{ij}, \\quad \\{Q_i, Q_j\\} = \\{P_i, P_j\\} = 0",
-        "interpretation": "The equations \\{Q_i, P_j\\}_{q,p} = ͂_{ij} and \\{Q_i, Q_j\\} = \\{P_i, P_j\\} = 0 describe the Poisson bracket structure in classical mechanics, which generalizes to the commutator in quantum mechanics. The expression \\{A, B\\}_{q,p} denotes the Poisson bracket of two functions A and B of generalized coordinates Q_i and their conjugate momenta P_j . The indices i and j refer to different degrees of freedom of the system. The first equation, \\{Q_i, P_j\\}_{q,p} = ͂_{ij} , states that the Poisson bracket between the i -th generalized coordinate and the j -th conjugate momentum is equal to the Kronecker delta ͂_{ij} . This implies that a generalized coordinate Q_i and its conjugate momentum P_i are canonically conjugate variables, meaning they are fundamentally linked and affect each other's evolution. When i = j , the bracket is 1, signifying a direct relationship. When i eq j , the bracket is 0, indicating independence. The second set of equations, \\{Q_i, Q_j\\} = 0 and \\{P_i, P_j\\} = 0 , states that the Poisson bracket between any two distinct generalized coordinates is zero, and similarly for any two distinct conjugate momenta. This signifies that different generalized coordinates do not directly influence each other through these fundamental commutation relations, and likewise for their conjugate momenta. These relations are crucial because they form the foundation for Hamilton's equations of motion and are directly preserved under canonical transformations, ensuring the consistency of the Hamiltonian formulation of mechanics.",
-        "symmetry_origin": "These relations originate from the fundamental structure of Hamiltonian mechanics and are preserved under canonical transformations. Canonical transformations are coordinate transformations in phase space that leave Hamilton's equations of motion in their original form. This invariance ensures that the physical laws are independent of the specific choice of generalized coordinates used to describe the system, reflecting a deep symmetry in the formulation of mechanics. In quantum mechanics, these relations are directly translated into the canonical commutation relations between operators representing position and momentum.",
-        "limits_and_boundary": "In the context of classical mechanics, these relations hold universally for any configuration of canonical variables. There are no specific limits where these bracket relations break down, other than the implicit assumptions of classical mechanics itself (e.g., continuous variables, deterministic evolution). As the system's degrees of freedom approach zero or infinity, the structure of the canonical brackets remains defined by the delta function ͂_{ij} for the conjugate pairs, and zero for non-conjugate pairs, reflecting the local nature of these fundamental relations.",
+        "interpretation": "The relations state that the fundamental Poisson bracket between any new coordinate $Q_i$ and new momentum $P_j$, computed using partial derivatives with respect to the original canonical variables $(q, p)$, yields the Kronecker delta $\\delta_{ij}$. Mutual brackets among distinct coordinates $\\{Q_i, Q_j\\}_{q,p}$ and distinct momenta $\\{P_i, P_j\\}_{q,p}$ identically vanish. This preservation is both necessary and sufficient for the transformation $(q, p) \\mapsto (Q, P)$ to preserve Hamilton's equations of motion without modifying the underlying symplectic structure.",
+        "symmetry_origin": "Symplectic group invariance $\\mathrm{Sp}(2n, \\mathbb{R})$ on the cotangent bundle $T^*Q$ of phase space, corresponding to symplectomorphisms that preserve the canonical symplectic 2-form $\\omega$.",
+        "limits_and_boundary": "In the classical limit, these relations provide the geometric template for canonical quantization via the Dirac correspondence principle, $[\\hat{Q}_i, \\hat{P}_j] = i\\hbar \\{Q_i, P_j\\} = i\\hbar\\delta_{ij}\\hat{I}$ as $\\hbar \\to 0$.",
         "semantic_variables": {
             "Q_i": {
-                "name": "Generalized Coordinate",
+                "name": "Transformed generalized coordinate",
                 "type": "variable",
                 "unit": "m",
-                "description": "The i-th generalized coordinate of a system. This can represent position, angle, or any other suitable parameter that describes the configuration of the system. For a simple particle in 3D, these could be (x, y, z)."
+                "description": "The $i$-th transformed canonical position coordinate in phase space"
             },
             "P_j": {
-                "name": "Conjugate Momentum",
+                "name": "Transformed conjugate momentum",
                 "type": "variable",
-                "unit": "kg m/s",
-                "description": "The j-th conjugate momentum corresponding to the i-th generalized coordinate. In classical mechanics, for a simple Cartesian coordinate system, this is the linear momentum (mass times velocity)."
+                "unit": "kg*m/s",
+                "description": "The $j$-th transformed canonical conjugate momentum coordinate in phase space"
             },
-            "\\{A, B\\}_{q,p}": {
-                "name": "Poisson Bracket",
+            "q_k": {
+                "name": "Original generalized coordinate",
                 "type": "variable",
-                "unit": "N/A",
-                "description": "The Poisson bracket of two functions A and B in the phase space defined by generalized coordinates (q) and momenta (p). It is defined as \\{A, B\\}_{q,p} = \\sum_i ( $\\frac{\\partial A}{\\partial Q_i}\\frac{\\partial B}{\\partial P_i} - \\frac{\\partial A}{\\partial P_i}\\frac{\\partial B}{\\partial Q_i}$ ). It quantifies the fundamental relationship between dynamical variables."
+                "unit": "m",
+                "description": "The $k$-th base generalized coordinate used as the differentiation basis in the Poisson bracket"
+            },
+            "p_k": {
+                "name": "Original conjugate momentum",
+                "type": "variable",
+                "unit": "kg*m/s",
+                "description": "The $k$-th base canonical momentum used as the differentiation basis in the Poisson bracket"
             },
             "\\delta_{ij}": {
-                "name": "Kronecker Delta",
-                "type": "constant",
-                "unit": "N/A",
-                "description": "The Kronecker delta function. It is equal to 1 if i = j, and 0 if i eq j. It serves to distinguish between conjugate pairs and non-conjugate pairs of variables."
-            },
-            "Q": {
-                "name": "Total Charge",
-                "type": "variable",
-                "unit": "C",
-                "description": "The net electrical charge of a system."
-            },
-            "i": {
-                "name": "Imaginary Unit",
+                "name": "Kronecker delta",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
+                "description": "Discrete delta function evaluating to 1 if $i = j$ and 0 otherwise"
             },
-            "j": {
-                "name": "Current Density / Index",
-                "type": "variable",
-                "unit": "A/m²",
-                "description": "The flow of electric current per unit cross-sectional area."
+            "\\{ \\cdot, \\cdot \\}_{q,p}": {
+                "name": "Poisson bracket operator",
+                "type": "operator",
+                "unit": "1/(J*s)",
+                "description": "Bilinear Lie bracket operation evaluated with respect to the canonical variables $(q, p)$"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Canonical Bracket Invariance, expressed by the given equations, is a fundamental principle in classical and quantum mechanics that dictates the fundamental commutation relations between canonical position and momentum variables. These relations are invariant under canonical transformations, ensuring that the underlying physics described by Hamiltonian mechanics remains consistent regardless of the chosen set of generalized coordinates and their conjugate momenta.",
-        "intuitive_summary": "The canonical bracket relations establish that a generalized position and its conjugate momentum are fundamentally linked, while pairs of positions or pairs of momenta are independent."
+        "conceptual_definition": "In Hamiltonian mechanics, a coordinate transformation $(q, p) \\to (Q, P)$ is canonical if and only if it preserves the fundamental Poisson bracket algebraic relations. Specifically, the brackets evaluated with respect to the original phase-space coordinates satisfy $\\{Q_i, P_j\\}_{q,p} = \\delta_{ij}$ and $\\{Q_i, Q_j\\}_{q,p} = \\{P_i, P_j\\}_{q,p} = 0$, guaranteeing the preservation of the symplectic 2-form $\\omega = \\mathrm{d}p_i \\wedge \\mathrm{d}q_i = \\mathrm{d}P_i \\wedge \\mathrm{d}Q_i$.",
+        "intuitive_summary": "A canonical transformation reorganizes phase space without distorting its underlying symplectic geometry, ensuring that the fundamental conjugate pairings between positions and momenta remain intact.",
+        "description": "The fundamental Poisson brackets evaluated between transformed canonical coordinates and momenta maintain their invariant symplectic values under canonical transformations.",
+        "parent_formula_id": "canonical-poisson-bracket-definition-4b143ee8",
+        "derivation_type": "DERIVED_FROM",
+        "subcomponents": [
+            "fundamental-canonical-brackets-59306815",
+            "transformation-bridge-4e985f85",
+            "canonical-momenta-and-position-commutation"
+        ]
     },
     "truth-maker-mapping-physical-logic-ident-81f93b7e": {
         "title": "Truth-Maker Mapping",
         "equation": "\\mathcal{T}: S \\to \\mathcal{O}",
-        "interpretation": "The formula ℓ: S → ℎ defines a function or a mapping ℓ from a set $\\delta \\delta S to a set ℎ. In this context, the set \\delta S$ represents the space of possible physical states, hypotheses, or declarative statements about a physical system. Each element in $\\delta$ S$can be thought of as a proposition, such as 'the particle is at position x' or 'the force is F'. The set ℎ represents the space of observable outcomes or empirical evidence that can be registered by an observer or a measurement device. The mapping ℓ assigns to each statement or state in \\delta S a$ corresponding observable or set of observables in ℎ. For example, if a statement in $\\delta$ S is 'the electron has spin up along the z-axis', then ℓ('electron has spin up') might map to the observable outcome of a Stern-Gerlach experiment yielding a positive deflection in the z-direction. This mapping is fundamental to how we verify or falsify physical theories; a theory is considered valid if its predictions (elements of ℎ) are consistently observed when the conditions described by its postulates (elements $of \\delta \\delta$ S) are met.",
-        "symmetry_origin": "The concept of a Truth-Maker Mapping originates from formal semantics and epistemology, but in physics, it is deeply connected to the operational definition of physical quantities and the principles of empirical verification. The mapping itself is not directly tied to a specific symmetry like Lorentz invariance or gauge invariance, but the structure of the sets $\\delta S$ and ℎ, and the nature of the mapping, are influenced by the symmetries of the physical laws governing the system. For instance, if a physical law is translationally invariant, then statements about phenomena occurring at different spatial locations but under identical conditions should map to equivalent observable outcomes.",
-        "limits_and_boundary": "In extreme limits, the Truth-Maker Mapping can illustrate the limits of predictability or observability. If the set $\\delta$ S is conceptually infinite or ill-defined (e.g., describing states in quantum mechanics before measurement), the mapping might lead to a superposition of possible observable outcomes in ℎ. Conversely, if the set ℎ is empty or contains only trivial outcomes, $it implies that no observable consequences can be derived from any statement in\\delta\\delta$ S, rendering the theory unfalsifiable and empirically meaningless. As the precision of measurements in ℎ increases, the mapping can become more refined, allowing for finer distinctions between different states or hypotheses in $\\delta \\delta$ S.",
+        "interpretation": "The operator $\\mathcal{T}$ denotes the evaluation or correspondence mapping. The set $S$ denotes the theoretical state space or propositional universe representing theoretical claims (such as particle configurations, fields, or quantum states). The set $\\mathcal{O}$ constitutes the observable space comprising empirical outcomes or measurement apparatus readouts. A theoretical statement $s \\in S$ is empirically grounded if $\\mathcal{T}(s) \\in \\mathcal{O}$ corresponds faithfully to observed experimental data.",
+        "symmetry_origin": "Rooted in the observational invariance and operational symmetry of physical theories under theoretical re-parameterizations.",
+        "limits_and_boundary": "In the limit of complete observational distinguishability (noiseless measurement), $\\mathcal{T}$ is injective. In underdetermined or gauge-redundant theories, $\\mathcal{T}$ exhibits non-trivial kernels where distinct states $s_1, s_2 \\in S$ map to identical observable outcomes $\\mathcal{T}(s_1) = \\mathcal{T}(s_2)$.",
         "semantic_variables": {
-            "ℓ": {
-                "name": "Truth-Maker Mapping Operator",
-                "type": "variable",
+            "\\mathcal{T}": {
+                "name": "truth-maker mapping operator",
+                "type": "operator",
                 "unit": "dimensionless",
-                "description": "The operator representing the mapping from statements/states to observable outcomes. It dictates the correspondence between abstract physical descriptions and empirical evidence."
+                "description": "Functional mapping from the space of theoretical statements or states to empirical observables."
             },
             "S": {
-                "name": "Set of Physical States or Statements",
+                "name": "state or proposition space",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The domain of the mapping, representing all possible configurations, states, hypotheses, or declarative propositions about a physical system."
+                "description": "Set of theoretical physical states, configurations, or declarative statements."
             },
-            "ℎ": {
-                "name": "Set of Observable Outcomes",
+            "\\mathcal{O}": {
+                "name": "observable space",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The codomain of the mapping, representing all possible empirical results or observable phenomena that can be measured or perceived for the physical system."
-            },
-            "T": {
-                "name": "Tension / Period",
-                "type": "variable",
-                "unit": "N or s",
-                "description": "In dynamics, tension force in a string/cable, or period (time per cycle) of periodic motion."
-            },
-            "O": {
-                "name": "Operator / Big O Notation",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "A mathematical action performed on a state vector, or asymptotic growth boundary."
+                "description": "Set of empirically accessible outcomes, measurement results, or observable phenomena."
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Truth-Maker Mapping, denoted by the operator ℓ, is a conceptual framework used in formal semantics and philosophy of language to describe how propositions or statements correspond to reality. In a physics context, it can be interpreted as a mapping from a set of physical states or assertions about a system to the set of observable phenomena or empirical evidence that would confirm those assertions. It establishes a connection between the abstract description of a physical situation and its concrete manifestations.",
-        "intuitive_summary": "It's a rule that tells you what observable reality must be like if a given statement about the physical world is true."
+        "conceptual_definition": "The truth-maker mapping $\\mathcal{T}: S \\to \\mathcal{O}$ represents a formal correspondence from the domain of physical states, hypotheses, or theoretical propositions $S$ to the codomain of observable outcomes or empirical phenomena $\\mathcal{O}$. It operationalizes the bridge between ontological states or semantic statements within a physical model and the corresponding empirical truth-makers registered through physical measurement.",
+        "intuitive_summary": "It provides a formal bridge between abstract theoretical statements about nature and the concrete experimental observations that verify or falsify them.",
+        "description": "A formal mathematical mapping linking the space of theoretical propositions or physical states to empirical observations and measurement outcomes in physical logic.",
+        "parent_formula_id": "truth-isomorphism-condition-bc6bf6a0",
+        "derivation_type": "DEFINITION",
+        "subcomponents": [
+            "invariant-mapping-d8c162b5",
+            "structural-mapping-isomorphism-40096cb2",
+            "theory-as-operator-instrument-ident-9668d00c"
+        ]
     },
     "swampland-identity-1-55658e2a-4a66a545": {
         "title": "Swampland Distance Conjecture Decay Relation",
@@ -1060,28 +871,41 @@
         "derivation_type": "DERIVED_FROM"
     },
     "rate-of-energy-change": {
-        "title": "Rate of Energy Change",
+        "title": "Rate of Energy Dissipation via Rayleigh Dissipation Function",
         "equation": "dE/dt = -2R",
-        "conceptual_definition": "This formula describes the rate at which energy, denoted by E/dt, changes over time. The negative sign indicates that energy is decreasing, and the term -2R quantifies this rate of decrease. The variable R likely represents a factor related to energy dissipation or loss.",
-        "intuitive_summary": "The rate of energy loss is directly proportional to the value of R, with a negative proportionality constant.",
-        "interpretation": "The equation dE/dt = -2R relates the instantaneous rate of change of energy (dE/dt) with respect to time (t) to a quantity denoted by R. The term dE/dt represents how quickly energy is changing. A positive value would mean energy is increasing, while a negative value signifies energy is decreasing. The negative sign in front of 2R explicitly indicates that energy is being lost or dissipated. The factor of 2 is a numerical constant that may arise from specific physical derivations, such as factors of 2 in kinetic energy formulas or energy transfer mechanisms. The variable R itself must have units of energy per unit time (Joules per second, or Watts) for the equation to be dimensionally consistent. Without further context, R could represent various physical phenomena leading to energy loss, such as resistance in an electrical circuit, damping in a mechanical system, or radiative losses.",
-        "symmetry_origin": "The origin of this specific form, particularly the factor of 2 and the meaning of R, would stem from the fundamental physical laws governing the system under consideration. For instance, if E represented the energy of a damped harmonic oscillator, R might be related to the damping coefficient, and the factor of 2 could arise from the potential and kinetic energy terms in the total energy. In electrical circuits, if E were the energy stored in a capacitor, and R were related to the resistance through which it discharges, the factor of 2 might emerge from integrating power dissipation. It is not directly derivable from a fundamental symmetry principle like Noether's theorem without defining R in terms of conserved quantities.",
-        "limits_and_boundary": "As R approaches zero, the rate of energy change dE/dt also approaches zero, implying that if the energy loss factor is negligible, the energy of the system remains constant (no net change over time). As R approaches infinity (which would imply an extremely rapid rate of energy loss), the rate of energy change dE/dt also approaches negative infinity, meaning the energy is decreasing at an ever-increasing rate. However, in most physical scenarios, R would be bounded or dependent on other system parameters that prevent it from reaching arbitrary infinity.",
+        "conceptual_definition": "In classical mechanics with velocity-dependent linear viscous damping forces $F_{i} = -\\gamma_i \\dot{q}_i$, the total mechanical energy $E = T + V$ of the system decreases at a rate proportional to the Rayleigh dissipation function $\\mathcal{R}$ (often denoted $R$ or $\\mathcal{F}$), governed by $\\frac{\\mathrm{d}E}{\\mathrm{d}t} = -2R$, where $R = \\frac{1}{2} \\sum_i \\gamma_i \\dot{q}_i^2$.",
+        "intuitive_summary": "Friction and viscous drag continuously remove mechanical energy from a system, dissipating it as heat at exactly twice the value of the quadratic dissipation function.",
+        "interpretation": "The term $\\frac{\\mathrm{d}E}{\\mathrm{d}t}$ denotes the total instantaneous time derivative of the system's mechanical energy $E$. The negative sign indicates monotonic energy loss (dissipation) into thermal degrees of freedom. The factor of $2$ arises directly from Euler's homogeneous function theorem applied to the quadratic dissipation potential $R(\\dot{q}) = \\frac{1}{2} \\sum_{j,k} c_{jk} \\dot{q}_j \\dot{q}_k$, for which $\\sum_k \\dot{q}_k \\frac{\\partial R}{\\partial \\dot{q}_k} = 2R$.",
+        "symmetry_origin": "Broken continuous time-translation symmetry due to non-conservative, dissipative frictional forces violating energy conservation within the isolated mechanical subsystem.",
+        "limits_and_boundary": "In the limit of vanishing damping coefficients or static coordinates ($\\dot{q}_i \\to 0$), $R \\to 0$, recovering conservation of mechanical energy $\\frac{\\mathrm{d}E}{\\mathrm{d}t} = 0$. For strictly positive-definite damping matrices, $\\frac{\\mathrm{d}E}{\\mathrm{d}t} \\le 0$ for all physical trajectories.",
         "status": "platinum",
         "semantic_variables": {
-            "dE/dt": {
-                "name": "Rate of Energy Change",
+            "E": {
+                "name": "total mechanical energy",
                 "type": "variable",
-                "unit": "W",
-                "description": "The instantaneous rate at which the total energy of a system is changing with respect to time. It is the time derivative of energy."
+                "unit": "J",
+                "description": "Total mechanical energy of the system, comprising kinetic and potential energy"
+            },
+            "t": {
+                "name": "time",
+                "type": "variable",
+                "unit": "s",
+                "description": "Temporal evolution parameter"
             },
             "R": {
-                "name": "Energy Dissipation Factor",
+                "name": "Rayleigh dissipation function",
                 "type": "variable",
                 "unit": "W",
-                "description": "A parameter representing the magnitude of energy loss per unit time. Its precise physical meaning depends on the context of the system being modeled, but it carries units of power (Joules per second)."
+                "description": "Quadratic dissipation potential describing rate of energy dissipation by viscous forces"
             }
-        }
+        },
+        "description": "Expresses the time rate of mechanical energy loss in a dissipative dynamical system in terms of the Rayleigh dissipation function.",
+        "parent_formula_id": "energy-dissipation-law-c789565c",
+        "derivation_type": "SPECIAL_CASE",
+        "subcomponents": [
+            "rate-of-energy-change-c0f9d7a3",
+            "rate-of-change-of-generalized-momentum-bbbb807e"
+        ]
     },
     "spin-parameter": {
         "title": "Spin-Length Parameter",
@@ -1231,37 +1055,41 @@
         "derivation_type": "DERIVED_FROM"
     },
     "beta-equals-kinetic-energy": {
-        "title": "Scalar field equal to kinetic energy per unit mass",
+        "title": "Specific Total Energy in Flat Space or Negligible Gravitational Potential",
         "equation": "\\beta = e + v^2/2",
-        "conceptual_definition": "This formula describes a scalar field, denoted by $\\beta$, which is fundamentally related to the total energy per unit mass of a system. Specifically, it represents the sum of the potential energy per unit mass and the kinetic energy per unit mass. This is often encountered in systems where energy conservation is paramount, such as in classical mechanics or in the study of fields in physics.",
-        "intuitive_summary": "The total energy per unit mass of a system is the sum of its potential energy per unit mass and its kinetic energy per unit mass.",
-        "interpretation": "The equation $\\beta = e + v^2/2$ defines a scalar quantity $\\beta$, which can be interpreted as the total specific energy (energy per unit mass) of a particle or system. The term $e$ represents the specific potential energy, which is the potential energy $U$ divided by the mass $m$ (i.e., $e = U/m$). Potential energy is associated with the position or configuration of the system within a force field (e.g., gravitational or electric). The term $v^2/2$ represents the specific kinetic energy, which is the kinetic energy $K$ divided by the mass $m$ (i.e., $K/m = (1/2)mv^2 / m = v^2/2$). Here, $v$ is the magnitude of the velocity of the particle or system. The equation highlights that the total specific energy is the sum of these two components, reflecting the principle of energy conservation in many physical scenarios.",
-        "symmetry_origin": "This formula is a direct consequence of the conservation of mechanical energy in the absence of non-conservative forces (like friction or air resistance). If a system is subject to a conservative force field, its total mechanical energy (potential energy + kinetic energy) remains constant. When this total energy is divided by the mass of the object, the resulting specific energy is also conserved. The potential energy $e$ is often derived from a potential function $V(\\mathbf{r})$ such that $e = V(\\mathbf{r})$ (where $V$ is the potential energy per unit mass). The kinetic energy term $v^2/2$ comes from the definition of kinetic energy and its relationship to momentum. The scalar nature of $\\beta$ implies it is independent of the direction of motion, only depending on the magnitude of velocity and the position in the potential field.",
-        "limits_and_boundary": "As the velocity $v$ approaches zero (i.e., the system is at rest), the specific energy $\\beta$ becomes equal to the specific potential energy $e$. In the case where the potential energy is negligible (e.g., far from any sources of force, $e \\to 0$), the specific energy $\\beta$ is dominated by the specific kinetic energy $v^2/2$. If both $e$ and $v$ approach zero, $\\beta$ approaches zero, indicating a state of minimum energy or a reference point in the system.",
+        "conceptual_definition": "The quantity $\\beta = e + \\frac{1}{2}v^2$ represents the total mechanical and thermodynamic energy per unit mass of a fluid parcel or particle. It incorporates the specific internal or potential energy $e$ and the specific kinetic energy $\\frac{1}{2}v^2$, serving as a conserved quantity along streamlines in steady, inviscid, and horizontal or gravity-free flows.",
+        "intuitive_summary": "This expression quantifies the total energy carried by each kilogram of a moving substance, balancing its internal/stored energy with the energy of its bulk motion.",
+        "interpretation": "In this equation, $\\beta$ denotes the total specific energy with units of $\\text{J}\\cdot\\text{kg}^{-1}$ (or $\\text{m}^2\\cdot\\text{s}^{-2}$). The term $e$ represents the specific internal energy (in fluid dynamics) or specific potential energy per unit mass. The term $\\frac{1}{2}v^2$ is the specific kinetic energy associated with the velocity magnitude $v$. Along steady streamlines of an inviscid fluid without body forces, $\\beta$ remains invariant according to the classical first law of thermodynamics and Euler equations.",
+        "symmetry_origin": "Continuous time-translation invariance via Noether's theorem, leading to energy conservation in time-independent backgrounds.",
+        "limits_and_boundary": "In the static limit where $v \\to 0$, $\\beta \\to e$, reducing purely to specific internal or static potential energy. In the non-relativistic limit $v \\ll c$, this formulation is valid; at relativistic speeds $v \\sim c$, it must be replaced by the relativistic specific energy $\\gamma c^2 + e$.",
         "status": "platinum",
         "semantic_variables": {
             "\\beta": {
-                "name": "Specific Total Energy",
+                "name": "specific total energy",
                 "type": "variable",
-                "unit": "J/kg",
-                "description": "The scalar quantity representing the total energy per unit mass of the system. It is the sum of the specific potential energy and the specific kinetic energy."
+                "unit": "m^2*s^-2",
+                "description": "Total energy per unit mass of the system or fluid parcel"
             },
             "e": {
-                "name": "Specific Potential Energy",
+                "name": "specific internal or potential energy",
                 "type": "variable",
-                "unit": "J/kg",
-                "description": "The potential energy per unit mass of the system. It is dependent on the position of the object within a potential field."
+                "unit": "m^2*s^-2",
+                "description": "Internal thermodynamic or potential energy per unit mass"
             },
             "v": {
-                "name": "Velocity Magnitude",
+                "name": "velocity magnitude",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The magnitude of the velocity of the object or system. The term $v^2/2$ represents the kinetic energy per unit mass."
+                "unit": "m*s^-1",
+                "description": "Magnitude of the flow or particle velocity vector"
             }
         },
         "subcomponents": [
-            "specific-potential-energy-definition-bd39c706"
-        ]
+            "beta-equals-bernoulli-constant",
+            "classical-kinetic-energy-scalar-coefficient-93b05c90"
+        ],
+        "description": "Defines the specific total energy scalar field as the sum of specific internal (or potential) energy and specific kinetic energy, representing a hydrodynamic or particle energy invariant in the absence of external gravitational fields.",
+        "parent_formula_id": "beta-equals-bernoulli-constant",
+        "derivation_type": "SPECIAL_CASE"
     },
     "gravitational-radiation-power": {
         "title": "Gravitational Wave Power (Quadrupole Formula)",
@@ -1364,22 +1192,30 @@
         "derivation_type": "DEFINITION"
     },
     "neutrinoless-double-beta-decay-limit": {
-        "title": "Neutrinoless Double Beta Decay Limit",
+        "title": "Neutrinoless Double Beta Decay Effective Majorana Mass Limit",
         "equation": "\\langle m_{\\beta\\beta} \\rangle \\to 0",
-        "conceptual_definition": "The formula $m_{\\beta\\beta}$ → 0 represents the upper limit on the effective Majorana neutrino mass obtained from experiments searching for neutrinoless double beta decay. Neutrinoless double beta decay is a hypothetical nuclear process where a nucleus decays by emitting two electrons but no antineutrinos. The observation of such a decay would imply that neutrinos are Majorana particles (i.e., their own antiparticles) and that lepton number is not conserved. The rate of this decay is directly proportional to the square of the effective Majorana neutrino mass, $m_{\\beta\\beta}$. Therefore, if neutrinoless double beta decay is not observed experimentally, it places a stringent upper bound on the value of $m_{\\beta\\beta}$, indicating that if it exists, it must be very small, approaching zero.",
-        "intuitive_summary": "This formula signifies that the non-observation of a rare nuclear decay process (neutrinoless double beta decay) constrains the fundamental property of neutrinos (their effective mass) to be extremely small, close to zero.",
-        "interpretation": "The formula $m_{\\beta\\beta}$ → 0 states that the experimentally determined upper limit for the effective Majorana neutrino mass, denoted by $m_{\\beta\\beta}$, is approaching zero. This quantity, $m_{\\beta\\beta}$, is a key parameter in the Standard Model of particle physics, specifically within extensions that address neutrino masses and mixing. It is a weighted average of the absolute neutrino masses, where the weights depend on the elements of the neutrino mixing matrix and the Majorana phases. The rate of neutrinoless double beta decay ( $0$νββ) is theoretically proportional to the square of this effective mass: $0νββ$ ∝ |$m_{\\beta\\beta}$|^2. Thus, experimental searches that fail to detect this decay process set an upper bound on its rate, which in turn translates into an upper limit on $m_{\\beta\\beta}$. The notation → 0 implies that current experimental sensitivities are pushing this upper limit towards vanishingly small values, meaning that if the decay does occur, its rate must be exceedingly slow, or equivalently, the neutrinos' Majorana mass is very close to zero.",
-        "symmetry_origin": "Neutrinoless double beta decay violates lepton number conservation. If neutrinos are Majorana particles (their own antiparticles), and if the weak interaction respects a certain symmetry related to the handedness of neutrinos and antineutrinos, then processes that flip lepton number can occur. The standard model of particle physics, with only Dirac neutrinos, conserves lepton number. The possibility of neutrinoless double beta decay arises in theories that extend the Standard Model, such as those incorporating massive neutrinos and allowing for Majorana nature, which implies a breakdown of lepton number conservation and potentially a connection to the mass generation mechanism of neutrinos.",
-        "limits_and_boundary": "As the effective Majorana neutrino mass $m_{\\beta\\beta}$ approaches zero, the predicted rate for neutrinoless double beta decay also approaches zero. This is because the decay rate is proportional to |$m_{\\beta\\beta}$|^2. Therefore, a vanishing $m_{\\beta\\beta}$ signifies that neutrinoless double beta decay would be an extremely suppressed or non-existent process under this limit. Experimentally, the absence of observed events in dedicated searches for neutrinoless double beta decay leads to an upper bound on $m_{\\beta\\beta}$, effectively stating that $m_{\\beta\\beta}$ cannot be larger than a certain value determined by the experimental sensitivity and observation time. As experiments improve, this upper bound can be pushed closer to zero.",
+        "conceptual_definition": "The limiting condition $\\langle m_{\beta\\beta} \\rangle \\to 0$ describes the scenario where the effective Majorana electron neutrino mass parameter $\\langle m_{\beta\\beta} \\rangle = \\left| \\sum_i U_{ei}^2 m_i \\right|$ approaches zero. In the context of experimental nuclear physics, it parameterizes the null-detection sensitivity frontier for lepton-number-violating ($|\\Delta L| = 2$) neutrinoless double beta ($0\\nu\\beta\\beta$) decay transitions.",
+        "intuitive_summary": "As experimental sensitivity improves without observing neutrinoless double beta decay, the upper bound on the effective Majorana neutrino mass is driven toward zero, ruling out neutrino mass hierarchy configurations and constraining whether neutrinos are their own antiparticles.",
+        "interpretation": "The quantity $\\langle m_{\beta\\beta} \\rangle$ denotes the effective Majorana neutrino mass, which is a coherent linear combination of the neutrino mass eigenvalues $m_i$ weighted by the squared PMNS matrix elements $U_{ei}^2$ including Majorana CP phases. The limit $\\langle m_{\beta\\beta} \\rangle \\to 0$ signifies the suppression of the $0\\nu\\beta\\beta$ decay decay width $(T_{1/2}^{0\\nu})^{-1} \\propto \\langle m_{\beta\\beta} \\rangle^2$, which occurs either if neutrinos are strictly Dirac fermions ($m_M = 0$) or if exact destructive interference occurs within the normal mass ordering hierarchy.",
+        "symmetry_origin": "Global $U(1)_L$ total lepton number symmetry; the limit $\\langle m_{\beta\\beta} \\rangle \\to 0$ restores total lepton number conservation ($|\\Delta L| = 0$) in the neutrino sector.",
+        "limits_and_boundary": "In the limit $\\langle m_{\beta\\beta} \\rangle \\to 0$, the half-life of neutrinoless double beta decay diverges to infinity ($T_{1/2}^{0\\nu} \\to \\infty$), reducing nuclear double beta decay purely to the Standard Model two-neutrino mode $(2\\nu\\beta\\beta)$. For inverted mass hierarchy models, $\\langle m_{\beta\\beta} \\rangle$ has a non-zero lower bound ($15\\text{--}50\\text{ meV}$), meaning $\\langle m_{\beta\\beta} \\rangle \\to 0$ completely excludes the inverted ordering.",
         "status": "platinum",
         "semantic_variables": {
             "\\langle m_{\\beta\\beta} \\rangle": {
-                "name": "Effective Majorana Neutrino Mass",
+                "name": "effective Majorana neutrino mass",
                 "type": "variable",
                 "unit": "eV",
-                "description": "The effective Majorana neutrino mass is a weighted average of the absolute neutrino masses, sensitive to the specific mass ordering and the Majorana phases. It is the key parameter that determines the rate of neutrinoless double beta decay. Its unit is typically expressed in electronvolts (eV) for neutrino physics contexts, which is a unit of energy but commonly used for mass in particle physics via Einstein's mass-energy equivalence, E=mc^2. A value of 1 eV corresponds to approximately 1.783 x 10^-36 kg."
+                "description": "Effective Majorana mass parameter mediating neutrinoless double beta decay"
             }
-        }
+        },
+        "description": "Represents the asymptotic limiting condition where the effective Majorana neutrino mass vanishes, corresponding to either Dirac neutrinos or destructive interference among neutrino mass eigenstates in neutrinoless double beta decay.",
+        "parent_formula_id": "stability-measure-5751e166",
+        "derivation_type": "LIMITING_CASE",
+        "subcomponents": [
+            "stability-measure-5751e166",
+            "neutrinoless-double-beta-identity-1-edc35db0-e87c6393",
+            "self-interaction-0e098478"
+        ]
     },
     "trace-stress-energy-tensor": {
         "title": "Traceless Stress-Energy Tensor Condition",

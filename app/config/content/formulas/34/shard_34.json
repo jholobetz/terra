@@ -186,43 +186,44 @@
         "equation": "L = 4\\pi r^2 F_{total}",
         "semantic_variables": {
             "L": {
-                "name": "Luminosity",
+                "name": "Bolometric Luminosity",
                 "type": "variable",
                 "unit": "W",
-                "description": "The total amount of energy emitted by a source per unit time."
+                "description": "Total radiant electromagnetic power emitted by the source across all frequencies"
             },
             "r": {
                 "name": "Radial Distance",
                 "type": "variable",
                 "unit": "m",
-                "description": "The distance from the center of the energy source to the point of measurement."
+                "description": "Distance from the center of the isotropic radiating source to the measurement surface"
             },
-            "F_{\\text{total}}": {
-                "name": "Total Energy Flux",
+            "F_{total}": {
+                "name": "Total Bolometric Flux Density",
                 "type": "variable",
                 "unit": "W/m^2",
-                "description": "The total energy passing through a unit area per unit time at a distance r from the source."
+                "description": "Integrated radiant energy power passing per unit area perpendicular to the radial direction"
             },
             "\\pi": {
-                "name": "Pi",
+                "name": "Archimedes' Constant",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The mathematical constant representing the ratio of a circle's circumference to its diameter."
+                "description": "Mathematical constant defining the ratio of a circle's circumference to its diameter"
             }
         },
-        "interpretation": "The equation $L = 4\\pi r^2 F_{\\text{total}}$ relates the intrinsic luminosity $L$ of a source, which is the total energy it radiates per unit time (measured in Watts, W), to the observed flux $F_{\\text{total}}$ at a distance $r$. The term $F_{\\text{total}}$ represents the energy flux density, or the power passing through a unit area perpendicular to the direction of propagation (measured in Watts per square meter, W/m$^2$). The factor $4\\pi r^2$ is the surface area of a sphere of radius $r$. This relationship assumes that the energy is emitted isotropically and that there is no absorption or scattering of energy in the space between the source and the observer. It is a fundamental tool in astronomy for determining the luminosity of distant objects by measuring their flux and distance.",
-        "symmetry_origin": "The formula's validity for an isotropic source stems from spherical symmetry. The assumption that energy is radiated uniformly in all directions implies that the flux $F_{\\text{total}}$ depends only on the radial distance $r$ from the source, not on the angular position. This spherical symmetry is a geometric invariance that ensures energy is conserved across any spherical shell centered on the source.",
-        "limits_and_boundary": "As the distance from the source $r \\to \\infty$, for a fixed luminosity $L$, the flux $F_{\\text{total}} = L / (4\\pi r^2)$ must approach zero ($F_{\\text{total}} \\to 0$). This is the characteristic inverse-square law decay. Conversely, as $r \\to 0$, the flux $F_{\\text{total}}$ would diverge to infinity. This is a non-physical singularity, indicating the model breaks down at the source itself, which must have a finite physical size (e.g., the radius of a star).",
+        "interpretation": "In the relation $L = 4\\pi r^2 F_{\\text{total}}$, $L$ is the bolometric luminosity representing the total energy radiated per unit time by the source. The term $r$ is the radial distance from the center of the source to the observation point, making $4\\pi r^2$ the surface area of a concentric sphere. $F_{\\text{total}}$ is the total observed bolometric energy flux density perpendicular to the radial unit vector $\\hat{\\mathbf{r}}$, assuming an optically transparent, non-scattering intervening medium and zero cosmological redshift.",
+        "symmetry_origin": "Continuous time-translation symmetry yields total energy conservation via Noether's theorem, while continuous $SO(3)$ rotational symmetry guarantees the isotropic uniformity of the radiant Poynting vector across the spherical wavefront.",
+        "limits_and_boundary": "In the limit $r \\to \\infty$, the observed flux density approaches zero ($F_{\\text{total}} \\to 0$) while the integrated flux over the complete solid angle remains invariant and equal to $L$. In the limit $r \\to 0$, the point-source flux diverges as $r^{-2}$, signaling the breakdown of the point-source idealization and requiring the finite physical radius $R$ of the emitting body.",
         "status": "platinum",
-        "conceptual_definition": "This formula establishes that for a source emitting energy isotropically (uniformly in all directions), the total power, or luminosity $L$, is equal to the energy flux $F_{\\text{total}}$ (power per unit area) multiplied by the surface area of a sphere $A = 4\\pi r^2$ at a distance $r$ from the source. It is a direct consequence of the conservation of energy in a spherically symmetric system.",
-        "intuitive_summary": "Imagine a light bulb radiating light equally in all directions. The total amount of light energy it emits per second is a fixed value (its luminosity). As you move further away, that same amount of energy is spread over a much larger spherical surface, so the brightness you perceive (the flux) decreases with the square of the distance.",
+        "conceptual_definition": "The isotropic luminosity-flux relation $L = 4\\pi r^2 F_{\\text{total}}$ is a geometric consequence of energy conservation in three-dimensional flat space. For an isolated, steady-state source radiating uniformly into all solid angles, the total radiated power (luminosity $L$) equals the surface integral of the radiant energy flux density vector $\\mathbf{F}$ over an enclosing sphere of area $A = 4\\pi r^2$, yielding the familiar inverse-square attenuation of radiant flux.",
+        "intuitive_summary": "As radiation travels outward in all directions from a point source, the total energy per second remains constant but spreads evenly across the expanding surface area of a sphere, diluting the measured energy flux inversely with the square of the distance.",
         "subcomponents": [
-            "quasi-static-equilibrium-identity-1-ca6e8a07-26b3270b",
-            "energy-density-5289497a",
-            "dielectric-density-d378a146"
+            "flux-luminosity-7dd3ace1",
+            "flux-dilution-f226ebe6",
+            "stability-check-4d3b9430"
         ],
-        "description": "Defines the relationship between the total energy radiated per unit time (luminosity) by an isotropic source and the energy flux (power per unit area) measured at a given distance.",
-        "derivation_type": "DEFINITION"
+        "description": "Relates the total intrinsic luminosity emitted by an isotropic radiator to the integrated bolometric energy flux measured across a concentric spherical surface of radius $r$ in non-attenuating Euclidean space.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "net-loss-d2f14df6"
     },
     "gauge-gravity-identity-facd22ea": {
         "title": "Gauge/Gravity Duality: The GKPW Dictionary",
@@ -1126,42 +1127,42 @@
         "derivation_type": "DERIVED_FROM"
     },
     "infinite-distance-limit": {
-        "title": "Infinite Separation Distance Limit",
+        "title": "Asymptotic Limit of Infinite Separation Distance",
         "equation": "R \\to \\infty",
-        "conceptual_definition": "The limit $R \\to \\infty$ represents the mathematical procedure of allowing a distance variable, $R$, to grow without bound. This is a foundational concept in asymptotic analysis, used to study the behavior of functions and physical laws at large distances from a source or between interacting objects, often simplifying them to a more tractable form.",
-        "intuitive_summary": "Imagine walking away from a campfire. The farther you go, the less heat and light you perceive. At an 'infinite' distance, the fire's influence becomes zero. This limit is the mathematical tool physicists use to describe this 'far-away' behavior for forces, fields, and potentials, where their effects become negligible.",
-        "interpretation": "The notation $R \\to \\infty$ signifies a scenario where a characteristic distance, $R$, becomes arbitrarily large. This distance could be the separation between interacting particles, the radial distance from a field source, or a length scale in a system. In physical theories, interactions often weaken with distance. Consequently, terms in equations that depend on inverse powers of distance, such as potential energy $U(R) \\propto 1/R^n$ (for $n > 0$), approach zero in this limit. For example, the electrostatic force $F_E = k \\frac{q_1 q_2}{R^2}$ between two charges vanishes as $R \\to \\infty$. This allows for the definition of a zero potential energy reference at infinity and the analysis of isolated systems without external influence.",
-        "symmetry_origin": "This limit is not derived from a symmetry but is a crucial tool for defining boundary conditions. For an isolated system, physical fields are required to vanish at spatial infinity. This boundary condition is consistent with the assumption of an asymptotically flat spacetime (a maximally symmetric vacuum solution) in General Relativity, or a vacuum state in quantum field theory, far from any sources.",
-        "limits_and_boundary": "The limit $R \\to \\infty$ is itself a boundary condition. It is fundamental in scattering theory, where initial (in-states) and final (out-states) particles are considered asymptotically free, i.e., infinitely separated. In electrostatics and gravitation, it is conventional to set the potential to zero at infinity, $\\lim_{R \\to \\infty} V(R) = 0$, which uniquely fixes the potential for a given source distribution.",
+        "conceptual_definition": "The infinite separation distance limit $R \\to \\infty$ represents an asymptotic operation applied to field theories, scattering theory, and classical mechanics. Under this operation, localized potential energies $V(R)$ typically decay to zero ($V(R) \\to 0$), establishing asymptotic states where interacting entities behave as decoupled, free systems.",
+        "intuitive_summary": "Taking a distance to infinity isolates a system from external sources, effectively turning off long-range interactions and establishing a universal reference baseline for potential energy.",
+        "interpretation": "The symbol $R$ denotes a characteristic radial or Euclidean separation distance. The limit $R \\to \\infty$ dictates the evaluation of functions, field tensors, or potentials at spatial infinity. In long-range interaction potentials of the form $U(R) \\propto R^{-n}$ ($n > 0$), this limit enforces the decay of interaction forces to zero, enabling the asymptotic boundary conditions required for the $S$-matrix formulation and the definition of ADM mass in general relativity.",
+        "symmetry_origin": "Emergence of asymptotic Poincaré invariance and global spatial translation symmetry in isolated systems.",
+        "limits_and_boundary": "In the limit $R \\to \\infty$, localized interactions vanish such that $\\lim_{R \\to \\infty} V(R) = 0$, establishing asymptotically flat spacetimes or free asymptotic states in scattering theory.",
         "status": "platinum",
         "semantic_variables": {
             "R": {
-                "name": "Distance",
+                "name": "separation distance",
                 "type": "variable",
                 "unit": "m",
-                "description": "A characteristic distance or separation between points or objects."
+                "description": "Characteristic spatial separation or radial coordinate"
             },
             "\\to": {
-                "name": "Approaches/Tends to",
+                "name": "approaches limit",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "A mathematical operator indicating that a variable approaches a specified value or limit."
+                "description": "Asymptotic limit operator"
             },
             "\\infty": {
-                "name": "Infinity",
+                "name": "infinity",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "A mathematical concept representing a quantity without bound or end."
+                "description": "Unbounded mathematical infinity"
             }
         },
         "subcomponents": [
-            "infinite-source-distance-limit-c3880688",
-            "infinite-displacement-limit-c5b36054",
-            "infinite-distance-asymptotic-limit-b911b561",
-            "infinite-cosmological-redshift-limit-0ac3dc33"
+            "infinite-interparticle-separation-limit-95f5e37c",
+            "infinite-spatial-separation-limit-6cba1a2e",
+            "infinite-distance-asymptotic-limit-b911b561"
         ],
-        "description": "A fundamental limiting process in physics used to analyze the asymptotic behavior of physical systems when a characteristic distance, R, grows without bound.",
-        "derivation_type": "DEFINITION"
+        "description": "Represents the formal limiting operation where a characteristic radial coordinate or spatial separation distance grows arbitrarily large, commonly used to define asymptotic boundary conditions and isolate physical systems.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "distance-approaching-infinity"
     },
     "angle-approaches-zero": {
         "title": "Small-Angle Limit",
@@ -1394,28 +1395,28 @@
     "exponent-approximation-1-5": {
         "title": "Exponent Approximation for 3/2 Power-Law Dependence",
         "equation": "n \\approx 1.5",
-        "conceptual_definition": "In many physical systems, a quantity $y$ is observed to scale with another quantity $x$ according to a power-law, expressed as $y = C x^n$ for some constant $C$. The approximation $n \\approx 1.5$ (or $n \\approx 3/2$) specifies a particular type of super-linear relationship that arises in diverse contexts, such as the relationship between orbital period and semi-major axis in Kepler's Third Law.",
-        "intuitive_summary": "This formula states that one quantity grows faster than another, but not quadratically. Imagine plotting two variables: for every step you take on the horizontal axis, the vertical value increases by a factor related to the power of 1.5. This 'three-halves' power is a common signature in systems involving three-dimensional space or energy, like planetary orbits or the behavior of certain gases.",
-        "interpretation": "The symbol $n$ represents a dimensionless exponent in a power-law model. The approximation $n \\approx 1.5$ signifies that a dependent variable scales proportionally to an independent variable raised to the power of $3/2$. A prominent example is Kepler's Third Law of planetary motion, where the square of the orbital period ($P$) is proportional to the cube of the semi-major axis ($a$), leading to the relationship $P \\propto a^{3/2}$, so $n=1.5$. Other instances can be found in the study of fluid dynamics or the thermodynamic properties of non-relativistic degenerate Fermi gases.",
-        "symmetry_origin": "Not applicable; this is a phenomenological or derived exponent that appears in the solutions to the equations of motion or statistical descriptions of specific physical systems, rather than a direct consequence of a fundamental symmetry.",
-        "limits_and_boundary": "The validity of the approximation $n \\approx 1.5$ is restricted to the specific physical regime where the underlying power-law model holds. For example, in orbital mechanics, it assumes a dominant central gravitational force and negligible perturbations. The approximation itself does not have intrinsic limits, but the model it describes does.",
+        "conceptual_definition": "A power-law exponent approximation where a dependent physical observable scales with the $3/2$ power of an independent driving parameter, $y(x) \\propto x^{3/2}$, characterizing systems constrained by three-dimensional volume-to-surface geometry, Keplerian harmonic motion, or non-relativistic Fermi-Dirac statistical mechanics.",
+        "intuitive_summary": "The exponent $1.5$ (or $3/2$) represents the natural dimensional ratio between volume ($3\\text{D}$) and characteristic linear or planar scales, frequently arising when geometry balances energy or frequency.",
+        "interpretation": "The symbol $n$ denotes the dimensionless scaling index or polytropic exponent. Setting $n \\approx 1.5$ describes specific physical configurations, such as Kepler's third law $P \\propto a^{3/2}$, the three-halves law for space-charge-limited currents (Child-Langmuir law $J \\propto V^{3/2}$), and non-relativistic degenerate electron gas polytropes where $P \\propto \\rho^{1 + 1/n} = \\rho^{5/3}$ corresponding to $n = 1.5$.",
+        "symmetry_origin": "Scale invariance under continuous dilation transformations $x \\to \\lambda x$, $y \\to \\lambda^{3/2} y$, reflecting underlying geometric homogeneity in Euclidean 3-space.",
+        "limits_and_boundary": "Valid strictly within the domain where non-relativistic kinematics hold and where boundary-induced perturbations or higher-order multipole corrections remain negligible. In relativistic regimes ($v \\to c$ or ultra-relativistic Fermi gas), the scaling transitions from $n \\approx 1.5$ to $n \\approx 3.0$.",
         "status": "platinum",
         "semantic_variables": {
             "n": {
-                "name": "Power-law exponent",
-                "type": "variable",
+                "name": "power-law exponent",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "A dimensionless exponent that characterizes the scaling relationship between two physical quantities in a power-law model."
+                "description": "Dimensionless scaling index representing the 3/2 power-law relationship"
             }
         },
         "subcomponents": [
+            "approximation-constant-for-exponent-n-10e1fd09",
             "exponent-approximation-3",
-            "pathway-logic-3f37cc17",
-            "far-field-decay-1bfd0490",
-            "high-temperature-phonon-occupancy-approximation-31b1ad24"
+            "adiabatic-index-for-monatomic-ideal-gases-ccce1fb3"
         ],
-        "description": "An approximation for a dimensionless exponent, $n$, indicating a power-law relationship of the form $y \\propto x^{1.5}$. This 3/2-power dependence is characteristic of various physical phenomena, including orbital mechanics and the thermodynamics of certain systems.",
-        "derivation_type": "APPROXIMATION"
+        "description": "Represents the parameter value $n \\approx 1.5$ in power-law scaling relations $y \\propto x^n$, commonly encountered in classical orbital mechanics, polytropic stellar structures, and phase space density distributions.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "approximation-constant-for-exponent-n-10e1fd09"
     },
     "real-eigenvalues": {
         "title": "Reality Condition for Eigenvalues of Hermitian Operators",
@@ -1641,7 +1642,7 @@
         "symmetry_origin": "Via Noether's theorem, the conservation of energy is a direct consequence of the time-translation invariance of a physical system. If the Hamiltonian $\\hat{H}$ is independent of time, it commutes with the time-translation operator, leading to the conservation of energy.",
         "limits_and_boundary": "In the classical limit, where Planck's constant is considered negligible ($\\hbar \\to 0$), the predictions of quantum mechanics governed by $\\hat{H}$ must correspond to the results of classical mechanics governed by the classical Hamiltonian function $H(p, q)$. The Heisenberg equation of motion for an operator $\\hat{A}$, $\\frac{d\\hat{A}}{dt} = \\frac{1}{i\\hbar}[\\hat{A}, \\hat{H}]$, reduces to the classical Poisson bracket equation of motion, $\\frac{dA}{dt} = \\{A, H\\}$, in this limit.",
         "unit_system": "SI",
-        "parent_formula_id": "schrodinger-equation",
+        "parent_formula_id": "time-dependent-schrodinger-equation",
         "derivation_type": "AXIOMATIC_FOUNDATION",
         "status": "published",
         "semantic_variables": {

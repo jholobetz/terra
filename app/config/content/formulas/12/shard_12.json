@@ -686,116 +686,98 @@
         "derivation_type": "DERIVED_FROM"
     },
     "symmetry-tool-4cee9cea": {
-        "title": "Action in Lagrangian Mechanics",
+        "title": "Action Functional in Lagrangian Mechanics",
         "equation": "S = \\int L dt \\quad (\\text{Action Link})",
         "semantic_variables": {
             "S": {
-                "name": "Action",
+                "name": "Action functional",
                 "type": "variable",
-                "unit": "Joule-second (J·s)",
-                "description": "A functional representing the total action of a system's trajectory over time. It has units of energy multiplied by time."
+                "unit": "J*s",
+                "description": "Functional mapping a path in configuration space to a scalar action value"
             },
             "L": {
                 "name": "Lagrangian",
                 "type": "variable",
-                "unit": "Joule (J)",
-                "description": "A function that summarizes the dynamics of a system, typically defined as kinetic energy minus potential energy ($L=T-V$)."
+                "unit": "J",
+                "description": "Difference between kinetic and potential energy of the dynamical system"
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
-                "unit": "second (s)",
-                "description": "The independent variable over which the integration is performed."
-            },
-            "q": {
-                "name": "Generalized Coordinates",
-                "type": "variable",
-                "unit": "Varies (e.g., m, rad)",
-                "description": "A set of parameters that describe the configuration of the system."
-            },
-            "\\dot{q}": {
-                "name": "Generalized Velocities",
-                "type": "variable",
-                "unit": "Varies (e.g., m/s, rad/s)",
-                "description": "The time derivatives of the generalized coordinates."
+                "unit": "s",
+                "description": "Independent temporal parameter parameterizing the system trajectory"
             },
             "\\int": {
-                "name": "Integral",
+                "name": "Definite Integral",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "The operator for integration, summing the Lagrangian over the time interval from $t_1$ to $t_2$."
-            },
-            "dt": {
-                "name": "Differential of Time",
-                "type": "operator",
-                "unit": "second (s)",
-                "description": "An infinitesimal increment of time."
+                "unit": "dimensionless",
+                "description": "Integral operator accumulating the Lagrangian across the specified time interval"
             }
         },
-        "interpretation": "The formula $S[q(t)] = \\int_{t_1}^{t_2} L(q(t), \\dot{q}(t), t) dt$ defines the action $S$ as a functional of the path $q(t)$. The Lagrangian $L$ is typically the difference between the kinetic energy $T$ and the potential energy $V$ of the system, i.e., $L = T - V$. The integral is taken over a specific time interval from an initial time $t_1$ to a final time $t_2$. The physical trajectory that a system follows is determined by the Principle of Stationary Action, $\\delta S = 0$, which states that the variation of the action must be zero. This condition leads directly to the Euler-Lagrange equations, which are the equations of motion for the system. The action provides a scalar quantity whose extremization yields the vector equations of motion, offering a powerful and general framework for classical mechanics, field theory, and even quantum mechanics via the path integral formulation.",
-        "symmetry_origin": "Noether's Theorem establishes a profound connection between the action and conservation laws. If the action $S$ (and thus the Lagrangian $L$) is invariant under a continuous symmetry transformation, there exists a corresponding conserved quantity. For example, invariance under time translation implies conservation of energy; invariance under spatial translation implies conservation of momentum; and invariance under rotation implies conservation of angular momentum.",
-        "limits_and_boundary": "In the classical limit where Planck's constant $\\hbar \\to 0$, the principle of stationary action $\\delta S = 0$ yields the single, deterministic trajectory predicted by Newtonian mechanics. In the path integral formulation of quantum mechanics, a particle explores all possible paths, and the probability amplitude for a given path is proportional to $e^{iS/\\hbar}$. Paths for which the action $S$ is stationary interfere constructively, causing the classical path to emerge for macroscopic systems, while other paths with rapidly varying action interfere destructively.",
+        "interpretation": "In the action functional $S = \\int L \\, dt$, the scalar $S$ carries dimensions of angular momentum (energy multiplied by time, $\\text{J}\\cdot\\text{s}$). The integrand $L(q, \\dot{q}, t)$ represents the instantaneous difference between kinetic energy $T$ and potential energy $V$. Integrating over time accumulates this Lagrangian along the entire worldline. Under Hamilton's variational principle, demanding that first-order variations vanish ($\\delta S = 0$) for arbitrary virtual displacements $\\delta q(t)$ with fixed endpoints $\\delta q(t_1) = \\delta q(t_2) = 0$ yields the second-order Euler-Lagrange differential equations $\\frac{d}{dt}\\left(\\frac{\\partial L}{\\partial \\dot{q}}\\right) - \\frac{\\partial L}{\\partial q} = 0$.",
+        "symmetry_origin": "By Noether's first theorem, continuous symmetries of the action functional $S$ correspond directly to conserved physical quantities: temporal translation invariance yields energy conservation, spatial translation invariance yields linear momentum conservation, and spatial rotation invariance yields angular momentum conservation.",
+        "limits_and_boundary": "In the quantum regime where the magnitude of the action is comparable to Planck's reduced constant ($S \\sim \\hbar$), quantum superposition of all paths must be considered via Feynman's path integral amplitude $\\mathcal{A} \\propto \\int \\mathcal{D}q \\, e^{iS[q]/\\hbar}$. As $\\hbar \\to 0$ (the classical correspondence limit), destructive phase interference cancels non-extremal paths, isolating the classical trajectory where $\\delta S = 0$.",
         "status": "platinum",
-        "conceptual_definition": "The action, denoted by $S$, is a functional that takes a trajectory of a system (a path in configuration space) and assigns a single real number. It is formally defined as the integral of the Lagrangian function $L$ with respect to time $t$ over the interval from an initial time $t_1$ to a final time $t_2$. The Lagrangian itself is a function of the system's generalized coordinates $q$, generalized velocities $\\dot{q}$, and time $t$.",
-        "intuitive_summary": "Imagine a system can travel between a starting point and an endpoint in time via many possible paths. The 'action' assigns a numerical 'cost' to each path. Nature, in its elegance, chooses the path with the most 'efficient' or 'stationary' cost, not necessarily the lowest. This single principle of 'stationary action' is powerful enough to derive all the laws of motion.",
+        "conceptual_definition": "The action $S[q(t)]$ is a real-valued functional defined on the space of differentiable trajectories $q(t)$ between fixed boundary configurations $q(t_1) = q_1$ and $q(t_2) = q_2$. It is given by $S = \\int_{t_1}^{t_2} L(q(t), \\dot{q}(t), t) \\, dt$, where $L = T - V$ is the system Lagrangian. The physical trajectory realized by the system satisfies the variational condition $\\delta S = 0$, leading directly to the Euler-Lagrange equations of motion.",
+        "intuitive_summary": "The action assigns a single numerical 'cost' or score to every conceivable trajectory a physical system could take between two configurations; nature selects the path where this quantity is stationary (typically a minimum) with respect to small variations.",
         "subcomponents": [
             "the-cosmic-fake-6a24a3f4",
             "goldstone-link-3cd09f66",
-            "infinity-shield-657b90cf",
-            "action-angle-link-6a123cb3"
+            "average-motion-5c0dc504"
         ],
-        "description": "Defines the action as the time integral of the Lagrangian. The principle of stationary action states that the physical path of a system between two points in time is the one for which the action is an extremum (stationary).",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the classical action functional $S$ as the definite time integral of the Lagrangian $L$ along a path in configuration space, serving as the foundational quantity in Hamilton's principle of stationary action.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "lagrangian-density-dc4f13b2"
     },
     "energy-time-balance-dccf694e": {
-        "title": "Hamiltonian Operator (Non-Relativistic Single Particle)",
+        "title": "Hamiltonian Operator (Non-Relativistic Single Particle in Position Representation)",
         "equation": "\\hat{H} = -\\frac{\\hbar^2}{2m}\\nabla^2 + V",
         "semantic_variables": {
             "\\hat{H}": {
-                "name": "Hamiltonian Operator",
+                "name": "Hamiltonian operator",
                 "type": "operator",
-                "unit": "Joules (J)",
-                "description": "The quantum mechanical operator for the total energy of a system."
+                "unit": "J",
+                "description": "Total energy observable and generator of time evolution in non-relativistic quantum mechanics"
             },
             "\\hbar": {
-                "name": "Reduced Planck Constant",
+                "name": "reduced Planck constant",
                 "type": "constant",
-                "unit": "Joule-seconds (J·s)",
-                "description": "The Planck constant divided by 2π, a fundamental constant in quantum mechanics."
+                "unit": "J*s",
+                "description": "Fundamental quantum of action governing canonical commutation relations"
             },
             "m": {
-                "name": "Mass",
+                "name": "particle mass",
                 "type": "variable",
-                "unit": "Kilograms (kg)",
-                "description": "The mass of the non-relativistic particle."
+                "unit": "kg",
+                "description": "Inertial mass of the single quantum particle"
             },
             "\\nabla^2": {
-                "name": "Laplacian Operator",
+                "name": "Laplacian operator",
                 "type": "operator",
-                "unit": "m⁻²",
-                "description": "The divergence of the gradient of a function, representing the spatial curvature of a field or wavefunction."
+                "unit": "m^-2",
+                "description": "Spatial second-order differential divergence of the gradient"
             },
             "V": {
-                "name": "Potential Energy Operator",
+                "name": "potential energy",
                 "type": "operator",
-                "unit": "Joules (J)",
-                "description": "The operator for the potential energy of the particle, typically a function of position and time, $V(\\mathbf{r}, t)$."
+                "unit": "J",
+                "description": "Multiplicative potential energy operator dependent on spatial coordinates"
             }
         },
-        "interpretation": "The formula $\\hat{H} = -\\frac{\\hbar^2}{2m}\\nabla^2 + V$ defines the total energy operator, or Hamiltonian, for a single, non-relativistic quantum particle. The term $-\\frac{\\hbar^2}{2m}\\nabla^2$ represents the kinetic energy operator, $\\hat{T}$. Here, $\\hbar$ is the reduced Planck constant, a fundamental constant of nature, and $m$ is the particle's mass. The Laplacian operator, $\\nabla^2$, measures the spatial curvature of the wavefunction; a higher curvature implies a shorter wavelength, corresponding to higher momentum and thus greater kinetic energy. The term $V$, which can be a function of position and time $V(\\mathbf{r}, t)$, is the potential energy operator. It describes the external forces and interactions experienced by the particle. The Hamiltonian operator $\\hat{H}$ is the generator of time translations in quantum mechanics, and its application to a state vector $|\\Psi\\rangle$ within the Schrödinger equation, $i\\hbar \\frac{\\partial}{\\partial t} |\\Psi(t)\\rangle = \\hat{H} |\\Psi(t)\\rangle$, determines the evolution of the quantum state through time.",
-        "symmetry_origin": "The Hamiltonian operator is the generator of time translations. If the Hamiltonian is time-independent (i.e., $\\frac{\\partial \\hat{H}}{\\partial t} = 0$), the system possesses time-translation symmetry. By Noether's theorem, this symmetry implies the conservation of the corresponding physical quantity, which is the total energy.",
-        "limits_and_boundary": "In the classical limit, as $\\hbar \\to 0$, the Schrödinger equation (which employs this Hamiltonian) reduces to the classical Hamilton-Jacobi equation, and $\\hat{H}$ corresponds to the classical Hamiltonian function $H = p^2/(2m) + V(q)$. For a free particle where the potential $V \\to 0$, the Hamiltonian simplifies to the pure kinetic energy operator $\\hat{H} = -\\frac{\\hbar^2}{2m}\\nabla^2$. In the limit of infinite mass, $m \\to \\infty$, the kinetic energy term vanishes, and the particle's behavior is entirely dominated by the potential energy, effectively 'freezing' its dynamics.",
+        "interpretation": "In the operator equation $\\hat{H} = -\\frac{\\hbar^2}{2m}\\nabla^2 + V$, $\\hat{H}$ is the generator of infinitesimal time translations in the quantum state space via the Schrödinger equation $i\\hbar \\frac{\\partial}{\\partial t} |\\Psi\\rangle = \\hat{H} |\\Psi\\rangle$. The parameter $\\hbar$ denotes the reduced Planck constant, $m$ is the inertial rest mass of the particle, and $\\nabla^2 = \\frac{\\partial^2}{\\partial x^2} + \\frac{\\partial^2}{\\partial y^2} + \\frac{\\partial^2}{\\partial z^2}$ is the spatial Laplacian representing wave curvature. The term $V = V(\\mathbf{r})$ is the multiplicative potential energy operator describing interactions with external classical fields.",
+        "symmetry_origin": "Time-translation invariance via Noether's theorem implies energy conservation; $\\hat{H}$ generates the continuous unitary group of time translations $U(t) = \\exp(-i\\hat{H}t/\\hbar)$.",
+        "limits_and_boundary": "In the semi-classical limit $\\hbar \\to 0$, the operator equation recovers the classical Hamilton function $H(\\mathbf{r}, \\mathbf{p}) = \\frac{p^2}{2m} + V(\\mathbf{r})$ via the WKB approximation. In the relativistic limit $v \\to c$ or $p \\gg mc$, the operator must be replaced by the Dirac or Klein-Gordon Hamiltonian.",
         "status": "platinum",
-        "conceptual_definition": "This formula provides the explicit construction of the Hamiltonian operator $\\hat{H}$ for a single particle of mass $m$ moving in a potential field $V$. It is defined as the sum of the kinetic energy operator, $\\hat{T} = -\\frac{\\hbar^2}{2m}\\nabla^2$, and the potential energy operator, $\\hat{V} = V(\\mathbf{r}, t)$. The Hamiltonian dictates the total energy of the system and governs its time evolution via the Schrödinger equation.",
-        "intuitive_summary": "The Hamiltonian is the quantum mechanical recipe for a particle's total energy. It combines two key ingredients: the energy from motion (kinetic), which depends on how 'wavy' or curved the particle's wavefunction is, and the energy from position (potential), which depends on the forces in its environment.",
+        "conceptual_definition": "The non-relativistic Hamiltonian operator $\\hat{H} = -\\frac{\\hbar^2}{2m}\\nabla^2 + V$ represents the observable corresponding to the total energy of a single spinless particle of mass $m$ in a scalar potential $V$. In the coordinate representation, canonical quantization replaces the momentum $\\mathbf{p}$ with the differential operator $\\hat{\\mathbf{p}} = -i\\hbar\\nabla$, transforming the classical kinetic energy $T = \\mathbf{p}^2/(2m)$ into the differential operator $-\\frac{\\hbar^2}{2m}\\nabla^2$.",
+        "intuitive_summary": "The Hamiltonian acts as the total energy operator; its spatial derivative term measures the curvature (kinetic energy) of the wavefunction, while the potential term accounts for external field interactions.",
         "subcomponents": [
-            "time-independent-schrodinger-equation",
-            "schrodinger-lagrangian",
-            "quantum-time-evolution-operator-e717a9a3",
-            "energy-time-balance-45a3aae0"
+            "kinetic-energy-operator-for-a-single-particle-67c9950b",
+            "total-energy-c05fe4ab",
+            "quantum-time-evolution-operator-5230c913"
         ],
-        "description": "Defines the Hamiltonian operator, representing the total energy of a single non-relativistic particle, as the sum of its kinetic and potential energy operators. This operator is a central component of the Schrödinger equation.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the non-relativistic quantum Hamiltonian operator for a single massive particle in coordinate space, expressed as the sum of kinetic and potential energy operators.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "total-energy-c05fe4ab"
     },
     "interaction-link-378d3eaa": {
         "title": "Electroweak Quantum Numbers of the Higgs Doublet",
@@ -984,62 +966,50 @@
         "equation": "H_I(t) = e^{iH_0 t} H_{int} e^{-iH_0 t}",
         "semantic_variables": {
             "H_I(t)": {
-                "name": "Interaction Hamiltonian (Interaction Picture)",
+                "name": "interaction-picture Hamiltonian",
                 "type": "operator",
                 "unit": "J",
-                "description": "The Hamiltonian operator for the interaction part of a system, expressed in the time-dependent interaction picture."
+                "description": "Time-dependent interaction Hamiltonian operator in the interaction (Dirac) picture"
             },
             "H_0": {
-                "name": "Free Hamiltonian",
+                "name": "free Hamiltonian",
                 "type": "operator",
                 "unit": "J",
-                "description": "The Hamiltonian operator for the unperturbed, non-interacting part of a system, expressed in the Schrödinger picture."
+                "description": "Unperturbed or free Hamiltonian operator generating free time evolution"
             },
             "H_{int}": {
-                "name": "Interaction Hamiltonian (Schrödinger Picture)",
+                "name": "Schrödinger interaction Hamiltonian",
                 "type": "operator",
                 "unit": "J",
-                "description": "The Hamiltonian operator for the interaction part of a system, expressed in the time-independent Schrödinger picture."
+                "description": "Static interaction Hamiltonian operator in the Schrödinger picture"
             },
             "t": {
-                "name": "Time",
+                "name": "time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The time parameter over which the system evolves."
+                "description": "Time coordinate parameterizing the unitary transformation"
             },
             "i": {
-                "name": "Imaginary Unit",
+                "name": "imaginary unit",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The imaginary unit, defined as $i^2 = -1$."
-            },
-            "\\hbar": {
-                "name": "Reduced Planck Constant",
-                "type": "constant",
-                "unit": "J·s",
-                "description": "The Planck constant divided by $2\\pi$. Often set to 1 in natural units."
-            },
-            "e": {
-                "name": "Exponential Function",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "The exponential function, used here to define the unitary time-evolution operator via the matrix exponential."
+                "description": "Standard imaginary unit satisfying $i^2 = -1$"
             }
         },
-        "interpretation": "The formula $H_I(t) = e^{iH_0 t / \\hbar} H_{int} e^{-iH_0 t / \\hbar}$ defines the interaction Hamiltonian in the interaction picture, $H_I(t)$. Here, $H_0$ is the 'free' or unperturbed Hamiltonian, describing the system's dynamics without interactions. $H_{int}$ is the interaction part of the Hamiltonian in the Schrödinger picture. The terms $e^{iH_0 t / \\hbar}$ and its adjoint $e^{-iH_0 t / \\hbar}$ are unitary time-evolution operators generated by $H_0$. They perform a time-dependent basis transformation on the operator $H_{int}$, moving it from the Schrödinger picture to the interaction picture. This transformation ensures that the time evolution of operators in the interaction picture is governed solely by the free Hamiltonian, while the state evolution is governed by $H_I(t)$. The variable $t$ represents time, $i$ is the imaginary unit, and $\\hbar$ is the reduced Planck constant. In many theoretical contexts, natural units are used where $\\hbar=1$.",
-        "symmetry_origin": "The transformation is a direct consequence of unitary time evolution. It is a change of basis from the Schrödinger picture to the interaction picture, which is chosen to simplify the analysis of systems where the Hamiltonian can be split into a solvable free part $H_0$ and a perturbation $H_{int}$. The structure is dictated by the group of unitary transformations $U(1)$ generated by the free Hamiltonian, reflecting the time-translation symmetry of the unperturbed system.",
-        "limits_and_boundary": "At time $t=0$, the exponential terms become the identity operator, $e^0 = 1$, so $H_I(0) = H_{int}$. This shows that the interaction picture and Schrödinger picture coincide at $t=0$. In the special case where the free and interaction Hamiltonians commute, $[H_0, H_{int}] = 0$, the transformation is trivial: $e^{iH_0 t / \\hbar} H_{int} e^{-iH_0 t / \\hbar} = H_{int} e^{iH_0 t / \\hbar} e^{-iH_0 t / \\hbar} = H_{int}$. In this scenario, $H_I(t)$ is constant and identical to its Schrödinger picture counterpart for all time.",
+        "interpretation": "The operator $H_I(t)$ represents the interaction Hamiltonian at time $t$ in the interaction representation. The unperturbed Hamiltonian $H_0$ generates the unitary dressing $e^{i H_0 t}$ and $e^{-i H_0 t}$, which rotates the static Schrödinger interaction Hamiltonian $H_{\\text{int}}$ into the moving frame of the free theory. If $[H_0, H_{\\text{int}}] = 0$, the transformation is trivial and $H_I(t) = H_{\\text{int}}$ for all $t$. Otherwise, $H_I(t)$ acquires explicit time dependence governed by the free field mode frequencies.",
+        "symmetry_origin": "Rooted in the unitary equivalence of quantum representations under the group of time translations generated by $H_0$, preserving canonical commutation relations and inner products on the Hilbert space.",
+        "limits_and_boundary": "At $t = 0$, $H_I(0) = H_{\\text{int}}$, matching the Schrödinger picture interaction operator. When the coupling constant in $H_{\\text{int}} \\to 0$, $H_I(t) \\to 0$, reducing dynamics entirely to the free theory. If $[H_0, H_{\\text{int}}] = 0$, $H_I(t)$ is time-independent.",
         "status": "platinum",
-        "conceptual_definition": "In time-dependent perturbation theory, it is convenient to work in the interaction picture (or Dirac picture), where both states and operators evolve in time. State vectors evolve under the influence of the interaction Hamiltonian $H_I(t)$, while operators evolve according to the free Hamiltonian $H_0$. This formula provides the explicit transformation for the interaction Hamiltonian operator from the time-independent Schrödinger picture, $H_{int}$, to the time-dependent interaction picture, $H_I(t)$.",
-        "intuitive_summary": "This formula effectively 'unwinds' the simple, predictable evolution of a quantum system (governed by $H_0$) from the operators. This allows physicists to isolate and focus exclusively on the effects of the more complex interactions, represented by $H_{int}$, which are responsible for transitions and scattering events.",
+        "conceptual_definition": "In quantum mechanics and quantum field theory, the total Hamiltonian is split into a free, solvable part $H_0$ and an interaction term $H_{\\text{int}}$: $H = H_0 + H_{\\text{int}}$. In the Dirac (interaction) picture, operators evolve according to the free Hamiltonian $H_0$, while state vectors evolve according to the interaction Hamiltonian $H_I(t)$. The interaction Hamiltonian $H_I(t)$ is defined by applying the unitary transformation $U_0(t) = e^{-i H_0 t / \\hbar}$ (in natural units where $\\hbar = 1$, $U_0(t) = e^{-i H_0 t}$) to the Schrödinger picture interaction operator $H_{\\text{int}}$: $H_I(t) = e^{i H_0 t} H_{\\text{int}} e^{-i H_0 t}$.",
+        "intuitive_summary": "The interaction picture absorbs the fast, trivial time evolution of the free particles into the operators themselves, leaving only the genuine dynamical scattering or coupling effects in $H_I(t)$ to drive state transitions.",
         "subcomponents": [
-            "dyson-series-identity-1-9a14977a-5ee794e4",
-            "s-matrix-dyson-series-expansion-bdc1b5d2",
-            "interaction-hamiltonian-at-zero-time-c25b1908",
-            "free-hamiltonian-time-evolution-argument-1f672914"
+            "free-time-evolution-factor-1da8ba7f",
+            "interaction-hamiltonian-operator-162bfbaf",
+            "interaction-hamiltonian-at-zero-time-c25b1908"
         ],
-        "description": "Defines the time-dependent interaction Hamiltonian in the interaction picture, which is obtained by transforming the Schrödinger picture interaction Hamiltonian via the unitary time evolution generated by the free Hamiltonian.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the time-dependent interaction Hamiltonian in the Dirac (interaction) picture via unitary transformation generated by the unperturbed Hamiltonian.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "the-end-of-now-cc58b691"
     },
     "abundance-ratios-63f1dceb": {
         "title": "Observed Cosmic Flatness Condition",
@@ -1800,35 +1770,35 @@
         "derivation_type": "DERIVED_FROM"
     },
     "positive-real-part-condition": {
-        "title": "Condition for Dynamical Instability",
+        "title": "Condition for Linear Dynamical Instability",
         "equation": "\\text{Re}(\\sigma) > 0",
-        "conceptual_definition": "For a physical system whose temporal evolution includes modes of the form $e^{\\sigma t}$, the condition $\\text{Re}(\\sigma) > 0$ identifies dynamical instability. Here, $\\sigma$ is a complex number representing a system eigenvalue or frequency. A positive real part of $\\sigma$ results in a solution component that grows exponentially in amplitude over time, leading to unbounded behavior.",
-        "intuitive_summary": "Imagine pushing a swing. If your pushes consistently add more energy than is lost to friction, the swing's amplitude grows uncontrollably. This condition, $\\text{Re}(\\sigma) > 0$, is the mathematical flag for such runaway growth in any physical system, from a vibrating bridge to a plasma wave.",
-        "interpretation": "In the analysis of linear dynamical systems, solutions are often expressed as superpositions of modes proportional to $e^{\\sigma t}$, where $\\sigma$ is a complex eigenvalue. Writing $\\sigma$ in terms of its real and imaginary parts, $\\sigma = \\alpha + i\\omega$, the time evolution term becomes $e^{\\alpha t} e^{i\\omega t}$. The condition $\\text{Re}(\\sigma) > 0$ means $\\alpha > 0$. This causes the amplitude factor $e^{\\alpha t}$ to grow exponentially with time $t$, signifying an unstable mode. Conversely, $\\text{Re}(\\sigma) < 0$ indicates a stable mode that decays exponentially, while $\\text{Re}(\\sigma) = 0$ corresponds to a marginally stable mode that oscillates with constant amplitude. The imaginary part, $\\text{Im}(\\sigma) = \\omega$, represents the angular frequency of this oscillation.",
-        "symmetry_origin": "This is a mathematical condition on the eigenvalues of a system's evolution operator, not directly tied to a fundamental physical symmetry. It characterizes the breaking of temporal stability for a specific mode, meaning the mode's amplitude is not invariant under time translation.",
-        "limits_and_boundary": "As $\\text{Re}(\\sigma) \\to 0^+$, the system approaches the boundary of marginal stability, where exponential growth ceases and the behavior becomes purely oscillatory (for $\\text{Im}(\\sigma) \\neq 0$). In the limit $\\text{Re}(\\sigma) \\to \\infty$, the model predicts infinitely fast exponential growth, which is typically unphysical and signals a breakdown of the linear approximation of the system.",
+        "conceptual_definition": "In linear stability theory, a perturbation $\\delta x(t)$ around an equilibrium state is decomposed into Fourier-Laplace normal modes proportional to $e^{\\sigma t}$. The condition $\\text{Re}(\\sigma) > 0$ establishes that the real growth rate $\\alpha = \\text{Re}(\\sigma)$ is strictly positive, causing the mode amplitude to diverge exponentially as $t \\to \\infty$, thereby destabilizing the dynamical system.",
+        "intuitive_summary": "If the real part of an eigenvalue is positive, any infinitesimal perturbation amplifies exponentially over time, pulling the system away from its equilibrium.",
+        "interpretation": "Given a complex characteristic frequency or eigenvalue $\\sigma = \\alpha + i\\omega$, the time evolution factor decomposes as $e^{\\sigma t} = e^{\\alpha t} e^{i\\omega t}$. The factor $e^{i\\omega t}$ represents phase oscillation with angular frequency $\\omega = \\text{Im}(\\sigma)$, while $e^{\\alpha t}$ dictates the envelope dynamics. When $\\text{Re}(\\sigma) = \\alpha > 0$, the envelope exhibits unbounded exponential growth, defining dynamical instability. Conversely, $\\text{Re}(\\sigma) < 0$ defines asymptotic stability, and $\\text{Re}(\\sigma) = 0$ corresponds to marginal stability.",
+        "symmetry_origin": "Originates from continuous time-translation symmetry in autonomous linear differential systems $\\dot{\\mathbf{x}} = \\mathbf{A}\\mathbf{x}$, which ensures eigensolutions take the exponential form $e^{\\sigma t}$.",
+        "limits_and_boundary": "In the limit $\\text{Re}(\\sigma) \\to 0^+$, the system approaches the marginal stability threshold (Hopf bifurcation point if $\\text{Im}(\\sigma) \\neq 0$). For $\\text{Re}(\\sigma) \\to +\\infty$, the instability timescale $\\tau = 1/\\text{Re}(\\sigma)$ vanishes, representing instantaneous explosive divergence. As $t \\to \\infty$, linear approximations inevitably break down, requiring nonlinear saturation terms.",
         "status": "platinum",
         "semantic_variables": {
             "\\sigma": {
-                "name": "Complex Frequency / Eigenvalue",
+                "name": "complex characteristic eigenvalue",
                 "type": "variable",
-                "unit": "s⁻¹",
-                "description": "A complex number characterizing the temporal evolution of a system mode. Its real part determines growth/decay, and its imaginary part determines oscillation frequency."
+                "unit": "s^{-1}",
+                "description": "Complex growth rate or eigenvalue determining both the temporal growth rate and oscillation frequency of a mode"
             },
             "\\text{Re}": {
-                "name": "Real Part Operator",
+                "name": "real part operator",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "An operator that extracts the real component of a complex number, e.g., $\\text{Re}(a+ib) = a$."
+                "description": "Operator extracting the real component $\\alpha$ of a complex number $\\sigma = \\alpha + i\\omega$"
             }
         },
         "subcomponents": [
             "real-part-of-complex-variable-5cc29112",
-            "zero-real-part-condition-resigma-0-4d702e41",
             "asymptotic-negative-real-part-condition-8ed218ed"
         ],
-        "description": "The mathematical criterion, $\\text{Re}(\\sigma) > 0$, for identifying unstable, exponentially growing modes in a linear dynamical system, where $\\sigma$ is a complex frequency or eigenvalue.",
-        "derivation_type": "DEFINITION"
+        "description": "The mathematical criterion $\\text{Re}(\\sigma) > 0$ determines the onset of exponential growth and instability for normal modes in linear dynamical systems, where $\\sigma$ is the complex growth rate or eigenvalue.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "positive-real-part-condition-for-complex-variable-24009164"
     },
     "rest-mass-definition": {
         "title": "Definition of Invariant Mass",
@@ -1960,46 +1930,38 @@
     "unit-vector-field": {
         "title": "Normalization of a Vector Field",
         "equation": "\\hat{\\phi}^a = \\frac{\\phi^a}{\\|\\boldsymbol{\\phi}\\|}",
-        "conceptual_definition": "A unit vector field $\\hat{\\boldsymbol{\\phi}}$ is constructed from a given vector field $\\boldsymbol{\\phi}$ by dividing the vector at each point in space by its own magnitude (norm) at that same point. This operation, known as normalization, effectively discards the magnitude information, leaving only a pure directional field where every vector has a length of one.",
-        "intuitive_summary": "Imagine a field of arrows, like wind patterns on a weather map, where some arrows are long (strong wind) and some are short (light wind). Normalizing this field means resizing every single arrow to have the exact same length (e.g., one unit) while keeping them all pointing in their original directions. The result is a map that shows only the direction of the wind, not its speed.",
-        "interpretation": "The equation $\\hat{\\phi}^a = \\frac{\\phi^a}{\\|\\boldsymbol{\\phi}\\|}$ defines the $a$-th component of the unit vector field $\\hat{\\boldsymbol{\\phi}}$.\n*   $\\hat{\\phi}^a$: The $a$-th contravariant component of the unit vector field $\\hat{\\boldsymbol{\\phi}}$. It is a dimensionless quantity.\n*   $\\phi^a$: The $a$-th contravariant component of the original vector field $\\boldsymbol{\\phi}$. Its units depend on the physical quantity $\\boldsymbol{\\phi}$ represents (e.g., $\\text{m/s}$ for velocity, $\\text{N/C}$ for electric field).\n*   $\\|\\boldsymbol{\\phi}\\|$: The magnitude (norm) of the vector field $\\boldsymbol{\\phi}$, which is a scalar field. Its unit is the same as that of the components $\\phi^a$. In a general manifold with metric tensor $g_{ab}$, it is calculated as $\\|\\boldsymbol{\\phi}\\| = \\sqrt{g_{ab}\\phi^a \\phi^b}$. In Euclidean space with Cartesian coordinates, this simplifies to $\\|\\boldsymbol{\\phi}\\| = \\sqrt{\\sum_{a} (\\phi^a)^2}$.\n*   $a$: A spatial or spacetime index, indicating a specific component of the vector in a given coordinate system.\nThe operation ensures that the magnitude of the resulting vector $\\hat{\\boldsymbol{\\phi}}$ is always one: $\\|\\hat{\\boldsymbol{\\phi}}\\| = \\sqrt{g_{ab}\\hat{\\phi}^a \\hat{\\phi}^b} = \\sqrt{g_{ab}\\frac{\\phi^a}{\\|\\boldsymbol{\\phi}\\|}\\frac{\\phi^b}{\\|\\boldsymbol{\\phi}\\|}} = \\frac{1}{\\|\\boldsymbol{\\phi}\\|} \\sqrt{g_{ab}\\phi^a \\phi^b} = \\frac{\\|\\boldsymbol{\\phi}\\|}{\\|\\boldsymbol{\\phi}\\|} = 1$.",
-        "symmetry_origin": "Geometric invariance. The process of normalization isolates the directional degrees of freedom of a vector field, which transform under the special orthogonal group SO(n), from the scaling degree of freedom.",
-        "limits_and_boundary": "The normalization is well-defined for any point in space where the vector field $\\boldsymbol{\\phi}$ is non-zero, i.e., $\\|\\boldsymbol{\\phi}\\| \\neq 0$. At points where $\\boldsymbol{\\phi} = \\mathbf{0}$, the unit vector is undefined, representing a singularity in the unit vector field. The concept does not have intrinsic dependencies on limits like $T \\to 0$ or $v \\to c$, but the underlying field $\\boldsymbol{\\phi}$ might.",
+        "conceptual_definition": "Given a smooth non-vanishing vector field $\\boldsymbol{\\phi} = \\phi^a \\partial_a$ on a pseudo-Riemannian manifold $(M, g_{ab})$, the normalized unit vector field $\\hat{\\boldsymbol{\\phi}}$ is defined component-wise by $\\hat{\\phi}^a = \\frac{\\phi^a}{\\|\\boldsymbol{\\phi}\\|}$, where the norm is given by $\\|\\boldsymbol{\\phi}\\| = \\sqrt{|g_{ab} \\phi^a \\phi^b|}$. This construction extracts the pure directional orientation while rendering the field locally dimensionless with a unit magnitude $g_{ab} \\hat{\\phi}^a \\hat{\\phi}^b = \\pm 1$.",
+        "intuitive_summary": "Normalizing a vector field strips away its local magnitude to isolate its spatial or spacetime direction, generating a tangent vector field of constant unit length throughout the manifold.",
+        "interpretation": "The equation $\\hat{\\phi}^a = \\frac{\\phi^a}{\\|\\boldsymbol{\\phi}\\|}$ determines the $a$-th contravariant component of the normalized vector field. The quantity $\\hat{\\phi}^a$ is dimensionless and satisfies the normalization condition $g_{ab} \\hat{\\phi}^a \\hat{\\phi}^b = 1$ in positive-definite metrics. The numerator $\\phi^a$ is the $a$-th contravariant component of the physical vector field $\\boldsymbol{\\phi}$, whose physical units match the field in question. The denominator $\\|\\boldsymbol{\\phi}\\| = \\sqrt{g_{ab}\\phi^a\\phi^b}$ represents the scalar field norm, possessing identical physical units to $\\phi^a$, thereby ensuring that the resulting unit vector field is scale-invariant.",
+        "symmetry_origin": "Invariance under positive scalar field reparametrizations (Weyl scale transformations $\\phi^a(x) \\to \\lambda(x) \\phi^a(x)$ with $\\lambda(x) > 0$) and local $\\mathrm{SO}(n)$ or $\\mathrm{SO}(1, n-1)$ frame rotations.",
+        "limits_and_boundary": "Singular at points where the vector field vanishes, $\\|\\boldsymbol{\\phi}\\| \\to 0$, where the direction field is ill-defined (topological defect or vortex core). In the asymptotic limit $\\|\\boldsymbol{\\phi}\\| \\to \\infty$, $\\hat{\\phi}^a$ remains bounded on the unit sphere $S^{n-1}$.",
         "status": "platinum",
         "semantic_variables": {
             "\\hat{\\phi}^a": {
-                "name": "Contravariant component of the unit vector field",
+                "name": "Unit vector field component",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The $a$-th contravariant component of the normalized unit vector field $\\hat{\\boldsymbol{\\phi}}$."
+                "description": "Contravariant component of the normalized unit vector field"
             },
             "\\phi^a": {
-                "name": "Contravariant component of the vector field",
+                "name": "Vector field component",
                 "type": "variable",
-                "unit": "Depends on the physical quantity",
-                "description": "The $a$-th contravariant component of the original vector field $\\boldsymbol{\\phi}$."
+                "unit": "varies",
+                "description": "Contravariant component of the original vector field"
             },
             "\\|\\boldsymbol{\\phi}\\|": {
-                "name": "Magnitude of the vector field",
-                "type": "operator",
-                "unit": "Depends on the physical quantity",
-                "description": "The magnitude (norm) of the vector field $\\boldsymbol{\\phi}$ at a given point, calculated as $\\sqrt{g_{ab}\\phi^a \\phi^b}$."
-            },
-            "a": {
-                "name": "Component index",
+                "name": "Vector field norm",
                 "type": "variable",
-                "unit": "dimensionless",
-                "description": "An index representing a specific component of the vector in a given coordinate basis."
+                "unit": "varies",
+                "description": "Scalar magnitude of the vector field computed via the metric tensor"
             }
         },
         "subcomponents": [
             "arrow-origin-3ae63146",
-            "field-vector-fc50e64d",
-            "field-point-source",
-            "electric-field-at-a-charged-surface-6e8f0a8c"
+            "cylindrical-azimuthal-unit-vector-69863b3d"
         ],
-        "description": "This formula defines the components of a unit vector field $\\hat{\\boldsymbol{\\phi}}$ by normalizing an arbitrary, non-zero vector field $\\boldsymbol{\\phi}$. The process preserves the direction of the original field at every point while scaling its magnitude to unity.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the directional unit vector field by dividing the contravariant components of a non-zero vector field by its invariant Riemannian or Euclidean norm.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "operator-action-ghz-state": {
         "title": "Eigenstate Property of the GHZ State under a Composite Pauli Operator",

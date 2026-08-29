@@ -435,55 +435,44 @@
         "equation": "\\rho_{ij}(t) = \\rho_{ij}(0) e^{-\\Gamma t}",
         "semantic_variables": {
             "\\rho_{ij}(t)": {
-                "name": "Density Matrix Element",
+                "name": "Density matrix element at time t",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The element in the i-th row and j-th column of the density matrix at time $t$. Off-diagonal elements ($i \\neq j$) represent quantum coherence."
+                "description": "Component of the reduced density operator in basis state projection |i><j| evaluated at time t"
             },
             "\\rho_{ij}(0)": {
-                "name": "Initial Density Matrix Element",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The value of the density matrix element at the initial time $t=0$."
-            },
-            "e": {
-                "name": "Euler's Number",
+                "name": "Initial density matrix element",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "The base of the natural logarithm, approximately 2.718."
+                "description": "Boundary value of the density matrix element at initial time t = 0"
             },
             "\\Gamma": {
-                "name": "Decay Rate",
-                "type": "variable",
+                "name": "Decay rate",
+                "type": "constant",
                 "unit": "s^{-1}",
-                "description": "A positive constant representing the rate of decay of the quantum state's coherence or population due to environmental coupling."
+                "description": "Characteristic rate of decoherence or population relaxation mediated by system-environment coupling"
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The elapsed time since the initial state at $t=0$."
-            },
-            "i,j": {
-                "name": "State Indices",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Indices representing the basis states of the quantum system."
+                "description": "Continuous temporal coordinate tracking the evolution of the open quantum system"
             }
         },
-        "interpretation": "The equation $\\rho_{ij}(t) = \\rho_{ij}(0) e^{-\\Gamma t}$ describes the value of a density matrix element $\\rho_{ij}(t)$ at a given time $t$. The term $\\rho_{ij}(0)$ represents the initial value of that element at $t=0$. The exponential factor $e^{-\\Gamma t}$ governs the decay process, where $\\Gamma$ is the decay rate, a positive constant with units of inverse time (e.g., $s^{-1}$). A larger $\\Gamma$ signifies a faster decay. The indices $i$ and $j$ refer to the basis states of the system. When $i \\neq j$, $\\rho_{ij}$ are the coherences, and their decay to zero signifies the loss of quantum superposition. When $i = j$, $\\rho_{ii}$ represents the population of the $i$-th state, and its decay describes relaxation towards a thermal or ground state.",
-        "symmetry_origin": "The decay process is inherently irreversible and breaks the time-reversal symmetry characteristic of isolated, unitary quantum evolution (described by the Schrödinger equation). This asymmetry arises from tracing out the degrees of freedom of an external environment, leading to a non-unitary quantum dynamical semigroup that describes the system's open dynamics.",
-        "limits_and_boundary": "In the limit $t \\to 0$, we have $e^{-\\Gamma t} \\to 1$, so $\\rho_{ij}(t) \\to \\rho_{ij}(0)$, recovering the initial state. As $t \\to \\infty$, $e^{-\\Gamma t} \\to 0$ (for $\\Gamma > 0$), causing the off-diagonal elements ($\\rho_{ij}$ for $i \\neq j$) to vanish, which signifies complete decoherence. In the boundary case where the coupling to the environment is zero, $\\Gamma = 0$, the equation becomes $\\rho_{ij}(t) = \\rho_{ij}(0)$, indicating no decay and preserving quantum coherence, as expected for a closed system.",
+        "interpretation": "The quantity $\\rho_{ij}(t)$ represents the element in row $i$ and column $j$ of the reduced density operator $\\hat{\\rho}$ in a chosen basis at time $t$. The prefactor $\\rho_{ij}(0)$ denotes the initial boundary condition at $t=0$. The scalar parameter $\\Gamma > 0$ denotes the characteristic decay rate (in units of $\\text{s}^{-1}$), corresponding to an inverse relaxation lifetime $\\tau = 1/\\Gamma$. For off-diagonal terms ($i \\neq j$), $\\Gamma$ characterizes the transverse dephasing rate $\\Gamma_2 = 1/T_2$, driving the system from a coherent superposition to a statistical mixture. For diagonal terms ($i = j$), $\\Gamma$ describes population decay/longitudinal relaxation $\\Gamma_1 = 1/T_1$ toward a steady-state attractor.",
+        "symmetry_origin": "Time-translation symmetry is dynamically broken in the open subsystem due to dissipative coupling to the continuous spectrum of the bath modes, generating an irreversible semigroup dynamical map ($CPTP$ map).",
+        "limits_and_boundary": "As $t \\to 0$, $\\rho_{ij}(t) \\to \\rho_{ij}(0)$, preserving the initial quantum state. As $t \\to \\infty$, $\\rho_{ij}(t) \\to 0$ for coherences ($i \\neq j$), leading to the classical pointer-state mixture. In the limit of zero environmental coupling $\\Gamma \\to 0$, coherent unitary Schrödinger evolution is recovered.",
         "status": "platinum",
-        "conceptual_definition": "This equation models the time evolution of a single element, $\\rho_{ij}$, of a quantum system's density matrix. It is a solution to a simplified Markovian master equation, where the system's interaction with an environment leads to an irreversible, exponential decay towards a steady state. For off-diagonal elements ($i \\neq j$), this decay represents decoherence—the loss of quantum superposition.",
-        "intuitive_summary": "Imagine a perfectly vibrating guitar string representing a pure quantum state. When you touch it lightly, the vibrations (quantum coherence) don't stop instantly but fade away exponentially. This formula describes that fading process, where $\\Gamma$ is the rate of damping on the string.",
-        "description": "A fundamental equation in open quantum systems describing the exponential decay of coherence (off-diagonal elements) or population (diagonal elements) of a quantum state over time due to environmental interaction.",
-        "derivation_type": "DERIVED_FROM",
+        "conceptual_definition": "Under the Born-Markov and secular approximations, the open quantum system master equation (Lindblad form) yields uncoupled or weakly coupled differential equations for individual density matrix elements $\\rho_{ij}(t)$. For pure dephasing or simple relaxation processes without driving, each matrix element undergoes isotropic or characteristic exponential decay $\\rho_{ij}(t) = \\rho_{ij}(0) e^{-\\Gamma t}$, where $\\Gamma$ represents the decoherence rate ($i \\neq j$) or relaxation rate ($i = j$) induced by environmental interactions.",
+        "intuitive_summary": "Environmental noise continuously probes a quantum system, causing phase relations between distinct quantum superpositions (off-diagonal elements) to wash out exponentially fast while populations relax toward equilibrium.",
+        "description": "Describes the Markovian exponential relaxation and decoherence of density matrix elements over time resulting from weak coupling to a thermal reservoir or dissipative environment.",
+        "derivation_type": "SPECIAL_CASE",
         "subcomponents": [
-            "sterile-nature-a912a5aa",
-            "renormalization-scale-dependence-of-n-point-function-db6b08ae",
-            "scale-filter-f097c8b6"
-        ]
+            "decay-coherence",
+            "density-matrix-elements-zero",
+            "density-matrix-element"
+        ],
+        "parent_formula_id": "decay-law"
     },
     "wave-operator-535ad8e0": {
         "title": "Wave Operator (d'Alembertian)",
@@ -700,90 +689,79 @@
         "derivation_type": "DERIVED_FROM"
     },
     "central-temperature-profile-41662dd3": {
-        "title": "Solar Core Temperature (Standard Solar Model)",
+        "title": "Solar Core Temperature in the Standard Solar Model",
         "equation": "T_c \\approx 1.57 \\times 10^7 \\text{ K}",
         "semantic_variables": {
             "T_c": {
-                "name": "Central Temperature",
+                "name": "Central Core Temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The temperature at the gravitational center of a star, specifically the Sun in this context."
+                "description": "The temperature at the geometric center of the Sun predicted by the Standard Solar Model."
             }
         },
-        "interpretation": "The formula $T_c \\approx 1.57 \\times 10^7 \\text{ K}$ provides the approximate value for the central temperature, denoted as $T_c$, of the Sun. This value is a specific numerical result derived from the Standard Solar Model, which incorporates principles of hydrostatic equilibrium, energy transport, and nuclear reaction rates. This high temperature in the Sun's core is essential for overcoming the Coulomb barrier between atomic nuclei, enabling thermonuclear fusion reactions like the proton-proton chain. This process releases vast amounts of energy, which then propagates outward through radiative and convective zones, eventually being emitted as light and heat from the photosphere.",
-        "symmetry_origin": "This value is a consequence of the principle of hydrostatic equilibrium, which represents a stable state balancing the inward force of gravity with the outward pressure gradient. This equilibrium is a macroscopic manifestation of momentum conservation (a consequence of translational symmetry via Noether's theorem) applied to fluid elements within the star.",
-        "limits_and_boundary": "This value is specific to the Sun in its current main-sequence phase. The Standard Solar Model assumes a quasi-static, spherically symmetric star. The model would yield different core temperatures for stars of different mass or at different evolutionary stages. For example, as the Sun evolves into a red giant, its core will contract and heat to approximately $10^8$ K to initiate helium fusion. The model is not applicable to stellar remnants like white dwarfs or neutron stars.",
+        "interpretation": "In this empirical value, $T_c$ denotes the temperature at the center of the solar core in units of kelvin ($\\text{K}$). This temperature is sufficient to drive the proton-proton ($p\\text{-}p$) chain fusion reactions at a rate that sustains the present solar luminosity $L_\\odot$. Because neutrino fluxes (such as from $^{8}\\text{B}$) are extraordinarily sensitive functions of $T_c$, measuring these fluxes provides an exacting empirical probe of this central temperature.",
+        "symmetry_origin": "Spherical symmetry ($SO(3)$) of non-rotating, non-magnetic stellar interior models in steady-state thermal and hydrostatic equilibrium.",
+        "limits_and_boundary": "In the limit of zero core temperature ($T_c \\to 0$), thermal pressure vanishes and a non-degenerate star undergoes gravitational collapse; if $T_c$ increases significantly above $10^7 \\text{ K}$, nuclear reaction rates escalate exponentially (e.g., CNO cycle dominance), expanding the core to restore hydrostatic balance.",
         "status": "platinum",
-        "conceptual_definition": "This formula provides the calculated central temperature, $T_c$, of the Sun. This extreme temperature is a direct consequence of the immense gravitational pressure required to maintain hydrostatic equilibrium, creating the conditions necessary for thermonuclear fusion to occur in the stellar core.",
-        "intuitive_summary": "The immense weight of the Sun's outer layers crushes and heats its core to over 15 million Kelvin, turning it into a natural fusion reactor that powers the star and provides Earth with light and heat.",
+        "conceptual_definition": "The core temperature $T_c \\approx 1.57 \times 10^7 \\text{ K}$ represents the boundary value at the center ($r = 0$) obtained by solving the four fundamental differential equations of stellar structure—hydrostatic equilibrium, mass conservation, radiative/convective energy transport, and nuclear energy generation—calibrated to present-day solar age, radius, and luminosity $L_\\odot$.",
+        "intuitive_summary": "The Sun's central temperature is the thermal equilibrium point where gravitational inward pressure is perfectly balanced by the outward thermal and radiation pressure generated by core hydrogen fusion.",
         "subcomponents": [
-            "speed-of-light-in-vacuum",
-            "cp-violation-source-bd7f0865",
-            "single-degenerate-model-identity-1-002f314f-1cda9162"
+            "standard-solar-model-identity-1-d0b9b254-f4be84ad",
+            "solar-energy-output-2282f1ea"
         ],
-        "description": "A numerical approximation for the temperature at the center of the Sun, as predicted by the Standard Solar Model of stellar structure.",
-        "derivation_type": "APPROXIMATION"
+        "description": "The central temperature of the Sun evaluated numerically from the coupled stellar structure equations within the Standard Solar Model (SSM).",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "solar-energy-output-2282f1ea"
     },
     "flavor-mass-basis-transformation-f55da4b8": {
         "title": "Flavor-Mass Basis Transformation for Neutrinos",
         "equation": "|\\nu_\\alpha\\rangle = \\sum_i U_{\\alpha i}^* |\\nu_i\\rangle",
         "semantic_variables": {
             "|\\nu_\\alpha\\rangle": {
-                "name": "Neutrino Flavor Eigenstate Ket",
+                "name": "Neutrino flavor eigenstate",
                 "type": "variable",
-                "unit": "Dimensionless (State Vector)",
-                "description": "A quantum state vector representing a neutrino with a definite flavor $\\alpha$ (e.g., electron, muon, or tau)."
-            },
-            "U_{\\alpha i}": {
-                "name": "PMNS Matrix Element",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "An element of the Pontecorvo-Maki-Nakagawa-Sakata (PMNS) unitary mixing matrix, which relates the neutrino flavor and mass eigenstates. The index $\\alpha$ denotes the flavor and $i$ denotes the mass."
-            },
-            "*": {
-                "name": "Complex Conjugate Operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "An operator that takes the complex conjugate of a complex number."
+                "unit": "dimensionless",
+                "description": "Quantum state ket of a neutrino produced in a weak charged-current interaction with definite lepton flavor $\\alpha$"
             },
             "|\\nu_i\\rangle": {
-                "name": "Neutrino Mass Eigenstate Ket",
+                "name": "Neutrino mass eigenstate",
                 "type": "variable",
-                "unit": "Dimensionless (State Vector)",
-                "description": "A quantum state vector representing a neutrino with a definite mass $m_i$. These are the states that propagate in spacetime."
+                "unit": "dimensionless",
+                "description": "Quantum state ket of a neutrino with definite invariant mass $m_i$ and Hamiltonian energy eigenvalue"
+            },
+            "U_{\\alpha i}^*": {
+                "name": "Complex conjugate PMNS matrix element",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Complex conjugate of the Pontecorvo-Maki-Nakagawa-Sakata (PMNS) unitary mixing matrix element connecting flavor $\\alpha$ and mass eigenstate $i$"
             },
             "\\alpha": {
-                "name": "Flavor Index",
+                "name": "Lepton flavor index",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "An index representing the neutrino flavor, typically taking values from the set $\\{e, \\mu, \\tau\\}$."
+                "unit": "dimensionless",
+                "description": "Discrete flavor quantum number denoting electron ($e$), muon ($\\mu$), or tau ($\\tau$) lepton generation"
             },
             "i": {
-                "name": "Mass Index",
+                "name": "Neutrino mass eigenstate index",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "An index representing the neutrino mass eigenstate, typically taking values from the set $\\{1, 2, 3\\}$."
-            },
-            "\\sum": {
-                "name": "Summation Operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "Operator that sums a sequence of terms over the specified index."
+                "unit": "dimensionless",
+                "description": "Discrete index identifying the mass eigenstate, typically $i \\in \\{1, 2, 3\\}$"
             }
         },
-        "interpretation": "The equation $|\\nu_\\alpha\\rangle = \\sum_i U_{\\alpha i}^* |\\nu_i\\rangle$ defines the relationship between two different bases for describing neutrino states. The ket vector $|\\nu_\\alpha\\rangle$ represents a neutrino state with a definite flavor $\\alpha$, which is how neutrinos are created and detected in weak interactions (e.g., $\\alpha \\in \\{e, \\mu, \\tau\\}$). These are the 'flavor eigenstates'. However, these are not the states that have a definite mass and propagate through space; those are the 'mass eigenstates', denoted by $|\\nu_i\\rangle$, where the index $i$ typically runs from 1 to 3. The equation shows that a flavor state is a quantum superposition of the mass states. The coefficients of this superposition, $U_{\\alpha i}^*$, are the complex conjugates of the elements of the unitary Pontecorvo-Maki-Nakagawa-Sakata (PMNS) matrix, $U$. The unitarity of the $U$ matrix is crucial for conserving probability. The sum $\\sum_i$ is taken over all mass eigenstates, meaning each flavor state is a specific mixture of all three mass states.",
-        "symmetry_origin": "The transformation is a unitary change of basis in the Hilbert space of neutrino states. This is required because the mass eigenstates (which diagonalize the Hamiltonian in a vacuum) are not the same as the flavor eigenstates (which are defined by the weak interaction). The unitarity of the transformation matrix $U$ ensures the conservation of probability. The physical origin is the non-diagonal nature of the neutrino mass matrix in the flavor basis, which breaks individual lepton family number symmetry.",
-        "limits_and_boundary": "This equation is a definitional relationship in quantum mechanics. A key boundary condition is the hypothetical case where there is no mixing between flavor and mass eigenstates. In this limit, the PMNS matrix $U$ would become the identity matrix, i.e., $U_{\\alpha i} = \\delta_{\\alpha i}$. The formula would then simplify to $|\\nu_\\alpha\\rangle = |\\nu_\\alpha\\rangle$, meaning flavor eigenstates would be identical to mass eigenstates, and the phenomenon of neutrino oscillation would not exist. The structure of the equation itself is independent of kinematic variables like energy $E$ or distance $L$, but these variables govern the time evolution of the constituent $|\\nu_i\\rangle$ states, leading to oscillation.",
+        "interpretation": "The state ket $|\\nu_\\alpha\\rangle$ represents a pure neutrino flavor eigenstate corresponding to charged lepton flavor $\\alpha \\in \\{e, \\mu, \\tau\\}$. The state ket $|\\nu_i\\rangle$ represents a mass eigenstate characterized by rest mass $m_i$ and energy eigenvalue $E_i = \\sqrt{p^2 + m_i^2}$. The coefficient $U_{\\alpha i}^*$ is the complex conjugate of the element $U_{\\alpha i} = \\langle \\nu_i | \\nu_\\alpha \\rangle$ of the unitary $3 \\times 3$ PMNS mixing matrix $U$. The sum $\\sum_i$ runs over all active neutrino mass eigenstates $i \\in \\{1, 2, 3\\}$.",
+        "symmetry_origin": "Arises from the mismatch between the diagonalization of the charged lepton Yukawa coupling matrix and the neutrino mass matrix under the broken electroweak gauge group $SU(2)_L \\times U(1)_Y$. Unitarity of $U$ reflects quantum-mechanical probability conservation and completeness in Hilbert space.",
+        "limits_and_boundary": "In the limit of vanishing mixing angles ($\\theta_{12} = \\theta_{23} = \\theta_{13} = 0$), $U$ reduces to the identity matrix $\\mathbb{I}$, so $|\\nu_\\alpha\\rangle = |\\nu_i\\rangle$ for $\\alpha = i$. In the limit of degenerate neutrino masses ($m_1 = m_2 = m_3$), neutrino oscillations vanish entirely due to identical phase evolution across all mass eigenstates.",
         "status": "platinum",
-        "conceptual_definition": "In quantum mechanics, the state of a neutrino with a definite flavor $\\alpha$ (e.g., electron, muon, or tau), denoted by the ket vector $|\\nu_\\alpha\\rangle$, is not a stationary state that propagates with a definite mass. Instead, it is a linear combination, or superposition, of the mass eigenstates $|\\nu_i\\rangle$ (where $i=1, 2, 3$). The coefficients of this superposition are the complex conjugates of the elements of the unitary PMNS matrix, $U_{\\alpha i}^*$. This relationship, $|\\nu_\\alpha\\rangle = \\sum_i U_{\\alpha i}^* |\\nu_i\\rangle$, is fundamental to the phenomenon of neutrino oscillation, as the mass eigenstates evolve differently in time.",
-        "intuitive_summary": "Imagine a neutrino's 'flavor' (like electron or muon) is a specific color, say, purple. This purple light isn't a pure color itself but is actually a mix of pure red, green, and blue light (the 'mass' states). The PMNS matrix provides the exact recipe for how much red, green, and blue light you need to mix to create that specific shade of purple. As the neutrino travels, the red, green, and blue components get out of sync, causing the overall color to change, which is why we see neutrinos 'oscillate' from one flavor to another.",
+        "conceptual_definition": "In the Standard Model extended with neutrino mass terms, neutrino interaction states (flavor eigenstates $|\nu_\\alpha\rangle$ with $\\alpha \\in \\{e, \\mu, \\tau\\}$) produced via charged-current weak interactions do not coincide with the free-field Hamiltonian propagation eigenstates (mass eigenstates $|\nu_i\rangle$ with $i \\in \\{1, 2, 3\\}$). The transformation between these orthonormal bases is mediated by the unitary Pontecorvo-Maki-Nakagawa-Sakata (PMNS) matrix $U$, yielding the linear superposition $|\nu_\\alpha\rangle = \\sum_i U_{\\alpha i}^* |\\nu_i\\rangle$, where the complex conjugation arises from the field-operator creation convention.",
+        "intuitive_summary": "Neutrinos are created and detected in definite flavor types via weak nuclear interactions, but travel through spacetime as distinct mass components. This relation bridges the flavor basis with the mass basis, giving rise to neutrino oscillations.",
         "subcomponents": [
-            "mass-eigenstate-ket-vector-234bddb6",
-            "neutrino-oscillation-probability-e1395eb8",
-            "neutrino-flavor-transition-probability-98612f24"
+            "completeness-resolution-identity-8f33a2d7",
+            "pmns-matrix-element-46d7b89c",
+            "mass-basis-orthonormality-relation-11e0d68e"
         ],
-        "description": "This equation defines a neutrino flavor eigenstate as a quantum superposition of its constituent mass eigenstates. The transformation between the flavor basis and the mass basis is governed by the unitary Pontecorvo-Maki-Nakagawa-Sakata (PMNS) matrix.",
-        "derivation_type": "DEFINITION"
+        "description": "Expresses a neutrino weak-interaction flavor eigenstate as a coherent quantum superposition of neutrino mass eigenstates weighted by the complex-conjugated elements of the PMNS mixing matrix.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "completeness-resolution-identity-8f33a2d7"
     },
     "simultaneity-shift-relation": {
         "title": "Relativity of Simultaneity: Time Interval Shift",
@@ -1093,26 +1071,25 @@
     "efficiency-approximation": {
         "title": "Numerical Approximation for High Thermodynamic Efficiency",
         "equation": "\\eta \\approx 82.8\\%",
-        "conceptual_definition": "This formula, $\\eta \\approx 82.8\\%$, is not a fundamental physical law but a specific numerical result representing a high thermodynamic efficiency. Thermodynamic efficiency, denoted by $\\eta$, is fundamentally the ratio of useful work output, $W$, to the heat energy input, $Q_H$, given by $\\eta = W/Q_H$. This specific value is often contextualized by the maximum theoretical efficiency of a heat engine, the Carnot efficiency, $\\eta_{Carnot} = 1 - T_C/T_H$, where $T_C$ and $T_H$ are the absolute temperatures of the cold and hot reservoirs, respectively.",
-        "intuitive_summary": "Imagine a perfect, theoretical engine. This value, about 83%, represents a very high, though not perfect, efficiency for converting heat into useful work. It tells us that for every 100 units of heat energy put into the system, nearly 83 units are successfully transformed into work, with the rest being lost as waste heat. This is a benchmark for a very effective engine operating between a very hot source and a very cold sink.",
-        "interpretation": "The symbol $\\eta$ represents the thermodynamic efficiency, a dimensionless quantity that measures the performance of a device that converts heat energy into mechanical work. The value $82.8\\%$ is a specific, constant approximation, implying that the ratio of useful work output to heat input is approximately $0.828$. In the context of a Carnot engine, this would mean $1 - T_C/T_H \\approx 0.828$, which implies a temperature ratio of $T_C/T_H \\approx 0.172$. This signifies a very large temperature differential, a condition required for high efficiency.",
-        "symmetry_origin": "Rooted in the Second Law of Thermodynamics, which governs the direction of heat flow and sets an upper limit on the efficiency of converting heat to work, fundamentally linked to the statistical increase of entropy in an isolated system.",
-        "limits_and_boundary": "As a constant value, this approximation itself has no variable limits. However, the underlying Carnot efficiency, $\\eta_{Carnot} = 1 - T_C/T_H$, from which such a value could be derived, has clear limits. As the cold reservoir temperature $T_C \\to 0$ K, the efficiency $\\eta_{Carnot} \\to 1$ (100%). As the hot reservoir temperature $T_H \\to \\infty$, the efficiency also approaches $\\eta_{Carnot} \\to 1$. If $T_C = T_H$, no work can be extracted, and $\\eta_{Carnot} = 0$. The value $82.8\\%$ represents a case far from the $T_C = T_H$ limit and closer to the ideal $T_C \\ll T_H$ condition.",
+        "conceptual_definition": "Thermal efficiency $\\eta$ measures the ratio of net work output to heat input in a heat engine. The expression $\\eta \\approx 82.8\\%$ represents a specific numerical operating regime for idealized heat engines operating across wide temperature differentials, where $\\eta = 1 - T_C / T_H \\approx 0.828$.",
+        "intuitive_summary": "In an ultra-high efficiency thermodynamic regime, roughly four-fifths of incoming thermal energy is converted directly into useful mechanical work, leaving only a minor fraction to be rejected as waste heat.",
+        "interpretation": "The parameter $\\eta$ represents the dimensionless thermodynamic efficiency, bounded by $\\eta < 1$ in accordance with the Second Law of Thermodynamics. At $\\eta \\approx 82.8\\%$, the ratio of heat rejected to the cold reservoir ($Q_C$) to heat extracted from the hot reservoir ($Q_H$) is approximately $1 - 0.828 = 0.172$.",
+        "symmetry_origin": "Time-translation symmetry and the non-decrease of statistical entropy under macroscopic coarse-graining (Second Law of Thermodynamics).",
+        "limits_and_boundary": "As the cold reservoir temperature $T_C \\to 0\\text{ K}$ or the hot reservoir temperature $T_H \\to \\infty$, the Carnot bound approaches $\\eta \\to 1$. When $T_C \\to T_H$, the efficiency approaches $\\eta \\to 0$.",
         "status": "platinum",
         "semantic_variables": {
             "\\eta": {
-                "name": "Thermodynamic Efficiency",
+                "name": "Thermodynamic efficiency",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless measure of the performance of a heat engine, defined as the ratio of the net work done to the heat energy absorbed from the hot reservoir."
+                "description": "Fraction of thermal energy input converted to work"
             }
         },
-        "description": "Represents a specific, high numerical value for thermodynamic efficiency, often used as a benchmark or example derived from a theoretical model like the Carnot cycle under specific temperature conditions.",
-        "derivation_type": "SPECIAL_CASE",
+        "description": "Represents a numerical benchmark approximation for high thermodynamic conversion efficiency, typically evaluated in high-temperature-gradient Carnot or combined-cycle engines.",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
         "subcomponents": [
-            "maximum-efficiency-approximation",
-            "baryon-to-photon-ratio-approximation",
-            "wkb-transmission-coefficient-4ed00873"
+            "high-temperature-approximation-plancks-law",
+            "adiabatic-index-for-monatomic-ideal-gases-ccce1fb3"
         ]
     },
     "commutation-relation": {
@@ -1463,39 +1440,40 @@
     "relativistic-beta-definition": {
         "title": "Relativistic Velocity Parameter (Beta)",
         "equation": "\\beta = v/c \\,",
-        "conceptual_definition": "The relativistic velocity parameter, denoted by $\\beta$, is a dimensionless quantity defined as the ratio of the magnitude of an object's three-velocity, $v = |\\mathbf{v}|$, to the speed of light in a vacuum, $c$. This parameter is fundamental in special relativity for quantifying the magnitude of relativistic effects.",
-        "intuitive_summary": "Imagine a universal speed limit, the speed of light. The relativistic beta, $\\beta$, is simply a measure of what fraction of that ultimate speed limit you are currently traveling at. A $\\beta$ of 0.9 means you're at 90% of the speed of light, where the strange effects of relativity become very noticeable.",
-        "interpretation": "In the formula $\\beta = v/c$, the term $v$ represents the magnitude of the object's three-velocity in a given inertial frame, measured in meters per second (m/s). The constant $c$ is the speed of light in a vacuum, defined as exactly 299,792,458 m/s. The resulting quantity, $\\beta$, is a dimensionless scalar that ranges from $0$ (for an object at rest) to approaching $1$ (as an object's speed approaches the speed of light). This ratio is a cornerstone of relativistic kinematics, as it directly governs the magnitude of effects such as time dilation (via the Lorentz factor $\\gamma = 1/\\sqrt{1-\\beta^2}$) and length contraction. As $v \\to c$, $\\beta \\to 1$, and relativistic phenomena become dominant. Conversely, for $v \\ll c$, $\\beta \\approx 0$, and the predictions of special relativity converge to those of classical Newtonian mechanics.",
-        "symmetry_origin": "Lorentz invariance, a fundamental symmetry of spacetime described by the Poincaré group. The existence of a universal, frame-invariant speed $c$ is a direct consequence of this symmetry, and $\\beta$ is the natural parameterization of velocity in this geometric structure.",
-        "limits_and_boundary": "In the non-relativistic limit, as $v \\to 0$, $\\beta \\to 0$. In this regime, the Lorentz factor $\\gamma \\to 1$, and relativistic mechanics smoothly reduces to Newtonian mechanics. In the ultra-relativistic limit, as $v \\to c$, $\\beta \\to 1$. This is the domain of massless particles (like photons, for which $\\beta=1$ exactly) and highly energetic massive particles. As $\\beta \\to 1$, relativistic effects such as time dilation and length contraction become infinitely pronounced.",
+        "conceptual_definition": "The relativistic velocity parameter $\\beta = v/c$ is a fundamental dimensionless quantity in special relativity representing the speed $v$ of a particle or reference frame normalized by the invariant speed of light $c$. It establishes the scale of relativistic kinematic departures from classical Newtonian mechanics, directly parameterizing the Lorentz factor $\\gamma = (1 - \\beta^2)^{-1/2}$, spacetime boosts, and rapidity $\\phi = \\operatorname{artanh}(\\beta)$.",
+        "intuitive_summary": "Beta quantifies an object's speed as a fraction or percentage of the cosmic speed limit, acting as a direct gauge for how strongly relativistic time dilation and length contraction manifest.",
+        "interpretation": "In the relation $\\beta = v/c$, the variable $v = \\|\\mathbf{v}\\|$ represents the magnitude of the three-velocity of an object relative to a chosen inertial frame, measured in meters per second ($\\mathrm{m/s}$). The fundamental constant $c$ denotes the invariant speed of light in vacuum ($299{,}792{,}458\\;\\mathrm{m/s}$). The resulting scalar $\\beta$ is dimensionless and constrained to the interval $[0, 1)$ for massive particles and identically $\\beta = 1$ for massless particles in vacuum.",
+        "symmetry_origin": "Rooted in the Lorentz covariance of spacetime under the Poincaré group $\\mathrm{ISO}(1,3)$ and the postulate of the frame-invariance of the speed of light $c$.",
+        "limits_and_boundary": "In the non-relativistic limit where $v \\ll c$, $\\beta \\to 0$, reducing Lorentz transformations to Galilean transformations. In the ultra-relativistic limit where $v \\to c$, $\\beta \\to 1$, driving the Lorentz factor $\\gamma \\to \\infty$. For any physical massive body, $\\beta < 1$ ensures preservation of causal timelike worldlines.",
         "status": "platinum",
         "semantic_variables": {
             "\\beta": {
-                "name": "Relativistic beta",
+                "name": "relativistic velocity parameter",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The ratio of an object's speed to the speed of light."
+                "unit": "dimensionless",
+                "description": "Dimensionless ratio of physical speed to the speed of light in vacuum"
             },
             "v": {
-                "name": "Speed",
+                "name": "speed",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The magnitude of the three-velocity of an object in a given inertial frame."
+                "description": "Magnitude of the spatial three-velocity vector in an inertial frame"
             },
             "c": {
-                "name": "Speed of light in vacuum",
+                "name": "speed of light in vacuum",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "The universal speed limit in a vacuum, defined as 299,792,458 m/s."
+                "description": "Universal physical constant representing the invariant speed of massless particles in vacuum"
             }
         },
         "subcomponents": [
+            "ultra-relativistic-velocity-limit-d437ab88",
+            "non-relativistic-velocity-condition-e9dee919",
             "beta-as-tanh-phi",
-            "relativistic-doppler-factor-definition-919e3376",
-            "power-radiated-accelerated-charge"
+            "squared-dimensionless-velocity-073ea3b7"
         ],
-        "description": "Defines the relativistic velocity parameter, beta (β), as the dimensionless ratio of an object's speed to the speed of light in a vacuum.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the relativistic dimensionless velocity parameter, beta ($\\beta$), as the ratio of an object's spatial speed to the universal speed of light in vacuum.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "divergence-theorem-gradient-scalar": {
         "title": "Divergence Theorem for the Gradient of a Scalar Field",

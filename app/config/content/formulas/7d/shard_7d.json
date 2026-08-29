@@ -143,37 +143,39 @@
         "equation": "\\mathbf{L} = \\mathbf{I} \\mathbf{\\omega}",
         "semantic_variables": {
             "\\mathbf{L}": {
-                "name": "Angular Momentum Vector",
+                "name": "Angular momentum vector",
                 "type": "variable",
-                "unit": "kg·m²/s",
-                "description": "The rotational equivalent of linear momentum, representing the 'quantity of rotation' of a body."
+                "unit": "kg*m^2/s",
+                "description": "Total angular momentum vector of the rigid body about the reference point"
             },
             "\\mathbf{I}": {
-                "name": "Moment of Inertia Tensor",
-                "type": "operator",
-                "unit": "kg·m²",
-                "description": "A second-rank tensor that characterizes the distribution of mass of a rigid body and its resistance to angular acceleration."
+                "name": "Moment of inertia tensor",
+                "type": "variable",
+                "unit": "kg*m^2",
+                "description": "Second-order symmetric tensor describing the mass distribution of the rigid body"
             },
             "\\mathbf{\\omega}": {
-                "name": "Angular Velocity Vector",
+                "name": "Angular velocity vector",
                 "type": "variable",
                 "unit": "rad/s",
-                "description": "A pseudovector representing the instantaneous speed of rotation and the direction of the axis of rotation."
+                "description": "Instantaneous angular velocity vector of the rotating frame"
             }
         },
-        "interpretation": "In the equation $\\mathbf{L} = \\mathbf{I} \\mathbf{\\omega}$, $\\mathbf{L}$ is the angular momentum vector, a measure of the rotational motion of a body. Its SI units are $\\text{kg} \\cdot \\text{m}^2/\\text{s}$. $\\mathbf{I}$ is the moment of inertia tensor, a second-order tensor that describes how the mass of a rigid body is distributed relative to a point. It is represented as a $3 \\times 3$ matrix, and its components, with units of $\\text{kg} \\cdot \\text{m}^2$, depend on the body's geometry and the chosen coordinate system. $\\mathbf{\\omega}$ is the angular velocity vector, representing the rate and axis of rotation, with SI units of $\\text{rad}/\\text{s}$. The equation signifies that $\\mathbf{L}$ is obtained by applying the linear transformation defined by $\\mathbf{I}$ to $\\mathbf{\\omega}$. Consequently, $\\mathbf{L}$ is not necessarily parallel to $\\mathbf{\\omega}$ unless $\\mathbf{\\omega}$ is aligned with one of the principal axes of inertia, in which case $\\mathbf{L} = \\lambda \\mathbf{\\omega}$, where $\\lambda$ is the corresponding principal moment of inertia.",
-        "symmetry_origin": "Conservation of angular momentum, which this equation helps define, is a direct consequence of the rotational invariance of physical laws (isotropy of space) as dictated by Noether's theorem.",
-        "limits_and_boundary": "For a non-rotating body where $\\mathbf{\\omega} \\to \\mathbf{0}$, the angular momentum $\\mathbf{L}$ is also zero. In the case of a spherically symmetric mass distribution, the inertia tensor simplifies to $\\mathbf{I} = I_0 \\mathbf{1}$ (where $\\mathbf{1}$ is the identity matrix and $I_0$ is a scalar), causing the angular momentum $\\mathbf{L}$ to be perfectly aligned with the angular velocity $\\mathbf{\\omega}$. If rotation occurs about a principal axis of the body, $\\mathbf{\\omega}$ is an eigenvector of $\\mathbf{I}$, and the relation simplifies to the scalar multiplication $\\mathbf{L} = \\lambda \\mathbf{\\omega}$, where $\\lambda$ is the principal moment of inertia for that axis.",
+        "interpretation": "The symbol $\\mathbf{L}$ represents the angular momentum vector (SI unit: $\\text{kg}\\cdot\\text{m}^2\\cdot\\text{s}^{-1}$), characterizing the rotational momentum of the rigid system. The matrix $\\mathbf{I}$ is the $3 \\times 3$ symmetric moment of inertia tensor (SI unit: $\\text{kg}\\cdot\\text{m}^2$), whose components $I_{ij} = \\int \\rho(\\mathbf{r}) (r^2 \\delta_{ij} - x_i x_j) d^3r$ encode the spatial distribution of mass. The vector $\\mathbf{\\omega}$ denotes the instantaneous angular velocity (SI unit: $\\text{rad}\\cdot\\text{s}^{-1}$). Under this linear transformation, eigenvectors of $\\mathbf{I}$ define the principal axes where $\\mathbf{L} = I_k \\mathbf{\\omega}$ for principal eigenvalue $I_k$.",
+        "symmetry_origin": "Rooted in the continuous spatial rotational symmetry $SO(3)$ of isolated physical systems via Noether's theorem, leading to the conservation of the total angular momentum vector $\\mathbf{L}$ in the absence of external torques.",
+        "limits_and_boundary": "In the limit of a spherically symmetric body or isotropic mass distribution, $\\mathbf{I} = I \\mathbb{I}_3$, reducing the relation to the collinear scalar mapping $\\mathbf{L} = I \\mathbf{\\omega}$. In the relativistic regime ($v \\sim c$), the non-relativistic tensor formulation breaks down and must be generalized to the antisymmetric four-dimensional relativistic angular momentum tensor $M^{\\mu\\nu}$.",
         "status": "platinum",
-        "conceptual_definition": "In rigid body dynamics, the angular momentum vector $\\mathbf{L}$ is not, in general, parallel to the angular velocity vector $\\mathbf{\\omega}$. Their relationship is mediated by the moment of inertia tensor $\\mathbf{I}$, a symmetric second-rank tensor that encapsulates the mass distribution of the body relative to a point. The equation $\\mathbf{L} = \\mathbf{I} \\mathbf{\\omega}$ expresses this linear mapping, where the tensor $\\mathbf{I}$ transforms the angular velocity vector into the corresponding angular momentum vector.",
-        "intuitive_summary": "Imagine spinning a lopsided object, like a potato. Even if you spin it around a fixed axis (the angular velocity), it will wobble and try to rotate in other directions. The inertia tensor is the 'recipe' that tells you exactly how the object will wobble (its angular momentum) for any given spin you apply. For a perfectly symmetric object like a sphere, there is no wobble, and the angular momentum lines up perfectly with the spin axis.",
-        "description": "This fundamental equation of classical mechanics defines the angular momentum vector of a rigid body as the linear transformation of its angular velocity vector by the moment of inertia tensor.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "In classical rigid body mechanics, the angular momentum $\\mathbf{L}$ is computed by summing the angular momenta of all constituent mass elements rotating with common angular velocity $\\mathbf{\\omega}$ relative to a reference origin (often the center of mass or a fixed point). Through the vector triple product $\\mathbf{r} \\times (\\mathbf{\\omega} \\times \\mathbf{r}) = r^2 \\mathbf{\\omega} - \\mathbf{r}(\\mathbf{r} \\cdot \\mathbf{\\omega})$, the relationship linearizes into $\\mathbf{L} = \\mathbf{I} \\mathbf{\\omega}$, where $\\mathbf{I}$ is the rank-2 moment of inertia tensor. This mapping demonstrates that $\\mathbf{L}$ and $\\mathbf{\\omega}$ are generally non-collinear unless rotation occurs along a principal axis of inertia.",
+        "intuitive_summary": "Because mass in an asymmetric object is distributed unevenly away from the rotation axis, spinning an object in one direction generates off-axis centrifugal forces, resulting in an angular momentum vector that tilts away from the instantaneous axis of rotation.",
+        "description": "Defines the total angular momentum vector of a rotating rigid body as the linear transformation of its angular velocity vector by the symmetric, second-order moment of inertia tensor.",
+        "derivation_type": "DERIVED_FROM",
         "subcomponents": [
-            "inertia-tensor-component",
-            "parallelism-dc097bb2",
-            "quadrupole-moment-tensor"
-        ]
+            "directional-shift-ee539c8f",
+            "angular-momentum-principal-axes",
+            "dynamic-wobble-65bcacfc",
+            "euler-equation-law-0ad23629"
+        ],
+        "parent_formula_id": "linear-velocity-in-rotational-motion-4170785e"
     },
     "neutral-penetration-6f377cb4": {
         "title": "Radiative Neutron Capture (Isotope Formation)",
@@ -961,85 +963,78 @@
         ]
     },
     "velocity-threshold": {
-        "title": "Astrophysical Velocity Threshold for High-Energy Phenomena",
+        "title": "Astrophysical Velocity Threshold for High-Energy Ejecta",
         "equation": "v \\ge 10^4 \\text{ km s}^{-1}",
-        "conceptual_definition": "This formula establishes a lower bound on velocity, $v$, defining a regime where an object's kinetic energy is significant compared to typical gravitational binding energies of large-scale structures like galaxies. Velocities exceeding this threshold, $v \\ge 10^4 \\text{ km s}^{-1}$, are characteristic of hypervelocity stars, galactic outflows, and certain relativistic jets, often indicating a violent dynamical origin.",
-        "intuitive_summary": "Imagine the difference between a thrown baseball and a fired bullet. The velocity threshold of $10^4 \\text{ km s}^{-1}$ is like a cosmic 'bullet speed.' Objects moving this fast or faster have enough energy to escape the gravitational pull of entire galaxies, signaling they were likely launched by an extremely powerful event, like a supernova or a black hole interaction.",
-        "interpretation": "The variable $v$ represents the magnitude of the velocity of a physical object, measured in kilometers per second ($\\text{km s}^{-1}$). The inequality $v \\ge 10^4 \\text{ km s}^{-1}$ establishes a specific threshold speed. In astrophysical contexts, velocities of this magnitude are significant as they often exceed the escape velocity from the gravitational potential wells of large systems like galaxies. For example, a hypervelocity star ejected from a galactic center can attain such speeds. While this speed is non-relativistic (approximately $3.3\\%$ of the speed of light, $c \\approx 3 \\times 10^5 \\text{ km s}^{-1}$), it marks a transition to a high-energy regime where kinetic energies are substantial. For particles, this velocity corresponds to a kinetic energy that may become comparable to or exceed certain interaction or rest mass energies, though full relativistic treatment is typically reserved for velocities closer to $c$.",
-        "symmetry_origin": "Not applicable; this is an empirical threshold derived from observational astrophysics and the dynamics of gravitational systems. It represents a practical boundary for classifying high-energy phenomena rather than a fundamental symmetry.",
-        "limits_and_boundary": "As $v \\to c$, the Lorentz factor $\\gamma = (1 - v^2/c^2)^{-1/2}$ diverges, and a full special relativistic treatment is required. The threshold $10^4 \\text{ km s}^{-1}$ is well within the non-relativistic domain ($\\gamma \\approx 1.00056$), but it serves as a practical marker for phenomena where kinetic energy becomes a dominant term in the system's energy budget. As $v \\to 0$, the object is in a low-energy, gravitationally bound state, far below this threshold.",
+        "conceptual_definition": "This inequality establishes an empirical boundary condition $v \\ge 10^4\\text{ km s}^{-1}$ in observational astrophysics. Speeds exceeding this magnitude indicate non-thermal or explosive mechanisms (e.g., shock-breakout acceleration, relativistic blast waves, or hypervelocity ejection) where kinetic energy densities substantially surpass typical gravitational binding energies per unit mass.",
+        "intuitive_summary": "Speeds above $10^4\\text{ km s}^{-1}$ represent roughly 3.3% of the speed of light, marking the transition from quiet orbital motion to catastrophic cosmic explosions like supernovae.",
+        "interpretation": "The symbol $v$ denotes the physical velocity magnitude (or bulk flow speed) of an astrophysical body or plasma ejecta. At $v = 10^4\\text{ km s}^{-1}$, the specific kinetic energy $E_k/m = \\frac{1}{2}v^2 \\approx 5 \\times 10^{13}\\text{ J kg}^{-1}$ surpasses the escape velocity of standard galactic and stellar gravitational potentials. While $v \\ll c$ allows the use of non-relativistic kinematics as a first-order approximation, corrections from special relativity become non-negligible for precise spectral line profiles.",
+        "symmetry_origin": "Lorentz covariance and Galilean invariance under spatial rotations $\\mathrm{SO}(3)$.",
+        "limits_and_boundary": "In the limit $v \\ll 10^4\\text{ km s}^{-1}$, the system is governed by standard Newtonian gravitational orbital dynamics. As $v \\to c$, non-relativistic kinetic formulas diverge from reality and require the full relativistic Lorentz factor $\\gamma = 1/\\sqrt{1 - v^2/c^2}$.",
         "status": "platinum",
         "semantic_variables": {
             "v": {
-                "name": "Velocity Magnitude",
+                "name": "Flow Velocity Magnitude",
                 "type": "variable",
-                "unit": "km s^{-1}",
-                "description": "The magnitude of the velocity of an object or fluid element."
+                "unit": "m s^-1",
+                "description": "Magnitude of the bulk velocity or ejecta speed of the astrophysical system."
             }
         },
-        "description": "This inequality defines a characteristic velocity threshold, $10^4 \\text{ km s}^{-1}$, often used in astrophysics to distinguish high-energy phenomena, such as supernova ejecta or objects escaping galactic potential wells, from more common orbital motions.",
-        "derivation_type": "DEFINITION",
+        "description": "An empirical classification inequality setting a lower velocity bound $v \\ge 10^4\\text{ km s}^{-1}$ ($~0.033c$) to demarcate explosive, high-energy astrophysical flows—such as core-collapse supernova ejecta—from standard gravitationally bound orbital dynamics.",
+        "derivation_type": "APPROXIMATION",
         "subcomponents": [
-            "fixed-ruler-00a2e217",
-            "kilonova-source-4441b56a",
-            "temperature-threshold",
-            "stability-threshold-identity-1-0a172572-46ab9bd9"
-        ]
+            "logical-shield-07b491fe",
+            "energy-barrier-7c9c75cb"
+        ],
+        "parent_formula_id": "logical-shield-07b491fe"
     },
     "function-change-translation-poisson": {
-        "title": "Infinitesimal Change of a Function under Spatial Translation via Poisson Bracket",
+        "title": "Infinitesimal Change of a Phase-Space Function under Spatial Translation via Poisson Bracket",
         "equation": "\\delta f = \\{f, \\mathbf{P} \\cdot \\delta\\mathbf{r}\\}",
-        "conceptual_definition": "In Hamiltonian mechanics, continuous symmetries are generated by conserved quantities. The total momentum $\\mathbf{P}$ is the conserved quantity (Noether's charge) associated with spatial translation invariance. The infinitesimal change $\\delta f$ of any function $f(q, p)$ on phase space under a transformation generated by a quantity $G$ is given by $\\delta f = \\{f, G\\}$. For an infinitesimal spatial translation by a vector $\\delta\\mathbf{r}$, the generator is the scalar quantity $G = \\mathbf{P} \\cdot \\delta\\mathbf{r}$, leading directly to the formula $\\delta f = \\{f, \\mathbf{P} \\cdot \\delta\\mathbf{r}\\}$.",
-        "intuitive_summary": "Imagine shifting an entire physical system by a tiny amount. This formula reveals how any measurable property of that system (like its energy or angular momentum) changes in response. The change is dictated by the Poisson bracket, which measures the interplay between the property and the system's total momentum—the quantity that 'generates' spatial shifts in classical mechanics.",
-        "interpretation": "The equation $\\delta f = \\{f, \\mathbf{P} \\cdot \\delta\\mathbf{r}\\}$ describes the first-order change, $\\delta f$, in a physical observable $f$ when the system undergoes an infinitesimal spatial translation $\\delta\\mathbf{r}$. The term $\\{f, G\\}$ represents the Poisson bracket. Here, the generator of the translation is the scalar quantity $G = \\mathbf{P} \\cdot \\delta\\mathbf{r}$, formed by the scalar product of the system's total momentum vector $\\mathbf{P}$ and the infinitesimal displacement vector $\\delta\\mathbf{r}$. The Poisson bracket is defined in canonical coordinates ($q_i$, $p_i$) as $\\{A, B\\} = \\sum_i (\\frac{\\partial A}{\\partial q_i} \\frac{\\partial B}{\\partial p_i} - \\frac{\\partial A}{\\partial p_i} \\frac{\\partial B}{\\partial q_i})$. Therefore, the change in $f$ is determined by the canonical relationships between $f$ and the components of momentum.",
-        "symmetry_origin": "This relationship is a direct consequence of the continuous symmetry of space under translations. By Noether's theorem, this symmetry implies the conservation of the total momentum vector $\\mathbf{P}$. In the Hamiltonian framework, conserved quantities act as the generators of their corresponding symmetry transformations via the Poisson bracket.",
-        "limits_and_boundary": "This formula is exact for infinitesimal displacements $\\delta\\mathbf{r} \\to \\mathbf{0}$. In the classical limit where $\\hbar \\to 0$, the Poisson bracket $\\{f, g\\}$ corresponds to the quantum mechanical commutator via the relation $\\{f, g\\} \\to \\frac{1}{i\\hbar}[\\hat{f}, \\hat{g}]$. If the function $f$ is the Hamiltonian $H$ and the system is isolated (translationally invariant), then $\\{H, \\mathbf{P}\\} = \\mathbf{0}$, which implies that total momentum $\\mathbf{P}$ is a constant of motion.",
+        "conceptual_definition": "In Hamiltonian mechanics, an infinitesimal canonical transformation representing a rigid spatial translation by a displacement vector $\\delta\\mathbf{r}$ acts on any smooth phase-space observable $f(\\mathbf{q}, \\mathbf{p})$ according to the Lie derivative along the Hamiltonian vector field generated by $G = \\mathbf{P} \\cdot \\delta\\mathbf{r}$. The resulting variation is given by the Poisson bracket $\\delta f = \\{f, \\mathbf{P} \\cdot \\delta\\mathbf{r}\\}$, establishing the total linear momentum $\\mathbf{P}$ as the canonical generator of spatial translations.",
+        "intuitive_summary": "Just as the Hamiltonian generates translations in time, total momentum acts as the steering engine that translates physical observables through space via the Poisson bracket.",
+        "interpretation": "The term $\\delta f$ represents the infinitesimal change in a phase-space function $f$ when the physical system is shifted by an infinitesimal displacement vector $\\delta\\mathbf{r}$. The expression $\\{f, \\mathbf{P} \\cdot \\delta\\mathbf{r}\\}$ denotes the canonical Poisson bracket between the observable $f$ and the translation generator $G = \\mathbf{P} \\cdot \\delta\\mathbf{r} = \\sum_{k=1}^3 P_k \\delta r_k$, where $\\mathbf{P} = \\sum_{i} \\mathbf{p}_i$ is the total canonical momentum of the system. For standard canonical coordinates $(\\mathbf{q}_i, \\mathbf{p}_i)$, the Poisson bracket evaluates to $\\delta f = -\\delta\\mathbf{r} \\cdot \\sum_i \\frac{\\partial f}{\\partial \\mathbf{q}_i}$, directly reproducing the spatial directional derivative of $f$.",
+        "symmetry_origin": "Rooted in the spatial homogeneity of Euclidean space and Noether's theorem in Hamiltonian form: invariance of the Hamiltonian under spatial translations generated by $\\mathbf{P} \\cdot \\delta\\mathbf{r}$ implies $\\{H, \\mathbf{P}\\} = 0$, leading to conservation of total linear momentum.",
+        "limits_and_boundary": "In the limit of vanishing displacement $|\\delta\\mathbf{r}| \\to 0$, the variation $\\delta f \\to 0$. In the quantum mechanical correspondence limit (Dirac quantization), the classical Poisson bracket maps to the commutator according to $\\{A, B\\} \\to \\frac{1}{i\\hbar}[\\hat{A}, \\hat{B}]$, turning this relation into $\\delta \\hat{f} = -\\frac{i}{\\hbar}[\\hat{f}, \\hat{\\mathbf{P}} \\cdot \\delta\\mathbf{r}]$.",
         "status": "platinum",
         "semantic_variables": {
             "\\delta f": {
-                "name": "Infinitesimal change in function f",
+                "name": "Infinitesimal variation of observable",
                 "type": "variable",
-                "unit": "Varies",
-                "description": "The first-order change in the value of the function $f$ due to the transformation."
+                "unit": "depends on observable",
+                "description": "First-order change in the dynamical function under the spatial translation"
             },
             "f": {
-                "name": "Phase-space function",
+                "name": "Phase-space observable",
                 "type": "variable",
-                "unit": "Varies",
-                "description": "A function of the canonical coordinates and momenta, representing a physical observable of the system (e.g., energy, angular momentum)."
-            },
-            "\\{\\cdot, \\cdot\\}": {
-                "name": "Poisson bracket",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "A binary operation on phase-space functions, fundamental to Hamiltonian mechanics. $\\{A, B\\} = \\sum_i (\\partial A/\\partial q_i \\partial B/\\partial p_i - \\partial A/\\partial p_i \\partial B/\\partial q_i)$."
+                "unit": "depends on observable",
+                "description": "Smooth real-valued function defined on the classical phase space"
             },
             "\\mathbf{P}": {
-                "name": "Total momentum",
+                "name": "Total linear momentum vector",
                 "type": "variable",
-                "unit": "kg⋅m/s",
-                "description": "The vector sum of the momenta of all particles in the system. It is the generator of spatial translations."
+                "unit": "kg*m/s",
+                "description": "Sum of canonical momenta of all particles in the system"
             },
             "\\delta\\mathbf{r}": {
                 "name": "Infinitesimal displacement vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "A small, constant vector representing the spatial translation applied to the entire system."
+                "description": "Infinitesimal spatial translation vector in configuration space"
             },
-            "\\cdot": {
-                "name": "Dot product",
+            "\\{\\cdot,\\cdot\\}": {
+                "name": "Poisson bracket",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "The scalar product between two vectors."
+                "unit": "unit(f)/(J*s)",
+                "description": "Standard canonical bilinear antisymmetric differential operator on phase space"
             }
         },
-        "description": "This fundamental equation of Hamiltonian mechanics quantifies the infinitesimal change in any phase-space function $f$ resulting from an infinitesimal spatial translation $\\delta\\mathbf{r}$. The change is given by the Poisson bracket of the function with the generator of translations, $\\mathbf{P} \\cdot \\delta\\mathbf{r}$.",
-        "derivation_type": "DEFINITION",
+        "description": "Quantifies the first-order variation of a dynamical observable on classical phase space under an infinitesimal spatial translation, generated by the total linear momentum through the Poisson bracket.",
+        "derivation_type": "SPECIAL_CASE",
         "subcomponents": [
-            "function-change-rotation-poisson",
-            "infinitesimal-quantum-translation-operator-approximation-1c465c94",
-            "infinitesimal-translation-shift-e451a560"
-        ]
+            "infinitesimal-translation-transformation",
+            "poisson-bracket-infinitesimal-transformation"
+        ],
+        "parent_formula_id": "poisson-bracket-infinitesimal-transformation"
     },
     "weak-coupling-limit": {
         "title": "Weak Coupling Limit",

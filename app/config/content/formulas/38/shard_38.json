@@ -232,52 +232,39 @@
         ]
     },
     "white-noise-a2740744": {
-        "title": "Radiation Length (High-Energy Approximation)",
+        "title": "Radiation Length in High-Energy Bremsstrahlung Approximation",
         "equation": "X_0 = \\frac{716.4 \\cdot A}{Z(Z+1) \\ln(287/\\sqrt{Z})} \\quad (\\text{Radiation Length})",
         "semantic_variables": {
             "X_0": {
-                "name": "Radiation Length",
+                "name": "Radiation length",
                 "type": "variable",
-                "unit": "g/cm^2",
-                "description": "The mean distance, expressed as mass per unit area, over which a high-energy electron loses all but 1/e of its energy by bremsstrahlung."
+                "unit": "g cm^-2",
+                "description": "Mean distance in mass thickness over which an electron loses $1-1/e$ of its energy via bremsstrahlung"
             },
             "A": {
-                "name": "Atomic Mass Number",
+                "name": "Atomic mass number",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The total number of protons and neutrons in an atomic nucleus."
+                "description": "Mass number or standard atomic weight of the target element"
             },
             "Z": {
-                "name": "Atomic Number",
+                "name": "Atomic number",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The number of protons in an atomic nucleus, which determines the chemical element."
-            },
-            "\\ln": {
-                "name": "Natural Logarithm",
-                "type": "operator",
-                "unit": "n/a",
-                "description": "The logarithm to the base e."
-            },
-            "716.4": {
-                "name": "Empirical Constant",
-                "type": "constant",
-                "unit": "g/cm^2",
-                "description": "An empirical constant derived from a fit to the Bethe-Heitler formula, incorporating fundamental constants like the fine-structure constant and classical electron radius."
+                "description": "Number of protons in the target nucleus"
             }
         },
-        "interpretation": "The formula provides the radiation length $X_0$ in units of mass per unit area (typically $\\text{g}/\\text{cm}^2$). The variable $A$ represents the material's atomic mass number, while $Z$ is its atomic number (the number of protons). The term $Z(Z+1)$ in the denominator, which is approximately $Z^2$ for large $Z$, shows that the radiation length decreases sharply with increasing nuclear charge. This is because the bremsstrahlung process is caused by the electron's acceleration in the nucleus's electric field, which is stronger for higher $Z$. The logarithmic term, $\\ln(287/\\sqrt{Z})$, is an approximation for the screening function, which accounts for the fact that the atomic electrons partially shield the nuclear charge. The numerical constant $716.4 \\, \\text{g} \\cdot \\text{cm}^{-2}$ is an empirical value that consolidates fundamental constants from the more complete QED cross-section calculation.",
-        "symmetry_origin": "The underlying physical process, bremsstrahlung, is a manifestation of Quantum Electrodynamics (QED). The fundamental symmetry is the local $U(1)$ gauge invariance of electromagnetism, which dictates the interaction between charged particles (electrons) and the electromagnetic field (photons).",
-        "limits_and_boundary": "This formula is an approximation valid for high-energy electrons (typically $\\gg 10$ MeV) where bremsstrahlung is the dominant energy loss mechanism. It is not accurate at lower energies where ionization and excitation losses prevail. The formula assumes a continuous, amorphous medium and does not account for crystalline effects (channeling) or density effects at very high energies. For $Z \\to 0$, the formula is undefined and physically meaningless.",
+        "interpretation": "In the relation $X_0 = \frac{716.4 \\cdot A}{Z(Z+1) \\ln(287/\\sqrt{Z})}$, $X_0$ represents the radiation length in units of mass thickness ($\text{g}\\cdot\text{cm}^{-2}$). The parameter $A$ is the atomic mass number of the absorbing medium, and $Z$ is the atomic number. The factor $Z(Z+1)$ accounts for bremsstrahlung in both the nuclear Coulomb field (scaling as $Z^2$) and the atomic electron cloud field (scaling as $Z$). The logarithmic term $\\ln(287/\\sqrt{Z})$ arises from the Thomas-Fermi atomic screening radius, while the empirical constant $716.4\text{ g}\\cdot\text{cm}^{-2}$ is derived from $(4\\alpha r_e^2 N_A)^{-1}$, where $\\alpha$ is the fine-structure constant, $r_e$ is the classical electron radius, and $N_A$ is Avogadro's number.",
+        "symmetry_origin": "Local $U(1)$ gauge invariance of Quantum Electrodynamics (QED) and rotational invariance of the screened Coulomb potential.",
+        "limits_and_boundary": "Valid in the ultra-relativistic limit where electron energy $E \\gg m_e c^2 / (\\alpha Z^{1/3})$, ensuring complete screening of the nuclear charge by atomic electrons. For light elements (e.g., $Z=1$), non-screening corrections become important, whereas for very heavy elements, higher-order Coulomb corrections (Bethe-Maximon corrections) modify the logarithmic factor.",
         "status": "platinum",
-        "conceptual_definition": "The radiation length, denoted $X_0$, is a material-dependent property that quantifies the energy loss of high-energy electrons primarily through bremsstrahlung. It is defined as the mean distance over which the electron's energy is reduced by a factor of $1/e$. This specific formula is a widely used approximation valid for high energies and is derived from the Bethe-Heitler theory of quantum electrodynamics.",
-        "intuitive_summary": "Imagine radiation length as the 'braking distance' for a high-energy electron moving through a material. Materials with heavy, dense atoms like lead have a very short braking distance ($X_0$ is small), causing the electron to stop and radiate its energy away quickly. Lighter materials like water or air have a much longer braking distance ($X_0$ is large).",
+        "conceptual_definition": "The radiation length $X_0$ is the characteristic mean free path for high-energy electromagnetic cascades in matter. It corresponds to the mean distance over which a high-energy electron reduces its energy by a factor of $1/e$ purely through bremsstrahlung, and approximately $7/9$ of the mean free path for $e^+ e^-$ pair production by high-energy photons. In this formula, atomic screening is modeled using the Thomas-Fermi approximation in the complete screening regime.",
+        "intuitive_summary": "Radiation length measures how easily an ultra-relativistic charged particle radiates away its energy when traversing a medium: denser materials with higher nuclear charge $Z$ generate stronger electric fields, causing rapid radiative energy loss and resulting in a shorter radiation length.",
         "subcomponents": [
-            "integral-rule-89b001c6",
-            "energy-equivalence-67b8c97b",
-            "slater-rule-64b396ba"
+            "energy-math-f041bb4d",
+            "precision-link-840caffc"
         ],
-        "description": "An approximate formula for the radiation length, the characteristic distance over which a high-energy electron loses all but $1/e$ of its energy via bremsstrahlung.",
+        "description": "Calculates the characteristic material thickness (radiation length) over which an ultra-relativistic electron loses all but $1/e$ of its initial energy via radiative bremsstrahlung in the complete screening limit.",
         "derivation_type": "APPROXIMATION"
     },
     "independent-parts-8c405ca6": {

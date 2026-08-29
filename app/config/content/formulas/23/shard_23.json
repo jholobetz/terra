@@ -4,61 +4,55 @@
         "equation": "\\Omega(r, \\theta) = \\Omega_0 (1 - s_2 \\cos^2 \\theta - s_4 \\cos^4 \\theta)",
         "semantic_variables": {
             "\\Omega": {
-                "name": "Angular Velocity",
+                "name": "Local angular velocity",
                 "type": "variable",
                 "unit": "rad/s",
-                "description": "The angular velocity at a given position, dependent on radius $r$ and poloidal angle $\\theta$."
-            },
-            "r": {
-                "name": "Radial Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "The distance from the center of the rotating body."
-            },
-            "\\theta": {
-                "name": "Poloidal Angle (Colatitude)",
-                "type": "variable",
-                "unit": "rad",
-                "description": "The angle measured from the axis of rotation. $\\theta=0$ at the pole, $\\theta=\\pi/2$ at the equator."
+                "description": "Angular rotation rate as a function of radius and colatitude"
             },
             "\\Omega_0": {
-                "name": "Equatorial Angular Velocity",
-                "type": "variable",
+                "name": "Equatorial angular velocity",
+                "type": "constant",
                 "unit": "rad/s",
-                "description": "The reference angular velocity at the equator ($\\theta = \\pi/2$)."
+                "description": "Reference angular velocity measured at the stellar equator"
+            },
+            "r": {
+                "name": "Radial coordinate",
+                "type": "variable",
+                "unit": "m",
+                "description": "Radial distance from the center of the rotating body"
+            },
+            "\\theta": {
+                "name": "Colatitude angle",
+                "type": "variable",
+                "unit": "rad",
+                "description": "Polar angle measured from the positive rotation axis"
             },
             "s_2": {
-                "name": "Quadrupole Differential Rotation Coefficient",
-                "type": "variable",
+                "name": "Quadrupole differential rotation coefficient",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "A dimensionless coefficient determining the primary ($\\cos^2 \\theta$) component of differential rotation."
+                "description": "Leading-order latitudinal differential shear coefficient"
             },
             "s_4": {
-                "name": "Hexadecapole Differential Rotation Coefficient",
-                "type": "variable",
+                "name": "Hexadecapole differential rotation coefficient",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "A dimensionless coefficient determining the higher-order ($\\cos^4 \\theta$) component of differential rotation."
-            },
-            "\\cos": {
-                "name": "Cosine",
-                "type": "operator",
-                "unit": "n/a",
-                "description": "The trigonometric cosine function."
+                "description": "Higher-order latitudinal differential shear correction"
             }
         },
-        "interpretation": "The term $\\Omega(r, \\theta)$ represents the local angular velocity at a radial distance $r$ and poloidal angle $\\theta$, where $\\theta=0$ corresponds to the rotation pole and $\\theta = \\pi/2$ to the equator. The parameter $\\Omega_0$ is the reference angular velocity, specifically the velocity at the equator. The dimensionless coefficients $s_2$ and $s_4$ quantify the magnitude of the differential rotation. For solar-like rotation, $s_2 > 0$, causing the angular velocity to decrease as one moves from the equator to the poles (as $\\cos^2 \\theta$ increases from 0 to 1). The $s_4$ term, involving $\\cos^4 \\theta$, adds a higher-order correction, allowing for a more detailed fit to the observed latitudinal profile, often capturing a slight flattening of the rotation profile near the poles compared to a simple quadratic dependence.",
-        "symmetry_origin": "Axial symmetry. This formula describes a state that breaks perfect spherical symmetry (which would imply solid body rotation, $\\Omega = \\text{const.}$). The resulting differential flow is a consequence of complex angular momentum transport dynamics within a fluid body, preserving symmetry only about the rotation axis.",
-        "limits_and_boundary": "At the equator ($\\theta = \\pi/2$), $\\cos \\theta = 0$, and the formula simplifies to $\\Omega(r, \\pi/2) = \\Omega_0$. Thus, $\\Omega_0$ is the equatorial angular velocity. At the poles ($\\theta = 0$ or $\\theta = \\pi$), $\\cos^2 \\theta = 1$, and the angular velocity is $\\Omega(r, 0) = \\Omega_0 (1 - s_2 - s_4)$. The difference in rotation rate between the equator and poles is $\\Delta\\Omega = \\Omega_0 - \\Omega(r, 0) = \\Omega_0(s_2 + s_4)$. This is a classical, macroscopic formula, not intended for relativistic or quantum regimes.",
+        "interpretation": "Here, $\\Omega(r, \\theta)$ denotes the local angular velocity at radial depth $r$ and colatitude $\\theta$, where $\\theta = 0$ corresponds to the rotational pole and $\\theta = \\pi/2$ corresponds to the equator. The quantity $\\Omega_0$ is the equatorial angular velocity. The dimensionless parameters $s_2$ and $s_4$ quantify the quadrupole and hexadecapole differential rotation rates, respectively. For solar-type differential rotation, $s_2 > 0$ and $s_4 > 0$, ensuring monotonic deceleration of angular frequency toward the poles.",
+        "symmetry_origin": "Reflection symmetry across the equatorial plane ($\\theta \\to \\pi - \\theta$), which eliminates odd powers of $\\cos \\theta$, combined with axisymmetry ($U(1)$ invariance about the rotation axis).",
+        "limits_and_boundary": "At the equator ($\\theta = \\pi/2$, $\\cos \\theta = 0$), the profile simplifies to $\\Omega = \\Omega_0$. At the rotational poles ($\\theta = 0$ or $\\pi$, $\\cos \\theta = \\pm 1$), the angular velocity attains its minimum value $\\Omega_{\\text{pole}} = \\Omega_0 (1 - s_2 - s_4)$. When $s_2 = s_4 = 0$, the expression reduces to rigid-body rotation $\\Omega(r, \\theta) = \\Omega_0$.",
         "status": "platinum",
-        "conceptual_definition": "This equation provides a phenomenological model for the angular velocity profile, $\\Omega$, in a differentially rotating body, as a function of the poloidal angle $\\theta$. It is formulated as a truncated series expansion in even powers of $\\cos \\theta$, which ensures symmetry about the equatorial plane. This specific form is widely used in helioseismology and stellar astrophysics to characterize observed surface rotation patterns.",
-        "intuitive_summary": "Imagine a spinning ball of gas like the Sun. This formula is a mathematical recipe that tells you the rotation speed isn't the same everywhere. It's typically fastest at the equator and gets progressively slower as you move towards the north or south poles. The coefficients $s_2$ and $s_4$ are tuning knobs to match the formula to the actual observed rotation of a specific star.",
+        "conceptual_definition": "The latitudinal differential rotation law describes the variation of angular velocity $\\Omega(r, \\theta)$ on the surface or within the convection zone of a rotating fluid body as a power series expansion in the cosine of the colatitude $\\theta$. It parameterizes departure from solid-body rotation via even-order multipole coefficients $s_2$ and $s_4$, reflecting equator-to-pole angular momentum transport governed by turbulent Reynolds stresses and thermal convection.",
+        "intuitive_summary": "In fluid stars like the Sun, the equator spins faster than the poles; this formula calculates that slowdown as a function of latitude using quadratic and quartic geometric corrections.",
         "subcomponents": [
             "poloidal-toroidal-flow-angular-coefficient-s2-59a12118",
-            "multipole-tool-d119e806",
-            "cosine-taylor-series-expansion-40607348"
+            "omega-effect-differential-rotation-0c3b6b83"
         ],
-        "description": "An empirical formula describing the angular velocity Ω of a rotating fluid body, such as a star, as a function of latitude. It models differential rotation where the angular speed varies between the equator and the poles.",
-        "derivation_type": "DEFINITION"
+        "description": "An empirical and truncated harmonic expansion describing the latitudinal profile of angular velocity in rotating stellar or planetary fluid envelopes.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "omega-effect-differential-rotation-0c3b6b83"
     },
     "infinite-dilation-d86bebb8": {
         "title": "Gravitational Time Dilation at the Event Horizon",
@@ -1731,41 +1725,42 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "lorentz-factor-exact": {
-        "title": "Lorentz Factor",
+        "title": "Exact Relativistic Lorentz Factor",
         "equation": "\\gamma = \\frac{1}{\\sqrt{1 - v^2/c^2}}",
         "semantic_variables": {
             "\\gamma": {
-                "name": "Lorentz Factor",
+                "name": "Lorentz factor",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A factor quantifying the strength of relativistic effects."
+                "description": "Relativistic scale factor relating proper time to coordinate time"
             },
             "v": {
-                "name": "Relative Velocity",
+                "name": "relative velocity magnitude",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The relative velocity between an observer and a moving reference frame."
+                "description": "Magnitude of the relative velocity between two inertial frames"
             },
             "c": {
-                "name": "Speed of Light in Vacuum",
+                "name": "speed of light",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "The universal speed limit and the speed of all massless particles in a vacuum."
+                "description": "Invariant speed of light in a vacuum"
             }
         },
-        "interpretation": "The Lorentz factor, denoted by $\\gamma$, is defined as the reciprocal of $\\sqrt{1 - v^2/c^2}$. Here, $v$ represents the relative speed between two inertial reference frames, and $c$ is the constant speed of light in a vacuum. The value of $\\gamma$ is always greater than or equal to 1. For an object at rest ($v=0$), $\\gamma=1$. As the object's speed $v$ increases, $\\gamma$ increases, indicating more pronounced relativistic effects. As $v$ approaches $c$, the denominator approaches zero, causing $\\gamma$ to approach infinity. This signifies that an infinite amount of energy would be required to accelerate a massive particle to the speed of light.",
-        "symmetry_origin": "The Lorentz factor is a direct consequence of the Lorentz transformations, which preserve the invariance of the spacetime interval $ds^2 = (c dt)^2 - d\\mathbf{x}^2$. These transformations form the Lorentz group SO(1,3), representing the fundamental spacetime symmetries of special relativity.",
-        "limits_and_boundary": "In the non-relativistic limit, as the relative velocity $v \\to 0$, the Lorentz factor $\\gamma \\to 1$, and the equations of special relativity reduce to those of classical Newtonian mechanics. In the ultra-relativistic limit, as $v \\to c$, $\\gamma \\to \\infty$, signifying the extreme nature of time dilation and length contraction. The formula is physically meaningful for real massive particles only in the domain $0 \\le v < c$, as $v > c$ would result in an imaginary $\\gamma$.",
+        "interpretation": "In the equation $\\gamma = \\frac{1}{\\sqrt{1 - v^2/c^2}}$, the variable $\\gamma$ is the dimensionless Lorentz factor, $v = |\\mathbf{v}|$ is the relative speed between two inertial reference frames, and $c$ is the invariant speed of light in a vacuum. Because $v < c$ for all massive particles, the radicand $1 - v^2/c^2$ remains strictly positive and bounded by $(0, 1]$, ensuring $\\gamma \\in [1, \\infty)$. When $v = 0$, $\\gamma = 1$, recovering classical Newtonian spacetime. As $v \\to c$, the denominator vanishes and $\\gamma \\to \\infty$, reflecting the infinite energy required to accelerate a massive body to light speed.",
+        "symmetry_origin": "Invariance of the spacetime interval $ds^2 = c^2 dt^2 - d\\mathbf{x}^2$ under the Lorentz group $\\mathrm{SO}(1, 3)$ (Poincaré symmetry).",
+        "limits_and_boundary": "In the non-relativistic limit $v/c \\to 0$, $\\gamma \\to 1 + \\frac{1}{2}\\frac{v^2}{c^2} + \\mathcal{O}\\left(\\frac{v^4}{c^4}\\right) \\to 1$. In the ultra-relativistic limit $v \\to c$, $\\gamma \\to \\infty$. For hypothetical tachyonic motion $v > c$, $\\gamma$ becomes purely imaginary.",
         "status": "platinum",
-        "conceptual_definition": "The Lorentz factor, $\\gamma$, is a fundamental quantity in special relativity that emerges from the invariance of the spacetime interval. It acts as a scaling factor for measurements of time, length, and relativistic mass of an object as its relative velocity approaches the speed of light.",
-        "intuitive_summary": "The Lorentz factor is a 'relativistic multiplier' that is essentially 1 at everyday speeds but grows infinitely large as one approaches the speed of light. It dictates how much time slows down and length contracts for a moving object from an observer's point of view.",
+        "conceptual_definition": "The Lorentz factor, designated by $\\gamma$, represents the ratio of coordinate time interval $dt$ to proper time interval $d\\tau$ for an inertial observer moving at coordinate velocity $v$ relative to a rest frame, defined mathematically as $\\gamma = \\frac{1}{\\sqrt{1 - v^2/c^2}}$.",
+        "intuitive_summary": "As an object moves faster through space, its progression through time slows down relative to a stationary observer, with $\\gamma$ measuring the factor by which time dilates and space contracts.",
         "subcomponents": [
-            "lorentz-factor-b333adaf",
-            "lorentz-factor-low-velocity-approximation-9aacbcde",
-            "inverse-lorentz-factor-1645103e"
+            "lorentz-factor-compound",
+            "lorentz-factor-expansion-low-velocity",
+            "lorentz-factor-for-zero-relative-velocity-98bb72b7",
+            "inverse-lorentz-factor-relation-137b397c"
         ],
-        "description": "A dimensionless factor that quantifies the magnitude of relativistic effects, such as time dilation and length contraction, arising from an object's velocity relative to an observer.",
-        "derivation_type": "DEFINITION"
+        "description": "The fundamental dimensionless scaling factor in special relativity that quantifies kinematic effects such as time dilation, length contraction, and relativistic mass-energy scaling as a function of relative velocity.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "angular-frequency-coupled-oscillators": {
         "title": "Angular Frequency of the Antisymmetric Mode in Coupled Oscillators",

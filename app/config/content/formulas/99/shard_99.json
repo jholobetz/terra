@@ -242,52 +242,65 @@
         ]
     },
     "rosseland-mean-definition-bbdcfb2b": {
-        "title": "Rosseland Mean Opacity",
+        "title": "Rosseland Mean Opacity Definition",
         "equation": "\\frac{1}{\\kappa_R} = \\frac{\\int_0^\\infty \\frac{1}{\\kappa_\\nu} \\frac{\\partial B_\\nu(T)}{\\partial T} \\mathrm{d}\\nu}{\\int_0^\\infty \\frac{\\partial B_\\nu(T)}{\\partial T} \\mathrm{d}\\nu}",
         "semantic_variables": {
             "\\kappa_R": {
-                "name": "Rosseland Mean Opacity",
+                "name": "Rosseland mean opacity",
                 "type": "variable",
-                "unit": "$\\mathrm{m}^2 \\cdot \\mathrm{kg}^{-1}$",
-                "description": "Effective frequency-averaged opacity for radiative transfer"
+                "unit": "m^2 kg^-1",
+                "description": "Harmonically weighted frequency-averaged mass absorption and scattering coefficient"
             },
             "\\kappa_\\nu": {
-                "name": "Frequency-Dependent Opacity",
+                "name": "Monochromatic opacity",
                 "type": "variable",
-                "unit": "$\\mathrm{m}^2 \\cdot \\mathrm{kg}^{-1}$",
-                "description": "Opacity at a specific frequency $\\nu$"
+                "unit": "m^2 kg^-1",
+                "description": "Frequency-dependent mass extinction coefficient including absorption and scattering"
             },
-            "B_\\nu": {
-                "name": "Planck Function",
+            "B_\\nu(T)": {
+                "name": "Planck blackbody spectral radiance",
                 "type": "variable",
-                "unit": "$\\mathrm{W} \\cdot \\mathrm{m}^{-2} \\cdot \\mathrm{Hz}^{-1} \\cdot \\mathrm{sr}^{-1}$",
-                "description": "Spectral radiance of a blackbody at frequency $\\nu$ and temperature $T$"
+                "unit": "W m^-2 sr^-1 Hz^-1",
+                "description": "Specific intensity of blackbody radiation at frequency nu and temperature T"
             },
             "T": {
-                "name": "Temperature",
+                "name": "Local thermodynamic temperature",
                 "type": "variable",
-                "unit": "$\\mathrm{K}$",
-                "description": "Absolute temperature of the local medium"
+                "unit": "K",
+                "description": "Thermodynamic equilibrium temperature of the radiating medium"
             },
             "\\nu": {
-                "name": "Frequency",
+                "name": "Radiation frequency",
                 "type": "variable",
-                "unit": "$\\mathrm{Hz}$",
-                "description": "Photon frequency"
+                "unit": "Hz",
+                "description": "Electromagnetic photon frequency"
+            },
+            "\\frac{\\partial}{\\partial T}": {
+                "name": "Partial derivative with respect to temperature",
+                "type": "operator",
+                "unit": "K^-1",
+                "description": "Derivative operator evaluated at constant frequency"
+            },
+            "\\int_0^\\infty \\dots \\mathrm{d}\\nu": {
+                "name": "Spectral integration",
+                "type": "operator",
+                "unit": "Hz",
+                "description": "Definite integral over all electromagnetic frequencies"
             }
         },
-        "interpretation": "The quantity $\\kappa_R$ represents the effective opacity governing radiative flux under local thermodynamic equilibrium. The frequency-dependent opacity is denoted by $\\kappa_\nu$, and $B_\nu(T)$ is the Planck blackbody radiation function at temperature $T$. The integration over frequency $\nu$ from zero to infinity accounts for the entire spectrum of thermal radiation.",
-        "symmetry_origin": "Thermodynamic equilibrium and detailed balance within local thermodynamic equilibrium (LTE) radiative transport.",
-        "limits_and_boundary": "In the limit of a gray atmosphere where $\\kappa_\nu$ is independent of frequency, $\\kappa_R$ reduces identically to $\\kappa_\nu$. In regions where matter becomes optically thin, the Rosseland mean diffusion approximation breaks down and alternative flux limiters or frequency-resolved transport must be applied.",
+        "interpretation": "The parameter $\\kappa_R$ denotes the Rosseland mean mass opacity ($\\mathrm{m^2\\,kg^{-1}}$ or $\\mathrm{cm^2\\,g^{-1}}$), while $\\kappa_\nu$ is the monochromatic extinction coefficient as a function of radiation frequency $\nu$. The weighting function $\frac{\\partial B_\nu(T)}{\\partial T}$ represents the temperature derivative of the Planck function $B_\nu(T)$ at local temperature $T$. The denominator integrates the derivative of the Planck intensity over all frequencies, yielding $\\int_0^\\infty \frac{\\partial B_\nu(T)}{\\partial T} \\mathrm{d}\nu = \frac{4\\sigma_{\\mathrm{SB}}}{\\pi} T^3$, where $\\sigma_{\\mathrm{SB}}$ is the Stefan-Boltzmann constant.",
+        "symmetry_origin": "Derived from the isotropic limit of the radiative transfer equation under local thermodynamic equilibrium (LTE) and spherical/planar spatial symmetry in the diffusion regime.",
+        "limits_and_boundary": "In the limit of a gray atmosphere ($\\kappa_\nu = \\kappa_0 = \\mathrm{const}$), the Rosseland mean trivially simplifies to $\\kappa_R = \\kappa_0$. In the transparent limit ($\\kappa_\nu \to 0$ in a non-zero bandwidth), $\\kappa_R \to 0$, indicating that photon transport becomes dominated by the transparent window.",
         "status": "platinum",
-        "conceptual_definition": "The reciprocal of the Rosseland mean opacity $\\kappa_R$ is given by the frequency integral of the reciprocal frequency-dependent opacity $\\kappa_\nu^{-1}$ weighted by the temperature derivative of the Planck function $\\partial B_\nu(T) / \\partial T$, normalized by the integral of the weighting function itself.",
-        "intuitive_summary": "Because it acts as a harmonic mean, the Rosseland mean is heavily weighted toward frequencies where opacity is lowest, representing 'radiative windows' that dictate the path of least resistance for photon transport in stellar interiors.",
-        "description": "The Rosseland mean opacity defines the effective frequency-averaged opacity used in the diffusion approximation for radiative transfer in optically thick media.",
+        "conceptual_definition": "In the interior of stars and dense astrophysical plasmas where the optical depth is large ($\tau_\nu \\gg 1$), radiation is near local thermodynamic equilibrium (LTE). The total radiative energy flux can be expressed via Fick's diffusion law with an effective opacity $\\kappa_R$. The Rosseland mean opacity $\\kappa_R$ weights the inverse monochromatic opacity $\\kappa_\nu^{-1}$ by the temperature gradient of the Planck blackbody radiation function $\frac{\\partial B_\nu(T)}{\\partial T}$, representing a harmonic average that emphasizes spectral windows of low opacity where radiation leaks out most efficiently.",
+        "intuitive_summary": "Because radiative diffusion is dominated by frequency bands with the least resistance (lowest opacity), the effective total opacity is a weighted harmonic mean rather than a simple arithmetic average.",
+        "description": "The Rosseland mean opacity defines a harmonic frequency-weighted mean extinction coefficient, enabling the reduction of frequency-dependent radiative transfer equations to a diffusion approximation in optically thick media.",
         "derivation_type": "DEFINITION",
         "subcomponents": [
             "rosseland-opacity-identity-1-5cbdf20a-74d92c68",
-            "rosseland-mean-opacity-812bb94f"
-        ]
+            "partial-derivative-operator-definition-df65ecd5"
+        ],
+        "parent_formula_id": "rosseland-mean-opacity-812bb94f"
     },
     "curvature-force-decff3d9": {
         "title": "Christoffel Symbols of the Second Kind",
@@ -1670,41 +1683,50 @@
         "intuitive_summary": "The value of $I_{11}$ indicates how difficult it is to initiate or change rotation about the $x$-axis. A larger $I_{11}$ implies that more torque is required to achieve a given angular acceleration around the $x$-axis."
     },
     "gradient-of-specific-intensity-79960996": {
-        "title": "Gradient of Specific Intensity Along a Ray",
-        "description": "This term represents the rate of change of specific intensity of radiation along a path length in an absorbing, emitting, and scattering medium.",
-        "conceptual_definition": "The spatial derivative of the specific intensity $I_{\nu}$ with respect to the geometrical path length $s$, denoted as $\frac{dI_{\nu}}{ds}$, quantifying the directional variation of the radiation field.",
-        "interpretation": "In the context of the radiative transfer equation, $\frac{dI_{\nu}}{ds}$ represents the net directional change in specific intensity $I_{\nu}$ along a ray path parameterized by $s$. A positive spatial variation indicates net local emission augmenting the beam, while a negative gradient corresponds to net extinction via absorption or scattering out of the line of sight.",
-        "limits_and_boundary": "In a completely transparent medium where emission and extinction coefficients vanish, $\frac{dI_{\nu}}{ds} \to 0$, recovering the constancy of specific intensity along rays in empty space.",
-        "symmetry_origin": "Originates from phase space conservation laws and Liouville's theorem applied to photon distribution functions in geometric optics.",
+        "title": "Gradient of Specific Intensity Along a Ray Path",
+        "description": "Represents the directional spatial rate of change of monochromatic specific intensity along a geometric ray trajectory in a medium.",
+        "conceptual_definition": "The directional derivative of monochromatic specific intensity $I_{\\nu}$ with respect to the spatial path length $s$ along a ray path $\\hat{\\mathbf{n}}$, defined mathematically as $\\frac{dI_{\\nu}}{ds} = \\hat{\\mathbf{n}} \\cdot \\nabla I_{\\nu}$. It characterizes the microscopic energy conservation and transport rate of photons along a pencil of radiation.",
+        "interpretation": "In the radiative transfer framework, $\\frac{dI_{\\nu}}{ds}$ quantifies the net spatial variation of the specific intensity $I_{\\nu}$ at frequency $\\nu$ per unit geometric path length $s$. When $\\frac{dI_{\\nu}}{ds} > 0$, local spontaneous or stimulated emission dominates extinction, amplifying the beam intensity. Conversely, when $\\frac{dI_{\\nu}}{ds} < 0$, extinction via absorption and out-scattering removes energy from the pencil of radiation along the propagation direction.",
+        "limits_and_boundary": "In an optical vacuum without sources ($j_\\nu = 0, \\alpha_\\nu = 0$), $\\frac{dI_{\\nu}}{ds} \\to 0$, indicating constant specific intensity along rays. In an optically thick medium where $s \\gg \\alpha_\\nu^{-1}$, the gradient approaches local thermodynamic equilibrium with $\\frac{dI_\\nu}{ds} \\approx 0$ as $I_\\nu \\to B_\\nu(T)$.",
+        "symmetry_origin": "Translational invariance along the null geodesic or geometric optical ray parameter in stationary media, reflecting local photon number flux conservation along phase space trajectories (Liouville's theorem for photon gas).",
         "unit_system": "SI",
         "derivation_type": "DERIVED_FROM",
         "equation_family": "radiative-transfer",
         "semantic_variables": {
-            "\\nu": {
-                "name": "Frequency",
+            "I_{\\nu}": {
+                "name": "Monochromatic specific intensity",
                 "type": "variable",
-                "unit": "\\text{Hz}",
-                "description": "The specific frequency of the electromagnetic radiation field."
-            },
-            "I_{\nu}": {
-                "name": "Specific Intensity",
-                "type": "variable",
-                "unit": "\\text{W} \\cdot \\text{m}^{-2} \\cdot \\text{Hz}^{-1} \\cdot \\text{sr}^{-1}",
-                "description": "The monochromatic radiative energy per unit time, per unit area, per unit frequency, and per unit solid angle."
+                "unit": "W/(m^2*sr*Hz)",
+                "description": "Radiative energy per unit area, per unit time, per unit solid angle, and per unit frequency interval."
             },
             "s": {
-                "name": "Path Length",
+                "name": "Ray path length",
                 "type": "variable",
-                "unit": "\\text{m}",
-                "description": "The geometric distance traveled by the radiation along a specific ray path."
+                "unit": "m",
+                "description": "Geometric spatial coordinate parameterized along the propagation direction of the radiation beam."
+            },
+            "\\nu": {
+                "name": "Photon frequency",
+                "type": "variable",
+                "unit": "Hz",
+                "description": "Electromagnetic radiation spectral frequency."
+            },
+            "\\frac{d}{ds}": {
+                "name": "Directional derivative operator",
+                "type": "operator",
+                "unit": "1/m",
+                "description": "Spatial gradient projected along the unit propagation vector tangent to the ray trajectory."
             }
         },
         "equation": "\\frac{dI_{\\nu}}{ds}",
         "status": "published",
         "parent_formula_id": "radiative-transfer-equation-87e92dd5",
-        "subcomponents": [],
+        "subcomponents": [
+            "radiative-transfer-equation-87e92dd5",
+            "directional-derivative-specific"
+        ],
         "id": "gradient-of-specific-intensity-79960996",
-        "intuitive_summary": "It measures how much brighter or dimmer a ray of light gets as it travels through a medium, acting as the fundamental gradient term in radiative transfer."
+        "intuitive_summary": "As a beam of light travels a distance $ds$ through matter, its brightness changes continuously due to the balance of newly emitted photons and lost photons through absorption or scattering."
     },
     "particle-number-density-definition-3370868e": {
         "title": "Particle Number Density Definition",

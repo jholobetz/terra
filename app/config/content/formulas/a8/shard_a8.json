@@ -225,27 +225,35 @@
                 "name": "Luminosity Distance",
                 "type": "variable",
                 "unit": "pc",
-                "description": "Physical or luminosity distance from the observer to the emitting celestial source in parsecs"
+                "description": "Physical luminosity distance to the astronomical object in parsecs."
             },
             "\\mu": {
                 "name": "Distance Modulus",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Difference between the apparent magnitude $m$ and the absolute magnitude $M$"
+                "description": "Difference between apparent magnitude m and absolute magnitude M."
+            },
+            "\\text{pc}": {
+                "name": "Parsec",
+                "type": "constant",
+                "unit": "m",
+                "description": "Astrophysical unit of length equal to approximately 3.085677581e16 meters."
             }
         },
-        "interpretation": "In this relation, $d$ denotes the distance to the source measured in parsecs ($\\text{pc}$), and $\\mu$ represents the distance modulus defined as $\\mu = m - M$, where $m$ is apparent magnitude and $M$ is absolute magnitude. The constant $5$ in the denominator originates from the definition of the magnitude scale where a difference of $5$ magnitudes corresponds to a factor of $100$ in flux, coupled with the $r^{-2}$ geometric dilution of flux from isotropic emission.",
-        "symmetry_origin": "Isotropy and spatial homogeneity in Euclidean 3-space, ensuring conservation of total radiated electromagnetic flux through concentric spherical surfaces of area $4\\pi d^2$.",
-        "limits_and_boundary": "As $\\mu \\to 0$, $d \\to 10\\text{ pc}$, consistent with the definition of absolute magnitude. In the limit of an infinitely distant source $\\mu \\to \\infty$, $d \\to \\infty$. For cosmological distances where redshift $z > 0.1$, the Euclidean assumption fails and curvature plus expansion corrections must be incorporated into the luminosity distance.",
+        "interpretation": "In this relation, $d$ represents the luminosity distance to the source expressed in parsecs ($\\text{pc}$), and $\\mu$ is the dimensionless distance modulus defined by the difference between the apparent magnitude $m$ and absolute magnitude $M$ ($\\mu = m - M$). The exponent $(\\mu + 5)/5 = \\mu/5 + 1$ scales the base-$10$ logarithm back to physical units such that an object with $\\mu = 0$ lies at $d = 10^1 = 10\\text{ pc}$.",
+        "symmetry_origin": "Originates from the geometric $SO(3)$ rotational isotropy of Euclidean space governing the $r^{-2}$ geometric dilution of radiating electromagnetic flux.",
+        "limits_and_boundary": "In the limit $\\mu \\to 0$, $d \\to 10\\text{ pc}$, matching the definition of absolute magnitude. In the limit $\\mu \\to -5$, $d \\to 1\\text{ pc}$. For $\\mu \\to \\infty$, $d \\to \\infty$, though cosmological redshift and curvature corrections require replacing Euclidean distance with comoving/cosmological luminosity distance $d_L(z)$.",
         "status": "platinum",
-        "conceptual_definition": "The distance modulus $\\mu \\equiv m - M$ expresses the difference between an object's apparent magnitude $m$ and its absolute magnitude $M$ (the apparent magnitude if located at a standard distance $d_0 = 10\\text{ pc}$). Inverting the definition $\\mu = 5 \\log_{10}(d / 10\\text{ pc})$ yields the geometric distance $d = 10^{(\\mu + 5)/5}\\text{ pc}$ in Euclidean, unextinguished space.",
-        "intuitive_summary": "Because radiative flux drops with the square of distance and human/astronomical magnitude scales are logarithmic, every five magnitudes added to the distance modulus corresponds to an exact factor-of-ten increase in physical distance.",
-        "description": "Calculates the distance to an astronomical object in parsecs from its distance modulus, derived directly from the inverse-square law of radiation and Pogson's magnitude relation.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "The distance $d$ (in parsecs) to an astronomical object is expressed as an explicit exponential function of the distance modulus $\\mu = m - M$. This formula is derived directly by inverting Pogson's relation $\\mu = 5 \\log_{10}(d / 10\\text{ pc})$, linking photometric flux measurements to physical geometric distances under the inverse-square law.",
+        "intuitive_summary": "Because astronomical magnitudes scale logarithmically with flux—where every increase of $5$ magnitudes corresponds to a factor of $100$ reduction in brightness—the true distance scales exponentially with the distance modulus $\\mu$, normalized such that $\\mu = 0$ corresponds to a distance of exactly $10\\text{ pc}$.",
+        "description": "Computes the luminosity distance of an astronomical source in parsecs by inverting the standard distance modulus relation.",
+        "derivation_type": "DERIVED_FROM",
         "subcomponents": [
-            "flux-boost-9f398594",
-            "boost-stability-e46f8863"
-        ]
+            "10-parsec-base-8408e63e",
+            "distance-modulus-general",
+            "error-link-d72749f9"
+        ],
+        "parent_formula_id": "distance-modulus"
     },
     "precision-link-840caffc": {
         "title": "Precision Link",

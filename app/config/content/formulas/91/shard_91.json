@@ -1430,40 +1430,45 @@
     "spatial-displacement-definition": {
         "title": "Infinitesimal Spatial Displacement Component Definition",
         "equation": "dx^i = v^i dt",
-        "conceptual_definition": "The infinitesimal spatial displacement $dx^i$ along the $i^{\text{th}}$ coordinate axis is defined as the product of the $i^{\text{th}}$ component of the velocity vector, $v^i$, and an infinitesimally small time interval, $dt$. This relationship forms the basis for defining velocity in differential calculus.",
-        "intuitive_summary": "For an object in motion, the tiny distance it travels in a specific direction during an infinitesimally small moment is simply its velocity component in that direction multiplied by that tiny time interval.",
-        "interpretation": "The equation $dx^i = v^i dt$ is a fundamental definition in kinematics and differential calculus:\n- $dx^i$: Represents the infinitesimal displacement along the $i^{\text{th}}$ spatial coordinate axis. For instance, in a Cartesian coordinate system, $i=1,2,3$ could correspond to the $x,y,z$ directions, respectively. It signifies an infinitesimally small change in position.\n- $v^i$: Denotes the $i^{\text{th}}$ component of the instantaneous velocity vector $\\mathbf{v}$. This component describes the rate of change of position along the $i^{\text{th}}$ coordinate axis.\n- $dt$: Represents an infinitesimally small duration of time. It is a differential time element over which the displacement $dx^i$ occurs.\nThis relationship fundamentally links the concepts of position, velocity, and time at an infinitesimal scale, forming a cornerstone of classical kinematics and differential calculus applications in physics.",
-        "symmetry_origin": "This definition is inherently tied to the continuous translational symmetry of space and time, which allows for the concept of infinitesimal displacements and durations. It is also invariant under Galilean transformations in classical mechanics, reflecting the equivalence of inertial frames.",
-        "limits_and_boundary": "This definition is valid in the limit as the time interval approaches zero, i.e., $dt \\to 0$, ensuring that the velocity $v^i$ can be considered constant over that infinitesimal duration. It applies to continuous paths in space. For macroscopic displacements, this equation is integrated over a finite time interval, $\\Delta x^i = \\int v^i dt$.",
+        "conceptual_definition": "In classical and differential kinematics, the trajectory of a point particle is parameterized by coordinate time $t$ along a differentiable manifold $\\mathbb{R}^3$. The differential form $dx^i = v^i dt$ represents the first-order Taylor expansion of the particle's spatial coordinates $x^i(t)$, mapping the tangent vector component $v^i = \\frac{dx^i}{dt}$ directly to an infinitesimal coordinate shift $dx^i$ over the duration $dt$.",
+        "intuitive_summary": "An infinitesimal step along any coordinate direction is equal to how fast the object moves along that axis multiplied by the tiny slice of time elapsed.",
+        "interpretation": "The equation $dx^i = v^i dt$ expresses the differential relationship governing spatial kinematics: $dx^i$ denotes the infinitesimal contravariant displacement along the $i^{\\text{th}}$ spatial coordinate axis ($i \\in \\{1, 2, 3\\}$); $v^i$ represents the instantaneous velocity vector component along that same axis, defined as the derivative $v^i = \\frac{dx^i}{dt}$; and $dt$ denotes the differential increment of coordinate time.",
+        "symmetry_origin": "Rooted in the continuous translational invariance of spatial coordinates $\\mathbf{x} \\mapsto \\mathbf{x} + \\delta \\mathbf{x}$ and the differentiability of the manifold under the Galilean/Poincaré group.",
+        "limits_and_boundary": "In the limit $dt \\to 0$, the displacement $dx^i \\to 0$, consistent with trajectory continuity. For non-relativistic velocities $v^i \\ll c$, coordinate time $t$ matches the proper time $\\tau$, whereas at relativistic speeds the relation remains formally valid in coordinate time but requires proper time scaling $d x^i = u^i d\\tau / \\gamma$.",
         "status": "platinum",
         "semantic_variables": {
             "dx^i": {
-                "name": "Infinitesimal Spatial Displacement Component",
+                "name": "Infinitesimal spatial coordinate displacement component",
                 "type": "variable",
                 "unit": "m",
-                "description": "The infinitesimal change in position along the $i^{\\text{th}}$ coordinate axis."
+                "description": "Differential contravariant coordinate displacement along the $i$-th spatial axis"
             },
             "v^i": {
-                "name": "Velocity Component",
+                "name": "Instantaneous spatial velocity component",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The $i^{\\text{th}}$ component of the instantaneous velocity vector, representing the rate of change of position along that axis."
+                "description": "Time rate of change of the $i$-th spatial coordinate"
             },
             "dt": {
-                "name": "Infinitesimal Time Interval",
+                "name": "Differential time increment",
                 "type": "variable",
                 "unit": "s",
-                "description": "An infinitesimally small duration of time."
+                "description": "Infinitesimal interval of coordinate time"
+            },
+            "i": {
+                "name": "Spatial coordinate index",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Tensor index representing spatial dimensions, typically ranging over $\\{1, 2, 3\\}$"
             }
         },
         "subcomponents": [
-            "index-definition-for-spatial-components-22cce648",
-            "euclidean-infinitesimal-spatial-displacement-squared-5fda311e",
-            "zero-infinitesimal-spatial-displacement-5116e51b",
-            "relational-distance-identity-a0bcea2e"
+            "infinitesimal-coordinate-displacement-component-a47ca7af",
+            "three-dimensional-spatial-index-definition-c8a8850d",
+            "infinitesimal-vertical-displacement-440104a9"
         ],
-        "description": "This formula defines the infinitesimal change in position along a specific coordinate axis as the product of the corresponding velocity component and an infinitesimal time interval, serving as a fundamental kinematic relation.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the differential spatial coordinate displacement along the $i$-th axis as the product of the contravariant velocity component and an infinitesimal time interval.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "anomalous-magnetic-moment": {
         "title": "Definition of the Leptonic Anomalous Magnetic Moment",
@@ -2511,70 +2516,52 @@
         "id": "liouville-volume-form",
         "title": "Liouville Phase Space Volume Form",
         "equation": "\\Omega = \\frac{(-1)^{n(n-1)/2}}{n!} \\omega^n = d^nq \\, d^np",
-        "conceptual_definition": "The Liouville volume form $\\Omega$ is the canonical measure on phase space, expressed either as the $n$-th exterior power of the canonical symplectic form $\\omega$ or as the direct product of infinitesimal configuration and momentum space volume elements, $d^nq \\, d^np$. Its invariance under Hamiltonian flow is a cornerstone of classical statistical mechanics.",
-        "intuitive_summary": "Imagine a tiny 'box' in the phase space of a system. The Liouville volume form tells us how to measure the size of this box. Liouville's theorem then states that as the system evolves, this box might change its shape, but its total volume remains constant.",
-        "interpretation": "The equation $\\Omega = \\frac{(-1)^{n(n-1)/2}}{n!} \\omega^n = d^nq \\, d^np$ defines the Liouville volume form. Here, $\\Omega$ represents the Liouville volume form, an invariant measure of infinitesimal volume in the $2n$-dimensional phase space. The variable $n$ denotes the number of degrees of freedom of the system. The term $\\omega$ is the canonical symplectic form, defined as $\\omega = \\sum_{i=1}^n dq_i \\wedge dp_i$. The expression $\\omega^n$ represents the $n$-th exterior power of the symplectic form. The factor $\\frac{(-1)^{n(n-1)/2}}{n!}$ is a normalization constant that ensures the exterior product of $\\omega^n$ correctly yields the standard phase space volume element with the chosen orientation. The term $d^nq$ represents the infinitesimal volume element in the $n$-dimensional configuration space, given by $dq_1 \\wedge \\dots \\wedge dq_n$. Similarly, $d^np$ represents the infinitesimal volume element in the $n$-dimensional momentum space, given by $dp_1 \\wedge \\dots \\wedge dp_n$. Together, $d^nq \\, d^np$ represents the infinitesimal volume element in the $2n$-dimensional phase space. The symbols $q_i$ and $p_i$ denote the $i$-th generalized coordinate and its conjugate momentum, respectively. The term $dq_i \\wedge dp_i$ represents the exterior product of the differentials of the $i$-th generalized coordinate and its conjugate momentum.",
-        "symmetry_origin": "The invariance of the Liouville volume form is a fundamental geometric property of Hamiltonian dynamics. It arises from the symplectic structure of phase space, which ensures that canonical transformations generated by the Hamiltonian preserve the phase space volume. This is not a direct consequence of Noether's theorem but rather a statement about the volume-preserving nature of Hamiltonian flow.",
-        "limits_and_boundary": "In the classical limit ($\\hbar \\to 0$), the Liouville volume form $\\Omega = d^nq \\, d^np$ is the continuous phase space volume element. In quantum mechanics, the analogous concept is the phase space cell volume $(2\\pi\\hbar)^n$, which becomes infinitesimally small as $\\hbar \\to 0$, recovering the classical continuous phase space. The form is defined for any integer $n \\ge 1$; for $n=1$, it simplifies to $\\Omega = dq \\, dp$.",
+        "conceptual_definition": "On a $2n$-dimensional phase space manifold $(\\mathcal{M}, \\omega)$, the Liouville volume form $\\Omega$ is constructed as the normalized top exterior power of the canonical symplectic two-form $\\omega = \\sum_{i=1}^n dq_i \\wedge dp_i$. It provides the natural orientation and measure $\\Omega = \\frac{(-1)^{n(n-1)/2}}{n!} \\omega^n = d^nq \\wedge d^np$, which is invariant under any canonical transformation and Hamiltonian flow ($\\mathcal{L}_{X_H} \\Omega = 0$).",
+        "intuitive_summary": "The Liouville volume form is the geometric way of measuring volume in phase space. Because Hamiltonian evolution acts as a volume-preserving shear flow (symplectomorphism), any bundle of trajectories retains its precise Liouville volume over time.",
+        "interpretation": "The symbol $\\Omega$ represents the top-degree differential $2n$-form corresponding to the phase space volume. The parameter $n$ denotes the number of physical degrees of freedom. The symbol $\\omega$ represents the canonical symplectic two-form $\\sum_{i=1}^n dq_i \\wedge dp_i$, and $\\omega^n = \\omega \\wedge \\dots \\wedge \\omega$ denotes its $n$-fold wedge product. The normalization prefactor $\\frac{(-1)^{n(n-1)/2}}{n!}$ compensates for permutation combinatorics and the sign structure arising from anticommuting $1$-forms so that $\\Omega$ matches the standard oriented coordinate volume element $d^nq \\, d^np = dq_1 \\wedge \\dots \\wedge dq_n \\wedge dp_1 \\wedge \\dots \\wedge dp_n$, where $q_i$ and $p_i$ are conjugate coordinate and momentum variables.",
+        "symmetry_origin": "Symplectic invariance under the group of symplectomorphisms $\\mathrm{Sp}(2n, \\mathbb{R})$; invariance along Hamiltonian flows follows from Cartan's magic formula and the closedness of the symplectic form ($d\\omega = 0$).",
+        "limits_and_boundary": "In the semiclassical limit $\\hbar \\to 0$, quantum states correspond to classical phase space volume cells of size $(2\\pi\\hbar)^n$. In non-Hamiltonian dissipative systems, phase space volume contracts asymptotically onto attractors, breaking Liouville measure conservation.",
         "unit_system": "SI",
-        "parent_formula_id": "",
+        "parent_formula_id": "phase-space-symplectic-two-form-e3d55310",
         "derivation_type": "DEFINITION",
         "status": "published",
         "semantic_variables": {
             "\\Omega": {
-                "name": "Liouville Volume Form",
+                "name": "Liouville phase space volume form",
                 "type": "variable",
-                "unit": "(J s)^n",
-                "description": "The invariant infinitesimal volume element in the $2n$-dimensional phase space."
-            },
-            "n": {
-                "name": "Number of Degrees of Freedom",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The number of independent generalized coordinates required to specify the configuration of the system."
+                "unit": "J^n s^n",
+                "description": "Differential 2n-form defining the invariant volume element on symplectic phase space"
             },
             "\\omega": {
-                "name": "Canonical Symplectic Form",
+                "name": "canonical symplectic 2-form",
                 "type": "variable",
                 "unit": "J s",
-                "description": "A differential 2-form on phase space that defines its symplectic structure."
+                "description": "Closed, non-degenerate differential 2-form on the cotangent bundle"
+            },
+            "n": {
+                "name": "degrees of freedom",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Number of generalized coordinate degrees of freedom of the physical system"
             },
             "d^nq": {
-                "name": "Configuration Space Volume Element",
+                "name": "configuration space volume element",
                 "type": "variable",
                 "unit": "m^n",
-                "description": "The infinitesimal volume element in the $n$-dimensional configuration space."
+                "description": "Infinitesimal wedge product of all generalized coordinate differentials dq_1 ^ ... ^ dq_n"
             },
             "d^np": {
-                "name": "Momentum Space Volume Element",
+                "name": "momentum space volume element",
                 "type": "variable",
-                "unit": "(kg m/s)^n",
-                "description": "The infinitesimal volume element in the $n$-dimensional momentum space."
-            },
-            "q_i": {
-                "name": "Generalized Coordinate",
-                "type": "variable",
-                "unit": "m | rad",
-                "description": "The $i$-th generalized coordinate, representing a position or angle."
-            },
-            "p_i": {
-                "name": "Conjugate Momentum",
-                "type": "variable",
-                "unit": "kg m/s | J s",
-                "description": "The $i$-th conjugate momentum corresponding to the generalized coordinate $q_i$."
-            },
-            "dq_i \\wedge dp_i": {
-                "name": "Exterior Product of Differentials",
-                "type": "operator",
-                "unit": "J s",
-                "description": "The exterior product of the differential of the $i$-th generalized coordinate and its conjugate momentum."
+                "unit": "(kg m / s)^n",
+                "description": "Infinitesimal wedge product of all conjugate momentum differentials dp_1 ^ ... ^ dp_n"
             }
         },
-        "description": "The Liouville volume form $\\Omega$ defines the invariant infinitesimal volume element in the $2n$-dimensional phase space of a Hamiltonian system, fundamental for integrals in statistical mechanics and the statement of Liouville's theorem.",
+        "description": "Defines the canonical, invariant top-degree differential form on a $2n$-dimensional symplectic manifold, representing the infinitesimal phase-space volume element in classical mechanics and statistical physics.",
         "subcomponents": [
-            "volume-ruler-0ecfc118",
+            "flow-connector-0524e9ad",
             "non-vanishing-data-c48ed254",
-            "phase-space-incompressibility-identity-1-de981dde-b70159ca"
+            "phase-space-volume-identity-1-ffe672c3-00481205"
         ]
     }
 }

@@ -395,53 +395,48 @@
         "derivation_type": "DERIVED_FROM"
     },
     "energy-sink-178872a8": {
-        "title": "Net Work in a Thermodynamic Cycle",
+        "title": "Net Work in a Closed Thermodynamic Cycle",
         "equation": "W = \\oint P dV > 0 \\quad (\\text{Work cycle})",
         "semantic_variables": {
             "W": {
-                "name": "Net Work",
+                "name": "Net Cyclic Work",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total mechanical work done by or on the system over one complete cycle."
-            },
-            "P": {
-                "name": "Pressure",
-                "type": "variable",
-                "unit": "Pa",
-                "description": "The pressure of the system, which may vary along the cyclic path."
-            },
-            "V": {
-                "name": "Volume",
-                "type": "variable",
-                "unit": "m^3",
-                "description": "The volume of the system, which may vary along the cyclic path."
+                "description": "Total mechanical boundary work performed by the system per thermodynamic cycle"
             },
             "\\oint": {
-                "name": "Cyclic Path Integral",
+                "name": "Closed Contour Integral Operator",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "An integral taken over a closed loop or path, returning the system to its initial state."
+                "unit": "dimensionless",
+                "description": "Line integral evaluated along a closed continuous thermodynamic path"
             },
-            "d": {
-                "name": "Differential",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "Represents an infinitesimal change in a variable."
+            "P": {
+                "name": "Thermodynamic Pressure",
+                "type": "variable",
+                "unit": "Pa",
+                "description": "Absolute normal force per unit area exerted by the working fluid"
+            },
+            "dV": {
+                "name": "Differential Volume Element",
+                "type": "variable",
+                "unit": "m^3",
+                "description": "Infinitesimal change in the physical boundary volume of the system"
             }
         },
-        "interpretation": "The equation $W = \\oint P dV$ quantifies the net energy transfer as work for a system returning to its initial state. The symbol $\\oint$ denotes a line integral over a closed loop in the thermodynamic state space (specifically, the $P-V$ plane). $P$ is the pressure of the system, and $dV$ is an infinitesimal change in its volume. When the system expands ($dV > 0$), it performs work on its surroundings. When it is compressed ($dV < 0$), work is done on it. The integral sums these infinitesimal contributions over the entire cycle. The condition $W > 0$ specifies that the net work done *by* the system is positive, meaning it has converted heat into work, characteristic of a heat engine. If $W < 0$, net work is done *on* the system, as in a heat pump or refrigerator.",
-        "symmetry_origin": "Derived from the principle of conservation of energy, which, by Noether's theorem, arises from the time-translation invariance of physical laws. In a thermodynamic cycle, the internal energy $U$ is a state function, so its net change $\\Delta U_{cycle}$ is zero, leading to the First Law for cycles: $W = Q$.",
-        "limits_and_boundary": "This formula is rigorously defined for quasi-static processes, where the system is always in approximate thermodynamic equilibrium, ensuring pressure $P$ is well-defined. For a perfectly reversible cycle, $W$ represents the maximum possible work output (engine) or minimum work input (refrigerator). In irreversible processes (e.g., involving friction or rapid changes), the actual work output is less than the ideal $\\oint P dV$. If the path in the $P-V$ plane does not enclose an area, the net work $W$ is zero.",
+        "interpretation": "In the cyclic integral $W = \\oint P dV$, the symbol $W$ represents the net mechanical boundary work evaluated across one complete cycle. The path integral operator $\\oint$ denotes integration along the closed curve $\\Gamma$ in the $P-V$ thermodynamic state space. The state variable $P$ represents the absolute instantaneous pressure exerted by the system, while $dV$ denotes the infinitesimal volume displacement of the control boundary. For an engine operating in a clockwise orientation, the expansion work during the high-pressure phase exceeds the compression work required during the low-pressure return phase, yielding $W > 0$.",
+        "symmetry_origin": "Time-translation symmetry and the First Law of Thermodynamics, corresponding to global energy conservation over a closed path where the net change in internal energy $\\oint dU = 0$.",
+        "limits_and_boundary": "In the quasistatic reversible limit, the path $\\Gamma$ is well-defined and work matches the Carnot efficiency bound. As the enclosed area approaches zero ($A \\to 0$), the net work vanishes ($W \\to 0$). In the limit of zero absolute temperature ($T \\to 0$), entropy production ceases in accordance with the Third Law of Thermodynamics.",
         "status": "platinum",
-        "conceptual_definition": "The net work, $W$, performed by a system undergoing a cyclic thermodynamic process is defined as the path integral of the system's pressure, $P$, with respect to its volume, $V$, over the closed path of the cycle. A positive value, $W > 0$, indicates the system acts as an engine, performing net work on its surroundings. A negative value, $W < 0$, indicates the system acts as a refrigerator or heat pump, with net work being done on it.",
-        "intuitive_summary": "Imagine a piston in an engine. If, over one full cycle, the work it does during expansion is greater than the work needed to compress it back to the start, the engine has produced a net output of useful work. This net work corresponds to the area inside the loop traced by the cycle on a pressure-volume graph.",
+        "conceptual_definition": "The net mechanical work $W$ performed by a thermodynamic system executing a closed cyclic trajectory $\\Gamma$ in equilibrium state space is defined by the oriented line integral $W = \\oint_{\\Gamma} P dV$, where the strict inequality $W > 0$ defines the operational regime of a heat engine converting net thermal energy into useful work.",
+        "intuitive_summary": "On a pressure-volume diagram, each cycle encloses a geometric area; traversing this loop clockwise yields positive net work output into the environment, turning thermal heat flow into mechanical displacement.",
         "subcomponents": [
+            "convection-limit-3146f98c",
             "energy-measure-70335bd9",
-            "conservative-path-86df3ad5",
-            "work-rule-4da28176"
+            "constant-density-17a35602"
         ],
-        "description": "Calculates the net mechanical work performed by or on a thermodynamic system over a complete, closed cycle, represented by the area enclosed by the process path on a Pressure-Volume diagram.",
-        "derivation_type": "DEFINITION"
+        "description": "Calculates the net mechanical work output delivered by a thermodynamic fluid over a complete closed cyclic process via boundary pressure-volume displacement.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "convection-limit-3146f98c"
     },
     "life-path-f13de329": {
         "title": "Pulsation Rule (Period-Density Relation for Stars)",
@@ -820,42 +815,48 @@
         "description": "A fundamental theorem of vector calculus that relates the total divergence of a vector field within a volume to the net flux of that field through the closed surface enclosing the volume."
     },
     "metric-homogeneity-condition-8eb28fa1": {
-        "title": "Killing's Equation for a Spacetime Isometry",
+        "title": "Killing's Equation for Spacetime Isometry via Lie Derivative",
         "equation": "\\mathcal{L}_X g_{\\mu\\nu} = 0",
         "semantic_variables": {
             "\\mathcal{L}_X": {
-                "name": "Lie Derivative",
+                "name": "Lie derivative operator along vector field X",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "The Lie derivative operator, which measures the rate of change of a tensor field along the flow of the vector field $X$."
-            },
-            "g_{\\mu\\nu}": {
-                "name": "Metric Tensor",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The rank-2 covariant metric tensor that defines the spacetime geometry and the infinitesimal distance element $ds^2 = g_{\\mu\\nu} dx^\\mu dx^\\nu$."
+                "unit": "1/m",
+                "description": "Differential operator measuring the directional rate of change of a tensor field under the infinitesimal diffeomorphism generated by X."
             },
             "X": {
-                "name": "Vector Field",
+                "name": "Killing vector field",
                 "type": "variable",
-                "unit": "Context-dependent",
-                "description": "A vector field generating an infinitesimal diffeomorphism. If the equation holds, it is called a Killing vector field, representing a continuous symmetry of the metric."
+                "unit": "dimensionless",
+                "description": "Infinitesimal generator of a continuous one-parameter group of spacetime isometries."
+            },
+            "g_{\\mu\\nu}": {
+                "name": "Metric tensor",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Rank-2 symmetric fundamental tensor defining the geometry, inner products, and intervals on the spacetime manifold."
+            },
+            "0": {
+                "name": "Zero tensor",
+                "type": "constant",
+                "unit": "1/m",
+                "description": "Vanishing rank-2 covariant symmetric tensor."
             }
         },
-        "interpretation": "The equation $\\mathcal{L}_X g_{\\mu\\nu} = 0$ is the defining condition for a Killing vector field $X$ in a pseudo-Riemannian manifold. Here, $\\mathcal{L}_X$ is the Lie derivative operator, which measures the change of a tensor field when dragged along the integral curves of the vector field $X$. The term $g_{\\mu\\nu}$ represents the metric tensor, which encodes the geometry of spacetime. A result of zero implies that the metric's components do not change under this 'dragging' process. Physically, this means the vector field $X$ generates an isometry—a transformation of spacetime that preserves all distances and angles. By Noether's theorem, the existence of such a symmetry implies a conserved quantity for particles moving along geodesics. For example, a time-translation symmetry (where $X$ is timelike, e.g., $X = \\partial_t$) corresponds to the conservation of energy, while a space-translation symmetry (where $X$ is spacelike, e.g., $X = \\partial_x$) corresponds to the conservation of linear momentum.",
-        "symmetry_origin": "The equation is a direct expression of a continuous geometric invariance of the spacetime manifold. It defines an isometry, which is a symmetry of the metric tensor itself. Via Noether's theorem, this geometric symmetry gives rise to a corresponding physical conservation law.",
-        "limits_and_boundary": "This equation is a fundamental geometric definition and does not have conventional physical limits (e.g., as $v \\to c$ or $\\hbar \\to 0$). Its implications depend on the global structure of the manifold. For an $n$-dimensional maximally symmetric spacetime (like Minkowski space, de Sitter space, or anti-de Sitter space), there exists a maximum of $n(n+1)/2$ linearly independent Killing vector fields. In asymptotically flat spacetimes, any Killing vector field must approach one of the Killing vectors of the Minkowski metric at spatial infinity.",
+        "interpretation": "The operator $\\mathcal{L}_X$ denotes the Lie derivative along the vector field $X = X^\\alpha \\partial_\\alpha$, which quantifies the directional rate of change of tensor fields with respect to the diffeomorphism flow. The symmetric rank-2 tensor $g_{\\mu\\nu}$ represents the metric tensor of the pseudo-Riemannian manifold. The condition $\\mathcal{L}_X g_{\\mu\\nu} = 0$ is equivalent in torsion-free connections to the covariant form $\\nabla_\\mu X_\\nu + \\nabla_\\nu X_\\mu = 0$. By Noether's theorem, whenever a geodesic particle with four-velocity $u^\\mu$ traverses this spacetime, the projection $K = X_\\mu u^\\mu$ constitutes a conserved constant of motion.",
+        "symmetry_origin": "Continuous diffeomorphism invariance generating a Lie group of metric isometries, corresponding via Noether's theorem to conserved particle momenta and energies along geodesics.",
+        "limits_and_boundary": "In flat Minkowski spacetime where $g_{\\mu\\nu} = \\eta_{\\mu\\nu}$, the maximally symmetric solution space yields the 10-parameter Poincaré algebra (4 spacetime translations, 3 spatial rotations, and 3 Lorentz boosts). For maximally symmetric $D$-dimensional spacetimes, there exist $D(D+1)/2$ linearly independent Killing vector fields, whereas generic asymmetric spacetimes admit no non-trivial Killing vectors.",
         "status": "platinum",
-        "conceptual_definition": "The equation $\\mathcal{L}_X g_{\\mu\\nu} = 0$ states that the Lie derivative of the metric tensor $g_{\\mu\\nu}$ along the flow of a vector field $X$ is zero. This condition signifies that the metric tensor is invariant under the infinitesimal diffeomorphisms generated by $X$. A vector field $X$ that satisfies this equation is, by definition, a Killing vector field, and its corresponding flow is an isometry of the manifold.",
-        "intuitive_summary": "Imagine sliding a rigid shape across a curved surface. If the shape fits the surface perfectly at every point along a certain path without needing to be stretched or deformed, that path represents a symmetry. This equation mathematically identifies such 'symmetry paths' (the flow of the vector field $X$) on the 'surface' of spacetime (defined by the metric $g_{\\mu\\nu}$).",
+        "conceptual_definition": "Killing's equation $\\mathcal{L}_X g_{\\mu\\nu} = 0$ asserts that the spacetime metric tensor $g_{\\mu\\nu}$ remains invariant under the local diffeomorphic flow generated by the vector field $X$. Vector fields satisfying this condition are termed Killing vector fields and correspond to continuous geometric symmetries (isometries) of the pseudo-Riemannian manifold.",
+        "intuitive_summary": "Dragging the spacetime metric along the streamlines of a Killing vector field leaves all distances, angles, and curvature invariants completely unchanged.",
         "subcomponents": [
-            "spacetime-null-interval-condition-57ee4d19",
-            "metric-compatibility-condition-9f00206f",
-            "minkowski-metric-tensor-definition-0ad998e3",
-            "covariant-four-velocity-definition-a4bc1ddb"
+            "formal-symmetry-identity-1-11e54ca3-7f076378",
+            "lie-derivative-invariance-8cd7310d",
+            "noethers-current"
         ],
-        "description": "This equation defines a Killing vector field $X$, which generates a continuous symmetry (an isometry) of the spacetime geometry described by the metric tensor $g_{\\mu\\nu}$.",
-        "derivation_type": "DEFINITION"
+        "description": "Vanishing of the Lie derivative of the metric tensor with respect to a vector field, defining the generator of a continuous spacetime isometry.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "formal-symmetry-identity-1-11e54ca3-7f076378"
     },
     "shannon-entropy-fda54dcb": {
         "title": "Shannon Entropy for a Discrete Probability Distribution",
@@ -1126,36 +1127,36 @@
         "derivation_type": "DEFINITION"
     },
     "constant-time": {
-        "title": "Constant Time Condition",
+        "title": "Isochronous Foliation (Constant Time Condition)",
         "equation": "t = C",
-        "conceptual_definition": "The equation $t = C$ establishes a constraint on the temporal coordinate $t$ within a given frame of reference, fixing it to a specific, unchanging value $C$. This condition is foundational for defining initial or boundary conditions, analyzing static systems, or studying phenomena at a precise moment in time, effectively creating a 'snapshot' of the system's state.",
-        "intuitive_summary": "Imagine pausing a movie to look at a single frame. The 'Constant Time Condition' is the physicist's version of pressing pause. It doesn't mean time has stopped in the universe, but that our analysis is focused on what's happening at one specific, frozen instant or for a pre-defined, fixed duration.",
-        "interpretation": "In the expression $t = C$:\n*   The symbol $t$ represents the time coordinate, a variable typically measured in seconds ($s$). It denotes a specific point on the time axis within a chosen reference frame.\n*   The symbol $C$ represents a constant, a specific numerical value that also has units of time ($s$). It signifies the fixed instant or duration to which the variable $t$ is set.\nThis equation asserts that for the purpose of the analysis, there is no evolution in time. Any quantity that is a function of time, $f(t)$, is evaluated only at this specific instant, $f(C)$.",
-        "symmetry_origin": "This condition does not originate from a symmetry via Noether's theorem. Instead, it is a definitional constraint that explicitly breaks the continuous time-translation symmetry for the specific problem being analyzed. By selecting a single point $t=C$ from the time continuum, it allows for the study of a system's state at a fixed moment, such as in defining initial conditions or analyzing static equilibria.",
-        "limits_and_boundary": "The condition $t = C$ is fundamental for defining boundaries in time. For instance, initial value problems are defined at $t=t_0$. In special relativity, a surface of constant time $t=C$ in one inertial frame is a hyperplane that is not a surface of constant time for a relatively moving observer (Relativity of Simultaneity). In quantum mechanics, a measurement is often idealized as occurring at a specific instant $t=C$, leading to the collapse of the wavefunction at that moment.",
+        "conceptual_definition": "The constant time condition $t = C$ specifies an isochronous surface $\\Sigma_t$ in spacetime or phase space. Restricting dynamical variables to this condition eliminates explicit time dependence, enabling the evaluation of instantaneous state vectors, static field distributions, and initial value formulations ($3+1$ decompositions).",
+        "intuitive_summary": "Taking a snapshot of a dynamic system at one precise instant, turning a continuously evolving trajectory into a static freeze-frame.",
+        "interpretation": "In the relation $t = C$, $t$ denotes the temporal coordinate parameter of the reference frame, measured in seconds ($\\text{s}$), and $C$ is a fixed real-valued constant with units of time ($\\text{s}$). On this slice, the differential time element vanishes ($dt = 0$), projecting any time-dependent field $\\Phi(x^\\mu)$ or dynamical observable $Q(q, p, t)$ into an instantaneous spatial representation $\\Phi(\\mathbf{x}, C)$.",
+        "symmetry_origin": "Directly related to the breaking or gauging of continuous time-translation symmetry; under a global time translation $t \\to t + \\epsilon$, the condition transforms as $C \\to C + \\epsilon$, defining the leaves of a foliated spacetime manifold.",
+        "limits_and_boundary": "In the limit $C \\to \\pm\\infty$, the hypersurface corresponds to the asymptotic past or future boundaries ($\\mathscr{I}^-$ or $\\mathscr{I}^+$ in conformal spacetime diagrams). For non-relativistic limits $c \\to \\infty$, the foliation defines absolute Newtonian simultaneity surfaces.",
         "status": "platinum",
         "semantic_variables": {
             "t": {
-                "name": "Time",
+                "name": "temporal coordinate",
                 "type": "variable",
                 "unit": "s",
-                "description": "The temporal coordinate or a measure of duration in a given reference frame."
+                "description": "Coordinate time parameter parameterizing the evolution of the system."
             },
             "C": {
-                "name": "Constant Time Value",
+                "name": "constant time value",
                 "type": "constant",
                 "unit": "s",
-                "description": "A specific, fixed value of time."
+                "description": "Fixed scalar timestamp defining the specific spacelike leaf or slice."
             }
         },
         "subcomponents": [
-            "zero-time-interval-condition-ceae9213",
+            "time-derivative-zero",
             "condition-for-explicit-time-invariance-295cb613",
-            "time-independent-scalar-field-condition-d23e6637",
-            "time-independent-vector-potential-condition-ceae55fe"
+            "time-invariance-of-a-dynamical-quantity-a5f93fba"
         ],
-        "description": "A fundamental definitional equation that constrains the temporal variable to a fixed value, essential for analyzing a physical system at a specific instant or over a fixed duration.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines a spacelike hypersurface of constant coordinate time, freezing temporal evolution to evaluate physical observables and field configurations instantaneously.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "time-independent-limit"
     },
     "lagrangian-function-definition": {
         "title": "Mathematical Definition of the Lagrangian Function",
@@ -1783,40 +1784,52 @@
     "constant-approaches-zero": {
         "title": "Condition for Conformal Flatness (Vanishing Weyl Tensor)",
         "equation": "C_{\\mu\\nu\\rho\\sigma} \\to 0",
-        "conceptual_definition": "The expression $C_{\\mu\\nu\\rho\\sigma} \\to 0$ represents the limit where all components of the Weyl conformal curvature tensor, $C_{\\mu\\nu\\rho\\sigma}$, approach zero. The Weyl tensor is the traceless part of the Riemann curvature tensor $R_{\\mu\\nu\\rho\\sigma}$ and isolates the parts of spacetime curvature that cause tidal distortion (changes in shape). Its vanishing is the necessary and sufficient condition for a spacetime to be conformally flat.",
-        "intuitive_summary": "Think of spacetime curvature as the crumpling of a sheet. The Weyl tensor, $C_{\\mu\\nu\\rho\\sigma}$, represents the 'shape-distorting' part of the crumples, like stretching and shearing, which manifest as tidal forces. When $C_{\\mu\\nu\\rho\\sigma} \\to 0$, these distortions vanish, meaning any remaining curvature is purely 'isotropic' (like the uniform curvature of a sphere). Such a spacetime can be made perfectly flat just by locally rescaling distances, and it contains no gravitational waves.",
-        "interpretation": "In this limiting condition, $C_{\\mu\\nu\\rho\\sigma}$ is the Weyl conformal curvature tensor, a rank-4 tensor field that quantifies the tidal forces and degrees of freedom of the gravitational field that can propagate as gravitational waves. The Greek indices $\\mu, \\nu, \\rho, \\sigma$ are spacetime indices, each running from 0 to 3. The expression $\\to 0$ signifies that all 10 independent components of this tensor approach zero within a given region or under a specific limit. A spacetime where $C_{\\mu\\nu\\rho\\sigma} = 0$ holds exactly is called conformally flat. For instance, the Friedmann–Lemaître–Robertson–Walker (FLRW) metric, which models a homogeneous and isotropic universe, has a vanishing Weyl tensor by construction.",
-        "symmetry_origin": "The vanishing of the Weyl tensor, $C_{\\mu\\nu\\rho\\sigma} = 0$, is the condition for a spacetime to possess local conformal symmetry with flat Minkowski space. This is a geometric invariance under conformal transformations, which are coordinate transformations that preserve angles but not necessarily lengths.",
-        "limits_and_boundary": "This condition is met in several important physical limits. In asymptotically flat spacetimes, $C_{\\mu\\nu\\rho\\sigma} \\to 0$ as the distance $r \\to \\infty$ from an isolated source. By definition, in any Friedmann–Lemaître–Robertson–Walker (FLRW) cosmology, $C_{\\mu\\nu\\rho\\sigma} = 0$ everywhere due to the assumption of perfect homogeneity and isotropy. In the weak-field limit of General Relativity, where the metric is a small perturbation of flat space, all components of the curvature tensor, including $C_{\\mu\\nu\\rho\\sigma}$, are small.",
+        "conceptual_definition": "In differential geometry and general relativity in dimensions $n \\ge 4$, the vanishing of the Weyl conformal curvature tensor, $C_{\\mu\\nu\\rho\\sigma} \\to 0$, is the necessary and sufficient condition for a spacetime metric $g_{\\mu\\nu}$ to be locally conformal to the flat Minkowski metric $\\eta_{\\mu\\nu}$, such that $g_{\\mu\\nu}(x) = \\Omega^2(x) \\eta_{\\mu\\nu}$ for some non-zero scalar field $\\Omega(x)$. Physically, it indicates the absence of free gravitational radiation and tidal shear distortions.",
+        "intuitive_summary": "The Weyl tensor measures the shape-distorting tidal forces of gravity without changing volume; when it approaches zero, gravity only dilates volume isotropically without shearing shapes, making the spacetime locally indistinguishable from flat space under a local scale transformation.",
+        "interpretation": "The symbol $C_{\\mu\\nu\\rho\\sigma}$ denotes the fully covariant rank-4 Weyl curvature tensor, representing the trace-free part of the Riemann curvature tensor $R_{\\mu\\nu\\rho\\sigma}$. The indices $\\mu, \\nu, \\rho, \\sigma \\in \\{0, 1, 2, 3\\}$ represent four-dimensional spacetime coordinates. The limit $\\to 0$ denotes that all 10 algebraically independent components of the Weyl tensor vanish in the domain, which suppresses pure gravitational wave degrees of freedom and restricts spacetime curvature entirely to local matter sources via the Ricci tensor $R_{\\mu\\nu}$.",
+        "symmetry_origin": "Conformal invariance (local Weyl scale invariance $g_{\\mu\\nu} \\mapsto \\Omega^2(x) g_{\\mu\\nu}$), preserving null geodesics and the light-cone structure of spacetime.",
+        "limits_and_boundary": "In the limit where both the Ricci tensor and Weyl tensor vanish ($R_{\\mu\\nu} = 0$ and $C_{\\mu\\nu\\rho\\sigma} = 0$), the spacetime reduces strictly to flat Minkowski spacetime with Riemann tensor $R_{\\mu\\nu\\rho\\sigma} = 0$. For highly symmetric spacetimes such as the Friedmann–Lemaître–Robertson–Walker (FLRW) cosmological metrics or the spatial geometry near isotropic cosmological singularities (Penrose Weyl Curvature Hypothesis), $C_{\\mu\\nu\\rho\\sigma} = 0$ holds identically.",
         "status": "platinum",
         "semantic_variables": {
             "C_{\\mu\\nu\\rho\\sigma}": {
-                "name": "Weyl Conformal Curvature Tensor",
+                "name": "Weyl conformal curvature tensor",
                 "type": "variable",
-                "unit": "m⁻²",
-                "description": "The traceless component of the Riemann curvature tensor. It describes tidal distortions, shear, and the propagating degrees of freedom of the gravitational field (gravitational waves)."
+                "unit": "m^{-2}",
+                "description": "Rank-4 trace-free curvature tensor representing tidal shear forces and gravitational radiation degrees of freedom in $n \\ge 4$ dimensions."
             },
-            "\\to": {
-                "name": "Approaches",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "Denotes a limiting process where the quantity on the left approaches the value on the right."
+            "\\mu": {
+                "name": "Spacetime index 1",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "First covariant spacetime coordinate index running from 0 to 3."
             },
-            "0": {
-                "name": "Zero Tensor",
-                "type": "constant",
-                "unit": "m⁻²",
-                "description": "The rank-4 tensor with all components equal to zero, representing a state of zero Weyl curvature."
+            "\\nu": {
+                "name": "Spacetime index 2",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Second covariant spacetime coordinate index running from 0 to 3."
+            },
+            "\\rho": {
+                "name": "Spacetime index 3",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Third covariant spacetime coordinate index running from 0 to 3."
+            },
+            "\\sigma": {
+                "name": "Spacetime index 4",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Fourth covariant spacetime coordinate index running from 0 to 3."
             }
         },
         "subcomponents": [
-            "redshift-approaches-zero",
-            "net-force-approaches-zero",
-            "rate-of-change-of-scale-factor-approaches-zero",
-            "distance-approaches-zero"
+            "vanishing-riemann-curvature-tensor-268eb1cd",
+            "flat-spacetime-connection-coefficient-limit-80bede1b",
+            "zero-curvature-constant"
         ],
-        "description": "This condition signifies that a spacetime is conformally flat, meaning it can be transformed into flat Minkowski spacetime via a conformal rescaling. Physically, it describes regions of spacetime devoid of gravitational tidal forces and gravitational waves.",
-        "derivation_type": "LIMITING_CASE"
+        "description": "Specifies the vanishing limit of the Weyl curvature tensor, establishing the criterion under which a four-dimensional pseudo-Riemannian manifold is locally conformally flat.",
+        "derivation_type": "GENERALIZATION",
+        "parent_formula_id": "vanishing-riemann-curvature-tensor-268eb1cd"
     },
     "squared-boyer-lindquist-radial-coordinate-294ce890": {
         "title": "Squared Boyer-Lindquist Radial Coordinate in Kerr Spacetime",

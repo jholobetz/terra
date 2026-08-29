@@ -4,38 +4,38 @@
         "equation": "dA = \\frac{1}{2} r^2 d\\theta",
         "semantic_variables": {
             "dA": {
-                "name": "Infinitesimal Area Element",
+                "name": "Infinitesimal Swept Area Element",
                 "type": "variable",
                 "unit": "m^2",
-                "description": "The infinitesimal area swept by the position vector during an infinitesimal angular displacement."
+                "description": "Differential area swept out by the position vector"
             },
             "r": {
                 "name": "Radial Distance",
                 "type": "variable",
                 "unit": "m",
-                "description": "The instantaneous distance from the origin of the coordinate system to the point of interest."
+                "description": "Distance from the coordinate origin to the particle"
             },
             "d\\theta": {
                 "name": "Infinitesimal Angular Displacement",
                 "type": "variable",
                 "unit": "rad",
-                "description": "The infinitesimal change in the angle of the position vector."
+                "description": "Differential change in the polar angle"
             }
         },
-        "interpretation": "In this equation, $dA$ is the infinitesimal area element swept by the position vector of an orbiting body. The variable $r$ represents the instantaneous radial distance from the central body, and $d\\theta$ is the infinitesimal angular displacement. The expression $\\frac{1}{2} r^2 d\\theta$ is the area of an infinitesimal sector, which is approximated as a triangle with height $r$ and base $r d\\theta$. The time derivative of this area, $\\frac{dA}{dt} = \\frac{1}{2} r^2 \\frac{d\\theta}{dt} = \\frac{1}{2} r^2 \\omega$, is the areal velocity. For a particle of mass $m$, the angular momentum is $L = m r^2 \\omega$. Thus, the areal velocity $\\frac{dA}{dt} = \\frac{L}{2m}$ is constant if and only if the angular momentum $L$ is conserved, which is true for any central force.",
-        "symmetry_origin": "The physical application of this geometric formula, leading to Kepler's Second Law (conservation of areal velocity), is a direct consequence of the conservation of angular momentum. By Noether's theorem, conservation of angular momentum arises from the rotational invariance (isotropy) of the system's Lagrangian, which holds true for any central potential $V(r)$ that depends only on radial distance and not on angle.",
-        "limits_and_boundary": "This formula is a purely geometric definition within polar coordinates and holds universally. In its physical application to orbital mechanics, it is typically used within the framework of classical, non-relativistic mechanics. The formula itself has no inherent physical limits; as $r \\to 0$ or $r \\to \\infty$, it remains geometrically valid, though the physical context of a stable orbit may no longer apply. The formula is independent of temperature, velocity approaching the speed of light, or quantum effects where $\\hbar$ would be relevant.",
+        "interpretation": "The quantity $dA$ represents the differential swept area element. The variable $r$ denotes the instantaneous radial distance from the coordinate origin, while $d\\theta$ signifies the infinitesimal angular displacement. Dividing by the differential time increment $dt$ establishes the areal velocity $\\frac{dA}{dt} = \\frac{1}{2} r^2 \\dot{\\theta} = \\frac{L}{2m}$, showing that areal velocity is strictly proportional to specific angular momentum.",
+        "symmetry_origin": "Rotational invariance ($SO(2)$ symmetry) of central-force systems implies conservation of canonical angular momentum $L = m r^2 \\dot{\\theta}$, which in turn guarantees a constant rate of swept area $\\frac{dA}{dt}$.",
+        "limits_and_boundary": "In the limit $r \\to 0$, the swept area vanishes identically ($dA \\to 0$). For purely radial trajectories ($d\\theta = 0$), $dA = 0$. For macroscopic finite sweeps over an interval $[\\theta_1, \\theta_2]$, the total area is given by the integral $A = \\frac{1}{2} \\int_{\\theta_1}^{\\theta_2} r(\\theta)^2 d\\theta$.",
         "status": "platinum",
-        "conceptual_definition": "The formula $dA = \\frac{1}{2} r^2 d\\theta$ represents the area of an infinitesimal triangular sector formed by a position vector $\\mathbf{r}$ of length $r$ that rotates through an infinitesimal angle $d\\theta$. This geometric relationship is fundamental to calculating the rate at which area is swept out by an orbiting body, known as the areal velocity.",
-        "intuitive_summary": "Imagine a planet orbiting the sun. In a tiny slice of time, it moves a tiny bit along its path. The area of the skinny triangle formed by the sun and the start and end points of this tiny movement is what this formula calculates. Kepler's Second Law states that the rate of sweeping out this area is constant because angular momentum is conserved.",
+        "conceptual_definition": "In two-dimensional polar coordinates $(r, \theta)$, the differential area $dA$ swept out by the position vector $\\mathbf{r}$ undergoing an angular displacement $d\\theta$ corresponds to the area of an infinitesimal circular sector or triangle with base $r d\\theta$ and height $r$, formulated as $dA = \\frac{1}{2} r^2 d\\theta$.",
+        "intuitive_summary": "As an object moves through an infinitesimal angle $d\\theta$, the region traced from the origin behaves like a slim triangle of height $r$ and arc base $r d\\theta$, producing an area equal to half their product.",
         "subcomponents": [
-            "equal-areas-92c56b86",
-            "keplers-second-law-identity-1-17c637cb-84277dbc",
-            "newtons-second-law-for-rotation-89e9c0ba",
-            "newtons-second-law-of-motion-33557d01"
+            "infinitesimal-area-element-in-polar-coordinates-ccc55d0f",
+            "areal-velocity-in-polar-coordinates-40ec8fe9",
+            "infinitesimal-arc-length-in-spherical-coordinates-d3b2ff8e"
         ],
-        "description": "Defines the infinitesimal area element swept by a position vector in polar coordinates, forming the geometric basis for deriving Kepler's Second Law of equal areas in equal times.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the differential triangular area element swept out by a planar radius vector, forming the geometric basis for Kepler's Second Law and the conservation of areal velocity.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "infinitesimal-area-element-in-polar-coordinates-ccc55d0f"
     },
     "rotating-core-48783b99": {
         "title": "Infinite Mass Density Limit in Gravitational Collapse",
@@ -1064,45 +1064,46 @@
     "perturbed-hamiltonian": {
         "title": "Perturbed Hamiltonian Decomposition",
         "equation": "\\hat{H} = \\hat{H}_0 + \\lambda \\hat{H}_1",
-        "conceptual_definition": "In quantum mechanics, many systems of interest are too complex to solve exactly. Perturbation theory provides a method to approximate solutions by starting with a simpler, solvable system (described by the unperturbed Hamiltonian, $\\hat{H}_0$) and adding a 'small' correction term (the perturbation, $\\lambda \\hat{H}_1$). This formula expresses the total Hamiltonian, $\\hat{H}$, as this decomposition, where $\\lambda$ is a small parameter controlling the strength of the perturbation.",
-        "intuitive_summary": "Imagine trying to calculate the exact path of a planet around the sun. A simple, solvable model would be a perfect two-body orbit. The perturbed Hamiltonian adds in the small gravitational tugs from all the other planets, which slightly alter the perfect orbit. This formula separates the 'perfect orbit' part ($\\hat{H}_0$) from the 'small tugs' part ($\\lambda \\hat{H}_1$).",
-        "interpretation": "In this equation, $\\hat{H}$ represents the total Hamiltonian operator of the system under consideration, encapsulating its total energy. The term $\\hat{H}_0$ is the unperturbed Hamiltonian, which describes a simpler, solvable version of the system whose eigenvalues and eigenstates are known. The symbol $\\lambda$ is a dimensionless parameter, often called the perturbation strength or coupling constant, which quantifies the relative magnitude of the perturbation. For perturbation theory to be valid, $\\lambda$ is assumed to be small (i.e., $\\lambda \\ll 1$). Finally, $\\hat{H}_1$ is the perturbation Hamiltonian, representing the additional term that slightly modifies the original system, such as an external field or inter-particle interaction not included in $\\hat{H}_0$. The goal of perturbation theory is to find the corrected energy levels and wavefunctions of $\\hat{H}$ by treating $\\lambda \\hat{H}_1$ as a small deviation from $\\hat{H}_0$.",
-        "symmetry_origin": "Not applicable. This is a mathematical decomposition used in approximation methods (perturbation theory), not a direct consequence of a physical symmetry or conservation law.",
-        "limits_and_boundary": "In the limit where the perturbation strength $\\lambda \\to 0$, the total Hamiltonian reduces to the unperturbed Hamiltonian, $\\hat{H} \\to \\hat{H}_0$, and the system becomes exactly solvable. The validity of perturbation theory relies on the condition that the energy corrections due to $\\lambda \\hat{H}_1$ are much smaller than the energy level separations of $\\hat{H}_0$. If $\\lambda$ is large, the perturbative series may not converge. In the classical limit where $\\hbar \\to 0$, the operators become classical functions ($H$, $H_0$, $H_1$), but the additive decomposition $H = H_0 + \\lambda H_1$ remains valid.",
+        "conceptual_definition": "The perturbed Hamiltonian decomposition expresses a complex quantum system's total Hamiltonian $\\hat{H}$ as an analytically solvable reference Hamiltonian $\\hat{H}_0$ plus a perturbative term $\\lambda \\hat{H}_1$. This formulation provides the mathematical foundation for Rayleigh-Schrödinger and Dyson perturbation series in quantum mechanics and quantum field theory.",
+        "intuitive_summary": "A complex quantum system is modeled as a known, solvable system slightly perturbed by an additional interaction or external field.",
+        "interpretation": "In this relation, $\\hat{H}$ denotes the total self-adjoint Hamiltonian operator acting on the system's Hilbert space $\\mathcal{H}$, governing total energy and unitary time evolution. The operator $\\hat{H}_0$ is the unperturbed Hamiltonian whose spectral decomposition (eigenvalues and eigenstates) is completely known. The dimensionless parameter $\\lambda \\in [0, 1]$ controls the perturbation strength, and $\\hat{H}_1$ is the perturbation Hamiltonian operator characterizing external potentials or inter-particle interactions.",
+        "symmetry_origin": "Governed by the breaking of continuous or discrete symmetries of $\\hat{H}_0$ due to the perturbation $\\lambda \\hat{H}_1$, altering the degeneracy of energy levels via Noether's theorem and representation theory.",
+        "limits_and_boundary": "In the limit $\\lambda \\to 0$, the system smoothly reduces to the exact unperturbed system $\\hat{H} = \\hat{H}_0$. As $\\lambda \\to 1$, the full interaction is realized. Perturbative series validity typically requires the matrix elements satisfying $|\\langle m|\\lambda \\hat{H}_1|n\\rangle| \\ll |E_n^{(0)} - E_m^{(0)}|$ for non-degenerate states.",
         "status": "platinum",
         "semantic_variables": {
             "\\hat{H}": {
                 "name": "Total Hamiltonian Operator",
                 "type": "operator",
                 "unit": "J",
-                "description": "The operator corresponding to the total energy of the quantum system."
+                "description": "The self-adjoint operator representing the total energy and time-evolution generator of the full quantum system."
             },
             "\\hat{H}_0": {
                 "name": "Unperturbed Hamiltonian Operator",
                 "type": "operator",
                 "unit": "J",
-                "description": "The Hamiltonian of a known, exactly solvable system that approximates the full system."
+                "description": "The baseline Hamiltonian operator with analytically known eigenstates and eigenvalues."
             },
             "\\lambda": {
-                "name": "Perturbation Strength Parameter",
+                "name": "Perturbation Scaling Parameter",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "A small, dimensionless parameter that controls the magnitude of the perturbation."
+                "unit": "dimensionless",
+                "description": "A continuous dimensionless coupling parameter tracking the order of the perturbation expansion."
             },
             "\\hat{H}_1": {
                 "name": "Perturbation Hamiltonian Operator",
                 "type": "operator",
                 "unit": "J",
-                "description": "An operator representing the perturbation or interaction term added to the unperturbed system."
+                "description": "The self-adjoint operator representing the perturbative interaction or deviation potential."
             }
         },
         "subcomponents": [
-            "total-energy-c05fe4ab",
-            "first-order-perturbation-hamiltonian-9510f800",
-            "many-body-electronic-hamiltonian"
+            "total-perturbed-hamiltonian-operator-013da2a0",
+            "interaction-hamiltonian",
+            "discrete-steps-fd98e072"
         ],
-        "description": "Defines the total Hamiltonian of a quantum system as the sum of a solvable, unperturbed Hamiltonian and a small, perturbative term, forming the basis of perturbation theory.",
-        "derivation_type": "DEFINITION"
+        "description": "Decomposes the total quantum Hamiltonian operator into an exactly solvable baseline operator and a small perturbative interaction parameterized by a coupling constant.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "total-energy-c05fe4ab"
     },
     "four-current-no-free-current": {
         "title": "Four-Current Density for a Stationary Charge Distribution",

@@ -218,62 +218,56 @@
         "equation": "\\mathrm{d}f = \\sum_{i=1}^{n} \\frac{\\partial f}{\\partial x_i} \\mathrm{d}x_i",
         "semantic_variables": {
             "\\mathrm{d}f": {
-                "name": "Total Differential of f",
+                "name": "total differential",
                 "type": "variable",
-                "unit": "Unit of f",
-                "description": "The principal linear part of the total change in the function $f$."
+                "unit": "dimensionless or [f]",
+                "description": "Total infinitesimal change or differential 1-form of the function f"
             },
             "f": {
-                "name": "Scalar Function",
+                "name": "multivariable scalar function",
                 "type": "variable",
-                "unit": "Depends on context",
-                "description": "A differentiable scalar function of $n$ independent variables."
+                "unit": "dimensionless or [f]",
+                "description": "Continuously differentiable scalar field over n-dimensional domain"
             },
             "x_i": {
-                "name": "Independent Variable",
+                "name": "independent coordinate variable",
                 "type": "variable",
-                "unit": "Depends on context",
-                "description": "The i-th independent variable of the function $f$."
+                "unit": "[x_i]",
+                "description": "i-th coordinate component in configuration or state space"
+            },
+            "\\frac{\\partial f}{\\partial x_i}": {
+                "name": "partial derivative",
+                "type": "operator",
+                "unit": "[f] [x_i]^-1",
+                "description": "First partial derivative of f with respect to the i-th coordinate"
             },
             "\\mathrm{d}x_i": {
-                "name": "Infinitesimal Change",
+                "name": "coordinate differential",
                 "type": "variable",
-                "unit": "Unit of x_i",
-                "description": "An infinitesimal change in the i-th independent variable $x_i$."
-            },
-            "\\frac{\\partial}{\\partial x_i}": {
-                "name": "Partial Derivative Operator",
-                "type": "operator",
-                "unit": "Unit of f / Unit of x_i",
-                "description": "The operator that computes the rate of change of a function with respect to the variable $x_i$, holding all other variables constant."
+                "unit": "[x_i]",
+                "description": "Dual basis 1-form or infinitesimal displacement along the i-th coordinate"
             },
             "n": {
-                "name": "Dimensionality",
-                "type": "variable",
+                "name": "dimension of domain",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "The number of independent variables of the function $f$."
-            },
-            "\\sum": {
-                "name": "Summation Operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "Sums the terms from $i=1$ to $n$."
+                "description": "Total number of independent variables"
             }
         },
-        "interpretation": "The total differential $\\mathrm{d}f$ represents the principal linear part of the change in a function $f(x_1, \\dots, x_n)$ when its independent variables $x_i$ are changed by infinitesimal amounts $\\mathrm{d}x_i$. Each term in the sum, $(\\partial f / \\partial x_i) \\mathrm{d}x_i$, is the approximate change in $f$ due solely to the change in $x_i$. The partial derivative $\\partial f / \\partial x_i$ acts as a sensitivity factor or slope, quantifying the rate of change of $f$ along the $x_i$ coordinate axis. Summing these individual contributions gives the best linear approximation for the total change in the function in the neighborhood of a point. In the language of differential geometry, $f$ is a scalar field (a 0-form), and its total differential $\\mathrm{d}f$ is the corresponding differential 1-form, also known as the exterior derivative of $f$.",
-        "symmetry_origin": "The concept of the total differential arises from the geometric property of differentiability on manifolds. It represents the local linearization of a function, effectively approximating the curved graph of the function with its tangent plane (or hyperplane) at a point. This local 'flatness' is a fundamental geometric invariance that allows the methods of linear algebra to be applied to the study of differentiable functions.",
-        "limits_and_boundary": "This formula provides an exact relationship for infinitesimal changes $\\mathrm{d}x_i$. For finite changes $\\Delta x_i$, the total change in the function, $\\Delta f$, is given by the integral of the total differential along a path. The expression on the right-hand side is the first-order term in the Taylor series expansion of the function $f$ around a point. Therefore, it serves as an excellent approximation for $\\Delta f$ as long as the changes $\\Delta x_i$ are small, i.e., in the limit where all $\\Delta x_i \\to 0$.",
+        "interpretation": "The quantity $\\mathrm{d}f$ denotes the differential 1-form or total infinitesimal change of the scalar field $f(x_1, \\dots, x_n)$. The indices $i \\in \\{1, \\dots, n\\}$ label the independent spatial or configuration-space coordinates $x_i$. The terms $\\frac{\\partial f}{\\partial x_i}$ are the first-order partial derivatives representing directional gradients along the basis vectors, while $\\mathrm{d}x_i$ denotes the dual basis 1-forms (infinitesimal coordinate increments).",
+        "symmetry_origin": "General coordinate diffeomorphism invariance; the total differential is a coordinate-free differential geometric operation satisfying the nilpotent exterior derivative property $\\mathrm{d}^2 = 0$ (Poincaré lemma).",
+        "limits_and_boundary": "In the limit of infinitesimal displacements $\\Delta x_i \\to 0$, the approximation $\\Delta f \\approx \\mathrm{d}f$ becomes exact up to higher-order error terms $\\mathcal{O}(\\|\\Delta \\mathbf{x}\\|^2)$. For non-differentiable points or discontinuous partial derivatives, the linear differential structure breaks down.",
         "status": "platinum",
-        "conceptual_definition": "The total differential $\\mathrm{d}f$ of a differentiable function $f(x_1, x_2, \\dots, x_n)$ is the best linear approximation of the change in $f$ at a given point. It is defined as the sum of the partial derivatives of $f$ with respect to each variable $x_i$, with each partial derivative multiplied by the corresponding infinitesimal change $\\mathrm{d}x_i$ in that variable.",
-        "intuitive_summary": "Imagine you are on a hilly landscape described by an altitude function $f(x, y)$. To find your total change in altitude for a tiny step, you add the change from moving a little bit east-west (proportional to the east-west slope) to the change from moving a little bit north-south (proportional to the north-south slope). The total differential is the mathematical rule for summing these contributions in any number of dimensions.",
+        "conceptual_definition": "For a continuously differentiable real-valued function $f: \\mathbb{R}^n \to \\mathbb{R}$, the total differential $\\mathrm{d}f$ represents the exterior derivative of the 0-form $f$, yielding a differential 1-form defined by the linear combination $\\mathrm{d}f = \\sum_{i=1}^{n} \\frac{\\partial f}{\\partial x_i} \\mathrm{d}x_i$. In geometric terms, it maps tangent vectors to directional directional rates of change and defines the tangent hyperplane to the graph of $f$.",
+        "intuitive_summary": "The total change in a multivariable quantity when moving in an arbitrary direction is equal to the sum of the independent contributions from each coordinate axis, each weighted by the local slope in that direction.",
         "subcomponents": [
+            "partial-derivative-operator-f66648e4",
+            "partial-derivative-component-8b10b9bc",
             "upright-math-font-convention-527d6b7c",
-            "total-differential-identity-1-ef9866b2-bc494d06",
-            "total-differential-lagrangian",
-            "total-differential-hamiltonian"
+            "total-differential-identity-1-ef9866b2-bc494d06"
         ],
-        "description": "A fundamental rule of calculus that expresses the total infinitesimal change of a multivariable function as the sum of its changes along each independent coordinate direction.",
-        "derivation_type": "DEFINITION"
+        "description": "Fundamental mathematical relation expressing the principal linear infinitesimal variation of a differentiable multivariable scalar field as the sum of partial variations along each coordinate basis direction.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "technical-relation-cc055e7b": {
         "title": "Incompressibility of Phase Space Flow (Liouville's Theorem)",

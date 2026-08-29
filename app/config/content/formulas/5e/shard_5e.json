@@ -454,59 +454,60 @@
         ]
     },
     "internal-sum-80f72d94": {
-        "title": "Definition of Divergence (Coordinate-Free)",
+        "title": "Coordinate-Free Geometric Definition of Divergence",
         "equation": "\\nabla \\cdot \\mathbf{V} = \\lim_{\\Delta V \\to 0} \\frac{1}{\\Delta V}\\oint \\mathbf{V} \\cdot d\\mathbf{a}",
         "semantic_variables": {
-            "\\nabla \\cdot": {
-                "name": "Divergence Operator",
-                "type": "operator",
-                "unit": "1/m",
-                "description": "Measures the magnitude of a vector field's source or sink at a given point."
+            "\\nabla \\cdot \\mathbf{V}": {
+                "name": "Divergence of the vector field",
+                "type": "variable",
+                "unit": "m^{-1} \\cdot [V]",
+                "description": "Scalar source density representing the local flux expansion per unit volume."
             },
             "\\mathbf{V}": {
-                "name": "Vector Field",
+                "name": "Vector field",
                 "type": "variable",
-                "unit": "[Varies]",
-                "description": "A vector-valued function of position in space, e.g., velocity field, electric field."
-            },
-            "\\lim_{\\Delta V \\to 0}": {
-                "name": "Limit",
-                "type": "operator",
-                "unit": "unitless",
-                "description": "Operator that evaluates the expression as the volume element approaches zero."
+                "unit": "[V]",
+                "description": "Continuously differentiable vector field defined on the spatial domain."
             },
             "\\Delta V": {
-                "name": "Volume Element",
+                "name": "Enclosed volume element",
                 "type": "variable",
                 "unit": "m^3",
-                "description": "An infinitesimal volume enclosing the point at which divergence is being calculated."
-            },
-            "\\oint": {
-                "name": "Closed Surface Integral",
-                "type": "operator",
-                "unit": "unitless",
-                "description": "Integral over a closed, orientable surface."
+                "description": "Volume of the spatial region enclosing the evaluation point."
             },
             "d\\mathbf{a}": {
-                "name": "Area Element Vector",
+                "name": "Differential surface area vector",
                 "type": "variable",
                 "unit": "m^2",
-                "description": "An infinitesimal vector representing a patch of surface area, with direction normal to the surface and pointing outward."
+                "description": "Outward-pointing normal differential area element on the boundary surface."
+            },
+            "\\oint": {
+                "name": "Closed surface integral",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Integration operator over the closed boundary surface bounding volume $\\Delta V$."
+            },
+            "\\lim_{\\Delta V \\to 0}": {
+                "name": "Volume contraction limit",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Limiting process shrinking the enclosing volume continuously to an infinitesimal point."
             }
         },
-        "interpretation": "The left side of the equation, $\\nabla \\cdot \\mathbf{V}$, represents the divergence operator acting on a vector field $\\mathbf{V}$. The right side provides the formal definition of this operation. Here, $\\mathbf{V}$ is a differentiable vector field, a function of position such as $\\mathbf{V}(x, y, z)$. The term $\\oint \\mathbf{V} \\cdot d\\mathbf{a}$ is the surface integral of $\\mathbf{V}$ over a closed surface, representing the total flux of the field flowing out of that surface. The vector $d\\mathbf{a}$ is an infinitesimal area element, with its direction normal to the surface and pointing outward. $\\Delta V$ is the volume enclosed by this closed surface. The limit $\\Delta V \\to 0$ signifies that we are shrinking this volume down to an infinitesimal point. Therefore, the divergence $\\nabla \\cdot \\mathbf{V}$ measures the net outward flux per unit volume at a specific point in space. A positive value indicates a source, a negative value indicates a sink, and a value of zero signifies a solenoidal or incompressible field at that point.",
-        "symmetry_origin": "This is a fundamental geometric definition from vector calculus. It is not derived from a symmetry via Noether's theorem, but it is the essential mathematical tool used to express local conservation laws, such as the conservation of electric charge or mass, in a differential (point-wise) form.",
-        "limits_and_boundary": "This definition is valid for any vector field $\\mathbf{V}$ that is continuously differentiable ($C^1$) in the region of interest. If the field has discontinuities or singularities (e.g., at the location of a point charge), the divergence may become infinite or require description in terms of distributions like the Dirac delta function, as seen in $\\nabla \\cdot (\\hat{\\mathbf{r}}/r^2) = 4\\pi \\delta^3(\\mathbf{r})$.",
+        "interpretation": "The left-hand side, $\\nabla \\cdot \\mathbf{V}$, represents the divergence scalar field evaluated at a point in space. On the right-hand side, the closed surface integral $\\oint \\mathbf{V} \\cdot d\\mathbf{a}$ evaluates the total outward flux passing through the boundary surface $\\partial (\\Delta V)$, where $d\\mathbf{a} = \\hat{\\mathbf{n}} \\, da$ is the outward-directed differential area normal. The denominator $\\Delta V$ represents the measure of the enclosed volume. The limit $\\Delta V \\to 0$ contracts the bounding boundary onto the point of interest, extracting the point-source density.",
+        "symmetry_origin": "General covariance and coordinate invariance under orthogonal rotations and spatial translations ($SO(3) \\ltimes \\mathbb{R}^3$).",
+        "limits_and_boundary": "In the limit of a finite volume $\\Delta V > 0$, the expression provides the mean divergence theorem approximation. For a singularity such as a point source $\\mathbf{V} = \\hat{\\mathbf{r}} / r^2$, the limit yields the distribution $4\\pi \\delta^3(\\mathbf{r})$.",
         "status": "platinum",
-        "conceptual_definition": "The divergence of a vector field $\\mathbf{V}$ at a point is a scalar quantity that measures the magnitude of the field's source (positive divergence) or sink (negative divergence) at that point. It is formally defined as the net outward flux of the field through an infinitesimally small closed surface, divided by the volume enclosed by that surface.",
-        "intuitive_summary": "Imagine a tiny, imaginary sphere placed in a flowing medium. The divergence at the center of the sphere quantifies whether the medium is being created (a source), destroyed (a sink), or simply flowing through at that exact point. It's a local measure of how much a vector field 'spreads out'.",
-        "description": "This equation provides the fundamental, coordinate-independent definition of the divergence of a vector field, which measures the local source strength or 'outflow' per unit volume.",
+        "conceptual_definition": "The divergence $\\nabla \\cdot \\mathbf{V}$ of a smooth vector field $\\mathbf{V}$ at a point is the scalar limit of the ratio of the surface integral (net outward flux) of $\\mathbf{V}$ over the boundary of an enclosed domain to the volume $\\Delta V$ of that domain as $\\Delta V \\to 0$. This coordinate-free formulation expresses the local rate of volumetric source or sink density independently of any specific curvilinear basis.",
+        "intuitive_summary": "Imagine a microscopic fluid parcel; divergence measures how much fluid emerges from or disappears into that point per second per unit volume.",
+        "description": "Defines the divergence of a vector field intrinsically as the net outward flux per unit volume in the limit where the enclosing volume shrinks to zero.",
         "derivation_type": "DEFINITION",
         "subcomponents": [
-            "gausss-law-for-electric-fields-5a2fad74",
-            "the-4pi-factor-d171f17c",
-            "friction-source-f3ff6185"
-        ]
+            "boundary-rule-ee997d0c",
+            "divergence-operator-law-e0e63b59",
+            "the-4pi-factor-d171f17c"
+        ],
+        "parent_formula_id": "inside-to-outside-ff1d782c"
     },
     "the-truncation-rule-ae627d18": {
         "title": "Orthonormality Condition for Discrete Basis States",

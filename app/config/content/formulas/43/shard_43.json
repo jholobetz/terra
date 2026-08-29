@@ -213,52 +213,40 @@
                 "name": "Relative Variance",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A measure of the statistical fluctuation or 'graininess' in a discretely sampled quantity, relative to its mean value. Also known as shot noise power."
+                "description": "Fractional variance or shot noise power of the discrete weighted distribution"
             },
             "n_i": {
-                "name": "Number of Elements",
+                "name": "Bin Occupancy Count",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The count of discrete elements (e.g., particles, galaxies, photons) in the i-th category or bin."
+                "description": "Number of discrete tracers in the $i$-th bin"
             },
             "L_i": {
-                "name": "Weighting Factor",
+                "name": "Tracer Weight / Luminosity",
                 "type": "variable",
-                "unit": "context-dependent",
-                "description": "A characteristic weight associated with the i-th category of elements, such as luminosity, mass, or energy."
-            },
-            "\\sum": {
-                "name": "Summation Operator",
-                "type": "operator",
-                "unit": "n/a",
-                "description": "Sums the expression over all discrete indices 'i'."
+                "unit": "W",
+                "description": "Characteristic weighting factor or luminosity of an individual tracer in category $i$"
             },
             "d": {
-                "name": "Characteristic Separation Distance",
+                "name": "Characteristic Distance Scale",
                 "type": "variable",
                 "unit": "m",
-                "description": "The average distance between the discrete elements in the distribution. The inverse square dependence is typical for shot noise in a 3D volume."
-            },
-            "\\propto": {
-                "name": "Proportionality Operator",
-                "type": "operator",
-                "unit": "n/a",
-                "description": "Indicates that the left-hand side is directly proportional to the right-hand side, differing only by a constant factor."
+                "description": "Mean separation scale between discrete sampling elements"
             }
         },
-        "interpretation": "$\\sigma^2$: The relative variance of the distribution, a dimensionless measure of its 'graininess' or shot noise power. $n_i$: The number of discrete elements (e.g., particles, galaxies) in the $i$-th bin or category, which is a dimensionless count. $L_i$: A characteristic weighting factor for the $i$-th category, such as luminosity or mass, with units specific to the physical context. $\\sum n_i L_i^2$: The numerator, representing the weighted second moment of the distribution. $(\\sum n_i L_i)^2$: The denominator, representing the square of the total weighted signal, or the squared first moment. $\\propto$: The proportionality symbol. $d$: A characteristic distance scale, typically the average separation between the discrete elements. The $1/d^2$ scaling is characteristic of shot noise in a 3D volume, where the number of tracers per unit volume scales as $1/d^3$.",
-        "symmetry_origin": "Statistical homogeneity and isotropy. The formula's proportionality to $1/d^2$ relies on the assumption that the discrete tracers are, on average, distributed uniformly throughout the volume, allowing for a well-defined mean separation distance $d$.",
-        "limits_and_boundary": "In the continuum limit, where the number of tracers $N = \\sum n_i \\to \\infty$, the mean separation $d \\to 0$, causing the relative variance $\\sigma^2 \\to 0$. This signifies that shot noise vanishes with infinitely dense sampling. Conversely, for a very sparse sample where $N$ is small and $d$ is large, $\\sigma^2$ becomes large, indicating the measurement is dominated by discreteness effects.",
+        "interpretation": "$\\sigma^2$: The dimensionless relative variance or fractional shot noise power. $n_i$: The number of discrete tracers in the $i$-th luminosity bin. $L_i$: The weight or luminosity of individual tracers in the $i$-th bin, with units depending on the physical context (e.g., $\\text{W}$ or $\\text{kg}$). $\\sum n_i L_i^2$: The variance contribution from Poisson fluctuations across all bins. $(\\sum n_i L_i)^2$: The square of the total expected signal. $d$: The characteristic spatial separation scale between discrete tracers.",
+        "symmetry_origin": "Statistical translational and rotational invariance of homogeneous Poisson point processes under spatial coarse-graining.",
+        "limits_and_boundary": "In the continuum limit where tracer number $N = \\sum n_i \\to \\infty$ and tracer weight $L_i \\to 0$ with $\\sum n_i L_i = \\text{const}$, the relative variance approaches zero ($\\sigma^2 \\to 0$). In the sparse limit where $d \\to \\infty$ (or $N \\to 1$), the relative variance approaches unity ($\\sigma^2 \\to 1$) for identical sources.",
         "status": "platinum",
-        "conceptual_definition": "The relative variance, $\\sigma^2$, of a quantity sampled by a discrete set of tracers is defined as the ratio of the weighted second moment of the distribution, $\\sum n_i L_i^2$, to the square of the weighted first moment, $(\\sum n_i L_i)^2$. This 'graininess' is a manifestation of shot noise and is typically found to be inversely proportional to the square of the mean separation distance between tracers, $d$, such that $\\sigma^2 \\propto 1/d^2$.",
-        "intuitive_summary": "Imagine estimating the average color of a sandy beach from a small photo. If the photo shows only a few grains of sand (large separation $d$), your estimate might be skewed by a few odd-colored grains (high variance $\\sigma^2$). If the photo is a close-up of millions of grains (small $d$), the individual variations average out, yielding a more accurate estimate (low $\\sigma^2$). This formula shows that this 'graininess' decreases as the sampling becomes denser.",
-        "description": "Quantifies the relative variance ($\\sigma^2$), or 'shot noise', arising from sampling a continuous field with discrete tracers, which scales inversely with the number density of tracers.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "The relative variance $\\sigma^2$ measures the fractional statistical fluctuation in the total intensity of a field sampled by discrete Poissonian sources. It is defined as the ratio of the second moment of the weighted counts $\\sum n_i L_i^2$ to the square of the total first moment $(\\sum n_i L_i)^2$. For a spatial distribution of tracers with mean separation $d$, the shot noise power scales geometrically as $\\sigma^2 \\propto 1/d^2$ (or inversely with the projected surface/number density).",
+        "intuitive_summary": "When viewing a smooth light distribution through individual discrete light bulbs, the apparent graininess or fractional noise drops as the number of bulbs increases and their average spacing decreases.",
+        "description": "Quantifies the fractional variance (shot noise power) that arises when a continuous field is sampled by discrete weighted tracers, scaling inversely with the effective number density of the tracers.",
+        "derivation_type": "SPECIAL_CASE",
         "subcomponents": [
-            "source-summation-96387421",
-            "averaging-rule-257a37f8",
+            "statistical-variance-10e16c6a",
             "sum-probabilities-one"
-        ]
+        ],
+        "parent_formula_id": "frequentist-rule-90debdf9"
     },
     "density-map-49cb28f4": {
         "title": "Gravitational Lensing Characteristic Angular Deflection",
@@ -1408,51 +1396,52 @@
     "maximum-principle-harmonic-identity-1-763c0578-9b983def": {
         "title": "Maximum Principle for Harmonic Functions",
         "equation": "\\nabla^2 \\Phi(\\mathbf{r}) = 0 \\implies \\Phi(\\mathbf{r}) \\le \\max_{\\partial U} \\Phi",
-        "interpretation": "The expression $\\nabla^2 \\Phi(\\mathbf{r}) = 0 \\implies \\Phi(\\mathbf{r}) \\le \\max_{\\partial U} \\Phi$ states that if a scalar field $\\Phi(\\mathbf{r})$ is harmonic (its Laplacian $\\nabla^2 \\Phi$ is zero) inside a region $U$, then the value of $\\Phi$ at any interior point $\\mathbf{r}$ cannot exceed the absolute maximum value that $\\Phi$ attains on the boundary $\\partial U$. A corresponding minimum principle also holds: $\\Phi(\\mathbf{r}) \\ge \\min_{\\partial U} \\Phi$. This property is a cornerstone of potential theory and guarantees the uniqueness of solutions to Poisson's and Laplace's equations with specified boundary conditions.",
-        "symmetry_origin": "The principle is not a direct consequence of a physical symmetry via Noether's theorem, but rather a core mathematical property of elliptic partial differential equations. The Laplacian operator $\\nabla^2$ itself is invariant under translations and rotations, reflecting the homogeneity and isotropy of Euclidean space, and this geometric invariance is fundamental to the nature of its solutions.",
-        "limits_and_boundary": "The Maximum Principle as stated applies to bounded domains $U$. For unbounded domains, additional constraints are required. For instance, in 3D electrostatics, if we consider the space outside a charged object, we typically require that the potential $\\Phi(\\mathbf{r})$ vanishes as $|\\mathbf{r}| \\to \\infty$. This condition at infinity acts as a boundary condition that allows a modified version of the principle to hold, ensuring the potential outside the object is bounded by the values on its surface and at infinity.",
+        "interpretation": "In the relation $\nabla^2 \\Phi(\\mathbf{r}) = 0 \\implies \\Phi(\\mathbf{r}) \\le \\max_{\\partial U} \\Phi$, the operator $\nabla^2$ denotes the spatial Laplacian acting on the potential field $\\Phi(\\mathbf{r})$. The statement establishes an upper bound on $\\Phi$ at any interior coordinate $\\mathbf{r} \\in U$ dictated strictly by the supremum of $\\Phi$ evaluated over the boundary manifold $\\partial U$. Applying the principle to $-\\Phi(\\mathbf{r})$ yields the dual minimum principle $\\Phi(\\mathbf{r}) \\ge \\min_{\\partial U} \\Phi$, confirming that all extrema reside on the boundary $\\partial U$.",
+        "symmetry_origin": "Originates from the rotational and translational invariance of the Laplace operator $\nabla^2 = \\delta^{ij} \\partial_i \\partial_j$ in Euclidean space $\\mathbb{R}^n$, which underpins the mean value property and isotropic averaging of harmonic fields.",
+        "limits_and_boundary": "When boundary values are uniform ($\\Phi|_{\\partial U} = \\Phi_0$), the potential collapses identically to the constant $\\Phi(\\mathbf{r}) = \\Phi_0$ everywhere in $U$. For unbounded domains extending to spatial infinity, the principle holds provided $\\lim_{|\\mathbf{r}| \to \\infty} \\Phi(\\mathbf{r})$ exists and regular decay conditions are imposed.",
         "semantic_variables": {
             "\\nabla^2": {
-                "name": "Laplace Operator",
+                "name": "Laplace operator",
                 "type": "operator",
-                "unit": "m⁻²",
-                "description": "The divergence of the gradient of a scalar field, $\\nabla \\cdot \\nabla$. It measures the local concavity of the field."
+                "unit": "m^{-2}",
+                "description": "Second-order spatial differential divergence of the gradient"
             },
             "\\Phi": {
-                "name": "Scalar Potential Field",
+                "name": "Harmonic scalar potential",
                 "type": "variable",
-                "unit": "Volts",
-                "description": "A harmonic scalar field, such as the electrostatic potential in a charge-free region, or temperature in steady-state heat conduction."
+                "unit": "V",
+                "description": "Continuous scalar field satisfying Laplace's equation in the interior domain"
             },
             "\\mathbf{r}": {
-                "name": "Position Vector",
+                "name": "Position vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "A vector representing a point in the domain $U$ or on its boundary $\\partial U$."
+                "description": "Spatial coordinate vector within domain U"
+            },
+            "U": {
+                "name": "Interior spatial domain",
+                "type": "variable",
+                "unit": "m^3",
+                "description": "Bounded connected open region in Euclidean space"
             },
             "\\partial U": {
-                "name": "Boundary of Domain U",
+                "name": "Domain boundary",
                 "type": "variable",
-                "unit": "N/A",
-                "description": "The closed surface (in 3D) or curve (in 2D) that encloses the open domain $U$."
-            },
-            "\\max": {
-                "name": "Maximum Operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "An operator that finds the maximum value of a function over a given set or domain."
+                "unit": "m^2",
+                "description": "Topological boundary manifold enclosing the open domain U"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "For a scalar function $\\Phi(\\mathbf{r})$ that is harmonic (i.e., satisfies Laplace's equation, $\\nabla^2 \\Phi = 0$) within a bounded, open domain $U \\subset \\mathbb{R}^n$, and is continuous on its closure $\\bar{U}$, the maximum value of $\\Phi$ in $\\bar{U}$ is achieved on the boundary $\\partial U$. Formally, $\\max_{\\mathbf{r} \\in \\bar{U}} \\Phi(\\mathbf{r}) = \\max_{\\mathbf{r} \\in \\partial U} \\Phi(\\mathbf{r})$. This implies that for any point $\\mathbf{r}$ in the interior of $U$, $\\Phi(\\mathbf{r}) \\le \\max_{\\partial U} \\Phi$.",
-        "intuitive_summary": "Imagine a perfectly stretched, massless membrane (like a drumhead) fixed to a non-flat frame. The height of the membrane represents a harmonic function. The Maximum Principle is the simple observation that the highest and lowest points of the membrane must lie on the frame itself, not somewhere in the middle, as there are no forces to create peaks or valleys in the interior.",
+        "conceptual_definition": "Let $U \\subset \\mathbb{R}^n$ be a bounded, connected open domain with boundary $\\partial U$, and let $\\Phi \\in C^2(U) \\cap C(\bar{U})$ satisfy Laplace's equation $\nabla^2 \\Phi(\\mathbf{r}) = 0$ throughout $U$. The weak maximum principle establishes that $\\max_{\bar{U}} \\Phi(\\mathbf{r}) = \\max_{\\partial U} \\Phi$. Furthermore, by the strong maximum principle, if there exists a point $\\mathbf{r}_0 \\in U$ such that $\\Phi(\\mathbf{r}_0) = \\max_{\bar{U}} \\Phi$, then the scalar potential $\\Phi(\\mathbf{r})$ is identically constant across the entire closure $\bar{U}$.",
+        "intuitive_summary": "Because a harmonic function satisfies the mean value property, its value at any point equals the average over any surrounding sphere; therefore, it cannot be strictly greater or smaller than all surrounding points. In physics, this forbids stable electrostatic equilibrium in vacuum (Earnshaw's theorem) and ensures absolute uniqueness of electrostatic and steady-state thermal field solutions.",
         "subcomponents": [
-            "laplaces-equation-for-scalar-potential-03aa8511",
-            "the-2nd-identity-919acdae",
-            "nabla-vector-identity-011a21f1"
+            "mean-value-property-harmonic-functions",
+            "smoothing-property-458dc799",
+            "poissons-equation-for-scalar-potential-e0595b6d"
         ],
-        "description": "A fundamental theorem stating that a non-constant harmonic function, defined on a bounded domain, must attain its maximum and minimum values on the boundary of that domain, not in its interior.",
-        "derivation_type": "DERIVED_FROM"
+        "description": "A fundamental theorem of potential theory asserting that a real-valued harmonic function on a connected bounded domain attains its extrema exclusively on the boundary, precluding strict local maxima or minima within the interior.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "mean-value-property-harmonic-functions"
     },
     "action-lagrangian-density-1": {
         "title": "Action Functional in Relativistic Field Theory",

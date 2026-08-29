@@ -136,59 +136,54 @@
         ]
     },
     "math-symmetry-e1148da8": {
-        "title": "Unitary Time-Evolution Operator",
+        "title": "Unitary Time-Evolution Operator for Time-Independent Hamiltonians",
         "equation": "U(t) = e^{-iHt/\\hbar} \\quad (\\text{Unitary Evolution})",
         "semantic_variables": {
             "U(t)": {
-                "name": "Unitary Time-Evolution Operator",
+                "name": "Time-Evolution Operator",
                 "type": "operator",
-                "unit": "Dimensionless",
-                "description": "An operator that evolves a quantum state through a time interval $t$."
-            },
-            "e": {
-                "name": "Euler's Number",
-                "type": "constant",
-                "unit": "Dimensionless",
-                "description": "The base of the natural logarithm, used here as the base of the exponential function."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "Dimensionless",
-                "description": "The imaginary unit, satisfying $i^2 = -1$."
+                "unit": "dimensionless",
+                "description": "Unitary operator acting on Hilbert space to propagate quantum states through time $t$"
             },
             "H": {
                 "name": "Hamiltonian Operator",
                 "type": "operator",
                 "unit": "J",
-                "description": "The total energy operator of the system. For a time-independent Hamiltonian, its eigenvalues are the possible energy levels."
+                "description": "Self-adjoint observable corresponding to the total energy of the system"
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The time interval over which the system evolves."
+                "description": "Elapsed duration of continuous time evolution"
             },
             "\\hbar": {
                 "name": "Reduced Planck Constant",
                 "type": "constant",
-                "unit": "J·s",
-                "description": "A fundamental constant in quantum mechanics, equal to the Planck constant divided by $2\\pi$."
+                "unit": "J*s",
+                "description": "Fundamental quantum of action setting the scale of phase evolution"
+            },
+            "i": {
+                "name": "Imaginary Unit",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Standard imaginary unit satisfying $i^2 = -1$"
             }
         },
-        "interpretation": "The equation $U(t) = e^{-iHt/\\hbar}$ defines the unitary time-evolution operator $U(t)$. When applied to an initial quantum state $|\\Psi(0)\rangle$, it yields the state at a later time $t$ as $|\\Psi(t)\rangle = U(t)|\\Psi(0)\rangle$. Here, $H$ is the Hamiltonian operator, which represents the total energy of the system and dictates its dynamics. The time $t$ is the duration over which the evolution occurs. The imaginary unit $i$ ensures that the exponential operator is unitary ($U^\\dagger(t) U(t) = I$), which is crucial for preserving the normalization of the quantum state and, consequently, the conservation of probability. The reduced Planck constant $\\hbar$ is a fundamental constant that provides the characteristic scale for quantum phenomena, connecting energy and time in the dimensionless exponent $-iHt/\\hbar$.",
-        "symmetry_origin": "This operator is the quantum mechanical generator of time translations. Its existence is a direct consequence of time-translation symmetry in physics, which, by Noether's theorem, implies the conservation of energy. The Hamiltonian $H$ is the conserved quantity (the generator) associated with this symmetry.",
-        "limits_and_boundary": "In the limit of zero time evolution, $t \to 0$, the operator becomes the identity operator, $U(0) = e^0 = I$, meaning the state is unchanged. This formula is valid for a time-independent Hamiltonian $H$. If $H$ depends on time, $H(t)$, the solution becomes a time-ordered exponential, $U(t) = \\mathcal{T}e^{-\frac{i}{\\hbar}\\int_0^t H(t') dt'}$. In the classical limit as $\\hbar \to 0$, the phase factor $e^{-iHt/\\hbar}$ oscillates infinitely rapidly, causing destructive interference for all but the classical path of stationary action.",
+        "interpretation": "In the relation $U(t) = e^{-iHt/\\hbar}$, the object $U(t)$ is the unitary time-evolution operator. The symbol $H$ denotes the self-adjoint (Hermitian) Hamiltonian operator representing the total energy of the closed system. The parameter $t$ denotes the elapsed time parameter ($t \\in \\mathbb{R}$). The imaginary unit $i$ ensures that because $H = H^\\dagger$, the operator exponential satisfies $U(t)^\\dagger U(t) = e^{iHt/\\hbar} e^{-iHt/\\hbar} = I$, establishing strict unitarity. The reduced Planck constant $\\hbar$ scales the physical energy-time product into a dimensionless operator exponent.",
+        "symmetry_origin": "Continuous time-translation symmetry governed by Noether's theorem and Stone's theorem on one-parameter unitary groups, identifying the Hamiltonian $H$ as the self-adjoint generator of temporal translations.",
+        "limits_and_boundary": "As $t \\to 0$, $U(t) \\to I$ linearly as $I - \\frac{iHt}{\\hbar} + \\mathcal{O}(t^2)$. In the semiclassical limit $\\hbar \\to 0$, quantum phase oscillations rapidly decorrelate, reproducing classical trajectories via the stationary phase approximation of the path integral. For time-dependent Hamiltonians $H(t)$, this exponential generalizes to the Dyson time-ordered product $\\mathcal{T}\\exp\\left(-\\frac{i}{\\hbar}\\int_0^t H(t')dt'\\right)$.",
         "status": "platinum",
-        "conceptual_definition": "The unitary time-evolution operator, $U(t)$, is the formal solution to the time-dependent Schrödinger equation for a system whose Hamiltonian operator $H$ does not explicitly depend on time. It acts on a quantum state $|\\Psi(t_0)\rangle$ to yield the state $|\\Psi(t)\rangle$ at a later time $t$ via the transformation $|\\Psi(t)\rangle = U(t-t_0)|\\Psi(t_0)\rangle$. Its unitarity, $U^\\dagger(t) U(t) = I$, guarantees that the total probability is conserved throughout the evolution.",
-        "intuitive_summary": "Think of the unitary evolution operator $U(t)$ as the 'quantum fast-forward button'. It takes the complete description of a quantum system at one moment and perfectly calculates what it will look like at any future time, assuming the system is left alone. It does this by rotating the state vector in an abstract space (Hilbert space) without changing its length, which is equivalent to preserving all probabilities.",
+        "conceptual_definition": "The time-evolution operator $U(t) = e^{-iHt/\\hbar}$ is the formal solution to the operator differential equation $i\\hbar \\frac{d}{dt}U(t) = H U(t)$ with the initial condition $U(0) = I$. It maps any initial state $|\\Psi(0)\\rangle$ on a Hilbert space $\\mathcal{H}$ to its state at a subsequent time $t$ via $|\\Psi(t)\\rangle = U(t)|\\Psi(0)\\rangle$, preserving the inner product and total probability across time.",
+        "intuitive_summary": "In quantum mechanics, time evolution acts as a continuous rotation in Hilbert space, where the total energy operator (the Hamiltonian) serves as the infinitesimal generator of translations in time.",
         "subcomponents": [
-            "quantum-time-evolution-phase-factor-0f566068",
-            "state-vector-identity-1-eb62c446-39c0e53b",
-            "john-von-neumann-identity-1-1413cd71-4a09a0d0"
+            "the-end-of-now-cc58b691",
+            "unitary-evolution-quantum-identity-1-c0644a4c-19b0c62d",
+            "state-vector-identity-1-eb62c446-39c0e53b"
         ],
-        "description": "Defines the operator that governs the deterministic, continuous time evolution of a quantum state for a system with a time-independent Hamiltonian.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the operator exponential that generates continuous, unitary, and deterministic time evolution of state vectors in a closed quantum system governed by a time-independent Hamiltonian.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "quantum-time-evolution-operator-e717a9a3"
     },
     "geometric-distance-1c55b5a7": {
         "title": "Geometric Distance",
@@ -629,38 +624,39 @@
         "equation": "[\\hat{A}_i, \\hat{A}_j] = 0 \\quad \\forall i, j",
         "semantic_variables": {
             "\\hat{A}_i": {
-                "name": "Quantum Observable Operator",
+                "name": "i-th quantum observable operator",
                 "type": "operator",
-                "unit": "Observable-dependent",
-                "description": "A Hermitian operator representing a physical observable. The index $i$ selects a specific operator from a set of commuting observables."
+                "unit": "dimensionless",
+                "description": "Self-adjoint operator on Hilbert space representing the i-th physical observable"
+            },
+            "\\hat{A}_j": {
+                "name": "j-th quantum observable operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Self-adjoint operator on Hilbert space representing the j-th physical observable"
             },
             "[\\cdot, \\cdot]": {
-                "name": "Commutator",
+                "name": "commutator bracket",
                 "type": "operator",
-                "unit": "Product of operand units",
-                "description": "An operator that measures the degree of non-commutativity between two operators $\\hat{X}$ and $\\hat{Y}$, defined as $[\\hat{X}, \\hat{Y}] = \\hat{X}\\hat{Y} - \\hat{Y}\\hat{X}$."
-            },
-            "i, j": {
-                "name": "Operator Indices",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "Integers that index the members of the set of operators $\\{\\hat{A}_k\\}$."
+                "unit": "dimensionless",
+                "description": "Lie bracket of associative algebra defined as [A, B] = AB - BA"
             }
         },
-        "interpretation": "The expression $[\\hat{A}_i, \\hat{A}_j] = 0 \\quad \\forall i, j$ indicates that for any pair of quantum mechanical operators, $\\hat{A}_i$ and $\\hat{A}_j$, from a given set, their commutator is the zero operator. In quantum mechanics, self-adjoint (Hermitian) operators represent physical observables such as position, momentum, or energy. The commutator of two operators $\\hat{A}$ and $\\hat{B}$ is defined as $[\\hat{A}, \\hat{B}] = \\hat{A}\\hat{B} - \\hat{B}\\hat{A}$. If this commutator is zero, it means that $\\hat{A}\\hat{B} = \\hat{B}\\hat{A}$, implying that the order in which the operations are applied to a state vector does not alter the outcome. Physically, this signifies that the observables associated with $\\hat{A}_i$ and $\\hat{A}_j$ are 'compatible'. A cornerstone theorem of linear algebra states that two operators commute if and only if they share a complete set of common eigenvectors. This allows a quantum system to be prepared in a state where both observables have definite, simultaneously knowable values. Consequently, one can perform a simultaneous measurement of these observables without the measurement of one quantity disturbing the value of the other, a concept that stands in stark contrast to non-commuting observables like position and momentum, which are governed by the Heisenberg uncertainty principle.",
-        "symmetry_origin": "This commutation relation is the fundamental algebraic test for identifying conserved quantities and symmetries. If an operator $\\hat{A}$ commutes with the Hamiltonian $\\hat{H}$, i.e., $[\\hat{H}, \\hat{A}] = 0$, then the observable corresponding to $\\hat{A}$ is a constant of motion. By Noether's theorem, this conserved quantity implies an underlying symmetry in the system's dynamics.",
-        "limits_and_boundary": "In the classical limit, where Planck's constant $\\hbar \\to 0$, the quantum commutator is related to the classical Poisson bracket $\\{A, B\\}_{PB}$ via the correspondence principle: $[\\hat{A}, \\hat{B}] \\to i\\hbar\\{A, B\\}_{PB}$. Therefore, the condition $[\\hat{A}_i, \\hat{A}_j] = 0$ implies that the corresponding classical observables have a vanishing Poisson bracket, $\\{A_i, A_j\\}_{PB} = 0$. This means the classical quantities are also compatible and can be determined simultaneously without ambiguity.",
+        "interpretation": "The condition $[\\hat{A}_i, \\hat{A}_j] = 0 \\quad \forall i, j$ states that the action of the operator $\\hat{A}_i$ followed by $\\hat{A}_j$ is identical to $\\hat{A}_j$ followed by $\\hat{A}_i$. For self-adjoint operators $\\hat{A}_i = \\hat{A}_i^\\dagger$ and $\\hat{A}_j = \\hat{A}_j^\\dagger$, this mutual commutativity ensures that projectively measuring observable $\\hat{A}_i$ leaves the spectral eigenspaces of $\\hat{A}_j$ invariant. Consequently, there exists a simultaneous eigenbasis $|a_1, a_2, \\dots\rangle$ satisfying $\\hat{A}_k |a_1, a_2, \\dots\rangle = a_k |a_1, a_2, \\dots\rangle$, eliminating quantum backaction uncertainty between the members of the set.",
+        "symmetry_origin": "Abelian Lie algebra invariance; the operators generate a set of mutually commuting continuous unitary transformations that form an abelian symmetry subgroup of the system's unitary group.",
+        "limits_and_boundary": "In the classical limit where $\\hbar \to 0$, quantum commutators $[\\hat{A}_i, \\hat{A}_j]$ correspond via Dirac quantization to classical Poisson brackets $\\{A_i, A_j\\}_{\text{PB}} = 0$, reflecting mutually non-interfering phase space coordinates or constants of motion in involution.",
         "status": "platinum",
-        "conceptual_definition": "In quantum mechanics, a set of observables, represented by Hermitian operators $\\{\\hat{A}_i\\}$, are said to be mutually compatible if the commutator of any two operators in the set is the zero operator: $[\\hat{A}_i, \\hat{A}_j] = \\hat{A}_i\\hat{A}_j - \\hat{A}_j\\hat{A}_i = 0$ for all pairs $i, j$. This condition is the foundation for the existence of a common basis of eigenvectors that simultaneously diagonalizes all operators in the set.",
-        "intuitive_summary": "Imagine you want to measure both the color and shape of an object. If measuring the color changes its shape, you can't know both at the same time. Commuting observables are like color and shape that don't interfere with each other; you can measure one without messing up the value of the other.",
+        "conceptual_definition": "A collection of self-adjoint operators $\\{ \\hat{A}_i \\}$ on a Hilbert space $\\mathcal{H}$ forms a family of mutually compatible observables if their commutator vanishes pairwise, $[\\hat{A}_i, \\hat{A}_j] = \\hat{A}_i \\hat{A}_j - \\hat{A}_j \\hat{A}_i = 0$ for all indices $i$ and $j$. By the spectral theorem for commuting normal operators, vanishing commutators are a necessary and sufficient condition for the existence of a common orthonormal basis of joint eigenstates.",
+        "intuitive_summary": "When quantum operators commute, the act of measuring one property does not alter or destroy the information about the other, allowing precise knowledge of all such quantities simultaneously.",
         "subcomponents": [
-            "orbital-marker-78ffbfaa",
-            "quantization-16a6ac37",
-            "quantum-bridge-aea5d80c",
-            "hermiticity-identity-1-7c4c73d8-6628a68c"
+            "dual-eigenstates-51213dd9",
+            "compatibility-rule-97fc47bd",
+            "coordinate-set-3380d99b",
+            "quantum-numbers-5ca850df"
         ],
-        "description": "This relation defines a set of commuting quantum operators, which correspond to physical observables that can be measured simultaneously with arbitrary precision.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the condition for a set of mutually commuting quantum mechanical operators, establishing the algebraic requirement for physical observables to be simultaneously measurable with arbitrary precision.",
+        "derivation_type": "GENERALIZATION",
+        "parent_formula_id": "commuting-operators-condition-b54f1d3f"
     },
     "right-angle-rule-0c05bfbb": {
         "title": "Orthogonality of Eigenstates for Distinct Eigenvalues",
@@ -1057,44 +1053,39 @@
     "lindemann-criterion-melting-limit-cdb4e319": {
         "title": "Lindemann Criterion for Melting",
         "equation": "L = \\frac{\\sqrt{\\langle \\delta R^2 \\rangle}}{a} \\approx 0.1",
-        "interpretation": "The Lindemann Criterion, expressed as $L = \\frac{\\sqrt{\\langle \\delta R^2 \\rangle}}{a} \\approx 0.1$, provides an empirical threshold for the solid-to-liquid phase transition. The term $L$ is the dimensionless Lindemann parameter. The numerator, $\\sqrt{\\langle \\delta R^2 \\rangle}$, represents the root-mean-square (RMS) displacement of an atom from its equilibrium lattice position due to thermal vibrations, where $\\langle \\cdot \\rangle$ denotes a thermal average. The denominator, $a$, is the average interatomic separation or lattice constant. The criterion asserts that melting occurs when the amplitude of atomic vibrations becomes so large (empirically, about 10% of the lattice spacing) that the crystalline structure can no longer maintain its integrity and transitions into a disordered liquid state.",
-        "symmetry_origin": "The criterion describes the phenomenological breakdown of the discrete translational symmetry of the crystal lattice. As thermal energy increases the vibrational amplitude of atoms, the long-range periodic order is lost, leading to the more disordered, statistically homogeneous, and isotropic liquid state which possesses continuous translational and rotational symmetry.",
-        "limits_and_boundary": "In the low-temperature limit, as $T \\to 0$, the thermal vibrational amplitude diminishes, leaving only the contribution from quantum zero-point motion. In this regime, $\\sqrt{\\langle \\delta R^2 \\rangle}$ is small, $L \\ll 0.1$, and the solid is stable. The criterion is most effective for simple, monoatomic, isotropic solids (like noble gases or alkali metals). Its predictive power decreases for materials with complex covalent or directional bonding, molecular solids, or polymers, where the melting mechanism is more intricate than simple vibrational instability.",
+        "interpretation": "In the equation $L = \\frac{\\sqrt{\\langle \\delta R^2 \\rangle}}{a} \\approx 0.1$, the variable $L$ denotes the dimensionless Lindemann parameter. The quantity $\\sqrt{\\langle \\delta R^2 \\rangle}$ is the root-mean-square displacement of lattice atoms computed via the thermal expectation value $\\langle \\cdot \\rangle$ over populated phonon modes. The parameter $a$ represents the nearest-neighbor equilibrium distance or lattice parameter. When $L$ approaches the critical threshold, harmonic restoration forces break down and the crystalline lattice collapses into a liquid.",
+        "symmetry_origin": "Spontaneous breaking and restoration of discrete spatial translation and rotational symmetries characteristic of crystalline space groups.",
+        "limits_and_boundary": "In the zero-temperature limit $T \\to 0$, vibrational fluctuations are governed entirely by quantum zero-point motion $\\langle \\delta R^2 \\rangle_0 > 0$, causing quantum melting only in systems with exceptionally light elements and weak potentials (e.g., liquid Helium). In the classical high-temperature limit $T \\gg \\Theta_D$, the mean-square displacement scales linearly with temperature $\\langle \\delta R^2 \\rangle \\propto T$, yielding the classical melting temperature $T_m$.",
         "semantic_variables": {
             "L": {
-                "name": "Lindemann Parameter",
+                "name": "Lindemann parameter",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless quantity that relates the vibrational amplitude to the interatomic spacing, used as the criterion for melting."
+                "description": "Dimensionless ratio of root-mean-square atomic displacement to lattice spacing"
             },
-            "\\delta R": {
-                "name": "Atomic Displacement Vector",
+            "\\sqrt{\\langle \\delta R^2 \\rangle}": {
+                "name": "Root-mean-square atomic displacement",
                 "type": "variable",
                 "unit": "m",
-                "description": "The vector representing the displacement of an atom from its equilibrium position in the crystal lattice."
-            },
-            "\\langle \\cdot \\rangle": {
-                "name": "Thermal Average",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "An operator denoting the ensemble average or thermal average over all possible states of the system."
+                "description": "Thermal and quantum expectation value of atomic displacement fluctuation from equilibrium"
             },
             "a": {
-                "name": "Interatomic Spacing",
-                "type": "variable",
+                "name": "Lattice constant",
+                "type": "constant",
                 "unit": "m",
-                "description": "The average distance between nearest-neighbor atoms in the crystal lattice, often taken as the lattice constant."
+                "description": "Equilibrium nearest-neighbor interatomic distance or unit cell parameter"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The Lindemann criterion posits that a crystalline solid melts when the root-mean-square amplitude of thermal vibrations, $\\sqrt{\\langle \\delta R^2 \\rangle}$, becomes a significant fraction of the interatomic spacing, $a$. This relationship is quantified by the dimensionless Lindemann parameter, $L$, which is empirically found to be approximately constant for a wide range of materials at their melting point, $T_m$. The criterion is expressed as $L = \\frac{\\sqrt{\\langle \\delta R^2 \\rangle}}{a}$, with melting predicted when $L$ reaches a critical value, typically in the range of $0.1$ to $0.2$.",
-        "intuitive_summary": "Imagine atoms in a crystal are like people in a crowded elevator, each jiggling in their own small space. As the temperature rises, they jiggle more violently. The Lindemann criterion states that when the jiggling becomes so intense that each person is moving about 10-20% of the distance to their neighbor, the orderly arrangement breaks down, and the 'solid' crowd turns into a 'liquid' mob. The crystal melts.",
+        "conceptual_definition": "The Lindemann Criterion states that a crystalline solid undergoes a phase transition to a liquid state when thermal vibrational fluctuations disrupt long-range periodic order, quantified by the condition $L = \\frac{\\sqrt{\\langle \\delta R^2 \\rangle}}{a} \\approx c_L$, where $c_L \\approx 0.1\\text{--}0.2$.",
+        "intuitive_summary": "As temperature increases, atoms vibrate more violently around their equilibrium lattice sites; when these vibrational excursions become comparable to roughly ten percent of the atomic spacing, atomic collision spheres overlap and the rigid lattice melts.",
         "subcomponents": [
-            "phonon-bose-einstein-occupancy-996345f3",
-            "high-temperature-phonon-occupancy-approximation-31b1ad24"
+            "high-temperature-phonon-occupancy-approximation-31b1ad24",
+            "onsager-critical-temperature-2d-0d657115"
         ],
-        "description": "An empirical law in condensed matter physics that predicts the melting point of a crystalline solid by postulating that melting occurs when the root-mean-square amplitude of atomic thermal vibrations reaches a critical fraction of the interatomic spacing.",
-        "derivation_type": "DEFINITION"
+        "description": "A semi-empirical thermodynamic threshold predicting crystalline melting when the root-mean-square amplitude of atomic thermal vibrations exceeds a critical fraction of the lattice spacing.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "high-temperature-phonon-occupancy-approximation-31b1ad24"
     },
     "early-universe-cosmology-identity-1-54be6e39-77cc26fd": {
         "title": "Relativistic Fermion Number Density in Thermal Equilibrium",

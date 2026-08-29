@@ -601,60 +601,42 @@
         "title": "Covariant Derivative of a Contravariant Vector Field",
         "equation": "\\nabla_\\nu V^\\mu = \\partial_\\nu V^\\mu + \\Gamma^\\mu_{\\rho\\nu} V^\\rho",
         "semantic_variables": {
-            "\\nabla_\\nu": {
-                "name": "Covariant Derivative Operator",
-                "type": "operator",
-                "unit": "1/length",
-                "description": "The operator that computes the derivative of a tensor field with respect to a coordinate direction $x^\\nu$ in a way that is independent of the coordinate system."
-            },
-            "V^\\mu": {
-                "name": "Contravariant Vector Field Component",
+            "\\nabla_\\nu V^\\mu": {
+                "name": "Covariant derivative of contravariant vector field",
                 "type": "variable",
-                "unit": "Context-dependent",
-                "description": "The $\\mu$-th component of a contravariant vector field, which transforms contravariantly under coordinate changes."
+                "unit": "m^{-1}",
+                "description": "Component of the type-(1,1) tensor representing the intrinsic rate of change of $V^\\mu$ along the $\\nu$-direction"
             },
-            "\\partial_\\nu": {
-                "name": "Partial Derivative Operator",
-                "type": "operator",
-                "unit": "1/length",
-                "description": "The operator for the partial derivative with respect to the coordinate $x^\\nu$."
+            "\\partial_\\nu V^\\mu": {
+                "name": "Partial derivative of vector component",
+                "type": "variable",
+                "unit": "m^{-1}",
+                "description": "Coordinate partial derivative of the vector component $V^\\mu$ with respect to coordinate $x^\\nu$"
             },
             "\\Gamma^\\mu_{\\rho\\nu}": {
-                "name": "Christoffel Symbol of the Second Kind",
+                "name": "Christoffel symbol / Affine connection coefficient",
                 "type": "variable",
-                "unit": "1/length",
-                "description": "A component of the affine connection that quantifies the change in basis vectors from point to point. It is symmetric in its lower two indices for a torsion-free connection."
+                "unit": "m^{-1}",
+                "description": "Metric-compatible Levi-Civita connection coefficient describing the variation of coordinate basis vectors"
             },
-            "\\mu": {
-                "name": "Spacetime Index (Contravariant)",
+            "V^\\rho": {
+                "name": "Contravariant vector field component",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "An index representing a component of a contravariant tensor, typically ranging from 0 to 3 in 4D spacetime."
-            },
-            "\\nu": {
-                "name": "Spacetime Index (Covariant)",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "An index representing a component of a covariant tensor or a derivative, typically ranging from 0 to 3 in 4D spacetime."
-            },
-            "\\rho": {
-                "name": "Spacetime Index (Summation)",
-                "type": "variable",
-                "unit": "Dimensionless",
-                "description": "A dummy index over which summation is implied (Einstein notation), typically ranging from 0 to 3 in 4D spacetime."
+                "unit": "dimensionless",
+                "description": "Component of the contravariant vector field being differentiated"
             }
         },
-        "interpretation": "The equation $\\nabla_\\nu V^\\mu = \\partial_\\nu V^\\mu + \\Gamma^\\mu_{\\rho\\nu} V^\\rho$ defines the components of the covariant derivative of a contravariant vector field $V^\\mu$. \n* The term $\\nabla_\\nu V^\\mu$ is the $(\\mu, \\nu)$-component of the resulting $(1,1)$ tensor, representing the intrinsic rate of change of the vector field $V$ in the $\\nu$-direction.\n* The term $\\partial_\\nu V^\\mu$ is the ordinary partial derivative of the component $V^\\mu$ with respect to the coordinate $x^\\nu$. It describes how the numerical value of the vector's component changes in a specific coordinate chart.\n* The term $\\Gamma^\\mu_{\\rho\\nu} V^\\rho$ is the connection or correction term. The Christoffel symbols $\\Gamma^\\mu_{\\rho\\nu}$ encode the geometry of the manifold by describing how the basis vectors change. This term precisely cancels the non-tensorial part of the partial derivative's transformation, ensuring $\\nabla_\\nu V^\\mu$ transforms correctly as a tensor. The Einstein summation convention is implied for the repeated index $\\rho$.",
-        "symmetry_origin": "General Covariance. The structure of the covariant derivative is designed to ensure that equations written with it are invariant in form under arbitrary differentiable coordinate transformations. The quantity $\\nabla_\\nu V^\\mu$ transforms as a tensor of rank (1,1), unlike the partial derivative $\\partial_\\nu V^\\mu$ which does not.",
-        "limits_and_boundary": "In the limit of a flat manifold (e.g., Minkowski spacetime) expressed in Cartesian coordinates, the metric tensor components are constant. This causes all Christoffel symbols to vanish, $\\Gamma^\\mu_{\\rho\\nu} = 0$. In this case, the covariant derivative reduces exactly to the partial derivative: $\\nabla_\\nu V^\\mu = \\partial_\\nu V^\\mu$. This demonstrates that the covariant derivative is a direct generalization of standard differentiation.",
+        "interpretation": "The total expression $\\nabla_\\nu V^\\mu$ represents the $(1,1)$ tensor formed by taking the covariant derivative of $V^\\mu$ with respect to the coordinate $x^\\nu$. The ordinary partial derivative $\\partial_\\nu V^\\mu = \\frac{\\partial V^\\mu}{\\partial x^\\nu}$ tracks the component variation across charts, which fails to transform as a tensor on its own. The geometric correction term $\\Gamma^\\mu_{\\rho\\nu} V^\\rho$ uses the affine connection $\\Gamma^\\mu_{\\rho\\nu}$ contracted with the vector $V^\\rho$ to cancel the non-tensorial second derivatives arising under coordinate transformations, ensuring that $\\nabla_\\nu V^\\mu$ transforms covariantly under general diffeomorphisms.",
+        "symmetry_origin": "General covariance and diffeomorphism invariance under the group of general coordinate transformations $\\mathrm{Diff}(M)$ on the spacetime manifold $M$.",
+        "limits_and_boundary": "In flat Minkowski spacetime with global inertial Cartesian coordinates, all Christoffel symbols vanish identically ($\\Gamma^\\mu_{\\rho\\nu} = 0$), reducing the covariant derivative to the standard partial derivative: $\\nabla_\\nu V^\\mu \\to \\partial_\\nu V^\\mu$.",
         "status": "platinum",
-        "conceptual_definition": "The covariant derivative of a contravariant vector field $V^\\mu$ with respect to the coordinate $x^\\nu$, denoted $\\nabla_\\nu V^\\mu$, is defined as the partial derivative $\\partial_\\nu V^\\mu$ plus a correction term $\\Gamma^\\mu_{\\rho\\nu} V^\\rho$. This correction term, involving the Christoffel symbols $\\Gamma^\\mu_{\\rho\\nu}$, accounts for the change in the coordinate basis vectors, thereby yielding a coordinate-independent measure of the vector field's rate of change.",
-        "intuitive_summary": "In a curved space, coordinate grid lines stretch and twist. A simple derivative ($\\partial_\\nu V^\\mu$) mistakenly includes changes from this grid distortion. The covariant derivative ($\\nabla_\\nu V^\\mu$) adds a correction term ($\\Gamma^\\mu_{\\rho\\nu} V^\\rho$) to subtract this artificial change, revealing the true, geometry-independent variation of the vector.",
-        "description": "Defines the generalization of the partial derivative for vector fields on a curved manifold, ensuring the result transforms as a tensor under general coordinate transformations.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "The covariant derivative $\\nabla_\\nu V^\\mu$ of a contravariant vector field $V^\\mu$ expresses the directional rate of change of the vector field along the coordinate basis direction $\\partial_\\nu$, supplemented by the affine connection coefficients (Christoffel symbols) $\\Gamma^\\mu_{\\rho\\nu}$ that account for the intrinsic curvature and coordinate-induced variations of the tangent basis vectors: $\\nabla_\\nu V^\\mu = \\partial_\\nu V^\\mu + \\Gamma^\\mu_{\\rho\\nu} V^\\rho$.",
+        "intuitive_summary": "In curved space or curvilinear coordinates, the basis vectors themselves change from point to point. The covariant derivative accounts for both the change in the vector's numerical components and the rotation/stretching of the underlying basis frames.",
+        "description": "Defines the covariant derivative of a contravariant vector field on a pseudo-Riemannian manifold, incorporating an affine connection to ensure tensorial transformation under arbitrary coordinate transformations.",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
         "subcomponents": [
+            "covariant-derivative-component-vector-9573e269",
             "connection-term-for-vector-covariant-derivative-3540998f",
-            "christoffel-symbols-64d17c83",
             "parallel-transport-a252f306"
         ]
     },
@@ -1207,29 +1189,36 @@
         "derivation_type": "DERIVED_FROM"
     },
     "integer-value-of-n-is-1": {
-        "title": "Specification of the First Integer Quantum State",
+        "title": "Ground State Integer Quantum Number Selection",
         "equation": "n = 1",
-        "conceptual_definition": "In physical systems described by discrete integer indices, the equation $n=1$ specifies the first, fundamental, or ground state. This assignment is a particular instance of a more general set of allowed integer values $n \\in \\{1, 2, 3, \\dots\\}$, which quantize a physical property such as energy, angular momentum, or wave modes.",
-        "intuitive_summary": "Think of a ladder where you can only stand on the rungs, not in between. The equation $n=1$ is like saying 'start at the very first rung.' This first rung represents the most basic, lowest-energy state of a system, like the fundamental note of a guitar string or the innermost orbit of an electron in an atom.",
-        "interpretation": "The symbol $n$ represents a dimensionless integer variable. In quantum mechanics, it often denotes the principal quantum number, where $n=1$ signifies the ground state of a bound system like the hydrogen atom. In the study of wave phenomena, $n$ can be the mode number for standing waves, with $n=1$ corresponding to the fundamental frequency or first harmonic. The value $1$ is a dimensionless integer constant, representing the first positive integer, whose assignment to $n$ selects a specific, unique state from a discrete set of possibilities.",
-        "symmetry_origin": "The existence of discrete integer solutions, of which $n=1$ is the first, typically arises from imposing boundary conditions on the system's wavefunction or field. For example, in quantum mechanics, requiring the wavefunction to be normalizable within a potential well (a consequence of the probabilistic interpretation) leads to quantized energy levels indexed by $n$. In classical wave mechanics, fixed endpoints on a string lead to quantized modes.",
-        "limits_and_boundary": "The equation $n=1$ is a specific assignment and does not have dynamic variables. It represents a fixed, discrete state, invariant under limiting operations like taking temperature $T \\to 0$, velocity $v \\to c$, or Planck's constant $\\hbar \\to 0$. It defines a specific point within a quantized spectrum, often the lowest energy or ground state, which is the relevant state in the limit of zero temperature ($T \\to 0$).",
+        "conceptual_definition": "In discrete quantum mechanical spectra (such as the hydrogen atom or an infinite potential well) and classical wave acoustics, $n=1$ denotes the ground-state boundary condition wherein the discrete eigenvalue index $n \\in \\mathbb{Z}^+$ assumes its minimum permissible value.",
+        "intuitive_summary": "Selecting $n=1$ identifies the absolute lowest energy state (ground state) or lowest vibrational mode (fundamental harmonic) in a quantized system.",
+        "interpretation": "The symbol $n$ denotes the discrete integer quantum number labeling orthogonal eigenstates $|n\\rangle$. Setting $n = 1$ fixes the state parameter to the first non-trivial bound state, yielding the minimum kinetic/potential energy configuration under spatial confinement constraints.",
+        "symmetry_origin": "Arises from discrete spatial boundary conditions and compact spatial topology leading to quantized eigenvalue spectra under the Sturm-Liouville theorem.",
+        "limits_and_boundary": "In the classical correspondence limit ($n \\gg 1$), discrete quantum transitions merge into a continuum according to the Bohr correspondence principle; $n=1$ represents the maximal quantum regime where zero-point effects dominate.",
         "status": "platinum",
         "semantic_variables": {
             "n": {
-                "name": "Integer Index / Quantum Number",
+                "name": "Principal Quantum Number",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless integer, typically representing a quantum number (e.g., principal quantum number), a mode number in wave mechanics, or an order parameter in a discrete system."
+                "description": "Discrete integer mode or state index specifying the energy level of the quantum system"
+            },
+            "1": {
+                "name": "Unity Constant",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Base positive integer representing the first discrete quantum state"
             }
         },
         "subcomponents": [
-            "integer-spin-6bec4a16",
-            "quantum-vacuum-ontology-identity-1-73eb21f1-bcb71480",
-            "expectation-value-699f5e8f"
+            "quantum-number-definition-55238a7a",
+            "unitarity-lock-f083b391",
+            "expectation-value-of-an-operator-46c4b5e7"
         ],
-        "description": "A specific assignment setting a dimensionless integer index, typically a quantum number or mode number, to its lowest possible value, representing the ground state or fundamental mode.",
-        "derivation_type": "DEFINITION"
+        "description": "Sets the principal quantum index or spatial mode number to its lowest positive integer value $n=1$, specifying the fundamental quantum ground state or fundamental standing wave mode.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "quantum-number-definition-55238a7a"
     },
     "lagrangian-variation-general": {
         "title": "First Variation of the Lagrangian",

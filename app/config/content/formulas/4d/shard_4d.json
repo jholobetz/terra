@@ -659,45 +659,46 @@
     "shock-temperature-jump-condition-97571dc5": {
         "title": "Normal Shock Temperature Jump Condition",
         "equation": "\\frac{T_2}{T_1} = \\frac{\\left[2\\gamma M_1^2 - (\\gamma - 1)\\right] \\left[(\\gamma - 1) M_1^2 + 2\\right]}{(\\gamma + 1)^2 M_1^2}",
-        "interpretation": "The formula relates the temperature $T_2$ downstream of a normal shock wave to the upstream temperature $T_1$. This ratio $\frac{T_2}{T_1}$ is determined by two key dimensionless parameters: the upstream Mach number $M_1$ and the fluid's ratio of specific heats $\\gamma$. The Mach number $M_1 > 1$ quantifies the supersonic nature of the incoming flow, and its magnitude determines the shock strength. The term $\\gamma$ (the adiabatic index) reflects the thermodynamic properties of the fluid. The equation is derived by combining the Rankine-Hugoniot relations for conservation of mass, momentum, and energy with the ideal gas law, describing the irreversible thermodynamic process of converting kinetic energy into internal energy across the shock discontinuity.",
-        "symmetry_origin": "Conservation of mass, momentum, and energy across a control volume. These conservation laws are themselves consequences of the fundamental symmetries of spacetime (homogeneity and isotropy) via Noether's theorem. The shock process itself is irreversible and generates entropy, breaking local time-reversal symmetry.",
-        "limits_and_boundary": "In the weak shock limit, as the upstream Mach number $M_1 \to 1$, the temperature ratio $\frac{T_2}{T_1} \to 1$, indicating no temperature change for a sonic wave. In the strong shock limit, as $M_1 \to \\infty$, the temperature ratio becomes very large, scaling as $\frac{T_2}{T_1} \\propto M_1^2$. Specifically, $\frac{T_2}{T_1} \to \frac{2\\gamma(\\gamma-1)}{(\\gamma+1)^2} M_1^2$. This relation is valid for a calorically perfect ideal gas undergoing a normal shock and assumes the shock is a one-dimensional discontinuity.",
+        "interpretation": "The static temperature ratio $\\frac{T_2}{T_1}$ across the shock depends exclusively on the upstream Mach number $M_1$ and the ratio of specific heats $\\gamma$. Since the ideal gas law gives $\\frac{T_2}{T_1} = \\left(\\frac{P_2}{P_1}\\right) \\left(\\frac{\\rho_1}{\\rho_2}\\right)$, this relation directly combines the normal shock pressure jump $\\frac{P_2}{P_1}$ and the inverse of the density jump $\\frac{\\rho_2}{\\rho_1}$. For supersonic upstream flow ($M_1 > 1$), the temperature ratio is strictly greater than unity ($\\frac{T_2}{T_1} > 1$), indicating shock heating.",
+        "symmetry_origin": "Originates from the macroscopic conservation laws of mass, momentum, and energy across a spatial discontinuity in planar 1D compressible Navier-Stokes flow in the zero-viscosity limit.",
+        "limits_and_boundary": "In the acoustic limit $M_1 \\to 1$, $\\frac{T_2}{T_1} \\to 1$, recovering continuous isentropic flow. In the strong-shock limit $M_1 \\to \\infty$, the temperature ratio scales quadratically with Mach number as $\\frac{T_2}{T_1} \\to \\frac{2\\gamma(\\gamma - 1)}{(\\gamma + 1)^2} M_1^2$.",
         "semantic_variables": {
-            "T_2": {
-                "name": "Downstream Temperature",
-                "type": "variable",
-                "unit": "K",
-                "description": "The static temperature of the fluid immediately after passing through the shock wave."
-            },
             "T_1": {
-                "name": "Upstream Temperature",
+                "name": "upstream static temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The static temperature of the fluid approaching the shock wave."
+                "description": "Static thermodynamic temperature of the unshocked upstream fluid"
             },
-            "\\gamma": {
-                "name": "Adiabatic Index",
+            "T_2": {
+                "name": "downstream static temperature",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The ratio of specific heats ($c_p/c_v$) for the fluid, characterizing its thermodynamic properties."
+                "unit": "K",
+                "description": "Static thermodynamic temperature of the shocked downstream fluid"
             },
             "M_1": {
-                "name": "Upstream Mach Number",
+                "name": "upstream Mach number",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The ratio of the upstream fluid velocity to the local speed of sound, $M_1 = u_1/a_1$. Must be greater than 1 for a shock to form."
+                "unit": "dimensionless",
+                "description": "Mach number of the flow upstream of the normal shock wave"
+            },
+            "\\gamma": {
+                "name": "heat capacity ratio",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Adiabatic index or ratio of specific heats ($c_p/c_v$) of the ideal gas"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "For a one-dimensional, steady, normal shock wave in an ideal gas, the fluid properties undergo a near-instantaneous, irreversible change. This equation, one of the Rankine-Hugoniot relations, describes the jump in static temperature from the upstream (pre-shock) state to the downstream (post-shock) state. It is derived by applying the conservation laws of mass, momentum, and energy across the shock discontinuity, combined with the ideal gas equation of state. The process involves the conversion of the flow's kinetic energy into internal energy, resulting in a significant temperature increase.",
-        "intuitive_summary": "Imagine a supersonic jet flying through the air. The air can't get out of the way fast enough, so it piles up in a thin, intense 'shock wave' in front of the jet. This formula tells you how much hotter the air gets ($T_2$) after being slammed by this shock wave, based on how fast the jet is going ($M_1$) and the type of gas it's flying through ($\\gamma$).",
+        "conceptual_definition": "The normal shock temperature jump condition determines the post-shock static temperature $T_2$ relative to the upstream static temperature $T_1$ for a normal shock wave in a calorically perfect gas. Derived directly from the Rankine-Hugoniot jump conditions combined with the ideal gas equation of state $P = \\rho R T$, the temperature ratio expresses the irreversible conversion of bulk kinetic energy into thermal internal energy due to viscous dissipation and thermal conduction within the shock layer.",
+        "intuitive_summary": "As supersonic gas encounters a normal shock wave, it abruptly decelerates to subsonic speeds, causing severe compression and viscous dissipation that converts kinetic energy into internal thermal energy, resulting in a dramatic increase in temperature.",
         "subcomponents": [
             "strong-shock-rule-783bbc34",
-            "work-heat-link-85ddffef",
-            "expansion-cost-00e30d30"
+            "rankine-hugoniot-density-jump-relation-decf28fc",
+            "temperature-ratio-across-shock-99775df2"
         ],
-        "description": "This equation quantifies the temperature ratio across a normal shock wave in a compressible fluid, relating the post-shock temperature to the pre-shock temperature, Mach number, and the fluid's specific heat ratio.",
-        "derivation_type": "DERIVED_FROM"
+        "description": "Quantifies the static temperature ratio across a stationary normal shock wave in an ideal gas as a function of the upstream Mach number and heat capacity ratio.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "strong-shock-rule-783bbc34"
     },
     "principle-of-complementarity-identity-1-ca5d2509-2ff33e74": {
         "title": "Englert-Greenberger-Yasin Duality Relation",

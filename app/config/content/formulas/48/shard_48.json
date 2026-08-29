@@ -291,61 +291,50 @@
         "equation": "A^\\mu = \\frac{q U^\\mu}{R_\\nu U^\\nu} \\Big|_{ret}",
         "semantic_variables": {
             "A^\\mu": {
-                "name": "Electromagnetic four-potential",
+                "name": "electromagnetic four-potential",
                 "type": "variable",
-                "unit": "V·s/m",
-                "description": "A four-vector combining the electric scalar potential and magnetic vector potential, $A^\\mu = (\\phi/c, \\mathbf{A})$."
+                "unit": "V*s/m",
+                "description": "Contravariant four-vector combining the electric scalar potential and magnetic vector potential"
             },
             "q": {
-                "name": "Electric charge",
-                "type": "variable",
+                "name": "electric charge",
+                "type": "constant",
                 "unit": "C",
-                "description": "The invariant electric charge of the point source."
+                "description": "Invariant electric charge of the moving point source"
             },
             "U^\\mu": {
-                "name": "Four-velocity",
+                "name": "four-velocity",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The four-velocity of the source charge, defined as the derivative of its worldline position with respect to its proper time, $U^\\mu = dz^\\mu/d\\tau$."
+                "description": "Contravariant four-velocity of the point charge along its worldline"
             },
             "R_\\nu": {
-                "name": "Null separation four-vector",
+                "name": "retarded separation four-vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The light-like four-vector pointing from the source's position at the retarded time to the observer's position at the observation time, $R^\\mu = x^\\mu_{obs} - z^\\mu_{src}(\\tau_{ret})$."
+                "description": "Covariant null separation four-vector connecting the retarded emission event on the particle worldline to the field observation event"
             },
-            "|_{ret}": {
-                "name": "Retarded time evaluation",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "An operator indicating that the associated source quantities are to be evaluated at the retarded time, defined by the light-cone condition $R_\\mu R^\\mu = 0$."
-            },
-            "\\mu": {
-                "name": "Spacetime index",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "A contravariant spacetime index, running from 0 (time) to 3 (space)."
-            },
-            "\\nu": {
-                "name": "Spacetime index",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "A covariant spacetime index, running from 0 (time) to 3 (space)."
+            "\\tau_{ret}": {
+                "name": "retarded proper time",
+                "type": "variable",
+                "unit": "s",
+                "description": "Proper time of the charged particle at the intersection of its worldline with the past light cone of the observer"
             }
         },
-        "interpretation": "The equation $A^\\mu = \\frac{q U^\\mu}{R_\\nu U^\\nu} \\Big|_{ret}$ gives the Liénard-Wiechert four-potential $A^\\mu$ for a point charge $q$. The four-velocity of the charge is $U^\\mu$. The vector $R^\\mu = x^\\mu - z^\\mu(\\tau_{ret})$ is the null four-vector connecting the emission event on the source's worldline $z^\\mu(\\tau_{ret})$ to the observation event at spacetime point $x^\\mu$. The denominator, $R_\\nu U^\\nu$, is a Lorentz scalar representing the dot product of this null separation vector with the source's four-velocity. The subscript 'ret' emphasizes that all source quantities ($U^\\mu$ and the position used to define $R^\\mu$) must be evaluated at the retarded proper time $\\tau_{ret}$ of the source, which is implicitly defined by the light-cone condition $R_\\mu R^\\mu = 0$. This formulation is manifestly covariant and is a solution to the inhomogeneous wave equation $\\Box A^\\mu = \\mu_0 J^\\mu$ for a point charge.",
-        "symmetry_origin": "This potential is a direct consequence of Maxwell's equations, which are invariant under Lorentz transformations (Poincaré symmetry) and U(1) gauge transformations. The equation is written in a manifestly Lorentz covariant form, reflecting the geometric structure of spacetime in special relativity.",
-        "limits_and_boundary": "In the non-relativistic limit where the source's velocity $v \\to 0$, the time component $A^0$ correctly reduces to the Coulomb potential $\\phi/c$ (where $\\phi \\propto q/r$), and the spatial components $A^i$ vanish. As the distance from the source $r \\to \\infty$, the potential falls off as $1/r$. The formula is purely classical and does not incorporate quantum effects, corresponding to the limit $\\hbar \\to 0$.",
+        "interpretation": "In this covariant formulation, $A^\\mu$ denotes the contravariant electromagnetic four-potential $(\\Phi/c, \\mathbf{A})$. The parameter $q$ is the invariant electric charge of the point particle, and $U^\\mu = \\frac{dz^\\mu}{d\\tau}$ is its four-velocity evaluated at the retarded proper time $\\tau_{\\mathrm{ret}}$. The denominator $R_\\nu U^\\nu = \\eta_{\\mu\\nu} R^\\mu U^\\nu$ is a Lorentz scalar formed by contracting the null displacement four-vector $R^\\mu = x^\\mu - z^\\mu(\\tau_{\\mathrm{ret}})$ (which satisfies $R_\\mu R^\\mu = 0$ with $R^0 > 0$) with $U^\\nu$. The subscript 'ret' designates evaluation at the unique retarded event along the particle's worldline intersecting the past light cone of field event $x^\\mu$.",
+        "symmetry_origin": "Lorentz covariance ($SO(1,3)$ spacetime symmetry) and $U(1)$ electromagnetic gauge invariance. The form satisfies the Lorenz gauge condition $\\partial_\\mu A^\\mu = 0$ automatically when integrated from the conserved current density $J^\\mu$.",
+        "limits_and_boundary": "In the static limit where the particle velocity $\\mathbf{v} \\to 0$, the four-velocity reduces to $U^\\mu \\to (c, \\mathbf{0})$, and $R_\\nu U^\\nu \\to c |\\mathbf{r} - \\mathbf{r}'|$, reducing $A^0$ to the standard static Coulomb potential $\\Phi = \\frac{q}{4\\pi\\varepsilon_0 r}$ and $\\mathbf{A} \\to \\mathbf{0}$. For ultra-relativistic source velocities approaching the speed of light ($v \\to c$) along the line of sight, $R_\\nu U^\\nu \\to 0$, producing sharp relativistic beaming and field enhancement.",
         "status": "platinum",
-        "conceptual_definition": "The formula expresses the electromagnetic four-potential $A^\\mu$ at a specific spacetime point as being determined by the state of the source charge $q$ at a unique earlier time, known as the retarded time. This time is precisely when a light signal would have had to leave the source to arrive at the observer's location at the observation time. The potential is proportional to the charge's four-velocity $U^\\mu$ and inversely proportional to the Lorentz-invariant 'distance' $R_\\nu U^\\nu$ from the source to the observer, all evaluated at this retarded time.",
-        "intuitive_summary": "Imagine a moving light bulb. The light you see *now* was emitted by the bulb at some point in the *past* and from a different location. This formula is the relativistic equivalent for the electromagnetic potential: the potential you feel now depends on the charge's velocity and position back when it emitted the 'potential signal' that is just reaching you. The denominator term includes a relativistic Doppler-like effect; if the charge moves towards you, the potential is stronger, and if it moves away, it's weaker.",
+        "conceptual_definition": "The Liénard-Wiechert four-potential $A^\\mu(x)$ is the exact retarded Green's function solution to the inhomogeneous Maxwell wave equation $\\Box A^\\mu = \\mu_0 J^\\mu$ for a classical point particle carrying electric charge $q$. It is expressed in manifestly covariant form as $A^\\mu(x) = \\frac{\\mu_0 c q}{4\\pi} \\frac{U^\\mu(\\tau_{\\mathrm{ret}})}{R_\\nu(\\tau_{\\mathrm{ret}}) U^\\nu(\\tau_{\\mathrm{ret}})}$, where $R^\\mu \\equiv x^\\mu - z^\\mu(\\tau_{\\mathrm{ret}})$ is the light-cone separation four-vector between the field point $x^\\mu$ and the emission worldline point $z^\\mu(\\tau_{\\mathrm{ret}})$.",
+        "intuitive_summary": "Because electromagnetic interactions propagate at the speed of light $c$, the potential experienced at an observation point is determined not by where the charge is now, but by where it was and how fast it was moving when the light ray left it, geometrically scaled by a relativistic Doppler-like compression factor $R_\\nu U^\\nu$.",
         "subcomponents": [
-            "maximum-proper-time-identity-1-c4b38382-27bebbe7",
-            "invariant-mass-squared-four-momentum",
-            "minus-origin-12e9d4cc"
+            "electromagnetic-four-potential",
+            "linard-wiechert-potentials",
+            "lienard-wiechert-0b518e8a"
         ],
-        "description": "This equation provides the electromagnetic four-potential generated by an arbitrarily moving point charge, representing the fundamental covariant solution to Maxwell's equations for a point source.",
-        "derivation_type": "DERIVED_FROM"
+        "description": "Provides the manifestly Lorentz-covariant electromagnetic four-potential generated by an arbitrarily moving classical point charge evaluated at the retarded spacetime event.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "retardation-52db4211"
     },
     "energy-to-mass-66805f31": {
         "title": "CPT Symmetry Invariance",
@@ -690,41 +679,42 @@
         "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "angular-diameter-identity-bf115b95": {
-        "title": "Angular Diameter Distance (Small-Angle Approximation)",
+        "title": "Angular Diameter Distance in the Small-Angle Regime",
         "equation": "d_A = L / \\theta",
         "semantic_variables": {
             "d_A": {
-                "name": "Angular Diameter Distance",
+                "name": "angular diameter distance",
                 "type": "variable",
                 "unit": "m",
-                "description": "A distance measure defined by an object's physical size and angular size. In cosmology, it is the ratio of an object's transverse proper size to its angular size."
+                "description": "Apparent distance to an astronomical object calculated from its physical size and observed angular size"
             },
             "L": {
-                "name": "Proper Physical Size",
+                "name": "proper transverse physical size",
                 "type": "variable",
                 "unit": "m",
-                "description": "The actual physical size of an object, measured perpendicular to the line of sight at the time of light emission."
+                "description": "Proper transverse linear dimension of the source perpendicular to the line of sight at emission"
             },
             "\\theta": {
-                "name": "Angular Diameter",
+                "name": "angular diameter",
                 "type": "variable",
                 "unit": "rad",
-                "description": "The apparent angular size of an object as measured by an observer, expressed in radians."
+                "description": "Apparent angular diameter subtended by the source on the observer's celestial sphere"
             }
         },
-        "interpretation": "The equation $d_A = L / \\theta$ relates three quantities. $d_A$ is the angular diameter distance, a measure of distance calculated as if the universe were Euclidean; in cosmology, it accounts for the fact that the light from the object was emitted when the universe was smaller and closer. $L$ is the proper physical size of the object, measured perpendicular to the line of sight. $\\theta$ is the angular diameter of the object as seen by the observer, which must be expressed in radians for this formula to be valid. The relationship is a direct consequence of the small-angle approximation in trigonometry, $\\tan(\\theta) \\approx \\theta$.",
-        "symmetry_origin": "The formula is rooted in the geometric properties of Euclidean space, specifically the principles of similar triangles which are invariant under scaling transformations. This is a manifestation of the homogeneity and isotropy of space, which allows for consistent definitions of angle and distance.",
-        "limits_and_boundary": "This identity is an approximation that holds in the limit of small angles, i.e., as $\\theta \\to 0$. The exact trigonometric relation is $d_A = \\frac{L/2}{\\tan(\\theta/2)}$. For large angles, the approximation $d_A = L / \\theta$ becomes inaccurate. In a cosmological context, this simple form is only valid for nearby objects (low redshift, $z \\ll 1$). For distant objects, $d_A$ must be calculated using the Friedmann–Lemaître–Robertson–Walker (FLRW) metric, which accounts for the expansion of the universe.",
+        "interpretation": "In the relation $d_A = L / \\theta$, $d_A$ denotes the angular diameter distance to the source, $L$ represents the proper transverse physical length (or diameter) of the source measured at the epoch of emission perpendicular to the observer's line of sight, and $\\theta$ represents the subtended angular size in radians. The relation follows directly from Euclidean trigonometry where $\\tan(\\theta/2) = (L/2)/d_A$, reducing to $d_A = L / \\theta$ in the small-angle limit $\\theta \\ll 1$.",
+        "symmetry_origin": "Spatial isotropy and rotational invariance $SO(3)$ around the observer's line of sight in Euclidean and FLRW spacetimes.",
+        "limits_and_boundary": "In the limit $\\theta \\to 0$, $d_A \\to \\infty$ for fixed $L$. In cosmological contexts with $z \\gg 1$, $d_A$ non-monotonically peaks and approaches zero as $z \\to \\infty$ due to the scale factor $a(t) \\to 0$, causing high-redshift objects of fixed proper size $L$ to subtend increasingly larger angular sizes $\\theta$.",
         "status": "platinum",
-        "conceptual_definition": "The formula $d_A = L / \\theta$ provides a definition for the angular diameter distance, $d_A$. It is derived from Euclidean geometry under the small-angle approximation, where for a small angle $\\theta$ (in radians), $\\tan(\\theta) \\approx \\theta$. For an object of physical transverse size $L$ subtending a small angle $\\theta$ at the observer's position, its distance $d_A$ is defined by this simple inverse relationship. This concept is generalized in cosmology to account for the expansion of spacetime.",
-        "intuitive_summary": "This formula quantifies the everyday experience that objects appear smaller the farther away they are. If you know the actual size of an object, like a distant mountain, you can calculate its distance by measuring the small angle it occupies in your field of view.",
+        "conceptual_definition": "The angular diameter distance $d_A$ is an observational metric distance defined such that an object of physical transverse extent $L$ subtends an apparent angle $\\theta$ via Euclidean geometry, yielding $d_A = L / \\theta$. In expanding cosmological spacetimes described by the Friedmann-Lemaître-Robertson-Walker (FLRW) metric, $d_A$ relates the comoving distance $r$ and cosmological redshift $z$ according to $d_A = a(t_{\\text{emit}}) r = r / (1 + z)$.",
+        "intuitive_summary": "Angular diameter distance is the apparent distance derived from how large a standard ruler appears on the sky, assuming Euclidean ray tracing.",
         "subcomponents": [
-            "infinitesimal-angular-displacement-6a47656c",
-            "periodic-map-e496b1cb",
-            "angular-diameter-distance-between-lens-and-source-0891a4a5"
+            "small-angle-approximation-tangent",
+            "math-basis-8864d0d0",
+            "distance-calculation-3c89e718"
         ],
-        "description": "Defines the angular diameter distance to an object as the ratio of its proper physical size to its apparent angular size, a cornerstone relationship in observational astronomy and cosmology valid for small angles.",
-        "derivation_type": "APPROXIMATION"
+        "description": "Defines the angular diameter distance to an astronomical source as the ratio of its proper transverse physical size to its subtended angular diameter under the paraxial approximation.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "angular-size"
     },
     "polytropic-relations-lane-emden-abc1858d": {
         "title": "Polytropic Equation of State and the Lane-Emden Equation for Stellar Structure",

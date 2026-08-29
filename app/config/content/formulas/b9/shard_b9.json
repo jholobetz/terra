@@ -215,64 +215,58 @@
         ]
     },
     "statistical-correction-499970f2": {
-        "title": "Effective Volume with Selection Function Correction",
+        "title": "Effective Survey Volume with Selection Function Correction",
         "equation": "V_{eff} = \\int \\Phi(L) f_{sel}(L, r) dV",
         "semantic_variables": {
             "V_{eff}": {
-                "name": "Effective Volume",
+                "name": "Effective survey volume",
                 "type": "variable",
                 "unit": "m^3",
-                "description": "The statistically corrected survey volume that accounts for selection biases."
+                "description": "Effective volume accessible by the survey after correcting for observational selection and completeness biases"
             },
             "\\Phi": {
-                "name": "Spatial Distribution Function",
+                "name": "Differential distribution function",
                 "type": "variable",
-                "unit": "Varies (e.g., m^{-3} W^{-1})",
-                "description": "A function describing the density or distribution of objects as a function of an intrinsic property L. Often a luminosity or mass function."
+                "unit": "m^-3 W^-1",
+                "description": "Intrinsic number density distribution of astronomical sources per unit physical parameter (e.g., luminosity function)"
             },
             "L": {
-                "name": "Intrinsic Property",
+                "name": "Intrinsic source parameter",
                 "type": "variable",
-                "unit": "Varies (e.g., W, kg)",
-                "description": "An intrinsic property of the observed objects, such as luminosity, mass, or size."
+                "unit": "W",
+                "description": "Intrinsic physical characteristic of the detected astronomical object, such as radiant luminosity or mass"
             },
             "f_{sel}": {
-                "name": "Selection Function",
+                "name": "Selection function",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "The probability that an object with property L at position r is included in the observational sample."
+                "unit": "1",
+                "description": "Dimensionless observational detection probability and completeness factor as a function of intrinsic property and spatial coordinate"
             },
             "r": {
-                "name": "Position or Distance",
+                "name": "Comoving spatial coordinate",
                 "type": "variable",
                 "unit": "m",
-                "description": "The spatial position or distance of an object within the survey."
+                "description": "Spatial position vector or comoving radial distance from the observer to the source"
             },
             "dV": {
-                "name": "Differential Volume Element",
-                "type": "operator",
+                "name": "Differential geometric volume element",
+                "type": "variable",
                 "unit": "m^3",
-                "description": "An infinitesimal element of the three-dimensional integration volume."
-            },
-            "\\int": {
-                "name": "Integral Operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The operation of integration over the entire survey volume."
+                "description": "Differential comoving volume element defined over the survey angular footprint and radial depth"
             }
         },
-        "interpretation": "The formula calculates the effective volume $V_{eff}$, a key quantity in correcting for selection effects in astronomical surveys. The term $\\Phi(L)$ represents a distribution function, such as a luminosity function or mass function, which describes the number density of objects with a given intrinsic property $L$. The selection function, $f_{sel}(L, r)$, is a dimensionless probability (between 0 and 1) that an object with property $L$ at position $r$ is successfully detected and included in the sample. The integral $\\int dV$ is performed over the geometric volume of the survey. By integrating the product of the distribution $\\Phi(L)$ and the selection probability $f_{sel}(L, r)$, the formula yields a volume that is effectively 'smaller' than the geometric volume, accounting for the fact that the survey is not sensitive to all objects at all locations.",
-        "symmetry_origin": "This formula is not derived from a fundamental physical symmetry (like a Noether theorem or gauge invariance). It is a methodological construct rooted in the principles of statistical inference and probability theory, designed to ensure that derived population statistics are invariant to known, quantifiable observational biases.",
-        "limits_and_boundary": "In the limit of a perfect, unbiased survey where every object is detected, the selection function $f_{sel}(L, r) \\to 1$ for all $L$ and $r$ within the survey volume. In this idealized case, the formula would simplify to $V_{eff} = \\int \\Phi(L) dV$. Conversely, for a completely ineffective survey where no objects are detected, $f_{sel}(L, r) \\to 0$ and thus $V_{eff} \\to 0$. The effective volume is always less than or equal to the geometric volume, $V_{eff} \\le V_{geom}$, if $\\Phi(L)$ is normalized such that its integral over the volume is less than or equal to the volume itself.",
+        "interpretation": "The effective volume $V_{\\mathrm{eff}}$ provides the unbiased normalization volume for cosmological sample statistics. The term $\\Phi(L)$ represents the intrinsic source distribution function (such as the Schechter luminosity function or halo mass function). The term $f_{\\mathrm{sel}}(L, \\mathbf{r})$ is the survey selection probability, representing the likelihood that an object with intrinsic property $L$ at position $\\mathbf{r}$ is detected and retained in the catalog. The differential geometric volume element $dV = r^2 dr \\, d\\Omega$ integrates over the solid angle $\\Omega$ and radial distance $r$ covering the survey footprint.",
+        "symmetry_origin": "Spatial isotropy and rotational invariance of the background cosmological Friedmann-Lemaître-Robertson-Walker (FLRW) spacetime, broken by observational selection geometry and survey boundary masks.",
+        "limits_and_boundary": "In the ideal limit of a complete, volume-limited survey ($f_{\\mathrm{sel}}(L, \\mathbf{r}) \\to 1$) with a normalized distribution function $\\int \\Phi(L) dL = 1$, the effective volume converges to the total geometric volume $V_{\\mathrm{eff}} \\to V_{\\mathrm{geom}}$. In the limit where sources are completely obscured or beyond the flux threshold ($f_{\\mathrm{sel}} \\to 0$), $V_{\\mathrm{eff}} \\to 0$.",
         "status": "platinum",
-        "conceptual_definition": "In observational sciences, particularly astronomy, not all objects within a survey's geometric volume are detected. The probability of detection often depends on an object's intrinsic properties (like luminosity, $L$) and its position (like distance, $r$). This formula defines an effective volume, $V_{eff}$, by integrating a spatial distribution function, $\\Phi(L)$, weighted by the selection function, $f_{sel}(L, r)$, over the entire survey volume $V$. The resulting $V_{eff}$ is a statistically corrected volume that represents the volume a survey would need to have to detect the same number of objects if it were 100% complete.",
-        "intuitive_summary": "Imagine counting fireflies at night. You'll more easily spot the bright ones and the close ones. Your 'survey' is biased. To estimate the total number of fireflies in the field, you must account for the dim, distant ones you missed. This formula is the mathematical way to do that: it calculates a corrected 'effective search area' by weighting each spot in the field by your probability of seeing a firefly there, allowing for a more accurate total count.",
+        "conceptual_definition": "The effective volume $V_{\\mathrm{eff}}$ quantifies the volume over which a flux- or magnitude-limited astronomical survey is sensitive to a population of sources with intrinsic property $L$ (such as luminosity or mass). It is formulated as the integral over the differential survey volume element $dV$, weighted by the intrinsic distribution function $\\Phi(L)$ and the empirical selection function $f_{\\mathrm{sel}}(L, \\mathbf{r}) \\in [0, 1]$, which accounts for completeness, geometrical masking, and detection efficiency.",
+        "intuitive_summary": "Real astronomical surveys cannot detect every galaxy across space because faint or distant objects fall below detection thresholds. The effective volume determines the volume a survey effectively probes by weighting geometric regions by their observational completeness.",
         "subcomponents": [
-            "field-operator-acting-on-test-function",
-            "potential-energy-charge-distribution"
+            "global-volume-3cffe761",
+            "green-s-function-identity-f10ee4c9"
         ],
-        "description": "A statistical formula used in observational astronomy and cosmology to calculate an effective survey volume by correcting for observational biases and incompleteness.",
-        "derivation_type": "DEFINITION"
+        "description": "Calculates the effective volume of an astronomical survey by integrating the geometric volume weighted by the source distribution function and detection selection probability.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "distance-scaling-6cd682d1": {
         "title": "Distance Scaling",
@@ -633,76 +627,77 @@
         "derivation_type": "APPROXIMATION"
     },
     "scale-of-c-2-b2df466a": {
-        "title": "Scale of c^2",
+        "title": "Total Relativistic Energy Decomposition",
         "equation": "E_{total} = E_0 + K",
         "semantic_variables": {
-            "E_{total}": {
-                "name": "Total Energy",
+            "E_{\\text{total}}": {
+                "name": "Total Relativistic Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The total energy of a particle, encompassing both its rest energy and its kinetic energy."
+                "description": "Total energy of the relativistic particle, given by $\\gamma m c^2$"
             },
             "E_0": {
                 "name": "Rest Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The intrinsic energy a particle possesses due solely to its mass, given by E_0 = mc^2, where m is the rest mass and c is the speed of light."
+                "description": "Invariant internal energy possessed by the particle at rest, equal to $m c^2$"
             },
             "K": {
-                "name": "Kinetic Energy",
+                "name": "Relativistic Kinetic Energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The energy a particle possesses due to its motion."
-            },
-            "c": {
-                "name": "Speed of Light",
-                "type": "constant",
-                "unit": "m/s",
-                "description": "The speed of light in a vacuum, a fundamental physical constant."
-            },
-            "m": {
-                "name": "Rest Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "The mass of a particle when it is at rest relative to an observer."
-            },
-            "E": {
-                "name": "Electric Field Strength",
-                "type": "variable",
-                "unit": "V/m or N/C",
-                "description": "The magnitude of the electric field vector, representing the force per unit charge at a point in space."
+                "description": "Energy of motion defined as the difference between total energy and rest energy, $(\\gamma - 1) m c^2$"
             }
         },
-        "interpretation": "In this relativistic energy equation, E_{total} represents the total energy of a particle, measured in Joules (J). This is the sum of all forms of energy the particle possesses. E_0 is the rest energy of the particle, also measured in Joules (J). This is the intrinsic energy a particle has solely due to its mass, according to the famous relation E_0 = mc^2, where m is the rest mass and c is the speed of light. K represents the kinetic energy of the particle, measured in Joules (J), which is the energy it possesses due to its motion. The equation signifies that the total energy of a particle is not just its kinetic energy but also includes the energy locked within its mass. For a particle at rest (K=0), its total energy is equal to its rest energy, E_{total} = E_0.",
-        "symmetry_origin": "This formula is a fundamental consequence of the principles of special relativity, particularly the interconnectedness of mass and energy as described by the Lorentz transformations. It arises from the requirement that the laws of physics must be the same for all inertial observers, leading to a unified description of energy and momentum. The derivation often involves the relativistic momentum and the definition of kinetic energy as the difference between total energy and rest energy, and it highlights the conservation of energy and momentum in relativistic systems.",
-        "limits_and_boundary": "In the non-relativistic limit, where the velocity of the particle is much smaller than the speed of light ( $u\\to$ 0), the kinetic energy K approaches the classical kinetic energy formula, K $\\to \\frac{1}{2} m u^2$. The rest energy E_0 = mc^2 remains constant as long as the mass of the particle does not change. As the velocity approaches the speed of light ( $u\\to$ c), the kinetic energy K approaches infinity, and consequently, the total energy E_{total} also approaches infinity. This illustrates why massive particles cannot reach the speed of light, as an infinite amount of energy would be required.",
+        "interpretation": "The symbol $E_{\\text{total}}$ represents the total relativistic energy of the particle, measured in Joules ($\\text{J}$). The term $E_0 = m c^2$ is the rest energy, representing the invariant mass energy content in the particle's rest frame. The term $K$ denotes the relativistic kinetic energy, which quantifies the net mechanical work required to accelerate the particle from rest to its current velocity $\\mathbf{v}$.",
+        "symmetry_origin": "Originates from spacetime translation invariance in Minkowski spacetime via Noether's theorem, yielding the conservation of the energy-momentum four-vector $P^\\mu = (E_{\\text{total}}/c, \\mathbf{p})$ whose invariant norm defines the mass shell relation $P_\\mu P^\\mu = m^2 c^2$.",
+        "limits_and_boundary": "In the non-relativistic limit $v/c \\to 0$, the Lorentz factor expands as $\\gamma \\approx 1 + \\frac{1}{2}\\frac{v^2}{c^2}$, yielding $K \\to \\frac{1}{2} m v^2$ and recovering classical Newtonian kinetic energy. As $v \\to c$, $\\gamma \\to \\infty$, leading to $K \\to \\infty$ and $E_{\\text{total}} \\to \\infty$, which prohibits massive particles from reaching or exceeding the speed of light.",
         "status": "platinum",
-        "conceptual_definition": "The formula E_{total} = E_0 + K, derived from Einstein's theory of special relativity, relates the total energy of a particle to its rest energy and its kinetic energy. Specifically, it states that the total energy of an object is the sum of its intrinsic energy (energy it possesses by virtue of its mass alone) and the energy it gains due to its motion.",
-        "intuitive_summary": "The total energy of an object is its inherent mass-energy plus the energy of its motion."
+        "conceptual_definition": "In special relativity, the total energy $E_{\\text{total}} = \\gamma m c^2$ of a particle of rest mass $m$ moving with velocity $\\mathbf{v}$ is partitioned additively into its intrinsic rest energy $E_0 = m c^2$ and its relativistic kinetic energy $K = (\\gamma - 1) m c^2$, satisfying $E_{\\text{total}} = E_0 + K$.",
+        "intuitive_summary": "Even when completely stationary, a massive particle contains a baseline reservoir of energy solely due to its mass; any additional energy supplied through work manifests as kinetic energy of motion.",
+        "description": "Decomposes the total relativistic energy of a free massive particle into its invariant rest energy and its kinetic energy.",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
+        "subcomponents": [
+            "characteristic-length-scale-for-massive-particles-3f419634",
+            "hamiltonian-energy-identity-493b3a3c"
+        ]
     },
     "translational-symmetry-6053074f": {
-        "title": "Translational Symmetry",
+        "title": "Spatial Homogeneity Condition for a Scalar Density Field",
         "equation": "\\nabla \\rho = 0",
         "semantic_variables": {
             "\\nabla": {
-                "name": "Gradient Operator",
+                "name": "Nabla / Gradient Operator",
                 "type": "operator",
-                "unit": "1/m",
-                "description": "The del operator, a vector differential operator that describes the rate and direction of the greatest rate of increase of a scalar function. In Cartesian coordinates, it is given by \n\\nabla = \\frac{\\partial}{\\partial x}$\\boldsymbol{i} +$\\frac{\\partial}{\\partial y}$\\boldsymbol{j} +$\\frac{\\partial}{\\partial z}$ \\boldsymbol{k}."
+                "unit": "m^{-1}",
+                "description": "Spatial vector differential operator computing the spatial rate and direction of maximum increase of a scalar field."
             },
             "\\rho": {
-                "name": "Scalar Field",
+                "name": "Scalar Density Field",
                 "type": "variable",
-                "unit": "SI units depend on the physical quantity represented (e.g., kg/m^3 for mass density, C/m^3 for charge density)",
-                "description": "A scalar quantity that may vary in space, representing a physical property such as density, potential, or field strength. The condition \n\\nabla \\rho = 0 implies that this quantity is constant throughout the space where the symmetry holds."
+                "unit": "kg*m^{-3}",
+                "description": "Continuous scalar field representing volumetric density (e.g., mass, charge, or probability density) over space."
+            },
+            "0": {
+                "name": "Zero Vector",
+                "type": "constant",
+                "unit": "kg*m^{-4}",
+                "description": "Null gradient vector indicating the absence of spatial variation in all coordinate directions."
             }
         },
-        "interpretation": "In this equation, \n\\nabla is the gradient operator, which in Cartesian coordinates is given by \n\\nabla = \\frac{\\partial}{\\partial x} \\boldsymbol{i} + \\frac{\\partial}{\\partial y} \\boldsymbol{j} + \\frac{\\partial}{\\partial z}$\\boldsymbol{k}$. The symbol $\\rho$ represents a scalar field, which could be a physical quantity like mass density (kg/m³), charge density (C/m³), or any other scalar property that might vary in space. The equation \n\\nabla $\\rho$ = 0 signifies that for every component of the gradient, $\\frac{\\partial \\rho}{\\partial x} = 0$, $\\frac{ \\partial \\rho }{ \\partial y} = 0$, and $\\frac{\\partial \\rho}{\\partial z} = 0$. This means that the scalar field $\\rho$ is constant with respect to position. If $\\rho$ were the mass density of an object, \n\\nabla $\\rho$ = 0 would imply that the object has uniform density throughout its volume, and its density is the same no matter where you measure it within the object.",
-        "symmetry_origin": "This condition arises from the principle of translational symmetry. If a physical system possesses translational symmetry, it means that its physical laws and properties are invariant under spatial translations. Mathematically, this invariance implies that a scalar field describing a property of the system, such as density, potential, or field strength, must be constant throughout space. The gradient of a constant function is identically zero. Conversely, if the gradient of a field is zero everywhere, the field itself must be a constant, indicating translational symmetry.",
-        "limits_and_boundary": "The equation \n\\nabla $\\rho$ = 0 is typically applied to systems where translational symmetry is assumed to hold over the entire domain of interest. There are no explicit limits on variables approaching zero or infinity within this specific equation itself. However, in practical applications, one might consider systems where translational symmetry is an approximation, and deviations from \n\\nabla $\\rho$ = 0 would occur at boundaries or in regions where the underlying physical assumptions break down. For instance, if $\\rho$ represents mass density, the equation implies infinite extent of uniform density unless boundary conditions are imposed, which would typically introduce a non-zero gradient at the interfaces.",
+        "interpretation": "In this equation, $\\nabla$ represents the spatial vector differential operator (gradient), defined in Cartesian coordinates as $\\nabla = \\mathbf{\\hat{i}} \\frac{\\partial}{\\partial x} + \\mathbf{\\hat{j}} \\frac{\\partial}{\\partial y} + \\mathbf{\\hat{k}} \\frac{\\partial}{\\partial z}$. The symbol $\\rho$ denotes a scalar field, such as mass density (with SI unit $\\mathrm{kg \\cdot m^{-3}}$) or electric charge density (with SI unit $\\mathrm{C \\cdot m^{-3}}$). The condition $\\nabla \\rho = 0$ decomposes into three independent partial differential equations: $\\frac{\\partial \\rho}{\\partial x} = 0$, $\\frac{\\partial \\rho}{\\partial y} = 0$, and $\\frac{\\partial \\rho}{\\partial z} = 0$, enforcing absolute spatial uniformity.",
+        "symmetry_origin": "Continuous spatial translational symmetry $T(3)$ via infinitesimal generator $\\mathbf{P} = -i\\hbar \\nabla$. By Noether's theorem, spatial translational invariance is the geometric foundation for linear momentum conservation.",
+        "limits_and_boundary": "In the limit of infinite domain size $V \\to \\infty$, global mass or charge diverges unless $\\rho = 0$. In finite volumes with boundary $\\partial \\Omega$, the condition implies Neumann boundary conditions $\\mathbf{n} \\cdot \\nabla \\rho = 0$ everywhere on the boundary.",
         "status": "platinum",
-        "conceptual_definition": "The equation \n\\nabla $\\rho = 0 represents the mathematical condition for translational symmetry in a physical system. Specifically, it states that the gradient of a scalar field \\rho is zero everywhere. The gradient, \\nabla , is a vector operator that describes the rate and direction of change of a field. When the gradient of \\rho$ is zero, it implies that the field $\\rho does$ not change with position in any direction. This constancy of $\\rho$ throughout space is the hallmark of translational symmetry: the physical properties described by $\\rho$ are the same regardless of where the observer or system is located in space.",
-        "intuitive_summary": "The property described by \n$\\rho$\n is identical everywhere in space."
+        "conceptual_definition": "A scalar field $\\rho(\\mathbf{r})$ exhibits continuous spatial translational symmetry under all displacement vectors $\\mathbf{a} \\in \\mathbb{R}^3$ if and only if its directional derivative along any spatial direction is zero, mathematically expressed by the vanishing spatial gradient $\\nabla \\rho = 0$. Consequently, $\\rho(\\mathbf{r}) = \\text{constant}$ across the connected domain.",
+        "intuitive_summary": "If you look at the density at any point in space, it is completely identical to every other point—there are no spatial slopes, concentrations, or rarefactions.",
+        "description": "States that the spatial gradient of a scalar density field vanishes identically, signifying continuous spatial translational invariance and uniform distribution throughout the domain.",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
+        "subcomponents": [
+            "general-continuity-equation-ident-b0a7fcc9",
+            "fluid-mass-conservation-form-07fd9f29",
+            "divergence-of-mass-flux-80fdf7e0"
+        ]
     },
     "kinetic-metric-5de8833f": {
         "title": "Metric Representation",
@@ -890,70 +885,66 @@
         ]
     },
     "lagrangian-in-an-external-field-38d55be1": {
-        "title": "Lagrangian in an External Field",
+        "title": "Lagrangian for an N-Particle System in an External Field",
         "equation": "\\mathcal{L} = \\sum \\frac{1}{2}m_i \\dot{r}_i^2 - V_{int}(r_{ij}) - V_{ext}(\\mathbf{r}_i)",
         "semantic_variables": {
-            "&c;": {
-                "name": "Lagrangian",
+            "\\mathcal{L}": {
+                "name": "Lagrangian of the system",
                 "type": "variable",
                 "unit": "J",
-                "description": "The Lagrangian of the system, defined as the difference between the total kinetic energy and the total potential energy."
+                "description": "Total Lagrangian of the $N$-particle system defined as kinetic minus potential energy."
             },
             "m_i": {
-                "name": "Mass of the i-th particle",
-                "type": "variable",
+                "name": "Mass of particle i",
+                "type": "constant",
                 "unit": "kg",
-                "description": "The mass of the i-th particle in the system."
+                "description": "Inertial mass of the $i$-th particle."
             },
-            "&ri&": {
-                "name": "Velocity vector of the i-th particle",
+            "\\dot{\\mathbf{r}}_i": {
+                "name": "Velocity of particle i",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The time derivative of the position vector of the i-th particle, representing its velocity."
+                "description": "Time derivative of the position vector for the $i$-th particle."
             },
-            "V_{int}(r_{ij})": {
-                "name": "Internal Potential Energy",
-                "type": "variable",
-                "unit": "J",
-                "description": "The potential energy arising from interactions between pairs of particles in the system. $r_{ij}$ is the vector connecting particle $i$ and particle $j$."
-            },
-            "V_{ext}(\\mathbf{r}_i)": {
-                "name": "External Potential Energy",
-                "type": "variable",
-                "unit": "J",
-                "description": "The potential energy of the i-th particle due to an external field."
-            },
-            "m": {
-                "name": "Mass",
-                "type": "variable",
-                "unit": "kg",
-                "description": "A fundamental measure of the amount of matter in an object, which acts as a quantitative measure of inertia (resistance to acceleration) and determines the strength of its gravitational attraction."
-            },
-            "i": {
-                "name": "Imaginary Unit",
-                "type": "constant",
-                "unit": "dimensionless",
-                "description": "The mathematical constant defined by the property i² = -1 (sometimes written as j)."
-            },
-            "r": {
-                "name": "Radial Distance / Radius",
+            "r_{ij}": {
+                "name": "Inter-particle distance",
                 "type": "variable",
                 "unit": "m",
-                "description": "The radial distance from a central source or origin, typically used in spherical or cylindrical coordinate systems."
+                "description": "Euclidean distance $|\\mathbf{r}_i - \\mathbf{r}_j|$ between particle $i$ and particle $j$."
             },
-            "V": {
-                "name": "Electric Potential",
+            "V_{int}": {
+                "name": "Internal potential energy",
                 "type": "variable",
-                "unit": "V",
-                "description": "The amount of work energy needed to move a unit of electric charge from a reference point to a specific point in an electric field."
+                "unit": "J",
+                "description": "Potential energy due to mutual pairwise interactions between particles."
+            },
+            "V_{ext}": {
+                "name": "External potential energy",
+                "type": "variable",
+                "unit": "J",
+                "description": "Potential energy due to external background fields acting on particle positions."
+            },
+            "\\mathbf{r}_i": {
+                "name": "Position vector of particle i",
+                "type": "variable",
+                "unit": "m",
+                "description": "Spatial coordinate vector of the $i$-th particle in Euclidean 3-space."
             }
         },
-        "interpretation": "The formula $|$&c; = &sum ri=1 1/2mi &ri&^2 - V_int(rij) - V_ext( $\\bbfr$;i) describes the dynamics of a system composed of multiple particles, indexed by i. The first term, &sum ri=1 1/2mi &ri&^2, represents the total kinetic energy of the system. Here, mi is the mass of the i-th particle (in kg), and &ri& is its position vector (in meters). The term &ri& is the time derivative of the position vector, representing the velocity of the i-th particle (in m/s). The second term, &- V_int(rij), subtracts the total internal potential energy. V_int(rij) is a function describing the potential energy arising from interactions between pairs of particles, where rij is the vector connecting particle i and particle j. This term accounts for forces like electrostatic attraction or repulsion, or the Lennard-Jones potential in molecular physics (in Joules). The third term, &- V_ext( $\\bbfr$;i), subtracts the external potential energy. V_ext( $\\bbfr$;i) represents the potential energy of the i-th particle due to an external field, such as gravitational or electromagnetic fields (in Joules). The Lagrangian is typically expressed in terms of generalized coordinates and velocities, but in this form, it uses Cartesian coordinates for clarity.",
-        "symmetry_origin": "The Lagrangian formulation stems from the principle of least action, which states that the path a physical system takes between two points in time is the one for which the action (the time integral of the Lagrangian) is minimized. This principle is deeply connected to symmetries via Noether's theorem. For instance, if the Lagrangian is invariant under spatial translations, energy is conserved. If it is invariant under time translations, momentum is conserved. The structure of the Lagrangian itself, particularly the separation into kinetic and potential energy terms, is a consequence of the Galilean invariance of classical mechanics.",
-        "limits_and_boundary": "As the masses mi approach zero, the kinetic energy term approaches zero, implying that the dynamics are dominated by the potential energy terms. Conversely, as masses become infinitely large, the kinetic energy term tends to dominate, and the particles tend to move with constant velocities unless acted upon by a significant potential force. If the external potential V_ext( $\\bbfr$;i) approaches zero for all particles, the system behaves as if it is only influenced by internal forces. If all potential energy terms (V_int and V_ext) approach zero, the Lagrangian simplifies to just the kinetic energy, and the particles will move according to Newton's first law (inertia) if they are already in motion.",
+        "interpretation": "The first term $\\sum_i \\frac{1}{2}m_i \\dot{\\mathbf{r}}_i^2$ represents the total kinetic energy $T$ of the system of $N$ particles, where $m_i$ is the mass of the $i$-th particle and $\\dot{\\mathbf{r}}_i$ is its velocity vector. The second term $-V_{\\text{int}}(r_{ij})$ is the total internal potential energy arising from inter-particle distances $r_{ij} = |\\mathbf{r}_i - \\mathbf{r}_j|$, accounting for conservative two-body interactions such as gravitational or electrostatic forces. The third term $-V_{\\text{ext}}(\\mathbf{r}_i)$ accounts for the potential energy resulting from external forces, such as applied electromagnetic or background gravitational fields acting on the $i$-th particle at position $\\mathbf{r}_i$.",
+        "symmetry_origin": "Under the absence of external potentials ($V_{\\text{ext}} = 0$), the Lagrangian is invariant under spatial translations and rotations, leading via Noether's theorem to the conservation of total linear momentum and total angular momentum, respectively. When $V_{\\text{ext}} \\neq 0$, these continuous spatial symmetries are explicitly broken, conserving momentum only along homogeneous directions of the external field.",
+        "limits_and_boundary": "In the non-interacting limit ($V_{\\text{int}} \\to 0$), the system decouples into $N$ independent single-particle Lagrangians in an external potential. In the limit where the external field vanishes ($V_{\\text{ext}} \\to 0$), full Galilean invariance of the closed system is restored. Relativistic corrections become mandatory when particle speeds approach the speed of light ($|\\dot{\\mathbf{r}}_i| \\to c$).",
         "status": "platinum",
-        "conceptual_definition": "The Lagrangian $|$&c; is a fundamental quantity in classical and quantum mechanics, particularly useful in systems with symmetries or when dealing with forces that are not easily expressed in terms of a potential. For a system of interacting particles in an external field, the Lagrangian is defined as the difference between the total kinetic energy of the system and the total potential energy. This formulation allows for the derivation of the equations of motion via the Euler-Lagrange equations, providing an alternative and often more elegant approach compared to Newtonian mechanics.",
-        "intuitive_summary": "The Lagrangian is the system's total kinetic energy minus its total potential energy, accounting for both internal particle interactions and the influence of an external field."
+        "conceptual_definition": "In classical Lagrangian mechanics, the dynamics of an $N$-particle system governed by conservative forces is formulated via the Lagrangian function $\\mathcal{L} = T - V$. For particles with masses $m_i$, velocities $\\dot{\\mathbf{r}}_i$, mutual internal pairwise potentials $V_{\\text{int}}(r_{ij})$ where $r_{ij} = |\\mathbf{r}_i - \\mathbf{r}_j|$, and external potentials $V_{\\text{ext}}(\\mathbf{r}_i)$, the total Lagrangian is $\\mathcal{L} = \\sum_i \\frac{1}{2}m_i \\dot{\\mathbf{r}}_i^2 - \\sum_{i < j} V_{\\text{int}}(r_{ij}) - \\sum_i V_{\\text{ext}}(\\mathbf{r}_i)$.",
+        "intuitive_summary": "The Lagrangian represents the total kinetic energy of all moving particles minus the sum of their internal mutual interaction energies and the external potential energy exerted on each particle by outside fields.",
+        "description": "Defines the non-relativistic Lagrangian for a system of interacting particles subject to both mutual pairwise internal interactions and an external potential field.",
+        "parent_formula_id": "lagrangian-single-particle-external-potential",
+        "derivation_type": "GENERALIZATION",
+        "subcomponents": [
+            "lagrangian-single-particle-external-potential",
+            "lagrangian-for-free-particle",
+            "rate-change-total-momentum-external"
+        ]
     },
     "phase-space-specification-5f3d3bfc": {
         "title": "Phase Space State Vector Specification",
@@ -1002,68 +993,52 @@
     "hamilton-matrix-equations-5eeea853": {
         "title": "Matrix Form of Hamilton’s Equations",
         "equation": "\\dot{\\mathbf{z}} = \\mathbf{J} \\nabla_{\\mathbf{z}} H",
-        "interpretation": "The equation = H is the matrix form of Hamilton's equations. Here, represents the state vector of the dynamical system in phase space. This state vector is a column vector containing all the generalized coordinates () and their corresponding conjugate momenta () for the system. The dot over , denoted as , signifies the time derivative of this state vector, i.e., the rate at which the system's state is changing. The symbol is the symplectic matrix, a constant matrix with specific block structure that characterizes the geometry of phase space and is crucial for preserving the canonical structure of Hamiltonian mechanics. For a system with $n$ degrees of freedom, is a $2n \\times 2n$ matrix of the form =, where is the $n \\times n$ identity matrix and is the $n \\times n$ anti-symmetric matrix with 1s on the anti-diagonal and 0s elsewhere. The term H represents the gradient of the Hamiltonian function ( H) with respect to the state vector . This gradient is a column vector containing the partial derivatives of the Hamiltonian with respect to each generalized coordinate and momentum: H = ( H/_1, ..., H/_n, H/_1, ..., H/_n)^T. Specifically, H/_i = _i and H/_i = -_i, which are the standard Hamilton's equations when written in component form. The matrix multiplication H effectively combines these partial derivatives to yield the time evolution of all generalized coordinates and momenta simultaneously.",
-        "symmetry_origin": "This formulation arises from the canonical structure of Hamiltonian mechanics, which is deeply connected to the symplectic geometry of phase space. Hamilton's original formulation of mechanics, which leads to these equations, is invariant under arbitrary coordinate transformations, a fundamental principle in physics. The symplectic matrix itself is a manifestation of the fundamental Poisson bracket relations, which are preserved under canonical transformations. The derivation can be traced back to the principle of least action and the Legendre transformation that converts Lagrangian mechanics to Hamiltonian mechanics, preserving the underlying symmetries.",
-        "limits_and_boundary": "In the limit where the Hamiltonian function H is constant with respect to all state variables (), meaning H = 0, the time derivative of the state vector becomes zero. This implies that the system is in equilibrium, and its state does not change over time. Conversely, if the Hamiltonian depends strongly on the state variables, the resulting can be large, indicating rapid changes in the system's state. As the system approaches boundaries of physically accessible phase space (e.g., infinite momenta or positions for unbound systems), the behavior of is dictated by the specific form of H near those boundaries.",
+        "interpretation": "In this equation, $\\mathbf{z} \\in \\mathbb{R}^{2n}$ is the phase space state vector whose first $n$ components are generalized coordinates $q_i$ and last $n$ components are canonical conjugate momenta $p_i$. The time derivative $\\dot{\\mathbf{z}} = \\frac{\\mathrm{d}\\mathbf{z}}{\\mathrm{d}t}$ describes the phase-space velocity field along the system trajectory. The operator $\\nabla_{\\mathbf{z}} H = \\left(\\frac{\\partial H}{\\partial q_1}, \\dots, \\frac{\\partial H}{\\partial q_n}, \\frac{\\partial H}{\\partial p_1}, \\dots, \\frac{\\partial H}{\\partial p_n}\\right)^T$ is the gradient of the Hamiltonian function $H(\\mathbf{z}, t)$ with respect to phase space coordinates. The matrix $\\mathbf{J} = \\begin{pmatrix} \\mathbf{0} & \\mathbf{I}_n \\\\ -\\mathbf{I}_n & \\mathbf{0} \\end{pmatrix}$ is the standard canonical symplectic matrix, which satisfies $\\mathbf{J}^T = -\\mathbf{J} = \\mathbf{J}^{-1}$ and $\\mathbf{J}^2 = -\\mathbf{I}_{2n}$, appropriately mapping the gradient to the canonical flow $\\dot{q}_i = \\frac{\\partial H}{\\partial p_i}$ and $\\dot{p}_i = -\\frac{\\partial H}{\\partial q_i}$.",
+        "symmetry_origin": "Rooted in symplectic geometry and canonical invariance; canonical transformations preserve the symplectic form $\\mathbf{M}^T \\mathbf{J} \\mathbf{M} = \\mathbf{J}$, corresponding to the conservation of phase-space volume via Liouville's theorem and Noether invariants under continuous symmetry groups.",
+        "limits_and_boundary": "In the classical limit where quantum fluctuations are negligible ($\\hbar \\to 0$), quantum Heisenberg equations $\\frac{\\mathrm{d}\\hat{\\mathbf{z}}}{\\mathrm{d}t} = \\frac{1}{i\\hbar}[\\hat{\\mathbf{z}}, \\hat{H}]$ map directly onto this matrix equation via the Dirac correspondence principle $[\\cdot, \\cdot] \\to i\\hbar \\{\\cdot, \\cdot\\}$. The formalism assumes a non-singular, unconstrained phase space manifold $\\mathbb{R}^{2n}$.",
         "semantic_variables": {
             "\\dot{\\mathbf{z}}": {
-                "name": "Time derivative of the state vector",
+                "name": "Phase space velocity vector",
                 "type": "variable",
-                "unit": "s^{-1}",
-                "description": "Represents the rate of change of the system's state vector with respect to time. This is a column vector containing the time derivatives of all generalized coordinates and generalized momenta."
+                "unit": "m/s, kg*m/s^2",
+                "description": "Time derivative of the $2n$-dimensional phase space coordinate vector"
             },
             "\\mathbf{z}": {
-                "name": "State vector in phase space",
+                "name": "Phase space state vector",
                 "type": "variable",
-                "unit": "various",
-                "description": "A column vector representing the complete state of the dynamical system at a given time. It comprises all generalized coordinates () and their corresponding conjugate momenta () for the system. For a system with $n$ degrees of freedom, is a $2n imes 1$ vector."
+                "unit": "mixed",
+                "description": "Column vector of generalized coordinates and conjugate momenta $(q_1, \\dots, q_n, p_1, \\dots, p_n)^T$"
             },
             "\\mathbf{J}": {
-                "name": "Symplectic matrix",
+                "name": "Standard symplectic matrix",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "A constant $2n imes 2n$ matrix that defines the canonical structure of phase space. It has the form $\\mathbf{J}$ = \\begin{pmatrix} 0 & I \\\\ -I & 0 \\end{pmatrix}, where $I$ is the $n \\times n$ identity matrix and $0$ is the $n imes n$ zero matrix. It is antisymmetric and its determinant is 1."
+                "description": "Skew-symmetric $2n \\times 2n$ block matrix defined as [[0, I], [-I, 0]]"
             },
-            "\\nabla_{\\mathbf{z}} H": {
-                "name": "Gradient of the Hamiltonian",
+            "\\nabla_{\\mathbf{z}}": {
+                "name": "Phase space gradient operator",
                 "type": "operator",
-                "unit": "J",
-                "description": "A column vector representing the gradient of the Hamiltonian function ( H) with respect to the state vector . Each component is the partial derivative of the Hamiltonian with respect to a corresponding generalized coordinate or momentum. The units of the gradient are energy per unit of the corresponding generalized coordinate or momentum."
+                "unit": "mixed^-1",
+                "description": "Vector differential operator containing partial derivatives with respect to generalized coordinates and momenta"
             },
             "H": {
                 "name": "Hamiltonian function",
                 "type": "variable",
                 "unit": "J",
-                "description": "The Hamiltonian function of the system, typically representing the total energy of the system as a function of generalized coordinates (), generalized momenta (), and possibly time. Its units are Joules."
-            },
-            "\\mathbf{q}": {
-                "name": "Generalized coordinates",
-                "type": "variable",
-                "unit": "various",
-                "description": "A set of $n$ independent variables that describe the configuration of the system. For example, for a particle in 3D space, these could be its Cartesian coordinates (x, y, z). Their units depend on the specific system."
-            },
-            "\\mathbf{p}": {
-                "name": "Generalized momenta",
-                "type": "variable",
-                "unit": "kg \\cdot m/s",
-                "description": "The conjugate momenta corresponding to the generalized coordinates. For a simple mechanical system, this is often the standard linear momentum. Their units are typically kg \\cdot m/s."
-            },
-            "z": {
-                "name": "Position Coordinate",
-                "type": "variable",
-                "unit": "m",
-                "description": "A coordinate representing the longitudinal or altitude location of a particle in space."
-            },
-            "J": {
-                "name": "Angular Momentum / Current Density",
-                "type": "variable",
-                "unit": "kg·m²/s or A/m²",
-                "description": "Rotational momentum vector, or flow of electric charge per unit area."
+                "description": "Total energy function of the dynamical system expressed in terms of phase space coordinates"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "This equation represents a compact, matrix formulation of Hamilton's equations of motion, a fundamental set of equations in classical mechanics that describe the time evolution of a dynamical system. It elegantly expresses the rates of change of generalized coordinates and generalized momenta in terms of the Hamiltonian of the system and a symplectic matrix. The Hamiltonian, representing the total energy of the system, dictates how the system's state evolves over time.",
-        "intuitive_summary": "The rate of change of a system's state (positions and momenta) is determined by how the system's energy changes across all possible states, governed by a specific geometric structure of phase space."
+        "conceptual_definition": "The matrix form of Hamilton's equations, $\\dot{\\mathbf{z}} = \\mathbf{J} \\nabla_{\\mathbf{z}} H$, unifies the $2n$ first-order ordinary differential equations of Hamiltonian mechanics into a single vector-matrix relation on phase space. Here, $\\mathbf{z} = (q_1, \\dots, q_n, p_1, \\dots, p_n)^T$ combines generalized coordinates and conjugate momenta, while $\\mathbf{J}$ represents the standard $2n \\times 2n$ fundamental symplectic matrix, embodying the non-degenerate, closed 2-form of symplectic geometry.",
+        "intuitive_summary": "Instead of tracking positions and momenta separately with two sets of coupled equations, the phase space coordinates are packed into a single vector whose evolution is generated by rotating the energy gradient using the fundamental symplectic matrix.",
+        "description": "Expresses Hamilton's canonical equations of motion in a unified, symplectic matrix formalism governing the phase-space trajectory of a dynamical system.",
+        "parent_formula_id": "hamilton-canonical-equations-5314f032",
+        "derivation_type": "DERIVED_FROM",
+        "subcomponents": [
+            "hamilton-canonical-equations-5314f032",
+            "geometric-gear-62571695",
+            "hamiltons-equations-symplectic"
+        ]
     },
     "gross-pitaevskii-equation-condensate-afc8fd27": {
         "title": "Gross-Pitaevskii Equation for Bose-Einstein Condensates",
@@ -1199,28 +1174,42 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "density-matrix-elements-zero": {
-        "title": "Density matrix elements approach zero",
+        "title": "Decoherence Limit of Off-Diagonal Density Matrix Elements",
         "equation": "\\rho_{ij}(t) \\to 0",
-        "conceptual_definition": "The formula $\\rho_{ij}(t) \\to 0$ signifies that off-diagonal elements of a density matrix describing a quantum system tend to zero over time. This is a crucial indicator of decoherence, where quantum coherence between different states is lost due to interactions with the environment. As $\\rho_{ij}(t)$ approaches zero, the system evolves from a superposition of states to a classical mixture of states, effectively losing its quantum nature in those specific off-diagonal components.",
-        "intuitive_summary": "Quantum interference between different states of a system vanishes over time, leading to a loss of quantum properties.",
-        "interpretation": "In this formula, $\\rho_{ij}(t)$ represents the off-diagonal element (the element connecting state |i⟩ to state |j⟩, where i ≠ j) of the density matrix $\\rho(t)$ at time $t$. The density matrix is a powerful tool in quantum mechanics for describing the state of a quantum system, especially when it is part of a larger system or when it is in a mixed state (a statistical ensemble of pure states). The diagonal elements, $\\rho_{ii}(t)$, represent the probabilities of finding the system in the corresponding energy eigenstate |i⟩, and these probabilities typically remain constant or evolve according to the system's Hamiltonian if there are no dissipative processes. The off-diagonal elements, $\\rho_{ij}(t)$ for $i$ eq j$, are known as coherences. They are responsible for quantum interference phenomena, such as those observed in the double-slit experiment. The condition \\rho_{ij} (t) \\to 0$ means that these coherences decay to zero. This decay is a manifestation of decoherence, where the quantum system becomes entangled with its environment. This entanglement effectively 'leaks' the phase information responsible for the coherences into the environment, making it inaccessible to measurements performed solely on the system. Consequently, the system loses its ability to exhibit quantum interference effects that depend on the relative phases between different states.",
-        "symmetry_origin": "The decay of off-diagonal density matrix elements to zero is typically a consequence of the system's interaction with its environment, a process known as decoherence. While the fundamental laws of quantum mechanics (like the Schrödinger equation for a closed system) are time-reversal symmetric and preserve coherences, realistic systems are always coupled to an environment. The Hamiltonian describing the total system (system + environment) is typically assumed to be symmetric under certain transformations, but the interaction leads to a loss of coherence in the subsystem. The origin of this decay is not a fundamental symmetry of the system itself but rather the dissipative and irreversible nature of interactions with a large, complex environment. The mathematical description often involves master equations or stochastic Schrödinger equations, which are derived from the Liouville-von Neumann equation by incorporating approximations like the Born-Markov approximation, which account for the continuous and weak interaction with a vast number of environmental degrees of freedom.",
-        "limits_and_boundary": "As $t \\to \\infty$ (in the limit of infinite time), the off-diagonal density matrix elements $\\rho_{ij}(t)$ approach zero, provided the system is interacting with a sufficiently complex environment causing decoherence. This means that $\\lim_{t \\to \\infty} \\rho_{ij}(t) = 0$ for $i$ eq j$. The diagonal elements, \\rho_{ii} (t)$, will then represent the steady-state probabilities of the system being in each of its energy eigenstates, forming a classical statistical mixture. If $t \\to 0$ (at the initial time), the off-diagonal elements $\\rho_{ij}$(0)$can be non-zero, indicating the presence of initial quantum coherences. The rate at which \\rho_{ij} (t)$ decays to zero depends on the nature of the interaction with the environment and is typically characterized by a decoherence timescale.",
+        "conceptual_definition": "In open quantum systems, the off-diagonal elements $\\rho_{ij}(t)$ ($i \\neq j$) of the reduced density operator in a preferred pointer basis decay to zero as time $t \\to \\infty$. This process, known as environmental decoherence, dynamically destroys quantum interference without violating the conservation of probability encoded in the trace $\\mathrm{Tr}(\\rho) = 1$.",
+        "intuitive_summary": "As a quantum system interacts with its surrounding environment, relative phase information disperses into unobserved degrees of freedom, causing quantum superpositions to effectively degrade into classical probability distributions.",
+        "interpretation": "The quantity $\\rho_{ij}(t) = \\langle i | \\rho(t) | j \\rangle$ denotes the coherence between orthogonal eigenstates $|i\\rangle$ and $|j\\rangle$ at time $t$. The limiting condition $\\rho_{ij}(t) \\to 0$ for $i \\neq j$ indicates that the system's reduced density matrix $\\rho(t)$ asymptotically diagonalizes in the pointer basis, eliminating observable quantum interference phenomena such as phase-dependent fringes.",
+        "symmetry_origin": "Rooted in unitary invariance $U(\\mathcal{H}_S \\otimes \\mathcal{H}_E)$ of the total closed system-environment Hilbert space, under which total von Neumann entropy is conserved while the local subsystem entropy increases monotonically.",
+        "limits_and_boundary": "In the limit $t \\gg \\tau_d$ (where $\\tau_d$ is the decoherence timescale), off-diagonal elements $\\rho_{ij}(t) \\to 0$, recovering classical statistical behavior. In the isolated limit where system-environment coupling $g \\to 0$ or $t \\ll \\tau_d$, off-diagonal coherences undergo purely unitary phase evolution without decay.",
         "status": "platinum",
         "semantic_variables": {
             "\\rho_{ij}(t)": {
-                "name": "Density Matrix Element",
+                "name": "Off-diagonal density matrix element",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "An off-diagonal element of the density matrix $\\rho(t)$ at time $t$, connecting the quantum state |i⟩ to the quantum state |j⟩, where $i eq j$. It represents the coherence between these two states."
+                "description": "Time-dependent quantum coherence element between orthogonal states $|i\\rangle$ and $|j\\rangle$ ($i \\neq j$)"
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The elapsed time from some initial moment."
+                "description": "Temporal evolution coordinate of the open quantum system"
+            },
+            "0": {
+                "name": "Zero",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Vanishing asymptotic limit for quantum coherence amplitudes"
             }
-        }
+        },
+        "description": "Represents the asymptotic decay of off-diagonal density matrix elements (quantum coherences) to zero due to environmental entangling interactions, driving the transition from a pure quantum superposition to a classical statistical mixture.",
+        "parent_formula_id": "scale-of-reality-00f1de95",
+        "derivation_type": "LIMITING_CASE",
+        "subcomponents": [
+            "decay-coherence",
+            "zero-off-diagonal-density-matrix-element-18142ace",
+            "density-matrix-element"
+        ]
     },
     "minkowski-metric-signature-minus-plus-plus-plus-1": {
         "title": "Minkowski Metric (Signature $-+++$)",
@@ -1710,106 +1699,104 @@
         "derivation_type": "DEFINITION"
     },
     "total-differential-helmholtz-free-energy": {
-        "title": "Total Differential of Helmholtz Free Energy",
+        "title": "Total Differential of the Helmholtz Free Energy",
         "equation": "dA = -S dT - P dV",
-        "conceptual_definition": "The total differential of the Helmholtz free energy, denoted as dA, quantifies the infinitesimal change in this thermodynamic potential. It reveals how the Helmholtz free energy responds to infinitesimal changes in temperature (dT) and volume (dV) at constant particle number. This relationship is fundamental in understanding the spontaneous processes in systems held at constant temperature and volume, where the Helmholtz free energy acts as the potential that tends to decrease.",
-        "intuitive_summary": "The change in Helmholtz free energy is the negative of the entropy change times the temperature change, minus the pressure change times the volume change, indicating how heat and work exchanges affect this potential at constant temperature and volume.",
-        "interpretation": "The equation dA = -S dT - P dV describes the infinitesimal change in the Helmholtz free energy, dA. The first term, –S dT, signifies that if the temperature ( $T$) of the system is changed infinitesimally (dT) while keeping the volume constant, the corresponding change in Helmholtz free energy is directly proportional to the negative of the entropy (S) of the system. This term represents the change in free energy due to thermal fluctuations. The second term, –P dV, indicates that if the volume ( $V$) of the system is changed infinitesimally (dV) while keeping the temperature constant, the change in Helmholtz free energy is directly proportional to the negative of the pressure (P) exerted by the system. This term represents the change in free energy associated with the work done by or on the system. Thus, dA provides a complete infinitesimal description of how the Helmholtz free energy changes in response to small variations in temperature and volume.",
-        "symmetry_origin": "This formula is derived from the fundamental thermodynamic relation for a system with constant particle number: dU = T dS - P dV, where U is internal energy. By defining the Helmholtz free energy as A = U - TS, and taking its total differential, dA = dU - T dS - S dT, we substitute dU to obtain dA = (T dS - P dV) - T dS - S dT, which simplifies to dA = -S dT - P dV. This derivation highlights its origin in the first and second laws of thermodynamics and the Legendre transform used to define the Helmholtz free energy.",
-        "limits_and_boundary": "As temperature ( $T$) approaches absolute zero (T → 0), the term –S dT approaches zero, meaning changes in Helmholtz free energy are primarily governed by volume changes (or work done) at very low temperatures. Conversely, as temperature becomes very high, the –S dT term can become significant, indicating that entropy changes play a larger role in the free energy variations. If the volume change dV is zero (i.e., an isochoric process), then dA = –S dT, implying that at constant volume, the Helmholtz free energy changes only due to temperature variations and is directly related to the entropy. If the temperature change dT is zero (i.e., an isothermal process), then dA = –P dV, implying that at constant temperature, the Helmholtz free energy changes only due to volume variations and is directly related to the work done by the system.",
+        "conceptual_definition": "The Helmholtz free energy $A$ (or $F$) is obtained via the Legendre transform of internal energy $U(S, V)$ with respect to entropy $S$: $A = U - TS$. Taking the differential yields $dA = dU - T dS - S dT$. Substituting the fundamental relation $dU = T dS - P dV$ eliminates the entropic differential $dS$, yielding the canonical differential 1-form $dA = -S dT - P dV$, where the natural independent state variables are temperature $T$ and volume $V$.",
+        "intuitive_summary": "The Helmholtz free energy measures the reversible work obtainable from a closed thermodynamic system held at constant temperature. Its differential shows that increasing temperature decreases free energy at a rate proportional to entropy, while expanding volume decreases free energy at a rate equal to pressure.",
+        "interpretation": "In the differential $dA = -S dT - P dV$, the term $-S dT$ represents the change in available free energy driven by thermal variation at constant volume, where $S = -(\\partial A / \\partial T)_V$ is the thermodynamic entropy. The term $-P dV$ quantifies the reversible mechanical work performed by or on the system at constant temperature, with $P = -(\\partial A / \\partial V)_T$ denoting the hydrostatic pressure. For an open system with particle variations, the form extends by $\\sum_i \\mu_i dN_i$.",
+        "symmetry_origin": "Rooted in the First and Second Laws of Thermodynamics and the projective geometric duality of the Legendre transformation on the convex thermodynamic state manifold $(S, V) \\mapsto (T, V)$.",
+        "limits_and_boundary": "In the limit $T \\to 0$, by the Third Law of Thermodynamics (Nernst Heat Theorem), $S \\to 0$, implying $(\\partial A / \\partial T)_V \\to 0$ and $A \\to U$. In the thermodynamic limit where volume $V \\to \\infty$ at fixed particle density $N/V$, $A$ exhibits extensive scaling such that $A(\\lambda T, \\lambda V) = \\lambda A(T, V)$ is not strictly homogeneous in $T$, but rather $A(T, \\lambda V) = \\lambda A(T, V)$.",
         "status": "platinum",
         "semantic_variables": {
             "A": {
-                "name": "Helmholtz Free Energy",
+                "name": "Helmholtz free energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The Helmholtz free energy (A) is a thermodynamic potential that measures the 'useful' work obtainable from a closed thermodynamic system at a constant temperature and volume. It is defined as A = U - TS, where U is internal energy, T is temperature, and\\delta\\delta S is entropy."
+                "description": "Thermodynamic potential measuring the useful work obtainable from a closed system at constant temperature and volume"
             },
             "S": {
                 "name": "Entropy",
                 "type": "variable",
                 "unit": "J/K",
-                "description": "Entropy (S) is a measure of the disorder or randomness in a system. It is a state function in thermodynamics."
+                "description": "Extensive thermodynamic measure of microscopic state multiplicity and thermal dispersal"
             },
             "T": {
-                "name": "Temperature",
+                "name": "Absolute temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "Temperature (T) is a measure of the average kinetic energy of the particles in a system. It dictates the direction of heat flow."
+                "description": "Intensive state variable representing the conjugate thermodynamic force to entropy"
             },
             "P": {
-                "name": "Pressure",
+                "name": "Hydrostatic pressure",
                 "type": "variable",
                 "unit": "Pa",
-                "description": "Pressure (P) is the force exerted per unit area. In thermodynamics, it is related to the work done when a system's volume changes."
+                "description": "Intensive state variable representing conjugate force to volume deformation"
             },
             "V": {
                 "name": "Volume",
                 "type": "variable",
                 "unit": "m^3",
-                "description": "Volume (V) is the amount of space occupied by a system."
+                "description": "Extensive geometric boundary volume enclosing the thermodynamic system"
             },
-            "dA": {
-                "name": "Infinitesimal Change in Helmholtz Free Energy",
-                "type": "variable",
-                "unit": "J",
-                "description": "The infinitesimal change (dA) in the Helmholtz free energy, representing a small, differential variation in its value."
-            },
-            "dT": {
-                "name": "Infinitesimal Change in Temperature",
-                "type": "variable",
-                "unit": "K",
-                "description": "The infinitesimal change (dT) in temperature, representing a small, differential variation in its value."
-            },
-            "dV": {
-                "name": "Infinitesimal Change in Volume",
-                "type": "variable",
-                "unit": "m^3",
-                "description": "The infinitesimal change (dV) in volume, representing a small, differential variation in its value."
+            "d": {
+                "name": "Exterior differential operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Total exterior differential acting on 0-form state functions to produce 1-form differentials"
             }
-        }
+        },
+        "description": "Fundamental thermodynamic relation expressing the total differential of the Helmholtz free energy in terms of natural variables temperature and volume for a closed, hydrostatic system.",
+        "parent_formula_id": "thermodynamic-potential-transform-3547a62f",
+        "derivation_type": "DERIVED_FROM",
+        "subcomponents": [
+            "helmholtz-free-energy",
+            "entropy-from-helmholtz-free-energy",
+            "pressure-from-helmholtz-free-energy"
+        ]
     },
     "density-matrix-approximation": {
-        "title": "Density Matrix Approximation",
+        "title": "Diagonal Density Matrix Approximation via Decoherence",
         "equation": "\\rho \\approx \\sum |c_i|^2 |i\\rangle\\langle i|",
-        "conceptual_definition": "The Density Matrix Approximation formula, $\\rho$ ≈ $\\sum$ |c_i|^2 |i✉i|, is a fundamental concept in quantum mechanics used to describe the state of a quantum system, particularly when it is in a mixed state or when we are only interested in the probabilities of obtaining certain outcomes. In its approximated form, it represents a quantum state as a statistical ensemble of pure states, where each pure state is described by a ket vector |i✉ and weighted by the probability |c_i|^2 of finding the system in that state.",
-        "intuitive_summary": "This approximation simplifies a complex quantum state into a weighted average of simpler, pure states, where the weights represent the probabilities of observing those states.",
-        "interpretation": "The formula $\\rho$ ≈ $\\sum$ |c_i|^2 |i✉i| describes an approximate density matrix $\\rho$. The summation is taken over a set of basis states, denoted by |i✉. Each |i✉ represents a possible pure quantum state of the system. The term |c_i|^2 is the probability of finding the system in the pure state |i✉. These probabilities must sum to 1, i.e., $\\sum$ |c_i|^2 = 1. The term |i✉i| is a projection operator, which projects a quantum state onto the subspace spanned by |i✉. Therefore, the density matrix $\\rho$ is a statistical mixture of pure states, where each pure state |i✉ contributes to the overall state with a probability given by |c_i|^2. This approximation is particularly useful when dealing with systems that are not in a single, definite quantum state but rather in a superposition of states with associated probabilities.",
-        "symmetry_origin": "This formula arises from the need to describe quantum systems that are not in a pure state. A pure state can be represented by a single ket vector |ψ✉, and its density matrix is given by $\\rho$ = |ψ✉✉|. However, many physical situations involve mixed states, which are statistical ensembles of pure states. The density matrix formalism is general and can describe both pure and mixed states. The approximation $\\rho ≈ \\sum |c_i|^2 |i✉i|$ arises when we can represent the state as a probabilistic combination of basis states. This is deeply connected to the principles of quantum measurement, where the act of measurement collapses the quantum state into one of its possible outcomes, with probabilities determined by the coefficients of the superposition.",
-        "limits_and_boundary": "In the limit where the system is in a single pure state, say |ψ✉ = $\\sum$ c_i |i✉, then only one coefficient, say c_k, is non-zero (equal to 1), and all others are zero. In this case, the approximation becomes exact: $\\rho$ = |c_k|^2 |k✉✉k| = |k✉✉k|, which is the density matrix for a pure state. As the number of contributing pure states |i✉ increases, and their associated probabilities |c_i|^2 become more evenly distributed, the system approaches a maximally mixed state, where all basis states are equally likely.",
+        "conceptual_definition": "The diagonal density matrix approximation $\\rho \\approx \\sum_i |c_i|^2 |i\\rangle\\langle i|$ models a quantum statistical ensemble where quantum phase coherences between distinct orthogonal eigenstates $|i\\rangle$ have decayed to zero, typically due to environmental decoherence or phase randomization. The system is thus effectively described by classical probability weights $p_i = |c_i|^2$ satisfying $\\sum_i p_i = 1$.",
+        "intuitive_summary": "When a quantum system interacts with its environment, off-diagonal interference terms wash out rapidly, leaving behind a simple statistical mixture where the system has definite probabilities of being in specific states.",
+        "interpretation": "The symbol $\\rho$ denotes the density operator of the quantum ensemble. The basis vectors $|i\\rangle$ and dual vectors $\\langle i|$ represent an orthonormal set of pure quantum states forming rank-one projection operators $|i\\rangle\\langle i|$. The real coefficients $|c_i|^2$ denote the statistical weights or occupation probabilities for each state $|i\\rangle$, satisfying the normalization condition $\\mathrm{Tr}(\\rho) = \\sum_i |c_i|^2 = 1$.",
+        "symmetry_origin": "Invariance under unitary phase transformations $U(1)$ acting independently on each basis component $|i\\rangle \\to e^{i\\theta_i}|i\\rangle$ (dephasing invariance).",
+        "limits_and_boundary": "In the limit where a single $|c_k|^2 \\to 1$ and all other $|c_{i \\neq k}|^2 \\to 0$, the state reduces to a pure state with purity $\\mathrm{Tr}(\\rho^2) = 1$. In the fully decohered equiprobable limit over an $N$-dimensional Hilbert space, $|c_i|^2 = 1/N$, yielding the maximally mixed state $\\rho = \\frac{1}{N}\\mathbb{I}$ with minimal purity $\\mathrm{Tr}(\\rho^2) = 1/N$.",
         "status": "platinum",
         "semantic_variables": {
             "\\rho": {
-                "name": "Density Matrix",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The density matrix, which is a mathematical operator used to describe the quantum mechanical ensemble of possible states of a quantum system."
-            },
-            "\\sum": {
-                "name": "Summation",
+                "name": "density matrix",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "The mathematical symbol for summation, indicating that the terms that follow are to be added together."
+                "description": "Density operator representing the statistical quantum state of the system"
             },
             "c_i": {
-                "name": "Complex Amplitude",
+                "name": "state expansion amplitude",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The complex coefficient associated with the pure state |i\\rangle in a linear combination or superposition. Its squared magnitude, |c_i|^2, represents the probability of finding the system in the state |i\\rangle."
+                "description": "Complex probability amplitude associated with basis state $|i\\rangle$"
             },
             "|i\\rangle": {
-                "name": "Basis State (Ket Vector)",
+                "name": "quantum basis ket",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A ket vector representing a specific pure quantum state within a chosen basis set."
+                "description": "Orthonormal basis state vector in the system Hilbert space"
             },
-            "|i\\rangle\\langle i|": {
-                "name": "Projection Operator",
+            "\\langle i|": {
+                "name": "quantum basis bra",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A projection operator onto the state |i\\rangle. It is constructed by taking the outer product of the ket vector |i\\rangle with its corresponding bra vector \\langle i|."
+                "description": "Dual vector of the basis state $|i\\rangle$"
             }
-        }
+        },
+        "description": "Represents the density operator of a quantum system as an incoherent classical statistical mixture over an orthonormal basis, neglecting off-diagonal quantum coherences.",
+        "parent_formula_id": "non-physical-collapse-efcafda8",
+        "derivation_type": "APPROXIMATION",
+        "subcomponents": [
+            "normalization-condition-for-density-matrix-140f553a",
+            "trace-of-density-matrix-squared-6c9f2fa1",
+            "density-matrix-in-stable-basis-approximation-320e5875"
+        ]
     },
     "right-handed-projector": {
         "title": "Right-Handed Chirality Projector",
@@ -1960,34 +1947,37 @@
     },
     "previous-bifurcation-index-cee44a47": {
         "title": "Preceding Period-Doubling Bifurcation Index",
-        "description": "Represents the discrete ordinal index $n-1$ identifying the bifurcation event directly preceding the $n$-th period doubling in a nonlinear cascade.",
-        "conceptual_definition": "In discrete dynamical systems exhibiting a period-doubling route to chaos (such as one-dimensional unimodal maps), bifurcations occur at successive parameter values $r_n$ where the stable periodic orbit doubles its period from $2^{n-1}$ to $2^n$. The term $(n-1)$ serves as the discrete step index of the preceding bifurcation, establishing the reference interval $\\Delta r_n = r_n - r_{n-1}$ essential for evaluating asymptotic scaling and the universal Feigenbaum constant $\\delta = \\lim_{n \\to \\infty} \\frac{r_n - r_{n-1}}{r_{n+1} - r_n}$.",
-        "interpretation": "The variable $n \\in \\mathbb{Z}^+$ represents the generation index of the period-doubling bifurcation sequence. The preceding index $(n-1)$ characterizes the system state at period $2^{n-1}$. The interval between parameter thresholds $r_n$ and $r_{n-1}$ measures the parameter-space lifetime of the $(n-1)$-th orbit.",
-        "limits_and_boundary": "For the fundamental base case $n = 1$, the index becomes $n - 1 = 0$, denoting the initial fixed-point state of period $2^0 = 1$. As $n \\to \\infty$, the bifurcation intervals geometric ratio converges to the universal Feigenbaum constant $\\delta \\approx 4.6692016$.",
-        "symmetry_origin": "Discrete scale invariance and renormalization group self-similarity of the attractor near the Feigenbaum accumulation point $r_\\infty$.",
+        "description": "Represents the discrete ordinal index $n-1$ identifying the bifurcation event directly preceding the $n$-th period doubling in a nonlinear dynamical cascade.",
+        "conceptual_definition": "In nonlinear dynamics and iterated map theory (such as the logistic map), a period-doubling cascade generates stable periodic orbits of period $2^n$ at critical parameter thresholds $r_n$. The preceding bifurcation index, written as $(n-1)$, designates the prior stage of the cascade corresponding to a stable orbit of period $2^{n-1}$. It provides the backward discrete step in the indexing sequence used to compute successive parameter intervals and universal scaling ratios.",
+        "interpretation": "The index $n \\in \\mathbb{Z}^+$ denotes the generation of the period-doubling bifurcation sequence. The preceding index $(n-1)$ identifies the parameter value $r_{n-1}$ at which a period-$2^{n-1}$ orbit was created, allowing the definition of parameter intervals $\\Delta r_n = r_n - r_{n-1}$ that converge according to Feigenbaum universality.",
+        "limits_and_boundary": "For the initial bifurcation cascade step $n = 1$, $(n-1) = 0$, representing the base period-$1$ fixed point. In the asymptotic limit $n \\to \\infty$, the index approaches the accumulation point $r_\\infty$ at the transition to deterministic chaos.",
+        "symmetry_origin": "Discrete translation invariance along the renormalization-group trajectory governing period-doubling universality.",
         "unit_system": "SI",
-        "derivation_type": "AXIOMATIC_FOUNDATION",
+        "derivation_type": "DEFINITION",
         "equation_family": "nonlinear-dynamics",
         "semantic_variables": {
             "n": {
-                "name": "bifurcation generation index",
+                "name": "Bifurcation generation index",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Discrete integer index labeling the current period-doubling bifurcation in the sequence."
+                "description": "Discrete integer counter indexing the successive period-doubling bifurcations."
             },
             "n-1": {
-                "name": "preceding bifurcation index",
+                "name": "Preceding bifurcation index",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "Discrete integer index labeling the bifurcation event immediately preceding the $n$-th bifurcation."
+                "description": "Discrete integer counter indexing the immediately prior period-doubling bifurcation."
             }
         },
         "equation": "(n-1)",
         "status": "published",
         "parent_formula_id": "feigenbaum-constant-delta-ratio-0c9ec79a",
-        "subcomponents": [],
+        "subcomponents": [
+            "difference-of-successive-bifurcation-parameters-0274e64e",
+            "preceding-state-index-800ba394"
+        ],
         "id": "previous-bifurcation-index-cee44a47",
-        "intuitive_summary": "Identifies the immediately preceding step in a sequence of period-doublings, indexing the parent cycle from which the current periodic state branched."
+        "intuitive_summary": "The index $(n-1)$ points to the immediately preceding state in a sequence of period doublings, characterizing the orbit of half the period before the current doubling occurs."
     },
     "differential-internal-energy-of-ideal-gas-9d6efed8": {
         "title": "Differential Internal Energy of an Ideal Gas",
@@ -2658,46 +2648,45 @@
         "id": "dilatational-force-density-term-in-linear-isotropic-elasticity",
         "title": "Dilatational Force Density Term in Linear Isotropic Elasticity",
         "equation": "(\\lambda + \\mu) \\nabla (\\nabla \\cdot \\mathbf{v})",
-        "conceptual_definition": "This vector term quantifies the contribution to the elastic force density within an isotropic linear elastic material that arises from the gradient of its volumetric strain (dilatation).",
-        "intuitive_summary": "This part of the elastic force acts like a pressure gradient, pushing or pulling material based on how its volume is changing spatially. It describes how variations in volume changes generate forces that tend to restore the material to its original volume.",
-        "interpretation": "In the theory of linear isotropic elasticity, the elastic stress tensor $\\sigma_{ij}$ can be expressed in terms of the displacement vector field $\\mathbf{v}$ and the Lame parameters $\\lambda$ and $\\mu$. The elastic force density $\\mathbf{f}$ acting on the material is given by the divergence of the stress tensor, $\\mathbf{f} = \\nabla \\cdot \\mathbf{\\sigma}$. For an isotropic material, the stress-strain relation (Hooke's Law) leads to the stress tensor components $\\sigma_{ij} = \\lambda (\\nabla \\cdot \\mathbf{v}) \\delta_{ij} + \\mu (\\partial_i v_j + \\partial_j v_i)$. When the divergence of this stress tensor is computed, it yields the Navier-Cauchy equation. The term $(\\lambda + \\mu) \\nabla (\\nabla \\cdot \\mathbf{v})$ is precisely one of the two main contributions to the elastic force density in this equation. It represents the force density component that is proportional to the gradient of the volumetric strain (also known as dilatation, $\\nabla \\cdot \\mathbf{v}$). This term is responsible for the propagation of compressional (P-waves) in elastic media and describes the material's resistance to changes in volume.",
-        "symmetry_origin": "The presence of the Lame parameters $\\lambda$ and $\\mu$ inherently reflects the assumption of material isotropy, meaning the elastic properties of the material are independent of direction. This symmetry ensures that the stress-strain relationship, and consequently this force density term, is invariant under rotations of the coordinate system. The term itself is derived from the constitutive relations of linear elasticity, which are based on the conservation of momentum (Newton's second law) and the assumption of small deformations.",
-        "limits_and_boundary": "In the limit of an incompressible material, the volumetric strain $\\nabla \\cdot \\mathbf{v}$ approaches zero, and the Lame parameter $\\lambda$ tends to infinity. In this case, the term $(\\lambda + \\mu) \\nabla (\\nabla \\cdot \\mathbf{v})$ would typically be replaced by a pressure gradient term, as the material resists any volume change. For static equilibrium problems, this term contributes to the overall balance of forces, where the sum of all force densities (elastic, body, inertial) is zero. At boundaries, specific conditions (e.g., fixed displacement, free surface with zero stress) are applied to the displacement field $\\mathbf{v}$, which in turn affects the value and distribution of this force density term near the boundary.",
+        "conceptual_definition": "The dilatational force density term, $(\\lambda + \\mu) \nabla (\nabla \\cdot \\mathbf{v})$, describes the net internal body force density generated by spatial variations in volumetric strain (dilatation) in an isotropic elastic medium or compressible viscous fluid. It directly governs the coupling between shear and volumetric deformations and mediates the propagation of longitudinal compressional waves ($P$-waves).",
+        "intuitive_summary": "When a material is squeezed or expanded non-uniformly, the gradient of this volumetric deformation generates a restoring force density directed along the compression gradient, modulated by the Lamé parameters.",
+        "interpretation": "In linear isotropic elasticity and compressible continuum mechanics, the total internal force density is given by the divergence of the Cauchy or viscous stress tensor, $\\mathbf{f} = \nabla \\cdot \boldsymbol{\\sigma}$. Given the isotropic constitutive law $\\sigma_{ij} = \\lambda (\nabla \\cdot \\mathbf{v}) \\delta_{ij} + \\mu (\\partial_i v_j + \\partial_j v_i)$, taking the divergence yields $\\mu \nabla^2 \\mathbf{v} + (\\lambda + \\mu) \nabla (\nabla \\cdot \\mathbf{v})$. Here, $\\lambda$ is the first Lamé parameter (or volume viscosity parameter), $\\mu$ is the shear modulus (or dynamic shear viscosity), and $\\mathbf{v}$ represents the displacement field (or velocity vector field). The scalar divergence $\nabla \\cdot \\mathbf{v}$ characterizes local volumetric dilatation, while the outer gradient $\nabla$ converts this scalar field into a vector force density.",
+        "symmetry_origin": "Derived from spatial translation invariance (momentum conservation) combined with isotropic $SO(3)$ rotational invariance of the linear constitutive tensor.",
+        "limits_and_boundary": "In the incompressible limit, $\nabla \\cdot \\mathbf{v} \to 0$, causing this dilatational term to vanish while the pressure gradient takes over volume-constraint enforcement. In the pure irrotational limit ($\nabla \times \\mathbf{v} = \\mathbf{0}$), the term combines with the Laplacian to yield $(\\lambda + 2\\mu) \nabla^2 \\mathbf{v}$.",
         "unit_system": "SI",
-        "parent_formula_id": "",
-        "derivation_type": "",
+        "parent_formula_id": "constitutive-relation-for-a-newtonian-fluid-viscous-stress-tensor",
+        "derivation_type": "DERIVED_FROM",
         "status": "published",
         "semantic_variables": {
-            "lambda": {
-                "name": "Lame's First Parameter",
+            "\\lambda": {
+                "name": "First Lamé parameter",
+                "type": "constant",
                 "unit": "Pa",
-                "description": "One of the two Lame parameters for an isotropic elastic material, related to the bulk modulus and resistance to volume change."
+                "description": "First Lamé elasticity parameter related to volume compressibility."
             },
-            "mu": {
-                "name": "Lame's Second Parameter (Shear Modulus)",
+            "\\mu": {
+                "name": "Shear modulus / Second Lamé parameter",
+                "type": "constant",
                 "unit": "Pa",
-                "description": "One of the two Lame parameters for an isotropic elastic material, representing the shear modulus and resistance to shape change."
+                "description": "Second Lamé parameter quantifying resistance to shear deformation."
             },
-            "nabla": {
-                "name": "Del Operator (Gradient)",
+            "\\nabla": {
+                "name": "Del operator",
+                "type": "operator",
                 "unit": "m^-1",
-                "description": "A vector differential operator used to compute the gradient of a scalar field or the divergence/curl of a vector field."
+                "description": "Spatial vector differential operator."
             },
-            "v": {
-                "name": "Displacement Vector Field",
+            "\\mathbf{v}": {
+                "name": "Displacement or velocity vector field",
+                "type": "variable",
                 "unit": "m",
-                "description": "The vector field representing the displacement of each point in the elastic material from its equilibrium position."
-            },
-            "nabla_dot_v": {
-                "name": "Volumetric Strain (Dilatation)",
-                "unit": "dimensionless",
-                "description": "The divergence of the displacement vector field, representing the fractional change in volume of an infinitesimal element of the material."
-            },
-            "nabla_nabla_dot_v": {
-                "name": "Gradient of Volumetric Strain",
-                "unit": "m^-1",
-                "description": "The gradient of the volumetric strain, indicating the spatial rate of change of volume expansion or contraction."
+                "description": "Continuous displacement vector field in elasticity or velocity field in fluids."
             }
-        }
+        },
+        "description": "Represents the volumetric or compressional force density arising from gradients of dilatation in a linear isotropic continuum.",
+        "subcomponents": [
+            "navier-stokes-momentum-viscous-form-7b93eee6",
+            "dilatational-force-density-term-in-linear-isotropic-elasticity-d62f6613"
+        ]
     }
 }

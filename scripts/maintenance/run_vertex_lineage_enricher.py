@@ -352,6 +352,33 @@ cumulative_candidates_tokens = 0
 global_max_cost_dollars = 0.0
 is_paid_session = False
 
+def compute_dynamic_thinking_budget(fid, form):
+    """
+    Computes the optimal thinking budget based on mathematical complexity:
+    - Tier A (Heavy Tensors, Lagrangians, QFT, GR, Spinors): 4,096 tokens
+    - Tier B (Standard Master Equations: Classical, Thermo, Optics): 2,048 tokens
+    - Tier C (Light Subcomponents, Definitions, Short Identities): 1,024 tokens
+    """
+    eq = form.get('equation', '')
+    title = form.get('title', '').lower()
+    
+    # Tier C: Light / Subcomponents
+    if len(eq) < 15 or 'identity' in fid or 'operator' in fid or 'definition' in fid or 'unit' in fid:
+        if not any(k in eq for k in ['\\mu', '\\nu', '\\alpha', '\\beta', '\\mathcal{L}', '\\nabla', '\\partial', '\\Gamma', 'R_', 'g_']):
+            return 1024
+            
+    # Tier A: Heavy Tensors, Lagrangians, QFT, Curvature, Covariant Derivatives
+    heavy_markers = [
+        '\\mu', '\\nu', '\\alpha', '\\beta', '\\mathcal{L}', '\\nabla', '\\Gamma', 
+        'R_{\\mu', 'g_{\\mu', 'F_{\\mu', 'T_{\\mu', '\\Psi', '\\dagger', '\\oint',
+        '\\int', 'tensor', 'lagrangian', 'hamiltonian', 'spinor', 'commutator', 'metric'
+    ]
+    if any(m in eq for m in heavy_markers) or any(m in title for m in ['tensor', 'lagrangian', 'hamiltonian', 'spinor', 'general relativity', 'quantum field', 'dirac', 'yang-mills']):
+        return 4096
+
+    # Tier B: Standard Master Laws
+    return 2048
+
 def generate_enrichment(client, model_name, fid, form, candidates):
     global consecutive_429_count, cumulative_session_spend_usd, cumulative_prompt_tokens, cumulative_candidates_tokens
     if quota_exhausted_event.is_set() or budget_circuit_breaker_event.is_set():
@@ -391,6 +418,14 @@ Respond with STRICT JSON format:
   }}
 }}
 """
+    budget = compute_dynamic_thinking_budget(fid, form)
+    gen_config = {
+        'temperature': 0.1,
+        'response_mime_type': 'application/json'
+    }
+    if '3.7-flash' in model_name:
+        gen_config['thinking_config'] = types.ThinkingConfig(thinking_budget=budget)
+
     max_retries = 4
     backoff = 3
     for attempt in range(max_retries):
@@ -400,10 +435,7 @@ Respond with STRICT JSON format:
             response = client.models.generate_content(
                 model=model_name,
                 contents=[SYSTEM_PROMPT, prompt],
-                config=types.GenerateContentConfig(
-                    temperature=0.1,
-                    response_mime_type="application/json"
-                )
+                config=types.GenerateContentConfig(**gen_config)
             )
             with consecutive_429_lock:
                 consecutive_429_count = 0
@@ -431,6 +463,8 @@ Respond with STRICT JSON format:
                     print(f"\n🛑 [CIRCUIT BREAKER] Hard Price Limit Reached: ${cumulative_session_spend_usd:.4f} >= ${global_max_cost_dollars:.2f}! Halting immediately.", flush=True)
 
             parsed = robust_json_decode(response.text)
+            if not is_paid_session:
+                time.sleep(12.5)
             return parsed, p_tok, total_billable_output_tokens, formula_cost
         except Exception as e:
             err_msg = str(e)
@@ -552,8 +586,8 @@ def save_checkpoint(data):
 # -------------------------------------------------------------------------
 def main():
     parser = argparse.ArgumentParser(description="Vertex AI Lineage & Derivation Enrichment Engine")
-    parser.add_argument('--filter', choices=['isolated', 'thin', 'moderate', 'all'], default='isolated',
-                        help="Filter target formulas by LHI score: isolated (0), thin (1-39), moderate (40-74), all")
+    parser.add_argument('--filter', choices=['isolated', 'thin', 'moderate', 'all', 'sub75'], default='isolated',
+                        help="Filter target formulas by LHI score: isolated (0), thin (1-39), moderate (40-74), all, sub75")
     parser.add_argument('--target-id', type=str, help="Target a specific formula ID directly")
     parser.add_argument('--limit', type=int, default=0, help="Maximum formulas to process (0 = all matching in filter)")
     parser.add_argument('--batch-size', type=int, default=8, help="Batch chunk size for graph sync and progress reporting (default: 8)")
@@ -599,9 +633,13 @@ def main():
             sys.exit(1)
     else:
         for fid, form in formulas.items():
+            lhi = calculate_lhi(fid, form, formulas, parent_map, child_map)
+            if args.filter == 'sub75':
+                if lhi < 75:
+                    target_ids.append(fid)
+                continue
             if fid in already_processed:
                 continue
-            lhi = calculate_lhi(fid, form, formulas, parent_map, child_map)
             if args.filter == 'isolated' and lhi == 0:
                 target_ids.append(fid)
             elif args.filter == 'thin' and 0 < lhi < 40:

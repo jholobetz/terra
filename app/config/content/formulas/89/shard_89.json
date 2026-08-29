@@ -395,74 +395,75 @@
         "equation": "\\psi_{tot} = \\psi_{spatial} \\chi_{spin}",
         "semantic_variables": {
             "\\psi_{tot}": {
-                "name": "Total Wavefunction",
+                "name": "Total quantum wavefunction",
                 "type": "variable",
                 "unit": "m^{-3/2}",
-                "description": "Describes the complete quantum state of a particle, encompassing both spatial and internal (spin) degrees of freedom."
+                "description": "Total separable quantum state amplitude spanning spatial and spin Hilbert spaces"
             },
             "\\psi_{spatial}": {
-                "name": "Spatial Wavefunction",
+                "name": "Spatial wavefunction",
                 "type": "variable",
                 "unit": "m^{-3/2}",
-                "description": "Describes the probability amplitude of a particle's position or momentum in space."
+                "description": "Continuous position-space probability amplitude in L^2(R^3)"
             },
             "\\chi_{spin}": {
-                "name": "Spin Wavefunction",
+                "name": "Spinor component",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "Describes the intrinsic angular momentum (spin) state of a particle."
+                "unit": "dimensionless",
+                "description": "Normalized state vector in the discrete spin Hilbert space C^{2s+1}"
             }
         },
-        "interpretation": "The equation $\\psi_{tot} = \\psi_{spatial} \\chi_{spin}$ describes the composition of a quantum state:\n*   $\\psi_{tot}$: The total wavefunction of the quantum system. It is a complex-valued function whose squared magnitude, $|\\psi_{tot}|^2$, gives the probability density of finding the particle in a particular state, encompassing both its spatial position and spin orientation. Unit: $\\text{m}^{-3/2}$ (for 3D spatial part) or dimensionless if normalized.\n*   $\\psi_{spatial}$: The spatial wavefunction, which describes the probability amplitude of finding the particle at a particular position $\\mathbf{r}$ or in a specific momentum state $\\mathbf{p}$. It is typically a function of position coordinates, e.g., $\\psi_{spatial}(\\mathbf{r})$. Unit: $\\text{m}^{-3/2}$.\n*   $\\chi_{spin}$: The spin wavefunction, which describes the intrinsic angular momentum (spin) of the particle. Spin is a purely quantum mechanical property without a classical analog. For a spin-$1/2$ particle like an electron, $\\chi_{spin}$ can be a two-component spinor representing spin-up and spin-down states. Unit: Dimensionless.",
-        "symmetry_origin": "This factorization arises from the separability of the Hamiltonian into spatial and spin-dependent parts, which implies that the spatial and spin degrees of freedom commute and can be treated independently. This separability often reflects underlying symmetries in the system, such as rotational invariance for the spin part and translational invariance for the spatial part, when external fields are absent or weak.",
-        "limits_and_boundary": "This factorization is valid when the spatial and spin degrees of freedom are independent. It breaks down in the presence of strong spin-orbit coupling, where the orbital angular momentum and spin angular momentum interact, or in external magnetic fields that couple to the particle's spin and orbital motion, thereby linking spin and spatial dynamics. In such cases, the total wavefunction becomes an entangled state, and a simple product form $\\psi_{spatial} \\chi_{spin}$ is no longer sufficient.",
+        "interpretation": "The factorization $\\psi_{tot} = \\psi_{spatial} \\chi_{spin}$ defines the composite quantum state vector:\n* $\\psi_{tot}$: The total composite state vector belonging to $\\mathcal{H}_{tot} = L^2(\\mathbb{R}^3) \\otimes \\mathbb{C}^{2s+1}$, normalized such that $\\langle \\psi_{tot} | \\psi_{tot} \\rangle = 1$.\n* $\\psi_{spatial}$: The spatial wavefunction amplitude $\\psi(\\mathbf{r}) \\in L^2(\\mathbb{R}^3)$ governing position and orbital angular momentum, with dimensions $\\text{m}^{-3/2}$.\n* $\\chi_{spin}$: The normalized spinor vector in the $(2s+1)$-dimensional spin Hilbert space $\\mathbb{C}^{2s+1}$, which is dimensionless.",
+        "symmetry_origin": "Direct product structure arising from the independent invariance under spatial translations/rotations $\\mathrm{SO}(3)_{spatial}$ and internal spin rotations $\\mathrm{SU}(2)_{spin}$ in the absence of spin-orbit coupling.",
+        "limits_and_boundary": "Breaks down in the presence of relativistic corrections or explicit spin-orbit coupling terms (e.g., $\\hat{H}_{SO} \\propto \\mathbf{L} \\cdot \\mathbf{S}$), which entangle the spatial and spin degrees of freedom, requiring an inseparable sum of tensor products $\\sum_i c_i \\psi_i \\otimes \\chi_i$.",
         "status": "platinum",
-        "conceptual_definition": "The total quantum mechanical wavefunction, denoted by $\\psi_{tot}$, describing the complete state of a particle, can be expressed as the product of its spatial wavefunction $\\psi_{spatial}$ and its spin wavefunction $\\chi_{spin}$, under conditions where spatial and spin degrees of freedom are independent.",
-        "intuitive_summary": "Imagine a quantum particle like an electron. Its 'identity card' (total wavefunction) can often be split into two parts: one describing where it is or how it moves in space (spatial wavefunction), and another describing its intrinsic 'spin' property (spin wavefunction). This split is possible when these two aspects don't strongly influence each other.",
-        "description": "This fundamental equation posits that the total wavefunction of a quantum system can be factorized into a spatial component and a spin component, provided their respective degrees of freedom are uncoupled.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "In non-relativistic quantum mechanics, when the Hamiltonian $\\hat{H}$ exhibits negligible spin-orbit coupling (such that $[\\hat{H}, \\hat{\\mathbf{S}}] = 0$ and $[\\hat{H}, \\hat{\\mathbf{L}}] = 0$), the total Hilbert space factors as $\\mathcal{H}_{tot} = \\mathcal{H}_{spatial} \\otimes \\mathcal{H}_{spin}$. A pure separable state within this space is expressed as the product $\\psi_{tot} = \\psi_{spatial} \\chi_{spin}$, where $\\psi_{spatial}(\\mathbf{r})$ is the spatial coordinate representation and $\\chi_{spin}$ is a spinor in the discrete spin space.",
+        "intuitive_summary": "When a particle's trajectory through space does not interact with the direction of its intrinsic spin, the probability of finding it at position $\\mathbf{r}$ and the probability of measuring a specific spin projection are completely independent and multiply together.",
+        "description": "Represents the direct product decomposition of a quantum state in composite Hilbert spaces when spatial and spin degrees of freedom are mutually uncoupled.",
+        "derivation_type": "SPECIAL_CASE",
         "subcomponents": [
-            "plane-wave-solution",
-            "spatial-origin-boundary-condition-e11729b0",
-            "identity-translation-operator-0cce6e36"
-        ]
+            "square-integrability-identity-1-c8d528ce-d1206b7e",
+            "normalization-constant-a1617059"
+        ],
+        "parent_formula_id": "square-integrability-identity-1-c8d528ce-d1206b7e"
     },
     "technical-relation-6f9f9933": {
-        "title": "The Subset Relation of Direct Links within Causal Relations in Causal Set Theory",
+        "title": "Proper Inclusion of Direct Causal Links in the Causal Order",
         "equation": "\\text{Links} \\subset \\text{Relations}",
         "semantic_variables": {
             "\\text{Links}": {
-                "name": "Set of Direct Causal Links",
+                "name": "Set of direct causal links",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The set of all elementary, non-transitive causal connections between events in a causal set."
+                "description": "The set of immediate covering pairs $(x, y)$ in a causal set with no intervening elements"
             },
             "\\text{Relations}": {
-                "name": "Set of All Causal Relations",
+                "name": "Set of causal relations",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The set of all causal orderings between events in a causal set, including both direct links and transitively implied connections."
+                "description": "The total set of ordered pairs representing the partial order relation $\\prec$ on the causal set"
             },
             "\\subset": {
-                "name": "Proper Subset Operator",
+                "name": "Proper subset operator",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "Mathematical operator indicating that the set on the left is a proper subset of the set on the right."
+                "description": "Strict inclusion operator indicating that direct links form an irreducible subcollection of the transitive closure"
             }
         },
-        "interpretation": "The formula $\\text{Links} \\subset \\text{Relations}$ establishes a foundational set-theoretic relationship within Causal Set Theory.\n*   $\\text{Links}$: This symbol represents the set of *direct causal links* between events in a causal set. A direct link $x \\prec^* y$ signifies that event $x$ causally precedes event $y$, and there is no intermediate event $z$ such that $x \\prec z \\prec y$. These are the most primitive, 'one-step' causal connections.\n*   $\\text{Relations}$: This symbol denotes the set of *all causal relations* in the causal set. This includes all direct links, as well as all indirect or transitively implied causal connections. If $x \\prec y$ and $y \\prec z$, then $x \\prec z$ is a causal relation, even if $x \\prec z$ is not a direct link. The set $\\text{Relations}$ forms a partial order on the set of events.\n*   $\\subset$: This is the standard mathematical symbol for a *proper subset*. It indicates that every element of $\\text{Links}$ is also an element of $\\text{Relations}$, but $\\text{Relations}$ contains at least one element not found in $\\text{Links}$. This reflects the fact that $\\text{Relations}$ includes transitive connections that are not direct links.",
-        "symmetry_origin": "This relation is not derived from a symmetry principle but is a fundamental structural definition within the mathematical framework of Causal Set Theory, reflecting the distinction between primitive causal connections and their transitive closure.",
-        "limits_and_boundary": "In the continuum limit, where the discrete causal set approaches a continuous spacetime manifold, the distinction between $\\text{Links}$ and $\\text{Relations}$ becomes less pronounced, as the concept of 'direct' adjacency becomes ill-defined. However, in the discrete regime, this distinction is crucial for defining the fundamental building blocks of spacetime and understanding how the global causal order emerges from local connections. The formula holds for any finite or countably infinite causal set.",
+        "interpretation": "The relation $\\text{Links} \\subset \\text{Relations}$ distinguishes immediate nearest-neighbor causal connections from transitive causal propagation in discrete spacetime: \n- $\\text{Links}$: The set of direct, unmediated covering relations $x \\prec^* y$ in the causal set $\\mathcal{C}$, corresponding to the edges of the Hasse diagram.\n- $\\text{Relations}$: The complete binary relation graph $\\prec$ over $\\mathcal{C}$, encompassing both local links and macroscopically propagated causal order.\n- $\\subset$: Strict set inclusion reflecting that non-trivial finite or locally finite posets contain multi-step causal chains whose transitively generated endpoints are elements of $\\text{Relations}$ but not of $\\text{Links}$.",
+        "symmetry_origin": "Discrete causal order invariance under order-preserving isomorphisms (general covariance in causal set quantum gravity).",
+        "limits_and_boundary": "In the continuum limit where point density $\\rho \\to \\infty$ under Poisson sprinkling, the discrete causal order yields the conformal Lorentzian geometry $(M, g_{ab})$, and macroscopic causal relations recover the lightcone structure $J^+(p)$. For an antichain or trivial 2-element chain, non-link relations vanish, reducing the relation structure to empty or purely direct links.",
         "status": "platinum",
-        "conceptual_definition": "In Causal Set Theory, the set of elementary, non-transitive causal connections, denoted as $\\text{Links}$, is formally defined as a proper subset of the set of all causal relations, $\\text{Relations}$, which encompasses both direct and transitively implied causal orderings.",
-        "intuitive_summary": "Think of 'links' as direct, immediate cause-and-effect steps, like 'A causes B'. 'Relations' are all cause-and-effect connections, including indirect ones like 'A causes B, and B causes C, so A causes C'. This formula simply says that all direct steps are also part of the bigger picture of all connections, but the bigger picture has more (the indirect ones).",
-        "description": "This formula defines a fundamental structural relationship in Causal Set Theory, stating that the set of direct causal connections (links) is a proper subset of the set of all causal relations, which includes transitively implied connections.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "A causal set $\\mathcal{C} = (C, \\prec)$ is a locally finite partially ordered set. A pair of elements $(x, y) \\in C \\times C$ forms a direct link, denoted $x \\prec^* y$, if $x \\prec y$ and the causal interval between them is empty, $\\langle x, y \\rangle = \\{z \\in C \\mid x \\prec z \\prec y\\} = \\emptyset$. The collection of all direct links $\\text{Links} = \\{(x, y) \\in C^2 \\mid x \\prec^* y\\}$ is a proper subset of the full set of binary causal relations $\\text{Relations} = \\{(x, y) \\in C^2 \\mid x \\prec y\\}$, such that $\\text{Relations}$ is the transitive closure of $\\text{Links}$.",
+        "intuitive_summary": "Direct links represent elementary, indivisible spacetime steps. While every direct link is a causal relationship, transitive chains across intermediate events create non-link causal connections, making links an irreducible skeleton of the full causal hierarchy.",
+        "description": "In Causal Set Theory, the set of irreducible direct links constitutes a strict subset of the full transitive causal relation set on a locally finite poset.",
+        "derivation_type": "DERIVED_FROM",
         "subcomponents": [
             "poset-relation-cst-identity-1-9f1ffbda-6ff906aa",
-            "poset-relation-1f6ed72c",
-            "technical-relation-c0218ed7"
-        ]
+            "relational-subset-identity-c41c20c3",
+            "poset-relation-1f6ed72c"
+        ],
+        "parent_formula_id": "poset-relation-cst-identity-1-9f1ffbda-6ff906aa"
     },
     "technical-relation-e8ff9b0e": {
         "title": "Cosmic Microwave Background Temperature Redshift Relation",

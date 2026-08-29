@@ -1068,65 +1068,58 @@
         "derivation_type": "DERIVED_FROM"
     },
     "bayesian-evidence-occams-factor-70c30cd9": {
-        "title": "Bayesian Evidence as Maximum Likelihood times the Occam's Factor",
+        "title": "Bayesian Evidence Laplace-Occam Factor Approximation",
         "equation": "P(D|H_i) \\approx \\mathcal{L}_{\\max} \\cdot \\frac{\\Delta w}{\\Delta W}",
-        "interpretation": "The formula approximates the Bayesian evidence, $P(D|H_i)$, which is the marginal likelihood of the data $D$ given a hypothesis $H_i$. It is decomposed into two main parts. $\\mathcal{L}_{\\max}$ represents the maximum likelihood, which is the highest probability of observing the data $D$ under hypothesis $H_i$ when the hypothesis's parameters are optimally chosen. The term $\\frac{\\Delta w}{\\Delta W}$ is the Occam's Factor. Here, $\\Delta w$ represents the effective volume of the posterior distribution of the hypothesis's parameters (the region of parameter space that adequately explains the data), and $\\Delta W$ represents the volume of the prior distribution of the hypothesis's parameters (the total volume of parameter space considered plausible by the hypothesis before seeing the data). This ratio penalizes hypotheses that have a large parameter space but only a small portion of it actually explains the data well, thus favoring simpler models that explain the data without unnecessary complexity.",
-        "symmetry_origin": "This principle does not arise from a physical symmetry in the sense of Noether's theorem. It is a manifestation of the principle of parsimony (Occam's Razor) within the framework of Bayesian probability theory, which favors the simplest explanation consistent with the evidence.",
-        "limits_and_boundary": "This formula is an approximation, often derived via the Laplace approximation of the evidence integral, which assumes the posterior is unimodal and roughly Gaussian. It fails for complex, multi-modal posteriors. In the limit of a very simple or highly constrained model where the prior volume $\\Delta W$ is already concentrated on the high-likelihood region, so that $\\Delta w \\approx \\Delta W$, the Occam's factor approaches 1, and the evidence $P(D|H_i)$ is simply the maximum likelihood $\\mathcal{L}_{\\max}$. Conversely, for an overly complex model where the data only supports a tiny fraction of the prior parameter space, $\\Delta w \\ll \\Delta W$, the Occam's factor approaches zero, heavily penalizing the model's evidence.",
+        "interpretation": "The quantity $P(D|H_i)$ denotes the marginal probability of observing dataset $D$ under hypothesis $H_i$. $\\mathcal{L}_{\\max}$ is the peak likelihood evaluated at the best-fit parameter value $w_0$. The term $\\Delta w$ is the posterior uncertainty width (typically determined by the inverse curvature of the log-likelihood, $\\sigma_w = [-\\partial^2 \\ln \\mathcal{L}/\\partial w^2]^{-1/2}$), while $\\Delta W$ denotes the characteristic support or volume of the prior distribution $P(w|H_i)$. The ratio $\\frac{\\Delta w}{\\Delta W} < 1$ acts as an automatic Occam's razor penalizing unconstrained parameter tuning.",
+        "symmetry_origin": "Invariance under linear parameter reparameterizations in the asymptotic limit, connected to the invariance of probability measures under diffeomorphisms via the Jeffreys prior and information geometry.",
+        "limits_and_boundary": "In the limit of infinitely uninformative priors ($\\Delta W \\to \\infty$), the evidence tends to zero ($P(D|H_i) \\to 0$), reflecting the infinite penalty for unbounded hypothesis spaces. In the large-sample limit ($N \\to \\infty$), $\\Delta w \\sim N^{-1/2}$, recovering the Bayesian Information Criterion (BIC) asymptotic scaling.",
         "semantic_variables": {
-            "P": {
-                "name": "Probability",
-                "type": "operator",
+            "P(D|H_i)": {
+                "name": "Bayesian evidence",
+                "type": "variable",
                 "unit": "dimensionless",
-                "description": "Represents the probability of an event. $P(A|B)$ is the conditional probability of A given B."
-            },
-            "D": {
-                "name": "Data",
-                "type": "variable",
-                "unit": "various",
-                "description": "The set of observed empirical evidence."
-            },
-            "H_i": {
-                "name": "Hypothesis",
-                "type": "variable",
-                "unit": "N/A",
-                "description": "A specific model or hypothesis being tested, indexed by $i$."
+                "description": "Marginal likelihood of dataset $D$ integrated over the parameter space under hypothesis $H_i$"
             },
             "\\mathcal{L}_{\\max}": {
-                "name": "Maximum Likelihood",
+                "name": "maximum likelihood",
                 "type": "variable",
-                "unit": "dimensionless probability density",
-                "description": "The peak value of the likelihood function, representing the best fit the model can achieve for the data."
+                "unit": "dimensionless",
+                "description": "Likelihood evaluated at the maximum a posteriori / maximum likelihood parameter estimate"
             },
             "\\Delta w": {
-                "name": "Posterior Volume",
+                "name": "posterior parameter width",
                 "type": "variable",
-                "unit": "depends on parameter space",
-                "description": "The effective volume of the parameter space where the posterior probability is high, representing the parameters consistent with the data."
+                "unit": "dimensionless",
+                "description": "Effective width or volume of parameter space supported by the posterior distribution"
             },
             "\\Delta W": {
-                "name": "Prior Volume",
+                "name": "prior parameter width",
                 "type": "variable",
-                "unit": "depends on parameter space",
-                "description": "The volume of the parameter space defined by the prior probability distribution, representing the model's initial flexibility."
+                "unit": "dimensionless",
+                "description": "Total range or volume of parameter space supported by the prior distribution"
             },
-            "\\approx": {
-                "name": "Approximately Equal To",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "Indicates that the two sides are approximately equal, often under certain assumptions or in a specific limit."
+            "D": {
+                "name": "dataset",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Observed empirical data vector or ensemble"
+            },
+            "H_i": {
+                "name": "model hypothesis",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The parameterized theoretical model or hypothesis class being tested"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "In Bayesian model selection, the evidence for a hypothesis $H_i$ given data $D$, denoted $P(D|H_i)$, is the integral of the likelihood over the prior parameter space. This formula approximates that integral by considering the peak of the likelihood function, $\\mathcal{L}_{\\max}$, and scaling it by the 'Occam's factor', $\\frac{\\Delta w}{\\Delta W}$. This factor represents the ratio of the posterior parameter volume $\\Delta w$ (where the model fits the data well) to the prior parameter volume $\\Delta W$, effectively penalizing models that are unnecessarily complex (i.e., have a large prior volume but only a small region that explains the data).",
-        "intuitive_summary": "Imagine trying to hit a tiny target (the data) with a dart (your model's prediction). A simple model is like taking a single, well-aimed shot. A complex model is like throwing a huge bucket of paint at the wall. Even if the complex model hits the target, it gets penalized for its sloppiness—the vast area of paint that missed. This formula rewards the precise, simple model over the messy, complex one, even if both manage to explain the data.",
+        "conceptual_definition": "The Bayesian evidence $P(D|H_i)$ is evaluated by integrating the likelihood weighted by the prior over the model parameter space $w$. Under a one-dimensional or separable Gaussian (Laplace) approximation of a single posterior peak, the integral simplifies to the maximum likelihood $\\mathcal{L}_{\\max} = P(D|w_0, H_i)$ multiplied by the Occam factor $\\frac{\\Delta w}{\\Delta W}$, representing the accessible posterior parameter volume relative to the prior volume.",
+        "intuitive_summary": "A complex model with a wide prior parameter space pays a penalty unless the data strongly justifies its extra flexibility; the Occam factor quantifies this tradeoff by measuring the fraction of the prior parameter range that actually fits the observations.",
         "subcomponents": [
-            "lorentz-factor-and-non-relativistic-limit-df9fc44b",
-            "first-order-energy-change-approximation-52c38450",
-            "the-conversion-factor-170c8ccc"
+            "stationary-phase-classical-limit-2f9a2f2c",
+            "penrose-initial-state-probability-ece2e226"
         ],
-        "description": "This formula provides an approximation for the Bayesian evidence (marginal likelihood) of a model, decomposing it into the product of the maximum likelihood and the 'Occam's factor', which penalizes model complexity.",
-        "derivation_type": "APPROXIMATION"
+        "description": "Approximates the marginal likelihood (Bayesian evidence) of a model as the product of the maximum likelihood and the Occam factor, penalizing parameter volume complexity.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "electrostatic-field-energy-work": {
         "title": "Electrostatic Field Energy",
@@ -1207,66 +1200,67 @@
     "null-separation": {
         "title": "Null Spacetime Interval Condition",
         "equation": "d^2 = 0",
-        "conceptual_definition": "In the geometry of spacetime, the interval $ds^2$ between two infinitesimally separated events is a Lorentz-invariant quantity. The condition $ds^2 = 0$ defines a null interval, signifying that the two events are connected by a light ray. Such events lie on each other's light cones.",
-        "intuitive_summary": "If the special 'distance' in relativity between two events is zero, it means light has just enough time to travel between them. Think of a lightning strike and the moment you see the flash—these two events are connected by a null interval.",
-        "interpretation": "The equation $ds^2 = 0$ establishes the condition for a 'null' or 'light-like' separation. The term $ds$ represents the infinitesimal spacetime interval, an invariant measure of separation between two events. When $ds^2 = 0$, a signal traveling at the speed of light, $c$, can connect the two events. In flat Minkowski spacetime, this expands to $ds^2 = c^2 dt^2 - d\\mathbf{x}^2 = 0$, where $dt$ is the time separation and $d\\mathbf{x}^2$ is the squared spatial separation. In curved spacetime, the condition is expressed using the metric tensor $g_{\\mu\\nu}$ as $g_{\\mu\\nu} dx^\\mu dx^\\nu = 0$.",
-        "symmetry_origin": "The invariance of the spacetime interval $ds^2$ under Lorentz transformations is a direct consequence of the postulates of special relativity, particularly the constancy of the speed of light in all inertial frames. This reflects the underlying Poincaré symmetry of Minkowski spacetime.",
-        "limits_and_boundary": "The condition $ds^2 = 0$ defines the boundary of the causal future and past of an event, known as the light cone. For $ds^2 > 0$, the separation is 'timelike' (causally connected, reachable by massive particles). For $ds^2 < 0$, the separation is 'spacelike' (causally disconnected, unreachable even by light). The null condition is the precise boundary between these two regimes.",
+        "conceptual_definition": "A null spacetime interval condition $d^2 = 0$ (often denoted $ds^2 = 0$ or $\\Delta s^2 = 0$) represents the boundary between timelike ($ds^2 > 0$ or $ds^2 < 0$, depending on metric signature) and spacelike regions in pseudo-Riemannian spacetime. Along a trajectory satisfying $d^2 = 0$, the coordinate speed of propagation matches the invariant speed of light $c$, corresponding to light cones and the propagation paths of massless gauge bosons.",
+        "intuitive_summary": "Events separated by a null interval can be directly connected by a beam of light; from the perspective of a photon traversing this path, zero proper time elapses.",
+        "interpretation": "The symbol $d^2$ (or $ds^2$) denotes the squared invariant spacetime interval between two events, given in local coordinates by $g_{\\mu\\nu} dx^\\mu dx^\\nu$. Setting $d^2 = 0$ indicates that the invariant spacetime distance is zero, meaning spatial separation precisely balances temporal separation such that $|\\Delta \\mathbf{x}| = c \\Delta t$.",
+        "symmetry_origin": "Lorentz invariance $\\mathrm{SO}(1,3)$ in flat spacetime and general diffeomorphism invariance in general relativity, which preserve the conformal light-cone structure and the causal geometry of spacetime.",
+        "limits_and_boundary": "In the limit where particle mass vanishes $m \\to 0$, energy-momentum relations yield $E = |\\mathbf{p}|c$, compelling the particle trajectory to strictly follow a null path $d^2 = 0$. For non-zero mass $m > 0$, the path becomes timelike ($d^2 \\neq 0$).",
         "status": "platinum",
         "semantic_variables": {
-            "ds": {
-                "name": "Spacetime Interval",
+            "d^2": {
+                "name": "Squared invariant spacetime interval",
                 "type": "variable",
-                "unit": "m",
-                "description": "The infinitesimal, Lorentz-invariant separation between two events in spacetime. It is a path element in 4D spacetime."
+                "unit": "m^2",
+                "description": "The squared differential or finite invariant spacetime interval between two spacetime events"
             }
         },
         "subcomponents": [
-            "light-cones-null-interval-ec1e5fb5",
-            "spacetime-null-interval-condition-57ee4d19",
-            "null-four-momentum-squared-condition-9fa54d4e",
-            "null-four-vector"
+            "null-spacetime-interval-condition-9ad02782",
+            "null-interval-in-minkowski-spacetime",
+            "null-spacetime-interval-condition-84c3f054"
         ],
-        "description": "Defines the condition for a null or light-like separation between two events in spacetime, where the invariant spacetime interval between them is zero. This path can be traversed by a massless particle.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the vanishing of the squared invariant spacetime interval between two events, characterizing lightlike separation and null geodesics traversed by massless particles.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "spacetime-null-interval-condition-57ee4d19"
     },
     "time-independent-limit": {
-        "title": "Static or Stationary State Condition",
+        "title": "Static or Stationary State Limiting Condition",
         "equation": "\\partial/\\partial t \\to 0",
-        "conceptual_definition": "The expression $\\partial/\\partial t \\to 0$ represents the mathematical condition for a system to be considered time-independent. It is not an equation to be solved, but rather a constraint applied to the governing equations of a system (e.g., Maxwell's equations, the Schrödinger equation) to simplify them for the analysis of equilibrium, steady-state, or static scenarios. When this limit is applied to a physical quantity $f(x, t)$, it implies that $\\partial f / \\partial t = 0$, meaning the quantity $f$ no longer evolves in time.",
-        "intuitive_summary": "Imagine a photograph of a waterfall. The image captures a single moment, freezing the complex motion of the water. This formula is the physicist's tool for 'freezing' a dynamic system in time to analyze its properties in a state of equilibrium or steady flow, where nothing is changing from one moment to the next.",
-        "interpretation": "The symbol $\\partial/\\partial t$ represents the partial derivative operator with respect to the time variable $t$. This operator quantifies the instantaneous rate of change of a multivariable function as time progresses, while all other variables (like spatial coordinates) are held constant. The arrow $\\to$ indicates a limit, signifying that a quantity approaches a certain value. The value $0$ is the additive identity. Therefore, the expression $\\partial/\\partial t \\to 0$ is a formal statement that the operation of taking the time derivative becomes equivalent to multiplication by zero when applied to the state variables of a system under study. This implies that the system has reached a stationary state or equilibrium, where its observable properties are constant in time.",
-        "symmetry_origin": "This condition is intrinsically linked to continuous time-translation symmetry. For systems governed by a time-independent Hamiltonian ($H$), where $\\partial H / \\partial t = 0$, Noether's theorem guarantees the conservation of energy. The static condition is the defining characteristic of such systems, allowing for the separation of time from other variables and leading to conserved quantities.",
-        "limits_and_boundary": "This expression is itself a limit that defines a boundary condition. Applying the $\\partial/\\partial t \\to 0$ limit to time-dependent theories yields their static or stationary counterparts. For example, applying this to Maxwell's equations transitions from general electrodynamics to the decoupled fields of electrostatics and magnetostatics. In quantum mechanics, it allows the time-dependent Schrödinger equation to be separated into the time-independent Schrödinger equation, which describes stationary states with definite energy.",
+        "conceptual_definition": "The condition $\\partial/\\partial t \\to 0$ designates the asymptotic or quasi-static limit wherein the partial derivative operator with respect to coordinate time $t$ acting on any physical observable, field, or state variable evaluates to zero. This operational limit reduces time-dependent dynamical field equations (such as Maxwell's equations, the Navier-Stokes equations, or wave equations) into their respective elliptic, time-independent boundary value forms.",
+        "intuitive_summary": "Setting the time-derivative operator to zero formally freezes time, transforming dynamic systems into static equilibria where spatial structure alone governs the physics.",
+        "interpretation": "The operator $\\partial / \\partial t$ is the partial derivative with respect to time $t$, measuring the local rate of temporal change while spatial coordinates $\\mathbf{r}$ are held constant. The limit notation $\\to 0$ signifies that the temporal evolution of fields $\\phi(\\mathbf{r}, t)$ becomes negligible relative to the characteristic dynamical timescales of the system, collapsing dynamical equations into static governing laws such as Poisson's or Laplace's equations.",
+        "symmetry_origin": "Continuous time-translation symmetry governed by the 1D temporal translation Lie group $T(1)$, associated via Noether's theorem with the conservation of energy in isolated classical and quantum systems.",
+        "limits_and_boundary": "In the adiabatic limit (where the system variation timescale $\\tau \\gg \\omega^{-1}$), dynamical terms $\\mathcal{O}(\\partial / \\partial t)$ are suppressed relative to spatial gradient terms $\\nabla$. In relativity, this corresponds to the existence of a timelike Killing vector field $\\xi = \\partial_t$ such that the Lie derivative $\\mathcal{L}_\\xi g_{\\mu\\nu} = 0$.",
         "status": "platinum",
         "semantic_variables": {
-            "\\partial/\\partial t": {
-                "name": "Partial Time Derivative",
+            "\\frac{\\partial}{\\partial t}": {
+                "name": "Partial time derivative operator",
                 "type": "operator",
-                "unit": "1/s",
-                "description": "The operator that computes the rate of change with respect to the time variable $t$, holding all other variables constant."
+                "unit": "s^{-1}",
+                "description": "Differential operator representing the rate of change of a multivariable quantity with respect to coordinate time."
             },
-            "\\to": {
-                "name": "Limit Operator",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "Indicates that a variable or expression approaches a specified value or condition."
+            "t": {
+                "name": "Coordinate time",
+                "type": "variable",
+                "unit": "s",
+                "description": "Temporal parameter indexing the continuous evolution of a physical system."
             },
             "0": {
-                "name": "Zero",
-                "type": "scalar",
-                "unit": "context-dependent",
-                "description": "The additive identity, representing a value of zero. In this context, it signifies a zero rate of change."
+                "name": "Zero element / null operator",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "The additive identity representing the vanishing of temporal variation."
             }
         },
         "subcomponents": [
+            "time-derivative-approaches-zero-static",
+            "stationary-state-condition-a8c972b7",
             "time-independent-function",
-            "time-independent-hamiltonian",
-            "time-independent-density",
-            "time-independent-magnetic-vector-potential"
+            "time-independent-density"
         ],
-        "description": "A fundamental limiting condition in physics defining a static or stationary state, where the rate of change of all relevant physical quantities with respect to time approaches zero.",
-        "derivation_type": "DEFINITION"
+        "description": "Represents the formal limiting condition in field theory and continuum mechanics where explicit temporal variations vanish, leading to static or stationary configurations.",
+        "derivation_type": "LIMITING_CASE",
+        "parent_formula_id": "time-derivative-zero"
     },
     "zero-momentum": {
         "title": "Condition of Zero Linear Momentum",

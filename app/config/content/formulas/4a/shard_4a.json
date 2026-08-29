@@ -4,43 +4,44 @@
         "equation": "\\Delta E = \\frac{4}{\\sqrt{3}} \\sqrt{E_0 k_{\\mathrm{B}} T}",
         "semantic_variables": {
             "\\Delta E": {
-                "name": "Gamow Peak Width",
+                "name": "Gamow peak energy width",
                 "type": "variable",
                 "unit": "J",
-                "description": "The full width at 1/e of the maximum of the Gamow peak, representing the effective energy range for fusion."
+                "description": "Full width at $1/e$ of maximum of the thermonuclear reaction rate distribution"
             },
             "E_0": {
-                "name": "Gamow Energy",
+                "name": "Gamow peak energy",
                 "type": "variable",
                 "unit": "J",
-                "description": "The energy at which the Gamow peak is centered, representing the most probable energy for a fusion reaction to occur."
+                "description": "Centroid kinetic energy maximizing the product of Maxwellian flux and tunneling probability"
             },
             "k_{\\mathrm{B}}": {
-                "name": "Boltzmann Constant",
+                "name": "Boltzmann constant",
                 "type": "constant",
-                "unit": "J/K",
-                "description": "A fundamental constant relating temperature to the average kinetic energy of particles in a gas."
+                "unit": "J*K^-1",
+                "description": "Fundamental physical constant relating temperature to particle energy"
             },
             "T": {
-                "name": "Temperature",
+                "name": "Absolute temperature",
                 "type": "variable",
                 "unit": "K",
-                "description": "The thermodynamic temperature of the plasma or stellar core."
+                "description": "Thermodynamic temperature of the stellar core or thermonuclear plasma"
             }
         },
-        "interpretation": "The equation for $\\Delta E$ quantifies the width of the Gamow peak, which is crucial for calculating thermonuclear reaction rates in stars and fusion reactors. The reaction rate is determined by an integral over particle energies $E$ of the product of the number of particle pairs (from the Maxwell-Boltzmann distribution) and their fusion cross-section $\\sigma(E)$. The Maxwell-Boltzmann factor, $\\exp(-E/k_{\\mathrm{B}}T)$, decreases rapidly with energy $E$. The cross-section, dominated by quantum tunneling through the Coulomb barrier, includes a Gamow factor, $\\exp(-(E_{\\mathrm{G}}/E)^{1/2})$, which increases rapidly with energy. The product of these two opposing exponentials, $\\exp(-E/k_{\\mathrm{B}}T - (E_{\\mathrm{G}}/E)^{1/2})$, results in a sharp peak known as the Gamow peak, centered at the Gamow energy $E_0$. This formula, $\\Delta E = \\frac{4}{\\sqrt{3}} \\sqrt{E_0 k_{\\mathrm{B}} T}$, gives the full width at $1/e$ of the maximum for a Gaussian approximation of this peak. This width represents the effective energy window where most fusion reactions occur.",
-        "symmetry_origin": "Not applicable; this is a derived statistical mechanics and quantum tunneling result, not a direct consequence of a fundamental symmetry or conservation law.",
-        "limits_and_boundary": "In the limit of zero temperature, $T \\to 0$, the thermal energy is insufficient to contribute to overcoming the Coulomb barrier, and the peak width $\\Delta E \\to 0$, closing the fusion window. Conversely, as temperature becomes very large, $T \\to \\infty$, the Maxwell-Boltzmann distribution flattens, and the Gamow peak broadens significantly ($\\Delta E \\to \\infty$), making the concept of a narrow fusion window less relevant. The formula is an approximation based on a Taylor expansion of the exponent around the peak energy $E_0$ and is most accurate when the peak is sharp, i.e., for $k_{\\mathrm{B}}T \\ll E_0$.",
+        "interpretation": "In this formula, $\\Delta E$ represents the effective width (full width at $1/e$ of maximum) of the fusion energy window. $E_0$ is the centroid energy of the Gamow peak, $k_{\\mathrm{B}}$ is the Boltzmann constant, and $T$ is the absolute temperature of the plasma. Expanding the logarithm of the reaction integrand $I(E)$ as a Taylor series around its peak $E = E_0$ to second order gives a standard Gaussian profile $\\exp(-(E - E_0)^2 / (\\Delta E / 2)^2)$, yielding $\\Delta E = \\frac{4}{\\sqrt{3}} \\sqrt{E_0 k_{\\mathrm{B}} T}$.",
+        "symmetry_origin": "Rooted in $SO(3)$ rotational symmetry and spatial translation invariance of the central Coulomb potential, coupled with thermal equilibrium arising from the maximum entropy principle under canonical ensemble time-translation invariance.",
+        "limits_and_boundary": "As temperature $T \\to 0$, both $E_0 \\to 0$ and $\\Delta E \\to 0$, collapsing the fusion window completely as tunneling probability vanishes. In the classical limit $\\hbar \\to 0$, the Gamow energy $E_{\\mathrm{G}} \\to \\infty$, shifting the required peak energy toward infinity and extinguishing sub-barrier tunneling. As $T \\to \\infty$, $\\Delta E$ widens asymptotically as $T^{5/6}$.",
         "status": "platinum",
-        "conceptual_definition": "The Gamow peak is the energy range where thermonuclear reactions are most probable. It results from the product of two competing factors: the Maxwell-Boltzmann distribution of particle energies, which favors lower energies, and the quantum tunneling probability through the Coulomb barrier, which favors higher energies. This formula provides the full width at $1/e$ of the maximum of a Gaussian approximation to this peak, denoted as $\\Delta E$.",
-        "intuitive_summary": "Imagine trying to throw a ball over a very high wall. Most people don't have enough energy to throw it over directly. However, quantum mechanics allows a tiny chance for the ball to 'tunnel' through the wall. The Gamow peak is the 'sweet spot' energy: high enough to make tunneling more likely, but not so high that very few particles have that energy. This formula measures the size of that sweet spot.",
+        "conceptual_definition": "The Gamow Peak Energy Width $\\Delta E$ is defined as the full width at $1/e$ of the maximum for the Gaussian approximation of the thermonuclear reaction rate integrand $I(E) \\propto \\exp(-E/(k_{\\mathrm{B}}T) - \\sqrt{E_{\\mathrm{G}}/E})$. It characterizes the effective energy range centered at the Gamow peak energy $E_0$ where the competition between Maxwell-Boltzmann thermal particle distribution and quantum mechanical Coulomb barrier penetration is optimized.",
+        "intuitive_summary": "Thermonuclear fusion requires balancing thermal availability against quantum barrier penetration: low-energy particles are abundant but cannot tunnel, while high-energy particles tunnel easily but are extremely rare. The Gamow width defines the narrow 'energy window' where virtually all successful fusion reactions take place.",
         "subcomponents": [
-            "thermal-de-broglie-wavelength",
-            "wave-packet-identity-6a3850ea",
-            "fourier-transform-position-to-momentum-e25d4c9a"
+            "effective-threshold-f586f3e8",
+            "energy-filter-833cd3a4",
+            "plasma-shield-4e7a7f98"
         ],
-        "description": "This formula quantifies the effective energy range, or width, of the Gamow peak, where the probability of thermonuclear fusion reactions is maximized in stellar interiors and fusion plasmas.",
-        "derivation_type": "APPROXIMATION"
+        "description": "Calculates the effective energy width of the Gamow peak, representing the narrow energy window in which non-resonant thermonuclear fusion reactions predominantly occur in stellar interiors.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "gamow-peak-thermonuclear-integrand-ef6a8678"
     },
     "structural-map-71b9ec3b": {
         "title": "Lepton Number Violation by Two Units",

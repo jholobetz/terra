@@ -562,44 +562,38 @@
         "equation": "x'^i = R^i_j x^j",
         "semantic_variables": {
             "x'^i": {
-                "name": "Transformed Vector Component",
+                "name": "transformed vector component",
                 "type": "variable",
                 "unit": "m",
-                "description": "The $i$-th component of the vector $\\mathbf{x}$ after the transformation, in the new coordinate basis."
+                "description": "The $i$-th coordinate component of the vector in the transformed coordinate frame"
             },
             "R^i_j": {
-                "name": "Rotation Matrix Element",
-                "type": "operator",
+                "name": "orthogonal rotation matrix element",
+                "type": "variable",
                 "unit": "dimensionless",
-                "description": "The element in the $i$-th row and $j$-th column of the orthogonal transformation matrix $R$."
+                "description": "Component of the orthogonal transformation matrix linking original axis $j$ to new axis $i$"
             },
             "x^j": {
-                "name": "Original Vector Component",
+                "name": "original vector component",
                 "type": "variable",
                 "unit": "m",
-                "description": "The $j$-th component of the vector $\\mathbf{x}$ before the transformation, in the original coordinate basis."
-            },
-            "i,j": {
-                "name": "Indices",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "Indices representing vector and matrix components, running from 1 to the dimension of the space, $N$. Summation over the repeated index $j$ is implied (Einstein summation convention)."
+                "description": "The $j$-th coordinate component of the vector in the initial reference frame"
             }
         },
-        "interpretation": "The equation $x'^i = R^i_j x^j$ employs the Einstein summation convention, where a sum over the repeated index $j$ (from $1$ to $N$, the dimension of the space) is implicitly performed. Each component $x'^i$ of the new vector $\\mathbf{x}'$ is a linear combination of all components $x^j$ of the original vector $\\mathbf{x}$. The coefficients of this combination are the elements $R^i_j$ of the transformation matrix $R$. For this transformation to represent an isometry (a distance-preserving map) like a rotation, the matrix $R$ must be orthogonal, satisfying the condition $R^T R = I$, where $R^T$ is the transpose of $R$ and $I$ is the identity matrix. This orthogonality ensures the invariance of the scalar product, which is the geometric foundation for preserving lengths and angles in Euclidean space.",
-        "symmetry_origin": "This transformation rule embodies the principle of rotational invariance, a fundamental symmetry of Euclidean space also known as isotropy. The laws of physics are independent of the orientation of the coordinate system used to describe them. According to Noether's theorem, this continuous symmetry under the rotation group SO(N) corresponds to the conservation of angular momentum.",
-        "limits_and_boundary": "This relation is valid in any finite-dimensional Euclidean or pseudo-Euclidean space. The primary constraint applies to the matrix $R^i_j$. For the transformation to be a pure rotation, $R$ must be a special orthogonal matrix, meaning it is orthogonal ($R^T R = I$) and has a determinant of $+1$. A determinant of $-1$ indicates the transformation also includes a reflection (an improper rotation).",
+        "interpretation": "The equation $x'^i = R^i_j x^j$ employs the Einstein summation convention over the repeated contravariant/covariant index $j \\in \\{1, \\dots, N\\}$. The transformed component $x'^i$ corresponds to the projection of the vector onto the new basis axis $i$. The matrix element $R^i_j$ represents the direction cosine between the new $i$-th basis vector and the original $j$-th basis vector. Because $R \\in \\mathrm{O}(N)$ (or $\\mathrm{SO}(N)$ for proper rotations), the Euclidean metric tensor $\\delta_{ij}$ remains invariant, ensuring $\\sum_i (x'^i)^2 = \\sum_j (x^j)^2$.",
+        "symmetry_origin": "Rooted in the global $\\mathrm{SO}(N)$ rotational symmetry of isotropic Euclidean space, preserving the Euclidean metric tensor $\\delta_{ij}$ and inner products.",
+        "limits_and_boundary": "In the limit of zero rotation angle $\\theta \\to 0$, $R^i_j \\to \\delta^i_j$ (the Kronecker delta), reducing the transformation to the identity $x'^i = x^i$. For infinitesimal rotations $\\delta\\theta$, $R^i_j \\approx \\delta^i_j + \\epsilon^i_{\\ jk} \\delta\\theta^k$.",
         "status": "platinum",
-        "conceptual_definition": "In an N-dimensional Euclidean space, the components $x'^i$ of a transformed vector $\\mathbf{x}'$ are obtained from the components $x^j$ of the original vector $\\mathbf{x}$ via the linear transformation $x'^i = R^i_j x^j$. If the matrix $R$ is orthogonal, satisfying $R^T R = I$, the transformation preserves the length of vectors and the angles between them, corresponding to a rigid rotation and/or reflection.",
-        "intuitive_summary": "Imagine looking at an object and then tilting your head. The object itself hasn't changed, but its coordinates relative to your point of view have. This formula is the mathematical rule for calculating the object's new coordinates ($x'^i$) from its old ones ($x^j$) after you've tilted your head (the rotation $R^i_j$).",
+        "conceptual_definition": "In an $N$-dimensional Euclidean space, the components of a contravariant vector transform under coordinate frame rotations according to the linear mapping $x'^i = R^i_j x^j$, where $R^i_j$ denotes the elements of an orthogonal matrix satisfying $R^T R = I$ to preserve distances and inner products.",
+        "intuitive_summary": "Rotating the reference frame mixes the components of a vector through linear combinations while preserving its total length and orientation relative to other geometric objects.",
         "subcomponents": [
-            "transformed-vector-component-in-euclidean-space-add3c83c",
-            "technical-relation-3b82ec65",
-            "two-dimensional-euclidean-space-4401afd1",
-            "basis-vectors-configuration-space"
+            "rotation-matrix-orthogonality-condition-0de25e54",
+            "rotation-matrix-component-572e7eae",
+            "identity-transformation-matrix-element-b6ce0901"
         ],
-        "description": "Defines how the components of a vector in Euclidean space transform under a linear operation, such as a rotation, represented by an orthogonal matrix $R^i_j$.",
-        "derivation_type": "DEFINITION"
+        "description": "Describes the linear coordinate transformation of a Euclidean vector's components under an orthogonal matrix representing a spatial rotation or reflection.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "rotation-transformation"
     },
     "curie-weiss-law-d7f2cc2b": {
         "title": "Curie-Weiss Law",
@@ -1190,36 +1184,41 @@
         ]
     },
     "limit-of-epsilon-approaching-zero": {
-        "title": "Limit of an Infinitesimal Quantity",
+        "title": "Infinitesimal Limit Operation",
         "equation": "\\epsilon \\to 0",
-        "conceptual_definition": "The expression $\\epsilon \\to 0$ signifies that a quantity, denoted by $\\epsilon$, approaches the value of zero. This is a cornerstone of calculus, formally defined using the $(\\epsilon, \\delta)$-definition of a limit. It represents the concept of an infinitesimal, a quantity that is smaller than any assignable positive number but is not itself zero, allowing for the analysis of functions and systems at a point or an instant.",
-        "intuitive_summary": "Imagine infinitely zooming in on a specific point on a map. The distance you shift the view with each zoom, represented by $\\epsilon$, gets smaller and smaller, approaching zero. This process allows us to see the 'local' landscape at that single point, just as the limit $\\epsilon \\to 0$ allows physicists to define 'instantaneous' properties like velocity or the strength of a field at a precise location.",
-        "interpretation": "In this expression, $\\epsilon$ represents a small, positive quantity that is being considered to shrink towards zero. The symbol $\\to$ denotes the process of approaching a limit. Thus, $\\epsilon \\to 0$ means that $\\epsilon$ is getting arbitrarily close to zero, but not necessarily equal to it. This concept is fundamental in calculus, where it is used to define derivatives (rates of change) and integrals (accumulation of quantities). For instance, the derivative of a function $f(x)$ is defined as the limit of the difference quotient $\\frac{f(x+\\epsilon)-f(x)}{\\epsilon}$ as $\\epsilon \\to 0$. Physically, this might represent an infinitesimal time interval for calculating instantaneous velocity, or the radius of a small volume shrinking to a point to define a charge density $\\rho(\\mathbf{r})$. The mathematical rigor of the limit allows physicists to handle concepts that would otherwise be ill-defined, such as division by zero, by analyzing the behavior of a system as a parameter becomes infinitesimally small.",
-        "symmetry_origin": "This is a foundational mathematical construct, not directly derived from a physical symmetry. It is the essential tool used to define the generators of continuous symmetries (e.g., in Lie groups) and to formulate differential equations that describe physical laws, which in turn may possess various symmetries.",
-        "limits_and_boundary": "The concept of $\\epsilon \\to 0$ is the mathematical machinery used to explore the limits and boundary conditions of physical theories. For example, the classical limit of quantum mechanics is taken by formally letting the Planck constant approach zero, $\\hbar \\to 0$. The non-relativistic limit is found by considering velocities $v$ such that the ratio $v/c \\to 0$. In general relativity, a flat spacetime metric is recovered by taking the limit of the gravitational constant $G \\to 0$. In all these cases, the $\\epsilon \\to 0$ formalism provides the rigorous framework for analyzing the asymptotic behavior of the governing equations.",
+        "conceptual_definition": "The formal limiting condition $\\epsilon \\to 0$ defines the asymptotic behavior of a function or functional $F(\\epsilon)$ as the parameter $\\epsilon$ approaches zero within a specified topological space. In mathematical physics, this operation underpins the definition of instantaneous rates of change via differential quotients, the convergence of weak distributions (such as the nascent Dirac delta function), and the generation of continuous Lie group transformations from infinitesimal generators.",
+        "intuitive_summary": "Shrinking a small parameter toward zero allows physical laws to probe instantaneous, point-like, or continuous behaviors from macroscopic approximations without encountering catastrophic divisions by zero.",
+        "interpretation": "The symbol $\\epsilon$ denotes an auxiliary dimensionless or dimensionful perturbation parameter, and $\\to$ represents the topological convergence toward the identity or origin $0$. When applied to functional variations $\\delta q(t) = \\lim_{\\epsilon \\to 0} \\frac{q(t + \\epsilon \\eta) - q(t)}{\\epsilon}$, it isolates linear response terms. In field-theoretic regularization schemes (such as the Feynman prescription $i\\epsilon$ or dimensional regularization), taking $\\epsilon \\to 0$ restores physical observables after isolating ultraviolet or infrared divergences.",
+        "symmetry_origin": "Forms the mathematical substrate for infinitesimal Lie group transformations and continuous spacetime symmetries via Noether's theorem, where finite continuous transformations are generated by exponentiating infinitesimal shifts characterized by $\\epsilon \\to 0$.",
+        "limits_and_boundary": "In the limit $\\epsilon \\to 0$, smooth differential manifolds locally reduce to tangent spaces; nascent distributions converge to singular distributions in the sense of generalized functions. If $\\epsilon$ acts as a regulator (e.g., $m^2 - i\\epsilon$), $\\epsilon \\to 0^+$ enforces causal boundary conditions in Green's functions.",
         "status": "platinum",
         "semantic_variables": {
             "\\epsilon": {
-                "name": "Infinitesimal Quantity",
+                "name": "infinitesimal parameter",
                 "type": "variable",
-                "unit": "Context-dependent",
-                "description": "A small, positive quantity that approaches zero. Its physical units depend on the specific application (e.g., seconds for time, meters for length)."
+                "unit": "dimensionless",
+                "description": "An auxiliary parameter representing a small perturbation, displacement, or regulator tending toward zero."
             },
             "\\to": {
-                "name": "Limit Operator",
+                "name": "limit operator",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "Indicates that the variable on the left approaches the value on the right."
+                "unit": "dimensionless",
+                "description": "Topological convergence operator indicating the approach of a variable toward a specified target value."
+            },
+            "0": {
+                "name": "zero",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Additive identity and origin of the underlying metric or topological vector space."
             }
         },
         "subcomponents": [
+            "variation-generalized-coordinates",
             "dirac-delta-function-limit-definition-ada11f67",
-            "classical-limit-hbar-zero",
-            "velocity-approaching-zero",
-            "temperature-approaching-absolute-zero"
+            "infinitesimal-spatial-translation"
         ],
-        "description": "A fundamental mathematical concept from calculus representing the process where a variable quantity, $\\epsilon$, becomes arbitrarily close to zero. This is essential for defining derivatives, integrals, and continuity in physical theories.",
-        "derivation_type": "DEFINITION"
+        "description": "The limiting process wherein an infinitesimal parameter $\\epsilon$ tends toward zero, serving as the foundational construct for differential calculus, continuous symmetries, and regularized field theories.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "energy-of-magnetic-dipole": {
         "title": "Potential Energy of a Magnetic Dipole",

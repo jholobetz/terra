@@ -699,65 +699,60 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "causal-edge-8a7ae5a7": {
-        "title": "Directional Covariant Derivative",
+        "title": "Directional Covariant Derivative of a Vector Field",
         "equation": "\\nabla_{\\mathbf{U}} \\mathbf{V} = U^\\mu \\nabla_\\mu V^\\nu \\mathbf{e}_\\nu \\quad (\\text{Directional})",
         "semantic_variables": {
-            "\\nabla_{\\mathbf{U}}": {
-                "name": "Directional Covariant Derivative Operator",
-                "type": "operator",
-                "unit": "Context-dependent",
-                "description": "Operator that computes the derivative of a tensor field along the integral curves of the vector field U."
-            },
-            "\\mathbf{V}": {
-                "name": "Subject Vector Field",
+            "\\nabla_{\\mathbf{U}} \\mathbf{V}": {
+                "name": "directional covariant derivative vector",
                 "type": "variable",
-                "unit": "Context-dependent",
-                "description": "The vector field whose rate of change is being measured."
+                "unit": "m/s^2",
+                "description": "Covariant derivative of vector field V along direction vector field U"
             },
             "\\mathbf{U}": {
-                "name": "Direction Vector Field",
+                "name": "directional vector field",
                 "type": "variable",
-                "unit": "Context-dependent",
-                "description": "The vector field that defines the direction of differentiation."
+                "unit": "dimensionless",
+                "description": "Vector field defining the direction of differentiation"
+            },
+            "\\mathbf{V}": {
+                "name": "differentiated vector field",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "Vector field being differentiated"
             },
             "U^\\mu": {
-                "name": "Components of Direction Vector",
+                "name": "components of direction vector",
                 "type": "variable",
-                "unit": "Context-dependent",
-                "description": "The contravariant components of the direction vector field U."
+                "unit": "dimensionless",
+                "description": "Contravariant components of the direction vector field U"
             },
-            "\\nabla_\\mu": {
-                "name": "Covariant Derivative Operator",
-                "type": "operator",
-                "unit": "1/length",
-                "description": "Operator that computes the derivative of a tensor field with respect to coordinate x^mu, accounting for manifold curvature."
-            },
-            "V^\\nu": {
-                "name": "Components of Subject Vector",
+            "\\nabla_\\mu V^\\nu": {
+                "name": "covariant derivative tensor components",
                 "type": "variable",
-                "unit": "Context-dependent",
-                "description": "The contravariant components of the vector field V."
+                "unit": "1/m",
+                "description": "Components of the rank-(1,1) covariant derivative tensor of vector field V"
             },
             "\\mathbf{e}_\\nu": {
-                "name": "Coordinate Basis Vector",
+                "name": "basis vector",
                 "type": "variable",
-                "unit": "Basis Vector",
-                "description": "The basis vector in the nu-th coordinate direction of the tangent space."
+                "unit": "dimensionless",
+                "description": "Local coordinate basis vector associated with coordinate index nu"
             }
         },
-        "interpretation": "The equation defines the directional covariant derivative, denoted $\\nabla_{\\mathbf{U}} \\mathbf{V}$, which measures the rate of change of a vector field $\\mathbf{V}$ along the integral curves of another vector field $\\mathbf{U}$. The right-hand side expresses this in a coordinate basis. The components $U^\\mu$ of the direction vector field $\\mathbf{U}$ contract with the components of the full covariant derivative tensor, $\\nabla_\\mu V^\\nu$. This isolates the change of $\\mathbf{V}$ specifically in the direction defined by $\\mathbf{U}$. The term $\\nabla_\\mu V^\\nu$ itself accounts for both the change in the components of $\\mathbf{V}$ and the change in the basis vectors in a curved spacetime (via Christoffel symbols). The result, $U^\\mu \\nabla_\\mu V^\\nu$, gives the components of the resulting vector, which is then expressed in the coordinate basis $\\mathbf{e}_\\nu$.",
-        "symmetry_origin": "General Covariance. The structure of the covariant derivative is mandated by the principle that physical laws must be expressed in a form that is invariant under arbitrary differentiable coordinate transformations.",
-        "limits_and_boundary": "In a flat spacetime (Minkowski space), the Christoffel symbols vanish, and the covariant derivative $\\nabla_\\mu$ reduces to the partial derivative $\\partial_\\mu$. The equation then simplifies to $\\nabla_{\\mathbf{U}} \\mathbf{V} = U^\\mu \\partial_\\mu V^\\nu \\mathbf{e}_\\nu$, which is the standard directional derivative from vector calculus. A critical application is when $\\mathbf{V} = \\mathbf{U}$ and the result is zero, $\\nabla_{\\mathbf{U}} \\mathbf{U} = 0$, which defines a geodesic—the path of a freely-falling particle.",
+        "interpretation": "The operator $\\nabla_{\\mathbf{U}}$ denotes the connection operator evaluated along the direction $\\mathbf{U}$. On the right-hand side, $U^\\mu$ are the contravariant components of the direction vector field $\\mathbf{U}$, and $\\nabla_\\mu V^\\nu = \\partial_\\mu V^\\nu + \\Gamma^\\nu_{\\mu\\rho} V^\\rho$ represents the components of the full covariant derivative of $\\mathbf{V}$, where $\\Gamma^\\nu_{\\mu\\rho}$ are the Christoffel symbols of the Levi-Civita connection. The contracted product $U^\\mu \\nabla_\\mu V^\\nu$ forms the $\\nu$-th component of the resulting vector in the basis $\\mathbf{e}_\\nu$.",
+        "symmetry_origin": "General covariance under arbitrary spacetime coordinate transformations (diffeomorphism invariance $\\mathrm{Diff}(M)$), ensuring the directional derivative transforms as a true rank-$(1,0)$ vector.",
+        "limits_and_boundary": "In flat Minkowski spacetime with Cartesian coordinates, the Christoffel symbols vanish ($\\Gamma^\\nu_{\\mu\\rho} \\to 0$), reducing the expression to the standard kinematic directional derivative $U^\\mu \\partial_\\mu V^\\nu \\mathbf{e}_\\nu$. When evaluated along the tangent vector of a geodesic curve with $\\mathbf{V} = \\mathbf{U}$, the parallel transport condition yields $\\nabla_{\\mathbf{U}} \\mathbf{U} = 0$.",
         "status": "platinum",
-        "conceptual_definition": "The directional covariant derivative, $\\nabla_{\\mathbf{U}} \\mathbf{V}$, represents the change in a vector field $\\mathbf{V}$ as it is transported along an integral curve defined by a vector field $\\mathbf{U}$. In component form, this is calculated by contracting the components of the direction vector, $U^\\mu$, with the covariant derivative of the field being transported, $\\nabla_\\mu V^\\nu$. This operation correctly accounts for the curvature of the underlying manifold, ensuring the result is a coordinate-independent tensor.",
-        "intuitive_summary": "Imagine walking on a curved surface like the Earth while carrying a compass. The directional covariant derivative tells you how the compass needle's direction changes from your perspective as you walk along a specific path. It correctly separates the 'real' change in the magnetic field from the apparent change caused by you following a curved path on a curved surface.",
+        "conceptual_definition": "The directional covariant derivative $\\nabla_{\\mathbf{U}} \\mathbf{V}$ evaluates the rate of change of a contravariant vector field $\\mathbf{V}$ along the flow generated by a vector field $\\mathbf{U}$ on a curved Riemannian or pseudo-Riemannian manifold. In a local coordinate basis $\\{\\mathbf{e}_\\nu\\}$, it is expressed as the contraction of the directional vector components $U^\\mu$ with the total covariant derivative $\\nabla_\\mu V^\\nu$, yielding $\\nabla_{\\mathbf{U}} \\mathbf{V} = U^\\mu \\nabla_\\mu V^\\nu \\mathbf{e}_\\nu$.",
+        "intuitive_summary": "In flat space, a directional derivative measures how a vector's components change along a given trajectory; in curved spacetime, the directional covariant derivative accounts for both component variation and the twisting and curvature of the underlying coordinate basis vectors.",
         "subcomponents": [
-            "geometric-origin-9315e8a0",
-            "kinematic-component-of-covariant-derivative-2d893ac1",
-            "force-detector-e71395ed"
+            "covariant-derivative-along-vector-field-u-10a3dda3",
+            "covariant-derivative-vector-field-ident-c94574fe",
+            "kinematic-component-of-covariant-derivative-2d893ac1"
         ],
-        "description": "Defines the rate of change of a vector field along the direction of another vector field in a curved manifold, generalizing the concept of a directional derivative to general relativity.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the intrinsic directional covariant derivative of a vector field along the flow of another vector field on a differentiable manifold.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "covariant-derivative-vector-field-ident-c94574fe"
     },
     "scale-conflict-2cb960c8": {
         "title": "Macroscopic Quantum Superposition (Schrödinger's Cat)",
@@ -878,47 +873,48 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "backward-propagation-ce1b6df3": {
-        "title": "Backward Propagation (Time-Reversal Symmetry)",
+        "title": "Time-Reversed Advanced Wavefunction Identity",
         "equation": "\\Psi_{\\mathrm{adv}}(t) = \\Psi_{\\mathrm{ret}}^{*}(-t)",
         "semantic_variables": {
             "\\Psi_{\\mathrm{adv}}": {
                 "name": "Advanced Wavefunction",
                 "type": "variable",
-                "unit": "[Depends on Field]",
-                "description": "The solution to a wave equation that propagates backward in time, converging on a source from the future."
+                "unit": "m^{-3/2}",
+                "description": "Advanced field amplitude or quantum state evolving backward in time from future boundary conditions."
             },
             "\\Psi_{\\mathrm{ret}}": {
                 "name": "Retarded Wavefunction",
                 "type": "variable",
-                "unit": "[Depends on Field]",
-                "description": "The standard solution to a wave equation that propagates forward in time, diverging from a source in the past."
+                "unit": "m^{-3/2}",
+                "description": "Retarded field amplitude or causal quantum state evolving forward in time from past boundary conditions."
             },
             "t": {
-                "name": "Time",
+                "name": "Time Coordinate",
                 "type": "variable",
                 "unit": "s",
-                "description": "The temporal coordinate."
+                "description": "Temporal parameter governing the evolution of the wavefield."
             },
             "*": {
                 "name": "Complex Conjugation",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "An operation that reverses the sign of the imaginary part of a complex number, effectively inverting the phase evolution of a wavefunction."
+                "description": "Anti-linear operation that inverts the imaginary component and phase evolution of the wavefunction."
             }
         },
-        "interpretation": "In this equation, $\\Psi_{\\mathrm{adv}}(t)$ represents the advanced wavefunction at time $t$, which satisfies boundary conditions in the future (acting as a sink or absorber). Conversely, $\\Psi_{\\mathrm{ret}}^{*}(-t)$ is the complex conjugate of the retarded wavefunction evaluated at time $-t$. The retarded wavefunction, $\\Psi_{\\mathrm{ret}}(t)$, describes standard causal propagation originating from a source in the past. The complex conjugation operation, denoted by the asterisk ($*$), inverts the phase evolution of the quantum state (e.g., for a state $e^{-iEt/\\hbar}$, conjugation yields $e^{+iEt/\\hbar}$). The negation of the temporal argument, $t \\to -t$, formally reverses the flow of time. Together, these two operations transform a forward-evolving, causal solution into a backward-evolving, 'anti-causal' solution that converges on a source from the future.",
-        "symmetry_origin": "The relationship stems from the fundamental time-reversal symmetry (T-symmetry) of the underlying wave equations (like the Schrödinger, Klein-Gordon, or Maxwell equations). For a time-reversal operation $\\mathcal{T}$, a solution $\\Psi(t)$ is mapped to $\\mathcal{T}\\Psi(t) = \\Psi^*(-t)$. This equation is a specific application of this symmetry principle, relating the two fundamental solutions (retarded and advanced) of the wave equation.",
-        "limits_and_boundary": "This is a definitional identity relating two fundamental solutions of a wave equation. Its physical relevance depends on the boundary conditions of the universe. In the context of Wheeler-Feynman absorber theory, the existence of a future absorber that perfectly absorbs all radiation is a critical boundary condition. In a universe without such an absorber, both $\\Psi_{\\mathrm{ret}}(t)$ and $\\Psi_{\\mathrm{adv}}(t)$ would exist, violating causality as we observe it. The equation itself holds regardless of specific limits like $v \\to c$ or $\\hbar \\to 0$, as it is a statement about the mathematical structure of wave propagation.",
+        "interpretation": "The symbol $\\Psi_{\\mathrm{adv}}(t)$ denotes the advanced state or field amplitude at time $t$, converging toward the source from boundary conditions at $t \\to +\\infty$. The term $\\Psi_{\\mathrm{ret}}(-t)$ is the retarded causal wavefunction evaluated at the negated time coordinate $-t$, representing the spatial configuration reflected across the temporal origin. The asterisk $*$ denotes complex conjugation, which reverses the phase evolution generated by the Hamiltonian $\\hat{H}$, ensuring that positive energy states propagate backward in time with consistent physical dispersion.",
+        "symmetry_origin": "Rooted in discrete time-reversal invariance $\\mathcal{T}$ of the underlying wave equation and the anti-unitary structure of quantum mechanical time-reversal symmetry $\\mathcal{T} = U K$, where $K$ represents complex conjugation.",
+        "limits_and_boundary": "In strictly dissipative macroscopic systems where the thermodynamic arrow of time is imposed, advanced solutions $\\Psi_{\\mathrm{adv}}$ are suppressed by Sommerfeld radiation conditions at infinity. In time-symmetric formulations such as Wheeler-Feynman absorber theory, $\\Psi_{\\mathrm{adv}}$ and $\\Psi_{\\mathrm{ret}}$ enter with equal weight $\\frac{1}{2}$ at the microscopic level.",
         "status": "platinum",
-        "conceptual_definition": "The backward-propagating or 'advanced' wavefunction, denoted as $\\Psi_{\\mathrm{adv}}(t)$, is mathematically defined as the complex conjugate of the forward-propagating or 'retarded' wavefunction, $\\Psi_{\\mathrm{ret}}(t)$, evaluated at a reversed time coordinate, $-t$. This transformation effectively reverses the direction of wave propagation from the future to the past.",
-        "intuitive_summary": "Imagine watching a movie of ripples spreading out from a stone dropped in a pond. The 'backward propagation' equation is like playing that movie in reverse: the ripples converge back to the point where the stone will be dropped. It describes a wave that seems to know its future destination and travels backward in time to get there.",
+        "conceptual_definition": "In time-symmetric quantum mechanics and electrodynamics, the advanced solution $\\Psi_{\\mathrm{adv}}(t)$ evolves backward in time from future boundary conditions. Applying the anti-unitary time-reversal operation $\\mathcal{T}$ (comprising temporal coordinate reflection $t \\to -t$ and complex conjugation $*$) maps the forward-propagating retarded state $\\Psi_{\\mathrm{ret}}(t)$ onto the advanced state: $\\Psi_{\\mathrm{adv}}(t) = \\Psi_{\\mathrm{ret}}^{*}(-t)$.",
+        "intuitive_summary": "Running a movie of an outgoing spherical wave backward produces an incoming spherical wave; mathematically, flipping the direction of time and conjugating the phase converts an emitted causal wave into an absorbed advanced wave.",
         "subcomponents": [
-            "advanced-wave-function-c170648c",
-            "retarded-wave-function-component-9b4664c9",
-            "complex-conjugate-of-time-reversed-retarded-wave-ed403ba7"
+            "forward-propagation-5707a251",
+            "complex-conjugate-of-time-reversed-retarded-wave-ed403ba7",
+            "time-reversal-symmetry"
         ],
-        "description": "This equation defines the advanced wavefunction, which propagates backward in time, as the time-reversed complex conjugate of the standard retarded (forward-propagating) wavefunction. It is a key identity in time-symmetric formulations of physics, such as the Wheeler-Feynman absorber theory.",
-        "derivation_type": "DEFINITION"
+        "description": "Relates the advanced (backward-propagating) wavefunction to the time-reversed complex conjugate of the retarded (forward-propagating) wavefunction under microscopic time-reversal symmetry.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "loschmidts-time-reversal-paradox-47e3e3ca"
     },
     "divergence-operator-law-e0e63b59": {
         "title": "Divergence Operator (Cartesian Coordinates)",
@@ -1707,22 +1703,32 @@
         "intuitive_summary": "This term acts like a 'stiffness' penalty for the field. A high value means the field is changing rapidly from point to point, costing a lot of energy, much like a stiff rubber sheet resists being bent sharply."
     },
     "decimal-factor-of-one-thousandth-599ba39d": {
-        "title": "Decimal Scaling Factor: 10^{-3}",
-        "description": "A dimensionless numerical constant representing the value of one-thousandth (0.001), commonly used as a scaling factor in unit conversions and physical equations.",
-        "conceptual_definition": "The expression $10^{-3}$ represents the multiplicative inverse of one thousand, i.e., $1/1000$. It is a fundamental constant in the decimal system, frequently appearing in the International System of Units (SI) as the prefix 'milli-'.",
-        "interpretation": "The expression $10^{-3}$ is a dimensionless numerical constant with a value of $0.001$. In the context of physical laws, it acts as a fixed scaling coefficient. For instance, in unit conversions, it relates a base unit to its 'milli-' prefixed counterpart, such as converting millimeters to meters: $1 \\, \\text{mm} = 10^{-3} \\, \\text{m}$. It can also appear as a fixed parameter in empirical models or theoretical calculations where a specific ratio of $1:1000$ is required.",
-        "limits_and_boundary": "As a fixed numerical constant, $10^{-3}$ is invariant under any physical limit. It does not depend on variables such as temperature $T$, velocity $v$, or spatial coordinate $r$.",
-        "symmetry_origin": "Not applicable; this is a mathematical constant defined within the base-10 number system, not derived from a physical symmetry.",
+        "title": "Decimal Scaling Factor: $10^{-3}$",
+        "description": "A dimensionless numerical constant representing the exact value of one-thousandth ($0.001$), serving as the standard SI metric prefix 'milli-' conversion factor and a common fixed order-of-magnitude scaling coefficient in physical expressions.",
+        "conceptual_definition": "The expression $10^{-3} \\equiv \\frac{1}{1000} = 0.001$ defines a base-$10$ negative power representing a fractional scale factor. In measurement systems and mathematical physics, it operates as an exact scalar multiplier that translates physical quantities between base SI units and subunit representations ($1\\text{ milliunit} = 10^{-3}\\text{ base units}$) or reflects third-order perturbative suppression factors in power-series expansions.",
+        "interpretation": "The constant $10^{-3}$ acts as a pure mathematical multiplier devoid of dimensions: when applied to a dimensional quantity $Q_{\\text{base}}$, the product $(10^{-3}) Q_{\\text{base}}$ yields the equivalent physical quantity represented in standard metric subunits (such as converting meters to millimeters, $1\\text{ mm} = 10^{-3}\\text{ m}$, or grams to kilograms, $1\\text{ g} = 10^{-3}\\text{ kg}$). In asymptotic and perturbative frameworks, terms of order $\\mathcal{O}(10^{-3})$ represent sub-percent corrections to leading-order physics.",
+        "limits_and_boundary": "Being a fundamental arithmetic constant, its value is invariant across all energy scales, temperatures, and reference frames. As an operational scaling factor $\\lim_{n \\to -3} 10^n = 10^{-3}$, representing a fixed point on the real line $\\mathbb{R}$.",
+        "symmetry_origin": "Invariance under Global Scale Transformations (Scale Invariance of Decimal Arithmetic)",
         "unit_system": "SI",
-        "derivation_type": "DEFINITION",
+        "derivation_type": "AXIOMATIC_FOUNDATION",
         "equation_family": "numerical-constants",
-        "semantic_variables": {},
+        "semantic_variables": {
+            "10^{-3}": {
+                "name": "Decimal scaling factor (one-thousandth)",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Exact base-10 numerical scaling constant equal to 0.001"
+            }
+        },
         "equation": "10^{-3}",
         "status": "platinum",
         "parent_formula_id": "geometric-guiding-ed3c1821",
-        "subcomponents": [],
+        "subcomponents": [
+            "inverse-cube-of-the-cosmological-scale-factor-72fcad1b",
+            "inverse-cube-root-of-mass-number-7c4a45e2"
+        ],
         "id": "decimal-factor-of-one-thousandth-599ba39d",
-        "intuitive_summary": "This is simply the number that represents 'one part out of a thousand'. It's the mathematical tool for shrinking a value by a factor of 1000, like when you convert a large unit (like meters) into a thousand smaller units (millimeters)."
+        "intuitive_summary": "An exact decimal factor reducing a measured magnitude by three orders of magnitude, equivalent to taking one part per thousand."
     },
     "definition-of-retarded-time-d75fbaa1": {
         "title": "Definition of Retarded Time",

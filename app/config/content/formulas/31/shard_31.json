@@ -1568,58 +1568,51 @@
     "nuclear-eos-identity-1-32e25465": {
         "title": "Nuclear Equation of State from Energy per Nucleon",
         "equation": "P = n^2 \\frac{d(E/A)}{dn}",
-        "interpretation": "The equation $P = n^2 \\frac{d(E/A)}{dn}$ provides the pressure $P$ for a system of interacting nucleons, typically expressed in units of energy density like MeV/fm³. The variable $n$ is the nucleon number density (number of protons and neutrons per unit volume, in fm⁻³). The term $E/A$ represents the average energy per nucleon in MeV, which is a function of density, $E/A = \\mathcal{E}(n)$. The derivative $\\frac{d(E/A)}{dn}$ measures the stiffness of the nuclear matter; a larger value indicates that the energy cost of compression is high, resulting in a higher pressure. The stability of nuclear matter requires that at saturation density ($n_0 \\approx 0.16$ fm⁻³), the pressure is zero and the energy per nucleon is at a minimum. A positive curvature of the $E/A$ vs. $n$ curve around this minimum ensures mechanical stability against collapse.",
-        "symmetry_origin": "Derived from the first law of thermodynamics, which is a statement of energy conservation. Energy conservation is a direct consequence of time-translation symmetry via Noether's theorem. The formula also assumes spatial homogeneity, a form of spatial-translation symmetry.",
-        "limits_and_boundary": "In the high-density limit ($n \\to \\infty$), nuclear matter behaves as a relativistic degenerate Fermi gas. In this regime, the energy per nucleon scales as $E/A \\propto n^{1/3}$, leading to a pressure $P \\propto n^{4/3}$, which is a stiff equation of state. In the low-density limit ($n \\to 0$), the attractive part of the nuclear force can dominate, potentially leading to a negative pressure ($P < 0$), which signifies a mechanical instability leading to the formation of bound clusters (i.e., atomic nuclei) rather than a uniform gas.",
+        "interpretation": "In the relation $P = n^2 \\frac{\\mathrm{d}(E/A)}{\\mathrm{d}n}$, $P$ denotes the thermodynamic pressure of uniform nuclear matter, $n$ represents the baryon number density, and $E/A$ is the binding energy per nucleon (or energy per particle). The first derivative $\\frac{\\mathrm{d}(E/A)}{\\mathrm{d}n}$ represents the stiffness of the nuclear matter against compression. At nuclear saturation density $n_0 \\approx 0.16\\text{ fm}^{-3}$, the energy per nucleon attains a local minimum, yielding $\\frac{\\mathrm{d}(E/A)}{\\mathrm{d}n} = 0$ and thus $P(n_0) = 0$.",
+        "symmetry_origin": "Translational and rotational invariance of uniform nuclear matter; conservation of baryon number associated with global $U(1)_B$ gauge symmetry.",
+        "limits_and_boundary": "In the low-density limit $n \\to 0$, $P \\to 0$ as inter-nucleon interactions vanish. At saturation density $n = n_0$, $P(n_0) = 0$. In the high-density limit $n \\gg n_0$, the speed of sound $c_s = \\sqrt{\\frac{\\mathrm{d}P}{\\mathrm{d}\\varepsilon}}$ must satisfy causality $c_s \\le c$.",
         "semantic_variables": {
             "P": {
                 "name": "Pressure",
                 "type": "variable",
-                "unit": "MeV/fm³",
-                "description": "The pressure of the nuclear matter, expressed as energy density."
+                "unit": "MeV/fm^3",
+                "description": "Thermodynamic hydrostatic pressure exerted by the nuclear matter"
             },
             "n": {
-                "name": "Nucleon number density",
+                "name": "Nucleon Number Density",
                 "type": "variable",
-                "unit": "fm⁻³",
-                "description": "The number of nucleons (protons and neutrons) per unit volume."
+                "unit": "fm^-3",
+                "description": "Number of nucleons per unit volume"
             },
             "E": {
-                "name": "Total Energy",
+                "name": "Total Internal Energy",
                 "type": "variable",
                 "unit": "MeV",
-                "description": "The total energy of the system of nucleons."
+                "description": "Total energy of the nuclear system at zero temperature"
             },
             "A": {
                 "name": "Nucleon Number",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The total number of nucleons (baryons) in the system."
+                "description": "Total number of nucleons (baryons) in the volume"
             },
             "E/A": {
                 "name": "Energy per Nucleon",
                 "type": "variable",
                 "unit": "MeV",
-                "description": "The average binding or kinetic energy for each nucleon in the system, which is a function of density $n$."
-            },
-            "\\frac{d}{dn}": {
-                "name": "Derivative with respect to density",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The operator for differentiation with respect to the nucleon number density $n$."
+                "description": "Average energy per nucleon as a function of density"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "For a system of nucleons at zero temperature ($T=0$), the pressure $P$ is defined thermodynamically as the negative rate of change of total energy $E$ with respect to volume $V$, i.e., $P = -dE/dV$. By expressing the total energy as $E = A \\cdot (E/A)$ and the volume as $V = A/n$, where $A$ is the total nucleon number and $n$ is the nucleon number density, this relation transforms to $P = n^2 \\frac{d(E/A)}{dn}$. This equation of state is central to the study of nuclear matter, neutron stars, and supernovae.",
-        "intuitive_summary": "Pressure is the system's resistance to compression. This equation shows that if squeezing nuclear matter together (increasing density $n$) requires a significant increase in energy per particle (a large, positive derivative $\\frac{d(E/A)}{dn}$), then the system will exert a strong outward pressure $P$. This resistance arises from quantum mechanics (the Pauli exclusion principle) and the repulsive nature of the strong force at very short distances.",
+        "conceptual_definition": "At zero temperature ($T = 0$), the thermodynamic pressure $P$ of a degenerate many-body system of $A$ nucleons in volume $V$ is given by $P = -\\left(\\frac{\\partial E}{\\partial V}\\right)_A$. Expressing volume in terms of the nucleon number density $n = A / V$, the relation transforms to $P = n^2 \\frac{\\mathrm{d}(E/A)}{\\mathrm{d}n}$, establishing the direct link between the microscopic nuclear equation of state and macroscopic mechanical pressure.",
+        "intuitive_summary": "Compacting nuclear matter changes the energy allocated to each nucleon; the resulting resistance against further compression is the nuclear pressure.",
         "subcomponents": [
-            "equation-of-state-84d964fe",
-            "relativistic-degeneracy-identity-1-42a5b146-db25e751",
-            "neutron-star-eos-identity-1-0011dc4f-43a017ce",
-            "cosmological-eos-88d98df2-dadf4940"
+            "total-energy-from-energy-per-nucleon-a80de05e",
+            "neutron-star-eos-identity-1-0011dc4f-43a017ce"
         ],
-        "description": "A fundamental thermodynamic relation defining the pressure of a uniform nuclear system at zero temperature based on how its energy per nucleon changes with nucleon number density.",
-        "derivation_type": "DEFINITION"
+        "description": "Determines the hydrostatic pressure of uniform zero-temperature nuclear matter as a function of nucleon number density and the derivative of energy per nucleon.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "pressure-from-energy-per-particle-c2935624"
     },
     "dark-matter-halos-identity-1-f7170e8c": {
         "title": "Friedmann Equation for Cosmic Expansion (Dark Matter Halos)",
@@ -1789,52 +1782,51 @@
     "total-tangent-bundle": {
         "title": "Definition of the Total Tangent Bundle",
         "equation": "T\\mathcal{Q} = \\bigsqcup_{p \\in \\mathcal{Q}} T_p\\mathcal{Q}",
-        "conceptual_definition": "The total tangent bundle, denoted $T\\mathcal{Q}$, is a manifold constructed by 'gluing together' all the individual tangent spaces $T_p\\mathcal{Q}$ for every point $p$ on a base manifold $\\mathcal{Q}$. Each point in $T\\mathcal{Q}$ is a pair $(p, v)$, where $p$ is a point in the configuration space $\\mathcal{Q}$ and $v$ is a tangent vector in the tangent space at that point, $v \\in T_p\\mathcal{Q}$. This space represents all possible configurations and their corresponding velocities.",
-        "intuitive_summary": "Imagine a curved surface like the Earth (the configuration space $\\mathcal{Q}$). At every single point on the surface ($p$), you can imagine a flat plane ($T_p\\mathcal{Q}$) that just touches the surface at that point. This plane represents all possible directions and speeds (velocities) you could travel from that point. The total tangent bundle ($T\\mathcal{Q}$) is the collection of all these points on the Earth's surface, each paired with a specific velocity vector from its corresponding tangent plane. It's the complete 'state space' of positions and velocities.",
-        "interpretation": "The equation $T\\mathcal{Q} = \\bigsqcup_{p \\in \\mathcal{Q}} T_p\\mathcal{Q}$ defines the total tangent bundle $T\\mathcal{Q}$ as the disjoint union of tangent spaces $T_p\\mathcal{Q}$ for each point $p$ in the configuration space $\\mathcal{Q}$. The symbol $\\mathcal{Q}$ represents the configuration space of a physical system, which is a manifold describing all possible states or positions. A point $p \\in \\mathcal{Q}$ denotes a specific configuration (e.g., the position of a particle in 3D space, or the angles of a robotic arm). For each configuration $p$, the tangent space $T_p\\mathcal{Q}$ is a vector space that contains all possible velocity vectors at that configuration. A tangent vector $v \\in T_p\\mathcal{Q}$ describes the instantaneous rate of change of the system's configuration. The symbol $\\bigsqcup$ signifies a disjoint union, emphasizing that the tangent spaces at different points $p$ are distinct. The total tangent bundle $T\\mathcal{Q}$ is therefore a space where each point represents not just a configuration $p$, but also a possible velocity $v$ associated with that configuration. This space is fundamental in Hamiltonian and Lagrangian mechanics, where the state of a system is often described by a point in the tangent bundle (for Lagrangian mechanics) or the cotangent bundle (for Hamiltonian mechanics).",
-        "symmetry_origin": "Geometric Invariance. The construction of the tangent bundle is a coordinate-invariant concept in differential geometry, providing the natural setting for defining vector fields, flows, and the dynamics of physical systems described by Lagrangian mechanics.",
-        "limits_and_boundary": "The concept is purely geometric and does not have physical limits in the sense of temperature or velocity. However, if the base manifold $\\mathcal{Q}$ has a boundary $\\partial\\mathcal{Q}$, the tangent bundle $T\\mathcal{Q}$ will have a corresponding boundary structure. The dimensionality of $T\\mathcal{Q}$ is twice the dimensionality of $\\mathcal{Q}$, i.e., $\\text{dim}(T\\mathcal{Q}) = 2 \\cdot \\text{dim}(\\mathcal{Q})$.",
+        "conceptual_definition": "The total tangent bundle $T\\mathcal{Q} = \\bigsqcup_{p \\in \\mathcal{Q}} T_p\\mathcal{Q}$ is the smooth manifold consisting of all pairs $(p, v)$ where $p$ is a point on the configuration manifold $\\mathcal{Q}$ and $v \\in T_p\\mathcal{Q}$ is a tangent vector at $p$. For an $n$-dimensional configuration manifold $\\mathcal{Q}$, $T\\mathcal{Q}$ is a $2n$-dimensional differential manifold endowed with canonical projection $\\pi: T\\mathcal{Q} \\to \\mathcal{Q}$ mapping $(p, v) \\mapsto p$, providing the natural geometric arena where the classical Lagrangian $\\mathcal{L}(q, \\dot{q}, t)$ is defined.",
+        "intuitive_summary": "The tangent bundle bundles together every possible position in a physical system with every possible instantaneous velocity achievable from that position into a single unified geometric space.",
+        "interpretation": "In this geometric relation, $\\mathcal{Q}$ denotes the $n$-dimensional configuration manifold parameterizing the generalized coordinates of the physical system. The index $p \\in \\mathcal{Q}$ represents a specific base configuration point. For each base point $p$, $T_p\\mathcal{Q}$ denotes the $n$-dimensional tangent vector space consisting of all velocity vectors tangent to curves passing through $p$. The coproduct symbol $\\bigsqcup$ represents the disjoint union over all base points $p \\in \\mathcal{Q}$, ensuring that tangent vectors attached to distinct base configurations remain distinct in the total space. The resulting total tangent bundle $T\\mathcal{Q}$ possesses a natural smooth manifold structure of dimension $2n$, locally parameterized by coordinates $(q^1, \\dots, q^n, \\dot{q}^1, \\dots, \\dot{q}^n)$.",
+        "symmetry_origin": "Diffeomorphism invariance of the underlying configuration manifold $\\mathcal{Q}$, under which coordinate transformations induce linear transformations on the tangent fibers via the Jacobian matrix.",
+        "limits_and_boundary": "For a flat configuration space $\\mathcal{Q} = \\mathbb{R}^n$, the tangent bundle trivializes globally to the Cartesian product $T\\mathbb{R}^n \\cong \\mathbb{R}^n \\times \\mathbb{R}^n$. When the configuration space reduces to a discrete set of isolated points (0-dimensional manifold), each tangent space $T_p\\mathcal{Q}$ reduces to the zero vector space $\\{0\\}$.",
         "status": "platinum",
         "semantic_variables": {
             "T\\mathcal{Q}": {
-                "name": "Total Tangent Bundle",
+                "name": "total tangent bundle",
                 "type": "variable",
-                "unit": "Manifold / State Space",
-                "description": "The manifold formed by the disjoint union of all tangent spaces of the base manifold $\\mathcal{Q}$. It represents the space of all possible positions and velocities of a system."
+                "unit": "dimensionless",
+                "description": "The $2n$-dimensional smooth manifold formed by the disjoint union of all tangent spaces over the configuration manifold $\\mathcal{Q}$"
             },
             "\\mathcal{Q}": {
-                "name": "Configuration Space",
+                "name": "configuration manifold",
                 "type": "variable",
-                "unit": "Manifold",
-                "description": "A smooth manifold representing all possible configurations or states of a physical system."
-            },
-            "T_p\\mathcal{Q}": {
-                "name": "Tangent Space at a Point",
-                "type": "variable",
-                "unit": "Vector Space",
-                "description": "The vector space of all possible velocity vectors of a system when it is at configuration $p \\in \\mathcal{Q}$."
+                "unit": "dimensionless",
+                "description": "The $n$-dimensional smooth manifold representing the generalized coordinate space of the system"
             },
             "p": {
-                "name": "Point on Manifold",
+                "name": "base configuration point",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "A specific point in the configuration space $\\mathcal{Q}$, representing a single configuration of the system."
+                "unit": "dimensionless",
+                "description": "A specific position or generalized configuration point within the manifold $\\mathcal{Q}$"
+            },
+            "T_p\\mathcal{Q}": {
+                "name": "tangent space at a point",
+                "type": "variable",
+                "unit": "dimensionless",
+                "description": "The $n$-dimensional vector space of all tangent vectors (generalized velocities) at base configuration $p$"
             },
             "\\bigsqcup": {
-                "name": "Disjoint Union",
+                "name": "disjoint union operator",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "A set-theoretic operation that combines a collection of sets, ensuring that the elements from different sets are kept distinct."
+                "unit": "dimensionless",
+                "description": "Set-theoretic coproduct ensuring disjointness of the fiber vector spaces indexed over the base manifold"
             }
         },
         "subcomponents": [
             "tangent-space-at-a-point-0f2f79ce",
-            "full-description-72101365",
-            "lagrangian-function-definition",
-            "total-cotangent-bundle"
+            "lagrangian-function-definition"
         ],
-        "description": "Defines the total tangent bundle $T\\mathcal{Q}$ of a configuration manifold $\\mathcal{Q}$ as the disjoint union of all tangent spaces $T_p\\mathcal{Q}$ at every point $p$ in the manifold. This structure forms the state space for Lagrangian mechanics.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the total tangent bundle $T\\mathcal{Q}$ of a configuration manifold $\\mathcal{Q}$ as the disjoint union of all individual tangent spaces $T_p\\mathcal{Q}$ over every configuration point $p \\in \\mathcal{Q}$. This geometric structure serves as the velocity state space for Lagrangian mechanics.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "full-description-72101365"
     },
     "internal-potential-energy": {
         "title": "Internal Potential Energy of a Multi-Particle System",

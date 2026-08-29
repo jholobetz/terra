@@ -1219,70 +1219,58 @@
     "h-theorem-identity-1-8f0eb0e5-0175ae83": {
         "title": "Boltzmann's H-Functional and the H-Theorem",
         "equation": "H(t) = \\int f(\\mathbf{r}, \\mathbf{v}, t) \\ln f(\\mathbf{r}, \\mathbf{v}, t) \\, d^3\\mathbf{r} \\, d^3\\mathbf{v}, \\quad \\frac{dH}{dt} \\le 0",
-        "interpretation": "The equation consists of two parts. The first, $H(t) = \\int f(\\mathbf{r}, \\mathbf{v}, t) \\ln f(\\mathbf{r}, \\mathbf{v}, t) \\, d^3\\mathbf{r} \\, d^3\\mathbf{v}$, is the definition of the Boltzmann H-functional. Here, $H(t)$ is a time-dependent scalar that is functionally related to the system's thermodynamic entropy $S$ via $S = -k_B H$. The integral is performed over the entire six-dimensional single-particle phase space, with $d^3\\mathbf{r}$ representing the volume element in position space and $d^3\\mathbf{v}$ the volume element in velocity space. The function $f(\\mathbf{r}, \\mathbf{v}, t)$ is the single-particle distribution function, representing the probability density of finding a particle at position $\\mathbf{r}$ with velocity $\\mathbf{v}$ at time $t$. The second part, $\\frac{dH}{dt} \\le 0$, is the H-theorem itself. It states that the time derivative of $H(t)$ is always non-positive, implying that $H(t)$ is a monotonically non-increasing function of time for an isolated system. This irreversible evolution towards a state of minimum $H$ (maximum entropy) is a direct consequence of applying the statistical assumption of molecular chaos to the underlying reversible microscopic dynamics.",
-        "symmetry_origin": "Arises from the statistical assumption of 'molecular chaos' (Stosszahlansatz), which is applied during the derivation from the reversible Liouville equation to the irreversible Boltzmann transport equation. This assumption effectively breaks the time-reversal symmetry of the underlying microscopic dynamics for the macroscopic distribution function, thereby introducing an arrow of time.",
-        "limits_and_boundary": "The H-theorem is valid for dilute classical gases where only two-body collisions are significant. As $t \\to \\infty$, the system approaches equilibrium, $f(\\mathbf{r}, \\mathbf{v}, t)$ converges to the time-independent Maxwell-Boltzmann distribution, and $\\frac{dH}{dt} \\to 0$, at which point $H$ reaches its global minimum. The theorem's derivation relies on the 'molecular chaos' assumption, which posits that the velocities of two particles are uncorrelated before they collide. This assumption breaks down in dense fluids, systems with long-range interactions, or over very short timescales where velocity correlations from recent collisions persist (re-collision events). The theorem famously stands in apparent contradiction to time-reversal symmetric microscopic laws, a problem known as Loschmidt's paradox.",
+        "interpretation": "The primary functional $H(t)$ integrates the product of the single-particle phase-space density $f(\\mathbf{r}, \\mathbf{v}, t)$ and its logarithm $\\ln f(\\mathbf{r}, \\mathbf{v}, t)$ across the 6-dimensional $\\mu$-space spanned by coordinates $d^3\\mathbf{r}$ and velocities $d^3\\mathbf{v}$. The thermodynamic entropy corresponds asymptotically to $S = -k_B H$. The inequality $\\frac{dH}{dt} \\le 0$ indicates that the instantaneous rate of change of $H(t)$ is non-positive for an isolated system evolving under the Boltzmann transport equation, reaching $\\frac{dH}{dt} = 0$ strictly when $f$ is the local or global Maxwellian distribution.",
+        "symmetry_origin": "Emerges from macroscopic time-reversal symmetry breaking induced by the molecular chaos hypothesis (Stosszahlansatz), despite the underlying time-reversal $\\mathcal{T}$-invariance and Liouvillian phase-space volume conservation of Hamiltonian dynamics.",
+        "limits_and_boundary": "In the limit $t \\to \\infty$, the system relaxes to thermodynamic equilibrium with $\\frac{dH}{dt} \\to 0$ and $f(\\mathbf{r}, \\mathbf{v}, t) \\to f_{\\text{MB}}(\\mathbf{v})$. For a collisionless gas (Knudsen number $\\text{Kn} \\to \\infty$), $\\frac{dH}{dt} = 0$ holds identically under purely collisionless Vlasov streaming.",
         "semantic_variables": {
             "H(t)": {
-                "name": "Boltzmann H-Functional",
+                "name": "Boltzmann H-functional",
                 "type": "variable",
-                "unit": "Dimensionless",
-                "description": "A functional of the distribution function that quantifies the deviation of a system from equilibrium. It is related to entropy by S = -k_B H."
+                "unit": "dimensionless",
+                "description": "Scalar functional quantifying the phase-space information content and negative entropy of the gas"
             },
-            "f": {
+            "f(\\mathbf{r}, \\mathbf{v}, t)": {
                 "name": "Single-particle distribution function",
                 "type": "variable",
-                "unit": "s^3/m^6",
-                "description": "The probability density function in 6D phase space, f(r, v, t), giving the probability of finding a particle at position r with velocity v at time t."
+                "unit": "s^3 m^{-6}",
+                "description": "Number density of particles at spatial position $\\mathbf{r}$ with velocity $\\mathbf{v}$ at time $t$"
             },
             "\\mathbf{r}": {
                 "name": "Position vector",
                 "type": "variable",
                 "unit": "m",
-                "description": "The three-dimensional position vector of a particle in configuration space."
+                "description": "Three-dimensional spatial coordinate vector in configuration space"
             },
             "\\mathbf{v}": {
                 "name": "Velocity vector",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The three-dimensional velocity vector of a particle."
+                "unit": "m s^{-1}",
+                "description": "Three-dimensional particle velocity vector"
             },
             "t": {
                 "name": "Time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The time variable at which the system's state is evaluated."
+                "description": "Temporal coordinate governing kinetic evolution"
             },
-            "\\ln": {
-                "name": "Natural logarithm",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The natural logarithm function, which is central to the information-theoretic interpretation of H as a measure of statistical uncertainty."
-            },
-            "\\int": {
-                "name": "Phase Space Integral",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "An integral over the entire accessible single-particle phase space (all positions and all velocities)."
-            },
-            "\\frac{d}{dt}": {
-                "name": "Total time derivative",
-                "type": "operator",
-                "unit": "1/s",
-                "description": "The rate of change of the H-functional with respect to time."
+            "\\frac{dH}{dt}": {
+                "name": "Time rate of change of H",
+                "type": "variable",
+                "unit": "s^{-1}",
+                "description": "Instantaneous time derivative of the Boltzmann H-functional"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "The H-functional, denoted $H(t)$, is a quantity constructed from the single-particle distribution function $f(\\mathbf{r}, \\mathbf{v}, t)$ that quantifies the state of a dilute gas. The H-theorem, $\\frac{dH}{dt} \\le 0$, asserts that for an isolated system obeying the assumption of molecular chaos, this functional never increases. The system's evolution thus proceeds in the direction of decreasing $H$, driving it towards the Maxwell-Boltzmann distribution corresponding to thermodynamic equilibrium, where $H$ is at its minimum.",
-        "intuitive_summary": "Imagine a box of gas where all particles start in one corner. The H-functional, $H(t)$, acts as a measure of this 'un-mixedness' or order. As particles collide and spread throughout the box, the gas becomes more mixed and disordered, causing the value of $H(t)$ to decrease. The H-theorem, $\\frac{dH}{dt} \\le 0$, is the rule stating that this is a one-way process; the 'un-mixedness' can only decrease or stay the same, never spontaneously increase. The gas will not, on its own, return to its ordered state in the corner.",
+        "conceptual_definition": "The Boltzmann $H$-functional $H(t) = \\int f(\\mathbf{r}, \\mathbf{v}, t) \\ln f(\\mathbf{r}, \\mathbf{v}, t) \\, d^3\\mathbf{r} \\, d^3\\mathbf{v}$ quantifies the lack of microscopic disorder in a kinetic distribution $f(\\mathbf{r}, \\mathbf{v}, t)$. The associated $H$-theorem, $\\frac{dH}{dt} \\le 0$, establishes that molecular binary collisions drive an isolated gas irreversibly toward the Maxwell-Boltzmann equilibrium distribution, providing the statistical mechanical foundation for macroscopic thermodynamic irreversibility.",
+        "intuitive_summary": "The $H$-functional measures how far a gas distribution is from thermal equilibrium. Collisions continuously randomize velocities and smooth out phase-space inhomogeneities, forcing $H(t)$ to decline until it reaches its minimum at the Maxwell-Boltzmann distribution, where entropy is maximized.",
         "subcomponents": [
-            "irreversibility-constraint-0c3c65f7",
-            "phase-space-incompressibility-identity-1-de981dde-b70159ca",
-            "loschmidts-paradox-identity-1-86c06f22-2bd09f64",
-            "equilibrium-identity-1-f407e7f9-de21ec63"
+            "boltzmann-h-theorem",
+            "boltzmann-h-functional-equilibrium-condition-6f21468b",
+            "temporal-direction-d10e8e7c"
         ],
-        "description": "This formula defines the Boltzmann H-functional, a quantity derived from the single-particle phase-space distribution function of a dilute gas, and states the H-theorem: that for an isolated system, this functional monotonically decreases over time, providing a statistical mechanical basis for the Second Law of Thermodynamics.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the non-equilibrium statistical H-functional over single-particle phase space and asserts the Boltzmann H-theorem, demonstrating the monotonic decrease of $H(t)$ over time in dilute gases under the Stosszahlansatz.",
+        "derivation_type": "DERIVED_FROM",
+        "parent_formula_id": "boltzmann-h-theorem-entropy-ident-a7880f67"
     },
     "parallax-baseline-identity-1-7cd92d49-386bf5b1": {
         "title": "Trigonometric Parallax Distance Relation (Parallax Baseline)",

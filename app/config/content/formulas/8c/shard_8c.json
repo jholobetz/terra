@@ -123,126 +123,92 @@
         ]
     },
     "directional-shift-ee539c8f": {
-        "title": "Angular Momentum of a Rigid Body (Tensor Form)",
+        "title": "Tensorial Angular Momentum of a Rigid Body",
         "equation": "\\mathbf{L} = \\mathbf{I} \\mathbf{\\omega} \\neq I \\mathbf{\\omega}",
         "semantic_variables": {
             "\\mathbf{L}": {
                 "name": "Angular Momentum Vector",
                 "type": "variable",
-                "unit": "kg·m²/s",
-                "description": "Vector representing the rotational inertia of a body, quantifying its tendency to continue rotating."
+                "unit": "kg*m^2/s",
+                "description": "Total three-dimensional angular momentum vector of the rigid body about the origin or center of mass."
             },
             "\\mathbf{I}": {
                 "name": "Inertia Tensor",
                 "type": "variable",
-                "unit": "kg·m²",
-                "description": "Second-order tensor describing the distribution of mass of a rigid body in relation to its axis of rotation."
+                "unit": "kg*m^2",
+                "description": "Symmetric second-rank tensor representing the second mass moments of the body."
             },
-            "\\mathbf{\\omega}": {
+            "\\boldsymbol{\\omega}": {
                 "name": "Angular Velocity Vector",
                 "type": "variable",
                 "unit": "rad/s",
-                "description": "Vector representing the angular speed and the instantaneous axis of rotation of a body."
+                "description": "Instantaneous vector describing the rate and axis of rotation of the rigid body."
             },
             "I": {
                 "name": "Scalar Moment of Inertia",
                 "type": "variable",
-                "unit": "kg·m²",
-                "description": "Scalar quantity representing the resistance of an object to changes in its angular velocity, typically used when rotation is about a principal axis."
+                "unit": "kg*m^2",
+                "description": "Effective scalar moment of inertia corresponding to rotation restricted to a single principal axis."
             }
         },
-        "interpretation": "$\\mathbf{L}$: Represents the angular momentum vector, a measure of an object's rotational motion. Its SI unit is $\\text{kg} \\cdot \\text{m}^2/\\text{s}$. $\\mathbf{I}$: Represents the inertia tensor, a second-order tensor that describes how mass is distributed relative to the axis of rotation and the object's resistance to angular acceleration. Its SI units are $\\text{kg} \\cdot \\text{m}^2$. $\\mathbf{\\omega}$: Represents the angular velocity vector, indicating the rate and axis of rotation. Its SI unit is $\\text{rad/s}$ (or $\\text{s}^{-1}$). The core of the equation is the matrix multiplication between the inertia tensor $\\mathbf{I}$ and the angular velocity vector $\\mathbf{\\omega}$, yielding the angular momentum vector $\\mathbf{L}$. The inequality ($\\neq$) highlights that this operation is generally not a simple scalar multiplication (i.e., $\\mathbf{L} \\neq I \\mathbf{\\omega}$) because the inertia tensor $\\mathbf{I}$ is not generally a scalar; it can map a vector ($\\mathbf{\\omega}$) to another vector ($\\mathbf{L}$) that is not parallel to the original vector, unless $\\mathbf{\\omega}$ aligns with one of the principal axes of inertia. $I$: Represents a scalar moment of inertia, typically used when the angular momentum is parallel to the angular velocity (e.g., rotation about a principal axis). Its SI unit is $\\text{kg} \\cdot \\text{m}^2$.",
-        "symmetry_origin": "This formula is a direct consequence of the rotational symmetry of space. The conservation of angular momentum, which this formula helps define, arises from the invariance of physical laws under rotations (Noether's Theorem).",
-        "limits_and_boundary": "If the angular velocity vector $\\mathbf{\\omega}$ is aligned with one of the principal axes of inertia of the body, then the inertia tensor $\\mathbf{I}$ acts effectively as a scalar, and the angular momentum $\\mathbf{L}$ becomes parallel to $\\mathbf{\\omega}$, simplifying to $\\mathbf{L} = I \\mathbf{\\omega}$, where $I$ is the principal moment of inertia about that axis. For a point mass, the inertia tensor simplifies, and the angular momentum can be expressed as $\\mathbf{L} = \\mathbf{r} \\times \\mathbf{p}$, where $\\mathbf{r}$ is the position vector and $\\mathbf{p}$ is the linear momentum. This formula generalizes that concept for a continuous mass distribution. For deformable bodies or fluids, the concept of a single inertia tensor and angular velocity vector for the entire body becomes more complex, often requiring integration over the volume and considering local angular velocities (vorticity).",
+        "interpretation": "The angular momentum vector $\\mathbf{L}$ is obtained through the linear transformation of the angular velocity vector $\\boldsymbol{\\omega}$ via the inertia tensor $\\mathbf{I}$. The inequality $\\mathbf{L} \\neq I\\boldsymbol{\\omega}$ explicitly contrasts the general anisotropic 3D rotational dynamics with the simplified scalar approximation where $I$ represents a single scalar moment of inertia. Only when the rotation axis $\\boldsymbol{\\omega}$ lies entirely along an eigenvector $\\mathbf{e}_k$ of $\\mathbf{I}$ does the relation reduce to $\\mathbf{L} = I_k \\boldsymbol{\\omega}$.",
+        "symmetry_origin": "Originates from continuous spatial rotational symmetry $SO(3)$ via Noether's theorem, where total angular momentum is the conserved Noether charge corresponding to rotational invariance of the Lagrangian in isotropic space.",
+        "limits_and_boundary": "In the limit where the mass distribution exhibits spherical symmetry ($I_1 = I_2 = I_3 = I_0$), the inertia tensor becomes isotropic $\\mathbf{I} = I_0 \\mathbf{1}$, recovering strict collinearity $\\mathbf{L} = I_0 \\boldsymbol{\\omega}$. In the non-relativistic classical regime where internal particle speeds satisfy $v \\ll c$, the rigid body approximation remains valid without relativistic de-synchronization.",
         "status": "platinum",
-        "conceptual_definition": "The angular momentum $\\mathbf{L}$ of a rigid body quantifies its rotational inertia and motion, and is fundamentally linked to its mass distribution, represented by the inertia tensor $\\mathbf{I}$, and its rotational speed and axis, given by the angular velocity vector $\\mathbf{\\omega}$. The non-scalar nature of the inertia tensor means that $\\mathbf{L}$ is generally not parallel to $\\mathbf{\\omega}$.",
-        "intuitive_summary": "Imagine spinning an object. How hard it is to stop it, and which way it wants to keep spinning, depends not just on how fast it's rotating, but also on how its mass is spread out. This formula tells us that the 'rotational push' (angular momentum) isn't always in the same direction as the 'spin axis' (angular velocity) because the object's shape (inertia tensor) can twist things around.",
-        "description": "This formula defines the angular momentum vector $\\mathbf{L}$ of a rigid body as the product of its inertia tensor $\\mathbf{I}$ and its angular velocity vector $\\mathbf{\\omega}$, highlighting that this is generally a tensor-vector multiplication, not a scalar one.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "For a continuous or discrete distribution of mass constituting a rigid body, the total angular momentum about a reference point $\\mathbf{r}_0$ is given by $\\mathbf{L} = \\int (\\mathbf{r} \\times \\mathbf{v}) \\, dm = \\int [\\mathbf{r} \\times (\\boldsymbol{\\omega} \\times \\mathbf{r})] \\, dm = \\mathbf{I}\\boldsymbol{\\omega}$. Because the moment of inertia tensor $\\mathbf{I} \\in \\mathbb{R}^{3 \\times 3}$ is a symmetric rank-2 tensor with generally distinct principal eigenvalues $(I_1, I_2, I_3)$, the vector $\\mathbf{L}$ is not aligned with $\\boldsymbol{\\omega}$ unless $\\boldsymbol{\\omega}$ coincides with one of the eigenvectors (principal axes) of $\\mathbf{I}$.",
+        "intuitive_summary": "Unlike linear momentum where velocity and momentum are always parallel (scaled by scalar mass), rotation distributes mass in three dimensions non-isotropically. Consequently, spinning an asymmetric object creates angular momentum pointing in a direction different from the instantaneous rotation axis, causing dynamic wobble and gyroscopic precession.",
+        "description": "Expresses the total angular momentum of a three-dimensional rigid body as the contraction of the rank-2 inertia tensor with the angular velocity vector, demonstrating that angular momentum and angular velocity are generally non-collinear.",
+        "derivation_type": "GENERALIZATION",
         "subcomponents": [
-            "alignment-rule-a56ed43a",
-            "effective-torque-rotating-frame",
-            "the-coriolis-shift-703aaf6f",
-            "vorticity-vector"
-        ]
+            "tensor-mapping-abbdde5d",
+            "angular-momentum-principal-axes",
+            "angular-momentum-and-moment-of-inertia-771eaaf9"
+        ],
+        "parent_formula_id": "tensor-mapping-abbdde5d"
     },
     "master-law-bce779cb": {
         "title": "Unified Field Theory Lagrangian Density (Conceptual Framework)",
         "equation": "\\mathcal{L}_{\\text{TOE}} = \\mathcal{L}_{\\text{GR}} + \\mathcal{L}_{\\text{SM}} + \\mathcal{L}_{\\text{New Physics}}",
         "semantic_variables": {
             "\\mathcal{L}_{\\text{TOE}}": {
-                "name": "Total Lagrangian Density for Theory of Everything",
+                "name": "Theory of Everything Lagrangian density",
                 "type": "variable",
-                "unit": "J m$^{-3}$",
-                "description": "The total Lagrangian density representing a hypothetical unified theory encompassing all fundamental forces and particles."
+                "unit": "J*m^-3",
+                "description": "Total unified Lagrangian density describing all fundamental fields, spacetime geometry, and their interactions"
             },
             "\\mathcal{L}_{\\text{GR}}": {
-                "name": "General Relativity Lagrangian Density",
+                "name": "General Relativity Lagrangian density",
                 "type": "variable",
-                "unit": "J m$^{-3}$",
-                "description": "The Lagrangian density describing the dynamics of spacetime geometry and gravity, typically the Einstein-Hilbert Lagrangian."
+                "unit": "J*m^-3",
+                "description": "Lagrangian density of gravitation, canonically given by the Einstein-Hilbert density and Gibbons-Hawking-York boundary terms"
             },
             "\\mathcal{L}_{\\text{SM}}": {
-                "name": "Standard Model Lagrangian Density",
+                "name": "Standard Model Lagrangian density",
                 "type": "variable",
-                "unit": "J m$^{-3}$",
-                "description": "The Lagrangian density describing the electromagnetic, weak, and strong forces and their interactions with matter particles within the Standard Model of particle physics."
+                "unit": "J*m^-3",
+                "description": "Lagrangian density of the Standard Model comprising gauge kinetic terms, Dirac/fermionic kinetic terms, Yukawa couplings, and Higgs potential"
             },
             "\\mathcal{L}_{\\text{New Physics}}": {
-                "name": "New Physics Lagrangian Density",
+                "name": "Beyond the Standard Model Lagrangian density",
                 "type": "variable",
-                "unit": "J m$^{-3}$",
-                "description": "A placeholder term for the Lagrangian density representing all unknown physics beyond the Standard Model and General Relativity, necessary for a complete Theory of Everything."
-            },
-            "g": {
-                "name": "Determinant of the Metric Tensor",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The determinant of the spacetime metric tensor $g_{\\mu\\nu}$, which describes the geometry of spacetime in General Relativity."
-            },
-            "c": {
-                "name": "Speed of Light in Vacuum",
-                "type": "constant",
-                "unit": "m s$^{-1}$",
-                "description": "A fundamental physical constant representing the speed at which all electromagnetic radiation and massless particles travel in a vacuum."
-            },
-            "G": {
-                "name": "Newton's Gravitational Constant",
-                "type": "constant",
-                "unit": "N m$^2$ kg$^{-2}$",
-                "description": "The proportionality constant in Newton's law of universal gravitation, also appearing in Einstein's field equations."
-            },
-            "R": {
-                "name": "Ricci Scalar",
-                "type": "variable",
-                "unit": "m$^{-2}$",
-                "description": "A measure of the curvature of spacetime, derived from the Ricci tensor and metric tensor in General Relativity."
-            },
-            "\\hbar": {
-                "name": "Reduced Planck Constant",
-                "type": "constant",
-                "unit": "J s",
-                "description": "The Planck constant divided by $2\\pi$, a fundamental constant in quantum mechanics relating a photon's energy to its frequency."
-            },
-            "\\Lambda": {
-                "name": "High Energy Scale / Cutoff Scale",
-                "type": "variable",
-                "unit": "GeV",
-                "description": "A characteristic energy scale in effective field theories, typically representing the energy at which new physics phenomena become apparent or the effective theory breaks down."
+                "unit": "J*m^-3",
+                "description": "Placeholder effective Lagrangian density containing higher-dimensional operators, quantum gravity terms, and dark sector degrees of freedom"
             }
         },
-        "interpretation": "The equation $\\mathcal{L}_{\\text{TOE}} = \\mathcal{L}_{\\text{GR}} + \\mathcal{L}_{\\text{SM}} + \\mathcal{L}_{\\text{New Physics}}$ is a conceptual representation of a Lagrangian density for a hypothetical Theory of Everything (TOE). The total Lagrangian density $\\mathcal{L}_{\\text{TOE}}$ is expressed as a sum of components.\n\n*   $\\mathcal{L}_{\\text{TOE}}$: This is the total Lagrangian density for the hypothetical Theory of Everything. It is a scalar function of fields and their derivatives, whose integral over spacetime yields the action, from which all fundamental field equations can be derived via the principle of least action.\n*   $\\mathcal{L}_{\\text{GR}}$: This term represents the Lagrangian density for General Relativity, which describes the dynamics of spacetime geometry and gravity. Typically, this is the Einstein-Hilbert Lagrangian, $\\mathcal{L}_{\\text{GR}} = \\sqrt{-g} (c^4/16\\pi G) R$, where $g$ is the determinant of the metric tensor, $c$ is the speed of light, $G$ is Newton's gravitational constant, and $R$ is the Ricci scalar.\n*   $\\mathcal{L}_{\\text{SM}}$: This term denotes the Lagrangian density of the Standard Model of particle physics. It successfully describes the electromagnetic, weak, and strong fundamental forces and their interactions with matter particles (quarks and leptons) through quantum field theory, including the Higgs mechanism for mass generation.\n*   $\\mathcal{L}_{\\text{New Physics}}$: This is a placeholder term for all physics beyond the Standard Model and General Relativity that would be required to complete a Theory of Everything. This could include terms for dark matter, dark energy, neutrino masses, quantum gravity effects, or phenomena predicted by theories like string theory or loop quantum gravity.",
-        "symmetry_origin": "A complete Theory of Everything Lagrangian is expected to exhibit a vast array of symmetries. These would include the local Lorentz invariance and general covariance of General Relativity, the local gauge symmetries of the Standard Model (SU(3) x SU(2) x U(1)), and potentially new symmetries such as supersymmetry, grand unified symmetries, or string symmetries. The principle of least action, applied to $\\mathcal{L}_{\\text{TOE}}$, would ensure that these symmetries lead to conserved quantities and fundamental field equations.",
-        "limits_and_boundary": "The conceptual Unified Field Theory Lagrangian $\\mathcal{L}_{\\text{TOE}}$ is expected to exhibit specific behaviors under various limits:\n\n*   **Low Energy Limit**: In the low-energy limit, where quantum gravitational effects are negligible and energies are below the electroweak scale, $\\mathcal{L}_{\\text{TOE}}$ should reduce to the sum of the classical General Relativity Lagrangian and the Standard Model Lagrangian, with $\\mathcal{L}_{\\text{New Physics}}$ either vanishing or contributing only via higher-dimension operators that are suppressed by a high energy scale $\\Lambda$.\n*   **Classical Limit ($\\hbar \\to 0$)**: In the classical limit, the quantum field theory aspects of $\\mathcal{L}_{\\text{SM}}$ and $\\mathcal{L}_{\\text{New Physics}}$ would reduce to their classical field theory counterparts, and the gravitational sector $\\mathcal{L}_{\\text{GR}}$ would remain classical.\n*   **Weak Field Limit**: In the weak gravitational field limit, $\\mathcal{L}_{\\text{GR}}$ would approximate to the Newtonian gravitational potential, and the full theory would describe particles interacting in a nearly flat spacetime.\n*   **High Energy Limit**: At extremely high energies (e.g., Planck scale), $\\mathcal{L}_{\\text{New Physics}}$ is expected to become dominant, revealing the true nature of quantum gravity and potentially unifying all fundamental forces. The current forms of $\\mathcal{L}_{\\text{GR}}$ and $\\mathcal{L}_{\\text{SM}}$ are expected to break down or be subsumed into a more fundamental theory.",
+        "interpretation": "The total action density $\\mathcal{L}_{\\text{TOE}}$ specifies the dynamics of all matter and geometry in the universe via Hamilton's principle $\\delta \\int \\mathcal{L}_{\\text{TOE}} d^4x = 0$. $\\mathcal{L}_{\\text{GR}}$ supplies the diffeomorphism-invariant spacetime metric dynamics. $\\mathcal{L}_{\\text{SM}}$ governs the renormalizable quantum field theory of known fermions, electroweak bosons, gluons, and the scalar Higgs field. The residual density $\\mathcal{L}_{\\text{New Physics}}$ acts as an effective operator expansion containing higher-dimensional operators suppressed by a high-energy cutoff scale $\\Lambda$ (such as the Planck scale $M_{\\text{Pl}}$ or Grand Unification scale $M_{\\text{GUT}}$), encapsulating quantum gravity, supersymmetry, or extra-dimensional degrees of freedom.",
+        "symmetry_origin": "Rooted in general diffeomorphism invariance (general covariance) of spacetime combined with the local gauge symmetry $SU(3)_C \\times SU(2)_L \\times U(1)_Y$, global Poincaré invariance, and prospective unified gauge or dualities (e.g., $SO(10)$, $E_8 \\times E_8$, or string dualities).",
+        "limits_and_boundary": "In the low-energy limit $E \\ll M_{\\text{Pl}}$ with negligible gravitational effects, the expression smoothly decouples to $\\mathcal{L}_{\\text{TOE}} \\to \\mathcal{L}_{\\text{SM}}$. In the classical macroscopic regime where particle quantum fluctuations average out, $\\mathcal{L}_{\\text{TOE}} \\to \\mathcal{L}_{\\text{GR}}$.",
         "status": "platinum",
-        "conceptual_definition": "The total Lagrangian density for a Theory of Everything, denoted as $\\mathcal{L}_{\\text{TOE}}$, is conceptually defined as the sum of the Lagrangian density for General Relativity, $\\mathcal{L}_{\\text{GR}}$, the Lagrangian density for the Standard Model of particle physics, $\\mathcal{L}_{\\text{SM}}$, and a term representing all currently unknown or \"new\" physics, $\\mathcal{L}_{\\text{New Physics}}$. This sum, when integrated over spacetime to form an action, would theoretically yield all fundamental field equations.",
-        "intuitive_summary": "Imagine all the known laws of physics (gravity, electromagnetism, nuclear forces, and particles) as separate instruction manuals. A \"Theory of Everything\" would be a single, grand instruction manual that combines all of them, plus instructions for anything we haven't discovered yet. This equation is like the table of contents for that grand manual, showing how all the different parts add up.",
-        "description": "This formula conceptually represents a Lagrangian density for a hypothetical Theory of Everything (TOE), summing the known Lagrangians of General Relativity and the Standard Model with a placeholder for unknown physics.",
+        "conceptual_definition": "The total Lagrangian density $\\mathcal{L}_{\\text{TOE}}$ represents the fundamental action density of a unified Theory of Everything, formally expressed as the linear superposition of the gravitational sector $\\mathcal{L}_{\\text{GR}}$ (e.g., the Einstein-Hilbert term $\\frac{c^4}{16\\pi G}\\sqrt{-g}R$), the Standard Model sector $\\mathcal{L}_{\\text{SM}}$ (governing $SU(3)_C \\times SU(2)_L \\times U(1)_Y$ gauge fields, Yukawa couplings, and the Higgs sector), and an ultraviolet completion term $\\mathcal{L}_{\\text{New Physics}}$ accounting for quantum gravity corrections, dark matter candidates, and neutrino mass mechanisms.",
+        "intuitive_summary": "This equation embodies the ultimate aspiration of fundamental theoretical physics: combining gravity, particle interactions, and yet-to-be-discovered phenomena into a single comprehensive action principle.",
+        "description": "A conceptual master Lagrangian density unifying gravitational dynamics, the Standard Model gauge and matter sectors, and prospective beyond-the-Standard-Model interactions.",
         "derivation_type": "GENERALIZATION",
         "subcomponents": [
-            "gauge-field-lagrangian-density-92ae6777",
-            "field-action-integral-eb33542d"
-        ]
+            "the-master-equation-94e21183",
+            "effective-field-theory-expansion-cutoff-e4d1c9b4",
+            "action-lagrangian-density"
+        ],
+        "parent_formula_id": "effective-field-theory-expansion-cutoff-e4d1c9b4"
     },
     "line-knottedness-33fe722c": {
         "title": "Line Knottedness",
@@ -479,55 +445,44 @@
         "equation": "t(z) = \\int_{z}^{\\infty} \\frac{dz'}{(1+z')H(z')}",
         "semantic_variables": {
             "t(z)": {
-                "name": "Cosmic Time at Redshift z",
+                "name": "Cosmic time",
                 "type": "variable",
                 "unit": "s",
-                "description": "The age of the universe at a specific redshift $z$."
+                "description": "Elapsed proper time from the Big Bang singularity to epoch at redshift $z$"
             },
             "z": {
-                "name": "Redshift",
+                "name": "Cosmological redshift",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The cosmological redshift, indicating the expansion factor of the universe since light was emitted."
+                "description": "Redshift corresponding to the target cosmic epoch"
             },
             "z'": {
-                "name": "Dummy Redshift Variable",
+                "name": "Integration redshift variable",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dummy variable representing redshift during the integration."
+                "description": "Dummy integration variable across historical redshift values"
             },
             "H(z')": {
-                "name": "Hubble Parameter at Redshift z'",
+                "name": "Hubble parameter",
                 "type": "variable",
-                "unit": "s^-1",
-                "description": "The Hubble parameter, describing the expansion rate of the universe at redshift $z'$."
-            },
-            "\\int": {
-                "name": "Integral Operator",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "The integral operator, summing infinitesimal contributions over a range."
-            },
-            "dz'": {
-                "name": "Differential Redshift Element",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "An infinitesimal increment in redshift."
+                "unit": "s^{-1}",
+                "description": "Expansion rate of the universe evaluated at redshift $z'$"
             }
         },
-        "interpretation": "The formula $t(z) = \\int_{z}^{\\infty} \frac{dz'}{(1+z')H(z')}$ provides the age of the universe at a specific redshift $z$.\n*   $t(z)$: Represents the cosmic time elapsed from the Big Bang until the universe reached redshift $z$. Its unit is seconds ($\\text{s}$) or years ($\\text{yr}$). \n*   $z$: Denotes the redshift at which the cosmic time is being evaluated. It is a dimensionless quantity.\n*   $z'$: Is a dummy integration variable representing redshift, ranging from the given redshift $z$ to infinity. It is dimensionless.\n*   $H(z')$: Is the Hubble parameter at redshift $z'$. It describes the expansion rate of the universe at that specific redshift. Its unit is inverse seconds ($\\text{s}^{-1}$) or $\\text{km s}^{-1} \\text{Mpc}^{-1}$.\n*   $dz'$: Represents an infinitesimal change in redshift, a dimensionless quantity.\n*   $\\int_{z}^{\\infty} \\dots dz'$: Denotes the definite integral from the given redshift $z$ to an infinitely large redshift, effectively integrating \"backwards\" in time to the Big Bang. This integral accumulates the differential time elements to yield the total age of the universe at redshift $z$.",
-        "symmetry_origin": "This formula is a kinematic consequence derived from the Friedmann equations, which themselves arise from Einstein's field equations of General Relativity under the assumption of a homogeneous and isotropic universe (described by the FLRW metric). General Relativity is founded on the principle of general covariance (diffeomorphism invariance), which ensures the laws of physics are the same for all observers, regardless of their state of motion.",
-        "limits_and_boundary": "The behavior of the formula can be examined at cosmological limits:\n*   As $z \\to 0$ (the present epoch), the integral becomes $t(0) = \\int_{0}^{\\infty} \\frac{dz'}{(1+z')H(z')}$, which represents the current age of the universe.\n*   As $z \\to \\infty$ (the Big Bang singularity), the upper limit of the integral approaches the lower limit, implying $t(\\infty) \\to 0$. This signifies that cosmic time starts at the Big Bang.\n*   The behavior of $H(z')$ at very high redshifts (early universe) is dominated by radiation and matter, where $H(z') \\propto (1+z')^{3/2}$ or $H(z') \\propto (1+z')^2$. This ensures the integral converges, yielding a finite age for the universe.",
+        "interpretation": "The formula $t(z) = \\int_{z}^{\\infty} \\frac{dz'}{(1+z')H(z')}$ determines the elapsed proper time of the universe at redshift $z$. The variable $t(z)$ denotes the cosmic age at redshift $z$ in seconds ($\\text{s}$), $z$ is the target observation redshift (dimensionless), $z'$ is the integration variable for redshift running from $z$ to $\\infty$, and $H(z')$ is the dynamical Hubble parameter at redshift $z'$ in units of inverse time ($\\text{s}^{-1}$). The factor $(1+z')^{-1}$ accounts for the scaling relation $a(t)/a_0 = (1+z)^{-1}$, translating scale factor differentials into redshift intervals.",
+        "symmetry_origin": "Rooted in the spatial homogeneity and isotropy of spacetime described by the Friedmann-Lemaître-Robertson-Walker (FLRW) metric under the cosmological principle, which admits a universal cosmic proper time foliation $\\mathbb{R} \\times \\Sigma_k$.",
+        "limits_and_boundary": "In the limit $z \\to 0$, $t(0) = t_0$ represents the present age of the universe. In the asymptotic limit $z \\to \\infty$, the integration domain shrinks to zero, yielding $t(\\infty) = 0$, representing the initial Big Bang singularity. In an Einstein-de Sitter matter-dominated flat universe where $H(z) = H_0 (1+z)^{3/2}$, the integral evaluates analytically to $t(z) = \\frac{2}{3 H_0 (1+z)^{3/2}}$.",
         "status": "platinum",
-        "conceptual_definition": "The cosmic time $t(z)$ at a specific redshift $z$ is obtained by integrating the differential time element $dt = -dz / ((1+z)H(z))$ from that redshift $z$ to an infinitely large redshift (the Big Bang singularity, $z \to \\infty$). The negative sign accounts for time increasing as redshift decreases, such that the integral $t(z) = \\int_{z}^{\\infty} \frac{dz'}{(1+z')H(z')}$ correctly yields the age of the universe at redshift $z$.",
-        "intuitive_summary": "Imagine rewinding the universe's expansion. This formula tells you how much time has passed since the universe was at a particular 'redshift state' (meaning a particular size and expansion rate), up until the present moment. It essentially calculates the age of the universe at any given point in its history, defined by its redshift.",
+        "conceptual_definition": "In the standard Friedmann-Lemaître-Robertson-Walker (FLRW) cosmological framework, cosmic time $t(z)$ represents the proper time measured by a fundamental comoving observer from the initial Big Bang singularity ($z \\to \\infty$, corresponding to scale factor $a \\to 0$) to a specific cosmological epoch characterized by redshift $z$. Using the kinematic relation between the cosmic scale factor and redshift, $1 + z = a_0 / a$, and the definition of the Hubble parameter $H(a) = \\dot{a}/a$, the differential time element is given by $dt = -dz' / [(1+z')H(z')]$. Integrating from $z' = \\infty$ to $z' = z$ yields the total elapsed cosmic time $t(z) = \\int_{z}^{\\infty} \\frac{dz'}{(1+z')H(z')}$.",
+        "intuitive_summary": "Because the expansion rate of the universe stretches light wavelengths systematically with time, redshift acts as a cosmic clock; integrating the inverse expansion rate backwards from the Big Bang gives the precise age of the universe at any given redshift.",
         "subcomponents": [
+            "proper-time-curved-spacetime",
             "cosmic-ruler-identity-1-1d4e285e-8789233b",
-            "fourier-transform-forward-ident-5ca854f6",
-            "quantum-time-evolution-operator-e717a9a3"
+            "maximum-proper-time-identity-1-c4b38382-27bebbe7"
         ],
-        "description": "This formula defines the cosmic time $t(z)$ elapsed from the Big Bang until the universe reached a given redshift $z$, by integrating the inverse of the Hubble parameter over redshift. It represents the age of the universe at redshift $z$.",
-        "derivation_type": "DEFINITION"
+        "description": "Computes the cosmic time (age of the universe) at a specified redshift by integrating the reciprocal of the expansion rate from infinite redshift down to the observation epoch.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "proper-time-curved-spacetime"
     },
     "energy-exchange-293633ca": {
         "title": "Baryon Number Density Evolution in an Expanding Universe",
@@ -827,43 +782,32 @@
         "equation": "m_{GB} = 0",
         "semantic_variables": {
             "m_{GB}": {
-                "name": "Mass of Goldstone Boson",
+                "name": "Nambu-Goldstone boson mass",
                 "type": "variable",
-                "unit": "eV/c^2 (natural units)",
-                "description": "The mass of the scalar particle (Goldstone boson) that emerges when a continuous global symmetry is spontaneously broken."
+                "unit": "eV",
+                "description": "The rest mass of the scalar particle arising from spontaneous global symmetry breaking"
             },
             "0": {
-                "name": "Zero",
+                "name": "Zero mass value",
                 "type": "constant",
                 "unit": "dimensionless",
-                "description": "Represents the exact value of zero, indicating the massless nature of the Goldstone boson."
-            },
-            "Q": {
-                "name": "Charge Operator",
-                "type": "operator",
-                "unit": "dimensionless",
-                "description": "The generator of the continuous global symmetry that is spontaneously broken."
-            },
-            "|0\\rangle": {
-                "name": "Vacuum State",
-                "type": "variable",
-                "unit": "dimensionless",
-                "description": "The lowest energy state (ground state) of the quantum field theory."
+                "description": "Vanishing invariant mass eigenvalue corresponding to a gapless excitation"
             }
         },
-        "interpretation": "The equation $m_{GB} = 0$ gives the mass of the Goldstone boson, which is predicted to be exactly zero. This result is a direct consequence of a continuous global symmetry of a system's Lagrangian not being a symmetry of its vacuum state (ground state). This situation, known as spontaneous symmetry breaking, is signaled when a symmetry generator (charge operator) $Q$ does not annihilate the vacuum state, i.e., $Q|0\\rangle \\neq 0$. The vacuum state has a non-zero expectation value for some field that is not invariant under the symmetry. The Goldstone boson corresponds to the excitation along the flat direction of the potential in field space, which exists because of the broken symmetry, and moving along this direction costs no energy, implying a massless particle.\n*   $m_{GB}$: Represents the mass of the Goldstone boson, a scalar particle predicted by the theorem. Its value is given in units of energy (e.g., electronvolts, $\\text{eV}$) or mass (e.g., kilograms, $\\text{kg}$) in natural units where $c=1$.\n*   $0$: Represents the exact value of zero, indicating that the Goldstone boson is massless.\n*   $Q$: Denotes the charge operator (or symmetry generator) associated with the continuous global symmetry that is spontaneously broken. In quantum field theory, $Q$ is an operator acting on the Hilbert space of states.\n*   $|0\\rangle$: Represents the vacuum state (ground state) of the system. In quantum field theory, this is the lowest energy state.",
-        "symmetry_origin": "Goldstone's Theorem arises directly from the spontaneous breaking of a continuous global symmetry. This is a fundamental concept in quantum field theory and condensed matter physics, where the ground state of a system does not share the full symmetry of its underlying Hamiltonian or Lagrangian. The theorem is a direct consequence of Noether's theorem applied to the broken symmetry, implying a conserved current whose charge operator fails to annihilate the vacuum.",
-        "limits_and_boundary": "The applicability of Goldstone's Theorem is subject to specific conditions:\n*   **Gauge Symmetries**: Goldstone's Theorem applies only to *global* continuous symmetries. For *local* (gauge) continuous symmetries, the \"would-be\" Goldstone bosons are \"eaten\" by the gauge bosons, giving them mass through the Higgs mechanism. In this case, the Goldstone bosons do not appear as physical massless particles.\n*   **Discrete Symmetries**: The theorem does not apply to discrete symmetries. Spontaneous breaking of a discrete symmetry does not lead to massless bosons.\n*   **Explicit Symmetry Breaking**: If the symmetry is explicitly broken by terms in the Lagrangian, even if small, the Goldstone bosons acquire a small mass and are then called \"pseudo-Goldstone bosons\" (e.g., pions in QCD). The condition $m_{GB} = 0$ holds strictly only for exact spontaneous breaking of a global continuous symmetry.\n*   **Relativistic Field Theories**: The theorem is typically formulated in the context of relativistic quantum field theories, but analogous phenomena occur in condensed matter systems (e.g., magnons in ferromagnets, phonons in crystals).",
+        "interpretation": "The relation $m_{\\text{GB}} = 0$ specifies that the rest mass $m_{\\text{GB}}$ of the Nambu-Goldstone boson is identically zero. In quantum field theory, the symmetry generator $Q = \\int d^3x \\, j^0(x)$ associated with a conserved Noether current $\\partial_\\mu j^\\mu = 0$ yields a non-vanishing commutant with order parameter fields across the vacuum. This forces the spectral density $\\rho(p^2)$ to possess a delta-function contribution at $p^2 = 0$, proving the particle is strictly massless in the absence of explicit symmetry-breaking terms or gauge couplings.",
+        "symmetry_origin": "Spontaneous breaking of continuous global internal Lie symmetries (Noether's theorem) from symmetry group $G$ to subgroup $H$, yielding $\\dim(G) - \\dim(H)$ massless Goldstone modes.",
+        "limits_and_boundary": "In the presence of small explicit symmetry-breaking terms in the Lagrangian (such as current quark masses in chiral perturbation theory), the Goldstone mode acquires a small mass $m_{\\text{pGB}} \\propto \\sqrt{m_{\\text{explicit}}}$, becoming a pseudo-Nambu-Goldstone boson (e.g., the pion). When coupled to dynamical gauge fields (Higgs mechanism), the Goldstone mode is 'eaten' to provide the longitudinal degree of freedom for gauge bosons, removing the physical massless scalar.",
         "status": "platinum",
-        "conceptual_definition": "When a continuous global symmetry of a system's Lagrangian is not a symmetry of its vacuum state (ground state), this phenomenon is called spontaneous symmetry breaking. Goldstone's Theorem dictates that such a breaking inevitably leads to the appearance of one or more massless scalar bosons, whose mass $m_{GB}$ is precisely zero, i.e., $m_{GB} = 0$. These particles correspond to excitations along the \"flat directions\" of the potential in field space, which cost no energy.",
-        "intuitive_summary": "Imagine a perfectly round hill (symmetric potential). If a ball rolls to the bottom and settles in a specific direction (breaking the rotational symmetry of the ground state), then it can roll freely around the bottom of the hill without changing its height. This \"free rolling\" motion is like a massless particle, the Goldstone boson, which emerges because the ground state picked a direction, even though the underlying physics didn't.",
-        "description": "Goldstone's Theorem states that for every spontaneously broken continuous global symmetry, there must exist a corresponding massless scalar particle, known as a Goldstone boson.",
-        "derivation_type": "DEFINITION",
+        "conceptual_definition": "When a continuous global symmetry group $G$ of a Lagrangian is spontaneously broken to a subgroup $H$ by a non-invariant vacuum expectation value $\\langle 0 | \\phi | 0 \\rangle \\neq 0$, the generator of the broken symmetry $Q$ does not annihilate the vacuum ($Q|0\\rangle \\neq 0$). Goldstone's theorem dictates that the energy-momentum spectrum must contain gapless excitations corresponding to excitations along the degenerate vacuum manifold, resulting in a physical pole at zero mass: $m_{\\text{GB}} = 0$.",
+        "intuitive_summary": "Spontaneous symmetry breaking creates a continuous manifold of equivalent degenerate ground states ('flat valley' in the potential). Moving along this degenerate vacuum direction costs zero energy at zero momentum, manifesting as a massless particle.",
+        "description": "States that the spontaneous breakdown of a continuous global symmetry in a relativistic quantum field theory guarantees the existence of massless, spinless excitations known as Nambu-Goldstone bosons.",
+        "derivation_type": "SPECIAL_CASE",
         "subcomponents": [
-            "four-momentum-norm-squared",
-            "second-variation-of-action-condition-ee4821a1",
-            "lagrangian-time-independence-ff6a59ad"
-        ]
+            "goldstone-massless-mode-identity-2c040620",
+            "massless-scalar-propagator-pole-1105e1fb",
+            "higgs-vacuum-expectation-value-80bcf294"
+        ],
+        "parent_formula_id": "goldstone-massless-mode-identity-2c040620"
     },
     "boltzmann-h-function-cb3eb417": {
         "title": "Boltzmann's H-Function",
@@ -1031,43 +975,44 @@
         "equation": "\\eta = \\frac{n_b - n_{\\bar{b}}}{n_\\gamma} \\approx 6 \\times 10^{-10}",
         "semantic_variables": {
             "\\eta": {
-                "name": "Baryon-to-Photon Ratio",
+                "name": "Baryon-to-photon ratio",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The ratio of net baryon number density to photon number density."
+                "description": "Cosmological parameter quantifying net baryon number density relative to photon number density"
             },
             "n_b": {
-                "name": "Baryon Number Density",
+                "name": "Baryon number density",
                 "type": "variable",
-                "unit": "m^-3",
-                "description": "The number density of baryons (protons and neutrons)."
+                "unit": "m^{-3}",
+                "description": "Number of baryons (protons, neutrons) per unit physical volume"
             },
             "n_{\\bar{b}}": {
-                "name": "Antibaryon Number Density",
+                "name": "Antibaryon number density",
                 "type": "variable",
-                "unit": "m^-3",
-                "description": "The number density of antibaryons (antiprotons and antineutrons)."
+                "unit": "m^{-3}",
+                "description": "Number of antibaryons (antiprotons, antineutrons) per unit physical volume"
             },
             "n_\\gamma": {
-                "name": "Photon Number Density",
+                "name": "Photon number density",
                 "type": "variable",
-                "unit": "m^-3",
-                "description": "The number density of photons, primarily from the cosmic microwave background."
+                "unit": "m^{-3}",
+                "description": "Number density of cosmic background photons"
             }
         },
-        "interpretation": "The formula $\\eta = \frac{n_b - n_{\bar{b}}}{n_\\gamma}$ defines the baryon-to-photon ratio. The approximate value $\\approx 6 \times 10^{-10}$ is derived from cosmological observations. \n*   $\\eta$: The baryon-to-photon ratio, a dimensionless quantity representing the relative abundance of net baryons to photons. Its value is approximately $6 \times 10^{-10}$.\n*   $n_b$: The number density of baryons (protons and neutrons), typically measured in $\\text{m}^{-3}$.\n*   $n_{\\bar{b}}$: The number density of antibaryons (antiprotons and antineutrons), also measured in $\\text{m}^{-3}$. The term $n_b - n_{\\bar{b}}$ represents the net baryon number density, which is positive due to the observed matter-antimatter asymmetry.\n*   $n_\\gamma$: The number density of photons, primarily from the cosmic microwave background (CMB), measured in $\\text{m}^{-3}$. This density is significantly higher than the net baryon density.",
-        "symmetry_origin": "The existence of a non-zero baryon-to-photon ratio, $\\eta \\neq 0$, is a direct consequence of baryogenesis, a process that violates baryon number conservation, C-symmetry, and CP-symmetry, as outlined by the Sakharov conditions. While baryon number is conserved in the Standard Model at low energies, electroweak sphalerons can violate it at high temperatures, contributing to the observed asymmetry. The ratio itself is not directly derived from a fundamental symmetry, but its non-zero value implies a breaking of initial symmetries.",
-        "limits_and_boundary": "In the very early universe, before baryogenesis, it is hypothesized that $n_b \\approx n_{\\bar{b}}$, leading to an initial ratio $\\eta \\approx 0$. After the annihilation epoch, the ratio becomes essentially constant, as both baryon number and photon number are conserved (or diluted by cosmic expansion in the same way) in the subsequent evolution of the universe. The value of $\\eta$ is crucial for predicting the primordial abundances of light elements during Big Bang Nucleosynthesis (BBN) and for understanding the anisotropies in the Cosmic Microwave Background (CMB). If $\\eta$ were significantly larger, the universe would have formed too much helium and other light elements; if it were much smaller, there would be insufficient matter for structure formation.",
+        "interpretation": "In the relation $\\eta = \\frac{n_b - n_{\\bar{b}}}{n_\\gamma} \\approx 6 \\times 10^{-10}$, the numerator $n_b - n_{\\bar{b}}$ represents the excess of baryonic matter over antimatter per unit physical volume, while the denominator $n_\\gamma$ denotes the blackbody photon number density dominated by the Cosmic Microwave Background. The ratio $\\eta$ remains invariant during adiabatic cosmological expansion after $e^+e^-$ annihilation because both net baryon number and photon number per comoving volume are conserved.",
+        "symmetry_origin": "Global $U(1)_B$ baryon number conservation below the electroweak scale, combined with early-universe violation of $C$ and $CP$ symmetries and departure from thermal equilibrium (Sakharov conditions).",
+        "limits_and_boundary": "In the symmetric limit where $n_b = n_{\\bar{b}}$, $\\eta \\to 0$, precluding the survival of baryonic matter after freeze-out. In the epoch after baryon-antibaryon annihilation ($T \\ll 1\\text{ GeV}$), $n_{\\bar{b}} \\to 0$, simplifying the numerator to the net baryon density $n_b$.",
         "status": "platinum",
-        "conceptual_definition": "The cosmic baryon-to-photon ratio, $\\eta$, is defined as the ratio of the net baryon number density, $n_b - n_{\bar{b}}$, to the photon number density, $n_\\gamma$. Its observed value, approximately $6 \times 10^{-10}$, reflects the profound matter-antimatter asymmetry of the universe.",
-        "intuitive_summary": "Imagine counting all the protons and neutrons (baryons) in a given volume, subtracting any antibaryons, and then counting all the photons in that same volume. The ratio of these two counts is the baryon-to-photon ratio. It tells us how much 'ordinary matter' there is compared to light particles, and its tiny value means photons vastly outnumber matter particles.",
+        "conceptual_definition": "The cosmic baryon-to-photon ratio is defined as the quotient of the net baryon number density, $n_b - n_{\\bar{b}}$, and the relic photon number density, $n_\\gamma$. In the post-annihilation epoch where antibaryon density $n_{\\bar{b}} \\approx 0$, it characterizes the primordial matter-antimatter asymmetry of the universe: $\\eta = \\frac{n_b - n_{\\bar{b}}}{n_\\gamma} \\approx 6 \\times 10^{-10}$.",
+        "intuitive_summary": "For roughly every billion photons in the universe, only a single net baryon survived the early universe annihilation epoch, setting the exact matter budget for all subsequent cosmic structure.",
         "subcomponents": [
-            "cosmic-baryon-to-photon-ratio-value-3a36d260",
-            "conserved-ratio-1d09af87",
-            "baryogenesis-link-d5b15a01"
+            "baryon-photon-ratio-identity-1-d1090217-bfcf19ed",
+            "success-rate-0c8c402e",
+            "baryon-to-photon-number-density-ratio-44a010a2"
         ],
-        "description": "The baryon-to-photon ratio, $\\eta$, quantifies the relative abundance of net baryons (matter) to photons in the universe, a critical parameter for Big Bang Nucleosynthesis and the cosmic microwave background.",
-        "derivation_type": "DEFINITION"
+        "description": "The baryon-to-photon ratio $\\eta$ defines the net baryon number density relative to the cosmic background photon density, serving as a primary parameter in Big Bang nucleosynthesis and cosmic microwave background physics.",
+        "derivation_type": "APPROXIMATION",
+        "parent_formula_id": "baryon-photon-ratio-identity-1-d1090217-bfcf19ed"
     },
     "scalar-field-density-covariant-90f4e4e7": {
         "title": "Covariant Lagrangian Density for a Free, Massive Real Scalar Field (Klein-Gordon Theory)",
@@ -1584,40 +1529,40 @@
     "low-velocity-limit": {
         "title": "Low-Velocity Limit Condition",
         "equation": "v \\to 0 \\,",
-        "conceptual_definition": "The condition $v \to 0$ (or $v/c \to 0$) signifies the non-relativistic regime where the velocity $v$ of a system or object is negligible compared to the speed of light $c$. In this limit, the effects predicted by special relativity become imperceptible, and the classical laws of physics provide an accurate description of motion and interactions.",
-        "intuitive_summary": "When objects move very slowly compared to the speed of light, the complex rules of Einstein's relativity simplify, and we can use the familiar, everyday rules of classical physics, like those from Newton.",
-        "interpretation": "The expression $v \to 0$ is a mathematical condition, not an equation to be solved. It indicates that the physical quantity $v$, representing the velocity of an object or system, is considered to be approaching zero. This implies that the ratio $v/c$ also approaches zero, where $c$ is the speed of light in vacuum. This condition is fundamental for transitioning from relativistic descriptions to their classical counterparts.",
-        "symmetry_origin": "This condition marks the transition from the Lorentz symmetry of spacetime, which governs relativistic phenomena, to the Galilean symmetry, which underlies classical mechanics. While not a symmetry origin itself, it defines the regime where Lorentz invariance effectively reduces to Galilean invariance.",
-        "limits_and_boundary": "The low-velocity limit $v \to 0$ (or $v/c \to 0$) serves as a crucial boundary condition for many physical theories. For instance, the Lorentz factor $\\gamma = (1 - v^2/c^2)^{-1/2}$ approaches $1$ as $v \to 0$, causing relativistic energy $E = \\gamma mc^2$ to reduce to $E \\approx mc^2 + \frac{1}{2}mv^2$ (rest energy plus classical kinetic energy) and relativistic momentum $\\mathbf{p} = \\gamma m\\mathbf{v}$ to simplify to classical momentum $\\mathbf{p} = m\\mathbf{v}$. Similarly, the Lorentz transformations for spacetime coordinates reduce to the Galilean transformations in this limit, and proper time $d\tau$ approximates coordinate time $dt$.",
+        "conceptual_definition": "The low-velocity limit $v \\to 0$ (more formally expressed as the dimensionless ratio $\\beta = v/c \\to 0$) designates the asymptotic regime wherein relativistic kinematic and dynamical corrections become vanishingly small. Under this limiting operation, spacetime transformations reduce from the Lorentz group $SO(1,3)$ to the Galilean group, recovering classical Newtonian mechanics as an effective low-energy theory.",
+        "intuitive_summary": "As objects move much slower than light, relativistic effects such as time dilation and length contraction disappear, restoring everyday classical physics.",
+        "interpretation": "The expression $v \\to 0$ denotes a limiting process applied to physical equations. Here, $v$ represents the magnitude of the coordinate velocity or relative speed of an observer/body. In relativistic field theories and particle dynamics, evaluating limits as $v \\to 0$ or $v/c \\to 0$ suppresses higher-order corrections in the Lorentz factor $\\gamma = (1 - v^2/c^2)^{-1/2}$, causing $\\gamma \\to 1$.",
+        "symmetry_origin": "Inönü-Wigner contraction of the Poincaré/Lorentz group $SO(1,3)$ to the Galilei group as the speed of light $c \\to \\infty$ (or equivalently $v/c \\to 0$).",
+        "limits_and_boundary": "In the limit $v \\to 0$, the Lorentz factor satisfies $\\gamma \\to 1$, momentum simplifies to $\\mathbf{p} \\approx m\\mathbf{v}$, and kinetic energy approaches the classical quadratic form $T \\approx \\frac{1}{2}mv^2$. Conversely, in the ultra-relativistic limit $v \\to c$, $\\gamma \\to \\infty$ and relativistic corrections dominate.",
         "status": "platinum",
         "semantic_variables": {
             "v": {
-                "name": "Velocity",
+                "name": "velocity magnitude",
                 "type": "variable",
                 "unit": "m/s",
-                "description": "The speed of an object or system relative to an inertial frame of reference."
+                "description": "Magnitude of the coordinate velocity of a body or reference frame"
             },
             "\\to": {
-                "name": "Approaches",
+                "name": "limit operator",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "Mathematical operator indicating that a variable tends towards a specific value."
+                "description": "Asymptotic mathematical convergence operator"
             },
-            "c": {
-                "name": "Speed of Light",
+            "0": {
+                "name": "zero velocity limit",
                 "type": "constant",
                 "unit": "m/s",
-                "description": "The speed of light in vacuum, approximately $2.998 \times 10^8$ meters per second."
+                "description": "Vanishing speed threshold representing the static or non-relativistic baseline"
             }
         },
         "subcomponents": [
             "lorentz-factor-and-non-relativistic-limit-df9fc44b",
             "spatial-transformation-low-velocity-limit",
-            "time-transformation-low-velocity-limit",
-            "proper-time-approximation-in-weak-fields-5773dc87"
+            "time-transformation-low-velocity-limit"
         ],
-        "description": "The low-velocity limit, denoted by $v \to 0$ or more rigorously $v \\ll c$, defines the regime where an object's speed is much smaller than the speed of light, leading to the simplification of relativistic physics into classical Newtonian mechanics.",
-        "derivation_type": "DEFINITION"
+        "description": "The asymptotic limiting condition where the characteristic speed $v$ of a physical system approaches zero or is negligible compared to the speed of light $c$, defining the non-relativistic domain.",
+        "derivation_type": "LIMITING_CASE",
+        "parent_formula_id": "non-relativistic-limit"
     },
     "conserved-charge": {
         "title": "Quantum Mechanical Condition for a Conserved Charge",

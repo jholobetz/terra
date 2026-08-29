@@ -156,50 +156,44 @@
         "equation": "S = -k_B \\text{Tr}(\\rho \\ln \\rho) \\quad (\\text{Entropy})",
         "semantic_variables": {
             "S": {
-                "name": "Von Neumann Entropy",
+                "name": "von Neumann entropy",
                 "type": "variable",
                 "unit": "J/K",
-                "description": "A measure of the statistical uncertainty or entanglement of a quantum system."
+                "description": "Total quantum statistical mechanical entropy of the state"
             },
             "k_B": {
-                "name": "Boltzmann Constant",
+                "name": "Boltzmann constant",
                 "type": "constant",
                 "unit": "J/K",
-                "description": "A fundamental constant relating temperature to energy."
+                "description": "Fundamental thermodynamic conversion constant"
             },
             "\\rho": {
-                "name": "Density Matrix Operator",
+                "name": "density matrix",
                 "type": "operator",
                 "unit": "dimensionless",
-                "description": "A Hermitian operator describing the statistical state of a quantum system."
+                "description": "Positive semi-definite Hermitian density operator describing the quantum ensemble"
             },
             "\\text{Tr}": {
-                "name": "Trace Operator",
+                "name": "trace operator",
                 "type": "operator",
-                "unit": "N/A",
-                "description": "An operator that sums the diagonal elements of a matrix."
-            },
-            "\\ln": {
-                "name": "Natural Logarithm Operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The logarithm to the base e, applied to the operator argument."
+                "unit": "dimensionless",
+                "description": "Sum of the diagonal matrix elements or spectral eigenvalues"
             }
         },
-        "interpretation": "In this formula, $S$ represents the von Neumann entropy, measured in Joules per Kelvin (J/K). The constant $k_B$ is the Boltzmann constant, a fundamental physical constant relating temperature to energy. The symbol $\\rho$ represents the density matrix of the quantum system, which is a positive semi-definite Hermitian operator with unit trace, $\\text{Tr}(\\rho) = 1$. The trace operation, $\\text{Tr}(\\cdot)$, sums the diagonal elements of a matrix operator. The expression $\\text{Tr}(\\rho \\ln \\rho)$ can be computed in the eigenbasis of $\\rho$. If the eigenvalues of $\\rho$ are $p_i$, which represent the probabilities of finding the system in the corresponding eigenstates, then the expression is equivalent to the sum $\\sum_i p_i \\ln p_i$. The entropy $S$ thus quantifies the amount of information missing in specifying the exact quantum state, or equivalently, the degree of mixing of the statistical ensemble.",
-        "symmetry_origin": "While not a conserved charge from a continuous symmetry via Noether's theorem, the von Neumann entropy $S$ is conserved under unitary time evolution, $\\frac{dS}{dt} = 0$. This conservation is a direct consequence of the time-reversal symmetry of the underlying microscopic quantum dynamics described by the Schrödinger equation.",
-        "limits_and_boundary": "For a pure quantum state, described by a state vector $|\\psi\\rangle$, the density matrix is a projector $\\rho = |\\psi\\rangle\\langle\\psi|$. In this case, the entropy is zero: $S = 0$. This represents a state of complete information. Conversely, for a system with an $N$-dimensional Hilbert space, the state of maximum uncertainty is the maximally mixed state, where $\\rho = \\frac{1}{N}\\mathbb{I}$ (where $\\mathbb{I}$ is the identity operator). The entropy reaches its maximum value, $S_{max} = k_B \\ln N$. This corresponds to a state of complete ignorance, where all possible basis states are equally probable.",
+        "interpretation": "In this formula, $S$ denotes the von Neumann entropy with SI units of Joules per Kelvin ($\\text{J/K}$), scaled by Boltzmann's constant $k_B$. The density operator $\\rho$ is a positive semi-definite trace-class operator on the system Hilbert space satisfying $\\text{Tr}(\\rho) = 1$. The functional $\\text{Tr}(\\rho \\ln \\rho)$ represents the trace of the matrix logarithm operator $\\rho \\ln \\rho$, which in the eigenbasis $\\rho = \\sum_i p_i |\\psi_i\\rangle\\langle\\psi_i|$ reduces to the Shannon-like sum $\\sum_i p_i \\ln p_i$.",
+        "symmetry_origin": "Invariance under unitary transformations $\\rho \\to U \\rho U^\\dagger$ due to the cyclic property of the trace, establishing conservation of entropy under closed unitary quantum time evolution.",
+        "limits_and_boundary": "For a pure state $\\rho = |\\psi\\rangle\\langle\\psi|$, $S = 0$. For a maximally mixed state in a $d$-dimensional Hilbert space $\\rho = \\frac{1}{d}\\mathbb{I}$, the entropy reaches its upper bound $S = k_B \\ln d$. In the classical limit $\\hbar \\to 0$, $S$ converges to the classical Gibbs entropy.",
         "status": "platinum",
-        "conceptual_definition": "The von Neumann entropy, $S$, is the quantum mechanical generalization of the classical Gibbs entropy. It quantifies the statistical uncertainty or degree of 'mixedness' of a quantum state described by the density matrix $\\rho$. A value of $S=0$ corresponds to a pure state with no uncertainty, while a positive value indicates a mixed state, with the maximum value corresponding to a maximally mixed state.",
-        "intuitive_summary": "Imagine a quantum system can be in several states at once, each with a certain probability. The von Neumann entropy measures your total ignorance about which specific state the system is in. If you know exactly what state it's in (a 'pure' state), your ignorance is zero, and so is the entropy. If it's a complete toss-up among all possibilities (a 'mixed' state), your ignorance is maximal, and so is the entropy.",
+        "conceptual_definition": "The von Neumann entropy extends classical Gibbs-Shannon entropy to quantum statistical mechanics via the spectral decomposition of the density matrix $\\rho$. It is defined as $S = -k_B \\text{Tr}(\\rho \\ln \\rho)$, measuring both classical statistical ignorance in mixed ensembles and quantum bipartite entanglement entropy when restricted to reduced subsystems.",
+        "intuitive_summary": "Measures the degree of classical ignorance or quantum mixing in a quantum state: it evaluates to zero for pure states and reaches a maximum for uniformly mixed statistical ensembles.",
         "subcomponents": [
             "von-neumann-entropy-pure-state-5481090c",
+            "technical-relation-92a81718",
             "quantum-block-d1db33f7",
-            "entanglement-entropy-identity-1-52a4c2e6-f9444fb5",
-            "s-k-ln-w-01110557"
+            "non-negativity-of-von-neumann-entropy-03216c23"
         ],
-        "description": "This formula defines the von Neumann entropy, the fundamental measure of statistical uncertainty and entanglement for a quantum system described by a density matrix.",
-        "derivation_type": "DEFINITION"
+        "description": "Fundamental quantum generalization of thermodynamic Gibbs-Boltzmann entropy, quantifying the statistical mixture and missing information of a quantum state represented by a density operator.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "stability-wall-b2fa0942": {
         "title": "Spherically Symmetric Metric Potential",
@@ -1091,40 +1085,41 @@
         "derivation_type": "DERIVED_FROM"
     },
     "anti-newtonian-be7d6bde": {
-        "title": "Mach Number (Dimensionless Flow Velocity)",
+        "title": "Mach Number Definition in Compressible Fluid Dynamics",
         "equation": "M = \\frac{v}{c_s}",
         "semantic_variables": {
             "M": {
                 "name": "Mach Number",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A dimensionless quantity representing the ratio of flow velocity past a boundary to the local speed of sound."
+                "description": "Dimensionless ratio of flow velocity to local sound speed"
             },
             "v": {
-                "name": "Characteristic Velocity",
+                "name": "Flow Velocity",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The velocity of the fluid or the velocity of an object relative to the fluid."
+                "unit": "m s^{-1}",
+                "description": "Magnitude of the relative velocity of the fluid or moving body"
             },
             "c_s": {
                 "name": "Speed of Sound",
                 "type": "variable",
-                "unit": "m/s",
-                "description": "The speed at which sound waves propagate through the medium, dependent on the medium's thermodynamic properties."
+                "unit": "m s^{-1}",
+                "description": "Local acoustic wave propagation velocity in the medium"
             }
         },
-        "interpretation": "The value of the Mach number $M$ determines the nature of the fluid flow. For $M < 1$, the flow is subsonic, and pressure disturbances can propagate in all directions, including upstream. For $M = 1$, the flow is sonic, a critical state often referred to as the 'sound barrier'. For $M > 1$, the flow is supersonic, and disturbances cannot propagate upstream; they are instead swept downstream, forming a conical region of intense pressure change known as a shock wave. Flows with $M > 5$ are typically classified as hypersonic, where high-temperature effects like gas dissociation become significant.",
-        "symmetry_origin": "The Mach number is not a conserved quantity derived from a symmetry via Noether's theorem. It is a dimensionless parameter that arises from the scaling analysis of the fundamental equations of fluid dynamics (e.g., the Euler or Navier-Stokes equations), which themselves are founded on the conservation of mass, momentum, and energy.",
-        "limits_and_boundary": "In the limit of low velocity, $v \\to 0$, the Mach number $M \\to 0$. This regime corresponds to incompressible flow, where density changes due to fluid motion are negligible. The value $M=1$ marks a critical mathematical boundary where the character of the governing partial differential equations for steady, inviscid flow changes from elliptic (for $M<1$) to hyperbolic (for $M>1$), signifying a fundamental shift in the physics of information propagation within the flow.",
+        "interpretation": "In the relation $M = \\frac{v}{c_s}$, $M$ represents the dimensionless Mach number, $v$ denotes the magnitude of the local relative flow velocity, and $c_s$ is the local speed of sound determined by the thermodynamic state of the fluid medium via $c_s = \\sqrt{(\\partial P / \\partial \\rho)_s}$. For $M < 0.3$, density variations are negligible (incompressible regime); for $M < 1$, the flow is subsonic; at $M = 1$, the flow is sonic; for $M > 1$, supersonic flow develops characteristic shock fronts; and for $M > 5$, hypersonic regime effects dominate.",
+        "symmetry_origin": "Scale invariance of the compressible Euler and Navier-Stokes equations under kinematic similitude transformations.",
+        "limits_and_boundary": "In the limit $v \\to 0$ or $c_s \\to \\infty$, $M \\to 0$, recovering the incompressible fluid dynamics limit where acoustic waves propagate quasi-instantaneously across the domain. In the limit $M \\gg 1$, pressure disturbances cannot propagate upstream, forming thin hydrodynamic shocks governed by the Rankine-Hugoniot conditions.",
         "status": "platinum",
-        "conceptual_definition": "The Mach number, denoted by the symbol $M$, is a dimensionless quantity defined as the ratio of a characteristic velocity $v$ (such as the speed of an object in a fluid or the flow velocity of the fluid itself) to the local speed of sound $c_s$ in that medium. It is a fundamental parameter used to classify flow regimes based on compressibility effects.",
-        "intuitive_summary": "The Mach number compares an object's speed to the speed of sound in its surrounding medium. If you're traveling slower than sound ($M<1$), the 'news' of your approach (sound waves) travels ahead of you, allowing the medium to adjust smoothly. If you're faster than sound ($M>1$), you outrun your own sound, creating a pile-up of pressure waves known as a shock wave.",
+        "conceptual_definition": "The Mach number $M = \\frac{v}{c_s}$ parameterizes the relative importance of fluid advection compared to acoustic wave propagation, governing compressibility effects and flow regime classification.",
+        "intuitive_summary": "It measures whether a fluid element moves faster than the pressure signals that warn the medium ahead of its approach.",
         "subcomponents": [
-            "lane-emden-link-bb1bcbd8",
-            "reynolds-number"
+            "flow-velocity-and-mach-number-relation-666f8e78",
+            "pinching-force-f4effc14"
         ],
-        "description": "Defines the Mach number, a dimensionless quantity in fluid dynamics representing the ratio of an object's or fluid's velocity to the local speed of sound.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the Mach number as the dimensionless ratio of local flow velocity to the local acoustic wave propagation speed.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "energy-loss-80156eec"
     },
     "dust-model-3386642e": {
         "title": "Cosmological Dust Matter Density Scaling",
@@ -1248,36 +1243,49 @@
         "derivation_type": "SPECIAL_CASE"
     },
     "spectral-origin-c884f187": {
-        "title": "Spectral Equivalence of Pure Quantum States",
+        "title": "Equality of Reduced Von Neumann Entropies for Pure Bipartite States",
         "equation": "S_A = S_B \\text{ (For Pure States)}",
         "semantic_variables": {
             "S_A": {
-                "name": "Spectrum of System A",
+                "name": "Entanglement entropy of subsystem A",
                 "type": "variable",
-                "unit": "Dimensionless (Set)",
-                "description": "The complete set of eigenvalues and their corresponding probabilities for all possible observables of quantum system A."
+                "unit": "nats",
+                "description": "Von Neumann entropy associated with the reduced density matrix of subsystem A"
             },
             "S_B": {
-                "name": "Spectrum of System B",
+                "name": "Entanglement entropy of subsystem B",
                 "type": "variable",
-                "unit": "Dimensionless (Set)",
-                "description": "The complete set of eigenvalues and their corresponding probabilities for all possible observables of quantum system B."
+                "unit": "nats",
+                "description": "Von Neumann entropy associated with the reduced density matrix of subsystem B"
+            },
+            "\\hat{\\rho}_A": {
+                "name": "Reduced density operator of subsystem A",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Partial trace over Hilbert space B of the total bipartite pure state projection"
+            },
+            "\\hat{\\rho}_B": {
+                "name": "Reduced density operator of subsystem B",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Partial trace over Hilbert space A of the total bipartite pure state projection"
             }
         },
-        "interpretation": "The equation $S_A = S_B$ establishes a condition for the physical indistinguishability of two quantum systems assumed to be in pure states. Here, $S_A$ represents the complete spectrum of system A, which is the collection of all possible measurement outcomes (eigenvalues) and their associated probabilities for all possible physical observables. Similarly, $S_B$ is the spectrum for system B. The equality implies that no experiment, regardless of the observable being measured, can differentiate between system A and system B. This is a much stronger condition than having equal expectation values for a few observables. The constraint '(For Pure States)' is crucial; a pure state is described by a single state vector $|\\psi\rangle$ and has a purity of $\\text{Tr}(\\rho^2) = 1$, where $\\rho = |\\psi\\rangle\\langle\\psi|$ is the density operator. Mixed states, which are statistical ensembles of pure states, have a purity $\\text{Tr}(\\rho^2) < 1$ and do not generally obey this equivalence.",
-        "symmetry_origin": "The principle stems from the U(1) gauge invariance of quantum mechanics, where the absolute phase of a state vector is unobservable. Two pure states $|\\psi_A\rangle$ and $|\\psi_B\rangle$ are physically equivalent if $|\\psi_A\rangle = e^{i\\phi}|\\psi_B\rangle$, which directly leads to them having identical spectra for all observables, since probabilities depend on the modulus squared, $|\\langle\\phi|\\psi\rangle|^2$.",
-        "limits_and_boundary": "This principle is strictly valid only for pure states, defined by the condition $\\text{Tr}(\\rho^2) = 1$. It breaks down for mixed states where $\\text{Tr}(\\rho^2) < 1$, as two different mixed states can have different physical properties even if the spectra for a subset of observables are identical. In the classical limit where $\\hbar \\to 0$, quantum states collapse to definite points in phase space, and the 'spectrum' of an observable reduces to a single value. The equation then trivially means that two classical systems are identical in all respects.",
+        "interpretation": "The quantity $S_A = -\text{Tr}(\\hat{\rho}_A \\ln \\hat{\rho}_A)$ denotes the von Neumann entropy of the reduced density operator $\\hat{\rho}_A$ of subsystem $A$. Similarly, $S_B = -\text{Tr}(\\hat{\rho}_B \\ln \\hat{\rho}_B)$ represents the entropy of subsystem $B$. The identity $S_A = S_B$ holds identically if and only if the composite system is globally pure, demonstrating that entanglement is an intrinsically reciprocal relational property between disjoint partitions.",
+        "symmetry_origin": "Unitary invariance of the von Neumann entropy under local basis rotations $\\mathcal{U}_A \\otimes \\mathcal{U}_B$ and spectral invariance under the Schmidt decomposition transpose duality.",
+        "limits_and_boundary": "For a separable pure state $|\\Psi\rangle_{AB} = |\\psi\rangle_A \\otimes |\\phi\rangle_B$, the Schmidt rank is $1$, yielding $S_A = S_B = 0$. For maximally entangled states of dimension $d = \\min(\\dim \\mathcal{H}_A, \\dim \\mathcal{H}_B)$, the entropies reach their upper theoretical bound $S_A = S_B = \\ln d$. For globally mixed states $\text{Tr}(\rho_{AB}^2) < 1$, the equality generally fails ($S_A \neq S_B$).",
         "status": "platinum",
-        "conceptual_definition": "In quantum mechanics, the spectrum of an observable for a system in a given state is the set of its eigenvalues weighted by their respective probabilities of being measured. For two systems, A and B, described by pure state vectors $|\\psi_A\rangle$ and $|\\psi_B\rangle$ respectively, the condition $S_A = S_B$ signifies that for any arbitrary observable represented by a Hermitian operator $\\hat{O}$, the set of eigenvalues ${\\lambda_i}$ and their corresponding probabilities $P(\\lambda_i) = |\\langle\\lambda_i|\\psi\\rangle|^2$ are identical for both systems. This implies a fundamental physical equivalence between the states $|\\psi_A\\rangle$ and $|\\psi_B\\rangle$, which can differ at most by a global phase factor.",
-        "intuitive_summary": "Imagine two sealed, identical music boxes. If, for every possible 'song' (physical measurement) you could ask them to play, they produce the exact same set of notes with the same loudness (probabilities), you can conclude their internal mechanisms (the quantum states) are functionally identical. You cannot tell them apart by listening.",
+        "conceptual_definition": "Given a global pure state $|\\Psi\rangle_{AB} \\in \\mathcal{H}_A \\otimes \\mathcal{H}_B$, the Schmidt decomposition guarantees $|\\Psi\rangle_{AB} = \\sum_k \\sqrt{\\lambda_k} |u_k\rangle_A |v_k\rangle_B$. The reduced density matrices $\\hat{\rho}_A = \text{Tr}_B(|\\Psi\rangle_{AB}\\langle\\Psi|)$ and $\\hat{\rho}_B = \text{Tr}_A(|\\Psi\rangle_{AB}\\langle\\Psi|)$ share the exact same non-zero eigenvalue spectrum $\\{\\lambda_k\\}$, which directly implies equality of their von Neumann entanglement entropies $S_A = S(\\hat{\rho}_A) = S(\\hat{\rho}_B) = S_B$.",
+        "intuitive_summary": "In an isolated pure quantum universe partitioned into two subsystems, all ignorance or entropy observed within one subsystem arises solely from quantum entanglement with the other, making their perceived entropies strictly identical.",
         "subcomponents": [
+            "stretching-test-eef175e2",
             "density-operator-for-pure-quantum-states-bf33ce87",
-            "pure-vs-mixed-dc123f1d",
-            "expectation-value-for-pure-quantum-state-1df40405",
-            "pure-state-spectral-origin-component-e3e056a7"
+            "von-neumann-entropy-pure-state-5481090c",
+            "spooky-link-8e882f6d"
         ],
-        "description": "This principle asserts that two quantum systems, A and B, are in physically indistinguishable pure states if and only if the spectra of all their corresponding observables are identical.",
-        "derivation_type": "DEFINITION"
+        "description": "For any composite quantum system in a pure bipartite state $|\\Psi\rangle_{AB}$, the von Neumann entropy of subsystem $A$ equals that of subsystem $B$ ($S_A = S_B$), reflecting the symmetric distribution of Schmidt coefficients across the partition.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "equality-of-entanglement-entropies-e9a8e725"
     },
     "cp-violation-e4cf623d": {
         "title": "Low-Temperature Electroweak Sphaleron Transition Rate",

@@ -292,44 +292,39 @@
         "title": "Generalized Frictional Force from Rayleigh Dissipation Function",
         "equation": "Q_i^{friction} = -\\frac{\\partial \\mathcal{R}}{\\partial \\dot{q}_i}",
         "semantic_variables": {
-            "Q_i^{friction}": {
-                "name": "Generalized Frictional Force",
+            "Q_i^{\\text{friction}}": {
+                "name": "generalized frictional force",
                 "type": "variable",
-                "unit": "Newtons (or generalized force units, e.g., N·m)",
-                "description": "The i-th component of the non-conservative generalized force due to dissipation (e.g., friction, viscosity)."
+                "unit": "J / [q_i] (e.g., N or N m)",
+                "description": "Component of the generalized dissipative friction force associated with coordinate $q_i$"
             },
             "\\mathcal{R}": {
-                "name": "Rayleigh Dissipation Function",
+                "name": "Rayleigh dissipation function",
                 "type": "variable",
-                "unit": "Watts (J/s)",
-                "description": "A scalar function of generalized velocities representing half the rate of energy dissipation from the system."
+                "unit": "W",
+                "description": "Scalar quadratic potential function representing half the rate of mechanical energy dissipation"
             },
             "\\dot{q}_i": {
-                "name": "Generalized Velocity",
+                "name": "generalized velocity",
                 "type": "variable",
-                "unit": "m/s, rad/s, etc.",
-                "description": "The time derivative of the i-th generalized coordinate, representing the velocity component in that degree of freedom."
-            },
-            "\\frac{\\partial}{\\partial \\dot{q}_i}": {
-                "name": "Partial Derivative Operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The partial derivative with respect to the i-th generalized velocity."
+                "unit": "[q_i]/s (e.g., m/s or rad/s)",
+                "description": "Time derivative of the $i$-th generalized coordinate $q_i$"
             }
         },
-        "interpretation": "The equation $Q_i^{friction} = - \\frac{ \\partial \\mathcal{R}}{ \\partial \\dot{q}_i}$ provides a fundamental link between the generalized forces of dissipation and a scalar potential. Here, $Q_i^{friction}$ is the $i$-th component of the generalized force associated with non-conservative dissipative processes. Unlike conservative forces that can be derived from a scalar potential energy, these dissipative forces depend on velocities. Rayleigh's dissipation function, $\\mathcal{R}$, is a scalar function typically dependent on the generalized velocities $\\dot{q}_i$. It represents half the rate at which energy is dissipated from the system (e.g., converted to heat due to friction). The partial derivative $\\frac{\\partial \\mathcal{R}}{\\partial \\dot{q}_i}$ quantifies how the system's energy dissipation rate changes as the $i$-th generalized velocity $\\dot{q}_i$ varies. The negative sign is crucial: it ensures that the generalized frictional force $Q_i^{friction}$ always opposes the direction of the generalized velocity $\\dot{q}_i$, consistent with the nature of dissipative forces that remove energy from the system. For instance, if $\\mathcal{R}$ is a positive definite quadratic form of velocities (e.g., $\\mathcal{R} = \\frac{1}{2} c_i \\dot{q}_i^2$), then $\\frac{\\partial \\mathcal{R}}{\\partial \\dot{q}_i} = c_i \\dot{q}_i$, making $Q_i^{friction} = -c_i \\dot{q}_i$, which is a linear damping force proportional and opposite to velocity.",
-        "symmetry_origin": "This formulation phenomenologically introduces irreversibility into the system, explicitly breaking the time-reversal symmetry ($t \\rightarrow -t$) that is characteristic of conservative Lagrangian systems. The force depends on velocity $\\dot{q}_i$, which is odd under time reversal, ensuring the dissipative work done is always negative.",
-        "limits_and_boundary": "In the limit of zero velocity, $\\dot{q}_i \\rightarrow 0$, the dissipation function $\\mathcal{R}$ for most physical systems approaches zero, and consequently the frictional force $Q_i^{friction} \\rightarrow 0$. This equation is a classical, non-relativistic formulation and does not account for quantum effects ($\\hbar \\rightarrow 0$) or relativistic speeds ($v \\rightarrow c$). Its form is valid for a wide range of dissipative phenomena, from linear (viscous) damping to more complex non-linear cases, depending on the chosen form of $\\mathcal{R}$.",
+        "interpretation": "The quantity $Q_i^{\\text{friction}}$ represents the $i$-th component of the generalized non-conservative frictional force acting along the generalized coordinate $q_i$. The scalar function $\\mathcal{R}$ denotes Rayleigh's dissipation function, which for linear viscous damping is a positive-definite quadratic form in generalized velocities $\\dot{q}_i$, satisfying $2\\mathcal{R} = \\frac{\\mathrm{d}E_{\\text{diss}}}{\\mathrm{d}t}$. The partial derivative $\\frac{\\partial \\mathcal{R}}{\\partial \\dot{q}_i}$ generates a force linearly proportional to velocity, while the preceding negative sign enforces energy dissipation by ensuring that $Q_i^{\\text{friction}} \\dot{q}_i \\le 0$, which opposes motion.",
+        "symmetry_origin": "Time-translation symmetry is explicitly broken in systems with $\\mathcal{R} > 0$, leading to non-conservation of mechanical energy $\\frac{\\mathrm{d}E}{\\mathrm{d}t} = -2\\mathcal{R} < 0$ in accordance with the second law of thermodynamics.",
+        "limits_and_boundary": "In the limit of vanishing generalized velocities $\\dot{q}_i \\to 0$ or zero viscosity coefficients $c_{ij} \\to 0$, the dissipation function approaches zero $\\mathcal{R} \\to 0$, causing $Q_i^{\\text{friction}} \\to 0$ and restoring standard conservative Euler-Lagrange dynamics.",
         "status": "platinum",
-        "conceptual_definition": "In Lagrangian mechanics, for systems with velocity-dependent dissipative forces, the generalized frictional force $Q_i^{friction}$ corresponding to the generalized coordinate $q_i$ is defined as the negative partial derivative of the Rayleigh dissipation function $\\mathcal{R}$ with respect to the corresponding generalized velocity $\\dot{q}_i$. The function $\\mathcal{R}$ is a scalar potential for dissipative forces, representing half the rate of energy dissipation in the system.",
-        "intuitive_summary": "Imagine a 'dissipation landscape' in the space of all possible velocities. The Rayleigh function $\\mathcal{R}$ defines the height of this landscape. The force of friction $Q_i^{friction}$ always pushes the system 'downhill' on this landscape, directly opposing the current velocity and thus removing energy from the system's organized motion.",
+        "conceptual_definition": "In analytical mechanics, when a dynamical system experiences linearly velocity-dependent viscous damping, the non-conservative generalized forces $Q_i^{\\text{friction}}$ can be compactly derived from a scalar potential function $\\mathcal{R}(\\dot{q})$, known as the Rayleigh dissipation function, via the relation $Q_i^{\\text{friction}} = -\\frac{\\partial \\mathcal{R}}{\\partial \\dot{q}_i}$.",
+        "intuitive_summary": "Just as conservative forces emerge from the spatial gradient of potential energy, linear viscous drag forces emerge from the velocity gradient of half the total energy dissipation rate.",
         "subcomponents": [
-            "lagranges-equation-with-rayleigh-dissipation-7f22c197",
-            "the-equation-of-motion-a0d000cd",
-            "definition-of-canonical-momentum"
+            "rayleigh-dissipation-function-component-b3912122",
+            "partial-derivative-of-rayleigh-dissipation-function-75adaa07",
+            "generalized-dissipative-force-term-808cfe38"
         ],
-        "description": "This equation defines the generalized non-conservative force of friction as the negative gradient of the Rayleigh dissipation function with respect to the generalized velocities.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the generalized dissipative force in Lagrangian mechanics as the negative gradient of the Rayleigh dissipation function with respect to generalized velocity.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "lagranges-equation-with-rayleigh-dissipation-7f22c197"
     },
     "certainty-constraint-38214c5c": {
         "title": "Wave Function Normalization Condition",

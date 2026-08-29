@@ -715,55 +715,44 @@
         "equation": "H_{ex} = -J \\sum \\mathbf{S}_i \\cdot \\mathbf{S}_j",
         "semantic_variables": {
             "H_{ex}": {
-                "name": "Exchange Hamiltonian Operator",
+                "name": "Exchange Hamiltonian",
                 "type": "operator",
                 "unit": "J",
-                "description": "The operator representing the total energy contribution from exchange interactions in a system."
+                "description": "Quantum Hamiltonian operator representing the total exchange interaction energy of the spin lattice"
             },
             "J": {
-                "name": "Exchange Integral",
-                "type": "variable",
+                "name": "Exchange coupling constant",
+                "type": "constant",
                 "unit": "J",
-                "description": "A coupling constant determining the strength and nature of the exchange interaction. Positive J favors ferromagnetism, negative J favors antiferromagnetism."
-            },
-            "\\sum": {
-                "name": "Summation Operator",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "Sum over all interacting pairs of spins, often restricted to nearest neighbors."
+                "description": "Energy scale of the exchange interaction between overlapping electronic orbitals"
             },
             "\\mathbf{S}_i": {
-                "name": "Spin Operator at site i",
+                "name": "Spin operator at site i",
                 "type": "operator",
-                "unit": "dimensionless (in units of ħ)",
-                "description": "The quantum mechanical spin angular momentum vector operator for a particle at lattice site i."
+                "unit": "dimensionless",
+                "description": "Vector quantum spin angular momentum operator acting on the Hilbert space at lattice site i"
             },
             "\\mathbf{S}_j": {
-                "name": "Spin Operator at site j",
+                "name": "Spin operator at site j",
                 "type": "operator",
-                "unit": "dimensionless (in units of ħ)",
-                "description": "The quantum mechanical spin angular momentum vector operator for a particle at lattice site j."
-            },
-            "\\cdot": {
-                "name": "Dot Product",
-                "type": "operator",
-                "unit": "N/A",
-                "description": "The scalar product between the two spin vectors, which determines the angle-dependent part of the interaction energy."
+                "unit": "dimensionless",
+                "description": "Vector quantum spin angular momentum operator acting on the Hilbert space at lattice site j"
             }
         },
-        "interpretation": "The Hamiltonian for the exchange interaction is given by $H_{ex} = -J \\sum \\mathbf{S}_i \\cdot \\mathbf{S}_j$. Here, $H_{ex}$ is the exchange Hamiltonian operator, whose eigenvalues represent the possible energy contributions from this interaction. The parameter $J$ is the exchange integral, which encapsulates the effects of orbital overlap and Coulomb repulsion; its unit is energy. If $J > 0$, the energy is minimized when spins are parallel ($\\mathbf{S}_i \\cdot \\mathbf{S}_j > 0$), favoring ferromagnetism. If $J < 0$, the energy is minimized when spins are anti-parallel ($\\mathbf{S}_i \\cdot \\mathbf{S}_j < 0$), favoring antiferromagnetism. The summation $\\sum$ is taken over pairs of interacting sites, often restricted to nearest neighbors $\\langle i,j \\rangle$. $\\mathbf{S}_i$ and $\\mathbf{S}_j$ are the vector spin operators for electrons at lattice sites $i$ and $j$, respectively. This effective spin-dependent potential energy arises from the constraint that the total electronic wavefunction must be antisymmetric under particle exchange (Pauli principle).",
-        "symmetry_origin": "This Hamiltonian originates from the fermionic antisymmetry requirement (Pauli exclusion principle) for the many-electron wavefunction, combined with the electrostatic Coulomb interaction. The model itself possesses a global SU(2) spin-rotational symmetry: the energy is invariant if all spins $\\mathbf{S}_i$ are rotated by the same amount, provided there are no external magnetic fields or anisotropic terms.",
-        "limits_and_boundary": "In the limit where the exchange coupling $J \\to 0$, the spins become uncoupled, and the system behaves as a paramagnet. In the classical limit where $\\hbar \\to 0$, the spin operators $\\mathbf{S}_i$ can be treated as classical vectors, leading to the classical Heisenberg model. As temperature approaches absolute zero ($T \\to 0$), the system settles into its lowest energy state (ground state), which is a fully ordered ferromagnetic state for $J>0$ or an ordered antiferromagnetic state (e.g., a Néel state) for $J<0$ on a suitable lattice.",
+        "interpretation": "In the Hamiltonian $H_{ex} = -J \\sum \\mathbf{S}_i \\cdot \\mathbf{S}_j$, the operator $H_{ex}$ is the total exchange interaction energy. The parameter $J$ is the exchange coupling constant (with units of Joules); positive $J > 0$ energetically favors parallel spin alignment (ferromagnetism), whereas negative $J < 0$ favors antiparallel alignment (antiferromagnetism). The summation extends over pairs of localized lattice sites (typically nearest neighbors). The operators $\\mathbf{S}_i$ and $\\mathbf{S}_j$ represent the quantum vector spin angular momentum operators at lattice sites $i$ and $j$, whose inner product measures relative spin orientation.",
+        "symmetry_origin": "Global $SU(2)$ spin rotational symmetry (in the isotropic limit) leading to total spin angular momentum conservation, alongside spatial lattice point-group and translational symmetries.",
+        "limits_and_boundary": "In the classical limit ($S \\to \\infty$ with $\\hbar \\to 0$), the quantum spin operators $\\mathbf{S}_i$ commute and reduce to classical unit vectors on a sphere. At temperatures $T \\gg |J|/k_B$, thermal fluctuations destroy long-range magnetic order, yielding paramagnetic behavior governed by the Curie-Weiss law.",
         "status": "platinum",
-        "conceptual_definition": "The Heisenberg model Hamiltonian, $H_{ex}$, quantifies the energy of a system of interacting quantum spins on a lattice. The total energy is expressed as a sum over pairs of spins, where the energy of each pair is proportional to the dot product of their spin operators, $\\mathbf{S}_i \\cdot \\mathbf{S}_j$. The constant of proportionality, $J$, is the exchange integral, which determines the strength and sign of the interaction.",
-        "intuitive_summary": "Imagine neighboring electrons as tiny, quantum bar magnets. The exchange interaction is not a classical magnetic force, but a purely quantum mechanical effect stemming from electron indistinguishability. It creates a powerful effective coupling that forces adjacent spins to prefer either parallel alignment (ferromagnetism, like in iron) or anti-parallel alignment (antiferromagnetism), depending on the material's properties.",
+        "conceptual_definition": "The Heisenberg exchange Hamiltonian models the magnetic interaction between localized quantum mechanical spins on a lattice. Although it is formulated as an effective scalar product of vector spin operators $\\mathbf{S}_i \\cdot \\mathbf{S}_j$, the physical origin of the exchange coupling $J$ is electrostatic Coulomb repulsion subject to the antisymmetry requirement of the fermionic many-body wavefunction under spatial and spin coordinate permutation.",
+        "intuitive_summary": "Quantum mechanics dictates that when electron wavefunctions overlap, their spatial distribution depends on their relative spin alignment due to Pauli exclusion. This translates the large Coulomb energy difference between symmetric and antisymmetric orbital states into an effective spin-spin coupling.",
         "subcomponents": [
-            "differential-work-and-potential-energy-change-5d05c37e",
-            "energy-sum-6d00f06d",
-            "magnetic-dipole-potential-energy-8df65147"
+            "heisenberg-exchange-hamiltonian-54392c5a",
+            "the-heisenberg-hamiltonian-4422c4c4",
+            "magnetic-exchange-energy-component-1642e5f5"
         ],
-        "description": "A fundamental model Hamiltonian in quantum magnetism that describes the effective spin-dependent interaction energy between localized electrons, arising from the Pauli exclusion principle and Coulomb repulsion.",
-        "derivation_type": "DEFINITION"
+        "description": "A fundamental quantum spin Hamiltonian describing effective exchange interactions between localized spins, resulting from electrostatic Coulomb repulsion combined with the Pauli exclusion principle.",
+        "derivation_type": "SPECIAL_CASE",
+        "parent_formula_id": "heisenberg-spin-hamiltonian-ident-c1b0522f"
     },
     "technical-relation-45df4bdb": {
         "title": "Uniqueness Theorem for Poisson's Equation",
@@ -1658,58 +1647,57 @@
     "jarlskog-invariant-cp-violation-ident-2f2f2397": {
         "title": "Jarlskog Invariant for CP Violation",
         "equation": "J = \\operatorname{Im}(V_{ud} V_{cs} V_{us}^* V_{cd}^*)",
-        "interpretation": "The formula $J = \\operatorname{Im}(V_{ud} V_{cs} V_{us}^* V_{cd}^*)$ defines the Jarlskog invariant, $J$, as the imaginary part of a specific product of four CKM matrix elements. Each element $V_{ij}$ represents the coupling strength between an up-type quark $i \\in \\{u, c, t\\}$ and a down-type quark $j \\in \\{d, s, b\\}$. The asterisk ($*$) denotes complex conjugation. The product forms a 'unitarity quadrilateral' from the CKM matrix unitarity condition $V V^\\dagger = I$. The area of any such quadrilateral is equal to $J/2$. All nine possible quadrilaterals yield the same value for $J$. A non-zero value for $J$ is a necessary and sufficient condition for CP violation in the Standard Model quark sector, as it signifies that the CKM matrix cannot be made purely real through any rephasing of the quark fields. The experimentally measured value is $J \\approx 3 \\times 10^{-5}$.",
-        "symmetry_origin": "The invariant quantifies the violation of Charge-Parity (CP) symmetry. This violation originates from a single, irreducible complex phase in the Yukawa coupling sector of the Standard Model Lagrangian, which manifests in the $3 \\times 3$ CKM matrix. The structure of the invariant is a consequence of the unitarity of the CKM matrix for three or more generations of quarks.",
-        "limits_and_boundary": "For CP to be conserved, $J$ must be zero. This occurs if: (1) there are fewer than three generations of quarks, as the CKM matrix can be made real; (2) the complex phase $\\delta_{13}$ in the standard CKM parameterization is zero; or (3) any two quarks of the same charge are degenerate in mass, which would make some mixing angles zero or ill-defined. The small experimental value of $J \\approx 3 \\times 10^{-5}$ indicates that CP violation is a perturbative, but fundamental, effect in the weak interactions of quarks.",
+        "interpretation": "In the relation $J = \\operatorname{Im}(V_{ud} V_{cs} V_{us}^* V_{cd}^*)$, $J$ is the dimensionless Jarlskog invariant. The quantities $V_{ud}$, $V_{cs}$, $V_{us}$, and $V_{cd}$ are elements of the $3 \\times 3$ unitary CKM matrix $V$, where the indices represent weak charged-current transitions between up-type quarks ($u, c, t$) and down-type quarks ($d, s, b$). The asterisk ($*$) denotes complex conjugation, and $\\operatorname{Im}(\\cdot)$ extracts the imaginary part. In the standard Chau-Keung parameterization, $J = c_{12} c_{23} c_{13}^2 s_{12} s_{23} s_{13} \\sin\\delta_{13}$, where $s_{ij} = \\sin\\theta_{ij}$, $c_{ij} = \\cos\\theta_{ij}$, and $\\delta_{13}$ is the irreducible Dirac $CP$-violating phase. Experimentally, $J \\approx 3.0 \\times 10^{-5}$.",
+        "symmetry_origin": "Rooted in the gauge structure $SU(2)_L \\times U(1)_Y$ of electroweak theory and global quark field rephasing invariance $[U(1)]^6 / U(1)_B$. $CP$ violation manifests as an explicitly non-removable complex phase in the Yukawa coupling sector after spontaneous electroweak symmetry breaking.",
+        "limits_and_boundary": "In the limit where any mixing angle vanishes ($\\theta_{12} \\to 0$, $\\theta_{23} \\to 0$, or $\\theta_{13} \\to 0$), $J \\to 0$. In the limit where the Dirac phase vanishes or equals $\\pi$ ($\\delta_{13} \\to 0, \\pi$), $J \\to 0$, restoring exact $CP$ symmetry in the quark sector. In the limit of degenerate quark masses within either the up or down sector (e.g., $m_u \\to m_c$), $J$ ceases to produce physical $CP$ asymmetries.",
         "semantic_variables": {
             "J": {
-                "name": "Jarlskog Invariant",
+                "name": "Jarlskog invariant",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "A rephasing-invariant measure of CP violation in the quark sector."
-            },
-            "\\operatorname{Im}": {
-                "name": "Imaginary Part Operator",
-                "type": "operator",
-                "unit": "n/a",
-                "description": "An operator that returns the imaginary component of a complex number."
+                "description": "Phase-independent measure of CP violation in the quark sector"
             },
             "V_{ud}": {
-                "name": "CKM Matrix Element (up-down)",
+                "name": "Up-down CKM matrix element",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The mixing element connecting the up quark and the down quark."
+                "description": "Transition amplitude element between up and down quarks"
             },
             "V_{cs}": {
-                "name": "CKM Matrix Element (charm-strange)",
+                "name": "Charm-strange CKM matrix element",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The mixing element connecting the charm quark and the strange quark."
+                "description": "Transition amplitude element between charm and strange quarks"
             },
             "V_{us}": {
-                "name": "CKM Matrix Element (up-strange)",
+                "name": "Up-strange CKM matrix element",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The mixing element connecting the up quark and the strange quark."
+                "description": "Transition amplitude element between up and strange quarks"
             },
             "V_{cd}": {
-                "name": "CKM Matrix Element (charm-down)",
+                "name": "Charm-down CKM matrix element",
                 "type": "variable",
                 "unit": "dimensionless",
-                "description": "The mixing element connecting the charm quark and the down quark."
+                "description": "Transition amplitude element between charm and down quarks"
+            },
+            "\\operatorname{Im}": {
+                "name": "Imaginary part operator",
+                "type": "operator",
+                "unit": "dimensionless",
+                "description": "Extracts the imaginary component of a complex-valued argument"
             }
         },
         "status": "platinum",
-        "conceptual_definition": "In the Standard Model with three generations of quarks, the Cabibbo-Kobayashi-Maskawa (CKM) matrix, $V_{CKM}$, is a $3 \\times 3$ unitary matrix that relates the quark mass eigenstates to their weak interaction eigenstates. Unitarity implies that $V_{CKM}$ can be parameterized by three mixing angles and one irreducible complex phase, $\\delta_{13}$. This phase is the sole source of Charge-Parity (CP) violation in the quark sector. The Jarlskog invariant, $J$, is a quantity constructed from CKM elements, $J = \\operatorname{Im}(V_{ud} V_{cs} V_{us}^* V_{cd}^*)$, that is independent of the phase conventions of the quark fields. Its non-zero value provides a fundamental and unambiguous measure of CP violation.",
-        "intuitive_summary": "Imagine the six types of quarks can transform into one another via the weak force, with the CKM matrix governing the probabilities. If the universe were perfectly symmetric, running a movie of these transformations backward would look identical to a valid physical process. The Jarlskog invariant, $J$, measures a tiny, inherent imbalance in these transformations. Its non-zero value is the 'smoking gun' proof that the laws of physics are not perfectly time-reversal symmetric for quarks, a phenomenon known as CP violation.",
+        "conceptual_definition": "The Jarlskog invariant $J$ quantifies the strength of $CP$ violation arising from the Cabibbo-Kobayashi-Maskawa (CKM) quark-mixing matrix $V$. It is defined algebraically as $J = \\operatorname{Im}(V_{ud} V_{cs} V_{us}^* V_{cd}^*)$ and is invariant under arbitrary quark field rephasings $q_i \\to e^{i \\theta_i} q_i$. Geometrically, $|J|$ equals twice the area of any of the six unitarity triangles formed in the complex plane by CKM orthogonality relations. A non-zero value of $J$ is a necessary and sufficient condition for $CP$ violation within the Standard Model three-generation quark sector.",
+        "intuitive_summary": "The Jarlskog invariant measures the intrinsic, unavoidable complex phase in the quark mixing matrix, representing the area of the CKM unitarity triangles; if $J = 0$, all $CP$-violating phenomena in quark weak interactions vanish.",
         "subcomponents": [
-            "jarlskog-invariant-cp-phase-be333aaf",
-            "jarlskog-invariant-magnitude-c17af29b",
-            "t-violation-asymmetry-parameter-ident-9c1fcf18",
-            "ckm-matrix-element-product-for-cp-violation-09f8190f"
+            "ckm-matrix-element-product-for-cp-violation-09f8190f",
+            "jarlskog-cp-invariant-model-9d3e88bb"
         ],
-        "description": "A phase-convention-independent measure of the magnitude of CP violation in the quark sector of the Standard Model, constructed from a specific product of Cabibbo-Kobayashi-Maskawa (CKM) matrix elements.",
-        "derivation_type": "DEFINITION"
+        "description": "A phase-convention-independent measure of the magnitude of CP violation in the quark sector of the Standard Model, defined as the imaginary part of a quartet product of Cabibbo-Kobayashi-Maskawa (CKM) matrix elements.",
+        "derivation_type": "DEFINITION",
+        "parent_formula_id": "jarlskog-invariant-cp-phase-be333aaf"
     },
     "modal-robustness-counterfactual-ident-739a55d9": {
         "title": "Nomological Necessity and Counterfactual Robustness of Physical Laws",
@@ -2268,27 +2256,32 @@
     "atomic-number-29": {
         "title": "Atomic Number of Copper",
         "equation": "Z = 29",
-        "conceptual_definition": "The atomic number, denoted by the symbol $Z$, is a fundamental property of a chemical element that represents the number of protons found within the atomic nucleus. The equation $Z = 29$ is a definitional statement identifying the element as Copper (Cu), as the proton count uniquely determines an element's identity and its position on the periodic table.",
-        "intuitive_summary": "Think of the atomic number as an element's unique ID card. The number 29 is the specific ID for Copper, telling us every Copper atom has 29 protons. This number is what makes Copper 'Copper' and not some other element like Gold or Iron.",
-        "interpretation": "The equation $Z = 29$ is a specific instance of the definition of the atomic number, $Z$. Here, $Z$ represents the atomic number, which is the count of protons in an atom's nucleus. The value $29$ is a dimensionless integer constant that uniquely identifies the element as Copper (Cu). This number is the fundamental identifier for an element in the periodic table. While not explicitly part of this equation, in a charge-neutral atom, the number of electrons orbiting the nucleus is also equal to $Z$. The value of $Z$ governs the electronic structure and, consequently, the chemical properties and bonding behavior of the element.",
-        "symmetry_origin": "The atomic number $Z$ represents a quantized integer charge corresponding to the number of protons. Its conservation in nuclear reactions is a consequence of the conservation of baryon number and electric charge, which are fundamental principles tied to underlying $U(1)$ gauge symmetries in the Standard Model.",
-        "limits_and_boundary": "The equation $Z=29$ is a definitional constant for the element Copper. It does not have dynamic variables and therefore no asymptotic limits in the traditional sense. The stability of a nucleus with $Z=29$ depends on its neutron number $N$, as described by the nuclear shell model and the valley of beta stability. For extremely high energies where nuclei are disintegrated into a quark-gluon plasma, the concept of a localized atomic number $Z$ for a specific nucleus ceases to be meaningful.",
+        "conceptual_definition": "The atomic number $Z$ is a fundamental nuclear quantum invariant representing the integer number of positive elementary charges (protons) inside the atomic nucleus: $Z = 29$ uniquely identifies the chemical element copper ($\\mathrm{Cu}$). In a neutral atom, it dictates the exact number of bound electrons and the structure of electronic orbitals.",
+        "intuitive_summary": "Every chemical element is defined by its proton count; having exactly 29 protons in its nucleus is the unique signature that makes an atom copper.",
+        "interpretation": "In the identity $Z = 29$, $Z$ denotes the atomic number (or proton number), an exact integer representing the nuclear charge in units of the elementary charge $e$. The constant $29$ places copper in Group 11, Period 4 of the periodic table, establishing its anomalous ground-state electron configuration $[\\mathrm{Ar}]\\,3d^{10}4s^1$ and dictating its metallic, electrical, and chemical properties.",
+        "symmetry_origin": "Conservation of electric charge arising from the global $U(1)$ gauge invariance of quantum electrodynamics, ensuring that the total nuclear charge $Q = +Ze$ remains conserved under electromagnetic interactions.",
+        "limits_and_boundary": "Strictly invariant under non-nuclear, chemical, and thermodynamic processes. Under nuclear reactions (e.g., $\\beta^+$ decay or electron capture), $Z \\to Z - 1 = 28$ (Nickel), and under $\\beta^-$ decay, $Z \\to Z + 1 = 30$ (Zinc).",
         "status": "platinum",
         "semantic_variables": {
             "Z": {
-                "name": "Atomic Number",
-                "type": "variable",
+                "name": "Atomic number",
+                "type": "constant",
                 "unit": "dimensionless",
-                "description": "The number of protons in an atomic nucleus, which uniquely defines a chemical element."
+                "description": "Integer number of protons within the nucleus of an atom, identifying the element copper"
+            },
+            "29": {
+                "name": "Proton count value",
+                "type": "constant",
+                "unit": "dimensionless",
+                "description": "Exact integer count of protons characteristic of the copper nucleus"
             }
         },
         "subcomponents": [
-            "baryon-number",
-            "mass-number-equals-atomic-number-273cb421",
-            "topological-charge-winding-4787af2e"
+            "atomic-number-of-copper-a8cc89fd",
+            "number-of-neutrons-in-a-nucleus-0c43922c"
         ],
-        "description": "This equation defines the atomic number ($Z$) for the element Copper (Cu) as 29, signifying that every copper atom contains exactly 29 protons in its nucleus.",
-        "derivation_type": "DEFINITION"
+        "description": "Defines the atomic number $Z = 29$ for copper, specifying the nuclear charge and the number of protons contained within a copper nucleus.",
+        "derivation_type": "AXIOMATIC_FOUNDATION"
     },
     "astrometric-error-approaching-zero": {
         "title": "Astrometric error approaching zero",

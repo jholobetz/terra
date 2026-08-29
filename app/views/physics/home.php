@@ -11,17 +11,17 @@ $topicCubes = [
     'relativity' => [
         'badge' => 'RELATIVITY',
         'theme' => 'var(--accent-relativity)',
-        'equation' => 'R_{\\mu\\nu} - \\frac{1}{2}R g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}'
+        'equation' => 'G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}'
     ],
     'classical-mechanics' => [
         'badge' => 'CLASSICAL',
         'theme' => 'var(--accent-classical)',
-        'equation' => '\\frac{d}{dt}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = 0'
+        'equation' => '\\frac{d}{dt}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) = \\frac{\\partial L}{\\partial q_i}'
     ],
     'electromagnetism' => [
         'badge' => 'FIELDS',
         'theme' => 'var(--accent-electromagnetism)',
-        'equation' => '\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\varepsilon_0 \\frac{\\partial \\mathbf{E}}{\\partial t}'
+        'equation' => '\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\frac{1}{c^2} \\frac{\\partial \\mathbf{E}}{\\partial t}'
     ],
     'thermodynamics-statistical-mechanics' => [
         'badge' => 'THERMAL',
@@ -31,7 +31,7 @@ $topicCubes = [
     'fluids-nonlinear' => [
         'badge' => 'FLUIDS',
         'theme' => 'var(--accent-fluids)',
-        'equation' => '\\rho \\left(\\frac{\\partial \\mathbf{u}}{\\partial t} + \\mathbf{u} \\cdot \\nabla \\mathbf{u}\\right) = -\\nabla p + \\mu \\nabla^2 \\mathbf{u}'
+        'equation' => '\\rho \\frac{D\\mathbf{u}}{Dt} = -\\nabla p + \\mu \\nabla^2 \\mathbf{u}'
     ],
     'theoretical-physics' => [
         'badge' => 'THEORY',
@@ -56,7 +56,7 @@ $topicCubes = [
     'astrophysics' => [
         'badge' => 'COSMOS',
         'theme' => 'var(--accent-astrophysics)',
-        'equation' => '\\left(\\frac{\\dot{a}}{a}\\right)^2 = \\frac{8\\pi G}{3}\\rho - \\frac{k c^2}{a^2} + \\frac{\\Lambda c^2}{3}'
+        'equation' => 'H^2 = \\frac{8\\pi G}{3}\\rho - \\frac{k c^2}{a^2} + \\frac{\\Lambda c^2}{3}'
     ],
     'philosophy-of-physics' => [
         'badge' => 'MIND',
@@ -84,9 +84,9 @@ $topicCubes = [
 <section class="halo-orbit-section" style="margin-top: 20px; margin-bottom: 80px; text-align: center; position: relative;">
 
     <!-- 3D Halo Orbit Container with Expanded Room -->
-    <div id="halo-orbit-container" style="position: relative; width: 100%; height: 500px; margin: 0 auto; perspective: 1200px; cursor: grab; user-select: none; overflow: visible;">
+    <div id="halo-orbit-container" style="position: relative; width: 100%; height: 520px; margin: 0 auto; perspective: 1200px; cursor: grab; user-select: none; overflow: visible;">
         <!-- Glowing Tilted Wire Ring -->
-        <div id="halo-orbit-ring" style="position: absolute; top: 50%; left: 50%; width: 880px; height: 260px; margin-left: -440px; margin-top: -130px; border: 1.5px dashed rgba(100, 255, 218, 0.25); border-radius: 50%; transform: rotateX(72deg); pointer-events: none; box-shadow: 0 0 40px rgba(100, 255, 218, 0.12);"></div>
+        <div id="halo-orbit-ring" style="position: absolute; top: 50%; left: 50%; width: 960px; height: 280px; margin-left: -480px; margin-top: -140px; border: 1.5px dashed rgba(100, 255, 218, 0.25); border-radius: 50%; transform: rotateX(72deg); pointer-events: none; box-shadow: 0 0 40px rgba(100, 255, 218, 0.12);"></div>
 
         <!-- 3D Cubes Wrapper -->
         <div id="halo-cubes-wrapper" style="position: absolute; top: 50%; left: 50%; width: 0; height: 0; transform-style: preserve-3d;">
@@ -125,10 +125,10 @@ $topicCubes = [
 <style>
 .glass-cube {
     position: absolute;
-    width: 220px;
-    height: 200px;
-    margin-left: -110px;
-    margin-top: -100px;
+    width: 250px;
+    height: 210px;
+    margin-left: -125px;
+    margin-top: -105px;
     transform-style: preserve-3d;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
     text-decoration: none;
@@ -151,12 +151,13 @@ $topicCubes = [
 }
 
 .cube-face-front {
-    padding: 16px;
+    padding: 14px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     text-align: center;
+    box-sizing: border-box;
     transform: translateZ(20px);
 }
 
@@ -178,31 +179,56 @@ $topicCubes = [
 }
 
 .cube-icon-wrapper svg {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
 }
 
 .cube-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #ffffff;
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 .cube-equation-core {
     background: rgba(2, 6, 23, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    padding: 6px 10px;
+    padding: 6px 8px;
     width: 100%;
-    overflow-x: auto;
-    font-size: 0.85rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    font-size: 0.82rem;
     color: var(--cube-accent, var(--accent-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+}
+
+.cube-equation-core::-webkit-scrollbar {
+    display: none;
+}
+
+.cube-equation-core mjx-container {
+    margin: 0 !important;
+    max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.cube-equation-core mjx-container > svg {
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
 }
 
 .cube-link {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
     color: var(--cube-accent, var(--accent-color));
     text-decoration: none;

@@ -132,11 +132,13 @@ function sanitizeProseTeX(string $text): string {
         '\\text{\\}' => '$\\epsilon_0$',
     ]);
 
-    // Replace orphaned 'abla' or '\\n\\nabla' that resulted from corrupted '\nabla'
+    // Replace orphaned 'abla' or '\\n\\nabla' or newline+u that resulted from corrupted '\nabla', '\nu'
     $text = preg_replace('/(?<![a-zA-Z])abla\b/u', '\\nabla', $text);
     $text = preg_replace('/\\\\n\\\\nabla/u', '\\nabla', $text);
     $text = preg_replace('/\\\\n\s*\\\\nabla/u', '\\nabla', $text);
     $text = preg_replace('/\\$\\s*\\\\n\\s*\\$\\s*\\\\nabla/u', '$\\nabla', $text);
+    $text = preg_replace('/(?<=\$|\s|\b)\n\s*u(?=\s|\$|\b|[.,;])/u', '\\nu', $text);
+    $text = preg_replace('/\\\\n\s*u(?=\s|\$|\b|[.,;])/u', '\\nu', $text);
 
     // 2. Fix specific legacy corrupted TeX patterns
     $text = preg_replace('/[χ\chi]_[m]\s*=\s*-\s*\$\s*\\\\frac\{[^}]+\}\{[^}]+\}\s*\$\s*[⟨<]\s*r\^2\s*[⟩>]/u', '$\\chi_m = -\\frac{\\mu_0 N Z e^2}{6m_e} \\langle r^2 \\rangle$', $text);

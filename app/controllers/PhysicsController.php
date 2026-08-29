@@ -763,11 +763,13 @@ class PhysicsController
             return;
         }
 
-        $breadcrumbs = $this->service()->resolveBreadcrumbs(!empty($subtopic['parents']) ? (array)$subtopic['parents'] : []);
+        $parents = !empty($subtopic['parents']) ? (is_string($subtopic['parents']) ? (json_decode($subtopic['parents'], true) ?: []) : (array)$subtopic['parents']) : [];
+        $breadcrumbs = $this->service()->resolveBreadcrumbs($parents);
         $related = $this->service()->getRelatedTopics($slug);
         $subtopicVariables = \App\Logic\VariableAggregator::buildSubtopicVariables($subtopic);
 
         $this->renderWithLayout('physics/subtopic', array_merge($subtopic, [
+            'parents' => $parents,
             'breadcrumbs' => $breadcrumbs,
             'related_topics' => $related,
             'title' => $subtopic['title'],

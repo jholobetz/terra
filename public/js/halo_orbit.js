@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let startX = 0;
 
     // Orbit Radii (Ellipse)
-    const radiusX = 440; // Horizontal width
-    const radiusY = 130; // Vertical depth (tilted 3D perspective)
+    const radiusX = 480; // Horizontal width (matches 960px ring)
+    const radiusY = 140; // Vertical depth (tilted 3D perspective, matches 280px ring)
 
     // Pre-render MathJax equations once on load
     if (window.MathJax && window.MathJax.typesetPromise) {

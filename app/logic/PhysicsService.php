@@ -635,7 +635,20 @@ class PhysicsService
         if (!$row) return [];
 
         $data = is_object($row) && method_exists($row, 'getData') ? $row->getData() : (array) $row;
-        $f_ids = !empty($data['formula_data']) ? json_decode($data['formula_data'], true) : [];
+        $f_ids = !empty($data['formula_data']) ? (is_string($data['formula_data']) ? json_decode($data['formula_data'], true) : $data['formula_data']) : [];
+        $data['formula_ids'] = $f_ids;
+
+        if (isset($data['parents']) && is_string($data['parents'])) {
+            $data['parents'] = json_decode($data['parents'], true) ?: [];
+        }
+
+        if (isset($data['equations']) && is_string($data['equations'])) {
+            $data['equations'] = json_decode($data['equations'], true) ?: [];
+        }
+
+        if (isset($data['breakdowns']) && is_string($data['breakdowns'])) {
+            $data['breakdowns'] = json_decode($data['breakdowns'], true) ?: [];
+        }
         
         if (isset($data['verification']) && is_string($data['verification'])) {
             $data['verification'] = json_decode($data['verification'], true);

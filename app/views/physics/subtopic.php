@@ -21,7 +21,8 @@ if (!empty($breadcrumbs) && is_array($breadcrumbs)) {
 }
 
 if (empty($parentSlug) && !empty($parents)) {
-    foreach ((array)$parents as $p) {
+    $parentList = is_string($parents) ? (json_decode($parents, true) ?: [$parents]) : (array)$parents;
+    foreach ($parentList as $p) {
         if (is_string($p) && !empty($p)) {
             $parentSlug = $p;
             break;
@@ -32,22 +33,38 @@ if (empty($parentSlug) && !empty($parents)) {
 $meta = get_topic_icon_and_class($parentSlug ?? '');
 $theme = $meta['theme'] ?? 'default';
 
-$facultyTitles = [
-    'classical' => 'CLASSICAL MECHANICS',
-    'electromagnetism' => 'ELECTROMAGNETISM & OPTICS',
-    'relativity' => 'RELATIVITY & GRAVITATION',
-    'quantum' => 'QUANTUM MECHANICS',
-    'astrophysics' => 'ASTROPHYSICS & COSMOLOGY',
-    'thermodynamics' => 'THERMODYNAMICS & STATISTICAL PHYSICS',
-    'fluids' => 'FLUID DYNAMICS & NONLINEAR SYSTEMS',
-    'condensed' => 'CONDENSED MATTER PHYSICS',
-    'standard-model' => 'HIGH ENERGY & PARTICLE PHYSICS',
-    'theoretical' => 'THEORETICAL PHYSICS',
-    'math-methods' => 'MATHEMATICAL PHYSICS',
-    'philosophy' => 'PHILOSOPHY OF PHYSICS',
-    'default' => 'PHYSICAL SCIENCES'
-];
-$facultyLabel = $facultyTitles[$theme] ?? (strtoupper(str_replace('-', ' ', $theme)) ?: 'PHYSICAL SCIENCES');
+// Fallback theme resolution from alias/category mappings
+if ($theme === 'default' && !empty($parentSlug)) {
+    $aliasThemeMap = [
+        'quantum-mechanics' => 'quantum',
+        'quantum-physics' => 'quantum',
+        'special-relativity' => 'relativity',
+        'general-relativity' => 'relativity',
+        'relativity' => 'relativity',
+        'classical-mechanics' => 'classical',
+        'classical' => 'classical',
+        'electromagnetism' => 'electromagnetism',
+        'optics' => 'electromagnetism',
+        'thermodynamics-statistical-mechanics' => 'thermodynamics',
+        'thermodynamics' => 'thermodynamics',
+        'fluids-nonlinear' => 'fluids',
+        'fluids' => 'fluids',
+        'condensed-matter' => 'condensed',
+        'standard-model' => 'standard-model',
+        'particle-physics' => 'standard-model',
+        'theoretical-physics' => 'theoretical',
+        'theoretical' => 'theoretical',
+        'mathematical-methods' => 'math-methods',
+        'math-methods' => 'math-methods',
+        'astrophysics' => 'astrophysics',
+        'cosmology' => 'astrophysics',
+        'philosophy-of-physics' => 'philosophy',
+        'philosophy' => 'philosophy'
+    ];
+    if (isset($aliasThemeMap[$parentSlug])) {
+        $theme = $aliasThemeMap[$parentSlug];
+    }
+}
 ?>
 
 <article class="subtopic-content" style="--accent-color: var(--accent-<?= $theme ?>);">
@@ -75,7 +92,6 @@ $facultyLabel = $facultyTitles[$theme] ?? (strtoupper(str_replace('-', ' ', $the
             <span style="opacity: 1; color: var(--accent-color, #64ffda); font-weight: 500;"><?= htmlspecialchars($title) ?></span>
         </nav>
 
-        <div class="header-badge-tag">FACULTY OF <?= htmlspecialchars($facultyLabel) ?> // MANIFOLD SUBTOPIC</div>
         <h1 class="topic-title"><?= htmlspecialchars($title ?? 'Subtopic') ?></h1>
 
         <?php if (!empty($verification)): ?>
@@ -188,11 +204,25 @@ $facultyLabel = $facultyTitles[$theme] ?? (strtoupper(str_replace('-', ' ', $the
     <?php endif; ?>
 
     <footer class="subtopic-footer" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
-        <?php if (!empty($breadcrumbs)): 
+        <?php 
+        if (!empty($breadcrumbs)): 
             $lastCrumb = end($breadcrumbs);
+            $backUrl = null;
+            $backTitle = null;
+            if (!empty($lastCrumb['url'])) {
+                $backUrl = $lastCrumb['url'];
+                $backTitle = $lastCrumb['title'] ?? 'Parent Topic';
+            } elseif (!empty($lastCrumb['is_multi']) && !empty($lastCrumb['links'][0])) {
+                $backUrl = $lastCrumb['links'][0]['url'] ?? '/physics';
+                $backTitle = $lastCrumb['links'][0]['title'] ?? 'Parent Topic';
+            }
+            if ($backUrl):
         ?>
-            <a href="<?= htmlspecialchars($lastCrumb['url']) ?>" class="btn btn-secondary" style="font-family: 'Space Grotesk', sans-serif;">&larr; Back to <?= $lastCrumb['title'] ?></a>
-        <?php endif; ?>
+            <a href="<?= htmlspecialchars($backUrl) ?>" class="btn btn-secondary" style="font-family: 'Space Grotesk', sans-serif;">&larr; Back to <?= htmlspecialchars($backTitle) ?></a>
+        <?php 
+            endif;
+        endif; 
+        ?>
         <a href="/physics/random" class="btn btn-secondary" style="font-family: 'Space Grotesk', sans-serif; color: #64ffda; border-color: rgba(100, 255, 218, 0.3);">🎲 Discover Random Subtopic</a>
     </footer>
 </article>

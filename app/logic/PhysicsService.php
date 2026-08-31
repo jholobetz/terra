@@ -483,8 +483,23 @@ class PhysicsService
             $shardData = json_decode(file_get_contents($shardPath), true) ?: [];
         }
 
+        // Ensure semantic_variables is an object in JSON (never empty array [])
+        if (!isset($data['semantic_variables']) || !is_array($data['semantic_variables']) || empty($data['semantic_variables'])) {
+            $data['semantic_variables'] = (object)[];
+        }
+
         // Update shard array
         $shardData[$fId] = $data;
+
+        // Sanitize all entries in shard to guarantee no neighboring formula has [] for semantic_variables
+        foreach ($shardData as $key => &$entry) {
+            if (is_array($entry)) {
+                if (!isset($entry['semantic_variables']) || !is_array($entry['semantic_variables']) || empty($entry['semantic_variables'])) {
+                    $entry['semantic_variables'] = (object)[];
+                }
+            }
+        }
+        unset($entry);
 
         // Save JSON shard atomically with proper formatting
         $jsonEncoded = json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

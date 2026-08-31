@@ -231,6 +231,7 @@ def audit_semantic_prose(content_dir="app/config/content", ref_path="app/config/
     
     errors = []
     warnings = []
+    cached_shards = {}
     
     print("================================================================================")
     print("             🪐 PHYSICS LAB: SEMANTIC PROSE ALIGNMENT AUDITOR                   ")
@@ -250,14 +251,16 @@ def audit_semantic_prose(content_dir="app/config/content", ref_path="app/config/
             print(f"⚠️ Warning: Slug '{slug}' not found in active content shards.")
             continue
 
-        shard_path = os.path.join(content_dir, shard_file)
-        try:
-            with open(shard_path, "r") as f:
-                shard_data = json.load(f)
-            cms_node = shard_data.get(slug, {})
-        except Exception as e:
-            print(f"❌ Error reading shard {shard_file}: {e}")
-            continue
+        if shard_file not in cached_shards:
+            shard_path = os.path.join(content_dir, shard_file)
+            try:
+                with open(shard_path, "r") as f:
+                    cached_shards[shard_file] = json.load(f)
+            except Exception as e:
+                print(f"❌ Error reading shard {shard_file}: {e}")
+                continue
+
+        cms_node = cached_shards[shard_file].get(slug, {})
 
         cms_text = cms_node.get("content", "")
         if not cms_text:

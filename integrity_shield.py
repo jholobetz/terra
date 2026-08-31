@@ -409,6 +409,23 @@ class IntegrityShield:
             if re.search(r'<h[1-6][^>]*>', content, re.IGNORECASE):
                 self.errors.append(f"FORMATTING VIOLATION: [{slug}] contains forbidden HTML header tags (<h1-h6>). Only continuous <p> prose is allowed.")
 
+    def check_manifold_closure(self):
+        """Ensures 100% Manifold Equation Closure (zero unmapped physical equations in subtopic prose)."""
+        if not self.target_slug:
+            import subprocess
+            try:
+                cmd = ["php", "scripts/audit_prose_equations.php"]
+                result = subprocess.run(cmd, capture_output=True, text=True)
+                report_path = "scratch/unmapped_prose_equations.json"
+                if os.path.exists(report_path):
+                    with open(report_path, "r") as f:
+                        report = json.load(f)
+                    unmapped = report.get("unmapped_equations_count", 0)
+                    if unmapped > 0:
+                        self.errors.append(f"MANIFOLD CLOSURE VIOLATION: {unmapped} unmapped physical equations detected in subtopic prose. Run scripts/maintenance/ingest_unmapped_prose_equations.php to resolve.")
+            except Exception as e:
+                self.warnings.append(f"Could not run Manifold Closure audit: {str(e)}")
+
     def run(self):
         print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
         print(f"Directory: {self.content_dir}")
@@ -432,6 +449,7 @@ class IntegrityShield:
         self.check_constants()
         self.check_particles()
         self.check_semantic_prose()
+        self.check_manifold_closure()
         self.check_ambiguity()
 
         

@@ -111,6 +111,10 @@ const FormulaInspector = {
                 font-size: 1.4rem;
                 color: #ffd700;
                 overflow-x: auto;
+                max-width: 100%;
+                box-sizing: border-box;
+                scrollbar-width: thin;
+                scrollbar-color: rgba(100, 255, 218, 0.25) transparent;
             }
 
             .drawer-card {
@@ -184,6 +188,11 @@ const FormulaInspector = {
                     <p id="drawer-concept-text" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">Loading definition...</p>
                 </div>
 
+                <div id="drawer-variables-card" class="drawer-card" style="display: none;">
+                    <h4 class="drawer-card-title">🔬 Variables &amp; Physical Constants</h4>
+                    <div id="drawer-variables-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+
                 <div id="drawer-summary-card" class="drawer-card">
                     <h4 class="drawer-card-title">💡 Intuitive Summary</h4>
                     <p id="drawer-summary-text" style="margin: 0; font-size: 0.9rem; line-height: 1.5; color: #94a3b8; font-style: italic;">Loading summary...</p>
@@ -230,6 +239,8 @@ const FormulaInspector = {
         const targetEl = this.drawerEl.querySelector('#drawer-math-target');
         const conceptText = this.drawerEl.querySelector('#drawer-concept-text');
         const summaryText = this.drawerEl.querySelector('#drawer-summary-text');
+        const variablesCard = this.drawerEl.querySelector('#drawer-variables-card');
+        const variablesList = this.drawerEl.querySelector('#drawer-variables-list');
         const graphCard = this.drawerEl.querySelector('#drawer-graph-card');
         const graphContent = this.drawerEl.querySelector('#drawer-graph-content');
         const workbenchBtn = this.drawerEl.querySelector('#drawer-workbench-btn');
@@ -238,6 +249,8 @@ const FormulaInspector = {
         targetEl.innerHTML = `\\[ ${latex} \\]`;
         conceptText.textContent = 'Analyzing identity...';
         summaryText.textContent = 'Analyzing intuition...';
+        variablesCard.style.display = 'none';
+        variablesList.innerHTML = '';
         graphCard.style.display = 'none';
 
         workbenchBtn.href = `/physics/equation-explainer?latex=${encodeURIComponent(latex)}${formulaId ? '&id=' + formulaId : ''}`;
@@ -261,6 +274,23 @@ const FormulaInspector = {
                     titleEl.textContent = f.title || 'Physical Identity';
                     conceptText.innerHTML = f.conceptual_definition || 'Physical relationship between operators and fields.';
                     summaryText.innerHTML = f.intuitive_summary || 'Calculates the relative dynamics of the system.';
+
+                    // Populate Semantic Variables
+                    if (f.semantic_variables && typeof f.semantic_variables === 'object' && Object.keys(f.semantic_variables).length > 0) {
+                        variablesCard.style.display = 'block';
+                        let varsHtml = '';
+                        for (const [sym, vInfo] of Object.entries(f.semantic_variables)) {
+                            const name = (vInfo && vInfo.name) ? vInfo.name : sym;
+                            const unit = (vInfo && vInfo.unit && vInfo.unit !== 'dimensionless') ? ` [${vInfo.unit}]` : '';
+                            const desc = (vInfo && vInfo.description) ? ` — ${vInfo.description}` : '';
+                            varsHtml += `
+                                <div style="display: flex; align-items: baseline; gap: 8px; font-size: 0.86rem; color: #cbd5e1; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 6px; padding: 6px 10px;">
+                                    <span style="color: var(--accent-default, #64ffda); font-weight: 600; font-family: monospace;">\\(${sym}\\)</span>
+                                    <span><strong>${name}</strong><span style="color: #94a3b8; font-size: 0.8rem;">${unit}</span>${desc}</span>
+                                </div>`;
+                        }
+                        variablesList.innerHTML = varsHtml;
+                    }
 
                     if (f.parent_formula_id || f.derivation_type || f.constraints) {
                         graphCard.style.display = 'block';
@@ -294,7 +324,9 @@ const FormulaInspector = {
                 }
 
                 if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([conceptText, summaryText]).catch(err => console.warn(err));
+                    const elsToTypeset = [conceptText, summaryText];
+                    if (variablesList) elsToTypeset.push(variablesList);
+                    window.MathJax.typesetPromise(elsToTypeset).catch(err => console.warn(err));
                 }
             });
     },

@@ -181,6 +181,23 @@ class IntegrityShield:
                             f"which contains spritified math references ('math-path-'). Only fully-inlined SVGs are allowed."
                         )
 
+    def check_formula_control_chars(self):
+        """Ensures all formula shards are 100% free of unescaped TeX control character collisions."""
+        fields_to_check = ['conceptual_definition', 'intuitive_summary', 'interpretation', 'symmetry_origin', 'limits_and_boundary', 'description', 'equation']
+        for f_id, f_data in self.formula_registry.items():
+            if not isinstance(f_data, dict): continue
+            for field in fields_to_check:
+                val = f_data.get(field)
+                if isinstance(val, str):
+                    if '\x08' in val:
+                        self.errors.append(f"CONTROL CHAR VIOLATION: Formula '{f_id}' field '{field}' contains 0x08 backspace from unescaped \\beta.")
+                    if '\x0c' in val:
+                        self.errors.append(f"CONTROL CHAR VIOLATION: Formula '{f_id}' field '{field}' contains 0x0C formfeed from unescaped \\frac.")
+                    if any(ord(c) < 32 and c not in '\n\r\t' for c in val):
+                        self.errors.append(f"CONTROL CHAR VIOLATION: Formula '{f_id}' field '{field}' contains raw ASCII control character.")
+                    if re.search(r'(?:^|[ ($,\^_\-])ar\{[a-zA-Z]', val):
+                        self.errors.append(f"BROKEN PREFIX VIOLATION: Formula '{f_id}' field '{field}' contains broken 'ar{{' from stripped \\bar.")
+
     def check_formula_hierarchy(self):
         """Verifies referential integrity of parent_formula_id and subcomponents across all formulas."""
         for f_id, f_data in self.formula_registry.items():
@@ -402,6 +419,7 @@ class IntegrityShield:
         
         self.check_duplicates()
         self.check_formulas()
+        self.check_formula_control_chars()
         self.check_formula_hierarchy()
         self.check_registry()
         self.check_technical_density()

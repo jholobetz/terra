@@ -441,6 +441,158 @@ class PhysicsService
     }
 
     /**
+     * Atomically saves or updates a formula across:
+     *  1. The target JSON hash shard (app/config/content/formulas/[xx]/shard_[xx].json)
+     *  2. The MariaDB formulas table (with dynamic MathJax reset)
+     *  3. The formulas_latex_index.json lookup mapping
+     *
+     * @param string $fId Formula ID
+     * @param array $data Complete formula record data
+     * @return bool True on success, false on failure
+     */
+    public function saveFormula(string $fId, array $data): bool
+    {
+        if (empty($fId) || empty($data)) {
+            return false;
+        }
+
+        // 1. Sanitize all prose fields against control character collisions and broken prefixes
+        $proseFields = ['conceptual_definition', 'intuitive_summary', 'interpretation', 'symmetry_origin', 'limits_and_boundary', 'description'];
+        foreach ($proseFields as $field) {
+            if (!empty($data[$field]) && is_string($data[$field])) {
+                $val = $data[$field];
+                $val = str_replace(["\x08ar{", "\x08\\bar{", "ar{"], '\bar{', $val);
+                $val = str_replace(["\x08eta", "\x08"], ['\beta', ''], $val);
+                $val = str_replace(["\x0crac", "\x0c"], ['\frac', ''], $val);
+                $val = preg_replace('/[\x00-\x08\x0b\x0c\x0e-\x1f]/', '', $val);
+                $data[$field] = $val;
+            }
+        }
+
+        // 2. Determine target JSON shard path
+        $hex = substr(md5($fId), 0, 2);
+        $shardDir = PROJECT_ROOT . '/app/config/content/formulas/' . $hex;
+        $shardPath = $shardDir . '/shard_' . $hex . '.json';
+
+        if (!is_dir($shardDir)) {
+            mkdir($shardDir, 0755, true);
+        }
+
+        $shardData = [];
+        if (file_exists($shardPath)) {
+            $shardData = json_decode(file_get_contents($shardPath), true) ?: [];
+        }
+
+        // Update shard array
+        $shardData[$fId] = $data;
+
+        // Save JSON shard atomically with proper formatting
+        $jsonEncoded = json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        if (file_put_contents($shardPath, $jsonEncoded) === false) {
+            error_log("Failed to write formula to shard: {$shardPath}");
+            return false;
+        }
+
+        // 3. Update MariaDB record if database connection is available
+        try {
+            if ($this->app && \Flight::has('db')) {
+                $db = $this->app->db();
+                $existing = $db->fetchRow("SELECT id FROM formulas WHERE id = ?", [$fId]);
+
+                $semanticVars = !empty($data['semantic_variables']) ? (is_string($data['semantic_variables']) ? $data['semantic_variables'] : json_encode($data['semantic_variables'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                $constraints = !empty($data['constraints']) ? (is_string($data['constraints']) ? $data['constraints'] : json_encode($data['constraints'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                $subcomponents = !empty($data['subcomponents']) ? (is_string($data['subcomponents']) ? $data['subcomponents'] : json_encode($data['subcomponents'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                $relatedIds = !empty($data['related_formula_ids']) ? (is_string($data['related_formula_ids']) ? $data['related_formula_ids'] : json_encode($data['related_formula_ids'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+
+                if ($existing) {
+                    $db->runQuery(
+                        "UPDATE formulas SET 
+                            title = ?, 
+                            equation = ?, 
+                            conceptual_definition = ?, 
+                            intuitive_summary = ?, 
+                            interpretation = ?, 
+                            symmetry_origin = ?, 
+                            limits_and_boundary = ?, 
+                            semantic_variables = ?, 
+                            parent_formula_id = ?, 
+                            derivation_type = ?, 
+                            subcomponents = ?, 
+                            constraints = ?, 
+                            related_formula_ids = ?, 
+                            status = ?, 
+                            unit_system = ?, 
+                            equation_svg = NULL 
+                        WHERE id = ?",
+                        [
+                            $data['title'] ?? null,
+                            $data['equation'] ?? null,
+                            $data['conceptual_definition'] ?? null,
+                            $data['intuitive_summary'] ?? null,
+                            $data['interpretation'] ?? null,
+                            $data['symmetry_origin'] ?? null,
+                            $data['limits_and_boundary'] ?? null,
+                            $semanticVars,
+                            $data['parent_formula_id'] ?? null,
+                            $data['derivation_type'] ?? null,
+                            $subcomponents,
+                            $constraints,
+                            $relatedIds,
+                            $data['status'] ?? 'platinum',
+                            $data['unit_system'] ?? null,
+                            $fId
+                        ]
+                    );
+                } else {
+                    $db->runQuery(
+                        "INSERT INTO formulas (id, title, equation, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, parent_formula_id, derivation_type, subcomponents, constraints, related_formula_ids, status, unit_system, equation_svg) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
+                        [
+                            $fId,
+                            $data['title'] ?? null,
+                            $data['equation'] ?? null,
+                            $data['conceptual_definition'] ?? null,
+                            $data['intuitive_summary'] ?? null,
+                            $data['interpretation'] ?? null,
+                            $data['symmetry_origin'] ?? null,
+                            $data['limits_and_boundary'] ?? null,
+                            $semanticVars,
+                            $data['parent_formula_id'] ?? null,
+                            $data['derivation_type'] ?? null,
+                            $subcomponents,
+                            $constraints,
+                            $relatedIds,
+                            $data['status'] ?? 'platinum',
+                            $data['unit_system'] ?? null
+                        ]
+                    );
+                }
+            }
+        } catch (\Exception $e) {
+            error_log("Database saveFormula failed for {$fId}: " . $e->getMessage());
+        }
+
+        // 4. Update formulas_latex_index.json lookup mapping
+        if (!empty($data['equation'])) {
+            $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
+            $index = [];
+            if (file_exists($indexFile)) {
+                $index = json_decode(file_get_contents($indexFile), true) ?: [];
+            }
+            $normalizedKey = $this->normalizeLatex($data['equation']);
+            if (!empty($normalizedKey)) {
+                $index[$normalizedKey] = $fId;
+                file_put_contents($indexFile, json_encode($index, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+            }
+        }
+
+        // 5. Update runtime in-memory cache
+        $this->physicsContent['formula_registry'][$fId] = $data;
+
+        return true;
+    }
+
+    /**
      * Sanitizes malformed TeX escape sequences in formula prose fields.
      */
     private function sanitizeFormulaText(array $formula): array

@@ -139,6 +139,9 @@ function sanitizeProseTeX(string $text): string {
     $text = preg_replace('/\\$\\s*\\\\n\\s*\\$\\s*\\\\nabla/u', '$\\nabla', $text);
     $text = preg_replace('/(?<=\$|\s|\b)\n\s*u(?=\s|\$|\b|[.,;])/u', '\\nu', $text);
     $text = preg_replace('/\\\\n\s*u(?=\s|\$|\b|[.,;])/u', '\\nu', $text);
+    $text = preg_replace('/(?:\x08|\b|(?<=[ ($,\^_\-]))ar\{([a-zA-Z\\\\])/u', '\\bar{\\1', $text);
+    $text = str_replace(["\x08eta", "\x08"], ['\\beta', ''], $text);
+    $text = str_replace(["\x0crac", "\x0c"], ['\\frac', ''], $text);
 
     // 2. Fix specific legacy corrupted TeX patterns
     $text = preg_replace('/[χ\chi]_[m]\s*=\s*-\s*\$\s*\\\\frac\{[^}]+\}\{[^}]+\}\s*\$\s*[⟨<]\s*r\^2\s*[⟩>]/u', '$\\chi_m = -\\frac{\\mu_0 N Z e^2}{6m_e} \\langle r^2 \\rangle$', $text);
@@ -534,40 +537,17 @@ foreach ($targets as $input) {
 
     // 5. Write Back (unless Dry Run)
     if (!$isDryRun) {
-        file_put_contents($shardFile, json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), LOCK_EX);
-        if (!$isJson) echo "[OK] Saved updated formula definition to shard: {$shardFile}\n";
-
-        if ($pdo) {
-            try {
-                $stmt = $pdo->prepare("UPDATE formulas SET title = ?, equation = ?, equation_svg = NULL, conceptual_definition = ?, intuitive_summary = ?, interpretation = ?, symmetry_origin = ?, limits_and_boundary = ?, semantic_variables = ? WHERE id = ?");
-                $stmt->execute([
-                    $formulaData['title'] ?? null,
-                    $cleanEq,
-                    $formulaData['conceptual_definition'] ?? null,
-                    $formulaData['intuitive_summary'] ?? null,
-                    $formulaData['interpretation'] ?? null,
-                    $formulaData['symmetry_origin'] ?? null,
-                    $formulaData['limits_and_boundary'] ?? null,
-                    isset($formulaData['semantic_variables']) ? json_encode($formulaData['semantic_variables'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null,
-                    $formulaId
-                ]);
-                if (!$isJson) echo "[OK] Updated MariaDB formulas table record (equation_svg set to NULL).\n";
-            } catch (\Throwable $e) {
-                if (!$isJson) echo "[WARN] MariaDB record update skipped: " . $e->getMessage() . "\n";
+        $service = Flight::physicsService();
+        $saved = $service->saveFormula($formulaId, $formulaData);
+        if ($saved) {
+            if (!$isJson) {
+                echo "[OK] Saved updated formula definition to shard: {$shardFile}\n";
+                echo "[OK] Updated MariaDB formulas table record (equation_svg set to NULL).\n";
+                $normLatex = $service->normalizeLatex($cleanEq);
+                echo "[OK] Updated formulas_latex_index.json mapping for: {$normLatex} -> {$formulaId}\n";
             }
-        }
-
-        $latexIndexFile = __DIR__ . '/../app/config/formulas_latex_index.json';
-        if (file_exists($latexIndexFile)) {
-            $indexData = json_decode(file_get_contents($latexIndexFile), true) ?: [];
-            $app = Flight::app();
-            $service = $app->physicsService();
-            $normLatex = $service->normalizeLatex($cleanEq);
-            if (!empty($normLatex)) {
-                $indexData[$normLatex] = $formulaId;
-                file_put_contents($latexIndexFile, json_encode($indexData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), LOCK_EX);
-                if (!$isJson) echo "[OK] Updated formulas_latex_index.json mapping for: {$normLatex} -> {$formulaId}\n";
-            }
+        } else {
+            if (!$isJson) echo "[ERROR] Failed to save formula via PhysicsService::saveFormula().\n";
         }
     } else {
         if (!$isJson) echo "[DRY-RUN] Skipped writing to shard file and MariaDB.\n";

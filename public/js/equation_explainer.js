@@ -4077,12 +4077,8 @@ const EquationExplainer = {
         if (typeof text !== 'string' || !text) return text;
         
         const placeholders = [];
-        // Convert literal escaped newlines/tabs that are NOT LaTeX commands (e.g. \n2., \n*, \n\n) into real newlines
-        let tempText = text.replace(/\\r\\n|\\r(?![a-zA-Z])|\\n(?![a-zA-Z])/g, '\n').replace(/\\t(?![a-zA-Z])/g, ' ');
+        let tempText = text.replace(/\r\n/g, '\n');
         tempText = tempText.replace(/\\par\b/g, ' ');
-        tempText = tempText.replace(/\\b\{([^\}]+)\}/g, '\\mathbf{$1}');
-        tempText = tempText.replace(/\\b\$([^\$]+)\$/g, '$\\mathbf{$1}$');
-        tempText = tempText.replace(/\\b\$/g, '$');
         
         function protect(match) {
             placeholders.push(match);
@@ -4184,9 +4180,10 @@ const EquationExplainer = {
             return protect(wrapped);
         });
 
-        // 7. Parse Markdown formatting (bold, italic, numbered list breaks) BEFORE restoring math placeholders
+        // 7. Parse Markdown formatting (bullet points, bold, italic, numbered lists)
+        tempText = tempText.replace(/(?:^|\n)\s*[\*\-]\s+(.+)/g, (m, line) => '\n<div style="margin: 4px 0 4px 12px;">• ' + line + '</div>');
         tempText = tempText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        tempText = tempText.replace(/(?<!\*)\*(?!\*)([^*]+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+        tempText = tempText.replace(/(?<!\*)\*(\S[^*]*?\S|\S)\*(?!\*)/g, '<em>$1</em>');
         tempText = tempText.replace(/(?:\r?\n)+(?=\d+\.\s+)/g, '<br><br>');
         tempText = tempText.replace(/\r?\n/g, '<br>');
 

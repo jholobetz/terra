@@ -4,6 +4,7 @@ import os
 import re
 import subprocess
 import pytest
+from scripts.lib.delimiters import strip_math_blocks, validate_narrative_delimiters
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FORMULAS_DIR = os.path.join(PROJECT_ROOT, "app", "config", "content", "formulas")
@@ -65,16 +66,10 @@ def test_no_raw_unwrapped_tex_macros():
     unwrapped = []
     for f in ALL_FORMULAS:
         text = f"{f.get('conceptual_definition', '')} {f.get('interpretation', '')}"
-        for line in text.split("\n"):
-            for match in re.finditer(r"\\(frac|oint|iint)\b", line):
-                st = match.start()
-                db = len(re.findall(r"(?<!\\)\$", line[:st]))
-                da = len(re.findall(r"(?<!\\)\$", line[st:]))
-                pb = len(re.findall(r"\\\(", line[:st]))
-                pa = len(re.findall(r"\\\)", line[st:]))
-                if (db == 0 and pb == 0) and (da == 0 and pa == 0):
-                    unwrapped.append((f.get("_id"), match.group(0)))
-                    break
+        outside = strip_math_blocks(text)
+        match = re.search(r"\\(frac|oint|iint)\b", outside)
+        if match:
+            unwrapped.append((f.get("_id"), match.group(0)))
     assert len(unwrapped) == 0, f"Found unwrapped TeX macros in prose: {unwrapped}"
 
 def test_no_html_markup_in_formula_equations():
@@ -109,32 +104,12 @@ def test_formula_narrative_math_delimiters():
             text = f.get(key, "")
             if not text or not isinstance(text, str):
                 continue
-            
-            # Check 1: Unbalanced dollar signs
-            dollar_count = text.count("$")
-            if dollar_count % 2 != 0:
-                corrupted_formulas.append((formula_id, key, f"Unbalanced '$' count ({dollar_count}): {text[:100]}..."))
-                continue
-                
-            # Check 2: Inverted or misplaced delimiters
-            if re.search(r"=\$\s*\\frac|\}\$\{\\frac|\$\s*=\s*\$\\frac|is\$\s*\\frac", text):
-                corrupted_formulas.append((formula_id, key, f"Misplaced '$' around fraction/equals: {text[:100]}..."))
-                continue
-
-            # Check 3: Trailing isolated dollar sign at paragraph end
-            if text.endswith(".$") or text.endswith(" $"):
-                corrupted_formulas.append((formula_id, key, f"Trailing isolated '$': {text[-60:]}"))
-                continue
-                
-            # Check 4: Unwrapped TeX macros outside dollar signs
-            parts = text.split("$")
-            for i in range(0, len(parts), 2): # Outside math mode
-                outside_text = parts[i]
-                if re.search(r"\\(mathbf|vec|hat|mathcal|bar|dot|ddot|frac)\{[^}]+\}", outside_text):
-                    corrupted_formulas.append((formula_id, key, f"Unwrapped TeX macro outside '$': {outside_text[:100]}..."))
-                    break
+            errors = validate_narrative_delimiters(text)
+            for err in errors:
+                corrupted_formulas.append((formula_id, key, err))
 
     assert len(corrupted_formulas) == 0, f"Found {len(corrupted_formulas)} formula narrative delimiter errors: {corrupted_formulas[:10]}"
+
 
 
 def fetch_mariadb_formulas():

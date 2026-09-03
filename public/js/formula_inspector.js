@@ -271,9 +271,9 @@ const FormulaInspector = {
             .then(data => {
                 if (data && data.formula) {
                     const f = data.formula;
-                    titleEl.textContent = f.title || 'Physical Identity';
-                    conceptText.innerHTML = f.conceptual_definition || 'Physical relationship between operators and fields.';
-                    summaryText.innerHTML = f.intuitive_summary || 'Calculates the relative dynamics of the system.';
+                    const formatMath = (txt) => (window.MathProseFormatter && typeof window.MathProseFormatter.format === 'function') ? window.MathProseFormatter.format(txt) : txt;
+                    conceptText.innerHTML = formatMath(f.conceptual_definition) || 'Physical relationship between operators and fields.';
+                    summaryText.innerHTML = formatMath(f.intuitive_summary) || 'Calculates the relative dynamics of the system.';
 
                     // Populate Semantic Variables
                     if (f.semantic_variables && typeof f.semantic_variables === 'object' && Object.keys(f.semantic_variables).length > 0) {
@@ -282,13 +282,14 @@ const FormulaInspector = {
                         for (const [sym, vInfo] of Object.entries(f.semantic_variables)) {
                             const name = (vInfo && vInfo.name) ? vInfo.name : sym;
                             const unit = (vInfo && vInfo.unit && vInfo.unit !== 'dimensionless') ? ` [${vInfo.unit}]` : '';
-                            const desc = (vInfo && vInfo.description) ? ` — ${vInfo.description}` : '';
+                            const desc = (vInfo && vInfo.description) ? ` — ${formatMath(vInfo.description)}` : '';
                             varsHtml += `
                                 <div style="display: flex; align-items: baseline; gap: 8px; font-size: 0.86rem; color: #cbd5e1; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 6px; padding: 6px 10px;">
                                     <span style="color: var(--accent-default, #64ffda); font-weight: 600; font-family: monospace;">\\(${sym}\\)</span>
                                     <span><strong>${name}</strong><span style="color: #94a3b8; font-size: 0.8rem;">${unit}</span>${desc}</span>
                                 </div>`;
                         }
+
                         variablesList.innerHTML = varsHtml;
                     }
 

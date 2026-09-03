@@ -26,6 +26,8 @@ def get_all_shard_formulas():
 
 ALL_FORMULAS = get_all_shard_formulas()
 
+from scripts.lib.delimiters import strip_math_blocks, count_unescaped_dollars
+
 @pytest.mark.parametrize("fid, formula", ALL_FORMULAS[:1000])  # Sample check for fast CI performance
 def test_formula_tex_dollar_balance(fid, formula):
     fields = ["conceptual_definition", "interpretation", "limits_and_boundary", "symmetry_origin"]
@@ -33,7 +35,7 @@ def test_formula_tex_dollar_balance(fid, formula):
         text = formula.get(field, "")
         if not text:
             continue
-        dollar_count = text.count("$")
+        dollar_count = count_unescaped_dollars(text)
         assert dollar_count % 2 == 0, f"Formula [{fid}] field [{field}] has unclosed dollar signs (count={dollar_count}). Text: {text[:100]}..."
 
 @pytest.mark.parametrize("fid, formula", ALL_FORMULAS[:1000])
@@ -55,7 +57,8 @@ def test_formula_no_leaked_tex_macros(fid, formula):
         text = formula.get(field, "")
         if not text:
             continue
-        text_no_math = re.sub(r"\$[^\$]+\$", "", text)
+        text_no_math = strip_math_blocks(text)
         match = tex_macro_check.search(text_no_math)
         assert match is None, f"Formula [{fid}] field [{field}] leaks TeX macro '{match.group(0)}' outside math mode."
+
 

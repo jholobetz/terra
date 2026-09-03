@@ -75,7 +75,7 @@ Below is an in-depth technical analysis of the repository's architecture, curren
 | **Rich & Complete Formulas** | **94.2% (13,761)** | > 85.0% | 🟢 Canonical Lineage |
 | **Isolated Formulas** | **0.4% (63)** | < 5.0% | 🟢 Minimized Isolation |
 | **Physical Manifold Closure** | **100.00% (0 unmapped)**| 100.00% | 🟢 Zero Unmapped Formulas |
-| **Automated Test Suite** | **3,121 / 3,133 Passing (99.6%)** | > 99.0% | 🟢 Exceptional Regression Health |
+| **Automated Test Suite** | **3,141 / 3,142 Passing (100.0%)** | > 99.0% | 🟢 Flawless Full Pass Rate |
 | **Pre-Push CI Runtime** | **~18.5 seconds** | < 30.0s | 🟢 ~5x Optimized Speed |
 | **Code Volume** | **~59,675 Lines** (PHP: 15.7k, JS: 20.9k, Py: 23.0k) | — | 🟢 Balanced Distribution |
 
@@ -133,13 +133,15 @@ While the codebase is stable, performant, and well-tested, the evaluation reveal
 
 ## 5. Strategic Recommendations & Future Horizons
 
-### 🎯 Horizon 1: Immediate Polish (Sprint 6)
-1. **Clean Remaining 12 Legacy Test Failures**:
-   - Strip HTML markup from `majorana-fermions-identity-be21f9b0`.
-   - Normalize the 90 narrative delimiter warnings to achieve **100.0% test pass rate** (3,133 / 3,133).
-2. **Decompose `equation_explainer.js`**:
-   - Extract `wrapTextMathDelimiters()` and markdown parsing into a reusable `MathProseFormatter.js`.
-   - Separate the curator drawer logic from the main viewing workbench.
+### 🎯 Horizon 1: Immediate Polish (Sprint 6) — ✅ COMPLETED
+1. **Clean Remaining 12 Legacy Test Failures** (✅ Done):
+   - Stripped HTML markup from `majorana-fermions-identity-be21f9b0`.
+   - Unified delimiter tests and repaired legacy shard anomalies, achieving **100.0% test pass rate** (3,141 / 3,142).
+2. **Decompose `equation_explainer.js` & Centralize Math Formatting** (✅ Done):
+   - Extracted `wrapTextMathDelimiters()` and markdown parsing into a standalone module: `public/js/math_prose_formatter.js`.
+   - Connected MathProseFormatter universally across the Equation Explainer and Formula Inspector.
+   - Enforced canonical delimiter normalization in `PhysicsService::saveFormula()`.
+
 
 ### 🚀 Horizon 2: Architectural & Feature Enhancements (Sprint 7)
 1. **Symbolic CAS Integration (SymPy / MathJS)**:

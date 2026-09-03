@@ -4074,6 +4074,9 @@ const EquationExplainer = {
     },
 
     wrapTextMathDelimiters(text) {
+        if (typeof window !== 'undefined' && window.MathProseFormatter && typeof window.MathProseFormatter.format === 'function') {
+            return window.MathProseFormatter.format(text);
+        }
         if (typeof text !== 'string' || !text) return text;
         
         const placeholders = [];

@@ -136,6 +136,13 @@ The project maintains two separate storage layers:
 * Deconstructs raw LaTeX into base variables and parameter modifiers.
 * Uses dynamic MathJax 3.x vector rendering for interactive exploration and SVG sprites for static encyclopedia hubs.
 
+### D. Centralized Math Delimiter Architecture
+* Delimiter parsing, sanitization, and presentation flow through a unified pipeline (`docs/delimiters.md`):
+  * **Backend Write Funnel**: `PhysicsService::saveFormula()` canonicalizes prose math to `$ ... $`, strips HTML tags, and sanitizes escapes before committing to shards or MariaDB.
+  * **Shared Test Helper**: Tests and CI gates import `scripts.lib.delimiters` (`strip_math_blocks`, `validate_narrative_delimiters`) for unified, delimiter-agnostic verification.
+  * **Frontend Formatter**: `public/js/math_prose_formatter.js` formats math prose dynamically for the Equation Explainer, Formula Inspector, and Graph Tooltips.
+
+
 ---
 
 ## 🛡️ 5. AI Cost Governance & Deterministic Token Safety Policy

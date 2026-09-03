@@ -456,7 +456,16 @@ class PhysicsService
             return false;
         }
 
-        // 1. Sanitize all prose fields against control character collisions and broken prefixes
+        // 1. Sanitize equation against HTML tags and formatting leaks
+        if (!empty($data['equation']) && is_string($data['equation'])) {
+            $eq = $data['equation'];
+            $eq = preg_replace('/<(?:strong|b)>(.*?)<\/(?:strong|b)>/i', '\\mathbf{$1}', $eq);
+            $eq = preg_replace('/<(?:em|i)>(.*?)<\/(?:em|i)>/i', '\\mathit{$1}', $eq);
+            $eq = strip_tags($eq);
+            $data['equation'] = trim($eq);
+        }
+
+        // 2. Sanitize all prose fields against control collisions and normalize math delimiters
         $proseFields = ['conceptual_definition', 'intuitive_summary', 'interpretation', 'symmetry_origin', 'limits_and_boundary', 'description'];
         foreach ($proseFields as $field) {
             if (!empty($data[$field]) && is_string($data[$field])) {
@@ -465,7 +474,21 @@ class PhysicsService
                 $val = str_replace(["\x08eta", "\x08"], ['\beta', ''], $val);
                 $val = str_replace(["\x0crac", "\x0c"], ['\frac', ''], $val);
                 $val = preg_replace('/[\x00-\x08\x0b\x0c\x0e-\x1f]/', '', $val);
-                $data[$field] = $val;
+
+                // Clean double backslashes before standard LaTeX macros
+                $val = preg_replace('/\\\\\\\\(mathcal|mathbf|oint|iint|frac|dot|ddot|vec|hat|bar|nabla|partial|sum|int|text|sigma|tau|mu|nu|rho|lambda)/', '\\$1', $val);
+
+                // Clean stray escaped dollars
+                $val = str_replace(['\\$', '\\ $'], '$', $val);
+
+                // Canonicalize inline bracket delimiters \( ... \) to standard $ ... $
+                $val = preg_replace('/\\\\\((.*?)\\\\\)/s', '$$1$', $val);
+
+                // Fix misplaced equals or fraction delimiters
+                $val = preg_replace('/=\$\s*\\\\frac/', '= \\frac', $val);
+                $val = preg_replace('/is\$\s*\\\\frac/', 'is \\frac', $val);
+
+                $data[$field] = trim($val);
             }
         }
 

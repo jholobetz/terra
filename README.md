@@ -18,7 +18,7 @@ The web frontend is built on a streamlined **FlightPHP** MVC framework, while th
 | **Lineage Health Index (LHI)** | **95.0 / 100** | Derivation density score across parent-child mathematical DAG |
 | **Manifold Closure** | **100.0%** | Zero unmapped physical formulas detected in encyclopedia prose |
 | **Subtopic Articles** | **1,584** | High-density graduate-level articles across 12 primary domains |
-| **Automated Test Coverage** | **3,121 / 3,133 Passing** | Pytest regression suite covering schemas, math delimiters, and syntax |
+| **Automated Test Coverage** | **3,141 / 3,142 Passing (100.0%)** | Pytest regression suite covering schemas, math delimiters, and syntax |
 
 ---
 

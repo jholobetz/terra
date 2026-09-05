@@ -50,6 +50,7 @@
 
         const placeholders = [];
         let tempText = text.replace(/\r\n/g, '\n');
+        tempText = tempText.replace(/\\n(?=\s*(?:\d+\.|\*|-))/g, '\n');
         tempText = tempText.replace(/\\par\b/g, ' ');
 
         function protect(match) {
@@ -117,7 +118,7 @@
         tempText = tempText.replace(/(?:(?<!\\)\\([a-zA-Z]+)(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}|\([^)]*\)|\[[^\]]*\]|[a-zA-Z0-9_\^])*)/g, match => {
             if (match.includes('\uE000')) return match;
             let trimmed = match.trim();
-            if (!trimmed || trimmed === '\\') return match;
+            if (!trimmed || trimmed === '\\' || trimmed === '\\n' || trimmed === '\\r' || trimmed === '\\t') return match;
             let trailingPunct = '';
             const punctMatch = trimmed.match(/[,.;:\)]+$/);
             if (punctMatch) {

@@ -142,6 +142,8 @@ function sanitizeProseTeX(string $text): string {
     $text = preg_replace('/(?:\x08|\b|(?<=[ ($,\^_\-]))ar\{([a-zA-Z\\\\])/u', '\\bar{\\1', $text);
     $text = str_replace(["\x08eta", "\x08"], ['\\beta', ''], $text);
     $text = str_replace(["\x0crac", "\x0c"], ['\\frac', ''], $text);
+    // Replace literal '\n' before numbered lists or bullet items with actual newlines
+    $text = preg_replace('/\\\\n(?=\s*(?:\d+\.|\*|-))/u', "\n", $text);
 
     // 2. Fix specific legacy corrupted TeX patterns
     $text = preg_replace('/[χ\chi]_[m]\s*=\s*-\s*\$\s*\\\\frac\{[^}]+\}\{[^}]+\}\s*\$\s*[⟨<]\s*r\^2\s*[⟩>]/u', '$\\chi_m = -\\frac{\\mu_0 N Z e^2}{6m_e} \\langle r^2 \\rangle$', $text);
@@ -311,8 +313,19 @@ function applyHintToFormulaData(array &$formulaData, string &$cleanEq, string $h
 
             if (!empty($sectionContent)) {
                 $sanitized = sanitizeProseTeX($sectionContent);
-                $formulaData[$curField] = $sanitized;
-                $repairsMade[] = "Updated '{$curField}' from reference text section";
+                // Safeguard: If incoming reference text is a browser copy-paste artifact missing MathJax
+                // (e.g. empty parentheses or stripped formulas) while existing field has rich LaTeX, preserve existing.
+                $existingMathCount = substr_count($formulaData[$curField] ?? '', '$');
+                $newMathCount = substr_count($sanitized, '$');
+                $isStrippedArtifact = preg_match('/\(\s*\)\s*:\s*When/i', $sectionContent) || ($existingMathCount >= 4 && $newMathCount === 0);
+
+                if ($isStrippedArtifact && $existingMathCount > 0) {
+                    $formulaData[$curField] = sanitizeProseTeX($formulaData[$curField]);
+                    $repairsMade[] = "Retained and sanitized rich mathematical expressions in '{$curField}' (prevented overwrite by stripped browser copy artifact)";
+                } else {
+                    $formulaData[$curField] = $sanitized;
+                    $repairsMade[] = "Updated '{$curField}' from reference text section";
+                }
             }
         }
     } else {
@@ -486,6 +499,9 @@ foreach ($targets as $input) {
     } else if (strpos($cleanEq, 'dp^') !== false && strpos($cleanEq, '\frac') === false) {
         $cleanEq = preg_replace('/dp\^?\\\\?([a-zA-Z]+)\/d\\\\?([a-zA-Z]+)/', '\frac{dp^\1}{d\\\2}', $cleanEq);
         $repairsMade[] = "Converted slash derivative to fraction notation: {$cleanEq}";
+    } else if (strpos($cleanEq, 'Xˆθ') !== false || ($formulaId === 'generalized-quadrature-operator' && (strpos($cleanEq, 'ˆ') !== false || strpos($cleanEq, "\n") !== false))) {
+        $cleanEq = '\hat{X}_\theta = \frac{1}{\sqrt{2}} \left( \hat{a} e^{-i\theta} + \hat{a}^\dagger e^{i\theta} \right)';
+        $repairsMade[] = "Decorrupted Unicode and multiline formatting in equation: {$cleanEq}";
     }
 
     // Apply Reference Text / Hint if provided
@@ -542,7 +558,43 @@ foreach ($targets as $input) {
         if ($saved) {
             if (!$isJson) {
                 echo "[OK] Saved updated formula definition to shard: {$shardFile}\n";
-                echo "[OK] Updated MariaDB formulas table record (equation_svg set to NULL).\n";
+
+                $dbUpdated = $service->lastDbSaved;
+                if (!$dbUpdated && $pdo !== null) {
+                    try {
+                        $semanticVars = !empty($formulaData['semantic_variables']) ? (is_string($formulaData['semantic_variables']) ? $formulaData['semantic_variables'] : json_encode($formulaData['semantic_variables'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                        $constraints = !empty($formulaData['constraints']) ? (is_string($formulaData['constraints']) ? $formulaData['constraints'] : json_encode($formulaData['constraints'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                        $subcomponents = !empty($formulaData['subcomponents']) ? (is_string($formulaData['subcomponents']) ? $formulaData['subcomponents'] : json_encode($formulaData['subcomponents'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                        $relatedIds = !empty($formulaData['related_formula_ids']) ? (is_string($formulaData['related_formula_ids']) ? $formulaData['related_formula_ids'] : json_encode($formulaData['related_formula_ids'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+
+                        $stmt = $pdo->prepare("UPDATE formulas SET 
+                            title = ?, equation = ?, conceptual_definition = ?, intuitive_summary = ?, 
+                            interpretation = ?, symmetry_origin = ?, limits_and_boundary = ?, 
+                            semantic_variables = ?, parent_formula_id = ?, derivation_type = ?, 
+                            subcomponents = ?, constraints = ?, related_formula_ids = ?, 
+                            status = ?, unit_system = ?, equation_svg = NULL WHERE id = ?");
+                        $stmt->execute([
+                            $formulaData['title'] ?? null, $formulaData['equation'] ?? null,
+                            $formulaData['conceptual_definition'] ?? null, $formulaData['intuitive_summary'] ?? null,
+                            $formulaData['interpretation'] ?? null, $formulaData['symmetry_origin'] ?? null,
+                            $formulaData['limits_and_boundary'] ?? null, $semanticVars,
+                            $formulaData['parent_formula_id'] ?? null, $formulaData['derivation_type'] ?? null,
+                            $subcomponents, $constraints, $relatedIds,
+                            $formulaData['status'] ?? 'platinum', $formulaData['unit_system'] ?? null,
+                            $formulaId
+                        ]);
+                        $dbUpdated = true;
+                    } catch (\Throwable $e) {
+                        $service->lastDbError = $e->getMessage();
+                    }
+                }
+
+                if ($dbUpdated) {
+                    echo "[OK] Updated MariaDB formulas table record (equation_svg set to NULL).\n";
+                } else {
+                    echo "[WARN] MariaDB formulas table record was NOT updated: " . ($service->lastDbError ?? 'Database connection unavailable') . "\n";
+                }
+
                 $normLatex = $service->normalizeLatex($cleanEq);
                 echo "[OK] Updated formulas_latex_index.json mapping for: {$normLatex} -> {$formulaId}\n";
             }

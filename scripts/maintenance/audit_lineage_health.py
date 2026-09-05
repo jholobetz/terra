@@ -251,7 +251,22 @@ def main():
     parser.add_argument('--search', type=str, help="Search formulas by title or keyword")
     parser.add_argument('--url', type=str, help="Inspect formula from equation explainer URL")
     parser.add_argument('--export-json', type=str, help="Export audit results to JSON file")
+    parser.add_argument('--heal', action='store_true', help="Heal isolated and thin formula nodes by attaching family pillars and rebuilding derivation graph")
     args = parser.parse_args()
+
+    if args.heal:
+        print("🩹 Initiating Automated Formula Lineage Healing Protocol...")
+        enricher_path = os.path.join(PROJECT_ROOT, 'scripts', 'maintenance', 'enrich_lineage_families.py')
+        import subprocess
+        res = subprocess.run([sys.executable, enricher_path, '--apply'])
+        if res.returncode != 0:
+            print("❌ Healing failed during family enrichment.")
+            sys.exit(res.returncode)
+        print("\n✨ Re-evaluating Lineage Health Index post-healing...")
+        formulas, file_map = load_all_formulas()
+        results = audit_all(formulas)
+        print_summary(results)
+        return
 
     formulas, file_map = load_all_formulas()
     results = audit_all(formulas)

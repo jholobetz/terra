@@ -10,6 +10,8 @@ class PhysicsService
     private ?array $physicsContent = null;
     private ?bool $isPreviewMode = null;
     private ?array $formulaAliases = null;
+    public ?string $lastDbError = null;
+    public bool $lastDbSaved = false;
 
     public function __construct(Engine $app)
     {
@@ -488,6 +490,9 @@ class PhysicsService
                 $val = preg_replace('/=\$\s*\\\\frac/', '= \\frac', $val);
                 $val = preg_replace('/is\$\s*\\\\frac/', 'is \\frac', $val);
 
+                // Convert literal '\n' before numbered lists or bullet items to actual newlines
+                $val = preg_replace('/\\\\n(?=\s*(?:\d+\.|\*|-))/u', "\n", $val);
+
                 $data[$field] = trim($val);
             }
         }
@@ -532,6 +537,8 @@ class PhysicsService
         }
 
         // 3. Update MariaDB record if database connection is available
+        $this->lastDbSaved = false;
+        $this->lastDbError = null;
         try {
             if ($this->app && \Flight::has('db')) {
                 $db = $this->app->db();
@@ -605,8 +612,12 @@ class PhysicsService
                         ]
                     );
                 }
+                $this->lastDbSaved = true;
+            } else {
+                $this->lastDbError = "Database service not registered in Flight container.";
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            $this->lastDbError = $e->getMessage();
             error_log("Database saveFormula failed for {$fId}: " . $e->getMessage());
         }
 

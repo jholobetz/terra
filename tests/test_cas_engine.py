@@ -4,6 +4,8 @@ Verifies parsing, physical asymptotic limits, series expansions, and safety time
 """
 
 import pytest
+pytest.importorskip("sympy")
+
 from scripts.lib.cas_engine import evaluate_symbolic, latex_to_sympy_str
 
 

@@ -1,7 +1,7 @@
 import re
 
 def sanitize_latex(equation_str):
-    """Sanitizes raw LaTeX strings to prevent MathJax parsing failures.
+    r"""Sanitizes raw LaTeX strings to prevent MathJax parsing failures.
     
     1. Fixes double-escaped or backslash-escaped single and double quotes (e.g., \\' -> ')
     2. Translates text-mode commands like \\AA or \\text{\\AA} to MathJax-compatible math-mode equivalents.

@@ -592,74 +592,57 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 }
 
 .directory-concept-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 16px;
-    border-radius: 6px;
-    background: rgba(15, 23, 42, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 10px 16px !important;
+    border-radius: 6px !important;
+    background: rgba(15, 23, 42, 0.45) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    text-align: left !important;
     transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
 .directory-concept-row:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(100, 255, 218, 0.25);
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(100, 255, 218, 0.25) !important;
     transform: translateX(3px);
 }
 
 .concept-row-left {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-    text-align: left;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    text-align: left !important;
 }
 
 .concept-row-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-shrink: 0;
-}
-
-.level-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.dot-foundational {
-    background: #34d399;
-    box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
-}
-
-.dot-analytical {
-    background: #38bdf8;
-    box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
-}
-
-.dot-frontier {
-    background: #c084fc;
-    box-shadow: 0 0 6px rgba(192, 132, 252, 0.4);
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+    margin-left: auto !important;
 }
 
 .directory-concept-row .subtopic-link {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #e2e8f0;
-    text-decoration: none;
-    text-align: left;
-    display: block;
-    line-height: 1.4;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    color: #e2e8f0 !important;
+    text-decoration: none !important;
+    text-align: left !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.4 !important;
     transition: color 0.15s ease;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
 .directory-concept-row:hover .subtopic-link {

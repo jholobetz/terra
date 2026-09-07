@@ -1,6 +1,6 @@
 <?php
 /**
- * Platinum Standard Topic Hub - Compact Academic Directory (Option A)
+ * Platinum Standard Topic Hub - Compact Academic Accordion Directory
  */
 
 require_once __DIR__ . '/_topic_icons.php';
@@ -67,6 +67,12 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
                 <input type="text" id="directory-filter-input" placeholder="Quick filter concepts in <?= htmlspecialchars($title ?? 'this faculty') ?>..." autocomplete="off" />
                 <span id="directory-match-counter" class="match-counter"></span>
             </div>
+            
+            <div class="directory-accordion-controls">
+                <button type="button" id="btn-expand-all" class="btn-tool-subtle">Expand All</button>
+                <button type="button" id="btn-collapse-all" class="btn-tool-subtle">Collapse All</button>
+            </div>
+
             <div class="directory-actions">
                 <a href="/physics/subtopic/<?= htmlspecialchars($slug) ?>-overview" class="btn-tool">🚀 Overview</a>
                 <a href="/physics/universe-graph" class="btn-tool">🌌 Derivation Graph</a>
@@ -75,42 +81,49 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         </div>
     </header>
 
-    <!-- Multi-Column Pillar Directory Grid -->
+    <!-- Stacked Full-Width Accordion Directory -->
     <div class="content-body" style="margin-bottom: 24px;">
         <?php if (!empty($pillars) && is_array($pillars)): ?>
-            <div class="directory-pillars-grid">
+            <div class="directory-accordion-stack" id="directory-accordion-stack">
                 <?php foreach ($pillars as $idx => $pillar): 
                     $pillarSubCount = !empty($pillar['slugs']) ? count($pillar['slugs']) : 0;
                     $cleanTitle = preg_replace('/^\d+\.\s*/', '', $pillar['title']);
                 ?>
-                    <section class="concept-pillar directory-pillar-col" data-pillar-idx="<?= $idx ?>">
-                        <div class="pillar-col-header">
-                            <span class="pillar-col-num"><?= sprintf('%02d', $idx + 1) ?></span>
-                            <h3 class="pillar-col-title"><?= htmlspecialchars($cleanTitle) ?></h3>
-                            <span class="pillar-col-count"><?= $pillarSubCount ?></span>
-                        </div>
+                    <section class="concept-pillar directory-accordion-item" data-pillar-idx="<?= $idx ?>">
+                        <button type="button" class="accordion-trigger" aria-expanded="false" data-pillar-toggle="<?= $idx ?>">
+                            <div class="trigger-left">
+                                <span class="accordion-chevron">▶</span>
+                                <span class="pillar-num"><?= sprintf('%02d', $idx + 1) ?></span>
+                                <h3 class="pillar-title"><?= htmlspecialchars($cleanTitle) ?></h3>
+                            </div>
+                            <div class="trigger-right">
+                                <span class="pillar-count-tag"><?= $pillarSubCount ?> concepts</span>
+                            </div>
+                        </button>
 
-                        <ul class="directory-rows-list">
-                            <?php foreach ($pillar['slugs'] as $slugItem): 
-                                $sub = $subtopics_map[$slugItem] ?? null;
-                                if (!$sub) continue;
-                                $level = getConceptLevel($slugItem, $sub['title']);
-                            ?>
-                                <li class="concept-card directory-row-item" 
-                                    data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>"
-                                    data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
-                                    data-level="<?= strtolower($level) ?>">
-                                    <span class="row-level-dot dot-<?= strtolower($level) ?>" title="<?= $level ?> Level"></span>
-                                    <a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link">
-                                        <?= str_replace('\\\\', '\\', $sub['title']) ?>
-                                    </a>
-                                    <!-- Preserved for semantic variable & testing hooks -->
-                                    <span class="subtopic-card-abstract" style="display: none;">
-                                        <?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?>
-                                    </span>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
+                        <div class="accordion-content" style="display: none;">
+                            <ul class="directory-subtopic-grid">
+                                <?php foreach ($pillar['slugs'] as $slugItem): 
+                                    $sub = $subtopics_map[$slugItem] ?? null;
+                                    if (!$sub) continue;
+                                    $level = getConceptLevel($slugItem, $sub['title']);
+                                ?>
+                                    <li class="concept-card directory-concept-row" 
+                                        data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>"
+                                        data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
+                                        data-level="<?= strtolower($level) ?>">
+                                        <span class="level-dot dot-<?= strtolower($level) ?>" title="<?= $level ?> Level"></span>
+                                        <a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link">
+                                            <?= str_replace('\\\\', '\\', $sub['title']) ?>
+                                        </a>
+                                        <!-- Preserved for semantic variable & testing hooks -->
+                                        <span class="subtopic-card-abstract" style="display: none;">
+                                            <?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?>
+                                        </span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
                     </section>
                 <?php endforeach; ?>
             </div>
@@ -121,7 +134,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         <?php endif; ?>
     </div>
 
-    <!-- Interdisciplinary Bridges (Compact Footer Bar) -->
+    <!-- Interdisciplinary Bridges (Compact Strip) -->
     <?php if (!empty($bridges)): ?>
         <div class="directory-bridges-strip">
             <span class="bridges-strip-label">CONNECTED FACULTIES:</span>
@@ -163,41 +176,92 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     </footer>
 </article>
 
-<!-- Fast Instant Filter & Drawer Script -->
+<!-- Interactive Accordion, Filter & Expansion Script -->
 <script nonce="<?= $nonce ?>">
 (function() {
+    const items = document.querySelectorAll('.directory-accordion-item');
     const filterInput = document.getElementById('directory-filter-input');
     const matchCounter = document.getElementById('directory-match-counter');
-    const rows = document.querySelectorAll('.directory-row-item');
-    const cols = document.querySelectorAll('.directory-pillar-col');
-    const totalCount = rows.length;
+    const btnExpandAll = document.getElementById('btn-expand-all');
+    const btnCollapseAll = document.getElementById('btn-collapse-all');
+    const allRows = document.querySelectorAll('.directory-concept-row');
+    const totalCount = allRows.length;
 
+    // Helper: Toggle Accordion Item
+    function toggleAccordion(item, forceOpen = null) {
+        const trigger = item.querySelector('.accordion-trigger');
+        const content = item.querySelector('.accordion-content');
+        if (!trigger || !content) return;
+
+        const shouldOpen = (forceOpen !== null) ? forceOpen : (content.style.display === 'none');
+        if (shouldOpen) {
+            content.style.display = 'block';
+            item.classList.add('open');
+            trigger.setAttribute('aria-expanded', 'true');
+        } else {
+            content.style.display = 'none';
+            item.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    // Bind Accordion Header Clicks
+    items.forEach(item => {
+        const trigger = item.querySelector('.accordion-trigger');
+        if (trigger) {
+            trigger.addEventListener('click', function() {
+                toggleAccordion(item);
+            });
+        }
+    });
+
+    // Expand All / Collapse All Controls
+    if (btnExpandAll) {
+        btnExpandAll.addEventListener('click', function() {
+            items.forEach(item => toggleAccordion(item, true));
+        });
+    }
+
+    if (btnCollapseAll) {
+        btnCollapseAll.addEventListener('click', function() {
+            items.forEach(item => toggleAccordion(item, false));
+        });
+    }
+
+    // Instant Filter & Smart Auto-Expand
     if (filterInput) {
         filterInput.addEventListener('input', function() {
             const query = this.value.trim().toLowerCase();
             let visibleCount = 0;
 
-            cols.forEach(col => {
-                let colHasMatch = false;
-                const colRows = col.querySelectorAll('.directory-row-item');
+            items.forEach(item => {
+                const rows = item.querySelectorAll('.directory-concept-row');
+                let pillarHasMatch = false;
 
-                colRows.forEach(row => {
+                rows.forEach(row => {
                     const title = row.getAttribute('data-title') || '';
                     const slug = row.getAttribute('data-subtopic-slug') || '';
                     if (!query || title.includes(query) || slug.includes(query)) {
                         row.style.display = 'flex';
-                        colHasMatch = true;
+                        pillarHasMatch = true;
                         visibleCount++;
                     } else {
                         row.style.display = 'none';
                     }
                 });
 
-                if (colHasMatch) {
-                    col.style.opacity = '1';
-                    col.style.pointerEvents = 'auto';
+                if (query) {
+                    if (pillarHasMatch) {
+                        item.style.display = 'block';
+                        item.style.opacity = '1';
+                        toggleAccordion(item, true); // Auto-expand matching pillars
+                    } else {
+                        item.style.display = 'none';
+                    }
                 } else {
-                    col.style.opacity = query ? '0.2' : '1';
+                    item.style.display = 'block';
+                    item.style.opacity = '1';
+                    toggleAccordion(item, false); // Return to compact collapsed state on clear
                 }
             });
 
@@ -223,10 +287,10 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 })();
 </script>
 
-<!-- Scoped CSS for Option A Compact Academic Directory -->
+<!-- Scoped CSS for Single Full-Width Stacked Accordion Directory -->
 <style>
 .compact-directory {
-    max-width: 1380px;
+    max-width: 1280px;
     margin: 0 auto;
     padding: 0 10px;
 }
@@ -315,7 +379,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     display: flex;
     align-items: center;
     flex: 1;
-    max-width: 420px;
+    max-width: 380px;
 }
 
 .directory-search-wrapper input {
@@ -353,6 +417,31 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     font-weight: 600;
 }
 
+.directory-accordion-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-tool-subtle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted, #94a3b8);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-tool-subtle:hover {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
+
 .directory-actions {
     display: flex;
     align-items: center;
@@ -379,93 +468,142 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     background: rgba(100, 255, 218, 0.08);
 }
 
-/* Dense Multi-Column Pillars Grid */
-.directory-pillars-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 16px;
-}
-
-.directory-pillar-col {
-    background: rgba(15, 23, 42, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 14px 16px;
-    transition: opacity 0.2s, border-color 0.2s;
+/* Stacked Accordion Structure */
+.directory-accordion-stack {
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
-.directory-pillar-col:hover {
-    border-color: rgba(255, 255, 255, 0.16);
-    background: rgba(15, 23, 42, 0.7);
+.directory-accordion-item {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s, background 0.2s;
 }
 
-.pillar-col-header {
+.directory-accordion-item:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(15, 23, 42, 0.75);
+}
+
+.directory-accordion-item.open {
+    border-color: rgba(100, 255, 218, 0.3);
+}
+
+/* Accordion Trigger Header Bar */
+.accordion-trigger {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    user-select: none;
+    transition: background 0.15s;
+}
+
+.accordion-trigger:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.trigger-left {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 12px;
 }
 
-.pillar-col-num {
-    font-family: 'Space Grotesk', monospace;
+.accordion-chevron {
     font-size: 0.72rem;
+    color: var(--text-muted, #94a3b8);
+    transition: transform 0.2s ease, color 0.2s ease;
+    width: 12px;
+    display: inline-block;
+}
+
+.directory-accordion-item.open .accordion-chevron {
+    transform: rotate(90deg);
+    color: var(--accent-color, #64ffda);
+}
+
+.pillar-num {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.75rem;
     font-weight: 700;
     color: var(--accent-color, #64ffda);
     background: rgba(100, 255, 218, 0.08);
-    padding: 2px 5px;
+    padding: 2px 6px;
     border-radius: 4px;
 }
 
-.pillar-col-title {
+.pillar-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     font-weight: 600;
     color: #ffffff;
     margin: 0;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    letter-spacing: 0.01em;
 }
 
-.pillar-col-count {
-    font-size: 0.72rem;
+.trigger-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pillar-count-tag {
+    font-size: 0.75rem;
     font-weight: 600;
     color: #64748b;
     background: rgba(255, 255, 255, 0.04);
-    padding: 2px 6px;
-    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 3px 9px;
+    border-radius: 12px;
 }
 
-/* Concept Rows */
-.directory-rows-list {
+.directory-accordion-item.open .pillar-count-tag {
+    color: #cbd5e1;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Accordion Content & Subtopics Grid */
+.accordion-content {
+    padding: 12px 20px 16px 20px;
+    background: rgba(11, 17, 32, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.directory-subtopic-grid {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
 }
 
-.directory-row-item {
+.directory-concept-row {
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 6px 8px;
+    gap: 10px;
+    padding: 7px 10px;
     border-radius: 6px;
-    transition: background 0.15s ease, transform 0.15s ease;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
-.directory-row-item:hover {
+.directory-concept-row:hover {
     background: rgba(255, 255, 255, 0.06);
-    transform: translateX(3px);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateX(2px);
 }
 
-.row-level-dot {
+.level-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
@@ -487,9 +625,9 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     box-shadow: 0 0 6px rgba(192, 132, 252, 0.4);
 }
 
-.directory-row-item .subtopic-link {
+.directory-concept-row .subtopic-link {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     color: #e2e8f0;
     text-decoration: none;
     line-height: 1.35;
@@ -497,7 +635,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     transition: color 0.15s ease;
 }
 
-.directory-row-item:hover .subtopic-link {
+.directory-concept-row:hover .subtopic-link {
     color: var(--accent-color, #64ffda);
 }
 
@@ -603,7 +741,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     .directory-search-wrapper {
         max-width: 100%;
     }
-    .directory-pillars-grid {
+    .directory-subtopic-grid {
         grid-template-columns: 1fr;
     }
 }

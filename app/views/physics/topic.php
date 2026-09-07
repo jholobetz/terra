@@ -112,10 +112,16 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
                                         data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>"
                                         data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
                                         data-level="<?= strtolower($level) ?>">
-                                        <span class="level-dot dot-<?= strtolower($level) ?>" title="<?= $level ?> Level"></span>
-                                        <a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link">
-                                            <?= str_replace('\\\\', '\\', $sub['title']) ?>
-                                        </a>
+                                        <div class="concept-row-left">
+                                            <span class="level-dot dot-<?= strtolower($level) ?>" title="<?= $level ?> Level"></span>
+                                            <a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link">
+                                                <?= str_replace('\\\\', '\\', $sub['title']) ?>
+                                            </a>
+                                        </div>
+                                        <div class="concept-row-right">
+                                            <span class="concept-level-badge level-badge-<?= strtolower($level) ?>"><?= $level ?></span>
+                                            <span class="concept-row-arrow">&rarr;</span>
+                                        </div>
                                         <!-- Preserved for semantic variable & testing hooks -->
                                         <span class="subtopic-card-abstract" style="display: none;">
                                             <?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?>
@@ -581,31 +587,48 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .directory-concept-row {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    padding: 7px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 16px;
     border-radius: 6px;
-    background: rgba(15, 23, 42, 0.5);
+    background: rgba(15, 23, 42, 0.45);
     border: 1px solid rgba(255, 255, 255, 0.04);
     transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
 .directory-concept-row:hover {
     background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.12);
-    transform: translateX(2px);
+    border-color: rgba(100, 255, 218, 0.25);
+    transform: translateX(3px);
+}
+
+.concept-row-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.concept-row-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
 }
 
 .level-dot {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     flex-shrink: 0;
 }
@@ -627,16 +650,59 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 
 .directory-concept-row .subtopic-link {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
+    font-weight: 500;
     color: #e2e8f0;
     text-decoration: none;
-    line-height: 1.35;
-    flex: 1;
+    line-height: 1.4;
     transition: color 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .directory-concept-row:hover .subtopic-link {
     color: var(--accent-color, #64ffda);
+}
+
+.concept-level-badge {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+}
+
+.level-badge-foundational {
+    color: #6ee7b7;
+    background: rgba(52, 211, 153, 0.08);
+    border-color: rgba(52, 211, 153, 0.2);
+}
+
+.level-badge-analytical {
+    color: #7dd3fc;
+    background: rgba(56, 189, 248, 0.08);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+.level-badge-frontier {
+    color: #d8b4fe;
+    background: rgba(192, 132, 252, 0.08);
+    border-color: rgba(192, 132, 252, 0.2);
+}
+
+.concept-row-arrow {
+    color: #475569;
+    font-size: 0.88rem;
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.directory-concept-row:hover .concept-row-arrow {
+    color: var(--accent-color, #64ffda);
+    transform: translateX(3px);
 }
 
 /* Bridges Strip */
@@ -740,9 +806,6 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     }
     .directory-search-wrapper {
         max-width: 100%;
-    }
-    .directory-subtopic-grid {
-        grid-template-columns: 1fr;
     }
 }
 </style>

@@ -113,7 +113,6 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
                                         data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
                                         data-level="<?= strtolower($level) ?>">
                                         <div class="concept-row-left">
-                                            <span class="level-dot dot-<?= strtolower($level) ?>" title="<?= $level ?> Level"></span>
                                             <a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link">
                                                 <?= str_replace('\\\\', '\\', $sub['title']) ?>
                                             </a>
@@ -614,9 +613,9 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 .concept-row-left {
     display: flex;
     align-items: center;
-    gap: 12px;
     flex: 1;
     min-width: 0;
+    text-align: left;
 }
 
 .concept-row-right {
@@ -654,6 +653,8 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     font-weight: 500;
     color: #e2e8f0;
     text-decoration: none;
+    text-align: left;
+    display: block;
     line-height: 1.4;
     transition: color 0.15s ease;
     white-space: nowrap;

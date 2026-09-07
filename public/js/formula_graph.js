@@ -24,18 +24,28 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         this.links = [];
         this.animFrame = null;
 
-        // Domain palette
+        // Domain palette - 12 Canonical Physics Branches
         this.domainColors = {
+            'theoretical-physics': { fill: '#c084fc', glow: 'rgba(192, 132, 252, 0.4)', stroke: '#9333ea' },
+            'electromagnetism': { fill: '#60a5fa', glow: 'rgba(96, 165, 250, 0.4)', stroke: '#2563eb' },
+            'astrophysics': { fill: '#f472b6', glow: 'rgba(244, 114, 182, 0.4)', stroke: '#db2777' },
+            'philosophy-of-physics': { fill: '#e879f9', glow: 'rgba(232, 121, 249, 0.4)', stroke: '#c026d3' },
+            'classical-mechanics': { fill: '#94a3b8', glow: 'rgba(148, 163, 184, 0.4)', stroke: '#475569' },
+            'relativity': { fill: '#38bdf8', glow: 'rgba(56, 189, 248, 0.4)', stroke: '#0284c7' },
+            'standard-model': { fill: '#f87171', glow: 'rgba(248, 113, 113, 0.4)', stroke: '#dc2626' },
+            'quantum-physics': { fill: '#34d399', glow: 'rgba(52, 211, 153, 0.4)', stroke: '#059669' },
+            'thermodynamics-statistical-mechanics': { fill: '#fbbf24', glow: 'rgba(251, 191, 36, 0.4)', stroke: '#d97706' },
+            'mathematical-methods': { fill: '#818cf8', glow: 'rgba(129, 140, 248, 0.4)', stroke: '#4f46e5' },
+            'fluids-nonlinear': { fill: '#2dd4bf', glow: 'rgba(45, 212, 191, 0.4)', stroke: '#0d9488' },
+            'condensed-matter': { fill: '#a78bfa', glow: 'rgba(167, 139, 250, 0.4)', stroke: '#7c3aed' },
+
+            // Backwards compatibility aliases
             'general-relativity': { fill: '#38bdf8', glow: 'rgba(56, 189, 248, 0.4)', stroke: '#0284c7' },
+            'special-relativity': { fill: '#818cf8', glow: 'rgba(129, 140, 248, 0.4)', stroke: '#4f46e5' },
             'quantum-mechanics': { fill: '#34d399', glow: 'rgba(52, 211, 153, 0.4)', stroke: '#059669' },
             'quantum-field-theory': { fill: '#c084fc', glow: 'rgba(192, 132, 252, 0.4)', stroke: '#9333ea' },
             'thermodynamics': { fill: '#fbbf24', glow: 'rgba(251, 191, 36, 0.4)', stroke: '#d97706' },
-            'electromagnetism': { fill: '#60a5fa', glow: 'rgba(96, 165, 250, 0.4)', stroke: '#2563eb' },
-            'astrophysics': { fill: '#f472b6', glow: 'rgba(244, 114, 182, 0.4)', stroke: '#db2777' },
-            'classical-mechanics': { fill: '#94a3b8', glow: 'rgba(148, 163, 184, 0.4)', stroke: '#475569' },
             'fluid-dynamics': { fill: '#2dd4bf', glow: 'rgba(45, 212, 191, 0.4)', stroke: '#0d9488' },
-            'condensed-matter': { fill: '#a78bfa', glow: 'rgba(167, 139, 250, 0.4)', stroke: '#7c3aed' },
-            'special-relativity': { fill: '#818cf8', glow: 'rgba(129, 140, 248, 0.4)', stroke: '#4f46e5' },
             'nuclear-physics': { fill: '#f87171', glow: 'rgba(248, 113, 113, 0.4)', stroke: '#dc2626' }
         };
 

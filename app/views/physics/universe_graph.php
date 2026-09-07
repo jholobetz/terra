@@ -9,7 +9,7 @@
                     Physics Universe Knowledge Graph
                 </h1>
                 <span style="font-size: 0.72rem; padding: 3px 8px; background: rgba(100, 255, 218, 0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); border-radius: 12px; font-weight: 600;">
-                    13,773 Formulas • 21,540 Links
+                    14,630 Formulas • 44,562 Links
                 </span>
             </div>
             <p style="margin: 0; color: var(--text-muted, #94a3b8); font-size: 0.95rem; max-width: 800px; line-height: 1.5;">
@@ -99,12 +99,18 @@
             <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 16px;">
                 <h4 style="font-size: 0.74rem; text-transform: uppercase; color: #94a3b8; margin: 0 0 10px 0; font-weight: 700;">Physics Domains</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.72rem;">
-                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8;"></span> Relativity</span>
-                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #34d399;"></span> Quantum</span>
-                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #c084fc;"></span> QFT &amp; Fields</span>
-                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span> Thermo</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #c084fc;"></span> Theoretical</span>
                     <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #60a5fa;"></span> E&amp;M</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #f472b6;"></span> Astrophysics</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #e879f9;"></span> Philosophy</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #94a3b8;"></span> Classical</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8;"></span> Relativity</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #f87171;"></span> Standard Model</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #34d399;"></span> Quantum</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span> Thermo</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #818cf8;"></span> Math Methods</span>
                     <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2dd4bf;"></span> Fluids</span>
+                    <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #a78bfa;"></span> Condensed</span>
                 </div>
             </div>
         </div>

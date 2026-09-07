@@ -452,6 +452,45 @@ class IntegrityShield:
             except Exception as e:
                 self.warnings.append(f"Could not run Manifold Closure audit: {str(e)}")
 
+    def check_graph_taxonomy(self):
+        """Ensures knowledge graph node domains strictly match categories.json and detects anomalous domain skew."""
+        if not self.target_slug:
+            graph_path = "app/config/formula_derivation_graph.json"
+            if not os.path.exists(graph_path):
+                return
+
+            try:
+                with open(graph_path, "r", encoding="utf-8") as f:
+                    graph = json.load(f)
+
+                nodes = graph.get("nodes", {})
+                if not nodes:
+                    self.errors.append("GRAPH TAXONOMY VIOLATION: formula_derivation_graph.json has 0 nodes.")
+                    return
+
+                valid_domains = set(self.topics.keys())
+                domain_counts = {}
+                invalid_nodes = []
+
+                for nid, nval in nodes.items():
+                    dom = nval.get("domain")
+                    if dom not in valid_domains:
+                        invalid_nodes.append((nid, dom))
+                    domain_counts[dom] = domain_counts.get(dom, 0) + 1
+
+                if invalid_nodes:
+                    self.errors.append(f"GRAPH TAXONOMY VIOLATION: {len(invalid_nodes)} nodes have invalid/unrecognized domains: {invalid_nodes[:3]}")
+
+                total_nodes = len(nodes)
+                for dom, count in domain_counts.items():
+                    pct = (count / total_nodes) * 100
+                    if dom == "classical-mechanics" and pct > 20.0:
+                        self.errors.append(f"GRAPH TAXONOMY VIOLATION: Classical Mechanics anomalous capture detected ({pct:.1f}% > 20.0%). Check for broken domain fallback in build_formula_graph.py.")
+                    elif pct > 35.0:
+                        self.errors.append(f"GRAPH TAXONOMY VIOLATION: Domain '{dom}' exhibits anomalous dominance ({pct:.1f}% > 35.0%).")
+            except Exception as e:
+                self.warnings.append(f"Could not verify graph taxonomy: {str(e)}")
+
     def run(self):
         print(f"\n\033[1m=== INTEGRITY SHIELD (SHARDED) ===\033[0m")
         print(f"Directory: {self.content_dir}")
@@ -477,6 +516,7 @@ class IntegrityShield:
         self.check_particles()
         self.check_semantic_prose()
         self.check_manifold_closure()
+        self.check_graph_taxonomy()
         self.check_ambiguity()
 
         

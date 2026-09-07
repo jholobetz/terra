@@ -1,6 +1,6 @@
 <?php
 /**
- * Platinum Standard Topic Hub - Unified Dynamic View (Option 1: Research Command Dashboard)
+ * Platinum Standard Topic Hub - Compact Academic Directory (Option A)
  */
 
 require_once __DIR__ . '/_topic_icons.php';
@@ -22,23 +22,14 @@ if (!function_exists('getConceptLevel')) {
     }
 }
 
-// Compute Telemetry Metrics
+// Compute Metrics
 $totalPillars = !empty($pillars) && is_array($pillars) ? count($pillars) : 0;
 $allSubtopicSlugs = [];
-$levelCounts = ['Foundational' => 0, 'Analytical' => 0, 'Frontier' => 0];
-
 if (!empty($pillars) && is_array($pillars)) {
     foreach ($pillars as $p) {
         if (!empty($p['slugs']) && is_array($p['slugs'])) {
             foreach ($p['slugs'] as $s) {
-                if (!isset($allSubtopicSlugs[$s])) {
-                    $allSubtopicSlugs[$s] = true;
-                    $subTitle = $subtopics_map[$s]['title'] ?? $s;
-                    $lvl = getConceptLevel($s, $subTitle);
-                    if (isset($levelCounts[$lvl])) {
-                        $levelCounts[$lvl]++;
-                    }
-                }
+                $allSubtopicSlugs[$s] = true;
             }
         }
     }
@@ -48,882 +39,572 @@ $totalFormulas = !empty($formulas) && is_array($formulas) ? count($formulas) : (
 $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 ?>
 
-<article class="topic-content" style="--accent-color: var(--accent-<?= $theme ?>);">
+<article class="topic-content compact-directory" style="--accent-color: var(--accent-<?= $theme ?>);">
     
-    <!-- Option 1: Cosmic Command Header & Telemetry KPI Dashboard -->
-    <header class="topic-command-header">
-        <div class="topic-header-watermark">
-            <?= $meta['svg'] ?>
-        </div>
-
-        <div class="header-badge-tag">FACULTY OF <?= strtoupper(str_replace('-', ' ', $theme)) ?></div>
-        <h1 class="topic-title"><?= htmlspecialchars($title ?? 'Physics Hub') ?></h1>
-        <p id="topic-beginning-abstract" class="topic-subtitle"><?= $intro ?? 'Accessing the deep mathematical structure of the physical manifold.' ?></p>
-
-        <!-- Live Domain Telemetry Bar -->
-        <div class="topic-telemetry-bar">
-            <div class="telemetry-pill">
-                <span class="telemetry-icon">🏛️</span>
-                <div class="telemetry-data">
-                    <span class="telemetry-value"><?= $totalPillars ?></span>
-                    <span class="telemetry-label">Pillars</span>
-                </div>
+    <!-- Minimalist Compact Directory Header -->
+    <header class="directory-header">
+        <div class="header-headline-row">
+            <div>
+                <div class="header-badge-tag">FACULTY OF <?= strtoupper(str_replace('-', ' ', $theme)) ?></div>
+                <h1 class="directory-title"><?= htmlspecialchars($title ?? 'Physics Hub') ?></h1>
+                <p id="topic-beginning-abstract" class="directory-subtitle"><?= $intro ?? 'Comprehensive academic directory of the physical manifold.' ?></p>
             </div>
-            <div class="telemetry-pill">
-                <span class="telemetry-icon">📜</span>
-                <div class="telemetry-data">
-                    <span class="telemetry-value"><?= $totalConcepts ?></span>
-                    <span class="telemetry-label">Subtopics</span>
-                </div>
-            </div>
-            <div class="telemetry-pill">
-                <span class="telemetry-icon">📐</span>
-                <div class="telemetry-data">
-                    <span class="telemetry-value"><?= $totalFormulas ?></span>
-                    <span class="telemetry-label">Identities</span>
-                </div>
-            </div>
-            <div class="telemetry-pill">
-                <span class="telemetry-icon">🌉</span>
-                <div class="telemetry-data">
-                    <span class="telemetry-value"><?= $totalBridges ?></span>
-                    <span class="telemetry-label">Bridges</span>
-                </div>
+            <div class="header-meta-badge">
+                <span class="meta-item"><strong><?= $totalPillars ?></strong> Pillars</span>
+                <span class="meta-sep">/</span>
+                <span class="meta-item"><strong><?= $totalConcepts ?></strong> Concepts</span>
+                <?php if ($totalFormulas > 0): ?>
+                    <span class="meta-sep">/</span>
+                    <span class="meta-item"><strong><?= $totalFormulas ?></strong> Identities</span>
+                <?php endif; ?>
             </div>
         </div>
 
-        <!-- Action Bar -->
-        <div class="topic-actions-row">
-            <a href="/physics/subtopic/<?= htmlspecialchars($slug) ?>-overview" class="btn btn-secondary">🚀 Domain Overview &rarr;</a>
-            <a href="/physics/universe-graph" class="btn btn-tertiary">🌌 Derivation Universe Graph</a>
-            <a href="/physics/simulations" class="btn btn-tertiary">🧪 Domain Simulations</a>
+        <!-- Quick Filter & Action Bar -->
+        <div class="directory-toolbar">
+            <div class="directory-search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="directory-filter-input" placeholder="Quick filter concepts in <?= htmlspecialchars($title ?? 'this faculty') ?>..." autocomplete="off" />
+                <span id="directory-match-counter" class="match-counter"></span>
+            </div>
+            <div class="directory-actions">
+                <a href="/physics/subtopic/<?= htmlspecialchars($slug) ?>-overview" class="btn-tool">🚀 Overview</a>
+                <a href="/physics/universe-graph" class="btn-tool">🌌 Derivation Graph</a>
+                <a href="/physics/simulations" class="btn-tool">🧪 Simulations</a>
+            </div>
         </div>
     </header>
 
-    <!-- Top Dock Navigation Bar (Fast Stage Switching) -->
-    <div class="topic-dock-wrapper">
-        <nav class="topic-stage-dock" aria-label="Topic View Stages">
-            <button type="button" class="topic-dock-tab active" data-stage="stage-pillars">
-                <span class="tab-icon">🏛️</span>
-                <span>Pillars &amp; Concepts</span>
-                <span class="topic-dock-badge"><?= $totalConcepts ?></span>
-            </button>
-            <button type="button" class="topic-dock-tab" data-stage="stage-equations">
-                <span class="tab-icon">📐</span>
-                <span>Core Identities</span>
-                <span class="topic-dock-badge"><?= $totalFormulas ?></span>
-            </button>
-            <button type="button" class="topic-dock-tab" data-stage="stage-bridges">
-                <span class="tab-icon">🌉</span>
-                <span>Cross-Disciplinary Bridges</span>
-                <span class="topic-dock-badge"><?= $totalBridges ?></span>
-            </button>
-        </nav>
-    </div>
+    <!-- Multi-Column Pillar Directory Grid -->
+    <div class="content-body" style="margin-bottom: 24px;">
+        <?php if (!empty($pillars) && is_array($pillars)): ?>
+            <div class="directory-pillars-grid">
+                <?php foreach ($pillars as $idx => $pillar): 
+                    $pillarSubCount = !empty($pillar['slugs']) ? count($pillar['slugs']) : 0;
+                    $cleanTitle = preg_replace('/^\d+\.\s*/', '', $pillar['title']);
+                ?>
+                    <section class="concept-pillar directory-pillar-col" data-pillar-idx="<?= $idx ?>">
+                        <div class="pillar-col-header">
+                            <span class="pillar-col-num"><?= sprintf('%02d', $idx + 1) ?></span>
+                            <h3 class="pillar-col-title"><?= htmlspecialchars($cleanTitle) ?></h3>
+                            <span class="pillar-col-count"><?= $pillarSubCount ?></span>
+                        </div>
 
-    <div class="content-body">
-        
-        <!-- STAGE 1: Pillars & Concepts Hub -->
-        <div id="stage-pillars" class="topic-stage-pane" style="display: block;">
-            
-            <?php if (!empty($pillars) && is_array($pillars)): ?>
-                
-                <!-- Live Search & Multi-Filter Console -->
-                <div class="topic-filter-console glass-card">
-                    <div class="console-top-row">
-                        <div class="console-search-box">
-                            <span class="search-lens">🔍</span>
-                            <input type="text" id="topic-concept-search" placeholder="Filter concepts by title or keyword..." autocomplete="off" />
-                            <button type="button" id="topic-search-clear" style="display: none;">&times;</button>
-                        </div>
-                        <div class="console-level-chips">
-                            <button type="button" class="level-chip-btn active" data-level="all">All Levels (<?= $totalConcepts ?>)</button>
-                            <button type="button" class="level-chip-btn level-foundational" data-level="foundational">Foundational (<?= $levelCounts['Foundational'] ?>)</button>
-                            <button type="button" class="level-chip-btn level-analytical" data-level="analytical">Analytical (<?= $levelCounts['Analytical'] ?>)</button>
-                            <button type="button" class="level-chip-btn level-frontier" data-level="frontier">Frontier (<?= $levelCounts['Frontier'] ?>)</button>
-                        </div>
-                    </div>
-
-                    <div class="console-bottom-row">
-                        <!-- Pillar Filter Tabs -->
-                        <div class="pillar-tabs-bar">
-                            <button type="button" class="pillar-tab-btn active" data-pillar-idx="all">All Pillars (<?= count($pillars) ?>)</button>
-                            <?php foreach ($pillars as $idx => $pillar): ?>
-                                <button type="button" class="pillar-tab-btn" data-pillar-idx="<?= $idx ?>"><?= ($idx + 1) ?>. <?= htmlspecialchars($pillar['title']) ?></button>
-                            <?php endforeach; ?>
-                        </div>
-                        <div id="concept-filter-counter" class="concept-filter-counter">
-                            Showing all <?= $totalConcepts ?> concepts
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Empty Search Match Banner -->
-                <div id="concept-no-results" class="glass-card" style="display: none; padding: 40px; text-align: center; margin-bottom: 30px;">
-                    <p style="font-size: 1.1rem; color: #f1f5f9; margin-bottom: 8px;">No concepts match your filter criteria.</p>
-                    <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Try adjusting your search query or selecting "All Levels".</p>
-                </div>
-
-                <!-- Pillars Content Grids -->
-                <?php foreach ($pillars as $idx => $pillar): ?>
-                    <section class="concept-pillar" data-pillar-idx="<?= $idx ?>">
-                        <div class="pillar-header-group">
-                            <span class="pillar-index-badge">PILLAR 0<?= ($idx + 1) ?> // MANIFOLD DOMAIN</span>
-                            <h3 class="pillar-header"><?= htmlspecialchars($pillar['title']) ?></h3>
-                        </div>
-                        <p class="pillar-narrative"><?= $pillar['narrative'] ?></p>
-                        <div class="concept-grid">
+                        <ul class="directory-rows-list">
                             <?php foreach ($pillar['slugs'] as $slugItem): 
                                 $sub = $subtopics_map[$slugItem] ?? null;
                                 if (!$sub) continue;
                                 $level = getConceptLevel($slugItem, $sub['title']);
                             ?>
-                                <div class="concept-card" 
-                                     data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>"
-                                     data-level="<?= strtolower($level) ?>"
-                                     data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>">
-                                    <div class="card-glass-sheen"></div>
-                                    <div class="concept-anchor">
-                                        <span class="level-tag level-<?= strtolower($level) ?>"><?= $level ?></span>
-                                        <h4><strong><a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link"><?= str_replace('\\\\', '\\', $sub['title']) ?></a></strong></h4>
-                                    </div>
-                                    
-                                    <?php if (!empty($sub['hero_math'])): ?>
-                                        <div class="hero-math-badge">
-                                            <?= $sub['hero_math'] ?>
-                                        </div>
-                                    <?php endif; ?>
-
-                                    <div class="concept-detail subtopic-card-abstract">
-                                        <p><?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?></p>
-                                    </div>
-                                    <div class="concept-card-footer">
-                                        <span class="explore-subtopic-btn">Explore Deep Dive &rarr;</span>
-                                    </div>
-                                </div>
+                                <li class="concept-card directory-row-item" 
+                                    data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>"
+                                    data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
+                                    data-level="<?= strtolower($level) ?>">
+                                    <span class="row-level-dot dot-<?= strtolower($level) ?>" title="<?= $level ?> Level"></span>
+                                    <a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link">
+                                        <?= str_replace('\\\\', '\\', $sub['title']) ?>
+                                    </a>
+                                    <!-- Preserved for semantic variable & testing hooks -->
+                                    <span class="subtopic-card-abstract" style="display: none;">
+                                        <?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?>
+                                    </span>
+                                </li>
                             <?php endforeach; ?>
-                        </div>
+                        </ul>
                     </section>
                 <?php endforeach; ?>
-
-            <?php else: ?>
-                <!-- FALLBACK: CLASSIC STATIC CONTENT -->
-                <?= $content ?? '<p>No content available for this topic.</p>' ?>
-            <?php endif; ?>
-
-        </div>
-
-        <!-- STAGE 2: Core Identities & Equations Hub -->
-        <div id="stage-equations" class="topic-stage-pane" style="display: none;">
-            <div class="stage-section-header glass-card" style="margin-bottom: 25px; padding: 24px 28px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-                    <div>
-                        <h2 style="font-size: 1.4rem; color: #ffffff; margin: 0 0 6px 0; font-family: 'Space Grotesk', sans-serif;">
-                            Key Theoretical Identities
-                        </h2>
-                        <p style="margin: 0; font-size: 0.92rem; color: var(--text-muted);">
-                            Governing algebraic equations, conserved invariants, and canonical derivations in <?= htmlspecialchars($title ?? 'this faculty') ?>.
-                        </p>
-                    </div>
-                    <div class="equation-search-box">
-                        <span class="search-lens">🔍</span>
-                        <input type="text" id="topic-equation-search" placeholder="Filter equations..." autocomplete="off" />
-                    </div>
-                </div>
             </div>
-
-            <!-- Equations Catalog Section -->
-            <div id="topic-equations-section">
-                <?php $this->render('physics/_equations_partial', [
-                    'equations' => $equations ?? [],
-                    'breakdowns' => $breakdowns ?? [],
-                    'formulas' => $formulas ?? [],
-                    'nonce' => $nonce,
-                    'domain' => $slug
-                ]); ?>
+        <?php else: ?>
+            <div class="glass-card" style="padding: 24px; text-align: center;">
+                <?= $content ?? '<p>No concepts currently listed for this directory.</p>' ?>
             </div>
-        </div>
-
-        <!-- STAGE 3: Cross-Disciplinary Bridges Hub -->
-        <div id="stage-bridges" class="topic-stage-pane" style="display: none;">
-            <div class="stage-section-header glass-card" style="margin-bottom: 25px; padding: 24px 28px;">
-                <h2 style="font-size: 1.4rem; color: #ffffff; margin: 0 0 6px 0; font-family: 'Space Grotesk', sans-serif;">
-                    Cross-Disciplinary Bridges
-                </h2>
-                <p style="margin: 0; font-size: 0.92rem; color: var(--text-muted);">
-                    Asymptotic limits, correspondence principles, and geometric dualities connecting <?= htmlspecialchars($title ?? 'this faculty') ?> to neighboring physics domains.
-                </p>
-            </div>
-
-            <?php if (!empty($bridges)): ?>
-                <div class="bridge-matrix">
-                    <div class="bridge-grid">
-                        <?php foreach ($bridges as $b): ?>
-                            <div class="bridge-item glass-card">
-                                <div class="bridge-badge-row">
-                                    <span class="bridge-badge">INTERDISCIPLINARY COUPLING</span>
-                                </div>
-                                <div class="bridge-item-title">
-                                    <?php if (!empty($b['slug'])): ?>
-                                        <a href="/physics/topic/<?= $b['slug'] ?>" class="topic-link"><?= htmlspecialchars($b['title']) ?></a>
-                                    <?php else: ?>
-                                        <?= htmlspecialchars($b['title']) ?>
-                                    <?php endif; ?>
-                                </div>
-                                <p class="bridge-item-desc"><?= htmlspecialchars($b['description']) ?></p>
-                                <?php if (!empty($b['slug'])): ?>
-                                    <div class="bridge-action">
-                                        <a href="/physics/topic/<?= $b['slug'] ?>" class="btn-bridge-explore">Traverse to <?= htmlspecialchars($b['title']) ?> &rarr;</a>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php else: ?>
-                <div class="glass-card" style="padding: 30px; text-align: center; color: var(--text-muted);">
-                    No cross-disciplinary bridges currently mapped for this domain.
-                </div>
-            <?php endif; ?>
-        </div>
-
+        <?php endif; ?>
     </div>
+
+    <!-- Interdisciplinary Bridges (Compact Footer Bar) -->
+    <?php if (!empty($bridges)): ?>
+        <div class="directory-bridges-strip">
+            <span class="bridges-strip-label">CONNECTED FACULTIES:</span>
+            <div class="bridges-strip-links">
+                <?php foreach ($bridges as $b): ?>
+                    <a href="<?= !empty($b['slug']) ? '/physics/topic/' . $b['slug'] : '#' ?>" 
+                       class="bridge-strip-pill" 
+                       title="<?= htmlspecialchars($b['description']) ?>">
+                        <?= htmlspecialchars($b['title']) ?> &rarr;
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Core Theoretical Identities Drawer -->
+    <details class="directory-drawer" id="topic-equations-drawer">
+        <summary class="drawer-header-toggle">
+            <span class="drawer-title">📐 Key Theoretical Identities (<?= $totalFormulas ?>)</span>
+            <span class="drawer-hint">[ Click to Toggle Formula Catalog ]</span>
+        </summary>
+        <div id="topic-equations-section" class="drawer-body">
+            <?php $this->render('physics/_equations_partial', [
+                'equations' => $equations ?? [],
+                'breakdowns' => $breakdowns ?? [],
+                'formulas' => $formulas ?? [],
+                'nonce' => $nonce,
+                'domain' => $slug
+            ]); ?>
+        </div>
+    </details>
 
     <script id="topic-var-map" type="application/json">
     <?= json_encode($topicVariableMap ?? [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>
     </script>
 
-    <footer class="topic-footer">
+    <footer class="directory-footer">
         <a href="/physics" class="btn btn-secondary">&larr; Back to Faculty Index</a>
     </footer>
 </article>
 
-<!-- Option 1 Interactive Script: Stage Docking, Live Multi-Filter & Card Tilt -->
+<!-- Fast Instant Filter & Drawer Script -->
 <script nonce="<?= $nonce ?>">
 (function() {
-    // 1. Stage Dock Switching
-    const dockTabs = document.querySelectorAll('.topic-dock-tab');
-    const stagePanes = document.querySelectorAll('.topic-stage-pane');
+    const filterInput = document.getElementById('directory-filter-input');
+    const matchCounter = document.getElementById('directory-match-counter');
+    const rows = document.querySelectorAll('.directory-row-item');
+    const cols = document.querySelectorAll('.directory-pillar-col');
+    const totalCount = rows.length;
 
-    dockTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            const targetStage = this.getAttribute('data-stage');
-            if (!targetStage) return;
-
-            dockTabs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-
-            stagePanes.forEach(pane => {
-                if (pane.id === targetStage) {
-                    pane.style.display = 'block';
-                    if (targetStage === 'stage-equations' && window.MathJax && window.MathJax.typesetPromise) {
-                        window.MathJax.typesetPromise([pane]);
-                    }
-                } else {
-                    pane.style.display = 'none';
-                }
-            });
-        });
-    });
-
-    // 2. Live Concept Filtering (Keyword Search + Level Chips + Pillar Selector)
-    const conceptSearch = document.getElementById('topic-concept-search');
-    const searchClearBtn = document.getElementById('topic-search-clear');
-    const levelChips = document.querySelectorAll('.level-chip-btn');
-    const pillarBtns = document.querySelectorAll('.pillar-tab-btn');
-    const conceptCards = document.querySelectorAll('.concept-card');
-    const pillars = document.querySelectorAll('.concept-pillar');
-    const counterEl = document.getElementById('concept-filter-counter');
-    const noResultsEl = document.getElementById('concept-no-results');
-
-    let currentLevel = 'all';
-    let currentPillar = 'all';
-    let currentQuery = '';
-
-    function applyConceptFilters() {
-        let visibleCount = 0;
-        const totalCards = conceptCards.length;
-
-        pillars.forEach(pillar => {
-            const pillarIdx = pillar.getAttribute('data-pillar-idx');
-            const matchesPillar = (currentPillar === 'all' || currentPillar === pillarIdx);
-            let pillarHasVisibleCards = false;
-
-            const cardsInPillar = pillar.querySelectorAll('.concept-card');
-            cardsInPillar.forEach(card => {
-                const cardLevel = card.getAttribute('data-level') || '';
-                const cardTitle = card.getAttribute('data-title') || '';
-                const cardSlug = card.getAttribute('data-subtopic-slug') || '';
-                const cardSnippet = (card.querySelector('.subtopic-card-abstract') ? card.querySelector('.subtopic-card-abstract').textContent : '').toLowerCase();
-
-                const matchesLevel = (currentLevel === 'all' || currentLevel === cardLevel);
-                const matchesSearch = !currentQuery || 
-                                      cardTitle.includes(currentQuery) || 
-                                      cardSlug.includes(currentQuery) || 
-                                      cardSnippet.includes(currentQuery);
-
-                if (matchesPillar && matchesLevel && matchesSearch) {
-                    card.style.display = 'flex';
-                    pillarHasVisibleCards = true;
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            if (matchesPillar && pillarHasVisibleCards) {
-                pillar.style.display = 'block';
-            } else {
-                pillar.style.display = 'none';
-            }
-        });
-
-        // Update counter
-        if (counterEl) {
-            if (visibleCount === totalCards) {
-                counterEl.textContent = `Showing all ${totalCards} concepts`;
-            } else {
-                counterEl.textContent = `Showing ${visibleCount} of ${totalCards} concepts`;
-            }
-        }
-
-        // Show/Hide No Results Box
-        if (noResultsEl) {
-            noResultsEl.style.display = (visibleCount === 0) ? 'block' : 'none';
-        }
-    }
-
-    if (conceptSearch) {
-        conceptSearch.addEventListener('input', function() {
-            currentQuery = this.value.trim().toLowerCase();
-            if (searchClearBtn) {
-                searchClearBtn.style.display = currentQuery.length > 0 ? 'inline-block' : 'none';
-            }
-            applyConceptFilters();
-        });
-    }
-
-    if (searchClearBtn) {
-        searchClearBtn.addEventListener('click', function() {
-            if (conceptSearch) {
-                conceptSearch.value = '';
-                currentQuery = '';
-                this.style.display = 'none';
-                applyConceptFilters();
-                conceptSearch.focus();
-            }
-        });
-    }
-
-    levelChips.forEach(chip => {
-        chip.addEventListener('click', function() {
-            levelChips.forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            currentLevel = this.getAttribute('data-level') || 'all';
-            applyConceptFilters();
-        });
-    });
-
-    pillarBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation(); // Handle locally to integrate with live multi-filter
-            pillarBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            currentPillar = this.getAttribute('data-pillar-idx') || 'all';
-            applyConceptFilters();
-        });
-    });
-
-    // 3. Live Equation Filter
-    const equationSearch = document.getElementById('topic-equation-search');
-    if (equationSearch) {
-        equationSearch.addEventListener('input', function() {
+    if (filterInput) {
+        filterInput.addEventListener('input', function() {
             const query = this.value.trim().toLowerCase();
-            const eqItems = document.querySelectorAll('.equation-item');
-            eqItems.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                if (!query || text.includes(query)) {
-                    item.style.display = 'block';
+            let visibleCount = 0;
+
+            cols.forEach(col => {
+                let colHasMatch = false;
+                const colRows = col.querySelectorAll('.directory-row-item');
+
+                colRows.forEach(row => {
+                    const title = row.getAttribute('data-title') || '';
+                    const slug = row.getAttribute('data-subtopic-slug') || '';
+                    if (!query || title.includes(query) || slug.includes(query)) {
+                        row.style.display = 'flex';
+                        colHasMatch = true;
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                if (colHasMatch) {
+                    col.style.opacity = '1';
+                    col.style.pointerEvents = 'auto';
                 } else {
-                    item.style.display = 'none';
+                    col.style.opacity = query ? '0.2' : '1';
                 }
             });
+
+            if (matchCounter) {
+                if (query) {
+                    matchCounter.textContent = `${visibleCount}/${totalCount}`;
+                } else {
+                    matchCounter.textContent = '';
+                }
+            }
         });
     }
 
-    // 4. Interactive 3D Parallax Tilt for Glassmorphic Concept Cards
-    const cards = document.querySelectorAll('.concept-card');
-    cards.forEach(card => {
-        let bounds;
-
-        function rotateToMouse(e) {
-            if (!bounds) bounds = card.getBoundingClientRect();
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-            const leftX = mouseX - bounds.left;
-            const topY = mouseY - bounds.top;
-            const center = {
-                x: leftX - bounds.width / 2,
-                y: topY - bounds.height / 2
-            };
-            
-            const tiltX = (center.y / (bounds.height / 2)) * -6;
-            const tiltY = (center.x / (bounds.width / 2)) * 6;
-
-            card.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) scale3d(1.015, 1.015, 1.015)`;
-        }
-
-        card.addEventListener('mouseenter', () => {
-            bounds = card.getBoundingClientRect();
-            card.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease';
+    // Lazy typeset equations when drawer is toggled open
+    const eqDrawer = document.getElementById('topic-equations-drawer');
+    if (eqDrawer) {
+        eqDrawer.addEventListener('toggle', function() {
+            if (this.open && window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([this]);
+            }
         });
-
-        card.addEventListener('mousemove', rotateToMouse);
-
-        card.addEventListener('mouseleave', () => {
-            card.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease';
-            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-        });
-    });
+    }
 })();
 </script>
 
-<!-- Scoped CSS Styling for Research Command Dashboard -->
+<!-- Scoped CSS for Option A Compact Academic Directory -->
 <style>
-.topic-command-header {
-    position: relative;
-    padding: 38px 36px 32px;
-    margin-bottom: 24px;
-    background: radial-gradient(circle at 50% 0%, rgba(100, 255, 218, 0.12) 0%, rgba(15, 23, 42, 0.75) 80%);
+.compact-directory {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+/* Minimalist Directory Header */
+.directory-header {
+    background: rgba(15, 23, 42, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-top: 2px solid var(--accent-color, #64ffda);
-    border-radius: 18px;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    overflow: hidden;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 20px 24px 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.header-headline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
 .header-badge-tag {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     color: var(--accent-color, #64ffda);
-    margin-bottom: 10px;
-    display: inline-block;
+    margin-bottom: 4px;
 }
 
-.topic-title {
+.directory-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 2.5rem;
+    font-size: 1.85rem;
     font-weight: 700;
     color: #ffffff;
-    margin: 0 0 12px;
+    margin: 0 0 4px;
     line-height: 1.2;
 }
 
-.topic-subtitle {
-    font-size: 1.05rem;
+.directory-subtitle {
+    font-size: 0.92rem;
     color: var(--text-muted, #94a3b8);
-    line-height: 1.6;
-    max-width: 840px;
-    margin: 0 0 24px;
+    margin: 0;
+    max-width: 780px;
+    line-height: 1.4;
 }
 
-/* Domain Telemetry Bar */
-.topic-telemetry-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.telemetry-pill {
-    display: flex;
+.header-meta-badge {
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
-    background: rgba(15, 23, 42, 0.6);
+    gap: 8px;
+    background: rgba(11, 17, 32, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 8px 16px;
-    transition: all 0.2s ease;
-}
-
-.telemetry-pill:hover {
-    border-color: var(--accent-color, #64ffda);
-    background: rgba(100, 255, 218, 0.05);
-}
-
-.telemetry-icon {
-    font-size: 1.2rem;
-}
-
-.telemetry-data {
-    display: flex;
-    flex-direction: column;
-}
-
-.telemetry-value {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #ffffff;
-    line-height: 1.1;
-}
-
-.telemetry-label {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted, #94a3b8);
-    font-weight: 500;
-}
-
-.topic-actions-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.btn-tertiary {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
     color: #cbd5e1;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 8px 16px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.btn-tertiary:hover {
-    color: #ffffff;
-    border-color: var(--accent-color, #64ffda);
-    background: rgba(100, 255, 218, 0.08);
-}
-
-/* Stage Dock Tabs */
-.topic-dock-wrapper {
-    width: 100%;
-    margin-bottom: 24px;
-}
-
-.topic-stage-dock {
-    display: flex;
-    gap: 8px;
-    padding: 6px;
-    background: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    backdrop-filter: blur(12px);
-    overflow-x: auto;
-}
-
-.topic-dock-tab {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 18px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    color: var(--text-muted, #94a3b8);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
     white-space: nowrap;
 }
 
-.topic-dock-tab:hover {
+.header-meta-badge strong {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.04);
 }
 
-.topic-dock-tab.active {
-    color: #ffffff;
-    background: rgba(100, 255, 218, 0.12);
-    border-color: rgba(100, 255, 218, 0.35);
-    box-shadow: 0 0 15px rgba(100, 255, 218, 0.15);
+.meta-sep {
+    color: rgba(255, 255, 255, 0.2);
 }
 
-.topic-dock-badge {
-    font-size: 0.72rem;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2px 7px;
-    border-radius: 10px;
-    color: #cbd5e1;
-}
-
-.topic-dock-tab.active .topic-dock-badge {
-    background: var(--accent-color, #64ffda);
-    color: #0b1120;
-    font-weight: 700;
-}
-
-/* In-Topic Filter Console */
-.topic-filter-console {
-    padding: 20px 24px;
-    margin-bottom: 30px;
-    background: rgba(15, 23, 42, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.console-top-row {
+/* Toolbar & Quick Search */
+.directory-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.console-search-box, .equation-search-box {
+.directory-search-wrapper {
     position: relative;
     display: flex;
     align-items: center;
     flex: 1;
-    min-width: 260px;
-    max-width: 440px;
+    max-width: 420px;
 }
 
-.console-search-box input, .equation-search-box input {
+.directory-search-wrapper input {
     width: 100%;
-    padding: 9px 34px 9px 36px;
-    background: rgba(11, 17, 32, 0.7);
+    padding: 7px 55px 7px 32px;
+    background: rgba(11, 17, 32, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
+    border-radius: 6px;
     color: #ffffff;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     outline: none;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
 }
 
-.console-search-box input:focus, .equation-search-box input:focus {
+.directory-search-wrapper input:focus {
     border-color: var(--accent-color, #64ffda);
-    box-shadow: 0 0 10px rgba(100, 255, 218, 0.2);
+    box-shadow: 0 0 10px rgba(100, 255, 218, 0.15);
 }
 
-.search-lens {
+.search-icon {
     position: absolute;
-    left: 12px;
-    font-size: 0.85rem;
-    opacity: 0.6;
+    left: 10px;
+    font-size: 0.78rem;
+    opacity: 0.5;
     pointer-events: none;
 }
 
-#topic-search-clear {
+.match-counter {
     position: absolute;
     right: 10px;
-    background: none;
-    border: none;
-    color: #94a3b8;
-    font-size: 1.1rem;
-    cursor: pointer;
-    line-height: 1;
+    font-size: 0.75rem;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--accent-color, #64ffda);
+    font-weight: 600;
 }
 
-.console-level-chips {
+.directory-actions {
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
     gap: 8px;
 }
 
-.level-chip-btn {
+.btn-tool {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 0.78rem;
     font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 6px;
+    color: #cbd5e1;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-muted, #94a3b8);
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
 }
 
-.level-chip-btn:hover {
+.btn-tool:hover {
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: var(--accent-color, #64ffda);
+    background: rgba(100, 255, 218, 0.08);
 }
 
-.level-chip-btn.active {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.3);
+/* Dense Multi-Column Pillars Grid */
+.directory-pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 16px;
 }
 
-.level-chip-btn.level-foundational.active {
-    background: rgba(52, 211, 153, 0.15);
-    border-color: #34d399;
-    color: #34d399;
-}
-
-.level-chip-btn.level-analytical.active {
-    background: rgba(56, 189, 248, 0.15);
-    border-color: #38bdf8;
-    color: #38bdf8;
-}
-
-.level-chip-btn.level-frontier.active {
-    background: rgba(192, 132, 252, 0.15);
-    border-color: #c084fc;
-    color: #c084fc;
-}
-
-.console-bottom-row {
+.directory-pillar-col {
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: opacity 0.2s, border-color 0.2s;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+}
+
+.directory-pillar-col:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(15, 23, 42, 0.7);
+}
+
+.pillar-col-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pillar-col-num {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-color, #64ffda);
+    background: rgba(100, 255, 218, 0.08);
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.pillar-col-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pillar-col-count {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+/* Concept Rows */
+.directory-rows-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.directory-row-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.directory-row-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateX(3px);
+}
+
+.row-level-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-foundational {
+    background: #34d399;
+    box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
+}
+
+.dot-analytical {
+    background: #38bdf8;
+    box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+}
+
+.dot-frontier {
+    background: #c084fc;
+    box-shadow: 0 0 6px rgba(192, 132, 252, 0.4);
+}
+
+.directory-row-item .subtopic-link {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    color: #e2e8f0;
+    text-decoration: none;
+    line-height: 1.35;
+    flex: 1;
+    transition: color 0.15s ease;
+}
+
+.directory-row-item:hover .subtopic-link {
+    color: var(--accent-color, #64ffda);
+}
+
+/* Bridges Strip */
+.directory-bridges-strip {
+    display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    gap: 10px;
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
 }
 
-.pillar-tabs-bar {
+.bridges-strip-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent-color, #64ffda);
+}
+
+.bridges-strip-links {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
-.pillar-tab-btn {
+.bridge-strip-pill {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 8px;
-    background: rgba(11, 17, 32, 0.6);
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    color: var(--text-muted, #94a3b8);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.pillar-tab-btn:hover {
-    color: #ffffff;
-    border-color: var(--accent-color, #64ffda);
-}
-
-.pillar-tab-btn.active {
-    color: #ffffff;
-    background: rgba(100, 255, 218, 0.12);
-    border-color: var(--accent-color, #64ffda);
-}
-
-.concept-filter-counter {
-    font-size: 0.8rem;
-    color: var(--text-muted, #94a3b8);
-    font-family: 'Space Grotesk', sans-serif;
-}
-
-/* Bridges Matrix & Cards */
-.bridge-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.bridge-item {
-    padding: 24px;
-    border-radius: 12px;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: all 0.25s ease;
-}
-
-.bridge-item:hover {
-    border-color: var(--accent-color, #64ffda);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-.bridge-badge-row {
-    margin-bottom: 4px;
-}
-
-.bridge-badge {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: var(--accent-color, #64ffda);
-    background: rgba(100, 255, 218, 0.08);
-    padding: 3px 8px;
+    padding: 3px 10px;
     border-radius: 4px;
-    border: 1px solid rgba(100, 255, 218, 0.2);
+    text-decoration: none;
+    transition: all 0.2s;
 }
 
-.bridge-item-title {
+.bridge-strip-pill:hover {
+    color: #ffffff;
+    border-color: var(--accent-color, #64ffda);
+    background: rgba(100, 255, 218, 0.06);
+}
+
+/* Collapsible Equations Drawer */
+.directory-drawer {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.drawer-header-toggle {
+    padding: 14px 20px;
+    cursor: pointer;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.15rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.drawer-header-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.drawer-title {
+    font-size: 0.95rem;
     font-weight: 600;
     color: #ffffff;
 }
 
-.bridge-item-title a {
-    color: #ffffff;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.bridge-item-title a:hover {
-    color: var(--accent-color, #64ffda);
-}
-
-.bridge-item-desc {
-    font-size: 0.92rem;
+.drawer-hint {
+    font-size: 0.75rem;
     color: var(--text-muted, #94a3b8);
-    line-height: 1.55;
-    margin: 0;
-    flex: 1;
 }
 
-.bridge-action {
-    padding-top: 8px;
+.drawer-body {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.btn-bridge-explore {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--accent-color, #64ffda);
-    text-decoration: none;
-    transition: all 0.2s ease;
-    display: inline-block;
-}
-
-.btn-bridge-explore:hover {
-    text-decoration: underline;
+/* Footer */
+.directory-footer {
+    padding: 16px 0 32px;
 }
 
 @media (max-width: 768px) {
-    .topic-command-header {
-        padding: 24px 20px;
+    .header-headline-row {
+        flex-direction: column;
     }
-    .topic-title {
-        font-size: 1.9rem;
-    }
-    .console-top-row, .console-bottom-row {
+    .directory-toolbar {
         flex-direction: column;
         align-items: stretch;
     }
-    .console-search-box {
+    .directory-search-wrapper {
         max-width: 100%;
+    }
+    .directory-pillars-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>

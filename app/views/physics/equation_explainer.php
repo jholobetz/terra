@@ -64,7 +64,8 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
             <button type="button" class="explainer-tab-btn active" data-target="stage-narrative">
                 <span class="tab-icon">📖</span> Narrative &amp; Breakdown
             </button>
-            <button type="button" class="explainer-tab-btn" data-target="stage-cas">
+            <!-- Preserved for future expansion: Symbolic CAS & Limits Laboratory -->
+            <button type="button" class="explainer-tab-btn" data-target="stage-cas" style="display: none;">
                 <span class="tab-icon">⚙️</span> Symbolic CAS &amp; Limits
             </button>
             <button type="button" class="explainer-tab-btn" data-target="stage-lineage">

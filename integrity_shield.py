@@ -7,6 +7,7 @@ from scripts.maintenance.generate_system_health import is_node_subjective
 from scripts.maintenance.nist_constants_verifier import audit_constants
 from scripts.maintenance.pdg_particle_verifier import audit_particles
 from scripts.maintenance.semantic_prose_verifier import audit_semantic_prose
+from scripts.lib.delimiters import find_html_in_math
 
 # Attempt to import jsonschema, fallback to basic check if not available
 try:
@@ -345,6 +346,31 @@ class IntegrityShield:
                     if "<svg" not in display:
                         self.errors.append(f"MATH RENDERING VIOLATION: [{slug}] is Platinum but has a raw LaTeX display math equation (missing SVG): '{display[:80]}...'")
 
+    def check_html_in_math(self):
+        """Ensures zero HTML tag or attribute infiltration inside LaTeX math blocks across formula shards and subtopics."""
+        fields_to_check = ['conceptual_definition', 'intuitive_summary', 'interpretation', 'symmetry_origin', 'limits_and_boundary', 'description']
+        for f_id, f_data in self.formula_registry.items():
+            if not isinstance(f_data, dict): continue
+            eq = f_data.get("equation", "")
+            eq_violations = find_html_in_math(eq, is_raw_tex=True)
+            if eq_violations:
+                self.errors.append(f"HTML IN TEX VIOLATION: Formula '{f_id}' equation contains HTML markup: {eq_violations}")
+            for field in fields_to_check:
+                val = f_data.get(field)
+                if isinstance(val, str):
+                    prose_violations = find_html_in_math(val, is_raw_tex=False)
+                    if prose_violations:
+                        self.errors.append(f"HTML IN TEX VIOLATION: Formula '{f_id}' field '{field}' contains HTML markup inside math: {prose_violations}")
+
+        subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
+        for slug in subtopics_to_check:
+            sub = self.all_subtopics.get(slug)
+            if not sub or not isinstance(sub, dict): continue
+            content = sub.get("content", "")
+            sub_violations = find_html_in_math(content, is_raw_tex=False)
+            if sub_violations:
+                self.errors.append(f"HTML IN TEX VIOLATION: Subtopic [{slug}] contains HTML markup inside math block or SVG data-tex: {sub_violations[:3]}")
+
     def check_spritified_references(self):
         """Ensures all subtopics do not contain spritified SVG math references."""
         subtopics_to_check = [self.target_slug] if self.target_slug else self.all_subtopics.keys()
@@ -444,6 +470,7 @@ class IntegrityShield:
         self.check_links()
         self.check_latex_formatting()
         self.check_math_rendering()
+        self.check_html_in_math()
         self.check_spritified_references()
         self.check_forbidden_headers()
         self.check_constants()

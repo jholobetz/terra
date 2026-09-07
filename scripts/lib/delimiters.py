@@ -140,10 +140,95 @@ def validate_prose_delimiters(text: str) -> List[str]:
         macro_names = ", ".join(sorted(set(m[0] for m in leaks))[:5])
         errors.append(f"Leaked TeX macro outside math mode: {macro_names}")
 
+    # 6. Check for HTML infiltration inside math blocks
+    html_in_math = validate_no_html_in_math(text)
+    errors.extend(html_in_math)
+
     return errors
 
 
 UNWRAPPED_ARG_MACRO_RE = re.compile(r"\\(mathbf|vec|hat|mathcal|bar|dot|ddot|frac)\{[^}]+\}")
+
+HTML_TAG_NAMES = (
+    r"a|abbr|b|blockquote|body|br|button|caption|cite|code|col|colgroup|dd|del|dfn|div|dl|dt|"
+    r"em|fieldset|figcaption|figure|footer|form|h[1-6]|head|header|hr|html|i|iframe|img|input|"
+    r"ins|kbd|label|legend|li|link|main|map|mark|meta|nav|noscript|object|ol|optgroup|option|"
+    r"output|p|param|picture|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|small|source|"
+    r"span|strong|style|sub|summary|sup|svg|table|tbody|td|template|textarea|tfoot|th|thead|"
+    r"time|title|tr|track|u|ul|var|video|wbr"
+)
+
+HTML_IN_MATH_RE = re.compile(
+    rf"</?(?:{HTML_TAG_NAMES})\b[^>]*>|"
+    rf"&lt;/?(?:{HTML_TAG_NAMES})\b[^&]*&gt;|"
+    r"\b(?:href|class)=[\"'][^\"'>\s]*[\"']",
+    re.IGNORECASE
+)
+
+
+def extract_math_blocks(text: str) -> List[Tuple[str, str]]:
+    """
+    Extracts all math blocks from text as (delimiter_type, math_content).
+    Handles display environments, bracket math, and dollar math.
+    """
+    if not text or not isinstance(text, str):
+        return []
+
+    blocks = []
+    for m in DISPLAY_MATH_RE.finditer(text):
+        blocks.append(("display", m.group(0)))
+    for m in INLINE_MATH_BRACKET_RE.finditer(text):
+        blocks.append(("bracket", m.group(0)))
+    for m in INLINE_MATH_DOLLAR_RE.finditer(text):
+        blocks.append(("dollar", m.group(1)))
+
+    return blocks
+
+
+def find_html_in_math(text: str, is_raw_tex: bool = False) -> List[Tuple[str, str]]:
+    r"""
+    Finds HTML tags or attributes embedded inside math blocks (or within raw LaTeX).
+    If is_raw_tex is True, the entire string is treated as math mode (e.g. formula 'equation' field).
+    Otherwise, only text inside math delimiters ($...$, \(...\), \[...\], $$...$$, or data-tex) is checked.
+    Returns list of (snippet, html_match).
+    """
+    if not text or not isinstance(text, str):
+        return []
+
+    violations = []
+    # If explicitly raw LaTeX (e.g. formula 'equation' field)
+    if is_raw_tex:
+        matches = HTML_IN_MATH_RE.findall(text)
+        for m in matches:
+            violations.append((text[:60].strip(), m))
+        return violations
+
+    # Extract all math blocks
+    blocks = extract_math_blocks(text)
+    for _, block in blocks:
+        matches = HTML_IN_MATH_RE.findall(block)
+        for m in matches:
+            violations.append((block[:60].strip(), m))
+
+    # Also check SVG data-tex attributes
+    for dt_m in re.finditer(r'<svg\s+[^>]*data-tex=["\']([^"\']*)["\']', text, re.IGNORECASE):
+        tex = dt_m.group(1)
+        matches = HTML_IN_MATH_RE.findall(tex)
+        for m in matches:
+            violations.append((tex[:60].strip(), m))
+
+    return violations
+
+
+def validate_no_html_in_math(text: str, is_raw_tex: bool = False) -> List[str]:
+    """
+    Validates that text does not contain HTML markup or attribute tags inside math blocks.
+    Returns list of error messages.
+    """
+    violations = find_html_in_math(text, is_raw_tex=is_raw_tex)
+    if not violations:
+        return []
+    return [f"HTML infiltration in math block: '{html_tag}' inside '{snippet}'" for snippet, html_tag in violations]
 
 
 def find_unwrapped_macros(text: str) -> List[str]:
@@ -162,6 +247,7 @@ def validate_narrative_delimiters(text: str) -> List[str]:
       2. Misplaced delimiters around fractions or equals
       3. Trailing isolated dollar sign (e.g. ' $' or isolated unclosed '.$')
       4. Unwrapped TeX command macros outside valid math delimiters
+      5. HTML tags or attributes embedded inside math blocks
     """
     if not text or not isinstance(text, str):
         return []
@@ -180,5 +266,8 @@ def validate_narrative_delimiters(text: str) -> List[str]:
     unwrapped = find_unwrapped_macros(text)
     if unwrapped:
         errors.append(f"Unwrapped TeX macro outside math mode: {unwrapped[0]}")
+
+    html_errors = validate_no_html_in_math(text)
+    errors.extend(html_errors)
 
     return errors

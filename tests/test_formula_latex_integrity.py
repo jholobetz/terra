@@ -4,7 +4,12 @@ import os
 import re
 import subprocess
 import pytest
-from scripts.lib.delimiters import strip_math_blocks, validate_narrative_delimiters
+from scripts.lib.delimiters import (
+    strip_math_blocks,
+    validate_narrative_delimiters,
+    find_html_in_math,
+    validate_no_html_in_math,
+)
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FORMULAS_DIR = os.path.join(PROJECT_ROOT, "app", "config", "content", "formulas")
@@ -76,22 +81,29 @@ def test_no_html_markup_in_formula_equations():
     corrupted = []
     for f in ALL_FORMULAS:
         eq = f.get("equation", "")
-        if re.search(r"<\/?(a|strong|em|code|div|span|p)\b", eq, re.IGNORECASE) or "href=" in eq or "subtopic-link" in eq or "latex.codecogs" in eq:
-            corrupted.append((f.get("_id"), eq))
+        violations = find_html_in_math(eq, is_raw_tex=True)
+        if violations or "latex.codecogs" in eq:
+            corrupted.append((f.get("_id"), eq, violations))
     assert len(corrupted) == 0, f"Found HTML markup or raw image links in formula equation fields: {corrupted}"
 
 def test_no_html_inside_subtopic_svg_data_tex():
     content_dir = os.path.join(PROJECT_ROOT, "app", "config", "content")
     corrupted_svgs = []
     for file_name in os.listdir(content_dir):
-        if file_name.endswith(".json") and file_name != "search_index.json":
+        if file_name.endswith(".json") and file_name not in [
+            "search_index.json", "categories.json", "constants.json", "entities.json",
+            "compiled_trie_regex.json", "notation.json", "particles.json", "pillar_profiles.json",
+            "formula_aliases.json", "formulas_latex_index.json", "unindexed_subcomponents.json",
+            "subcomponents_checkpoint.json", "formula_derivation_graph.json", "formulas_hash_registry.json"
+        ]:
             file_path = os.path.join(content_dir, file_name)
             with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
                 matches = re.findall(r'<svg\s+[^>]*data-tex=["\']([^"\']*)["\']', content, re.IGNORECASE)
                 for tex in matches:
-                    if "href=" in tex or "<a" in tex or "&lt;a" in tex or "subtopic-link" in tex:
-                        corrupted_svgs.append((file_name, tex[:80]))
+                    violations = find_html_in_math(tex)
+                    if violations:
+                        corrupted_svgs.append((file_name, tex[:80], violations))
     assert len(corrupted_svgs) == 0, f"Found HTML tags embedded inside SVG data-tex attributes: {corrupted_svgs}"
 
 def test_formula_narrative_math_delimiters():

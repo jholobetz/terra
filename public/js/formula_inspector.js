@@ -198,6 +198,14 @@ const FormulaInspector = {
                     <p id="drawer-summary-text" style="margin: 0; font-size: 0.9rem; line-height: 1.5; color: #94a3b8; font-style: italic;">Loading summary...</p>
                 </div>
 
+                <div id="drawer-cas-card" class="drawer-card" style="display: none; border-color: rgba(168, 85, 247, 0.25); background: rgba(168, 85, 247, 0.03);">
+                    <h4 class="drawer-card-title" style="color: #c084fc;">⚙️ Symbolic Limits (SymPy CAS)</h4>
+                    <div id="drawer-cas-chips" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;"></div>
+                    <div id="drawer-cas-result" style="display: none; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 6px; padding: 10px; font-size: 0.92rem;">
+                        <div id="drawer-cas-math" style="color: #ffffff; overflow-x: auto;"></div>
+                    </div>
+                </div>
+
                 <div id="drawer-graph-card" class="drawer-card" style="display: none;">
                     <h4 class="drawer-card-title">🕸️ Knowledge Graph Ancestry</h4>
                     <div id="drawer-graph-content" style="font-size: 0.85rem; line-height: 1.4; color: #cbd5e1;"></div>
@@ -324,12 +332,70 @@ const FormulaInspector = {
                     summaryText.innerHTML = 'It defines how physical fields or particle states evolve and interact under boundary constraints.';
                 }
 
+                // Render CAS Limits in Drawer
+                this.renderDrawerCasLimits(latex);
+
                 if (window.MathJax && window.MathJax.typesetPromise) {
                     const elsToTypeset = [conceptText, summaryText];
                     if (variablesList) elsToTypeset.push(variablesList);
                     window.MathJax.typesetPromise(elsToTypeset).catch(err => console.warn(err));
                 }
             });
+    },
+
+    renderDrawerCasLimits(latex) {
+        const casCard = this.drawerEl.querySelector('#drawer-cas-card');
+        const casChips = this.drawerEl.querySelector('#drawer-cas-chips');
+        const casResult = this.drawerEl.querySelector('#drawer-cas-result');
+        const casMath = this.drawerEl.querySelector('#drawer-cas-math');
+
+        if (!casCard || !casChips || !latex) return;
+        casChips.innerHTML = '';
+        casResult.style.display = 'none';
+
+        const quickLimits = [
+            { label: 'v → 0', var: 'v', to: '0', test: latex.includes('v') },
+            { label: 'c → ∞', var: 'c', to: 'oo', test: latex.includes('c') },
+            { label: 'ℏ → 0', var: 'hbar', to: '0', test: latex.includes('hbar') || latex.includes('\\hbar') },
+            { label: 'T → 0', var: 'T', to: '0', test: latex.includes('T') }
+        ];
+
+        let hasChips = false;
+        quickLimits.forEach(ql => {
+            if (ql.test) {
+                hasChips = true;
+                const btn = document.createElement('button');
+                btn.style.cssText = 'padding: 3px 8px; background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.3); color: #e9d5ff; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-family: "Space Grotesk", sans-serif;';
+                btn.textContent = ql.label;
+                btn.onclick = () => {
+                    casResult.style.display = 'block';
+                    casMath.innerHTML = '<span style="font-size: 0.8rem; color: #94a3b8;">Computing limit...</span>';
+                    fetch('/physics/api/cas-evaluate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ latex, limit_var: ql.var, limit_to: ql.to })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success && data.limit && data.limit.result_latex) {
+                            const tgt = ql.to === 'oo' ? '\\infty' : ql.to;
+                            casMath.innerHTML = `\\[ \\lim_{${ql.var} \\to ${tgt}} = ${data.limit.result_latex} \\]`;
+                            if (window.MathJax && window.MathJax.typesetPromise) {
+                                window.MathJax.typesetPromise([casMath]).catch(e => console.warn(e));
+                            }
+                        } else {
+                            casMath.innerHTML = `<span style="font-size: 0.78rem; color: #f87171;">${data.error || 'Evaluation error'}</span>`;
+                        }
+                    })
+                    .catch(() => {
+                        casMath.innerHTML = '<span style="font-size: 0.78rem; color: #f87171;">CAS request failed</span>';
+                    });
+                };
+                casChips.appendChild(btn);
+            }
+        });
+
+        casCard.style.display = hasChips ? 'block' : 'none';
     },
 
     close() {

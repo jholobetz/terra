@@ -13,6 +13,9 @@ from scripts.lib.delimiters import (
     check_bracket_balance,
     find_leaked_macros,
     validate_prose_delimiters,
+    extract_math_blocks,
+    find_html_in_math,
+    validate_no_html_in_math,
 )
 
 
@@ -85,3 +88,34 @@ def test_validate_prose_delimiters():
     # Leaked macro
     errors = validate_prose_delimiters(r"Unwrapped \frac{1}{2} outside math.")
     assert any("Leaked TeX macro" in e for e in errors)
+
+
+def test_html_in_math_clean_mathematical_inequalities():
+    # Mathematical inequalities must NOT trigger HTML infiltration errors
+    assert len(validate_no_html_in_math(r"Summation $\sum_{i<j} J_{ij}$ is clean.")) == 0
+    assert len(validate_no_html_in_math(r"Inequality \(x < y\) and \(a > b\) is valid.")) == 0
+    assert len(validate_no_html_in_math(r"Bra-ket $\langle \psi | \hat{H} | \psi \rangle$ is valid.")) == 0
+    assert len(validate_no_html_in_math(r"\sum_{i<j} \mathbf{S}_i \cdot \mathbf{S}_j")) == 0
+
+
+def test_html_in_math_detects_infiltrated_tags():
+    # Infiltrated HTML tags inside math delimiters
+    errors1 = validate_no_html_in_math(r"Equation $\psi = <strong>C</strong> \bar{\psi}^T$ is broken.")
+    assert len(errors1) > 0
+    assert "HTML infiltration" in errors1[0]
+    assert "strong" in errors1[0]
+
+    # Infiltrated anchor links inside bracket math
+    errors2 = validate_no_html_in_math(r"Term \(a href='/physics/subtopic/spin' class='subtopic-link' c /a\) is broken.")
+    assert len(errors2) > 0
+    assert any("subtopic-link" in e or "href" in e or "a" in e for e in errors2)
+
+    # Infiltrated HTML entities inside SVG data-tex
+    errors3 = validate_no_html_in_math(r'<svg data-tex="\psi = &lt;strong&gt;C&lt;/strong&gt; \bar{\psi}^T"></svg>')
+    assert len(errors3) > 0
+    assert any("strong" in e for e in errors3)
+
+
+def test_validate_prose_delimiters_catches_html_in_math():
+    errors = validate_prose_delimiters(r"The mass term $m \bar{\psi} <em>\psi</em>$ is invariant.")
+    assert any("HTML infiltration" in e for e in errors)

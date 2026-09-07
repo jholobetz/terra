@@ -21,40 +21,61 @@ GRAPH_BUILDER = os.path.join(PROJECT_ROOT, 'scripts', 'build_formula_graph.py')
 
 # Core Master Foundation Hubs
 FAMILY_PILLARS = {
-    # Electromagnetism
+    # Electromagnetism & Gauge Fields
     'maxwell-hub': {
         'parent_id': 'ampere-maxwell-law',
         'derivation_type': 'SPECIAL_CASE',
-        'match_keywords': ['poynting', 'lorenz gauge', 'coulomb gauge', 'displacement current', 'vector potential', 'radiation field', 'gauge transformation', 'permeability', 'permittivity', 'maxwell stress'],
-        'match_tex': [r'\\mathbf{E}\s*\\times\s*\\mathbf{B}', r'\\mathbf{A}', r'\\mu_0', r'\\varepsilon_0', r'\\partial_\\mu A\^\\mu']
+        'match_keywords': ['poynting', 'lorenz gauge', 'coulomb gauge', 'displacement current', 'vector potential', 'radiation field', 'gauge transformation', 'permeability', 'permittivity', 'maxwell', 'electric', 'magnetic', 'curl', 'flux', 'induction', 'faraday', 'lorentz force', 'topological charge', 'chern'],
+        'match_tex': ['\\nabla', '\\mathbf{E}', '\\mathbf{B}', '\\mathbf{A}', '\\mu_0', '\\varepsilon_0', '\\Phi_B', '\\Phi', 'C_n', 'F_\\mu']
     },
-    # Quantum Dynamics & Density Matrices
+    # Quantum Dynamics & States
     'quantum-dynamics-hub': {
-        'parent_id': 'schrodinger-equation-time-dependent',
+        'parent_id': 'time-dependent-schrodinger-equation',
         'derivation_type': 'DERIVED_FROM',
-        'match_keywords': ['density matrix', 'von neumann', 'lindblad', 'master equation', 'collapse', 'bayesian filtering', 'expectation value', 'wave packet', 'bloch sphere', 'state vector'],
-        'match_tex': [r'\\hat{\\rho}', r'\\rho_t', r'\\langle\\psi|', r'|\\psi\\rangle', r'\\text{Tr}\(']
+        'match_keywords': ['schrodinger', 'density matrix', 'von neumann', 'lindblad', 'master equation', 'collapse', 'bayesian filtering', 'expectation value', 'wave packet', 'bloch sphere', 'state vector', 'wavefunction', 'hilbert', 'hamiltonian', 'ket', 'bra', 'inner product', 'orthonormal', 'quantum'],
+        'match_tex': ['\\langle', '\\rangle', '\\psi', '\\phi', '\\hat', '\\delta_ij', '\\delta_{ij}', '\\text{Tr}']
     },
-    # Analytical Mechanics & Lagrangian Symmetries
+    # Analytical Mechanics & Variational Principles
     'mechanics-hub': {
-        'parent_id': 'action-principle-definition',
+        'parent_id': 'stationary-action-principle-8836edf7',
         'derivation_type': 'DERIVED_FROM',
-        'match_keywords': ['rotational invariance', 'noether', 'generalized coordinate', 'legendre transform', 'cyclic coordinate', 'canonical momentum', 'hamilton-jacobi'],
-        'match_tex': [r'\\delta L', r'\\frac{\\partial L}{\\partial', r'\\mathcal{L}']
+        'match_keywords': ['rotational invariance', 'noether', 'generalized coordinate', 'legendre transform', 'cyclic coordinate', 'canonical momentum', 'hamilton-jacobi', 'action', 'lagrangian', 'euler-lagrange', 'variation', 'entropy stability', 'bounded', 'constraint', 'virtual work', 'second variation'],
+        'match_tex': ['\\delta S', '\\delta^2 S', '\\delta q', '\\delta\\mathbf', '\\frac{\\partial L}', '\\int L', '\\delta\\int', '\\delta', 'L(q', 'dt']
     },
     # Thermodynamics & Statistical Physics
     'thermo-hub': {
-        'parent_id': 'first-law-thermodynamics',
+        'parent_id': 'first-law-of-thermodynamics-3bb4a7d0',
         'derivation_type': 'SPECIAL_CASE',
-        'match_keywords': ['helmholtz free energy', 'gibbs free energy', 'enthalpy', 'maxwell relation', 'heat capacity', 'chemical potential', 'clapeyron', 'carnot cycle', 'partition function'],
-        'match_tex': [r'U\s*-\s*TS', r'H\s*=\s*U\s*\+\s*PV', r'G\s*=\s*H\s*-\s*TS', r'k_B\s*T']
+        'match_keywords': ['helmholtz free energy', 'gibbs free energy', 'enthalpy', 'maxwell relation', 'heat capacity', 'chemical potential', 'clapeyron', 'carnot cycle', 'partition function', 'thermodynamic', 'heat', 'entropy', 'temperature', 'first law', 'microstate'],
+        'match_tex': ['k_B', 'U - TS', 'H = U', 'k_B T', '\\Delta Q', '\\Delta W', '\\Delta U', '\\delta T', 'P(t)']
     },
-    # Cosmology & General Relativity
+    # Special Relativity & Spacetime Invariance
+    'relativity-hub': {
+        'parent_id': 'lorentz-transformation-matrix',
+        'derivation_type': 'SPECIAL_CASE',
+        'match_keywords': ['lorentz', 'spacetime', 'proper time', 'interval', 'dilation', 'boost', 'rapidity', 'four-vector', 'minkowski', 'speed of light', 'relativistic'],
+        'match_tex': ['\\gamma', '\\Delta t', '\\Delta x', '\\Delta\\tau', '\\eta', 's^2', 'v/c', 'c^2']
+    },
+    # Quantum Uncertainty & Measurement Limits
+    'uncertainty-hub': {
+        'parent_id': 'heisenberg-uncertainty-principle',
+        'derivation_type': 'DERIVED_FROM',
+        'match_keywords': ['uncertainty', 'commutation', 'commutator', 'heisenberg', 'dispersion', 'standard deviation', 'variance', 'measurement'],
+        'match_tex': ['\\Delta x', '\\Delta p', '\\Delta E', '\\Delta t', '\\sigma', '\\ge', '[\\hat', 'hbar']
+    },
+    # General Relativity & Gravitational Curvature
+    'gr-curvature-hub': {
+        'parent_id': 'einstein-field-equations-simplified',
+        'derivation_type': 'SPECIAL_CASE',
+        'match_keywords': ['curvature', 'riemann', 'ricci', 'kretschmann', 'christoffel', 'geodesic', 'einstein', 'metric tensor'],
+        'match_tex': ['R^', 'R_', 'G_', 'g_', 'g_{']
+    },
+    # Cosmology & Spacetime Expansion
     'cosmology-hub': {
         'parent_id': 'big-bang-start-4da62fa5',
         'derivation_type': 'DERIVED_FROM',
-        'match_keywords': ['friedmann', 'hubble parameter', 'scale factor', 'cosmological constant', 'deceleration parameter', 'dark energy density', 'redshift'],
-        'match_tex': [r'\\frac{\\ddot{a}}{a}', r'\\Omega_\\Lambda', r'\\Omega_m', r'H\(z\)']
+        'match_keywords': ['friedmann', 'hubble parameter', 'scale factor', 'cosmological constant', 'deceleration parameter', 'dark energy density', 'redshift', 'expansion', 'lambda cdm'],
+        'match_tex': ['\\frac{\\ddot{a}}{a}', '\\Omega_\\Lambda', '\\Omega_m', 'H(z)', 'H(t)', '\\Lambda', '\\Omega', '\\Delta z']
     }
 }
 
@@ -85,8 +106,9 @@ def enrich_families(formulas, dry_run=True):
         eq = form.get('equation', '')
         parent = form.get('parent_formula_id')
 
-        # If formula has no parent, find best matching family pillar
-        if not parent:
+        # If formula has no valid parent in formula registry or is an isolated 'Axiom', find best matching family pillar
+        needs_parent = (not parent) or (parent == 'Axiom' and not form.get('subcomponents'))
+        if needs_parent:
             for fam_name, fam in FAMILY_PILLARS.items():
                 pillar_id = fam['parent_id']
                 if fid == pillar_id or pillar_id not in formulas:
@@ -96,8 +118,8 @@ def enrich_families(formulas, dry_run=True):
                 # Keyword check
                 if any(kw in title for kw in fam['match_keywords']):
                     matched = True
-                # TeX check
-                elif any(re.search(pat, eq) for pat in fam['match_tex']):
+                # TeX check (substring or regex)
+                elif any((pat in eq) for pat in fam['match_tex']):
                     matched = True
 
                 if matched:

@@ -1903,12 +1903,13 @@ const EquationExplainer = {
             'lozenge', 'iff', 'exists', 'in', 'vDash', 'vdash', 'models', 'forall', 'subset', 'supset',
             'cup', 'cap', 'implies', 'Rightarrow', 'Leftarrow', 'Leftrightarrow', 'coprod', 'oint', 'iint', 'iiint',
             'dim', 'det', 'ker', 'tr', 'diag', 'rank', 'supp', 'span', 'bra', 'ket', 'braket',
-            'text', 'mathrm', 'mathbf', 'mathcal', 'mathbb', 'operatorname', 'quad', 'qquad', 'vec', 'hat', 'bar', 'dot', 'ddot'
+            'text', 'mathrm', 'mathbf', 'mathcal', 'mathbb', 'operatorname', 'quad', 'qquad', 'vec', 'hat', 'bar', 'dot', 'ddot', 'tilde',
+            'begin', 'end', 'pmatrix', 'matrix', 'bmatrix', 'vmatrix', 'Vmatrix', 'cases', 'align', 'aligned', 'gather', 'gathered', 'split', 'array', 'multline'
         ]);
 
-        // 1. Protect existing backslashed LaTeX macros and macro environments (e.g. \text{enc}, \mathbf{v}_d)
+        // 1. Protect existing backslashed LaTeX macros and macro environments (e.g. \text{enc}, \mathbf{v}_d, \begin{pmatrix}...\end{pmatrix})
         const macroPlaceholders = [];
-        let tempLatex = cleanedLatex.replace(/(?:\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname|vec|hat|bar|dot|ddot|tilde|frac|sqrt)\{(?:[^{}]|\{[^{}]*\})*\}|\\[a-zA-Z]+|\\[^a-zA-Z])/g, (match) => {
+        let tempLatex = cleanedLatex.replace(/(?:\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname|vec|hat|bar|dot|ddot|tilde|frac|sqrt|color)\{(?:[^{}]|\{[^{}]*\})*\}|\\(?:begin|end)\{[a-zA-Z*]+\}|\\[a-zA-Z]+|\\[^a-zA-Z])/g, (match) => {
             macroPlaceholders.push(match);
             return `___TEXMACRO_${macroPlaceholders.length - 1}___`;
         });
@@ -2453,6 +2454,9 @@ const EquationExplainer = {
         // Setup Dimensional Solver Link
         this.setupSolverLink(this.currentLatex);
 
+        // Render Symbolic CAS & Asymptotic Limits Card
+        this.renderCasLimitsCard(this.currentLatex, formula.semantic_variables || {});
+
         // Initialize sandbox simulator
         this.initSandbox(this.currentLatex, formula.semantic_variables || {});
     },
@@ -2553,6 +2557,133 @@ const EquationExplainer = {
         this.triggerTypeset([details]);
     },
 
+    renderCasLimitsCard(latex, semanticVariables = {}) {
+        const card = document.getElementById('cas-limits-card');
+        const chipsContainer = document.getElementById('cas-quick-limits');
+        const resultBox = document.getElementById('cas-result-box');
+        const limitMath = document.getElementById('cas-limit-math');
+        const seriesMath = document.getElementById('cas-series-math');
+        const loadingSpinner = document.getElementById('cas-loading-spinner');
+        const evalTitle = document.getElementById('cas-eval-title');
+
+        if (!card || !chipsContainer || !resultBox || !latex) return;
+
+        // Reset display
+        card.style.display = 'flex';
+        resultBox.style.display = 'none';
+        chipsContainer.innerHTML = '';
+
+        // Derive candidate variables from formula
+        const candidateVars = new Set();
+        const varMatches = latex.match(/[a-zA-Z]/g) || [];
+        varMatches.forEach(v => {
+            if (!['d', 'e', 'i'].includes(v.toLowerCase())) {
+                candidateVars.add(v);
+            }
+        });
+
+        // Common physical asymptotic limit presets
+        const quickLimits = [
+            { label: 'Classical Limit (v → 0)', var: 'v', to: '0', test: latex.includes('v') },
+            { label: 'Non-Relativistic (c → ∞)', var: 'c', to: 'oo', test: latex.includes('c') },
+            { label: 'Classical Correspondence (ℏ → 0)', var: 'hbar', to: '0', test: latex.includes('hbar') || latex.includes('\\hbar') },
+            { label: 'Ground State (T → 0)', var: 'T', to: '0', test: latex.includes('T') },
+            { label: 'Weak Field (r → ∞)', var: 'r', to: 'oo', test: latex.includes('r') },
+            { label: 'Small Angle (θ → 0)', var: 'theta', to: '0', test: latex.includes('theta') || latex.includes('\\theta') },
+            { label: 'Zero Frequency (ω → 0)', var: 'omega', to: '0', test: latex.includes('omega') || latex.includes('\\omega') }
+        ];
+
+        let hasChips = false;
+        quickLimits.forEach(ql => {
+            if (ql.test) {
+                hasChips = true;
+                const btn = document.createElement('button');
+                btn.className = 'cas-chip-btn';
+                btn.style.cssText = 'padding: 5px 12px; background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); color: #e9d5ff; border-radius: 6px; font-size: 0.8rem; font-family: "Space Grotesk", sans-serif; font-weight: 500; cursor: pointer; transition: all 0.2s;';
+                btn.textContent = ql.label;
+                btn.onmouseover = () => { btn.style.background = 'rgba(168, 85, 247, 0.2)'; btn.style.borderColor = '#c084fc'; };
+                btn.onmouseout = () => { btn.style.background = 'rgba(168, 85, 247, 0.08)'; btn.style.borderColor = 'rgba(168, 85, 247, 0.25)'; };
+                btn.onclick = () => this.evaluateCasLimit(latex, ql.var, ql.to, ql.label);
+                chipsContainer.appendChild(btn);
+            }
+        });
+
+        // Add generic chips for any remaining free variables
+        candidateVars.forEach(v => {
+            if (!['v', 'c', 'T', 'r'].includes(v)) {
+                const btn = document.createElement('button');
+                btn.style.cssText = 'padding: 5px 12px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); color: #cbd5e1; border-radius: 6px; font-size: 0.8rem; font-family: "Space Grotesk", sans-serif; cursor: pointer; transition: all 0.2s;';
+                btn.textContent = `Limit (${v} → 0)`;
+                btn.onmouseover = () => { btn.style.borderColor = 'rgba(100, 255, 218, 0.4)'; };
+                btn.onmouseout = () => { btn.style.borderColor = 'rgba(255, 255, 255, 0.1)'; };
+                btn.onclick = () => this.evaluateCasLimit(latex, v, '0', `Asymptotic Limit (${v} → 0)`);
+                chipsContainer.appendChild(btn);
+                hasChips = true;
+            }
+        });
+
+        if (!hasChips) {
+            chipsContainer.innerHTML = '<span style="font-size: 0.8rem; color: #64748b; font-style: italic;">No free scalar parameters detected for automated limit expansion.</span>';
+        }
+    },
+
+    evaluateCasLimit(latex, variable, target, label) {
+        const resultBox = document.getElementById('cas-result-box');
+        const limitMath = document.getElementById('cas-limit-math');
+        const seriesMath = document.getElementById('cas-series-math');
+        const loadingSpinner = document.getElementById('cas-loading-spinner');
+        const evalTitle = document.getElementById('cas-eval-title');
+
+        if (!resultBox || !limitMath) return;
+
+        resultBox.style.display = 'flex';
+        loadingSpinner.style.display = 'inline';
+        evalTitle.textContent = label || `Evaluating Limit (${variable} → ${target})`;
+        limitMath.innerHTML = '<span style="font-size: 0.9rem; color: #94a3b8;">SymPy AST evaluation in progress...</span>';
+        seriesMath.style.display = 'none';
+
+        fetch('/physics/api/cas-evaluate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                latex: latex,
+                limit_var: variable,
+                limit_to: target,
+                series_order: 4
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            if (!data.success) {
+                limitMath.innerHTML = `<span style="font-size: 0.88rem; color: #f87171;">⚠️ ${data.error || 'Evaluation failed.'}</span>`;
+                return;
+            }
+
+            let targetDisplay = target === 'oo' ? '\\infty' : target;
+            let lhsDisplay = data.lhs ? `${data.lhs} \\to ` : '';
+            let limitVal = (data.limit && data.limit.result_latex) ? data.limit.result_latex : '?';
+
+            limitMath.innerHTML = `\\[ \\lim_{${variable} \\to ${targetDisplay}} \\left( ${data.parsed_latex} \\right) = ${limitVal} \\]`;
+
+            if (data.series && data.series.leading_terms_latex) {
+                seriesMath.style.display = 'block';
+                seriesMath.innerHTML = `
+                    <div style="font-size: 0.78rem; text-transform: uppercase; color: #a855f7; font-weight: 600; margin-bottom: 4px;">Taylor / Asymptotic Series Expansion</div>
+                    <div>\\[ ${data.parsed_latex} \\approx ${data.series.leading_terms_latex} + \\mathcal{O}(${variable}^4) \\]</div>
+                `;
+            } else {
+                seriesMath.style.display = 'none';
+            }
+
+            this.triggerTypeset([resultBox]);
+        })
+        .catch(err => {
+            loadingSpinner.style.display = 'none';
+            limitMath.innerHTML = `<span style="font-size: 0.88rem; color: #f87171;">Network error executing CAS engine.</span>`;
+        });
+    },
+
     formatConstraintsToPills(c) {
         if (!c || typeof c !== 'object') return '';
         const pills = [];
@@ -2616,6 +2747,9 @@ const EquationExplainer = {
 
         // Setup Dimensional Solver Link
         this.setupSolverLink(latex);
+
+        // Render Symbolic CAS & Asymptotic Limits Card
+        this.renderCasLimitsCard(latex, {});
 
         // Initialize sandbox simulator
         this.initSandbox(latex, {});

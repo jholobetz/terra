@@ -276,6 +276,65 @@ class PhysicsController
     }
 
     /**
+     * REST Action executing symbolic limit evaluations, series expansions,
+     * and dimensional consistency via the local SymPy CAS engine.
+     */
+    public function apiCasEvaluate()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $req = $this->app->request();
+        $payload = [];
+
+        if ($req->method === 'POST') {
+            $rawBody = $req->getBody();
+            $decoded = json_decode($rawBody, true);
+            if (is_array($decoded)) {
+                $payload = $decoded;
+            } else {
+                $payload = $req->data->getData() ?: [];
+            }
+        } else {
+            $payload = $req->query->getData() ?: [];
+        }
+
+        $latex = $payload['latex'] ?? '';
+        if (empty($latex)) {
+            echo json_encode(['success' => false, 'error' => 'No LaTeX equation provided.']);
+            return;
+        }
+
+        $casScript = PROJECT_ROOT . '/scripts/lib/cas_engine.py';
+        $pythonBin = PROJECT_ROOT . '/.venv/bin/python3';
+        if (!file_exists($pythonBin)) {
+            $pythonBin = 'python3';
+        }
+
+        $jsonPayload = json_encode([
+            'latex' => $latex,
+            'limit_var' => $payload['limit_var'] ?? null,
+            'limit_to' => $payload['limit_to'] ?? null,
+            'series_order' => isset($payload['series_order']) ? (int)$payload['series_order'] : 4
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        $cmd = escapeshellcmd($pythonBin) . ' ' . escapeshellarg($casScript) . ' ' . escapeshellarg($jsonPayload);
+        $output = shell_exec($cmd);
+
+        if ($output === null) {
+            echo json_encode(['success' => false, 'error' => 'Failed to execute symbolic CAS engine.']);
+            return;
+        }
+
+        $result = json_decode($output, true);
+        if (!$result) {
+            echo json_encode(['success' => false, 'error' => 'Invalid response from CAS engine.', 'raw_output' => $output]);
+            return;
+        }
+
+        echo json_encode($result);
+    }
+
+    /**
      * REST Action to define an unregistered LaTeX formula via Gemini AI and save to database.
      */
     public function apiDefineFormula()

@@ -198,6 +198,35 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         </div>
                     </div>
 
+                    <!-- Section 3.5: Symbolic CAS & Asymptotic Limits -->
+                    <div id="cas-limits-card" style="display: none; background: rgba(168, 85, 247, 0.03); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 12px; padding: 20px; flex-direction: column; gap: 14px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                            <h3 style="font-size: 1.05rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                <span style="display: inline-block; width: 6px; height: 16px; background: #c084fc; border-radius: 2px;"></span>
+                                ⚙️ Symbolic CAS &amp; Asymptotic Limits
+                            </h3>
+                            <span style="font-size: 0.75rem; color: #c084fc; background: rgba(168, 85, 247, 0.12); padding: 3px 8px; border-radius: 4px; font-weight: 600;">SymPy Engine</span>
+                        </div>
+                        <p style="margin: 0; font-size: 0.86rem; color: #94a3b8; line-height: 1.4;">
+                            Evaluate physical limits and Taylor/Laurent series expansions symbolically. Click a quick limit or select any variable:
+                        </p>
+                        
+                        <!-- Quick Limit Chips -->
+                        <div id="cas-quick-limits" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <!-- Limit Result Display -->
+                        <div id="cas-result-box" style="display: none; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 8px; padding: 14px; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <span id="cas-eval-title" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #c084fc; font-weight: 600;">Limit Reduction</span>
+                                <span id="cas-loading-spinner" style="display: none; font-size: 0.75rem; color: var(--accent-default, #64ffda);">Computing...</span>
+                            </div>
+                            <div id="cas-limit-math" style="font-size: 1.15rem; color: #ffffff; padding: 4px 0; overflow-x: auto;"></div>
+                            <div id="cas-series-math" style="display: none; border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 8px; font-size: 0.95rem; color: #cbd5e1;"></div>
+                        </div>
+                    </div>
+
                     <!-- Section 4: Live Simulation Sandbox -->
                     <div id="ai-simulation-card" style="display: none !important; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 20px; flex-direction: column; gap: 15px; margin-top: 10px;">
                         <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">

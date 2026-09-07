@@ -4,12 +4,14 @@
  * Scans all 1,527 subtopics with in-memory AST indexing and live progress bar.
  */
 
+ini_set('memory_limit', '2048M');
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../app/config/bootstrap.php';
+require_once __DIR__ . '/../app/logic/PhysicsService.php';
 
-use App\Logic\PhysicsService;
+use app\logic\PhysicsService;
+use flight\Engine;
 
-$app = Flight::app();
+$app = new Engine();
 $service = new PhysicsService($app);
 
 echo "=======================================================\n";

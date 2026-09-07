@@ -47,6 +47,8 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/lab-tools', [ $app->physicsController(), 'labTools' ]);
 		$router->get('/equation-explainer', [ $app->physicsController(), 'equationExplainer' ]);
 		$router->get('/api/explain', [ $app->physicsController(), 'apiExplain' ]);
+		$router->post('/api/cas-evaluate', [ $app->physicsController(), 'apiCasEvaluate' ]);
+		$router->get('/api/cas-evaluate', [ $app->physicsController(), 'apiCasEvaluate' ]);
 		$router->post('/api/define-formula', [ $app->physicsController(), 'apiDefineFormula' ]);
 		$router->get('/api/subtopic-variables/@slug', [ $app->physicsController(), 'apiGetSubtopicVariables' ]);
 		$router->get('/api/search', [ $app->physicsController(), 'apiSearch' ]);

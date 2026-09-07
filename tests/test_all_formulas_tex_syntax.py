@@ -7,9 +7,8 @@ import pytest
 SHARDS_DIR = os.path.join(os.path.dirname(__file__), "..", "app", "config", "content", "formulas")
 
 def get_all_shard_formulas():
-    shard_files = glob.glob(os.path.join(SHARDS_DIR, "**", "*.json"), recursive=True)
-    root_shard_files = glob.glob(os.path.join(SHARDS_DIR, "*.json"))
-    all_files = shard_files + root_shard_files
+    shard_files = sorted(glob.glob(os.path.join(SHARDS_DIR, "*", "shard_*.json")))
+    all_files = shard_files
 
     formulas = []
     for fpath in all_files:

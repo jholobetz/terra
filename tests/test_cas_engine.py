@@ -57,3 +57,12 @@ def test_equation_with_lhs():
     assert res["success"] is True
     assert res["lhs"] == "F"
     assert set(res["variables"]) == {"a", "m"}
+
+
+def test_many_body_hamiltonian_with_sums_and_abs():
+    latex = r"\hat{H} = \sum_{i} \frac{\hat{p}_i^2}{2m} + \sum_{i, I} V(\mathbf{r}_i - \mathbf{R}_I) + \frac{1}{2}\sum_{i \neq j} \frac{e^2}{4\pi\epsilon_0 |\mathbf{r}_i - \mathbf{R}_j|}"
+    res = evaluate_symbolic(latex, limit_var="e", limit_to="0")
+    assert res["success"] is True
+    assert "e" in res["variables"]
+    assert "m" in res["variables"]
+    assert "limit" in res

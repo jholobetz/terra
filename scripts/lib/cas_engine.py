@@ -38,6 +38,9 @@ def latex_to_sympy_str(latex: str) -> str:
     s = re.sub(r"^\$|\$$", "", s)
     s = re.sub(r"^\\\(|\\\)$", "", s)
 
+    # Strip operator sums, products, and integrals (with indices/limits) for CAS algebraic evaluation
+    s = re.sub(r"\\(?:sum|prod|int|iint|iiint|oint)(?:_\{[^{}]*\}|_[0-9a-zA-Z])?(?:\^\{[^{}]*\}|\^[0-9a-zA-Z])?", " ", s)
+
     # Strip formatting macros
     s = re.sub(r"\\(mathbf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|underline)\{([^}]+)\}", r"\2", s)
     s = re.sub(r"\\cssId\{[^}]+\}\{([^}]+)\}", r"\1", s)
@@ -52,14 +55,23 @@ def latex_to_sympy_str(latex: str) -> str:
     # Square roots: \sqrt{A} -> sqrt(A)
     s = re.sub(r"\\sqrt\{((?:[^{}]|\{[^{}]*\})*)\}", r"sqrt(\1)", s)
 
-    # Greek letters and common physical constants
+    # Absolute values: |A| -> (abs(A))
+    s = re.sub(r"\|([^|]+)\|", r"(abs(\1))", s)
+
+    # Insert spaces between adjacent TeX control words: e.g. \pi\epsilon -> \pi \epsilon
+    s = re.sub(r"\\([a-zA-Z]+)(?=\\)", r"\\\1 ", s)
+
+    # Greek letters and common physical constants (longest first to avoid prefix collisions)
     greeks = [
-        "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa",
-        "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega",
-        "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Upsilon", "Phi", "Psi", "Omega", "hbar"
+        "epsilon", "upsilon", "Upsilon", "lambda", "Lambda", "alpha", "gamma", "delta", "theta",
+        "kappa", "sigma", "Sigma", "omega", "Omega", "hbar", "beta", "zeta", "iota", "mu", "nu",
+        "xi", "Xi", "pi", "Pi", "rho", "tau", "phi", "Phi", "chi", "psi", "Psi", "Gamma", "Delta", "Theta"
     ]
     for g in greeks:
-        s = re.sub(r"\\" + g + r"\b", g, s)
+        s = re.sub(r"\\" + g + r"(?![a-zA-Z])", g, s)
+
+    # Subscripts: clean curly braces a_{i} -> a_i
+    s = re.sub(r"_\{([^}]+)\}", r"_\1", s)
 
     # Exponents: ^{...} -> **(...), ^x -> **x
     s = re.sub(r"\^\{([^}]+)\}", r"**(\1)", s)
@@ -67,7 +79,10 @@ def latex_to_sympy_str(latex: str) -> str:
 
     # Multiplication and spacing
     s = re.sub(r"\\cdot|\\times", "*", s)
-    s = re.sub(r"\\(left|right|quad|qquad|\,|\;|\!)", "", s)
+    s = re.sub(r"\\(left|right|quad|qquad|\,|\;|\!)", " ", s)
+
+    # Clean any remaining LaTeX control sequences (e.g. \neq, \sim, \approx)
+    s = re.sub(r"\\[a-zA-Z]+", " ", s)
 
     # Replace TeX braces with parentheses
     s = s.replace("{", "(").replace("}", ")")
@@ -79,7 +94,7 @@ def build_physics_symbols(sympy_str: str) -> Dict[str, sympy.Symbol]:
     Extracts variable names and defines positive physics symbols.
     """
     tokens = re.findall(r"\b[a-zA-Z][a-zA-Z0-9_]*\b", sympy_str)
-    reserved = {"sqrt", "sin", "cos", "tan", "exp", "log", "ln", "sinh", "cosh", "tanh", "pi", "E", "I", "O"}
+    reserved = {"sqrt", "sin", "cos", "tan", "exp", "log", "ln", "sinh", "cosh", "tanh", "pi", "E", "I", "O", "abs", "Abs"}
     symbols_dict = {}
     for tok in set(tokens):
         if tok not in reserved:

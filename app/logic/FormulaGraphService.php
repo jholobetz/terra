@@ -14,6 +14,11 @@ class FormulaGraphService {
             return self::$graphData;
         }
 
+        // Formula graph has 14k+ nodes and 44k+ links, require adequate memory to decode
+        if ((int)ini_get('memory_limit') < 512) {
+            ini_set('memory_limit', '512M');
+        }
+
         if (file_exists(self::$graphGzFile) && function_exists('gzdecode')) {
             $raw = file_get_contents(self::$graphGzFile);
             $decoded = gzdecode($raw);

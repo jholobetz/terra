@@ -211,9 +211,27 @@ def generate_definition(latex_str):
         data = {}
 
     title = data.get('title', 'Custom Physical Relation')
-    slug_id = slugify(title)
-    if not slug_id:
-        slug_id = f"custom-formula-{hash(latex_str) & 0xffffffff}"
+    base_slug = slugify(title)
+    if not base_slug:
+        base_slug = f"custom-formula-{hash(latex_str) & 0xffffffff}"
+
+    # Collision Guard: check if slug exists with a DIFFERENT equation
+    slug_id = base_slug
+    import hashlib
+    hex_hash = hashlib.md5(slug_id.encode('utf-8')).hexdigest()[:2]
+    check_shard = os.path.join(FORMULAS_DIR, hex_hash, f"shard_{hex_hash}.json")
+    if os.path.exists(check_shard):
+        try:
+            with open(check_shard, 'r', encoding='utf-8') as f:
+                existing_shard = json.load(f)
+                if slug_id in existing_shard:
+                    existing_eq = existing_shard[slug_id].get('equation', '').strip()
+                    # If equations differ, create a disambiguated formulation variant
+                    if existing_eq and existing_eq != latex_str.strip():
+                        eq_hash = hashlib.md5(latex_str.strip().encode('utf-8')).hexdigest()[:8]
+                        slug_id = f"{base_slug}-{eq_hash}"
+        except Exception:
+            pass
 
     formula_obj = {
         "id": slug_id,

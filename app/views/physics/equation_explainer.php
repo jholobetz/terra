@@ -4,34 +4,79 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 ?>
 
 <div class="explainer-container">
-    <div class="explainer-header" style="margin-bottom: 30px; text-align: center;">
-        <h1 style="font-size: 2.5rem; color: #ffffff; margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; background: linear-gradient(135deg, #ffffff 40%, var(--accent-default, #64ffda)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+    <div class="explainer-header" style="margin-bottom: 20px; text-align: center;">
+        <h1 style="font-size: 2.3rem; color: #ffffff; margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; background: linear-gradient(135deg, #ffffff 40%, var(--accent-default, #64ffda)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
             🔬 Interactive Equation Explainer
         </h1>
-        <p class="tagline" style="color: var(--text-muted, #94a3b8); font-size: 1.05rem;">
-            Compile LaTeX formulas in real-time, trace their physical origins, and map continuous symmetries directly to conserved quantities.
-        </p>
     </div>
 
-    <!-- Math Rendering Box (Full-Width Top Panel) -->
-    <div class="glass-card math-preview-fullwidth" style="margin-bottom: 30px; padding: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <span style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); font-family: 'Space Grotesk', sans-serif; font-weight: 600;">MathJax Render</span>
-            <span id="compiler-status" style="font-size: 0.78rem; color: #10b981; display: flex; align-items: center; gap: 4px; font-family: 'Space Grotesk', sans-serif; font-weight: 500;">
-                <span style="width: 6px; height: 6px; background: currentColor; border-radius: 50%; display: inline-block;"></span>
-                Ready
-            </span>
+    <!-- Math Rendering Box (Full-Width Top Panel with Integrated Title & Curation) -->
+    <div class="glass-card math-preview-fullwidth" style="margin-bottom: 25px; padding: 22px 24px;">
+        <!-- Integrated Header: Title, Breadcrumbs, Compiler Status, and Curate Button -->
+        <div id="explanation-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 14px;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div id="explainer-breadcrumbs" style="display: none; font-size: 0.8rem; font-family: 'Space Grotesk', sans-serif; color: var(--text-muted, #94a3b8); align-items: center; gap: 6px;"></div>
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <h2 id="formula-title" style="margin: 0; font-size: 1.45rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">
+                        Selecting Equation...
+                    </h2>
+                    <span id="compiler-status" style="display: none; font-size: 0.76rem; color: #10b981; align-items: center; gap: 5px; font-family: 'Space Grotesk', sans-serif; font-weight: 500; background: rgba(16, 185, 129, 0.1); padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.25);">
+                        <span style="width: 6px; height: 6px; background: currentColor; border-radius: 50%; display: inline-block;"></span>
+                        Ready
+                    </span>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button id="btn-open-curator-drawer" style="padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.08); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <span id="btn-curator-label">Curate / Suggest Fix</span>
+                </button>
+                <span id="formula-badge" style="display: none !important; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;"></span>
+            </div>
         </div>
+
         <div id="math-preview-box" 
-             style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 0.8) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 40px 24px; min-height: 110px; display: flex; align-items: center; justify-content: flex-start; box-sizing: border-box; position: relative; overflow-x: auto; max-width: 100%; width: 100%; min-width: 0;">
+             style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 0.8) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 36px 24px; min-height: 110px; display: flex; align-items: center; justify-content: flex-start; box-sizing: border-box; position: relative; overflow-x: auto; max-width: 100%; width: 100%; min-width: 0;">
             <div id="math-render-target" style="font-size: 1.8rem; color: #ffd700; transition: color 0.2s; margin: 0 auto; line-height: 1.4;">
                 <!-- LaTeX rendered here -->
             </div>
         </div>
     </div>
 
-    <div class="explainer-grid">
-        <!-- Left Column: LaTeX Compiler and Sandbox -->
+    <!-- Fallback Placeholder when no equation loaded -->
+    <div id="explainer-placeholder" class="glass-card" style="text-align: center; padding: 60px 20px; color: var(--text-muted, #94a3b8); margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4;">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <line x1="10" y1="9" x2="8" y2="9"/>
+        </svg>
+        <div>
+            <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #f1f5f9;">No Equation Loaded</p>
+            <p style="margin: 4px 0 0 0; font-size: 0.88rem; opacity: 0.7;">Type a LaTeX formula or click one of the quick load examples to analyze.</p>
+        </div>
+    </div>
+
+    <!-- Full-Width Workbench Tab Navigation Bar (Translucent Glass Capsule Dock) -->
+    <div style="width: 100%; margin-bottom: 22px;">
+        <nav id="explainer-nav-tabs" class="explainer-tabs-dock" style="display: none;" aria-label="Explainer Workbench Stages">
+            <button type="button" class="explainer-tab-btn active" data-target="stage-narrative">
+                <span class="tab-icon">📖</span> Narrative &amp; Breakdown
+            </button>
+            <button type="button" class="explainer-tab-btn" data-target="stage-cas">
+                <span class="tab-icon">⚙️</span> Symbolic CAS &amp; Limits
+            </button>
+            <button type="button" class="explainer-tab-btn" data-target="stage-lineage">
+                <span class="tab-icon">🌌</span> Derivation Lineage Map
+            </button>
+        </nav>
+    </div>
+
+    <!-- WORKBENCH STAGE 1: Narrative & Breakdown (Side-by-Side Grid) -->
+    <div id="stage-narrative" class="explainer-tab-pane explainer-grid" style="display: none;">
+        
+        <!-- Stage 1 Left: Compiler and Equation Component Breakdown -->
         <div class="explainer-panel-left">
             <div class="glass-card main-explainer-card">
                 <h3 style="font-family: 'Space Grotesk', sans-serif; margin-top: 0; color: #ffffff; display: flex; align-items: center; gap: 8px;">
@@ -67,7 +112,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     </div>
                 </div>
 
-
                 <!-- Tokenized Symbols Breakdown Section -->
                 <div id="symbols-breakdown" style="<?= (!empty($formula) || !empty($latex)) ? 'display: block;' : 'display: none;' ?> margin-bottom: 25px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px;">
                     <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 15px 0; font-family: 'Space Grotesk', sans-serif;">
@@ -89,7 +133,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     </div>
                     
                     <div id="variables-section">
-                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-default, #64ffda); margin-bottom: 8px; font-weight: 600;">Base Variables & Constants</div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-default, #64ffda); margin-bottom: 8px; font-weight: 600;">Base Variables &amp; Constants</div>
                         <div id="symbols-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
                             <!-- JS populated -->
                         </div>
@@ -112,170 +156,130 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
             </div>
         </div>
 
-        <!-- Right Column: Interactive Physical Explanation & Breakdown -->
+        <!-- Stage 1 Right: Physical Meaning, Scenarios, and Conceptual Intuition -->
         <div class="explainer-panel-right">
-            <div class="glass-card details-card" style="min-height: 480px; box-sizing: border-box; display: flex; flex-direction: column;">
+            <div class="glass-card details-card" style="min-height: 480px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
                 
-                <!-- Status Banner / Header -->
-                <div id="explanation-header-wrapper" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 15px; margin-bottom: 20px;">
-                    <div id="explainer-breadcrumbs" style="display: none; font-size: 0.8rem; font-family: 'Space Grotesk', sans-serif; color: var(--text-muted, #94a3b8); margin-bottom: 8px; align-items: center; gap: 6px;"></div>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
-                        <div>
-                            <h2 id="formula-title" style="margin: 0 0 4px 0; font-size: 1.4rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif;">
-                                Selecting Equation...
-                            </h2>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <button id="btn-open-curator-drawer" style="padding: 5px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.08); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                                <span id="btn-curator-label">Curate / Suggest Fix</span>
-                            </button>
-                            <span id="formula-badge" style="display: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;"></span>
-                        </div>
+                <!-- Section 1: Explanation Banner -->
+                <div id="conceptual-intro-card" style="display: none; background: rgba(100, 255, 218, 0.03); border: 1px solid rgba(100, 255, 218, 0.12); border-radius: 12px; padding: 20px; flex-direction: column; gap: 12px;">
+                    <!-- JS populated -->
+                </div>
+
+                <!-- Section 3: Physical Meaning & Scenarios -->
+                <div id="ai-scenarios-section" style="display: none; flex-direction: column; gap: 12px;">
+                    <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        Understand the Physical Meaning
+                    </h3>
+                    <div id="ai-scenarios-list" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Dynamic scenario blocks -->
                     </div>
                 </div>
 
-                <!-- Main Explanation Body -->
-                <div id="explanation-content" style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
-                    
-                    <!-- Fallback Placeholder -->
-                    <div id="explainer-placeholder" style="text-align: center; padding: 40px 20px; color: var(--text-muted, #94a3b8); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4;">
-                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
-                            <line x1="10" y1="9" x2="8" y2="9"/>
-                        </svg>
-                        <div>
-                            <p style="margin: 0; font-weight: 500;">No Equation Loaded</p>
-                            <p style="margin: 4px 0 0 0; font-size: 0.82rem; opacity: 0.7;">Type a LaTeX formula or click one of the quick load examples to analyze.</p>
-                        </div>
-                    </div>
-
-                    <!-- Section 1: Explanation Banner -->
-                    <div id="conceptual-intro-card" style="display: none; background: rgba(100, 255, 218, 0.03); border: 1px solid rgba(100, 255, 218, 0.12); border-radius: 12px; padding: 20px; flex-direction: column; gap: 12px;">
-                        <!-- JS populated -->
-                    </div>
-
-                    <!-- Section 3: Physical Meaning & Scenarios -->
-                    <div id="ai-scenarios-section" style="display: none; flex-direction: column; gap: 12px;">
-                        <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                            Understand the Physical Meaning
-                        </h3>
-                        <div id="ai-scenarios-list" style="display: flex; flex-direction: column; gap: 12px;">
-                            <!-- Dynamic scenario blocks -->
-                        </div>
-                    </div>
-
-                    <!-- Tiers Section (Only shown when formula has detailed breakdowns) -->
-                    <div id="official-breakdown" style="display: none; flex-direction: column; gap: 15px;">
-                        <div class="tier-card" style="background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;">
-                            <h4 style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;">
-                                Interpretation (Local Identity)
-                            </h4>
-                            <p id="local-interpretation" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
-                                --
-                            </p>
-                        </div>
-
-                        <div class="tier-card" style="background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;">
-                            <h4 style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;">
-                                Symmetry &amp; Coordinate Invariance
-                            </h4>
-                            <p id="symmetry-origin" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
-                                --
-                            </p>
-                        </div>
-
-                        <div class="tier-card" style="background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;">
-                            <h4 style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;">
-                                Limiting Cases &amp; Boundaries
-                            </h4>
-                            <p id="limits-boundary" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
-                                --
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Section 3.5: Symbolic CAS & Asymptotic Limits -->
-                    <div id="cas-limits-card" style="display: none; background: rgba(168, 85, 247, 0.03); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 12px; padding: 20px; flex-direction: column; gap: 14px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                            <h3 style="font-size: 1.05rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                                <span style="display: inline-block; width: 6px; height: 16px; background: #c084fc; border-radius: 2px;"></span>
-                                ⚙️ Symbolic CAS &amp; Asymptotic Limits
-                            </h3>
-                            <span style="font-size: 0.75rem; color: #c084fc; background: rgba(168, 85, 247, 0.12); padding: 3px 8px; border-radius: 4px; font-weight: 600;">SymPy Engine</span>
-                        </div>
-                        <p style="margin: 0; font-size: 0.86rem; color: #94a3b8; line-height: 1.4;">
-                            Evaluate physical limits and Taylor/Laurent series expansions symbolically. Click a quick limit or select any variable:
-                        </p>
-                        
-                        <!-- Quick Limit Chips -->
-                        <div id="cas-quick-limits" style="display: flex; flex-wrap: wrap; gap: 8px;">
-                            <!-- Populated dynamically -->
-                        </div>
-
-                        <!-- Limit Result Display -->
-                        <div id="cas-result-box" style="display: none; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 8px; padding: 14px; flex-direction: column; gap: 10px;">
-                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <span id="cas-eval-title" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #c084fc; font-weight: 600;">Limit Reduction</span>
-                                <span id="cas-loading-spinner" style="display: none; font-size: 0.75rem; color: var(--accent-default, #64ffda);">Computing...</span>
-                            </div>
-                            <div id="cas-limit-math" style="font-size: 1.15rem; color: #ffffff; padding: 4px 0; overflow-x: auto;"></div>
-                            <div id="cas-series-math" style="display: none; border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 8px; font-size: 0.95rem; color: #cbd5e1;"></div>
-                        </div>
-                    </div>
-
-                    <!-- Section 4: Live Simulation Sandbox -->
-                    <div id="ai-simulation-card" style="display: none !important; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 20px; flex-direction: column; gap: 15px; margin-top: 10px;">
-                        <h3 style="font-size: 1.1rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
-                            <span style="display: flex; align-items: center; gap: 8px;">
-                                Interactive Sandbox
-                            </span>
-                            <!-- Sonification Button -->
-                            <button id="sonify-toggle-btn" style="background: rgba(100, 255, 218, 0.05); border: 1px solid rgba(100, 255, 218, 0.2); color: var(--accent-default, #64ffda); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-family: 'Space Grotesk', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                                Sonify Math
-                            </button>
-                        </h3>
-
-                        <!-- Dynamic Simulation Canvas -->
-                        <div style="position: relative; width: 100%; height: 180px; background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            <canvas id="sandbox-canvas" width="400" height="180" style="display: block; width: 100%; height: 100%;"></canvas>
-                        </div>
-
-                        <!-- Parameter Sliders Container -->
-                        <div id="sandbox-sliders" style="display: flex; flex-direction: column; gap: 12px;">
-                            <!-- JS populated sliders -->
-                        </div>
-                    </div>
-
-                    <!-- Topological Bridges Section -->
-                    <div id="topological-bridges" style="display: none; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px; margin-top: 10px;">
-                        <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif;">
-                            Topological Bridges (Encyclopedia Contexts)
+                <!-- Tiers Section (Only shown when formula has detailed breakdowns) -->
+                <div id="official-breakdown" style="display: none; flex-direction: column; gap: 15px;">
+                    <div class="tier-card" style="background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;">
+                        <h4 style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;">
+                            Interpretation (Local Identity)
                         </h4>
-                        <div id="bridges-container" style="display: flex; flex-wrap: wrap; gap: 10px;">
-                            <!-- JS populated -->
-                        </div>
+                        <p id="local-interpretation" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
+                            --
+                        </p>
+                    </div>
+
+                    <div class="tier-card" style="background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;">
+                        <h4 style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;">
+                            Symmetry &amp; Coordinate Invariance
+                        </h4>
+                        <p id="symmetry-origin" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
+                            --
+                        </p>
+                    </div>
+
+                    <div class="tier-card" style="background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.08); border-radius: 8px; padding: 15px;">
+                        <h4 style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 6px 0; letter-spacing: 0.05em; font-family: 'Space Grotesk', sans-serif;">
+                            Limiting Cases &amp; Boundaries
+                        </h4>
+                        <p id="limits-boundary" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
+                            --
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Topological Bridges Section -->
+                <div id="topological-bridges" style="display: none; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 18px; margin-top: 5px;">
+                    <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif;">
+                        Topological Bridges (Encyclopedia Contexts)
+                    </h4>
+                    <div id="bridges-container" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <!-- JS populated -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Full-Width Bottom Section: Mathematical Lineage & Derivation Map -->
-    <div id="knowledge-graph-card" class="glass-card" style="display: none; margin-top: 30px; background: rgba(100, 255, 218, 0.02); border: 1px solid rgba(100, 255, 218, 0.15); border-radius: 16px; padding: 24px; flex-direction: column; gap: 18px;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <h4 style="font-size: 0.95rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif;">
-                🌌 Mathematical Lineage &amp; Derivation Map
-            </h4>
-            <span style="font-size: 0.78rem; color: #94a3b8;">Click any node to navigate • Scroll to zoom • Drag to pan</span>
+    <!-- WORKBENCH STAGE 2: Full-Width Symbolic CAS & Limits Laboratory -->
+    <div id="stage-cas" class="explainer-tab-pane glass-card" style="display: none; padding: 30px; flex-direction: column; gap: 24px;">
+        <div id="cas-limits-card" style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h3 style="font-size: 1.25rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; margin: 0 0 4px 0; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                        <span style="display: inline-block; width: 6px; height: 20px; background: #c084fc; border-radius: 3px;"></span>
+                        Symbolic CAS &amp; Asymptotic Limits Laboratory
+                    </h3>
+                    <p style="margin: 0; font-size: 0.9rem; color: #94a3b8;">
+                        Compute rigorous limits, asymptotic regimes, and Taylor/Laurent series expansions via SymPy AST symbolic engine.
+                    </p>
+                </div>
+                <span style="font-size: 0.78rem; color: #c084fc; background: rgba(168, 85, 247, 0.12); padding: 5px 12px; border-radius: 6px; font-weight: 600; border: 1px solid rgba(168, 85, 247, 0.3);">
+                    SymPy AST Engine Active
+                </span>
+            </div>
+
+            <!-- Quick Limit Chips Bar -->
+            <div>
+                <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted, #94a3b8); margin-bottom: 10px; font-weight: 600;">
+                    Automated Physical Edge-Case Presets:
+                </div>
+                <div id="cas-quick-limits" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Limit Result Display Box -->
+            <div id="cas-result-box" style="display: none; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 12px; padding: 24px; flex-direction: column; gap: 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span id="cas-eval-title" style="font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.05em; color: #c084fc; font-weight: 600;">Limit Reduction</span>
+                    <span id="cas-loading-spinner" style="display: none; font-size: 0.8rem; color: var(--accent-default, #64ffda);">Computing AST...</span>
+                </div>
+                <div id="cas-limit-math" style="font-size: 1.35rem; color: #ffffff; padding: 8px 0; overflow-x: auto;"></div>
+                <div id="cas-series-math" style="display: none; border-top: 1px dashed rgba(255, 255, 255, 0.12); padding-top: 16px; font-size: 1.05rem; color: #cbd5e1;"></div>
+            </div>
         </div>
-        <div id="formula-lineage-graph-canvas" style="height: 520px; width: 100%; position: relative;"></div>
-        <div id="knowledge-graph-details" style="font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
-            <!-- JS populated -->
+    </div>
+
+    <!-- WORKBENCH STAGE 3: Full-Width Derivation Lineage Map -->
+    <div id="stage-lineage" class="explainer-tab-pane glass-card" style="display: none; padding: 28px; flex-direction: column; gap: 20px;">
+        <div id="knowledge-graph-card" style="display: flex; flex-direction: column; gap: 18px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h3 style="font-size: 1.25rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 4px 0; letter-spacing: 0.08em; display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif;">
+                        🌌 Mathematical Lineage &amp; Derivation Map
+                    </h3>
+                    <p style="margin: 0; font-size: 0.88rem; color: #94a3b8;">
+                        Explore multi-hop mathematical ancestry, prerequisite foundational laws, and derived component sub-equations.
+                    </p>
+                </div>
+                <span style="font-size: 0.8rem; color: #94a3b8;">Click node to navigate • Drag canvas to pan • Scroll to zoom</span>
+            </div>
+            
+            <!-- Full-Width Canvas: 540px high -->
+            <div id="formula-lineage-graph-canvas" style="height: 540px; width: 100%; position: relative; border-radius: 12px; overflow: hidden;"></div>
+            
+            <!-- Ancestry and Subcomponent Details -->
+            <div id="knowledge-graph-details" style="font-size: 0.95rem; line-height: 1.6; color: #cbd5e1;">
+                <!-- JS populated -->
+            </div>
         </div>
     </div>
 </div>
@@ -320,6 +324,33 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 
 .explainer-example-btn:active {
     transform: translateY(0);
+}
+
+/* Explainer Tab Navigation */
+.explainer-tab-btn {
+    padding: 7px 14px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--text-muted, #94a3b8);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.explainer-tab-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.04);
+}
+.explainer-tab-btn.active {
+    color: var(--accent-default, #64ffda);
+    background: rgba(100, 255, 218, 0.08);
+    border-color: rgba(100, 255, 218, 0.3);
+    box-shadow: 0 0 12px rgba(100, 255, 218, 0.08);
 }
 
 /* Badge Styling */
@@ -577,6 +608,66 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 </div>
 
 <style>
+/* Explainer Workbench Translucent Glass Pill Tabs (Home page design language) */
+.explainer-tabs-dock {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 0 16px rgba(255, 255, 255, 0.02);
+}
+
+.explainer-tab-btn {
+    flex: 1 1 0;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #94a3b8;
+    padding: 11px 20px;
+    border-radius: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.explainer-tab-btn .tab-icon {
+    font-size: 1.15rem;
+    transition: transform 0.2s ease;
+}
+
+.explainer-tab-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.explainer-tab-btn:hover .tab-icon {
+    transform: scale(1.1);
+}
+
+.explainer-tab-btn.active {
+    background: rgba(100, 255, 218, 0.12);
+    border-color: var(--accent-default, #64ffda);
+    color: var(--accent-default, #64ffda);
+    box-shadow: 0 0 16px rgba(100, 255, 218, 0.18), inset 0 0 10px rgba(100, 255, 218, 0.06);
+    font-weight: 600;
+}
+
 .drawer-tab:hover {
     color: #ffffff !important;
 }

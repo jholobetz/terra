@@ -1612,9 +1612,22 @@ const EquationExplainer = {
         this.solverRedirectLink = document.getElementById('solver-redirect-link');
         this.activeDomainSelect = document.getElementById('active-domain-select');
         this.autocompleteDropdown = document.getElementById('latex-autocomplete-dropdown');
+        this.explainerNavTabs = document.getElementById('explainer-nav-tabs');
+        this.tabButtons = document.querySelectorAll('.explainer-tab-btn');
+        this.tabPanes = document.querySelectorAll('.explainer-tab-pane');
     },
 
     bindEvents() {
+        // Tab switching
+        if (this.tabButtons) {
+            this.tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    this.switchTab(targetId);
+                });
+            });
+        }
+
         if (this.activeDomainSelect) {
             this.activeDomainSelect.addEventListener('change', (e) => {
                 this.activeDomain = e.target.value;
@@ -1731,6 +1744,49 @@ const EquationExplainer = {
         // Initialize Curator Drawer & Dev Role Switcher
         this.initCuratorDrawer();
         this.initDevRoleSwitcher();
+    },
+
+    switchTab(targetId) {
+        if (!this.tabButtons || !this.tabPanes) return;
+
+        // Update button states
+        this.tabButtons.forEach(btn => {
+            if (btn.getAttribute('data-target') === targetId) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Update stage visibility
+        this.tabPanes.forEach(pane => {
+            if (pane.id === targetId) {
+                if (pane.classList.contains('explainer-grid')) {
+                    pane.style.display = 'grid';
+                } else {
+                    pane.style.display = 'flex';
+                }
+            } else {
+                pane.style.display = 'none';
+            }
+        });
+
+        // If switching to Lineage graph stage, trigger reset/fit on full-width canvas
+        if (targetId === 'stage-lineage' && this.lineageGraph) {
+            requestAnimationFrame(() => {
+                if (this.currentFormula && this.currentFormula.id) {
+                    this.lineageGraph.loadFormula(this.currentFormula.id);
+                } else if (this.lineageGraph.resetView) {
+                    this.lineageGraph.resetView();
+                }
+            });
+        }
+
+        // Trigger MathJax typeset on the activated stage
+        const activePane = document.getElementById(targetId);
+        if (activePane) {
+            this.triggerTypeset([activePane]);
+        }
     },
 
     loadInitialState() {
@@ -2013,15 +2069,21 @@ const EquationExplainer = {
     },
 
     setCompilerStatus(text, color) {
+        if (!this.compilerStatus) return;
         this.compilerStatus.textContent = text;
         this.compilerStatus.style.color = color;
         const dot = this.compilerStatus.querySelector('span') || document.createElement('span');
         dot.style.background = color;
-        // Make dot pulse if compiling
-        if (text === 'Compiling...') {
-            dot.style.animation = 'pulse 1s infinite alternate';
+        // Only show if actively compiling or erroring; hide on Ready
+        if (text === 'Compiling...' || text.includes('Error')) {
+            this.compilerStatus.style.display = 'inline-flex';
+            if (text === 'Compiling...') {
+                dot.style.animation = 'pulse 1s infinite alternate';
+            } else {
+                dot.style.animation = '';
+            }
         } else {
-            dot.style.animation = '';
+            this.compilerStatus.style.display = 'none';
         }
     },
 
@@ -2369,6 +2431,13 @@ const EquationExplainer = {
 
         // Display status
         this.explainerPlaceholder.style.display = 'none';
+        if (this.explainerNavTabs) this.explainerNavTabs.style.display = 'flex';
+        
+        // Ensure active stage is displayed
+        let activeTab = document.querySelector('.explainer-tab-btn.active');
+        let activeStageId = activeTab ? activeTab.getAttribute('data-target') : 'stage-narrative';
+        this.switchTab(activeStageId);
+
         this.officialBreakdown.style.display = 'none'; // Keep legacy tiers container hidden, we map them below
         this.symbolsBreakdown.style.display = 'block';
         
@@ -2573,11 +2642,12 @@ const EquationExplainer = {
         resultBox.style.display = 'none';
         chipsContainer.innerHTML = '';
 
-        // Derive candidate variables from formula
+        // Derive candidate variables from formula by first stripping LaTeX control sequences
         const candidateVars = new Set();
-        const varMatches = latex.match(/[a-zA-Z]/g) || [];
+        const strippedLatex = latex.replace(/\\[a-zA-Z]+/g, ' ');
+        const varMatches = strippedLatex.match(/[a-zA-Z]/g) || [];
         varMatches.forEach(v => {
-            if (!['d', 'e', 'i'].includes(v.toLowerCase())) {
+            if (!['d', 'e', 'i', 'j'].includes(v.toLowerCase())) {
                 candidateVars.add(v);
             }
         });
@@ -4011,6 +4081,10 @@ const EquationExplainer = {
         this.stopSonification();
         
         this.explainerPlaceholder.style.display = 'flex';
+        if (this.explainerNavTabs) this.explainerNavTabs.style.display = 'none';
+        if (this.tabPanes) {
+            this.tabPanes.forEach(pane => pane.style.display = 'none');
+        }
         this.officialBreakdown.style.display = 'none';
         this.symbolsBreakdown.style.display = 'none';
         if (this.modifiersSection) this.modifiersSection.style.display = 'none';

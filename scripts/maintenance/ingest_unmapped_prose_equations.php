@@ -5,6 +5,7 @@
  * Platinum formula entries in the 256 formula shards using PhysicsService::saveFormula().
  */
 
+define('FLIGHT_SKIP_START', true);
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../app/config/bootstrap.php';
 

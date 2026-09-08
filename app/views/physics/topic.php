@@ -81,7 +81,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         </div>
     </header>
 
-    <!-- Stacked Full-Width Accordion Directory -->
+    <!-- Stacked Full-Width Grouped Subtopics Directory -->
     <div class="content-body" style="margin-bottom: 24px;">
         <?php if (!empty($pillars) && is_array($pillars)): ?>
             <div class="directory-accordion-stack" id="directory-accordion-stack">
@@ -89,8 +89,8 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
                     $pillarSubCount = !empty($pillar['slugs']) ? count($pillar['slugs']) : 0;
                     $cleanTitle = preg_replace('/^\d+\.\s*/', '', $pillar['title']);
                 ?>
-                    <section class="concept-pillar directory-accordion-item" data-pillar-idx="<?= $idx ?>">
-                        <button type="button" class="accordion-trigger" aria-expanded="false" data-pillar-toggle="<?= $idx ?>">
+                    <section class="topic-pillar-card directory-accordion-item" data-pillar-idx="<?= $idx ?>">
+                        <button type="button" class="accordion-trigger topic-pillar-trigger" aria-expanded="false" data-pillar-toggle="<?= $idx ?>">
                             <div class="trigger-left">
                                 <span class="accordion-chevron">▶</span>
                                 <span class="pillar-num"><?= sprintf('%02d', $idx + 1) ?></span>
@@ -102,32 +102,30 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
                         </button>
 
                         <div class="accordion-content" style="display: none;">
-                            <ul class="directory-subtopic-grid">
+                            <div class="topic-subtopics-list">
                                 <?php foreach ($pillar['slugs'] as $slugItem): 
                                     $sub = $subtopics_map[$slugItem] ?? null;
                                     if (!$sub) continue;
                                     $level = getConceptLevel($slugItem, $sub['title']);
                                 ?>
-                                    <li class="concept-card directory-concept-row" 
-                                        data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>"
-                                        data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
-                                        data-level="<?= strtolower($level) ?>">
-                                        <div class="concept-row-left">
-                                            <a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link directory-subtopic-link">
-                                                <?= str_replace('\\\\', '\\', $sub['title']) ?>
-                                            </a>
-                                        </div>
-                                        <div class="concept-row-right">
-                                            <span class="concept-level-badge level-badge-<?= strtolower($level) ?>"><?= $level ?></span>
-                                            <span class="concept-row-arrow">&rarr;</span>
-                                        </div>
+                                    <div class="topic-subtopic-row directory-concept-row" 
+                                         data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>"
+                                         data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
+                                         data-level="<?= strtolower($level) ?>">
+                                        <a href="/physics/subtopic/<?= $slugItem ?>" class="topic-subtopic-link directory-subtopic-link subtopic-link">
+                                            <span class="topic-subtopic-title"><?= str_replace('\\\\', '\\', $sub['title']) ?></span>
+                                            <span class="topic-subtopic-meta">
+                                                <span class="topic-level-badge level-badge-<?= strtolower($level) ?>"><?= $level ?></span>
+                                                <span class="topic-row-arrow">&rarr;</span>
+                                            </span>
+                                        </a>
                                         <!-- Preserved for semantic variable & testing hooks -->
                                         <span class="subtopic-card-abstract" style="display: none;">
                                             <?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?>
                                         </span>
-                                    </li>
+                                    </div>
                                 <?php endforeach; ?>
-                            </ul>
+                            </div>
                         </div>
                     </section>
                 <?php endforeach; ?>
@@ -189,7 +187,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     const matchCounter = document.getElementById('directory-match-counter');
     const btnExpandAll = document.getElementById('btn-expand-all');
     const btnCollapseAll = document.getElementById('btn-collapse-all');
-    const allRows = document.querySelectorAll('.directory-concept-row');
+    const allRows = document.querySelectorAll('.topic-subtopic-row, .directory-concept-row');
     const totalCount = allRows.length;
 
     // Helper: Toggle Accordion Item
@@ -240,14 +238,14 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
             let visibleCount = 0;
 
             items.forEach(item => {
-                const rows = item.querySelectorAll('.directory-concept-row');
+                const rows = item.querySelectorAll('.topic-subtopic-row, .directory-concept-row');
                 let pillarHasMatch = false;
 
                 rows.forEach(row => {
                     const title = row.getAttribute('data-title') || '';
                     const slug = row.getAttribute('data-subtopic-slug') || '';
                     if (!query || title.includes(query) || slug.includes(query)) {
-                        row.style.display = 'flex';
+                        row.style.display = 'block';
                         pillarHasMatch = true;
                         visibleCount++;
                     } else {
@@ -575,23 +573,36 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     border-color: rgba(255, 255, 255, 0.12);
 }
 
-/* Accordion Content & Subtopics Grid */
+/* Accordion Content & Stacked Grouped Subtopics */
 .accordion-content {
-    padding: 12px 20px 16px 20px;
-    background: rgba(11, 17, 32, 0.4);
+    padding: 10px 16px 14px;
+    background: rgba(11, 17, 32, 0.45);
     border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.directory-subtopic-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.topic-subtopics-list {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
+.topic-subtopic-row,
 .directory-concept-row {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+.topic-subtopic-link,
+.directory-subtopic-link {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
@@ -599,96 +610,92 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     box-sizing: border-box !important;
     padding: 10px 16px !important;
     border-radius: 6px !important;
-    background: rgba(15, 23, 42, 0.45) !important;
-    border: 1px solid rgba(255, 255, 255, 0.04) !important;
-    text-align: left !important;
-    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
-}
-
-.directory-concept-row:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border-color: rgba(100, 255, 218, 0.25) !important;
-    transform: translateX(3px);
-}
-
-.concept-row-left {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-    text-align: left !important;
-}
-
-.concept-row-right {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    flex-shrink: 0 !important;
-    margin-left: auto !important;
-}
-
-.directory-concept-row .subtopic-link,
-.directory-subtopic-link {
-    font-family: 'Space Grotesk', sans-serif !important;
-    font-size: 0.9rem !important;
-    font-weight: 500 !important;
-    color: #e2e8f0 !important;
+    background: rgba(15, 23, 42, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-bottom: none !important;
     text-decoration: none !important;
     text-align: left !important;
-    display: block !important;
-    margin: 0 auto 0 0 !important; /* Forces left margin to 0 and auto pushes right */
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease !important;
+}
+
+.topic-subtopic-link:hover,
+.directory-subtopic-link:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(100, 255, 218, 0.25) !important;
+    transform: translateX(3px) !important;
+}
+
+.topic-subtopic-title {
+    flex: 1 1 auto !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    margin: 0 !important;
     padding: 0 !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 0.92rem !important;
+    font-weight: 500 !important;
+    color: #e2e8f0 !important;
     line-height: 1.4 !important;
-    transition: color 0.15s ease;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 }
 
-.directory-concept-row:hover .subtopic-link,
-.directory-concept-row:hover .directory-subtopic-link {
+.topic-subtopic-link:hover .topic-subtopic-title,
+.directory-subtopic-link:hover .topic-subtopic-title {
     color: var(--accent-color, #64ffda) !important;
 }
 
+.topic-subtopic-meta {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+    margin-left: 16px !important;
+}
+
+.topic-level-badge,
 .concept-level-badge {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 2px 7px;
-    border-radius: 4px;
-    border: 1px solid transparent;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 0.68rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    padding: 2px 7px !important;
+    border-radius: 4px !important;
+    border: 1px solid transparent !important;
 }
 
 .level-badge-foundational {
-    color: #6ee7b7;
-    background: rgba(52, 211, 153, 0.08);
-    border-color: rgba(52, 211, 153, 0.2);
+    color: #6ee7b7 !important;
+    background: rgba(52, 211, 153, 0.08) !important;
+    border-color: rgba(52, 211, 153, 0.2) !important;
 }
 
 .level-badge-analytical {
-    color: #7dd3fc;
-    background: rgba(56, 189, 248, 0.08);
-    border-color: rgba(56, 189, 248, 0.2);
+    color: #7dd3fc !important;
+    background: rgba(56, 189, 248, 0.08) !important;
+    border-color: rgba(56, 189, 248, 0.2) !important;
 }
 
 .level-badge-frontier {
-    color: #d8b4fe;
-    background: rgba(192, 132, 252, 0.08);
-    border-color: rgba(192, 132, 252, 0.2);
+    color: #d8b4fe !important;
+    background: rgba(192, 132, 252, 0.08) !important;
+    border-color: rgba(192, 132, 252, 0.2) !important;
 }
 
+.topic-row-arrow,
 .concept-row-arrow {
-    color: #475569;
-    font-size: 0.88rem;
-    transition: transform 0.15s ease, color 0.15s ease;
+    color: #475569 !important;
+    font-size: 0.88rem !important;
+    transition: transform 0.15s ease, color 0.15s ease !important;
 }
 
-.directory-concept-row:hover .concept-row-arrow {
-    color: var(--accent-color, #64ffda);
-    transform: translateX(3px);
+.topic-subtopic-link:hover .topic-row-arrow,
+.directory-subtopic-link:hover .topic-row-arrow,
+.topic-subtopic-link:hover .concept-row-arrow {
+    color: var(--accent-color, #64ffda) !important;
+    transform: translateX(3px) !important;
 }
 
 /* Bridges Strip */

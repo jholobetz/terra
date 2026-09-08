@@ -1281,6 +1281,15 @@ class PhysicsService
                     return $formula;
                 }
             }
+            $strippedUnderscore = str_replace('_', '', $targetLatex);
+            if ($strippedUnderscore !== $targetLatex && isset($index[$strippedUnderscore])) {
+                $fId = $index[$strippedUnderscore];
+                $formula = $this->loadFormula($fId);
+                if ($formula) {
+                    $formula['id'] = $fId;
+                    return $formula;
+                }
+            }
         }
 
         // Secondary Fallback: Match by AST Canonical Signature
@@ -1489,9 +1498,8 @@ class PhysicsService
             }
         }
 
-        // Strip subscripts for robust comparison: e.g. _{ext} -> "", _0 -> ""
-        $normalized = preg_replace('/_\{[^}]+\}/', '', $normalized);
-        $normalized = preg_replace('/_[a-zA-Z0-9]/', '', $normalized);
+        // Flatten braced subscripts for comparison: e.g. _{ext} -> _ext, _{GUT} -> _gut
+        $normalized = preg_replace('/_\{([^}]+)\}/', '_$1', $normalized);
 
         // Strip whitespaces, backslashes, and braces
         $normalized = preg_replace('/[^a-zA-Z0-9_\\^\\-=+\\/*()\\[\\]<>\.,;?]/', '', $normalized);
@@ -1517,15 +1525,15 @@ class PhysicsService
 
         // 2. Extract multi-character symbols (with optional exponents like ^2 or 2)
         foreach ($multiSymbols as $sym) {
-            $regex = '/' . preg_quote($sym, '/') . '(?:\^[0-9]+|[0-9]+)?/';
+            $regex = '/' . preg_quote($sym, '/') . '(?:_[a-zA-Z0-9]+)?(?:\^[0-9]+|[0-9]+)?/';
             $temp = preg_replace_callback($regex, function($matches) use (&$factors) {
                 $factors[] = $matches[0];
                 return ' ';
             }, $temp);
         }
 
-        // 3. Extract remaining single letters/variables with optional exponents (e.g. e^2, e2, c)
-        $temp = preg_replace_callback('/[a-zA-Z](?:\^[0-9]+|[0-9]+)?/', function($matches) use (&$factors) {
+        // 3. Extract remaining single letters/variables with optional subscripts and exponents (e.g. e_gut, e^2, e2, c)
+        $temp = preg_replace_callback('/[a-zA-Z](?:_[a-zA-Z0-9]+)?(?:\^[0-9]+|[0-9]+)?/', function($matches) use (&$factors) {
             $factors[] = $matches[0];
             return ' ';
         }, $temp);

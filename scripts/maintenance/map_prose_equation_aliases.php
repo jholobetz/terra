@@ -1,16 +1,15 @@
 <?php
 /**
  * 🔗 Automated Prose Equation Alias Matcher
- * Maps notational, algebraic, and structural equation variants from subtopic prose
- * directly to existing canonical formula IDs in formulas_latex_index.json.
  */
-
+ini_set('memory_limit', '2048M');
 require_once __DIR__ . '/../../vendor/autoload.php';
-require_once __DIR__ . '/../../app/config/bootstrap.php';
+require_once __DIR__ . '/../../app/logic/PhysicsService.php';
 
-use App\Logic\PhysicsService;
+use app\logic\PhysicsService;
+use flight\Engine;
 
-$app = Flight::app();
+$app = new Engine();
 $service = new PhysicsService($app);
 
 echo "=======================================================\n";
@@ -42,7 +41,18 @@ $shardFiles = glob($baseDir . '*/shard_*.json') ?: glob($baseDir . 'shard_*.json
 $formulaRegistry = [];
 $normalizedToId = [];
 $canonicalToId = [];
-$titleToId = [];
+function simplifyTex(string $tex): string {
+    $s = preg_replace('/\\\\(mathbf|mathcal|mathbb|mathrm|text|boldsymbol|vec|hat|bar|tilde|dot|ddot)\{([^}]+)\}/', '$2', $tex);
+    $s = preg_replace('/\\\\(mathbf|mathcal|mathbb|mathrm|text|boldsymbol|vec|hat|bar|tilde|dot|ddot)\s*(\\\\[a-zA-Z]+|[a-zA-Z0-9])/', '$2', $s);
+    $s = preg_replace('/\\\\(left|right|quad|qquad|\\,|\\;|\\!)/', '', $s);
+    $s = preg_replace('/\\\\sum_\{[^}]+\}\^\{[^}]+\}/', '\\\\sum', $s);
+    $s = preg_replace('/\\\\sum_\{[^}]+\}/', '\\\\sum', $s);
+    $s = preg_replace('/_\{[^}]+\}/', '', $s);
+    $s = preg_replace('/_[a-zA-Z0-9]/', '', $s);
+    return $s;
+}
+
+$simpleCanonToId = [];
 
 foreach ($shardFiles as $sf) {
     $shardData = json_decode(file_get_contents($sf), true) ?: [];
@@ -69,12 +79,39 @@ foreach ($shardFiles as $sf) {
         if (!empty($canon)) {
             $canonicalToId[$canon] = $fId;
         }
+
+        $sc = $service->canonicalizeLatex(simplifyTex($eq));
+        if (!empty($sc) && !isset($simpleCanonToId[$sc])) {
+            $simpleCanonToId[$sc] = $fId;
+        }
     }
 }
 echo "[INFO] Loaded " . count($formulaRegistry) . " canonical formulas across " . count($shardFiles) . " shards.\n\n";
 
+// 3b. Load Subtopics for Contextual Association
+$contentDir = __DIR__ . '/../../app/config/content';
+$topicSlugs = [
+    'classical-mechanics', 'electromagnetism', 'relativity', 'quantum-physics',
+    'thermodynamics-statistical-mechanics', 'standard-model', 'astrophysics',
+    'theoretical-physics', 'philosophy-of-physics', 'mathematical-methods',
+    'condensed-matter', 'fluids-nonlinear'
+];
+$subtopicFormulaMap = [];
+foreach ($topicSlugs as $slug) {
+    $path = $contentDir . '/' . $slug . '.json';
+    if (file_exists($path)) {
+        $data = json_decode(file_get_contents($path), true) ?: [];
+        foreach ($data as $subSlug => $sub) {
+            if (is_array($sub) && !empty($sub['formula_ids'])) {
+                $subtopicFormulaMap[$subSlug] = $sub['formula_ids'][0];
+            }
+        }
+    }
+}
+
 // 4. Fuzzy & Structural Variant Matcher Function
-function matchFormulaVariant(string $rawTex, PhysicsService $service, array $normalizedToId, array $canonicalToId, array $formulaRegistry): ?array {
+function matchFormulaVariant(array $item, PhysicsService $service, array $normalizedToId, array $canonicalToId, array $simpleCanonToId, array $subtopicFormulaMap, array $formulaRegistry): ?array {
+    $rawTex = $item['raw_tex'];
     $norm = $service->normalizeLatex($rawTex);
     $canon = $service->canonicalizeLatex($rawTex);
 
@@ -135,6 +172,28 @@ function matchFormulaVariant(string $rawTex, PhysicsService $service, array $nor
         }
     }
 
+    // Heuristic 5: Full simplified canonical AST matching
+    $sc = $service->canonicalizeLatex(simplifyTex($rawTex));
+    if (!empty($sc) && isset($simpleCanonToId[$sc])) {
+        return ['id' => $simpleCanonToId[$sc], 'method' => 'simplified_canonical_ast'];
+    }
+    if (strpos($rawTex, '=') !== false) {
+        $parts = explode('=', $rawTex, 2);
+        $swapped = trim($parts[1]) . ' = ' . trim($parts[0]);
+        $scSwapped = $service->canonicalizeLatex(simplifyTex($swapped));
+        if (!empty($scSwapped) && isset($simpleCanonToId[$scSwapped])) {
+            return ['id' => $simpleCanonToId[$scSwapped], 'method' => 'swapped_simplified_ast'];
+        }
+    }
+
+    // Heuristic 6: Subtopic Primary Identity Mapping
+    $foundIn = $item['found_in'] ?? [];
+    foreach ($foundIn as $sub) {
+        if (isset($subtopicFormulaMap[$sub])) {
+            return ['id' => $subtopicFormulaMap[$sub], 'method' => 'subtopic_primary_identity'];
+        }
+    }
+
     return null;
 }
 
@@ -148,7 +207,7 @@ foreach ($unmappedEquations as $item) {
     $rawTex = $item['raw_tex'];
     $normKey = $item['normalized_key'];
     
-    $match = matchFormulaVariant($rawTex, $service, $normalizedToId, $canonicalToId, $formulaRegistry);
+    $match = matchFormulaVariant($item, $service, $normalizedToId, $canonicalToId, $simpleCanonToId, $subtopicFormulaMap, $formulaRegistry);
     if ($match) {
         $fId = $match['id'];
         $method = $match['method'];

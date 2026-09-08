@@ -113,7 +113,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
                                         data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
                                         data-level="<?= strtolower($level) ?>">
                                         <div class="concept-row-left">
-                                            <a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link">
+                                            <a href="/physics/subtopic/<?= $slugItem ?>" class="subtopic-link directory-subtopic-link">
                                                 <?= str_replace('\\\\', '\\', $sub['title']) ?>
                                             </a>
                                         </div>
@@ -628,15 +628,16 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     margin-left: auto !important;
 }
 
-.directory-concept-row .subtopic-link {
+.directory-concept-row .subtopic-link,
+.directory-subtopic-link {
     font-family: 'Space Grotesk', sans-serif !important;
     font-size: 0.9rem !important;
     font-weight: 500 !important;
     color: #e2e8f0 !important;
     text-decoration: none !important;
     text-align: left !important;
-    display: inline-block !important;
-    margin: 0 !important;
+    display: block !important;
+    margin: 0 auto 0 0 !important; /* Forces left margin to 0 and auto pushes right */
     padding: 0 !important;
     line-height: 1.4 !important;
     transition: color 0.15s ease;
@@ -645,8 +646,9 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     text-overflow: ellipsis !important;
 }
 
-.directory-concept-row:hover .subtopic-link {
-    color: var(--accent-color, #64ffda);
+.directory-concept-row:hover .subtopic-link,
+.directory-concept-row:hover .directory-subtopic-link {
+    color: var(--accent-color, #64ffda) !important;
 }
 
 .concept-level-badge {

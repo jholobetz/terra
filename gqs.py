@@ -563,13 +563,6 @@ def ingest_formulas():
         
     print(f"\n✓ SUCCESS: Ingested drafts and updated {len(shards_updated)} shard files.")
     
-    print("\n🎨 Pre-rendering formulas into SVGs...")
-    try:
-        subprocess.run(["python3", "scratch/compile_formulas.py"])
-        print("✓ Formulas compiled to SVG.")
-    except Exception as e:
-        print(f"  ⚠️ Compilation failed: {e}")
-
     print("\n🔄 Synchronizing database tables...")
     try:
         subprocess.run(["php", "cli_sync.php"])
@@ -1203,15 +1196,7 @@ def formula_auto_seed(limit=5, rate_tier="free"):
     print("\n🌱 Seeding contents & explanations for the new formulas...")
     seed(rate_tier)
 
-    # 6. Pre-render MathJax SVGs via orchestrator compiler
-    print("\n🎨 Pre-rendering formulas into SVGs...")
-    try:
-        subprocess.run(["python3", "scratch/compile_formulas.py"])
-        print("✓ Formulas compiled to SVG.")
-    except Exception as e:
-        print(f"  ⚠️ Compilation failed: {e}")
-
-    # 7. Run database CLI synchronization to push to MariaDB
+    # 6. Run database CLI synchronization to push to MariaDB
     print("\n🔄 Synchronizing database tables...")
     try:
         subprocess.run(["php", "cli_sync.php"])
@@ -1219,7 +1204,7 @@ def formula_auto_seed(limit=5, rate_tier="free"):
     except Exception as e:
         print(f"  ⚠️ Database sync failed: {e}")
 
-    print("\n🚀 SUCCESS: Auto-registration, seeding, rendering, and database sync complete!")
+    print("\n🚀 SUCCESS: Auto-registration, seeding, and database sync complete!")
 
 def main():
     if len(sys.argv) < 2:

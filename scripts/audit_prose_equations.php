@@ -227,11 +227,11 @@ if (!empty($unmappedEquations)) {
 }
 
 // 7. Save JSON Delta Report
-$scratchDir = __DIR__ . '/../scratch';
-if (!is_dir($scratchDir)) {
-    mkdir($scratchDir, 0755, true);
+$dataDir = __DIR__ . '/../lib/data';
+if (!is_dir($dataDir)) {
+    mkdir($dataDir, 0755, true);
 }
-$reportPath = $scratchDir . '/unmapped_prose_equations.json';
+$reportPath = $dataDir . '/unmapped_prose_equations.json';
 file_put_contents($reportPath, json_encode([
     'timestamp' => date('c'),
     'total_unique' => $totalUnique,

@@ -17,7 +17,7 @@ echo "🔗 Automated Prose Equation Alias Matcher\n";
 echo "=======================================================\n\n";
 
 // 1. Load Unmapped Equations Report
-$reportFile = __DIR__ . '/../../scratch/unmapped_prose_equations.json';
+$reportFile = __DIR__ . '/../../lib/data/unmapped_prose_equations.json';
 if (!file_exists($reportFile)) {
     die("[ERROR] Unmapped equations report not found at: {$reportFile}\nRun scripts/audit_prose_equations.php first.\n");
 }
@@ -226,7 +226,8 @@ echo "\n=======================================================\n";
 echo "📊 ALIAS MATCHING RESULTS\n";
 echo "=======================================================\n";
 echo "Total Unmapped Evaluated: " . count($unmappedEquations) . "\n";
-echo "Successfully Matched:     " . count($matchedAliases) . " (" . number_format((count($matchedAliases)/count($unmappedEquations))*100, 1) . "%)\n";
+$pctMatched = count($unmappedEquations) > 0 ? number_format((count($matchedAliases)/count($unmappedEquations))*100, 1) : "100.0";
+echo "Successfully Matched:     " . count($matchedAliases) . " (" . $pctMatched . "%)\n";
 echo "Remaining Novel Formulas: " . $unmatchedCount . "\n";
 echo "=======================================================\n\n";
 

@@ -442,7 +442,7 @@ class IntegrityShield:
             try:
                 cmd = ["php", "scripts/audit_prose_equations.php"]
                 result = subprocess.run(cmd, capture_output=True, text=True)
-                report_path = "scratch/unmapped_prose_equations.json"
+                report_path = "lib/data/unmapped_prose_equations.json"
                 if os.path.exists(report_path):
                     with open(report_path, "r") as f:
                         report = json.load(f)

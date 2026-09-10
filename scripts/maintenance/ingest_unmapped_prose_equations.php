@@ -27,7 +27,7 @@ echo "📥 Canonical Prose Equation Ingestion Engine" . ($isDryRun ? " [DRY-RUN]
 echo "=======================================================\n\n";
 
 // 1. Load Unmapped Equations Report
-$reportFile = __DIR__ . '/../../scratch/unmapped_prose_equations.json';
+$reportFile = __DIR__ . '/../../lib/data/unmapped_prose_equations.json';
 if (!file_exists($reportFile)) {
     die("[ERROR] Report file not found at: {$reportFile}\n");
 }

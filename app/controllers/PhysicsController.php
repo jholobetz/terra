@@ -304,7 +304,9 @@ class PhysicsController
             return;
         }
 
-        $casScript = PROJECT_ROOT . '/scripts/lib/cas_engine.py';
+        $casScript = file_exists(PROJECT_ROOT . '/lib/cas/cas_engine.py')
+            ? PROJECT_ROOT . '/lib/cas/cas_engine.py'
+            : PROJECT_ROOT . '/scripts/lib/cas_engine.py';
         $pythonBin = PROJECT_ROOT . '/.venv/bin/python3';
         if (!file_exists($pythonBin)) {
             $pythonBin = 'python3';

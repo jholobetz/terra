@@ -139,28 +139,27 @@ flowchart TD
 
 ## 📋 Comprehensive Execution Matrix
 
-| Horizon | Phase | Task Description | Target Files | Priority |
-| :--- | :---: | :--- | :--- | :---: |
-| **Short-Term** | 1.1 | Decompose client monolith into modules | `public/js/equation_explainer.js`<br/>`public/js/explainer_simulations.js`<br/>`public/js/explainer_curator.js` | 🔴 **P1** |
-| **Short-Term** | 1.2 | Purge stale HTML dumps and archive legacy scripts | `scratch/`<br/>`docs/archive/historical_scratch/`<br/>`scripts/archive/` | 🔴 **P1** |
-| **Short-Term** | 1.3 | Harden HTML/TeX boundary and fix div-0 guard | `integrity_shield.py`<br/>`scripts/maintenance/map_prose_equation_aliases.php` | 🟡 **P2** |
-| **Short-Term** | 1.4 | Route and view template dead-code audit | `app/config/routes.php`<br/>`app/views/physics/*.php` | 🟢 **P3** |
-| **Medium-Term** | 2.1 | Step-by-step derivation accordions in Explainer | `app/config/content/formulas/`<br/>`app/views/physics/equation_explainer.php` | 🟡 **P2** |
-| **Medium-Term** | 2.2 | Expand Canvas/WebGL simulations (GR, QM, Fields) | `public/js/explainer_simulations.js` | 🟡 **P2** |
-| **Medium-Term** | 2.3 | APCu / in-memory formula shard caching | `app/logic/PhysicsService.php` | 🟢 **P3** |
-| **Long-Term** | 3.1 | Automated SymPy dimensional & limit proofs | `scripts/lib/cas_engine.py`<br/>`scripts/audit_symbolic_invariance.py` | 🟡 **P2** |
-| **Long-Term** | 3.2 | Autonomous governance & batch budget contracts | `scripts/maintenance/run_gqs_sprint.py`<br/>`docs/token_estimation_and_cost_governance.md` | 🟢 **P3** |
-| **Long-Term** | 3.3 | Project Terra department rollout (`/chemistry`, `/math`) | `app/controllers/`<br/>`app/config/content/` | 🔵 **Strategic** |
+| Horizon | Phase | Task Description | Target Files | Priority | Status |
+| :--- | :---: | :--- | :--- | :---: | :---: |
+| **Short-Term** | 1.1 | Decompose client monolith into modules | `public/js/equation_explainer.js`<br/>`public/js/explainer_simulations.js`<br/>`public/js/explainer_curator.js`<br/>`public/js/explainer_dictionary.js` | 🔴 **P1** | ✅ **Complete** |
+| **Short-Term** | 1.2 | Purge stale scratch dumps and archive legacy scripts | `scratch/`<br/>`scripts/archive/`<br/>`lib/` | 🔴 **P1** | ✅ **Complete** |
+| **Short-Term** | 1.3 | Harden HTML/TeX boundary and fix div-0 guard | `integrity_shield.py`<br/>`scripts/maintenance/map_prose_equation_aliases.php` | 🟡 **P2** | ✅ **Complete** |
+| **Short-Term** | 1.4 | Route and view template dead-code audit | `app/config/routes.php`<br/>`app/controllers/`<br/>`app/views/` | 🟢 **P3** | ✅ **Complete** |
+| **Medium-Term** | 2.1 | Step-by-step derivation accordions in Explainer | `app/config/content/formulas/`<br/>`app/views/physics/equation_explainer.php` | 🟡 **P2** | ⏳ **Ready** |
+| **Medium-Term** | 2.2 | Expand Canvas/WebGL simulations (GR, QM, Fields) | `public/js/explainer_simulations.js` | 🟡 **P2** | ⏳ **Ready** |
+| **Medium-Term** | 2.3 | APCu / in-memory formula shard caching | `app/logic/PhysicsService.php` | 🟢 **P3** | ⏳ **Ready** |
+| **Long-Term** | 3.1 | Automated SymPy dimensional & limit proofs | `lib/cas/cas_engine.py`<br/>`scripts/audit_symbolic_invariance.py` | 🟡 **P2** | 📋 Planned |
+| **Long-Term** | 3.2 | Autonomous governance & batch budget contracts | `scripts/maintenance/run_gqs_sprint.py`<br/>`docs/token_estimation_and_cost_governance.md` | 🟢 **P3** | 📋 Planned |
+| **Long-Term** | 3.3 | Project Terra department rollout (`/chemistry`, `/math`) | `app/controllers/`<br/>`app/config/content/` | 🔵 **Strategic** | 📋 Planned |
 
 ---
 
 ## 🎯 Immediate Recommended Starting Action
 
-To kick off this plan immediately, execute **Phase 1: Short-Term Action Plan**:
-1. **Sanitize `scratch/` & Fix Division-by-Zero Guard**:
-   - Delete stale HTML test files in `scratch/`.
-   - Add safety check to `scripts/maintenance/map_prose_equation_aliases.php`.
-2. **Decompose `public/js/equation_explainer.js`**:
-   - Extract canvas simulation code into `public/js/explainer_simulations.js`.
-   - Extract curator drawer code into `public/js/explainer_curator.js`.
-   - Verify that all Equation Explainer features render cleanly at `http://localhost:8000/physics/equation-explainer`.
+With **Phase 1: Codebase Hygiene & Architectural Hardening** 100% complete, proceed to **Phase 2: Horizon 3 Interactivity & Performance**:
+1. **Shard In-Memory / APCu Caching Layer (`app/logic/PhysicsService.php`)**:
+   - Cache loaded formula shards with `mtime` invalidation to achieve sub-millisecond API response times.
+2. **Step-by-Step Derivation Accordions**:
+   - Enrich formula schema with `derivation_steps` and render folding visual accordions in the Equation Explainer.
+3. **Expand Simulation Sandboxes (`public/js/explainer_simulations.js`)**:
+   - Add General Relativity geodesic raytracing and Quantum Mechanics 1D tunneling simulations.

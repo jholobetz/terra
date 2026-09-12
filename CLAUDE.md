@@ -121,15 +121,25 @@ To graduate a subtopic from standard "legacy" to "platinum," it must pass these 
 
 ## 🏛️ 4. Core Platform Architecture
 
-### A. The Two Distinct Data Stores
-The project maintains two separate storage layers:
-1. **Subtopic Prose Shards (`app/config/content/*.json`)**: 14 thematic JSON files (e.g. `astrophysics.json`, `quantum-physics.json`) containing the narrative encyclopedia articles, word metrics, and neighbor links.
-2. **Formula Manifold Shards (`app/config/content/formulas/[00-ff]/shard_[00-ff].json`)**: 256 deterministic hex-hashed shards storing all **14,613 formulas**, mathematical definitions, interpretations, limiting cases, derivation parent IDs, and semantic variable dictionaries.
+### A. The Fundamental Data Model: Production MariaDB vs. Development Shards
+The platform maintains a deliberate dual-layer operational model:
+1. **Production Operational Engine (MariaDB)**:
+   * In production, live queries run against the **MariaDB** relational store (`formulas`, `subtopics`, `topics`, `reviews`).
+   * When `PhysicsService::loadFormula()` or `fetchAndPrepare()` is called, it queries indexed MariaDB tables directly (leveraging InnoDB memory buffer pools).
+   * Static subtopic views are served via the high-performance disk cache (`public/cache/subtopic/{slug}.html`), bypassing database load on repeat visits.
+   * **The 256 JSON shards are NOT an operational bottleneck in production.**
+2. **Development & Offline Source of Truth (Git JSON Shards)**:
+   * The **256 hex shards** (`app/config/content/formulas/[00-ff]/shard_[00-ff].json`) and **14 subtopic files** (`app/config/content/*.json`) serve as the **version-controlled source of truth in Git**.
+   * They enable offline development, Git branching/diffs, preview mode (`?preview=1`), and automated CI test suites (`pytest`, `integrity_shield.py`, `gqs.py`) without requiring a live, running database daemon.
+   * Shard file reads on disk are strictly an offline development, preview, or database-unavailable fallback mechanism.
+3. **The Service Synchronization Bridge (`PhysicsService.php`)**:
+   * Bridges the two layers: `PhysicsService::saveFormula()` serves as the single write funnel, atomically updating the Git JSON shard, MariaDB record, and reverse LaTeX trie (`formulas_latex_index.json`).
+   * Deployment synchronization (`syncFormulasToDatabase()`) uses SHA-256 hash registries (`formulas_hash_registry.json`) to detect changed shards and update MariaDB in batch.
 
 ### B. Mathematical Derivation Lineage Graph (DAG)
 * Lineage is tracked as an acyclic graph in `app/config/formula_derivation_graph.json` (and `.gz`).
 * Formulas connect hierarchically from foundational axioms down to phenomenological identities.
-* The **Lineage Health Index (LHI)** continuously benchmarks derivation density on a 0–100 scale (currently at **95.0 / 100**).
+* The **Lineage Health Index (LHI)** continuously benchmarks derivation density on a 0–100 scale (currently at **95.2 / 100**, with **0 isolated nodes**).
 
 ### C. Equation Explainer & Dissection Suite
 * Located at `/physics/equation-explainer`.

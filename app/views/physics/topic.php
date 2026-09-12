@@ -1,7 +1,8 @@
 <?php
 /**
- * Platinum Standard Topic Hub — Master-Detail Command Console
- * High-density pedagogical curriculum navigator paired with a live holographic detail stage.
+ * Platinum Standard Topic Hub — The Solar Constellation & Orbiting Radial Manifold
+ * An interactive celestial knowledge manifold anchoring the central axiomatic core
+ * with concentric orbital pillar tracks and planetary concept nodes.
  */
 
 require_once __DIR__ . '/_topic_icons.php';
@@ -9,6 +10,23 @@ require_once __DIR__ . '/_topic_icons.php';
 // Resolve category theme mapping
 $meta = get_topic_icon_and_class($slug);
 $theme = $meta['theme'] ?? 'default';
+
+// Landmark equations for the Axiomatic Solar Core
+$landmarkAxioms = [
+    'quantum-physics' => 'i\\hbar \\frac{\\partial}{\\partial t}\\Psi = \\hat{H}\\Psi',
+    'relativity' => 'G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}',
+    'classical-mechanics' => '\\frac{d}{dt}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) = \\frac{\\partial L}{\\partial q_i}',
+    'electromagnetism' => '\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\frac{1}{c^2} \\frac{\\partial \\mathbf{E}}{\\partial t}',
+    'thermodynamics-statistical-mechanics' => 'dS \\ge \\frac{dQ}{T}, \\quad S = k_B \\ln \\Omega',
+    'fluids-nonlinear' => '\\rho \\frac{D\\mathbf{u}}{Dt} = -\\nabla p + \\mu \\nabla^2 \\mathbf{u}',
+    'theoretical-physics' => 'S[\\phi] = \\int d^4x \\, \\mathcal{L}(\\phi, \\partial_\\mu \\phi)',
+    'mathematical-methods' => '\\hat{f}(\\xi) = \\int_{-\\infty}^{\\infty} f(x) e^{-2\\pi i x \\xi} dx',
+    'standard-model' => '\\mathcal{L}_{\\text{SM}} = -\\frac{1}{4}F_{\\mu\\nu}^a F^{a\\mu\\nu} + \\bar{\\psi}i\\gamma^\\mu D_\\mu \\psi',
+    'condensed-matter' => 'H = -\\sum_{\\langle i,j \\rangle} J_{ij} \\sigma_i \\sigma_j',
+    'astrophysics' => 'H^2 = \\frac{8\\pi G}{3}\\rho - \\frac{k c^2}{a^2} + \\frac{\\Lambda c^2}{3}',
+    'philosophy-of-physics' => '\\langle \\hat{A} \\rangle = \\text{Tr}(\\rho \\hat{A})'
+];
+$coreEquation = $landmarkAxioms[$slug] ?? null;
 
 // Determine Level based on technical markers
 if (!function_exists('getConceptLevel')) {
@@ -27,13 +45,28 @@ if (!function_exists('getConceptLevel')) {
 $totalPillars = !empty($pillars) && is_array($pillars) ? count($pillars) : 0;
 $allSubtopicSlugs = [];
 $firstActiveSlug = null;
+$conceptsList = [];
+
 if (!empty($pillars) && is_array($pillars)) {
-    foreach ($pillars as $p) {
+    foreach ($pillars as $pIdx => $p) {
         if (!empty($p['slugs']) && is_array($p['slugs'])) {
             foreach ($p['slugs'] as $s) {
                 $allSubtopicSlugs[$s] = true;
-                if ($firstActiveSlug === null && !empty($subtopics_map[$s])) {
-                    $firstActiveSlug = $s;
+                $sub = $subtopics_map[$s] ?? null;
+                if ($sub) {
+                    if ($firstActiveSlug === null) $firstActiveSlug = $s;
+                    $level = getConceptLevel($s, $sub['title']);
+                    $conceptsList[$s] = [
+                        'slug' => $s,
+                        'title' => str_replace('\\\\', '\\', $sub['title']),
+                        'pillar_idx' => $pIdx,
+                        'pillar_title' => preg_replace('/^\d+\.\s*/', '', $p['title']),
+                        'pillar_narrative' => $p['narrative'] ?? '',
+                        'level' => $level,
+                        'hero_math' => $sub['hero_math'] ?? '',
+                        'snippet' => $sub['snippet'] ?? '',
+                        'snippet_svg' => $sub['snippet_svg'] ?? ''
+                    ];
                 }
             }
         }
@@ -44,20 +77,20 @@ $totalFormulas = !empty($formulas) && is_array($formulas) ? count($formulas) : (
 $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 ?>
 
-<article class="topic-content master-detail-console" style="--accent-color: var(--accent-<?= $theme ?>);">
+<article class="topic-content solar-constellation-view" style="--accent-color: var(--accent-<?= $theme ?>);">
     
     <!-- Cosmic Command Header -->
-    <header class="console-header">
+    <header class="constellation-header">
         <div class="header-headline-row">
             <div class="header-title-block">
                 <div class="header-badge-tag">FACULTY OF <?= strtoupper(str_replace('-', ' ', $theme)) ?></div>
-                <h1 class="console-title"><?= htmlspecialchars($title ?? 'Physics Hub') ?></h1>
-                <p id="topic-beginning-abstract" class="console-subtitle"><?= $intro ?? 'Comprehensive academic directory of the physical manifold.' ?></p>
+                <h1 class="constellation-title"><?= htmlspecialchars($title ?? 'Physics Hub') ?></h1>
+                <p id="topic-beginning-abstract" class="constellation-subtitle"><?= $intro ?? 'Comprehensive radial manifold of the physical discipline.' ?></p>
             </div>
             <div class="header-meta-badge">
-                <span class="meta-item"><strong><?= $totalPillars ?></strong> Pillars</span>
+                <span class="meta-item"><strong><?= $totalPillars ?></strong> Orbital Tracks</span>
                 <span class="meta-sep">/</span>
-                <span class="meta-item"><strong><?= $totalConcepts ?></strong> Concepts</span>
+                <span class="meta-item"><strong><?= $totalConcepts ?></strong> Planetary Nodes</span>
                 <?php if ($totalFormulas > 0): ?>
                     <span class="meta-sep">/</span>
                     <span class="meta-item"><strong><?= $totalFormulas ?></strong> Identities</span>
@@ -65,18 +98,27 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
             </div>
         </div>
 
-        <!-- Toolbar Quick Actions -->
-        <div class="console-toolbar">
-            <div class="console-search-wrapper">
+        <!-- Toolbar: Mode Switcher & Quick Actions -->
+        <div class="constellation-toolbar">
+            <!-- View Mode Switcher -->
+            <div class="view-mode-switch">
+                <button type="button" id="btn-mode-orbit" class="btn-mode-pill active">
+                    <span class="mode-icon">🌌</span> Solar Constellation
+                </button>
+                <button type="button" id="btn-mode-directory" class="btn-mode-pill">
+                    <span class="mode-icon">📋</span> Curriculum Directory
+                </button>
+            </div>
+
+            <!-- Orbit Filter / Search Input -->
+            <div class="constellation-search-wrapper">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="directory-filter-input" placeholder="Quick filter concepts in <?= htmlspecialchars($title ?? 'this faculty') ?>..." autocomplete="off" />
+                <input type="text" id="directory-filter-input" placeholder="Search planetary concepts..." autocomplete="off" />
                 <span id="directory-match-counter" class="match-counter"></span>
             </div>
-            
-            <div class="console-nav-actions">
-                <button type="button" id="btn-expand-all" class="btn-console-tool" title="Expand All Pillars">Expand All</button>
-                <button type="button" id="btn-collapse-all" class="btn-console-tool" title="Collapse All Pillars">Collapse All</button>
-                <span class="nav-sep">|</span>
+
+            <!-- Quick Navigation Actions -->
+            <div class="constellation-nav-actions">
                 <a href="/physics/subtopic/<?= htmlspecialchars($slug) ?>-overview" class="btn-console-link">🚀 Overview</a>
                 <a href="/physics/universe-graph" class="btn-console-link">🌌 Derivation Graph</a>
                 <a href="/physics/simulations" class="btn-console-link">🧪 Simulations</a>
@@ -84,167 +126,213 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         </div>
     </header>
 
-    <!-- Master-Detail Split Console Grid -->
-    <div class="console-workspace-grid">
+    <!-- SECTION 1: THE SOLAR CONSTELLATION ORBITING MANIFOLD (DEFAULT ACTIVE) -->
+    <section class="constellation-manifold-stage" id="stage-constellation-mode">
         
-        <!-- LEFT RAIL: Curriculum Trajectory Navigator -->
-        <aside class="console-navigator-rail" id="console-navigator">
-            <div class="rail-header-label">
-                <span>CURRICULUM TRAJECTORY</span>
-                <span class="rail-count-badge"><?= $totalConcepts ?> nodes</span>
-            </div>
-
-            <?php if (!empty($pillars) && is_array($pillars)): ?>
-                <div class="curriculum-pillar-stack" id="curriculum-stack">
+        <!-- Celestial Orbit Legend & Track Filter Strip -->
+        <div class="celestial-track-bar">
+            <div class="track-bar-label">ORBITAL TRACKS:</div>
+            <div class="track-pills-list">
+                <button type="button" class="orbit-filter-chip active" data-orbit-target="all">
+                    <span class="orbit-chip-dot all"></span> All Orbits
+                </button>
+                <?php if (!empty($pillars) && is_array($pillars)): ?>
                     <?php foreach ($pillars as $pIdx => $pillar): 
-                        $pillarSubCount = !empty($pillar['slugs']) ? count($pillar['slugs']) : 0;
-                        $cleanTitle = preg_replace('/^\d+\.\s*/', '', $pillar['title']);
-                        $isFirstPillar = ($pIdx === 0);
+                        $cleanPillarTitle = preg_replace('/^\d+\.\s*/', '', $pillar['title']);
                     ?>
-                        <section class="pillar-group <?= $isFirstPillar ? 'is-open' : 'is-open' ?>" data-pillar-idx="<?= $pIdx ?>">
-                            <!-- Pillar Station Header -->
-                            <button type="button" class="pillar-station-btn" aria-expanded="true" data-pillar-toggle="<?= $pIdx ?>">
-                                <div class="station-left">
-                                    <span class="station-chevron">▼</span>
-                                    <span class="station-num"><?= sprintf('%02d', $pIdx + 1) ?></span>
-                                    <span class="station-title"><?= htmlspecialchars($cleanTitle) ?></span>
-                                </div>
-                                <span class="station-badge-count"><?= $pillarSubCount ?></span>
-                            </button>
-
-                            <!-- Subtopic Items under this Pillar -->
-                            <div class="pillar-concepts-tray" id="tray-<?= $pIdx ?>">
-                                <?php foreach ($pillar['slugs'] as $slugItem): 
-                                    $sub = $subtopics_map[$slugItem] ?? null;
-                                    if (!$sub) continue;
-                                    $level = getConceptLevel($slugItem, $sub['title']);
-                                    $isActive = ($slugItem === $firstActiveSlug);
-                                ?>
-                                    <div class="console-concept-item topic-subtopic-row directory-concept-row <?= $isActive ? 'is-active' : '' ?>" 
-                                         data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>"
-                                         data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
-                                         data-level="<?= strtolower($level) ?>"
-                                         data-pillar-idx="<?= $pIdx ?>"
-                                         tabindex="0"
-                                         role="button">
-                                        <div class="concept-item-indicator"></div>
-                                        <div class="concept-item-content">
-                                            <span class="concept-title"><?= str_replace('\\\\', '\\', $sub['title']) ?></span>
-                                        </div>
-                                        <span class="topic-level-badge level-badge-<?= strtolower($level) ?>"><?= $level ?></span>
-                                        
-                                        <!-- Preserved hidden abstract for semantic variable hover & test assertions -->
-                                        <span class="subtopic-card-abstract" style="display: none;">
-                                            <?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?>
-                                        </span>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </section>
+                        <button type="button" class="orbit-filter-chip" data-orbit-target="<?= $pIdx ?>">
+                            <span class="orbit-chip-dot orbit-<?= $pIdx % 4 ?>"></span>
+                            <span>Track <?= sprintf('%02d', $pIdx + 1) ?>: <?= htmlspecialchars($cleanPillarTitle) ?></span>
+                        </button>
                     <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div class="glass-card" style="padding: 20px; text-align: center; color: var(--text-muted);">
-                    <?= $content ?? '<p>No curriculum concepts defined for this faculty.</p>' ?>
-                </div>
-            <?php endif; ?>
-        </aside>
+                <?php endif; ?>
+            </div>
+            <div class="orbit-controls-tools">
+                <button type="button" id="btn-orbit-pause" class="btn-orbit-tool" title="Pause / Resume continuous orbital rotation">
+                    <span id="orbit-pause-icon">⏸</span> Pause Drift
+                </button>
+            </div>
+        </div>
 
-        <!-- RIGHT MAIN STAGE: Live Holographic Inspection Stage -->
-        <main class="console-detail-stage" id="console-detail-stage" aria-live="polite">
-            <?php if (!empty($pillars) && is_array($pillars)): ?>
+        <!-- Interactive Radial Constellation Canvas Container -->
+        <div class="constellation-viewport" id="constellation-viewport">
+            
+            <!-- SVG Radial Manifold Plane -->
+            <svg id="constellation-svg" class="constellation-svg-plane" viewBox="0 0 1100 680" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <!-- Pulsing Radial Gradients for Solar Core -->
+                    <radialGradient id="sun-glow-core" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="var(--accent-color, #64ffda)" stop-opacity="0.9" />
+                        <stop offset="40%" stop-color="var(--accent-color, #64ffda)" stop-opacity="0.35" />
+                        <stop offset="80%" stop-color="var(--accent-color, #64ffda)" stop-opacity="0.08" />
+                        <stop offset="100%" stop-color="transparent" stop-opacity="0" />
+                    </radialGradient>
+                    <radialGradient id="sun-corona" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="var(--accent-color, #64ffda)" stop-opacity="0.5" />
+                        <stop offset="100%" stop-color="transparent" stop-opacity="0" />
+                    </radialGradient>
+                    
+                    <!-- Glow Filters -->
+                    <filter id="glow-filter" x="-30%" y="-30%" width="160%" height="160%">
+                        <feGaussianBlur stdDeviation="4" result="blur" />
+                        <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                    <filter id="intense-glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="8" result="blur1" />
+                        <feGaussianBlur stdDeviation="3" result="blur2" />
+                        <feMerge>
+                            <feMergeNode in="blur1" />
+                            <feMergeNode in="blur2" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Background Subtle Cosmic Coordinates Grid -->
+                <g class="constellation-grid-rings" opacity="0.18">
+                    <line x1="500" y1="30" x2="500" y2="650" stroke="rgba(255,255,255,0.2)" stroke-dasharray="3,6" />
+                    <line x1="30" y1="340" x2="970" y2="340" stroke="rgba(255,255,255,0.2)" stroke-dasharray="3,6" />
+                </g>
+
+                <!-- Dynamic Orbital Tracks Group (Rendered by JS) -->
+                <g id="svg-orbital-tracks-group"></g>
+
+                <!-- Dynamic Gravitational Luminous Connector Ray -->
+                <line id="svg-gravitational-ray" x1="500" y1="340" x2="500" y2="340" 
+                      stroke="var(--accent-color, #64ffda)" stroke-width="2" stroke-dasharray="4,4" 
+                      opacity="0" filter="url(#glow-filter)" />
+
+                <!-- Dynamic Planetary Concept Nodes Group (Rendered by JS) -->
+                <g id="svg-planetary-nodes-group"></g>
+
+                <!-- Central Axiomatic Solar Sun Core -->
+                <g id="solar-sun-core" class="solar-sun-core" transform="translate(500, 340)">
+                    <!-- Outer Pulsing Corona -->
+                    <circle r="72" fill="url(#sun-glow-core)" class="sun-pulse-ring" />
+                    <circle r="44" fill="rgba(11, 17, 32, 0.92)" stroke="var(--accent-color, #64ffda)" stroke-width="2" filter="url(#glow-filter)" />
+                    
+                    <!-- Faculty SVG Glyph Inside Core -->
+                    <g transform="translate(-16, -24) scale(0.32)">
+                        <?= $meta['svg'] ?>
+                    </g>
+
+                    <!-- Axiomatic Core Label -->
+                    <text y="18" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-size="8" font-weight="700" letter-spacing="1.5" fill="var(--accent-color, #64ffda)">
+                        AXIOMATIC CORE
+                    </text>
+                    <text y="28" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-size="7" font-weight="600" fill="#94a3b8">
+                        <?= strtoupper(htmlspecialchars($slug)) ?>
+                    </text>
+                </g>
+            </svg>
+
+            <!-- Floating Holographic HUD Inspector Deck (Docked Top-Right) -->
+            <aside class="holographic-hud-deck" id="constellation-hud-deck" aria-live="polite">
+                
+                <!-- HUD Status Bar -->
+                <div class="hud-status-bar">
+                    <span class="hud-orbit-label" id="hud-orbit-label">ORBIT 01 // FOUNDATIONAL TRACK</span>
+                    <span class="hud-level-tag" id="hud-level-tag">Frontier Level</span>
+                </div>
+
+                <!-- Concept Headline -->
+                <h2 class="hud-concept-title" id="hud-concept-title">
+                    <a href="#" id="hud-concept-link" class="hud-title-link">Select a Concept Node</a>
+                </h2>
+
+                <!-- Pillar Pedagogical Framing Narrative -->
+                <div class="hud-pillar-narrative" id="hud-pillar-narrative" style="display: none;">
+                    <span class="hud-glyph">§</span>
+                    <span id="hud-narrative-text" class="hud-narrative-text"></span>
+                </div>
+
+                <!-- Hero Mathematical Identity Inset Box -->
+                <div class="hud-equation-inset" id="hud-equation-box" style="display: none;">
+                    <div class="hud-box-header">GOVERNING IDENTITY</div>
+                    <div class="hud-equation-display" id="hud-equation-display"></div>
+                </div>
+
+                <!-- First-Principles Abstract Card -->
+                <div class="hud-abstract-card">
+                    <div class="hud-box-header">FIRST-PRINCIPLES ABSTRACT</div>
+                    <div class="hud-abstract-body subtopic-card-abstract" id="hud-abstract-body">
+                        <p>Explore the solar constellation by hovering or clicking planetary concept nodes orbiting the central axiomatic core.</p>
+                    </div>
+                </div>
+
+                <!-- Action Launch Bar -->
+                <div class="hud-actions-bar">
+                    <a href="#" id="hud-btn-primary" class="btn-hud-primary">
+                        <span>Enter Full Treatise</span>
+                        <span class="hud-arrow">&rarr;</span>
+                    </a>
+                    <a href="#" id="hud-btn-explainer" class="btn-hud-secondary" title="Deconstruct equation tokens and CAS limits" style="display: none;">
+                        <span>📐 Dissect Equation</span>
+                    </a>
+                    <a href="/physics/universe-graph" class="btn-hud-subtle" title="Explore in mathematical derivation DAG">
+                        <span>🌌 Lineage DAG</span>
+                    </a>
+                </div>
+
+            </aside>
+
+        </div>
+    </section>
+
+    <!-- SECTION 2: THE CURRICULUM DIRECTORY (ALTERNATIVE ACCESSIBLE VIEW) -->
+    <section class="curriculum-directory-section" id="stage-directory-mode" style="display: none;">
+        <?php if (!empty($pillars) && is_array($pillars)): ?>
+            <div class="directory-pillar-grid">
                 <?php foreach ($pillars as $pIdx => $pillar): 
                     $cleanPillarTitle = preg_replace('/^\d+\.\s*/', '', $pillar['title']);
-                    foreach ($pillar['slugs'] as $slugItem): 
-                        $sub = $subtopics_map[$slugItem] ?? null;
-                        if (!$sub) continue;
-                        $level = getConceptLevel($slugItem, $sub['title']);
-                        $isActive = ($slugItem === $firstActiveSlug);
                 ?>
-                    <div class="concept-dossier-card <?= $isActive ? 'is-active' : '' ?>" 
-                         id="dossier-<?= htmlspecialchars($slugItem) ?>"
-                         data-slug="<?= htmlspecialchars($slugItem) ?>"
-                         data-pillar-idx="<?= $pIdx ?>"
-                         style="<?= $isActive ? 'display: block;' : 'display: none;' ?>">
-                        
-                        <!-- Dossier Trajectory Header -->
-                        <div class="dossier-header-bar">
-                            <div class="dossier-track-label">
-                                <span class="dossier-pillar-tag">PILLAR <?= sprintf('%02d', $pIdx + 1) ?></span>
-                                <span class="dossier-track-dot">&bull;</span>
-                                <span class="dossier-pillar-name"><?= htmlspecialchars($cleanPillarTitle) ?></span>
-                            </div>
-                            <div class="dossier-chips">
-                                <span class="dossier-level-badge level-badge-<?= strtolower($level) ?>"><?= $level ?> Level</span>
-                                <span class="dossier-domain-badge"><?= strtoupper(htmlspecialchars($field ?? $theme)) ?></span>
-                            </div>
-                        </div>
-
-                        <!-- Concept Headline -->
-                        <h2 class="dossier-title">
-                            <a href="/physics/subtopic/<?= htmlspecialchars($slugItem) ?>" class="dossier-title-link">
-                                <?= str_replace('\\\\', '\\', $sub['title']) ?>
-                            </a>
-                        </h2>
-
-                        <!-- Pillar Pedagogical Framing / Narrative -->
-                        <?php if (!empty($pillar['narrative'])): ?>
-                            <div class="dossier-pillar-narrative">
-                                <span class="narrative-glyph">§</span>
-                                <div class="narrative-text"><?= htmlspecialchars($pillar['narrative']) ?></div>
-                            </div>
-                        <?php endif; ?>
-
-                        <!-- Hero Mathematical Identity Box -->
-                        <?php if (!empty($sub['hero_math'])): ?>
-                            <div class="dossier-math-container">
-                                <div class="dossier-box-label">GOVERNING MATHEMATICAL IDENTITY</div>
-                                <div class="dossier-math-display">
-                                    <?= $sub['hero_math'] ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-
-                        <!-- First-Principles Abstract -->
-                        <div class="dossier-abstract-container">
-                            <div class="dossier-box-label">FIRST-PRINCIPLES ABSTRACT</div>
-                            <div class="dossier-abstract-body subtopic-card-abstract">
-                                <?php if (!empty($sub['snippet_svg'])): ?>
-                                    <?= $sub['snippet_svg'] ?>
-                                <?php elseif (!empty($sub['snippet'])): ?>
-                                    <p><?= htmlspecialchars($sub['snippet']) ?></p>
-                                <?php else: ?>
-                                    <p>Comprehensive academic monograph detailing <?= htmlspecialchars($sub['title']) ?> inside the <?= htmlspecialchars($title ?? 'physics') ?> manifold.</p>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-
-                        <!-- Launch Actions -->
-                        <div class="dossier-actions-footer">
-                            <a href="/physics/subtopic/<?= htmlspecialchars($slugItem) ?>" class="btn-dossier-primary">
-                                <span>Enter Full Treatise</span>
-                                <span class="btn-arrow">&rarr;</span>
-                            </a>
-                            <?php if (!empty($sub['hero_math'])): ?>
-                                <a href="/physics/equation-explainer?id=<?= htmlspecialchars($slugItem) ?>" class="btn-dossier-secondary" title="Deconstruct equation tokens and CAS limits">
-                                    <span>📐 Dissect Equation</span>
-                                </a>
+                    <div class="directory-pillar-column" data-pillar-idx="<?= $pIdx ?>">
+                        <div class="directory-column-header">
+                            <span class="column-track-num">TRACK <?= sprintf('%02d', $pIdx + 1) ?></span>
+                            <h3 class="column-title"><?= htmlspecialchars($cleanPillarTitle) ?></h3>
+                            <?php if (!empty($pillar['narrative'])): ?>
+                                <p class="column-narrative"><?= htmlspecialchars($pillar['narrative']) ?></p>
                             <?php endif; ?>
-                            <a href="/physics/universe-graph" class="btn-dossier-subtle" title="Explore in mathematical derivation DAG">
-                                <span>🌌 Lineage DAG</span>
-                            </a>
                         </div>
 
+                        <div class="directory-column-list">
+                            <?php foreach ($pillar['slugs'] as $slugItem): 
+                                $sub = $subtopics_map[$slugItem] ?? null;
+                                if (!$sub) continue;
+                                $level = getConceptLevel($slugItem, $sub['title']);
+                            ?>
+                                <div class="directory-card topic-subtopic-row directory-concept-row"
+                                     data-subtopic-slug="<?= htmlspecialchars($slugItem) ?>"
+                                     data-title="<?= htmlspecialchars(strtolower($sub['title'])) ?>"
+                                     data-level="<?= strtolower($level) ?>">
+                                    <a href="/physics/subtopic/<?= $slugItem ?>" class="directory-card-link">
+                                        <div class="card-headline">
+                                            <span class="card-name"><?= str_replace('\\\\', '\\', $sub['title']) ?></span>
+                                            <span class="topic-level-badge level-badge-<?= strtolower($level) ?>"><?= $level ?></span>
+                                        </div>
+                                        <?php if (!empty($sub['hero_math'])): ?>
+                                            <div class="card-mini-math"><?= $sub['hero_math'] ?></div>
+                                        <?php endif; ?>
+                                    </a>
+                                    <!-- Preserved for semantic variable & test assertions -->
+                                    <span class="subtopic-card-abstract" style="display: none;">
+                                        <?= !empty($sub['snippet_svg']) ? $sub['snippet_svg'] : ($sub['snippet'] ?? '') ?>
+                                    </span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                <?php endforeach; endforeach; ?>
-            <?php endif; ?>
-        </main>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </section>
 
-    </div>
-
-    <!-- Connected Faculties (Interdisciplinary Bridges Strip) -->
+    <!-- Interdisciplinary Connected Faculties (Cross-Bridges) -->
     <?php if (!empty($bridges)): ?>
-        <section class="console-bridges-strip">
+        <section class="constellation-bridges-strip">
             <div class="bridges-strip-label">CONNECTED FACULTIES</div>
             <div class="bridges-strip-grid">
                 <?php foreach ($bridges as $b): ?>
@@ -265,7 +353,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     <?php endif; ?>
 
     <!-- Core Theoretical Identities Drawer -->
-    <details class="console-equations-drawer" id="topic-equations-drawer">
+    <details class="constellation-equations-drawer" id="topic-equations-drawer">
         <summary class="drawer-header-toggle">
             <span class="drawer-title">📐 Key Theoretical Identities Catalog (<?= $totalFormulas ?>)</span>
             <span class="drawer-hint">[ Click to Toggle Formula Cards ]</span>
@@ -281,201 +369,448 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         </div>
     </details>
 
+    <!-- Raw Data for Dynamic Client Constellation Engine -->
+    <script id="constellation-data" type="application/json">
+    <?= json_encode([
+        'slug' => $slug,
+        'title' => $title,
+        'pillars' => $pillars,
+        'concepts' => $conceptsList,
+        'firstSlug' => $firstActiveSlug
+    ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>
+    </script>
+
     <script id="topic-var-map" type="application/json">
     <?= json_encode($topicVariableMap ?? [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>
     </script>
 
-    <footer class="console-footer">
+    <footer class="constellation-footer">
         <a href="/physics" class="btn-console-back">&larr; Back to Faculty Index</a>
     </footer>
 </article>
 
-<!-- Interactive Master-Detail Console Controller Script -->
+<!-- Solar Constellation Client Controller Script -->
 <script nonce="<?= $nonce ?>">
 (function() {
-    const conceptItems = document.querySelectorAll('.console-concept-item');
-    const dossierCards = document.querySelectorAll('.concept-dossier-card');
-    const pillarGroups = document.querySelectorAll('.pillar-group');
-    const filterInput = document.getElementById('directory-filter-input');
-    const matchCounter = document.getElementById('directory-match-counter');
-    const btnExpandAll = document.getElementById('btn-expand-all');
-    const btnCollapseAll = document.getElementById('btn-collapse-all');
-    const stageContainer = document.getElementById('console-detail-stage');
-
-    // Activate a Concept Item and Reveal its Dossier Card
-    function activateConcept(slug, shouldScroll = false) {
-        if (!slug) return;
-
-        // 1. Update active states on left rail
-        conceptItems.forEach(item => {
-            if (item.getAttribute('data-subtopic-slug') === slug) {
-                item.classList.add('is-active');
-                // Ensure parent pillar is open
-                const parentPillar = item.closest('.pillar-group');
-                if (parentPillar && !parentPillar.classList.contains('is-open')) {
-                    togglePillar(parentPillar, true);
-                }
-            } else {
-                item.classList.remove('is-active');
-            }
-        });
-
-        // 2. Reveal matching dossier card on right stage
-        dossierCards.forEach(card => {
-            if (card.getAttribute('data-slug') === slug) {
-                card.style.display = 'block';
-                // Trigger CSS fade animation
-                card.classList.add('is-active');
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                    MathJax.typesetPromise([card]);
-                }
-            } else {
-                card.style.display = 'none';
-                card.classList.remove('is-active');
-            }
-        });
-
-        // 3. Scroll stage into view on small screens if stacked
-        if (shouldScroll && window.innerWidth < 960 && stageContainer) {
-            stageContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+    // 1. Parse Constellation Data
+    let constData = {};
+    try {
+        constData = JSON.parse(document.getElementById('constellation-data').textContent || '{}');
+    } catch(e) {
+        console.error('Failed to parse constellation data:', e);
+        return;
     }
 
-    // Bind Click and Keyboard Events to Concept Items
-    conceptItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            const slug = this.getAttribute('data-subtopic-slug');
-            activateConcept(slug, true);
-        });
+    const concepts = constData.concepts || {};
+    const pillars = constData.pillars || [];
+    const svgTracksGroup = document.getElementById('svg-orbital-tracks-group');
+    const svgNodesGroup = document.getElementById('svg-planetary-nodes-group');
+    const gravityRay = document.getElementById('svg-gravitational-ray');
 
-        item.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                const slug = this.getAttribute('data-subtopic-slug');
-                activateConcept(slug, true);
-            }
+    // HUD Elements
+    const hudDeck = document.getElementById('constellation-hud-deck');
+    const hudOrbitLabel = document.getElementById('hud-orbit-label');
+    const hudLevelTag = document.getElementById('hud-level-tag');
+    const hudConceptTitle = document.getElementById('hud-concept-title');
+    const hudConceptLink = document.getElementById('hud-concept-link');
+    const hudPillarNarrative = document.getElementById('hud-pillar-narrative');
+    const hudNarrativeText = document.getElementById('hud-narrative-text');
+    const hudEquationBox = document.getElementById('hud-equation-box');
+    const hudEquationDisplay = document.getElementById('hud-equation-display');
+    const hudAbstractBody = document.getElementById('hud-abstract-body');
+    const hudBtnPrimary = document.getElementById('hud-btn-primary');
+    const hudBtnExplainer = document.getElementById('hud-btn-explainer');
+
+    // View Mode Toggles
+    const btnModeOrbit = document.getElementById('btn-mode-orbit');
+    const btnModeDirectory = document.getElementById('btn-mode-directory');
+    const stageConstellation = document.getElementById('stage-constellation-mode');
+    const stageDirectory = document.getElementById('stage-directory-mode');
+    const btnOrbitPause = document.getElementById('btn-orbit-pause');
+    const orbitPauseIcon = document.getElementById('orbit-pause-icon');
+
+    // 2. Orbital Geometry Setup
+    // Center point of the solar sun in SVG viewBox (1100 x 680)
+    const cx = 450;
+    const cy = 340;
+
+    // Define elliptical radii for each pillar track
+    // (Tilted perspective gives depth: rx is wide, ry is squashed)
+    const baseRx = 150;
+    const stepRx = 80;
+    const baseRy = 95;
+    const stepRy = 55;
+
+    const orbitConfigs = pillars.map((p, idx) => ({
+        rx: baseRx + idx * stepRx,
+        ry: baseRy + idx * stepRy,
+        title: p.title,
+        narrative: p.narrative || '',
+        slugs: p.slugs || [],
+        speed: 0.0012 / (1 + idx * 0.4) // Keplerian: inner orbits move faster
+    }));
+
+    // 3. Render Orbital Tracks in SVG
+    if (svgTracksGroup) {
+        orbitConfigs.forEach((cfg, idx) => {
+            const track = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+            track.setAttribute('cx', cx);
+            track.setAttribute('cy', cy);
+            track.setAttribute('rx', cfg.rx);
+            track.setAttribute('ry', cfg.ry);
+            track.setAttribute('fill', 'none');
+            track.setAttribute('stroke', 'rgba(255, 255, 255, 0.12)');
+            track.setAttribute('stroke-width', '1.2');
+            track.setAttribute('stroke-dasharray', '5, 8');
+            track.setAttribute('class', `orbit-track-ring orbit-ring-${idx}`);
+            track.setAttribute('data-orbit-idx', idx);
+            svgTracksGroup.appendChild(track);
+
+            // Track Label along the ellipse curve
+            const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            label.setAttribute('x', cx - cfg.rx + 10);
+            label.setAttribute('y', cy - 6);
+            label.setAttribute('fill', 'rgba(148, 163, 184, 0.6)');
+            label.setAttribute('font-family', "'Space Grotesk', sans-serif");
+            label.setAttribute('font-size', '8');
+            label.setAttribute('font-weight', '600');
+            label.setAttribute('letter-spacing', '1');
+            label.textContent = `ORBIT ${idx + 1}`;
+            svgTracksGroup.appendChild(label);
+        });
+    }
+
+    // 4. Build Planetary Concept Nodes
+    let nodes = [];
+    let activeSlug = constData.firstSlug || null;
+
+    orbitConfigs.forEach((cfg, pIdx) => {
+        const count = cfg.slugs.length;
+        if (count === 0) return;
+
+        cfg.slugs.forEach((slug, sIdx) => {
+            const data = concepts[slug];
+            if (!data) return;
+
+            const initialAngle = (sIdx / count) * Math.PI * 2;
+            const nodeG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            nodeG.setAttribute('class', 'celestial-node');
+            nodeG.setAttribute('data-slug', slug);
+            nodeG.setAttribute('data-pillar-idx', pIdx);
+            nodeG.style.cursor = 'pointer';
+
+            // Outer Glow Ring
+            const aura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            aura.setAttribute('r', '14');
+            aura.setAttribute('class', 'node-aura');
+            aura.setAttribute('fill', 'transparent');
+            aura.setAttribute('stroke', getTierColor(data.level));
+            aura.setAttribute('stroke-width', '1.5');
+            aura.setAttribute('opacity', '0.4');
+
+            // Inner Core Body
+            const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            core.setAttribute('r', '6');
+            core.setAttribute('class', 'node-core');
+            core.setAttribute('fill', getTierColor(data.level));
+            core.setAttribute('filter', 'url(#glow-filter)');
+
+            // Label Text (Capsule badge)
+            const textBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            textBg.setAttribute('class', 'node-label-bg');
+            textBg.setAttribute('rx', '4');
+            textBg.setAttribute('ry', '4');
+            textBg.setAttribute('fill', 'rgba(11, 17, 32, 0.85)');
+            textBg.setAttribute('stroke', 'rgba(255, 255, 255, 0.1)');
+            textBg.setAttribute('stroke-width', '0.8');
+
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('class', 'node-label-text');
+            text.setAttribute('font-family', "'Space Grotesk', sans-serif");
+            text.setAttribute('font-size', '9');
+            text.setAttribute('font-weight', '600');
+            text.setAttribute('fill', '#e2e8f0');
+            text.textContent = data.title;
+
+            nodeG.appendChild(aura);
+            nodeG.appendChild(core);
+            nodeG.appendChild(textBg);
+            nodeG.appendChild(text);
+            svgNodesGroup.appendChild(nodeG);
+
+            nodes.push({
+                slug: slug,
+                data: data,
+                pillarIdx: pIdx,
+                element: nodeG,
+                aura: aura,
+                core: core,
+                textBg: textBg,
+                text: text,
+                angle: initialAngle,
+                cfg: cfg
+            });
         });
     });
 
-    // Keyboard Arrow Navigation between Concepts
-    const navigatorRail = document.getElementById('console-navigator');
-    if (navigatorRail) {
-        navigatorRail.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                const visibleItems = Array.from(conceptItems).filter(item => item.style.display !== 'none' && item.closest('.pillar-group').classList.contains('is-open'));
-                const activeIndex = visibleItems.findIndex(item => item.classList.contains('is-active'));
-                
-                let nextIndex = activeIndex;
-                if (e.key === 'ArrowDown') {
-                    nextIndex = (activeIndex + 1 < visibleItems.length) ? activeIndex + 1 : 0;
-                } else if (e.key === 'ArrowUp') {
-                    nextIndex = (activeIndex - 1 >= 0) ? activeIndex - 1 : visibleItems.length - 1;
-                }
+    function getTierColor(level) {
+        const l = (level || '').toLowerCase();
+        if (l === 'foundational') return '#10b981'; // Emerald
+        if (l === 'frontier') return '#d946ef';     // Violet
+        return '#00d2ff';                           // Analytical Cyan
+    }
 
-                if (visibleItems[nextIndex]) {
-                    e.preventDefault();
-                    visibleItems[nextIndex].focus();
-                    const slug = visibleItems[nextIndex].getAttribute('data-subtopic-slug');
-                    activateConcept(slug, false);
-                }
+    // 5. Update HUD Inspector Deck with Concept Data
+    function updateHUD(slug) {
+        const data = concepts[slug];
+        if (!data) return;
+
+        activeSlug = slug;
+
+        // Context header
+        hudOrbitLabel.textContent = `ORBIT ${sprintf2(data.pillar_idx + 1)} // ${data.pillar_title.toUpperCase()}`;
+        hudLevelTag.textContent = `${data.level} Level`;
+        hudLevelTag.className = `hud-level-tag level-${data.level.toLowerCase()}`;
+
+        // Title and Link
+        hudConceptTitle.innerHTML = `<a href="/physics/subtopic/${slug}" class="hud-title-link">${data.title}</a>`;
+        hudBtnPrimary.href = `/physics/subtopic/${slug}`;
+
+        // Pillar Narrative
+        if (data.pillar_narrative) {
+            hudNarrativeText.textContent = data.pillar_narrative;
+            hudPillarNarrative.style.display = 'flex';
+        } else {
+            hudPillarNarrative.style.display = 'none';
+        }
+
+        // Hero Math
+        if (data.hero_math) {
+            hudEquationDisplay.innerHTML = data.hero_math;
+            hudEquationBox.style.display = 'block';
+            hudBtnExplainer.href = `/physics/equation-explainer?id=${slug}`;
+            hudBtnExplainer.style.display = 'inline-flex';
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([hudEquationDisplay]);
+            }
+        } else {
+            hudEquationBox.style.display = 'none';
+            hudBtnExplainer.style.display = 'none';
+        }
+
+        // Abstract
+        if (data.snippet_svg) {
+            hudAbstractBody.innerHTML = data.snippet_svg;
+        } else if (data.snippet) {
+            hudAbstractBody.innerHTML = `<p>${data.snippet}</p>`;
+        } else {
+            hudAbstractBody.innerHTML = `<p>Comprehensive monograph detailing ${data.title} inside the physics manifold.</p>`;
+        }
+
+        // Update gravitational connector ray
+        const activeNode = nodes.find(n => n.slug === slug);
+        if (activeNode && gravityRay) {
+            gravityRay.setAttribute('x1', cx);
+            gravityRay.setAttribute('y1', cy);
+            gravityRay.setAttribute('x2', activeNode.currentX || cx);
+            gravityRay.setAttribute('y2', activeNode.currentY || cy);
+            gravityRay.setAttribute('opacity', '0.75');
+        }
+
+        // Highlight active node in SVG
+        nodes.forEach(n => {
+            if (n.slug === slug) {
+                n.element.classList.add('is-active');
+                n.aura.setAttribute('r', '18');
+                n.aura.setAttribute('opacity', '0.9');
+                n.core.setAttribute('r', '8');
+            } else {
+                n.element.classList.remove('is-active');
+                n.aura.setAttribute('r', '14');
+                n.aura.setAttribute('opacity', '0.4');
+                n.core.setAttribute('r', '6');
             }
         });
     }
 
-    // Toggle Single Pillar Accordion
-    function togglePillar(pillarGroup, forceOpen = null) {
-        const btn = pillarGroup.querySelector('.pillar-station-btn');
-        const tray = pillarGroup.querySelector('.pillar-concepts-tray');
-        if (!btn || !tray) return;
-
-        const isOpen = (forceOpen !== null) ? forceOpen : !pillarGroup.classList.contains('is-open');
-        if (isOpen) {
-            pillarGroup.classList.add('is-open');
-            btn.setAttribute('aria-expanded', 'true');
-            tray.style.display = 'flex';
-        } else {
-            pillarGroup.classList.remove('is-open');
-            btn.setAttribute('aria-expanded', 'false');
-            tray.style.display = 'none';
-        }
+    function sprintf2(n) {
+        return n < 10 ? '0' + n : '' + n;
     }
 
-    // Bind Pillar Station Header Buttons
-    pillarGroups.forEach(group => {
-        const btn = group.querySelector('.pillar-station-btn');
-        if (btn) {
-            btn.addEventListener('click', function() {
-                togglePillar(group);
+    // 6. Bind Node Hover and Click Events
+    nodes.forEach(n => {
+        n.element.addEventListener('mouseenter', () => {
+            updateHUD(n.slug);
+        });
+
+        n.element.addEventListener('click', () => {
+            updateHUD(n.slug);
+        });
+    });
+
+    // 7. Continuous Orbital Animation Loop
+    let isPaused = false;
+
+    function animateOrbits() {
+        if (!isPaused) {
+            nodes.forEach(n => {
+                n.angle += n.cfg.speed;
             });
         }
+
+        // Position nodes on their respective orbital ellipses
+        nodes.forEach(n => {
+            const x = cx + Math.cos(n.angle) * n.cfg.rx;
+            const y = cy + Math.sin(n.angle) * n.cfg.ry;
+            n.currentX = x;
+            n.currentY = y;
+
+            n.element.setAttribute('transform', `translate(${x}, ${y})`);
+
+            // Position label badge next to the planet
+            const bbox = n.text.getBBox();
+            n.textBg.setAttribute('x', 14);
+            n.textBg.setAttribute('y', -10);
+            n.textBg.setAttribute('width', Math.max(50, bbox.width + 12));
+            n.textBg.setAttribute('height', 16);
+            n.text.setAttribute('x', 20);
+            n.text.setAttribute('y', 2);
+        });
+
+        // Update gravitational connector ray to follow active node in real time
+        if (activeSlug && gravityRay) {
+            const activeNode = nodes.find(n => n.slug === activeSlug);
+            if (activeNode) {
+                gravityRay.setAttribute('x2', activeNode.currentX || cx);
+                gravityRay.setAttribute('y2', activeNode.currentY || cy);
+            }
+        }
+
+        requestAnimationFrame(animateOrbits);
+    }
+
+    // Start animation loop
+    requestAnimationFrame(animateOrbits);
+
+    // Initial HUD Activation
+    if (activeSlug) {
+        updateHUD(activeSlug);
+    }
+
+    // 8. Orbit Pause / Play Toggle
+    if (btnOrbitPause) {
+        btnOrbitPause.addEventListener('click', () => {
+            isPaused = !isPaused;
+            if (isPaused) {
+                btnOrbitPause.classList.add('is-paused');
+                btnOrbitPause.innerHTML = '<span id="orbit-pause-icon">▶</span> Resume Drift';
+            } else {
+                btnOrbitPause.classList.remove('is-paused');
+                btnOrbitPause.innerHTML = '<span id="orbit-pause-icon">⏸</span> Pause Drift';
+            }
+        });
+    }
+
+    // 9. Orbit Filter Chips (Focus on specific orbital track)
+    const filterChips = document.querySelectorAll('.orbit-filter-chip');
+    filterChips.forEach(chip => {
+        chip.addEventListener('click', function() {
+            filterChips.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+
+            const target = this.getAttribute('data-orbit-target');
+            nodes.forEach(n => {
+                if (target === 'all' || target === String(n.pillarIdx)) {
+                    n.element.style.opacity = '1';
+                    n.element.style.pointerEvents = 'auto';
+                } else {
+                    n.element.style.opacity = '0.15';
+                    n.element.style.pointerEvents = 'none';
+                }
+            });
+
+            const rings = document.querySelectorAll('.orbit-track-ring');
+            rings.forEach(r => {
+                const idx = r.getAttribute('data-orbit-idx');
+                if (target === 'all' || target === idx) {
+                    r.setAttribute('stroke', 'rgba(100, 255, 218, 0.45)');
+                    r.setAttribute('stroke-width', '1.8');
+                } else {
+                    r.setAttribute('stroke', 'rgba(255, 255, 255, 0.05)');
+                    r.setAttribute('stroke-width', '0.8');
+                }
+            });
+        });
     });
 
-    // Expand All / Collapse All Controls
-    if (btnExpandAll) {
-        btnExpandAll.addEventListener('click', function() {
-            pillarGroups.forEach(group => togglePillar(group, true));
+    // 10. View Mode Switcher (Constellation vs Directory)
+    if (btnModeOrbit && btnModeDirectory) {
+        btnModeOrbit.addEventListener('click', () => {
+            btnModeOrbit.classList.add('active');
+            btnModeDirectory.classList.remove('active');
+            stageConstellation.style.display = 'block';
+            stageDirectory.style.display = 'none';
+        });
+
+        btnModeDirectory.addEventListener('click', () => {
+            btnModeDirectory.classList.add('active');
+            btnModeOrbit.classList.remove('active');
+            stageConstellation.style.display = 'none';
+            stageDirectory.style.display = 'block';
         });
     }
 
-    if (btnCollapseAll) {
-        btnCollapseAll.addEventListener('click', function() {
-            pillarGroups.forEach(group => togglePillar(group, false));
-        });
-    }
+    // 11. Real-Time Search Filtering across both views
+    const filterInput = document.getElementById('directory-filter-input');
+    const matchCounter = document.getElementById('directory-match-counter');
 
-    // Real-Time Filter & Search
     if (filterInput) {
         filterInput.addEventListener('input', function() {
             const query = this.value.trim().toLowerCase();
-            let visibleCount = 0;
-            let firstMatchedSlug = null;
+            let matchCount = 0;
+            let firstMatch = null;
 
-            pillarGroups.forEach(group => {
-                const items = group.querySelectorAll('.console-concept-item');
-                let groupHasMatch = false;
+            // Filter celestial nodes in Constellation view
+            nodes.forEach(n => {
+                const title = (n.data.title || '').toLowerCase();
+                const slug = n.slug.toLowerCase();
+                const level = (n.data.level || '').toLowerCase();
 
-                items.forEach(item => {
-                    const title = item.getAttribute('data-title') || '';
-                    const slug = item.getAttribute('data-subtopic-slug') || '';
-                    const level = item.getAttribute('data-level') || '';
-
-                    if (!query || title.includes(query) || slug.includes(query) || level.includes(query)) {
-                        item.style.display = 'flex';
-                        groupHasMatch = true;
-                        visibleCount++;
-                        if (!firstMatchedSlug) firstMatchedSlug = slug;
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-
-                if (query) {
-                    if (groupHasMatch) {
-                        group.style.display = 'block';
-                        togglePillar(group, true); // Auto-expand matching pillar
-                    } else {
-                        group.style.display = 'none';
-                    }
+                if (!query || title.includes(query) || slug.includes(query) || level.includes(query)) {
+                    n.element.style.display = 'block';
+                    n.element.style.opacity = '1';
+                    matchCount++;
+                    if (!firstMatch) firstMatch = n.slug;
                 } else {
-                    group.style.display = 'block';
+                    n.element.style.opacity = '0.08';
+                }
+            });
+
+            // Filter cards in Directory view
+            const dirCards = document.querySelectorAll('.directory-card');
+            dirCards.forEach(card => {
+                const title = card.getAttribute('data-title') || '';
+                const slug = card.getAttribute('data-subtopic-slug') || '';
+                const level = card.getAttribute('data-level') || '';
+
+                if (!query || title.includes(query) || slug.includes(query) || level.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
                 }
             });
 
             if (matchCounter) {
-                matchCounter.textContent = query ? `${visibleCount}/${conceptItems.length}` : '';
+                matchCounter.textContent = query ? `${matchCount}/${nodes.length}` : '';
             }
 
-            // If active item was filtered out, activate first matched item
-            if (query && firstMatchedSlug) {
-                const activeItem = document.querySelector('.console-concept-item.is-active');
-                if (!activeItem || activeItem.style.display === 'none') {
-                    activateConcept(firstMatchedSlug, false);
-                }
+            if (query && firstMatch) {
+                updateHUD(firstMatch);
             }
         });
     }
 
-    // Lazy Typeset Equations when Drawer is Toggled Open
+    // 12. Lazy Typeset Equations when Drawer is Toggled Open
     const eqDrawer = document.getElementById('topic-equations-drawer');
     if (eqDrawer) {
         eqDrawer.addEventListener('toggle', function() {
@@ -487,23 +822,23 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 })();
 </script>
 
-<!-- Scoped CSS for Master-Detail Command Console -->
+<!-- Scoped CSS for The Solar Constellation / Orbiting Radial Manifold -->
 <style>
-.master-detail-console {
-    max-width: 1360px;
+.solar-constellation-view {
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 16px;
     color: #f1f5f9;
 }
 
-/* Cosmic Command Header */
-.console-header {
+/* Header */
+.constellation-header {
     background: rgba(15, 23, 42, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-top: 2px solid var(--accent-color, #64ffda);
     border-radius: 14px;
     padding: 22px 26px 18px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -532,7 +867,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     margin-bottom: 4px;
 }
 
-.console-title {
+.constellation-title {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 2.1rem;
     font-weight: 700;
@@ -541,7 +876,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     line-height: 1.15;
 }
 
-.console-subtitle {
+.constellation-subtitle {
     font-size: 0.94rem;
     color: var(--text-muted, #94a3b8);
     margin: 0;
@@ -571,8 +906,8 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     color: rgba(255, 255, 255, 0.25);
 }
 
-/* Toolbar & Quick Actions */
-.console-toolbar {
+/* Toolbar */
+.constellation-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -582,28 +917,64 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.console-search-wrapper {
+.view-mode-switch {
+    display: flex;
+    gap: 6px;
+    background: rgba(11, 17, 32, 0.85);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-mode-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted, #94a3b8);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-mode-pill:hover {
+    color: #ffffff;
+}
+
+.btn-mode-pill.active {
+    background: var(--accent-color, #64ffda);
+    color: #020617;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(100, 255, 218, 0.25);
+}
+
+.constellation-search-wrapper {
     position: relative;
     display: flex;
     align-items: center;
     flex: 1;
-    max-width: 380px;
+    max-width: 340px;
 }
 
-.console-search-wrapper input {
+.constellation-search-wrapper input {
     width: 100%;
-    padding: 8px 55px 8px 34px;
+    padding: 7px 50px 7px 32px;
     background: rgba(11, 17, 32, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
     color: #ffffff;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.84rem;
+    font-size: 0.82rem;
     outline: none;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
 }
 
-.console-search-wrapper input:focus {
+.constellation-search-wrapper input:focus {
     border-color: var(--accent-color, #64ffda);
     box-shadow: 0 0 12px rgba(100, 255, 218, 0.2);
 }
@@ -625,34 +996,10 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     font-weight: 600;
 }
 
-.console-nav-actions {
+.constellation-nav-actions {
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.btn-console-tool {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.74rem;
-    font-weight: 600;
-    color: var(--text-muted, #94a3b8);
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-console-tool:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-.nav-sep {
-    color: rgba(255, 255, 255, 0.15);
-    margin: 0 2px;
 }
 
 .btn-console-link {
@@ -675,219 +1022,512 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     background: rgba(100, 255, 218, 0.08);
 }
 
-/* Master-Detail Split Console Grid */
-.console-workspace-grid {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 22px;
-    align-items: start;
-    margin-bottom: 24px;
-}
-
-@media (max-width: 960px) {
-    .console-workspace-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* LEFT RAIL: Curriculum Trajectory Navigator */
-.console-navigator-rail {
-    background: rgba(15, 23, 42, 0.65);
+/* SECTION 1: THE SOLAR CONSTELLATION STAGE */
+.constellation-manifold-stage {
+    background: rgba(15, 23, 42, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    border-radius: 14px;
+    padding: 16px 20px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    max-height: calc(100vh - 160px);
-    display: flex;
-    flex-direction: column;
 }
 
-.rail-header-label {
+/* Track Filter Strip */
+.celestial-track-bar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    background: rgba(11, 17, 32, 0.8);
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 12px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 12px;
+}
+
+.track-bar-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     color: var(--accent-color, #64ffda);
 }
 
-.rail-count-badge {
-    color: var(--text-muted, #94a3b8);
-    font-weight: 500;
-}
-
-.curriculum-pillar-stack {
-    overflow-y: auto;
-    padding: 8px;
+.track-pills-list {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    flex-wrap: wrap;
+    gap: 6px;
 }
 
-.curriculum-pillar-stack::-webkit-scrollbar {
-    width: 5px;
-}
-.curriculum-pillar-stack::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
-}
-
-.pillar-group {
-    background: rgba(11, 17, 32, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 8px;
-    overflow: hidden;
+.orbit-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(11, 17, 32, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    cursor: pointer;
     transition: all 0.2s;
 }
 
-.pillar-group:hover {
-    border-color: rgba(255, 255, 255, 0.14);
-}
-
-.pillar-station-btn {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px;
-    background: transparent;
-    border: none;
+.orbit-filter-chip:hover {
+    border-color: rgba(255, 255, 255, 0.25);
     color: #ffffff;
-    cursor: pointer;
-    font-family: inherit;
-    text-align: left;
-    transition: background 0.15s;
 }
 
-.pillar-station-btn:hover {
-    background: rgba(255, 255, 255, 0.03);
+.orbit-filter-chip.active {
+    background: rgba(100, 255, 218, 0.12);
+    border-color: var(--accent-color, #64ffda);
+    color: #ffffff;
 }
 
-.station-left {
-    display: flex;
+.orbit-chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.orbit-chip-dot.all { background: var(--accent-color, #64ffda); }
+.orbit-chip-dot.orbit-0 { background: #10b981; }
+.orbit-chip-dot.orbit-1 { background: #00d2ff; }
+.orbit-chip-dot.orbit-2 { background: #d946ef; }
+.orbit-chip-dot.orbit-3 { background: #f59e0b; }
+
+.btn-orbit-tool {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    min-width: 0;
-}
-
-.station-chevron {
-    font-size: 0.65rem;
-    color: var(--accent-color, #64ffda);
-    transition: transform 0.2s;
-}
-
-.pillar-group:not(.is-open) .station-chevron {
-    transform: rotate(-90deg);
-}
-
-.station-num {
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    padding: 4px 10px;
+    border-radius: 6px;
     font-family: 'Space Grotesk', sans-serif;
     font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--accent-color, #64ffda);
-    background: rgba(100, 255, 218, 0.08);
-    padding: 2px 5px;
-    border-radius: 4px;
-}
-
-.station-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.84rem;
     font-weight: 600;
-    color: #e2e8f0;
-    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-orbit-tool:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-orbit-tool.is-paused {
+    color: var(--accent-color, #64ffda);
+    border-color: var(--accent-color, #64ffda);
+}
+
+/* Viewport for SVG + HUD Stage */
+.constellation-viewport {
+    position: relative;
+    width: 100%;
+    min-height: 680px;
+    background: radial-gradient(circle at 45% 50%, rgba(15, 23, 42, 0.4), rgba(2, 6, 23, 0.95) 80%);
+    border-radius: 12px;
     overflow: hidden;
-    text-overflow: ellipsis;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.station-badge-count {
-    font-size: 0.7rem;
-    color: var(--text-muted, #94a3b8);
-    background: rgba(255, 255, 255, 0.04);
-    padding: 2px 6px;
-    border-radius: 10px;
-    margin-left: 6px;
+.constellation-svg-plane {
+    width: 100%;
+    height: 680px;
+    display: block;
 }
 
-.pillar-concepts-tray {
+/* Celestial Nodes in SVG */
+.celestial-node {
+    transition: transform 0.05s linear;
+}
+
+.celestial-node:hover .node-aura {
+    opacity: 1;
+    stroke-width: 2.5;
+}
+
+.celestial-node:hover .node-label-bg {
+    fill: rgba(15, 23, 42, 0.95);
+    stroke: var(--accent-color, #64ffda);
+}
+
+.celestial-node:hover .node-label-text {
+    fill: #ffffff;
+    font-weight: 700;
+}
+
+.celestial-node.is-active .node-label-bg {
+    stroke: var(--accent-color, #64ffda);
+    fill: rgba(100, 255, 218, 0.15);
+}
+
+/* Floating Holographic HUD Inspector Deck */
+.holographic-hud-deck {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    bottom: 20px;
+    width: 380px;
+    background: rgba(11, 17, 32, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-top: 2px solid var(--accent-color, #64ffda);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 0 4px 6px 8px;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    z-index: 10;
 }
 
-.pillar-group:not(.is-open) .pillar-concepts-tray {
-    display: none;
+@media (max-width: 1024px) {
+    .holographic-hud-deck {
+        position: relative;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        width: 100%;
+        margin-top: 16px;
+    }
+    .constellation-viewport {
+        min-height: auto;
+    }
 }
 
-/* Concept Item Row */
-.console-concept-item {
-    position: relative;
+.hud-status-bar {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     gap: 8px;
-    padding: 7px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    background: transparent;
-    border: 1px solid transparent;
-    transition: all 0.15s ease;
-    user-select: none;
+    margin-bottom: 10px;
 }
 
-.console-concept-item:hover {
-    background: rgba(255, 255, 255, 0.04);
-    transform: translateX(2px);
-}
-
-.console-concept-item.is-active {
-    background: rgba(100, 255, 218, 0.08);
-    border-color: rgba(100, 255, 218, 0.25);
-}
-
-.concept-item-indicator {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 0;
-    background: var(--accent-color, #64ffda);
-    border-radius: 2px;
-    transition: height 0.15s;
-}
-
-.console-concept-item.is-active .concept-item-indicator {
-    height: 60%;
-}
-
-.concept-item-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.concept-title {
-    font-size: 0.84rem;
-    font-weight: 500;
-    color: #cbd5e1;
-    display: block;
+.hud-orbit-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent-color, #64ffda);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.console-concept-item.is-active .concept-title {
+.hud-level-tag {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.hud-level-tag.level-foundational {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.hud-level-tag.level-analytical {
+    background: rgba(0, 210, 255, 0.15);
+    color: #00d2ff;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+}
+.hud-level-tag.level-frontier {
+    background: rgba(217, 70, 239, 0.15);
+    color: #d946ef;
+    border: 1px solid rgba(217, 70, 239, 0.3);
+}
+
+.hud-concept-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 12px;
+}
+
+.hud-title-link {
     color: #ffffff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.hud-title-link:hover {
+    color: var(--accent-color, #64ffda);
+}
+
+.hud-pillar-narrative {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: rgba(2, 6, 23, 0.6);
+    border-left: 2px solid var(--accent-color, #64ffda);
+    padding: 8px 10px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 14px;
+}
+
+.hud-glyph {
+    color: var(--accent-color, #64ffda);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.hud-narrative-text {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    line-height: 1.35;
+    font-style: italic;
+}
+
+.hud-box-header {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--accent-color, #64ffda);
+    margin-bottom: 6px;
+}
+
+.hud-equation-inset {
+    background: rgba(2, 6, 23, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+}
+
+.hud-equation-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+    padding: 4px 0;
+}
+
+.hud-equation-display svg {
+    max-height: 38px;
+    width: auto;
+    filter: drop-shadow(0 0 10px rgba(100, 255, 218, 0.2));
+}
+
+.hud-abstract-card {
+    background: rgba(2, 6, 23, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    flex: 1;
+}
+
+.hud-abstract-body {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: #cbd5e1;
+}
+
+.hud-abstract-body p {
+    margin: 0 0 8px;
+}
+.hud-abstract-body p:last-child {
+    margin-bottom: 0;
+}
+
+.hud-actions-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-hud-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-color, #64ffda);
+    color: #020617;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(100, 255, 218, 0.25);
+}
+
+.btn-hud-primary:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+.hud-arrow {
+    transition: transform 0.2s;
+}
+.btn-hud-primary:hover .hud-arrow {
+    transform: translateX(3px);
+}
+
+.btn-hud-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.78rem;
     font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-hud-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.btn-hud-subtle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-hud-subtle:hover {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* SECTION 2: THE CURRICULUM DIRECTORY */
+.curriculum-directory-section {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 24px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+.directory-pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.directory-pillar-column {
+    background: rgba(11, 17, 32, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.directory-column-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.column-track-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--accent-color, #64ffda);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.column-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 6px;
+}
+
+.column-narrative {
+    font-size: 0.8rem;
+    color: var(--text-muted, #94a3b8);
+    line-height: 1.35;
+    margin: 0;
+    font-style: italic;
+}
+
+.directory-column-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.directory-card {
+    background: rgba(2, 6, 23, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    padding: 10px 12px;
+    transition: all 0.15s;
+}
+
+.directory-card:hover {
+    border-color: var(--accent-color, #64ffda);
+    background: rgba(100, 255, 218, 0.04);
+    transform: translateY(-1px);
+}
+
+.directory-card-link {
+    text-decoration: none;
+    display: block;
+}
+
+.card-headline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.directory-card:hover .card-name {
+    color: var(--accent-color, #64ffda);
+}
+
+.card-mini-math {
+    margin-top: 6px;
+    display: flex;
+    justify-content: center;
+}
+.card-mini-math svg {
+    max-height: 24px;
+    width: auto;
 }
 
 /* Level Badges */
@@ -899,288 +1539,24 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     border-radius: 4px;
     white-space: nowrap;
 }
-
 .level-badge-foundational {
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(16, 185, 129, 0.12);
     color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.25);
 }
-
 .level-badge-analytical {
-    background: rgba(0, 210, 255, 0.1);
+    background: rgba(0, 210, 255, 0.12);
     color: #00d2ff;
-    border: 1px solid rgba(0, 210, 255, 0.2);
+    border: 1px solid rgba(0, 210, 255, 0.25);
 }
-
 .level-badge-frontier {
-    background: rgba(217, 70, 239, 0.1);
+    background: rgba(217, 70, 239, 0.12);
     color: #d946ef;
-    border: 1px solid rgba(217, 70, 239, 0.2);
-}
-
-/* RIGHT MAIN STAGE: Live Holographic Detail Stage */
-.console-detail-stage {
-    position: sticky;
-    top: 20px;
-    background: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    padding: 28px;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    min-height: 520px;
-}
-
-.concept-dossier-card {
-    animation: dossierFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes dossierFadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.dossier-header-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 12px;
-}
-
-.dossier-track-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-}
-
-.dossier-pillar-tag {
-    color: var(--accent-color, #64ffda);
-}
-
-.dossier-track-dot {
-    color: rgba(255, 255, 255, 0.2);
-}
-
-.dossier-pillar-name {
-    color: var(--text-muted, #94a3b8);
-}
-
-.dossier-chips {
-    display: flex;
-    gap: 6px;
-}
-
-.dossier-level-badge {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-}
-
-.dossier-domain-badge {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.04);
-    color: #94a3b8;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.dossier-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin: 0 0 16px;
-}
-
-.dossier-title-link {
-    color: #ffffff;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.dossier-title-link:hover {
-    color: var(--accent-color, #64ffda);
-}
-
-/* Pillar Pedagogical Framing Narrative */
-.dossier-pillar-narrative {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: rgba(11, 17, 32, 0.7);
-    border-left: 3px solid var(--accent-color, #64ffda);
-    border-radius: 0 8px 8px 0;
-    padding: 10px 14px;
-    margin-bottom: 20px;
-}
-
-.narrative-glyph {
-    color: var(--accent-color, #64ffda);
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    line-height: 1.2;
-}
-
-.narrative-text {
-    font-size: 0.88rem;
-    color: #94a3b8;
-    line-height: 1.45;
-    font-style: italic;
-}
-
-/* Box Labels */
-.dossier-box-label {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.66rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--accent-color, #64ffda);
-    margin-bottom: 8px;
-}
-
-/* Hero Math Identity Inset */
-.dossier-math-container {
-    background: rgba(2, 6, 23, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 14px 18px;
-    margin-bottom: 20px;
-    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-.dossier-math-display {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow-x: auto;
-    padding: 8px 0;
-}
-
-.dossier-math-display svg {
-    max-height: 48px;
-    width: auto;
-    filter: drop-shadow(0 0 12px rgba(100, 255, 218, 0.15));
-}
-
-/* Abstract Container */
-.dossier-abstract-container {
-    background: rgba(11, 17, 32, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
-    padding: 16px 18px;
-    margin-bottom: 24px;
-}
-
-.dossier-abstract-body {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #cbd5e1;
-}
-
-.dossier-abstract-body p {
-    margin: 0 0 10px;
-}
-.dossier-abstract-body p:last-child {
-    margin-bottom: 0;
-}
-
-/* Actions Footer */
-.dossier-actions-footer {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding-top: 18px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.btn-dossier-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--accent-color, #64ffda);
-    color: #020617;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 700;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 16px rgba(100, 255, 218, 0.25);
-}
-
-.btn-dossier-primary:hover {
-    background: #ffffff;
-    box-shadow: 0 6px 20px rgba(100, 255, 218, 0.4);
-    transform: translateY(-1px);
-}
-
-.btn-arrow {
-    transition: transform 0.2s;
-}
-.btn-dossier-primary:hover .btn-arrow {
-    transform: translateX(3px);
-}
-
-.btn-dossier-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.04);
-    color: #e2e8f0;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 600;
-    padding: 10px 16px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.2s;
-}
-
-.btn-dossier-secondary:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-}
-
-.btn-dossier-subtle {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    color: #94a3b8;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 600;
-    padding: 10px 14px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.2s;
-}
-
-.btn-dossier-subtle:hover {
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(217, 70, 239, 0.25);
 }
 
 /* Connected Faculties Bridges Strip */
-.console-bridges-strip {
+.constellation-bridges-strip {
     background: rgba(15, 23, 42, 0.65);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
@@ -1248,7 +1624,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 }
 
 /* Equations Drawer */
-.console-equations-drawer {
+.constellation-equations-drawer {
     background: rgba(15, 23, 42, 0.65);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
@@ -1289,7 +1665,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.console-footer {
+.constellation-footer {
     padding: 16px 0 32px;
     text-align: center;
 }

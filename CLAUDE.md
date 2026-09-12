@@ -157,7 +157,7 @@ The platform maintains a deliberate dual-layer operational model:
 
 ## 🛡️ 5. AI Cost Governance & Deterministic Token Safety Policy
 
-All AI automation scripts, batch runners, and model integrations MUST adhere to the **Deterministic Token Governance Standard** detailed in `docs/token_estimation_and_cost_governance.md`:
+All AI automation scripts, batch runners, and model integrations MUST adhere to the **Deterministic Token Governance Standard** detailed in `docs/cost_governance.md`:
 
 1. **Pure Free Tier as Default**:
    * Interactive formula drafting and local developer tooling MUST default to `provider="free"` utilizing Google AI Studio keys (`GEMINI_FREE_API_KEY`).

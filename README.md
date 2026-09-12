@@ -5,7 +5,7 @@ Physics Lab is a university-level digital physics encyclopedia and computational
 The web frontend is built on a streamlined **FlightPHP** MVC framework, while the underlying data layer is partitioned across a **256-shard deterministic mathematical formula manifold** and **14 thematic subtopic prose shards** on disk, synchronized with a **MariaDB** query engine. Content transitions and mathematical rigor are governed by the **Organic Platinum Standard (OPS)**, automated derivation graph audits (Lineage Health Index), and pre-push integrity shields.
 
 > [!NOTE]
-> **Project Terra Blueprint & Deployment Model:** Physics Lab is the flagship domain module of **Project Terra**, an overarching scientific laboratory and reference ecosystem. The project is developed locally on macOS (`http://localhost:8000`), tracked via Git, and deployed to an independent production LAMP stack. For details, see [docs/terra_project_blueprint.md](file:///Users/holobetj/code/gemini/terra/docs/terra_project_blueprint.md).
+> **Project Terra Blueprint & Deployment Model:** Physics Lab is the flagship domain module of **Project Terra**, an overarching scientific laboratory and reference ecosystem. The project is developed locally on macOS (`http://localhost:8000`), tracked via Git, and deployed to an independent production LAMP stack. For details, see [`docs/architecture.md`](file:///Users/holobetj/code/gemini/terra/docs/architecture.md).
 
 ---
 
@@ -153,7 +153,7 @@ physics-lab/
 
 ## 🛡️ 5. AI Cost Governance & Token Safety Standard
 
-All AI automation scripts in this repository adhere to the **Deterministic Token Estimation Standard** detailed in [`docs/token_estimation_and_cost_governance.md`](file:///Users/holobetj/code/gemini/terra/docs/token_estimation_and_cost_governance.md):
+All AI automation scripts in this repository adhere to the **Deterministic Token Estimation Standard** detailed in [`docs/cost_governance.md`](file:///Users/holobetj/code/gemini/terra/docs/cost_governance.md):
 1. **Pure Free-Tier Default**: Interactive drafting and automated local tools default to Google AI Studio's Free Tier (`GEMINI_FREE_API_KEY`) capped at **$0.00**.
 2. **Pre-Flight Token Counting**: Input payloads are sized via `client.models.count_tokens()` before dispatching calls.
 3. **Hard Output Caps**: Thinking budgets and maximum output tokens are bounded mathematically.

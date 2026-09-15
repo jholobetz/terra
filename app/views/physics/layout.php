@@ -54,10 +54,6 @@
                 <div class="dropdown">
                     <a href="/physics/lab-tools" class="dropbtn btn btn-primary">Lab Tools &blacktriangledown;</a>
                     <div class="dropdown-content dropdown-content-tertiary">
-                        <a href="/physics/dimensional-solver" class="nav-module-link">
-                            <span class="module-title">Dimensional Solver</span>
-                            <span class="module-desc">Verify formulas &amp; dimensions</span>
-                        </a>
                         <a href="/physics/notation-toggle" class="nav-module-link">
                             <span class="module-title">Notation Toggle</span>
                             <span class="module-desc">Compare mathematical frameworks</span>

@@ -19,9 +19,9 @@ This specification outlines the architectural vision for transforming Lab Tools 
 
 The platform currently includes 11 dedicated engines and registries:
 
-| Engine / Tool | Route | Core Mathematical & Physical Capability |
-| :--- | :--- | :--- |
-| **Dimensional Solver** | `/physics/dimensional-solver` | Evaluates SI base dimensions ($[M^a L^b T^c I^d]$), audits equation homogeneity, and verifies unit balances across classical and quantum formulas. |
+| Engine / Tool | Route | Core Mathematical & Physical Capability | Status |
+| :--- | :--- | :--- | :---: |
+| **Dimensional Solver** | `/physics/dimensional-solver` (Archived) | Evaluates SI base dimensions ($[M^a L^b T^c I^d]$); archived from standalone page into `docs/archive/dimensional_solver/` pending integrated workbench absorption. | 📦 Archived |
 | **Notation Toggle** | `/physics/notation-toggle` | Translates physical laws seamlessly between coordinate-free vectors, tensor index contractions, and Cartan differential forms. |
 | **Noether's Vault** | `/physics/noethers-vault` | Maps continuous spacetime and gauge symmetries ($SO(3), U(1)$) to conserved currents with real-time numerical phase-space canvases. |
 | **Correspondence Workspace** | `/physics/correspondence-workspace` | Simulates the quantum-classical transition via Ehrenfest's theorem, comparing Gaussian wave packets to Newtonian point particles. |

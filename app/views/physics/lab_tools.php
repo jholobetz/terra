@@ -20,33 +20,7 @@
     </h2>
     
     <section class="topics-grid" style="margin-bottom: 50px;">
-        <!-- Card 1: Dimensional Solver -->
-        <a href="/physics/dimensional-solver" class="topic-card card-math-methods" style="--card-accent: var(--accent-math-methods);">
-            <div class="card-watermark">
-                <svg viewBox="0 0 100 100">
-                    <rect x="20" y="45" width="60" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/>
-                    <text x="50" y="35" font-family="Space Grotesk, sans-serif" font-size="16" font-weight="bold" fill="currentColor" text-anchor="middle">[L][T]⁻¹</text>
-                </svg>
-            </div>
-            <div class="topic-card-header">
-                <svg viewBox="0 0 100 100" class="card-icon" style="color: var(--accent-math-methods);">
-                    <rect x="20" y="45" width="60" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3"/>
-                    <line x1="30" y1="45" x2="30" y2="50" stroke="currentColor" stroke-width="1"/>
-                    <line x1="40" y1="45" x2="40" y2="52" stroke="currentColor" stroke-width="1"/>
-                    <line x1="50" y1="45" x2="50" y2="50" stroke="currentColor" stroke-width="1"/>
-                    <line x1="60" y1="45" x2="60" y2="52" stroke="currentColor" stroke-width="1"/>
-                    <line x1="70" y1="45" x2="70" y2="50" stroke="currentColor" stroke-width="1"/>
-                    <text x="50" y="33" font-family="Space Grotesk, sans-serif" font-size="16" font-weight="bold" fill="var(--accent-math-methods)" text-anchor="middle">[L][T]⁻¹</text>
-                    <path d="M 30 65 L 50 80 L 70 65" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 2" opacity="0.5"/>
-                    <circle cx="50" cy="80" r="3" fill="currentColor"/>
-                </svg>
-                <h3>Dimensional Solver</h3>
-            </div>
-            <p>Verify formulas, compute SI base dimensions, and audit algebraic consistency across classical and quantum equations.</p>
-            <span class="read-more">Launch Solver &rarr;</span>
-        </a>
-
-        <!-- Card 2: Notation Toggle -->
+        <!-- Card 1: Notation Toggle -->
         <a href="/physics/notation-toggle" class="topic-card card-relativity" style="--card-accent: var(--accent-relativity);">
             <div class="card-watermark">
                 <svg viewBox="0 0 100 100">

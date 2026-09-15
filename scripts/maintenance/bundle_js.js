@@ -75,5 +75,4 @@ ${code}
 
 console.log('⚡ Building Production Frontend JS Bundles...');
 bundleFile('tools/equation_explainer.js', 'equation_explainer.bundle.js', 'EquationExplainer');
-bundleFile('tools/dimensional_solver.js', 'dimensional_solver.bundle.js', 'DimensionalSolver');
 console.log('✓ Frontend Bundling Complete!');

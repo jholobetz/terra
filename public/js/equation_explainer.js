@@ -3218,19 +3218,7 @@ const EquationExplainer = {
     },
 
     setupSolverLink(latex) {
-        const plainText = this.latexToPlainText(latex);
-        if (plainText) {
-            if (this.solverRedirectContainer) {
-                this.solverRedirectContainer.style.display = 'block';
-            }
-            if (this.solverRedirectLink) {
-                this.solverRedirectLink.href = `${BASE_URL}/physics/dimensional-solver?formula=` + encodeURIComponent(plainText);
-            }
-        } else {
-            if (this.solverRedirectContainer) {
-                this.solverRedirectContainer.style.display = 'none';
-            }
-        }
+        // Deprecated: standalone dimensional solver removed in favor of upcoming integrated lab tools workbench
     },
 
     /**

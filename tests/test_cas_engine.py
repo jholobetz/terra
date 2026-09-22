@@ -68,3 +68,66 @@ def test_many_body_hamiltonian_with_sums_and_abs():
     assert "e" in res["variables"]
     assert "m" in res["variables"]
     assert "limit" in res
+
+
+def test_legendre_transform_sho():
+    from scripts.lib.cas_engine import legendre_transform
+    res = legendre_transform(
+        lagrangian="0.5 * m * dq^2 - 0.5 * k * q^2",
+        coords="q",
+        velocities="dq",
+        parameters="m, k"
+    )
+    assert res["success"] is True
+    assert res["is_singular"] is False
+    assert "m" in res["momenta"][0]["latex"]
+    assert "p" in res["inverted_velocities"][0]["latex"]
+    assert "p^{2}" in res["hamiltonian_latex"]
+    assert len(res["equations_of_motion"]) == 1
+    assert "k q" in res["equations_of_motion"][0]["dp_dt_latex"]
+
+
+def test_legendre_transform_relativistic():
+    from scripts.lib.cas_engine import legendre_transform
+    res = legendre_transform(
+        lagrangian="-m * c^2 * sqrt(1 - dq^2 / c^2) - V",
+        coords="q",
+        velocities="dq",
+        parameters="m, c, V"
+    )
+    assert res["success"] is True
+    assert res["is_singular"] is False
+    assert r"\sqrt{c^{2} m^{2} + p^{2}}" in res["hamiltonian_latex"]
+    assert "V" in res["hamiltonian_latex"]
+    assert "q" in res["conservation"]["cyclic_coordinates"]
+
+
+def test_legendre_transform_2d_central_force():
+    from scripts.lib.cas_engine import legendre_transform
+    res = legendre_transform(
+        lagrangian="0.5 * m * (dr^2 + r^2 * dphi^2) - V",
+        coords="r, phi",
+        velocities="dr, dphi",
+        parameters="m, V"
+    )
+    assert res["success"] is True
+    assert res["is_singular"] is False
+    assert len(res["momenta"]) == 2
+    assert len(res["inverted_velocities"]) == 2
+    assert len(res["equations_of_motion"]) == 2
+    assert "phi" in res["conservation"]["cyclic_coordinates"]
+
+
+def test_legendre_transform_singular_constraint():
+    from scripts.lib.cas_engine import legendre_transform
+    res = legendre_transform(
+        lagrangian="m * dx - V",
+        coords="x",
+        velocities="dx",
+        parameters="m, V"
+    )
+    assert res["success"] is True
+    assert res["is_singular"] is True
+    assert res["hessian"]["det_latex"] == "0"
+    assert "primary Dirac constraints" in res["error"]
+

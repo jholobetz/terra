@@ -1,12 +1,13 @@
 /**
- * 🌌 PHYSICS LAB: Symbolic Legendre Transformer Controller
+ * 🌌 PHYSICS LAB: SymPy CAS Legendre Transformer Controller
  * 
- * Uses math.js to symbolically compute Legendre transformations, invert velocities,
- * calculate Hamilton's equations of motion, and typeset the results using MathJax.
+ * Powered by server-side SymPy Computer Algebra System (/physics/api/cas-evaluate).
+ * Symbolically evaluates canonical momenta, inverts velocities, calculates Hessian determinants,
+ * handles Dirac constraints/singular Lagrangians, and derives Hamilton's equations of motion.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Elements selection
+    // 1. DOM Elements selection
     const computeBtn = document.getElementById('compute-btn');
     const presets = document.querySelectorAll('.preset-btn');
     const coordVarInput = document.getElementById('coord-var');
@@ -26,11 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const latexLagrangian = document.getElementById('latex-lagrangian');
     const latexMomentum = document.getElementById('latex-momentum');
     const latexInvertedVel = document.getElementById('latex-inverted-vel');
+    const latexHessian = document.getElementById('latex-hessian');
     const latexHamiltonian = document.getElementById('latex-hamiltonian');
     const latexEqVelocity = document.getElementById('latex-eq-velocity');
     const latexEqForce = document.getElementById('latex-eq-force');
+    const equationsContainer = document.getElementById('equations-container');
     const copyLatexBtn = document.getElementById('copy-latex-btn');
     const conservationText = document.getElementById('conservation-text');
+    const dofText = document.getElementById('dof-text');
 
     let activeHamiltonianLatex = ''; // Stored clean LaTeX for copying
 
@@ -48,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 3. Preset Loading
+    // 3. Physical Preset Configurations
     const presetData = {
         sho: {
             coord: 'q',
@@ -73,6 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
             velocity: 'dx',
             params: 'm, c, V',
             expr: '-m * c^2 * sqrt(1 - dx^2 / c^2) - V'
+        },
+        central_force: {
+            coord: 'r, phi',
+            velocity: 'dr, dphi',
+            params: 'm, V',
+            expr: '0.5 * m * (dr^2 + r^2 * dphi^2) - V'
+        },
+        singular: {
+            coord: 'x',
+            velocity: 'dx',
+            params: 'm, V',
+            expr: 'm * dx - V'
         }
     };
 
@@ -92,8 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 4. Utility to render math nicely
+    // 4. Utility to render math nicely with MathJax 3.x
     function renderMathField(el, latexStr) {
+        if (!el) return;
         el.textContent = `\\[ ${latexStr} \\]`;
         if (window.MathJax && window.MathJax.typesetPromise) {
             window.MathJax.typesetPromise([el]).catch(err => {
@@ -102,18 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Symbolic substitution helper for math.js nodes
-    function substituteSymbolic(node, varName, replacementNode) {
-        return node.transform(function (childNode) {
-            if (childNode.isSymbolNode && childNode.name === varName) {
-                return replacementNode.clone();
-            }
-            return childNode;
-        });
-    }
-
-    // 5. Compute Legendre Transformation
-    computeBtn.addEventListener('click', () => {
+    // 5. Compute Legendre Transformation via SymPy CAS API
+    computeBtn.addEventListener('click', async () => {
         // Clear outputs & error states
         outputError.style.display = 'none';
         outputPlaceholder.style.display = 'none';
@@ -121,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const coordVar = coordVarInput.value.trim();
         const velocityVar = velocityVarInput.value.trim();
-        const parameterVars = parameterVarsInput.value.split(',').map(s => s.trim()).filter(s => s);
+        const parameterVars = parameterVarsInput.value.trim();
         const lagrangianExpr = lagrangianExprInput.value.trim();
 
         // Basic inputs validation
@@ -130,118 +137,140 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Set Loading State on button
+        const originalBtnText = computeBtn.innerHTML;
+        computeBtn.disabled = true;
+        computeBtn.innerHTML = `
+            <span style="display: inline-block; animation: spin 1s linear infinite; margin-right: 8px;">⚙️</span>
+            Evaluating SymPy CAS Duality...
+        `;
+
         try {
-            // Check that velocity and coordinate variable names are valid alphanumeric
-            const nameRegex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
-            if (!nameRegex.test(coordVar)) throw new Error(`Invalid coordinate variable name: '${coordVar}'`);
-            if (!nameRegex.test(velocityVar)) throw new Error(`Invalid velocity variable name: '${velocityVar}'`);
+            const response = await fetch('/physics/api/cas-evaluate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    mode: 'legendre',
+                    lagrangian: lagrangianExpr,
+                    coords: coordVar,
+                    velocities: velocityVar,
+                    parameters: parameterVars
+                })
+            });
 
-            // Check if math.js is loaded (blocked by CSP/CDN issues)
-            if (typeof math === 'undefined') {
-                throw new Error("Duality engine (math.js) is not loaded. Please reload the page.");
+            if (!response.ok) {
+                throw new Error(`CAS server responded with HTTP status ${response.status}`);
             }
 
-            // Parse Lagrangian Expression
-            let L_node;
-            try {
-                L_node = math.parse(lagrangianExpr);
-            } catch (err) {
-                throw new Error("Syntax error in Lagrangian expression: " + err.message);
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.error || "Symbolic CAS computation failed.");
             }
 
-            // Differentiate with respect to velocity variable to get momentum p
-            const p_node_raw = math.derivative(L_node, velocityVar);
-            const p_node = math.simplify(p_node_raw);
-            const p_text = p_node.toString();
+            // Case A: Singular Lagrangian (det W = 0)
+            if (data.is_singular) {
+                showError(data.error || "Singular Lagrangian (det W = 0): primary Dirac constraints detected.");
+                outputContent.style.display = 'block';
 
-            let solved_vel_node;
-            let final_H_node;
-
-            // SPECIAL CASE: Relativistic Particle (non-linear in velocity)
-            if (lagrangianExpr.includes('sqrt') && (lagrangianExpr.includes('c') || lagrangianExpr.includes('1 -'))) {
-                // Hardcode Legendre solutions for the relativistic particle preset
-                // L = -m * c^2 * sqrt(1 - dq^2/c^2) - V
-                // p = m * dq / sqrt(1 - dq^2/c^2)
-                // dq = p / sqrt(m^2 + p^2 / c^2)
-                // H = c * sqrt(p^2 + m^2 * c^2) + V
-                
-                // Verify parameters match relativistic components (m, c, p)
-                const hasV = lagrangianExpr.endsWith('- V') || lagrangianExpr.includes('-V');
-                const V_term = hasV ? ' + V' : '';
-                
-                solved_vel_node = math.parse(`p / sqrt(m^2 + p^2 / c^2)`);
-                final_H_node = math.parse(`c * sqrt(p^2 + m^2 * c^2)${V_term}`);
-                
-                // Manually overwrite momentum expression to typeset cleanly
-                renderMathField(latexMomentum, `p = \\frac{\\partial L}{\\partial \\dot{${coordVar}}} = \\frac{m \\dot{${coordVar}}}{\\sqrt{1 - \\frac{\\dot{${coordVar}}^2}{c^2}}}`);
-                renderMathField(latexInvertedVel, `\\dot{${coordVar}}(p) = \\frac{p}{\\sqrt{m^2 + p^2/c^2}}`);
-            } else {
-                // GENERAL SOLVER: Check if quadratic/linear in velocity
-                const p2_node = math.simplify(math.derivative(p_node, velocityVar)); // 2nd derivative of L
-                const p3_node = math.simplify(math.derivative(p2_node, velocityVar)); // 3rd derivative of L
-                
-                if (p3_node.toString() !== '0') {
-                    throw new Error("Lagrangian is non-quadratic in velocity. Standard symbolic inversion is mathematically unavailable (requires numerical solver).");
+                // Still render what we have: Lagrangian and Hessian
+                renderMathField(latexLagrangian, `L = ${data.lagrangian_latex}`);
+                renderMathField(latexMomentum, `\\text{Singular: Velocities are non-invertible}`);
+                renderMathField(latexInvertedVel, `\\text{Constraint: } \\det(W) = 0`);
+                if (latexHessian && data.hessian) {
+                    renderMathField(latexHessian, `W = ${data.hessian.matrix_latex}, \\quad \\det(W) = 0 \\implies \\text{Primary Constraints}`);
                 }
-                
-                // Extract C0 (constant term relative to velocityVar) by substituting velocityVar = 0
-                const node_C0 = math.simplify(substituteSymbolic(p_node, velocityVar, math.parse('0')));
-                
-                // Extract C1 (coefficient of velocityVar) by substituting velocityVar = 1 and subtracting C0
-                const node_dq_one = math.simplify(substituteSymbolic(p_node, velocityVar, math.parse('1')));
-                const node_C1 = math.simplify(math.parse(`(${node_dq_one.toString()}) - (${node_C0.toString()})`));
-                
-                if (node_C1.toString() === '0') {
-                    throw new Error("Lagrangian does not depend on velocity. Cannot define canonical momentum or Legendre transformation.");
-                }
-                
-                // Solve for velocityVar: velocityVar = (p - C0) / C1
-                // We map canonical momentum symbol to 'p'
-                const solve_expr = `(p - (${node_C0.toString()})) / (${node_C1.toString()})`;
-                solved_vel_node = math.simplify(math.parse(solve_expr));
-                
-                // Render Momentum and Inversion equations
-                // Replace variable names with standard LaTeX formatting for dot notation
-                let latexP = p_node.toTex().replace(new RegExp(velocityVar, 'g'), `\\dot{${coordVar}}`);
-                renderMathField(latexMomentum, `p = \\frac{\\partial L}{\\partial \\dot{${coordVar}}} = ${latexP}`);
-                
-                let latexInv = solved_vel_node.toTex();
-                renderMathField(latexInvertedVel, `\\dot{${coordVar}}(p) = ${latexInv}`);
-                
-                // Compute Legendre step: H = p * dq - L
-                const h_step_expr = `p * ${velocityVar} - (${lagrangianExpr})`;
-                const h_step_node = math.parse(h_step_expr);
-                
-                // Substitute velocityVar with its inverted velocity relation solved_vel_node
-                const substituted_H = substituteSymbolic(h_step_node, velocityVar, solved_vel_node);
-                final_H_node = math.simplify(substituted_H);
+                renderMathField(latexHamiltonian, `\\text{Requires Dirac-Bergmann Constraint Analysis}`);
+                return;
             }
 
-            // Render Input Lagrangian
-            let latexL = L_node.toTex().replace(new RegExp(velocityVar, 'g'), `\\dot{${coordVar}}`);
-            renderMathField(latexLagrangian, `L(${coordVar}, \\dot{${coordVar}}) = ${latexL}`);
-
-            // Render final simplified Hamiltonian
-            // Let's replace 'p' and coordVar in output to clean up
-            let latexH = final_H_node.toTex();
-            renderMathField(latexHamiltonian, `H(${coordVar}, p) = ${latexH}`);
-            activeHamiltonianLatex = `H(${coordVar}, p) = ${latexH}`;
-
-            // Calculate Hamilton's Equations of motion
-            // dq = dH/dp
-            const eq_vel_node = math.simplify(math.derivative(final_H_node, 'p'));
-            renderMathField(latexEqVelocity, `\\dot{${coordVar}} = \\frac{\\partial H}{\\partial p} = ${eq_vel_node.toTex()}`);
+            // Case B: Non-singular Lagrangian (Standard Legendre transformation)
             
-            // dp = -dH/dq
-            const eq_force_raw = math.derivative(final_H_node, coordVar);
-            const eq_force_negated = math.simplify(math.parse(`-1 * (${eq_force_raw.toString()})`));
-            renderMathField(latexEqForce, `\\dot{p} = -\\frac{\\partial H}{\\partial ${coordVar}} = ${eq_force_negated.toTex()}`);
+            // 1. Render Input Lagrangian
+            renderMathField(latexLagrangian, `L = ${data.lagrangian_latex}`);
 
-            // Display result panel
+            // 2. Render Canonical Momenta
+            if (data.momenta && data.momenta.length > 0) {
+                const momentaLatex = data.momenta.map(m => m.latex).join(`, \\quad `);
+                renderMathField(latexMomentum, momentaLatex);
+            }
+
+            // 3. Render Inverted Velocities
+            if (data.inverted_velocities && data.inverted_velocities.length > 0) {
+                const invLatex = data.inverted_velocities.map(v => v.latex).join(`, \\quad `);
+                renderMathField(latexInvertedVel, invLatex);
+            }
+
+            // 4. Render Hessian Matrix and Non-Singularity Check
+            if (latexHessian && data.hessian) {
+                renderMathField(latexHessian, `W = ${data.hessian.matrix_latex}, \\quad \\det(W) = ${data.hessian.det_latex} \\neq 0 \\implies \\text{Regular}`);
+            }
+
+            // 5. Render Final Simplified Hamiltonian
+            const hLatex = `H = ${data.hamiltonian_latex}`;
+            renderMathField(latexHamiltonian, hLatex);
+            activeHamiltonianLatex = hLatex;
+
+            // 6. Render Equations of Motion
+            if (data.equations_of_motion && data.equations_of_motion.length > 0) {
+                if (equationsContainer && data.equations_of_motion.length > 1) {
+                    // Multi-variable: render dedicated card for each pair
+                    equationsContainer.innerHTML = '';
+                    data.equations_of_motion.forEach(eq => {
+                        const pairContainer = document.createElement('div');
+                        pairContainer.className = 'math-display-container';
+                        pairContainer.innerHTML = `
+                            <div class="math-label-bar">
+                                <span class="math-label">Coordinate \\(${eq.coord}\\) Canonical Flow:</span>
+                            </div>
+                            <div class="math-box" style="margin-bottom: 8px;">
+                                <div class="math-render-field">\\[ ${eq.dq_dt_latex} \\]</div>
+                            </div>
+                            <div class="math-box">
+                                <div class="math-render-field">\\[ ${eq.dp_dt_latex} \\]</div>
+                            </div>
+                        `;
+                        equationsContainer.appendChild(pairContainer);
+                    });
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        window.MathJax.typesetPromise([equationsContainer]);
+                    }
+                } else {
+                    // Single degree of freedom
+                    const eq = data.equations_of_motion[0];
+                    renderMathField(latexEqVelocity, eq.dq_dt_latex);
+                    renderMathField(latexEqForce, eq.dp_dt_latex);
+                }
+            }
+
+            // 7. Render Phase Space Topology & Conservation Laws
+            const numDof = (data.equations_of_motion || []).length || 1;
+            if (dofText) {
+                const phaseDim = numDof * 2;
+                dofText.innerHTML = `The system possesses <strong>${numDof} degree(s) of freedom</strong>. In the Lagrangian formulation, this is represented by the tangent bundle \\(TQ\\) spanned by generalized velocities. In the Hamiltonian formulation, this is mapped to a <strong>${phaseDim}D Symplectic Phase Space Manifold</strong> spanned by conjugate coordinate-momentum pairs \\((q_i, p_i)\\).`;
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([dofText]);
+                }
+            }
+
+            if (conservationText && data.conservation) {
+                conservationText.innerHTML = data.conservation.summary;
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([conservationText]);
+                }
+            }
+
+            // Reveal Result Container
             outputContent.style.display = 'block';
 
         } catch (error) {
             showError(error.message);
+        } finally {
+            computeBtn.disabled = false;
+            computeBtn.innerHTML = originalBtnText;
         }
     });
 
@@ -249,7 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage.textContent = msg;
         outputError.style.display = 'block';
         outputPlaceholder.style.display = 'none';
-        outputContent.style.display = 'none';
     }
 
     // 6. Copy LaTeX functionality
@@ -311,5 +339,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
 });

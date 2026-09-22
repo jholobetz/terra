@@ -16,6 +16,8 @@
                     <button class="preset-btn" data-preset="pendulum">Simple Pendulum</button>
                     <button class="preset-btn" data-preset="em_field">Charged Particle in EM Field</button>
                     <button class="preset-btn" data-preset="relativistic">Relativistic Particle</button>
+                    <button class="preset-btn" data-preset="central_force">Central Force (2D)</button>
+                    <button class="preset-btn" data-preset="singular">Singular (det W = 0)</button>
                 </div>
             </div>
 
@@ -25,12 +27,12 @@
                 
                 <div class="input-group-row">
                     <div class="input-field-wrapper">
-                        <label for="coord-var">Coordinate Variable (<span class="math-sub">\(q\)</span>)</label>
-                        <input type="text" id="coord-var" value="q" placeholder="e.g. q, x, theta" />
+                        <label for="coord-var">Coordinate Variable(s) (<span class="math-sub">\(q_i\)</span>)</label>
+                        <input type="text" id="coord-var" value="q" placeholder="e.g. q, or r, phi" />
                     </div>
                     <div class="input-field-wrapper">
-                        <label for="velocity-var">Velocity Variable (<span class="math-sub">\(\dot{q}\)</span>)</label>
-                        <input type="text" id="velocity-var" value="dq" placeholder="e.g. dq, v, theta_dot" />
+                        <label for="velocity-var">Velocity Variable(s) (<span class="math-sub">\(\dot{q}_i\)</span>)</label>
+                        <input type="text" id="velocity-var" value="dq" placeholder="e.g. dq, or dr, dphi" />
                     </div>
                 </div>
 
@@ -115,9 +117,18 @@
                             </div>
                         </div>
 
+                        <div class="math-display-container">
+                            <div class="math-label-bar">
+                                <span class="math-label">Hessian Matrix &amp; Non-Singularity Check (<span class="math-sub">\(W_{ij} = \frac{\partial^2 L}{\partial \dot{q}_i \partial \dot{q}_j}\)</span>):</span>
+                            </div>
+                            <div class="math-box">
+                                <div id="latex-hessian" class="math-render-field"></div>
+                            </div>
+                        </div>
+
                         <div class="math-display-container hero-container">
                             <div class="math-label-bar">
-                                <span class="math-label">Hamiltonian Function (<span class="math-sub">\(H(q, p) = p\dot{q} - L\)</span>):</span>
+                                <span class="math-label">Hamiltonian Function (<span class="math-sub">\(H(q, p) = \sum p_i \dot{q}_i - L\)</span>):</span>
                             </div>
                             <div class="math-box hero-box">
                                 <div id="latex-hamiltonian" class="math-render-field"></div>
@@ -137,21 +148,23 @@
                         <h3>Hamilton's Equations of Motion</h3>
                         <p class="section-desc">The Hamiltonian formulation yields two first-order symmetric differential equations, replacing the single second-order Euler-Lagrange equation.</p>
 
-                        <div class="math-display-container">
-                            <div class="math-label-bar">
-                                <span class="math-label">Velocity Equation (<span class="math-sub">\(\dot{q} = \frac{\partial H}{\partial p}\)</span>):</span>
+                        <div id="equations-container">
+                            <div class="math-display-container">
+                                <div class="math-label-bar">
+                                    <span class="math-label">Velocity Equation (<span class="math-sub">\(\dot{q} = \frac{\partial H}{\partial p}\)</span>):</span>
+                                </div>
+                                <div class="math-box">
+                                    <div id="latex-eq-velocity" class="math-render-field"></div>
+                                </div>
                             </div>
-                            <div class="math-box">
-                                <div id="latex-eq-velocity" class="math-render-field"></div>
-                            </div>
-                        </div>
 
-                        <div class="math-display-container">
-                            <div class="math-label-bar">
-                                <span class="math-label">Force Equation (<span class="math-sub">\(\dot{p} = -\frac{\partial H}{\partial q}\)</span>):</span>
-                            </div>
-                            <div class="math-box">
-                                <div id="latex-eq-force" class="math-render-field"></div>
+                            <div class="math-display-container">
+                                <div class="math-label-bar">
+                                    <span class="math-label">Force Equation (<span class="math-sub">\(\dot{p} = -\frac{\partial H}{\partial q}\)</span>):</span>
+                                </div>
+                                <div class="math-box">
+                                    <div id="latex-eq-force" class="math-render-field"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -163,7 +176,7 @@
                         <div class="geometry-insight-grid">
                             <div class="insight-card">
                                 <h4>Degrees of Freedom</h4>
-                                <p>The system possesses <strong>1 degree of freedom</strong>. In the Lagrangian formulation, this is represented by the tangent bundle $TQ$ spanned by $(q, \dot{q})$. In the Hamiltonian formulation, this is mapped to a <strong>2D Phase Space Manifold</strong> spanned by the coordinate $q$ and its momentum $p$.</p>
+                                <p id="dof-text">The system possesses <strong>1 degree of freedom</strong>. In the Lagrangian formulation, this is represented by the tangent bundle \(TQ\) spanned by \((q, \dot{q})\). In the Hamiltonian formulation, this is mapped to a <strong>2D Phase Space Manifold</strong> spanned by the coordinate \(q\) and its momentum \(p\).</p>
                             </div>
                             <div class="insight-card">
                                 <h4>Conservation &amp; Energy</h4>

@@ -292,9 +292,9 @@ class PhysicsController
             $payload = $req->query->getData() ?: [];
         }
 
-        $latex = $payload['latex'] ?? '';
+        $latex = $payload['latex'] ?? $payload['lagrangian'] ?? '';
         if (empty($latex)) {
-            echo json_encode(['success' => false, 'error' => 'No LaTeX equation provided.']);
+            echo json_encode(['success' => false, 'error' => 'No mathematical equation or Lagrangian provided.']);
             return;
         }
 
@@ -306,12 +306,16 @@ class PhysicsController
             $pythonBin = 'python3';
         }
 
-        $jsonPayload = json_encode([
+        $mode = $payload['mode'] ?? 'evaluate';
+        $casPayload = array_merge([
+            'mode' => $mode,
             'latex' => $latex,
             'limit_var' => $payload['limit_var'] ?? null,
             'limit_to' => $payload['limit_to'] ?? null,
             'series_order' => isset($payload['series_order']) ? (int)$payload['series_order'] : 4
-        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        ], $payload);
+
+        $jsonPayload = json_encode($casPayload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         $cmd = escapeshellcmd($pythonBin) . ' ' . escapeshellarg($casScript) . ' ' . escapeshellarg($jsonPayload);
         $output = shell_exec($cmd);
@@ -589,13 +593,11 @@ class PhysicsController
     }
 
     /**
-     * View action rendering the interactive Concept Derivation Genealogy Explorer (Pillar F).
+     * Deprecated action: redirects legacy Genealogy Explorer prototype requests to the canonical Universe Graph.
      */
     public function genealogyExplorer()
     {
-        $this->renderWithLayout('physics/genealogy_explorer', [
-            'title' => "Concept Derivation Genealogy Explorer"
-        ]);
+        \Flight::redirect('/physics/universe-graph', 301);
     }
 
     /**

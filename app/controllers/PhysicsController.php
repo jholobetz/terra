@@ -117,10 +117,14 @@ class PhysicsController
     {
         $content = $this->service()->getPhysicsContent();
         $notation = $content['notation'] ?? [];
+        $searchIndex = $content['search_index'] ?? [];
+        $topics = $content['topics'] ?? [];
         
         $this->renderWithLayout('physics/symbols', [
             'title' => 'Fundamental Symbols & Notation Reference',
-            'notation' => $notation
+            'notation' => $notation,
+            'searchIndex' => $searchIndex,
+            'topics' => $topics
         ]);
     }
 
@@ -796,6 +800,12 @@ class PhysicsController
      */
     public function viewSubtopic(string $slug)
     {
+        // 1. Canonical alias redirects
+        if ($slug === 'maxwell-equations') {
+            \Flight::redirect('/physics/subtopic/maxwells-equations', 301);
+            return;
+        }
+
         $cachePath = PROJECT_ROOT . "/public/cache/subtopic/{$slug}.html";
         $isStale = $this->isCacheStale($slug, $cachePath);
 
@@ -815,7 +825,13 @@ class PhysicsController
         }
 
         $subtopic = $this->service()->fetchAndPrepare('subtopics', $slug);
-        if (empty($subtopic)) {
+        if (empty($subtopic) || empty($subtopic['title'])) {
+            // Check if slug is a notation/symbol reference
+            $content = $this->service()->getPhysicsContent();
+            if (isset($content['notation'][$slug])) {
+                \Flight::redirect('/physics/symbols#' . $slug, 302);
+                return;
+            }
             $this->app->notFound();
             return;
         }

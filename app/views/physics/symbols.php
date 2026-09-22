@@ -60,7 +60,15 @@ foreach ($notation as $item) {
                 $symbol = $slug;
             }
             $originSlug = $item['origin_subtopic'] ?? '';
-            $originUrl = $originSlug ? '/physics/subtopic/' . $originSlug : '';
+            if ($originSlug === 'maxwell-equations') {
+                $originSlug = 'maxwells-equations';
+            }
+            $originExists = !empty($originSlug) && $originSlug !== $slug && (
+                (isset($searchIndex) && isset($searchIndex[$originSlug])) || 
+                (isset($topics) && isset($topics[$originSlug])) ||
+                file_exists(PROJECT_ROOT . "/public/cache/subtopic/{$originSlug}.html")
+            );
+            $originUrl = $originExists ? '/physics/subtopic/' . $originSlug : '';
             $description = $item['description'] ?? $item['snippet'] ?? '';
             if (empty($description) && !empty($item['content']) && is_string($item['content'])) {
                 $description = strip_tags($item['content']);

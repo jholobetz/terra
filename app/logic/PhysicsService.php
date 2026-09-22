@@ -375,35 +375,37 @@ class PhysicsService
                 $row = $this->app->db()->fetchRow("SELECT * FROM formulas WHERE id = ?", [$fId]);
                 if ($row) {
                     $formula = is_object($row) && method_exists($row, 'getData') ? $row->getData() : (array) $row;
-                    if (isset($formula['semantic_variables'])) {
-                        $formula['semantic_variables'] = is_string($formula['semantic_variables'])
-                            ? (json_decode($formula['semantic_variables'], true) ?: [])
-                            : $formula['semantic_variables'];
+                    if (!empty($formula)) {
+                        if (isset($formula['semantic_variables'])) {
+                            $formula['semantic_variables'] = is_string($formula['semantic_variables'])
+                                ? (json_decode($formula['semantic_variables'], true) ?: [])
+                                : $formula['semantic_variables'];
+                        }
+                        if (isset($formula['constraints'])) {
+                            $formula['constraints'] = is_string($formula['constraints'])
+                                ? (json_decode($formula['constraints'], true) ?: [])
+                                : $formula['constraints'];
+                        }
+                        if (isset($formula['related_formula_ids'])) {
+                            $formula['related_formula_ids'] = is_string($formula['related_formula_ids'])
+                                ? (json_decode($formula['related_formula_ids'], true) ?: [])
+                                : $formula['related_formula_ids'];
+                        }
+                        if (isset($formula['subcomponents'])) {
+                            $formula['subcomponents'] = is_string($formula['subcomponents'])
+                                ? (json_decode($formula['subcomponents'], true) ?: [])
+                                : $formula['subcomponents'];
+                        }
+                        if (!empty($formula['equation'])) {
+                            $formula['latex_source'] = $formula['equation'];
+                        }
+                        if (!empty($formula['equation_svg'])) {
+                            $formula['equation'] = $formula['equation_svg'];
+                        }
+                        $formula = $this->sanitizeFormulaText($formula);
+                        $this->physicsContent['formula_registry'][$fId] = $formula;
+                        return $formula;
                     }
-                    if (isset($formula['constraints'])) {
-                        $formula['constraints'] = is_string($formula['constraints'])
-                            ? (json_decode($formula['constraints'], true) ?: [])
-                            : $formula['constraints'];
-                    }
-                    if (isset($formula['related_formula_ids'])) {
-                        $formula['related_formula_ids'] = is_string($formula['related_formula_ids'])
-                            ? (json_decode($formula['related_formula_ids'], true) ?: [])
-                            : $formula['related_formula_ids'];
-                    }
-                    if (isset($formula['subcomponents'])) {
-                        $formula['subcomponents'] = is_string($formula['subcomponents'])
-                            ? (json_decode($formula['subcomponents'], true) ?: [])
-                            : $formula['subcomponents'];
-                    }
-                    if (!empty($formula['equation'])) {
-                        $formula['latex_source'] = $formula['equation'];
-                    }
-                    if (!empty($formula['equation_svg'])) {
-                        $formula['equation'] = $formula['equation_svg'];
-                    }
-                    $formula = $this->sanitizeFormulaText($formula);
-                    $this->physicsContent['formula_registry'][$fId] = $formula;
-                    return $formula;
                 }
             } catch (\Exception $e) {
                 error_log("Database loadFormula failed, falling back to shards: " . $e->getMessage());
@@ -836,6 +838,7 @@ class PhysicsService
         if (!$row) return [];
 
         $data = is_object($row) && method_exists($row, 'getData') ? $row->getData() : (array) $row;
+        if (empty($data)) return [];
         $f_ids = !empty($data['formula_data']) ? (is_string($data['formula_data']) ? json_decode($data['formula_data'], true) : $data['formula_data']) : [];
         $data['formula_ids'] = $f_ids;
 

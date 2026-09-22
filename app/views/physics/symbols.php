@@ -5,7 +5,8 @@ $counts = [
     'variable' => 0,
     'tensor' => 0,
     'vector' => 0,
-    'operator' => 0
+    'operator' => 0,
+    'concept' => 0
 ];
 foreach ($notation as $item) {
     $type = $item['type'] ?? 'variable';
@@ -13,6 +14,8 @@ foreach ($notation as $item) {
         $counts[$type]++;
     } elseif ($type === 'variable-state' || $type === 'density') {
         $counts['variable']++;
+    } else {
+        $counts['concept']++;
     }
 }
 ?>
@@ -41,25 +44,41 @@ foreach ($notation as $item) {
             <button class="btn btn-secondary filter-btn" data-type="tensor">Tensors <span class="filter-count" style="opacity: 0.6; font-size: 0.8em; margin-left: 4px;">(<?= $counts['tensor'] ?>)</span></button>
             <button class="btn btn-secondary filter-btn" data-type="vector">Vectors <span class="filter-count" style="opacity: 0.6; font-size: 0.8em; margin-left: 4px;">(<?= $counts['vector'] ?>)</span></button>
             <button class="btn btn-secondary filter-btn" data-type="operator">Operators <span class="filter-count" style="opacity: 0.6; font-size: 0.8em; margin-left: 4px;">(<?= $counts['operator'] ?>)</span></button>
+            <button class="btn btn-secondary filter-btn" data-type="concept">Concepts &amp; Fields <span class="filter-count" style="opacity: 0.6; font-size: 0.8em; margin-left: 4px;">(<?= $counts['concept'] ?>)</span></button>
         </div>
     </div>
 
     <div class="notation-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px;">
         <?php foreach ($notation as $slug => $item): 
             $type = $item['type'] ?? 'variable';
+            $name = $item['name'] ?? $item['title'] ?? ucwords(str_replace('-', ' ', $slug));
+            $symbol = $item['symbol'] ?? '';
+            if (empty($symbol) && !empty($item['title']) && preg_match('/\\((.*?)\\)/', $item['title'], $matches)) {
+                $symbol = trim($matches[1], ' \\()$');
+            }
+            if (empty($symbol)) {
+                $symbol = $slug;
+            }
             $originSlug = $item['origin_subtopic'] ?? '';
             $originUrl = $originSlug ? '/physics/subtopic/' . $originSlug : '';
+            $description = $item['description'] ?? $item['snippet'] ?? '';
+            if (empty($description) && !empty($item['content']) && is_string($item['content'])) {
+                $description = strip_tags($item['content']);
+                if (mb_strlen($description) > 220) {
+                    $description = mb_substr($description, 0, 220) . '...';
+                }
+            }
         ?>
-            <section class="notation-card" data-type="<?= $type ?>" data-symbol="<?= htmlspecialchars($item['symbol']) ?>" id="<?= $slug ?>" style="background: #112240; border: 1px solid #233554; border-radius: 12px; padding: 25px; transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; position: relative;">
+            <section class="notation-card" data-type="<?= htmlspecialchars($type) ?>" data-symbol="<?= htmlspecialchars($symbol) ?>" id="<?= htmlspecialchars($slug) ?>" style="background: #112240; border: 1px solid #233554; border-radius: 12px; padding: 25px; transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; position: relative;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; gap: 15px;">
                     <div>
-                        <h3 style="margin: 0; font-size: 1.25rem; color: #fff;"><?= htmlspecialchars($item['name']) ?></h3>
+                        <h3 style="margin: 0; font-size: 1.25rem; color: #fff;"><?= htmlspecialchars($name) ?></h3>
                         <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-color); font-weight: bold; margin-top: 4px; display: inline-block;">
                             <?= htmlspecialchars(str_replace('-', ' ', $type)) ?>
                         </span>
                     </div>
-                    <span class="symbol-container" data-symbol="<?= htmlspecialchars($item['symbol']) ?>" style="background: rgba(100, 255, 218, 0.08); color: var(--accent-color); padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 1.15rem; display: inline-block; white-space: nowrap;">
-                        \( <?= $item['symbol'] ?> \)
+                    <span class="symbol-container" data-symbol="<?= htmlspecialchars($symbol) ?>" style="background: rgba(100, 255, 218, 0.08); color: var(--accent-color); padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 1.15rem; display: inline-block; white-space: nowrap;">
+                        \( <?= $symbol ?> \)
                     </span>
                 </div>
                 
@@ -72,7 +91,7 @@ foreach ($notation as $item) {
                 </div>
 
                 <p style="margin: 0 0 15px 0; font-size: 0.92rem; color: #ccd6f6; line-height: 1.5;">
-                    <?= htmlspecialchars($item['description']) ?>
+                    <?= htmlspecialchars($description) ?>
                 </p>
 
                 <?php if ($originUrl): ?>
@@ -167,6 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (currentFilter === 'variable') {
                     // Match any variable variations and density
                     typeMatches = cardType.includes('variable') || cardType === 'density';
+                } else if (currentFilter === 'concept') {
+                    typeMatches = cardType === 'concept';
                 } else {
                     typeMatches = cardType === currentFilter;
                 }

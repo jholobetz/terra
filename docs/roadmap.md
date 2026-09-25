@@ -111,8 +111,9 @@ flowchart TD
   3. Registered simulation in MariaDB, `app/config/content/simulations.json`, `_topic_icons.php`, and embedded direct GPU launcher inside Equation Explainer.
   4. Automated regression test net verified in `tests/test_webgl_simulations.py`.
 
-### 2.4 Formula Shard APCu / In-Memory Caching
-* **Goal**: Maximize read throughput on high-traffic instances by caching deserialized JSON shard contents in APCu / memory buffers, reducing filesystem disk I/O.
+### 2.4 Formula Shard APCu / In-Memory Caching (Retired / Superseded)
+* **Status**: Retired / Closed.
+* **Architectural Rationale**: Discounted per the platform's dual-layer data architecture (`GEMINI.md`). In production, all live formula lookups execute via MariaDB relational queries backed by in-memory InnoDB buffer pools, while static encyclopedia views are served from the disk HTML cache (`public/cache/subtopic/`). Shards serve strictly as the version-controlled Git source of truth for offline development, preview mode (`?preview=1`), and CI test suites. Adding PHP APCu caching around shard file reads would introduce cache-invalidation friction to a fallback path that production web traffic never touches.
 
 ---
 
@@ -154,7 +155,7 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 2** | 2.1 | Scratch & Maintenance Script Archival | `scratch/`<br/>`scripts/maintenance/` | 🟡 **P2** | 📋 In Progress |
 | **Phase 2** | 2.2 | Step-by-Step Derivation Accordions | `equation_explainer.php`<br/>`shard_[00-ff].json` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.3 | Modular Canvas/WebGL Visualizers | `webgl_physics_harness.js`<br/>`relativistic-black-hole.js` | 🟡 **P2** | 🟢 Completed |
-| **Phase 2** | 2.4 | In-Memory Shard APCu Caching | `app/logic/PhysicsService.php` | 🟢 **P3** | 📋 Backlog |
+| **Phase 2** | 2.4 | In-Memory Shard APCu Caching | `app/logic/PhysicsService.php` | ⚪ **P4** | 🚫 Retired (Superseded by MariaDB) |
 | **Phase 3** | 3.1 | Sitewide SymPy CAS Invariance | `cas_engine.py`<br/>`.agents/skills/cas-symbolic-prover` | 🟡 **P2** | 📋 Active |
 | **Phase 3** | 3.2 | Autonomous Long-Horizon Sweeps | `docs/cost_governance.md`<br/>`.agents/skills/` | 🟢 **P3** | 📋 Backlog |
 | **Phase 4** | 4.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |

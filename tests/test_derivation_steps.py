@@ -46,7 +46,17 @@ def test_canonical_formulas_have_derivation_steps():
         "euler-lagrange-equations-dcda7a85",
         "time-independent-schrodinger-53ae29ae",
         "relativistic-energy-momentum-invariant-f61a9ff1",
-        "schwarzschild-metric"
+        "schwarzschild-metric",
+        "wave-equation-physics-816dc899",
+        "local-energy-conservation-in-electromagnetism-7fd769fd",
+        "dirac-equation-relativistic",
+        "algebraic-uncertainty-bound-9e7e0df3",
+        "plancks-law",
+        "carnot-efficiency-factor-47f8b746",
+        "expansion-clock-26a3aced",
+        "exact-gravitational-redshift-factor-schwarzschild-5a0de121",
+        "hamiltons-equations",
+        "virial-theorem"
     ]
     found = {}
     for shard in get_all_shards():
@@ -99,4 +109,4 @@ def test_all_derivation_steps_schema_and_tex_integrity():
                         unescaped_dollars = rat.count("$") - rat.count("\\$")
                         assert unescaped_dollars % 2 == 0, f"Unbalanced math dollar delimiters in {fid} rationale: {rat}"
 
-    assert total_with_steps >= 4, f"Expected at least 4 formulas with derivation steps, found {total_with_steps}"
+    assert total_with_steps >= 14, f"Expected at least 14 formulas with derivation steps, found {total_with_steps}"

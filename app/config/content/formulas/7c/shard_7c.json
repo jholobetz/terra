@@ -2191,7 +2191,7 @@
         "limits_and_boundary": "In a vacuum where the current density $\\mathbf{J} = 0$, the equation simplifies to the continuity equation for field energy: $\\frac{\\partial u}{\\partial t} + \\nabla \\cdot \\mathbf{S} = 0$. For static fields, where all time derivatives are zero ($\\frac{\\partial}{\\partial t} = 0$), the equation becomes $\\nabla \\cdot \\mathbf{S} = -\\mathbf{J} \\cdot \\mathbf{E}$, implying that the power dissipated in a volume must be balanced by an inflow of electromagnetic energy.",
         "symmetry_origin": "Time-translation invariance of the laws of electrodynamics, as formalized by Noether's theorem. The total energy of the combined system of fields and particles is conserved.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "CONSERVATION_LAW",
         "equation_family": "electromagnetism-energy-momentum",
         "semantic_variables": {
             "\\partial": {
@@ -2252,7 +2252,34 @@
             "stokes-theorem-identity-1-f693c4e1-7c479796"
         ],
         "id": "local-energy-conservation-in-electromagnetism-7fd769fd",
-        "intuitive_summary": "Imagine a small box in space. The amount of electromagnetic energy inside the box can only change in two ways: either energy flows in or out through the walls of the box, or the electromagnetic field inside the box gives its energy away to charged particles (like heating them up). This formula is the precise accounting sheet for that energy balance at every single point."
+        "intuitive_summary": "Imagine a small box in space. The amount of electromagnetic energy inside the box can only change in two ways: either energy flows in or out through the walls of the box, or the electromagnetic field inside the box gives its energy away to charged particles (like heating them up). This formula is the precise accounting sheet for that energy balance at every single point.",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\nabla \\times \\mathbf{E} = -\\frac{\\partial \\mathbf{B}}{\\partial t}, \\quad \\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\varepsilon_0 \\frac{\\partial \\mathbf{E}}{\\partial t}",
+                "rationale": "Begin with Maxwell's two curl equations describing time-varying electric and magnetic fields in the presence of current density $\\mathbf{J}$."
+            },
+            {
+                "step": 2,
+                "latex": "\\mathbf{B} \\cdot (\\nabla \\times \\mathbf{E}) - \\mathbf{E} \\cdot (\\nabla \\times \\mathbf{B}) = -\\mathbf{B} \\cdot \\frac{\\partial \\mathbf{B}}{\\partial t} - \\mu_0 \\mathbf{J} \\cdot \\mathbf{E} - \\mu_0 \\varepsilon_0 \\mathbf{E} \\cdot \\frac{\\partial \\mathbf{E}}{\\partial t}",
+                "rationale": "Form the dot product of $\\mathbf{B}$ with Faraday's law and subtract the dot product of $\\mathbf{E}$ with the Ampère-Maxwell law."
+            },
+            {
+                "step": 3,
+                "latex": "\\nabla \\cdot (\\mathbf{E} \\times \\mathbf{B}) = \\mathbf{B} \\cdot (\\nabla \\times \\mathbf{E}) - \\mathbf{E} \\cdot (\\nabla \\times \\mathbf{B})",
+                "rationale": "Invoke the vector calculus divergence product rule for the cross product of two vector fields."
+            },
+            {
+                "step": 4,
+                "latex": "\\nabla \\cdot (\\mathbf{E} \\times \\mathbf{B}) = -\\frac{1}{2}\\frac{\\partial}{\\partial t}\\left(\\mu_0 \\varepsilon_0 |\\mathbf{E}|^2 + |\\mathbf{B}|^2\\right) - \\mu_0 \\mathbf{J} \\cdot \\mathbf{E}",
+                "rationale": "Express the time-derivative terms as derivatives of squared field amplitudes using $\\mathbf{F} \\cdot \\frac{\\partial \\mathbf{F}}{\\partial t} = \\frac{1}{2}\\frac{\\partial}{\\partial t}|\\mathbf{F}|^2$."
+            },
+            {
+                "step": 5,
+                "latex": "\\frac{\\partial}{\\partial t}\\left(\\frac{1}{2}\\varepsilon_0 E^2 + \\frac{1}{2\\mu_0} B^2\\right) + \\nabla \\cdot \\left(\\frac{1}{\\mu_0}\\mathbf{E} \\times \\mathbf{B}\\right) = -\\mathbf{J}\\cdot\\mathbf{E} \\implies \\frac{\\partial u}{\\partial t} + \\nabla \\cdot \\mathbf{S} = -\\mathbf{J}\\cdot\\mathbf{E}",
+                "rationale": "Divide through by $\\mu_0$ and identify electromagnetic energy density $u$ and the Poynting flux vector $\\mathbf{S} = \\frac{1}{\\mu_0}(\\mathbf{E}\\times\\mathbf{B})$."
+            }
+        ]
     },
     "differential-work-by-conservative-force-65197ed6": {
         "title": "Differential Work by Conservative Force",

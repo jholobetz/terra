@@ -1087,14 +1087,41 @@
             }
         },
         "description": "Quantifies the spectral energy density of electromagnetic radiation in thermal equilibrium within an isothermal cavity as a function of frequency and absolute temperature.",
-        "derivation_type": "SPECIAL_CASE",
+        "derivation_type": "STATISTICAL_SUM",
         "subcomponents": [
             "rayleigh-jeans-law-classical-approximation",
             "high-temperature-approximation-plancks-law",
             "radiation-constant",
             "wien-displacement-law-5ebde0f9"
         ],
-        "parent_formula_id": "first-law-of-thermodynamics-3bb4a7d0"
+        "parent_formula_id": "first-law-of-thermodynamics-3bb4a7d0",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "E_n = n h \\nu, \\quad n \\in \\{0, 1, 2, \\dots\\}",
+                "rationale": "Postulate Planck's quantum hypothesis that electromagnetic cavity modes of frequency $\\nu$ exchange energy only in discrete packets of size $h\\nu$."
+            },
+            {
+                "step": 2,
+                "latex": "Z = \\sum_{n=0}^\\infty e^{-n h\\nu / (k_B T)} = \\frac{1}{1 - e^{-h\\nu / (k_B T)}}",
+                "rationale": "Calculate the canonical partition function for a single oscillator mode using the sum of an infinite geometric series with ratio $e^{-h\\nu/k_B T} < 1$."
+            },
+            {
+                "step": 3,
+                "latex": "\\langle E \\rangle = -\\frac{\\partial \\ln Z}{\\partial \\beta} = \\frac{h\\nu e^{-h\\nu / (k_B T)}}{1 - e^{-h\\nu / (k_B T)}} = \\frac{h\\nu}{e^{h\\nu / (k_B T)} - 1}",
+                "rationale": "Derive the mean energy per cavity mode from the logarithmic derivative of the partition function with respect to $\\beta = 1/k_B T$."
+            },
+            {
+                "step": 4,
+                "latex": "g(\\nu)\\,d\\nu = 2 \\cdot \\frac{4\\pi \\nu^2 V}{c^3}\\,d\\nu = \\frac{8\\pi \\nu^2 V}{c^3}\\,d\\nu",
+                "rationale": "Determine the density of standing wave spatial modes per unit volume in a 3D box, including a factor of 2 for orthogonal transverse photon polarizations."
+            },
+            {
+                "step": 5,
+                "latex": "\\rho(\\nu, T)\\,d\\nu = \\frac{g(\\nu)}{V}\\langle E \\rangle\\,d\\nu \\implies \\rho(\\nu, T) = \\frac{8\\pi h \\nu^3}{c^3}\\frac{1}{e^{h\\nu / (k_B T)} - 1}",
+                "rationale": "Multiply the spatial mode density by the average mode energy to produce the exact blackbody spectral energy density."
+            }
+        ]
     },
     "stationary-condition-generalized-coordinate": {
         "title": "Stationary Condition for Generalized Coordinate (Cyclic Coordinate Condition)",

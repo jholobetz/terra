@@ -69,8 +69,10 @@ class PhysicsService
                 }
 
                 try {
+                    $derivationSteps = !empty($formula['derivation_steps']) ? (is_string($formula['derivation_steps']) ? $formula['derivation_steps'] : json_encode($formula['derivation_steps'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                    $derivationType = $formula['derivation_type'] ?? null;
                     $this->app->db()->runQuery(
-                        "UPDATE formulas SET title = ?, equation = ?, interpretation = ?, limits_and_boundary = ?, conceptual_definition = ?, intuitive_summary = ?, symmetry_origin = ? WHERE id = ?",
+                        "UPDATE formulas SET title = ?, equation = ?, interpretation = ?, limits_and_boundary = ?, conceptual_definition = ?, intuitive_summary = ?, symmetry_origin = ?, derivation_steps = ?, derivation_type = ? WHERE id = ?",
                         [
                             $formula['title'] ?? '',
                             $formula['equation'] ?? '',
@@ -79,12 +81,31 @@ class PhysicsService
                             $formula['conceptual_definition'] ?? '',
                             $formula['intuitive_summary'] ?? '',
                             $formula['symmetry_origin'] ?? '',
+                            $derivationSteps,
+                            $derivationType,
                             $formulaId
                         ]
                     );
                     $formulasSynced++;
                 } catch (\Throwable $e) {
-                    // Ignore missing database rows
+                    try {
+                        $this->app->db()->runQuery(
+                            "UPDATE formulas SET title = ?, equation = ?, interpretation = ?, limits_and_boundary = ?, conceptual_definition = ?, intuitive_summary = ?, symmetry_origin = ? WHERE id = ?",
+                            [
+                                $formula['title'] ?? '',
+                                $formula['equation'] ?? '',
+                                $formula['interpretation'] ?? '',
+                                $formula['limits_and_boundary'] ?? '',
+                                $formula['conceptual_definition'] ?? '',
+                                $formula['intuitive_summary'] ?? '',
+                                $formula['symmetry_origin'] ?? '',
+                                $formulaId
+                            ]
+                        );
+                        $formulasSynced++;
+                    } catch (\Throwable $e2) {
+                        // Ignore missing database rows
+                    }
                 }
             }
         }

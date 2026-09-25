@@ -159,6 +159,10 @@ class PhysicsService
                 if (file_exists($baseDir . 'notation.json')) {
                     $this->physicsContent['notation'] = json_decode(file_get_contents($baseDir . 'notation.json'), true) ?: [];
                 }
+                $simPath = PROJECT_ROOT . '/app/config/simulations.json';
+                if (file_exists($simPath)) {
+                    $this->physicsContent['simulations'] = json_decode(file_get_contents($simPath), true) ?: [];
+                }
             }
         }
 
@@ -221,7 +225,7 @@ class PhysicsService
         // Load Subtopic Shards
         $files = scandir($baseDir);
         foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'json' && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json', 'pillar_profiles.json', 'compiled_trie_regex.json', 'notation.json', 'formula_aliases.json', 'formulas_latex_index.json', 'unindexed_subcomponents.json', 'subcomponents_checkpoint.json'])) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'json' && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json', 'pillar_profiles.json', 'compiled_trie_regex.json', 'notation.json', 'formula_aliases.json', 'formulas_latex_index.json', 'unindexed_subcomponents.json', 'subcomponents_checkpoint.json', 'simulations.json'])) {
                 $shard = json_decode(file_get_contents($baseDir . $file), true) ?: [];
                 if (is_array($shard)) {
                     $this->physicsContent['subtopics'] = array_merge($this->physicsContent['subtopics'], $shard);
@@ -345,7 +349,18 @@ class PhysicsService
             }
             return $list;
         }
-        return $this->app->db()->fetchAll("SELECT * FROM {$table} ORDER BY id ASC");
+        try {
+            return $this->app->db()->fetchAll("SELECT * FROM {$table} ORDER BY id ASC");
+        } catch (\Throwable $e) {
+            $this->loadAllShards();
+            $content = $this->getPhysicsContent();
+            $list = [];
+            foreach ($content[$table] ?? [] as $slug => $data) {
+                $data['slug'] = $slug;
+                $list[] = $data;
+            }
+            return $list;
+        }
     }
 
     /**
@@ -395,6 +410,11 @@ class PhysicsService
                             $formula['subcomponents'] = is_string($formula['subcomponents'])
                                 ? (json_decode($formula['subcomponents'], true) ?: [])
                                 : $formula['subcomponents'];
+                        }
+                        if (isset($formula['derivation_steps'])) {
+                            $formula['derivation_steps'] = is_string($formula['derivation_steps'])
+                                ? (json_decode($formula['derivation_steps'], true) ?: [])
+                                : $formula['derivation_steps'];
                         }
                         if (!empty($formula['equation'])) {
                             $formula['latex_source'] = $formula['equation'];
@@ -549,70 +569,141 @@ class PhysicsService
                 $semanticVars = !empty($data['semantic_variables']) ? (is_string($data['semantic_variables']) ? $data['semantic_variables'] : json_encode($data['semantic_variables'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
                 $constraints = !empty($data['constraints']) ? (is_string($data['constraints']) ? $data['constraints'] : json_encode($data['constraints'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
                 $subcomponents = !empty($data['subcomponents']) ? (is_string($data['subcomponents']) ? $data['subcomponents'] : json_encode($data['subcomponents'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                $derivationSteps = !empty($data['derivation_steps']) ? (is_string($data['derivation_steps']) ? $data['derivation_steps'] : json_encode($data['derivation_steps'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
                 $relatedIds = !empty($data['related_formula_ids']) ? (is_string($data['related_formula_ids']) ? $data['related_formula_ids'] : json_encode($data['related_formula_ids'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
 
                 if ($existing) {
-                    $db->runQuery(
-                        "UPDATE formulas SET 
-                            title = ?, 
-                            equation = ?, 
-                            conceptual_definition = ?, 
-                            intuitive_summary = ?, 
-                            interpretation = ?, 
-                            symmetry_origin = ?, 
-                            limits_and_boundary = ?, 
-                            semantic_variables = ?, 
-                            parent_formula_id = ?, 
-                            derivation_type = ?, 
-                            subcomponents = ?, 
-                            constraints = ?, 
-                            related_formula_ids = ?, 
-                            status = ?, 
-                            unit_system = ?, 
-                            equation_svg = NULL 
-                        WHERE id = ?",
-                        [
-                            $data['title'] ?? null,
-                            $data['equation'] ?? null,
-                            $data['conceptual_definition'] ?? null,
-                            $data['intuitive_summary'] ?? null,
-                            $data['interpretation'] ?? null,
-                            $data['symmetry_origin'] ?? null,
-                            $data['limits_and_boundary'] ?? null,
-                            $semanticVars,
-                            $data['parent_formula_id'] ?? null,
-                            $data['derivation_type'] ?? null,
-                            $subcomponents,
-                            $constraints,
-                            $relatedIds,
-                            $data['status'] ?? 'platinum',
-                            $data['unit_system'] ?? null,
-                            $fId
-                        ]
-                    );
+                    try {
+                        $db->runQuery(
+                            "UPDATE formulas SET 
+                                title = ?, 
+                                equation = ?, 
+                                conceptual_definition = ?, 
+                                intuitive_summary = ?, 
+                                interpretation = ?, 
+                                symmetry_origin = ?, 
+                                limits_and_boundary = ?, 
+                                semantic_variables = ?, 
+                                parent_formula_id = ?, 
+                                derivation_type = ?, 
+                                subcomponents = ?, 
+                                derivation_steps = ?, 
+                                constraints = ?, 
+                                related_formula_ids = ?, 
+                                status = ?, 
+                                unit_system = ?, 
+                                equation_svg = NULL 
+                            WHERE id = ?",
+                            [
+                                $data['title'] ?? null,
+                                $data['equation'] ?? null,
+                                $data['conceptual_definition'] ?? null,
+                                $data['intuitive_summary'] ?? null,
+                                $data['interpretation'] ?? null,
+                                $data['symmetry_origin'] ?? null,
+                                $data['limits_and_boundary'] ?? null,
+                                $semanticVars,
+                                $data['parent_formula_id'] ?? null,
+                                $data['derivation_type'] ?? null,
+                                $subcomponents,
+                                $derivationSteps,
+                                $constraints,
+                                $relatedIds,
+                                $data['status'] ?? 'platinum',
+                                $data['unit_system'] ?? null,
+                                $fId
+                            ]
+                        );
+                    } catch (\Throwable $colErr) {
+                        // Fallback in case derivation_steps column is not migrated yet
+                        $db->runQuery(
+                            "UPDATE formulas SET 
+                                title = ?, 
+                                equation = ?, 
+                                conceptual_definition = ?, 
+                                intuitive_summary = ?, 
+                                interpretation = ?, 
+                                symmetry_origin = ?, 
+                                limits_and_boundary = ?, 
+                                semantic_variables = ?, 
+                                parent_formula_id = ?, 
+                                derivation_type = ?, 
+                                subcomponents = ?, 
+                                constraints = ?, 
+                                related_formula_ids = ?, 
+                                status = ?, 
+                                unit_system = ?, 
+                                equation_svg = NULL 
+                            WHERE id = ?",
+                            [
+                                $data['title'] ?? null,
+                                $data['equation'] ?? null,
+                                $data['conceptual_definition'] ?? null,
+                                $data['intuitive_summary'] ?? null,
+                                $data['interpretation'] ?? null,
+                                $data['symmetry_origin'] ?? null,
+                                $data['limits_and_boundary'] ?? null,
+                                $semanticVars,
+                                $data['parent_formula_id'] ?? null,
+                                $data['derivation_type'] ?? null,
+                                $subcomponents,
+                                $constraints,
+                                $relatedIds,
+                                $data['status'] ?? 'platinum',
+                                $data['unit_system'] ?? null,
+                                $fId
+                            ]
+                        );
+                    }
                 } else {
-                    $db->runQuery(
-                        "INSERT INTO formulas (id, title, equation, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, parent_formula_id, derivation_type, subcomponents, constraints, related_formula_ids, status, unit_system, equation_svg) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
-                        [
-                            $fId,
-                            $data['title'] ?? null,
-                            $data['equation'] ?? null,
-                            $data['conceptual_definition'] ?? null,
-                            $data['intuitive_summary'] ?? null,
-                            $data['interpretation'] ?? null,
-                            $data['symmetry_origin'] ?? null,
-                            $data['limits_and_boundary'] ?? null,
-                            $semanticVars,
-                            $data['parent_formula_id'] ?? null,
-                            $data['derivation_type'] ?? null,
-                            $subcomponents,
-                            $constraints,
-                            $relatedIds,
-                            $data['status'] ?? 'platinum',
-                            $data['unit_system'] ?? null
-                        ]
-                    );
+                    try {
+                        $db->runQuery(
+                            "INSERT INTO formulas (id, title, equation, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, parent_formula_id, derivation_type, subcomponents, derivation_steps, constraints, related_formula_ids, status, unit_system, equation_svg) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
+                            [
+                                $fId,
+                                $data['title'] ?? null,
+                                $data['equation'] ?? null,
+                                $data['conceptual_definition'] ?? null,
+                                $data['intuitive_summary'] ?? null,
+                                $data['interpretation'] ?? null,
+                                $data['symmetry_origin'] ?? null,
+                                $data['limits_and_boundary'] ?? null,
+                                $semanticVars,
+                                $data['parent_formula_id'] ?? null,
+                                $data['derivation_type'] ?? null,
+                                $subcomponents,
+                                $derivationSteps,
+                                $constraints,
+                                $relatedIds,
+                                $data['status'] ?? 'platinum',
+                                $data['unit_system'] ?? null
+                            ]
+                        );
+                    } catch (\Throwable $colErr) {
+                        $db->runQuery(
+                            "INSERT INTO formulas (id, title, equation, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, parent_formula_id, derivation_type, subcomponents, constraints, related_formula_ids, status, unit_system, equation_svg) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
+                            [
+                                $fId,
+                                $data['title'] ?? null,
+                                $data['equation'] ?? null,
+                                $data['conceptual_definition'] ?? null,
+                                $data['intuitive_summary'] ?? null,
+                                $data['interpretation'] ?? null,
+                                $data['symmetry_origin'] ?? null,
+                                $data['limits_and_boundary'] ?? null,
+                                $semanticVars,
+                                $data['parent_formula_id'] ?? null,
+                                $data['derivation_type'] ?? null,
+                                $subcomponents,
+                                $constraints,
+                                $relatedIds,
+                                $data['status'] ?? 'platinum',
+                                $data['unit_system'] ?? null
+                            ]
+                        );
+                    }
                 }
                 $this->lastDbSaved = true;
             } else {
@@ -834,8 +925,19 @@ class PhysicsService
             return $data;
         }
 
-        $row = $this->app->db()->fetchRow("SELECT * FROM {$table} WHERE slug = ?", [$slug]);
-        if (!$row) return [];
+        $row = null;
+        try {
+            $row = $this->app->db()->fetchRow("SELECT * FROM {$table} WHERE slug = ?", [$slug]);
+        } catch (\Throwable $e) {
+            $row = null;
+        }
+
+        if (!$row || (is_object($row) && method_exists($row, 'count') && count($row) === 0)) {
+            $data = $content[$table][$slug] ?? null;
+            if (!$data) return [];
+            $data['slug'] = $slug;
+            return $data;
+        }
 
         $data = is_object($row) && method_exists($row, 'getData') ? $row->getData() : (array) $row;
         if (empty($data)) return [];
@@ -997,6 +1099,7 @@ class PhysicsService
             constraints JSON,
             related_formula_ids JSON,
             subcomponents JSON,
+            derivation_steps JSON,
             title VARCHAR(255) NOT NULL,
             equation MEDIUMTEXT NOT NULL,
             equation_svg MEDIUMTEXT,
@@ -1037,6 +1140,11 @@ class PhysicsService
         }
         try {
             $db->runQuery("ALTER TABLE formulas ADD COLUMN subcomponents JSON AFTER related_formula_ids;");
+        } catch (\Exception $e) {
+            // Column already exists, ignore
+        }
+        try {
+            $db->runQuery("ALTER TABLE formulas ADD COLUMN derivation_steps JSON AFTER subcomponents;");
         } catch (\Exception $e) {
             // Column already exists, ignore
         }
@@ -1100,17 +1208,18 @@ class PhysicsService
 
                         $db->runQuery(
                             "INSERT INTO formulas (
-                                id, parent_formula_id, derivation_type, constraints, related_formula_ids, subcomponents,
+                                id, parent_formula_id, derivation_type, constraints, related_formula_ids, subcomponents, derivation_steps,
                                 title, equation, equation_svg, conceptual_definition, intuitive_summary, 
                                 interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
                                 unit_system, status
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                             ON DUPLICATE KEY UPDATE 
                                 parent_formula_id = VALUES(parent_formula_id),
                                 derivation_type = VALUES(derivation_type),
                                 constraints = VALUES(constraints),
                                 related_formula_ids = VALUES(related_formula_ids),
                                 subcomponents = VALUES(subcomponents),
+                                derivation_steps = VALUES(derivation_steps),
                                 title = VALUES(title),
                                 equation = VALUES(equation),
                                 equation_svg = VALUES(equation_svg),
@@ -1129,6 +1238,7 @@ class PhysicsService
                                 !empty($fData['constraints']) ? json_encode($fData['constraints']) : null,
                                 !empty($fData['related_formula_ids']) ? json_encode($fData['related_formula_ids']) : null,
                                 !empty($fData['subcomponents']) ? json_encode($fData['subcomponents']) : null,
+                                !empty($fData['derivation_steps']) ? json_encode($fData['derivation_steps']) : null,
                                 $fData['title'],
                                 $cleanEq,
                                 $eqSvg,

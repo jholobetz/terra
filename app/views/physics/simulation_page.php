@@ -30,4 +30,5 @@
     </footer>
 </article>
 
+<script src="/js/lib/webgl_physics_harness.js" nonce="<?= $nonce ?>"></script>
 <script src="/js/simulations/<?= $slug ?>.js" nonce="<?= $nonce ?>"></script>

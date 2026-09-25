@@ -264,7 +264,13 @@ class FormulaReviewService
         // 2. Merge prose overrides if provided
         if (!empty($prose) && is_array($prose)) {
             foreach ($prose as $field => $val) {
-                if (is_string($val) && ($isNew || trim($val) !== '') && (!isset($formulaData[$field]) || $formulaData[$field] !== $val)) {
+                if ($field === 'derivation_steps' && (is_array($val) || is_string($val))) {
+                    $decodedSteps = is_string($val) ? (json_decode($val, true) ?: []) : $val;
+                    if (is_array($decodedSteps)) {
+                        $formulaData['derivation_steps'] = $decodedSteps;
+                        $repairsMade[] = "Updated derivation_steps (" . count($decodedSteps) . " steps)";
+                    }
+                } elseif (is_string($val) && ($isNew || trim($val) !== '') && (!isset($formulaData[$field]) || $formulaData[$field] !== $val)) {
                     $sanitizedVal = $this->sanitizeProse($val);
                     if ($isNew || $sanitizedVal !== ($formulaData[$field] ?? '')) {
                         $formulaData[$field] = $sanitizedVal;

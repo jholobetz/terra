@@ -301,7 +301,7 @@ const FormulaInspector = {
                         variablesList.innerHTML = varsHtml;
                     }
 
-                    if (f.parent_formula_id || f.derivation_type || f.constraints) {
+                    if (f.parent_formula_id || f.derivation_type || f.constraints || (f.derivation_steps && f.derivation_steps.length > 0)) {
                         graphCard.style.display = 'block';
                         let html = '';
                         if (f.derivation_type) {
@@ -324,6 +324,37 @@ const FormulaInspector = {
                                 html += `<div style="margin-top: 6px;"><strong>Physical Constraints:</strong><br>${pills.join(' ')}</div>`;
                             } catch(e) {}
                         }
+                        if (Array.isArray(f.derivation_steps) && f.derivation_steps.length > 0) {
+                            html += `
+                                <div style="margin-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10px;">
+                                    <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--accent-default, #64ffda); font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                                        <span>📐 Derivation Steps (${f.derivation_steps.length})</span>
+                                        <a href="/physics/equation-explainer?id=${encodeURIComponent(f.id || '')}" style="color: var(--accent-default, #64ffda); font-size: 0.72rem; text-decoration: none;">Full Explainer ↗</a>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                            `;
+                            f.derivation_steps.forEach((st, idx) => {
+                                const stepNum = st.step !== undefined ? st.step : (idx + 1);
+                                const cleanEq = (st.latex || '').trim();
+                                const safeEq = cleanEq.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                                html += `
+                                    <details style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 6px 10px; cursor: pointer;">
+                                        <summary style="font-size: 0.8rem; font-weight: 600; color: #f1f5f9; outline: none; display: flex; align-items: center; gap: 6px;">
+                                            <span style="color: var(--accent-default, #64ffda);">Step ${stepNum}:</span>
+                                            <span style="color: #94a3b8; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${(st.rationale || '').replace(/<[^>]*>?/gm, '').replace(/\$+/g, '')}</span>
+                                        </summary>
+                                        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(255, 255, 255, 0.08);">
+                                            ${cleanEq ? `<div style="font-size: 0.95rem; color: #ffd700; text-align: center; margin-bottom: 4px;">\\[ ${safeEq} \\]</div>` : ''}
+                                            <div style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">${st.rationale || ''}</div>
+                                        </div>
+                                    </details>
+                                `;
+                            });
+                            html += `
+                                    </div>
+                                </div>
+                            `;
+                        }
                         graphContent.innerHTML = html;
                     }
                 } else {
@@ -338,6 +369,7 @@ const FormulaInspector = {
                 if (window.MathJax && window.MathJax.typesetPromise) {
                     const elsToTypeset = [conceptText, summaryText];
                     if (variablesList) elsToTypeset.push(variablesList);
+                    if (graphContent) elsToTypeset.push(graphContent);
                     window.MathJax.typesetPromise(elsToTypeset).catch(err => console.warn(err));
                 }
             });

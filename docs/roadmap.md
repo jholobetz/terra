@@ -90,22 +90,26 @@ flowchart TD
 
 ### 2.2 Step-by-Step Derivation Accordions
 * **Goal**: Transform single-link parent-child relationships ($A \to B$) into readable, collapsible multi-step mathematical derivations.
-* **Actions**:
-  1. Expand the formula schema to support optional intermediate derivation steps:
-     ```json
-     "derivation_steps": [
-       { "step": 1, "latex": "...", "rationale": "Apply Euler-Lagrange variation" },
-       { "step": 2, "latex": "...", "rationale": "Eliminate boundary terms" }
-     ]
-     ```
-  2. Render collapsible derivation accordions in the Equation Explainer and Formula Inspector modal.
+* **Accomplished**:
+  1. Expanded `app/config/formula.schema.json` with `derivation_steps` schema (step, latex, rationale) and `derivation_type`.
+  2. Implemented persistence, JSON decoding, and MariaDB synchronization in `PhysicsService.php` and `FormulaReviewService.php`.
+  3. Integrated collapsible derivation accordions with MathJax typesetting into the Equation Explainer (`equation_explainer.php` / `public/js/equation_explainer.js`), the in-page Formula Inspector modal (`public/js/formula_inspector.js`), and the Curator slide-over drawer (`public/js/explainer_curator.js`).
+  4. Seeded canonical foundation formulas (Euler-Lagrange equations, Time-Independent Schrödinger equation, Relativistic energy-momentum invariant, Schwarzschild metric) across Git shards with rigorous step-by-step mathematical proofs.
+  5. Added comprehensive test coverage in `tests/test_derivation_steps.py`.
 
 ### 2.3 Modular Canvas / WebGL Visualizer Library
 * **Goal**: Enrich theoretical physics topics with interactive, parameter-tunable visual models.
-* **Target Areas**:
-  - Relativistic geodesics (Schwarzschild and Kerr black hole raytracing).
-  - Quantum wave packet scattering across 1D potential barriers.
-  - Phase portraits for non-linear Hamiltonian and chaotic systems.
+* **Accomplished**:
+  1. Built the zero-dependency `WebGLPhysicsHarness` (`public/js/lib/webgl_physics_harness.js`) supporting WebGL2/GLSL 300 es, shader compilation with formatted error logs, automatic uniform binding, HiDPI scaling, smooth spherical orbit camera with inertia, and ping-pong FBOs.
+  2. Implemented Flagship Option A: **Relativistic Kerr Black Hole Raytracer** (`public/js/simulations/relativistic-black-hole.js`):
+     - Real-time GPU null geodesic raymarching in Boyer-Lindquist coordinates for static Schwarzschild ($a=0$) and spinning Kerr ($a \le 0.998$) black holes.
+     - Physically accurate event horizon shadows ($r_+$), Cauchy inner horizons ($r_-$), ergosphere frame-dragging ($r_{\text{ergo}}$), and ISCO ($r_{\text{isco}}$).
+     - Relativistic Keplerian accretion disk with Shakura-Sunyaev / Novikov-Thorne temperature profiles, gravitational redshift, and Doppler beaming ($I_{\text{obs}} = g^4 I_{\text{emit}}$).
+     - Procedural celestial starfield gravitational lensing and Einstein rings.
+     - Presets: Interstellar (Gargantua), M87* (EHT), Static Schwarzschild, Extreme Kerr, Polar Jet Axis, Pure Star Lensing.
+     - Real-time mathematical telemetry HUD and 4K PNG snapshot export.
+  3. Registered simulation in MariaDB, `app/config/content/simulations.json`, `_topic_icons.php`, and embedded direct GPU launcher inside Equation Explainer.
+  4. Automated regression test net verified in `tests/test_webgl_simulations.py`.
 
 ### 2.4 Formula Shard APCu / In-Memory Caching
 * **Goal**: Maximize read throughput on high-traffic instances by caching deserialized JSON shard contents in APCu / memory buffers, reducing filesystem disk I/O.
@@ -148,8 +152,8 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 1** | 1.2 | Derivation Lineage DAG Healing (LHI 95.2) | `scripts/fixlineage`<br/>`formula_derivation_graph.json` | 🔴 **P1** | 🟢 Completed |
 | **Phase 1** | 1.3 | 100% OPS Subtopic Graduation | `app/config/content/*.json`<br/>`integrity_shield.py` | 🔴 **P1** | 🟢 Completed |
 | **Phase 2** | 2.1 | Scratch & Maintenance Script Archival | `scratch/`<br/>`scripts/maintenance/` | 🟡 **P2** | 📋 In Progress |
-| **Phase 2** | 2.2 | Step-by-Step Derivation Accordions | `equation_explainer.php`<br/>`shard_[00-ff].json` | 🟡 **P2** | 📋 Active |
-| **Phase 2** | 2.3 | Modular Canvas/WebGL Visualizers | `public/js/explainer_simulations.js` | 🟡 **P2** | 📋 Active |
+| **Phase 2** | 2.2 | Step-by-Step Derivation Accordions | `equation_explainer.php`<br/>`shard_[00-ff].json` | 🟡 **P2** | 🟢 Completed |
+| **Phase 2** | 2.3 | Modular Canvas/WebGL Visualizers | `webgl_physics_harness.js`<br/>`relativistic-black-hole.js` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.4 | In-Memory Shard APCu Caching | `app/logic/PhysicsService.php` | 🟢 **P3** | 📋 Backlog |
 | **Phase 3** | 3.1 | Sitewide SymPy CAS Invariance | `cas_engine.py`<br/>`.agents/skills/cas-symbolic-prover` | 🟡 **P2** | 📋 Active |
 | **Phase 3** | 3.2 | Autonomous Long-Horizon Sweeps | `docs/cost_governance.md`<br/>`.agents/skills/` | 🟢 **P3** | 📋 Backlog |

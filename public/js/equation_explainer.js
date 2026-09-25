@@ -708,6 +708,11 @@ const EquationExplainer = {
         this.explainerNavTabs = document.getElementById('explainer-nav-tabs');
         this.tabButtons = document.querySelectorAll('.explainer-tab-btn');
         this.tabPanes = document.querySelectorAll('.explainer-tab-pane');
+
+        this.derivationAccordionSection = document.getElementById('derivation-accordion-section');
+        this.derivationStepsList = document.getElementById('derivation-steps-list');
+        this.derivationStepsCount = document.getElementById('derivation-steps-count');
+        this.btnToggleAllDerivationSteps = document.getElementById('btn-toggle-all-derivation-steps');
     },
 
     bindEvents() {
@@ -1607,6 +1612,9 @@ const EquationExplainer = {
         // Render Knowledge Graph Ancestry card
         this.renderKnowledgeGraphCard(formula);
 
+        // Render Step-by-Step Derivation Accordion
+        this.renderDerivationAccordion(formula);
+
         // Deconstruct EVERY element in the LaTeX string, merging database semantic definitions for left panel hover list
         this.renderElementsBreakdown(this.currentLatex, formula.semantic_variables || {});
 
@@ -1675,6 +1683,30 @@ const EquationExplainer = {
             html += `<div style="margin-bottom: 10px;"><strong>Master Parent Law:</strong> <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; border-bottom: 1px dashed rgba(100,255,218,0.4); font-weight: 600;">${parentName}</a></div>`;
         }
 
+        // Derivation Steps summary pathway in lineage map
+        if (Array.isArray(formula.derivation_steps) && formula.derivation_steps.length > 0) {
+            html += `
+                <div style="margin-bottom: 14px; background: rgba(100, 255, 218, 0.04); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 8px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-default, #64ffda); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                            <span>📐</span> Mathematical Derivation Pathway (${formula.derivation_steps.length} Steps)
+                        </span>
+                        <button type="button" onclick="const tab = document.querySelector('.explainer-tab-btn[data-target=stage-narrative]'); if(tab) tab.click(); setTimeout(() => { const el = document.getElementById('derivation-accordion-section'); if(el) el.scrollIntoView({behavior: 'smooth'}); }, 100);" style="background: rgba(100, 255, 218, 0.1); border: 1px solid rgba(100, 255, 218, 0.3); border-radius: 4px; color: var(--accent-default, #64ffda); font-size: 0.72rem; padding: 3px 8px; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+                            View Accordion ↗
+                        </button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        ${formula.derivation_steps.map((st, i) => `
+                            <div style="display: flex; align-items: baseline; gap: 8px; font-size: 0.85rem; color: #cbd5e1;">
+                                <span style="font-weight: 700; color: #ffd700; font-family: monospace; font-size: 0.8rem;">[Step ${st.step || (i+1)}]</span>
+                                <span style="color: #94a3b8; font-size: 0.84rem;">${this.wrapTextMathDelimiters(st.rationale || '')}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
         // 2. Child Subcomponents Grid
         if (hasSubcomponents) {
             html += `
@@ -1717,6 +1749,75 @@ const EquationExplainer = {
         }
         details.innerHTML = html;
         this.triggerTypeset([details]);
+    },
+
+    renderDerivationAccordion(formula) {
+        if (!this.derivationAccordionSection || !this.derivationStepsList) return;
+
+        const steps = Array.isArray(formula && formula.derivation_steps) ? formula.derivation_steps : [];
+        if (steps.length === 0) {
+            this.derivationAccordionSection.style.display = 'none';
+            this.derivationStepsList.innerHTML = '';
+            return;
+        }
+
+        this.derivationAccordionSection.style.display = 'flex';
+        if (this.derivationStepsCount) {
+            this.derivationStepsCount.textContent = `${steps.length} ${steps.length === 1 ? 'Step' : 'Steps'}`;
+        }
+
+        let html = '';
+        steps.forEach((s, idx) => {
+            const stepNum = s.step !== undefined ? s.step : (idx + 1);
+            const rationale = this.wrapTextMathDelimiters(s.rationale || '');
+            const cleanLatex = (s.latex || '').trim();
+            const safeLatex = this.escapeMathForHtml(cleanLatex);
+            const isOpen = idx === 0 ? ' open' : '';
+            const rawRationale = (s.rationale || '').replace(/<[^>]*>?/gm, '').replace(/\$+/g, '');
+
+            html += `
+                <div class="derivation-step-item${isOpen}" data-step="${stepNum}">
+                    <div class="derivation-step-header" onclick="this.parentElement.classList.toggle('open')">
+                        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                            <span class="derivation-step-pill">Step ${stepNum}</span>
+                            <span class="derivation-step-preview" style="font-size: 0.86rem; color: #f1f5f9; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${rawRationale}
+                            </span>
+                        </div>
+                        <span class="derivation-step-chevron">▼</span>
+                    </div>
+                    <div class="derivation-step-content">
+                        ${cleanLatex ? `
+                            <div class="derivation-step-eq">
+                                \\[ ${safeLatex} \\]
+                            </div>
+                        ` : ''}
+                        <div class="derivation-step-rationale">
+                            ${rationale}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        this.derivationStepsList.innerHTML = html;
+
+        if (this.btnToggleAllDerivationSteps) {
+            this.btnToggleAllDerivationSteps.onclick = () => {
+                const items = this.derivationStepsList.querySelectorAll('.derivation-step-item');
+                const anyClosed = Array.from(items).some(item => !item.classList.contains('open'));
+                items.forEach(item => {
+                    if (anyClosed) {
+                        item.classList.add('open');
+                    } else {
+                        item.classList.remove('open');
+                    }
+                });
+                this.btnToggleAllDerivationSteps.textContent = anyClosed ? 'Collapse All' : 'Expand All';
+            };
+        }
+
+        this.triggerTypeset([this.derivationStepsList]);
     },
 
     renderCasLimitsCard(latex, semanticVariables = {}) {

@@ -20,6 +20,7 @@ const ExplainerCurator = {
         this.drawerFieldInterpretation = document.getElementById('drawer-field-interpretation');
         this.drawerFieldSymmetry = document.getElementById('drawer-field-symmetry');
         this.drawerFieldLimits = document.getElementById('drawer-field-limits');
+        this.drawerFieldDerivationSteps = document.getElementById('drawer-field-derivation-steps');
 
         this.drawerPreviewEquation = document.getElementById('drawer-preview-equation');
         this.drawerPreviewLimits = document.getElementById('drawer-preview-limits');
@@ -134,6 +135,11 @@ const ExplainerCurator = {
         if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = f.interpretation || '';
         if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = f.symmetry_origin || '';
         if (this.drawerFieldLimits) this.drawerFieldLimits.value = f.limits_and_boundary || '';
+        if (this.drawerFieldDerivationSteps) {
+            this.drawerFieldDerivationSteps.value = (Array.isArray(f.derivation_steps) && f.derivation_steps.length > 0)
+                ? JSON.stringify(f.derivation_steps, null, 2)
+                : '';
+        }
 
         // Clear alerts
         this.hideDrawerAlert();
@@ -199,6 +205,17 @@ const ExplainerCurator = {
             return;
         }
 
+        let derivationSteps = null;
+        if (this.drawerFieldDerivationSteps && this.drawerFieldDerivationSteps.value.trim()) {
+            try {
+                derivationSteps = JSON.parse(this.drawerFieldDerivationSteps.value.trim());
+                if (!Array.isArray(derivationSteps)) throw new Error('Must be an array of step objects');
+            } catch (e) {
+                this.showDrawerAlert('Invalid JSON in Derivation Steps: ' + e.message, true);
+                return;
+            }
+        }
+
         const payload = {
             formula_id: formulaId,
             latex: latex,
@@ -210,6 +227,9 @@ const ExplainerCurator = {
                 limits_and_boundary: this.drawerFieldLimits ? this.drawerFieldLimits.value.trim() : ''
             }
         };
+        if (derivationSteps !== null) {
+            payload.prose.derivation_steps = derivationSteps;
+        }
 
         this.drawerBtnSuggest.disabled = true;
         this.drawerBtnSuggest.textContent = 'Submitting...';
@@ -246,6 +266,17 @@ const ExplainerCurator = {
             return;
         }
 
+        let derivationSteps = null;
+        if (this.drawerFieldDerivationSteps && this.drawerFieldDerivationSteps.value.trim()) {
+            try {
+                derivationSteps = JSON.parse(this.drawerFieldDerivationSteps.value.trim());
+                if (!Array.isArray(derivationSteps)) throw new Error('Must be an array of step objects');
+            } catch (e) {
+                this.showDrawerAlert('Invalid JSON in Derivation Steps: ' + e.message, true);
+                return;
+            }
+        }
+
         const payload = {
             formula_id: formulaId,
             latex: latex,
@@ -257,6 +288,9 @@ const ExplainerCurator = {
                 limits_and_boundary: this.drawerFieldLimits ? this.drawerFieldLimits.value.trim() : ''
             }
         };
+        if (derivationSteps !== null) {
+            payload.prose.derivation_steps = derivationSteps;
+        }
 
         this.drawerBtnApplyDirect.disabled = true;
         this.drawerBtnApplyDirect.textContent = 'Applying...';

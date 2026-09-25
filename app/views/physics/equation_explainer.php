@@ -206,6 +206,23 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     </div>
                 </div>
 
+                <!-- Step-by-Step Mathematical Derivation Accordion -->
+                <div id="derivation-accordion-section" style="display: none; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 18px; margin-top: 5px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                        <h4 style="font-size: 0.84rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-default, #64ffda); margin: 0; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.05rem;">📐</span>
+                            <span>Step-by-Step Mathematical Derivation</span>
+                        </h4>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span id="derivation-steps-count" style="font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; background: rgba(100, 255, 218, 0.12); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); font-weight: 600; font-family: 'Space Grotesk', sans-serif;">0 Steps</span>
+                            <button id="btn-toggle-all-derivation-steps" type="button" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: var(--text-muted, #94a3b8); font-size: 0.72rem; padding: 3px 10px; cursor: pointer; transition: all 0.2s; font-family: 'Space Grotesk', sans-serif; font-weight: 500;">Expand All</button>
+                        </div>
+                    </div>
+                    <div id="derivation-steps-list" style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- JS populated step accordions -->
+                    </div>
+                </div>
+
                 <!-- Topological Bridges Section -->
                 <div id="topological-bridges" style="display: none; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 18px; margin-top: 5px;">
                     <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #94a3b8); margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif;">
@@ -447,6 +464,82 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
     color: var(--accent-default, #64ffda);
     transform: translateY(-1px);
 }
+
+/* Step-by-Step Derivation Accordion */
+.derivation-step-item {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+.derivation-step-item:hover {
+    border-color: rgba(100, 255, 218, 0.25);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.derivation-step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+}
+.derivation-step-header:hover {
+    background: rgba(100, 255, 218, 0.04);
+}
+.derivation-step-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(100, 255, 218, 0.15);
+    color: var(--accent-default, #64ffda);
+    border: 1px solid rgba(100, 255, 218, 0.35);
+    flex-shrink: 0;
+}
+.derivation-step-chevron {
+    font-size: 0.72rem;
+    color: var(--text-muted, #94a3b8);
+    transition: transform 0.25s ease;
+}
+.derivation-step-item.open .derivation-step-chevron {
+    transform: rotate(180deg);
+}
+.derivation-step-content {
+    display: none;
+    padding: 14px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(3, 7, 18, 0.6);
+    flex-direction: column;
+    gap: 12px;
+}
+.derivation-step-item.open .derivation-step-content {
+    display: flex;
+}
+.derivation-step-eq {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+    text-align: center;
+    font-size: 1.15rem;
+    color: #ffd700;
+}
+.derivation-step-rationale {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #cbd5e1;
+    margin: 0;
+}
 </style>
 
 <!-- Curator Slide-Over Drawer Modal -->
@@ -549,6 +642,11 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         <div>
                             <label style="display: block; font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Limiting Cases &amp; Boundaries</label>
                             <textarea id="drawer-field-limits" rows="3" style="width: 100%; padding: 8px; background: rgba(3,7,18,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #e2e8f0; font-size: 0.85rem; box-sizing: border-box;"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Step-by-Step Derivations (JSON)</label>
+                            <textarea id="drawer-field-derivation-steps" rows="4" placeholder='[{"step": 1, "latex": "...", "rationale": "..."}]' style="width: 100%; padding: 8px; background: rgba(3,7,18,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #e2e8f0; font-size: 0.82rem; font-family: 'Fira Code', monospace; box-sizing: border-box;"></textarea>
+                            <small style="display: block; font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Array of objects with step (int), latex (str), and rationale (str).</small>
                         </div>
                     </div>
                 </details>

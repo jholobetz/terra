@@ -878,8 +878,19 @@ class PhysicsController
                 return ['slug' => $s, 'title' => $title];
             }, array_keys($content['simulations']), $content['simulations']);
         } else {
-            $topicsList = $this->app->db()->fetchAll("SELECT slug, title FROM topics ORDER BY id ASC");
-            $simsList = $this->app->db()->fetchAll("SELECT slug, title FROM simulations ORDER BY id ASC");
+            try {
+                $topicsList = $this->app->db()->fetchAll("SELECT slug, title FROM topics ORDER BY id ASC");
+                $simsList = $this->app->db()->fetchAll("SELECT slug, title FROM simulations ORDER BY id ASC");
+            } catch (\Throwable $e) {
+                $this->service()->loadAllShards();
+                $content = $this->service()->getPhysicsContent();
+                $topicsList = array_map(function($s, $t) {
+                    return ['slug' => $s, 'title' => $t['title'] ?? $s];
+                }, array_keys($content['topics'] ?? []), $content['topics'] ?? []);
+                $simsList = array_map(function($s, $t) {
+                    return ['slug' => $s, 'title' => $t['title'] ?? $s];
+                }, array_keys($content['simulations'] ?? []), $content['simulations'] ?? []);
+            }
         }
 
         $menuTopics = [];

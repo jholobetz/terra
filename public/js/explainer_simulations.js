@@ -50,6 +50,20 @@ const ExplainerSimulations = {
             this.createSlider('input', 'Control Input Variable', 'dimensionless', 0, 10, 5, 0.1);
         }
 
+        // Check for General Relativity / Black Hole Metric formulas
+        if (latex.includes('g_{\\mu\\nu}') || latex.includes('Schwarzschild') || latex.includes('Kerr') || (latex.includes('\\Delta') && latex.includes('r^2')) || latex.includes('r_s') || latex.includes('2GM') || (latex.includes('R_{\\mu\\nu}'))) {
+            const grBanner = document.createElement('div');
+            grBanner.style.cssText = 'margin-top: 10px; padding: 10px 12px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 6px; display: flex; flex-direction: column; gap: 6px;';
+            grBanner.innerHTML = `
+                <div style="font-size: 0.78rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">GPU Relativistic Model</div>
+                <div style="font-size: 0.8rem; color: #cbd5e1;">Raymarch null geodesics, event horizons, and accretion disk beaming in full WebGL2.</div>
+                <a href="/physics/simulations/relativistic-black-hole" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 10px; background: var(--accent-default, #38bdf8); color: #020617; font-size: 0.78rem; font-weight: 600; border-radius: 4px; text-decoration: none; margin-top: 4px; transition: opacity 0.15s;">
+                    Launch Black Hole Raytracer &rarr;
+                </a>
+            `;
+            this.sandboxSliders.appendChild(grBanner);
+        }
+
         // 3. Start render loop
         this.startSandboxLoop();
     },

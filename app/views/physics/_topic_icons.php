@@ -227,6 +227,7 @@ if (!function_exists('get_simulation_category')) {
                 return 'electromagnetism';
             case 'spacetime-relativity':
             case 'gravitational-lensing':
+            case 'relativistic-black-hole':
                 return 'relativity';
             case 'bells-inequality':
             case 'path-integral':

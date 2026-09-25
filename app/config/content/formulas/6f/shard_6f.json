@@ -1026,7 +1026,34 @@
         ],
         "description": "A set of second-order partial differential equations that describe the motion of a mechanical system. They are the fundamental equations of motion in Lagrangian mechanics, derived from the principle of stationary action.",
         "parent_formula_id": "operator-transfer-2d8d6a65",
-        "derivation_type": "DERIVED_FROM"
+        "derivation_type": "DERIVED_FROM",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\delta S = \\delta \\int_{t_1}^{t_2} L(q_i(t), \\dot{q}_i(t), t) \\, \\mathrm{d}t = 0",
+                "rationale": "State Hamilton's Principle of Stationary Action, demanding that the true physical trajectory makes the action integral stationary with respect to arbitrary virtual variations $\\delta q_i(t)$ vanishing at the temporal endpoints $t_1$ and $t_2$."
+            },
+            {
+                "step": 2,
+                "latex": "\\delta S = \\int_{t_1}^{t_2} \\sum_i \\left( \\frac{\\partial L}{\\partial q_i} \\delta q_i + \\frac{\\partial L}{\\partial \\dot{q}_i} \\delta \\dot{q}_i \\right) \\mathrm{d}t = 0",
+                "rationale": "Expand the first variation of the Lagrangian by the multi-variable chain rule into spatial coordinate and generalized velocity directional components."
+            },
+            {
+                "step": 3,
+                "latex": "\\int_{t_1}^{t_2} \\frac{\\partial L}{\\partial \\dot{q}_i} \\delta \\dot{q}_i \\, \\mathrm{d}t = \\left[ \\frac{\\partial L}{\\partial \\dot{q}_i} \\delta q_i \\right]_{t_1}^{t_2} - \\int_{t_1}^{t_2} \\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) \\delta q_i \\, \\mathrm{d}t",
+                "rationale": "Perform integration by parts on the generalized velocity variation term using $\\delta \\dot{q}_i = \\frac{\\mathrm{d}}{\\mathrm{d}t}(\\delta q_i)$ to transfer the total time derivative onto the canonical momentum conjugate."
+            },
+            {
+                "step": 4,
+                "latex": "\\delta q_i(t_1) = \\delta q_i(t_2) = 0 \\implies \\left[ \\frac{\\partial L}{\\partial \\dot{q}_i} \\delta q_i \\right]_{t_1}^{t_2} = 0",
+                "rationale": "Eliminate the boundary surface term by invoking fixed endpoint boundary conditions where the variation of coordinates strictly vanishes."
+            },
+            {
+                "step": 5,
+                "latex": "\\int_{t_1}^{t_2} \\sum_i \\left( \\frac{\\partial L}{\\partial q_i} - \\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) \\right) \\delta q_i \\, \\mathrm{d}t = 0 \\implies \\frac{\\mathrm{d}}{\\mathrm{d}t}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = 0",
+                "rationale": "Apply the Fundamental Lemma of the Calculus of Variations; since the coordinate variations $\\delta q_i(t)$ are completely arbitrary and independent, the integrand factor must identically vanish for every coordinate index $i$."
+            }
+        ]
     },
     "electromagnetic-stress-energy-tensor-identity-1-a7427134-73545a3a": {
         "title": "The Covariant Electromagnetic Stress-Energy Tensor",

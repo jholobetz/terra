@@ -133,12 +133,17 @@ function sanitizeProseTeX(string $text): string {
     ]);
 
     // Replace orphaned 'abla' or '\\n\\nabla' or newline+u that resulted from corrupted '\nabla', '\nu'
-    $text = preg_replace('/(?<![a-zA-Z])abla\b/u', '\\nabla', $text);
+    $text = preg_replace('/(?<![a-zA-Z])\\$?abla\b/u', '\\nabla', $text);
+    $text = preg_replace('/(?<![a-zA-Z])\\$?abla_([a-zA-Z\\\\]+)/u', '\\nabla_$1', $text);
     $text = preg_replace('/\\\\n\\\\nabla/u', '\\nabla', $text);
     $text = preg_replace('/\\\\n\s*\\\\nabla/u', '\\nabla', $text);
     $text = preg_replace('/\\$\\s*\\\\n\\s*\\$\\s*\\\\nabla/u', '$\\nabla', $text);
+    $text = preg_replace('/\\\\nabla_\\s*u\b/u', '\\nabla_\\nu', $text);
+    $text = preg_replace('/\\\\nabla_\\$\\s*u\\$/u', '\\nabla_\\nu', $text);
     $text = preg_replace('/(?<=\$|\s|\b)\n\s*u(?=\s|\$|\b|[.,;])/u', '\\nu', $text);
     $text = preg_replace('/\\\\n\s*u(?=\s|\$|\b|[.,;])/u', '\\nu', $text);
+    $text = preg_replace('/\\\\mu\s*u\b/u', '\\mu\\nu', $text);
+    $text = preg_replace('/\\$u\\$-th/u', '$\\nu$-th', $text);
     $text = preg_replace('/(?:\x08|\b|(?<=[ ($,\^_\-]))ar\{([a-zA-Z\\\\])/u', '\\bar{\\1', $text);
     $text = str_replace(["\x08eta", "\x08"], ['\\beta', ''], $text);
     $text = str_replace(["\x0crac", "\x0c"], ['\\frac', ''], $text);
@@ -529,6 +534,9 @@ foreach ($targets as $input) {
         $cleanSemVars = [];
         foreach ($semVars as $k => $v) {
             $cleanK = str_replace('$', '', trim($k));
+            if (is_array($v) && isset($v['description']) && is_string($v['description'])) {
+                $v['description'] = sanitizeProseTeX($v['description']);
+            }
             $cleanSemVars[$cleanK] = $v;
         }
         $formulaData['semantic_variables'] = $cleanSemVars;

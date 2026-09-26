@@ -509,7 +509,15 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
             nodeG.setAttribute('class', 'celestial-node');
             nodeG.setAttribute('data-slug', slug);
             nodeG.setAttribute('data-pillar-idx', pIdx);
+            nodeG.setAttribute('role', 'link');
+            nodeG.setAttribute('tabindex', '0');
+            nodeG.setAttribute('aria-label', `${data.title} (Open treatise)`);
             nodeG.style.cursor = 'pointer';
+
+            // Native SVG Tooltip
+            const nodeTitle = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+            nodeTitle.textContent = `${data.title} — Click to open treatise`;
+            nodeG.appendChild(nodeTitle);
 
             // Outer Glow Ring
             const aura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -662,8 +670,20 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
             updateHUD(n.slug);
         });
 
-        n.element.addEventListener('click', () => {
+        n.element.addEventListener('click', (e) => {
             updateHUD(n.slug);
+            if (e.metaKey || e.ctrlKey || e.button === 1) {
+                window.open(`/physics/subtopic/${n.slug}`, '_blank');
+            } else {
+                window.location.href = `/physics/subtopic/${n.slug}`;
+            }
+        });
+
+        n.element.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = `/physics/subtopic/${n.slug}`;
+            }
         });
     });
 
@@ -1188,7 +1208,18 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 
 /* Celestial Nodes in SVG */
 .celestial-node {
+    cursor: pointer;
     transition: transform 0.05s linear;
+}
+
+.celestial-node:focus {
+    outline: none;
+}
+
+.celestial-node:focus .node-aura {
+    opacity: 1;
+    stroke-width: 2.5;
+    stroke: #ffffff;
 }
 
 .celestial-node:hover .node-aura {

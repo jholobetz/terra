@@ -78,14 +78,39 @@ if (!empty($fileInput)) {
         }
     }
 } else if (count($positionals) >= 2) {
-    $targets[] = trim($positionals[0]);
-    // The second positional argument (and any subsequent) is treated as the hint / reference text
-    $positionalHint = trim(implode(' ', array_slice($positionals, 1)));
+    if (!empty($cliHint)) {
+        // Explicit --hint or --ref was provided, so ALL positionals are targets
+        foreach ($positionals as $pos) {
+            $targets[] = trim($pos);
+        }
+    } else {
+        // Check if all arguments look like targets (URLs or formula slugs without spaces)
+        $allTargets = true;
+        foreach ($positionals as $pos) {
+            $p = trim($pos);
+            $isUrl = (strpos($p, 'http://') === 0 || strpos($p, 'https://') === 0 || strpos($p, 'equation-explainer') !== false || strpos($p, '?') !== false);
+            $isId = (preg_match('/^[a-z0-9\-]+$/i', $p) && strpos($p, ' ') === false);
+            if (!$isUrl && !$isId) {
+                $allTargets = false;
+                break;
+            }
+        }
+        if ($allTargets) {
+            foreach ($positionals as $pos) {
+                $targets[] = trim($pos);
+            }
+        } else {
+            // First argument is target, remaining arguments form the hint/reference text
+            $targets[] = trim($positionals[0]);
+            $positionalHint = trim(implode(' ', array_slice($positionals, 1)));
+        }
+    }
 } else if (count($positionals) === 1) {
     $targets[] = trim($positionals[0]);
 }
 
 $globalHint = !empty($cliHint) ? trim($cliHint) : $positionalHint;
+
 
 if ($showHelp || empty($targets)) {
     echo "=======================================================\n";
@@ -371,19 +396,13 @@ try {
 $results = [];
 
 foreach ($targets as $input) {
-    $targetResult = [
-        'input' => $input,
-        'success' => false,
-        'dry_run' => $isDryRun,
-        'repairs_made' => [],
-    ];
-
     if (!$isJson) {
         echo "=======================================================\n";
         echo "Terra Equation Repair Engine v2" . ($isDryRun ? " [DRY-RUN MODE]" : "") . "\n";
         echo "Input: {$input}\n";
         echo "=======================================================\n\n";
     }
+
 
     // 1. Extract Target Parameters
     $targetId = null;
@@ -409,26 +428,33 @@ foreach ($targets as $input) {
         $targetLatex = trim($input);
     }
 
-    // 2. Resolve Target Formula from DB or Input
-    $formulaRecord = null;
+    // 2. Resolve Target Formula(s) from DB or Input
+    $formulaRecords = [];
     if ($pdo) {
         try {
             if (!empty($targetId)) {
                 $stmt = $pdo->prepare("SELECT * FROM formulas WHERE id = ?");
                 $stmt->execute([$targetId]);
-                $formulaRecord = $stmt->fetch();
+                $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($rec) {
+                    $formulaRecords[] = $rec;
+                }
             }
 
-            if (!$formulaRecord && !empty($targetLatex)) {
+            if (empty($formulaRecords) && !empty($targetLatex)) {
                 $stmt = $pdo->prepare("SELECT * FROM formulas WHERE equation = ?");
                 $stmt->execute([$targetLatex]);
-                $formulaRecord = $stmt->fetch();
-
-                if (!$formulaRecord) {
+                $recs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                if (!empty($recs)) {
+                    $formulaRecords = $recs;
+                } else {
                     $escapedLatex = addcslashes($targetLatex, '%_');
-                    $stmt = $pdo->prepare("SELECT * FROM formulas WHERE equation LIKE ? LIMIT 1");
+                    $stmt = $pdo->prepare("SELECT * FROM formulas WHERE equation LIKE ?");
                     $stmt->execute(['%' . $escapedLatex . '%']);
-                    $formulaRecord = $stmt->fetch();
+                    $recs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if (!empty($recs)) {
+                        $formulaRecords = $recs;
+                    }
                 }
             }
         } catch (\Throwable $e) {
@@ -437,49 +463,82 @@ foreach ($targets as $input) {
     }
 
     // Fallback: Resolve formula ID via PhysicsService LaTeX Index if DB lookup yields nothing
-    if (!$formulaRecord && empty($targetId) && !empty($targetLatex)) {
-        try {
-            $service = Flight::physicsService();
-            $resolvedFormula = $service->searchFormulaByLatex($targetLatex);
-            if ($resolvedFormula && !empty($resolvedFormula['id'])) {
-                $targetId = $resolvedFormula['id'];
+    if (empty($formulaRecords)) {
+        if (!empty($targetId)) {
+            $formulaRecords[] = ['id' => $targetId];
+        } else if (!empty($targetLatex)) {
+            try {
+                $service = Flight::physicsService();
+                $resolvedFormula = $service->searchFormulaByLatex($targetLatex);
+                if ($resolvedFormula && !empty($resolvedFormula['id'])) {
+                    $formulaRecords[] = $resolvedFormula;
+                }
+            } catch (\Throwable $e) {
+                // Ignore index search errors
             }
-        } catch (\Throwable $e) {
-            // Ignore index search errors
         }
     }
 
-    // 3. Locate Shard File
-    $formulaId = $formulaRecord['id'] ?? $targetId;
-    if (empty($formulaId)) {
-        $targetResult['error'] = "Could not resolve formula ID from input.";
-        $results[] = $targetResult;
+    if (empty($formulaRecords)) {
+        $failedResult = [
+            'input' => $input,
+            'success' => false,
+            'dry_run' => $isDryRun,
+            'error' => "Could not resolve formula ID from input.",
+        ];
+        $results[] = $failedResult;
         if (!$isJson) echo "[ERROR] Could not resolve formula ID from input.\n\n";
         continue;
     }
 
-    $hexPrefix = substr(md5($formulaId), 0, 2);
-    $baseDir = __DIR__ . '/../app/config/content/formulas/';
-    $shardFile = $baseDir . $hexPrefix . '/shard_' . $hexPrefix . '.json';
-
-    if (!file_exists($shardFile)) {
-        $shardFile = $baseDir . 'shard_' . $hexPrefix . '.json';
+    if (count($formulaRecords) > 1 && !$isJson) {
+        echo "=======================================================\n";
+        echo "🔍 [MULTI-MATCH] Identified " . count($formulaRecords) . " formula entries matching equation:\n";
+        foreach ($formulaRecords as $mIdx => $mRec) {
+            $mTitle = $mRec['title'] ?? 'Untitled';
+            echo "  [" . ($mIdx + 1) . "] {$mRec['id']} (\"{$mTitle}\")\n";
+        }
+        echo "--> Repairing ALL " . count($formulaRecords) . " entries across their respective shards...\n";
+        echo "=======================================================\n\n";
     }
 
-    if (!file_exists($shardFile)) {
-        $targetResult['error'] = "Shard file for formula ID '{$formulaId}' not found at prefix '{$hexPrefix}'.";
-        $results[] = $targetResult;
-        if (!$isJson) echo "[ERROR] Shard file for formula ID '{$formulaId}' not found at md5 prefix '{$hexPrefix}'.\n\n";
-        continue;
-    }
+    foreach ($formulaRecords as $matchIndex => $formulaRecord) {
+        $formulaId = $formulaRecord['id'];
+        $targetResult = [
+            'input' => $input,
+            'formula_id' => $formulaId,
+            'success' => false,
+            'dry_run' => $isDryRun,
+            'repairs_made' => [],
+        ];
 
-    $targetResult['formula_id'] = $formulaId;
-    $targetResult['shard_file'] = $shardFile;
+        // 3. Locate Shard File
+        $hexPrefix = substr(md5($formulaId), 0, 2);
+        $baseDir = __DIR__ . '/../app/config/content/formulas/';
+        $shardFile = $baseDir . $hexPrefix . '/shard_' . $hexPrefix . '.json';
 
-    if (!$isJson) {
-        echo "[INFO] Target Formula ID: {$formulaId}\n";
-        echo "[INFO] Canonical Shard Path: {$shardFile}\n\n";
-    }
+        if (!file_exists($shardFile)) {
+            $shardFile = $baseDir . 'shard_' . $hexPrefix . '.json';
+        }
+
+        if (!file_exists($shardFile)) {
+            $targetResult['error'] = "Shard file for formula ID '{$formulaId}' not found at prefix '{$hexPrefix}'.";
+            $results[] = $targetResult;
+            if (!$isJson) echo "[ERROR] Shard file for formula ID '{$formulaId}' not found at md5 prefix '{$hexPrefix}'.\n\n";
+            continue;
+        }
+
+        $targetResult['shard_file'] = $shardFile;
+
+        if (!$isJson) {
+            if (count($formulaRecords) > 1) {
+                echo "-------------------------------------------------------\n";
+                echo "Repairing Entry [" . ($matchIndex + 1) . "/" . count($formulaRecords) . "]: {$formulaId}\n";
+            }
+            echo "[INFO] Target Formula ID: {$formulaId}\n";
+            echo "[INFO] Canonical Shard Path: {$shardFile}\n\n";
+        }
+
 
     // 4. Load and Audit Shard Data
     $shardContent = file_get_contents($shardFile);
@@ -655,7 +714,9 @@ foreach ($targets as $input) {
     $results[] = $targetResult;
 
     if (!$isJson) echo "\nDone!\n\n";
-}
+    } // end foreach formulaRecords
+} // end foreach targets
+
 
 if ($isJson) {
     echo json_encode(count($results) === 1 ? $results[0] : $results, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";

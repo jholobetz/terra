@@ -362,7 +362,34 @@
         ],
         "description": "States that in thermal equilibrium at temperature $T$, every independent quadratic degree of freedom in the classical Hamiltonian contributes an average energy of $\\frac{1}{2} k_B T$ to the total internal energy of an $N$-particle system.",
         "parent_formula_id": "equipartition-theorem-average-energy",
-        "derivation_type": "GENERALIZATION"
+        "derivation_type": "CANONICAL_ENSEMBLE_AVERAGE",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "H(q, p) = \\sum_{i=1}^n a_i x_i^2 + H_{\\text{other}}",
+                "rationale": "Consider a classical Hamiltonian system where each particle possesses $n$ independent quadratic degrees of freedom $x_i$ in coordinates or momenta."
+            },
+            {
+                "step": 2,
+                "latex": "\\langle x_i \\frac{\\partial H}{\\partial x_j} \\rangle = \\frac{1}{Z}\\int x_i \\frac{\\partial H}{\\partial x_j} e^{-\\beta H} d\\Gamma, \\quad \\beta \\equiv \\frac{1}{k_B T}",
+                "rationale": "Express the statistical ensemble expectation value in terms of phase-space volume element $d\\Gamma$ and partition function $Z$."
+            },
+            {
+                "step": 3,
+                "latex": "\\frac{\\partial H}{\\partial x_j} e^{-\\beta H} = -\\frac{1}{\\beta}\\frac{\\partial}{\\partial x_j}(e^{-\\beta H})",
+                "rationale": "Rewrite the integrand using the chain rule derivative of the Boltzmann exponential factor."
+            },
+            {
+                "step": 4,
+                "latex": "\\int_{-\\infty}^\\infty x_i \\frac{\\partial}{\\partial x_i}(e^{-\\beta H}) dx_i = \\left[x_i e^{-\\beta H}\\right]_{-\\infty}^\\infty - \\int_{-\\infty}^\\infty e^{-\\beta H} dx_i = - \\int_{-\\infty}^\\infty e^{-\\beta H} dx_i",
+                "rationale": "Perform integration by parts on degree of freedom $x_i$, observing that physical boundary terms vanish exponentially as $|x_i| \\to \\infty$."
+            },
+            {
+                "step": 5,
+                "latex": "\\langle a_i x_i^2 \\rangle = \\frac{1}{2}\\langle x_i \\frac{\\partial H}{\\partial x_i} \\rangle = \\frac{1}{2\\beta} = \\frac{1}{2}k_B T \\implies U = N \\sum_{i=1}^n \\langle \\varepsilon_i \\rangle = \\frac{1}{2} n N k_B T",
+                "rationale": "Sum across all $n$ quadratic degrees of freedom for $N$ non-interacting particles to establish the equipartition internal energy."
+            }
+        ]
     },
     "gamma-scaling-2e4fb2bd": {
         "title": "Relativistic Lorentz Four-Force (Minkowski Force)",

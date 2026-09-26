@@ -400,7 +400,34 @@
         ],
         "description": "A relativistic wave equation that describes the dynamics of a free, massive, spin-0 scalar field. It is the quantum field theory analog of the relativistic energy-momentum relation.",
         "parent_formula_id": "action-for-scalar-field",
-        "derivation_type": "DERIVED_FROM"
+        "derivation_type": "CANONICAL_QUANTIZATION",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "E^2 = \\mathbf{p}^2 c^2 + m^2 c^4",
+                "rationale": "Begin with Einstein's relativistic energy-momentum invariant for a free particle of rest mass $m$."
+            },
+            {
+                "step": 2,
+                "latex": "E \\to i\\hbar \\frac{\\partial}{\\partial t}, \\quad \\mathbf{p} \\to -i\\hbar \\nabla",
+                "rationale": "Apply the standard Schrödinger quantum operator correspondence to energy and linear momentum."
+            },
+            {
+                "step": 3,
+                "latex": "-\\hbar^2 \\frac{\\partial^2 \\phi}{\\partial t^2} = -c^2 \\hbar^2 \\nabla^2 \\phi + m^2 c^4 \\phi",
+                "rationale": "Promote the classical invariant to an operator eigenvalue equation acting on a scalar wave function $\\phi(\\mathbf{r}, t)$."
+            },
+            {
+                "step": 4,
+                "latex": "\\frac{1}{c^2}\\frac{\\partial^2 \\phi}{\\partial t^2} - \\nabla^2 \\phi + \\frac{m^2 c^2}{\\hbar^2}\\phi = 0",
+                "rationale": "Divide through by $-c^2 \\hbar^2$ to arrange the equation in relativistic wave form with Compton wavenumber term."
+            },
+            {
+                "step": 5,
+                "latex": "\\Box \\equiv -\\partial_\\mu \\partial^\\mu = \\frac{1}{c^2}\\partial_t^2 - \\nabla^2 \\implies (\\Box + m^2)\\phi = 0 \\quad (\\text{Natural Units } c = \\hbar = 1)",
+                "rationale": "Express the differential operators using the four-gradient d'Alembertian in natural units to obtain the canonical Klein-Gordon equation."
+            }
+        ]
     },
     "right-hand-check-98eb04c1": {
         "title": "First Law of Thermodynamics (System-Centric Energy Balance)",
@@ -3082,7 +3109,7 @@
         "limits_and_boundary": "In the limit of a flat spacetime, the metric becomes the Minkowski metric $g_{\\mu\\nu} \\to \\eta_{\\mu\\nu}$. In an inertial (Cartesian) coordinate system, the derivatives of the metric are zero, causing the Christoffel symbols to vanish: $\\Gamma^\\mu_{\\alpha\\beta} \\to 0$. The equation simplifies to $\\frac{d^2 x^\\mu}{d\\tau^2} = 0$, recovering Newton's First Law as expressed in Special Relativity. For massless particles like photons, the proper time $\\tau$ is ill-defined. An affine parameter $\\lambda$ must be used instead, but the form of the equation remains identical.",
         "symmetry_origin": "The geodesic equation is a direct consequence of the principle of general covariance (diffeomorphism invariance), which states that the laws of physics must be independent of the choice of coordinate system. It can be derived as the Euler-Lagrange equation from a variational principle, specifically by extremizing the action $S = -m c \\int ds$, which is equivalent to extremizing the proper time $\\tau = \\int ds/c$ along a worldline.",
         "unit_system": "SI",
-        "derivation_type": "SPECIAL_CASE",
+        "derivation_type": "VARIATIONAL_PRINCIPLE",
         "equation_family": "general-relativity",
         "semantic_variables": {
             "x^\\mu": {
@@ -3128,7 +3155,7 @@
                 "description": "A dummy index summed over from 0 to 3 according to the Einstein summation convention."
             }
         },
-        "equation": "\\frac{d^2 x^\\mu}{d\\tau^2} + \\Gamma^\\mu_{\\alpha\\beta} \\frac{d x^\\alpha}{d\\tau} \\frac{d x^\\beta}{d\\tau} = 0)\\n, in a coordinate system where the Christoffel symbols (",
+        "equation": "\\frac{d^2 x^\\mu}{d\\tau^2} + \\Gamma^\\mu_{\\alpha\\beta} \\frac{d x^\\alpha}{d\\tau} \\frac{d x^\\beta}{d\\tau} = 0",
         "status": "published",
         "parent_formula_id": "parallel-transport-a252f306",
         "subcomponents": [
@@ -3137,7 +3164,34 @@
             "geodesic-equation-parametrized"
         ],
         "id": "geodesic-equation-in-general-relativity-e9a37d9e",
-        "intuitive_summary": "Imagine a stretched rubber sheet with a heavy ball in the center, causing a dip. A marble rolled across the sheet will follow a curved path not because a force is pulling it, but because that is the straightest possible path in the curved geometry of the sheet. The geodesic equation mathematically describes this 'straightest path' for a particle in the curved four-dimensional spacetime of our universe."
+        "intuitive_summary": "Imagine a stretched rubber sheet with a heavy ball in the center, causing a dip. A marble rolled across the sheet will follow a curved path not because a force is pulling it, but because that is the straightest possible path in the curved geometry of the sheet. The geodesic equation mathematically describes this 'straightest path' for a particle in the curved four-dimensional spacetime of our universe.",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "S = -m c \\int d\\tau = -m c \\int \\sqrt{-g_{\\mu\\nu}(x)\\dot{x}^\\mu \\dot{x}^\\nu} \\, d\\lambda \\quad (\\dot{x}^\\mu \\equiv dx^\\mu/d\\lambda)",
+                "rationale": "Formulate the action $S$ for a free point particle of mass $m$ traversing curved spacetime, extremizing proper time $\\tau$ parameterized by affine parameter $\\lambda$."
+            },
+            {
+                "step": 2,
+                "latex": "L(x, \\dot{x}) = \\frac{1}{2}g_{\\mu\\nu}(x)\\dot{x}^\\mu \\dot{x}^\\nu",
+                "rationale": "Adopt the equivalent quadratic Lagrangian along affine parameterization where $d\\tau = d\\lambda$, generating identical extremal worldlines $\\delta S = 0$."
+            },
+            {
+                "step": 3,
+                "latex": "\\frac{\\partial L}{\\partial x^\\sigma} = \\frac{1}{2}(\\partial_\\sigma g_{\\mu\\nu})\\dot{x}^\\mu \\dot{x}^\\nu, \\quad \\frac{\\partial L}{\\partial \\dot{x}^\\sigma} = g_{\\sigma\\mu}\\dot{x}^\\mu",
+                "rationale": "Compute the functional derivatives of the Lagrangian with respect to spacetime coordinates and four-velocities."
+            },
+            {
+                "step": 4,
+                "latex": "\\frac{d}{d\\tau}\\left(\\frac{\\partial L}{\\partial \\dot{x}^\\sigma}\\right) - \\frac{\\partial L}{\\partial x^\\sigma} = 0 \\implies g_{\\sigma\\mu}\\ddot{x}^\\mu + (\\partial_\\alpha g_{\\sigma\\mu})\\dot{x}^\\alpha \\dot{x}^\\mu - \\frac{1}{2}(\\partial_\\sigma g_{\\mu\\nu})\\dot{x}^\\mu \\dot{x}^\\nu = 0",
+                "rationale": "Apply the Euler-Lagrange equations and expand the total proper time derivative using the chain rule $\\frac{d}{d\\tau}g_{\\sigma\\mu} = (\\partial_\\alpha g_{\\sigma\\mu})\\dot{x}^\\alpha$."
+            },
+            {
+                "step": 5,
+                "latex": "g_{\\sigma\\mu}\\ddot{x}^\\mu + \\frac{1}{2}(\\partial_\\alpha g_{\\sigma\\beta} + \\partial_\\beta g_{\\sigma\\alpha} - \\partial_\\sigma g_{\\alpha\\beta})\\dot{x}^\\alpha \\dot{x}^\\beta = 0 \\implies \\ddot{x}^\\mu + \\Gamma^\\mu_{\\alpha\\beta}\\dot{x}^\\alpha \\dot{x}^\\beta = 0",
+                "rationale": "Symmetrize indices, contract with the inverse metric $g^{\\rho\\sigma}$, and identify the Christoffel symbols of the second kind $\\Gamma^\\mu_{\\alpha\\beta}$ to yield the geodesic equation."
+            }
+        ]
     },
     "oscillating-electric-dipole-identity-0e9beea9": {
         "title": "Custom Physical Relation",

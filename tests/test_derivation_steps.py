@@ -66,7 +66,19 @@ def test_canonical_formulas_have_derivation_steps():
         "bernoulli-constant-standard-form-ff90fb4b",
         "jeans-mass-critical-threshold-21a223b3",
         "chandrasekhar-limit-88f98df2-31bbfff0-c5efb2d1",
-        "stefan-boltzmann-law"
+        "stefan-boltzmann-law",
+        "total-field-56c1f6d7",
+        "matrix-math-8b8a3af3",
+        "unified-wave-3e179f6c",
+        "technical-relation-02b01ceb",
+        "free-waves-2fc9d212",
+        "fermi-golden-rule-interaction-024fbf64",
+        "maxwell-boltzmann-speed-distribution",
+        "dimensional-reduction-42f3bbfb",
+        "recombination-era-identity-1-f2d0deec-439586e5",
+        "geodesic-equation-in-general-relativity-e9a37d9e",
+        "relativistic-edge-6bd78c24",
+        "geometric-bending-32fd3f54"
     ]
     found = {}
     for shard in get_all_shards():
@@ -119,4 +131,4 @@ def test_all_derivation_steps_schema_and_tex_integrity():
                         unescaped_dollars = rat.count("$") - rat.count("\\$")
                         assert unescaped_dollars % 2 == 0, f"Unbalanced math dollar delimiters in {fid} rationale: {rat}"
 
-    assert total_with_steps >= 24, f"Expected at least 24 formulas with derivation steps, found {total_with_steps}"
+    assert total_with_steps >= 36, f"Expected at least 36 formulas with derivation steps, found {total_with_steps}"

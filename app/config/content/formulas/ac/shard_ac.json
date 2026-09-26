@@ -1269,7 +1269,34 @@
             "velocity-space-spherical-shell-area-a476a1b3"
         ],
         "parent_formula_id": "ampere-maxwell-law",
-        "derivation_type": "SPECIAL_CASE"
+        "derivation_type": "PHASE_SPACE_INTEGRATION",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "f(\\mathbf{v}) \\, d^3 v = C \\exp\\left(-\\frac{E(\\mathbf{v})}{k_B T}\\right) d^3 v = C \\exp\\left(-\\frac{m(v_x^2 + v_y^2 + v_z^2)}{2 k_B T}\\right) dv_x dv_y dv_z",
+                "rationale": "Start with the 3D canonical Boltzmann distribution for classical gas particles of mass $m$ in thermal equilibrium at temperature $T$."
+            },
+            {
+                "step": 2,
+                "latex": "\\int_{-\\infty}^\\infty \\dots \\int_{-\\infty}^\\infty f(\\mathbf{v}) d^3 v = 1 \\implies C \\left(\\int_{-\\infty}^\\infty e^{-m v_x^2 / 2k_B T} dv_x\\right)^3 = C \\left(\\frac{2\\pi k_B T}{m}\\right)^{3/2} = 1",
+                "rationale": "Normalize the 3D distribution using the product of three independent Gaussian integrals."
+            },
+            {
+                "step": 3,
+                "latex": "C = \\left(\\frac{m}{2\\pi k_B T}\\right)^{3/2} \\implies f(\\mathbf{v}) = \\left(\\frac{m}{2\\pi k_B T}\\right)^{3/2} e^{-m v^2 / 2k_B T}",
+                "rationale": "Solve for the normalization constant $C$, establishing the isotropic 3D velocity distribution function."
+            },
+            {
+                "step": 4,
+                "latex": "d^3 v = v^2 \\sin\\theta \\, dv \\, d\\theta \\, d\\phi \\implies \\int_{\\text{angles}} d^3 v = 4\\pi v^2 dv",
+                "rationale": "Transform from Cartesian velocity coordinates to spherical speed coordinates and integrate over all solid angles."
+            },
+            {
+                "step": 5,
+                "latex": "f(v)\\,dv = \\left(\\int_{\\Omega} f(\\mathbf{v})\\,d\\Omega\\right) v^2 dv = 4\\pi v^2 \\left(\\frac{m}{2\\pi k_B T}\\right)^{3/2} e^{-mv^2 / 2k_B T} dv",
+                "rationale": "Multiply the isotropic distribution by the spherical shell volume element $4\\pi v^2 dv$ to obtain the scalar speed distribution."
+            }
+        ]
     },
     "canonical-momentum-from-action": {
         "title": "Constants of Motion via Hamilton's Principal Function",

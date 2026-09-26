@@ -1047,7 +1047,34 @@
         ],
         "description": "A fundamental formula in quantum mechanics that calculates the constant transition rate (probability per unit time) from an initial quantum state to a continuum of final states due to a weak, time-independent perturbation.",
         "parent_formula_id": "schrodinger-equation-motion-identity-1-f5ccc4a5-5d51d834",
-        "derivation_type": "APPROXIMATION"
+        "derivation_type": "TIME_DEPENDENT_PERTURBATION",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "i\\hbar \\frac{dc_f(t)}{dt} = H'_{fi} e^{i\\omega_{fi} t}, \\quad \\omega_{fi} \\equiv \\frac{E_f - E_i}{\\hbar}",
+                "rationale": "Formulate the first-order Dirac time-dependent perturbation equation for transition amplitude $c_f(t)$ under perturbation $\\hat{H}'$."
+            },
+            {
+                "step": 2,
+                "latex": "c_f(t) = -\\frac{i}{\\hbar} H'_{fi} \\int_0^t e^{i\\omega_{fi} t'} dt' = -\\frac{H'_{fi}}{\\hbar} \\frac{e^{i\\omega_{fi} t} - 1}{\\omega_{fi}}",
+                "rationale": "Integrate from initial time $t=0$ where $c_i(0)=1$ and $c_f(0)=0$ under a constant perturbation turned on at $t=0$."
+            },
+            {
+                "step": 3,
+                "latex": "P_{i \\to f}(t) = |c_f(t)|^2 = \\frac{|H'_{fi}|^2}{\\hbar^2} \\frac{4\\sin^2(\\omega_{fi} t / 2)}{\\omega_{fi}^2} = \\frac{|H'_{fi}|^2 t^2}{\\hbar^2} \\text{sinc}^2\\left(\\frac{\\omega_{fi} t}{2}\\right)",
+                "rationale": "Calculate the transition probability as the squared modulus of the complex probability amplitude."
+            },
+            {
+                "step": 4,
+                "latex": "\\lim_{t \\to \\infty} \\frac{\\sin^2(\\omega t / 2)}{\\pi t (\\omega / 2)^2} = \\delta(\\omega) = \\hbar \\delta(E_f - E_i)",
+                "rationale": "Utilize the standard representation of the Dirac delta distribution in the asymptotic long-time limit $t \\to \\infty$."
+            },
+            {
+                "step": 5,
+                "latex": "\\Gamma_{i \\to f} \\equiv \\frac{dP_{i \\to f}}{dt} = \\lim_{t \\to \\infty} \\frac{P_{i \\to f}(t)}{t} = \\frac{2\\pi}{\\hbar} |\\langle f | \\hat{H}' | i \\rangle|^2 \\delta(E_f - E_i)",
+                "rationale": "Differentiate with respect to time to extract the steady-state transition rate per unit time, establishing Fermi's Golden Rule."
+            }
+        ]
     },
     "thermodynamic-potential-transform-3547a62f": {
         "title": "Differential of Helmholtz Free Energy via Legendre Transform",

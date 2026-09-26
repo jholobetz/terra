@@ -157,6 +157,11 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         <!-- Interactive Radial Constellation Canvas Container -->
         <div class="constellation-viewport" id="constellation-viewport">
             
+            <!-- Top-Left Corner Highlighted Subtopic Title -->
+            <div class="universe-corner-display" id="universe-corner-display">
+                <a href="#" id="universe-corner-title" class="universe-corner-title">Select a Concept Node</a>
+            </div>
+
             <!-- SVG Radial Manifold Plane -->
             <svg id="constellation-svg" class="constellation-svg-plane" viewBox="0 0 1100 580" preserveAspectRatio="xMidYMid meet">
                 <defs>
@@ -426,6 +431,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     const hudAbstractBody = document.getElementById('hud-abstract-body');
     const hudBtnPrimary = document.getElementById('hud-btn-primary');
     const hudBtnExplainer = document.getElementById('hud-btn-explainer');
+    const universeCornerTitle = document.getElementById('universe-corner-title');
 
     // View Mode Toggles
     const btnModeOrbit = document.getElementById('btn-mode-orbit');
@@ -581,6 +587,14 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         // Title and Link
         hudConceptTitle.innerHTML = `<a href="/physics/subtopic/${slug}" class="hud-title-link">${data.title}</a>`;
         hudBtnPrimary.href = `/physics/subtopic/${slug}`;
+
+        if (universeCornerTitle) {
+            universeCornerTitle.innerHTML = data.title;
+            universeCornerTitle.href = `/physics/subtopic/${slug}`;
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([universeCornerTitle]).catch(() => {});
+            }
+        }
 
         // Pillar Narrative
         if (data.pillar_narrative) {
@@ -1140,6 +1154,32 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.universe-corner-display {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    z-index: 5;
+    pointer-events: auto;
+    max-width: 480px;
+}
+
+.universe-corner-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    line-height: 1.25;
+    display: inline-block;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.6);
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+.universe-corner-title:hover {
+    color: var(--accent-color, #64ffda);
+    text-shadow: 0 0 12px var(--accent-color, #64ffda);
+}
+
 .constellation-svg-plane {
     width: 100%;
     height: 520px;
@@ -1218,6 +1258,14 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 }
 
 @media (max-width: 768px) {
+    .universe-corner-display {
+        top: 14px;
+        left: 16px;
+        max-width: 80%;
+    }
+    .universe-corner-title {
+        font-size: 1.15rem;
+    }
     .hud-row-header {
         flex-direction: column;
         align-items: flex-start;

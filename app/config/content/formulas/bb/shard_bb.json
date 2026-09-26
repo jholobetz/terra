@@ -524,7 +524,34 @@
         "conceptual_definition": "The London Equation describes the spatial decay of a magnetic field inside a superconductor. It is a fundamental equation in the theory of superconductivity, specifically for Type I superconductors, and arises from the interplay between Maxwell's equations and the Ginzburg-Landau theory. It quantifies the magnetic field's penetration depth, known as the London penetration depth.",
         "intuitive_summary": "The magnetic field decays exponentially inside a superconductor over a characteristic length scale, the London penetration depth.",
         "parent_formula_id": "ampere-maxwell-law",
-        "derivation_type": "SPECIAL_CASE"
+        "derivation_type": "SUPERCONDUCTING_ELECTRODYNAMICS",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "m_s \\frac{d\\mathbf{v}_s}{dt} = q_s \\mathbf{E} \\implies \\frac{\\partial \\mathbf{J}_s}{\\partial t} = \\frac{n_s q_s^2}{m_s}\\mathbf{E} \\quad (\\text{First London Equation})",
+                "rationale": "Model superconducting carriers of mass $m_s$, charge $q_s$, and density $n_s$ accelerating without resistance under an applied electric field, where $\\mathbf{J}_s = n_s q_s \\mathbf{v}_s$."
+            },
+            {
+                "step": 2,
+                "latex": "\\frac{\\partial}{\\partial t}(\\nabla \\times \\mathbf{J}_s) = \\frac{n_s q_s^2}{m_s}(\\nabla \\times \\mathbf{E}) = -\\frac{n_s q_s^2}{m_s}\\frac{\\partial \\mathbf{B}}{\\partial t}",
+                "rationale": "Take the curl of both sides and substitute Faraday's law of electromagnetic induction $\\nabla \\times \\mathbf{E} = -\\partial\\mathbf{B}/\\partial t$."
+            },
+            {
+                "step": 3,
+                "latex": "\\nabla \\times \\mathbf{J}_s = -\\frac{n_s q_s^2}{m_s}\\mathbf{B} \\quad (\\text{Second London Equation})",
+                "rationale": "Integrate with respect to time and set the integration constant to zero, embodying the Meissner effect where static interior magnetic flux is expelled."
+            },
+            {
+                "step": 4,
+                "latex": "\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J}_s \\implies \\nabla \\times (\\nabla \\times \\mathbf{B}) = \\mu_0 (\\nabla \\times \\mathbf{J}_s) = -\\frac{\\mu_0 n_s q_s^2}{m_s}\\mathbf{B}",
+                "rationale": "Take the curl of Ampère's circuital law in magnetostatic equilibrium and substitute the Second London Equation."
+            },
+            {
+                "step": 5,
+                "latex": "\\nabla \\times (\\nabla \\times \\mathbf{B}) = \\nabla(\\nabla \\cdot \\mathbf{B}) - \\nabla^2 \\mathbf{B} = -\\nabla^2 \\mathbf{B} \\implies \\nabla^2 \\mathbf{B} = \\frac{1}{\\lambda_L^2}\\mathbf{B}, \\quad \\lambda_L \\equiv \\sqrt{\\frac{m_s}{\\mu_0 n_s q_s^2}}",
+                "rationale": "Apply $\\nabla \\cdot \\mathbf{B} = 0$ to arrive at the Helmholtz screening equation, demonstrating exponential magnetic flux expulsion with London penetration depth $\\lambda_L$."
+            }
+        ]
     },
     "combined-mass-law-34557da1": {
         "title": "Super-Chandrasekhar Binary Merger Mass Condition",
@@ -1003,7 +1030,34 @@
             "cube-of-light-speed-97100d33"
         ],
         "parent_formula_id": "causal-metric-spacetime-interval-b2aee666",
-        "derivation_type": "SPECIAL_CASE"
+        "derivation_type": "HORIZON_SURFACE_GRAVITY",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "ds^2 = -\\left(1 - \\frac{2GM}{c^2 r}\\right)c^2 dt^2 + \\left(1 - \\frac{2GM}{c^2 r}\\right)^{-1}dr^2 + r^2 d\\Omega^2",
+                "rationale": "Consider the exterior Schwarzschild metric with event horizon radius $r_s = 2GM/c^2$."
+            },
+            {
+                "step": 2,
+                "latex": "\\kappa \\equiv \\lim_{r \\to r_s} \\frac{1}{2\\sqrt{-g_{00} g_{rr}}}\\left|\\frac{\\partial g_{00}}{\\partial r}\\right| = \\frac{c^2}{4GM}",
+                "rationale": "Calculate the black hole event horizon surface gravity $\\kappa$, measuring the redshifted acceleration required to hold a test mass at the horizon."
+            },
+            {
+                "step": 3,
+                "latex": "t \\to -i \\tau_E \\implies ds^2 = \\left(1 - \\frac{r_s}{r}\\right)c^2 d\\tau_E^2 + \\left(1 - \\frac{r_s}{r}\\right)^{-1}dr^2",
+                "rationale": "Perform Wick rotation to Euclidean signature spacetime with imaginary time coordinate $\\tau_E$."
+            },
+            {
+                "step": 4,
+                "latex": "\\rho \\equiv \\sqrt{r - r_s} \\implies ds^2 \\approx \\rho^2 \\left(\\frac{\\kappa}{c}\\right)^2 d\\tau_E^2 + \\left(\\frac{2 c^2}{\\kappa}\\right)^2 d\\rho^2 \\implies \\Delta\\tau_E = \\frac{2\\pi c}{\\kappa}",
+                "rationale": "Expand near the horizon $\\rho \\to 0$ into standard 2D polar coordinates, identifying the required thermal Euclidean time period $\\beta_E = 2\\pi c/\\kappa$ to eliminate conical singularities."
+            },
+            {
+                "step": 5,
+                "latex": "k_B T_H = \\frac{\\hbar}{\\beta_E} = \\frac{\\hbar \\kappa}{2\\pi c} = \\frac{\\hbar c^3}{8\\pi G M} \\implies T_H = \\frac{\\hbar c^3}{8\\pi G M k_B}",
+                "rationale": "Relate the Euclidean periodicity to KMS thermal equilibrium temperature, establishing Hawking's black hole radiation temperature."
+            }
+        ]
     },
     "magnetic-field-strength": {
         "title": "Magnetic Field Strength",

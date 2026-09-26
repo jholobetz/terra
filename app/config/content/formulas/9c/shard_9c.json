@@ -263,7 +263,34 @@
         ],
         "description": "Expresses the canonical Noether four-current associated with a continuous global symmetry transformation of a field theory Lagrangian density.",
         "parent_formula_id": "noether-current-general-form-794646eb",
-        "derivation_type": "SPECIAL_CASE"
+        "derivation_type": "CONTINUOUS_SYMMETRY_INVARIANCE",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\phi(x) \\to \\phi'(x) = \\phi(x) + \\alpha \\, \\delta\\phi(x) \\implies \\delta S = \\int d^4 x \\, \\delta\\mathcal{L} = 0",
+                "rationale": "Consider an infinitesimal continuous global symmetry transformation parameterized by constant $\\alpha$, leaving the action integral invariant."
+            },
+            {
+                "step": 2,
+                "latex": "\\delta\\mathcal{L} = \\frac{\\partial \\mathcal{L}}{\\partial \\phi}\\delta\\phi + \\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)}\\delta(\\partial_\\mu \\phi)",
+                "rationale": "Compute the first-order variation of the Lagrangian density $\\mathcal{L}(\\phi, \\partial_\\mu \\phi)$ under the field variation."
+            },
+            {
+                "step": 3,
+                "latex": "\\delta(\\partial_\\mu \\phi) = \\partial_\\mu(\\delta\\phi), \\quad \\frac{\\partial \\mathcal{L}}{\\partial \\phi} = \\partial_\\mu\\left(\\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)}\\right)",
+                "rationale": "Commute variation with spacetime derivatives and substitute the Euler-Lagrange equations of motion for field $\\phi$."
+            },
+            {
+                "step": 4,
+                "latex": "\\delta\\mathcal{L} = \\partial_\\mu\\left(\\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)}\\right)\\delta\\phi + \\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)}\\partial_\\mu(\\delta\\phi) = \\partial_\\mu\\left[\\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)}\\delta\\phi\\right]",
+                "rationale": "Combine the two terms into a total spacetime four-divergence via the product rule."
+            },
+            {
+                "step": 5,
+                "latex": "J^\\mu \\equiv \\frac{\\partial \\mathcal{L}}{\\partial (\\partial_\\mu \\phi)}\\delta\\phi \\implies \\partial_\\mu J^\\mu = 0",
+                "rationale": "Define the Noether four-current $J^\\mu$, demonstrating that symmetry invariance $\\delta\\mathcal{L} = 0$ implies exact local four-current conservation."
+            }
+        ]
     },
     "arrow-origin-3ae63146": {
         "title": "Unit Normal Vector to a Level Surface of a Scalar Field",
@@ -1147,7 +1174,7 @@
         },
         "status": "platinum",
         "parent_formula_id": "tov-hydrostatic-equilibrium-gr-3e08c07d",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "EINSTEIN_FIELD_SOL",
         "conceptual_definition": "The Tolman-Oppenheimer-Volkoff (TOV) equation is the general relativistic extension of the Newtonian equation of hydrostatic equilibrium. It describes the radial pressure gradient $dP/dr$ inside a spherically symmetric, static star composed of an isotropic fluid. The three bracketed terms represent purely relativistic corrections: the first accounts for the gravitational contribution of pressure, the second for the mass-energy of pressure in the interior volume, and the third is a geometric metric correction.",
         "intuitive_summary": "The TOV equation describes the balance between gas pressure and gravity in general relativity, determining the internal structure of highly compact objects like neutron stars.",
         "subcomponents": [
@@ -1156,6 +1183,33 @@
             "geometric-factor-a8878bcc",
             "relativistic-equilibrium-astrophysics-identity-1bddff3b",
             "relativistic-equilibrium-astrophysics-identity-9544479c"
+        ],
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "ds^2 = -e^{2\\Phi(r)} c^2 dt^2 + \\left(1 - \\frac{2GM(r)}{c^2 r}\\right)^{-1}dr^2 + r^2 d\\Omega^2, \\quad M(r) = \\int_0^r 4\\pi r'^2 \\rho(r') dr'",
+                "rationale": "Adopt the static, spherically symmetric interior metric line element sourced by enclosed gravitational mass $M(r)$."
+            },
+            {
+                "step": 2,
+                "latex": "T^\\mu_{\\ \\nu} = \\text{diag}(-\\rho c^2, P, P, P)",
+                "rationale": "Represent interior stellar matter as a static perfect fluid with energy density $\\rho(r)$ and isotropic pressure $P(r)$."
+            },
+            {
+                "step": 3,
+                "latex": "\\nabla_\\mu T^\\mu_{\\ r} = 0 \\implies \\frac{dP}{dr} = -(\\rho c^2 + P)\\frac{d\\Phi}{dr}",
+                "rationale": "Enforce local energy-momentum conservation $\\nabla_\\mu T^{\\mu\\nu} = 0$, relating the radial pressure gradient to the metric potential gradient $d\\Phi/dr$."
+            },
+            {
+                "step": 4,
+                "latex": "G^r_{\\ r} = \\frac{8\\pi G}{c^4} T^r_{\\ r} \\implies \\frac{d\\Phi}{dr} = \\frac{G}{c^2 r^2}\\left[M(r) + \\frac{4\\pi r^3 P}{c^2}\\right]\\left(1 - \\frac{2GM(r)}{c^2 r}\\right)^{-1}",
+                "rationale": "Solve the radial Einstein field equation $G^r_{\\ r} = \\frac{8\\pi G}{c^4} P$ to determine the gravitational metric acceleration potential $d\\Phi/dr$."
+            },
+            {
+                "step": 5,
+                "latex": "\\frac{dP}{dr} = -\\frac{G M(r) \\rho}{r^2} \\left(1 + \\frac{P}{\\rho c^2}\\right)\\left(1 + \\frac{4\\pi r^3 P}{M(r)c^2}\\right)\\left(1 - \\frac{2GM(r)}{c^2 r}\\right)^{-1}",
+                "rationale": "Substitute $d\\Phi/dr$ into the radial pressure gradient to establish the Tolman-Oppenheimer-Volkoff relativistic hydrostatic equilibrium equation."
+            }
         ]
     },
     "cst-number-identity-1-7550cc4e-b09294e4": {

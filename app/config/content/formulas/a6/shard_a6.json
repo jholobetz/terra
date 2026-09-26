@@ -764,7 +764,34 @@
         ],
         "description": "Describes the low-temperature lattice heat capacity of a crystalline dielectric or metal, exhibiting the characteristic cubic scaling with temperature ($T^3$).",
         "parent_formula_id": "debye-temperature-66489c6c",
-        "derivation_type": "APPROXIMATION"
+        "derivation_type": "PHONON_DENSITY_OF_STATES",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "g(\\omega) = \\frac{3V\\omega^2}{2\\pi^2 v_s^3}, \\quad \\int_0^{\\omega_D} g(\\omega)\\,d\\omega = 3N \\implies \\omega_D = v_s\\left(6\\pi^2\\frac{N}{V}\\right)^{1/3}",
+                "rationale": "Adopt Debye's continuum model of acoustic phonons with linear dispersion $\\omega = v_s k$, cut off at Debye frequency $\\omega_D$ to normalize total vibrational modes to $3N$."
+            },
+            {
+                "step": 2,
+                "latex": "U(T) = \\int_0^{\\omega_D} \\frac{\\hbar\\omega}{e^{\\hbar\\omega/k_B T} - 1} g(\\omega)\\,d\\omega = \\frac{9N\\hbar}{\\omega_D^3}\\int_0^{\\omega_D} \\frac{\\omega^3}{e^{\\hbar\\omega/k_B T} - 1}\\,d\\omega",
+                "rationale": "Integrate the Planck harmonic oscillator energy over the density of vibrational states to find the total internal thermal lattice energy."
+            },
+            {
+                "step": 3,
+                "latex": "x \\equiv \\frac{\\hbar\\omega}{k_B T}, \\quad x_D \\equiv \\frac{\\hbar\\omega_D}{k_B T} = \\frac{\\Theta_D}{T} \\implies U(T) = 9N k_B T \\left(\\frac{T}{\\Theta_D}\\right)^3 \\int_0^{x_D} \\frac{x^3}{e^x - 1}\\,dx",
+                "rationale": "Transform to dimensionless variable $x$, defining the characteristic Debye temperature $\\Theta_D \\equiv \\hbar\\omega_D / k_B$."
+            },
+            {
+                "step": 4,
+                "latex": "T \\ll \\Theta_D \\implies x_D \\to \\infty, \\quad \\int_0^\\infty \\frac{x^3}{e^x - 1}\\,dx = \\frac{\\pi^4}{15} \\implies U(T) \\approx \\frac{3\\pi^4}{5} N k_B T \\left(\\frac{T}{\\Theta_D}\\right)^3",
+                "rationale": "Take the low-temperature limit $T \\ll \\Theta_D$ where the upper integration bound extends to infinity, evaluating the Riemann zeta integral."
+            },
+            {
+                "step": 5,
+                "latex": "C_V \\equiv \\frac{\\partial U}{\\partial T} = \\frac{\\partial}{\\partial T}\\left[\\frac{3\\pi^4}{5} N k_B \\frac{T^4}{\\Theta_D^3}\\right] = \\frac{12\\pi^4}{5} N k_B \\left(\\frac{T}{\\Theta_D}\\right)^3",
+                "rationale": "Differentiate internal energy with respect to temperature to establish Debye's $T^3$ lattice heat capacity law."
+            }
+        ]
     },
     "gauge-boson-count-sun-f4919278": {
         "title": "Dimension of the Special Unitary Gauge Lie Algebra SU(N)",

@@ -948,7 +948,34 @@
             "material-acceleration-of-fluid-element-d7327a65"
         ],
         "parent_formula_id": "incompressibility-condition-fluid",
-        "derivation_type": "SPECIAL_CASE"
+        "derivation_type": "CAUCHY_CONTINUUM_MOMENTUM",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\rho \\frac{D\\mathbf{v}}{Dt} = \\rho\\left[\\frac{\\partial \\mathbf{v}}{\\partial t} + (\\mathbf{v}\\cdot\\nabla)\\mathbf{v}\\right] = \\nabla \\cdot \\boldsymbol{\\sigma} + \\mathbf{f}",
+                "rationale": "Start with Cauchy's momentum equation for continuum mechanics, relating material acceleration to internal stress tensor $\\boldsymbol{\\sigma}$ and body forces $\\mathbf{f}$."
+            },
+            {
+                "step": 2,
+                "latex": "\\boldsymbol{\\sigma} = -P \\mathbf{I} + \\boldsymbol{\\tau}",
+                "rationale": "Decompose the total stress tensor into isotropic thermodynamic pressure $P$ and viscous deviatoric shear stress tensor $\\boldsymbol{\\tau}$."
+            },
+            {
+                "step": 3,
+                "latex": "\\tau_{ij} = 2\\mu \\varepsilon_{ij} + \\lambda (\\nabla \\cdot \\mathbf{v})\\delta_{ij}, \\quad \\varepsilon_{ij} = \\frac{1}{2}\\left(\\frac{\\partial v_i}{\\partial x_j} + \\frac{\\partial v_j}{\\partial x_i}\\right)",
+                "rationale": "Apply the Stokesian constitutive relation for an isotropic Newtonian fluid, expressing viscous stress in terms of dynamic shear viscosity $\\mu$, bulk viscosity $\\lambda$, and strain rate $\\varepsilon_{ij}$."
+            },
+            {
+                "step": 4,
+                "latex": "\\nabla \\cdot \\boldsymbol{\\tau} = \\mu \\nabla^2 \\mathbf{v} + (\\lambda + \\mu)\\nabla(\\nabla \\cdot \\mathbf{v})",
+                "rationale": "Compute the divergence of the viscous stress tensor, grouping the vector Laplacian and velocity divergence gradient terms."
+            },
+            {
+                "step": 5,
+                "latex": "\\rho \\left( \\frac{\\partial \\mathbf{v}}{\\partial t} + (\\mathbf{v} \\cdot \\nabla)\\mathbf{v} \\right) = -\\nabla P + \\mu \\nabla^2 \\mathbf{v} + (\\lambda + \\mu) \\nabla (\\nabla \\cdot \\mathbf{v}) + \\mathbf{f}",
+                "rationale": "Assemble the pressure gradient, viscous dissipation, and external body force terms to establish the full compressible Navier-Stokes momentum equation."
+            }
+        ]
     },
     "degenerate-fermi-momentum-ac3b3cdf": {
         "title": "Fermi Momentum of a Degenerate Electron Gas",

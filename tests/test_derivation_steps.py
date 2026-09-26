@@ -78,7 +78,19 @@ def test_canonical_formulas_have_derivation_steps():
         "recombination-era-identity-1-f2d0deec-439586e5",
         "geodesic-equation-in-general-relativity-e9a37d9e",
         "relativistic-edge-6bd78c24",
-        "geometric-bending-32fd3f54"
+        "geometric-bending-32fd3f54",
+        "noether-rule-58a13a95",
+        "higgs-kibble-mechanism-identity-1-246b2a79-548a3047",
+        "classical-yukawa-potential-pole-7e982f85",
+        "yang-mills-curvature-general-3f6b1546",
+        "debye-specific-heat-90ea8693",
+        "london-equation-8bf340c8",
+        "superconducting-gap-equation-ident-4f2aa7e5",
+        "hall-conductivity-quantization-law-5524fc65",
+        "navier-stokes-momentum-viscous-form-7b93eee6",
+        "tov-equation-identity-1-6e8eb3b1-43637a35",
+        "hawking-temperature-schwarzschild",
+        "friedmann-acceleration-equation-expansion-4aa65f2c"
     ]
     found = {}
     for shard in get_all_shards():
@@ -131,4 +143,4 @@ def test_all_derivation_steps_schema_and_tex_integrity():
                         unescaped_dollars = rat.count("$") - rat.count("\\$")
                         assert unescaped_dollars % 2 == 0, f"Unbalanced math dollar delimiters in {fid} rationale: {rat}"
 
-    assert total_with_steps >= 36, f"Expected at least 36 formulas with derivation steps, found {total_with_steps}"
+    assert total_with_steps >= 48, f"Expected at least 48 formulas with derivation steps, found {total_with_steps}"

@@ -678,7 +678,34 @@
         ],
         "description": "Describes the potential energy for a short-range interaction mediated by a massive particle, characterized by an exponential decay factor that 'screens' a standard inverse-distance potential.",
         "parent_formula_id": "field-equations-identity-1-957bee7d-ae08e88c",
-        "derivation_type": "DERIVED_FROM"
+        "derivation_type": "GREENS_FUNCTION_INVERSION",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "(\\nabla^2 - \\mu^2)\\phi(\\mathbf{r}) = g \\delta^3(\\mathbf{r}) \\quad \\left(\\mu \\equiv \\frac{mc}{\\hbar}\\right)",
+                "rationale": "Consider the static limit of the Klein-Gordon field equation sourced by a point coupling charge $g$ at the origin, with inverse Compton screening length $\\mu$."
+            },
+            {
+                "step": 2,
+                "latex": "\\frac{1}{r}\\frac{d^2}{dr^2}(r \\phi) - \\mu^2 \\phi = 0 \\quad (r > 0)",
+                "rationale": "Express the Laplacian in spherically symmetric radial coordinates away from the point source at $r=0$."
+            },
+            {
+                "step": 3,
+                "latex": "u(r) \\equiv r \\phi(r) \\implies \\frac{d^2 u}{dr^2} - \\mu^2 u = 0 \\implies u(r) = A e^{-\\mu r} + B e^{+\\mu r}",
+                "rationale": "Solve the homogeneous second-order linear radial differential equation."
+            },
+            {
+                "step": 4,
+                "latex": "\\lim_{r \\to \\infty} \\phi(r) = 0 \\implies B = 0 \\implies \\phi(r) = A \\frac{e^{-\\mu r}}{r}",
+                "rationale": "Enforce asymptotic decay boundary conditions at infinity, discarding the unphysical exponentially diverging solution."
+            },
+            {
+                "step": 5,
+                "latex": "\\lim_{\\mu \\to 0} \\nabla^2 \\phi = g \\delta^3(\\mathbf{r}) \\implies A = -\\frac{g}{4\\pi} \\implies V(r) \\propto -g^2 \\frac{e^{-\\mu r}}{r}",
+                "rationale": "Match the short-range limit $r \\to 0$ to the Coulomb Poisson Green's function to determine normalization, establishing the screened Yukawa potential."
+            }
+        ]
     },
     "mass-continuity-stellar-relation-c1b59288": {
         "title": "Mass Continuity Equation for Stellar Structure",

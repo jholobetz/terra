@@ -1297,8 +1297,9 @@ class PhysicsService
 
             $db->runQuery("COMMIT");
 
-            // 4a. Compile formula LaTeX index for fast lookup
-            $latexIndex = [];
+            // 4a. Compile formula LaTeX index for fast lookup (preserving existing prose aliases)
+            $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
+            $latexIndex = file_exists($indexFile) ? (json_decode(file_get_contents($indexFile), true) ?: []) : [];
             foreach ($formulaFiles as $file) {
                 $content = json_decode(file_get_contents($file), true) ?: [];
                 foreach ($content as $fId => $fData) {

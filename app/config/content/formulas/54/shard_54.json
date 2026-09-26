@@ -1038,10 +1038,37 @@
         "conceptual_definition": "The BCS gap equation is a self-consistency condition that determines the magnitude of the superconducting energy gap $\\Delta(k)$ in a superconductor. The provided form represents the core self-consistency relation, often seen at zero temperature or as the fundamental structure. In its full temperature-dependent form, it includes a thermal factor (e.g., $\\tanh(E(k') / (2 k_B T))$) within the summation. It arises from a mean-field approximation of the attractive electron-electron interaction mediated by phonons, leading to the formation of Cooper pairs. The equation states that the gap at a given momentum $\\mathbf{k}$ depends on the average of the gap over all other momentum states $\\mathbf{k}'$, weighted by the interaction potential $V(\\mathbf{k},\\mathbf{k}')$ and a factor related to the quasiparticle energy $E(\\mathbf{k}')$.",
         "intuitive_summary": "Imagine electrons in a metal usually repel each other. In a superconductor, they can weakly attract each other, forming 'Cooper pairs.' The BCS gap equation is like a self-fulfilling prophecy: the strength of this attraction (the 'gap') depends on how many other electrons are also forming pairs, and how strongly they interact. It's a feedback loop that determines the energy cost to break a Cooper pair.",
         "description": "This integral equation, central to the Bardeen-Cooper-Schrieffer (BCS) theory of superconductivity, describes the self-consistent determination of the superconducting energy gap $\\Delta(k)$ at a given temperature $T$. It quantifies the attractive interaction between electrons that leads to the formation of Cooper pairs.",
-        "derivation_type": "AXIOMATIC_FOUNDATION",
+        "derivation_type": "BOGOLIUBOV_VALATIN_TRANSFORMATION",
         "subcomponents": [
             "bcs-coherence-length-zero-temperature-6fd0147e",
             "superconducting-coherence-length-scale-6fd0147e"
+        ],
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "H_{\\text{BCS}} = \\sum_{\\mathbf{k}\\sigma} \\xi_{\\mathbf{k}} c_{\\mathbf{k}\\sigma}^\\dagger c_{\\mathbf{k}\\sigma} + \\sum_{\\mathbf{k}\\mathbf{k}'} V_{\\mathbf{k}\\mathbf{k}'} c_{\\mathbf{k}\\uparrow}^\\dagger c_{-\\mathbf{k}\\downarrow}^\\dagger c_{-\\mathbf{k}'\\downarrow} c_{\\mathbf{k}'\\uparrow}",
+                "rationale": "Formulate the effective reduced BCS pairing Hamiltonian with attractive phonon-mediated interaction $V_{\\mathbf{k}\\mathbf{k}'} < 0$ between time-reversed electron pairs."
+            },
+            {
+                "step": 2,
+                "latex": "\\Delta_{\\mathbf{k}} \\equiv -\\sum_{\\mathbf{k}'} V_{\\mathbf{k}\\mathbf{k}'} \\langle c_{-\\mathbf{k}'\\downarrow} c_{\\mathbf{k}'\\uparrow} \\rangle",
+                "rationale": "Apply mean-field approximation, defining the pairing order parameter gap $\\Delta_{\\mathbf{k}}$ from the Cooper pair expectation value."
+            },
+            {
+                "step": 3,
+                "latex": "\\gamma_{\\mathbf{k}0} = u_{\\mathbf{k}} c_{\\mathbf{k}\\uparrow} - v_{\\mathbf{k}} c_{-\\mathbf{k}\\downarrow}^\\dagger, \\quad \\gamma_{\\mathbf{k}1}^\\dagger = v_{\\mathbf{k}} c_{\\mathbf{k}\\uparrow} + u_{\\mathbf{k}} c_{-\\mathbf{k}\\downarrow}^\\dagger",
+                "rationale": "Perform the Bogoliubov-Valatin canonical transformation to diagonalize the mean-field Hamiltonian into free fermionic Bogoliubov quasiparticles."
+            },
+            {
+                "step": 4,
+                "latex": "E_{\\mathbf{k}} = \\sqrt{\\xi_{\\mathbf{k}}^2 + |\\Delta_{\\mathbf{k}}|^2}, \\quad u_{\\mathbf{k}} v_{\\mathbf{k}} = \\frac{\\Delta_{\\mathbf{k}}}{2E_{\\mathbf{k}}}",
+                "rationale": "Obtain the quasiparticle dispersion relation $E_{\\mathbf{k}}$ with energy gap $\\Delta_{\\mathbf{k}}$ and determine the coherence factor product $u_{\\mathbf{k}} v_{\\mathbf{k}}$."
+            },
+            {
+                "step": 5,
+                "latex": "\\langle c_{-\\mathbf{k}\\downarrow} c_{\\mathbf{k}\\uparrow} \\rangle = u_{\\mathbf{k}} v_{\\mathbf{k}} \\xrightarrow{T=0} \\frac{\\Delta_{\\mathbf{k}}}{2E_{\\mathbf{k}}} \\implies \\Delta_{\\mathbf{k}} = -\\sum_{\\mathbf{k}'} V_{\\mathbf{k}\\mathbf{k}'} \\frac{\\Delta_{\\mathbf{k}'}}{2E_{\\mathbf{k}'}}",
+                "rationale": "Substitute coherence factors into the gap definition at zero temperature to establish the self-consistent BCS gap integral equation."
+            }
         ]
     },
     "humean-regularity-supervenience-ident-8f2ab7a9": {

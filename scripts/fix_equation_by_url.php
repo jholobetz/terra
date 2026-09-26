@@ -144,6 +144,9 @@ function sanitizeProseTeX(string $text): string {
     $text = preg_replace('/\\\\n\s*u(?=\s|\$|\b|[.,;])/u', '\\nu', $text);
     $text = preg_replace('/\\\\mu\s*u\b/u', '\\mu\\nu', $text);
     $text = preg_replace('/\\$u\\$-th/u', '$\\nu$-th', $text);
+    $text = preg_replace('/\\\\b\\\\bar\{/u', '\\bar{', $text);
+    $text = preg_replace('/\\\\b(?=\\\\bar)/u', '', $text);
+    $text = preg_replace('/\\\\bar\{([a-zA-Z\\\\]+)\}\}/u', '\\bar{$1}', $text);
     $text = preg_replace('/(?:\x08|\b|(?<=[ ($,\^_\-]))ar\{([a-zA-Z\\\\])/u', '\\bar{\\1', $text);
     $text = str_replace(["\x08eta", "\x08"], ['\\beta', ''], $text);
     $text = str_replace(["\x0crac", "\x0c"], ['\\frac', ''], $text);

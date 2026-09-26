@@ -233,39 +233,21 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         <!-- Horizontal Holographic HUD Telemetry Console (Docked Below Constellation) -->
         <aside class="holographic-hud-deck" id="constellation-hud-deck" aria-live="polite">
             
-            <!-- Column 1: Context & Pillar Framing -->
-            <div class="hud-col-meta">
-                <div class="hud-status-bar">
-                    <span class="hud-orbit-label" id="hud-orbit-label">ORBIT 01 // FOUNDATIONAL TRACK</span>
-                    <span class="hud-level-tag" id="hud-level-tag">Frontier Level</span>
-                </div>
-
-                <h2 class="hud-concept-title" id="hud-concept-title">
-                    <a href="#" id="hud-concept-link" class="hud-title-link">Select a Concept Node</a>
-                </h2>
-
-                <div class="hud-pillar-narrative" id="hud-pillar-narrative" style="display: none;">
-                    <span class="hud-glyph">§</span>
-                    <span id="hud-narrative-text" class="hud-narrative-text"></span>
-                </div>
-            </div>
-
-            <!-- Column 2: Governing Mathematical Identity -->
-            <div class="hud-col-equation">
-                <div class="hud-equation-inset" id="hud-equation-box">
-                    <div class="hud-box-header">GOVERNING IDENTITY</div>
-                    <div class="hud-equation-display" id="hud-equation-display">
-                        <span style="font-size: 0.8rem; color: #64748b; font-style: italic;">Hover or click a planetary node</span>
+            <!-- Row 1: Header Bar (Meta Badges, Concept Title, Narrative, Action Buttons) -->
+            <div class="hud-row-header">
+                <div class="hud-meta-block">
+                    <div class="hud-status-bar">
+                        <span class="hud-orbit-label" id="hud-orbit-label">ORBIT 01 // FOUNDATIONAL TRACK</span>
+                        <span class="hud-level-tag" id="hud-level-tag">Frontier Level</span>
                     </div>
-                </div>
-            </div>
 
-            <!-- Column 3: First-Principles Abstract & Action Bar -->
-            <div class="hud-col-abstract">
-                <div class="hud-abstract-card">
-                    <div class="hud-box-header">FIRST-PRINCIPLES ABSTRACT</div>
-                    <div class="hud-abstract-body subtopic-card-abstract" id="hud-abstract-body">
-                        <p>Explore the solar constellation by hovering or clicking planetary concept nodes orbiting the central axiomatic core.</p>
+                    <h2 class="hud-concept-title" id="hud-concept-title">
+                        <a href="#" id="hud-concept-link" class="hud-title-link">Select a Concept Node</a>
+                    </h2>
+
+                    <div class="hud-pillar-narrative" id="hud-pillar-narrative" style="display: none;">
+                        <span class="hud-glyph">§</span>
+                        <span id="hud-narrative-text" class="hud-narrative-text"></span>
                     </div>
                 </div>
 
@@ -280,6 +262,26 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
                     <a href="/physics/universe-graph" class="btn-hud-subtle" title="Explore in mathematical derivation DAG">
                         <span>🌌 Lineage DAG</span>
                     </a>
+                </div>
+            </div>
+
+            <!-- Row 2: Governing Mathematical Identity (Wide Horizontal Band) -->
+            <div class="hud-row-equation">
+                <div class="hud-equation-inset" id="hud-equation-box">
+                    <div class="hud-box-header">GOVERNING IDENTITY</div>
+                    <div class="hud-equation-display" id="hud-equation-display">
+                        <span style="font-size: 0.8rem; color: #64748b; font-style: italic;">Hover or click a planetary node</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: First-Principles Abstract (Wide Horizontal Band) -->
+            <div class="hud-row-abstract">
+                <div class="hud-abstract-card">
+                    <div class="hud-box-header">FIRST-PRINCIPLES ABSTRACT</div>
+                    <div class="hud-abstract-body subtopic-card-abstract" id="hud-abstract-body">
+                        <p>Explore the solar constellation by hovering or clicking planetary concept nodes orbiting the central axiomatic core.</p>
+                    </div>
                 </div>
             </div>
 
@@ -1183,28 +1185,45 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    display: grid;
-    grid-template-columns: 320px minmax(280px, 1fr) 1.25fr;
-    gap: 24px;
-    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     z-index: 10;
 }
 
-@media (max-width: 1100px) {
-    .holographic-hud-deck {
-        grid-template-columns: 1fr 1fr;
-    }
-    .hud-col-abstract {
-        grid-column: span 2;
-    }
+.hud-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hud-meta-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 280px;
+}
+
+.hud-row-equation {
+    width: 100%;
+}
+
+.hud-row-abstract {
+    width: 100%;
 }
 
 @media (max-width: 768px) {
-    .holographic-hud-deck {
-        grid-template-columns: 1fr;
+    .hud-row-header {
+        flex-direction: column;
+        align-items: flex-start;
     }
-    .hud-col-abstract {
-        grid-column: span 1;
+    .hud-actions-bar {
+        width: 100%;
     }
     .constellation-svg-plane {
         height: 380px;
@@ -1214,31 +1233,11 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     }
 }
 
-.hud-col-meta {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-.hud-col-equation {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.hud-col-abstract {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 12px;
-}
-
 .hud-status-bar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
+    gap: 10px;
+    margin-bottom: 4px;
 }
 
 .hud-orbit-label {
@@ -1278,10 +1277,10 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
 
 .hud-concept-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.35rem;
+    font-size: 1.45rem;
     font-weight: 700;
     line-height: 1.25;
-    margin: 0 0 10px;
+    margin: 0 0 4px;
 }
 
 .hud-title-link {
@@ -1300,8 +1299,9 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     gap: 8px;
     background: rgba(2, 6, 23, 0.6);
     border-left: 2px solid var(--accent-color, #64ffda);
-    padding: 8px 10px;
+    padding: 6px 10px;
     border-radius: 0 6px 6px 0;
+    margin-top: 4px;
     margin-bottom: 0;
 }
 
@@ -1332,13 +1332,14 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     background: rgba(2, 6, 23, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    padding: 12px 16px;
-    height: 100%;
+    padding: 12px 20px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     margin-bottom: 0;
+    width: 100%;
 }
 
 .hud-equation-display {
@@ -1347,6 +1348,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     align-items: center;
     overflow-x: auto;
     padding: 4px 0;
+    width: 100%;
 }
 
 .hud-equation-display svg {
@@ -1359,9 +1361,10 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     background: rgba(2, 6, 23, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 8px;
-    padding: 12px 14px;
+    padding: 12px 18px;
     margin-bottom: 0;
-    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .hud-abstract-body {
@@ -1382,8 +1385,8 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0;
+    border: none;
 }
 
 .btn-hud-primary {

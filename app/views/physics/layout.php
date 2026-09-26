@@ -11,10 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- MathJax Static-Safe Configuration -->
-    <script src="/js/mathjax_config.js"></script>
-    <script src="/js/math_prose_formatter.js"></script>
-    <script src="/js/lib/tex-svg-full.js" id="MathJax-script" defer></script>
-    <script src="/js/hub_interactions.js"></script>
+    <script src="/js/mathjax_config.js" nonce="<?= $nonce ?>"></script>
+    <script src="/js/math_prose_formatter.js" nonce="<?= $nonce ?>"></script>
+    <script src="/js/lib/tex-svg-full.js" id="MathJax-script" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/hub_interactions.js" nonce="<?= $nonce ?>"></script>
     <link rel="stylesheet" href="/css/physics.css">
     <script nonce="<?= $nonce ?>">
         const BASE_URL = '<?= (Flight::request()->base && Flight::request()->base !== '.') ? rtrim(Flight::request()->base, '/') : '' ?>';
@@ -126,9 +126,9 @@
         </div>
     </div>
 
-    <script src="/js/search_engine.js" defer></script>
-    <script src="/js/formula_inspector.js" defer></script>
-    <script src="/js/mathjax_inspector.js" defer></script>
-    <script src="/js/derivation_accordions.js" defer></script>
+    <script src="/js/search_engine.js" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/formula_inspector.js" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/mathjax_inspector.js" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/derivation_accordions.js" nonce="<?= $nonce ?>" defer></script>
 </body>
 </html>

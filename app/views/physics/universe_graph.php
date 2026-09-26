@@ -48,7 +48,7 @@
                         <span>Dirac Relativistic Equation</span>
                         <span style="font-size: 0.7rem; color: #c084fc;">QFT</span>
                     </button>
-                    <button class="hub-btn" data-id="maxwell-stress-tensor-divergence-lorentz-force-e83788ff" style="text-align: left; background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 8px 10px; color: #f1f5f9; font-size: 0.82rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
+                    <button class="hub-btn" data-id="maxwell-stress-tensor" style="text-align: left; background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 8px 10px; color: #f1f5f9; font-size: 0.82rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
                         <span>Maxwell Stress Tensor</span>
                         <span style="font-size: 0.7rem; color: #60a5fa;">Electrodynamics</span>
                     </button>
@@ -146,27 +146,31 @@
     </div>
 </div>
 
-<script src="/js/formula_graph.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/formula_graph.js') ?>" defer></script>
-<script>
+<script src="/js/formula_graph.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/formula_graph.js') ?>" nonce="<?= $nonce ?>" defer></script>
+<script nonce="<?= $nonce ?>">
 document.addEventListener('DOMContentLoaded', () => {
     const canvasContainer = document.getElementById('universe-graph-canvas');
     if (!canvasContainer || !window.FormulaLineageGraph) return;
+
+    function updateActiveCard(node) {
+        if (!node) return;
+        document.getElementById('active-card-title').innerText = node.title || node.id;
+        document.getElementById('active-card-domain').innerText = node.domain_label || node.domain || 'Physics';
+        document.getElementById('active-card-id').innerText = node.id;
+        document.getElementById('active-card-summary').innerText = node.summary || 'Click to explore mathematical details and derivations.';
+        document.getElementById('btn-open-explainer').href = `/physics/equation-explainer?id=${encodeURIComponent(node.id)}`;
+    }
 
     const universeGraph = new window.FormulaLineageGraph('universe-graph-canvas', {
         depth: 2,
         onNodeClick: (node) => {
             updateActiveCard(node);
             universeGraph.loadFormula(node.id);
+        },
+        onRootLoaded: (node) => {
+            updateActiveCard(node);
         }
     });
-
-    function updateActiveCard(node) {
-        document.getElementById('active-card-title').innerText = node.title;
-        document.getElementById('active-card-domain').innerText = node.domain_label || node.domain;
-        document.getElementById('active-card-id').innerText = node.id;
-        document.getElementById('active-card-summary').innerText = node.summary || 'Click to explore mathematical details and derivations.';
-        document.getElementById('btn-open-explainer').href = `/physics/equation-explainer?id=${encodeURIComponent(node.id)}`;
-    }
 
     // Hub selection
     document.querySelectorAll('.hub-btn').forEach(btn => {

@@ -11,7 +11,8 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
             depth: 2,
             width: 800,
             height: 400,
-            onNodeClick: null
+            onNodeClick: null,
+            onRootLoaded: null
         }, options);
 
         this.data = null;
@@ -195,6 +196,13 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
                 }
             });
         }
+
+        // Window resize
+        window.addEventListener('resize', () => {
+            if (this.data && this.data.nodes && this.data.nodes.length > 0) {
+                this.resetView();
+            }
+        });
     }
 
     updateTransform() {
@@ -203,7 +211,9 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
     resetView() {
         const rect = this.svg.getBoundingClientRect();
-        this.transform = { x: rect.width / 2, y: rect.height / 2, k: 1.0 };
+        const w = (rect && rect.width > 0) ? rect.width : (this.container.clientWidth || 800);
+        const h = (rect && rect.height > 0) ? rect.height : (this.container.clientHeight || 650);
+        this.transform = { x: w / 2, y: h / 2, k: 1.0 };
         this.updateTransform();
     }
 
@@ -221,6 +231,9 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
                 this.renderGraph(res.data);
                 if (badge) {
                     badge.innerText = `${res.data.stats.total_nodes} nodes • ${res.data.stats.total_links} links`;
+                }
+                if (typeof this.options.onRootLoaded === 'function' && res.data.root_node) {
+                    this.options.onRootLoaded(res.data.root_node);
                 }
             } else {
                 this.renderEmptyState("No direct mathematical lineage recorded for this formula.");

@@ -2052,7 +2052,7 @@
         "limits_and_boundary": "This law applies to plane waves incident on a flat interface between two homogeneous, isotropic, and non-absorbing media. It is an approximation for electromagnetic waves, valid when the wavelength is much smaller than the interface curvature and the medium's characteristic length scales. It does not explicitly account for diffraction or total internal reflection, though the latter can be predicted when the calculation for $\\sin \\theta_2$ yields a value greater than 1, indicating no real angle of refraction exists.",
         "symmetry_origin": "Snell's Law can be rigorously derived from Fermat's Principle of Least Time, which states that light travels along the path that takes the least time between two points. It can also be derived from the conservation of the component of the wave vector parallel to the interface, or from the boundary conditions for electromagnetic fields at an interface, which ensure continuity of certain field components.",
         "unit_system": "SI",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "VARIATIONAL_MINIMIZATION",
         "equation_family": "optics-refraction",
         "semantic_variables": {
             "n_1": {
@@ -2085,7 +2085,34 @@
         "parent_formula_id": "refraction-74d97afe",
         "subcomponents": [],
         "id": "snells-law-of-refraction-74d97afe",
-        "intuitive_summary": ""
+        "intuitive_summary": "",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "t(x) = \\frac{\\sqrt{a^2 + x^2}}{v_1} + \\frac{\\sqrt{b^2 + (d - x)^2}}{v_2}",
+                "rationale": "Express the total optical travel time $t$ for a light ray propagating from $(0, a)$ in medium 1 to $(d, -b)$ in medium 2 crossing the interface at horizontal position $x$, invoking Fermat's Principle of Least Time."
+            },
+            {
+                "step": 2,
+                "latex": "v_1 = \\frac{c}{n_1}, \\quad v_2 = \\frac{c}{n_2} \\implies t(x) = \\frac{n_1}{c}\\sqrt{a^2 + x^2} + \\frac{n_2}{c}\\sqrt{b^2 + (d - x)^2}",
+                "rationale": "Relate propagation velocities to media refractive indices $n_1$ and $n_2$ relative to vacuum light speed $c$."
+            },
+            {
+                "step": 3,
+                "latex": "\\frac{dt}{dx} = \\frac{n_1}{c}\\frac{x}{\\sqrt{a^2 + x^2}} - \\frac{n_2}{c}\\frac{d - x}{\\sqrt{b^2 + (d - x)^2}} = 0",
+                "rationale": "Differentiate total travel time with respect to the interface crossing coordinate $x$ and set the derivative to zero for stationary action $\\delta \\int dt = 0$."
+            },
+            {
+                "step": 4,
+                "latex": "\\sin \\theta_1 = \\frac{x}{\\sqrt{a^2 + x^2}}, \\quad \\sin \\theta_2 = \\frac{d - x}{\\sqrt{b^2 + (d - x)^2}}",
+                "rationale": "Identify geometric sines of the angles of incidence $\\theta_1$ and refraction $\\theta_2$ with respect to the interface normal."
+            },
+            {
+                "step": 5,
+                "latex": "\\frac{n_1}{c}\\sin\\theta_1 - \\frac{n_2}{c}\\sin\\theta_2 = 0 \\implies n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2",
+                "rationale": "Multiply through by $c$ to obtain the canonical invariant relation governing wave refraction across dielectric interfaces."
+            }
+        ]
     },
     "relativistic-shear-tensor-ddc1fc7d": {
         "title": "Relativistic Shear Tensor",

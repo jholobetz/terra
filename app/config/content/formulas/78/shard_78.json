@@ -1004,7 +1004,34 @@
         ],
         "description": "Quantifies the total power radiated per unit surface area of an ideal black body, showing it is directly proportional to the fourth power of the black body's absolute temperature.",
         "parent_formula_id": "stefan-boltzmann-total-a323e6aa",
-        "derivation_type": "SPECIAL_CASE"
+        "derivation_type": "INTEGRATION",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "u(\\nu, T)\\,d\\nu = \\frac{8\\pi h \\nu^3}{c^3}\\frac{1}{e^{h\\nu/k_B T} - 1}\\,d\\nu",
+                "rationale": "Start with Planck's spectral energy density distribution for electromagnetic blackbody cavity radiation at temperature $T$."
+            },
+            {
+                "step": 2,
+                "latex": "u(T) = \\int_0^\\infty u(\\nu, T)\\,d\\nu = \\frac{8\\pi h}{c^3}\\int_0^\\infty \\frac{\\nu^3}{e^{h\\nu/k_B T} - 1}\\,d\\nu",
+                "rationale": "Integrate the spectral density over all frequencies $\\nu \\in [0, \\infty)$ to find the total volumetric radiation energy density $u(T)$."
+            },
+            {
+                "step": 3,
+                "latex": "x \\equiv \\frac{h\\nu}{k_B T} \\implies \\nu = \\frac{k_B T}{h}x, \\quad d\\nu = \\frac{k_B T}{h}dx",
+                "rationale": "Transform to dimensionless integration variable $x$, factoring out temperature dependencies."
+            },
+            {
+                "step": 4,
+                "latex": "u(T) = \\frac{8\\pi h}{c^3}\\left(\\frac{k_B T}{h}\\right)^4 \\int_0^\\infty \\frac{x^3}{e^x - 1}\\,dx = \\frac{8\\pi k_B^4 T^4}{c^3 h^3}\\left(\\frac{\\pi^4}{15}\\right) = a T^4",
+                "rationale": "Evaluate the standard Riemann zeta integral $\\int_0^\\infty \\frac{x^3}{e^x - 1}dx = \\Gamma(4)\\zeta(4) = \\frac{\\pi^4}{15}$, defining radiation constant $a$."
+            },
+            {
+                "step": 5,
+                "latex": "P = \\frac{c}{4}u(T) = \\left(\\frac{2\\pi^5 k_B^4}{15 c^2 h^3}\\right)T^4 \\equiv \\sigma T^4",
+                "rationale": "Multiply energy density by $c/4$ for hemispherical Lambertian emission flux to establish the Stefan-Boltzmann law with constant $\\sigma = \\frac{2\\pi^5 k_B^4}{15 c^2 h^3}$."
+            }
+        ]
     },
     "commutator-charge-field": {
         "title": "Commutator of Charge and Field",

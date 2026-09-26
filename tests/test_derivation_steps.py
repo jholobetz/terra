@@ -56,7 +56,17 @@ def test_canonical_formulas_have_derivation_steps():
         "expansion-clock-26a3aced",
         "exact-gravitational-redshift-factor-schwarzschild-5a0de121",
         "hamiltons-equations",
-        "virial-theorem"
+        "virial-theorem",
+        "snells-law-of-refraction-74d97afe",
+        "larmor-formula-aa594928",
+        "relativistic-sum-5e65d748",
+        "relativistic-doppler-factor-receding-source-f059487f",
+        "de-broglie-relation-8bbf6275",
+        "photoelectric-equation-einstein-identity-1-3be3f842-00b8e623",
+        "bernoulli-constant-standard-form-ff90fb4b",
+        "jeans-mass-critical-threshold-21a223b3",
+        "chandrasekhar-limit-88f98df2-31bbfff0-c5efb2d1",
+        "stefan-boltzmann-law"
     ]
     found = {}
     for shard in get_all_shards():
@@ -109,4 +119,4 @@ def test_all_derivation_steps_schema_and_tex_integrity():
                         unescaped_dollars = rat.count("$") - rat.count("\\$")
                         assert unescaped_dollars % 2 == 0, f"Unbalanced math dollar delimiters in {fid} rationale: {rat}"
 
-    assert total_with_steps >= 14, f"Expected at least 14 formulas with derivation steps, found {total_with_steps}"
+    assert total_with_steps >= 24, f"Expected at least 24 formulas with derivation steps, found {total_with_steps}"

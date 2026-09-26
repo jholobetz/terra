@@ -948,7 +948,34 @@
             "dynamic-pressure-term-f7c67255"
         ],
         "parent_formula_id": "incompressibility-condition-fluid",
-        "derivation_type": "SPECIAL_CASE"
+        "derivation_type": "STREAMLINE_INTEGRATION",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\frac{\\partial \\mathbf{v}}{\\partial t} + (\\mathbf{v} \\cdot \\nabla)\\mathbf{v} = -\\frac{1}{\\rho}\\nabla P + \\mathbf{g}",
+                "rationale": "Begin with the Euler momentum conservation equation for inviscid fluid flow under gravitational body force acceleration $\\mathbf{g} = -g \\nabla z$."
+            },
+            {
+                "step": 2,
+                "latex": "(\\mathbf{v} \\cdot \\nabla)\\mathbf{v} = \\nabla\\left(\\frac{1}{2}v^2\\right) - \\mathbf{v} \\times (\\nabla \\times \\mathbf{v})",
+                "rationale": "Invoke the vector identity decomposing the convective acceleration term into the kinetic energy gradient and the Lamb vorticity vector."
+            },
+            {
+                "step": 3,
+                "latex": "\\frac{\\partial \\mathbf{v}}{\\partial t} = 0, \\quad d\\mathbf{r} \\parallel \\mathbf{v} \\implies \\left[\\mathbf{v} \\times (\\nabla \\times \\mathbf{v})\\right] \\cdot d\\mathbf{r} = 0",
+                "rationale": "Specialize to steady flow ($\\partial/\\partial t = 0$) and take the line integral along an infinitesimal streamline displacement $d\\mathbf{r}$ orthogonal to the cross product."
+            },
+            {
+                "step": 4,
+                "latex": "\\nabla\\left(\\frac{1}{2}v^2\\right) \\cdot d\\mathbf{r} + \\frac{1}{\\rho}\\nabla P \\cdot d\\mathbf{r} + g\\nabla z \\cdot d\\mathbf{r} = 0",
+                "rationale": "Project the gradient terms along the streamline direction $d\\mathbf{r}$, transforming vector partial derivatives into total differentials along the trajectory."
+            },
+            {
+                "step": 5,
+                "latex": "d\\left(\\frac{1}{2}v^2 + \\frac{P}{\\rho} + gz\\right) = 0 \\implies P + \\frac{1}{2}\\rho v^2 + \\rho g z = \\text{constant}",
+                "rationale": "Integrate along the streamline assuming constant incompressible fluid density $\\rho$ to obtain Bernoulli's invariant energy relation."
+            }
+        ]
     },
     "universal-wave-function-everett-ident-0ee862f7": {
         "title": "Universal Wave Function (Everett's Relative State Formulation)",
@@ -2073,7 +2100,7 @@
         "limits_and_boundary": "In the non-relativistic limit where the source's velocity $v \\ll c$ (i.e., $\\beta \\to 0$), the factor $\\delta \\to 1$, indicating no frequency shift for a stationary source. In the ultra-relativistic limit as $v \\to c$ (i.e., $\\beta \\to 1$), the factor $\\delta \\to 0$. This corresponds to an infinite redshift, where the observed frequency of the emitted radiation approaches zero.",
         "symmetry_origin": "The formula is a direct consequence of the Lorentz transformations, which represent the fundamental symmetry of spacetime described by the Poincaré group. These transformations preserve the spacetime interval, ensuring the laws of physics, including the constancy of the speed of light, are the same in all inertial reference frames.",
         "unit_system": "SI",
-        "derivation_type": "SPECIAL_CASE",
+        "derivation_type": "LORENTZ_KINEMATICS",
         "equation_family": "relativistic-kinematics",
         "semantic_variables": {
             "\\delta": {
@@ -2104,7 +2131,34 @@
             "redshift-astronomy-identity-1-41971863-dc701e1d"
         ],
         "id": "relativistic-doppler-factor-receding-source-f059487f",
-        "intuitive_summary": "When a light source moves directly away from you at speeds approaching the speed of light, its light appears 'stretched' to longer, redder wavelengths. This formula precisely calculates how much the light is stretched (redshifted) based on the source's speed."
+        "intuitive_summary": "When a light source moves directly away from you at speeds approaching the speed of light, its light appears 'stretched' to longer, redder wavelengths. This formula precisely calculates how much the light is stretched (redshifted) based on the source's speed.",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\Delta t = \\gamma \\Delta \\tau = \\frac{\\Delta \\tau}{\\sqrt{1 - \\beta^2}}",
+                "rationale": "Apply time dilation to relate the proper period $\\Delta \\tau = 1/f_{\\text{src}}$ between emitted wavefronts in the source rest frame to coordinate period $\\Delta t$ in the observer frame, where $\\beta = v/c$."
+            },
+            {
+                "step": 2,
+                "latex": "d = v \\Delta t = \\beta c \\Delta t",
+                "rationale": "Account for the additional spatial distance traveled by the receding source during the emission interval before dispatching the second pulse."
+            },
+            {
+                "step": 3,
+                "latex": "\\Delta t_{\\text{obs}} = \\Delta t + \\frac{d}{c} = \\Delta t(1 + \\beta)",
+                "rationale": "Calculate the total arrival time interval between wavefronts at the observer, combining emission time separation with optical propagation delay $d/c$."
+            },
+            {
+                "step": 4,
+                "latex": "\\Delta t_{\\text{obs}} = \\gamma \\Delta \\tau (1 + \\beta) = \\Delta \\tau \\frac{1 + \\beta}{\\sqrt{1 - \\beta^2}}",
+                "rationale": "Express observed arrival period in terms of the intrinsic proper source period $\\Delta \\tau$."
+            },
+            {
+                "step": 5,
+                "latex": "\\delta = \\frac{f_{\\text{obs}}}{f_{\\text{src}}} = \\frac{\\Delta \\tau}{\\Delta t_{\\text{obs}}} = \\frac{\\sqrt{1 - \\beta^2}}{1 + \\beta} = \\sqrt{\\frac{(1 - \\beta)(1 + \\beta)}{(1 + \\beta)^2}} = \\sqrt{\\frac{1 - \\beta}{1 + \\beta}}",
+                "rationale": "Invert periods to frequencies and simplify the radical fraction using difference of squares to establish the exact radial Doppler factor."
+            }
+        ]
     },
     "classical-position-momentum-commutativity-565ff983": {
         "title": "Classical Position-Momentum Commutativity",

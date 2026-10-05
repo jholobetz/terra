@@ -111,9 +111,32 @@ flowchart TD
   3. Registered simulation in MariaDB, `app/config/content/simulations.json`, `_topic_icons.php`, and embedded direct GPU launcher inside Equation Explainer.
   4. Automated regression test net verified in `tests/test_webgl_simulations.py`.
 
-### 2.4 Formula Shard APCu / In-Memory Caching (Retired / Superseded)
-* **Status**: Retired / Closed.
-* **Architectural Rationale**: Discounted per the platform's dual-layer data architecture (`GEMINI.md`). In production, all live formula lookups execute via MariaDB relational queries backed by in-memory InnoDB buffer pools, while static encyclopedia views are served from the disk HTML cache (`public/cache/subtopic/`). Shards serve strictly as the version-controlled Git source of truth for offline development, preview mode (`?preview=1`), and CI test suites. Adding PHP APCu caching around shard file reads would introduce cache-invalidation friction to a fallback path that production web traffic never touches.
+### 2.5 Cross-Encyclopedia Lab Tools Ingestion & URL State Hydration
+* **Status**: Completed.
+* **Accomplished**:
+  1. Built `app/logic/LabToolsLauncher.php` with curated mapping rules covering all 1,584 subtopic articles to their optimal interactive lab instrument, duality workbench, or numerical simulation with pre-hydrated URL parameters.
+  2. Implemented deep-linking URL state hydration across all 5 flagship lab tools (`legendre_transformer.js`, `noethers_vault.js`, `correspondence_workspace.js`, `anthropic_tuner.js`, `notation_toggle.js`) and the Unified Cockpit (`lab_cockpit.js`).
+  3. Embedded interactive header action launchers (`.lab-launcher-badge`) and ambient in-prose cockpit bridge cards (`.subtopic-cockpit-bridge`) directly into `subtopic.php`.
+  4. Verified cache-invalidation architecture in `PhysicsController.php` with 9/9 automated tests in `tests/test_lab_tools_hydration.py`.
+
+### 2.6 Analytical Mechanics Workbench Deepening (Legendre Transformer)
+* **Status**: Completed.
+* **Accomplished**:
+  1. Expanded the physical preset library from 6 to **10 publication-grade classical & relativistic configurations**:
+     - *Harmonic Oscillator* (1D quadratic potential)
+     - *Simple Pendulum* (transcendental gravitational potential)
+     - *Anharmonic Duffing Oscillator* (quartic restoring force $\beta q^4 / 4$)
+     - *Relativistic Free Particle* (square root kinetic metric $-mc^2\sqrt{1-v^2/c^2}$)
+     - *Charged Particle in EM Field* (magnetic vector potential gauge shift $q\mathbf{A}\cdot\mathbf{v}$)
+     - *Rotating Reference Frame* (non-diagonal Coriolis cross-coupling $m\omega(x\dot{y}-y\dot{x})$ and centrifugal potential)
+     - *2D Central Force* (polar coordinates $(r, \phi)$ with cyclic conservation)
+     - *Kepler Two-Body Gravitational Problem* (reduced mass $\mu$, cyclic $\phi$, conserved $p_\phi$)
+     - *3D Spherical Central Force* (metric tensor $W_{ij}$, $\det(W) = m^3 r^4 \sin^2\theta$, cyclic $\phi$)
+     - *Singular Constrained System* (degenerate $\det(W) = 0$ triggering Dirac primary constraint analysis)
+  2. Enhanced SymPy CAS engine ([`lib/cas/cas_engine.py`](file:///Users/holobetj/code/gemini/terra/lib/cas/cas_engine.py)) to cleanly format coupled multi-variable inverted velocity fields ($\dot{q}_i = \dots$) across arbitrary configuration dimensions.
+  3. Added responsive 2-column preset selectors to [`app/views/physics/legendre_transformer.php`](file:///Users/holobetj/code/gemini/terra/app/views/physics/legendre_transformer.php) and state pre-loading in [`public/js/legendre_transformer.js`](file:///Users/holobetj/code/gemini/terra/public/js/legendre_transformer.js).
+  4. Mapped celestial mechanics and rotational dynamics subtopics (`keplers-second-law`, `rotational-dynamics`, `coupled-oscillations`, `central-force`) directly into dedicated presets in [`LabToolsLauncher.php`](file:///Users/holobetj/code/gemini/terra/app/logic/LabToolsLauncher.php).
+  5. Implemented comprehensive test coverage in `tests/test_cas_engine.py` and `tests/test_lab_tools_hydration.py` (100% passing across 190 tests).
 
 ---
 
@@ -156,6 +179,8 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 2** | 2.2 | Step-by-Step Derivation Accordions | `equation_explainer.php`<br/>`shard_[00-ff].json` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.3 | Modular Canvas/WebGL Visualizers | `webgl_physics_harness.js`<br/>`relativistic-black-hole.js` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.4 | In-Memory Shard APCu Caching | `app/logic/PhysicsService.php` | ⚪ **P4** | 🚫 Retired (Superseded by MariaDB) |
+| **Phase 2** | 2.5 | Cross-Encyclopedia Lab Tools Ingestion | `LabToolsLauncher.php`<br/>`subtopic.php`<br/>`test_lab_tools_hydration.py` | 🟡 **P2** | 🟢 Completed |
+| **Phase 2** | 2.6 | Analytical Mechanics Workbench Deepening | `legendre_transformer.js`<br/>`legendre_transformer.php`<br/>`cas_engine.py` | 🟡 **P2** | 🟢 Completed |
 | **Phase 3** | 3.1 | Sitewide SymPy CAS Invariance | `cas_engine.py`<br/>`.agents/skills/cas-symbolic-prover` | 🟡 **P2** | 📋 Active |
 | **Phase 3** | 3.2 | Autonomous Long-Horizon Sweeps | `docs/cost_governance.md`<br/>`.agents/skills/` | 🟢 **P3** | 📋 Backlog |
 | **Phase 4** | 4.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |

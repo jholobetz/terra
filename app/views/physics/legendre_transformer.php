@@ -14,9 +14,13 @@
                 <div class="preset-buttons">
                     <button class="preset-btn" data-preset="sho">Harmonic Oscillator</button>
                     <button class="preset-btn" data-preset="pendulum">Simple Pendulum</button>
-                    <button class="preset-btn" data-preset="em_field">Charged Particle in EM Field</button>
+                    <button class="preset-btn" data-preset="duffing">Duffing Oscillator</button>
                     <button class="preset-btn" data-preset="relativistic">Relativistic Particle</button>
+                    <button class="preset-btn" data-preset="em_field">Charged Particle (EM)</button>
+                    <button class="preset-btn" data-preset="coriolis">Rotating Frame (Coriolis)</button>
                     <button class="preset-btn" data-preset="central_force">Central Force (2D)</button>
+                    <button class="preset-btn" data-preset="kepler">Kepler Two-Body (2D)</button>
+                    <button class="preset-btn" data-preset="spherical_3d">Spherical Central (3D)</button>
                     <button class="preset-btn" data-preset="singular">Singular (det W = 0)</button>
                 </div>
             </div>
@@ -38,7 +42,7 @@
 
                 <div class="input-field-wrapper full-width">
                     <label for="parameter-vars">Constant Parameters (comma-separated)</label>
-                    <input type="text" id="parameter-vars" value="m, k, g, l, q_charge, A_pot, c" placeholder="e.g. m, k, g, l" />
+                    <input type="text" id="parameter-vars" value="m, k, g, l, q_charge, A_pot, c, mu, G, M, omega, beta_param" placeholder="e.g. m, k, g, l" />
                     <small class="help-text">Constants used in the Lagrangian that are not coordinates.</small>
                 </div>
 

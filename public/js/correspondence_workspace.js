@@ -75,8 +75,29 @@ document.addEventListener("DOMContentLoaded", () => {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Initial setup
-    setMode("ehrenfest");
+    // Initial setup from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const reqMode = urlParams.get("mode");
+    const reqPot = urlParams.get("pot") || urlParams.get("potential");
+
+    const validModes = ["ehrenfest", "phase"];
+    const targetMode = (reqMode && validModes.includes(reqMode.toLowerCase())) ? reqMode.toLowerCase() : "ehrenfest";
+
+    const potMap = {
+        "harmonic": "harmonic",
+        "double_well": "double_well",
+        "double-well": "double_well",
+        "barrier": "barrier",
+        "tunneling": "barrier"
+    };
+    if (reqPot && potMap[reqPot.toLowerCase()]) {
+        activePotential = potMap[reqPot.toLowerCase()];
+    }
+
+    setMode(targetMode, false);
+    if (reqPot && potMap[reqPot.toLowerCase()]) {
+        setPotential(potMap[reqPot.toLowerCase()], false);
+    }
 });
 
 function resizeCanvas() {
@@ -106,8 +127,16 @@ function setupUIHandlers() {
     });
 }
 
-function setMode(mode) {
+function setMode(mode, updateURL = true) {
     activeMode = mode;
+    
+    if (updateURL) {
+        try {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set("mode", mode);
+            window.history.replaceState({}, "", currentUrl.toString());
+        } catch (_) {}
+    }
     
     // UI elements
     document.getElementById("mode-btn-ehrenfest").classList.toggle("active", mode === "ehrenfest");
@@ -158,11 +187,21 @@ function setMode(mode) {
         MathJax.typesetPromise();
     }
 
-    resetSimulation();
-}
-
-function setPotential(pot) {
+function setPotential(pot, updateURL = true) {
     activePotential = pot;
+
+    document.querySelectorAll(".pot-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-pot") === pot);
+    });
+
+    if (updateURL) {
+        try {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set("pot", pot);
+            window.history.replaceState({}, "", currentUrl.toString());
+        } catch (_) {}
+    }
+
     resetSimulation();
 }
 

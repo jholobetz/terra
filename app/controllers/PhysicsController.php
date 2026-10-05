@@ -204,6 +204,9 @@ class PhysicsController
                 $formula = $this->service()->synthesizeFormulaExplanation($latex);
             }
         }
+        if (empty($formula)) {
+            $formula = null;
+        }
         
         if (!empty($subtopicSlug)) {
             $subtopicData = $this->service()->fetchAndPrepare('subtopics', $subtopicSlug);
@@ -268,6 +271,11 @@ class PhysicsController
             $formula = $this->service()->getFormulaWithHierarchy($formula['id']);
         } else if (!$formula) {
             $formula = $this->service()->synthesizeFormulaExplanation($latex);
+        }
+
+        if (empty($formula)) {
+            echo json_encode(['success' => false, 'error' => 'Could not analyze or resolve formula.']);
+            return;
         }
 
         echo json_encode(['success' => true, 'formula' => $formula]);
@@ -610,8 +618,30 @@ class PhysicsController
     public function simulations()
     {
         $sims = $this->service()->fetchAllData('simulations');
+        $configPath = PROJECT_ROOT . '/app/config/simulations.json';
+        $simsConfig = file_exists($configPath) ? (json_decode(file_get_contents($configPath), true) ?: []) : [];
+
+        foreach ($sims as &$s) {
+            $slug = $s['slug'] ?? '';
+            if (isset($simsConfig[$slug])) {
+                $cfg = $simsConfig[$slug];
+                foreach ($cfg as $k => $v) {
+                    if (!isset($s[$k]) || empty($s[$k]) || ($k === 'equations' && empty($s[$k]))) {
+                        $s[$k] = $v;
+                    }
+                }
+                if (is_string($s['equations'] ?? null)) {
+                    $s['equations'] = json_decode($s['equations'], true) ?: [];
+                }
+                if (empty($s['equations']) && !empty($cfg['equations'])) {
+                    $s['equations'] = $cfg['equations'];
+                }
+            }
+        }
+        unset($s);
+
         $this->renderWithLayout('physics/simulations', [
-            'title' => 'Interactive Simulations',
+            'title' => 'The Living Physics Observatory',
             'simulations' => $sims,
         ]);
     }
@@ -841,6 +871,10 @@ class PhysicsController
         $related = $this->service()->getRelatedTopics($slug);
         $subtopicVariables = \App\Logic\VariableAggregator::buildSubtopicVariables($subtopic);
 
+        require_once __DIR__ . '/../logic/LabToolsLauncher.php';
+        $firstParent = !empty($parents) ? (is_array($parents) ? reset($parents) : (string)$parents) : '';
+        $labLauncher = \App\Logic\LabToolsLauncher::resolve($slug, $firstParent);
+
         $this->renderWithLayout('physics/subtopic', array_merge($subtopic, [
             'parents' => $parents,
             'breadcrumbs' => $breadcrumbs,
@@ -850,7 +884,8 @@ class PhysicsController
             'equations' => $subtopic['equations'] ?? [],
             'breakdowns' => $subtopic['breakdowns'] ?? [],
             'formulas' => $subtopic['formulas'] ?? [],
-            'subtopicVariables' => $subtopicVariables
+            'subtopicVariables' => $subtopicVariables,
+            'labLauncher' => $labLauncher
         ]), $cachePath);
     }
 
@@ -985,6 +1020,16 @@ class PhysicsController
 
         $aggregatorPath = PROJECT_ROOT . '/app/logic/VariableAggregator.php';
         if (file_exists($aggregatorPath) && filemtime($aggregatorPath) > $cacheMtime) {
+            return true;
+        }
+
+        $launcherPath = PROJECT_ROOT . '/app/logic/LabToolsLauncher.php';
+        if (file_exists($launcherPath) && filemtime($launcherPath) > $cacheMtime) {
+            return true;
+        }
+
+        $subtopicViewPath = PROJECT_ROOT . '/app/views/physics/subtopic.php';
+        if (file_exists($subtopicViewPath) && filemtime($subtopicViewPath) > $cacheMtime) {
             return true;
         }
 

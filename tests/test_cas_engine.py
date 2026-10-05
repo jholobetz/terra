@@ -131,3 +131,90 @@ def test_legendre_transform_singular_constraint():
     assert res["hessian"]["det_latex"] == "0"
     assert "primary Dirac constraints" in res["error"]
 
+
+def test_legendre_transform_kepler_problem():
+    from scripts.lib.cas_engine import legendre_transform
+    res = legendre_transform(
+        lagrangian="0.5 * mu * (dr^2 + r^2 * dphi^2) + G * M * mu / r",
+        coords="r, phi",
+        velocities="dr, dphi",
+        parameters="mu, G, M"
+    )
+    assert res["success"] is True
+    assert res["is_singular"] is False
+    assert len(res["momenta"]) == 2
+    assert "phi" in res["conservation"]["cyclic_coordinates"]
+    assert "p_{\\phi}" in res["hamiltonian_latex"] or "p_{phi}" in res["hamiltonian_latex"]
+
+
+def test_legendre_transform_coriolis_rotating_frame():
+    from scripts.lib.cas_engine import legendre_transform
+    res = legendre_transform(
+        lagrangian="0.5 * m * (dx^2 + dy^2) + m * omega * (x * dy - y * dx) - 0.5 * k * (x^2 + y^2)",
+        coords="x, y",
+        velocities="dx, dy",
+        parameters="m, omega, k"
+    )
+    assert res["success"] is True
+    assert res["is_singular"] is False
+    assert len(res["momenta"]) == 2
+    # Check that Hessian determinant is m^2
+    assert "m^{2}" in res["hessian"]["det_latex"]
+    # Verify non-diagonal velocity coupling leads to momentum cross terms
+    assert "omega" in res["hamiltonian_latex"]
+
+
+def test_legendre_transform_duffing_oscillator():
+    from scripts.lib.cas_engine import legendre_transform
+    res = legendre_transform(
+        lagrangian="0.5 * m * dq^2 - 0.5 * k * q^2 - 0.25 * beta_param * q^4",
+        coords="q",
+        velocities="dq",
+        parameters="m, k, beta_param"
+    )
+    assert res["success"] is True
+    assert res["is_singular"] is False
+    assert "beta_{param}" in res["hamiltonian_latex"]
+    assert len(res["equations_of_motion"]) == 1
+
+
+def test_legendre_transform_spherical_3d():
+    from scripts.lib.cas_engine import legendre_transform
+    res = legendre_transform(
+        lagrangian="0.5 * m * (dr^2 + r^2 * dtheta^2 + r^2 * sin(theta)^2 * dphi^2) - 0.5 * k * r^2",
+        coords="r, theta, phi",
+        velocities="dr, dtheta, dphi",
+        parameters="m, k"
+    )
+    assert res["success"] is True
+    assert res["is_singular"] is False
+    assert len(res["momenta"]) == 3
+    assert len(res["equations_of_motion"]) == 3
+    assert "phi" in res["conservation"]["cyclic_coordinates"]
+    assert "sin" in res["hessian"]["det_latex"]
+
+
+def test_check_dimensions_homogeneous_equation():
+    from scripts.lib.cas_engine import check_dimensions
+    res = check_dimensions("E = m c^2")
+    assert res["success"] is True
+    assert res["is_equation"] is True
+    assert res["is_homogeneous"] is True
+    assert res["lhs"]["dimension_powers"] == {"M": 1, "L": 2, "T": -2}
+    assert res["rhs"]["dimension_powers"] == {"M": 1, "L": 2, "T": -2}
+    assert "Energy" in res["lhs"]["quantity"]
+
+
+def test_check_dimensions_expression_and_schwarzschild():
+    from scripts.lib.cas_engine import check_dimensions
+    res_expr = check_dimensions(r"\frac{G M}{c^2}")
+    assert res_expr["success"] is True
+    assert res_expr["is_equation"] is False
+    assert res_expr["dimension_powers"] == {"L": 1}
+    assert "Length" in res_expr["quantity"]
+
+    res_eq = check_dimensions(r"r_s = \frac{2 G M}{c^2}")
+    assert res_eq["success"] is True
+    assert res_eq["is_homogeneous"] is True
+
+

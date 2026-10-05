@@ -66,11 +66,23 @@ document.addEventListener('DOMContentLoaded', () => {
             params: 'm, g, l',
             expr: '0.5 * m * l^2 * dtheta^2 + m * g * l * cos(theta)'
         },
+        duffing: {
+            coord: 'q',
+            velocity: 'dq',
+            params: 'm, k, beta_param',
+            expr: '0.5 * m * dq^2 - 0.5 * k * q^2 - 0.25 * beta_param * q^4'
+        },
         em_field: {
             coord: 'x',
             velocity: 'dx',
             params: 'm, q_charge, A_pot, V',
             expr: '0.5 * m * dx^2 + q_charge * A_pot * dx - V'
+        },
+        coriolis: {
+            coord: 'x, y',
+            velocity: 'dx, dy',
+            params: 'm, omega, k',
+            expr: '0.5 * m * (dx^2 + dy^2) + m * omega * (x * dy - y * dx) - 0.5 * k * (x^2 + y^2)'
         },
         relativistic: {
             coord: 'x',
@@ -84,6 +96,18 @@ document.addEventListener('DOMContentLoaded', () => {
             params: 'm, V',
             expr: '0.5 * m * (dr^2 + r^2 * dphi^2) - V'
         },
+        kepler: {
+            coord: 'r, phi',
+            velocity: 'dr, dphi',
+            params: 'mu, G, M',
+            expr: '0.5 * mu * (dr^2 + r^2 * dphi^2) + G * M * mu / r'
+        },
+        spherical_3d: {
+            coord: 'r, theta, phi',
+            velocity: 'dr, dtheta, dphi',
+            params: 'm, k',
+            expr: '0.5 * m * (dr^2 + r^2 * dtheta^2 + r^2 * sin(theta)^2 * dphi^2) - 0.5 * k * r^2'
+        },
         singular: {
             coord: 'x',
             velocity: 'dx',
@@ -92,19 +116,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    function applyPreset(presetKey, shouldCompute = false) {
+        const data = presetData[presetKey];
+        if (!data) return false;
+        
+        coordVarInput.value = data.coord;
+        velocityVarInput.value = data.velocity;
+        parameterVarsInput.value = data.params;
+        lagrangianExprInput.value = data.expr;
+        
+        presets.forEach(btn => {
+            if (btn.dataset.preset === presetKey) {
+                btn.classList.add('active');
+                btn.style.borderColor = 'var(--accent-color, #64ffda)';
+            } else {
+                btn.classList.remove('active');
+                btn.style.borderColor = '';
+            }
+        });
+        
+        try {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('preset', presetKey);
+            window.history.replaceState({}, '', currentUrl.toString());
+        } catch (_) {}
+        
+        if (shouldCompute) {
+            computeBtn.click();
+        }
+        return true;
+    }
+
     presets.forEach(btn => {
         btn.addEventListener('click', () => {
-            const data = presetData[btn.dataset.preset];
-            if (data) {
-                coordVarInput.value = data.coord;
-                velocityVarInput.value = data.velocity;
-                parameterVarsInput.value = data.params;
-                lagrangianExprInput.value = data.expr;
-                
-                // Animate preset selection
-                btn.style.transform = 'scale(0.95)';
-                setTimeout(() => { btn.style.transform = ''; }, 100);
-            }
+            const key = btn.dataset.preset;
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => { btn.style.transform = ''; }, 100);
+            applyPreset(key, true);
         });
     });
 
@@ -339,4 +387,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // 7. URL State Hydration (Deep-Linking)
+    function initFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const preset = urlParams.get('preset');
+        const customLagrangian = urlParams.get('lagrangian');
+        const customCoord = urlParams.get('coord');
+        const customVelocity = urlParams.get('velocity');
+        const customParams = urlParams.get('params');
+        const autorun = urlParams.get('autorun') !== '0';
+
+        if (preset && presetData[preset]) {
+            applyPreset(preset, autorun);
+        } else if (customLagrangian) {
+            if (customCoord) coordVarInput.value = customCoord;
+            if (customVelocity) velocityVarInput.value = customVelocity;
+            if (customParams) parameterVarsInput.value = customParams;
+            lagrangianExprInput.value = customLagrangian;
+            if (autorun) computeBtn.click();
+        }
+    }
+
+    initFromURL();
 });

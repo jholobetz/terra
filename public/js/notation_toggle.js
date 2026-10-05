@@ -333,11 +333,29 @@ function selectTheory(index) {
     document.getElementById("active-theory-title").textContent = theory.title;
     document.getElementById("active-theory-description").textContent = theory.description;
 
+    if (updateURL) {
+        syncURLParams();
+    }
+
     // Render tabs for representations
     populateRepTabs();
 
     // Render content
     renderActiveRepresentation();
+}
+
+/**
+ * Syncs the active theory and representation into the browser URL.
+ */
+function syncURLParams() {
+    try {
+        const theory = THEORIES[activeTheoryIndex];
+        const rep = theory ? theory.representations[activeRepIndex] : null;
+        const currentUrl = new URL(window.location.href);
+        if (theory) currentUrl.searchParams.set("theory", theory.id);
+        if (rep) currentUrl.searchParams.set("rep", rep.id);
+        window.history.replaceState({}, "", currentUrl.toString());
+    } catch (_) {}
 }
 
 /**
@@ -363,7 +381,7 @@ function populateRepTabs() {
 /**
  * Handles switching the representation tab.
  */
-function selectRepresentation(index) {
+function selectRepresentation(index, updateURL = true) {
     activeRepIndex = index;
 
     // Update active class in tab buttons
@@ -375,6 +393,10 @@ function selectRepresentation(index) {
             tab.classList.remove("active");
         }
     });
+
+    if (updateURL) {
+        syncURLParams();
+    }
 
     renderActiveRepresentation();
 }
@@ -453,6 +475,36 @@ document.addEventListener("DOMContentLoaded", () => {
     // Populate theory list
     populateTheoryList();
 
-    // Select first theory by default
-    selectTheory(0);
+    // URL state hydration (deep-linking)
+    const urlParams = new URLSearchParams(window.location.search);
+    const reqTheory = urlParams.get("theory") || urlParams.get("id");
+    const reqRep = urlParams.get("rep") || urlParams.get("representation");
+
+    let theoryIdx = 0;
+    if (reqTheory) {
+        const reqLower = reqTheory.toLowerCase().replace(/[- ]/g, "_");
+        const foundIdx = THEORIES.findIndex(t => 
+            t.id.toLowerCase() === reqLower ||
+            t.id.toLowerCase().startsWith(reqLower) ||
+            t.title.toLowerCase().includes(reqTheory.toLowerCase())
+        );
+        if (foundIdx !== -1) {
+            theoryIdx = foundIdx;
+        }
+    }
+
+    selectTheory(theoryIdx, false);
+
+    if (reqRep) {
+        const theory = THEORIES[theoryIdx];
+        const reqRepLower = reqRep.toLowerCase().replace(/[- ]/g, "_");
+        const foundRepIdx = theory.representations.findIndex(r => 
+            r.id.toLowerCase() === reqRepLower ||
+            r.id.toLowerCase().startsWith(reqRepLower) ||
+            r.name.toLowerCase().includes(reqRep.toLowerCase())
+        );
+        if (foundRepIdx !== -1) {
+            selectRepresentation(foundRepIdx, false);
+        }
+    }
 });

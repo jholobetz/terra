@@ -24,13 +24,21 @@ let starPulse = 0;
 
 // Sliders config
 const DIALS = [
-    { id: "dial-G", label: "Gravitational Constant (G)", min: -3.0, max: 3.0, value: 0.0, step: 0.1, isLog: true, description: "Governs strength of gravitational attraction." },
-    { id: "dial-c", label: "Speed of Light (c)", min: 0.2, max: 3.0, value: 1.0, step: 0.1, isLog: false, description: "Governs speed limit and mass-energy equivalence." },
-    { id: "dial-hbar", label: "Planck Constant (ℏ)", min: 0.15, max: 4.0, value: 1.0, step: 0.05, isLog: false, description: "Governs quantum fuzziness and uncertainty scale." },
-    { id: "dial-alpha", label: "Fine-Structure Constant (α)", min: 0.05, max: 3.0, value: 1.0, step: 0.05, isLog: false, description: "Governs strength of electromagnetic force (atoms/chemistry)." },
-    { id: "dial-me", label: "Electron Mass (m_e)", min: 0.1, max: 5.0, value: 1.0, step: 0.1, isLog: false, description: "Governs atomic electron shell mass." },
-    { id: "dial-mp", label: "Proton Mass (m_p)", min: 0.1, max: 5.0, value: 1.0, step: 0.1, isLog: false, description: "Governs nuclear mass and gravity scale." }
+    { id: "dial-G", key: "G", label: "Gravitational Constant (G)", min: -3.0, max: 3.0, value: 0.0, step: 0.1, isLog: true, description: "Governs strength of gravitational attraction." },
+    { id: "dial-c", key: "c", label: "Speed of Light (c)", min: 0.2, max: 3.0, value: 1.0, step: 0.1, isLog: false, description: "Governs speed limit and mass-energy equivalence." },
+    { id: "dial-hbar", key: "hbar", label: "Planck Constant (ℏ)", min: 0.15, max: 4.0, value: 1.0, step: 0.05, isLog: false, description: "Governs quantum fuzziness and uncertainty scale." },
+    { id: "dial-alpha", key: "alpha", label: "Fine-Structure Constant (α)", min: 0.05, max: 3.0, value: 1.0, step: 0.05, isLog: false, description: "Governs strength of electromagnetic force (atoms/chemistry)." },
+    { id: "dial-me", key: "me", label: "Electron Mass (m_e)", min: 0.1, max: 5.0, value: 1.0, step: 0.1, isLog: false, description: "Governs atomic electron shell mass." },
+    { id: "dial-mp", key: "mp", label: "Proton Mass (m_p)", min: 0.1, max: 5.0, value: 1.0, step: 0.1, isLog: false, description: "Governs nuclear mass and gravity scale." }
 ];
+
+const TUNER_PRESETS = {
+    standard: { label: "Standard Universe", G: 1.0, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
+    weak_gravity: { label: "Weak Gravity Universe", G: 0.01, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
+    collapse: { label: "Gravitational Crunch", G: 100.0, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
+    quantum_realm: { label: "Macroscopic Quantum Realm", G: 1.0, c: 1.0, hbar: 3.5, alpha: 1.0, me: 1.0, mp: 1.0 },
+    weak_alpha: { label: "Weak Electromagnetism", G: 1.0, c: 1.0, hbar: 1.0, alpha: 0.2, me: 1.0, mp: 1.0 }
+};
 
 document.addEventListener("DOMContentLoaded", () => {
     canvas = document.getElementById("tuner-canvas");
@@ -39,12 +47,37 @@ document.addEventListener("DOMContentLoaded", () => {
     // UI actions
     document.getElementById("reset-dials-btn").addEventListener("click", resetToStandard);
 
+    // Preset button listeners
+    document.querySelectorAll(".tuner-preset-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            applyPreset(btn.dataset.preset, true);
+        });
+    });
+
     // Populate sliders
     renderDials();
 
     // Resize canvas
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+
+    // URL state hydration (deep-linking)
+    const urlParams = new URLSearchParams(window.location.search);
+    const reqPreset = urlParams.get("preset");
+    if (reqPreset && TUNER_PRESETS[reqPreset]) {
+        applyPreset(reqPreset, false);
+    } else {
+        let modified = false;
+        if (urlParams.has("G")) { const val = parseFloat(urlParams.get("G")); if (!isNaN(val)) { setDialValue("dial-G", val); dialG = val; modified = true; } }
+        if (urlParams.has("c")) { const val = parseFloat(urlParams.get("c")); if (!isNaN(val)) { setDialValue("dial-c", val); dialC = val; modified = true; } }
+        if (urlParams.has("hbar")) { const val = parseFloat(urlParams.get("hbar")); if (!isNaN(val)) { setDialValue("dial-hbar", val); dialHbar = val; modified = true; } }
+        if (urlParams.has("alpha")) { const val = parseFloat(urlParams.get("alpha")); if (!isNaN(val)) { setDialValue("dial-alpha", val); dialAlpha = val; modified = true; } }
+        if (urlParams.has("me")) { const val = parseFloat(urlParams.get("me")); if (!isNaN(val)) { setDialValue("dial-me", val); dialMe = val; modified = true; } }
+        if (urlParams.has("mp")) { const val = parseFloat(urlParams.get("mp")); if (!isNaN(val)) { setDialValue("dial-mp", val); dialMp = val; modified = true; } }
+        if (modified) {
+            document.querySelectorAll(".tuner-preset-btn").forEach(b => b.classList.remove("active"));
+        }
+    }
 
     // Initial check & start loop
     recalculateScaling();
@@ -105,34 +138,74 @@ function renderDials() {
             if (dial.id === "dial-me") dialMe = absoluteVal;
             if (dial.id === "dial-mp") dialMp = absoluteVal;
 
+            // Clear preset active badge since custom dial was moved
+            document.querySelectorAll(".tuner-preset-btn").forEach(b => b.classList.remove("active"));
+
+            // Sync URL parameters
+            try {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.delete("preset");
+                currentUrl.searchParams.set(dial.key, absoluteVal.toFixed(3));
+                window.history.replaceState({}, "", currentUrl.toString());
+            } catch (_) {}
+
             recalculateScaling();
         });
     });
 }
 
-function resetToStandard() {
-    DIALS.forEach(dial => {
-        const input = document.getElementById(dial.id);
-        if (input) {
-            input.value = dial.value;
-            let displayVal = dial.value;
-            if (dial.isLog) {
-                displayVal = Math.pow(10, dial.value).toFixed(2);
-            } else {
-                displayVal = dial.value.toFixed(2);
-            }
-            document.getElementById(`val-${dial.id}`).textContent = `${displayVal}×`;
-        }
+function applyPreset(presetKey, updateURL = true) {
+    const p = TUNER_PRESETS[presetKey];
+    if (!p) return false;
+
+    setDialValue("dial-G", p.G);
+    setDialValue("dial-c", p.c);
+    setDialValue("dial-hbar", p.hbar);
+    setDialValue("dial-alpha", p.alpha);
+    setDialValue("dial-me", p.me);
+    setDialValue("dial-mp", p.mp);
+
+    dialG = p.G;
+    dialC = p.c;
+    dialHbar = p.hbar;
+    dialAlpha = p.alpha;
+    dialMe = p.me;
+    dialMp = p.mp;
+
+    document.querySelectorAll(".tuner-preset-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.preset === presetKey);
     });
 
-    dialG = 1.0;
-    dialC = 1.0;
-    dialHbar = 1.0;
-    dialAlpha = 1.0;
-    dialMe = 1.0;
-    dialMp = 1.0;
+    if (updateURL) {
+        try {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set("preset", presetKey);
+            ["G", "c", "hbar", "alpha", "me", "mp"].forEach(k => currentUrl.searchParams.delete(k));
+            window.history.replaceState({}, "", currentUrl.toString());
+        } catch (_) {}
+    }
 
     recalculateScaling();
+    return true;
+}
+
+function setDialValue(dialId, multiplier) {
+    const dial = DIALS.find(d => d.id === dialId);
+    const input = document.getElementById(dialId);
+    if (!dial || !input) return;
+
+    if (dial.isLog) {
+        const sliderVal = Math.log10(multiplier);
+        input.value = Math.max(dial.min, Math.min(dial.max, sliderVal));
+        document.getElementById(`val-${dialId}`).textContent = `${multiplier.toFixed(2)}×`;
+    } else {
+        input.value = Math.max(dial.min, Math.min(dial.max, multiplier));
+        document.getElementById(`val-${dialId}`).textContent = `${multiplier.toFixed(2)}×`;
+    }
+}
+
+function resetToStandard() {
+    applyPreset("standard", true);
 }
 
 // Recalculate physical quantities relative to standard values

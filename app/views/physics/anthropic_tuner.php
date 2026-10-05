@@ -11,6 +11,14 @@
                 <h3>Universe Dials</h3>
                 <p class="ref-sub">Adjust these sliders to vary the fundamental constants of nature relative to our standard universe value.</p>
                 
+                <div class="preset-buttons" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;">
+                    <button class="tuner-preset-btn active" data-preset="standard">Standard</button>
+                    <button class="tuner-preset-btn" data-preset="weak_gravity">Weak Gravity</button>
+                    <button class="tuner-preset-btn" data-preset="collapse">Crunch</button>
+                    <button class="tuner-preset-btn" data-preset="quantum_realm">Quantum</button>
+                    <button class="tuner-preset-btn" data-preset="weak_alpha">Weak EM</button>
+                </div>
+
                 <div class="sliders-list" id="dials-sliders-container">
                     <!-- JS Populated Sliders -->
                 </div>
@@ -201,6 +209,34 @@
 
 .control-group input[type="range"]::-webkit-slider-thumb:hover {
     transform: scale(1.2);
+}
+
+.tuner-preset-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.74rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tuner-preset-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.tuner-preset-btn.active {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border-color: #fbbf24;
+    font-weight: 600;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
 }
 
 /* Right Panel Console */

@@ -200,7 +200,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     renderSymmetryList();
-    loadSymmetry(SYMMETRIES[0].id);
+
+    // URL state hydration (deep-linking)
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedSymmetry = urlParams.get("symmetry") || urlParams.get("id");
+    let targetSymId = SYMMETRIES[0].id;
+    if (requestedSymmetry) {
+        const reqLower = requestedSymmetry.toLowerCase().replace(/[- ]/g, "_");
+        const match = SYMMETRIES.find(s => 
+            s.id.toLowerCase() === reqLower ||
+            s.id.toLowerCase().startsWith(reqLower) ||
+            s.title.toLowerCase().includes(requestedSymmetry.toLowerCase())
+        );
+        if (match) targetSymId = match.id;
+    }
+    loadSymmetry(targetSymId);
 });
 
 function resizeCanvas() {
@@ -242,6 +256,13 @@ function loadSymmetry(id) {
     if (!sym) return;
 
     activeSymmetry = sym;
+
+    // Update URL query parameter
+    try {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("symmetry", id);
+        window.history.replaceState({}, "", currentUrl.toString());
+    } catch (_) {}
 
     // Update active class in sidebar
     document.querySelectorAll(".symmetry-item").forEach(el => {

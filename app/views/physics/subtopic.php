@@ -65,6 +65,11 @@ if ($theme === 'default' && !empty($parentSlug)) {
         $theme = $aliasThemeMap[$parentSlug];
     }
 }
+
+if (empty($labLauncher)) {
+    require_once __DIR__ . '/../../logic/LabToolsLauncher.php';
+    $labLauncher = \App\Logic\LabToolsLauncher::resolve($slug ?? '', $parentSlug ?? '');
+}
 ?>
 
 <article class="subtopic-content" style="--accent-color: var(--accent-<?= $theme ?>);">
@@ -94,19 +99,54 @@ if ($theme === 'default' && !empty($parentSlug)) {
 
         <h1 class="topic-title"><?= htmlspecialchars($title ?? 'Subtopic') ?></h1>
 
-        <?php if (!empty($verification)): ?>
-            <div class="topic-actions-row" style="margin-top: 14px;">
+        <div class="topic-actions-row" style="margin-top: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <?php if (!empty($verification)): ?>
                 <a href="#literature-consensus" class="verification-badge" style="cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(100, 255, 218, 0.08); border: 1px solid var(--accent-color); border-radius: 20px; font-size: 0.8rem; color: var(--accent-color); font-weight: 600; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.05em; transition: all 0.25s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.2)'; this.style.boxShadow='0 0 12px rgba(100, 255, 218, 0.3)'" onmouseout="this.style.background='rgba(100, 255, 218, 0.08)'; this.style.boxShadow='none'">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                     <span>Academic Consensus Verified (<?= number_format(($verification['consensus_score'] ?? 1.0) * 100, 0) ?>%)</span>
                 </a>
-            </div>
-        <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if (!empty($labLauncher)): ?>
+                <a href="<?= htmlspecialchars($labLauncher['url']) ?>" class="lab-launcher-badge" style="text-decoration: none; display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 20px; font-size: 0.8rem; color: #38bdf8; font-weight: 600; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.04em; transition: all 0.25s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.2)'; this.style.boxShadow='0 0 14px rgba(56, 189, 248, 0.35)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.boxShadow='none'; this.style.transform='none'">
+                    <span><?= $labLauncher['icon'] ?></span>
+                    <span><?= htmlspecialchars($labLauncher['action_label']) ?></span>
+                    <span style="font-size: 0.75rem; opacity: 0.7;">&rarr;</span>
+                </a>
+            <?php endif; ?>
+        </div>
     </header>
     
     <div class="content-body subtopic-prose-card" id="subtopic-main-prose">
         <?= $content ?? '<p>No content available for this subtopic.</p>' ?>
     </div>
+
+    <?php if (!empty($labLauncher)): ?>
+        <!-- Contextual Lab Tools Cockpit Bridge Banner -->
+        <section class="subtopic-cockpit-bridge" style="margin: 36px 0 24px 0; background: radial-gradient(circle at 10% 50%, rgba(30, 41, 59, 0.6) 0%, rgba(10, 15, 26, 0.85) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-left: 4px solid var(--accent-color, #38bdf8); border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px);">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="font-size: 2.2rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.04); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.06); flex-shrink: 0;">
+                    <?= $labLauncher['icon'] ?>
+                </div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap;">
+                        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.05rem; color: #ffffff;">
+                            <?= htmlspecialchars($labLauncher['tool_name']) ?>
+                        </span>
+                        <span style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; padding: 2px 8px; border-radius: 12px;">
+                            <?= htmlspecialchars($labLauncher['badge_label']) ?>
+                        </span>
+                    </div>
+                    <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.4; max-width: 680px;">
+                        <?= htmlspecialchars($labLauncher['description']) ?>
+                    </p>
+                </div>
+            </div>
+            <a href="<?= htmlspecialchars($labLauncher['url']) ?>" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; padding: 10px 18px; border-radius: 8px; color: #fff; font-size: 0.88rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25); white-space: nowrap; flex-shrink: 0; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(2, 132, 199, 0.4)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 14px rgba(2, 132, 199, 0.25)'">
+                <?= htmlspecialchars($labLauncher['action_label']) ?> &rarr;
+            </a>
+        </section>
+    <?php endif; ?>
 
     <?php $this->render('physics/_equations_partial', [
         'equations' => $equations ?? [],
@@ -597,5 +637,13 @@ document.addEventListener('DOMContentLoaded', () => {
     border-bottom-style: solid;
     border-bottom-color: var(--secondary-color, #b485ff);
     text-shadow: 0 0 10px rgba(180, 133, 255, 0.5);
+}
+
+@media (max-width: 800px) {
+    .subtopic-cockpit-bridge {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 16px !important;
+    }
 }
 </style>

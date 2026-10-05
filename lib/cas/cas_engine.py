@@ -17,10 +17,15 @@ from sympy.parsing.sympy_parser import (
     standard_transformations,
     implicit_multiplication_application
 )
+from sympy.physics.units import (
+    length, mass, time, current, temperature, amount_of_substance, luminous_intensity
+)
+from sympy.physics.units.systems.si import dimsys_SI
 
 
 class TimeoutException(Exception):
     pass
+
 
 
 def timeout_handler(signum, frame):
@@ -348,7 +353,7 @@ def legendre_transform(
     for i in range(n):
         inv_vel_info.append({
             "velocity": rf"\dot{{{coords[i]}}}",
-            "latex": rf"\dot{{{coords[i]}}}({p_syms[i]}) = {sympy.latex(sol[v_syms[i]])}",
+            "latex": rf"\dot{{{coords[i]}}} = {sympy.latex(sol[v_syms[i]])}",
             "expr_latex": sympy.latex(sol[v_syms[i]])
         })
 
@@ -378,6 +383,201 @@ def legendre_transform(
             "summary": summary
         }
     }
+
+
+STANDARD_PHYSICS_DIMENSIONS = {
+    "m": mass, "M": mass, "m_e": mass, "m_p": mass, "m_n": mass,
+    "x": length, "y": length, "z": length, "r": length, "l": length, "L": length,
+    "d": length, "R": length, "a_0": length, "lambda": length, "s": length, "r_s": length,
+    "t": time, "T_period": time, "tau": time,
+    "v": length / time, "c": length / time, "dq": length / time, "dx": length / time, "dr": length / time,
+    "a": length / (time**2), "g": length / (time**2),
+    "F": mass * length / (time**2),
+    "E": mass * (length**2) / (time**2), "H": mass * (length**2) / (time**2),
+    "V": mass * (length**2) / (time**2), "U": mass * (length**2) / (time**2),
+    "K": mass * (length**2) / (time**2), "T_energy": mass * (length**2) / (time**2),
+    "p": mass * length / time,
+    "k": mass / (time**2), "k_B": mass * (length**2) / ((time**2) * temperature),
+
+    "G": (length**3) / (mass * (time**2)),
+    "hbar": (mass * (length**2)) / time,
+    "h": (mass * (length**2)) / time,
+    "q": current * time, "e": current * time, "q_charge": current * time,
+    "B": mass / (current * (time**2)),
+    "A_pot": mass * length / (current * (time**2)),
+    "omega": 1 / time,
+    "rho": mass / (length**3),
+    "P": mass / (length * (time**2)),
+    "theta": 1, "phi": 1, "alpha": 1
+}
+
+
+def _extract_dim_powers(deps: Dict[Any, Any]) -> Dict[str, Any]:
+    mapping = {
+        mass: "M",
+        length: "L",
+        time: "T",
+        current: "I",
+        temperature: "Theta",
+        amount_of_substance: "N",
+        luminous_intensity: "J"
+    }
+    dim_powers = {}
+    for d, p in deps.items():
+        for base_unit, symbol in mapping.items():
+            if d == base_unit or str(d) == str(base_unit):
+                dim_powers[symbol] = int(p) if (hasattr(p, 'is_integer') and p.is_integer) or (isinstance(p, (int, float)) and int(p) == p) else float(p)
+    return dim_powers
+
+
+def _format_dim_latex(dim_powers: Dict[str, Any]) -> str:
+    if not dim_powers:
+        return r"[1] \text{ (Dimensionless)}"
+    pos_terms = []
+    neg_terms = []
+    for k in ["M", "L", "T", "I", "Theta", "N", "J"]:
+        if k in dim_powers:
+            p = dim_powers[k]
+            if p == 1:
+                pos_terms.append(rf"\text{{{k}}}")
+            elif p > 0:
+                pos_terms.append(rf"\text{{{k}}}^{{{p}}}")
+            elif p == -1:
+                neg_terms.append(rf"\text{{{k}}}")
+            else:
+                neg_terms.append(rf"\text{{{k}}}^{{{abs(p)}}}")
+    if not pos_terms and not neg_terms:
+        return r"[1] \text{ (Dimensionless)}"
+    pos_str = r" \cdot ".join(pos_terms) if pos_terms else "1"
+    if neg_terms:
+        neg_str = r" \cdot ".join(neg_terms)
+        return rf"[{pos_str} / ({neg_str})]"
+    return rf"[{pos_str}]"
+
+
+def _identify_physical_quantity(dim_powers: Dict[str, Any]) -> str:
+    m = dim_powers.get("M", 0)
+    l = dim_powers.get("L", 0)
+    t = dim_powers.get("T", 0)
+    i = dim_powers.get("I", 0)
+    if not dim_powers or (m == 0 and l == 0 and t == 0 and i == 0):
+        return "Dimensionless Quantity (Ratio / Angle)"
+    if m == 0 and l == 1 and t == 0:
+        return "Length / Spatial Extent / Radius"
+    if m == 0 and l == 0 and t == 1:
+        return "Time / Period"
+    if m == 1 and l == 0 and t == 0:
+        return "Mass / Inertia"
+    if m == 0 and l == 1 and t == -1:
+        return "Velocity / Speed of Propagation"
+    if m == 0 and l == 1 and t == -2:
+        return "Acceleration / Gravitational Field"
+    if m == 1 and l == 1 and t == -2:
+        return "Force"
+    if m == 1 and l == 2 and t == -2:
+        return "Energy / Work / Hamiltonian"
+    if m == 1 and l == 2 and t == -1:
+        return "Action / Angular Momentum"
+    if m == 1 and l == 1 and t == -1:
+        return "Linear Momentum"
+    if m == 1 and l == 2 and t == -3:
+        return "Power / Radiant Flux"
+    if m == 1 and l == -1 and t == -2:
+        return "Pressure / Energy Density"
+    if m == 1 and l == -3 and t == 0:
+        return "Mass Density"
+    if m == 0 and l == 0 and t == -1:
+        return "Frequency / Angular Rate"
+    if m == 0 and l == 0 and t == 1 and i == 1:
+        return "Electric Charge"
+    if m == -1 and l == 3 and t == -2:
+        return "Gravitational Constant (G)"
+    return "Composite Physical Invariant"
+
+
+def check_dimensions(
+    latex: str,
+    custom_vars: Optional[Dict[str, str]] = None
+) -> Dict[str, Any]:
+    """
+    Evaluates physical dimensions of expressions or equations using SymPy physics units:
+    - Base SI dimension breakdown: [M, L, T, I, Theta, N, J]
+    - Dimension name (e.g. Energy, Force, Velocity, Length, Dimensionless)
+    - If equation has '=', checks dimensional homogeneity between LHS and RHS
+    """
+    clean_latex = latex.strip()
+    symbols_dict = dict(STANDARD_PHYSICS_DIMENSIONS)
+    if custom_vars:
+        for k, v in custom_vars.items():
+            try:
+                symbols_dict[k] = parse_expr(v, local_dict=STANDARD_PHYSICS_DIMENSIONS)
+            except Exception:
+                pass
+
+    transformations = standard_transformations + (implicit_multiplication_application,)
+
+    if "=" in clean_latex:
+        parts = clean_latex.split("=", 1)
+        lhs_latex = parts[0].strip()
+        rhs_latex = parts[1].strip()
+
+        lhs_str = latex_to_sympy_str(lhs_latex)
+        rhs_str = latex_to_sympy_str(rhs_latex)
+
+        try:
+            lhs_expr = parse_expr(lhs_str, local_dict=symbols_dict, transformations=transformations)
+            lhs_deps = dimsys_SI.get_dimensional_dependencies(lhs_expr)
+            lhs_powers = _extract_dim_powers(lhs_deps)
+        except Exception as e:
+            return {"success": False, "error": f"Error parsing LHS dimension: {str(e)}"}
+
+        try:
+            rhs_expr = parse_expr(rhs_str, local_dict=symbols_dict, transformations=transformations)
+            rhs_deps = dimsys_SI.get_dimensional_dependencies(rhs_expr)
+            rhs_powers = _extract_dim_powers(rhs_deps)
+        except Exception as e:
+            return {"success": False, "error": f"Error parsing RHS dimension: {str(e)}"}
+
+        is_homogeneous = (lhs_powers == rhs_powers)
+        return {
+            "success": True,
+            "is_equation": True,
+            "is_homogeneous": is_homogeneous,
+            "lhs": {
+                "latex": lhs_latex,
+                "dimension_powers": lhs_powers,
+                "dimension_latex": _format_dim_latex(lhs_powers),
+                "quantity": _identify_physical_quantity(lhs_powers)
+            },
+            "rhs": {
+                "latex": rhs_latex,
+                "dimension_powers": rhs_powers,
+                "dimension_latex": _format_dim_latex(rhs_powers),
+                "quantity": _identify_physical_quantity(rhs_powers)
+            },
+            "summary": (
+                r"Dimensionally homogeneous: $\text{dim}(\text{LHS}) \equiv \text{dim}(\text{RHS})$"
+                if is_homogeneous
+                else r"Dimensional mismatch detected: $\text{dim}(\text{LHS}) \neq \text{dim}(\text{RHS})$"
+            )
+        }
+    else:
+        sympy_str = latex_to_sympy_str(clean_latex)
+        try:
+            expr = parse_expr(sympy_str, local_dict=symbols_dict, transformations=transformations)
+            deps = dimsys_SI.get_dimensional_dependencies(expr)
+            powers = _extract_dim_powers(deps)
+        except Exception as e:
+            return {"success": False, "error": f"Error evaluating dimension: {str(e)}"}
+
+        return {
+            "success": True,
+            "is_equation": False,
+            "dimension_powers": powers,
+            "dimension_latex": _format_dim_latex(powers),
+            "quantity": _identify_physical_quantity(powers),
+            "summary": f"Evaluated physical dimension: {_identify_physical_quantity(powers)}"
+        }
 
 
 def main():
@@ -410,6 +610,10 @@ def main():
                 velocities=velocities,
                 parameters=parameters
             )
+        elif mode == "dimensions":
+            latex = payload.get("latex") or payload.get("expression", "")
+            custom_vars = payload.get("custom_vars", None)
+            res = check_dimensions(latex, custom_vars=custom_vars)
         else:
             latex = payload.get("latex", "")
             limit_var = payload.get("limit_var")

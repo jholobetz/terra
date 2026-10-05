@@ -214,9 +214,9 @@ To achieve immediate usability without requiring users to construct complex grap
 | :--- | :--- | :--- | :--- |
 | **Phase 2.1** | **Prototype Pruning** | Redirect legacy `/physics/genealogy-explorer` $\to$ `/physics/universe-graph` (Completed). | ✅ Done |
 | **Phase 2.2** | **SymPy CAS Legendre Engine** | Connect `/physics/legendre-transformer` to `cas_engine.py` for arbitrary Lagrangians & Hessians (Completed). | ✅ Done |
-| **Phase 2.3** | **Unified Physics Cockpit UI** | Redesign `/physics/lab-tools` landing page into the Unified Physics Cockpit with live Crucible & Prism Selector. | Next Sprint |
-| **Phase 2.4** | **Scrubbable Formula Engine** | Introduce in-situ variable dragging on MathJax expressions linked to canvas manifolds. | Sprint 2 |
-| **Phase 2.5** | **Cross-Encyclopedia Ingestion** | Add `[ Open in Cockpit ]` launcher hooks across all 1,584 graduated subtopic encyclopedia articles. | Sprint 3 |
+| **Phase 2.3** | **Unified Physics Cockpit UI** | Redesign `/physics/lab-tools` landing page into the Unified Physics Cockpit with live Crucible & Prism Selector (Completed). | ✅ Done |
+| **Phase 2.4** | **Scrubbable Formula Engine** | Introduce in-situ variable dragging on MathJax expressions linked to canvas manifolds and CAS (Completed). | ✅ Done |
+| **Phase 2.5** | **Cross-Encyclopedia Ingestion** | Add `[ Open in Cockpit ]` and contextual Lab Tools launcher hooks across all 1,584 graduated subtopic encyclopedia articles. | ✅ Done |
 
 ---
 

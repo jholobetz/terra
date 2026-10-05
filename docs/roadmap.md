@@ -84,8 +84,8 @@ flowchart TD
 ### 2.1 Codebase Hygiene & Repository Streamlining
 * **Goal**: Eliminate stale historical artifacts and obsolete scratch files to reduce repository noise.
 * **Actions**:
-  1. Archive one-off historical migrations from `scratch/` into `docs/archive/historical_scratch/`.
-  2. Deprecate superseded maintenance scripts in `scripts/maintenance/` into `scripts/archive/`, retaining canonical tools (`fixlatex`, `fixlineage`, `gqs.py`, `integrity_shield.py`).
+  1. Archive one-off historical migrations and superseded documentation into the root `archive/` directory.
+  2. Deprecate superseded maintenance scripts in `scripts/maintenance/` into `scripts/archive/` (or `archive/`), retaining canonical tools (`fixlatex`, `fixlineage`, `gqs.py`, `integrity_shield.py`).
   3. Ensure clean `.gitignore` tracking for temporary debug files.
 
 ### 2.2 Step-by-Step Derivation Accordions

@@ -279,6 +279,15 @@ const FormulaInspector = {
             .then(data => {
                 if (data && data.formula) {
                     const f = data.formula;
+                    if (f.title) {
+                        titleEl.textContent = f.title;
+                        if (f.cas_validation && f.cas_validation.is_homogeneous) {
+                            const casSpan = document.createElement('span');
+                            casSpan.style.cssText = 'font-size: 0.72rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px; padding: 1px 7px; font-weight: 600; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle;';
+                            casSpan.innerHTML = `✓ CAS: ${f.cas_validation.quantity || 'Verified'}`;
+                            titleEl.appendChild(casSpan);
+                        }
+                    }
                     const formatMath = (txt) => (window.MathProseFormatter && typeof window.MathProseFormatter.format === 'function') ? window.MathProseFormatter.format(txt) : txt;
                     conceptText.innerHTML = formatMath(f.conceptual_definition) || 'Physical relationship between operators and fields.';
                     summaryText.innerHTML = formatMath(f.intuitive_summary) || 'Calculates the relative dynamics of the system.';

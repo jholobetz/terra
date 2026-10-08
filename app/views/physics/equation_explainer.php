@@ -24,6 +24,10 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         <span style="width: 6px; height: 6px; background: currentColor; border-radius: 50%; display: inline-block;"></span>
                         Ready
                     </span>
+                    <span id="cas-verified-badge" style="display: none; font-size: 0.75rem; color: #38bdf8; align-items: center; gap: 5px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; background: rgba(56, 189, 248, 0.1); padding: 2px 10px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.3); transition: all 0.2s;" title="Symbolically certified for dimensional invariance">
+                        <span style="font-size: 0.82rem; color: #38bdf8;">✓</span>
+                        <span id="cas-verified-text">CAS Verified</span>
+                    </span>
                 </div>
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">

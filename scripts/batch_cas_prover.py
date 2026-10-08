@@ -11,8 +11,12 @@ import json
 import re
 import time
 import argparse
+import warnings
 from typing import Dict, Any, List, Optional, Tuple
 from multiprocessing import Pool, cpu_count
+
+# Suppress internal SymPy unit dimension deprecation warnings
+warnings.filterwarnings("ignore", message=".*Using non-Expr arguments in Pow is deprecated.*")
 
 # Ensure project root is in sys.path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -206,14 +210,16 @@ def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[
         }
 
 
-def _worker_wrapper(item: Tuple[str, Dict[str, Any]]) -> Dict[str, Any]:
-    formula_id, entry = item
-    return evaluate_formula_invariance(formula_id, entry)
+def _worker_wrapper(item: Tuple[str, Dict[str, Any], str]) -> Tuple[Dict[str, Any], str]:
+    warnings.filterwarnings("ignore")
+    formula_id, entry, shard_path = item
+    res = evaluate_formula_invariance(formula_id, entry)
+    return res, shard_path
 
 
-def load_shard_formulas(shard_hex: Optional[str] = None, limit: Optional[int] = None) -> List[Tuple[str, Dict[str, Any]]]:
+def load_shard_formulas(shard_hex: Optional[str] = None, limit: Optional[int] = None) -> List[Tuple[str, Dict[str, Any], str]]:
     """
-    Loads formula items from one or all 256 Git shards.
+    Loads formula items from one or all 256 Git shards with their shard paths.
     """
     items = []
     shards_to_load = []
@@ -235,7 +241,7 @@ def load_shard_formulas(shard_hex: Optional[str] = None, limit: Optional[int] = 
             with open(shard_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 for fid, entry in data.items():
-                    items.append((fid, entry))
+                    items.append((fid, entry, shard_path))
                     if limit and len(items) >= limit:
                         return items
         except Exception as e:
@@ -250,10 +256,11 @@ def run_batch_prover(
     target_id: Optional[str] = None,
     num_workers: Optional[int] = None,
     report_path: Optional[str] = None,
+    tag: bool = False,
     verbose: bool = False
 ) -> Dict[str, Any]:
     """
-    Executes the batch CAS invariance audit across formula shards.
+    Executes the batch CAS invariance audit across formula shards, optionally tagging verified formulas.
     """
     start_time = time.time()
 
@@ -268,7 +275,7 @@ def run_batch_prover(
                 with open(p, "r", encoding="utf-8") as f:
                     d = json.load(f)
                     if target_id in d:
-                        items = [(target_id, d[target_id])]
+                        items = [(target_id, d[target_id], p)]
                         found = True
                         break
         if not found:
@@ -283,12 +290,13 @@ def run_batch_prover(
         return {}
 
     workers = num_workers or max(1, cpu_count() - 1)
-    # If auditing 1 item or in small debugging mode, run sequentially
     if total_formulas <= 5 or workers == 1:
-        results = [evaluate_formula_invariance(fid, entry) for fid, entry in items]
+        raw_results = [_worker_wrapper(item) for item in items]
     else:
         with Pool(processes=workers) as pool:
-            results = pool.map(_worker_wrapper, items)
+            raw_results = pool.map(_worker_wrapper, items)
+
+    results = [r[0] for r in raw_results]
 
     elapsed_time = time.time() - start_time
     avg_latency_ms = (elapsed_time / total_formulas) * 1000 if total_formulas > 0 else 0
@@ -309,6 +317,38 @@ def run_batch_prover(
 
     homogeneous_rate = (homogeneous_count / total_formulas * 100) if total_formulas > 0 else 0.0
 
+    # Apply tagging to shards if requested
+    tagged_count = 0
+    if tag:
+        shards_to_update: Dict[str, Dict[str, Any]] = {}
+        for r, shard_path in raw_results:
+            if r.get("is_homogeneous") is True and shard_path:
+                fid = r.get("id")
+                if fid:
+                    if shard_path not in shards_to_update:
+                        shards_to_update[shard_path] = {}
+                    shards_to_update[shard_path][fid] = {
+                        "status": r.get("status", "HOMOGENEOUS"),
+                        "is_homogeneous": True,
+                        "quantity": r.get("quantity"),
+                        "dimension_latex": r.get("dimension_latex"),
+                        "verified_at": int(time.time())
+                    }
+                    tagged_count += 1
+
+        for s_path, updates in shards_to_update.items():
+            try:
+                with open(s_path, "r", encoding="utf-8") as f:
+                    s_data = json.load(f)
+                for fid, meta in updates.items():
+                    if fid in s_data:
+                        s_data[fid]["cas_validation"] = meta
+                with open(s_path, "w", encoding="utf-8") as f:
+                    json.dump(s_data, f, indent=4, ensure_ascii=False)
+                    f.write("\n")
+            except Exception as e:
+                print(f"⚠️ Failed to tag shard {s_path}: {e}", file=sys.stderr)
+
     summary = {
         "metadata": {
             "timestamp": int(time.time()),
@@ -318,6 +358,7 @@ def run_batch_prover(
             "avg_latency_ms": round(avg_latency_ms, 2),
             "homogeneous_count": homogeneous_count,
             "homogeneous_rate_pct": round(homogeneous_rate, 2),
+            "tagged_count": tagged_count
         },
         "status_distribution": status_counts,
         "top_physical_quantities": dict(sorted(quantity_counts.items(), key=lambda x: x[1], reverse=True)[:10]),
@@ -333,7 +374,6 @@ def run_batch_prover(
                 json.dump(summary, f, indent=2, ensure_ascii=False)
             summary["report_file"] = out_path
         except Exception as e:
-            # Only print warning if explicitly requested
             if report_path:
                 print(f"⚠️ Failed to write report to {out_path}: {e}", file=sys.stderr)
 
@@ -356,6 +396,9 @@ def print_summary_scorecard(summary: Dict[str, Any]):
     print("=" * 70)
     print(f" Total Formulas Audited  : {total:,}")
     print(f" Homogeneous Certified   : {homo:,} ({rate:.1f}%)")
+    tagged = meta.get("tagged_count", 0)
+    if tagged > 0:
+        print(f" Tagged into Git Shards  : {tagged:,}")
     print(f" Multi-core Throughput   : {elapsed:.2f}s total ({lat:.1f}ms / formula)")
     print("-" * 70)
     print(" Status Breakdown:")
@@ -373,6 +416,9 @@ def print_summary_scorecard(summary: Dict[str, Any]):
 
 def main():
     parser = argparse.ArgumentParser(description="Terra Physics Lab - Database-Wide SymPy CAS Prover CLI")
+    parser.add_argument("--all", action="store_true", help="Audit all 256 shards across the encyclopedia")
+    parser.add_argument("--derivations", action="store_true", help="Audit all 102 multi-step derivation proofs sitewide")
+    parser.add_argument("--tag", action="store_true", help="Tag verified formulas directly into shard files with cas_validation metadata")
     parser.add_argument("--shard", type=str, help="Specific formula shard hex (e.g. 00, 4f, ff)")
     parser.add_argument("--limit", type=int, help="Limit number of formulas to process")
     parser.add_argument("--target-id", type=str, help="Audit a single specific formula by ID")
@@ -383,12 +429,19 @@ def main():
 
     args = parser.parse_args()
 
+    if args.derivations:
+        from lib.cas.derivation_prover import run_derivation_audit, print_derivation_scorecard
+        d_summary = run_derivation_audit(report_path=args.report)
+        print_derivation_scorecard(d_summary)
+        return
+
     summary = run_batch_prover(
         shard_hex=args.shard,
         limit=args.limit,
         target_id=args.target_id,
         num_workers=args.workers,
         report_path=args.report,
+        tag=args.tag,
         verbose=args.verbose
     )
 

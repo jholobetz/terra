@@ -1549,6 +1549,22 @@ const EquationExplainer = {
             this.formulaBadge.textContent = status.replace('-', ' ').toUpperCase();
         }
 
+        // CAS Verification Badge
+        const casBadge = document.getElementById('cas-verified-badge');
+        const casText = document.getElementById('cas-verified-text');
+        if (casBadge && casText) {
+            const casVal = formula.cas_validation;
+            if (casVal && casVal.is_homogeneous) {
+                casBadge.style.display = 'inline-flex';
+                const qty = casVal.quantity || 'Homogeneous';
+                casText.textContent = `CAS: ${qty}`;
+                const dimInfo = casVal.dimension_latex ? ` [${casVal.dimension_latex}]` : '';
+                casBadge.title = `Symbolic CAS Verified: Homogeneous physical dimensions${dimInfo}`;
+            } else {
+                casBadge.style.display = 'none';
+            }
+        }
+
         // Update Curation Drawer button label contextually
         const btnCuratorLabel = document.getElementById('btn-curator-label');
         if (btnCuratorLabel) {

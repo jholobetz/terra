@@ -1,378 +1,417 @@
+/**
+ * 🌌 PHYSICS LAB: Newton's Orbital Cannon & Escape Trajectories
+ * 
+ * Simulates Sir Isaac Newton's landmark 1728 thought experiment on a spherical
+ * gravitating planet. Demonstrates the continuous physical transition from
+ * ballistic sub-orbital parabolic arcs to circular orbital insertion (v_circ = 7.91 km/s),
+ * bound Keplerian ellipses, and hyperbolic cosmic escape (v_esc = 11.19 km/s).
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('simulation-canvas');
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const controls = document.getElementById('controls');
 
-    // Inject custom controls
+    // Inject Modern Glassmorphic Controls
     controls.innerHTML = `
+        <!-- Presets Row -->
         <div class="control-group">
-            <label>Muzzle Velocity (v₀): <span id="v-val" class="math-value">55</span> m/s</label>
-            <input type="range" id="v-slider" min="15" max="100" value="55" style="width: 100%">
+            <label style="font-weight: 600; color: #fff; margin-bottom: 8px; display: block;">Orbital Regime Presets:</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <button id="preset-ballistic" class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px;">Sub-Orbital (4.5 km/s)</button>
+                <button id="preset-circular" class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px;">Circular (7.91 km/s)</button>
+                <button id="preset-elliptic" class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px;">Elliptic (9.6 km/s)</button>
+                <button id="preset-escape" class="btn btn-primary" style="font-size: 0.78rem; padding: 6px; background: linear-gradient(135deg, #0284c7, #c084fc); border: none;">Escape (11.5 km/s)</button>
+            </div>
         </div>
-        <div class="control-group" style="margin-top: 10px;">
-            <label>Cannon Launch Angle (θ): <span id="a-val" class="math-value">45</span>°</label>
-            <input type="range" id="angle-slider" min="0" max="90" value="45" style="width: 100%">
+
+        <!-- Muzzle Velocity Slider -->
+        <div class="control-group" style="margin-top: 14px;">
+            <div style="display: flex; justify-content: space-between;">
+                <label>Horizontal Muzzle Speed (v₀):</label>
+                <span id="v-val" class="math-value" style="color: #38bdf8; font-weight: 700;">7.91 km/s</span>
+            </div>
+            <input type="range" id="v-slider" min="1.0" max="14.0" step="0.05" value="7.91" style="width: 100%;">
         </div>
-        <div class="control-group" style="margin-top: 10px;">
-            <label>Air Resistance (Cd): <span id="d-val" class="math-value">0.02</span></label>
-            <input type="range" id="d-slider" min="0.00" max="0.10" step="0.005" value="0.02" style="width: 100%">
+
+        <!-- Cannon Altitude Slider -->
+        <div class="control-group" style="margin-top: 12px;">
+            <div style="display: flex; justify-content: space-between;">
+                <label>Mountain Altitude (h):</label>
+                <span id="h-val" class="math-value" style="color: #34d399; font-weight: 700;">120 km</span>
+            </div>
+            <input type="range" id="h-slider" min="20" max="400" step="10" value="120" style="width: 100%;">
         </div>
-        <div class="control-group" style="margin-top: 10px;">
-            <label>Cross Wind: <span id="w-val" class="math-value">0.0</span> m/s</label>
-            <input type="range" id="w-slider" min="-1.5" max="1.5" step="0.1" value="0.0" style="width: 100%">
+
+        <!-- Atmosphere Toggle -->
+        <div class="control-group" style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <label for="atmos-toggle" style="margin-bottom: 0; cursor: pointer;">Atmospheric Friction (Drag):</label>
+            <input type="checkbox" id="atmos-toggle" style="width: 18px; height: 18px; accent-color: #38bdf8; cursor: pointer;">
         </div>
-        <div class="control-group" style="margin-top: 10px;">
-            <label><input type="checkbox" id="show-vectors" checked> Show Force Vectors (F_vec)</label>
+
+        <!-- Action Buttons -->
+        <div class="control-group" style="margin-top: 15px; display: flex; gap: 8px;">
+            <button id="fire-btn" class="btn btn-primary" style="flex: 1.2; background: linear-gradient(135deg, #0284c7, #2563eb); border: none;">💥 Fire Cannon!</button>
+            <button id="clear-btn" class="btn btn-secondary" style="flex: 1;">Clear Trails</button>
+            <button id="pause-btn" class="btn btn-secondary">❚❚</button>
         </div>
-        <div class="control-group" style="margin-top: 15px; display: flex; gap: 10px;">
-            <button id="launch-btn" class="btn btn-primary" style="flex: 1;">Fire Cannon!</button>
-            <button id="clear-btn" class="btn btn-secondary">Clear Trails</button>
+
+        <!-- Live Telemetry Readout -->
+        <div class="physics-readout" style="margin-top: 16px; font-size: 0.84rem; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">Trajectory Class</span>
+                <span id="regime-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; font-weight: 700;">
+                    CIRCULAR ORBIT (e ≈ 0)
+                </span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.8rem;">
+                <div>Eccentricity e: <strong id="e-readout" style="color: #38bdf8;">0.00</strong></div>
+                <div>Orbital Energy: <strong id="energy-readout" style="color: #34d399;">-31.3 MJ/kg</strong></div>
+                <div>Apogee Altitude: <strong id="apogee-readout" style="color: #fbbf24;">120 km</strong></div>
+                <div>Perigee Altitude: <strong id="perigee-readout" style="color: #c084fc;">120 km</strong></div>
+            </div>
         </div>
     `;
 
+    // References
     const vSlider = document.getElementById('v-slider');
-    const angleSlider = document.getElementById('angle-slider');
-    const dSlider = document.getElementById('d-slider');
-    const wSlider = document.getElementById('w-slider');
-    const showVectorsCheck = document.getElementById('show-vectors');
-    const launchBtn = document.getElementById('launch-btn');
+    const hSlider = document.getElementById('h-slider');
+    const atmosToggle = document.getElementById('atmos-toggle');
+    const fireBtn = document.getElementById('fire-btn');
     const clearBtn = document.getElementById('clear-btn');
+    const pauseBtn = document.getElementById('pause-btn');
 
-    let v0 = 55;
-    let angle = 45;
-    let drag = 0.02;
-    let wind = 0.0;
-    let g = 9.81; // standard gravity
+    const vVal = document.getElementById('v-val');
+    const hVal = document.getElementById('h-val');
+    const regimeBadge = document.getElementById('regime-badge');
+    const eReadout = document.getElementById('e-readout');
+    const energyReadout = document.getElementById('energy-readout');
+    const apogeeReadout = document.getElementById('apogee-readout');
+    const perigeeReadout = document.getElementById('perigee-readout');
 
+    // Physical Constants & Scaling
+    // Real Earth: R_earth = 6371 km, GM = 3.986e5 km³/s²
+    // v_circ at surface = sqrt(GM / R) = 7.91 km/s
+    // v_esc at surface = sqrt(2 * GM / R) = 11.19 km/s
+    const R_EARTH_KM = 6371;
+    const GM = 3.986004418e5; // km³/s²
+
+    // State Variables
+    let v0_kms = 7.91;
+    let altitude_km = 120;
+    let hasAtmosphere = false;
+    let isRunning = true;
+
+    // Canvas & Trajectory
     let projectiles = [];
-    let particles = []; // muzzle flash and explosion debris
-    let cameraShake = 0;
-    let lastTimestamp = performance.now();
+    let persistentTrails = [];
+    const maxPathPoints = 1200;
 
-    // Cannon base position
-    const cannonPos = { x: 70, y: 0 }; // y set in resize
+    let width = 800;
+    let height = 520;
+    let dpr = window.devicePixelRatio || 1;
 
-    // Resize canvas
+    // Viewport scale: pixels per km
+    // Earth radius in pixels: ~140px
+    let pxPerKm = 140 / R_EARTH_KM;
+    let center = { x: 400, y: 260 };
+
     function resize() {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = 500;
-        cannonPos.y = canvas.height - 60;
+        const rect = canvas.parentElement.getBoundingClientRect();
+        width = rect.width || 800;
+        height = 540;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+        center = { x: width * 0.5, y: height * 0.52 };
+        pxPerKm = 135 / R_EARTH_KM;
     }
     window.addEventListener('resize', resize);
     resize();
 
-    // Event listeners
-    vSlider.oninput = () => { v0 = parseInt(vSlider.value); document.getElementById('v-val').innerText = v0; };
-    angleSlider.oninput = () => { angle = parseInt(angleSlider.value); document.getElementById('a-val').innerText = angle; };
-    dSlider.oninput = () => { drag = parseFloat(dSlider.value); document.getElementById('d-val').innerText = drag; };
-    wSlider.oninput = () => { wind = parseFloat(wSlider.value); document.getElementById('w-val').innerText = wind; };
-    clearBtn.onclick = () => { projectiles = []; particles = []; };
+    function updateTelemetry() {
+        const r0 = R_EARTH_KM + altitude_km;
+        // Specific orbital energy: ε = v²/2 - GM/r
+        const specificEnergy = (v0_kms * v0_kms) * 0.5 - GM / r0; // in km²/s² (MJ/kg)
+        // Specific angular momentum: h = r * v
+        const h_ang = r0 * v0_kms;
+        // Eccentricity: e = sqrt(1 + 2 * ε * h² / GM²)
+        let ecc = Math.sqrt(Math.max(0, 1 + (2 * specificEnergy * h_ang * h_ang) / (GM * GM)));
 
-    // Fire!
-    launchBtn.onclick = () => {
-        const rad = (angle * Math.PI) / 180;
-        const barrelLen = 42;
-        
-        // Muzzle coordinates
-        const mx = cannonPos.x + Math.cos(rad) * barrelLen;
-        const my = cannonPos.y - Math.sin(rad) * barrelLen;
+        // Semi-major axis: a = -GM / (2 * ε)
+        let a = specificEnergy < 0 ? -GM / (2 * specificEnergy) : Infinity;
+        let r_peri = a * (1 - ecc);
+        let r_apo = specificEnergy < 0 ? a * (1 + ecc) : Infinity;
 
-        // Velocity vector scale
-        const scale = 0.23; 
-        projectiles.push({
-            x: mx,
-            y: my,
-            vx: v0 * Math.cos(rad) * scale,
-            vy: -v0 * Math.sin(rad) * scale,
-            radius: 7,
-            color: '#e2e8f0', // bright shell
-            path: [],
-            active: true
-        });
+        let peri_alt = r_peri - R_EARTH_KM;
+        let apo_alt = specificEnergy < 0 ? (r_apo - R_EARTH_KM) : Infinity;
 
-        // Trigger camera shake
-        cameraShake = 7.0;
-
-        // Spawn muzzle flash smoke particles
-        for (let i = 0; i < 15; i++) {
-            const pAngle = rad + (Math.random() - 0.5) * 0.4;
-            const pSpeed = (2 + Math.random() * 5);
-            particles.push({
-                x: mx, y: my,
-                vx: pSpeed * Math.cos(pAngle),
-                vy: -pSpeed * Math.sin(pAngle),
-                radius: 3 + Math.random() * 6,
-                color: `rgba(249, 115, 22, ${0.4 + Math.random() * 0.6})`, // orange/grey fire
-                age: 0,
-                maxAge: 15 + Math.random() * 10,
-                type: 'smoke'
-            });
+        // Badge & Color
+        if (peri_alt < 0) {
+            regimeBadge.textContent = 'SUB-ORBITAL IMPACT';
+            regimeBadge.style.color = '#f87171';
+            regimeBadge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            regimeBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+        } else if (ecc < 0.03) {
+            regimeBadge.textContent = 'CIRCULAR ORBIT (e ≈ 0)';
+            regimeBadge.style.color = '#34d399';
+            regimeBadge.style.borderColor = 'rgba(52, 211, 153, 0.4)';
+            regimeBadge.style.background = 'rgba(52, 211, 153, 0.15)';
+        } else if (specificEnergy < 0) {
+            regimeBadge.textContent = 'BOUND ELLIPTICAL ORBIT';
+            regimeBadge.style.color = '#38bdf8';
+            regimeBadge.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+            regimeBadge.style.background = 'rgba(56, 189, 248, 0.15)';
+        } else {
+            regimeBadge.textContent = 'HYPERBOLIC ESCAPE';
+            regimeBadge.style.color = '#c084fc';
+            regimeBadge.style.borderColor = 'rgba(192, 132, 252, 0.4)';
+            regimeBadge.style.background = 'rgba(192, 132, 252, 0.15)';
         }
+
+        eReadout.textContent = ecc.toFixed(3);
+        energyReadout.textContent = `${specificEnergy.toFixed(1)} MJ/kg`;
+        perigeeReadout.textContent = `${Math.round(peri_alt)} km`;
+        apogeeReadout.textContent = specificEnergy < 0 ? `${Math.round(apo_alt)} km` : '∞ (Unbound)';
+    }
+
+    // Sliders
+    vSlider.oninput = () => {
+        v0_kms = parseFloat(vSlider.value);
+        vVal.textContent = `${v0_kms.toFixed(2)} km/s`;
+        updateTelemetry();
     };
 
-    // Trigger floor impact explosion debris
-    function triggerExplosion(ex, ey) {
-        for (let i = 0; i < 18; i++) {
-            const pAngle = Math.random() * Math.PI; // bounce upwards
-            const pSpeed = (1 + Math.random() * 4);
-            particles.push({
-                x: ex, y: ey,
-                vx: pSpeed * Math.cos(pAngle),
-                vy: -pSpeed * Math.sin(pAngle),
-                radius: 2 + Math.random() * 3,
-                color: `rgba(251, 146, 60, ${0.8 + Math.random() * 0.2})`, // bright spark
-                age: 0,
-                maxAge: 20 + Math.random() * 15,
-                type: 'spark'
-            });
-        }
+    hSlider.oninput = () => {
+        altitude_km = parseInt(hSlider.value);
+        hVal.textContent = `${altitude_km} km`;
+        updateTelemetry();
+    };
+
+    atmosToggle.onchange = () => {
+        hasAtmosphere = atmosToggle.checked;
+    };
+
+    // Presets
+    document.getElementById('preset-ballistic').onclick = () => {
+        v0_kms = 4.50; vSlider.value = v0_kms; vVal.textContent = `${v0_kms.toFixed(2)} km/s`;
+        updateTelemetry(); fireCannon();
+    };
+    document.getElementById('preset-circular').onclick = () => {
+        const r0 = R_EARTH_KM + altitude_km;
+        v0_kms = Math.sqrt(GM / r0);
+        vSlider.value = v0_kms.toFixed(2);
+        vVal.textContent = `${v0_kms.toFixed(2)} km/s`;
+        updateTelemetry(); fireCannon();
+    };
+    document.getElementById('preset-elliptic').onclick = () => {
+        v0_kms = 9.60; vSlider.value = v0_kms; vVal.textContent = `${v0_kms.toFixed(2)} km/s`;
+        updateTelemetry(); fireCannon();
+    };
+    document.getElementById('preset-escape').onclick = () => {
+        v0_kms = 11.50; vSlider.value = v0_kms; vVal.textContent = `${v0_kms.toFixed(2)} km/s`;
+        updateTelemetry(); fireCannon();
+    };
+
+    fireBtn.onclick = fireCannon;
+    clearBtn.onclick = () => { projectiles = []; persistentTrails = []; };
+    pauseBtn.onclick = () => {
+        isRunning = !isRunning;
+        pauseBtn.textContent = isRunning ? '❚❚' : '▶';
+    };
+
+    function fireCannon() {
+        const r0 = R_EARTH_KM + altitude_km;
+        // Cannon fires horizontally eastward (to the right) from North Pole
+        projectiles.push({
+            x: 0,
+            y: r0,
+            vx: v0_kms,
+            vy: 0,
+            path: [{ x: 0, y: r0 }],
+            active: true,
+            color: v0_kms > 11.19 ? '#c084fc' : (v0_kms > 7.8 ? '#34d399' : '#f87171')
+        });
     }
 
-    // Main animation and physics loop
-    function loop(timestamp) {
-        // Enforce time-delta step
-        const dt = Math.min(0.04, (timestamp - lastTimestamp) / 1000) * 60;
-        lastTimestamp = timestamp;
+    // RK4 Central Gravity Step
+    function stepProjectile(p, dt) {
+        if (!p.active) return;
 
-        if (cameraShake > 0.1) {
-            cameraShake *= 0.88; // decay
-        } else {
-            cameraShake = 0;
-        }
+        const f = (x, y, vx, vy) => {
+            const r2 = x*x + y*y;
+            const r = Math.sqrt(r2);
+            if (r <= R_EARTH_KM) return [0, 0, 0, 0];
 
-        // 1. Update active projectiles
-        for (let p of projectiles) {
-            if (!p.active) continue;
+            // Gravitational acceleration: a = -GM / r² in direction of -r
+            const a_grav = GM / r2;
+            let ax = -a_grav * (x / r);
+            let ay = -a_grav * (y / r);
 
-            const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy) || 0.001;
-            
-            // Forces calculations (scaled down for canvas size representation)
-            // Drag force opposite to velocity
-            const fDragX = -drag * speed * p.vx * 0.08;
-            const fDragY = -drag * speed * p.vy * 0.08;
-            
-            // Gravity force (pointing down)
-            const fGravY = g * 0.02;
-
-            // Wind force (horizontal)
-            const fWindX = wind * 0.02;
-
-            // Save force vectors for drawing
-            p.fDrag = { x: fDragX, y: fDragY };
-            p.fGrav = { x: 0, y: fGravY };
-            p.fWind = { x: fWindX, y: 0 };
-            p.fNet = { x: fDragX + fWindX, y: fDragY + fGravY };
-
-            // Integrate Velocity Verlet
-            p.vx += (fDragX + fWindX) * dt;
-            p.vy += (fDragY + fGravY) * dt;
-
-            p.x += p.vx * dt;
-            p.y += p.vy * dt;
-
-            // Save trail
-            p.path.push({ x: p.x, y: p.y });
-            if (p.path.length > 300) p.path.shift();
-
-            // Check floor collision
-            if (p.y >= canvas.height - 60) {
-                p.y = canvas.height - 60;
-                p.active = false;
-                triggerExplosion(p.x, p.y);
-            }
-        }
-
-        // 2. Update particle sparks and smoke
-        for (let i = particles.length - 1; i >= 0; i--) {
-            const pt = particles[i];
-            pt.x += pt.vx;
-            pt.y += pt.vy;
-            pt.age++;
-
-            if (pt.type === 'spark') {
-                pt.vy += 0.15; // sparks experience gravity
+            // Optional atmospheric drag (exponential scale height ~ 8.5 km)
+            if (hasAtmosphere && r < R_EARTH_KM + 120) {
+                const alt = r - R_EARTH_KM;
+                const rho = Math.exp(-alt / 8.5);
+                const speed = Math.sqrt(vx*vx + vy*vy);
+                const dragConst = 0.0003;
+                ax -= dragConst * rho * speed * vx;
+                ay -= dragConst * rho * speed * vy;
             }
 
-            if (pt.age >= pt.maxAge) {
-                particles.splice(i, 1);
-            }
-        }
-
-        draw();
-        requestAnimationFrame(loop);
-    }
-
-    function draw() {
-        // Save context and apply camera shake offset
-        ctx.save();
-        if (cameraShake > 0) {
-            const shakeX = (Math.random() - 0.5) * cameraShake;
-            const shakeY = (Math.random() - 0.5) * cameraShake;
-            ctx.translate(shakeX, shakeY);
-        }
-
-        // Deep slate background
-        ctx.fillStyle = '#0a0f1d';
-        ctx.fillRect(-20, -20, canvas.width + 40, canvas.height + 40);
-
-        // Draw ground / floor landscape
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(-20, canvas.height - 60, canvas.width + 40, 60);
-
-        ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, canvas.height - 60);
-        ctx.lineTo(canvas.width, canvas.height - 60);
-        ctx.stroke();
-
-        // 1. Draw projectile trails
-        for (let p of projectiles) {
-            if (p.path.length < 2) continue;
-            ctx.lineWidth = 2.0;
-            ctx.strokeStyle = 'rgba(100, 255, 218, 0.45)'; // cyan trail
-            ctx.beginPath();
-            ctx.moveTo(p.path[0].x, p.path[0].y);
-            for (let i = 1; i < p.path.length; i++) {
-                ctx.lineTo(p.path[i].x, p.path[i].y);
-            }
-            ctx.stroke();
-        }
-
-        // 2. Draw flying shell bobs
-        for (let p of projectiles) {
-            if (!p.active) continue;
-
-            // Draw glowing core
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = '#64ffda';
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0; // reset
-
-            // Draw educational physics force vector diagram overlay
-            if (showVectorsCheck.checked && p.fNet) {
-                const vectorScale = 450; // amplify for canvas visibility
-                ctx.lineWidth = 2.0;
-
-                // A. Gravity vector Fg (red, down)
-                drawArrow(p.x, p.y, p.x, p.y + p.fGrav.y * vectorScale, '#ef4444', 'Fg');
-
-                // B. Drag vector Fd (blue, opposite velocity)
-                if (drag > 0) {
-                    drawArrow(p.x, p.y, p.x + p.fDrag.x * vectorScale, p.y + p.fDrag.y * vectorScale, '#3b82f6', 'Fd');
-                }
-
-                // C. Wind vector Fw (orange, horizontal)
-                if (Math.abs(wind) > 0) {
-                    drawArrow(p.x, p.y, p.x + p.fWind.x * vectorScale, p.y, '#f97316', 'Fw');
-                }
-
-                // D. Net resulting acceleration vector (green)
-                drawArrow(p.x, p.y, p.x + p.fNet.x * vectorScale, p.y + p.fNet.y * vectorScale, '#22c55e', 'Fnet');
-            }
-        }
-
-        // Draw vector arrow helper function
-        function drawArrow(x1, y1, x2, y2, color, label) {
-            const dx = x2 - x1;
-            const dy = y2 - y1;
-            const len = Math.sqrt(dx * dx + dy * dy);
-            if (len < 6) return;
-
-            ctx.strokeStyle = color;
-            ctx.fillStyle = color;
-            
-            // Draw line
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-
-            // Arrow head
-            const udx = dx / len;
-            const udy = dy / len;
-            ctx.beginPath();
-            ctx.moveTo(x2, y2);
-            ctx.lineTo(x2 - udx * 7 + udy * 3.5, y2 - udy * 7 - udx * 3.5);
-            ctx.lineTo(x2 - udx * 7 - udy * 3.5, y2 - udy * 7 + udx * 3.5);
-            ctx.closePath();
-            ctx.fill();
-
-            // Draw label text
-            ctx.font = '9px monospace';
-            ctx.fillText(label, x2 + udx * 5, y2 + udy * 5 + 3);
-        }
-
-        // 3. Draw explosion/muzzle particles
-        for (let pt of particles) {
-            ctx.fillStyle = pt.color;
-            if (pt.type === 'smoke') {
-                // Fading cloud
-                const alpha = 1.0 - (pt.age / pt.maxAge);
-                ctx.fillStyle = `rgba(249, 115, 22, ${alpha * 0.4})`; // fade orange smoke
-            }
-            ctx.beginPath();
-            ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        // 4. Draw Cannon / Tank visual representation at bottom-left
-        const rad = (angle * Math.PI) / 180;
-        const barrelLen = 42;
-        const barrelEnd = {
-            x: cannonPos.x + Math.cos(rad) * barrelLen,
-            y: cannonPos.y - Math.sin(rad) * barrelLen
+            return [vx, vy, ax, ay];
         };
 
-        // Draw Tank wheels / tread (3 dark grey circles)
-        ctx.fillStyle = '#334155';
-        ctx.fillRect(cannonPos.x - 45, cannonPos.y, 75, 12);
-        
-        ctx.fillStyle = '#1e293b';
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 1.5;
-        for (let i = -3; i <= 2; i++) {
+        const k1 = f(p.x, p.y, p.vx, p.vy);
+        const k2 = f(p.x + 0.5*dt*k1[0], p.y + 0.5*dt*k1[1], p.vx + 0.5*dt*k1[2], p.vy + 0.5*dt*k1[3]);
+        const k3 = f(p.x + 0.5*dt*k2[0], p.y + 0.5*dt*k2[1], p.vx + 0.5*dt*k2[2], p.vy + 0.5*dt*k2[3]);
+        const k4 = f(p.x + dt*k3[0], p.y + dt*k3[1], p.vx + dt*k3[2], p.vy + dt*k3[3]);
+
+        p.x += (dt / 6) * (k1[0] + 2*k2[0] + 2*k3[0] + k4[0]);
+        p.y += (dt / 6) * (k1[1] + 2*k2[1] + 2*k3[1] + k4[1]);
+        p.vx += (dt / 6) * (k1[2] + 2*k2[2] + 2*k3[2] + k4[2]);
+        p.vy += (dt / 6) * (k1[3] + 2*k2[3] + 2*k3[3] + k4[3]);
+
+        const r = Math.sqrt(p.x*p.x + p.y*p.y);
+        p.path.push({ x: p.x, y: p.y });
+
+        // Check ground impact
+        if (r <= R_EARTH_KM) {
+            p.active = false;
+            persistentTrails.push({ path: p.path, color: p.color });
+        }
+
+        // Check solar escape distance boundary
+        if (r > R_EARTH_KM * 6) {
+            p.active = false;
+            persistentTrails.push({ path: p.path, color: p.color });
+        }
+    }
+
+    // Auto-fire initial circular orbit
+    updateTelemetry();
+    fireCannon();
+
+    // 60fps Loop
+    let lastTime = performance.now();
+
+    function loop(now) {
+        requestAnimationFrame(loop);
+        const elapsed = Math.min((now - lastTime) / 1000, 0.05);
+        lastTime = now;
+
+        if (isRunning) {
+            // Speed up time: 10 substeps per frame
+            const simDt = 2.8; 
+            for (let s = 0; s < 8; s++) {
+                projectiles.forEach(p => stepProjectile(p, simDt));
+            }
+        }
+
+        // Render Canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // 1. Draw Coordinate Grid & Distant Stars
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.lineWidth = 1;
+        for (let r_ring = 1; r_ring <= 4; r_ring++) {
             ctx.beginPath();
-            ctx.arc(cannonPos.x - 35 + i * 14, cannonPos.y + 8, 5, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.arc(center.x, center.y, (R_EARTH_KM * r_ring) * pxPerKm, 0, Math.PI * 2);
             ctx.stroke();
         }
 
-        // Draw Tank body cabin (grey bevel block)
-        ctx.fillStyle = '#64748b';
-        ctx.strokeStyle = '#94a3b8';
+        // 2. Draw Atmospheric Halo
+        const earthPxR = R_EARTH_KM * pxPerKm;
+        const atmosGrad = ctx.createRadialGradient(center.x, center.y, earthPxR, center.x, center.y, earthPxR + 14);
+        atmosGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+        atmosGrad.addColorStop(1, 'rgba(56, 189, 248, 0.0)');
+        ctx.fillStyle = atmosGrad;
         ctx.beginPath();
-        ctx.moveTo(cannonPos.x - 35, cannonPos.y);
-        ctx.lineTo(cannonPos.x + 25, cannonPos.y);
-        ctx.lineTo(cannonPos.x + 15, cannonPos.y - 18);
-        ctx.lineTo(cannonPos.x - 25, cannonPos.y - 18);
-        ctx.closePath();
+        ctx.arc(center.x, center.y, earthPxR + 14, 0, Math.PI * 2);
         ctx.fill();
+
+        // 3. Draw Spherical Earth
+        const earthGrad = ctx.createRadialGradient(center.x - 30, center.y - 40, 15, center.x, center.y, earthPxR);
+        earthGrad.addColorStop(0, '#1e3a8a');
+        earthGrad.addColorStop(0.7, '#0f172a');
+        earthGrad.addColorStop(1, '#020617');
+
+        ctx.fillStyle = earthGrad;
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, earthPxR, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // Draw rotating turret dome
+        // 4. Draw Cannon Mountain at North Pole
+        const mountainH_px = altitude_km * pxPerKm;
+        const cannonX = center.x;
+        const cannonY = center.y - earthPxR - mountainH_px;
+
+        // Mountain cone
         ctx.fillStyle = '#475569';
         ctx.beginPath();
-        ctx.arc(cannonPos.x, cannonPos.y - 16, 15, Math.PI, 0); // half circle
+        ctx.moveTo(cannonX - 8, center.y - earthPxR);
+        ctx.lineTo(cannonX, cannonY);
+        ctx.lineTo(cannonX + 8, center.y - earthPxR);
+        ctx.closePath();
         ctx.fill();
 
-        // Draw rotating cannon barrel
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 7.5;
-        ctx.lineCap = 'round';
+        // Cannon barrel pointing eastward
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 3.5;
         ctx.beginPath();
-        ctx.moveTo(cannonPos.x, cannonPos.y - 16);
-        ctx.lineTo(barrelEnd.x, barrelEnd.y);
+        ctx.moveTo(cannonX, cannonY);
+        ctx.lineTo(cannonX + 12, cannonY);
         ctx.stroke();
-        ctx.lineCap = 'butt'; // reset
 
-        // Restore context from camera shake
-        ctx.restore();
+        // 5. Draw Persistent Old Trails
+        persistentTrails.forEach(t => {
+            if (t.path.length < 2) return;
+            ctx.beginPath();
+            ctx.moveTo(center.x + t.path[0].x * pxPerKm, center.y - t.path[0].y * pxPerKm);
+            for (let i = 1; i < t.path.length; i++) {
+                ctx.lineTo(center.x + t.path[i].x * pxPerKm, center.y - t.path[i].y * pxPerKm);
+            }
+            ctx.strokeStyle = t.color;
+            ctx.globalAlpha = 0.35;
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+        });
+
+        // 6. Draw Active Projectiles & Live Trails
+        projectiles.forEach(p => {
+            if (p.path.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(center.x + p.path[0].x * pxPerKm, center.y - p.path[0].y * pxPerKm);
+                for (let i = 1; i < p.path.length; i++) {
+                    ctx.lineTo(center.x + p.path[i].x * pxPerKm, center.y - p.path[i].y * pxPerKm);
+                }
+                ctx.strokeStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 8;
+                ctx.lineWidth = 2.2;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+
+            if (p.active) {
+                const curPx = center.x + p.x * pxPerKm;
+                const curPy = center.y - p.y * pxPerKm;
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(curPx, curPy, 4.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        });
     }
 
-    // Start loop
     requestAnimationFrame(loop);
 });

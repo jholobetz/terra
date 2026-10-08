@@ -940,7 +940,39 @@
         ],
         "description": "Fundamental linear partial differential equation describing the deterministic, unitary time evolution of a quantum mechanical state vector in Hilbert space.",
         "derivation_type": "DERIVED_FROM",
-        "parent_formula_id": "time-dependent-schrodinger-equation"
+        "parent_formula_id": "time-dependent-schrodinger-equation",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "|\\Psi(t + \\Delta t)\\rangle = \\hat{U}(\\Delta t) |\\Psi(t)\\rangle = \\left( \\hat{I} - \\frac{i}{\\hbar} \\hat{G} \\Delta t + \\mathcal{O}(\\Delta t^2) \\right) |\\Psi(t)\\rangle",
+                "rationale": "Postulate that physical time evolution is governed by a one-parameter family of unitary operators $\\hat{U}(\\Delta t)$, where unitarity $\\hat{U}^\\dagger \\hat{U} = \\hat{I}$ demands that the generator $\\hat{G}$ is a self-adjoint (Hermitian) operator."
+            },
+            {
+                "step": 2,
+                "latex": "\\hat{G} = \\hat{H}",
+                "rationale": "Identify the generator of infinitesimal temporal translations $\\hat{G}$ with the total energy observable $\\hat{H}$ (Hamiltonian), consistent with the classical correspondence principle where energy generates time translations."
+            },
+            {
+                "step": 3,
+                "latex": "\\frac{|\\Psi(t + \\Delta t)\\rangle - |\\Psi(t)\\rangle}{\\Delta t} = -\\frac{i}{\\hbar} \\hat{H} |\\Psi(t)\\rangle + \\mathcal{O}(\\Delta t)",
+                "rationale": "Subtract $|\\Psi(t)\\rangle$ from both sides and form the finite difference quotient with respect to the temporal increment $\\Delta t$."
+            },
+            {
+                "step": 4,
+                "latex": "\\lim_{\\Delta t \\to 0} \\frac{|\\Psi(t + \\Delta t)\\rangle - |\\Psi(t)\\rangle}{\\Delta t} = \\frac{\\partial}{\\partial t} |\\Psi(t)\\rangle = -\\frac{i}{\\hbar} \\hat{H} |\\Psi(t)\\rangle",
+                "rationale": "Evaluate the limit as $\\Delta t \\to 0$ in the strong operator topology of the Hilbert space to define the continuous time derivative of the state vector."
+            },
+            {
+                "step": 5,
+                "latex": "i\\hbar \\frac{\\partial}{\\partial t} |\\Psi(t)\\rangle = -i^2 \\hat{H} |\\Psi(t)\\rangle",
+                "rationale": "Multiply both sides of the differential equation by the scalar factor $i\\hbar$, noting that $-i(i) = -i^2 = 1$."
+            },
+            {
+                "step": 6,
+                "latex": "i\\hbar \\frac{\\partial}{\\partial t} |\\Psi(t)\\rangle = \\hat{H} |\\Psi(t)\\rangle",
+                "rationale": "Simplify the scalar prefactors using $i^2 = -1$ to arrive at the canonical Time-Dependent Schrödinger Equation."
+            }
+        ]
     },
     "kelvin-circulation-invariance-law-2000f7f7": {
         "title": "Kelvin's Circulation Theorem",
@@ -972,6 +1004,38 @@
             "circulation-integral-definition-24dbfa06",
             "kelvin-circulation-relation-fluids-e115b264",
             "flux-balance-fa915e79"
+        ],
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\Gamma(t) = \\oint_{C(t)} \\mathbf{u} \\cdot d\\mathbf{l}",
+                "rationale": "Define the fluid circulation $\\Gamma(t)$ as the line integral of the Eulerian velocity vector $\\mathbf{u}$ around a closed material loop $C(t)$ composed of moving fluid parcels."
+            },
+            {
+                "step": 2,
+                "latex": "\\frac{D\\Gamma}{Dt} = \\frac{D}{Dt} \\oint_{C(t)} \\mathbf{u} \\cdot d\\mathbf{l} = \\oint_{C(t)} \\frac{D\\mathbf{u}}{Dt} \\cdot d\\mathbf{l} + \\oint_{C(t)} \\mathbf{u} \\cdot \\frac{D(d\\mathbf{l})}{Dt}",
+                "rationale": "Apply the Leibniz rule for differentiation of a line integral over a time-dependent material contour following the fluid motion."
+            },
+            {
+                "step": 3,
+                "latex": "\\frac{D(d\\mathbf{l})}{Dt} = d\\left(\\frac{D\\mathbf{l}}{Dt}\\right) = d\\mathbf{u} \\implies \\oint_{C(t)} \\mathbf{u} \\cdot d\\mathbf{u} = \\oint_{C(t)} d\\left(\\frac{1}{2} |\\mathbf{u}|^2\\right) = 0",
+                "rationale": "Recognize that the material derivative of the line segment increment $d\\mathbf{l}$ is the velocity difference $d\\mathbf{u}$, producing an exact differential whose closed-loop contour integral vanishes identically."
+            },
+            {
+                "step": 4,
+                "latex": "\\frac{D\\mathbf{u}}{Dt} = -\\frac{1}{\\rho}\\nabla p - \\nabla \\Phi = -\\nabla w - \\nabla \\Phi = -\\nabla(w + \\Phi)",
+                "rationale": "Substitute Euler's equation of motion for an inviscid fluid subject to conservative body forces $\\mathbf{f} = -\\nabla\\Phi$ and a barotropic equation of state $p = p(\\rho)$, where specific enthalpy satisfies $dw = dp/\\rho$."
+            },
+            {
+                "step": 5,
+                "latex": "\\frac{D\\Gamma}{Dt} = \\oint_{C(t)} -\\nabla(w + \\Phi) \\cdot d\\mathbf{l} = -\\oint_{C(t)} d(w + \\Phi)",
+                "rationale": "Substitute the gradient acceleration field back into the remaining contour integral and apply the gradient theorem for line integrals."
+            },
+            {
+                "step": 6,
+                "latex": "\\frac{D\\Gamma}{Dt} = 0",
+                "rationale": "Conclude that the circulation around any closed material contour in an inviscid, barotropic fluid with conservative body forces is an exact invariant of the motion."
+            }
         ]
     },
     "linear-mapping-axiom-ident-6e5a983a": {

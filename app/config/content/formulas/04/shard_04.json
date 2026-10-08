@@ -768,7 +768,39 @@
         "intuitive_summary": "When the fundamental description of a system (its Lagrangian) doesn't change over time, then the system's Hamiltonian, which describes its dynamics, becomes numerically identical to its total energy. This means that for such systems, the Hamiltonian represents the conserved total energy.",
         "description": "This identity states that if the Lagrangian of a system does not explicitly depend on time, then the Hamiltonian of the system is equal to its total energy, provided certain conditions on the kinetic and potential energies are met.",
         "parent_formula_id": "energy-conservation-law-741879b0",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "LEGENDRE_TIME_INVARIANCE",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "H(q, p, t) = \\sum_i p_i \\dot{q}^i - L(q, \\dot{q}, t), \\quad p_i = \\frac{\\partial L}{\\partial \\dot{q}^i}",
+                "rationale": "Define the Hamiltonian function through the classical Legendre transform of the Lagrangian with canonical momentum $p_i$."
+            },
+            {
+                "step": 2,
+                "latex": "\\frac{dH}{dt} = \\sum_i \\left( \\dot{p}_i \\dot{q}^i + p_i \\ddot{q}^i \\right) - \\sum_i \\left( \\frac{\\partial L}{\\partial q^i} \\dot{q}^i + \\frac{\\partial L}{\\partial \\dot{q}^i} \\ddot{q}^i \\right) - \\frac{\\partial L}{\\partial t}",
+                "rationale": "Compute the total time derivative of the Hamiltonian using the multivariable product rule and chain rule."
+            },
+            {
+                "step": 3,
+                "latex": "\\sum_i p_i \\ddot{q}^i - \\sum_i \\frac{\\partial L}{\\partial \\dot{q}^i} \\ddot{q}^i = \\sum_i \\left( p_i - \\frac{\\partial L}{\\partial \\dot{q}^i} \\right) \\ddot{q}^i = 0",
+                "rationale": "Cancel the second-derivative acceleration terms identically by virtue of the definition of canonical momentum."
+            },
+            {
+                "step": 4,
+                "latex": "\\frac{d}{dt} \\left( \\frac{\\partial L}{\\partial \\dot{q}^i} \\right) - \\frac{\\partial L}{\\partial q^i} = 0 \\implies \\dot{p}_i = \\frac{\\partial L}{\\partial q^i}",
+                "rationale": "Apply the Euler-Lagrange equations of motion to equate the generalized force to the time derivative of canonical momentum."
+            },
+            {
+                "step": 5,
+                "latex": "\\frac{dH}{dt} = \\sum_i \\left( \\dot{p}_i - \\frac{\\partial L}{\\partial q^i} \\right) \\dot{q}^i - \\frac{\\partial L}{\\partial t} = -\\frac{\\partial L}{\\partial t}",
+                "rationale": "Show that the total time rate of change of the Hamiltonian is governed strictly by the explicit time dependence of the Lagrangian."
+            },
+            {
+                "step": 6,
+                "latex": "\\frac{\\partial L}{\\partial t} = 0 \\implies \\frac{dH}{dt} = 0 \\quad \\text{and for scleronomic systems} \\quad H = T + V = E",
+                "rationale": "Conclude that time-translation invariance yields energy conservation ($dH/dt = 0$), with $H = E$ when kinetic energy is quadratic in velocities."
+            }
+        ],
         "subcomponents": [
             "homogeneity-energy-identity-1759e39b",
             "deterministic-path-identity-1-4eade3c6-acc37a49"
@@ -2433,11 +2465,39 @@
             }
         },
         "equation": "\\frac{\\partial}{\\partial t} |\\psi|^2 + \\nabla \\cdot \\mathbf{J} = 0",
-        "status": "published",
+        "status": "platinum",
         "parent_formula_id": "probability-continuity-law-574568a8",
+        "derivation_type": "DERIVED_FROM",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "i\\hbar \\frac{\\partial \\psi}{\\partial t} = -\\frac{\\hbar^2}{2m} \\nabla^2 \\psi + V \\psi, \\quad -i\\hbar \\frac{\\partial \\psi^*}{\\partial t} = -\\frac{\\hbar^2}{2m} \\nabla^2 \\psi^* + V \\psi^*",
+                "rationale": "State the Time-Dependent Schrödinger Equation for wavefunction $\\psi(\\mathbf{r}, t)$ in a real potential $V$ along with its complex conjugate."
+            },
+            {
+                "step": 2,
+                "latex": "\\frac{\\partial \\rho}{\\partial t} = \\frac{\\partial}{\\partial t} |\\psi|^2 = \\frac{\\partial}{\\partial t}(\\psi^* \\psi) = \\psi^* \\frac{\\partial \\psi}{\\partial t} + \\psi \\frac{\\partial \\psi^*}{\\partial t}",
+                "rationale": "Express the time derivative of the Born probability density $\\rho = |\\psi|^2$ via the product rule."
+            },
+            {
+                "step": 3,
+                "latex": "\\frac{\\partial \\rho}{\\partial t} = \\psi^* \\left( \\frac{i\\hbar}{2m}\\nabla^2\\psi - \\frac{i}{\\hbar}V\\psi \\right) + \\psi \\left( -\\frac{i\\hbar}{2m}\\nabla^2\\psi^* + \\frac{i}{\\hbar}V\\psi^* \\right) = \\frac{i\\hbar}{2m} \\left( \\psi^* \\nabla^2 \\psi - \\psi \\nabla^2 \\psi^* \\right)",
+                "rationale": "Substitute the time derivatives from the Schrödinger equations, observing that the real potential terms $\\pm \\frac{i}{\\hbar}V|\\psi|^2$ cancel identically."
+            },
+            {
+                "step": 4,
+                "latex": "\\psi^* \\nabla^2 \\psi - \\psi \\nabla^2 \\psi^* = \\nabla \\cdot \\left( \\psi^* \\nabla \\psi - \\psi \\nabla \\psi^* \\right)",
+                "rationale": "Apply the vector divergence identity to express the bracketed Laplacian difference as a total divergence."
+            },
+            {
+                "step": 5,
+                "latex": "\\mathbf{J} \\equiv \\frac{\\hbar}{2mi} \\left( \\psi^* \\nabla \\psi - \\psi \\nabla \\psi^* \\right) \\implies \\frac{\\partial \\rho}{\\partial t} + \\nabla \\cdot \\mathbf{J} = 0",
+                "rationale": "Define the quantum probability current density $\\mathbf{J}$ to recover the exact local conservation continuity equation."
+            }
+        ],
         "subcomponents": [],
         "id": "quantum-probability-continuity-equation-574568a8",
-        "intuitive_summary": ""
+        "intuitive_summary": "Just like water in a pipe cannot disappear without flowing somewhere else, the probability of finding a quantum particle in space is strictly conserved—if probability drops in one region, a probability current must flow out of its boundary."
     },
     "position-under-constant-acceleration-515a961d": {
         "title": "Position as a Function of Time under Constant Acceleration",

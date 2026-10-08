@@ -1314,7 +1314,39 @@
             }
         },
         "description": "This formula expresses the first-order change, or first variation $\\delta S$, of the action functional $S$ resulting from an infinitesimal variation $\\delta q^i$ in the system's path through configuration space. It is a foundational step in the calculus of variations used to derive the equations of motion.",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "VARIATIONAL_CALCULUS",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "S[q] = \\int_{t_1}^{t_2} \\mathcal{L}(q^i(t), \\dot{q}^i(t), t) \\, dt",
+                "rationale": "Define the classical action as the time integral of the Lagrangian functional evaluated along a path $q^i(t)$ connecting fixed boundary configurations."
+            },
+            {
+                "step": 2,
+                "latex": "q^i(t) \\to q^i(t) + \\alpha \\eta^i(t), \\quad \\eta^i(t_1) = \\eta^i(t_2) = 0",
+                "rationale": "Introduce a one-parameter family of virtual path variations parameterized by $\\alpha$ with arbitrary perturbation functions $\\eta^i(t)$ vanishing at the temporal boundaries."
+            },
+            {
+                "step": 3,
+                "latex": "\\delta S = \\left. \\frac{d S[q + \\alpha \\eta]}{d\\alpha} \\right|_{\\alpha = 0} = \\int_{t_1}^{t_2} \\left( \\frac{\\partial \\mathcal{L}}{\\partial q^i} \\eta^i + \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}^i} \\dot{\\eta}^i \\right) dt",
+                "rationale": "Differentiate under the integral sign using the multivariable chain rule to obtain the Gateaux derivative of the action."
+            },
+            {
+                "step": 4,
+                "latex": "\\int_{t_1}^{t_2} \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}^i} \\frac{d\\eta^i}{dt} \\, dt = \\left[ \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}^i} \\eta^i \\right]_{t_1}^{t_2} - \\int_{t_1}^{t_2} \\left( \\frac{d}{dt} \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}^i} \\right) \\eta^i \\, dt",
+                "rationale": "Integrate the generalized velocity derivative term by parts to transfer the time derivative from the virtual displacement $\\eta^i$ onto the momentum."
+            },
+            {
+                "step": 5,
+                "latex": "\\left[ \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}^i} \\eta^i(t) \\right]_{t_1}^{t_2} = 0",
+                "rationale": "Apply the fixed boundary endpoint condition $\\eta^i(t_1) = \\eta^i(t_2) = 0$, causing the boundary evaluation bracket to vanish."
+            },
+            {
+                "step": 6,
+                "latex": "\\delta S = \\int_{t_1}^{t_2} \\left( \\frac{\\partial \\mathcal{L}}{\\partial q^i} - \\frac{d}{dt} \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}^i} \\right) \\delta q^i \\, dt = 0 \\implies \\frac{\\partial \\mathcal{L}}{\\partial q^i} - \\frac{d}{dt} \\frac{\\partial \\mathcal{L}}{\\partial \\dot{q}^i} = 0",
+                "rationale": "Invoke the fundamental lemma of the calculus of variations for arbitrary $\\delta q^i = \\alpha \\eta^i$, yielding Hamilton's principle and the Euler-Lagrange equations."
+            }
+        ],
         "subcomponents": [
             "action-integral-functional-09f64cc6",
             "integration-by-parts-action-variation",

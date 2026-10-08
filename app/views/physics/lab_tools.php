@@ -21,38 +21,82 @@
     </header>
 
     <!-- ================================================================= -->
-    <!-- HERO STAGE: THE COSMIC ARENA                                      -->
+    <!-- HERO STAGE: THE UNIFIED PHYSICS COCKPIT & TRANSFORMATION CHAMBER  -->
     <!-- ================================================================= -->
-    <section class="cosmic-arena-section" style="margin-bottom: 50px;">
-        <!-- Arena Selector Carousel / Mystery Pills -->
-        <div class="arena-carousel-bar">
-            <div class="carousel-label">Select Physical Regime:</div>
-            <div class="mystery-pills-container">
-                <button class="mystery-pill active" data-mode="chaos">
+    <section class="cockpit-crucible-section" style="margin-bottom: 50px;">
+        <!-- 1. Crucible Active Physical System Bar -->
+        <div class="crucible-bar">
+            <div class="crucible-label-group">
+                <span class="crucible-badge">System Crucible</span>
+                <span class="crucible-hint">Select Active Physical System:</span>
+            </div>
+            <div class="crucible-systems-container">
+                <button class="crucible-system-pill active" data-system="sho">
                     <span class="pill-icon">🌀</span>
-                    <span class="pill-text">The Butterfly of Chaos</span>
-                    <span class="pill-sub">Lagrangian RK4</span>
+                    <span class="pill-text">Harmonic Oscillator</span>
+                    <span class="pill-sub">Quadratic V(q)</span>
                 </button>
-                <button class="mystery-pill" data-mode="quantum">
-                    <span class="pill-icon">👻</span>
-                    <span class="pill-text">The Quantum Ghost</span>
-                    <span class="pill-sub">Wave Packet Tunneling</span>
+                <button class="crucible-system-pill" data-system="relativistic">
+                    <span class="pill-icon">🪐</span>
+                    <span class="pill-text">Relativistic Particle</span>
+                    <span class="pill-sub">Lorentz Boost</span>
                 </button>
-                <button class="mystery-pill" data-mode="collapse">
-                    <span class="pill-icon">💥</span>
-                    <span class="pill-text">Tuning the Universe to Death</span>
-                    <span class="pill-sub">ISCO Gravity Collapse</span>
+                <button class="crucible-system-pill" data-system="chaos">
+                    <span class="pill-icon">⏳</span>
+                    <span class="pill-text">Double Pendulum</span>
+                    <span class="pill-sub">RK4 Chaos</span>
                 </button>
-                <button class="mystery-pill" data-mode="noether">
+                <button class="crucible-system-pill" data-system="em_field">
                     <span class="pill-icon">⚡</span>
-                    <span class="pill-text">The Breaking of Energy</span>
-                    <span class="pill-sub">Noether Time Symmetry</span>
+                    <span class="pill-text">Charged Particle</span>
+                    <span class="pill-sub">Gauge Vector A</span>
+                </button>
+                <button class="crucible-system-pill" data-system="quantum_barrier">
+                    <span class="pill-icon">👻</span>
+                    <span class="pill-text">Quantum Tunneling</span>
+                    <span class="pill-sub">Wave Packet</span>
+                </button>
+                <button class="crucible-system-pill" data-system="central_force">
+                    <span class="pill-icon">🌌</span>
+                    <span class="pill-text">Schwarzschild Orbit</span>
+                    <span class="pill-sub">ISCO Collapse</span>
                 </button>
             </div>
         </div>
 
-        <!-- The Cosmic Stage Viewport -->
-        <div class="cosmic-stage-card">
+        <!-- 2. Multi-Prism Selector Bar (Transformation Chamber) -->
+        <div class="prism-selector-bar">
+            <div class="prism-tabs">
+                <button class="prism-tab active" data-prism="variational">
+                    <span class="prism-icon">🧮</span>
+                    <span class="prism-title">Variational &amp; Phase</span>
+                    <span class="prism-sub">Lagrangian ↔ Hamiltonian</span>
+                </button>
+                <button class="prism-tab" data-prism="noether">
+                    <span class="prism-icon">🏛️</span>
+                    <span class="prism-title">Symmetries &amp; Currents</span>
+                    <span class="prism-sub">Noether Invariants</span>
+                </button>
+                <button class="prism-tab" data-prism="quantum">
+                    <span class="prism-icon">⚛️</span>
+                    <span class="prism-title">Quantum Correspondence</span>
+                    <span class="prism-sub">Ehrenfest Transition</span>
+                </button>
+                <button class="prism-tab" data-prism="rosetta">
+                    <span class="prism-icon">📐</span>
+                    <span class="prism-title">Rosetta Formalisms</span>
+                    <span class="prism-sub">Vectors ↔ Tensors ↔ Forms</span>
+                </button>
+                <button class="prism-tab" data-prism="dimensions">
+                    <span class="prism-icon">📏</span>
+                    <span class="prism-title">Dimensional Homogeneity</span>
+                    <span class="prism-sub">SI Balance &amp; Units</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. The Cockpit Stage Viewport Card -->
+        <div class="cosmic-stage-card cockpit-stage-card">
             <div class="arena-canvas-container">
                 <canvas id="cosmic-arena-canvas"></canvas>
                 
@@ -100,6 +144,11 @@
                     </div>
                     <div id="arena-equation-display" class="arena-equation-display">
                         <!-- MathJax typeset dynamically -->
+                    </div>
+
+                    <!-- SymPy CAS Integrated Console Inset -->
+                    <div id="cockpit-cas-console" class="cockpit-cas-console">
+                        <!-- Loaded dynamically via SymPy CAS REST API -->
                     </div>
                 </div>
 
@@ -835,6 +884,197 @@
     color: #05070d;
     box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
 }
+
+/* =========================================================================
+   THE CRUCIBLE & MULTI-PRISM COCKPIT STYLING (PHASE 2.3)
+   ========================================================================= */
+
+.crucible-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 12px 18px;
+}
+
+.crucible-label-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.crucible-badge {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.crucible-hint {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.crucible-systems-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.crucible-system-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 6px 14px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crucible-system-pill:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.crucible-system-pill.active {
+    background: rgba(56, 189, 248, 0.12);
+    color: #ffffff;
+    border-color: #38bdf8;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+}
+
+.crucible-system-pill.active .pill-sub {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.2);
+}
+
+/* Multi-Prism Selector Bar */
+.prism-selector-bar {
+    margin-bottom: 14px;
+}
+
+.prism-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.prism-tab {
+    flex: 1 1 auto;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 14px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    color: var(--text-muted);
+}
+
+.prism-tab:hover {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.prism-tab.active {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+}
+
+.prism-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+.prism-tab.active .prism-title {
+    color: #38bdf8;
+}
+
+.prism-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+/* CAS Console Inset */
+.cockpit-cas-console {
+    margin-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 12px;
+}
+
+.cas-result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.cas-cell {
+    background: rgba(10, 15, 26, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.cas-cell.full-width {
+    grid-column: 1 / -1;
+}
+
+.cas-cell-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.cas-math {
+    font-size: 0.92rem;
+    color: #ffffff;
+    overflow-x: auto;
+}
+
+.cas-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(56, 189, 248, 0.3);
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 </style>
 
-<script src="/js/cosmic_arena.js" defer></script>
+<script src="/js/scrubbable_math.js" defer></script>
+<script src="/js/lab_cockpit.js" defer></script>

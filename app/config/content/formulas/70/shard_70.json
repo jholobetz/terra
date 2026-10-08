@@ -863,7 +863,39 @@
         "conceptual_definition": "The density of states $g(E)$ represents the differential number of available single-particle quantum states $dN$ per infinitesimal energy interval $dE$, evaluated by counting translational $k$-space modes inside an isotropic Fermi sphere including spin degeneracy: $g(E) = \\frac{dN}{dE} = 2 \\cdot \\frac{V}{(2\\pi)^3} \\cdot 4\\pi k^2 \\frac{dk}{dE}$. Applying the parabolic dispersion relation $E = \\frac{\\hbar^2 k^2}{2m}$ yields the characteristic $\\sqrt{E}$ energy dependence in three spatial dimensions.",
         "intuitive_summary": "As energy increases in three dimensions, the surface area of the corresponding constant-energy sphere in momentum space grows quadratically with wavevector $k$, translating to a square-root proliferation of available quantum slots per unit energy interval.",
         "description": "Quantifies the number of accessible single-particle quantum states per unit energy interval for a non-relativistic, non-interacting electron gas confined in a three-dimensional volume.",
-        "derivation_type": "DERIVED_FROM",
+        "derivation_type": "K_SPACE_SPHERICAL_COUNTING",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "k_x = \\frac{2\\pi n_x}{L}, \\quad k_y = \\frac{2\\pi n_y}{L}, \\quad k_z = \\frac{2\\pi n_z}{L}",
+                "rationale": "Apply periodic Born-von Karman boundary conditions to a cubic volume $V = L^3$, quantizing the wavevector components into discrete integer modes $n_i$."
+            },
+            {
+                "step": 2,
+                "latex": "\\Delta k^3 = \\left(\\frac{2\\pi}{L}\\right)^3 = \\frac{(2\\pi)^3}{V}",
+                "rationale": "Determine the elementary volume in $k$-space occupied by a single spatial orbital state."
+            },
+            {
+                "step": 3,
+                "latex": "N(k) = 2 \\times \\frac{\\frac{4}{3}\\pi k^3}{\\Delta k^3} = 2 \\frac{V}{(2\\pi)^3} \\frac{4}{3}\\pi k^3 = \\frac{V}{3\\pi^2} k^3",
+                "rationale": "Count the cumulative number of states within a sphere of radius $k$ in reciprocal space, incorporating a factor of 2 for spin-$\\frac{1}{2}$ electron degeneracy."
+            },
+            {
+                "step": 4,
+                "latex": "E = \\frac{\\hbar^2 k^2}{2m} \\implies k = \\left( \\frac{2m E}{\\hbar^2} \\right)^{1/2}",
+                "rationale": "Relate wavevector magnitude $k$ to single-particle energy $E$ via the non-relativistic parabolic dispersion relation."
+            },
+            {
+                "step": 5,
+                "latex": "N(E) = \\frac{V}{3\\pi^2} \\left( \\frac{2m E}{\\hbar^2} \\right)^{3/2} = \\frac{V}{3\\pi^2} \\left( \\frac{2m}{\\hbar^2} \\right)^{3/2} E^{3/2}",
+                "rationale": "Substitute the energy expression into the cumulative state counter to express total states as a function of energy."
+            },
+            {
+                "step": 6,
+                "latex": "g(E) = \\frac{dN(E)}{dE} = \\frac{V}{2\\pi^2} \\left( \\frac{2m}{\\hbar^2} \\right)^{3/2} \\sqrt{E}",
+                "rationale": "Differentiate $N(E)$ with respect to energy $E$ to obtain the density of states per unit energy interval in three spatial dimensions."
+            }
+        ],
         "subcomponents": [
             "quantum-resistance-identity-1-875292e2-c360c085",
             "non-relativistic-particle-density",

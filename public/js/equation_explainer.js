@@ -2741,6 +2741,20 @@ const EquationExplainer = {
 
     extractAllMathTokens(latex, officialVariables = {}) {
         if (!latex) return [];
+
+        // 0. Unwrap MathJax HTML extension formatting macros: \class{name}{content}, \cssId{id}{content}, \style{css}{content}, \href{url}{content}
+        let hasHtmlMacros = true;
+        while (hasHtmlMacros) {
+            const nextLatex = latex.replace(/\\(class|cssId|style|href)\{[^{}]*\}\{((?:[^{}]|\{[^{}]*\})*)\}/g, '$2');
+            if (nextLatex === latex) {
+                hasHtmlMacros = false;
+            } else {
+                latex = nextLatex;
+            }
+        }
+        latex = latex.replace(/\\(class|cssId|style|href)\b/g, ' ').trim();
+        if (!latex) return [];
+
         latex = latex.replace(/\\par\b/g, ' ')
                      .replace(/\\varepsilon(?![a-zA-Z])/g, '\\epsilon')
                      .replace(/\\vartheta(?![a-zA-Z])/g, '\\theta')
@@ -2764,7 +2778,7 @@ const EquationExplainer = {
             '\\rangle', '\\langle', '\\mid', '|', '(', ')', '[', ']', '{', '}', '+', '-', '=', '/', 
             '\\cdot', '\\times', '\\div', '\\left', '\\right', '\\text', '\\mathrm', '\\mathsf',
             '\\colon', '\\quad', '\\qquad', '\\dots', '\\cdots', '\\ldots', '\\ddots', '\\vdots',
-            '\\circ', '\\bullet'
+            '\\circ', '\\bullet', '\\class', '\\cssId', '\\style', '\\href', '\\color'
         ];
         pureSyntaxDelimiters.forEach(d => {
             consumedSubtokens.add(d);
@@ -3127,7 +3141,8 @@ const EquationExplainer = {
                 '\\colon', '\\quad', '\\qquad', '\\dots', '\\cdots', '\\ldots', '\\ddots', '\\vdots',
                 '\\circ', '\\bullet', '\\ast', '\\star',
                 '\\boldsymbol', '\\mathbf', '\\mathsf', '\\mathrm', '\\text', '\\mathcal', 
-                '\\vec', '\\hat', '\\bar', '\\tilde', '\\dot', '\\ddot', '\\underline'
+                '\\vec', '\\hat', '\\bar', '\\tilde', '\\dot', '\\ddot', '\\underline',
+                '\\class', '\\cssId', '\\style', '\\href', '\\color'
             ]);
             if (ignoredCmds.has(sym) || consumedSubtokens.has(sym) || consumedSubtokens.has(sym.replace(/^\\/, ''))) continue;
             
@@ -3152,7 +3167,7 @@ const EquationExplainer = {
             // 1. Replace \text{...} and \mathrm{...} environments with spaces
             clean = clean.replace(/\\(text|mathrm|mathsf)\{([^\}]+)\}/g, match => ' '.repeat(match.length));
             // 2. Replace structural/formatting commands with spaces
-            const structuralRegex = /\\(frac|left|right|sqrt|cdot|times|div|iff|implies|impliedby|forall|exists|nexists|in|notin|ni|subset|subseteq|supset|supseteq|cap|cup|setminus|emptyset|vdash|dashv|models|vDash|Vdash|nVdash|nvdash|Rightarrow|Leftarrow|Leftrightarrow|rightarrow|leftarrow|leftrightarrow|to|mapsto|land|lor|neg|lnot|top|bot|approx|equiv|sim|simeq|cong|propto|asymp|doteq|ge|le|geq|leq|ne|neq|ll|gg|pm|mp|colon|quad|qquad|dots|cdots|ldots|circ|bullet|ast|star|boldsymbol|mathbf|mathsf|mathrm|text|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\b/g;
+            const structuralRegex = /\\(frac|left|right|sqrt|cdot|times|div|iff|implies|impliedby|forall|exists|nexists|in|notin|ni|subset|subseteq|supset|supseteq|cap|cup|setminus|emptyset|vdash|dashv|models|vDash|Vdash|nVdash|nvdash|Rightarrow|Leftarrow|Leftrightarrow|rightarrow|leftarrow|leftrightarrow|to|mapsto|land|lor|neg|lnot|top|bot|approx|equiv|sim|simeq|cong|propto|asymp|doteq|ge|le|geq|leq|ne|neq|ll|gg|pm|mp|colon|quad|qquad|dots|cdots|ldots|circ|bullet|ast|star|boldsymbol|mathbf|mathsf|mathrm|text|mathcal|vec|hat|bar|tilde|dot|ddot|underline|class|cssId|style|href|color)\b/g;
             clean = clean.replace(structuralRegex, match => ' '.repeat(match.length));
             // 3. Replace word-like subscripts of 3+ letters (e.g. _{ext}, _ext) with spaces
             clean = clean.replace(/_\{[a-zA-Z]{3,\}\}/g, match => ' '.repeat(match.length));
@@ -3164,14 +3179,14 @@ const EquationExplainer = {
             let res = str;
             let hasStyles = true;
             while (hasStyles) {
-                const next = res.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{((?:[^{}]|\{[^{}]*\})*)\}/g, '$2');
+                const next = res.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline|class|cssId|style|href)\{((?:[^{}]|\{[^{}]*\})*)\}/g, '$2');
                 if (next === res) {
                     hasStyles = false;
                 } else {
                     res = next;
                 }
             }
-            res = res.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\[a-zA-Z]+|[a-zA-Z0-9])/g, '$2');
+            res = res.replace(/\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline|class|cssId|style|href)\s*(\\[a-zA-Z]+|[a-zA-Z0-9])/g, '$2');
             return res;
         };
 

@@ -2,7 +2,7 @@
 
 > **Status**: Active Architecture Standard  
 > **Scope**: Core System Architecture, Dual Data Model, Mathematical Rendering, Symbolic Computation & Autonomous Agent Skills  
-> **Authoritative References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md), [`docs/delimiters.md`](delimiters.md)
+> **Authoritative References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md), [`docs/delimiters.md`](delimiters.md), [`docs/cost_governance.md`](cost_governance.md)
 
 ---
 
@@ -142,7 +142,7 @@ flowchart LR
 
 Physics Lab integrates machine verification directly into the pedagogical presentation via an isolated, sandboxed SymPy worker:
 
-* **Worker Daemon**: `scripts/lib/cas_engine.py` provides a sandboxed SymPy execution environment.
+* **Worker Daemon**: `lib/cas/cas_engine.py` provides a sandboxed SymPy execution environment.
 * **REST API**: `/physics/api/cas-evaluate` accepts JSON payloads with LaTeX formulas, evaluation variables, and target points.
 * **Capabilities**:
   - **Asymptotic Boundary Limits**: Evaluates non-relativistic limits ($v/c \to 0$), infinite distances ($r \to \infty$), event horizons ($r \to r_s$), and zero temperatures ($T \to 0$).

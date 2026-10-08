@@ -56,6 +56,21 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
 ```
 
 ### 🛡️ Validation & Test Suite
+* **Unified Platform Health & Assessment Auditor (`scripts/assess`)**:
+  Runs a modular health assessment across tests, documentation, and diagnostics:
+  ```bash
+  # Core assessment (Pytest + platform scorecard)
+  scripts/assess
+
+  # Hybrid deep assessment (Tests + Docs review + Lineage LHI + CAS latency)
+  scripts/assess --all
+
+  # Diagnostics and docs audit only (skipping pytest for speed)
+  scripts/assess --no-tests --diagnostics --docs
+
+  # Output an AI Agent Prompt with live telemetry for narrative report generation
+  scripts/assess --prompt
+  ```
 * **Automated Pytest Suite**: Runs the full regression net (3,100+ tests covering schemas, invariants, delimiters, and syntax):
   ```bash
   .venv/bin/python3 -m pytest tests/

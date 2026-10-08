@@ -2,7 +2,7 @@
 
 > **Status**: Active Architecture Standard  
 > **Scope**: LLM Token Estimation, Thinking Token Overrun Prevention & Financial Safeguards  
-> **Authoritative References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md)
+> **Authoritative References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md), [`docs/architecture.md`](architecture.md)
 
 ---
 

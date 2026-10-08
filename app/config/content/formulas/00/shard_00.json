@@ -1250,6 +1250,33 @@
             "leptonic-anomalous-magnetic-moment-d5e06485"
         ],
         "description": "The leading-order quantum electrodynamics (QED) correction to the electron's magnetic moment, explaining the deviation of its g-factor from the Dirac value of 2.",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "g_e^{\\text{Dirac}} = 2",
+                "rationale": "Identify the tree-level classical gyromagnetic ratio for a spin-$1/2$ Dirac lepton coupling minimally to an electromagnetic field."
+            },
+            {
+                "step": 2,
+                "latex": "a_e \\equiv \\frac{g_e - 2}{2} = F_2(0)",
+                "rationale": "Define the anomalous magnetic moment $a_e$ via the Pauli form factor $F_2(q^2)$ evaluated at zero momentum transfer $q^2 = 0$ in the Gordon decomposition."
+            },
+            {
+                "step": 3,
+                "latex": "\\Gamma^\\mu(p', p) = \\gamma^\\mu F_1(q^2) + \\frac{i\\sigma^{\\mu\\nu}q_\\nu}{2m} F_2(q^2)",
+                "rationale": "Parameterize the one-loop QED electron-photon vertex correction triangle diagram in terms of the Dirac and Pauli form factors."
+            },
+            {
+                "step": 4,
+                "latex": "F_2(0) = \\frac{\\alpha}{2\\pi} \\int_0^1 dx \\int_0^{1-x} dy \\, \\frac{2m^2 z(1-z)}{m^2 (1-z)^2} = \\frac{\\alpha}{2\\pi} \\int_0^1 2z \\, dz",
+                "rationale": "Evaluate the one-loop Feynman parameter integral with $z = 1 - x - y$ at zero momentum transfer."
+            },
+            {
+                "step": 5,
+                "latex": "a_e = \\frac{\\alpha}{2\\pi} \\left[ z^2 \\right]_0^1 = \\frac{\\alpha}{2\\pi}",
+                "rationale": "Compute the definite integral to establish Julian Schwinger's historic leading-order radiative correction."
+            }
+        ],
         "parent_formula_id": "muon-magnetic-moment-g-factor-341f045b",
         "derivation_type": "DERIVED_FROM"
     },
@@ -1713,15 +1740,47 @@
         "status": "platinum",
         "conceptual_definition": "For a composite quantum system partitioned into a subsystem $A$ and its complement $B$, the entanglement entropy $S_A$ is defined as the von Neumann entropy of the reduced density matrix $\\hat{\\rho}_A$. The reduced density matrix $\\hat{\\rho}_A = \\text{Tr}_B(\\hat{\\rho}_{AB})$ is obtained by tracing out the degrees of freedom of subsystem $B$ from the total system's density matrix $\\hat{\\rho}_{AB}$. This quantity measures the information about the total system that is inaccessible when observations are restricted to subsystem $A$ alone.",
         "intuitive_summary": "Imagine a book split into two halves, where the sentences are entangled across the split. The entanglement entropy measures how much 'meaning' or 'information' is lost when you only have one half of the book. A high entropy means the half you're holding is very 'mixed up' and nonsensical on its own, indicating it was strongly connected to the other half.",
+        "description": "Quantifies the degree of quantum entanglement between a subsystem and its environment by calculating the von Neumann entropy of the subsystem's reduced density matrix.",
+        "parent_formula_id": "von-neumann-entropy-definition-80ce52af",
+        "derivation_type": "SCHMIDT_DECOMPOSITION_PARTIAL_TRACE",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "|\\Psi_{AB}\\rangle \\in \\mathcal{H}_A \\otimes \\mathcal{H}_B, \\quad \\hat{\\rho}_{AB} = |\\Psi_{AB}\\rangle \\langle\\Psi_{AB}|",
+                "rationale": "Consider a bipartite quantum system composed of subsystem $A$ and environment $B$ in a global pure state."
+            },
+            {
+                "step": 2,
+                "latex": "|\\Psi_{AB}\\rangle = \\sum_{i} \\sqrt{\\lambda_i} |i_A\\rangle |i_B\\rangle, \\quad \\lambda_i \\ge 0, \\quad \\sum_i \\lambda_i = 1",
+                "rationale": "Perform the Schmidt decomposition of the bipartite state vector onto orthonormal bases $\\{|i_A\\rangle\\}$ and $\\{|i_B\\rangle\\}$."
+            },
+            {
+                "step": 3,
+                "latex": "\\hat{\\rho}_A = \\text{Tr}_B(\\hat{\\rho}_{AB}) = \\sum_k \\langle k_B | \\left( \\sum_{i,j} \\sqrt{\\lambda_i \\lambda_j} |i_A\\rangle |i_B\\rangle \\langle j_A| \\langle j_B| \\right) |k_B\\rangle",
+                "rationale": "Trace out the environmental Hilbert space $\\mathcal{H}_B$ to obtain the reduced density operator $\\hat{\\rho}_A$ of subsystem $A$."
+            },
+            {
+                "step": 4,
+                "latex": "\\hat{\\rho}_A = \\sum_{i} \\lambda_i |i_A\\rangle \\langle i_A|",
+                "rationale": "Evaluate the partial trace using the orthonormality condition $\\langle k_B | i_B\\rangle = \\delta_{ki}$, diagonalizing $\\hat{\\rho}_A$."
+            },
+            {
+                "step": 5,
+                "latex": "S_A = -\\text{Tr}(\\hat{\\rho}_A \\ln \\hat{\\rho}_A) = -\\sum_i \\lambda_i \\ln \\lambda_i",
+                "rationale": "Calculate the von Neumann entropy of the reduced density operator in its spectral eigenbasis."
+            },
+            {
+                "step": 6,
+                "latex": "S_A = 0 \\iff \\lambda_1 = 1, \\lambda_{i>1} = 0 \\quad (\\text{Product State}); \\quad S_A > 0 \\iff \\text{Entangled State}",
+                "rationale": "Conclude that $S_A$ vanishes for separable product states and is strictly positive if and only if quantum entanglement exists across the bipartition."
+            }
+        ],
         "subcomponents": [
             "von-neumann-entropy-pure-state-5481090c",
             "von-neumann-entropy-for-maximally-mixed-states-bf9eb61d",
             "entanglement-test-9312ee27",
             "entanglement-entropy-identity-9b70b09d"
-        ],
-        "description": "Quantifies the degree of quantum entanglement between a subsystem and its environment by calculating the von Neumann entropy of the subsystem's reduced density matrix.",
-        "parent_formula_id": "von-neumann-entropy-definition-80ce52af",
-        "derivation_type": "SPECIAL_CASE"
+        ]
     },
     "geometric-bound-identity-1-947933ca-ca7a98f4": {
         "title": "Cauchy-Schwarz Inequality in Hilbert Space",

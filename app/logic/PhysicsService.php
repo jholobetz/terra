@@ -437,6 +437,20 @@ class PhysicsService
                                 ? (json_decode($formula['derivation_steps'], true) ?: [])
                                 : $formula['derivation_steps'];
                         }
+                        // Dual-Layer Resilience: If DB lacks derivation_steps, fallback to Git shard
+                        if (empty($formula['derivation_steps'])) {
+                            $hexPrefix = substr(md5($fId), 0, 2);
+                            $shardFile = PROJECT_ROOT . '/app/config/content/formulas/' . $hexPrefix . '/shard_' . $hexPrefix . '.json';
+                            if (file_exists($shardFile)) {
+                                $rawShard = json_decode(file_get_contents($shardFile), true);
+                                if (!empty($rawShard[$fId]['derivation_steps'])) {
+                                    $formula['derivation_steps'] = $rawShard[$fId]['derivation_steps'];
+                                }
+                                if (!empty($rawShard[$fId]['derivation_type'])) {
+                                    $formula['derivation_type'] = $rawShard[$fId]['derivation_type'];
+                                }
+                            }
+                        }
                         if (!empty($formula['equation'])) {
                             $formula['latex_source'] = $formula['equation'];
                         }
@@ -577,6 +591,15 @@ class PhysicsService
         if (file_put_contents($shardPath, $jsonEncoded) === false) {
             error_log("Failed to write formula to shard: {$shardPath}");
             return false;
+        }
+
+        // Automatically synchronize the SHA-256 hash registry for this shard
+        $registryPath = PROJECT_ROOT . '/app/config/formulas_hash_registry.json';
+        if (file_exists($registryPath)) {
+            $relativePath = str_replace(PROJECT_ROOT . '/', '', $shardPath);
+            $reg = json_decode(file_get_contents($registryPath), true) ?: [];
+            $reg[$relativePath] = hash('sha256', $jsonEncoded);
+            file_put_contents($registryPath, json_encode($reg, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
 
         // 3. Update MariaDB record if database connection is available
@@ -1474,7 +1497,16 @@ class PhysicsService
         // Strip visual styling commands
         $clean = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\\{([^}]+)\\}/', '$2', $clean);
         $clean = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\\\[a-zA-Z]+|[a-zA-Z0-9])/', '$2', $clean);
-        $clean = preg_replace('/\\\\cssId\\{[^}]+\\}\\{([^}]+)\\}/', '$1', $clean);
+        $hasHtml = true;
+        while ($hasHtml) {
+            $next = preg_replace('/\\\\(cssId|class|style|href)\\{[^{}]*\\}\\{((?:[^{}]|\\{[^{}]*\\})*)\\}/', '$2', $clean);
+            if ($next === $clean) {
+                $hasHtml = false;
+            } else {
+                $clean = $next;
+            }
+        }
+        $clean = preg_replace('/\\\\(cssId|class|style|href)\b/', '', $clean);
 
         // Canonicalize fractions
         $hasFraction = true;
@@ -1514,6 +1546,9 @@ class PhysicsService
         }
 
         $canonical = $this->canonicalizeLatex($latex);
+        if (empty($canonical)) {
+            return [];
+        }
         
         $title = "Custom Physical Relation";
         $domain = "classical_mechanics";
@@ -1619,8 +1654,17 @@ class PhysicsService
         $normalized = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\\{([^}]+)\\}/', '$2', $normalized);
         $normalized = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\\\[a-zA-Z]+|[a-zA-Z0-9])/', '$2', $normalized);
         
-        // Strip MathJax \cssId{...}{...} wraps to compare only pure math
-        $normalized = preg_replace('/\\\\cssId\\{[^}]+\\}\\{([^}]+)\\}/', '$1', $normalized);
+        // Strip MathJax HTML extension wraps (\class, \cssId, \style, \href) to compare only pure math
+        $hasHtml = true;
+        while ($hasHtml) {
+            $next = preg_replace('/\\\\(cssId|class|style|href)\\{[^{}]*\\}\\{((?:[^{}]|\\{[^{}]*\\})*)\\}/', '$2', $normalized);
+            if ($next === $normalized) {
+                $hasHtml = false;
+            } else {
+                $normalized = $next;
+            }
+        }
+        $normalized = preg_replace('/\\\\(cssId|class|style|href)\b/', '', $normalized);
         
         // Canonicalize LaTeX fraction commands: \frac{A}{B} -> A/B
         $hasFraction = true;

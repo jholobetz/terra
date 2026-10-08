@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# 🪐 Physics Lab Unified Assessment CLI: assess
+# Authoritative evaluation tool for Project Terra / Physics Lab
+#
+# Usage:
+#   scripts/assess                # Core assessment (Pytest + quick scorecard)
+#   scripts/assess --docs         # Audit CLAUDE.md, README.md, docs/*.md
+#   scripts/assess --diagnostics  # Run LHI DAG, GQS, Shards, and CAS diagnostics
+#   scripts/assess --all          # Full hybrid sweep (Tests + Docs + Diag + Shield)
+#   scripts/assess --no-tests     # Rapid check skipping pytest
+#   scripts/assess --prompt       # Generate prompt for AI to produce narrative report
+#   scripts/assess --save         # Save timestamped report to docs/reports/
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+if [ -f "${WORKSPACE_ROOT}/.venv/bin/python3" ]; then
+    PYTHON_EXEC="${WORKSPACE_ROOT}/.venv/bin/python3"
+else
+    PYTHON_EXEC="python3"
+fi
+
+exec "${PYTHON_EXEC}" "${SCRIPT_DIR}/maintenance/run_project_assessment.py" "$@"

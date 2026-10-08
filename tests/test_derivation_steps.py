@@ -90,7 +90,56 @@ def test_canonical_formulas_have_derivation_steps():
         "navier-stokes-momentum-viscous-form-7b93eee6",
         "tov-equation-identity-1-6e8eb3b1-43637a35",
         "hawking-temperature-schwarzschild",
-        "friedmann-acceleration-equation-expansion-4aa65f2c"
+        "friedmann-acceleration-equation-expansion-4aa65f2c",
+        "ampere-maxwell-law",
+        "adiabatic-process-equation-for-ideal-gas-c04c4026",
+        "lorentz-transformations-identity-1-1f8aae35-61f743d4",
+        "orbit-stability-b0058333",
+        "orbital-angular-momentum-afe05d2a",
+        "definition-of-canonical-momentum",
+        "variation-of-action",
+        "generalized-force-law-014c3b75",
+        "work-energy-theorem-integral",
+        "net-external-force-law-fa53d667",
+        "hamiltonian-energy-identity-493b3a3c",
+        "lagrangian-for-free-particle",
+        "temperature-link-f5b2150a",
+        "entropy-derivative-2654973e",
+        "statistical-mean-identity-1-b75a734e-820f488c",
+        "grand-canonical-ensemble-identity-1-36347184-16b76b72",
+        "density-of-states-identity-1-fac333b9-e5683d20",
+        "maximum-entropy-equilibrium-state-714b3ee6",
+        "entanglement-entropy-identity-1-52a4c2e6-f9444fb5",
+        "time-dependent-schrodinger-e3d395cd",
+        "canonical-commutation-relation-e0328594",
+        "oscillator-hamiltonian-algebraic-eec20ea1",
+        "probability-current-vector-3783f63c",
+        "reciprocal-primitive-vector-transform-27b61553",
+        "bragg-diffraction-reciprocal-limit-59e541de",
+        "monoatomic-lattice-dispersion-relation-3b911160",
+        "bloch-wavefunction-condensed-c8c165bc",
+        "first-london-equation-acceleration-68a286ae",
+        "material-derivative-operator-fluid-46089746",
+        "euler-equation-momentum",
+        "incompressible-laplace-potential-flow-eb7744a6",
+        "reynolds-number-scaling-ident-b08188f8",
+        "kelvin-circulation-invariance-law-2000f7f7",
+        "instability-math-665b9678",
+        "cauchy-riemann-differentiability-idents-2087b552",
+        "cauchy-integral-theorem-boundary-ident-8815feaa",
+        "cauchy-integral-formula-ident-4d88cd56",
+        "fourier-transform-forward-ident-5ca854f6",
+        "parseval-theorem-energy-conservation-ident-c46e59d3",
+        "greens-function-integral-solution-ident-46642bfc",
+        "sturm-liouville-orthogonality-relation-f0a882e7",
+        "helmholtz-decomposition-identity-a9d4d53f",
+        "qft-qed-lagrangian-f42f7650",
+        "ckm-unitary-triangle-closure-relation-9141f5b2",
+        "electron-anomalous-magnetic-moment-26a2cf45",
+        "von-neumann-measurement-chain-ident-accfc7c1",
+        "projection-postulate-von-neumann-ident-c15721b0",
+        "ontology-identity-1-8fc2010b",
+        "existence-bias-cd89ac90"
     ]
     found = {}
     for shard in get_all_shards():
@@ -143,4 +192,5 @@ def test_all_derivation_steps_schema_and_tex_integrity():
                         unescaped_dollars = rat.count("$") - rat.count("\\$")
                         assert unescaped_dollars % 2 == 0, f"Unbalanced math dollar delimiters in {fid} rationale: {rat}"
 
-    assert total_with_steps >= 48, f"Expected at least 48 formulas with derivation steps, found {total_with_steps}"
+    assert total_with_steps >= 102, f"Expected at least 102 formulas with derivation steps, found {total_with_steps}"
+

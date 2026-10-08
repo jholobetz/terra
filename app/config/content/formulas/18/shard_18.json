@@ -582,7 +582,39 @@
         "intuitive_summary": "Imagine pushing a box. The harder you push (net external force), the faster its total 'oomph' (momentum) changes. This law says the same thing for a whole collection of interacting particles, like a gas in a container or a rocket in flight – only external pushes matter for the system's overall momentum change.",
         "description": "This fundamental law states that the net external force acting on a system of particles is equal to the time rate of change of the system's total linear momentum. It extends Newton's second law from a single particle to a multi-particle system.",
         "parent_formula_id": "force-as-rate-of-change-of-momentum-cc704f96",
-        "derivation_type": "GENERALIZATION",
+        "derivation_type": "MOMENTUM_CONSERVATION_SUM",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\mathbf{P}_{\\text{total}} = \\sum_{i=1}^N \\mathbf{p}_i = \\sum_{i=1}^N m_i \\mathbf{v}_i",
+                "rationale": "Define the total linear momentum of an $N$-particle system as the vector sum of individual particle linear momenta."
+            },
+            {
+                "step": 2,
+                "latex": "\\frac{d\\mathbf{P}_{\\text{total}}}{dt} = \\sum_{i=1}^N \\frac{d\\mathbf{p}_i}{dt} = \\sum_{i=1}^N \\mathbf{F}_i",
+                "rationale": "Differentiate total momentum with respect to time and apply Newton's second law $\\dot{\\mathbf{p}}_i = \\mathbf{F}_i$ to each particle."
+            },
+            {
+                "step": 3,
+                "latex": "\\mathbf{F}_i = \\mathbf{F}_i^{\\text{ext}} + \\sum_{j \\neq i}^N \\mathbf{F}_{ij}^{\\text{int}}",
+                "rationale": "Decompose the total resultant force acting on particle $i$ into external environmental forces and internal inter-particle interaction forces."
+            },
+            {
+                "step": 4,
+                "latex": "\\sum_{i=1}^N \\sum_{j \\neq i}^N \\mathbf{F}_{ij}^{\\text{int}} = \\sum_{1 \\le i < j \\le N} (\\mathbf{F}_{ij}^{\\text{int}} + \\mathbf{F}_{ji}^{\\text{int}})",
+                "rationale": "Group internal interaction forces into symmetric action-reaction pairs using pairwise double summation."
+            },
+            {
+                "step": 5,
+                "latex": "\\mathbf{F}_{ij}^{\\text{int}} = -\\mathbf{F}_{ji}^{\\text{int}} \\implies \\mathbf{F}_{ij}^{\\text{int}} + \\mathbf{F}_{ji}^{\\text{int}} = \\mathbf{0}",
+                "rationale": "Apply Newton's third law (action-reaction symmetry), establishing that the sum of all internal forces identically cancels."
+            },
+            {
+                "step": 6,
+                "latex": "\\mathbf{F}_{\\text{ext}} = \\sum_{i=1}^N \\mathbf{F}_i^{\\text{ext}} = \\frac{d\\mathbf{P}_{\\text{total}}}{dt}",
+                "rationale": "Prove Newton's second law for a multi-particle system, showing that only net external forces accelerate the center-of-mass momentum."
+            }
+        ],
         "subcomponents": [
             "net-external-force-vector-dd5b4b2f",
             "rate-change-total-momentum-external",

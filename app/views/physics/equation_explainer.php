@@ -153,6 +153,23 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                             <!-- JS populated -->
                         </div>
                     </div>
+
+                    <!-- Step-by-Step Mathematical Derivation Accordion (Left Column) -->
+                    <div id="derivation-accordion-section" style="display: none; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 18px; margin-top: 18px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <h4 style="font-size: 0.84rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-default, #64ffda); margin: 0; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.05rem;">📐</span>
+                                <span>Mathematical Derivation</span>
+                            </h4>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span id="derivation-steps-count" style="font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; background: rgba(100, 255, 218, 0.12); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); font-weight: 600; font-family: 'Space Grotesk', sans-serif;">0 Steps</span>
+                                <button id="btn-toggle-all-derivation-steps" type="button" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: var(--text-muted, #94a3b8); font-size: 0.72rem; padding: 3px 10px; cursor: pointer; transition: all 0.2s; font-family: 'Space Grotesk', sans-serif; font-weight: 500;">Expand All</button>
+                            </div>
+                        </div>
+                        <div id="derivation-steps-list" style="display: flex; flex-direction: column; gap: 10px;">
+                            <!-- JS populated step accordions -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -203,23 +220,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         <p id="limits-boundary" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">
                             --
                         </p>
-                    </div>
-                </div>
-
-                <!-- Step-by-Step Mathematical Derivation Accordion -->
-                <div id="derivation-accordion-section" style="display: none; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 18px; margin-top: 5px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                        <h4 style="font-size: 0.84rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-default, #64ffda); margin: 0; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 1.05rem;">📐</span>
-                            <span>Step-by-Step Mathematical Derivation</span>
-                        </h4>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span id="derivation-steps-count" style="font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; background: rgba(100, 255, 218, 0.12); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); font-weight: 600; font-family: 'Space Grotesk', sans-serif;">0 Steps</span>
-                            <button id="btn-toggle-all-derivation-steps" type="button" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: var(--text-muted, #94a3b8); font-size: 0.72rem; padding: 3px 10px; cursor: pointer; transition: all 0.2s; font-family: 'Space Grotesk', sans-serif; font-weight: 500;">Expand All</button>
-                        </div>
-                    </div>
-                    <div id="derivation-steps-list" style="display: flex; flex-direction: column; gap: 10px;">
-                        <!-- JS populated step accordions -->
                     </div>
                 </div>
 

@@ -1077,7 +1077,39 @@
         ],
         "description": "Defines the grand canonical partition function, $\\Xi$, as a weighted sum over the canonical partition functions, $Z$, for all possible particle numbers, $N$. This is the central quantity for describing a system in thermal and chemical equilibrium with a reservoir.",
         "parent_formula_id": "partition-function-identity-1-87e1c9f2-27aeba01",
-        "derivation_type": "DERIVED_FROM"
+        "derivation_type": "RESERVOIR_COUPLING_EXPANSION",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "E_{\\text{tot}} = E + E_R, \\quad N_{\\text{tot}} = N + N_R",
+                "rationale": "Consider a system in simultaneous thermal and diffusive contact with a macroscopic reservoir possessing total conserved energy $E_{\\text{tot}}$ and particle number $N_{\\text{tot}}$."
+            },
+            {
+                "step": 2,
+                "latex": "P(E_i, N) \\propto \\Omega_R(E_{\\text{tot}} - E_i, N_{\\text{tot}} - N)",
+                "rationale": "State that the probability of the small system occupying microstate $i$ with energy $E_i$ and particle count $N$ is proportional to the number of microstates accessible to the reservoir."
+            },
+            {
+                "step": 3,
+                "latex": "\\ln \\Omega_R(E_{\\text{tot}} - E_i, N_{\\text{tot}} - N) \\approx \\ln \\Omega_R(E_{\\text{tot}}, N_{\\text{tot}}) - \\left( \\frac{\\partial \\ln \\Omega_R}{\\partial E_R} \\right) E_i - \\left( \\frac{\\partial \\ln \\Omega_R}{\\partial N_R} \\right) N",
+                "rationale": "Perform a first-order Taylor series expansion of reservoir entropy around the total reservoir capacity."
+            },
+            {
+                "step": 4,
+                "latex": "\\frac{\\partial \\ln \\Omega_R}{\\partial E_R} = \\frac{1}{k_B T} = \\beta, \\quad \\frac{\\partial \\ln \\Omega_R}{\\partial N_R} = -\\frac{\\mu}{k_B T} = -\\beta \\mu",
+                "rationale": "Identify the thermodynamic definitions of reservoir inverse temperature $\\beta$ and chemical potential $\\mu$."
+            },
+            {
+                "step": 5,
+                "latex": "P(E_i, N) = \\frac{1}{\\Xi} \\exp\\left( -\\beta (E_i - \\mu N) \\right)",
+                "rationale": "Exponentiate the expansion to obtain the grand canonical probability weight factor, normalized by master sum $\\Xi$."
+            },
+            {
+                "step": 6,
+                "latex": "\\Xi(T, V, \\mu) = \\sum_{N=0}^\\infty \\sum_{i} e^{-\\beta(E_i - \\mu N)} = \\sum_{N=0}^\\infty e^{\\beta \\mu N} \\left( \\sum_i e^{-\\beta E_i} \\right) = \\sum_{N=0}^\\infty e^{\\beta \\mu N} Z(T, V, N)",
+                "rationale": "Express the grand partition function $\\Xi$ as a sum over particle numbers $N$ weighted by canonical partition functions $Z(T, V, N)$ and fugacity $z = e^{\\beta\\mu}$."
+            }
+        ]
     },
     "spacetime-causal-topology-identity-1-1cfab182-62c7d9dc": {
         "title": "The Topological Spacetime Causal Diamond Definition",
@@ -1901,6 +1933,39 @@
         "equation": "PV^\\gamma = \\text{const}",
         "status": "published",
         "parent_formula_id": "thermodynamic-isolation-c04c4026",
+        "derivation_type": "THERMODYNAMIC_INTEGRATION",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "dU = \\delta Q - \\delta W, \\quad \\delta Q = 0",
+                "rationale": "State the First Law of Thermodynamics for an isolated system undergoing a reversible process with vanishing external heat transfer."
+            },
+            {
+                "step": 2,
+                "latex": "dU = n C_v dT, \\quad \\delta W = P dV \\implies n C_v dT = -P dV",
+                "rationale": "Express differential internal energy in terms of molar heat capacity at constant volume $C_v$ and work done by the system against pressure $P$."
+            },
+            {
+                "step": 3,
+                "latex": "P = \\frac{n R T}{V} \\implies n C_v dT = -\\frac{n R T}{V} dV",
+                "rationale": "Substitute the ideal gas equation of state into the work differential to express pressure in terms of temperature $T$ and volume $V$."
+            },
+            {
+                "step": 4,
+                "latex": "\\frac{dT}{T} + \\frac{R}{C_v} \\frac{dV}{V} = 0, \\quad \\frac{R}{C_v} = \\frac{C_p - C_v}{C_v} = \\gamma - 1",
+                "rationale": "Separate variables by dividing by $n C_v T$ and apply Mayer's relation $C_p - C_v = R$, defining the adiabatic index $\\gamma = C_p / C_v$."
+            },
+            {
+                "step": 5,
+                "latex": "\\ln(T) + (\\gamma - 1) \\ln(V) = \\text{const} \\implies T V^{\\gamma - 1} = \\text{const}",
+                "rationale": "Integrate the separated differential equation across state space to obtain the adiabatic temperature-volume invariant."
+            },
+            {
+                "step": 6,
+                "latex": "T = \\frac{P V}{n R} \\implies \\left(\\frac{P V}{n R}\\right) V^{\\gamma - 1} = \\text{const} \\implies P V^\\gamma = \\text{const}",
+                "rationale": "Eliminate temperature using the ideal gas equation of state to establish Poisson's relation between pressure and volume."
+            }
+        ],
         "subcomponents": [
             "adiabatic-index-definition-4fbb84e5",
             "isothermal-process-equation-8eb40228",

@@ -1454,7 +1454,39 @@
         ],
         "description": "Defines the thermal average of a physical observable for a system in equilibrium at a constant temperature (canonical ensemble). The average is weighted by the Boltzmann probability of each microstate.",
         "parent_formula_id": "ensemble-expectation-trace-02d3c609",
-        "derivation_type": "DERIVED_FROM"
+        "derivation_type": "MAXIMUM_ENTROPY_CANONICAL_ENSEMBLE",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "S[\\{p_i\\}] = -k_B \\sum_i p_i \\ln p_i",
+                "rationale": "Formulate the Gibbs-Shannon information entropy for a system distributed over a discrete set of microscopic states labeled by index $i$."
+            },
+            {
+                "step": 2,
+                "latex": "\\Phi(\\{p_i\\}, \\lambda_0, \\beta) = -\\sum_i p_i \\ln p_i - \\lambda_0 \\left( \\sum_i p_i - 1 \\right) - \\beta \\left( \\sum_i p_i E_i - \\langle E \\rangle \\right)",
+                "rationale": "Construct the Lagrange multiplier functional maximizing entropy subject to total probability normalization and fixed mean internal energy $\\langle E \\rangle$."
+            },
+            {
+                "step": 3,
+                "latex": "\\frac{\\partial \\Phi}{\\partial p_i} = -\\ln p_i - 1 - \\lambda_0 - \\beta E_i = 0 \\implies p_i = e^{-(1 + \\lambda_0)} e^{-\\beta E_i}",
+                "rationale": "Set the functional derivative with respect to each microstate probability $p_i$ to zero to locate the stationary maximum."
+            },
+            {
+                "step": 4,
+                "latex": "\\sum_i p_i = 1 \\implies e^{-(1 + \\lambda_0)} \\sum_i e^{-\\beta E_i} = 1 \\implies Z = \\sum_i e^{-\\beta E_i}",
+                "rationale": "Enforce probability normalization to eliminate the normalization multiplier $\\lambda_0$, defining the canonical partition function $Z$."
+            },
+            {
+                "step": 5,
+                "latex": "p_i = \\frac{1}{Z} e^{-\\beta E_i}, \\quad \\beta = \\frac{1}{k_B T}",
+                "rationale": "Establish the Boltzmann probability distribution for a system held in thermal contact with a heat reservoir at temperature $T$."
+            },
+            {
+                "step": 6,
+                "latex": "\\langle A \\rangle = \\sum_i p_i A_i = \\frac{1}{Z} \\sum_i A_i e^{-\\beta E_i}",
+                "rationale": "Compute the ensemble expectation value as the probability-weighted statistical average across the microstates of the system."
+            }
+        ]
     },
     "s-duality-identity-1-e6df374e-5faef063": {
         "title": "S-Duality Transformation of the Complex Coupling Constant",

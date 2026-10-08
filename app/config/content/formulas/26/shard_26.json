@@ -1236,6 +1236,33 @@
         "parent_formula_id": "ampere-maxwell-law",
         "derivation_type": "AXIOMATIC_FOUNDATION",
         "description": "A fundamental theorem in vector calculus stating that any sufficiently smooth, rapidly decaying vector field in three dimensions can be uniquely decomposed into the sum of an irrotational (curl-free) component and a solenoidal (divergence-free) component.",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\mathbf{A}(\\mathbf{r}) = -\\frac{1}{4\\pi} \\int_{\\mathbb{R}^3} \\mathbf{A}(\\mathbf{r}') \\nabla^2 \\left( \\frac{1}{|\\mathbf{r} - \\mathbf{r}'|} \\right) d^3r'",
+                "rationale": "Express the decaying vector field $\\mathbf{A}(\\mathbf{r})$ using the fundamental Poisson Green's function identity $\\nabla^2 (1/|\\mathbf{r} - \\mathbf{r}'|) = -4\\pi \\delta(\\mathbf{r} - \\mathbf{r}')$."
+            },
+            {
+                "step": 2,
+                "latex": "\\nabla^2 \\mathbf{V} = \\nabla(\\nabla \\cdot \\mathbf{V}) - \\nabla \\times (\\nabla \\times \\mathbf{V})",
+                "rationale": "Apply the standard vector calculus Laplacian identity to decompose the Laplacian into longitudinal gradient-divergence and transverse curl-curl operators."
+            },
+            {
+                "step": 3,
+                "latex": "\\Phi(\\mathbf{r}) \\equiv \\frac{1}{4\\pi} \\int_{\\mathbb{R}^3} \\frac{\\nabla' \\cdot \\mathbf{A}(\\mathbf{r}')}{|\\mathbf{r} - \\mathbf{r}'|} d^3r'",
+                "rationale": "Define the scalar potential $\\Phi(\\mathbf{r})$ by integrating by parts to transfer the spatial divergence onto the source field distribution."
+            },
+            {
+                "step": 4,
+                "latex": "\\mathbf{W}(\\mathbf{r}) \\equiv \\frac{1}{4\\pi} \\int_{\\mathbb{R}^3} \\frac{\\nabla' \\times \\mathbf{A}(\\mathbf{r}')}{|\\mathbf{r} - \\mathbf{r}'|} d^3r'",
+                "rationale": "Define the vector potential $\\mathbf{W}(\\mathbf{r})$ by integrating by parts to transfer the spatial curl operator onto the source field distribution."
+            },
+            {
+                "step": 5,
+                "latex": "\\mathbf{A} = -\\nabla \\Phi + \\nabla \\times \\mathbf{W}",
+                "rationale": "Combine the longitudinal curl-free gradient term and the transverse divergence-free curl term to complete the Helmholtz decomposition."
+            }
+        ],
         "subcomponents": [
             "nabla-operator-identity-1-44d3af60-e07db4d8",
             "vector-identity-double-curl"
@@ -1296,6 +1323,33 @@
             "von-neumann-chain-identity-14d4a177"
         ],
         "description": "Models the entangled quantum state of a combined system and measurement apparatus following a unitary interaction, forming the core of the quantum measurement problem.",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "|\\psi_S\\rangle = \\sum_i c_i |a_i\\rangle, \\quad \\sum_i |c_i|^2 = 1",
+                "rationale": "Expand the initial state of the quantum system in the orthonormal eigenbasis $\\{|a_i\\rangle\\}$ of the observable to be measured."
+            },
+            {
+                "step": 2,
+                "latex": "|\\Psi(0)\\rangle = |\\psi_S\\rangle \\otimes |M_0\\rangle = \\left( \\sum_i c_i |a_i\\rangle \\right) \\otimes |M_0\\rangle = \\sum_i c_i (|a_i\\rangle \\otimes |M_0\\rangle)",
+                "rationale": "Form the initial composite product state of the system and the apparatus in its neutral ready state $|M_0\\rangle$."
+            },
+            {
+                "step": 3,
+                "latex": "|\\Psi(t)\\rangle = \\hat{U}_{SM} |\\Psi(0)\\rangle = \\hat{U}_{SM} \\sum_i c_i (|a_i\\rangle \\otimes |M_0\\rangle)",
+                "rationale": "Evolve the coupled composite system unitarily under the measurement interaction operator $\\hat{U}_{SM} = \\exp(-i \\hat{H}_{int} t / \\hbar)$."
+            },
+            {
+                "step": 4,
+                "latex": "\\hat{U}_{SM} (|a_i\\rangle \\otimes |M_0\\rangle) = |a_i\\rangle \\otimes |M_i\\rangle",
+                "rationale": "Enforce the von Neumann ideal measurement condition, correlating each system eigenstate $|a_i\\rangle$ with an orthogonal apparatus pointer state $|M_i\\rangle$."
+            },
+            {
+                "step": 5,
+                "latex": "|\\Psi\\rangle = \\sum_i c_i |a_i\\rangle \\otimes |M_i\\rangle",
+                "rationale": "Apply the linearity of unitary quantum mechanics to arrive at the entangled system-apparatus superposition."
+            }
+        ],
         "parent_formula_id": "john-von-neumann-identity-1-1413cd71-4a09a0d0",
         "derivation_type": "DEFINITION"
     },

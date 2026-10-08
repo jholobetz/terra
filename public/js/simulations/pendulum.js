@@ -1,300 +1,446 @@
+/**
+ * 🌌 PHYSICS LAB: Damped-Driven Chaotic Pendulum & Poincaré Bifurcations
+ * Equation: d²θ/dt² + γ dθ/dt + ω₀² sin(θ) = F₀ cos(ω_d t)
+ * 
+ * Integrates via Runge-Kutta 4th-order (RK4) with real-time phase space (θ, dθ/dt)
+ * and stroboscopic Poincaré recurrence sections displaying Feigenbaum period-doubling
+ * cascades into deterministic chaos.
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('simulation-canvas');
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const controls = document.getElementById('controls');
 
-    // Inject custom controls
+    // Inject Modern Glassmorphic Controls
     controls.innerHTML = `
+        <!-- Presets Row -->
         <div class="control-group">
-            <label>Pendulum Length (L): <span id="len-val" class="math-value">180</span> px</label>
-            <input type="range" id="len-slider" min="60" max="280" value="180" style="width: 100%">
-        </div>
-        <div class="control-group" style="margin-top: 10px;">
-            <label>Gravity (g): <span id="g-val" class="math-value">9.8</span> m/s²</label>
-            <input type="range" id="g-slider" min="2" max="25" step="0.2" value="9.8" style="width: 100%">
-        </div>
-        <div class="control-group" style="margin-top: 10px;">
-            <label>Air Damping (Friction): <span id="d-val" class="math-value">0.005</span></label>
-            <input type="range" id="d-slider" min="0.000" max="0.040" step="0.001" value="0.005" style="width: 100%">
-        </div>
-        <div class="control-group" style="margin-top: 15px; display: flex; gap: 10px;">
-            <button id="reset-sim" class="btn btn-secondary" style="width: 100%">Reset Pendulum</button>
-        </div>
-        <div class="physics-readout" style="margin-top: 15px; font-size: 0.85rem; color: #8892b0; border-top: 1px solid #2d3748; padding-top: 10px;">
-            <div style="font-size:0.75rem; color:#64748b; margin-bottom:5px;">
-                • Click & drag the bob to release it from any angle.<br>
-                • Solver integrates non-linear ODE: d²θ/dt² = -(g/L) sin θ.
+            <label style="font-weight: 600; color: #fff; margin-bottom: 8px; display: block;">Dynamical Regime Presets:</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <button id="preset-undriven" class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px;">Harmonic (F₀=0)</button>
+                <button id="preset-period1" class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px;">Limit Cycle (F₀=0.5)</button>
+                <button id="preset-period2" class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px;">Period-2 (F₀=1.07)</button>
+                <button id="preset-chaos" class="btn btn-primary" style="font-size: 0.78rem; padding: 6px; background: linear-gradient(135deg, #0284c7, #7c3aed); border: none;">Chaos (F₀=1.20)</button>
             </div>
-            <div>Release Angle (θ₀): <span id="angle-val" class="math-value">45</span>°</div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="control-group" style="margin-top: 14px;">
+            <div style="display: flex; justify-content: space-between;">
+                <label>Drive Amplitude (F₀):</label>
+                <span id="f-val" class="math-value" style="color: #38bdf8; font-weight: 700;">1.20</span>
+            </div>
+            <input type="range" id="f-slider" min="0.00" max="1.55" step="0.01" value="1.20" style="width: 100%;">
+        </div>
+
+        <div class="control-group" style="margin-top: 12px;">
+            <div style="display: flex; justify-content: space-between;">
+                <label>Damping Ratio (γ):</label>
+                <span id="d-val" class="math-value" style="color: #34d399; font-weight: 700;">0.50</span>
+            </div>
+            <input type="range" id="d-slider" min="0.10" max="0.80" step="0.02" value="0.50" style="width: 100%;">
+        </div>
+
+        <div class="control-group" style="margin-top: 12px;">
+            <div style="display: flex; justify-content: space-between;">
+                <label>Drive Frequency (ω_d):</label>
+                <span id="wd-val" class="math-value" style="color: #fbbf24; font-weight: 700;">0.67</span>
+            </div>
+            <input type="range" id="wd-slider" min="0.20" max="1.40" step="0.01" value="0.67" style="width: 100%;">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="control-group" style="margin-top: 15px; display: flex; gap: 8px;">
+            <button id="toggle-sim-btn" class="btn btn-secondary" style="flex: 1;">❚❚ Pause</button>
+            <button id="clear-poincare-btn" class="btn btn-secondary" style="flex: 1;">Clear Poincaré</button>
+            <button id="reset-sim-btn" class="btn btn-secondary">↺ Reset</button>
+        </div>
+
+        <!-- Live Telemetry Readout -->
+        <div class="physics-readout" style="margin-top: 16px; font-size: 0.84rem; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">Active Regime</span>
+                <span id="regime-badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; font-weight: 700;">
+                    DETERMINISTIC CHAOS
+                </span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.8rem;">
+                <div>Angle θ: <strong id="theta-readout" style="color: #38bdf8;">0.00 rad</strong></div>
+                <div>Velocity ω: <strong id="omega-readout" style="color: #34d399;">0.00 rad/s</strong></div>
+                <div>Drive Phase ϕ: <strong id="phase-readout" style="color: #fbbf24;">0.00 rad</strong></div>
+                <div>Poincaré Dots: <strong id="dots-count" style="color: #ffd700;">0</strong></div>
+            </div>
         </div>
     `;
 
-    const lenSlider = document.getElementById('len-slider');
-    const gSlider = document.getElementById('g-slider');
+    // References
+    const fSlider = document.getElementById('f-slider');
     const dSlider = document.getElementById('d-slider');
-    const resetSimBtn = document.getElementById('reset-sim');
-    const angleVal = document.getElementById('angle-val');
+    const wdSlider = document.getElementById('wd-slider');
+    const toggleBtn = document.getElementById('toggle-sim-btn');
+    const clearPoincareBtn = document.getElementById('clear-poincare-btn');
+    const resetBtn = document.getElementById('reset-sim-btn');
 
-    let L = 180; // rod length in pixels
-    let g = 9.8; // gravity
-    let damping = 0.005; // air friction
+    const fVal = document.getElementById('f-val');
+    const dVal = document.getElementById('d-val');
+    const wdVal = document.getElementById('wd-val');
+    const regimeBadge = document.getElementById('regime-badge');
+    const thetaReadout = document.getElementById('theta-readout');
+    const omegaReadout = document.getElementById('omega-readout');
+    const phaseReadout = document.getElementById('phase-readout');
+    const dotsCount = document.getElementById('dots-count');
 
-    // Pendulum state
-    let theta = Math.PI / 4; // angle in radians (45 degrees)
-    let omega = 0.0; // angular velocity (rad/s)
-    let alpha = 0.0; // angular acceleration
+    // Physical Parameters
+    let F0 = 1.20;       // Driving force amplitude
+    let gamma = 0.50;    // Damping coefficient
+    let omega_d = 0.667; // Driving frequency (approx 2/3)
+    let omega0_sq = 1.0; // Natural frequency squared (g/L = 1)
+
+    // State Variables
+    let theta = 0.2;     // Angle in radians
+    let omega = 0.0;     // Angular velocity
+    let time = 0.0;      // Simulation time
+    let isRunning = true;
     let isDragging = false;
-    let path = [];
-    let lastTimestamp = performance.now();
 
-    // Pivot center coordinates
-    const pivot = { x: 0, y: 80 }; // x set in resize
+    // Phase Space & Poincaré Trajectory Buffers
+    let phaseTrail = [];
+    const maxPhaseTrail = 400;
+    let poincarePoints = [];
+    const maxPoincare = 800;
+    let lastStrobePhase = 0;
 
-    // Resize canvas
+    // Viewport Geometry
+    let width = 800;
+    let height = 500;
+    let dpr = window.devicePixelRatio || 1;
+
     function resize() {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = 500;
-        pivot.x = canvas.width / 2;
+        const rect = canvas.parentElement.getBoundingClientRect();
+        width = rect.width || 800;
+        height = 520;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
     }
     window.addEventListener('resize', resize);
     resize();
 
-    // Event listeners
-    lenSlider.oninput = () => { L = parseInt(lenSlider.value); document.getElementById('len-val').innerText = L; path = []; };
-    gSlider.oninput = () => { g = parseFloat(gSlider.value); document.getElementById('g-val').innerText = g.toFixed(1); };
-    dSlider.oninput = () => { damping = parseFloat(dSlider.value); document.getElementById('d-val').innerText = damping.toFixed(3); };
-    resetSimBtn.onclick = () => { theta = Math.PI / 4; omega = 0; alpha = 0; path = []; };
-
-    // Mouse drag point bob detection
-    function getMousePos(e) {
-        const rect = canvas.getBoundingClientRect();
-        return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        };
+    function updateRegimeBadge() {
+        if (F0 < 0.1) {
+            regimeBadge.textContent = 'DAMPED HARMONIC';
+            regimeBadge.style.color = '#34d399';
+            regimeBadge.style.borderColor = 'rgba(52, 211, 153, 0.4)';
+            regimeBadge.style.background = 'rgba(52, 211, 153, 0.15)';
+        } else if (F0 < 0.95) {
+            regimeBadge.textContent = 'PERIOD-1 LIMIT CYCLE';
+            regimeBadge.style.color = '#38bdf8';
+            regimeBadge.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+            regimeBadge.style.background = 'rgba(56, 189, 248, 0.15)';
+        } else if (F0 < 1.15) {
+            regimeBadge.textContent = 'PERIOD-2 BIFURCATION';
+            regimeBadge.style.color = '#fbbf24';
+            regimeBadge.style.borderColor = 'rgba(251, 191, 36, 0.4)';
+            regimeBadge.style.background = 'rgba(251, 191, 36, 0.15)';
+        } else {
+            regimeBadge.textContent = 'DETERMINISTIC CHAOS';
+            regimeBadge.style.color = '#f87171';
+            regimeBadge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            regimeBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+        }
     }
 
-    canvas.addEventListener('mousedown', (e) => {
-        const pos = getMousePos(e);
-        const bobX = pivot.x + L * Math.sin(theta);
-        const bobY = pivot.y + L * Math.cos(theta);
-        const dist = Math.sqrt((pos.x - bobX) ** 2 + (pos.y - bobY) ** 2);
+    // Sliders
+    fSlider.oninput = () => { F0 = parseFloat(fSlider.value); fVal.textContent = F0.toFixed(2); updateRegimeBadge(); };
+    dSlider.oninput = () => { gamma = parseFloat(dSlider.value); dVal.textContent = gamma.toFixed(2); };
+    wdSlider.oninput = () => { omega_d = parseFloat(wdSlider.value); wdVal.textContent = omega_d.toFixed(2); };
 
-        if (dist < 28) {
+    // Presets
+    document.getElementById('preset-undriven').onclick = () => {
+        F0 = 0.0; fSlider.value = F0; fVal.textContent = F0.toFixed(2); updateRegimeBadge();
+    };
+    document.getElementById('preset-period1').onclick = () => {
+        F0 = 0.50; fSlider.value = F0; fVal.textContent = F0.toFixed(2); updateRegimeBadge();
+    };
+    document.getElementById('preset-period2').onclick = () => {
+        F0 = 1.07; fSlider.value = F0; fVal.textContent = F0.toFixed(2); updateRegimeBadge();
+    };
+    document.getElementById('preset-chaos').onclick = () => {
+        F0 = 1.20; fSlider.value = F0; fVal.textContent = F0.toFixed(2); updateRegimeBadge();
+    };
+
+    toggleBtn.onclick = () => {
+        isRunning = !isRunning;
+        toggleBtn.textContent = isRunning ? '❚❚ Pause' : '▶ Resume';
+    };
+    clearPoincareBtn.onclick = () => { poincarePoints = []; dotsCount.textContent = '0'; };
+    resetBtn.onclick = () => {
+        theta = 0.2; omega = 0.0; time = 0.0;
+        phaseTrail = []; poincarePoints = [];
+        dotsCount.textContent = '0';
+    };
+
+    // RK4 Equations of Motion:
+    // dθ/dt = ω
+    // dω/dt = -γ ω - ω₀² sin(θ) + F₀ cos(ω_d t)
+    function rk4Step(dt) {
+        const f = (t, th, w) => {
+            return [
+                w,
+                -gamma * w - omega0_sq * Math.sin(th) + F0 * Math.cos(omega_d * t)
+            ];
+        };
+
+        const k1 = f(time, theta, omega);
+        const k2 = f(time + 0.5 * dt, theta + 0.5 * dt * k1[0], omega + 0.5 * dt * k1[1]);
+        const k3 = f(time + 0.5 * dt, theta + 0.5 * dt * k2[0], omega + 0.5 * dt * k2[1]);
+        const k4 = f(time + dt, theta + dt * k3[0], omega + dt * k3[1]);
+
+        theta += (dt / 6) * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]);
+        omega += (dt / 6) * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]);
+        time += dt;
+
+        // Wrap angle to [-π, π] for phase plane analysis
+        while (theta > Math.PI) theta -= 2 * Math.PI;
+        while (theta < -Math.PI) theta += 2 * Math.PI;
+
+        // Record Poincaré Stroboscopic Point when drive phase cycles through 2π
+        const currentPhase = (omega_d * time) % (2 * Math.PI);
+        if (currentPhase < lastStrobePhase) {
+            // Drive cycle just rolled over
+            poincarePoints.push({ th: theta, w: omega });
+            if (poincarePoints.length > maxPoincare) poincarePoints.shift();
+            dotsCount.textContent = poincarePoints.length;
+        }
+        lastStrobePhase = currentPhase;
+
+        phaseTrail.push({ th: theta, w: omega });
+        if (phaseTrail.length > maxPhaseTrail) phaseTrail.shift();
+    }
+
+    // Interactive Dragging
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        // Left viewport: Pendulum pivot at (width * 0.24, 160)
+        const pivX = width * 0.24;
+        const pivY = 160;
+        const bobX = pivX + 130 * Math.sin(theta);
+        const bobY = pivY + 130 * Math.cos(theta);
+
+        const dist = Math.sqrt((mx - bobX)**2 + (my - bobY)**2);
+        if (dist < 32) {
             isDragging = true;
             omega = 0;
-            alpha = 0;
         }
     });
 
-    canvas.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-            const pos = getMousePos(e);
-            const dx = pos.x - pivot.x;
-            const dy = pos.y - pivot.y;
-            
-            // Calculate angle from vertical downwards
-            theta = Math.atan2(dx, dy);
-            
-            // Limit angles slightly to prevent complete wrapping/breaking constraints
-            if (theta > Math.PI - 0.05) theta = Math.PI - 0.05;
-            if (theta < -Math.PI + 0.05) theta = -Math.PI + 0.05;
-
-            // Display angle
-            const deg = Math.round((theta * 180) / Math.PI);
-            angleVal.innerText = deg;
-            path = []; // clear trail on drag
-        }
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const pivX = width * 0.24;
+        const pivY = 160;
+        theta = Math.atan2(mx - pivX, my - pivY);
+        omega = 0;
     });
 
-    canvas.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
+    window.addEventListener('mouseup', () => { isDragging = false; });
 
-    canvas.addEventListener('mouseleave', () => {
-        isDragging = false;
-    });
+    // Main 60fps Loop
+    let lastTime = performance.now();
 
-    // Exact non-linear pendulum ODE integration (Verlet scheme)
-    function integrate(dt) {
-        if (isDragging) return;
-
-        // Exact pendulum equation: alpha = -(g / L) * sin(theta) - damping * omega
-        // We scale g and L slightly to match visual coordinates speed
-        const scalingFactor = 4.0;
-        alpha = -((g * scalingFactor) / (L * 0.1)) * Math.sin(theta) - damping * omega * 60;
-
-        // Verlet/Semi-implicit Euler integration
-        omega += alpha * dt;
-        theta += omega * dt;
-
-        // Display current angle in controls
-        const deg = Math.round((theta * 180) / Math.PI);
-        angleVal.innerText = deg;
-    }
-
-    // Main animation loop
-    function loop(timestamp) {
-        // Enforce time-delta step (scaled to target dt = 0.016s)
-        const dt = Math.min(0.04, (timestamp - lastTimestamp) / 1000) * 1.0;
-        lastTimestamp = timestamp;
-
-        // Multiple integration steps for numerical stability
-        const substeps = 4;
-        const subDt = dt / substeps;
-        for (let i = 0; i < substeps; i++) {
-            integrate(subDt);
-        }
-
-        draw();
+    function loop(now) {
         requestAnimationFrame(loop);
-    }
+        const elapsed = Math.min((now - lastTime) / 1000, 0.05);
+        lastTime = now;
 
-    function draw() {
-        // Clear screen
-        ctx.fillStyle = '#0a0f1d';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Bob coordinates
-        const bobX = pivot.x + L * Math.sin(theta);
-        const bobY = pivot.y + L * Math.cos(theta);
-
-        // 1. Draw bob's trajectory path history (glowing cyan neon line)
-        if (!isDragging) {
-            path.push({ x: bobX, y: bobY });
-            if (path.length > 180) path.shift();
-        }
-
-        if (path.length > 1) {
-            ctx.lineWidth = 2.0;
-            for (let i = 1; i < path.length; i++) {
-                const alphaVal = (i / path.length) * 0.45;
-                ctx.strokeStyle = `rgba(34, 211, 238, ${alphaVal})`;
-                ctx.beginPath();
-                ctx.moveTo(path[i - 1].x, path[i - 1].y);
-                ctx.lineTo(path[i].x, path[i].y);
-                ctx.stroke();
+        if (isRunning && !isDragging) {
+            // Substep RK4 for numerical stability
+            const substeps = 10;
+            const subDt = elapsed / substeps;
+            for (let i = 0; i < substeps; i++) {
+                rk4Step(subDt);
             }
         }
 
-        // Draw dotted path constraint arc on drag
-        if (isDragging) {
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-            ctx.lineWidth = 1;
-            ctx.setLineDash([4, 4]);
+        // Telemetry Update
+        thetaReadout.textContent = `${theta.toFixed(2)} rad`;
+        omegaReadout.textContent = `${omega.toFixed(2)} rad/s`;
+        const drivePhase = (omega_d * time) % (2 * Math.PI);
+        phaseReadout.textContent = `${drivePhase.toFixed(2)} rad`;
+
+        // Render Canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // -------------------------------------------------------------
+        // VIEWPORT 1: REAL-SPACE SWINGING PENDULUM (LEFT 48%)
+        // -------------------------------------------------------------
+        const v1Width = width * 0.48;
+        const pivX = v1Width * 0.5;
+        const pivY = 140;
+        const rodLen = 135;
+
+        // Viewport 1 Panel Background
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.4)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.lineWidth = 1;
+        ctx.fillRect(10, 10, v1Width - 20, height - 20);
+        ctx.strokeRect(10, 10, v1Width - 20, height - 20);
+
+        // Title
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '600 12px Inter, sans-serif';
+        ctx.fillText('PHYSICAL SYSTEM & DRIVING TORQUE', 24, 34);
+
+        // Drive Force Vector Visualization (External torque arrow)
+        const driveForce = F0 * Math.cos(omega_d * time);
+        const arrowLen = driveForce * 40;
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(pivX, pivY - 35);
+        ctx.lineTo(pivX + arrowLen, pivY - 35);
+        ctx.stroke();
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillText(`Drive F(t): ${driveForce.toFixed(2)}`, pivX + arrowLen + (arrowLen >= 0 ? 8 : -70), pivY - 32);
+
+        // Pivot base
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(pivX - 25, pivY - 12, 50, 8);
+
+        // Pendulum Rod
+        const bobX = pivX + rodLen * Math.sin(theta);
+        const bobY = pivY + rodLen * Math.cos(theta);
+
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(pivX, pivY);
+        ctx.lineTo(bobX, bobY);
+        ctx.stroke();
+
+        // Pendulum Bob (Cyan Glow)
+        ctx.save();
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 16;
+        ctx.fillStyle = isDragging ? '#34d399' : '#0284c7';
+        ctx.beginPath();
+        ctx.arc(bobX, bobY, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        // Pivot center dot
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(pivX, pivY, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // -------------------------------------------------------------
+        // VIEWPORT 2: PHASE SPACE & POINCARÉ RECURRENCE SECTION (RIGHT 50%)
+        // -------------------------------------------------------------
+        const v2Left = width * 0.49;
+        const v2Width = width * 0.50;
+        const psCenterX = v2Left + v2Width * 0.5;
+        const psCenterY = height * 0.52;
+        const psScaleX = (v2Width - 50) / (2 * Math.PI); // Maps [-π, π] across width
+        const psScaleY = 55;                            // Maps ω (approx [-3, 3])
+
+        // Panel Background
+        ctx.fillStyle = 'rgba(2, 6, 23, 0.7)';
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.fillRect(v2Left, 10, v2Width - 10, height - 20);
+        ctx.strokeRect(v2Left, 10, v2Width - 10, height - 20);
+
+        // Title
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '600 12px Inter, sans-serif';
+        ctx.fillText('PHASE SPACE (θ, dθ/dt) & POINCARÉ RECURRENCE SECTION', v2Left + 18, 34);
+
+        // Coordinate Axes (θ = 0, ω = 0)
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 1;
+        // Horizontal axis (θ)
+        ctx.beginPath();
+        ctx.moveTo(v2Left + 15, psCenterY);
+        ctx.lineTo(v2Left + v2Width - 25, psCenterY);
+        ctx.stroke();
+        // Vertical axis (ω)
+        ctx.beginPath();
+        ctx.moveTo(psCenterX, 45);
+        ctx.lineTo(psCenterX, height - 25);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillText('-π', v2Left + 20, psCenterY - 6);
+        ctx.fillText('+π', v2Left + v2Width - 40, psCenterY - 6);
+        ctx.fillText('+ω', psCenterX + 6, 58);
+        ctx.fillText('-ω', psCenterX + 6, height - 32);
+
+        // Draw Continuous Phase Space Orbit Trail
+        if (phaseTrail.length > 2) {
             ctx.beginPath();
-            ctx.arc(pivot.x, pivot.y, L, 0, Math.PI * 2);
+            let first = true;
+            for (let i = 0; i < phaseTrail.length; i++) {
+                const px = psCenterX + phaseTrail[i].th * psScaleX;
+                const py = psCenterY - phaseTrail[i].w * psScaleY;
+
+                // Handle toroidal boundary wrapping jump
+                if (i > 0 && Math.abs(phaseTrail[i].th - phaseTrail[i-1].th) > 3.0) {
+                    first = true;
+                }
+
+                if (first) {
+                    ctx.moveTo(px, py);
+                    first = false;
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+            ctx.lineWidth = 1.2;
             ctx.stroke();
-            ctx.setLineDash([]);
         }
 
-        // 2. Draw Mechanical suspension rod (sleek metallic truss look)
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 4.0;
-        ctx.beginPath();
-        ctx.moveTo(pivot.x, pivot.y);
-        ctx.lineTo(bobX, bobY);
-        ctx.stroke();
+        // Draw Poincaré Recurrence Strobe Points (Gold dots)
+        ctx.save();
+        ctx.fillStyle = '#ffd700';
+        ctx.shadowColor = '#ffd700';
+        ctx.shadowBlur = 6;
+        poincarePoints.forEach(pt => {
+            const px = psCenterX + pt.th * psScaleX;
+            const py = psCenterY - pt.w * psScaleY;
+            ctx.beginPath();
+            ctx.arc(px, py, 2.2, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        ctx.restore();
 
-        // Inner rod highlight line
-        ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 1.2;
+        // Current State Point in Phase Space
+        const curPx = psCenterX + theta * psScaleX;
+        const curPy = psCenterY - omega * psScaleY;
+        ctx.save();
+        ctx.fillStyle = '#34d399';
+        ctx.shadowColor = '#34d399';
+        ctx.shadowBlur = 10;
         ctx.beginPath();
-        ctx.moveTo(pivot.x, pivot.y);
-        ctx.lineTo(bobX, bobY);
-        ctx.stroke();
-
-        // 3. Draw pivot bearing joint
-        ctx.fillStyle = '#1e293b';
-        ctx.strokeStyle = '#64748b';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(pivot.x, pivot.y, 8, 0, Math.PI * 2);
+        ctx.arc(curPx, curPy, 5.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.stroke();
-
-        // 4. Draw pendulum bob (metallic sphere with glowing core)
-        const bobRadius = 18;
-        ctx.shadowBlur = isDragging ? 15 : 10;
-        ctx.shadowColor = '#06b6d4';
-        
-        // Sphere gradient
-        const grad = ctx.createRadialGradient(bobX - 5, bobY - 5, 2, bobX, bobY, bobRadius);
-        grad.addColorStop(0, '#ffffff'); // specular shine
-        grad.addColorStop(0.3, '#22d3ee'); // bright cyan
-        grad.addColorStop(1, '#0891b2'); // dark cyan edge
-        
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(bobX, bobY, bobRadius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0; // reset
-
-        // Draw outer ring border
-        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.arc(bobX, bobY, bobRadius, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // ==========================================
-        // DYNAMIC ENERGY METERS (Kinetic vs Potential)
-        // ==========================================
-        // Kinetic Energy: KE = 0.5 * m * v^2 = 0.5 * m * (L * omega)^2
-        // Potential Energy: PE = m * g * h = m * g * L * (1 - cos(theta))
-        // We scale calculations for visual display
-        const m = 1.0;
-        const ke = 0.5 * m * (L * 0.05 * omega) * (L * 0.05 * omega) * 20;
-        const pe = m * g * (L * 0.05) * (1 - Math.cos(theta)) * 20;
-        const total = ke + pe;
-
-        const meterX = 25;
-        const meterY = canvas.height - 130;
-        const meterW = 35;
-        const meterH = 95;
-
-        // Draw Energy boxes (glassmorphism look)
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
-        ctx.strokeStyle = 'rgba(51, 65, 85, 0.6)';
-        ctx.lineWidth = 1;
-        ctx.fillRect(meterX - 10, meterY - 15, 150, meterH + 35);
-        ctx.strokeRect(meterX - 10, meterY - 15, 150, meterH + 35);
-
-        // A. Kinetic Energy Bar (Cyan)
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(meterX, meterY, meterW, meterH); // background channel
-        ctx.fillStyle = '#06b6d4';
-        const keBarH = Math.min(meterH, (ke / total) * meterH || 0);
-        ctx.fillRect(meterX, meterY + meterH - keBarH, meterW, keBarH);
-
-        // B. Potential Energy Bar (Purple)
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(meterX + 50, meterY, meterW, meterH);
-        ctx.fillStyle = '#a855f7';
-        const peBarH = Math.min(meterH, (pe / total) * meterH || 0);
-        ctx.fillRect(meterX + 50, meterY + meterH - peBarH, meterW, peBarH);
-
-        // C. Total Energy Bar (Green)
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(meterX + 100, meterY, 20, meterH);
-        ctx.fillStyle = '#10b981';
-        // Total energy remains constant (unless damping is high)
-        const totalBarH = Math.min(meterH, (total / 120) * meterH || 0);
-        ctx.fillRect(meterX + 100, meterY + meterH - totalBarH, 20, totalBarH);
-
-        // Labels
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = '9px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('KE', meterX + meterW / 2, meterY + meterH + 12);
-        ctx.fillText('PE', meterX + 50 + meterW / 2, meterY + meterH + 12);
-        ctx.fillText('Total', meterX + 110, meterY + meterH + 12);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 8px monospace';
-        ctx.fillText('ENERGY METERS', meterX + 65, meterY - 5);
+        ctx.restore();
     }
 
-    // Start loop
     requestAnimationFrame(loop);
 });

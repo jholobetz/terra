@@ -429,7 +429,39 @@
         "conceptual_definition": "The entropy $S$ of a thermodynamic system is defined as the negative rate of change of its Helmholtz free energy $F$ with respect to temperature $T$, when the system's volume $V$ and particle number $N$ are held constant. Mathematically, this is expressed as $S = -\\left( \\frac{\\partial F}{\\partial T} \\right)_{V, N}$.",
         "intuitive_summary": "Imagine a system at a fixed volume and with a fixed amount of stuff. The Helmholtz free energy ($F$) tells you how much useful work you can get out of it. This equation says that if you increase the temperature ($T$), the useful work you can get out decreases, and the rate at which it decreases is exactly the system's entropy ($S$). A higher entropy means that increasing the temperature further reduces the available work more rapidly.",
         "description": "This fundamental thermodynamic relation defines entropy ($S$) as the negative partial derivative of the Helmholtz free energy ($F$) with respect to temperature ($T$), held at constant volume ($V$) and particle number ($N$). It quantifies how the system's disorder or energy dispersal changes with temperature under specific constraints.",
-        "derivation_type": "SPECIAL_CASE",
+        "derivation_type": "LEGENDRE_TRANSFORMATION_POTENTIAL",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "dU = T dS - P dV + \\mu dN",
+                "rationale": "State the fundamental thermodynamic identity combining the First and Second Laws for a reversible infinitesimal process in an open system."
+            },
+            {
+                "step": 2,
+                "latex": "F \\equiv U - T S",
+                "rationale": "Define the Helmholtz free energy $F(T, V, N)$ via the Legendre transformation of internal energy $U(S, V, N)$ with respect to entropy $S$."
+            },
+            {
+                "step": 3,
+                "latex": "dF = dU - d(T S) = dU - T dS - S dT",
+                "rationale": "Compute the total differential of the Helmholtz potential using the product rule of calculus."
+            },
+            {
+                "step": 4,
+                "latex": "dF = (T dS - P dV + \\mu dN) - T dS - S dT = -S dT - P dV + \\mu dN",
+                "rationale": "Substitute the fundamental relation $dU$ into the differential $dF$, canceling the $T dS$ terms."
+            },
+            {
+                "step": 5,
+                "latex": "dF = \\left( \\frac{\\partial F}{\\partial T} \\right)_{V, N} dT + \\left( \\frac{\\partial F}{\\partial V} \\right)_{T, N} dV + \\left( \\frac{\\partial F}{\\partial N} \\right)_{T, V} dN",
+                "rationale": "Express $dF$ as the exact total differential of a state function of its natural independent variables $(T, V, N)$."
+            },
+            {
+                "step": 6,
+                "latex": "S = -\\left( \\frac{\\partial F}{\\partial T} \\right)_{V, N}",
+                "rationale": "Equate the coefficients of the temperature differential $dT$ to establish the canonical definition of entropy from free energy."
+            }
+        ],
         "subcomponents": [
             "thermodynamic-definition-of-pressure-b6e590d6",
             "force-from-potential-energy-gradient-aac310fe"
@@ -642,7 +674,39 @@
             "complex-increment-along-real-axis-81caf89a"
         ],
         "parent_formula_id": "causal-metric-spacetime-interval-b2aee666",
-        "derivation_type": "SPECIAL_CASE"
+        "derivation_type": "SPECIAL_CASE",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "f'(z) = \\lim_{\\Delta z \\to 0} \\frac{f(z + \\Delta z) - f(z)}{\\Delta z}",
+                "rationale": "Define the complex derivative of $f(z) = u(x, y) + i v(x, y)$ as the limit of the difference quotient as $\\Delta z = \\Delta x + i \\Delta y \\to 0$."
+            },
+            {
+                "step": 2,
+                "latex": "f'(z) = \\lim_{\\Delta x \\to 0} \\frac{[u(x+\\Delta x, y) - u(x,y)] + i[v(x+\\Delta x, y) - v(x,y)]}{\\Delta x} = \\frac{\\partial u}{\\partial x} + i \\frac{\\partial v}{\\partial x}",
+                "rationale": "Evaluate the limit along the real axis by choosing a purely horizontal displacement with $\\Delta y = 0$ and $\\Delta z = \\Delta x$."
+            },
+            {
+                "step": 3,
+                "latex": "f'(z) = \\lim_{\\Delta y \\to 0} \\frac{[u(x, y+\\Delta y) - u(x,y)] + i[v(x, y+\\Delta y) - v(x,y)]}{i \\Delta y} = \\frac{\\partial v}{\\partial y} - i \\frac{\\partial u}{\\partial y}",
+                "rationale": "Evaluate the limit along the imaginary axis by choosing a purely vertical displacement with $\\Delta x = 0$ and $\\Delta z = i \\Delta y$, using $1/i = -i$."
+            },
+            {
+                "step": 4,
+                "latex": "\\frac{\\partial u}{\\partial x} + i \\frac{\\partial v}{\\partial x} = \\frac{\\partial v}{\\partial y} - i \\frac{\\partial u}{\\partial y}",
+                "rationale": "Enforce path independence of the complex derivative $f'(z)$, which requires the horizontal and vertical limits to be strictly identical."
+            },
+            {
+                "step": 5,
+                "latex": "\\frac{\\partial u}{\\partial x} = \\frac{\\partial v}{\\partial y}",
+                "rationale": "Equate the real components of both sides of the complex derivative equality."
+            },
+            {
+                "step": 6,
+                "latex": "\\frac{\\partial u}{\\partial y} = -\\frac{\\partial v}{\\partial x}",
+                "rationale": "Equate the imaginary components of both sides to establish the complete Cauchy-Riemann system."
+            }
+        ]
     },
     "cosmological-density-parameter-f899ed51": {
         "title": "Composition of the Total Cosmological Density Parameter",

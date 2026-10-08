@@ -53,6 +53,12 @@ The frontend serves the encyclopedia, manages URL routing to subtopics, renders 
   ```bash
   .venv/bin/python3 -m pytest tests/
   ```
+* **Run Unified Platform Assessment (`scripts/assess`)**:
+  ```bash
+  scripts/assess          # Core test & health scorecard
+  scripts/assess --all    # Full hybrid pass (Tests + Docs + LHI + CAS)
+  scripts/assess --prompt # Generate prompt for AI to produce narrative report
+  ```
 * **Run Sitewide Integrity Shield Audit**:
   ```bash
   .venv/bin/python3 integrity_shield.py

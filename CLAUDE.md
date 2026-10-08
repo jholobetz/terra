@@ -175,7 +175,30 @@ The platform maintains a deliberate dual-layer operational model:
 
 ---
 
-## 🛡️ 5. AI Cost Governance & Deterministic Token Safety Policy
+## 🛠️ 5. Live Platform Capability Matrix & Audit-First Protocol
+
+### A. The Mandatory "Audit-First" Engineering Protocol
+To eliminate counter-productive amnesia, glossing over existing features, or reinventing existing code:
+1. **Pre-Flight Asset Audit**: Before proposing, architecting, or discussing any roadmap phase or feature, all AI assistants and developers MUST inspect existing repository files (`lib/`, `app/logic/`, `public/js/`, `scripts/`) to identify already implemented components.
+2. **Grounding in Code Reality**: Always state what is **already operational** before outlining incremental deltas. Never assume an engine or tool is unbuilt simply because an overall roadmap phase is not yet marked 100%.
+3. **Execution vs. Tooling Distinction**: Distinguish clearly between an **Engine/Tool** (software that exists and runs) and a **Data Sweep/Campaign** (applying that engine across the 14,613 formulas or 1,584 subtopics).
+
+### B. Live Platform Capability Matrix (Do NOT Reinvent or Re-propose)
+| Capability / System | Implementation Path | Live Status & Capabilities | Verification Command |
+| :--- | :--- | :--- | :--- |
+| **Symbolic CAS Engine** | [`lib/cas/cas_engine.py`](file:///Users/holobetj/code/gemini/terra/lib/cas/cas_engine.py)<br/>[`/physics/api/cas-evaluate`](file:///Users/holobetj/code/gemini/terra/app/controllers/PhysicsController.php#L288) | **Operational (168ms latency)**. Performs symbolic velocity inversions $\dot{q}_i(q, p)$, velocity Hessian matrices $W_{ij}$, singular constraint detection, Legendre transformations to Hamiltonians $H = \sum p\dot{q} - L$, asymptotic limits ($x \to 0, \infty$), Taylor expansions, and SI dimensional homogeneity checks. | `.venv/bin/python3 -m pytest tests/test_cas_engine.py` |
+| **Analytical Mechanics Workbench** | [`public/js/legendre_transformer.js`](file:///Users/holobetj/code/gemini/terra/public/js/legendre_transformer.js)<br/>[`app/views/physics/legendre_transformer.php`](file:///Users/holobetj/code/gemini/terra/app/views/physics/legendre_transformer.php) | **Operational**. 10 publication-grade classical & relativistic presets (Harmonic, Pendulum, Duffing, Relativistic, EM Vector Potential, Rotating Frame, Central Force, Kepler, 3D Spherical, Singular Constrained). | Browser at `/physics/legendre-transformer` |
+| **WebGL Raytracing Harness** | [`public/js/lib/webgl_physics_harness.js`](file:///Users/holobetj/code/gemini/terra/public/js/lib/webgl_physics_harness.js)<br/>[`public/js/simulations/relativistic-black-hole.js`](file:///Users/holobetj/code/gemini/terra/public/js/simulations/relativistic-black-hole.js) | **Operational (60fps GPU)**. Zero-dependency WebGL2/GLSL raytracer. Null geodesic raymarching in Boyer-Lindquist coordinates for Kerr ($a \le 0.998$) & Schwarzschild black holes, Doppler beaming ($g^4$), gravitational redshift, accretion disk temperature models, and Einstein ring lensing. | `.venv/bin/python3 -m pytest tests/test_webgl_simulations.py` |
+| **Elevated Dynamic Simulations** | [`public/js/simulations/pendulum.js`](file:///Users/holobetj/code/gemini/terra/public/js/simulations/pendulum.js)<br/>[`public/js/simulations/projectile-motion.js`](file:///Users/holobetj/code/gemini/terra/public/js/simulations/projectile-motion.js) | **Operational**. RK4 chaotic damped-driven pendulum with real-time Poincaré sections and period-doubling cascades; Newton's orbital cannon with circular, elliptical, and hyperbolic escape trajectories. | Browser at `/physics/simulations` |
+| **Hero Stage Cosmic Arena** | [`public/js/cosmic_arena.js`](file:///Users/holobetj/code/gemini/terra/public/js/cosmic_arena.js)<br/>[`public/js/lab_cockpit.js`](file:///Users/holobetj/code/gemini/terra/public/js/lab_cockpit.js) | **Operational**. 60fps high-DPI canvas engine on `/physics/lab-tools`. 4 physical regimes, Web Audio harmonic frequency synthesis, color-coupled telemetry HUD, and interactive What-If micro-challenges. | Browser at `/physics/lab-tools` |
+| **Cross-Encyclopedia Lab Hydration** | [`app/logic/LabToolsLauncher.php`](file:///Users/holobetj/code/gemini/terra/app/logic/LabToolsLauncher.php)<br/>[`app/views/physics/subtopic.php`](file:///Users/holobetj/code/gemini/terra/app/views/physics/subtopic.php) | **Operational**. 1,584/1,584 subtopics mapped to deep-linked interactive instruments, duality workbenches, and simulations with URL state pre-hydration and in-prose cockpit bridge cards. | `.venv/bin/python3 -m pytest tests/test_lab_tools_hydration.py` |
+| **Multi-Step Derivations Engine** | `equation_explainer.php`<br/>[`tests/test_derivation_steps.py`](file:///Users/holobetj/code/gemini/terra/tests/test_derivation_steps.py) | **Operational (102 verified proofs sitewide)**. Collapsible derivation accordions with MathJax typesetting, sequential step schema, TeX brace balance, and universal Domain Parity ($\ge 8$ proofs across all 12 platform domains). | `.venv/bin/python3 -m pytest tests/test_derivation_steps.py` |
+| **Lineage DAG & LHI** | `scripts/fixlineage`<br/>`formula_derivation_graph.json` | **Operational**. Lineage Health Index of 95.2/100, 0 isolated nodes, 44,558 derivation edges. | `scripts/fixlineage --summary` |
+| **Dual-Layer Hash Synchronizer** | `app/config/formulas_hash_registry.json`<br/>`PhysicsService.php` | **Operational**. 256/256 formula shards synchronized with zero hash drift. | `scripts/assess --roadmap --no-tests` |
+
+---
+
+## 🛡️ 6. AI Cost Governance & Deterministic Token Safety Policy
 
 All AI automation scripts, batch runners, and model integrations MUST adhere to the **Deterministic Token Governance Standard** detailed in `docs/cost_governance.md`:
 

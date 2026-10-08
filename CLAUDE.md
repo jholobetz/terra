@@ -44,6 +44,17 @@ Our unified developer CLI manages the entire GQS pipeline lifecycle, offering au
   scripts/fixlineage --target-id <formula-id>
   scripts/fixlineage --heal
   ```
+* **Symbolic CAS Invariance & Dimensional Prover (`cascheck`)**: Audits formulas and derivations for dimensional homogeneity, algebraic consistency, and physical invariant signatures:
+  ```bash
+  # Audit a specific formula by ID:
+  scripts/cascheck --target-id <formula-id>
+
+  # Audit a single shard (e.g. shard 00) with scorecard summary:
+  scripts/cascheck --shard 00 --summary
+
+  # Audit all 256 shards across multi-core workers:
+  scripts/cascheck --all --summary
+  ```
 
 ### 🛡️ Guarded Sprint Orchestrator (Token-Saver & Zero-Interruption)
 Consolidates the entire GQS cycle into a single transaction, automating syntax checking, compilation, and post-graduation audits with local git backups and self-healing rollbacks:

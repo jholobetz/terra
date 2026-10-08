@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# 🔬 Terra Physics Lab - CAS Proof & Invariance CLI: cascheck
+# Usage:
+#   scripts/cascheck --shard 00
+#   scripts/cascheck --target-id <id>
+#   scripts/cascheck --limit 100
+#   scripts/cascheck --all --summary
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PYTHON_BIN="$PROJECT_ROOT/.venv/bin/python3"
+
+if [ ! -f "$PYTHON_BIN" ]; then
+    PYTHON_BIN="python3"
+fi
+
+"$PYTHON_BIN" "$SCRIPT_DIR/batch_cas_prover.py" "$@"

@@ -1266,7 +1266,7 @@ def audit_git_changed(strict: bool = True):
             changed_shards.append(path_obj)
         elif "app/config/content/" in rel_path and rel_path.endswith(".json") and "formulas" not in rel_path:
             changed_subtopic_files.append(path_obj)
-        elif rel_path.startswith("docs/") and rel_path.endswith(".md"):
+        elif rel_path.startswith("docs/") and rel_path.endswith(".md") and not rel_path.startswith("docs/reports/"):
             changed_docs.append(path_obj)
         else:
             changed_other.append(rel_path)

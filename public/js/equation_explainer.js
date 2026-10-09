@@ -1259,18 +1259,87 @@ const EquationExplainer = {
             if (data.success && data.formula) {
                 const f = data.formula;
                 if (this.drawerFieldTitle) this.drawerFieldTitle.value = f.title || '';
+                if (this.drawerFieldDefinition) this.drawerFieldDefinition.value = f.conceptual_definition || '';
+                if (this.drawerFieldSummary) this.drawerFieldSummary.value = f.intuitive_summary || '';
                 if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = f.interpretation || '';
                 if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = f.symmetry_origin || '';
                 if (this.drawerFieldLimits) this.drawerFieldLimits.value = f.limits_and_boundary || '';
-                this.showDrawerAlert('✓ Auto-draft populated into fields! Review in Live Preview before saving.');
+
+                // Update main explanation card on page with drafted definition output
+                if (this.conceptualIntroCard) {
+                    const definition = this.wrapTextMathDelimiters(f.conceptual_definition || f.title);
+                    const summary = this.wrapTextMathDelimiters(f.intuitive_summary || f.interpretation || '');
+                    const sourceBadge = f.is_fallback
+                        ? `<span style="font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; background: rgba(234, 179, 8, 0.12); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.28); font-weight: 600; text-transform: none; letter-spacing: normal;">⚠️ Local Heuristic ($0.00)</span>`
+                        : (f.source && f.source.includes('antigravity')
+                            ? `<span style="font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.35); font-weight: 600; text-transform: none; letter-spacing: normal;">🪐 Antigravity Agent ($0.00)</span>`
+                            : `<span style="font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.28); font-weight: 600; text-transform: none; letter-spacing: normal;">⚡ Gemini Free Tier ($0.00)</span>`);
+
+
+                    this.conceptualIntroCard.style.display = 'flex';
+                    this.conceptualIntroCard.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                                ✦ Explanation (Auto-Draft)
+                            </h4>
+                            ${sourceBadge}
+                        </div>
+                        <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
+                            ${definition}
+                        </div>
+                        ${summary ? `<div class="intuitive-summary" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-muted, #94a3b8); border-left: 2px solid var(--accent-default, #64ffda); padding-left: 12px; font-style: italic; margin-top: 4px;">
+                            ${summary}
+                        </div>` : ''}
+                    `;
+                    this.triggerTypeset([this.conceptualIntroCard]);
+                }
+                if (this.currentFormula) {
+                    this.currentFormula.title = f.title || this.currentFormula.title;
+                    this.currentFormula.conceptual_definition = f.conceptual_definition || '';
+                    this.currentFormula.intuitive_summary = f.intuitive_summary || '';
+                    this.currentFormula.interpretation = f.interpretation || '';
+                    this.currentFormula.symmetry_origin = f.symmetry_origin || '';
+                    this.currentFormula.limits_and_boundary = f.limits_and_boundary || '';
+                }
+
+                if (f.is_fallback) {
+                    this.showDrawerAlert('⚠️ Offline heuristic scaffold populated (AI Studio busy). Review and enrich in Live Preview before saving.', true);
+                } else {
+                    this.showDrawerAlert('✓ Gemini Free Tier draft populated! Review in Live Preview before saving.');
+                }
                 this.updateDrawerLivePreview();
             } else {
                 // Fallback: AST overview synthesis
                 const synthesis = this.synthesizeCustomOverview(latex);
-                if (this.drawerFieldTitle) this.drawerFieldTitle.value = this.currentFormula ? this.currentFormula.title : 'Custom Physical Relation';
+                if (this.drawerFieldTitle) this.drawerFieldTitle.value = this.currentFormula ? this.currentFormula.title : (synthesis.title || 'Custom Physical Relation');
+                if (this.drawerFieldDefinition) this.drawerFieldDefinition.value = synthesis.intro || '';
+                if (this.drawerFieldSummary) this.drawerFieldSummary.value = synthesis.summary || '';
                 if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = synthesis.intro || '';
                 if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = 'Invariance derived from constitutive dynamical equations.';
                 if (this.drawerFieldLimits) this.drawerFieldLimits.value = synthesis.summary || '';
+
+                if (this.conceptualIntroCard) {
+                    const definition = this.wrapTextMathDelimiters(synthesis.intro);
+                    const summary = this.wrapTextMathDelimiters(synthesis.summary);
+                    this.conceptualIntroCard.style.display = 'flex';
+                    this.conceptualIntroCard.innerHTML = `
+                        <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                            ✦ Explanation (Auto-Draft)
+                        </h4>
+                        <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
+                            ${definition}
+                        </div>
+                        <div class="intuitive-summary" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-muted, #94a3b8); border-left: 2px solid var(--accent-default, #64ffda); padding-left: 12px; font-style: italic; margin-top: 4px;">
+                            ${summary}
+                        </div>
+                    `;
+                    this.triggerTypeset([this.conceptualIntroCard]);
+                }
+                if (this.currentFormula) {
+                    this.currentFormula.conceptual_definition = synthesis.intro;
+                    this.currentFormula.intuitive_summary = synthesis.summary;
+                }
+
                 this.showDrawerAlert('✓ Auto-draft synthesized from equation AST. Review before submitting.');
                 this.updateDrawerLivePreview();
             }
@@ -1282,10 +1351,35 @@ const EquationExplainer = {
                 btnAutoDraft.innerHTML = originalHtml;
             }
             const synthesis = this.synthesizeCustomOverview(latex);
-            if (this.drawerFieldTitle) this.drawerFieldTitle.value = this.currentFormula ? this.currentFormula.title : 'Custom Physical Relation';
+            if (this.drawerFieldTitle) this.drawerFieldTitle.value = this.currentFormula ? this.currentFormula.title : (synthesis.title || 'Custom Physical Relation');
+            if (this.drawerFieldDefinition) this.drawerFieldDefinition.value = synthesis.intro || '';
+            if (this.drawerFieldSummary) this.drawerFieldSummary.value = synthesis.summary || '';
             if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = synthesis.intro || '';
             if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = 'Invariance derived from constitutive dynamical equations.';
             if (this.drawerFieldLimits) this.drawerFieldLimits.value = synthesis.summary || '';
+
+            if (this.conceptualIntroCard) {
+                const definition = this.wrapTextMathDelimiters(synthesis.intro);
+                const summary = this.wrapTextMathDelimiters(synthesis.summary);
+                this.conceptualIntroCard.style.display = 'flex';
+                this.conceptualIntroCard.innerHTML = `
+                    <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                        ✦ Explanation (Auto-Draft)
+                    </h4>
+                    <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
+                        ${definition}
+                    </div>
+                    <div class="intuitive-summary" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-muted, #94a3b8); border-left: 2px solid var(--accent-default, #64ffda); padding-left: 12px; font-style: italic; margin-top: 4px;">
+                        ${summary}
+                    </div>
+                `;
+                this.triggerTypeset([this.conceptualIntroCard]);
+            }
+            if (this.currentFormula) {
+                this.currentFormula.conceptual_definition = synthesis.intro;
+                this.currentFormula.intuitive_summary = synthesis.summary;
+            }
+
             this.showDrawerAlert('✓ Auto-draft synthesized from equation AST.');
             this.updateDrawerLivePreview();
         });
@@ -1407,6 +1501,8 @@ const EquationExplainer = {
                 if (this.latexInput) this.latexInput.value = this.currentLatex;
                 if (this.drawerLatexInput) this.drawerLatexInput.value = this.currentLatex;
                 if (this.drawerFieldTitle) this.drawerFieldTitle.value = f.title || '';
+                if (this.drawerFieldDefinition) this.drawerFieldDefinition.value = f.conceptual_definition || '';
+                if (this.drawerFieldSummary) this.drawerFieldSummary.value = f.intuitive_summary || '';
                 if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = f.interpretation || '';
                 if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = f.symmetry_origin || '';
                 if (this.drawerFieldLimits) this.drawerFieldLimits.value = f.limits_and_boundary || '';

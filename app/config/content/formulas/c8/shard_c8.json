@@ -2587,5 +2587,95 @@
         "status": "platinum",
         "parent_formula_id": "chirality-identity-1-55e32e74-23514d7a",
         "subcomponents": []
+    },
+    "custom-physical-relation-ac9a1910": {
+        "id": "custom-physical-relation-ac9a1910",
+        "title": "Cauchy's Integral Formula for Complex Potentials",
+        "equation": "g(z_0) = \\frac{1}{2\\pi i} \\oint_C \\frac{g(z)}{z - z_0} \\, \\mathrm{d}z",
+        "conceptual_definition": "Cauchy's integral formula asserts that the values of a holomorphic function $g(z)$ inside a simply connected domain $D$ are completely and uniquely determined by its values along the closed boundary contour $C = \\partial D$, expressed by the contour integral $g(z_0) = \\frac{1}{2\\pi i} \\oint_C \\frac{g(z)}{z - z_0} \\, \\mathrm{d}z$ for any interior point $z_0 \\in D$.",
+        "intuitive_summary": "In complex analysis and 2D field theory, holomorphic fields possess infinite rigidity: knowing the field values entirely along any closed outer boundary loop is sufficient to reconstruct the exact value of the field at every single interior point. The kernel $(z - z_0)^{-1}$ acts as a harmonic Green's function reproducing the interior state from boundary data.",
+        "interpretation": "The formula demonstrates that holomorphicity is fundamentally non-local. In two-dimensional electrostatics, hydrodynamics, and quantum field theory, the complex potential $g(z) = \\phi(x, y) + i\\psi(x, y)$ combines the electrostatic potential $\\phi$ and stream function $\\psi$ into an analytic function satisfying the Cauchy-Riemann equations $\\nabla^2 \\phi = \\nabla^2 \\psi = 0$. The contour integral decomposes the interior potential into a continuous superposition of simple logarithmic sources and vortices distributed along the boundary curve $C$.",
+        "symmetry_origin": "Originates from conformal symmetry $SO(2, 2) \\cong SL(2, \\mathbb{R}) \\times SL(2, \\mathbb{R})$ in two Euclidean dimensions and the topological invariance of closed differential 1-forms. Under any continuous deformation of the contour $C$ that does not cross the pole at $z = z_0$, the differential form $\\omega = \\frac{g(z)}{z - z_0} \\mathrm{d}z$ remains closed ($\\mathrm{d}\\omega = 0$), guaranteeing path-independence by Stokes' theorem.",
+        "limits_and_boundary": "As the interior evaluation point approaches the boundary $z_0 \\to \\zeta \\in C$, the integral converges to the Sokhotski-Plemelj theorem, decomposing into the Cauchy principal value $\\mathcal{P} \\oint$ plus a half-residue $\\pm i\\pi g(\\zeta)$. In the limit where $g(z)$ is constant, the relation recovers the winding number invariant $\\oint_C (z - z_0)^{-1} \\mathrm{d}z = 2\\pi i$.",
+        "unit_system": "SI",
+        "parent_formula_id": "gauge-theory-identity-ca477fe3",
+        "derivation_type": "DERIVED_FROM",
+        "derivation_steps": [
+            {
+                "step": 1,
+                "latex": "\\oint_C \\frac{g(z)}{z - z_0} \\, \\mathrm{d}z = \\oint_{C_\\epsilon} \\frac{g(z)}{z - z_0} \\, \\mathrm{d}z",
+                "rationale": "By the Cauchy-Goursat theorem, because $\\frac{g(z)}{z - z_0}$ is holomorphic in the annular region between $C$ and an infinitesimal circle $C_\\epsilon$ of radius $\\epsilon$ centered at $z_0$, the contour $C$ can be continuously deformed to $C_\\epsilon$ without altering the integral."
+            },
+            {
+                "step": 2,
+                "latex": "z(\\theta) = z_0 + \\epsilon e^{i\\theta}, \\quad \\mathrm{d}z = i \\epsilon e^{i\\theta} \\mathrm{d}\\theta \\quad (0 \\le \\theta \\le 2\\pi)",
+                "rationale": "Parameterize the circular path $C_\\epsilon$ in polar coordinates, transforming the complex differential line element into an explicit angular differential."
+            },
+            {
+                "step": 3,
+                "latex": "\\oint_{C_\\epsilon} \\frac{g(z)}{z - z_0} \\, \\mathrm{d}z = \\int_0^{2\\pi} \\frac{g(z_0 + \\epsilon e^{i\\theta})}{\\epsilon e^{i\\theta}} \\left( i\\epsilon e^{i\\theta} \\right) \\mathrm{d}\\theta = i \\int_0^{2\\pi} g(z_0 + \\epsilon e^{i\\theta}) \\, \\mathrm{d}\\theta",
+                "rationale": "Substitute the polar coordinates into the contour integral, cancelling the radial distance $\\epsilon e^{i\\theta}$ between numerator and denominator."
+            },
+            {
+                "step": 4,
+                "latex": "\\lim_{\\epsilon \\to 0} i \\int_0^{2\\pi} g(z_0 + \\epsilon e^{i\\theta}) \\, \\mathrm{d}\\theta = i g(z_0) \\int_0^{2\\pi} \\mathrm{d}\\theta = 2\\pi i g(z_0)",
+                "rationale": "Take the asymptotic limit $\\epsilon \\to 0$. By the continuity of $g(z)$ at $z_0$, the integrand converges uniformly to the constant value $g(z_0)$, yielding $2\\pi i g(z_0)$."
+            },
+            {
+                "step": 5,
+                "latex": "g(z_0) = \\frac{1}{2\\pi i} \\oint_C \\frac{g(z)}{z - z_0} \\, \\mathrm{d}z",
+                "rationale": "Divide both sides by the topological winding factor $2\\pi i$ to obtain the canonical Cauchy integral representation."
+            }
+        ],
+        "subcomponents": [
+            "real-eigenvalues-identity-14f4783b",
+            "larmor-formula-identity-6b95c49a",
+            "relativistic-kinetic-energy-identity-25d623e1"
+        ],
+        "status": "platinum",
+        "semantic_variables": {
+            "g(z_0)": {
+                "name": "Interior Potential Value",
+                "type": "variable",
+                "unit": "Varies",
+                "description": "The evaluated value of the holomorphic function or complex potential at interior point $z_0$."
+            },
+            "g(z)": {
+                "name": "Boundary Potential Function",
+                "type": "function",
+                "unit": "Varies",
+                "description": "The complex-analytic field values prescribed along the bounding integration contour $C$."
+            },
+            "z_0": {
+                "name": "Interior Evaluation Point",
+                "type": "coordinate",
+                "unit": "Dimensionless",
+                "description": "A fixed complex coordinate $x_0 + i y_0$ strictly enclosed within the interior domain bounded by $C$."
+            },
+            "z": {
+                "name": "Complex Integration Variable",
+                "type": "variable",
+                "unit": "Dimensionless",
+                "description": "The complex coordinate traversing the perimeter curve $C$."
+            },
+            "C": {
+                "name": "Closed Integration Contour",
+                "type": "domain",
+                "unit": "Dimensionless",
+                "description": "A piecewise-smooth, positively oriented (counter-clockwise) simple closed Jordan curve."
+            },
+            "\\mathrm{d}z": {
+                "name": "Complex Line Element",
+                "type": "differential",
+                "unit": "Dimensionless",
+                "description": "Differential tangent vector $\\mathrm{d}x + i\\mathrm{d}y$ along the contour path."
+            },
+            "2\\pi i": {
+                "name": "Topological Residue Normalizer",
+                "type": "constant",
+                "unit": "Dimensionless",
+                "description": "Phase factor corresponding to a complete $2\\pi$ counter-clockwise circulation in the complex plane."
+            }
+        }
     }
 }

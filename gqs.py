@@ -19,6 +19,8 @@ try:
 except ImportError:
     pass
 
+from lib.ai.models import get_flash_model
+
 # Paths
 GQS_PATH = "subfiles/graduation_queue_stack.json"
 PAYLOAD_PATH = "subfiles/batch_payload.json"
@@ -655,19 +657,19 @@ def seed(rate_tier="free"):
             location="us-central1",
             http_options=types.HttpOptions(timeout=30_000)
         )
-        MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash-lite")
+        MODEL_NAME = get_flash_model()
         print(f"Using Vertex AI Model: {MODEL_NAME}", flush=True)
     else:
         if not api_key:
             print("Error: No GEMINI_API_KEY found in environment or keyring.", flush=True)
             sys.exit(1)
         print("API key successfully retrieved.", flush=True)
-        if api_key.startswith("AQ.") or api_key.startswith("ya29."):
+        if api_key.startswith("ya29."):
             from google.oauth2.credentials import Credentials
             client = genai.Client(credentials=Credentials(token=api_key), http_options=types.HttpOptions(timeout=30_000))
         else:
             client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
-        MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-flash-latest")
+        MODEL_NAME = get_flash_model()
         print(f"Using Google AI Studio Model: {MODEL_NAME}", flush=True)
 
     SHARDS_DIR = "app/config/content/formulas"
@@ -1011,17 +1013,17 @@ def formula_auto_seed(limit=5, rate_tier="free"):
             location="us-central1",
             http_options=types.HttpOptions(timeout=30_000)
         )
-        MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash-lite")
+        MODEL_NAME = get_flash_model()
     else:
         if not api_key:
             print("Error: No GEMINI_API_KEY found in environment or keyring.")
             return
-        if api_key.startswith("AQ.") or api_key.startswith("ya29."):
+        if api_key.startswith("ya29."):
             from google.oauth2.credentials import Credentials
             client = genai.Client(credentials=Credentials(token=api_key), http_options=types.HttpOptions(timeout=30_000))
         else:
             client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
-        MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-flash-latest")
+        MODEL_NAME = get_flash_model()
     print(f"Using Model: {MODEL_NAME}", flush=True)
 
     # 2. Audit to find unregistered formulas

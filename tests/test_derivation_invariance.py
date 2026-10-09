@@ -108,8 +108,8 @@ def test_run_derivation_audit_full_catalog():
     # Audit all 102 verified proofs sitewide
     summary = run_derivation_audit()
     meta = summary["metadata"]
-    assert meta["total_proofs"] == 102
-    assert meta["consecutive_count"] == 102  # 100% of proofs must have strictly consecutive step numbering
+    assert meta["total_proofs"] >= 102
+    assert meta["consecutive_count"] == meta["total_proofs"]  # 100% of proofs must have strictly consecutive step numbering
     assert meta["certified_count"] >= 70    # High confidence baseline certification
     assert meta["terminated_count"] >= 70
     assert meta["elapsed_seconds"] < 5.0    # Sub-5-second execution

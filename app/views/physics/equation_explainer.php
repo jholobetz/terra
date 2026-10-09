@@ -636,6 +636,14 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     </summary>
                     <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
                         <div>
+                            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Conceptual Definition</label>
+                            <textarea id="drawer-field-conceptual-definition" rows="3" placeholder="Academic definition of the physical relation..." style="width: 100%; padding: 8px; background: rgba(3,7,18,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #e2e8f0; font-size: 0.85rem; box-sizing: border-box;"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Intuitive Summary</label>
+                            <textarea id="drawer-field-intuitive-summary" rows="2" placeholder="Physical intuition and takeaway..." style="width: 100%; padding: 8px; background: rgba(3,7,18,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #e2e8f0; font-size: 0.85rem; box-sizing: border-box;"></textarea>
+                        </div>
+                        <div>
                             <label style="display: block; font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Interpretation</label>
                             <textarea id="drawer-field-interpretation" rows="3" style="width: 100%; padding: 8px; background: rgba(3,7,18,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #e2e8f0; font-size: 0.85rem; box-sizing: border-box;"></textarea>
                         </div>
@@ -662,6 +670,11 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
             <div style="background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(100, 255, 218, 0.15); border-radius: 8px; padding: 15px;">
                 <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-default, #64ffda); margin-bottom: 8px; font-weight: 600;">Rendered Equation</div>
                 <div id="drawer-preview-equation" style="font-size: 1.2rem; min-height: 40px; display: flex; align-items: center; justify-content: center; overflow-x: auto; color: #ffffff;">--</div>
+            </div>
+
+            <div style="background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 15px;">
+                <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-default, #64ffda); margin-bottom: 8px; font-weight: 600;">Rendered Definition &amp; Summary</div>
+                <div id="drawer-preview-definition" style="font-size: 0.9rem; line-height: 1.5; color: #cbd5e1;">--</div>
             </div>
 
             <div style="background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 15px;">

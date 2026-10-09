@@ -17,12 +17,15 @@ const ExplainerCurator = {
         this.drawerFieldTitle = document.getElementById('drawer-field-title');
         this.drawerLatexInput = document.getElementById('drawer-latex-input');
         this.drawerHintInput = document.getElementById('drawer-hint-input');
+        this.drawerFieldDefinition = document.getElementById('drawer-field-conceptual-definition');
+        this.drawerFieldSummary = document.getElementById('drawer-field-intuitive-summary');
         this.drawerFieldInterpretation = document.getElementById('drawer-field-interpretation');
         this.drawerFieldSymmetry = document.getElementById('drawer-field-symmetry');
         this.drawerFieldLimits = document.getElementById('drawer-field-limits');
         this.drawerFieldDerivationSteps = document.getElementById('drawer-field-derivation-steps');
 
         this.drawerPreviewEquation = document.getElementById('drawer-preview-equation');
+        this.drawerPreviewDefinition = document.getElementById('drawer-preview-definition');
         this.drawerPreviewLimits = document.getElementById('drawer-preview-limits');
         this.drawerReviewsContainer = document.getElementById('drawer-reviews-container');
 
@@ -71,6 +74,12 @@ const ExplainerCurator = {
         }
         if (this.drawerHintInput) {
             this.drawerHintInput.addEventListener('input', () => this.updateDrawerLivePreview());
+        }
+        if (this.drawerFieldDefinition) {
+            this.drawerFieldDefinition.addEventListener('input', () => this.updateDrawerLivePreview());
+        }
+        if (this.drawerFieldSummary) {
+            this.drawerFieldSummary.addEventListener('input', () => this.updateDrawerLivePreview());
         }
 
         // Action: Submit Suggestion (Contributor Tier)
@@ -134,6 +143,8 @@ const ExplainerCurator = {
         if (this.drawerFieldTitle) this.drawerFieldTitle.value = f.title || '';
         if (this.drawerLatexInput) this.drawerLatexInput.value = this.currentLatex || this.getCleanLatexFromEq(f.equation) || '';
         if (this.drawerHintInput) this.drawerHintInput.value = '';
+        if (this.drawerFieldDefinition) this.drawerFieldDefinition.value = f.conceptual_definition || '';
+        if (this.drawerFieldSummary) this.drawerFieldSummary.value = f.intuitive_summary || '';
         if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = f.interpretation || '';
         if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = f.symmetry_origin || '';
         if (this.drawerFieldLimits) this.drawerFieldLimits.value = f.limits_and_boundary || '';
@@ -168,6 +179,8 @@ const ExplainerCurator = {
         const latex = this.drawerLatexInput ? this.drawerLatexInput.value.trim() : '';
         const hint = this.drawerHintInput ? this.drawerHintInput.value.trim() : '';
         const limits = this.drawerFieldLimits ? this.drawerFieldLimits.value.trim() : '';
+        const defVal = this.drawerFieldDefinition ? this.drawerFieldDefinition.value.trim() : '';
+        const sumVal = this.drawerFieldSummary ? this.drawerFieldSummary.value.trim() : '';
 
         if (this.drawerPreviewEquation) {
             if (latex) {
@@ -177,12 +190,27 @@ const ExplainerCurator = {
             }
         }
 
+        if (this.drawerPreviewDefinition) {
+            const defText = defVal || (this.currentFormula ? this.currentFormula.conceptual_definition : '') || '';
+            const summaryText = sumVal || (this.currentFormula ? this.currentFormula.intuitive_summary : '') || '';
+            let contentHtml = '';
+            if (defText) {
+                contentHtml += `<div style="font-weight: 500; color: #f8fafc; margin-bottom: 6px;">${this.wrapTextMathDelimiters(defText)}</div>`;
+            }
+            if (summaryText) {
+                contentHtml += `<div style="color: var(--text-muted, #94a3b8); font-style: italic; border-left: 2px solid var(--accent-default, #64ffda); padding-left: 8px;">${this.wrapTextMathDelimiters(summaryText)}</div>`;
+            }
+            this.drawerPreviewDefinition.innerHTML = contentHtml || '<span style="opacity:0.5;">No definition specified</span>';
+        }
+
         if (this.drawerPreviewLimits) {
             const previewText = hint || limits || (this.currentFormula ? this.currentFormula.limits_and_boundary : 'No limiting cases specified.');
             this.drawerPreviewLimits.innerHTML = this.wrapTextMathDelimiters(previewText);
         }
 
-        this.triggerTypeset([this.drawerPreviewEquation, this.drawerPreviewLimits]);
+        const previewTargets = [this.drawerPreviewEquation, this.drawerPreviewLimits];
+        if (this.drawerPreviewDefinition) previewTargets.push(this.drawerPreviewDefinition);
+        this.triggerTypeset(previewTargets);
     },
 
     showDrawerAlert(message, isError = false) {
@@ -224,6 +252,8 @@ const ExplainerCurator = {
             hint: this.drawerHintInput ? this.drawerHintInput.value.trim() : '',
             prose: {
                 title: this.drawerFieldTitle ? this.drawerFieldTitle.value.trim() : (this.currentFormula ? this.currentFormula.title : 'Custom Physical Relation'),
+                conceptual_definition: this.drawerFieldDefinition ? this.drawerFieldDefinition.value.trim() : (this.currentFormula ? this.currentFormula.conceptual_definition : ''),
+                intuitive_summary: this.drawerFieldSummary ? this.drawerFieldSummary.value.trim() : (this.currentFormula ? this.currentFormula.intuitive_summary : ''),
                 interpretation: this.drawerFieldInterpretation ? this.drawerFieldInterpretation.value.trim() : '',
                 symmetry_origin: this.drawerFieldSymmetry ? this.drawerFieldSymmetry.value.trim() : '',
                 limits_and_boundary: this.drawerFieldLimits ? this.drawerFieldLimits.value.trim() : ''
@@ -285,6 +315,8 @@ const ExplainerCurator = {
             hint: this.drawerHintInput ? this.drawerHintInput.value.trim() : '',
             prose: {
                 title: this.drawerFieldTitle ? this.drawerFieldTitle.value.trim() : (this.currentFormula ? this.currentFormula.title : 'Custom Physical Relation'),
+                conceptual_definition: this.drawerFieldDefinition ? this.drawerFieldDefinition.value.trim() : (this.currentFormula ? this.currentFormula.conceptual_definition : ''),
+                intuitive_summary: this.drawerFieldSummary ? this.drawerFieldSummary.value.trim() : (this.currentFormula ? this.currentFormula.intuitive_summary : ''),
                 interpretation: this.drawerFieldInterpretation ? this.drawerFieldInterpretation.value.trim() : '',
                 symmetry_origin: this.drawerFieldSymmetry ? this.drawerFieldSymmetry.value.trim() : '',
                 limits_and_boundary: this.drawerFieldLimits ? this.drawerFieldLimits.value.trim() : ''

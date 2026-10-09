@@ -25,3 +25,7 @@ This directory contains historical, one-off migration scripts, legacy fixers, an
 | `warm_critic_cache.py` | `run_critic.py` | One-off cache pre-warmer. |
 | `run_seeding_loop.sh` | MariaDB ingestion pipeline | Initial database population shell loop. |
 | `audit_formula_normalization.py` | `integrity_shield.py` & `lib.math.lexer` | Dry-run normalization diff scanner. |
+| `build_physics_embeddings.py` | Google AI Studio embeddings / `ai_models.json` | Historical Vertex AI `text-embedding-004` batch formula embedder. |
+| `build_subtopic_embeddings.py` | Google AI Studio embeddings / `ai_models.json` | Historical Vertex AI `text-embedding-004` batch subtopic embedder. |
+| `run_gemini_shard_sanitizer.py` | `gqs.py` & `generate_gemini_formula.py` | Historical Vertex AI Gemini 2.5 Pro multi-threaded shard sanitizer. |
+| `run_vertex_lineage_enricher.py` | `fixlineage` & `generate_gemini_formula.py` | Historical Vertex AI Gemini 2.5 lineage & derivation enricher. |

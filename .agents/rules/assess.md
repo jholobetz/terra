@@ -30,5 +30,6 @@ Whenever the user instructs to run, check, or view an assessment (e.g., matching
    - **"assess diagnostics"**: Run `bash scripts/assess --diagnostics`.
 3. **Execution Safety**:
    - Always invoke as `bash scripts/assess [args]` within the project working directory.
+   - **Web GUI Console**: Available at `http://localhost:8000/physics/admin/assess` (or `/physics/admin`) on the local test server with one-click triggers, self-healing, strict ratchets, and interactive terminal console drawer.
 4. **Synthesize Output**:
    - Return the rendered terminal scorecard or the generated prompt payload cleanly to the user.

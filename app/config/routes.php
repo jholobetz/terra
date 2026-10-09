@@ -57,9 +57,14 @@ $router->group('', function(Router $router) use ($app) {
 		$router->post('/api/reviews/reject', [ $app->physicsController(), 'apiRejectReview' ]);
 
 		// Admin & Developer Control Panel Routes
-		$router->get('/admin/dashboard', [ $app->physicsController(), 'adminDashboard' ]);
+		$router->get('/admin', [ $app->physicsController(), 'adminAssess' ]);
+		$router->get('/admin/assess', [ $app->physicsController(), 'adminAssess' ]);
+		$router->get('/admin/dashboard', [ $app->physicsController(), 'adminAssess' ]);
 		$router->get('/admin/editor', [ $app->physicsController(), 'wysiwygEditor' ]);
 		$router->get('/admin/critic', [ $app->physicsController(), 'criticPortal' ]);
+		$router->get('/admin/api/assess-telemetry', [ $app->physicsController(), 'apiAssessTelemetry' ]);
+		$router->post('/admin/api/run-assess', [ $app->physicsController(), 'apiRunAssess' ]);
+		$router->get('/admin/api/assess-diff', [ $app->physicsController(), 'apiAssessDiff' ]);
 		$router->post('/admin/api/run-autolinker', [ $app->physicsController(), 'apiRunAutoLinker' ]);
 		$router->post('/admin/api/run-critic', [ $app->physicsController(), 'apiRunCritic' ]);
 		$router->post('/admin/api/register-reference', [ $app->physicsController(), 'apiRegisterReference' ]);

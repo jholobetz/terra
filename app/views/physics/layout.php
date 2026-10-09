@@ -97,7 +97,7 @@
     </main>
 
     <footer class="main-footer">
-        <p>&copy; <?= date('Y') ?> Physics Lab Digital Encyclopedia. All rights reserved.</p>
+        <p>&copy; <?= date('Y') ?> Physics Lab Digital Encyclopedia. All rights reserved. &nbsp;&bull;&nbsp; <a href="/physics/admin/assess" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s;" onmouseover="this.style.color='#64ffda'" onmouseout="this.style.color='var(--text-muted)'">🪐 Assessment Console</a></p>
     </footer>
 
     <!-- Spotlight Search Modal -->

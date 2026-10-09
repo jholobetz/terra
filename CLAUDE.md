@@ -119,6 +119,7 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   scripts/assess --prompt
   # (Optional: add -t / --with-tests to include pytest in the prompt payload)
   ```
+* **Web GUI Assessment Console**: Live interactive telemetry, strict monotonic ratchets, shard partition auditing, and one-click autonomous self-healing available in the browser at [`http://localhost:8000/physics/admin/assess`](http://localhost:8000/physics/admin/assess).
 * **Automated Pytest Suite**: Runs the full regression net (3,100+ tests covering schemas, invariants, delimiters, and syntax):
   ```bash
   .venv/bin/python3 -m pytest tests/

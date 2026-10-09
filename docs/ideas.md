@@ -76,3 +76,8 @@ Ideas for enhancing the narrative and human element:
 
 * *(Date: 2026-10-08)* — Could we add an export button on formula cards that generates ready-to-run Python/SymPy or Jupyter notebook snippets for that exact formula?
 * *(Date: 2026-10-08)* — Think about mobile UX for the equation dissector: can we have a horizontal bottom sheet for variable definitions so the equation stays sticky at the top?
+* *(Date: 2026-10-09)* — **Production Deployment & Server Footprint Architecture**:
+  * **DocumentRoot Isolation**: Web server (Nginx/Apache) root strictly points to `/public`. The public web only directly accesses CSS, JS, compiled MathJax SVG/assets, and pre-rendered static HTML cache (`public/cache/subtopic/*.html`).
+  * **Production Artifact Pruning**: In deployment packages (Docker container or server release tarball), exclude dev-only assets (`/tests`, `/docs`, `.git`, dev scratch files) while retaining `/public`, `/app`, `/vendor`, and `/lib` (SymPy CAS engine).
+  * **Performance Profile**: Subtopic and topic reading requests are served directly from the static disk cache at static-site speeds (<10ms) without hitting MariaDB. Dynamic features (`/physics/api/cas-evaluate`, search, equation explainer) invoke PHP and Python on demand.
+  * **Single-Developer Model vs. Future Tiers**: Keep local development flattened (direct write to Git shards + MariaDB sync). When public community contributions are eventually needed in production, design a lightweight public submission/review tier specifically tailored for production rollout.

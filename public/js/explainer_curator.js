@@ -121,10 +121,12 @@ const ExplainerCurator = {
             this.drawerFormulaIdLabel.textContent = formulaId ? `Formula ID: ${formulaId}` : 'Ad-hoc Equation (Unregistered)';
         }
 
-        // Role-based button visibility
-        const isPrivileged = user.role === 'curator' || user.role === 'admin';
+        // Single-Developer Mode: Apply directly is always active
         if (this.drawerBtnApplyDirect) {
-            this.drawerBtnApplyDirect.style.display = isPrivileged ? 'inline-block' : 'none';
+            this.drawerBtnApplyDirect.style.display = 'inline-block';
+        }
+        if (this.drawerBtnSuggest) {
+            this.drawerBtnSuggest.style.display = 'none';
         }
 
         // Populate Fields

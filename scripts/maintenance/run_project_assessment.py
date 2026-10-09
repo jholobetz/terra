@@ -1396,7 +1396,8 @@ def audit_git_changed(strict: bool = True):
         print(f"\n{Colors.GREEN}{Colors.BOLD}✅ ALL UNCOMMITTED CHANGES CONFORM TO INVARIANTS!{Colors.RESET}")
         print(f"   • 0 LaTeX syntax errors")
         print(f"   • 0 In Media Res lead violations")
-        print(f"   • 0 Delimiter / markdown artifact corruptions\n")
+        print(f"   • 0 Delimiter / markdown artifact corruptions")
+        print(f"{Colors.DIM}Audit completed in {dur_ms}ms.{Colors.RESET}\n")
         return
 
     print(f"\n{Colors.RED}{Colors.BOLD}❌ INCREMENTAL AUDIT FAILED: {len(violations)} violation(s) detected:{Colors.RESET}")

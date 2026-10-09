@@ -1090,146 +1090,196 @@ class PhysicsController
     }
 
     /**
-     * View action rendering the Admin Dashboard.
+     * View action rendering the Unified Platform Assessment & Health Cockpit.
+     */
+    public function adminAssess()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('HTTP/1.1 403 Forbidden');
+            echo 'Forbidden: Admin access restricted to localhost.';
+            exit;
+        }
+
+        // Read latest telemetry (Schema v1.0)
+        $latestPath = PROJECT_ROOT . '/docs/reports/latest.json';
+        $latest = [];
+        if (file_exists($latestPath)) {
+            $latest = json_decode(file_get_contents($latestPath), true) ?: [];
+        }
+
+        // Read timeline entries (recent runs)
+        $timelinePath = PROJECT_ROOT . '/docs/reports/timeline.jsonl';
+        $timeline = [];
+        if (file_exists($timelinePath)) {
+            $lines = file($timelinePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+            $recentLines = array_slice($lines, -25);
+            foreach ($recentLines as $line) {
+                $decoded = json_decode($line, true);
+                if ($decoded) {
+                    $timeline[] = $decoded;
+                }
+            }
+        }
+
+        // Load topics for domain selector
+        $topics = $this->service()->fetchAllData('topics');
+
+        $this->renderWithLayout('physics/admin/assess', [
+            'title' => 'Platform Assessment Console',
+            'latest' => $latest,
+            'timeline' => $timeline,
+            'topics' => $topics
+        ]);
+    }
+
+    /**
+     * Backward-compatible alias for adminDashboard
      */
     public function adminDashboard()
     {
-        // Enforce localhost security check
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('HTTP/1.1 403 Forbidden');
-            echo 'Forbidden: Admin access restricted to localhost.';
-            exit;
-        }
-
-        // Read system_health.json
-        $healthPath = PROJECT_ROOT . '/system_health.json';
-        $health = [];
-        if (file_exists($healthPath)) {
-            $health = json_decode(file_get_contents($healthPath), true);
-        }
-
-        $this->renderWithLayout('physics/admin/dashboard', [
-            'title' => 'GQS & Integrity Health Dashboard',
-            'health' => $health
-        ]);
+        return $this->adminAssess();
     }
 
     /**
-     * View action rendering the OPS WYSIWYG Shard Editor.
+     * REST Endpoint: Fetch live telemetry and historical timeline
+     */
+    public function apiAssessTelemetry()
+    {
+        $latestPath = PROJECT_ROOT . '/docs/reports/latest.json';
+        $latest = file_exists($latestPath) ? (json_decode(file_get_contents($latestPath), true) ?: []) : [];
+
+        $timelinePath = PROJECT_ROOT . '/docs/reports/timeline.jsonl';
+        $timeline = [];
+        if (file_exists($timelinePath)) {
+            $lines = file($timelinePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+            $recentLines = array_slice($lines, -30);
+            foreach ($recentLines as $line) {
+                $decoded = json_decode($line, true);
+                if ($decoded) {
+                    $timeline[] = $decoded;
+                }
+            }
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'telemetry' => $latest,
+            'timeline' => $timeline
+        ]);
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Trigger assessment runs (quick, heal, changed, domain, shard, full)
+     */
+    public function apiRunAssess()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
+            header('Content-Type: application/json');
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Forbidden']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $action = $input['action'] ?? 'quick';
+        $domain = trim($input['domain'] ?? '');
+        $shard = trim($input['shard'] ?? '');
+
+        $flags = [];
+
+        switch ($action) {
+            case 'heal':
+                $flags[] = '--heal';
+                $flags[] = '--quick';
+                break;
+            case 'changed':
+                $flags[] = '--changed';
+                break;
+            case 'integrity':
+                $flags[] = '--integrity';
+                break;
+            case 'diff':
+                $flags[] = '--diff';
+                $flags[] = '--quick';
+                break;
+            case 'domain':
+                if (!empty($domain)) {
+                    $flags[] = '--domain ' . escapeshellarg($domain);
+                } else {
+                    $flags[] = '--quick';
+                }
+                break;
+            case 'shard':
+                if (!empty($shard)) {
+                    $flags[] = '--shard ' . escapeshellarg($shard);
+                } else {
+                    $flags[] = '--quick';
+                }
+                break;
+            case 'full':
+                $flags[] = '--all';
+                break;
+            case 'quick':
+            default:
+                $flags[] = '--quick';
+                break;
+        }
+
+        $flagString = implode(' ', $flags);
+        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && bash scripts/assess " . $flagString . " 2>&1";
+
+        exec($cmd, $output, $returnCode);
+
+        // Fetch fresh latest.json
+        $latestPath = PROJECT_ROOT . '/docs/reports/latest.json';
+        $latest = file_exists($latestPath) ? (json_decode(file_get_contents($latestPath), true) ?: []) : [];
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => ($returnCode === 0),
+            'return_code' => $returnCode,
+            'action' => $action,
+            'command' => "scripts/assess " . $flagString,
+            'logs' => implode("\n", $output),
+            'telemetry' => $latest
+        ]);
+        exit;
+    }
+
+    /**
+     * REST Endpoint: Fetch diff comparison against baseline
+     */
+    public function apiAssessDiff()
+    {
+        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && bash scripts/assess --diff --quick 2>&1";
+        exec($cmd, $output, $returnCode);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => ($returnCode === 0),
+            'logs' => implode("\n", $output)
+        ]);
+        exit;
+    }
+
+    /**
+     * Deprecated: Redirects legacy WYSIWYG editor requests to the canonical Assessment Console.
      */
     public function wysiwygEditor()
     {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('HTTP/1.1 403 Forbidden');
-            echo 'Forbidden: Admin access restricted to localhost.';
-            exit;
-        }
-
-        // Load active drafts in subfiles/batch_payload.json
-        $payloadPath = PROJECT_ROOT . '/subfiles/batch_payload.json';
-        $payloads = [];
-        if (file_exists($payloadPath)) {
-            $payloads = json_decode(file_get_contents($payloadPath), true) ?: [];
-        }
-
-        // Load list of all subtopic slugs and their titles from search index
-        $slugsList = [];
-        $slugShardMapPath = PROJECT_ROOT . '/slug_shard_map.json';
-        $searchIndexPath = PROJECT_ROOT . '/app/config/content/search_index.json';
-        
-        if (file_exists($slugShardMapPath)) {
-            $slugsMap = json_decode(file_get_contents($slugShardMapPath), true) ?: [];
-            $searchIndex = [];
-            if (file_exists($searchIndexPath)) {
-                $searchIndex = json_decode(file_get_contents($searchIndexPath), true) ?: [];
-            }
-            
-            foreach ($slugsMap as $slug => $shard) {
-                // Exclude categories/constants/notation sharding if any
-                if ($shard !== 'constants.json' && $shard !== 'categories.json' && $shard !== 'notation.json') {
-                    $title = $searchIndex[$slug]['t'] ?? '';
-                    if (empty($title) || $title === 'Untitled') {
-                        $title = ucwords(str_replace('-', ' ', $slug));
-                    }
-                    $slugsList[$slug] = $title;
-                }
-            }
-            // Sort case-insensitively by title
-            asort($slugsList, SORT_NATURAL | SORT_FLAG_CASE);
-        }
-
-        $this->renderWithLayout('physics/admin/editor', [
-            'title' => 'OPS WYSIWYG Shard Editor',
-            'payloads' => $payloads,
-            'slugs' => $slugsList
-        ]);
+        $this->app->redirect('/physics/admin/assess', 301);
     }
 
     /**
-     * View action rendering the Literature Consensus Critic Portal.
+     * Deprecated: Redirects legacy Critic portal requests to the canonical Assessment Console.
      */
     public function criticPortal()
     {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('HTTP/1.1 403 Forbidden');
-            echo 'Forbidden: Admin access restricted to localhost.';
-            exit;
-        }
-
-        // Load literature cache
-        $cachePath = PROJECT_ROOT . '/app/config/ref_data/literature_cache.json';
-        $cache = [];
-        if (file_exists($cachePath)) {
-            $cache = json_decode(file_get_contents($cachePath), true) ?: [];
-        }
-
-        // Load registered semantic references
-        $refPath = PROJECT_ROOT . '/app/config/ref_data/semantic_references.json';
-        $references = [];
-        if (file_exists($refPath)) {
-            $references = json_decode(file_get_contents($refPath), true) ?: [];
-        }
-
-        // Load subtopics to read actual stamped verification status
-        $subtopics = [];
-        foreach (array_keys($references) as $slug) {
-            $subtopic = $this->service()->fetchAndPrepare('subtopics', $slug);
-            if (!empty($subtopic)) {
-                $subtopics[$slug] = $subtopic;
-            }
-        }
-
-        // Load unregistered subtopics for the registration dropdown
-        if ($this->service()->isPreviewActive()) {
-            $this->service()->loadAllShards();
-            $content = $this->service()->getPhysicsContent();
-            $subtopicsList = array_map(function($s, $sub) {
-                return ['slug' => $s, 'title' => $sub['title']];
-            }, array_keys($content['subtopics']), $content['subtopics']);
-        } else {
-            $subtopicsList = $this->app->db()->fetchAll("SELECT slug, title FROM subtopics ORDER BY title ASC");
-        }
-
-        $unregisteredSubtopics = [];
-        foreach ($subtopicsList as $sub) {
-            $row = is_object($sub) && method_exists($sub, 'getData') ? $sub->getData() : (array) $sub;
-            $s = $row['slug'] ?? '';
-            $t = $row['title'] ?? '';
-            if ($s && !isset($references[$s])) {
-                $unregisteredSubtopics[] = ['slug' => $s, 'title' => $t];
-            }
-        }
-
-        $this->renderWithLayout('physics/admin/critic', [
-            'title' => 'Literature Consensus Critic Portal',
-            'cache' => $cache,
-            'references' => $references,
-            'subtopics' => $subtopics,
-            'unregisteredSubtopics' => $unregisteredSubtopics
-        ]);
+        $this->app->redirect('/physics/admin/assess', 301);
     }
 
     /**
@@ -1626,49 +1676,13 @@ class PhysicsController
     }
 
     /**
-     * REST Endpoint: Submit Formula Repair Suggestion (Contributor Tier)
+     * REST Endpoint: Formula Repair (Single-Developer Authority)
+     * Directly commits changes to Git shard, hash registry, and MariaDB.
      */
     public function apiSuggestRepair()
     {
-        $auth = Flight::authService();
-        $user = $auth->getCurrentUser();
-
-        if (!$auth->hasRole('contributor', $user)) {
-            header('Content-Type: application/json');
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Permission denied: Contributor privileges required.']);
-            exit;
-        }
-
-        $input = json_decode(file_get_contents('php://input'), true);
-        $formulaId = $input['formula_id'] ?? '';
-        $latex = $input['latex'] ?? null;
-        $prose = $input['prose'] ?? null;
-        $hint = $input['hint'] ?? null;
-
-        if (empty($formulaId)) {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Formula ID is required.']);
-            exit;
-        }
-
-        try {
-            $reviewService = Flight::formulaReviewService();
-            $reviewId = $reviewService->createSuggestion($user->id, $formulaId, $latex, $prose, $hint);
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'message' => 'Your suggestion has been submitted for review.',
-                'review_id' => $reviewId
-            ]);
-        } catch (\Throwable $e) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-        exit;
+        // In flattened single-developer mode, all suggestions apply directly
+        return $this->apiApplyRepair();
     }
 
     /**

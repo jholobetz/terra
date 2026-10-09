@@ -386,28 +386,76 @@ def legendre_transform(
 
 
 STANDARD_PHYSICS_DIMENSIONS = {
-    "m": mass, "M": mass, "m_e": mass, "m_p": mass, "m_n": mass,
+    # Masses & Particles
+    "m": mass, "M": mass, "m_e": mass, "m_p": mass, "m_n": mass, "m_0": mass,
+
+    # Lengths & Spatial Coordinates
     "x": length, "y": length, "z": length, "r": length, "l": length, "L": length,
     "d": length, "R": length, "a_0": length, "lambda": length, "s": length, "r_s": length,
+
+    # Times & Durations
     "t": time, "T_period": time, "tau": time,
-    "v": length / time, "c": length / time, "dq": length / time, "dx": length / time, "dr": length / time,
+
+    # Velocities & Speeds
+    "v": length / time, "c": length / time, "u": length / time, "dq": length / time,
+    "dx": length / time, "dr": length / time,
+
+    # Accelerations & Gravitational Field
     "a": length / (time**2), "g": length / (time**2),
+
+    # Forces
     "F": mass * length / (time**2),
+
+    # Energies, Work & Hamiltonians
     "E": mass * (length**2) / (time**2), "H": mass * (length**2) / (time**2),
     "V": mass * (length**2) / (time**2), "U": mass * (length**2) / (time**2),
     "K": mass * (length**2) / (time**2), "T_energy": mass * (length**2) / (time**2),
-    "p": mass * length / time,
-    "k": mass / (time**2), "k_B": mass * (length**2) / ((time**2) * temperature),
 
+    # Momenta
+    "p": mass * length / time,
+
+    # Temperatures & Thermodynamics
+    "T": temperature,
+    "S": mass * (length**2) / ((time**2) * temperature),
+    "k": mass / (time**2),
+    "k_B": mass * (length**2) / ((time**2) * temperature),
+    "k_b": mass * (length**2) / ((time**2) * temperature),
+    "R_gas": mass * (length**2) / ((time**2) * temperature * amount_of_substance),
+    "sigma_SB": mass / ((time**3) * (temperature**4)),
+    "sigma": mass / ((time**3) * (temperature**4)),
+
+    # Frequencies & Rates
+    "omega": 1 / time, "f": 1 / time, "nu": 1 / time,
+
+    # Gravitational Constant & Action
     "G": (length**3) / (mass * (time**2)),
     "hbar": (mass * (length**2)) / time,
     "h": (mass * (length**2)) / time,
-    "q": current * time, "e": current * time, "q_charge": current * time,
+
+    # Electromagnetism & Field Tensors
+    "q": current * time, "e": current * time, "q_charge": current * time, "Q": current * time,
+    "I": current,
     "B": mass / (current * (time**2)),
     "A_pot": mass * length / (current * (time**2)),
-    "omega": 1 / time,
+    "V_pot": mass * (length**2) / ((time**3) * current),
+    "E_field": mass * length / ((time**3) * current),
+    "epsilon_0": ((time**4) * (current**2)) / (mass * (length**3)),
+    "eps_0": ((time**4) * (current**2)) / (mass * (length**3)),
+    "mu_0": mass * length / ((time**2) * (current**2)),
+    "k_e": mass * (length**3) / ((time**4) * (current**2)),
+    "mu_B": current * (length**2),
+    "mu_N": current * (length**2),
+
+    # Densities & Pressures
     "rho": mass / (length**3),
     "P": mass / (length * (time**2)),
+
+    # Geometry, Area & Volume
+    "A": length**2, "Area": length**2,
+    "Vol": length**3, "Volume": length**3,
+    "k_wave": 1 / length,
+
+    # Dimensionless & Angles
     "theta": 1, "phi": 1, "alpha": 1
 }
 

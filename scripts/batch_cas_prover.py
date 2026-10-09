@@ -34,7 +34,13 @@ from lib.cas.cas_engine import (
     _format_dim_latex,
     _identify_physical_quantity
 )
-from lib.cas.unit_parser import parse_unit_string, get_dimension_signature
+from lib.cas.unit_parser import (
+    parse_unit_string,
+    get_dimension_signature,
+    parse_unit_string_natural,
+    get_natural_dimension_power,
+    DIM_NATURAL_ENERGY
+)
 
 
 SHARDS_BASE_DIR = os.path.join(PROJECT_ROOT, "app", "config", "content", "formulas")
@@ -90,32 +96,235 @@ def clean_equation_for_cas(latex: str) -> str:
     return s.strip()
 
 
-def build_entry_dimensions(entry: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Builds a localized symbol-to-dimension map by prioritizing the formula's
-    semantic_variables unit fields, falling back to STANDARD_PHYSICS_DIMENSIONS.
-    """
-    local_dims = dict(STANDARD_PHYSICS_DIMENSIONS)
+RESERVED_MATH_TOKENS = {
+    "sqrt", "sin", "cos", "tan", "exp", "log", "ln", "sinh", "cosh", "tanh",
+    "pi", "E", "I", "abs", "Abs", "diff", "Derivative"
+}
 
-    semantic_vars = entry.get("semantic_variables", {})
-    if isinstance(semantic_vars, dict):
-        for raw_sym, var_meta in semantic_vars.items():
-            if isinstance(var_meta, dict):
-                unit_str = var_meta.get("unit")
-                if unit_str:
-                    dim_expr = parse_unit_string(unit_str)
-                    if dim_expr is not None:
-                        clean_sym = latex_to_sympy_str(raw_sym).strip()
-                        clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", clean_sym)
-                        if clean_sym:
-                            local_dims[clean_sym] = dim_expr
 
-    return local_dims
+def infer_symbol_dimension(sym: str, standard_dims: Dict[str, Any]) -> Optional[Any]:
+    """
+    Infers the physical dimension of an unrecognized symbol through:
+    1. Direct dictionary match.
+    2. Differential/difference prefix stripping (Delta_S -> S, dp -> p, dx -> x, dtau -> tau).
+    3. Subscript/index stripping (E_F -> E, p_x -> p, T_c -> T, m_1 -> m, omega_0 -> omega).
+    4. Numeric suffix stripping (m1 -> m, x0 -> x, v2 -> v).
+    5. Physics keyword aliases (temp -> T, energy -> E, dist -> r).
+    """
+    if sym in standard_dims:
+        return standard_dims[sym]
+
+    clean = sym.strip("_")
+    if not clean:
+        return None
+
+    # Step 1: Strip variation / differential prefixes: Delta_*, delta_*, d_*
+    prefix_patterns = [
+        r"^(?:Delta|delta|d|nabla)_+([a-zA-Z0-9_]+)$",
+        r"^d([A-Z][a-zA-Z0-9_]*)$",
+        r"^d([a-z])$"  # dx, dy, dz, dt, dr, dp, dm, dq
+    ]
+    for pat in prefix_patterns:
+        m = re.match(pat, clean)
+        if m:
+            base_sym = m.group(1)
+            if base_sym in standard_dims:
+                return standard_dims[base_sym]
+            clean = base_sym
+            break
+
+    # Step 2: Strip subscripts (e.g. E_F -> E, p_x -> p, T_c -> T, m_1 -> m, S_future -> S)
+    if "_" in clean:
+        root = clean.split("_")[0]
+        if root in standard_dims:
+            return standard_dims[root]
+
+    # Step 3: Strip numeric suffix (e.g. m1 -> m, x0 -> x, v2 -> v, q1 -> q)
+    m_num = re.match(r"^([a-zA-Z]+)[0-9]+$", clean)
+    if m_num:
+        root = m_num.group(1)
+        if root in standard_dims:
+            return standard_dims[root]
+
+    # Step 4: Common physics abbreviations
+    common_aliases = {
+        "temp": "T", "temperature": "T",
+        "mass": "m",
+        "vel": "v", "velocity": "v", "speed": "v",
+        "freq": "f", "frequency": "f",
+        "energy": "E", "ener": "E",
+        "time": "t",
+        "dist": "r", "distance": "r", "rad": "r", "radius": "r",
+        "len": "L", "length": "L",
+        "press": "P", "pressure": "P",
+        "vol": "Vol", "volume": "Vol",
+        "area": "A",
+        "dens": "rho", "density": "rho",
+        "charge": "q",
+        "accel": "a", "acceleration": "a",
+        "entropy": "S",
+    }
+    lower = clean.lower()
+    if lower in common_aliases:
+        alias_key = common_aliases[lower]
+        if alias_key in standard_dims:
+            return standard_dims[alias_key]
+
+    return None
+
+
+def build_entry_dimensions(
+    entry: Dict[str, Any],
+    natural_units: bool = False,
+    equation_str: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Builds a localized symbol-to-dimension map by prioritizing:
+    1. Formula semantic_variables unit fields.
+    2. STANDARD_PHYSICS_DIMENSIONS lookup.
+    3. Heuristic root and prefix inference (Sprint A.3).
+    If natural_units is True, dimensions are projected to powers of DIM_NATURAL_ENERGY [E]^d.
+    """
+    if not natural_units:
+        local_dims = dict(STANDARD_PHYSICS_DIMENSIONS)
+        semantic_vars = entry.get("semantic_variables", {})
+        if isinstance(semantic_vars, dict):
+            for raw_sym, var_meta in semantic_vars.items():
+                if isinstance(var_meta, dict):
+                    unit_str = var_meta.get("unit")
+                    if unit_str:
+                        dim_expr = parse_unit_string(unit_str)
+                        if dim_expr is not None:
+                            clean_sym = latex_to_sympy_str(raw_sym).strip()
+                            clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", clean_sym)
+                            if clean_sym:
+                                local_dims[clean_sym] = dim_expr
+
+        # Infer remaining symbols present in equation or semantic_vars without units
+        candidate_syms = set()
+        if equation_str:
+            candidate_syms.update(re.findall(r"\b[a-zA-Z][a-zA-Z0-9_]*\b", equation_str))
+        if isinstance(semantic_vars, dict):
+            for raw_sym in semantic_vars:
+                clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", latex_to_sympy_str(raw_sym).strip())
+                if clean_sym:
+                    candidate_syms.add(clean_sym)
+
+        for sym in candidate_syms:
+            if sym not in local_dims and sym not in RESERVED_MATH_TOKENS:
+                inferred = infer_symbol_dimension(sym, STANDARD_PHYSICS_DIMENSIONS)
+                if inferred is not None:
+                    local_dims[sym] = inferred
+
+        return local_dims
+    else:
+        local_dims = {}
+        for sym, si_dim in STANDARD_PHYSICS_DIMENSIONS.items():
+            d = get_natural_dimension_power(si_dim)
+            local_dims[sym] = (DIM_NATURAL_ENERGY ** d) if d != 0 else 1
+
+        semantic_vars = entry.get("semantic_variables", {})
+        if isinstance(semantic_vars, dict):
+            for raw_sym, var_meta in semantic_vars.items():
+                if isinstance(var_meta, dict):
+                    unit_str = var_meta.get("unit")
+                    if unit_str:
+                        nat_dim = parse_unit_string_natural(unit_str)
+                        if nat_dim is not None:
+                            clean_sym = latex_to_sympy_str(raw_sym).strip()
+                            clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", clean_sym)
+                            if clean_sym:
+                                local_dims[clean_sym] = nat_dim
+
+        # Infer remaining symbols for natural units
+        candidate_syms = set()
+        if equation_str:
+            candidate_syms.update(re.findall(r"\b[a-zA-Z][a-zA-Z0-9_]*\b", equation_str))
+        if isinstance(semantic_vars, dict):
+            for raw_sym in semantic_vars:
+                clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", latex_to_sympy_str(raw_sym).strip())
+                if clean_sym:
+                    candidate_syms.add(clean_sym)
+
+        for sym in candidate_syms:
+            if sym not in local_dims and sym not in RESERVED_MATH_TOKENS:
+                inferred_si = infer_symbol_dimension(sym, STANDARD_PHYSICS_DIMENSIONS)
+                if inferred_si is not None:
+                    d = get_natural_dimension_power(inferred_si)
+                    local_dims[sym] = (DIM_NATURAL_ENERGY ** d) if d != 0 else 1
+
+        return local_dims
+
+
+def _evaluate_natural_units(
+    formula_id: str,
+    entry: Dict[str, Any],
+    clean_eq: str,
+    transformations: Any
+) -> Optional[Dict[str, Any]]:
+    """
+    Fallback verification under Natural Units (hbar = c = k_B = 1).
+    All physical quantities project to integer/rational mass-energy dimensions [E]^d.
+    """
+    symbols_dict = build_entry_dimensions(entry, natural_units=True, equation_str=clean_eq)
+    try:
+        if "=" in clean_eq:
+            lhs_latex, rhs_latex = clean_eq.split("=", 1)
+            lhs_str = latex_to_sympy_str(lhs_latex)
+            rhs_str = latex_to_sympy_str(rhs_latex)
+            if not lhs_str.strip() or not rhs_str.strip():
+                return None
+
+            lhs_expr = parse_expr(lhs_str, local_dict=symbols_dict, transformations=transformations)
+            rhs_expr = parse_expr(rhs_str, local_dict=symbols_dict, transformations=transformations)
+
+            d_lhs = get_natural_dimension_power(lhs_expr)
+            d_rhs = get_natural_dimension_power(rhs_expr)
+
+            if d_lhs is not None and d_rhs is not None and d_lhs == d_rhs:
+                quantity = f"Natural Invariant [E]^{d_lhs}" if d_lhs != 0 else "Dimensionless Invariant (Natural Units)"
+                dim_latex = f"[\\text{{E}}^{{{d_lhs}}}]" if d_lhs != 0 else "[1] \\text{ (Dimensionless)}"
+                return {
+                    "id": formula_id,
+                    "title": entry.get("title", ""),
+                    "raw_equation": entry.get("equation", ""),
+                    "cleaned_equation": clean_eq,
+                    "status": "HOMOGENEOUS",
+                    "is_homogeneous": True,
+                    "framework": "natural_units",
+                    "quantity": quantity,
+                    "dimension_latex": dim_latex,
+                    "natural_power": d_lhs,
+                    "lhs_powers": {"E": d_lhs},
+                    "rhs_powers": {"E": d_rhs}
+                }
+        else:
+            expr_str = latex_to_sympy_str(clean_eq)
+            expr = parse_expr(expr_str, local_dict=symbols_dict, transformations=transformations)
+            d = get_natural_dimension_power(expr)
+            if d is not None:
+                quantity = f"Natural Invariant [E]^{d}" if d != 0 else "Dimensionless Invariant (Natural Units)"
+                dim_latex = f"[\\text{{E}}^{{{d}}}]" if d != 0 else "[1] \\text{ (Dimensionless)}"
+                return {
+                    "id": formula_id,
+                    "title": entry.get("title", ""),
+                    "raw_equation": entry.get("equation", ""),
+                    "status": "DIMENSIONAL_EXPRESSION",
+                    "is_homogeneous": True,
+                    "framework": "natural_units",
+                    "quantity": quantity,
+                    "dimension_latex": dim_latex,
+                    "powers": {"E": d}
+                }
+    except Exception:
+        pass
+    return None
 
 
 def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[str, Any]:
     """
     Evaluates dimensional homogeneity and algebraic consistency for a single formula.
+    First attempts strict SI verification, falling back to Natural Units (hbar=c=1).
     """
     raw_equation = entry.get("equation", "")
     if not raw_equation:
@@ -127,7 +336,7 @@ def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[
         }
 
     clean_eq = clean_equation_for_cas(raw_equation)
-    symbols_dict = build_entry_dimensions(entry)
+    symbols_dict = build_entry_dimensions(entry, natural_units=False, equation_str=clean_eq)
     transformations = standard_transformations + (implicit_multiplication_application,)
 
     # Detect abstract / operator syntax that is structurally non-scalar
@@ -169,13 +378,29 @@ def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[
             is_homo = (lhs_powers == rhs_powers)
             quantity = _identify_physical_quantity(lhs_powers)
 
+            if is_homo:
+                return {
+                    "id": formula_id,
+                    "title": entry.get("title", ""),
+                    "raw_equation": raw_equation,
+                    "cleaned_equation": clean_eq,
+                    "status": "HOMOGENEOUS",
+                    "is_homogeneous": True,
+                    "framework": "SI",
+                    "quantity": quantity,
+                    "dimension_latex": _format_dim_latex(lhs_powers),
+                    "lhs_powers": lhs_powers,
+                    "rhs_powers": rhs_powers
+                }
+
             return {
                 "id": formula_id,
                 "title": entry.get("title", ""),
                 "raw_equation": raw_equation,
                 "cleaned_equation": clean_eq,
-                "status": "HOMOGENEOUS" if is_homo else "INHOMOGENEOUS",
-                "is_homogeneous": is_homo,
+                "status": "INHOMOGENEOUS",
+                "is_homogeneous": False,
+                "framework": "SI",
                 "quantity": quantity,
                 "dimension_latex": _format_dim_latex(lhs_powers),
                 "lhs_powers": lhs_powers,
@@ -195,11 +420,17 @@ def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[
                 "raw_equation": raw_equation,
                 "status": "DIMENSIONAL_EXPRESSION",
                 "is_homogeneous": True,
+                "framework": "SI",
                 "quantity": quantity,
                 "dimension_latex": _format_dim_latex(powers),
                 "powers": powers
             }
     except Exception as e:
+        # If SI parse errored (e.g. dimensional addition clash), attempt Natural Units fallback
+        nat_result = _evaluate_natural_units(formula_id, entry, clean_eq, transformations)
+        if nat_result and nat_result.get("is_homogeneous"):
+            return nat_result
+
         return {
             "id": formula_id,
             "title": entry.get("title", ""),

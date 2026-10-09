@@ -354,7 +354,7 @@ class FormulaIngestionPipeline:
         eq = formula_data.get("equation", "")
         if not check_dimensions or not eq:
             formula_data["cas_validation"] = {
-                "status": "unverified",
+                "status": "UNVERIFIED",
                 "is_homogeneous": None,
                 "note": "CAS prover unavailable or empty equation."
             }
@@ -364,8 +364,9 @@ class FormulaIngestionPipeline:
             cas_res = check_dimensions(eq)
             if cas_res.get("success"):
                 is_homo = cas_res.get("is_homogeneous")
+                status = "HOMOGENEOUS" if is_homo else ("INHOMOGENEOUS" if is_homo is False else "DIMENSIONAL_EXPRESSION")
                 formula_data["cas_validation"] = {
-                    "status": "verified" if is_homo else ("mismatch" if is_homo is False else "evaluated"),
+                    "status": status,
                     "is_homogeneous": is_homo,
                     "lhs": cas_res.get("lhs"),
                     "rhs": cas_res.get("rhs"),
@@ -374,13 +375,13 @@ class FormulaIngestionPipeline:
                 }
             else:
                 formula_data["cas_validation"] = {
-                    "status": "unverified",
+                    "status": "UNVERIFIED",
                     "is_homogeneous": None,
                     "error": cas_res.get("error", "CAS evaluation indeterminate")
                 }
         except Exception as e:
             formula_data["cas_validation"] = {
-                "status": "unverified",
+                "status": "UNVERIFIED",
                 "is_homogeneous": None,
                 "error": str(e)
             }

@@ -122,7 +122,7 @@ def test_stage3_cas_invariance_prover():
     }
     prep = pipeline.stage1_validate_and_prepare(homo_data)
     proven = pipeline.stage3_verify_cas_invariance(prep)
-    assert proven["cas_validation"]["status"] == "verified"
+    assert proven["cas_validation"]["status"] == "HOMOGENEOUS"
     assert proven["cas_validation"]["is_homogeneous"] is True
 
     # Inhomogeneous equation
@@ -133,7 +133,7 @@ def test_stage3_cas_invariance_prover():
     }
     prep2 = pipeline.stage1_validate_and_prepare(inhomo_data)
     proven2 = pipeline.stage3_verify_cas_invariance(prep2)
-    assert proven2["cas_validation"]["status"] == "mismatch"
+    assert proven2["cas_validation"]["status"] == "INHOMOGENEOUS"
     assert proven2["cas_validation"]["is_homogeneous"] is False
 
 
@@ -153,7 +153,7 @@ def test_dry_run_ingest():
     assert res["formula_id"] == "harmonic-oscillator-restoring-force"
     assert "shard_file" in res
     assert "cas_validation" in res
-    assert res["cas_validation"]["status"] == "verified"
+    assert res["cas_validation"]["status"] == "HOMOGENEOUS"
 
 
 def test_isolated_sandbox_stage4_dual_layer_sync_and_rollback():

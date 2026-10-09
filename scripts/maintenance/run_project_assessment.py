@@ -444,7 +444,8 @@ def generate_markdown_report(data):
     md = []
     md.append(f"# 🪐 Physics Lab — Platform Assessment Report")
     md.append(f"\n> **Generated**: `{now}`  ")
-    md.append(f"> **Evaluator**: `scripts/assess` CLI  \n")
+    md.append(f"> **Evaluator**: `scripts/assess` CLI  ")
+    md.append(f"> **North Star**: *Describing How It All Connects* ([`docs/mandate.md`](../mandate.md))  \n")
     md.append(f"---\n")
 
     md.append(f"## 📊 1. Executive Summary & Health Index\n")
@@ -610,6 +611,10 @@ def generate_agent_prompt(data):
 
     prompt = (
         "Please provide an authoritative assessment report for the Physics Lab project based on the following freshly audited data:\n\n"
+        "### 0. Foundational Mandate & Platform North Star (docs/mandate.md)\n"
+        "- Mission: Describing How It All Connects (The Unified Physics Manifold)\n"
+        "- The Four Pillars: Derivation Lattice (DAG), Topological Bridges, Symmetry Origins, and Sensory Grounding\n"
+        "- Idea Incubator: docs/ideas.md (Non-binding concept sandbox)\n\n"
         f"### 1. Test Suite Results (pytest)\n"
         f"- Status: {tests.get('status', 'UNKNOWN')}\n"
         f"- Passed: {tests.get('passed', 0)} / {tests.get('total', 0)} (Skipped: {tests.get('skipped', 0)}, Failed: {tests.get('failed', 0)})\n"
@@ -631,7 +636,7 @@ def generate_agent_prompt(data):
     prompt += (
         f"\n### 4. Documentation Scope\n"
         f"- Total Docs Audited: {docs.get('file_count', 0)} files ({docs.get('total_words', 0):,} words)\n"
-        f"- Core References: CLAUDE.md, README.md, docs/roadmap.md, docs/OPS 2.0 (The Qualitative Rubric).md, docs/sim_fixes.md, docs/Lab_Tools_UI_design_ideas.md\n\n"
+        f"- Core References: CLAUDE.md, README.md, docs/mandate.md, docs/ideas.md, docs/roadmap.md, docs/OPS 2.0 (The Qualitative Rubric).md, docs/sim_fixes.md, docs/Lab_Tools_UI_design_ideas.md\n\n"
         "Synthesize these findings into an executive evaluation covering system health, architecture strengths, implementation gaps, and strategic next steps."
     )
     return prompt
@@ -652,6 +657,7 @@ def print_scorecard(data):
 
     print("\n" + "=" * 76)
     print(f"{Colors.BOLD}{Colors.HEADER}🪐 TERRA PHYSICS LAB — UNIFIED PLATFORM ASSESSMENT SCORECARD{Colors.RESET}")
+    print(f"🎯 {Colors.BOLD}Platform North Star:{Colors.RESET} {Colors.CYAN}Describing How It All Connects{Colors.RESET} (docs/mandate.md)")
     print("=" * 76)
 
     if tests:

@@ -1,6 +1,6 @@
 # Physics Lab Co-Developer Guide — Universal CLAUDE.md
 
-This document is the **Supreme Authority** for all architectural, stylistic, and procedural decisions in the Physics Lab project. All AI systems and human developers MUST adhere to these mandates to maintain the "Organic Platinum Standard" (OPS) of a university-level digital physics encyclopedia and mathematical manifold.
+This document is the **Supreme Authority** for all architectural, stylistic, and procedural decisions in the Physics Lab project. All AI systems and human developers MUST adhere to these mandates to maintain the "Organic Platinum Standard" (OPS) of a university-level digital physics encyclopedia and mathematical manifold. All development is guided by the platform's overarching North Star: **"Describing How It All Connects"** (detailed in [`docs/mandate.md`](docs/mandate.md), with unconstrained concepts explored in [`docs/ideas.md`](docs/ideas.md)).
 
 ---
 

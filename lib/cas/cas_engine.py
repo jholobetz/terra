@@ -44,7 +44,7 @@ def latex_to_sympy_str(latex: str) -> str:
     s = re.sub(r"^\\\(|\\\)$", "", s)
 
     # Strip operator sums, products, and integrals (with indices/limits) for CAS algebraic evaluation
-    s = re.sub(r"\\(?:sum|prod|int|iint|iiint|oint)(?:_\{[^{}]*\}|_[0-9a-zA-Z])?(?:\^\{[^{}]*\}|\^[0-9a-zA-Z])?", " ", s)
+    s = re.sub(r"\\(?:sum|prod|int|iint|iiint|oint)(?:(?:_\{((?:[^{}]|\{[^{}]*\})*)\}|_[0-9a-zA-Z])|(?:\^\{((?:[^{}]|\{[^{}]*\})*)\}|\^[0-9a-zA-Z]))*", " ", s)
 
     # Strip formatting macros
     s = re.sub(r"\\(mathbf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|underline)\{([^}]+)\}", r"\2", s)
@@ -66,9 +66,12 @@ def latex_to_sympy_str(latex: str) -> str:
     # Insert spaces between adjacent TeX control words: e.g. \pi\epsilon -> \pi \epsilon
     s = re.sub(r"\\([a-zA-Z]+)(?=\\)", r"\\\1 ", s)
 
+    # Map \lambda specifically to lam to avoid Python's reserved keyword 'lambda'
+    s = re.sub(r"\\lambda(?![a-zA-Z])", "lam", s)
+
     # Greek letters and common physical constants (longest first to avoid prefix collisions)
     greeks = [
-        "epsilon", "upsilon", "Upsilon", "lambda", "Lambda", "alpha", "gamma", "delta", "theta",
+        "epsilon", "upsilon", "Upsilon", "Lambda", "alpha", "gamma", "delta", "theta",
         "kappa", "sigma", "Sigma", "omega", "Omega", "hbar", "beta", "zeta", "iota", "mu", "nu",
         "xi", "Xi", "pi", "Pi", "rho", "tau", "phi", "Phi", "chi", "psi", "Psi", "Gamma", "Delta", "Theta"
     ]
@@ -391,14 +394,14 @@ STANDARD_PHYSICS_DIMENSIONS = {
 
     # Lengths & Spatial Coordinates
     "x": length, "y": length, "z": length, "r": length, "l": length, "L": length,
-    "d": length, "R": length, "a_0": length, "lambda": length, "s": length, "r_s": length,
+    "d": length, "R": length, "a_0": length, "lambda": length, "lam": length, "s": length, "r_s": length,
+    "dx": length, "dy": length, "dz": length, "dr": length, "dq": length, "dl": length,
 
     # Times & Durations
-    "t": time, "T_period": time, "tau": time,
+    "t": time, "T_period": time, "tau": time, "dt": time,
 
     # Velocities & Speeds
-    "v": length / time, "c": length / time, "u": length / time, "dq": length / time,
-    "dx": length / time, "dr": length / time,
+    "v": length / time, "c": length / time, "u": length / time, "v_0": length / time,
 
     # Accelerations & Gravitational Field
     "a": length / (time**2), "g": length / (time**2),
@@ -441,10 +444,12 @@ STANDARD_PHYSICS_DIMENSIONS = {
     "E_field": mass * length / ((time**3) * current),
     "epsilon_0": ((time**4) * (current**2)) / (mass * (length**3)),
     "eps_0": ((time**4) * (current**2)) / (mass * (length**3)),
+    "varepsilon_0": ((time**4) * (current**2)) / (mass * (length**3)),
     "mu_0": mass * length / ((time**2) * (current**2)),
     "k_e": mass * (length**3) / ((time**4) * (current**2)),
     "mu_B": current * (length**2),
     "mu_N": current * (length**2),
+    "J_current": current / (length**2),
 
     # Densities & Pressures
     "rho": mass / (length**3),

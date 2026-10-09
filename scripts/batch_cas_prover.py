@@ -76,22 +76,105 @@ def clean_equation_for_cas(latex: str) -> str:
 
     # Normalize relations for dimensional comparison
     # Any physical relation A \approx B or A \sim B or A \ge B implies dim(A) == dim(B)
-    s = re.sub(r"\\approx|\\equiv|\\sim|\\propto|\\ge|\\le|\\geq|\\leq|>|<", "=", s)
+    s = re.sub(r"\\approx|\\equiv|\\sim|\\propto|\\geq|\\leq|\\ge(?![a-zA-Z])|\\le(?![a-zA-Z])|>|<", "=", s)
+
+    # Strip complex conjugation and hermitian adjoint operators (do not change physical dimensions):
+    s = re.sub(r"\^\{?\*\}?", "", s)
+    s = re.sub(r"\^\{?\\dagger\}?", "", s)
+    s = re.sub(r"\\dagger", "", s)
+
+    # Normalize arcseconds / double primes: 1'' -> 1, '' -> _dprime
+    s = re.sub(r"([0-9]+(?:\.[0-9]+)?)\s*\'\'", r"\1", s)
+    s = re.sub(r"\'\'", "_dprime", s)
+
+    # Normalize prime notation: u' -> u_prime, x' -> x_prime, r' -> r_prime
+    s = re.sub(r"([a-zA-Z0-9_]+)\'", r"\1_prime", s)
+
+    # Normalize repeated integrals: \int \int -> \int
+    s = re.sub(r"\\int\s*\\int\s*\\int", r"\\int", s)
+    s = re.sub(r"\\int\s*\\int", r"\\int", s)
+
+    # Normalize tensor mixed indices: R^\rho_{\sigma\mu\nu} -> R_rhosigmamunu, F^a_{\mu\nu} -> F_amunu
+    s = re.sub(r"\b([RTFGC]|\\Gamma)\^\{?([a-zA-Z])\}?_\{?([a-zA-Z]+)\}?", r"\1_\2\3", s)
 
     # Strip error margins: 2.73 \pm 0.02 -> 2.73
     s = re.sub(r"\\pm\s*[0-9]+(?:\.[0-9]+)?", "", s)
 
-    # Normalize differentials and differences: \Delta S -> Delta_S, d\mathbf{x} -> dx
+    # Normalize differentials and differences: \Delta S -> Delta_S, d\mathbf{x} -> dx, \mathrm{d}\mathbf{l} -> dl
     s = re.sub(r"\\Delta\s*([a-zA-Z])", r"Delta_\1", s)
-    s = re.sub(r"\\mathrm\{d\}\s*([a-zA-Z])", r"d\1", s)
+    s = re.sub(r"\\(?:mathrm\{d\}|mathrm\{D\}|d)\s*(?:\\mathbf|\\boldsymbol|\\vec)?\{?([a-zA-Z])\}?", r"d\1", s)
 
-    # Normalize common function notations: x(t) -> x, \mathbf{x}(t) -> x, a(t) -> a
-    s = re.sub(r"([a-zA-Z])\s*\([t]\)", r"\1", s)
+    # Normalize time derivatives: \ddot{x} -> (x / (t**2)), \dot{M} -> (M / t)
+    s = re.sub(r"\\ddot\{?([a-zA-Z])\}?(?:_\{?[a-zA-Z0-9_]+\}?)?", r"(\1 / (t**2))", s)
+    s = re.sub(r"\\dot\{?([a-zA-Z])\}?(?:_\{?[a-zA-Z0-9_]+\}?)?", r"(\1 / t)", s)
 
-    # If multiple '=' exist (e.g. A = B = C), take first two: A = B
-    if s.count("=") > 1:
-        eq_parts = s.split("=")
-        s = f"{eq_parts[0]} = {eq_parts[1]}"
+    # Normalize solar/astronomical subscript symbols: M_\odot -> M_sun
+    s = re.sub(r"([MRL])_\{?\\odot\}?", r"\1_sun", s)
+
+    # Normalize 4D volume elements: d^4x -> d4x
+    s = re.sub(r"d\^4\s*(?:\\mathbf\{x\}|x)", "d4x", s)
+
+    # Normalize partial derivatives and vector calculus operators to spatial/temporal derivatives:
+    s = re.sub(r"\\frac\{\\partial\s*(?:\\mathbf\{([a-zA-Z])\}|([a-zA-Z]))\}\{\\partial\s*([a-zA-Z])\}", r"(\1\2 / \3)", s)
+
+    # Normalize vector symbols for fields: \mathbf{E} -> E_field, \mathbf{J} -> J_current, \mathbf{B} -> B
+    s = re.sub(r"\\(?:mathbf|boldsymbol|vec)\{E\}", "E_field", s)
+    s = re.sub(r"\\(?:mathbf|boldsymbol|vec)\{J\}", "J_current", s)
+    s = re.sub(r"\\(?:mathbf|boldsymbol|vec)\{B\}", "B", s)
+
+    # Normalize vector differential operators (div, grad, curl, laplacian):
+    s = re.sub(r"\\nabla\^2\s*(?:\\mathbf\{([a-zA-Z])\}|([a-zA-Z])|\\Phi|\\phi)", r"(\1\2Phi / (L**2))", s)
+    s = re.sub(r"\\nabla\s*\\times\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / L)", s)
+    s = re.sub(r"\\nabla\s*\\cdot\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / L)", s)
+    s = re.sub(r"\\nabla\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / L)", s)
+
+    # Normalize quantum expectation values:
+    s = re.sub(r"\\langle\s*\\sigma\s*v\s*\\rangle", "(sigma * v)", s)
+    s = re.sub(r"\\langle\s*([a-zA-Z0-9_]+)\s*\\rangle", r"(\1)", s)
+    # Inner products of discrete/normalized states: \langle n | m \rangle -> 1, \langle \psi | \phi \rangle -> 1
+    s = re.sub(r"\\langle\s*[^{}|]+\s*\|\s*[^{}|]+\s*\\rangle", " 1 ", s)
+    # If 3-part matrix element is present (e.g. \langle \psi | \hat{H} | \psi \rangle), preserve for operator classification
+    if not re.search(r"\\langle[^|]+\|[^|]+\|[^|]+\\rangle", s):
+        # State vectors in eigenvalue or evolution equations: |n\rangle -> 1, |\Psi(t)\rangle -> 1
+        s = re.sub(r"\|[a-zA-Z0-9_\s\(\)\^\{\}\*]+\\rangle", " 1 ", s)
+        s = re.sub(r"\\langle[a-zA-Z0-9_\s\(\)\^\{\}\*]+\|", " 1 ", s)
+
+    # Normalize metric tensor quadratic forms:
+    # \eta_{\mu\nu} U^\mu U^\nu -> (U * U), g_{\mu\nu} dx^\mu dx^\nu -> (dx**2)
+    s = re.sub(r"(?:\\eta|g|\\gamma)(?:_\{?[a-zA-Z0-9_,]+\}?)?\s*([a-zA-Z])\^\{?[a-zA-Z0-9_]\}?\s*([a-zA-Z])\^\{?[a-zA-Z0-9_]\}?", r"(\1 * \2)", s)
+    s = re.sub(r"(?:\\eta|g|\\gamma)(?:_\{?[a-zA-Z0-9_,]+\}?)?\s*\(([^()]+)\)\^\{?[a-zA-Z0-9_]\}?\s*\(([^()]+)\)\^\{?[a-zA-Z0-9_]\}?", r"((\1) * (\2))", s)
+    s = re.sub(r"(?:g|\\gamma|\\eta)(?:_\{?[a-zA-Z0-9_,]+\}?)?\s*d[a-zA-Z]\^\{?[a-zA-Z0-9_]\}?\s*d[a-zA-Z]\^\{?[a-zA-Z0-9_]\}?", "(dx**2)", s)
+    # Metric tensors as dimensionless: g_{\mu\nu} -> 1, \eta_{\mu\nu} -> 1, h_{\mu\nu} -> 1
+    s = re.sub(r"(?:\\eta|g|h|\\gamma)_\{?\\mu\\nu\}?", " 1 ", s)
+
+    # Normalize common function notations: x(t) -> x, \mathbf{x}(t) -> x, a(t) -> a, c_s(t) -> c_s
+    s = re.sub(r"([a-zA-Z0-9_]+)\s*\([t]\)", r"\1", s)
+
+    # Strip operator bounds containing '=' (e.g. \sum_{i=1}^{3N}) before relational parsing
+    s = re.sub(r"\\(?:sum|prod|int|oint)_\{[^{}]*=[^{}]*\}(?:\^\{[^{}]*\}|\^[0-9a-zA-Z]+)?", " ", s)
+
+    # If multiple top-level '=' exist (e.g. A = B = C), take first two: A = B
+    # Ignore '=' enclosed inside braces or parentheses (e.g. \sum_{i=1})
+    top_parts = []
+    cur = []
+    depth = 0
+    for ch in s:
+        if ch in "({[":
+            depth += 1
+            cur.append(ch)
+        elif ch in ")}]":
+            if depth > 0:
+                depth -= 1
+            cur.append(ch)
+        elif ch == "=" and depth == 0:
+            top_parts.append("".join(cur))
+            cur = []
+        else:
+            cur.append(ch)
+    top_parts.append("".join(cur))
+
+    if len(top_parts) > 2:
+        s = f"{top_parts[0]} = {top_parts[1]}"
 
     return s.strip()
 
@@ -281,6 +364,11 @@ def _evaluate_natural_units(
             d_lhs = get_natural_dimension_power(lhs_expr)
             d_rhs = get_natural_dimension_power(rhs_expr)
 
+            if rhs_str.strip() == "0" and d_lhs is not None:
+                d_rhs = d_lhs
+            elif lhs_str.strip() == "0" and d_rhs is not None:
+                d_lhs = d_rhs
+
             if d_lhs is not None and d_rhs is not None and d_lhs == d_rhs:
                 quantity = f"Natural Invariant [E]^{d_lhs}" if d_lhs != 0 else "Dimensionless Invariant (Natural Units)"
                 dim_latex = f"[\\text{{E}}^{{{d_lhs}}}]" if d_lhs != 0 else "[1] \\text{ (Dimensionless)}"
@@ -339,8 +427,8 @@ def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[
     symbols_dict = build_entry_dimensions(entry, natural_units=False, equation_str=clean_eq)
     transformations = standard_transformations + (implicit_multiplication_application,)
 
-    # Detect abstract / operator syntax that is structurally non-scalar
-    if re.search(r"\\langle|\\rangle|\|[a-zA-Z0-9\s]+\\rangle|\\nabla\s*\\times|\\partial_\{\\mu\}", clean_eq):
+    # Detect abstract 3-part matrix elements / bra-kets that represent operator equations
+    if re.search(r"\\langle[^|]+\|[^|]+\|[^|]+\\rangle", clean_eq):
         return {
             "id": formula_id,
             "title": entry.get("title", ""),
@@ -375,8 +463,20 @@ def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[
             lhs_powers = _extract_dim_powers(lhs_deps)
             rhs_powers = _extract_dim_powers(rhs_deps)
 
-            is_homo = (lhs_powers == rhs_powers)
-            quantity = _identify_physical_quantity(lhs_powers)
+            is_zero_rhs = (rhs_str.strip() == "0" or rhs_expr == 0)
+            is_zero_lhs = (lhs_str.strip() == "0" or lhs_expr == 0)
+
+            if is_zero_rhs:
+                is_homo = True
+                rhs_powers = dict(lhs_powers)
+                quantity = _identify_physical_quantity(lhs_powers)
+            elif is_zero_lhs:
+                is_homo = True
+                lhs_powers = dict(rhs_powers)
+                quantity = _identify_physical_quantity(rhs_powers)
+            else:
+                is_homo = (lhs_powers == rhs_powers)
+                quantity = _identify_physical_quantity(lhs_powers)
 
             if is_homo:
                 return {
@@ -392,6 +492,26 @@ def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[
                     "lhs_powers": lhs_powers,
                     "rhs_powers": rhs_powers
                 }
+
+            # Check if formula is eligible for Natural Units verification:
+            # If entry explicitly declares conflicting SI base units (like J vs kg*m/s), keep as INHOMOGENEOUS.
+            sem_vars = entry.get("semantic_variables", {})
+            has_conflicting_si_units = False
+            if isinstance(sem_vars, dict) and len(sem_vars) >= 2:
+                units = [v.get("unit") for v in sem_vars.values() if isinstance(v, dict) and v.get("unit")]
+                if any(u in ("J", "kg*m/s", "kg⋅m/s", "N", "W", "Pa") for u in units) and not any(u and ("eV" in u or "GeV" in u or "natural" in u.lower()) for u in units):
+                    si_dims_seen = set()
+                    for u in units:
+                        sd = parse_unit_string(u)
+                        if sd is not None and sd != 1:
+                            si_dims_seen.add(str(sd))
+                    if len(si_dims_seen) >= 2:
+                        has_conflicting_si_units = True
+
+            if not has_conflicting_si_units:
+                nat_result = _evaluate_natural_units(formula_id, entry, clean_eq, transformations)
+                if nat_result and nat_result.get("is_homogeneous"):
+                    return nat_result
 
             return {
                 "id": formula_id,
@@ -430,6 +550,17 @@ def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[
         nat_result = _evaluate_natural_units(formula_id, entry, clean_eq, transformations)
         if nat_result and nat_result.get("is_homogeneous"):
             return nat_result
+
+        # If error was due to unprojectable abstract operator / tensor syntax
+        if re.search(r"\\langle|\\rangle|\|[a-zA-Z0-9\s]+\\rangle|\\nabla|\\partial_\{\\mu\}|\^\\mu|\^\\nu|_\{\\mu\\nu\}|\\dagger", clean_eq):
+            return {
+                "id": formula_id,
+                "title": entry.get("title", ""),
+                "raw_equation": raw_equation,
+                "status": "OPERATOR_OR_TENSOR",
+                "is_homogeneous": None,
+                "note": "Differential operator, tensor index, or bra-ket formulation"
+            }
 
         return {
             "id": formula_id,

@@ -73,14 +73,51 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   # Core assessment (Pytest + platform scorecard)
   scripts/assess
 
+  # Quick scorecard: diagnostics + docs + roadmap (~3s, strict by default, exits 1 on failure)
+  scripts/assess -q
+
+  # Rapid incremental audit of uncommitted/staged files (<100ms)
+  scripts/assess -c
+
+  # Silent pre-commit gate (zero output, exits code 0 on pass or 1 on failure)
+  scripts/assess -q -s
+
+  # Advisory mode: suppress non-zero exit code during exploratory WIP refactoring
+  scripts/assess --permissive
+
+  # Autonomous healing: syncs shard hashes, heals DAG, purges stale cache
+  scripts/assess --heal
+
+  # Scoped domain telemetry scorecard (e.g. quantum, relativity, fluids)
+  scripts/assess --domain "Quantum Physics"
+
+  # Scoped hex shard partition scorecard (00 to ff)
+  scripts/assess --shard 00
+
+  # Telemetry diff comparison against baseline (latest.json or custom report)
+  scripts/assess --diff
+
+  # Tabular execution history from timeline.jsonl
+  scripts/assess --history
+
+  # Platform progression velocity and sprint trajectory
+  scripts/assess --trends
+
+  # Sitewide integrity shield deep scan
+  scripts/assess -i
+
+  # Install 3-second zero-tolerance git pre-commit hook
+  scripts/assess --install-hook
+
   # Hybrid deep assessment (Tests + Docs review + Lineage LHI + CAS latency)
   scripts/assess --all
 
-  # Diagnostics and docs audit only (skipping pytest for speed)
-  scripts/assess --no-tests --diagnostics --docs
+  # Display CLI options and usage
+  scripts/assess -h
 
-  # Output an AI Agent Prompt with live telemetry for narrative report generation
+  # Output an AI Agent Prompt with live telemetry for narrative report generation (~3s, skips pytest)
   scripts/assess --prompt
+  # (Optional: add -t / --with-tests to include pytest in the prompt payload)
   ```
 * **Automated Pytest Suite**: Runs the full regression net (3,100+ tests covering schemas, invariants, delimiters, and syntax):
   ```bash

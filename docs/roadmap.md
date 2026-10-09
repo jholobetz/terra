@@ -169,26 +169,41 @@ flowchart TD
 
 ---
 
-## 5. Phase 3: Medium to Long-Term Strategic Horizons
+## 5. Phase 3: Formal Verification & Unified Ingestion Architecture (Active Horizon)
 
 ### 3.1 Database-wide SymPy CAS Proof Sweep (Batch Campaign)
 * **Goal**: Upgrade derivation links and formula identities from pedagogical references to **algebraically proven identities** and catalog verified badges across the encyclopedia.
-* **Tooling Status**: **Fully Operational**. The sandboxed SymPy worker ([`lib/cas/cas_engine.py`](file:///Users/holobetj/code/gemini/terra/lib/cas/cas_engine.py), 168ms latency), `/physics/api/cas-evaluate` endpoint, and `.agents/skills/cas-symbolic-prover` skill are already built, active in production, and validated by `tests/test_cas_engine.py`. This initiative is a **data execution and cataloging sweep**, not new engine construction.
-* **Actions**:
-  1. Execute batch verification via `cas-symbolic-prover` across candidate parent-child derivation pairs.
-  2. Prove algebraic equivalence: $\text{Simplify}(\text{Expr}_{\text{child}} - \text{Expr}_{\text{parent\_reduction}}) \equiv 0$.
-  3. Automatically audit dimensional consistency across mass $[M]$, length $[L]$, time $[T]$, and charge $[I]$.
-  4. Tag verified formula records in shards and MariaDB with CAS-validated derivation badges.
+* **Current Status**:
+  * **Option A (Engine & Lexicon Expansion)**: 🟢 **Completed** (`commit 6aee2609`). Added CGS, astrophysics, particle physics, natural units ($\hbar=c=k_B=1$), and subscript/prefix heuristics. Certified **7,026+ homogeneous physical invariants (47.9%)**. All 213 tests passing.
+  * **Option B (Batch Shard Tagging & DB Sync)**: ⏳ **Scheduled**. Annotate the 7,026 verified formulas in the 256 Git shards with `cas_validation` metadata, update the SHA-256 hash registry, and sync to MariaDB with 0 drift.
+  * **Option C (Global Lineage DAG Edge Prover)**: 📋 **Architected**. Audit the 44,691 derivation edges in `formula_derivation_graph.json` to prove parent-child algebraic reductions ($\text{Simplify}(\text{Expr}_{\text{child}} - \text{Expr}_{\text{parent\_reduction}}) \equiv 0$).
 
-### 3.2 Long-Horizon Autonomous Governance (Horizon 4)
-* **Goal**: Conduct multi-hour autonomous manifold sweeps under strict budget and token contracts.
-### 3.3 OPS 2.0 Qualitative Editorial Architecture (Horizon 3)
-* **Goal**: Next-level future upgrade transitioning from syntactic compliance (OPS 1.0) to multi-agent qualitative peer review and discourse assessment.
-* **Pre-conditions & Prerequisites**: Execution deferred until foundational Phase 2 milestones (derivation proofs, thin shard curriculum, in-memory caching) and symbolic CAS verification are hardened.
-* **Key Components**:
-  1. Authoritative 5-dimension qualitative rubric ([`docs/OPS 2.0 (The Qualitative Rubric).md`](OPS%202.0%20(The%20Qualitative%20Rubric).md)).
-  2. Multi-agent referee panel (Pedagogue, Experimentalist, Formalist, Inquisitor).
-  3. CLI evaluation command (`gqs.py critique [slug]`).
+### 3.2 Blueprint: Unified 5-Stage Formula Ingestion Pipeline & GQS 2.0
+* **Goal**: Unify formula ingestion and subtopic graduation under a single, airtight quality gate. Eliminates "tier-2 / unanchored" formulas and guarantees that every formula entering the system—whether via terminal CLI or the Web UI "Auto-Draft" button—is bidirectionally wired into the DAG, verified by CAS, and bridged into encyclopedia subtopics.
+* **The 5-Stage Ingestion Pipeline (`lib/pipeline/formula_pipeline.py`)**:
+  ```
+  [1. Draft Formula]       ──► Synthesizes definition, symmetry, limits, variables
+          │
+          ▼
+  [2. Bidirectional DAG]   ──► Links child -> parent AND parent -> child (reciprocity)
+          │
+          ▼
+  [3. CAS Unit Prover]     ──► Proves dimensional homogeneity (SymPy SI + Natural Units)
+          │
+          ▼
+  [4. Dual-Layer Sync]     ──► Writes hex shard, updates hash registry & MariaDB
+          │
+          ▼
+  [5. Subtopic Bridge]     ──► Maps formula to relevant encyclopedia subtopic
+  ```
+* **The 4-Stage Rollout Plan**:
+  1. **Stage 1 (Core Pipeline Engine)**: Build and unit-test `lib/pipeline/formula_pipeline.py` implementing the 5 atomic steps with transactional rollback.
+  2. **Stage 2 (Dual Wiring)**: Connect `/physics/api/define-formula` (the Web UI "Auto-Draft" button) and `gqs.py formula "<LaTeX>"` to this shared engine.
+  3. **Stage 3 (Local OPS 2.0 Deterministic Linter)**: Implement `gqs.py lint` (zero-cost local regex/discourse scanner checking In Media Res, burstiness, AI-ism elimination, and CAS invariant badge presence in <20ms).
+  4. **Stage 4 (Selective Free-Tier OPS 2.0 Critique)**: Implement `gqs.py critique <slug>` scoring the 5 qualitative dimensions from [`docs/OPS 2.0 (The Qualitative Rubric).md`](OPS%202.0%20(The%20Qualitative%20Rubric).md) strictly bounded to the Google AI Studio Free Tier ($0.00 cost per `docs/cost_governance.md`).
+
+### 3.3 Autonomous Governance & Safeguards
+* **Goal**: Enforce deterministic token bounding and pre-flight budget firewalls per [`docs/cost_governance.md`](cost_governance.md) across all generative scripts.
 
 ---
 
@@ -217,7 +232,8 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 2** | 2.6 | Analytical Mechanics Workbench Deepening | `legendre_transformer.js`<br/>`legendre_transformer.php`<br/>`cas_engine.py` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.7 | Derivation Steps Proof Seeding | `shard_[00-ff].json`<br/>`tests/test_derivation_steps.py` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.8 | Thin Shard Curriculum Enrichment | `fluids-nonlinear.json`<br/>`gqs.py` | 🟢 **P3** | ⏸️ Deferred (Post-OPS 2.0) |
-| **Phase 3** | 3.1 | Database-wide SymPy CAS Proof Sweep | `cas_engine.py`<br/>`.agents/skills/cas-symbolic-prover` | 🟡 **P2** | 📋 Active Campaign |
-| **Phase 3** | 3.2 | Autonomous Long-Horizon Sweeps | `docs/cost_governance.md`<br/>`.agents/skills/` | 🟢 **P3** | 📋 Backlog |
-| **Phase 3** | 3.3 | OPS 2.0 Qualitative Multi-Agent Architecture | `docs/OPS 2.0 (The Qualitative Rubric).md`<br/>`gqs.py critique` | 🟢 **P3** | 🔭 Future Upgrade |
+| **Phase 3** | 3.1 | Database-wide SymPy CAS Proof Sweep | `cas_engine.py`<br/>`batch_cas_prover.py` | 🔴 **P1** | 🟡 Active (Option A done) |
+| **Phase 3** | 3.2 | Unified 5-Stage Ingestion & GQS 2.0 | `lib/pipeline/formula_pipeline.py`<br/>`gqs.py` | 🔴 **P1** | 📋 Blueprinted |
+| **Phase 3** | 3.3 | Deterministic OPS 2.0 Local Linter | `gqs.py lint`<br/>`docs/OPS 2.0 (The Qualitative Rubric).md` | 🟡 **P2** | 📋 Blueprinted |
+| **Phase 3** | 3.4 | Autonomous Governance Safeguards | `docs/cost_governance.md`<br/>`.agents/skills/` | 🟢 **P3** | 🟢 Guarded |
 | **Phase 4** | 4.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |

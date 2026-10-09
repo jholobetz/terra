@@ -1707,7 +1707,7 @@ const EquationExplainer = {
                         <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-default, #64ffda); font-weight: 600; display: flex; align-items: center; gap: 6px;">
                             <span>📐</span> Mathematical Derivation Pathway (${formula.derivation_steps.length} Steps)
                         </span>
-                        <button type="button" onclick="const tab = document.querySelector('.explainer-tab-btn[data-target=stage-narrative]'); if(tab) tab.click(); setTimeout(() => { const el = document.getElementById('derivation-accordion-section'); if(el) el.scrollIntoView({behavior: 'smooth'}); }, 100);" style="background: rgba(100, 255, 218, 0.1); border: 1px solid rgba(100, 255, 218, 0.3); border-radius: 4px; color: var(--accent-default, #64ffda); font-size: 0.72rem; padding: 3px 8px; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+                        <button type="button" class="btn-jump-to-derivation" style="background: rgba(100, 255, 218, 0.1); border: 1px solid rgba(100, 255, 218, 0.3); border-radius: 4px; color: var(--accent-default, #64ffda); font-size: 0.72rem; padding: 3px 8px; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
                             View Accordion ↗
                         </button>
                     </div>
@@ -1764,6 +1764,19 @@ const EquationExplainer = {
             } catch(e) {}
         }
         details.innerHTML = html;
+
+        // CSP-compliant click listener for jump to derivation button
+        const jumpBtn = details.querySelector('.btn-jump-to-derivation');
+        if (jumpBtn) {
+            jumpBtn.addEventListener('click', () => {
+                const tab = document.querySelector('.explainer-tab-btn[data-target=stage-narrative]');
+                if (tab) tab.click();
+                setTimeout(() => {
+                    const el = document.getElementById('derivation-accordion-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            });
+        }
         this.triggerTypeset([details]);
     },
 
@@ -1793,7 +1806,7 @@ const EquationExplainer = {
 
             html += `
                 <div class="derivation-step-item${isOpen}" data-step="${stepNum}">
-                    <div class="derivation-step-header" onclick="this.parentElement.classList.toggle('open')">
+                    <div class="derivation-step-header">
                         <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
                             <span class="derivation-step-pill">Step ${stepNum}</span>
                             <span class="derivation-step-preview" style="font-size: 0.86rem; color: #f1f5f9; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -1817,6 +1830,17 @@ const EquationExplainer = {
         });
 
         this.derivationStepsList.innerHTML = html;
+
+        // CSP-compliant event delegation for toggling derivation steps
+        if (!this._derivationStepsListenerBound) {
+            this.derivationStepsList.addEventListener('click', (e) => {
+                const header = e.target.closest('.derivation-step-header');
+                if (header && header.parentElement) {
+                    header.parentElement.classList.toggle('open');
+                }
+            });
+            this._derivationStepsListenerBound = true;
+        }
 
         if (this.btnToggleAllDerivationSteps) {
             this.btnToggleAllDerivationSteps.onclick = () => {

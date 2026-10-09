@@ -325,7 +325,17 @@ class FormulaReviewService
         }
         unset($fVal);
 
-        file_put_contents($shardFile, json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), LOCK_EX);
+        $encodedShard = json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        file_put_contents($shardFile, $encodedShard, LOCK_EX);
+
+        // Synchronize SHA-256 hash registry for this shard
+        $registryPath = PROJECT_ROOT . '/app/config/formulas_hash_registry.json';
+        if (file_exists($registryPath)) {
+            $relativePath = str_replace(PROJECT_ROOT . '/', '', $shardFile);
+            $reg = json_decode(file_get_contents($registryPath), true) ?: [];
+            $reg[$relativePath] = hash('sha256', $encodedShard);
+            file_put_contents($registryPath, json_encode($reg, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
 
         // 7. Commit to MariaDB (INSERT or UPDATE with equation_svg = NULL for clean client MathJax)
         $pdo = Flight::db();

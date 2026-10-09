@@ -505,6 +505,8 @@ def ingest_formulas():
     print("🚀 Ingesting formula definitions into local JSON shards...")
     shards_dir = "app/config/content/formulas"
     
+    from lib.pipeline.formula_pipeline import FormulaIngestionPipeline
+    pipeline = FormulaIngestionPipeline()
     shards_updated = set()
     
     for f_id, draft in payload.items():
@@ -526,13 +528,15 @@ def ingest_formulas():
             print(f"  ⚠️ Error: Formula '{f_id}' not found in target shard {shard_path}")
             continue
             
-        formula = shard_data[f_id]
-        
+        formula = dict(shard_data[f_id])
+        formula["id"] = f_id
         formula["conceptual_definition"] = draft.get("conceptual_definition", "")
         formula["intuitive_summary"] = draft.get("intuitive_summary", "")
         formula["interpretation"] = draft.get("interpretation", "")
         formula["symmetry_origin"] = draft.get("symmetry_origin", "")
         formula["limits_and_boundary"] = draft.get("limits_and_boundary", "")
+        if draft.get("parent_formula_id"):
+            formula["parent_formula_id"] = draft.get("parent_formula_id")
         
         sem_vars = {}
         for sym, v_data in draft.get("semantic_variables", {}).items():
@@ -546,29 +550,21 @@ def ingest_formulas():
             }
         formula["semantic_variables"] = sem_vars
         
-        temp_fd, temp_path = tempfile.mkstemp(dir=os.path.dirname(shard_path))
         try:
-            with open(temp_fd, 'w', encoding='utf-8') as f:
-                json.dump(shard_data, f, indent=4, ensure_ascii=False)
-            os.replace(temp_path, shard_path)
-            shards_updated.add(shard_path)
-            print(f"  ✓ Updated formula '{f_id}' in {os.path.basename(shard_path)}")
+            res = pipeline.ingest(formula)
+            if res.get("success"):
+                shards_updated.add(res.get("shard_file"))
+                cas_stat = res.get("cas_validation", {}).get("status", "evaluated")
+                print(f"  ✓ Ingested '{f_id}' via Pipeline in {res.get('shard_file')} (CAS: {cas_stat})")
+            else:
+                print(f"  ⚠️ Error ingesting '{f_id}': {res.get('error')}")
         except Exception as e:
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
-            print(f"  ⚠️ Error saving shard {shard_path}: {e}")
+            print(f"  ⚠️ Pipeline exception for '{f_id}': {e}")
             
     with open(payload_path, 'w', encoding='utf-8') as f:
         json.dump({}, f, indent=4)
         
-    print(f"\n✓ SUCCESS: Ingested drafts and updated {len(shards_updated)} shard files.")
-    
-    print("\n🔄 Synchronizing database tables...")
-    try:
-        subprocess.run(["php", "cli_sync.php"])
-        print("✓ Database table sync completed.")
-    except Exception as e:
-        print(f"  ⚠️ Database sync failed: {e}")
+    print(f"\n✓ SUCCESS: Ingested drafts and updated {len(shards_updated)} shard files with zero hash drift.")
 
 class FormulaNaming(BaseModel):
     latex: str = Field(description="The input LaTeX equation.")
@@ -900,27 +896,14 @@ def scaffold_to_formula_payload(formula_id: str, formula_data: dict):
     print(f"✓ Scaffolded '{formula_id}' in {payload_path}")
 
 def create_formula_entry(formula_id: str, title: str, latex: str, subtopic_slug: str = None):
-    import hashlib
-    shards_dir = "app/config/content/formulas"
-    hex_prefix = hashlib.md5(formula_id.encode('utf-8')).hexdigest()[:2]
-    shard_path = os.path.join(shards_dir, f"shard_{hex_prefix}.json")
-    
-    shard_data = {}
-    if os.path.exists(shard_path):
-        with open(shard_path, 'r', encoding='utf-8') as f:
-            try:
-                shard_data = json.load(f)
-            except Exception as e:
-                print(f"Error loading shard {shard_path}: {e}")
-                return False
-                
-    if formula_id in shard_data:
-        print(f"Error: Formula ID '{formula_id}' already exists in {os.path.basename(shard_path)}.")
-        return False
-        
-    shard_data[formula_id] = {
+    from lib.pipeline.formula_pipeline import FormulaIngestionPipeline
+    pipeline = FormulaIngestionPipeline()
+
+    clean_eq = clean_latex(latex) if 'clean_latex' in globals() else latex.strip()
+    entry = {
+        "id": formula_id,
         "title": title,
-        "equation": f"\\[ {latex} \\]",
+        "equation": clean_eq,
         "conceptual_definition": "derivation pending",
         "intuitive_summary": "analysis pending",
         "interpretation": "analysis pending",
@@ -929,16 +912,16 @@ def create_formula_entry(formula_id: str, title: str, latex: str, subtopic_slug:
         "status": "platinum-draft",
         "semantic_variables": {}
     }
-    
-    if not save_json_atomically(shard_path, shard_data):
+
+    res = pipeline.ingest(entry, subtopic_slug=subtopic_slug)
+    if not res.get("success"):
+        print(f"Error creating formula entry: {res.get('error')}")
         return False
-    print(f"✓ Created placeholder entry in {os.path.basename(shard_path)}")
-    
-    if subtopic_slug:
-        link_formula_to_subtopic(formula_id, subtopic_slug)
-        
-    scaffold_to_formula_payload(formula_id, shard_data[formula_id])
+
+    print(f"✓ Created placeholder entry in {res.get('shard_file')} with zero hash drift")
+    scaffold_to_formula_payload(formula_id, res.get("formula"))
     return True
+
 
 def link_formula_to_subtopic(formula_id: str, subtopic_slug: str):
     index_path = "app/config/content/search_index.json"

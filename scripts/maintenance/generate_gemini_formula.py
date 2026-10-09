@@ -16,6 +16,8 @@ import argparse
 import subprocess
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 FORMULAS_DIR = os.path.join(PROJECT_ROOT, 'app', 'config', 'content', 'formulas')
 GCP_CREDS_PATH = os.path.join(PROJECT_ROOT, 'gcp-credentials.json')
 
@@ -180,6 +182,7 @@ def generate_definition(latex_str):
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
             temperature=0.2,
+            max_output_tokens=800,
         ),
     )
 
@@ -317,73 +320,24 @@ def validate_formula_obj(formula_obj):
 
     return True
 
-def commit_to_git(target_shard, formula_obj):
-    try:
-        rel_shard = os.path.relpath(target_shard, PROJECT_ROOT)
-        subprocess.run(['git', 'add', rel_shard], cwd=PROJECT_ROOT, check=True, capture_output=True)
-        commit_msg = f"feat(formula): auto-define {formula_obj['title']} ({formula_obj['id']})"
-        proc = subprocess.run(['git', 'commit', '--no-verify', '-m', commit_msg], cwd=PROJECT_ROOT, capture_output=True, text=True)
-        return proc.returncode == 0
-    except Exception:
-        return False
+from lib.pipeline.formula_pipeline import FormulaIngestionPipeline
 
-def save_and_sync(formula_obj):
-    # Validate before touching disk/DB
-    validate_formula_obj(formula_obj)
-
-    formula_id = formula_obj['id']
-    import hashlib
-    hex_hash = hashlib.md5(formula_id.encode('utf-8')).hexdigest()[:2]
-    shard_dir = os.path.join(FORMULAS_DIR, hex_hash)
-    os.makedirs(shard_dir, exist_ok=True)
-    target_shard = os.path.join(shard_dir, f"shard_{hex_hash}.json")
-
-    shard_data = {}
-    if os.path.exists(target_shard):
-        try:
-            with open(target_shard, 'r', encoding='utf-8') as f:
-                shard_data = json.load(f)
-        except Exception:
-            shard_data = {}
-
-    if not isinstance(shard_data, dict):
-        shard_data = {}
-
-    shard_data[formula_id] = formula_obj
-
-    with open(target_shard, 'w', encoding='utf-8') as f:
-        json.dump(shard_data, f, indent=4, ensure_ascii=False)
-
-    # Sync to MariaDB & rebuild search index
-    cli_sync_path = os.path.join(PROJECT_ROOT, 'cli_sync.php')
-    sync_cmd = ['php', cli_sync_path]
-    subprocess.run(sync_cmd, capture_output=True, text=True)
-
-    # Rebuild formula derivation graph
-    build_graph_script = os.path.join(PROJECT_ROOT, 'scripts', 'build_formula_graph.py')
-    if os.path.exists(build_graph_script):
-        subprocess.run([sys.executable, build_graph_script], cwd=PROJECT_ROOT, capture_output=True, text=True)
-
-    # Commit cleanly to local Git repository
-    git_committed = commit_to_git(target_shard, formula_obj)
-
-    return target_shard, git_committed
+def save_and_sync(formula_obj, subtopic_slug=None, dry_run=False):
+    pipeline = FormulaIngestionPipeline(project_root=PROJECT_ROOT)
+    return pipeline.ingest(formula_obj, subtopic_slug=subtopic_slug, dry_run=dry_run)
 
 def main():
     parser = argparse.ArgumentParser(description="Generate Gemini Formula Definition")
     parser.add_argument('--latex', required=True, help="LaTeX equation string")
+    parser.add_argument('--subtopic', required=False, default=None, help="Subtopic slug to link")
+    parser.add_argument('--dry-run', action='store_true', help="Validate and prove without saving")
     args = parser.parse_args()
 
     try:
         formula_obj, lineage_info = generate_definition(args.latex)
-        target_shard, git_committed = save_and_sync(formula_obj)
-        result = {
-            "success": True,
-            "shard_file": os.path.basename(target_shard),
-            "git_committed": git_committed,
-            "formula": formula_obj,
-            "lineage": lineage_info
-        }
+        result = save_and_sync(formula_obj, subtopic_slug=args.subtopic, dry_run=args.dry_run)
+        if lineage_info and "lineage" not in result:
+            result["lineage"] = lineage_info
         print(json.dumps(result, ensure_ascii=False))
     except Exception as e:
         error_res = {
@@ -395,3 +349,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

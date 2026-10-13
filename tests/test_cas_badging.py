@@ -103,3 +103,16 @@ def test_inspector_js_handles_cas_badge():
 
     assert "cas_validation" in code, "formula_inspector.js must check cas_validation"
     assert "✓ CAS:" in code, "formula_inspector.js must render CAS badge label"
+
+
+def test_sitewide_shards_tagged_with_cas_validation():
+    report_path = os.path.join(PROJECT_ROOT, "app", "config", "cas_validation_report.json")
+    assert os.path.exists(report_path), "cas_validation_report.json must exist"
+    with open(report_path, "r", encoding="utf-8") as f:
+        report = json.load(f)
+
+    meta = report.get("metadata", {})
+    assert meta.get("total_audited", 0) >= 14600, "Full sitewide CAS sweep must audit >= 14,600 formulas"
+    assert meta.get("homogeneous_count", 0) >= 9000, "At least 9,000 formulas must be certified homogeneous"
+    assert meta.get("tagged_count", 0) >= 9000, "At least 9,000 formulas must be tagged into Git shards"
+

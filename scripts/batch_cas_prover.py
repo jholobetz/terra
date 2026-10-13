@@ -705,9 +705,11 @@ def run_batch_prover(
                 for fid, meta in updates.items():
                     if fid in s_data:
                         s_data[fid]["cas_validation"] = meta
-                with open(s_path, "w", encoding="utf-8") as f:
+                tmp_s_path = s_path + ".tmp"
+                with open(tmp_s_path, "w", encoding="utf-8") as f:
                     json.dump(s_data, f, indent=4, ensure_ascii=False)
                     f.write("\n")
+                os.replace(tmp_s_path, s_path)
             except Exception as e:
                 print(f"⚠️ Failed to tag shard {s_path}: {e}", file=sys.stderr)
 
@@ -732,8 +734,10 @@ def run_batch_prover(
         out_path = report_path or DEFAULT_REPORT_PATH
         try:
             os.makedirs(os.path.dirname(out_path), exist_ok=True)
-            with open(out_path, "w", encoding="utf-8") as f:
+            tmp_out_path = out_path + ".tmp"
+            with open(tmp_out_path, "w", encoding="utf-8") as f:
                 json.dump(summary, f, indent=2, ensure_ascii=False)
+            os.replace(tmp_out_path, out_path)
             summary["report_file"] = out_path
         except Exception as e:
             if report_path:

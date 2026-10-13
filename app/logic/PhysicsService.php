@@ -437,17 +437,25 @@ class PhysicsService
                                 ? (json_decode($formula['derivation_steps'], true) ?: [])
                                 : $formula['derivation_steps'];
                         }
-                        // Dual-Layer Resilience: If DB lacks derivation_steps, fallback to Git shard
-                        if (empty($formula['derivation_steps'])) {
+                        if (isset($formula['cas_validation'])) {
+                            $formula['cas_validation'] = is_string($formula['cas_validation'])
+                                ? (json_decode($formula['cas_validation'], true) ?: null)
+                                : $formula['cas_validation'];
+                        }
+                        // Dual-Layer Resilience: If DB lacks derivation_steps or cas_validation, fallback to Git shard
+                        if (empty($formula['derivation_steps']) || empty($formula['cas_validation'])) {
                             $hexPrefix = substr(md5($fId), 0, 2);
                             $shardFile = PROJECT_ROOT . '/app/config/content/formulas/' . $hexPrefix . '/shard_' . $hexPrefix . '.json';
                             if (file_exists($shardFile)) {
                                 $rawShard = json_decode(file_get_contents($shardFile), true);
-                                if (!empty($rawShard[$fId]['derivation_steps'])) {
+                                if (empty($formula['derivation_steps']) && !empty($rawShard[$fId]['derivation_steps'])) {
                                     $formula['derivation_steps'] = $rawShard[$fId]['derivation_steps'];
                                 }
-                                if (!empty($rawShard[$fId]['derivation_type'])) {
+                                if (empty($formula['derivation_type']) && !empty($rawShard[$fId]['derivation_type'])) {
                                     $formula['derivation_type'] = $rawShard[$fId]['derivation_type'];
+                                }
+                                if (empty($formula['cas_validation']) && !empty($rawShard[$fId]['cas_validation'])) {
+                                    $formula['cas_validation'] = $rawShard[$fId]['cas_validation'];
                                 }
                             }
                         }
@@ -566,6 +574,15 @@ class PhysicsService
         $shardData = [];
         if (file_exists($shardPath)) {
             $shardData = json_decode(file_get_contents($shardPath), true) ?: [];
+        }
+
+        // Preserve existing cas_validation if not explicitly supplied and equation is unchanged
+        if (!isset($data['cas_validation']) && isset($shardData[$fId]['cas_validation'])) {
+            $oldEq = $shardData[$fId]['equation'] ?? '';
+            $newEq = $data['equation'] ?? '';
+            if ($oldEq === $newEq) {
+                $data['cas_validation'] = $shardData[$fId]['cas_validation'];
+            }
         }
 
         // Ensure semantic_variables is an object in JSON (never empty array [])

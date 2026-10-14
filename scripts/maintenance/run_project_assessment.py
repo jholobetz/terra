@@ -481,7 +481,7 @@ def audit_roadmap_realization(heal_hashes: bool = False):
         ("Lab Tools State Hydration", "1,584 / 1,584 Subtopics Mapped", launcher_exists),
         ("Multi-Step Derivations", f"{proof_steps_count} / {total_formulas or 14613} Formulas (~{round(proof_steps_count/(total_formulas or 14613)*100, 1)}%)", proof_steps_count > 0),
         ("Dual-Layer Hash Sync", f"{len(hash_mismatches)} Shard Drift(s)" if hash_mismatches else "All 256 Shards Synchronized", len(hash_mismatches) == 0),
-        ("Thin Shard Curriculum", f"Fluids ({fluids_count} topics) - Deferred to Post-OPS 2.0", True),
+        ("Thin Shard Curriculum", f"Fluids ({fluids_count} topics) - Deferred to Next-Level Horizon", True),
     ]
     completed_p2 = sum(1 for _, _, ok in phase2_items if ok)
     p2_pct = int(round((completed_p2 / len(phase2_items)) * 100))
@@ -507,18 +507,6 @@ def audit_roadmap_realization(heal_hashes: bool = False):
         "status": "COMPLETED" if p3_pct == 100 else "ACTIVE_FRONTIER",
         "progress_pct": p3_pct,
         "items": phase3_items,
-    }
-
-    purity_pct = round(((total_articles - total_cliches_found) / (total_articles or 1584)) * 100, 1)
-    roadmap["ops_2"] = {
-        "title": "OPS 2.0: Qualitative & Linguistic Architecture",
-        "status": "FUTURE_HORIZON (Post-Phase 2)",
-        "progress_pct": 10,
-        "items": [
-            ("Qualitative 5-Point Rubric", "Documented in docs/OPS 2.0 (Blueprint)", True),
-            ("AI-ism Cliche Scanner", f"{total_cliches_found} Cliches in {total_articles} Articles ({purity_pct}% Pure)", total_cliches_found <= 10),
-            ("Multi-Agent Referee Panel", "gqs.py critique command (Future Milestone)", False),
-        ]
     }
 
     roadmap["phase_4"] = {

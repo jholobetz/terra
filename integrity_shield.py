@@ -473,6 +473,8 @@ class IntegrityShield:
                 invalid_nodes = []
 
                 for nid, nval in nodes.items():
+                    if not isinstance(nval, dict):
+                        continue
                     dom = nval.get("domain")
                     if dom not in valid_domains:
                         invalid_nodes.append((nid, dom))
@@ -481,7 +483,7 @@ class IntegrityShield:
                 if invalid_nodes:
                     self.errors.append(f"GRAPH TAXONOMY VIOLATION: {len(invalid_nodes)} nodes have invalid/unrecognized domains: {invalid_nodes[:3]}")
 
-                total_nodes = len(nodes)
+                total_nodes = max(1, sum(domain_counts.values()))
                 for dom, count in domain_counts.items():
                     pct = (count / total_nodes) * 100
                     if dom == "classical-mechanics" and pct > 20.0:

@@ -26,6 +26,8 @@ import time
 from pathlib import Path
 
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(WORKSPACE_ROOT) not in sys.path:
+    sys.path.insert(0, str(WORKSPACE_ROOT))
 VENV_PYTHON = WORKSPACE_ROOT / ".venv" / "bin" / "python3"
 PYTHON_BIN = str(VENV_PYTHON if VENV_PYTHON.exists() else sys.executable)
 
@@ -186,10 +188,22 @@ def audit_diagnostics():
             total_eval = tot_m.group(1)
 
         rich_m = re.search(r"Rich & Complete.*?:\s*([\d,]+)", out)
-        rich_count = int(rich_m.group(1).replace(",", "")) if rich_m else 13800
+        rich_count = int(rich_m.group(1).replace(",", "")) if rich_m else 0
 
         mod_m = re.search(r"Moderate.*?:\s*([\d,]+)", out)
-        moderate_count = int(mod_m.group(1).replace(",", "")) if mod_m else 871
+        moderate_count = int(mod_m.group(1).replace(",", "")) if mod_m else 0
+
+        dag_edges = 0
+        dag_path = WORKSPACE_ROOT / "app" / "config" / "formula_derivation_graph.json"
+        if dag_path.exists():
+            try:
+                with open(dag_path, "r", encoding="utf-8") as df:
+                    header_chunk = df.read(512)
+                links_m = re.search(r'"total_links":\s*(\d+)', header_chunk)
+                if links_m:
+                    dag_edges = int(links_m.group(1))
+            except Exception:
+                pass
 
         results["lineage"] = {
             "lhi_score": lhi_score,
@@ -197,7 +211,7 @@ def audit_diagnostics():
             "total_formulas": total_eval,
             "rich_count": rich_count,
             "moderate_count": moderate_count,
-            "dag_edges": 44691,
+            "dag_edges": dag_edges,
             "duration": round(dur, 2),
         }
     else:
@@ -207,8 +221,8 @@ def audit_diagnostics():
     gqs_script = WORKSPACE_ROOT / "gqs.py"
     if gqs_script.exists():
         code, out, dur = run_command_capture([PYTHON_BIN, "gqs.py", "status"], timeout=30)
-        total_subtopics = "1,584"
-        platinum_count = "1,584"
+        total_subtopics = "N/A"
+        platinum_count = "N/A"
         broken_links = 0
         lead_violations = 0
 
@@ -310,9 +324,16 @@ def audit_cache_freshness():
             "status": "NO_CACHE",
         }
 
+    primary_shards = {
+        "astrophysics", "classical-mechanics", "condensed-matter",
+        "electromagnetism", "fluids-nonlinear", "legacy-orphans",
+        "mathematical-methods", "philosophy-of-physics", "quantum-physics",
+        "relativity", "standard-model", "theoretical-physics",
+        "thermodynamics-statistical-mechanics"
+    }
     slug_to_mtime = {}
     for pf in content_dir.glob("*.json"):
-        if pf.name in ("formulas_hash_registry.json", "formulas_latex_index.json"):
+        if pf.stem not in primary_shards:
             continue
         try:
             data = json.loads(pf.read_text(encoding="utf-8"))
@@ -488,13 +509,14 @@ def audit_roadmap_realization(heal_hashes: bool = False):
         "items": phase3_items,
     }
 
+    purity_pct = round(((total_articles - total_cliches_found) / (total_articles or 1584)) * 100, 1)
     roadmap["ops_2"] = {
         "title": "OPS 2.0: Qualitative & Linguistic Architecture",
         "status": "FUTURE_HORIZON (Post-Phase 2)",
         "progress_pct": 10,
         "items": [
             ("Qualitative 5-Point Rubric", "Documented in docs/OPS 2.0 (Blueprint)", True),
-            ("AI-ism Cliche Scanner", f"{total_cliches_found} Cliches in {total_articles} Articles (99.7% Pure)", total_cliches_found <= 10),
+            ("AI-ism Cliche Scanner", f"{total_cliches_found} Cliches in {total_articles} Articles ({purity_pct}% Pure)", total_cliches_found <= 10),
             ("Multi-Agent Referee Panel", "gqs.py critique command (Future Milestone)", False),
         ]
     }
@@ -577,7 +599,7 @@ def build_standard_telemetry(data, mode="rapid", strict_passed=True, violations=
     p4_pct = roadmap.get("phase_4", {}).get("progress_pct", 0)
 
     shard_drift = 0
-    proofs_count = 102
+    proofs_count = 0
     p2_items = roadmap.get("phase_2", {}).get("items", [])
     for iname, idesc, iok in p2_items:
         if iname == "Dual-Layer Hash Sync" and not iok:
@@ -588,7 +610,7 @@ def build_standard_telemetry(data, mode="rapid", strict_passed=True, violations=
             if m:
                 proofs_count = int(m.group(1))
 
-    cliches_count = 4
+    cliches_count = 0
     ops_items = roadmap.get("ops_2", {}).get("items", [])
     for iname, idesc, iok in ops_items:
         if iname == "AI-ism Cliche Scanner":
@@ -598,27 +620,27 @@ def build_standard_telemetry(data, mode="rapid", strict_passed=True, violations=
 
     tot_formulas = lin.get("total_formulas")
     if isinstance(tot_formulas, str):
-        tot_formulas = int(tot_formulas.replace(",", "")) if tot_formulas.replace(",", "").isdigit() else 14671
-    elif not tot_formulas:
-        tot_formulas = 14671
+        tot_formulas = int(tot_formulas.replace(",", "")) if tot_formulas.replace(",", "").isdigit() else 0
+    elif not isinstance(tot_formulas, int):
+        tot_formulas = 0
 
     tot_subtopics = gqs.get("total_subtopics")
     if isinstance(tot_subtopics, str):
-        tot_subtopics = int(tot_subtopics.replace(",", "")) if tot_subtopics.replace(",", "").isdigit() else 1584
-    elif not tot_subtopics:
-        tot_subtopics = 1584
+        tot_subtopics = int(tot_subtopics.replace(",", "")) if tot_subtopics.replace(",", "").isdigit() else 0
+    elif not isinstance(tot_subtopics, int):
+        tot_subtopics = 0
 
     plat_subtopics = gqs.get("graduated_platinum")
     if isinstance(plat_subtopics, str):
-        plat_subtopics = int(plat_subtopics.replace(",", "")) if plat_subtopics.replace(",", "").isdigit() else 1584
-    elif not plat_subtopics:
-        plat_subtopics = 1584
+        plat_subtopics = int(plat_subtopics.replace(",", "")) if plat_subtopics.replace(",", "").isdigit() else 0
+    elif not isinstance(plat_subtopics, int):
+        plat_subtopics = 0
 
     lhi_val = lin.get("lhi_score")
     try:
         lhi_val = float(lhi_val)
     except (ValueError, TypeError):
-        lhi_val = 95.2
+        lhi_val = 0.0
 
     cas_lat = cas.get("latency_ms")
     try:
@@ -643,15 +665,15 @@ def build_standard_telemetry(data, mode="rapid", strict_passed=True, violations=
         },
         "mathematical_manifold": {
             "total_formulas": tot_formulas,
-            "dag_edges": lin.get("dag_edges", 44691),
-            "hex_shards_complete": shards.get("shard_count", 256),
+            "dag_edges": lin.get("dag_edges", 0),
+            "hex_shards_complete": shards.get("shard_count", 0),
             "lhi_score": lhi_val,
-            "lhi_rich_count": lin.get("rich_count", 13800),
-            "lhi_moderate_count": lin.get("moderate_count", 871),
+            "lhi_rich_count": lin.get("rich_count", 0),
+            "lhi_moderate_count": lin.get("moderate_count", 0),
             "isolated_nodes": lin.get("isolated_nodes", 0) if isinstance(lin.get("isolated_nodes"), int) else 0,
             "multi_step_proofs": proofs_count,
             "cas_latency_ms": cas_lat,
-            "cas_status": cas.get("status", "HEALTHY"),
+            "cas_status": cas.get("status", "UNKNOWN"),
         },
         "knowledge_web": {
             "total_subtopics": tot_subtopics,
@@ -1273,7 +1295,17 @@ def audit_git_changed(strict: bool = True):
 
         if "app/config/content/formulas/" in rel_path and rel_path.endswith(".json"):
             changed_shards.append(path_obj)
-        elif "app/config/content/" in rel_path and rel_path.endswith(".json") and "formulas" not in rel_path:
+        elif (
+            rel_path.startswith("app/config/content/")
+            and rel_path.endswith(".json")
+            and path_obj.stem in {
+                "astrophysics", "classical-mechanics", "condensed-matter",
+                "electromagnetism", "fluids-nonlinear", "legacy-orphans",
+                "mathematical-methods", "philosophy-of-physics", "quantum-physics",
+                "relativity", "standard-model", "theoretical-physics",
+                "thermodynamics-statistical-mechanics"
+            }
+        ):
             changed_subtopic_files.append(path_obj)
         elif rel_path.startswith("docs/") and rel_path.endswith(".md") and not rel_path.startswith("docs/reports/"):
             changed_docs.append(path_obj)
@@ -1339,6 +1371,7 @@ def audit_git_changed(strict: bool = True):
                 violations.append(f"{f_id}: Unbalanced LaTeX curly braces in '{latex[:30]}...'")
 
     # 2. Audit changed subtopic files
+    from scripts.maintenance.generate_system_health import is_node_subjective
     for sub_path in changed_subtopic_files:
         if not sub_path.exists():
             continue
@@ -1349,7 +1382,7 @@ def audit_git_changed(strict: bool = True):
             continue
 
         for slug, s_item in sub_data.items():
-            if not isinstance(s_item, dict):
+            if not isinstance(s_item, dict) or "content" not in s_item:
                 continue
             inspected_subtopics += 1
             title = s_item.get("title", "")
@@ -1374,24 +1407,27 @@ def audit_git_changed(strict: bool = True):
             if "**" in content:
                 violations.append(f"{slug}: Markdown artifact violation — contains '**' in content string")
 
-            # D. Word count threshold (stripped words >= 650)
-            clean_text = re.sub(r"<[^>]+>", " ", content)
-            clean_text = re.sub(r"\s+", " ", clean_text).strip()
-            word_count = len(clean_text.split())
-            if word_count < 650:
-                violations.append(f"{slug}: Depth violation — word count is {word_count} (minimum 650 words required)")
+            # D. Word count threshold (canonical OPS word count matching integrity_shield.py)
+            content_no_svg = re.sub(r"<svg.*?</svg>", "", content, flags=re.DOTALL)
+            clean_text = re.sub(r"<[^>]+>", " ", content_no_svg)
+            word_count = len(re.findall(r"\w+", clean_text))
+            is_subj = is_node_subjective(slug, s_item, category=sub_path.stem)
+            word_target = 500 if is_subj else 650
+            if word_count < word_target:
+                violations.append(f"{slug}: Depth violation — word count is {word_count} (minimum {word_target} words required)")
 
     # 3. Audit changed docs
+    import urllib.parse
     for doc_path in changed_docs:
         if not doc_path.exists():
             continue
         try:
             text = doc_path.read_text(encoding="utf-8")
-            for m in re.finditer(r"\[([^\]]+)\]\(([^)]+)\)", text):
+            for m in re.finditer(r"\[([^\]]+)\]\(((?:[^()]|\([^()]*\))+)\)", text):
                 link_target = m.group(2)
-                if link_target.startswith("http") or link_target.startswith("#") or link_target.startswith("mailto"):
+                if link_target.startswith(("http", "#", "mailto", "file://")):
                     continue
-                target_file = link_target.split("#")[0]
+                target_file = urllib.parse.unquote(link_target.split("#")[0])
                 if target_file and not (doc_path.parent / target_file).exists():
                     violations.append(f"{doc_path.name}: Broken relative markdown link '({link_target})'")
         except Exception:
@@ -1412,7 +1448,7 @@ def audit_git_changed(strict: bool = True):
     print(f"\n{Colors.RED}{Colors.BOLD}❌ INCREMENTAL AUDIT FAILED: {len(violations)} violation(s) detected:{Colors.RESET}")
     for v in violations:
         print(f"  {Colors.RED}✖ {v}{Colors.RESET}")
-    print()
+    print(f"{Colors.DIM}Audit completed in {dur_ms}ms.{Colors.RESET}\n")
 
     if strict:
         sys.exit(1)
@@ -1474,14 +1510,18 @@ def heal_all():
     if dag_path.exists():
         try:
             dag = json.loads(dag_path.read_text(encoding="utf-8"))
-            for fid, fnode in dag.items():
-                if isinstance(fnode, dict):
-                    parents = fnode.get("parents", [])
-                    children = fnode.get("children", [])
-                    if not parents and not children:
-                        domain = fnode.get("domain", "General Physics")
-                        fnode["parents"] = [f"axiom-{domain.lower().replace(' ', '-')}"]
-                        healed_nodes += 1
+            target_nodes = dag.get("nodes", dag) if isinstance(dag, dict) else {}
+            if isinstance(target_nodes, dict):
+                for fid, fnode in target_nodes.items():
+                    if fid in ("metadata", "domains", "nodes", "links"):
+                        continue
+                    if isinstance(fnode, dict) and ("parents" in fnode or "children" in fnode):
+                        parents = fnode.get("parents", [])
+                        children = fnode.get("children", [])
+                        if not parents and not children:
+                            domain = fnode.get("domain", "General Physics")
+                            fnode["parents"] = [f"axiom-{domain.lower().replace(' ', '-')}"]
+                            healed_nodes += 1
             if healed_nodes > 0:
                 dag_path.write_text(json.dumps(dag, indent=2), encoding="utf-8")
         except Exception:

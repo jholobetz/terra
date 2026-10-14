@@ -13,12 +13,12 @@ Over successive engineering sprints, the **Terra Physics Lab** platform has atta
 | Metric / Dimension | Benchmark Status | Verification Gate |
 | :--- | :--- | :--- |
 | **Subtopic Coverage** | **1,584 / 1,584 Subtopics (100.0%)** graduated to Organic Platinum Standard (OPS) | `integrity_shield.py` (OPS Lead & Density Audit) |
-| **Formula Catalog** | **14,614 Physical Formulas** partitioned across 256 hex shards (`00` to `ff`) | `integrity_shield.py` (Shard Hex Partition Audit) |
-| **Derivation Lineage DAG** | **Lineage Health Index (LHI) of 95.2 / 100** with **0 isolated nodes** (44,558 edges) | `scripts/fixlineage --summary` |
+| **Formula Catalog** | **14,682 Physical Formulas** partitioned across 256 hex shards (`00` to `ff`) | `integrity_shield.py` (Shard Hex Partition Audit) |
+| **Derivation Lineage DAG** | **Lineage Health Index (LHI) of 95.2 / 100** with **0 isolated nodes** (44,725 edges) | `scripts/fixlineage --summary` |
 | **Manifold Closure** | **100.0% equation closure** (0 unmapped prose identities across 8,649 expressions) | `php scripts/audit_prose_equations.php` |
-| **Symbolic CAS Engine** | Sandboxed SymPy worker ([`cas_engine.py`](file:///Users/holobetj/code/gemini/terra/lib/cas/cas_engine.py)) with async `/physics/api/cas-evaluate` | `pytest tests/test_cas_engine.py` |
+| **Symbolic CAS Engine** | Sandboxed SymPy worker ([`cas_engine.py`](../lib/cas/cas_engine.py)) with async `/physics/api/cas-evaluate` | `pytest tests/test_cas_engine.py` |
 | **Modular ES6 Client** | `equation_explainer.js` decoupled into `simulations`, `curator`, `dictionary` modules | Browser verification & regression suite |
-| **Regression Net** | **100% passing automated test suite** (3,150+ Pytest tests in ~13s) | `.venv/bin/python3 -m pytest tests/` |
+| **Regression Net** | **100% passing automated test suite** (524+ Pytest tests covering all 14,682 formulas in ~12s) | `.venv/bin/python3 -m pytest tests/` |
 
 ---
 
@@ -148,16 +148,16 @@ flowchart TD
      - *Kepler Two-Body Gravitational Problem* (reduced mass $\mu$, cyclic $\phi$, conserved $p_\phi$)
      - *3D Spherical Central Force* (metric tensor $W_{ij}$, $\det(W) = m^3 r^4 \sin^2\theta$, cyclic $\phi$)
      - *Singular Constrained System* (degenerate $\det(W) = 0$ triggering Dirac primary constraint analysis)
-  2. Enhanced SymPy CAS engine ([`lib/cas/cas_engine.py`](file:///Users/holobetj/code/gemini/terra/lib/cas/cas_engine.py)) to cleanly format coupled multi-variable inverted velocity fields ($\dot{q}_i = \dots$) across arbitrary configuration dimensions.
-  3. Added responsive 2-column preset selectors to [`app/views/physics/legendre_transformer.php`](file:///Users/holobetj/code/gemini/terra/app/views/physics/legendre_transformer.php) and state pre-loading in [`public/js/legendre_transformer.js`](file:///Users/holobetj/code/gemini/terra/public/js/legendre_transformer.js).
-  4. Mapped celestial mechanics and rotational dynamics subtopics (`keplers-second-law`, `rotational-dynamics`, `coupled-oscillations`, `central-force`) directly into dedicated presets in [`LabToolsLauncher.php`](file:///Users/holobetj/code/gemini/terra/app/logic/LabToolsLauncher.php).
+  2. Enhanced SymPy CAS engine ([`lib/cas/cas_engine.py`](../lib/cas/cas_engine.py)) to cleanly format coupled multi-variable inverted velocity fields ($\dot{q}_i = \dots$) across arbitrary configuration dimensions.
+  3. Added responsive 2-column preset selectors to [`app/views/physics/legendre_transformer.php`](../app/views/physics/legendre_transformer.php) and state pre-loading in [`public/js/legendre_transformer.js`](../public/js/legendre_transformer.js).
+  4. Mapped celestial mechanics and rotational dynamics subtopics (`keplers-second-law`, `rotational-dynamics`, `coupled-oscillations`, `central-force`) directly into dedicated presets in [`LabToolsLauncher.php`](../app/logic/LabToolsLauncher.php).
 
 ### 2.7 Derivation Steps Proof Seeding & Universal Domain Parity
 * **Status**: Completed (`commit 9adced2e`).
 * **Accomplished**:
-  1. Expanded multi-step mathematical proofs across all 256 formula shards from 53 to **102 verified proofs**.
+  1. Expanded multi-step mathematical proofs across all 256 formula shards from 53 to **103 verified proofs**.
   2. Established Universal Domain Parity ($\ge 8$ proofs in all 12 physics pillar domains): Astrophysics (9), Classical Mechanics (9), Condensed Matter (9), Electromagnetism (9), Fluid Dynamics (8), General Relativity (9), Nuclear Physics (8), Optics (8), Particle Physics (9), Plasma Physics (8), Quantum Mechanics (9), and Thermodynamics (9).
-  3. Validated 100% schema compliance, TeX brace balance, and narrative delimiter purity across all 102 proofs in `tests/test_derivation_steps.py`.
+  3. Validated 100% schema compliance, TeX brace balance, and narrative delimiter purity across all 103 proofs in `tests/test_derivation_steps.py`.
   4. Verified full Git shard and MariaDB synchronization in `formulas_hash_registry.json` (0 drift).
 
 ### 2.8 Thin Shard Curriculum Enrichment (`fluids-nonlinear.json`)
@@ -230,10 +230,10 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 2** | 2.4 | Hero Stage Cosmic Arena & Cockpit | `cosmic_arena.js`<br/>`lab_cockpit.js`<br/>`lab_tools.php` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.5 | Cross-Encyclopedia Lab Tools Ingestion | `LabToolsLauncher.php`<br/>`subtopic.php`<br/>`test_lab_tools_hydration.py` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.6 | Analytical Mechanics Workbench Deepening | `legendre_transformer.js`<br/>`legendre_transformer.php`<br/>`cas_engine.py` | 🟡 **P2** | 🟢 Completed |
-| **Phase 2** | 2.7 | Derivation Steps Proof Seeding | `shard_[00-ff].json`<br/>`tests/test_derivation_steps.py` | 🟡 **P2** | 🟢 Completed |
+| **Phase 2** | 2.7 | Derivation Steps Proof Seeding | `shard_[00-ff].json`<br/>`tests/test_derivation_steps.py` | 🟡 **P2** | 🟢 Completed (103 Proofs) |
 | **Phase 2** | 2.8 | Thin Shard Curriculum Enrichment | `fluids-nonlinear.json`<br/>`gqs.py` | 🟢 **P3** | ⏸️ Deferred (Post-OPS 2.0) |
 | **Phase 3** | 3.1 | Database-wide SymPy CAS Proof Sweep | `cas_engine.py`<br/>`batch_cas_prover.py` | 🔴 **P1** | 🟢 Completed (9,147 Tagged) |
-| **Phase 3** | 3.2 | Unified 5-Stage Ingestion & GQS 2.0 | `lib/pipeline/formula_pipeline.py`<br/>`gqs.py` | 🔴 **P1** | 🟡 Stage 1 Built |
-| **Phase 3** | 3.3 | Deterministic OPS 2.0 Local Linter | `gqs.py lint`<br/>`docs/OPS 2.0 (The Qualitative Rubric).md` | 🟡 **P2** | 📋 Blueprinted |
+| **Phase 3** | 3.2 | Unified 5-Stage Ingestion & GQS 2.0 | `lib/pipeline/formula_pipeline.py`<br/>`gqs.py`<br/>`generate_gemini_formula.py` | 🔴 **P1** | 🟢 Stages 1 & 2 Complete |
+| **Phase 3** | 3.3 | Deterministic OPS 2.0 Local Linter | `gqs.py lint`<br/>`docs/OPS 2.0 (The Qualitative Rubric).md` | 🟡 **P2** | ⏸️ Deferred (With OPS 2.0) |
 | **Phase 3** | 3.4 | Autonomous Governance Safeguards | `docs/cost_governance.md`<br/>`.agents/skills/` | 🟢 **P3** | 🟢 Guarded |
 | **Phase 4** | 4.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |

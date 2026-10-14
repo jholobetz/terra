@@ -25,10 +25,17 @@ class PhysicsController
     }
 
     /**
-     * Public database index synchronization endpoint.
+     * Database index synchronization endpoint (Admin / Local Studio Only).
      */
     public function sync(): void
     {
+        $auth = Flight::authService();
+        if (!$auth->hasRole('admin')) {
+            http_response_code(403);
+            echo '403 Forbidden: Admin privileges required.';
+            return;
+        }
+
         $this->service()->performSync();
         $syncLock = PROJECT_ROOT . '/app/config/.last_sync';
         touch($syncLock);
@@ -284,6 +291,7 @@ class PhysicsController
     /**
      * REST Action executing symbolic limit evaluations, series expansions,
      * and dimensional consistency via the local SymPy CAS engine.
+     * Hardened with deterministic SHA-256 result caching and per-IP rate limiting.
      */
     public function apiCasEvaluate()
     {
@@ -310,6 +318,12 @@ class PhysicsController
             return;
         }
 
+        if (strlen((string)$latex) > 2048) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Payload exceeds maximum allowed expression length (2048 bytes).']);
+            return;
+        }
+
         $casScript = file_exists(PROJECT_ROOT . '/lib/cas/cas_engine.py')
             ? PROJECT_ROOT . '/lib/cas/cas_engine.py'
             : PROJECT_ROOT . '/scripts/lib/cas_engine.py';
@@ -326,9 +340,46 @@ class PhysicsController
             'limit_to' => $payload['limit_to'] ?? null,
             'series_order' => isset($payload['series_order']) ? (int)$payload['series_order'] : 4
         ], $payload);
+        ksort($casPayload);
 
         $jsonPayload = json_encode($casPayload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
+        // 1. Check Deterministic SHA-256 CAS Result Cache (<1ms fast path)
+        $scriptMtime = file_exists($casScript) ? filemtime($casScript) : 0;
+        $cacheHash = hash('sha256', $jsonPayload . '|' . $scriptMtime);
+        $cacheDir = is_writable(PROJECT_ROOT . '/public/cache')
+            ? PROJECT_ROOT . '/public/cache/cas'
+            : sys_get_temp_dir() . '/terra_cas_cache';
+        $cacheFile = $cacheDir . '/' . $cacheHash . '.json';
+
+        $bypassCache = !empty($payload['nocache']);
+        if (!$bypassCache && file_exists($cacheFile)) {
+            $cachedRaw = file_get_contents($cacheFile);
+            $cachedResult = json_decode($cachedRaw ?: '', true);
+            if (is_array($cachedResult) && !empty($cachedResult['success'])) {
+                $cachedResult['cached'] = true;
+                echo json_encode($cachedResult);
+                return;
+            }
+        }
+
+        // 2. Per-IP Sliding-Window Rate Limiter on Cold Subprocess Spawns
+        $auth = Flight::authService();
+        $isLocalAdmin = $auth->isLocalDevStudio();
+        $maxPerWindow = $isLocalAdmin ? 120 : 20;
+        $windowSeconds = 60;
+        $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+
+        if (!$this->consumeCasRateLimit((string)$clientIp, $maxPerWindow, $windowSeconds)) {
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Rate limit exceeded for live symbolic CAS evaluation. Please wait a moment and try again.'
+            ]);
+            return;
+        }
+
+        // 3. Execute Sandboxed SymPy Subprocess
         $cmd = escapeshellcmd($pythonBin) . ' ' . escapeshellarg($casScript) . ' ' . escapeshellarg($jsonPayload);
         $output = shell_exec($cmd);
 
@@ -343,7 +394,52 @@ class PhysicsController
             return;
         }
 
+        // Persist valid evaluations in deterministic disk cache
+        if (!empty($result['success'])) {
+            if (!is_dir($cacheDir)) {
+                @mkdir($cacheDir, 0775, true);
+            }
+            @file_put_contents($cacheFile, json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        }
+
+        $result['cached'] = false;
         echo json_encode($result);
+    }
+
+    /**
+     * Sliding-window rate limiter for cold CAS subprocess spawns (stored outside DocumentRoot).
+     */
+    public function consumeCasRateLimit(string $clientIp, int $maxRequests, int $windowSeconds): bool
+    {
+        $rlDir = sys_get_temp_dir() . '/terra_cas_ratelimit';
+        if (!is_dir($rlDir)) {
+            @mkdir($rlDir, 0775, true);
+        }
+
+        $bucketFile = $rlDir . '/' . hash('sha256', $clientIp) . '.json';
+        $now = time();
+        $timestamps = [];
+
+        if (file_exists($bucketFile)) {
+            $raw = @file_get_contents($bucketFile);
+            $decoded = json_decode($raw ?: '', true);
+            if (is_array($decoded)) {
+                $cutoff = $now - $windowSeconds;
+                foreach ($decoded as $ts) {
+                    if (is_int($ts) && $ts > $cutoff) {
+                        $timestamps[] = $ts;
+                    }
+                }
+            }
+        }
+
+        if (count($timestamps) >= $maxRequests) {
+            return false;
+        }
+
+        $timestamps[] = $now;
+        @file_put_contents($bucketFile, json_encode($timestamps));
+        return true;
     }
 
     /**
@@ -354,16 +450,11 @@ class PhysicsController
         header('Content-Type: application/json; charset=utf-8');
         set_time_limit(120);
 
-        // Security check for production environments
-        $appEnv = getenv('APP_ENV') ?: 'development';
-        if ($appEnv === 'production') {
-            $adminKeyHeader = $_SERVER['HTTP_X_TERRA_ADMIN_KEY'] ?? '';
-            $expectedKey = getenv('TERRA_ADMIN_KEY') ?: 'terra_admin_secret_key_123';
-            if ($adminKeyHeader !== $expectedKey) {
-                http_response_code(403);
-                echo json_encode(['success' => false, 'error' => '403 Forbidden: Invalid Security Token']);
-                return;
-            }
+        $auth = Flight::authService();
+        if (!$auth->hasRole('admin')) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => '403 Forbidden: Admin or Local Studio authority required.']);
+            return;
         }
 
         try {
@@ -892,7 +983,7 @@ class PhysicsController
     /**
      * Render action embedding pages into standard HTML bootstrap templates.
      */
-    protected function renderWithLayout(string $view, array $data = [], ?string $cachePath = null): void
+    public function renderWithLayout(string $view, array $data = [], ?string $cachePath = null): void
     {
         $isPreview = $this->service()->isPreviewActive();
         $isBuildMode = ($this->app->request()->query->build_mode === '1');
@@ -1090,772 +1181,22 @@ class PhysicsController
     }
 
     /**
-     * View action rendering the Unified Platform Assessment & Health Cockpit.
+     * Backward-compatible delegation to AdminController and ReviewController.
      */
-    public function adminAssess()
+    public function __call(string $name, array $arguments)
     {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('HTTP/1.1 403 Forbidden');
-            echo 'Forbidden: Admin access restricted to localhost.';
-            exit;
+        $admin = $this->app->adminController();
+        if (method_exists($admin, $name)) {
+            return $admin->$name(...$arguments);
         }
 
-        // Read latest telemetry (Schema v1.0)
-        $latestPath = PROJECT_ROOT . '/docs/reports/latest.json';
-        $latest = [];
-        if (file_exists($latestPath)) {
-            $latest = json_decode(file_get_contents($latestPath), true) ?: [];
+        $review = $this->app->reviewController();
+        if (method_exists($review, $name)) {
+            return $review->$name(...$arguments);
         }
 
-        // Read timeline entries (recent runs)
-        $timelinePath = PROJECT_ROOT . '/docs/reports/timeline.jsonl';
-        $timeline = [];
-        if (file_exists($timelinePath)) {
-            $lines = file($timelinePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
-            $recentLines = array_slice($lines, -25);
-            foreach ($recentLines as $line) {
-                $decoded = json_decode($line, true);
-                if ($decoded) {
-                    $timeline[] = $decoded;
-                }
-            }
-        }
-
-        // Load topics for domain selector
-        $topics = $this->service()->fetchAllData('topics');
-
-        $this->renderWithLayout('physics/admin/assess', [
-            'title' => 'Platform Assessment Console',
-            'latest' => $latest,
-            'timeline' => $timeline,
-            'topics' => $topics
-        ]);
-    }
-
-    /**
-     * Backward-compatible alias for adminDashboard
-     */
-    public function adminDashboard()
-    {
-        return $this->adminAssess();
-    }
-
-    /**
-     * REST Endpoint: Fetch live telemetry and historical timeline
-     */
-    public function apiAssessTelemetry()
-    {
-        $latestPath = PROJECT_ROOT . '/docs/reports/latest.json';
-        $latest = file_exists($latestPath) ? (json_decode(file_get_contents($latestPath), true) ?: []) : [];
-
-        $timelinePath = PROJECT_ROOT . '/docs/reports/timeline.jsonl';
-        $timeline = [];
-        if (file_exists($timelinePath)) {
-            $lines = file($timelinePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
-            $recentLines = array_slice($lines, -30);
-            foreach ($recentLines as $line) {
-                $decoded = json_decode($line, true);
-                if ($decoded) {
-                    $timeline[] = $decoded;
-                }
-            }
-        }
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true,
-            'telemetry' => $latest,
-            'timeline' => $timeline
-        ]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Trigger assessment runs (quick, heal, changed, domain, shard, full)
-     */
-    public function apiRunAssess()
-    {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('Content-Type: application/json');
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Forbidden']);
-            exit;
-        }
-
-        $input = json_decode(file_get_contents('php://input'), true) ?: [];
-        $action = $input['action'] ?? 'quick';
-        $domain = trim($input['domain'] ?? '');
-        $shard = trim($input['shard'] ?? '');
-
-        $flags = [];
-
-        switch ($action) {
-            case 'heal':
-                $flags[] = '--heal';
-                $flags[] = '--quick';
-                break;
-            case 'changed':
-                $flags[] = '--changed';
-                break;
-            case 'integrity':
-                $flags[] = '--integrity';
-                break;
-            case 'diff':
-                $flags[] = '--diff';
-                $flags[] = '--quick';
-                break;
-            case 'domain':
-                if (!empty($domain)) {
-                    $flags[] = '--domain ' . escapeshellarg($domain);
-                } else {
-                    $flags[] = '--quick';
-                }
-                break;
-            case 'shard':
-                if (!empty($shard)) {
-                    $flags[] = '--shard ' . escapeshellarg($shard);
-                } else {
-                    $flags[] = '--quick';
-                }
-                break;
-            case 'full':
-                $flags[] = '--all';
-                break;
-            case 'quick':
-            default:
-                $flags[] = '--quick';
-                break;
-        }
-
-        $flagString = implode(' ', $flags);
-        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && bash scripts/assess " . $flagString . " 2>&1";
-
-        exec($cmd, $output, $returnCode);
-
-        // Fetch fresh latest.json
-        $latestPath = PROJECT_ROOT . '/docs/reports/latest.json';
-        $latest = file_exists($latestPath) ? (json_decode(file_get_contents($latestPath), true) ?: []) : [];
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => ($returnCode === 0),
-            'return_code' => $returnCode,
-            'action' => $action,
-            'command' => "scripts/assess " . $flagString,
-            'logs' => implode("\n", $output),
-            'telemetry' => $latest
-        ]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Fetch diff comparison against baseline
-     */
-    public function apiAssessDiff()
-    {
-        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && bash scripts/assess --diff --quick 2>&1";
-        exec($cmd, $output, $returnCode);
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => ($returnCode === 0),
-            'logs' => implode("\n", $output)
-        ]);
-        exit;
-    }
-
-    /**
-     * Deprecated: Redirects legacy WYSIWYG editor requests to the canonical Assessment Console.
-     */
-    public function wysiwygEditor()
-    {
-        $this->app->redirect('/physics/admin/assess', 301);
-    }
-
-    /**
-     * Deprecated: Redirects legacy Critic portal requests to the canonical Assessment Console.
-     */
-    public function criticPortal()
-    {
-        $this->app->redirect('/physics/admin/assess', 301);
-    }
-
-    /**
-     * REST Endpoint: Run the Auto-Linker
-     */
-    public function apiRunAutoLinker()
-    {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Forbidden']);
-            exit;
-        }
-
-        // Run auto_linker script
-        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/auto_linker.py 2>&1";
-        exec($cmd, $output, $return_var);
-
-        // Regenerate system health snapshot
-        exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => ($return_var === 0),
-            'logs' => implode("\n", $output)
-        ]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Run Consensus Critic on a slug
-     */
-    public function apiRunCritic()
-    {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Forbidden']);
-            exit;
-        }
-
-        $input = json_decode(file_get_contents('php://input'), true);
-        $slug = $input['slug'] ?? '';
-        $writeCitations = $input['write_citations'] ?? false;
-
-        $slugFlag = !empty($slug) ? " --slug " . escapeshellarg($slug) : "";
-        $writeFlag = $writeCitations ? ' --write-citations' : '';
-        $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/run_critic.py" . $slugFlag . $writeFlag . " 2>&1";
-        exec($cmd, $output, $return_var);
-
-        if ($writeCitations && $return_var === 0) {
-            $this->service()->clearCache();
-            if (!empty($slug)) {
-                $subtopicData = $this->service()->fetchAndPrepare('subtopics', $slug);
-                if (!empty($subtopicData)) {
-                    $this->service()->syncIndividualSubtopic($slug, $subtopicData);
-                }
-            } else {
-                $this->service()->loadAllShards();
-                $this->service()->performSync();
-            }
-        }
-
-        // Regenerate system health
-        exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => ($return_var === 0),
-            'logs' => implode("\n", $output)
-        ]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Register a new subtopic in semantic_references.json
-     */
-    public function apiRegisterReference()
-    {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Forbidden']);
-            exit;
-        }
-
-        $input = json_decode(file_get_contents('php://input'), true);
-        $slug = $input['slug'] ?? '';
-        $title = $input['title'] ?? '';
-        $prose = $input['reference_prose'] ?? '';
-        $keywordsInput = $input['keywords'] ?? '';
-
-        if (empty($slug) || empty($title) || empty($prose) || empty($keywordsInput)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'All fields are required.']);
-            exit;
-        }
-
-        // Parse keywords
-        $keywords = array_map('trim', explode(',', $keywordsInput));
-        $keywords = array_filter($keywords); // remove empty elements
-
-        $refPath = PROJECT_ROOT . '/app/config/ref_data/semantic_references.json';
-        $references = [];
-        if (file_exists($refPath)) {
-            $references = json_decode(file_get_contents($refPath), true) ?: [];
-        }
-
-        // Check if already registered
-        if (isset($references[$slug])) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Subtopic already registered as reference.']);
-            exit;
-        }
-
-        // Add the reference
-        $references[$slug] = [
-            'title' => $title,
-            'reference_prose' => $prose,
-            'keywords' => array_values($keywords)
-        ];
-
-        // Save back to JSON file
-        if (file_put_contents($refPath, json_encode($references, JSON_PRETTY_PRINT)) === false) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Failed to write to database file.']);
-            exit;
-        }
-
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Update verification citations for a processed subtopic
-     */
-    public function apiUpdateVerification()
-    {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Forbidden']);
-            exit;
-        }
-
-        $input = json_decode(file_get_contents('php://input'), true);
-        $slug = $input['slug'] ?? '';
-        $citations = $input['citations'] ?? [];
-
-        if (empty($slug)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Subtopic slug is required.']);
-            exit;
-        }
-
-        // Get content shard info using PhysicsService helper
-        $content = $this->service()->getPhysicsContent($slug);
-        $searchIndex = $content['search_index'] ?? [];
-        $shardFile = $searchIndex[$slug]['s'] ?? null;
-        $baseDir = PROJECT_ROOT . '/app/config/content/';
-
-        if (!$shardFile || !file_exists($baseDir . $shardFile)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Shard file for subtopic not found.']);
-            exit;
-        }
-
-        // Load the shard file
-        $shardData = json_decode(file_get_contents($baseDir . $shardFile), true) ?: [];
-        if (!isset($shardData[$slug])) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Subtopic not found in content shard.']);
-            exit;
-        }
-
-        // Keep or create verification block
-        $verification = $shardData[$slug]['verification'] ?? [];
-        if (empty($verification)) {
-            $verification = [
-                'verified_date' => date('Y-m-d'),
-                'consensus_score' => 1.00,
-                'agents' => [
-                    'extractor' => 'ManualEditor-v1.0',
-                    'critic' => 'ManualEditor-v1.0',
-                    'judge' => 'ManualEditor-v1.0'
-                ]
-            ];
-        }
-
-        // Clean & set the citations
-        $cleanedCitations = [];
-        foreach ($citations as $cit) {
-            $authors = $cit['authors'] ?? [];
-            if (is_string($authors)) {
-                $authors = array_map('trim', explode(',', $authors));
-                $authors = array_filter($authors);
-            }
-            $cleanedCitations[] = [
-                'doi' => trim($cit['doi'] ?? ''),
-                'title' => trim($cit['title'] ?? ''),
-                'authors' => array_values($authors),
-                'url' => trim($cit['url'] ?? '')
-            ];
-        }
-
-        $verification['citations'] = $cleanedCitations;
-        $shardData[$slug]['verification'] = $verification;
-
-        // Save back to JSON shard on disk
-        if (file_put_contents($baseDir . $shardFile, json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) === false) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Failed to save updated shard back to disk.']);
-            exit;
-        }
-
-        // Clear service cache and sync to DB
-        $this->service()->clearCache();
-        $subtopicData = $this->service()->fetchAndPrepare('subtopics', $slug);
-        if (!empty($subtopicData)) {
-            $this->service()->syncIndividualSubtopic($slug, $subtopicData);
-        }
-
-        // Regenerate system health
-        exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
-
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Save draft to batch_payload.json
-     */
-    public function apiSaveDraft()
-    {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Forbidden']);
-            exit;
-        }
-
-        $input = json_decode(file_get_contents('php://input'), true);
-        $slug = $input['slug'] ?? '';
-        $title = $input['title'] ?? '';
-        $content = $input['content'] ?? '';
-        $parents = $input['parents'] ?? [];
-        $identities = $input['identities'] ?? [];
-
-        if (empty($slug) || empty($content)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Slug and content are required.']);
-            exit;
-        }
-
-        // Save to payload
-        $payloadPath = PROJECT_ROOT . '/subfiles/batch_payload.json';
-        $payloads = [];
-        if (file_exists($payloadPath)) {
-            $payloads = json_decode(file_get_contents($payloadPath), true) ?: [];
-        }
-
-        $payloads[$slug] = [
-            'title' => $title ?: $slug,
-            'content' => $content,
-            'standard' => 'platinum',
-            'parents' => $parents,
-            'identities' => $identities
-        ];
-
-        file_put_contents($payloadPath, json_encode($payloads, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Fetch subtopic details by slug
-     */
-    public function apiGetSubtopic($slug)
-    {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        if ($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'localhost') {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Forbidden']);
-            exit;
-        }
-
-        $content = $this->service()->getPhysicsContent($slug);
-        $subtopic = $content['subtopics'][$slug] ?? null;
-
-        if (!$subtopic) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Subtopic not found']);
-            exit;
-        }
-
-        // Also resolve the parent category from search index or shard mapping
-        $parent = null;
-        $searchIndex = $content['search_index'] ?? [];
-        if (isset($searchIndex[$slug]['s'])) {
-            $parent = str_replace('.json', '', $searchIndex[$slug]['s']);
-        }
-
-        // Resolve formulas/identities
-        $identities = $subtopic['identities'] ?? [];
-        if (empty($identities)) {
-            $formulaIds = $subtopic['formula_ids'] ?? [];
-            foreach ($formulaIds as $fId) {
-                $formula = $this->service()->loadFormula($fId);
-                if ($formula) {
-                    $latex = '';
-                    if (!empty($formula['equation'])) {
-                        if (preg_match('/data-tex="([^"]+)"/', $formula['equation'], $matches)) {
-                            $latex = html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                        } else {
-                            $latex = $formula['equation'];
-                        }
-                    }
-                    // Strip the hex suffix (e.g., -ca9b4fff) to match input raw ID
-                    $cleanId = preg_replace('/-[a-f0-9]{8}$/', '', $fId);
-                    $identities[] = [
-                        'id' => $cleanId,
-                        'title' => $formula['title'] ?? '',
-                        'equation' => $latex
-                    ];
-                }
-            }
-        }
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true,
-            'subtopic' => [
-                'slug' => $slug,
-                'title' => $subtopic['title'] ?? '',
-                'content' => $subtopic['content'] ?? '',
-                'snippet' => $subtopic['snippet'] ?? '',
-                'parents' => $parent ? [$parent] : [],
-                'identities' => $identities
-            ]
-        ]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Get Current Authenticated User & Role
-     */
-    public function apiGetCurrentUser()
-    {
-        $auth = Flight::authService();
-        $user = $auth->getCurrentUser();
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true,
-            'user' => [
-                'id' => $user->id ?? 0,
-                'display_name' => $user->display_name ?? 'Anonymous Visitor',
-                'email' => $user->email ?? '',
-                'role' => $user->role ?? 'guest',
-                'avatar_url' => $user->avatar_url ?? null
-            ]
-        ]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Switch Dev Mock Role (Development Mode Only)
-     */
-    public function apiSwitchDevRole()
-    {
-        $input = json_decode(file_get_contents('php://input'), true);
-        $role = $input['role'] ?? 'guest';
-
-        $auth = Flight::authService();
-        $success = $auth->switchDevRole($role);
-        $user = $auth->getCurrentUser();
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => $success,
-            'user' => [
-                'id' => $user->id ?? 0,
-                'display_name' => $user->display_name ?? 'Anonymous Visitor',
-                'email' => $user->email ?? '',
-                'role' => $user->role ?? 'guest',
-                'avatar_url' => $user->avatar_url ?? null
-            ]
-        ]);
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Formula Repair (Single-Developer Authority)
-     * Directly commits changes to Git shard, hash registry, and MariaDB.
-     */
-    public function apiSuggestRepair()
-    {
-        // In flattened single-developer mode, all suggestions apply directly
-        return $this->apiApplyRepair();
-    }
-
-    /**
-     * REST Endpoint: Direct Formula Repair (Curator / Admin Tier)
-     */
-    public function apiApplyRepair()
-    {
-        if (class_exists('\Tracy\Debugger')) {
-            \Tracy\Debugger::$showBar = false;
-        }
-
-        $auth = Flight::authService();
-        $user = $auth->getCurrentUser();
-        $isLocalDev = (php_sapi_name() === 'cli' || (isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1', 'localhost'], true)));
-
-        if (!$isLocalDev && !$auth->hasRole('curator', $user)) {
-            header('Content-Type: application/json');
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
-            exit;
-        }
-
-        $input = json_decode(file_get_contents('php://input'), true);
-        $url = $input['url'] ?? '';
-        $formulaId = $input['formula_id'] ?? '';
-        $latex = $input['latex'] ?? null;
-        $prose = $input['prose'] ?? null;
-        $hint = $input['hint'] ?? null;
-
-        // 1. Resolve Target (Formula ID takes precedence if valid, then URL query, then LaTeX)
-        $target = '';
-        if (!empty($formulaId) && $formulaId !== 'synthesized-custom' && !str_starts_with($formulaId, 'synthesized-')) {
-            $target = $formulaId;
-        } else if (!empty($url) && (strpos($url, 'id=') !== false || strpos($url, 'latex=') !== false)) {
-            $target = $url;
-        } else if (!empty($latex)) {
-            $target = $latex;
-        }
-
-        if (empty($target)) {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Valid URL, Formula ID, or LaTeX equation is required.']);
-            exit;
-        }
-
-        try {
-            $reviewService = Flight::formulaReviewService();
-            $result = $reviewService->repairTarget($target, $hint, $user->id ?? 1, $prose);
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'message' => 'Formula updated and synchronized successfully via fixlatex engine!',
-                'data' => $result
-            ]);
-        } catch (\Throwable $e) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode([
-                'success' => false,
-                'error' => 'Failed to apply repair: ' . $e->getMessage()
-            ]);
-        }
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Get Review Queue
-     */
-    public function apiGetReviews()
-    {
-        $status = $_GET['status'] ?? 'pending';
-        $formulaId = $_GET['formula_id'] ?? null;
-
-        try {
-            $reviewService = Flight::formulaReviewService();
-            $reviews = $reviewService->getReviews($status, $formulaId);
-
-            header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'reviews' => $reviews]);
-        } catch (\Throwable $e) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Approve Review Suggestion (Curator / Admin Tier)
-     */
-    public function apiApproveReview()
-    {
-        $auth = Flight::authService();
-        $user = $auth->getCurrentUser();
-
-        if (!$auth->hasRole('curator', $user)) {
-            header('Content-Type: application/json');
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
-            exit;
-        }
-
-        $input = json_decode(file_get_contents('php://input'), true);
-        $reviewId = (int)($input['review_id'] ?? 0);
-
-        if ($reviewId <= 0) {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Valid review ID is required.']);
-            exit;
-        }
-
-        try {
-            $reviewService = Flight::formulaReviewService();
-            $result = $reviewService->approveReview($reviewId, $user->id);
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'message' => 'Review approved and changes committed to shard & database!',
-                'data' => $result
-            ]);
-        } catch (\Throwable $e) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-        exit;
-    }
-
-    /**
-     * REST Endpoint: Reject Review Suggestion (Curator / Admin Tier)
-     */
-    public function apiRejectReview()
-    {
-        $auth = Flight::authService();
-        $user = $auth->getCurrentUser();
-
-        if (!$auth->hasRole('curator', $user)) {
-            header('Content-Type: application/json');
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
-            exit;
-        }
-
-        $input = json_decode(file_get_contents('php://input'), true);
-        $reviewId = (int)($input['review_id'] ?? 0);
-        $notes = $input['notes'] ?? null;
-
-        if ($reviewId <= 0) {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Valid review ID is required.']);
-            exit;
-        }
-
-        try {
-            $reviewService = Flight::formulaReviewService();
-            $reviewService->rejectReview($reviewId, $user->id, $notes);
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'message' => 'Review rejected.'
-            ]);
-        } catch (\Throwable $e) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-        exit;
+        throw new \BadMethodCallException("Undefined method PhysicsController::{$name}()");
     }
 }
+
 

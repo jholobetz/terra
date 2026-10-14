@@ -48,29 +48,29 @@ $router->group('', function(Router $router) use ($app) {
 		$router->get('/search-index', [ $app->physicsController(), 'searchIndex' ]);
 
 		// Multi-Tier Auth & Formula Review API Routes
-		$router->get('/api/auth/me', [ $app->physicsController(), 'apiGetCurrentUser' ]);
-		$router->post('/api/auth/switch-role', [ $app->physicsController(), 'apiSwitchDevRole' ]);
-		$router->post('/api/suggest-repair', [ $app->physicsController(), 'apiSuggestRepair' ]);
-		$router->post('/api/apply-repair', [ $app->physicsController(), 'apiApplyRepair' ]);
-		$router->get('/api/reviews', [ $app->physicsController(), 'apiGetReviews' ]);
-		$router->post('/api/reviews/approve', [ $app->physicsController(), 'apiApproveReview' ]);
-		$router->post('/api/reviews/reject', [ $app->physicsController(), 'apiRejectReview' ]);
+		$router->get('/api/auth/me', [ $app->reviewController(), 'apiGetCurrentUser' ]);
+		$router->post('/api/auth/switch-role', [ $app->reviewController(), 'apiSwitchDevRole' ]);
+		$router->post('/api/suggest-repair', [ $app->reviewController(), 'apiSuggestRepair' ]);
+		$router->post('/api/apply-repair', [ $app->reviewController(), 'apiApplyRepair' ]);
+		$router->get('/api/reviews', [ $app->reviewController(), 'apiGetReviews' ]);
+		$router->post('/api/reviews/approve', [ $app->reviewController(), 'apiApproveReview' ]);
+		$router->post('/api/reviews/reject', [ $app->reviewController(), 'apiRejectReview' ]);
 
 		// Admin & Developer Control Panel Routes
-		$router->get('/admin', [ $app->physicsController(), 'adminAssess' ]);
-		$router->get('/admin/assess', [ $app->physicsController(), 'adminAssess' ]);
-		$router->get('/admin/dashboard', [ $app->physicsController(), 'adminAssess' ]);
-		$router->get('/admin/editor', [ $app->physicsController(), 'wysiwygEditor' ]);
-		$router->get('/admin/critic', [ $app->physicsController(), 'criticPortal' ]);
-		$router->get('/admin/api/assess-telemetry', [ $app->physicsController(), 'apiAssessTelemetry' ]);
-		$router->post('/admin/api/run-assess', [ $app->physicsController(), 'apiRunAssess' ]);
-		$router->get('/admin/api/assess-diff', [ $app->physicsController(), 'apiAssessDiff' ]);
-		$router->post('/admin/api/run-autolinker', [ $app->physicsController(), 'apiRunAutoLinker' ]);
-		$router->post('/admin/api/run-critic', [ $app->physicsController(), 'apiRunCritic' ]);
-		$router->post('/admin/api/register-reference', [ $app->physicsController(), 'apiRegisterReference' ]);
-		$router->post('/admin/api/update-verification', [ $app->physicsController(), 'apiUpdateVerification' ]);
-		$router->post('/admin/api/save-draft', [ $app->physicsController(), 'apiSaveDraft' ]);
-		$router->get('/admin/api/get-subtopic/@slug', [ $app->physicsController(), 'apiGetSubtopic' ]);
+		$router->get('/admin', [ $app->adminController(), 'adminAssess' ]);
+		$router->get('/admin/assess', [ $app->adminController(), 'adminAssess' ]);
+		$router->get('/admin/dashboard', [ $app->adminController(), 'adminAssess' ]);
+		$router->get('/admin/editor', [ $app->adminController(), 'wysiwygEditor' ]);
+		$router->get('/admin/critic', [ $app->adminController(), 'criticPortal' ]);
+		$router->get('/admin/api/assess-telemetry', [ $app->adminController(), 'apiAssessTelemetry' ]);
+		$router->post('/admin/api/run-assess', [ $app->adminController(), 'apiRunAssess' ]);
+		$router->get('/admin/api/assess-diff', [ $app->adminController(), 'apiAssessDiff' ]);
+		$router->post('/admin/api/run-autolinker', [ $app->adminController(), 'apiRunAutoLinker' ]);
+		$router->post('/admin/api/run-critic', [ $app->adminController(), 'apiRunCritic' ]);
+		$router->post('/admin/api/register-reference', [ $app->adminController(), 'apiRegisterReference' ]);
+		$router->post('/admin/api/update-verification', [ $app->adminController(), 'apiUpdateVerification' ]);
+		$router->post('/admin/api/save-draft', [ $app->adminController(), 'apiSaveDraft' ]);
+		$router->get('/admin/api/get-subtopic/@slug', [ $app->adminController(), 'apiGetSubtopic' ]);
 	});
 	
 }, [ SecurityHeadersMiddleware::class ]);

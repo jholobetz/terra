@@ -27,7 +27,7 @@ class PhysicsService
     }
 
     /**
-     * Fast, hash-based synchronization of modified JSON formula shards to MariaDB.
+     * Fast, hash-based transactional upsert of modified JSON formula shards to MariaDB.
      */
     public function syncFormulasToDatabase(): array
     {
@@ -39,74 +39,165 @@ class PhysicsService
             $hashRegistry = json_decode($rawRegistry, true) ?: [];
         }
 
-        $shardFiles = glob(PROJECT_ROOT . '/app/config/content/formulas/*/*.json');
-        $shardFiles = array_merge($shardFiles, glob(PROJECT_ROOT . '/app/config/content/formulas/*.json'));
+        $shardFiles = glob(PROJECT_ROOT . '/app/config/content/formulas/*/shard_*.json') ?: [];
+        sort($shardFiles);
 
         $shardsUpdated = 0;
         $formulasSynced = 0;
-        $newRegistry = [];
+        $newRegistry = $hashRegistry;
+        $db = $this->app->db();
+
+        $upsertWithStepsSql = "
+            INSERT INTO formulas (
+                id, title, equation, conceptual_definition, intuitive_summary,
+                interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
+                parent_formula_id, derivation_type, subcomponents, derivation_steps,
+                constraints, related_formula_ids, status, unit_system
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                title = VALUES(title),
+                equation = VALUES(equation),
+                conceptual_definition = VALUES(conceptual_definition),
+                intuitive_summary = VALUES(intuitive_summary),
+                interpretation = VALUES(interpretation),
+                symmetry_origin = VALUES(symmetry_origin),
+                limits_and_boundary = VALUES(limits_and_boundary),
+                semantic_variables = VALUES(semantic_variables),
+                parent_formula_id = VALUES(parent_formula_id),
+                derivation_type = VALUES(derivation_type),
+                subcomponents = VALUES(subcomponents),
+                derivation_steps = VALUES(derivation_steps),
+                constraints = VALUES(constraints),
+                related_formula_ids = VALUES(related_formula_ids),
+                status = VALUES(status),
+                unit_system = VALUES(unit_system)
+        ";
+
+        $upsertFallbackSql = "
+            INSERT INTO formulas (
+                id, title, equation, conceptual_definition, intuitive_summary,
+                interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
+                parent_formula_id, derivation_type, subcomponents,
+                constraints, related_formula_ids, status, unit_system
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                title = VALUES(title),
+                equation = VALUES(equation),
+                conceptual_definition = VALUES(conceptual_definition),
+                intuitive_summary = VALUES(intuitive_summary),
+                interpretation = VALUES(interpretation),
+                symmetry_origin = VALUES(symmetry_origin),
+                limits_and_boundary = VALUES(limits_and_boundary),
+                semantic_variables = VALUES(semantic_variables),
+                parent_formula_id = VALUES(parent_formula_id),
+                derivation_type = VALUES(derivation_type),
+                subcomponents = VALUES(subcomponents),
+                constraints = VALUES(constraints),
+                related_formula_ids = VALUES(related_formula_ids),
+                status = VALUES(status),
+                unit_system = VALUES(unit_system)
+        ";
 
         foreach ($shardFiles as $filePath) {
             $relativePath = str_replace(PROJECT_ROOT . '/', '', $filePath);
             $fileContent = file_get_contents($filePath);
             $currentHash = hash('sha256', $fileContent);
 
-            $newRegistry[$relativePath] = $currentHash;
-
             if (isset($hashRegistry[$relativePath]) && $hashRegistry[$relativePath] === $currentHash) {
+                $newRegistry[$relativePath] = $currentHash;
                 continue;
             }
 
-            $shardsUpdated++;
             $data = json_decode($fileContent, true);
             if (!is_array($data)) {
                 continue;
             }
 
-            foreach ($data as $formulaId => $formula) {
-                if (!is_array($formula)) {
-                    continue;
+            $shardsUpdated++;
+            $shardSuccess = true;
+            $inTransaction = false;
+
+            try {
+                if ($db && method_exists($db, 'beginTransaction') && !$db->inTransaction()) {
+                    $db->beginTransaction();
+                    $inTransaction = true;
                 }
 
-                try {
-                    $derivationSteps = !empty($formula['derivation_steps']) ? (is_string($formula['derivation_steps']) ? $formula['derivation_steps'] : json_encode($formula['derivation_steps'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
-                    $derivationType = $formula['derivation_type'] ?? null;
-                    $this->app->db()->runQuery(
-                        "UPDATE formulas SET title = ?, equation = ?, interpretation = ?, limits_and_boundary = ?, conceptual_definition = ?, intuitive_summary = ?, symmetry_origin = ?, derivation_steps = ?, derivation_type = ? WHERE id = ?",
-                        [
+                foreach ($data as $formulaId => $formula) {
+                    if (!is_array($formula)) {
+                        continue;
+                    }
+
+                    $encodeJsonField = static function ($val): ?string {
+                        if (empty($val)) {
+                            return null;
+                        }
+                        return is_string($val) ? $val : json_encode($val, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                    };
+
+                    $semanticVars = $encodeJsonField($formula['semantic_variables'] ?? null);
+                    $subcomponents = $encodeJsonField($formula['subcomponents'] ?? null);
+                    $derivationSteps = $encodeJsonField($formula['derivation_steps'] ?? null);
+                    $constraints = $encodeJsonField($formula['constraints'] ?? null);
+                    $relatedIds = $encodeJsonField($formula['related_formula_ids'] ?? null);
+
+                    try {
+                        $db->runQuery($upsertWithStepsSql, [
+                            $formulaId,
                             $formula['title'] ?? '',
                             $formula['equation'] ?? '',
-                            $formula['interpretation'] ?? '',
-                            $formula['limits_and_boundary'] ?? '',
                             $formula['conceptual_definition'] ?? '',
                             $formula['intuitive_summary'] ?? '',
+                            $formula['interpretation'] ?? '',
                             $formula['symmetry_origin'] ?? '',
+                            $formula['limits_and_boundary'] ?? '',
+                            $semanticVars,
+                            $formula['parent_formula_id'] ?? null,
+                            $formula['derivation_type'] ?? null,
+                            $subcomponents,
                             $derivationSteps,
-                            $derivationType,
-                            $formulaId
-                        ]
-                    );
-                    $formulasSynced++;
-                } catch (\Throwable $e) {
-                    try {
-                        $this->app->db()->runQuery(
-                            "UPDATE formulas SET title = ?, equation = ?, interpretation = ?, limits_and_boundary = ?, conceptual_definition = ?, intuitive_summary = ?, symmetry_origin = ? WHERE id = ?",
-                            [
-                                $formula['title'] ?? '',
-                                $formula['equation'] ?? '',
-                                $formula['interpretation'] ?? '',
-                                $formula['limits_and_boundary'] ?? '',
-                                $formula['conceptual_definition'] ?? '',
-                                $formula['intuitive_summary'] ?? '',
-                                $formula['symmetry_origin'] ?? '',
-                                $formulaId
-                            ]
-                        );
+                            $constraints,
+                            $relatedIds,
+                            $formula['status'] ?? 'platinum',
+                            $formula['unit_system'] ?? 'SI'
+                        ]);
                         $formulasSynced++;
-                    } catch (\Throwable $e2) {
-                        // Ignore missing database rows
+                    } catch (\Throwable $colErr) {
+                        $db->runQuery($upsertFallbackSql, [
+                            $formulaId,
+                            $formula['title'] ?? '',
+                            $formula['equation'] ?? '',
+                            $formula['conceptual_definition'] ?? '',
+                            $formula['intuitive_summary'] ?? '',
+                            $formula['interpretation'] ?? '',
+                            $formula['symmetry_origin'] ?? '',
+                            $formula['limits_and_boundary'] ?? '',
+                            $semanticVars,
+                            $formula['parent_formula_id'] ?? null,
+                            $formula['derivation_type'] ?? null,
+                            $subcomponents,
+                            $constraints,
+                            $relatedIds,
+                            $formula['status'] ?? 'platinum',
+                            $formula['unit_system'] ?? 'SI'
+                        ]);
+                        $formulasSynced++;
                     }
                 }
+
+                if ($inTransaction) {
+                    $db->commit();
+                }
+            } catch (\Throwable $shardErr) {
+                $shardSuccess = false;
+                if ($inTransaction && $db && method_exists($db, 'inTransaction') && $db->inTransaction()) {
+                    $db->rollBack();
+                }
+                $this->lastDbError = $shardErr->getMessage();
+            }
+
+            if ($shardSuccess) {
+                $newRegistry[$relativePath] = $currentHash;
             }
         }
 
@@ -243,10 +334,24 @@ class PhysicsService
             }
         }
 
-        // Load Subtopic Shards
-        $files = scandir($baseDir);
-        foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'json' && !in_array($file, ['categories.json', 'formulas.json', 'search_index.json', 'constants.json', 'entities.json', 'pillar_profiles.json', 'compiled_trie_regex.json', 'notation.json', 'formula_aliases.json', 'formulas_latex_index.json', 'unindexed_subcomponents.json', 'subcomponents_checkpoint.json', 'simulations.json'])) {
+        // Load Canonical Subtopic Shards (Explicit Allowlist)
+        $subtopicShards = [
+            'astrophysics.json',
+            'classical-mechanics.json',
+            'condensed-matter.json',
+            'electromagnetism.json',
+            'fluids-nonlinear.json',
+            'legacy-orphans.json',
+            'mathematical-methods.json',
+            'philosophy-of-physics.json',
+            'quantum-physics.json',
+            'relativity.json',
+            'standard-model.json',
+            'theoretical-physics.json',
+            'thermodynamics-statistical-mechanics.json'
+        ];
+        foreach ($subtopicShards as $file) {
+            if (file_exists($baseDir . $file)) {
                 $shard = json_decode(file_get_contents($baseDir . $file), true) ?: [];
                 if (is_array($shard)) {
                     $this->physicsContent['subtopics'] = array_merge($this->physicsContent['subtopics'], $shard);

@@ -102,5 +102,7 @@ $app->register('authService', \app\logic\AuthService::class, []);
 $app->register('formulaReviewService', \app\logic\FormulaReviewService::class, []);
 $app->register('semanticSearchService', \app\logic\SemanticSearchService::class, []);
 $app->register('physicsController', \app\controllers\PhysicsController::class, [ $app ]);
+$app->register('adminController', \app\controllers\AdminController::class, [ $app ]);
+$app->register('reviewController', \app\controllers\ReviewController::class, [ $app ]);
 
 // Add more service registrations below as needed

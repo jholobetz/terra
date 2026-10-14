@@ -643,46 +643,30 @@ def seed(rate_tier="free"):
         else:
             print(f"Using default free rate tier (5.0s cooldown per request).")
 
-    # 1. Configure Gemini API Client (AI Studio vs Vertex AI)
-    api_key = os.environ.get("GEMINI_API_KEY") or keyring.get_password("physics_lab", "gemini_api_key")
-    gcp_project = os.environ.get("GCP_PROJECT_ID")
-    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-    is_vertex = bool(gcp_project and credentials_path and rate_tier == "vertex")
+    # 1. Configure Gemini API Client (Pure Free Tier - Google AI Studio $0.00)
+    api_key = (
+        os.environ.get("GEMINI_FREE_API_KEY")
+        or os.environ.get("GEMINI_API_KEY")
+        or (keyring.get_password("physics_lab", "gemini_api_key") if keyring else None)
+    )
+    if not api_key:
+        print("Error: No GEMINI_FREE_API_KEY or GEMINI_API_KEY found in environment or keyring.", flush=True)
+        sys.exit(1)
+    if rate_tier == "vertex":
+        print("Error: Vertex AI is permanently disabled to guarantee $0.00 cost per docs/cost_governance.md.", flush=True)
+        sys.exit(1)
 
-    if is_vertex:
-        print(f"Initializing Vertex AI client for project: {gcp_project}", flush=True)
-        client = genai.Client(
-            vertexai=True,
-            project=gcp_project,
-            location="us-central1",
-            http_options=types.HttpOptions(timeout=30_000)
-        )
-        MODEL_NAME = get_flash_model()
-        print(f"Using Vertex AI Model: {MODEL_NAME}", flush=True)
-    else:
-        if not api_key:
-            print("Error: No GEMINI_API_KEY found in environment or keyring.", flush=True)
-            sys.exit(1)
-        print("API key successfully retrieved.", flush=True)
-        if api_key.startswith("ya29."):
-            from google.oauth2.credentials import Credentials
-            client = genai.Client(credentials=Credentials(token=api_key), http_options=types.HttpOptions(timeout=30_000))
-        else:
-            client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
-        MODEL_NAME = get_flash_model()
-        print(f"Using Google AI Studio Model: {MODEL_NAME}", flush=True)
+    print("API key successfully retrieved (Google AI Studio Free Tier - $0.00).", flush=True)
+    client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
+    MODEL_NAME = get_flash_model()
+    print(f"Using Google AI Studio Model: {MODEL_NAME}", flush=True)
 
     SHARDS_DIR = "app/config/content/formulas"
     consecutive_429s = [0]
 
-    # Determine Concurrency
+    # Determine Concurrency (Free tier sequential by default)
     concurrency = 1
-    if is_vertex or rate_tier in ["paid", "pay", "unlimited", "vertex"]:
-        concurrency = 10
-        cooldown = 0.0
-        print(f"Enabling parallel seeding with {concurrency} concurrent workers (cooldown: 0s).", flush=True)
-    else:
-        print(f"Running sequentially (cooldown: {cooldown}s).", flush=True)
+    print(f"Running sequentially (cooldown: {cooldown}s).", flush=True)
 
 
     def save_shard_file(filepath, shard_data):
@@ -753,7 +737,9 @@ def seed(rate_tier="free"):
                         contents=prompt,
                         config=types.GenerateContentConfig(
                             response_mime_type="application/json",
-                            response_schema=PhysicsFormulaMetadata
+                            response_schema=PhysicsFormulaMetadata,
+                            max_output_tokens=800,
+                            thinking_config=types.ThinkingConfig(thinking_budget=512)
                         )
                     )
                     break
@@ -775,7 +761,7 @@ def seed(rate_tier="free"):
                 if rate_limit_hit:
                     consecutive_429s[0] += 1
                     print(f"    Skipping '{title}' due to persistent 429 rate limits. (Consecutive 429s: {consecutive_429s[0]})", flush=True)
-                    if consecutive_429s[0] >= 3 and not is_vertex and rate_tier not in ["paid", "pay", "unlimited", "vertex"]:
+                    if consecutive_429s[0] >= 3:
                         print(f"\n🛑 CRITICAL: Encountered 429 RESOURCE_EXHAUSTED 3 times consecutively. Daily free tier limit likely reached. Exiting cleanly.", flush=True)
                         raise Exception("consecutive_429_limit_reached")
                     print("    Sleeping 30 seconds (circuit breaker)...", flush=True)
@@ -1000,31 +986,21 @@ def formula_auto_seed(limit=5, rate_tier="free"):
         print("Error: The 'google-genai' package is not installed.")
         return
 
-    api_key = os.environ.get("GEMINI_API_KEY") or keyring.get_password("physics_lab", "gemini_api_key")
-    gcp_project = os.environ.get("GCP_PROJECT_ID")
-    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-    is_vertex = bool(gcp_project and credentials_path and rate_tier == "vertex")
+    api_key = (
+        os.environ.get("GEMINI_FREE_API_KEY")
+        or os.environ.get("GEMINI_API_KEY")
+        or (keyring.get_password("physics_lab", "gemini_api_key") if keyring else None)
+    )
+    if not api_key:
+        print("Error: No GEMINI_FREE_API_KEY or GEMINI_API_KEY found in environment or keyring.")
+        return
+    if rate_tier == "vertex":
+        print("Error: Vertex AI is permanently disabled to guarantee $0.00 cost per docs/cost_governance.md.")
+        return
 
-    if is_vertex:
-        print(f"Initializing Vertex AI client for project: {gcp_project}", flush=True)
-        client = genai.Client(
-            vertexai=True,
-            project=gcp_project,
-            location="us-central1",
-            http_options=types.HttpOptions(timeout=30_000)
-        )
-        MODEL_NAME = get_flash_model()
-    else:
-        if not api_key:
-            print("Error: No GEMINI_API_KEY found in environment or keyring.")
-            return
-        if api_key.startswith("ya29."):
-            from google.oauth2.credentials import Credentials
-            client = genai.Client(credentials=Credentials(token=api_key), http_options=types.HttpOptions(timeout=30_000))
-        else:
-            client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
-        MODEL_NAME = get_flash_model()
-    print(f"Using Model: {MODEL_NAME}", flush=True)
+    client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
+    MODEL_NAME = get_flash_model()
+    print(f"Using Google AI Studio Model (Free Tier - $0.00): {MODEL_NAME}", flush=True)
 
     # 2. Audit to find unregistered formulas
     print("🛡️ Scanning subtopics for unregistered equations...")
@@ -1091,8 +1067,6 @@ def formula_auto_seed(limit=5, rate_tier="free"):
         print(f"  * {latex} (used in {len(subtopics)} subtopic(s))")
 
     # 3. Generate Naming and IDs via Gemini API (in batches to avoid rate limits & output limits)
-    from concurrent.futures import ThreadPoolExecutor, as_completed
-    
     print("\n🤖 Calling Gemini API to structure titles and slugs...")
     batch_size = 100
     batches = [target_unregistered[i:i + batch_size] for i in range(0, len(target_unregistered), batch_size)]
@@ -1103,8 +1077,7 @@ def formula_auto_seed(limit=5, rate_tier="free"):
     try:
         cooldown = float(rate_tier)
     except ValueError:
-        if rate_tier in ["paid", "pay", "unlimited"]:
-            cooldown = 0.2
+        pass
 
     def process_naming_batch(batch):
         prompt = (
@@ -1122,7 +1095,9 @@ def formula_auto_seed(limit=5, rate_tier="free"):
                     contents=prompt,
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
-                        response_schema=FormulaNamingList
+                        response_schema=FormulaNamingList,
+                        max_output_tokens=800,
+                        thinking_config=types.ThinkingConfig(thinking_budget=512)
                     )
                 )
                 return json.loads(response.text).get("namings", [])
@@ -1137,16 +1112,9 @@ def formula_auto_seed(limit=5, rate_tier="free"):
         return []
 
     namings = []
-    if is_vertex or rate_tier in ["paid", "pay", "unlimited", "vertex"]:
-        print(f"Using parallel naming with 5 workers.")
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            futures = [executor.submit(process_naming_batch, b) for b in batches]
-            for future in as_completed(futures):
-                namings.extend(future.result())
-    else:
-        for b in batches:
-            namings.extend(process_naming_batch(b))
-            time.sleep(cooldown)
+    for b in batches:
+        namings.extend(process_naming_batch(b))
+        time.sleep(cooldown)
 
     # 4. Create formula placeholders and links in shards
     created_formulas = []

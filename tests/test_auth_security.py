@@ -211,4 +211,36 @@ def test_service_and_explainer_decomposition():
         assert expected_fn in js_path.read_text(encoding="utf-8")
 
 
+def test_atomic_json_file_locking():
+    """Verifies PhysicsService::updateJsonFileLocked performs atomic read-modify-write under LOCK_EX."""
+    php_code = """
+    define('PROJECT_ROOT', getcwd());
+    require 'vendor/autoload.php';
+    require_once 'app/logic/PhysicsService.php';
 
+    $svc = new \\app\\logic\\PhysicsService(new \\flight\\Engine());
+    $ref = new \\ReflectionMethod($svc, 'updateJsonFileLocked');
+
+    $tmpFile = sys_get_temp_dir() . '/terra_lock_test_' . uniqid() . '.json';
+    $ref->invoke($svc, $tmpFile, function(array $map) {
+        $map['alpha'] = 1;
+        return $map;
+    });
+    $ref->invoke($svc, $tmpFile, function(array $map) {
+        $map['beta'] = 2;
+        return $map;
+    });
+
+    $final = json_decode(file_get_contents($tmpFile), true);
+    @unlink($tmpFile);
+    echo json_encode($final);
+    """
+    res = subprocess.run(
+        ["php", "-r", php_code],
+        cwd=str(WORKSPACE_ROOT),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    out = json.loads(res.stdout.strip())
+    assert out == {"alpha": 1, "beta": 2}

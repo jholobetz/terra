@@ -480,52 +480,51 @@ class PhysicsService
             mkdir($shardDir, 0755, true);
         }
 
-        $shardData = [];
-        if (file_exists($shardPath)) {
-            $shardData = json_decode(file_get_contents($shardPath), true) ?: [];
-        }
-
-        // Preserve existing cas_validation if not explicitly supplied and equation is unchanged
-        if (!isset($data['cas_validation']) && isset($shardData[$fId]['cas_validation'])) {
-            $oldEq = $shardData[$fId]['equation'] ?? '';
-            $newEq = $data['equation'] ?? '';
-            if ($oldEq === $newEq) {
-                $data['cas_validation'] = $shardData[$fId]['cas_validation'];
-            }
-        }
-
-        // Ensure semantic_variables is an object in JSON (never empty array [])
-        if (!isset($data['semantic_variables']) || !is_array($data['semantic_variables']) || empty($data['semantic_variables'])) {
-            $data['semantic_variables'] = (object)[];
-        }
-
-        // Update shard array
-        $shardData[$fId] = $data;
-
-        // Sanitize all entries in shard to guarantee no neighboring formula has [] for semantic_variables
-        foreach ($shardData as $key => &$entry) {
-            if (is_array($entry)) {
-                if (!isset($entry['semantic_variables']) || !is_array($entry['semantic_variables']) || empty($entry['semantic_variables'])) {
-                    $entry['semantic_variables'] = (object)[];
+        $jsonFlags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+        $jsonEncoded = $this->updateJsonFileLocked($shardPath, function (array $shardData) use ($fId, &$data) {
+            // Preserve existing cas_validation if not explicitly supplied and equation is unchanged
+            if (!isset($data['cas_validation']) && isset($shardData[$fId]['cas_validation'])) {
+                $oldEq = $shardData[$fId]['equation'] ?? '';
+                $newEq = $data['equation'] ?? '';
+                if ($oldEq === $newEq) {
+                    $data['cas_validation'] = $shardData[$fId]['cas_validation'];
                 }
             }
-        }
-        unset($entry);
 
-        // Save JSON shard atomically with proper formatting
-        $jsonEncoded = json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        if (file_put_contents($shardPath, $jsonEncoded) === false) {
+            // Ensure semantic_variables is an object in JSON (never empty array [])
+            if (!isset($data['semantic_variables']) || !is_array($data['semantic_variables']) || empty($data['semantic_variables'])) {
+                $data['semantic_variables'] = (object)[];
+            }
+
+            // Update shard array
+            $shardData[$fId] = $data;
+
+            // Sanitize all entries in shard to guarantee no neighboring formula has [] for semantic_variables
+            foreach ($shardData as $key => &$entry) {
+                if (is_array($entry)) {
+                    if (!isset($entry['semantic_variables']) || !is_array($entry['semantic_variables']) || empty($entry['semantic_variables'])) {
+                        $entry['semantic_variables'] = (object)[];
+                    }
+                }
+            }
+            unset($entry);
+            return $shardData;
+        }, $jsonFlags);
+
+        if ($jsonEncoded === null) {
             error_log("Failed to write formula to shard: {$shardPath}");
             return false;
         }
 
-        // Automatically synchronize the SHA-256 hash registry for this shard
+        // Automatically synchronize the SHA-256 hash registry for this shard under LOCK_EX
         $registryPath = PROJECT_ROOT . '/app/config/formulas_hash_registry.json';
         if (file_exists($registryPath)) {
             $relativePath = str_replace(PROJECT_ROOT . '/', '', $shardPath);
-            $reg = json_decode(file_get_contents($registryPath), true) ?: [];
-            $reg[$relativePath] = hash('sha256', $jsonEncoded);
-            file_put_contents($registryPath, json_encode($reg, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $shardHash = hash('sha256', $jsonEncoded);
+            $this->updateJsonFileLocked($registryPath, function (array $reg) use ($relativePath, $shardHash) {
+                $reg[$relativePath] = $shardHash;
+                return $reg;
+            }, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         }
 
         // 3. Update MariaDB record if database connection is available
@@ -688,17 +687,15 @@ class PhysicsService
             error_log("Database saveFormula failed for {$fId}: " . $e->getMessage());
         }
 
-        // 4. Update formulas_latex_index.json lookup mapping
+        // 4. Update formulas_latex_index.json lookup mapping under LOCK_EX
         if (!empty($data['equation'])) {
-            $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
-            $index = [];
-            if (file_exists($indexFile)) {
-                $index = json_decode(file_get_contents($indexFile), true) ?: [];
-            }
             $normalizedKey = $this->normalizeLatex($data['equation']);
             if (!empty($normalizedKey)) {
-                $index[$normalizedKey] = $fId;
-                file_put_contents($indexFile, json_encode($index, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+                $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
+                $this->updateJsonFileLocked($indexFile, function (array $index) use ($normalizedKey, $fId) {
+                    $index[$normalizedKey] = $fId;
+                    return $index;
+                }, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
             }
         }
 
@@ -706,6 +703,46 @@ class PhysicsService
         $this->physicsContent['formula_registry'][$fId] = $data;
 
         return true;
+    }
+
+    /**
+     * Atomically reads, mutates, and writes a JSON map file under an exclusive advisory lock (LOCK_EX).
+     * Returns the encoded JSON string on success or null on failure.
+     */
+    private function updateJsonFileLocked(string $filePath, callable $mutator, int $jsonFlags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE): ?string
+    {
+        $fp = @fopen($filePath, 'c+');
+        if ($fp === false) {
+            return null;
+        }
+        if (!flock($fp, LOCK_EX)) {
+            fclose($fp);
+            return null;
+        }
+
+        rewind($fp);
+        $raw = stream_get_contents($fp);
+        $decoded = ($raw !== false && $raw !== '') ? (json_decode($raw, true) ?: []) : [];
+        if (!is_array($decoded)) {
+            $decoded = [];
+        }
+
+        $updated = $mutator($decoded);
+        $encoded = json_encode($updated, $jsonFlags);
+        if ($encoded === false) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            return null;
+        }
+
+        ftruncate($fp, 0);
+        rewind($fp);
+        $written = fwrite($fp, $encoded);
+        fflush($fp);
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        return ($written === false) ? null : $encoded;
     }
 
     /**

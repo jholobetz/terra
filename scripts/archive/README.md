@@ -29,3 +29,15 @@ This directory contains historical, one-off migration scripts, legacy fixers, an
 | `build_subtopic_embeddings.py` | Google AI Studio embeddings / `ai_models.json` | Historical Vertex AI `text-embedding-004` batch subtopic embedder. |
 | `run_gemini_shard_sanitizer.py` | `gqs.py` & `generate_gemini_formula.py` | Historical Vertex AI Gemini 2.5 Pro multi-threaded shard sanitizer. |
 | `run_vertex_lineage_enricher.py` | `fixlineage` & `generate_gemini_formula.py` | Historical Vertex AI Gemini 2.5 lineage & derivation enricher. |
+| `seed_flagship_derivations.py` | Shard `derivation_steps` & `lib.cas.derivation_prover` | One-time Tier 1 flagship derivation seeding campaign. |
+| `seed_tier2_derivations.py` | Shard `derivation_steps` & `lib.cas.derivation_prover` | One-time Tier 2 derivation seeding campaign. |
+| `seed_tier3_derivations.py` | Shard `derivation_steps` & `lib.cas.derivation_prover` | One-time Tier 3 derivation seeding campaign. |
+| `seed_tier4_derivations.py` | Shard `derivation_steps` & `lib.cas.derivation_prover` | One-time Tier 4 domain-parity derivation seeding campaign. |
+| `apply_all_heals.py` | `scripts/fixlatex` & `LatexSanitizer.php` | One-time batch formula repair runner. |
+| `complete_heals_data.py` | `scripts/fixlatex` | Static dictionary payload for one-time batch formula repair. |
+| `heal_all_legacy.py` | `scripts/fixlatex` | One-time legacy formula LaTeX healer. |
+| `heal_legacy_macro_leaks.py` | `LatexSanitizer.php` | One-time macro leak cleanup script. |
+| `heal_residual_isolated.py` | `scripts/fixlineage --heal` | One-time isolated DAG node healer. |
+| `sanitize_all_shards.py` | `LatexSanitizer.php` | One-time shard prose sanitization sweep. |
+| `inject_tex_attributes.py` | Dynamic MathJax 3.x rendering | Legacy static `data-tex` attribute injector. |
+

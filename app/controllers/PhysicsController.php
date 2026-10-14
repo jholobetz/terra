@@ -394,12 +394,12 @@ class PhysicsController
             return;
         }
 
-        // Persist valid evaluations in deterministic disk cache
+        // Persist valid evaluations in deterministic disk cache under LOCK_EX
         if (!empty($result['success'])) {
             if (!is_dir($cacheDir)) {
                 @mkdir($cacheDir, 0775, true);
             }
-            @file_put_contents($cacheFile, json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+            @file_put_contents($cacheFile, json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), LOCK_EX);
         }
 
         $result['cached'] = false;
@@ -408,6 +408,7 @@ class PhysicsController
 
     /**
      * Sliding-window rate limiter for cold CAS subprocess spawns (stored outside DocumentRoot).
+     * Uses flock(LOCK_EX) to prevent race conditions under concurrent HTTP requests.
      */
     public function consumeCasRateLimit(string $clientIp, int $maxRequests, int $windowSeconds): bool
     {
@@ -417,12 +418,22 @@ class PhysicsController
         }
 
         $bucketFile = $rlDir . '/' . hash('sha256', $clientIp) . '.json';
+        $fp = @fopen($bucketFile, 'c+');
+        if ($fp === false) {
+            return true;
+        }
+        if (!flock($fp, LOCK_EX)) {
+            fclose($fp);
+            return true;
+        }
+
         $now = time();
         $timestamps = [];
 
-        if (file_exists($bucketFile)) {
-            $raw = @file_get_contents($bucketFile);
-            $decoded = json_decode($raw ?: '', true);
+        rewind($fp);
+        $raw = stream_get_contents($fp);
+        if ($raw !== false && $raw !== '') {
+            $decoded = json_decode($raw, true);
             if (is_array($decoded)) {
                 $cutoff = $now - $windowSeconds;
                 foreach ($decoded as $ts) {
@@ -434,11 +445,18 @@ class PhysicsController
         }
 
         if (count($timestamps) >= $maxRequests) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
             return false;
         }
 
         $timestamps[] = $now;
-        @file_put_contents($bucketFile, json_encode($timestamps));
+        ftruncate($fp, 0);
+        rewind($fp);
+        fwrite($fp, json_encode($timestamps));
+        fflush($fp);
+        flock($fp, LOCK_UN);
+        fclose($fp);
         return true;
     }
 

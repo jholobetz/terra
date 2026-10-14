@@ -126,3 +126,86 @@ def test_sitewide_shards_tagged_with_cas_validation():
     assert tagged_count >= 9000, f"At least 9,000 formulas must be tagged with cas_validation in Git shards (found {tagged_count})"
 
 
+def test_physics_service_persists_cas_validation_and_avoids_shard_fallback():
+    """
+    Behavioral test verifying that:
+    1. PhysicsService::loadFormula() does NOT fall back to reading JSON shards from disk
+       when the MariaDB row schema already contains `derivation_steps` and `cas_validation`
+       (even when derivation_steps is NULL, as is true for 99.3% of formulas).
+    2. PhysicsService::loadFormula() DOES fall back to the Git JSON shard if the MariaDB
+       table schema is missing the `cas_validation` column.
+    """
+    import subprocess
+
+    php_code = r"""
+    define('PROJECT_ROOT', getcwd());
+    require_once PROJECT_ROOT . '/vendor/autoload.php';
+    require_once PROJECT_ROOT . '/app/logic/PhysicsService.php';
+
+    class MockDbWithCasColumn {
+        public function fetchRow($sql, $params = []) {
+            return [
+                'id' => $params[0],
+                'title' => 'DB Loaded Formula',
+                'equation' => 'E = m c^2',
+                'derivation_steps' => null,
+                'cas_validation' => json_encode([
+                    'status' => 'HOMOGENEOUS',
+                    'is_homogeneous' => true,
+                    'quantity' => 'Energy (from DB)'
+                ])
+            ];
+        }
+    }
+
+    class MockDbLegacySchemaWithoutCasColumn {
+        public function fetchRow($sql, $params = []) {
+            return [
+                'id' => $params[0],
+                'title' => 'Legacy DB Row Without CAS Column',
+                'equation' => 'E = m c^2'
+                // Note: derivation_steps and cas_validation keys do NOT exist in row array
+            ];
+        }
+    }
+
+    $app1 = new \flight\Engine();
+    $app1->register('db', 'MockDbWithCasColumn');
+    $svc1 = new \app\logic\PhysicsService($app1);
+    $svc1->setPreviewMode(false);
+
+    // Query an ID that exists in shard_00 ('stefan-boltzmann-law') - since DB has the columns,
+    // loadFormula() must keep 'Energy (from DB)' and NOT overwrite it from shard_00.json!
+    $res1 = $svc1->loadFormula('stefan-boltzmann-law');
+    if (($res1['cas_validation']['quantity'] ?? '') !== 'Energy (from DB)') {
+        fwrite(STDERR, "FAIL: loadFormula() unnecessarily read disk shard when DB column existed!\n");
+        exit(1);
+    }
+
+    // Now test legacy unmigrated DB schema missing cas_validation column:
+    // loadFormula() MUST fall back to shard_00.json and populate cas_validation.
+    $app2 = new \flight\Engine();
+    $app2->register('db', 'MockDbLegacySchemaWithoutCasColumn');
+    $svc2 = new \app\logic\PhysicsService($app2);
+    $svc2->setPreviewMode(false);
+
+    $res2 = $svc2->loadFormula('stefan-boltzmann-law');
+    if (empty($res2['cas_validation']['is_homogeneous'])) {
+        fwrite(STDERR, "FAIL: loadFormula() did not fall back to disk shard when DB lacked cas_validation column!\n");
+        exit(2);
+    }
+
+    echo "OK\n";
+    """
+
+    proc = subprocess.run(
+        ["php", "-r", php_code],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        timeout=10
+    )
+    assert proc.returncode == 0, f"PHP behavioral test failed: {proc.stderr}\n{proc.stdout}"
+    assert "OK" in proc.stdout
+
+

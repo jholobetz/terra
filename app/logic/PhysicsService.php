@@ -29,7 +29,7 @@ class PhysicsService
     /**
      * Fast, hash-based transactional upsert of modified JSON formula shards to MariaDB.
      */
-    public function syncFormulasToDatabase(): array
+    public function syncFormulasToDatabase(bool $force = false): array
     {
         $registryPath = PROJECT_ROOT . '/app/config/formulas_hash_registry.json';
         $hashRegistry = [];
@@ -47,13 +47,28 @@ class PhysicsService
         $newRegistry = $hashRegistry;
         $db = $this->app->db();
 
+        if ($db) {
+            try {
+                $db->runQuery("ALTER TABLE formulas ADD COLUMN derivation_steps JSON AFTER subcomponents;");
+                $force = true;
+            } catch (\Throwable $e) {
+                // Column already exists
+            }
+            try {
+                $db->runQuery("ALTER TABLE formulas ADD COLUMN cas_validation JSON AFTER derivation_steps;");
+                $force = true;
+            } catch (\Throwable $e) {
+                // Column already exists
+            }
+        }
+
         $upsertWithStepsSql = "
             INSERT INTO formulas (
                 id, title, equation, conceptual_definition, intuitive_summary,
                 interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
-                parent_formula_id, derivation_type, subcomponents, derivation_steps,
+                parent_formula_id, derivation_type, subcomponents, derivation_steps, cas_validation,
                 constraints, related_formula_ids, status, unit_system
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
                 title = VALUES(title),
                 equation = VALUES(equation),
@@ -67,6 +82,7 @@ class PhysicsService
                 derivation_type = VALUES(derivation_type),
                 subcomponents = VALUES(subcomponents),
                 derivation_steps = VALUES(derivation_steps),
+                cas_validation = VALUES(cas_validation),
                 constraints = VALUES(constraints),
                 related_formula_ids = VALUES(related_formula_ids),
                 status = VALUES(status),
@@ -103,7 +119,7 @@ class PhysicsService
             $fileContent = file_get_contents($filePath);
             $currentHash = hash('sha256', $fileContent);
 
-            if (isset($hashRegistry[$relativePath]) && $hashRegistry[$relativePath] === $currentHash) {
+            if (!$force && isset($hashRegistry[$relativePath]) && $hashRegistry[$relativePath] === $currentHash) {
                 $newRegistry[$relativePath] = $currentHash;
                 continue;
             }
@@ -138,6 +154,7 @@ class PhysicsService
                     $semanticVars = $encodeJsonField($formula['semantic_variables'] ?? null);
                     $subcomponents = $encodeJsonField($formula['subcomponents'] ?? null);
                     $derivationSteps = $encodeJsonField($formula['derivation_steps'] ?? null);
+                    $casValidation = $encodeJsonField($formula['cas_validation'] ?? null);
                     $constraints = $encodeJsonField($formula['constraints'] ?? null);
                     $relatedIds = $encodeJsonField($formula['related_formula_ids'] ?? null);
 
@@ -156,6 +173,7 @@ class PhysicsService
                             $formula['derivation_type'] ?? null,
                             $subcomponents,
                             $derivationSteps,
+                            $casValidation,
                             $constraints,
                             $relatedIds,
                             $formula['status'] ?? 'platinum',
@@ -537,6 +555,9 @@ class PhysicsService
                                 ? (json_decode($formula['subcomponents'], true) ?: [])
                                 : $formula['subcomponents'];
                         }
+                        $hasStepsCol = array_key_exists('derivation_steps', $formula);
+                        $hasCasCol = array_key_exists('cas_validation', $formula);
+
                         if (isset($formula['derivation_steps'])) {
                             $formula['derivation_steps'] = is_string($formula['derivation_steps'])
                                 ? (json_decode($formula['derivation_steps'], true) ?: [])
@@ -547,19 +568,20 @@ class PhysicsService
                                 ? (json_decode($formula['cas_validation'], true) ?: null)
                                 : $formula['cas_validation'];
                         }
-                        // Dual-Layer Resilience: If DB lacks derivation_steps or cas_validation, fallback to Git shard
-                        if (empty($formula['derivation_steps']) || empty($formula['cas_validation'])) {
+                        // Dual-Layer Schema Resilience: Only read the Git shard from disk if the MariaDB table
+                        // schema has not yet been migrated to include `derivation_steps` or `cas_validation`.
+                        if (!$hasStepsCol || !$hasCasCol) {
                             $hexPrefix = substr(md5($fId), 0, 2);
                             $shardFile = PROJECT_ROOT . '/app/config/content/formulas/' . $hexPrefix . '/shard_' . $hexPrefix . '.json';
                             if (file_exists($shardFile)) {
                                 $rawShard = json_decode(file_get_contents($shardFile), true);
-                                if (empty($formula['derivation_steps']) && !empty($rawShard[$fId]['derivation_steps'])) {
+                                if (!$hasStepsCol && !empty($rawShard[$fId]['derivation_steps'])) {
                                     $formula['derivation_steps'] = $rawShard[$fId]['derivation_steps'];
                                 }
                                 if (empty($formula['derivation_type']) && !empty($rawShard[$fId]['derivation_type'])) {
                                     $formula['derivation_type'] = $rawShard[$fId]['derivation_type'];
                                 }
-                                if (empty($formula['cas_validation']) && !empty($rawShard[$fId]['cas_validation'])) {
+                                if (!$hasCasCol && !empty($rawShard[$fId]['cas_validation'])) {
                                     $formula['cas_validation'] = $rawShard[$fId]['cas_validation'];
                                 }
                             }
@@ -736,6 +758,7 @@ class PhysicsService
                 $constraints = !empty($data['constraints']) ? (is_string($data['constraints']) ? $data['constraints'] : json_encode($data['constraints'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
                 $subcomponents = !empty($data['subcomponents']) ? (is_string($data['subcomponents']) ? $data['subcomponents'] : json_encode($data['subcomponents'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
                 $derivationSteps = !empty($data['derivation_steps']) ? (is_string($data['derivation_steps']) ? $data['derivation_steps'] : json_encode($data['derivation_steps'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                $casValidation = !empty($data['cas_validation']) ? (is_string($data['cas_validation']) ? $data['cas_validation'] : json_encode($data['cas_validation'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
                 $relatedIds = !empty($data['related_formula_ids']) ? (is_string($data['related_formula_ids']) ? $data['related_formula_ids'] : json_encode($data['related_formula_ids'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
 
                 if ($existing) {
@@ -754,6 +777,7 @@ class PhysicsService
                                 derivation_type = ?, 
                                 subcomponents = ?, 
                                 derivation_steps = ?, 
+                                cas_validation = ?, 
                                 constraints = ?, 
                                 related_formula_ids = ?, 
                                 status = ?, 
@@ -773,6 +797,7 @@ class PhysicsService
                                 $data['derivation_type'] ?? null,
                                 $subcomponents,
                                 $derivationSteps,
+                                $casValidation,
                                 $constraints,
                                 $relatedIds,
                                 $data['status'] ?? 'platinum',
@@ -781,7 +806,7 @@ class PhysicsService
                             ]
                         );
                     } catch (\Throwable $colErr) {
-                        // Fallback in case derivation_steps column is not migrated yet
+                        // Fallback in case derivation_steps or cas_validation column is not migrated yet
                         $db->runQuery(
                             "UPDATE formulas SET 
                                 title = ?, 
@@ -824,8 +849,8 @@ class PhysicsService
                 } else {
                     try {
                         $db->runQuery(
-                            "INSERT INTO formulas (id, title, equation, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, parent_formula_id, derivation_type, subcomponents, derivation_steps, constraints, related_formula_ids, status, unit_system, equation_svg) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
+                            "INSERT INTO formulas (id, title, equation, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, parent_formula_id, derivation_type, subcomponents, derivation_steps, cas_validation, constraints, related_formula_ids, status, unit_system, equation_svg) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
                             [
                                 $fId,
                                 $data['title'] ?? null,
@@ -840,6 +865,7 @@ class PhysicsService
                                 $data['derivation_type'] ?? null,
                                 $subcomponents,
                                 $derivationSteps,
+                                $casValidation,
                                 $constraints,
                                 $relatedIds,
                                 $data['status'] ?? 'platinum',
@@ -1266,6 +1292,7 @@ class PhysicsService
             related_formula_ids JSON,
             subcomponents JSON,
             derivation_steps JSON,
+            cas_validation JSON,
             title VARCHAR(255) NOT NULL,
             equation MEDIUMTEXT NOT NULL,
             equation_svg MEDIUMTEXT,
@@ -1311,6 +1338,11 @@ class PhysicsService
         }
         try {
             $db->runQuery("ALTER TABLE formulas ADD COLUMN derivation_steps JSON AFTER subcomponents;");
+        } catch (\Exception $e) {
+            // Column already exists, ignore
+        }
+        try {
+            $db->runQuery("ALTER TABLE formulas ADD COLUMN cas_validation JSON AFTER derivation_steps;");
         } catch (\Exception $e) {
             // Column already exists, ignore
         }
@@ -1374,11 +1406,11 @@ class PhysicsService
 
                         $db->runQuery(
                             "INSERT INTO formulas (
-                                id, parent_formula_id, derivation_type, constraints, related_formula_ids, subcomponents, derivation_steps,
+                                id, parent_formula_id, derivation_type, constraints, related_formula_ids, subcomponents, derivation_steps, cas_validation,
                                 title, equation, equation_svg, conceptual_definition, intuitive_summary, 
                                 interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
                                 unit_system, status
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                             ON DUPLICATE KEY UPDATE 
                                 parent_formula_id = VALUES(parent_formula_id),
                                 derivation_type = VALUES(derivation_type),
@@ -1386,6 +1418,7 @@ class PhysicsService
                                 related_formula_ids = VALUES(related_formula_ids),
                                 subcomponents = VALUES(subcomponents),
                                 derivation_steps = VALUES(derivation_steps),
+                                cas_validation = VALUES(cas_validation),
                                 title = VALUES(title),
                                 equation = VALUES(equation),
                                 equation_svg = VALUES(equation_svg),
@@ -1405,6 +1438,7 @@ class PhysicsService
                                 !empty($fData['related_formula_ids']) ? json_encode($fData['related_formula_ids']) : null,
                                 !empty($fData['subcomponents']) ? json_encode($fData['subcomponents']) : null,
                                 !empty($fData['derivation_steps']) ? json_encode($fData['derivation_steps']) : null,
+                                !empty($fData['cas_validation']) ? json_encode($fData['cas_validation'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null,
                                 $fData['title'],
                                 $cleanEq,
                                 $eqSvg,

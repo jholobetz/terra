@@ -88,3 +88,40 @@ def run_gates(workspace):
             text=True,
         )
     return _run
+
+
+_CACHED_SHARD_DICTS = None
+_CACHED_FORMULAS = None
+
+
+def get_cached_shard_dicts():
+    """Loads and caches all 256 formula shard dicts once per test process."""
+    global _CACHED_SHARD_DICTS
+    if _CACHED_SHARD_DICTS is None:
+        formulas_dir = REPO_ROOT / "app" / "config" / "content" / "formulas"
+        shard_paths = sorted(formulas_dir.glob("*/*.json")) + sorted(formulas_dir.glob("*.json"))
+        shards = []
+        for p in shard_paths:
+            with open(p, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    shards.append((str(p), data))
+        _CACHED_SHARD_DICTS = shards
+    return _CACHED_SHARD_DICTS
+
+
+def get_cached_formulas():
+    """Returns a flat list of all formula dicts across the 256 shards (loaded once per process)."""
+    global _CACHED_FORMULAS
+    if _CACHED_FORMULAS is None:
+        formulas = []
+        for filepath, data in get_cached_shard_dicts():
+            for formula_id, f_data in data.items():
+                if isinstance(f_data, dict):
+                    f_copy = dict(f_data)
+                    f_copy["_id"] = formula_id
+                    f_copy["_filepath"] = filepath
+                    formulas.append(f_copy)
+        _CACHED_FORMULAS = formulas
+    return _CACHED_FORMULAS
+

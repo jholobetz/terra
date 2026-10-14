@@ -207,6 +207,6 @@ Any refinements or delimiter additions are made in **one file**, aligning both t
 - [x] **All equations free of HTML tags (`<a>`, `<strong>`, `<code>`)**: 0 HTML tags remain.
 - [x] **Pre-push gatekeeper (`integrity_shield.py`) green**: 100% Manifold Closure, valid AST mappings, all shields secure.
 - [x] **Pytest regression suite at 100.0%**: 189 / 190 tests passing (0 failures, 1 skipped).
-- [x] **Shared Delimiter Module deployed**: `scripts/lib/delimiters.py` imported universally by `test_all_formulas_tex_syntax.py` and `test_formula_latex_integrity.py`.
+- [x] **Shared Delimiter Module deployed**: `scripts/lib/delimiters.py` imported universally by `test_formula_latex_integrity.py` and `test_delimiters_lib.py`.
 - [x] **Write Gateway enforced**: `PhysicsService::saveFormula()` canonicalizes prose delimiters and strips equation HTML tags before committing to shards or MariaDB.
 - [x] **Frontend Formatter modularized**: `public/js/math_prose_formatter.js` created and loaded across the Equation Explainer, Formula Inspector, and Graph Tooltips.

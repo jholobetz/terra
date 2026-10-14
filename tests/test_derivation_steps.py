@@ -5,14 +5,13 @@ Validates the schema, syntax, delimiter integrity, and step ordering
 of Step-by-Step Derivation Accordions across the 256 formula shards.
 """
 
-import glob
 import json
 import os
 import pytest
 from jsonschema import Draft7Validator
+from tests.conftest import get_cached_shard_dicts
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FORMULAS_DIR = os.path.join(PROJECT_ROOT, "app", "config", "content", "formulas")
 SCHEMA_PATH = os.path.join(PROJECT_ROOT, "app", "config", "formula.schema.json")
 
 
@@ -20,12 +19,6 @@ def load_formula_schema():
     assert os.path.exists(SCHEMA_PATH), f"Missing schema at {SCHEMA_PATH}"
     with open(SCHEMA_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
-
-
-def get_all_shards():
-    shards = glob.glob(os.path.join(FORMULAS_DIR, "*", "*.json"))
-    shards.extend(glob.glob(os.path.join(FORMULAS_DIR, "*.json")))
-    return shards
 
 
 def test_schema_defines_derivation_steps():
@@ -142,9 +135,7 @@ def test_canonical_formulas_have_derivation_steps():
         "existence-bias-cd89ac90"
     ]
     found = {}
-    for shard in get_all_shards():
-        with open(shard, "r", encoding="utf-8") as f:
-            data = json.load(f)
+    for _, data in get_cached_shard_dicts():
         for cid in canonical_ids:
             if cid in data:
                 found[cid] = data[cid]
@@ -169,9 +160,7 @@ def test_all_derivation_steps_schema_and_tex_integrity():
     validator = Draft7Validator(schema)
 
     total_with_steps = 0
-    for shard in get_all_shards():
-        with open(shard, "r", encoding="utf-8") as f:
-            data = json.load(f)
+    for shard, data in get_cached_shard_dicts():
         for err in validator.iter_errors(data):
             pytest.fail(f"Schema violation in {os.path.basename(shard)}: {err.message}")
 

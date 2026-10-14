@@ -106,21 +106,14 @@ def test_inspector_js_handles_cas_badge():
 
 
 def test_sitewide_shards_tagged_with_cas_validation():
-    shards_dir = os.path.join(PROJECT_ROOT, "app", "config", "content", "formulas")
-    total_formulas = 0
-    tagged_count = 0
-
-    for i in range(256):
-        h = f"{i:02x}"
-        shard_path = os.path.join(shards_dir, h, f"shard_{h}.json")
-        assert os.path.exists(shard_path), f"Missing formula shard {shard_path}"
-        with open(shard_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        for _, entry in data.items():
-            total_formulas += 1
-            cas_meta = entry.get("cas_validation")
-            if isinstance(cas_meta, dict) and cas_meta.get("is_homogeneous") is True:
-                tagged_count += 1
+    from tests.conftest import get_cached_formulas
+    formulas = get_cached_formulas()
+    total_formulas = len(formulas)
+    tagged_count = sum(
+        1 for entry in formulas
+        if isinstance(entry.get("cas_validation"), dict)
+        and entry["cas_validation"].get("is_homogeneous") is True
+    )
 
     assert total_formulas >= 14600, f"Full sitewide catalog must contain >= 14,600 formulas (found {total_formulas})"
     assert tagged_count >= 9000, f"At least 9,000 formulas must be tagged with cas_validation in Git shards (found {tagged_count})"

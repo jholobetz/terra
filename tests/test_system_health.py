@@ -160,3 +160,39 @@ def test_objective_subtopic_retains_density_target_60():
     s = score_subtopic("tensor-math", node(content="<p>symmetry and tensor operator</p>"), category="relativity")
     assert s["is_subjective"] is False
     assert s["density_target"] == 60
+
+
+# -----------------------------------------------------------------------------
+# Reference Data & Manifold Closure Alignment Gates
+# -----------------------------------------------------------------------------
+
+def test_physical_constants_alignment():
+    """Verify that all physical constants in constants.json are aligned with CODATA 2022."""
+    import os
+    from scripts.maintenance.nist_constants_verifier import audit_constants
+    assert os.path.exists("app/config/content/constants.json")
+    assert os.path.exists("app/config/ref_data/codata_2022.json")
+    assert audit_constants() is True
+
+
+def test_particle_properties_alignment():
+    """Verify that all particle properties in particles.json are aligned with PDG 2024."""
+    import os
+    from scripts.maintenance.pdg_particle_verifier import audit_particles
+    assert os.path.exists("app/config/content/particles.json")
+    assert os.path.exists("app/config/ref_data/pdg_2024.json")
+    assert audit_particles() is True
+
+
+def test_lib_data_unmapped_prose_equations():
+    """Verify 100% prose equation manifold closure in lib/data/unmapped_prose_equations.json."""
+    import json
+    import os
+    data_path = os.path.join("lib", "data", "unmapped_prose_equations.json")
+    assert os.path.exists(data_path), "lib/data/unmapped_prose_equations.json must exist"
+    with open(data_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    assert "total_unique" in data
+    assert "closure_percent" in data
+    assert data["unmapped_equations_count"] == 0
+

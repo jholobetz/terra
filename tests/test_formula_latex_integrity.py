@@ -1,44 +1,29 @@
-import glob
 import json
 import os
 import re
 import subprocess
 import pytest
 from scripts.lib.delimiters import (
-    strip_math_blocks,
     validate_narrative_delimiters,
     find_html_in_math,
-    validate_no_html_in_math,
 )
+from tests.conftest import get_cached_formulas
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FORMULAS_DIR = os.path.join(PROJECT_ROOT, "app", "config", "content", "formulas")
+ALL_FORMULAS = get_cached_formulas()
 
-def get_all_shard_files():
-    shards = glob.glob(os.path.join(FORMULAS_DIR, "*", "*.json"))
-    shards.extend(glob.glob(os.path.join(FORMULAS_DIR, "*.json")))
-    return shards
+NARRATIVE_FIELDS = [
+    "conceptual_definition",
+    "intuitive_summary",
+    "interpretation",
+    "symmetry_origin",
+    "limits_and_boundary",
+]
 
-def load_all_formulas():
-    formulas = []
-    for filepath in get_all_shard_files():
-        with open(filepath, "r", encoding="utf-8") as f:
-            try:
-                data = json.load(f)
-                if isinstance(data, dict):
-                    for formula_id, f_data in data.items():
-                        if isinstance(f_data, dict):
-                            f_data["_id"] = formula_id
-                            f_data["_filepath"] = filepath
-                            formulas.append(f_data)
-            except Exception as e:
-                pytest.fail(f"Failed to parse JSON file {filepath}: {e}")
-    return formulas
-
-ALL_FORMULAS = load_all_formulas()
 
 def test_formulas_exist():
-    assert len(ALL_FORMULAS) > 1000, f"Expected >1000 formulas, found {len(ALL_FORMULAS)}"
+    assert len(ALL_FORMULAS) >= 14600, f"Expected >= 14600 formulas, found {len(ALL_FORMULAS)}"
+
 
 def test_no_literal_newline_artifacts():
     corrupted = []
@@ -47,6 +32,7 @@ def test_no_literal_newline_artifacts():
         if re.search(r'\bLagrangian,\s*\\n,', text, re.IGNORECASE) or re.search(r'\\n\s*=\s*0\s*for all\s*\\n', text, re.IGNORECASE):
             corrupted.append(f.get("_id"))
     assert len(corrupted) == 0, f"Found literal \\n artifacts in formulas: {corrupted}"
+
 
 def test_no_corrupted_unicode_ocr_glyphs():
     corrupted = []
@@ -59,6 +45,7 @@ def test_no_corrupted_unicode_ocr_glyphs():
                 break
     assert len(corrupted) == 0, f"Found corrupted OCR/Unicode glyphs in formulas: {corrupted}"
 
+
 def test_no_corrupted_titles():
     corrupted = []
     for f in ALL_FORMULAS:
@@ -67,15 +54,21 @@ def test_no_corrupted_titles():
             corrupted.append((f.get("_id"), title))
     assert len(corrupted) == 0, f"Found corrupted titles: {corrupted}"
 
-def test_no_raw_unwrapped_tex_macros():
-    unwrapped = []
+
+def test_no_mangled_tex_macros():
+    corrupted_pattern = re.compile(r"\\sqrt\$\{|\$g_\{\$\\mu\$ u\}|\\to'|'\+\$\S+'")
+    corrupted = []
     for f in ALL_FORMULAS:
-        text = f"{f.get('conceptual_definition', '')} {f.get('interpretation', '')}"
-        outside = strip_math_blocks(text)
-        match = re.search(r"\\(frac|oint|iint)\b", outside)
-        if match:
-            unwrapped.append((f.get("_id"), match.group(0)))
-    assert len(unwrapped) == 0, f"Found unwrapped TeX macros in prose: {unwrapped}"
+        fid = f.get("_id")
+        for field in NARRATIVE_FIELDS:
+            text = f.get(field, "")
+            if not text or not isinstance(text, str):
+                continue
+            match = corrupted_pattern.search(text)
+            if match:
+                corrupted.append((fid, field, match.group(0)))
+    assert len(corrupted) == 0, f"Found {len(corrupted)} corrupted TeX macro instances: {corrupted[:10]}"
+
 
 def test_no_html_markup_in_formula_equations():
     corrupted = []

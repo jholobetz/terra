@@ -218,3 +218,42 @@ def test_check_dimensions_expression_and_schwarzschild():
     assert res_eq["is_homogeneous"] is True
 
 
+def test_unified_cas_pipeline_and_symbol_inference():
+    from lib.cas.cas_engine import (
+        latex_to_sympy_str,
+        clean_equation_for_cas,
+        infer_symbol_dimension,
+        check_dimensions,
+        evaluate_formula_invariance
+    )
+
+    # 1. Nested formatting macros, Greek variants, and \dfrac
+    nested = r"\dfrac{\mathrm{d}\mathbf{x}}{\mathrm{d}t} + \varepsilon_0 \varphi"
+    parsed = latex_to_sympy_str(nested)
+    assert "mathbf" not in parsed
+    assert "mathrm" not in parsed
+    assert "epsilon_0" in parsed
+    assert "phi" in parsed
+
+    # 2. Subscript and differential prefix dimension inference in check_dimensions()
+    res_sub = check_dimensions(r"E_k = \frac{1}{2} m_1 v_0^2")
+    assert res_sub["success"] is True
+    assert res_sub["is_homogeneous"] is True
+    assert "Energy" in res_sub["lhs"]["quantity"]
+
+    res_diff = check_dimensions(r"\Delta x \approx v_0 \Delta t")
+    assert res_diff["success"] is True
+    assert res_diff["is_homogeneous"] is True
+    assert "Length" in res_diff["lhs"]["quantity"]
+
+    # 3. Direct formula invariance evaluation from lib.cas.cas_engine
+    inv = evaluate_formula_invariance("test-ke", {
+        "title": "Kinetic Energy",
+        "equation": r"E_k = \frac{1}{2} m v^2"
+    })
+    assert inv["status"] == "HOMOGENEOUS"
+    assert inv["is_homogeneous"] is True
+    assert infer_symbol_dimension("Delta_E") is not None
+    assert "=" in clean_equation_for_cas(r"p \approx m v")
+
+

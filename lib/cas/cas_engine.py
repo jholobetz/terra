@@ -6,10 +6,15 @@ from LaTeX expressions using SymPy with deterministic execution and safety timeo
 """
 
 import sys
+import os
 import json
 import re
 import signal
 from typing import Dict, Any, Optional
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 import sympy
 from sympy.parsing.sympy_parser import (
@@ -22,10 +27,16 @@ from sympy.physics.units import (
 )
 from sympy.physics.units.systems.si import dimsys_SI
 
+from lib.cas.unit_parser import (
+    parse_unit_string,
+    parse_unit_string_natural,
+    get_natural_dimension_power,
+    DIM_NATURAL_ENERGY
+)
+
 
 class TimeoutException(Exception):
     pass
-
 
 
 def timeout_handler(signum, frame):
@@ -35,6 +46,7 @@ def timeout_handler(signum, frame):
 def latex_to_sympy_str(latex: str) -> str:
     """
     Sanitizes and converts LaTeX math strings into SymPy-parseable syntax.
+    Supports nested formatting macros, Greek letter variants, and nested fractions.
     """
     s = latex.strip()
     # Strip delimiters
@@ -43,11 +55,28 @@ def latex_to_sympy_str(latex: str) -> str:
     s = re.sub(r"^\$|\$$", "", s)
     s = re.sub(r"^\\\(|\\\)$", "", s)
 
+    # Normalize Greek variants before general parsing
+    s = re.sub(r"\\varepsilon(?![a-zA-Z])", r"\\epsilon", s)
+    s = re.sub(r"\\varphi(?![a-zA-Z])", r"\\phi", s)
+    s = re.sub(r"\\vartheta(?![a-zA-Z])", r"\\theta", s)
+    s = re.sub(r"\\varrho(?![a-zA-Z])", r"\\rho", s)
+
+    # Normalize \dfrac and \tfrac to \frac
+    s = re.sub(r"\\(d|t)frac\b", r"\\frac", s)
+
     # Strip operator sums, products, and integrals (with indices/limits) for CAS algebraic evaluation
     s = re.sub(r"\\(?:sum|prod|int|iint|iiint|oint)(?:(?:_\{((?:[^{}]|\{[^{}]*\})*)\}|_[0-9a-zA-Z])|(?:\^\{((?:[^{}]|\{[^{}]*\})*)\}|\^[0-9a-zA-Z]))*", " ", s)
 
-    # Strip formatting macros
-    s = re.sub(r"\\(mathbf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|underline)\{([^}]+)\}", r"\2", s)
+    # Iteratively strip formatting and decorator macros (handles nested macros like \mathrm{d}\mathbf{x})
+    for _ in range(4):
+        next_s = re.sub(
+            r"\\(mathbf|mathrm|mathsf|text|boldsymbol|mathcal|vec|hat|bar|tilde|underline)\{([^{}]+)\}",
+            r"\2",
+            s
+        )
+        if next_s == s:
+            break
+        s = next_s
     s = re.sub(r"\\cssId\{[^}]+\}\{([^}]+)\}", r"\1", s)
 
     # Fractions: \frac{A}{B} -> ((A)/(B))
@@ -548,6 +577,519 @@ def _identify_physical_quantity(dim_powers: Dict[str, Any]) -> str:
     return "Composite Physical Invariant"
 
 
+RESERVED_MATH_TOKENS = {
+    "sqrt", "sin", "cos", "tan", "exp", "log", "ln", "sinh", "cosh", "tanh",
+    "pi", "E", "I", "abs", "Abs", "diff", "Derivative"
+}
+
+
+def clean_equation_for_cas(latex: str) -> str:
+    """
+    Strips non-algebraic annotations, conditional clauses, and conjunctions from raw equation strings.
+    """
+    s = latex.strip()
+
+    # Strip display delimiters
+    s = re.sub(r"^\\\[|\\\]$", "", s)
+    s = re.sub(r"^\$\$|\$\$$", "", s)
+    s = re.sub(r"^\$|\$$", "", s)
+    s = re.sub(r"^\\\(|\\\)$", "", s)
+
+    # Strip trailing text clauses (e.g. \quad (\text{Fermi Energy}), \text{where } ...)
+    s = re.sub(r"\\quad\s*\\text\{[^}]+\}", "", s)
+    s = re.sub(r"\\quad\s*\([^)]*\)", "", s)
+    s = re.sub(r"\\text\{where\s+[^}]+\}", "", s)
+    s = re.sub(r"\\text\{for\s+[^}]+\}", "", s)
+
+    # Handle conjunctions: if \iff or \implies is present, take the primary right-hand condition or main equality
+    if r"\iff" in s:
+        parts = s.split(r"\iff")
+        s = parts[1].strip() if "=" in parts[1] else parts[0].strip()
+    elif r"\implies" in s:
+        parts = s.split(r"\implies")
+        s = parts[1].strip() if "=" in parts[1] else parts[0].strip()
+
+    # Normalize relations for dimensional comparison
+    s = re.sub(r"\\approx|\\equiv|\\sim|\\propto|\\geq|\\leq|\\ge(?![a-zA-Z])|\\le(?![a-zA-Z])|>|<", "=", s)
+
+    # Strip complex conjugation and hermitian adjoint operators (do not change physical dimensions):
+    s = re.sub(r"\^\{?\*\}?", "", s)
+    s = re.sub(r"\^\{?\\dagger\}?", "", s)
+    s = re.sub(r"\\dagger", "", s)
+
+    # Normalize arcseconds / double primes: 1'' -> 1, '' -> _dprime
+    s = re.sub(r"([0-9]+(?:\.[0-9]+)?)\s*\'\'", r"\1", s)
+    s = re.sub(r"\'\'", "_dprime", s)
+
+    # Normalize prime notation: u' -> u_prime, x' -> x_prime, r' -> r_prime
+    s = re.sub(r"([a-zA-Z0-9_]+)\'", r"\1_prime", s)
+
+    # Normalize repeated integrals: \int \int -> \int
+    s = re.sub(r"\\int\s*\\int\s*\\int", r"\\int", s)
+    s = re.sub(r"\\int\s*\\int", r"\\int", s)
+
+    # Normalize tensor mixed indices: R^\rho_{\sigma\mu\nu} -> R_rhosigmamunu, F^a_{\mu\nu} -> F_amunu
+    s = re.sub(r"\b([RTFGC]|\\Gamma)\^\{?([a-zA-Z])\}?_\{?([a-zA-Z]+)\}?", r"\1_\2\3", s)
+
+    # Strip error margins: 2.73 \pm 0.02 -> 2.73
+    s = re.sub(r"\\pm\s*[0-9]+(?:\.[0-9]+)?", "", s)
+
+    # Normalize differentials and differences: \Delta S -> Delta_S, d\mathbf{x} -> dx, \mathrm{d}\mathbf{l} -> dl
+    s = re.sub(r"\\Delta\s*([a-zA-Z])", r"Delta_\1", s)
+    s = re.sub(r"\\(?:mathrm\{d\}|mathrm\{D\}|d)\s*(?:\\mathbf|\\boldsymbol|\\vec)?\{?([a-zA-Z])\}?", r"d\1", s)
+
+    # Normalize time derivatives: \ddot{x} -> (x / (t**2)), \dot{M} -> (M / t)
+    s = re.sub(r"\\ddot\{?([a-zA-Z])\}?(?:_\{?[a-zA-Z0-9_]+\}?)?", r"(\1 / (t**2))", s)
+    s = re.sub(r"\\dot\{?([a-zA-Z])\}?(?:_\{?[a-zA-Z0-9_]+\}?)?", r"(\1 / t)", s)
+
+    # Normalize solar/astronomical subscript symbols: M_\odot -> M_sun
+    s = re.sub(r"([MRL])_\{?\\odot\}?", r"\1_sun", s)
+
+    # Normalize 4D volume elements: d^4x -> d4x
+    s = re.sub(r"d\^4\s*(?:\\mathbf\{x\}|x)", "d4x", s)
+
+    # Normalize partial derivatives and vector calculus operators to spatial/temporal derivatives:
+    s = re.sub(r"\\frac\{\\partial\s*(?:\\mathbf\{([a-zA-Z])\}|([a-zA-Z]))\}\{\\partial\s*([a-zA-Z])\}", r"(\1\2 / \3)", s)
+
+    # Normalize vector symbols for fields: \mathbf{E} -> E_field, \mathbf{J} -> J_current, \mathbf{B} -> B
+    s = re.sub(r"\\(?:mathbf|boldsymbol|vec)\{E\}", "E_field", s)
+    s = re.sub(r"\\(?:mathbf|boldsymbol|vec)\{J\}", "J_current", s)
+    s = re.sub(r"\\(?:mathbf|boldsymbol|vec)\{B\}", "B", s)
+
+    # Normalize vector differential operators (div, grad, curl, laplacian):
+    s = re.sub(r"\\nabla\^2\s*(?:\\mathbf\{([a-zA-Z])\}|([a-zA-Z])|\\Phi|\\phi)", r"(\1\2Phi / (L**2))", s)
+    s = re.sub(r"\\nabla\s*\\times\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / L)", s)
+    s = re.sub(r"\\nabla\s*\\cdot\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / L)", s)
+    s = re.sub(r"\\nabla\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / L)", s)
+
+    # Normalize quantum expectation values:
+    s = re.sub(r"\\langle\s*\\sigma\s*v\s*\\rangle", "(sigma * v)", s)
+    s = re.sub(r"\\langle\s*([a-zA-Z0-9_]+)\s*\\rangle", r"(\1)", s)
+    # Inner products of discrete/normalized states: \langle n | m \rangle -> 1
+    s = re.sub(r"\\langle\s*[^{}|]+\s*\|\s*[^{}|]+\s*\\rangle", " 1 ", s)
+    if not re.search(r"\\langle[^|]+\|[^|]+\|[^|]+\\rangle", s):
+        s = re.sub(r"\|[a-zA-Z0-9_\s\(\)\^\{\}\*]+\\rangle", " 1 ", s)
+        s = re.sub(r"\\langle[a-zA-Z0-9_\s\(\)\^\{\}\*]+\|", " 1 ", s)
+
+    # Normalize metric tensor quadratic forms:
+    s = re.sub(r"(?:\\eta|g|\\gamma)(?:_\{?[a-zA-Z0-9_,]+\}?)?\s*([a-zA-Z])\^\{?[a-zA-Z0-9_]\}?\s*([a-zA-Z])\^\{?[a-zA-Z0-9_]\}?", r"(\1 * \2)", s)
+    s = re.sub(r"(?:\\eta|g|\\gamma)(?:_\{?[a-zA-Z0-9_,]+\}?)?\s*\(([^()]+)\)\^\{?[a-zA-Z0-9_]\}?\s*\(([^()]+)\)\^\{?[a-zA-Z0-9_]\}?", r"((\1) * (\2))", s)
+    s = re.sub(r"(?:g|\\gamma|\\eta)(?:_\{?[a-zA-Z0-9_,]+\}?)?\s*d[a-zA-Z]\^\{?[a-zA-Z0-9_]\}?\s*d[a-zA-Z]\^\{?[a-zA-Z0-9_]\}?", "(dx**2)", s)
+    s = re.sub(r"(?:\\eta|g|h|\\gamma)_\{?\\mu\\nu\}?", " 1 ", s)
+
+    # Normalize common function notations: x(t) -> x, a(t) -> a
+    s = re.sub(r"([a-zA-Z0-9_]+)\s*\([t]\)", r"\1", s)
+
+    # Strip operator bounds containing '=' (e.g. \sum_{i=1}^{3N}) before relational parsing
+    s = re.sub(r"\\(?:sum|prod|int|oint)_\{[^{}]*=[^{}]*\}(?:\^\{[^{}]*\}|\^[0-9a-zA-Z]+)?", " ", s)
+
+    # If multiple top-level '=' exist (e.g. A = B = C), take first two: A = B
+    top_parts = []
+    cur = []
+    depth = 0
+    for ch in s:
+        if ch in "({[":
+            depth += 1
+            cur.append(ch)
+        elif ch in ")}]":
+            if depth > 0:
+                depth -= 1
+            cur.append(ch)
+        elif ch == "=" and depth == 0:
+            top_parts.append("".join(cur))
+            cur = []
+        else:
+            cur.append(ch)
+    top_parts.append("".join(cur))
+
+    if len(top_parts) > 2:
+        s = f"{top_parts[0]} = {top_parts[1]}"
+
+    return s.strip()
+
+
+def infer_symbol_dimension(sym: str, standard_dims: Optional[Dict[str, Any]] = None) -> Optional[Any]:
+    """
+    Infers the physical dimension of an unrecognized symbol through:
+    1. Direct dictionary match.
+    2. Differential/difference prefix stripping (Delta_S -> S, dp -> p, dx -> x, dtau -> tau).
+    3. Subscript/index stripping (E_F -> E, p_x -> p, T_c -> T, m_1 -> m, omega_0 -> omega).
+    4. Numeric suffix stripping (m1 -> m, x0 -> x, v2 -> v).
+    5. Physics keyword aliases (temp -> T, energy -> E, dist -> r).
+    """
+    if standard_dims is None:
+        standard_dims = STANDARD_PHYSICS_DIMENSIONS
+
+    if sym in standard_dims:
+        return standard_dims[sym]
+
+    clean = sym.strip("_")
+    if not clean:
+        return None
+
+    # Step 1: Strip variation / differential prefixes: Delta_*, delta_*, d_*
+    prefix_patterns = [
+        r"^(?:Delta|delta|d|nabla)_+([a-zA-Z0-9_]+)$",
+        r"^d([A-Z][a-zA-Z0-9_]*)$",
+        r"^d([a-z])$"
+    ]
+    for pat in prefix_patterns:
+        m = re.match(pat, clean)
+        if m:
+            base_sym = m.group(1)
+            if base_sym in standard_dims:
+                return standard_dims[base_sym]
+            clean = base_sym
+            break
+
+    # Step 2: Strip subscripts (e.g. E_F -> E, p_x -> p, T_c -> T, m_1 -> m)
+    if "_" in clean:
+        root = clean.split("_")[0]
+        if root in standard_dims:
+            return standard_dims[root]
+
+    # Step 3: Strip numeric suffix (e.g. m1 -> m, x0 -> x, v2 -> v, q1 -> q)
+    m_num = re.match(r"^([a-zA-Z]+)[0-9]+$", clean)
+    if m_num:
+        root = m_num.group(1)
+        if root in standard_dims:
+            return standard_dims[root]
+
+    # Step 4: Common physics abbreviations
+    common_aliases = {
+        "temp": "T", "temperature": "T",
+        "mass": "m",
+        "vel": "v", "velocity": "v", "speed": "v",
+        "freq": "f", "frequency": "f",
+        "energy": "E", "ener": "E",
+        "time": "t",
+        "dist": "r", "distance": "r", "rad": "r", "radius": "r",
+        "len": "L", "length": "L",
+        "press": "P", "pressure": "P",
+        "vol": "Vol", "volume": "Vol",
+        "area": "A",
+        "dens": "rho", "density": "rho",
+        "charge": "q",
+        "accel": "a", "acceleration": "a",
+        "entropy": "S",
+    }
+    lower = clean.lower()
+    if lower in common_aliases:
+        alias_key = common_aliases[lower]
+        if alias_key in standard_dims:
+            return standard_dims[alias_key]
+
+    return None
+
+
+def build_entry_dimensions(
+    entry: Dict[str, Any],
+    natural_units: bool = False,
+    equation_str: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Builds a localized symbol-to-dimension map by prioritizing:
+    1. Formula semantic_variables unit fields.
+    2. STANDARD_PHYSICS_DIMENSIONS lookup.
+    3. Heuristic root and prefix inference.
+    If natural_units is True, dimensions are projected to powers of DIM_NATURAL_ENERGY [E]^d.
+    """
+    if not natural_units:
+        local_dims = dict(STANDARD_PHYSICS_DIMENSIONS)
+        semantic_vars = entry.get("semantic_variables", {})
+        if isinstance(semantic_vars, dict):
+            for raw_sym, var_meta in semantic_vars.items():
+                if isinstance(var_meta, dict):
+                    unit_str = var_meta.get("unit")
+                    if unit_str:
+                        dim_expr = parse_unit_string(unit_str)
+                        if dim_expr is not None:
+                            clean_sym = latex_to_sympy_str(raw_sym).strip()
+                            clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", clean_sym)
+                            if clean_sym:
+                                local_dims[clean_sym] = dim_expr
+
+        candidate_syms = set()
+        if equation_str:
+            candidate_syms.update(re.findall(r"\b[a-zA-Z][a-zA-Z0-9_]*\b", equation_str))
+        if isinstance(semantic_vars, dict):
+            for raw_sym in semantic_vars:
+                clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", latex_to_sympy_str(raw_sym).strip())
+                if clean_sym:
+                    candidate_syms.add(clean_sym)
+
+        for sym in candidate_syms:
+            if sym not in local_dims and sym not in RESERVED_MATH_TOKENS:
+                inferred = infer_symbol_dimension(sym, STANDARD_PHYSICS_DIMENSIONS)
+                if inferred is not None:
+                    local_dims[sym] = inferred
+
+        return local_dims
+    else:
+        local_dims = {}
+        for sym, si_dim in STANDARD_PHYSICS_DIMENSIONS.items():
+            d = get_natural_dimension_power(si_dim)
+            local_dims[sym] = (DIM_NATURAL_ENERGY ** d) if d != 0 else 1
+
+        semantic_vars = entry.get("semantic_variables", {})
+        if isinstance(semantic_vars, dict):
+            for raw_sym, var_meta in semantic_vars.items():
+                if isinstance(var_meta, dict):
+                    unit_str = var_meta.get("unit")
+                    if unit_str:
+                        nat_dim = parse_unit_string_natural(unit_str)
+                        if nat_dim is not None:
+                            clean_sym = latex_to_sympy_str(raw_sym).strip()
+                            clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", clean_sym)
+                            if clean_sym:
+                                local_dims[clean_sym] = nat_dim
+
+        candidate_syms = set()
+        if equation_str:
+            candidate_syms.update(re.findall(r"\b[a-zA-Z][a-zA-Z0-9_]*\b", equation_str))
+        if isinstance(semantic_vars, dict):
+            for raw_sym in semantic_vars:
+                clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", latex_to_sympy_str(raw_sym).strip())
+                if clean_sym:
+                    candidate_syms.add(clean_sym)
+
+        for sym in candidate_syms:
+            if sym not in local_dims and sym not in RESERVED_MATH_TOKENS:
+                inferred_si = infer_symbol_dimension(sym, STANDARD_PHYSICS_DIMENSIONS)
+                if inferred_si is not None:
+                    d = get_natural_dimension_power(inferred_si)
+                    local_dims[sym] = (DIM_NATURAL_ENERGY ** d) if d != 0 else 1
+
+        return local_dims
+
+
+def _evaluate_natural_units(
+    formula_id: str,
+    entry: Dict[str, Any],
+    clean_eq: str,
+    transformations: Any
+) -> Optional[Dict[str, Any]]:
+    """
+    Fallback verification under Natural Units (hbar = c = k_B = 1).
+    All physical quantities project to integer/rational mass-energy dimensions [E]^d.
+    """
+    symbols_dict = build_entry_dimensions(entry, natural_units=True, equation_str=clean_eq)
+    try:
+        if "=" in clean_eq:
+            lhs_latex, rhs_latex = clean_eq.split("=", 1)
+            lhs_str = latex_to_sympy_str(lhs_latex)
+            rhs_str = latex_to_sympy_str(rhs_latex)
+            if not lhs_str.strip() or not rhs_str.strip():
+                return None
+
+            lhs_expr = parse_expr(lhs_str, local_dict=symbols_dict, transformations=transformations)
+            rhs_expr = parse_expr(rhs_str, local_dict=symbols_dict, transformations=transformations)
+
+            d_lhs = get_natural_dimension_power(lhs_expr)
+            d_rhs = get_natural_dimension_power(rhs_expr)
+
+            if rhs_str.strip() == "0" and d_lhs is not None:
+                d_rhs = d_lhs
+            elif lhs_str.strip() == "0" and d_rhs is not None:
+                d_lhs = d_rhs
+
+            if d_lhs is not None and d_rhs is not None and d_lhs == d_rhs:
+                quantity = f"Natural Invariant [E]^{d_lhs}" if d_lhs != 0 else "Dimensionless Invariant (Natural Units)"
+                dim_latex = f"[\\text{{E}}^{{{d_lhs}}}]" if d_lhs != 0 else "[1] \\text{ (Dimensionless)}"
+                return {
+                    "id": formula_id,
+                    "title": entry.get("title", ""),
+                    "raw_equation": entry.get("equation", ""),
+                    "cleaned_equation": clean_eq,
+                    "status": "HOMOGENEOUS",
+                    "is_homogeneous": True,
+                    "framework": "natural_units",
+                    "quantity": quantity,
+                    "dimension_latex": dim_latex,
+                    "natural_power": d_lhs,
+                    "lhs_powers": {"E": d_lhs},
+                    "rhs_powers": {"E": d_rhs}
+                }
+        else:
+            expr_str = latex_to_sympy_str(clean_eq)
+            expr = parse_expr(expr_str, local_dict=symbols_dict, transformations=transformations)
+            d = get_natural_dimension_power(expr)
+            if d is not None:
+                quantity = f"Natural Invariant [E]^{d}" if d != 0 else "Dimensionless Invariant (Natural Units)"
+                dim_latex = f"[\\text{{E}}^{{{d}}}]" if d != 0 else "[1] \\text{ (Dimensionless)}"
+                return {
+                    "id": formula_id,
+                    "title": entry.get("title", ""),
+                    "raw_equation": entry.get("equation", ""),
+                    "status": "DIMENSIONAL_EXPRESSION",
+                    "is_homogeneous": True,
+                    "framework": "natural_units",
+                    "quantity": quantity,
+                    "dimension_latex": dim_latex,
+                    "powers": {"E": d}
+                }
+    except Exception:
+        pass
+    return None
+
+
+def evaluate_formula_invariance(formula_id: str, entry: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Evaluates dimensional homogeneity and algebraic consistency for a single formula.
+    First attempts strict SI verification, falling back to Natural Units (hbar=c=1).
+    """
+    raw_equation = entry.get("equation", "")
+    if not raw_equation:
+        return {
+            "id": formula_id,
+            "status": "NO_EQUATION",
+            "is_homogeneous": False,
+            "error": "Empty equation string"
+        }
+
+    clean_eq = clean_equation_for_cas(raw_equation)
+    symbols_dict = build_entry_dimensions(entry, natural_units=False, equation_str=clean_eq)
+    transformations = standard_transformations + (implicit_multiplication_application,)
+
+    if re.search(r"\\langle[^|]+\|[^|]+\|[^|]+\\rangle", clean_eq):
+        return {
+            "id": formula_id,
+            "title": entry.get("title", ""),
+            "raw_equation": raw_equation,
+            "status": "OPERATOR_OR_TENSOR",
+            "is_homogeneous": None,
+            "note": "Differential operator, tensor index, or bra-ket formulation"
+        }
+
+    try:
+        if "=" in clean_eq:
+            lhs_latex, rhs_latex = clean_eq.split("=", 1)
+            lhs_str = latex_to_sympy_str(lhs_latex)
+            rhs_str = latex_to_sympy_str(rhs_latex)
+
+            if not lhs_str.strip() or not rhs_str.strip():
+                return {
+                    "id": formula_id,
+                    "title": entry.get("title", ""),
+                    "raw_equation": raw_equation,
+                    "status": "PARSE_SKIPPED",
+                    "is_homogeneous": False,
+                    "error": "Empty LHS or RHS after sanitization"
+                }
+
+            lhs_expr = parse_expr(lhs_str, local_dict=symbols_dict, transformations=transformations)
+            rhs_expr = parse_expr(rhs_str, local_dict=symbols_dict, transformations=transformations)
+
+            lhs_deps = dimsys_SI.get_dimensional_dependencies(lhs_expr)
+            rhs_deps = dimsys_SI.get_dimensional_dependencies(rhs_expr)
+
+            lhs_powers = _extract_dim_powers(lhs_deps)
+            rhs_powers = _extract_dim_powers(rhs_deps)
+
+            is_zero_rhs = (rhs_str.strip() == "0" or rhs_expr == 0)
+            is_zero_lhs = (lhs_str.strip() == "0" or lhs_expr == 0)
+
+            if is_zero_rhs:
+                is_homo = True
+                rhs_powers = dict(lhs_powers)
+                quantity = _identify_physical_quantity(lhs_powers)
+            elif is_zero_lhs:
+                is_homo = True
+                lhs_powers = dict(rhs_powers)
+                quantity = _identify_physical_quantity(rhs_powers)
+            else:
+                is_homo = (lhs_powers == rhs_powers)
+                quantity = _identify_physical_quantity(lhs_powers)
+
+            if is_homo:
+                return {
+                    "id": formula_id,
+                    "title": entry.get("title", ""),
+                    "raw_equation": raw_equation,
+                    "cleaned_equation": clean_eq,
+                    "status": "HOMOGENEOUS",
+                    "is_homogeneous": True,
+                    "framework": "SI",
+                    "quantity": quantity,
+                    "dimension_latex": _format_dim_latex(lhs_powers),
+                    "lhs_powers": lhs_powers,
+                    "rhs_powers": rhs_powers
+                }
+
+            sem_vars = entry.get("semantic_variables", {})
+            has_conflicting_si_units = False
+            if isinstance(sem_vars, dict) and len(sem_vars) >= 2:
+                units = [v.get("unit") for v in sem_vars.values() if isinstance(v, dict) and v.get("unit")]
+                if any(u in ("J", "kg*m/s", "kg⋅m/s", "N", "W", "Pa") for u in units) and not any(u and ("eV" in u or "GeV" in u or "natural" in u.lower()) for u in units):
+                    si_dims_seen = set()
+                    for u in units:
+                        sd = parse_unit_string(u)
+                        if sd is not None and sd != 1:
+                            si_dims_seen.add(str(sd))
+                    if len(si_dims_seen) >= 2:
+                        has_conflicting_si_units = True
+
+            if not has_conflicting_si_units:
+                nat_result = _evaluate_natural_units(formula_id, entry, clean_eq, transformations)
+                if nat_result and nat_result.get("is_homogeneous"):
+                    return nat_result
+
+            return {
+                "id": formula_id,
+                "title": entry.get("title", ""),
+                "raw_equation": raw_equation,
+                "cleaned_equation": clean_eq,
+                "status": "INHOMOGENEOUS",
+                "is_homogeneous": False,
+                "framework": "SI",
+                "quantity": quantity,
+                "dimension_latex": _format_dim_latex(lhs_powers),
+                "lhs_powers": lhs_powers,
+                "rhs_powers": rhs_powers
+            }
+        else:
+            expr_str = latex_to_sympy_str(clean_eq)
+            expr = parse_expr(expr_str, local_dict=symbols_dict, transformations=transformations)
+            deps = dimsys_SI.get_dimensional_dependencies(expr)
+            powers = _extract_dim_powers(deps)
+            quantity = _identify_physical_quantity(powers)
+
+            return {
+                "id": formula_id,
+                "title": entry.get("title", ""),
+                "raw_equation": raw_equation,
+                "status": "DIMENSIONAL_EXPRESSION",
+                "is_homogeneous": True,
+                "framework": "SI",
+                "quantity": quantity,
+                "dimension_latex": _format_dim_latex(powers),
+                "powers": powers
+            }
+    except Exception as e:
+        nat_result = _evaluate_natural_units(formula_id, entry, clean_eq, transformations)
+        if nat_result and nat_result.get("is_homogeneous"):
+            return nat_result
+
+        if re.search(r"\\langle|\\rangle|\|[a-zA-Z0-9\s]+\\rangle|\\nabla|\\partial_\{\\mu\}|\^\\mu|\^\\nu|_\{\\mu\\nu\}|\\dagger", clean_eq):
+            return {
+                "id": formula_id,
+                "title": entry.get("title", ""),
+                "raw_equation": raw_equation,
+                "status": "OPERATOR_OR_TENSOR",
+                "is_homogeneous": None,
+                "note": "Differential operator, tensor index, or bra-ket formulation"
+            }
+
+        return {
+            "id": formula_id,
+            "title": entry.get("title", ""),
+            "raw_equation": raw_equation,
+            "status": "PARSE_ERROR",
+            "is_homogeneous": False,
+            "error": str(e)
+        }
+
+
 def check_dimensions(
     latex: str,
     custom_vars: Optional[Dict[str, str]] = None
@@ -558,8 +1100,17 @@ def check_dimensions(
     - Dimension name (e.g. Energy, Force, Velocity, Length, Dimensionless)
     - If equation has '=', checks dimensional homogeneity between LHS and RHS
     """
-    clean_latex = latex.strip()
+    clean_latex = clean_equation_for_cas(latex)
     symbols_dict = dict(STANDARD_PHYSICS_DIMENSIONS)
+
+    # Infer dimensions for subscripted/indexed/prefixed variables (e.g. E_k, v_0, m_1, Delta_x)
+    sympy_preview = latex_to_sympy_str(clean_latex)
+    for tok in set(re.findall(r"\b[a-zA-Z][a-zA-Z0-9_]*\b", sympy_preview)):
+        if tok not in symbols_dict and tok not in RESERVED_MATH_TOKENS:
+            inferred = infer_symbol_dimension(tok, STANDARD_PHYSICS_DIMENSIONS)
+            if inferred is not None:
+                symbols_dict[tok] = inferred
+
     if custom_vars:
         for k, v in custom_vars.items():
             try:

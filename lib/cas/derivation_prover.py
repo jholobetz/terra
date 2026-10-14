@@ -14,14 +14,12 @@ from lib.cas.cas_engine import (
     latex_to_sympy_str,
     _extract_dim_powers,
     _format_dim_latex,
-    _identify_physical_quantity
-)
-from lib.cas.unit_parser import parse_unit_string
-from scripts.batch_cas_prover import (
+    _identify_physical_quantity,
     clean_equation_for_cas,
     build_entry_dimensions,
     evaluate_formula_invariance
 )
+from lib.cas.unit_parser import parse_unit_string
 
 
 def normalize_math_string(s: str) -> str:

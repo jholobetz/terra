@@ -105,12 +105,12 @@ def test_verify_derivation_chain_synthetic():
 
 
 def test_run_derivation_audit_full_catalog():
-    # Audit all 102 verified proofs sitewide
+    # Audit all 103 verified proofs sitewide
     summary = run_derivation_audit()
     meta = summary["metadata"]
     assert meta["total_proofs"] >= 102
     assert meta["consecutive_count"] == meta["total_proofs"]  # 100% of proofs must have strictly consecutive step numbering
-    assert meta["certified_count"] >= 70    # High confidence baseline certification
-    assert meta["terminated_count"] >= 70
-    assert meta["elapsed_seconds"] < 5.0    # Sub-5-second execution
+    assert meta["certified_count"] == meta["total_proofs"]    # 100% multi-step derivation chain certification
+    assert meta["terminated_count"] == meta["total_proofs"]
+    assert meta["elapsed_seconds"] < 10.0   # Fast execution (with headroom for 2-vCPU CI runners)
     assert len(summary["derivation_type_distribution"]) >= 10

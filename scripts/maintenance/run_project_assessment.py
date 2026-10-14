@@ -510,7 +510,25 @@ def audit_roadmap_realization(heal_hashes: bool = False):
     }
 
     roadmap["phase_4"] = {
-        "title": "Phase 4: Project Terra Multi-Science",
+        "title": "Phase 4: Next Horizon (4.1)",
+        "status": "UNDETERMINED",
+        "progress_pct": 0,
+        "items": [
+            ("4.1 Undetermined", "Undetermined at this time", False),
+        ]
+    }
+
+    roadmap["phase_5"] = {
+        "title": "Phase 5: OPS 2.0 Upgrade (5.1)",
+        "status": "PLANNED",
+        "progress_pct": 0,
+        "items": [
+            ("5.1 OPS 2.0 Upgrade", "Qualitative Rubric & Referee Panel (docs/OPS 2.0)", False),
+        ]
+    }
+
+    roadmap["phase_6"] = {
+        "title": "Phase 6: Project Terra Multi-Science (6.1)",
         "status": "STRATEGIC_HORIZON",
         "progress_pct": 0,
         "items": [

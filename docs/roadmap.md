@@ -46,15 +46,25 @@ flowchart TD
         P3C["Unified 5-Stage Formula Ingestion Pipeline"]
     end
 
-    subgraph Phase4["Phase 4: Project Terra Expansion (Flagship Scale)"]
-        P4A["Chemistry Lab Manifold"]
-        P4B["Mathematics Lab Manifold"]
-        P4C["Cross-Domain Scientific Ontology"]
+    subgraph Phase4["Phase 4: Next Horizon (Undetermined)"]
+        P4A["4.1 Undetermined at This Time"]
+    end
+
+    subgraph Phase5["Phase 5: OPS 2.0 Upgrade"]
+        P5A["5.1 OPS 2.0 Qualitative Rubric & Referee Panel"]
+    end
+
+    subgraph Phase6["Phase 6: Project Terra Expansion (Flagship Scale)"]
+        P6A["6.1 Chemistry Lab Manifold"]
+        P6B["Mathematics Lab Manifold"]
+        P6C["Cross-Domain Scientific Ontology"]
     end
 
     Phase1 --> Phase2
     Phase2 --> Phase3
     Phase3 --> Phase4
+    Phase4 --> Phase5
+    Phase5 --> Phase6
 ```
 
 ---
@@ -204,7 +214,19 @@ flowchart TD
 
 ---
 
-## 6. Phase 4: Project Terra Multi-Science Expansion
+## 6. Phase 4: Next Horizon (4.1)
+
+* **4.1**: Undetermined at this time.
+
+---
+
+## 7. Phase 5: OPS 2.0 Upgrade (5.1)
+
+* **5.1 OPS 2.0 Qualitative & Linguistic Architecture**: Qualitative 5-point rubric evaluation, deterministic discourse linting (`gqs.py lint`), and multi-agent referee critique (`gqs.py critique`) as specified in [`docs/OPS 2.0 (The Qualitative Rubric).md`](OPS%202.0%20(The%20Qualitative%20Rubric).md).
+
+---
+
+## 8. Phase 6: Project Terra Multi-Science Expansion (6.1)
 
 Physics Lab serves as the flagship domain module for **Project Terra**. With the core architecture (FlightPHP microframework, 256-shard partitioning, dual-engine math rendering, and automated integrity shields) proven at scale:
 
@@ -214,7 +236,7 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 
 ---
 
-## 7. Master Priority & Implementation Ledger
+## 9. Master Priority & Implementation Ledger
 
 | Horizon | ID | Initiative | Key Components / Files | Priority | Status |
 | :--- | :--- | :--- | :--- | :---: | :---: |
@@ -232,4 +254,6 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 3** | 3.1 | Database-wide SymPy CAS Proof Sweep | `cas_engine.py`<br/>`batch_cas_prover.py` | 🔴 **P1** | 🟢 Completed (9,149 Tagged) |
 | **Phase 3** | 3.2 | Unified 5-Stage Ingestion Pipeline | `lib/pipeline/formula_pipeline.py`<br/>`gqs.py`<br/>`generate_gemini_formula.py` | 🔴 **P1** | 🟢 Completed |
 | **Phase 3** | 3.3 | Autonomous Governance Safeguards | `docs/cost_governance.md`<br/>`.agents/skills/` | 🟢 **P3** | 🟢 Guarded |
-| **Phase 4** | 4.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |
+| **Phase 4** | 4.1 | Undetermined at This Time | TBD | ⚪ **TBD** | ⏳ Undetermined |
+| **Phase 5** | 5.1 | OPS 2.0 Upgrade | `docs/OPS 2.0 (The Qualitative Rubric).md`<br/>`gqs.py` | 🟡 **P2** | 📋 Planned |
+| **Phase 6** | 6.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |

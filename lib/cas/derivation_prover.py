@@ -162,6 +162,13 @@ def _evaluate_clause_homogeneity(
         except Exception as e:
             last_err = str(e)
 
+        # Fast-path check if clause is a formal calculus / differential / operator / bra-ket identity
+        if re.search(
+            r"\\langle|\\rangle|\|[a-zA-Z0-9_\\'\s]+\\rangle|\\nabla|\\partial|\\int|\\sum|\\lim|\\delta|\\mathcal\{L\}|\\text\{Tr\}|\\hat\{",
+            clause_latex
+        ):
+            return True, "Operator / Calculus Step", None
+
         # Fallback to full CAS formula evaluator (includes Natural Units & operator/tensor checks)
         sub_entry = dict(entry)
         sub_entry["equation"] = f"{lhs_raw} = {rhs_raw}"
@@ -170,13 +177,6 @@ def _evaluate_clause_homogeneity(
             return True, cas_res.get("quantity"), None
         if cas_res.get("status") == "OPERATOR_OR_TENSOR":
             return True, "Operator / Tensor Identity", None
-
-    # Check if clause is a formal calculus / differential / operator / bra-ket identity
-    if re.search(
-        r"\\langle|\\rangle|\|[a-zA-Z0-9_\\'\s]+\\rangle|\\nabla|\\partial|\\int|\\sum|\\lim|\\delta|\\mathcal\{L\}|\\text\{Tr\}|\\hat\{",
-        clause_latex
-    ):
-        return True, "Operator / Calculus Step", None
 
     return False, None, last_err
 

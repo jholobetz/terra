@@ -729,8 +729,8 @@ def run_batch_prover(
         "results": results if total_formulas <= 100 else results[:100]
     }
 
-    # Save validation report (skip on single target query unless explicitly requested)
-    if not target_id or report_path:
+    # Save validation report (only on full catalog audit or when report_path is explicitly requested)
+    if report_path or (not target_id and not shard_hex and not limit):
         out_path = report_path or DEFAULT_REPORT_PATH
         try:
             os.makedirs(os.path.dirname(out_path), exist_ok=True)

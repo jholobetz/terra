@@ -106,13 +106,23 @@ def test_inspector_js_handles_cas_badge():
 
 
 def test_sitewide_shards_tagged_with_cas_validation():
-    report_path = os.path.join(PROJECT_ROOT, "app", "config", "cas_validation_report.json")
-    assert os.path.exists(report_path), "cas_validation_report.json must exist"
-    with open(report_path, "r", encoding="utf-8") as f:
-        report = json.load(f)
+    shards_dir = os.path.join(PROJECT_ROOT, "app", "config", "content", "formulas")
+    total_formulas = 0
+    tagged_count = 0
 
-    meta = report.get("metadata", {})
-    assert meta.get("total_audited", 0) >= 14600, "Full sitewide CAS sweep must audit >= 14,600 formulas"
-    assert meta.get("homogeneous_count", 0) >= 9000, "At least 9,000 formulas must be certified homogeneous"
-    assert meta.get("tagged_count", 0) >= 9000, "At least 9,000 formulas must be tagged into Git shards"
+    for i in range(256):
+        h = f"{i:02x}"
+        shard_path = os.path.join(shards_dir, h, f"shard_{h}.json")
+        assert os.path.exists(shard_path), f"Missing formula shard {shard_path}"
+        with open(shard_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        for _, entry in data.items():
+            total_formulas += 1
+            cas_meta = entry.get("cas_validation")
+            if isinstance(cas_meta, dict) and cas_meta.get("is_homogeneous") is True:
+                tagged_count += 1
+
+    assert total_formulas >= 14600, f"Full sitewide catalog must contain >= 14,600 formulas (found {total_formulas})"
+    assert tagged_count >= 9000, f"At least 9,000 formulas must be tagged with cas_validation in Git shards (found {tagged_count})"
+
 

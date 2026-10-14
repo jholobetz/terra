@@ -175,7 +175,7 @@ flowchart TD
 * **Current Status**:
   * **Option A (Engine & Lexicon Expansion)**: 🟢 **Completed** (`commit 6aee2609`). Added CGS, astrophysics, particle physics, natural units ($\hbar=c=k_B=1$), and subscript/prefix heuristics.
   * **Option B (Batch Shard Tagging & DB Sync)**: 🟢 **Completed**. Audited all **14,683 formulas** across the 256 Git shards, certifying and tagging **9,149 homogeneous physical invariants (62.3%)** with `cas_validation` metadata, updating `cas_validation_report.json` and `formulas_hash_registry.json` with 0 drift, and enabling Dual-Layer Resilience hydration in `PhysicsService::loadFormula()`.
-  * **Option C (Multi-Step Derivation & Lineage DAG Prover)**: 🟢 **Completed**. Audited all **103 multi-step derivation proofs** (`scripts/cascheck --derivations`), certifying **72 complete proof chains (69.9%)** at $7.1\text{ ms/proof}$.
+  * **Option C (Multi-Step Derivation & Lineage DAG Prover)**: 🟢 **Completed**. Audited all **103 multi-step derivation proofs** (`scripts/cascheck --derivations`), certifying **103 complete proof chains (100.0%)** with **103 / 103 terminal equation matches**.
 
 ### 3.2 Unified 5-Stage Formula Ingestion Pipeline
 * **Goal**: Unify formula ingestion and subtopic graduation under a single, airtight quality gate. Eliminates "tier-2 / unanchored" formulas and guarantees that every formula entering the system—whether via terminal CLI or the Web UI "Auto-Draft" button—is bidirectionally wired into the DAG, verified by CAS, and bridged into encyclopedia subtopics.

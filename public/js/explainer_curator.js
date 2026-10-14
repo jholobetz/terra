@@ -488,6 +488,341 @@ const ExplainerCurator = {
                 }
             });
         });
+    },
+
+    triggerAutoDraft() {
+        const latex = (this.drawerLatexInput ? this.drawerLatexInput.value.trim() : '') || this.currentLatex;
+        if (!latex) {
+            this.showDrawerAlert('Please provide a LaTeX equation to auto-draft.', true);
+            return;
+        }
+
+        const btnAutoDraft = document.getElementById('drawer-btn-autodraft');
+        const originalHtml = btnAutoDraft ? btnAutoDraft.innerHTML : '';
+        if (btnAutoDraft) {
+            btnAutoDraft.disabled = true;
+            btnAutoDraft.style.opacity = '0.7';
+            btnAutoDraft.innerHTML = `<span style="display:inline-block; width:9px; height:9px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:explainer-spin 0.8s linear infinite; margin-right:4px;"></span> Drafting...`;
+        }
+
+        if (!document.getElementById('explainer-spin-style')) {
+            const style = document.createElement('style');
+            style.id = 'explainer-spin-style';
+            style.textContent = `@keyframes explainer-spin { 100% { transform: rotate(360deg); } }`;
+            document.head.appendChild(style);
+        }
+
+        const adminKey = localStorage.getItem('terra_admin_key') || '';
+
+        fetch(`${BASE_URL}/physics/api/define-formula`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Terra-Admin-Key': adminKey
+            },
+            body: JSON.stringify({ latex: latex })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (btnAutoDraft) {
+                btnAutoDraft.disabled = false;
+                btnAutoDraft.style.opacity = '1';
+                btnAutoDraft.innerHTML = originalHtml;
+            }
+
+            if (data.success && data.formula) {
+                const f = data.formula;
+                if (this.drawerFieldTitle) this.drawerFieldTitle.value = f.title || '';
+                if (this.drawerFieldDefinition) this.drawerFieldDefinition.value = f.conceptual_definition || '';
+                if (this.drawerFieldSummary) this.drawerFieldSummary.value = f.intuitive_summary || '';
+                if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = f.interpretation || '';
+                if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = f.symmetry_origin || '';
+                if (this.drawerFieldLimits) this.drawerFieldLimits.value = f.limits_and_boundary || '';
+
+                if (this.conceptualIntroCard) {
+                    const definition = this.wrapTextMathDelimiters(f.conceptual_definition || f.title);
+                    const summary = this.wrapTextMathDelimiters(f.intuitive_summary || f.interpretation || '');
+                    const sourceBadge = f.is_fallback
+                        ? `<span style="font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; background: rgba(234, 179, 8, 0.12); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.28); font-weight: 600; text-transform: none; letter-spacing: normal;">⚠️ Local Heuristic ($0.00)</span>`
+                        : (f.source && f.source.includes('antigravity')
+                            ? `<span style="font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.35); font-weight: 600; text-transform: none; letter-spacing: normal;">🪐 Antigravity Agent ($0.00)</span>`
+                            : `<span style="font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.28); font-weight: 600; text-transform: none; letter-spacing: normal;">⚡ Gemini Free Tier ($0.00)</span>`);
+
+                    this.conceptualIntroCard.style.display = 'flex';
+                    this.conceptualIntroCard.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                                ✦ Explanation (Auto-Draft)
+                            </h4>
+                            ${sourceBadge}
+                        </div>
+                        <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
+                            ${definition}
+                        </div>
+                        ${summary ? `<div class="intuitive-summary" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-muted, #94a3b8); border-left: 2px solid var(--accent-default, #64ffda); padding-left: 12px; font-style: italic; margin-top: 4px;">
+                            ${summary}
+                        </div>` : ''}
+                    `;
+                    this.triggerTypeset([this.conceptualIntroCard]);
+                }
+                if (this.currentFormula) {
+                    this.currentFormula.title = f.title || this.currentFormula.title;
+                    this.currentFormula.conceptual_definition = f.conceptual_definition || '';
+                    this.currentFormula.intuitive_summary = f.intuitive_summary || '';
+                    this.currentFormula.interpretation = f.interpretation || '';
+                    this.currentFormula.symmetry_origin = f.symmetry_origin || '';
+                    this.currentFormula.limits_and_boundary = f.limits_and_boundary || '';
+                }
+
+                if (f.is_fallback) {
+                    this.showDrawerAlert('⚠️ Offline heuristic scaffold populated (AI Studio busy). Review and enrich in Live Preview before saving.', true);
+                } else {
+                    this.showDrawerAlert('✓ Gemini Free Tier draft populated! Review in Live Preview before saving.');
+                }
+                this.updateDrawerLivePreview();
+            } else {
+                const synthesis = this.synthesizeCustomOverview(latex);
+                if (this.drawerFieldTitle) this.drawerFieldTitle.value = this.currentFormula ? this.currentFormula.title : (synthesis.title || 'Custom Physical Relation');
+                if (this.drawerFieldDefinition) this.drawerFieldDefinition.value = synthesis.intro || '';
+                if (this.drawerFieldSummary) this.drawerFieldSummary.value = synthesis.summary || '';
+                if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = synthesis.intro || '';
+                if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = 'Invariance derived from constitutive dynamical equations.';
+                if (this.drawerFieldLimits) this.drawerFieldLimits.value = synthesis.summary || '';
+
+                if (this.conceptualIntroCard) {
+                    const definition = this.wrapTextMathDelimiters(synthesis.intro);
+                    const summary = this.wrapTextMathDelimiters(synthesis.summary);
+                    this.conceptualIntroCard.style.display = 'flex';
+                    this.conceptualIntroCard.innerHTML = `
+                        <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                            ✦ Explanation (Auto-Draft)
+                        </h4>
+                        <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
+                            ${definition}
+                        </div>
+                        <div class="intuitive-summary" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-muted, #94a3b8); border-left: 2px solid var(--accent-default, #64ffda); padding-left: 12px; font-style: italic; margin-top: 4px;">
+                            ${summary}
+                        </div>
+                    `;
+                    this.triggerTypeset([this.conceptualIntroCard]);
+                }
+                if (this.currentFormula) {
+                    this.currentFormula.conceptual_definition = synthesis.intro;
+                    this.currentFormula.intuitive_summary = synthesis.summary;
+                }
+
+                this.showDrawerAlert('✓ Auto-draft synthesized from equation AST. Review before submitting.');
+                this.updateDrawerLivePreview();
+            }
+        })
+        .catch(err => {
+            if (btnAutoDraft) {
+                btnAutoDraft.disabled = false;
+                btnAutoDraft.style.opacity = '1';
+                btnAutoDraft.innerHTML = originalHtml;
+            }
+            const synthesis = this.synthesizeCustomOverview(latex);
+            if (this.drawerFieldTitle) this.drawerFieldTitle.value = this.currentFormula ? this.currentFormula.title : (synthesis.title || 'Custom Physical Relation');
+            if (this.drawerFieldDefinition) this.drawerFieldDefinition.value = synthesis.intro || '';
+            if (this.drawerFieldSummary) this.drawerFieldSummary.value = synthesis.summary || '';
+            if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = synthesis.intro || '';
+            if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = 'Invariance derived from constitutive dynamical equations.';
+            if (this.drawerFieldLimits) this.drawerFieldLimits.value = synthesis.summary || '';
+
+            if (this.conceptualIntroCard) {
+                const definition = this.wrapTextMathDelimiters(synthesis.intro);
+                const summary = this.wrapTextMathDelimiters(synthesis.summary);
+                this.conceptualIntroCard.style.display = 'flex';
+                this.conceptualIntroCard.innerHTML = `
+                    <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+                        ✦ Explanation (Auto-Draft)
+                    </h4>
+                    <div class="conceptual-definition" style="font-size: 1.05rem; line-height: 1.5; color: #f8fafc; font-weight: 500; font-family: 'Space Grotesk', sans-serif;">
+                        ${definition}
+                    </div>
+                    <div class="intuitive-summary" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-muted, #94a3b8); border-left: 2px solid var(--accent-default, #64ffda); padding-left: 12px; font-style: italic; margin-top: 4px;">
+                        ${summary}
+                    </div>
+                `;
+                this.triggerTypeset([this.conceptualIntroCard]);
+            }
+            if (this.currentFormula) {
+                this.currentFormula.conceptual_definition = synthesis.intro;
+                this.currentFormula.intuitive_summary = synthesis.summary;
+            }
+
+            this.showDrawerAlert('✓ Auto-draft synthesized from equation AST.');
+            this.updateDrawerLivePreview();
+        });
+    },
+
+    showActionProgress(percent, msg, isDone = false, isError = false) {
+        const container = document.getElementById('drawer-action-progress-container');
+        const fill = document.getElementById('drawer-progress-bar-fill');
+        const statusMsg = document.getElementById('drawer-progress-status-msg');
+        const percentLabel = document.getElementById('drawer-progress-percent');
+        const statusText = document.getElementById('drawer-progress-status-text');
+
+        if (!container || !fill || !statusMsg || !percentLabel) return;
+
+        container.style.display = 'flex';
+        fill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+        percentLabel.textContent = `${Math.round(percent)}%`;
+        statusMsg.textContent = msg;
+
+        if (isError) {
+            fill.style.background = '#f43f5e';
+            if (statusText) statusText.style.color = '#f43f5e';
+        } else if (isDone) {
+            fill.style.background = '#64ffda';
+            if (statusText) statusText.style.color = '#64ffda';
+        } else {
+            fill.style.background = 'linear-gradient(90deg, #38bdf8, #64ffda)';
+            if (statusText) statusText.style.color = '#38bdf8';
+        }
+    },
+
+    hideActionProgress(delay = 1000) {
+        setTimeout(() => {
+            const container = document.getElementById('drawer-action-progress-container');
+            if (container) {
+                container.style.display = 'none';
+            }
+        }, delay);
+    },
+
+    triggerFixLatex() {
+        const latex = (this.drawerLatexInput ? this.drawerLatexInput.value.trim() : '') || this.currentLatex;
+        if (!latex) {
+            this.showDrawerAlert('Please provide a LaTeX equation to fix.', true);
+            return;
+        }
+
+        const btnFixLatex = document.getElementById('drawer-btn-fixlatex');
+        const originalHtml = btnFixLatex ? btnFixLatex.innerHTML : '';
+        if (btnFixLatex) {
+            btnFixLatex.disabled = true;
+            btnFixLatex.style.opacity = '0.7';
+            btnFixLatex.innerHTML = `<span style="display:inline-block; width:9px; height:9px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:explainer-spin 0.8s linear infinite; margin-right:4px;"></span> Fixing...`;
+        }
+
+        this.showActionProgress(15, 'Validating syntax & searching formula index...');
+
+        const formulaId = this.currentId || (this.currentFormula ? this.currentFormula.id : '') || 'synthesized-custom';
+        const hint = this.drawerHintInput ? this.drawerHintInput.value.trim() : '';
+
+        const payload = {
+            url: window.location.href,
+            formula_id: formulaId,
+            latex: latex,
+            hint: hint
+        };
+
+        const t1 = setTimeout(() => this.showActionProgress(45, 'Sanitizing TeX tokens & structuring narrative...'), 180);
+        const t2 = setTimeout(() => this.showActionProgress(75, 'Updating JSON shard & synchronizing MariaDB...'), 420);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+        const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
+        fetch(`${baseUrl}/physics/api/apply-repair`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal
+        })
+        .then(async res => {
+            clearTimeout(timeoutId);
+            clearTimeout(t1);
+            clearTimeout(t2);
+            let data;
+            try {
+                data = await res.json();
+            } catch (e) {
+                throw new Error(`HTTP ${res.status}: Server returned invalid response.`);
+            }
+            if (!res.ok && data && data.error) {
+                throw new Error(data.error);
+            }
+            return data;
+        })
+        .then(data => {
+            if (btnFixLatex) {
+                btnFixLatex.disabled = false;
+                btnFixLatex.style.opacity = '1';
+                btnFixLatex.innerHTML = originalHtml;
+            }
+
+            if (data.success && data.data && data.data.formula) {
+                this.showActionProgress(100, '✓ Repair complete! MathJax synced.', true, false);
+                this.hideActionProgress(1400);
+
+                const f = data.data.formula;
+                this.currentFormula = f;
+                this.currentId = f.id;
+                this.currentLatex = data.data.clean_equation || f.equation;
+
+                if (this.latexInput) this.latexInput.value = this.currentLatex;
+                if (this.drawerLatexInput) this.drawerLatexInput.value = this.currentLatex;
+                if (this.drawerFieldTitle) this.drawerFieldTitle.value = f.title || '';
+                if (this.drawerFieldDefinition) this.drawerFieldDefinition.value = f.conceptual_definition || '';
+                if (this.drawerFieldSummary) this.drawerFieldSummary.value = f.intuitive_summary || '';
+                if (this.drawerFieldInterpretation) this.drawerFieldInterpretation.value = f.interpretation || '';
+                if (this.drawerFieldSymmetry) this.drawerFieldSymmetry.value = f.symmetry_origin || '';
+                if (this.drawerFieldLimits) this.drawerFieldLimits.value = f.limits_and_boundary || '';
+
+                if (this.drawerFormulaIdLabel) {
+                    this.drawerFormulaIdLabel.textContent = `Formula ID: ${f.id}`;
+                }
+
+                this.renderFormula(f, this.currentSubtopics || []);
+                this.compileMathJax(this.currentLatex);
+                this.updateDrawerLivePreview();
+
+                const targets = [];
+                if (this.mathRenderTarget) targets.push(this.mathRenderTarget);
+                if (this.conceptualIntroCard) targets.push(this.conceptualIntroCard);
+                if (this.aiScenariosList) targets.push(this.aiScenariosList);
+                if (this.drawerPreviewTarget) targets.push(this.drawerPreviewTarget);
+                if (targets.length > 0) {
+                    this.triggerTypeset(targets);
+                }
+
+                this.showDrawerAlert('✓ LaTeX decorrupted, hint applied, and shard/database synchronized!');
+
+                if (window.history && window.history.replaceState) {
+                    const newUrl = window.location.pathname + '?id=' + encodeURIComponent(f.id);
+                    window.history.replaceState(null, '', newUrl);
+                }
+            } else {
+                this.showActionProgress(100, `Error: ${data.error || 'Failed to fix LaTeX.'}`, false, true);
+                this.hideActionProgress(3000);
+                this.showDrawerAlert(data.error || 'Failed to fix LaTeX.', true);
+            }
+        })
+        .catch(err => {
+            clearTimeout(timeoutId);
+            clearTimeout(t1);
+            clearTimeout(t2);
+
+            if (btnFixLatex) {
+                btnFixLatex.disabled = false;
+                btnFixLatex.style.opacity = '1';
+                btnFixLatex.innerHTML = originalHtml;
+            }
+
+            const isTimeout = err.name === 'AbortError';
+            const errorMsg = isTimeout ? 'Request timed out after 20 seconds.' : (err.message || 'Error while running Fix LaTeX.');
+
+            this.showActionProgress(100, errorMsg, false, true);
+            this.hideActionProgress(3000);
+
+            console.error('Fix LaTeX error:', err);
+            this.showDrawerAlert(errorMsg, true);
+        });
     }
 };
 
@@ -496,4 +831,7 @@ if (typeof window !== 'undefined') {
     if (window.EquationExplainer) {
         Object.assign(window.EquationExplainer, ExplainerCurator);
     }
+}
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = ExplainerCurator;
 }

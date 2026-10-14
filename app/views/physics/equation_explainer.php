@@ -808,6 +808,8 @@ window.CURRENT_USER = <?= json_encode($currentUser ?? (object)['role' => 'guest'
 
 <script src="/js/formula_graph.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/formula_graph.js') ?>" defer></script>
 <script src="/js/explainer_dictionary.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/explainer_dictionary.js') ?>" defer></script>
+<script src="/js/explainer_tokenizer.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/explainer_tokenizer.js') ?>" defer></script>
+<script src="/js/explainer_cards.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/explainer_cards.js') ?>" defer></script>
 <script src="/js/explainer_simulations.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/explainer_simulations.js') ?>" defer></script>
 <script src="/js/explainer_curator.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/explainer_curator.js') ?>" defer></script>
 <script src="/js/equation_explainer.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/equation_explainer.js') ?>" defer></script>

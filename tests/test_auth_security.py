@@ -41,9 +41,11 @@ def _eval_auth_scenario(env_vars: dict, server_vars: dict) -> dict:
 
 
 def test_php_syntax_auth_and_controller():
-    """Verifies zero PHP syntax errors in AuthService and all split Controllers."""
+    """Verifies zero PHP syntax errors in AuthService, decomposed Services, and all split Controllers."""
     for rel_path in [
         "app/logic/AuthService.php",
+        "app/logic/LatexSanitizer.php",
+        "app/logic/ShardSyncService.php",
         "app/logic/PhysicsService.php",
         "app/controllers/PhysicsController.php",
         "app/controllers/AdminController.php",
@@ -167,5 +169,46 @@ def test_controller_split_and_cas_ratelimit():
     assert out["r3"] is False
     assert out["has_admin_assess"] is True
     assert out["has_review_apply"] is True
+
+
+def test_service_and_explainer_decomposition():
+    """Verifies LatexSanitizer, ShardSyncService, ExplainerTokenizer, and ExplainerCards decomposition."""
+    php_code = """
+    define('PROJECT_ROOT', getcwd());
+    require 'vendor/autoload.php';
+    require_once 'app/logic/LatexSanitizer.php';
+    require_once 'app/logic/ShardSyncService.php';
+
+    $sanitizer = new \\app\\logic\\LatexSanitizer();
+    $norm1 = $sanitizer->normalizeLatex('\\\\mathbf{F} = m \\\\mathbf{a}');
+    $norm2 = $sanitizer->normalizeLatex('F = a m');
+    $synth = $sanitizer->synthesizeFormulaExplanation('\\\\mathbf{F} = m \\\\mathbf{a}');
+
+    echo json_encode([
+        'commutes' => ($norm1 === $norm2),
+        'synth_title' => $synth['title'] ?? '',
+    ]);
+    """
+    res = subprocess.run(
+        ["php", "-r", php_code],
+        cwd=str(WORKSPACE_ROOT),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    out = json.loads(res.stdout.strip())
+    assert out["commutes"] is True
+    assert "Newton's Second Law" in out["synth_title"]
+
+    # Verify JS decomposition files exist and export expected methods
+    for js_rel, expected_fn in [
+        ("public/js/explainer_tokenizer.js", "extractAllMathTokens("),
+        ("public/js/explainer_cards.js", "renderKnowledgeGraphCard("),
+        ("public/js/explainer_curator.js", "triggerFixLatex("),
+    ]:
+        js_path = WORKSPACE_ROOT / js_rel
+        assert js_path.exists(), f"Missing decomposed JS module: {js_rel}"
+        assert expected_fn in js_path.read_text(encoding="utf-8")
+
 
 

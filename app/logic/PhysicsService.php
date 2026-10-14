@@ -4,9 +4,14 @@ namespace app\logic;
 
 use flight\Engine;
 
+require_once __DIR__ . '/LatexSanitizer.php';
+require_once __DIR__ . '/ShardSyncService.php';
+
 class PhysicsService
 {
     protected Engine $app;
+    private LatexSanitizer $sanitizer;
+    private ShardSyncService $syncService;
     private ?array $physicsContent = null;
     private ?bool $isPreviewMode = null;
     private ?array $formulaAliases = null;
@@ -16,6 +21,8 @@ class PhysicsService
     public function __construct(Engine $app)
     {
         $this->app = $app;
+        $this->sanitizer = new LatexSanitizer();
+        $this->syncService = new ShardSyncService($app, $this);
     }
 
     /**
@@ -31,201 +38,7 @@ class PhysicsService
      */
     public function syncFormulasToDatabase(bool $force = false): array
     {
-        $registryPath = PROJECT_ROOT . '/app/config/formulas_hash_registry.json';
-        $hashRegistry = [];
-
-        if (file_exists($registryPath)) {
-            $rawRegistry = file_get_contents($registryPath);
-            $hashRegistry = json_decode($rawRegistry, true) ?: [];
-        }
-
-        $shardFiles = glob(PROJECT_ROOT . '/app/config/content/formulas/*/shard_*.json') ?: [];
-        sort($shardFiles);
-
-        $shardsUpdated = 0;
-        $formulasSynced = 0;
-        $newRegistry = $hashRegistry;
-        $db = $this->app->db();
-
-        if ($db) {
-            try {
-                $db->runQuery("ALTER TABLE formulas ADD COLUMN derivation_steps JSON AFTER subcomponents;");
-                $force = true;
-            } catch (\Throwable $e) {
-                // Column already exists
-            }
-            try {
-                $db->runQuery("ALTER TABLE formulas ADD COLUMN cas_validation JSON AFTER derivation_steps;");
-                $force = true;
-            } catch (\Throwable $e) {
-                // Column already exists
-            }
-        }
-
-        $upsertWithStepsSql = "
-            INSERT INTO formulas (
-                id, title, equation, conceptual_definition, intuitive_summary,
-                interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
-                parent_formula_id, derivation_type, subcomponents, derivation_steps, cas_validation,
-                constraints, related_formula_ids, status, unit_system
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                title = VALUES(title),
-                equation = VALUES(equation),
-                conceptual_definition = VALUES(conceptual_definition),
-                intuitive_summary = VALUES(intuitive_summary),
-                interpretation = VALUES(interpretation),
-                symmetry_origin = VALUES(symmetry_origin),
-                limits_and_boundary = VALUES(limits_and_boundary),
-                semantic_variables = VALUES(semantic_variables),
-                parent_formula_id = VALUES(parent_formula_id),
-                derivation_type = VALUES(derivation_type),
-                subcomponents = VALUES(subcomponents),
-                derivation_steps = VALUES(derivation_steps),
-                cas_validation = VALUES(cas_validation),
-                constraints = VALUES(constraints),
-                related_formula_ids = VALUES(related_formula_ids),
-                status = VALUES(status),
-                unit_system = VALUES(unit_system)
-        ";
-
-        $upsertFallbackSql = "
-            INSERT INTO formulas (
-                id, title, equation, conceptual_definition, intuitive_summary,
-                interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
-                parent_formula_id, derivation_type, subcomponents,
-                constraints, related_formula_ids, status, unit_system
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                title = VALUES(title),
-                equation = VALUES(equation),
-                conceptual_definition = VALUES(conceptual_definition),
-                intuitive_summary = VALUES(intuitive_summary),
-                interpretation = VALUES(interpretation),
-                symmetry_origin = VALUES(symmetry_origin),
-                limits_and_boundary = VALUES(limits_and_boundary),
-                semantic_variables = VALUES(semantic_variables),
-                parent_formula_id = VALUES(parent_formula_id),
-                derivation_type = VALUES(derivation_type),
-                subcomponents = VALUES(subcomponents),
-                constraints = VALUES(constraints),
-                related_formula_ids = VALUES(related_formula_ids),
-                status = VALUES(status),
-                unit_system = VALUES(unit_system)
-        ";
-
-        foreach ($shardFiles as $filePath) {
-            $relativePath = str_replace(PROJECT_ROOT . '/', '', $filePath);
-            $fileContent = file_get_contents($filePath);
-            $currentHash = hash('sha256', $fileContent);
-
-            if (!$force && isset($hashRegistry[$relativePath]) && $hashRegistry[$relativePath] === $currentHash) {
-                $newRegistry[$relativePath] = $currentHash;
-                continue;
-            }
-
-            $data = json_decode($fileContent, true);
-            if (!is_array($data)) {
-                continue;
-            }
-
-            $shardsUpdated++;
-            $shardSuccess = true;
-            $inTransaction = false;
-
-            try {
-                if ($db && method_exists($db, 'beginTransaction') && !$db->inTransaction()) {
-                    $db->beginTransaction();
-                    $inTransaction = true;
-                }
-
-                foreach ($data as $formulaId => $formula) {
-                    if (!is_array($formula)) {
-                        continue;
-                    }
-
-                    $encodeJsonField = static function ($val): ?string {
-                        if (empty($val)) {
-                            return null;
-                        }
-                        return is_string($val) ? $val : json_encode($val, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-                    };
-
-                    $semanticVars = $encodeJsonField($formula['semantic_variables'] ?? null);
-                    $subcomponents = $encodeJsonField($formula['subcomponents'] ?? null);
-                    $derivationSteps = $encodeJsonField($formula['derivation_steps'] ?? null);
-                    $casValidation = $encodeJsonField($formula['cas_validation'] ?? null);
-                    $constraints = $encodeJsonField($formula['constraints'] ?? null);
-                    $relatedIds = $encodeJsonField($formula['related_formula_ids'] ?? null);
-
-                    try {
-                        $db->runQuery($upsertWithStepsSql, [
-                            $formulaId,
-                            $formula['title'] ?? '',
-                            $formula['equation'] ?? '',
-                            $formula['conceptual_definition'] ?? '',
-                            $formula['intuitive_summary'] ?? '',
-                            $formula['interpretation'] ?? '',
-                            $formula['symmetry_origin'] ?? '',
-                            $formula['limits_and_boundary'] ?? '',
-                            $semanticVars,
-                            $formula['parent_formula_id'] ?? null,
-                            $formula['derivation_type'] ?? null,
-                            $subcomponents,
-                            $derivationSteps,
-                            $casValidation,
-                            $constraints,
-                            $relatedIds,
-                            $formula['status'] ?? 'platinum',
-                            $formula['unit_system'] ?? 'SI'
-                        ]);
-                        $formulasSynced++;
-                    } catch (\Throwable $colErr) {
-                        $db->runQuery($upsertFallbackSql, [
-                            $formulaId,
-                            $formula['title'] ?? '',
-                            $formula['equation'] ?? '',
-                            $formula['conceptual_definition'] ?? '',
-                            $formula['intuitive_summary'] ?? '',
-                            $formula['interpretation'] ?? '',
-                            $formula['symmetry_origin'] ?? '',
-                            $formula['limits_and_boundary'] ?? '',
-                            $semanticVars,
-                            $formula['parent_formula_id'] ?? null,
-                            $formula['derivation_type'] ?? null,
-                            $subcomponents,
-                            $constraints,
-                            $relatedIds,
-                            $formula['status'] ?? 'platinum',
-                            $formula['unit_system'] ?? 'SI'
-                        ]);
-                        $formulasSynced++;
-                    }
-                }
-
-                if ($inTransaction) {
-                    $db->commit();
-                }
-            } catch (\Throwable $shardErr) {
-                $shardSuccess = false;
-                if ($inTransaction && $db && method_exists($db, 'inTransaction') && $db->inTransaction()) {
-                    $db->rollBack();
-                }
-                $this->lastDbError = $shardErr->getMessage();
-            }
-
-            if ($shardSuccess) {
-                $newRegistry[$relativePath] = $currentHash;
-            }
-        }
-
-        file_put_contents($registryPath, json_encode($newRegistry, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-        return [
-            'shards_checked' => count($shardFiles),
-            'shards_changed' => $shardsUpdated,
-            'formulas_synced' => $formulasSynced
-        ];
+        return $this->syncService->syncFormulasToDatabase($force);
     }
 
     /**
@@ -652,42 +465,11 @@ class PhysicsService
 
         // 1. Sanitize equation against HTML tags and formatting leaks
         if (!empty($data['equation']) && is_string($data['equation'])) {
-            $eq = $data['equation'];
-            $eq = preg_replace('/<(?:strong|b)>(.*?)<\/(?:strong|b)>/i', '\\mathbf{$1}', $eq);
-            $eq = preg_replace('/<(?:em|i)>(.*?)<\/(?:em|i)>/i', '\\mathit{$1}', $eq);
-            $eq = strip_tags($eq);
-            $data['equation'] = trim($eq);
+            $data['equation'] = $this->sanitizer->sanitizeEquation($data['equation']);
         }
 
         // 2. Sanitize all prose fields against control collisions and normalize math delimiters
-        $proseFields = ['conceptual_definition', 'intuitive_summary', 'interpretation', 'symmetry_origin', 'limits_and_boundary', 'description'];
-        foreach ($proseFields as $field) {
-            if (!empty($data[$field]) && is_string($data[$field])) {
-                $val = $data[$field];
-                $val = str_replace(["\x08ar{", "\x08\\bar{", "ar{"], '\bar{', $val);
-                $val = str_replace(["\x08eta", "\x08"], ['\beta', ''], $val);
-                $val = str_replace(["\x0crac", "\x0c"], ['\frac', ''], $val);
-                $val = preg_replace('/[\x00-\x08\x0b\x0c\x0e-\x1f]/', '', $val);
-
-                // Clean double backslashes before standard LaTeX macros
-                $val = preg_replace('/\\\\\\\\(mathcal|mathbf|oint|iint|frac|dot|ddot|vec|hat|bar|nabla|partial|sum|int|text|sigma|tau|mu|nu|rho|lambda)/', '\\$1', $val);
-
-                // Clean stray escaped dollars
-                $val = str_replace(['\\$', '\\ $'], '$', $val);
-
-                // Canonicalize inline bracket delimiters \( ... \) to standard $ ... $
-                $val = preg_replace('/\\\\\((.*?)\\\\\)/s', '$$1$', $val);
-
-                // Fix misplaced equals or fraction delimiters
-                $val = preg_replace('/=\$\s*\\\\frac/', '= \\frac', $val);
-                $val = preg_replace('/is\$\s*\\\\frac/', 'is \\frac', $val);
-
-                // Convert literal '\n' before numbered lists or bullet items to actual newlines
-                $val = preg_replace('/\\\\n(?=\s*(?:\d+\.|\*|-))/u', "\n", $val);
-
-                $data[$field] = trim($val);
-            }
-        }
+        $data = $this->sanitizer->sanitizeProseFields($data);
 
         // 2. Determine target JSON shard path
         $hex = substr(md5($fId), 0, 2);
@@ -931,16 +713,7 @@ class PhysicsService
      */
     private function sanitizeFormulaText(array $formula): array
     {
-        $fields = ['interpretation', 'limits_and_boundary', 'symmetry_origin', 'conceptual_definition', 'intuitive_summary'];
-        foreach ($fields as $field) {
-            if (!empty($formula[$field]) && is_string($formula[$field])) {
-                $txt = $formula[$field];
-                $txt = str_replace('\\backslash)', ')', $txt);
-                $txt = str_replace('\\backslash', '\\', $txt);
-                $formula[$field] = $txt;
-            }
-        }
-        return $formula;
+        return $this->sanitizer->sanitizeFormulaText($formula);
     }
 
     /**
@@ -1171,44 +944,7 @@ class PhysicsService
      */
     public function syncIndividualSubtopic(string $slug, array $data): void
     {
-        if (empty($data['title']) || empty($data['content'])) {
-            return;
-        }
-
-        $primaryParent = !empty($data['parents']) ? $data['parents'][0] : '';
-
-        $this->app->db()->runQuery(
-            "INSERT INTO subtopics (slug, parent_topic, title, content, snippet, snippet_svg, hero_math, equations, breakdowns, formula_data, parents, standard, verification) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-             ON DUPLICATE KEY UPDATE 
-                parent_topic = VALUES(parent_topic), 
-                title = VALUES(title), 
-                content = VALUES(content), 
-                snippet = VALUES(snippet),
-                snippet_svg = VALUES(snippet_svg),
-                hero_math = VALUES(hero_math),
-                equations = VALUES(equations),
-                breakdowns = VALUES(breakdowns),
-                formula_data = VALUES(formula_data), 
-                parents = VALUES(parents), 
-                standard = VALUES(standard),
-                verification = VALUES(verification)",
-            [
-                $slug,
-                $primaryParent,
-                $data['title'],
-                $data['content'],
-                $data['snippet'] ?? '',
-                $data['snippet_svg'] ?? '',
-                $data['hero_math'] ?? '',
-                json_encode($data['equations'] ?? []),
-                json_encode($data['breakdowns'] ?? []),
-                json_encode($data['formula_ids'] ?? []),
-                json_encode($data['parents'] ?? []),
-                $data['standard'] ?? 'legacy',
-                !empty($data['verification']) ? json_encode($data['verification']) : null
-            ]
-        );
+        $this->syncService->syncIndividualSubtopic($slug, $data);
     }
 
     /**
@@ -1216,29 +952,7 @@ class PhysicsService
      */
     public function syncIndividualTopic(string $slug, array $data): void
     {
-        $pillars = !empty($data['pillars']) ? json_encode($data['pillars']) : '[]';
-        $bridges = !empty($data['metadata']['bridges']) ? json_encode($data['metadata']['bridges']) : '[]';
-        
-        $this->app->db()->runQuery(
-            "INSERT INTO topics (slug, title, intro, field, density, pillars, bridges) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)
-             ON DUPLICATE KEY UPDATE 
-                title = VALUES(title), 
-                intro = VALUES(intro), 
-                field = VALUES(field), 
-                density = VALUES(density), 
-                pillars = VALUES(pillars), 
-                bridges = VALUES(bridges)",
-            [
-                $slug,
-                $data['title'],
-                $data['metadata']['intro'] ?? '',
-                $data['metadata']['field'] ?? '',
-                $data['metadata']['density'] ?? '',
-                $pillars,
-                $bridges
-            ]
-        );
+        $this->syncService->syncIndividualTopic($slug, $data);
     }
 
     /**
@@ -1249,263 +963,7 @@ class PhysicsService
     {
         $this->loadAllShards();
         $data = $this->getPhysicsContent();
-        $db = $this->app->db();
-        $syncLock = PROJECT_ROOT . '/app/config/.last_sync';
-        $lastSyncTime = file_exists($syncLock) ? filemtime($syncLock) : 0;
-
-        // 1. Auto-provision the database tables if they do not exist
-        $db->runQuery("CREATE TABLE IF NOT EXISTS topics (
-            slug VARCHAR(255) PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            content MEDIUMTEXT,
-            pillars JSON,
-            intro TEXT,
-            bridges JSON,
-            field VARCHAR(255),
-            density VARCHAR(50),
-            equations JSON,
-            breakdowns JSON,
-            formula_data JSON
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-
-        $db->runQuery("CREATE TABLE IF NOT EXISTS subtopics (
-            slug VARCHAR(255) PRIMARY KEY,
-            parent_topic VARCHAR(255),
-            title VARCHAR(255) NOT NULL,
-            content MEDIUMTEXT NOT NULL,
-            snippet TEXT,
-            snippet_svg MEDIUMTEXT,
-            hero_math TEXT,
-            equations JSON,
-            breakdowns JSON,
-            formula_data JSON,
-            parents JSON,
-            standard VARCHAR(50) DEFAULT 'legacy',
-            verification JSON
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-
-        $db->runQuery("CREATE TABLE IF NOT EXISTS formulas (
-            id VARCHAR(255) PRIMARY KEY,
-            parent_formula_id VARCHAR(255),
-            derivation_type VARCHAR(50),
-            constraints JSON,
-            related_formula_ids JSON,
-            subcomponents JSON,
-            derivation_steps JSON,
-            cas_validation JSON,
-            title VARCHAR(255) NOT NULL,
-            equation MEDIUMTEXT NOT NULL,
-            equation_svg MEDIUMTEXT,
-            conceptual_definition TEXT,
-            intuitive_summary TEXT,
-            interpretation TEXT,
-            symmetry_origin TEXT,
-            limits_and_boundary TEXT,
-            semantic_variables JSON,
-            unit_system VARCHAR(50) DEFAULT 'SI',
-            status VARCHAR(50) DEFAULT 'published'
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-
-        try {
-            $db->runQuery("ALTER TABLE formulas ADD COLUMN equation_svg MEDIUMTEXT AFTER equation;");
-        } catch (\Exception $e) {
-            // Column already exists, ignore
-        }
-        try {
-            $db->runQuery("ALTER TABLE formulas ADD COLUMN parent_formula_id VARCHAR(255) AFTER id;");
-        } catch (\Exception $e) {
-            // Column already exists, ignore
-        }
-        try {
-            $db->runQuery("ALTER TABLE formulas ADD COLUMN derivation_type VARCHAR(50) AFTER parent_formula_id;");
-        } catch (\Exception $e) {
-            // Column already exists, ignore
-        }
-        try {
-            $db->runQuery("ALTER TABLE formulas ADD COLUMN constraints JSON AFTER derivation_type;");
-        } catch (\Exception $e) {
-            // Column already exists, ignore
-        }
-        try {
-            $db->runQuery("ALTER TABLE formulas ADD COLUMN related_formula_ids JSON AFTER constraints;");
-        } catch (\Exception $e) {
-            // Column already exists, ignore
-        }
-        try {
-            $db->runQuery("ALTER TABLE formulas ADD COLUMN subcomponents JSON AFTER related_formula_ids;");
-        } catch (\Exception $e) {
-            // Column already exists, ignore
-        }
-        try {
-            $db->runQuery("ALTER TABLE formulas ADD COLUMN derivation_steps JSON AFTER subcomponents;");
-        } catch (\Exception $e) {
-            // Column already exists, ignore
-        }
-        try {
-            $db->runQuery("ALTER TABLE formulas ADD COLUMN cas_validation JSON AFTER derivation_steps;");
-        } catch (\Exception $e) {
-            // Column already exists, ignore
-        }
-
-        // Provision FULLTEXT search indexes
-        try {
-            $db->runQuery("ALTER TABLE subtopics ADD FULLTEXT INDEX ft_subtopics (title, content);");
-        } catch (\Exception $e) {
-            // Index already exists, ignore
-        }
-        try {
-            $db->runQuery("ALTER TABLE formulas ADD FULLTEXT INDEX ft_formulas (title, conceptual_definition, equation);");
-        } catch (\Exception $e) {
-            // Index already exists, ignore
-        }
-
-        // 2. Sync Topics
-        foreach ($data['topics'] ?? [] as $slug => $t) {
-            $db->runQuery("INSERT INTO topics (slug, title, content, pillars, intro, bridges, field, density, equations, breakdowns, formula_data) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE 
-                    title = VALUES(title), content = VALUES(content), pillars = VALUES(pillars), intro = VALUES(intro), 
-                    bridges = VALUES(bridges), field = VALUES(field), density = VALUES(density), equations = VALUES(equations), 
-                    breakdowns = VALUES(breakdowns), formula_data = VALUES(formula_data)", 
-                [$slug, $t['title'], $t['content'] ?? '', json_encode($t['pillars'] ?? []), $t['intro'] ?? '', json_encode($t['bridges'] ?? []), $t['field'] ?? '', $t['density'] ?? '', json_encode($t['equations'] ?? []), json_encode($t['breakdowns'] ?? []), json_encode($t['formula_ids'] ?? [])]);
-        }
-
-        // 3. Sync Subtopics
-        foreach ($data['subtopics'] ?? [] as $slug => $st) {
-            $this->syncIndividualSubtopic($slug, $st);
-        }
-
-        // 4. Sync Formulas (Grouped Transactionally & Differentially)
-        $formulasDir = PROJECT_ROOT . '/app/config/content/formulas/';
-        $formulaFiles = array_merge(glob($formulasDir . 'shard_*.json') ?: [], glob($formulasDir . '*/shard_*.json') ?: []);
-        
-        $db->runQuery("START TRANSACTION");
-        try {
-            $diskFormulaIds = [];
-            $syncedShards = 0;
-            $skippedShards = 0;
-
-            foreach ($formulaFiles as $file) {
-                $isModified = $force || (filemtime($file) > $lastSyncTime);
-                $content = json_decode(file_get_contents($file), true) ?: [];
-
-                foreach ($content as $fId => $fData) {
-                    $diskFormulaIds[] = $fId;
-
-                    if ($isModified) {
-                        $eq = $fData['equation'] ?? '';
-                        $cleanEq = $eq;
-                        $eqSvg = $fData['equation_svg'] ?? null;
-
-                        if (strpos($eq, '<svg') === 0) {
-                            $eqSvg = $eq;
-                            if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
-                                $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
-                            }
-                        }
-
-                        $db->runQuery(
-                            "INSERT INTO formulas (
-                                id, parent_formula_id, derivation_type, constraints, related_formula_ids, subcomponents, derivation_steps, cas_validation,
-                                title, equation, equation_svg, conceptual_definition, intuitive_summary, 
-                                interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
-                                unit_system, status
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                            ON DUPLICATE KEY UPDATE 
-                                parent_formula_id = VALUES(parent_formula_id),
-                                derivation_type = VALUES(derivation_type),
-                                constraints = VALUES(constraints),
-                                related_formula_ids = VALUES(related_formula_ids),
-                                subcomponents = VALUES(subcomponents),
-                                derivation_steps = VALUES(derivation_steps),
-                                cas_validation = VALUES(cas_validation),
-                                title = VALUES(title),
-                                equation = VALUES(equation),
-                                equation_svg = VALUES(equation_svg),
-                                conceptual_definition = VALUES(conceptual_definition),
-                                intuitive_summary = VALUES(intuitive_summary),
-                                interpretation = VALUES(interpretation),
-                                symmetry_origin = VALUES(symmetry_origin),
-                                limits_and_boundary = VALUES(limits_and_boundary),
-                                semantic_variables = VALUES(semantic_variables),
-                                unit_system = VALUES(unit_system),
-                                status = VALUES(status)",
-                            [
-                                $fId,
-                                $fData['parent_formula_id'] ?? null,
-                                $fData['derivation_type'] ?? null,
-                                !empty($fData['constraints']) ? json_encode($fData['constraints']) : null,
-                                !empty($fData['related_formula_ids']) ? json_encode($fData['related_formula_ids']) : null,
-                                !empty($fData['subcomponents']) ? json_encode($fData['subcomponents']) : null,
-                                !empty($fData['derivation_steps']) ? json_encode($fData['derivation_steps']) : null,
-                                !empty($fData['cas_validation']) ? json_encode($fData['cas_validation'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null,
-                                $fData['title'],
-                                $cleanEq,
-                                $eqSvg,
-                                $fData['conceptual_definition'] ?? null,
-                                $fData['intuitive_summary'] ?? null,
-                                $fData['interpretation'] ?? null,
-                                $fData['symmetry_origin'] ?? null,
-                                $fData['limits_and_boundary'] ?? null,
-                                isset($fData['semantic_variables']) ? json_encode($fData['semantic_variables']) : null,
-                                $fData['unit_system'] ?? 'SI',
-                                $fData['status'] ?? 'published'
-                            ]
-                        );
-                    }
-                }
-
-                if ($isModified) {
-                    $syncedShards++;
-                } else {
-                    $skippedShards++;
-                }
-            }
-            
-            // Prune orphaned database formulas
-            $dbRows = $db->fetchAll("SELECT id FROM formulas");
-            $dbFormulaIds = array_map(fn($row) => $row->id, $dbRows);
-            $orphanedFormulas = array_diff($dbFormulaIds, $diskFormulaIds);
-            if (!empty($orphanedFormulas)) {
-                $placeholders = implode(',', array_fill(0, count($orphanedFormulas), '?'));
-                $db->runQuery(
-                    "DELETE FROM formulas WHERE id IN ($placeholders)",
-                    array_values($orphanedFormulas)
-                );
-            }
-
-            $db->runQuery("COMMIT");
-
-            // 4a. Compile formula LaTeX index for fast lookup (preserving existing prose aliases)
-            $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
-            $latexIndex = file_exists($indexFile) ? (json_decode(file_get_contents($indexFile), true) ?: []) : [];
-            foreach ($formulaFiles as $file) {
-                $content = json_decode(file_get_contents($file), true) ?: [];
-                foreach ($content as $fId => $fData) {
-                    $eq = $fData['equation'] ?? '';
-                    $cleanEq = $eq;
-                    if (strpos($eq, '<svg') === 0) {
-                        if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
-                            $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
-                        }
-                    }
-                    $normalized = $this->normalizeLatex($cleanEq);
-                    if (!empty($normalized)) {
-                        $latexIndex[$normalized] = $fId;
-                    }
-                }
-            }
-            file_put_contents(
-                PROJECT_ROOT . '/app/config/formulas_latex_index.json',
-                json_encode($latexIndex, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
-            );
-        } catch (\Exception $e) {
-            $db->runQuery("ROLLBACK");
-            throw $e;
-        }
-
-        // 5. Automatically prune database subtopics
-        $this->pruneOrphans(false);
+        $this->syncService->performSync($data, $force);
     }
 
     /**
@@ -1516,26 +974,7 @@ class PhysicsService
     {
         $this->loadAllShards();
         $content = $this->getPhysicsContent();
-        $diskSlugs = array_keys($content['subtopics']);
-
-        $dbRows = $this->app->db()->fetchAll("SELECT slug FROM subtopics");
-        $dbSlugs = array_map(fn($row) => $row->slug, $dbRows);
-
-        $orphans = array_diff($dbSlugs, $diskSlugs);
-
-        if (empty($orphans)) {
-            return [];
-        }
-
-        if (!$dryRun) {
-            $placeholders = implode(',', array_fill(0, count($orphans), '?'));
-            $this->app->db()->runQuery(
-                "DELETE FROM subtopics WHERE slug IN ($placeholders)",
-                array_values($orphans)
-            );
-        }
-
-        return array_values($orphans);
+        return $this->syncService->pruneOrphans(array_keys($content['subtopics']), $dryRun);
     }
 
     /**
@@ -1639,56 +1078,7 @@ class PhysicsService
      */
     public function canonicalizeLatex(string $latex): string
     {
-        if (empty($latex)) return '';
-        $clean = preg_replace('/\\\\par\b/', ' ', $latex);
-        $clean = preg_replace('/\\\\left|\\\\right/', '', $clean);
-        $clean = preg_replace('/\\\\quad|\\\\qquad|\\\\,/', ' ', $clean);
-        $clean = preg_replace('/\\\\varepsilon(?![a-zA-Z])/', '\\epsilon', $clean);
-        $clean = preg_replace('/\\\\vartheta(?![a-zA-Z])/', '\\theta', $clean);
-        $clean = preg_replace('/\\\\varphi(?![a-zA-Z])/', '\\phi', $clean);
-        $clean = preg_replace('/\\\\varrho(?![a-zA-Z])/', '\\rho', $clean);
-        $clean = preg_replace('/\\\\varpi(?![a-zA-Z])/', '\\pi', $clean);
-        $clean = preg_replace('/\\\\varsigma(?![a-zA-Z])/', '\\sigma', $clean);
-
-        // Strip visual styling commands
-        $clean = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\\{([^}]+)\\}/', '$2', $clean);
-        $clean = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\\\[a-zA-Z]+|[a-zA-Z0-9])/', '$2', $clean);
-        $hasHtml = true;
-        while ($hasHtml) {
-            $next = preg_replace('/\\\\(cssId|class|style|href)\\{[^{}]*\\}\\{((?:[^{}]|\\{[^{}]*\\})*)\\}/', '$2', $clean);
-            if ($next === $clean) {
-                $hasHtml = false;
-            } else {
-                $clean = $next;
-            }
-        }
-        $clean = preg_replace('/\\\\(cssId|class|style|href)\b/', '', $clean);
-
-        // Canonicalize fractions
-        $hasFraction = true;
-        while ($hasFraction) {
-            $next = preg_replace('/\\\\frac\{((?:[^{}]|\{[^{}]*\})*)\}\{((?:[^{}]|\{[^{}]*\})*)\}/', '($1)/($2)', $clean);
-            if ($next === $clean) {
-                $hasFraction = false;
-            } else {
-                $clean = $next;
-            }
-        }
-
-        // Canonicalize vector operators
-        $clean = preg_replace('/\\\\nabla\s*\\\\times/', 'curl', $clean);
-        $clean = preg_replace('/\\\\nabla\s*\\\\cdot/', 'div', $clean);
-        $clean = preg_replace('/\\\\nabla\^2/', 'laplacian', $clean);
-        $clean = preg_replace('/\\\\nabla/', 'grad', $clean);
-
-        // Canonicalize limits: \to 0 -> =0
-        $clean = preg_replace('/\\\\to\s*0/', '=0', $clean);
-        $clean = preg_replace('/\\\\rightarrow\s*0/', '=0', $clean);
-
-        // Strip whitespace and commas
-        $clean = preg_replace('/\s+/', '', $clean);
-        $clean = str_replace(',', '', $clean);
-        return strtolower($clean);
+        return $this->sanitizer->canonicalizeLatex($latex);
     }
 
     /**
@@ -1697,91 +1087,7 @@ class PhysicsService
      */
     public function synthesizeFormulaExplanation(string $latex): array
     {
-        if (empty($latex)) {
-            return [];
-        }
-
-        $canonical = $this->canonicalizeLatex($latex);
-        if (empty($canonical)) {
-            return [];
-        }
-        
-        $title = "Custom Physical Relation";
-        $domain = "classical_mechanics";
-        $intro = "This mathematical identity represents a physical relationship between variables and differential operators.";
-        $summary = "It defines how physical fields or particle states evolve and interact.";
-        $interpretation = "The left-hand side of the relation establishes how spatial gradients or field variations are balanced by the right-hand side source or rate terms.";
-        $symmetry = "Formulated in coordinate-free tensor or vector notation, maintaining spatial rotation and translation invariance.";
-        $limits = "Subject to boundary constraints where field quantities decay or approach stationary states.";
-
-        // 1. Classical Mechanics & Force / Acceleration / Newton's Second Law
-        if (strpos($canonical, 'f=m') !== false || strpos($canonical, 'f=ma') !== false || (strpos($canonical, 'f=') !== false && (strpos($canonical, 'd^2') !== false || strpos($canonical, 'dt^2') !== false))) {
-            $domain = "classical_mechanics";
-            $title = "Newton's Second Law of Motion (Differential Form)";
-            $intro = "Relates the net vector force acting on a particle to its mass and the second time derivative of position (acceleration).";
-            $summary = "The net vector force equals mass times instantaneous acceleration: \\mathbf{F} = m \\frac{d^2 \\mathbf{r}}{dt^2}.";
-            $interpretation = "The differential operator \\frac{d^2 \\mathbf{r}}{dt^2} represents the instantaneous acceleration vector \\mathbf{a}. Multiplying by inertial mass $m$ determines the net force required to change the particle's state of motion.";
-            $symmetry = "Galilean-invariant under constant velocity transformations; invariant under 3D spatial rotations and translations.";
-            $limits = "Valid for constant-mass particles at non-relativistic speeds ($v \\ll c$) in inertial reference frames.";
-        }
-        // 2. Electromagnetism & Curl / Maxwell Limits
-        elseif (strpos($canonical, 'curl') !== false || strpos($canonical, 'div') !== false) {
-            $domain = "electromagnetism";
-            if ((strpos($canonical, 'curle=0') !== false || strpos($canonical, 'curl=0') !== false) || (strpos($canonical, 'curle') !== false && strpos($canonical, 'curlb') !== false)) {
-                $title = "Static Limits of Maxwell's Equations";
-                $intro = "The steady-state or static limits of Maxwell's equations govern electromagnetic phenomena when charge distributions and currents are non-varying in time.";
-                $summary = "Under static conditions where fields do not change over time, the electric field is irrotational (curl-free), while magnetic fields are generated purely by steady electric current density.";
-                $interpretation = "In the static limit, the induced electric field from changing magnetic fields vanishes (\\nabla \\times \\mathbf{E} = 0), allowing the electric field to be represented as the gradient of a scalar electrostatic potential (\\mathbf{E} = -\\nabla V). Simultaneously, the displacement current term vanishes, causing the curl of the magnetic field to depend exclusively on static current density (\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J}).";
-                $symmetry = "Originates from time-translation invariance (\\partial / \\partial t = 0) and local gauge symmetry under steady current distributions.";
-                $limits = "Valid in non-radiating, low-frequency, or zero-frequency steady-state electrodynamics where inductive and displacement currents are negligible.";
-            } elseif (strpos($canonical, 'curle') !== false) {
-                $title = "Faraday's Law of Induction / Electric Field Curl";
-                $intro = "Defines the curl of the electric field, relating rotational electric field circulation to changing magnetic fields.";
-                $summary = "Changing magnetic flux generates an induced circulation in the surrounding electric field.";
-                $interpretation = "The curl operator (\\nabla \\times \\mathbf{E}) measures the local vorticity or circulation of the electric field lines per unit area.";
-                $symmetry = "Lorentz-covariant under relativistic transformations; invariant under spatial rotations.";
-                $limits = "In the static limit (\\partial \\mathbf{B}/\\partial t = 0), the curl vanishes, reducing the field to electrostatic conservative form.";
-            } elseif (strpos($canonical, 'curlb') !== false) {
-                $title = "Ampère-Maxwell Law / Magnetic Field Curl";
-                $intro = "Relates the spatial circulation of the magnetic field to electric current density and displacement currents.";
-                $summary = "Magnetic field lines curl around moving electric charges and time-varying electric fields.";
-                $interpretation = "The circulation of \\mathbf{B} around a closed loop is driven by the net current enclosed by that loop.";
-                $symmetry = "Preserves gauge symmetry under electromagnetic gauge transformations.";
-                $limits = "In vacuum with zero current density (\\mathbf{J}=0, \\partial \\mathbf{E}/\\partial t = 0), the curl vanishes.";
-            }
-        } elseif (strpos($canonical, 'delta') !== false || strpos($canonical, '\delta') !== false || strpos($latex, '\delta') !== false || strpos(strtolower($latex), 'bounded') !== false || strpos(strtolower($latex), 'field') !== false) {
-            $isField = (strpos(strtolower($latex), 'field') !== false || strpos($canonical, 'phi') !== false || strpos($canonical, 'psi') !== false);
-            $domain = "field_theory";
-            $title = $isField ? 'Second Variation of Action in Field Theory ($\delta^2 S_{\text{field}}$)' : 'Second Variation of Action / Entropy Stability ($\delta^2 S_{\text{bounded}}$)';
-            $intro = $isField
-                ? 'The second variation of action in field theory, denoted as $\delta^2 S_{\text{field}}[\phi]$, represents the second-order functional derivative operator $\frac{\delta^2 S}{\delta \phi(x) \delta \phi(y)}$ acting on field perturbations $\delta \phi(x)$. It governs the local stability of classical vacuum states, soliton solutions, and cosmological background fields.'
-                : 'Represents the second-order variation of action or thermodynamic entropy ($\delta^2 S$), used to establish local stability, convexity of thermodynamic potentials, and bounded oscillation modes in physical systems.';
-            $summary = $isField
-                ? 'The second variation of field action determines whether small field perturbations oscillate harmonically around a stable vacuum or grow exponentially due to tachyonic instability.'
-                : 'A bounded second variation ($\delta^2 S \le 0$ or $|\delta^2 S| < \infty$) guarantees that small fluctuations around an equilibrium path or thermodynamic state remain stable and bounded over time.';
-            $interpretation = $isField
-                ? 'While setting the first variation to zero ($\delta S[\phi] = 0$) yields the classical field equations of motion (e.g., Klein-Gordon, Maxwell, or Einstein field equations), the second variation $\delta^2 S_{\text{field}}$ defines the fluctuation Hessian operator. A positive-definite second variation ($\delta^2 S_{\text{field}} > 0$) guarantees vacuum stability, whereas a negative eigenvalue ($\delta^2 S_{\text{field}} < 0$) signals a tachyonic mode leading to spontaneous symmetry breaking or vacuum decay. In quantum field theory, $\delta^2 S_{\text{field}}$ forms the inverse propagator kernel $\mathcal{D}^{-1}(x,y)$ for path-integral 1-loop quantum corrections.'
-                : 'While the first variation ($\delta S = 0$) identifies stationary solutions (equations of motion or equilibrium states), the second variation ($\delta^2 S$) dictates system stability. A bounded or negative-definite second variation ensures that perturbation energies remain localized without exponential growth.';
-            $symmetry = $isField
-                ? 'Stemming from Hamilton\'s Principle of Stationary Action extended to continuous field degrees of freedom ($S[\phi] = \int \mathcal{L}(\phi, \partial_\mu \phi) \, d^4x$), the second variation operator preserves Poincaré spacetime invariance and gauge symmetries of the field Lagrangian.'
-                : 'Derived from Hamilton\'s Principle of Least Action and the Second Law of Thermodynamics under variational field transformations.';
-            $limits = $isField
-                ? 'In the weak-field or linear perturbation regime ($\delta \phi \to 0$), higher-order functional derivatives $\mathcal{O}(\delta \phi^3)$ are negligible, reducing field dynamics to linear wave propagation. Under infinite spatial boundaries, field perturbations $\delta \phi(x)$ are required to satisfy square-integrable asymptotic fall-off conditions ($\delta \phi \to 0$ as $|x| \to \infty$).'
-                : 'In the linear perturbation limit ($\delta S \to 0$), higher-order non-linear terms are negligible, reducing the variation to harmonic stability analysis.';
-        }
-
-        return [
-            'id' => 'synthesized-' . substr(md5($latex), 0, 8),
-            'title' => $title,
-            'equation' => $latex,
-            'conceptual_definition' => $intro,
-            'intuitive_summary' => $summary,
-            'interpretation' => $interpretation,
-            'symmetry_origin' => $symmetry,
-            'limits_and_boundary' => $limits,
-            'unit_system' => 'SI',
-            'status' => 'synthesized-ast'
-        ];
+        return $this->sanitizer->synthesizeFormulaExplanation($latex);
     }
 
     /**
@@ -1789,157 +1095,7 @@ class PhysicsService
      */
     public function normalizeLatex(string $latex): string
     {
-        $normalized = $latex;
-        $normalized = preg_replace('/\\\\varepsilon(?![a-zA-Z])/', '\\epsilon', $normalized);
-        $normalized = preg_replace('/\\\\vartheta(?![a-zA-Z])/', '\\theta', $normalized);
-        $normalized = preg_replace('/\\\\varphi(?![a-zA-Z])/', '\\phi', $normalized);
-        $normalized = preg_replace('/\\\\varrho(?![a-zA-Z])/', '\\rho', $normalized);
-        $normalized = preg_replace('/\\\\varpi(?![a-zA-Z])/', '\\pi', $normalized);
-        $normalized = preg_replace('/\\\\varsigma(?![a-zA-Z])/', '\\sigma', $normalized);
-        // Strip delimiters
-        $normalized = preg_replace('/^\\\\\\(/', '', $normalized);
-        $normalized = preg_replace('/\\\\\\)$/', '', $normalized);
-        $normalized = preg_replace('/^\\\\\\[/', '', $normalized);
-        $normalized = preg_replace('/\\\\\\]$/', '', $normalized);
-        $normalized = preg_replace('/^\$\$/', '', $normalized);
-        $normalized = preg_replace('/\$\$$/', '', $normalized);
-        $normalized = preg_replace('/^\$/', '', $normalized);
-        $normalized = preg_replace('/\$$/', '', $normalized);
-        
-        // Strip visual styling commands like \vec, \mathbf, \hat, \mathrm, \cssId
-        $normalized = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\\{([^}]+)\\}/', '$2', $normalized);
-        $normalized = preg_replace('/\\\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\s*(\\\\[a-zA-Z]+|[a-zA-Z0-9])/', '$2', $normalized);
-        
-        // Strip MathJax HTML extension wraps (\class, \cssId, \style, \href) to compare only pure math
-        $hasHtml = true;
-        while ($hasHtml) {
-            $next = preg_replace('/\\\\(cssId|class|style|href)\\{[^{}]*\\}\\{((?:[^{}]|\\{[^{}]*\\})*)\\}/', '$2', $normalized);
-            if ($next === $normalized) {
-                $hasHtml = false;
-            } else {
-                $normalized = $next;
-            }
-        }
-        $normalized = preg_replace('/\\\\(cssId|class|style|href)\b/', '', $normalized);
-        
-        // Canonicalize LaTeX fraction commands: \frac{A}{B} -> A/B
-        $hasFraction = true;
-        while ($hasFraction) {
-            $next = preg_replace('/\\\\frac\{((?:[^{}]|\{[^{}]*\})*)\}\{((?:[^{}]|\{[^{}]*\})*)\}/', '$1/$2', $normalized);
-            if ($next === $normalized) {
-                $hasFraction = false;
-            } else {
-                $normalized = $next;
-            }
-        }
-
-        // Flatten braced subscripts for comparison: e.g. _{ext} -> _ext, _{GUT} -> _gut
-        $normalized = preg_replace('/_\{([^}]+)\}/', '_$1', $normalized);
-
-        // Strip whitespaces, backslashes, and braces
-        $normalized = preg_replace('/[^a-zA-Z0-9_\\^\\-=+\\/*()\\[\\]<>\.,;?]/', '', $normalized);
-        $normalized = strtolower($normalized);
-
-        // Normalize algebraic structure (commutative sorting of products and sums)
-        $normalized = $this->normalizeAlgebraicStructure($normalized);
-
-        return $normalized;
-    }
-
-    private function sortTermFactors(string $term, array $multiSymbols): string
-    {
-        $temp = $term;
-        $factors = [];
-
-        // 1. Extract division blocks (e.g. /2)
-        $pattern = '/\/(?:[0-9]+|dtau|dtheta|dphi|dchi|deta|domega|dlambda|dpsi|ds|dt|dx|dy|dz|dr|dp|dq|df|dg|dh|dk|epsilon|theta|phi|rho|pi|sigma|tau|int|oint|iint|iiint|partial|nabla|hbar|psi|lambda|omega|gamma|mu|nu|eta|delta|beta|alpha|chi|zeta|[a-zA-Z])/';
-        $temp = preg_replace_callback($pattern, function($matches) use (&$factors) {
-            $factors[] = $matches[0];
-            return '';
-        }, $temp);
-
-        // 2. Extract multi-character symbols (with optional exponents like ^2 or 2)
-        foreach ($multiSymbols as $sym) {
-            $regex = '/' . preg_quote($sym, '/') . '(?:_[a-zA-Z0-9]+)?(?:\^[0-9]+|[0-9]+)?/';
-            $temp = preg_replace_callback($regex, function($matches) use (&$factors) {
-                $factors[] = $matches[0];
-                return ' ';
-            }, $temp);
-        }
-
-        // 3. Extract remaining single letters/variables with optional subscripts and exponents (e.g. e_gut, e^2, e2, c)
-        $temp = preg_replace_callback('/[a-zA-Z](?:_[a-zA-Z0-9]+)?(?:\^[0-9]+|[0-9]+)?/', function($matches) use (&$factors) {
-            $factors[] = $matches[0];
-            return ' ';
-        }, $temp);
-
-        // 4. Extract any remaining numbers
-        $temp = preg_replace_callback('/[0-9]+/', function($matches) use (&$factors) {
-            $factors[] = $matches[0];
-            return ' ';
-        }, $temp);
-
-        // Sort factors alphabetically and join
-        sort($factors);
-        return implode('', $factors);
-    }
-
-    private function normalizeAlgebraicStructure(string $latex): string
-    {
-        // Split LHS and RHS by '='
-        $parts = explode('=', $latex);
-        $normalizedParts = [];
-        
-        $multiSymbols = [
-            'dtau', 'dtheta', 'dphi', 'dchi', 'deta', 'domega', 'dlambda', 'dpsi', 'ds', 'dt', 'dx', 'dy', 'dz', 'dr', 'dp', 'dq', 'df', 'dg', 'dh', 'dk',
-            'epsilon', 'theta', 'phi', 'rho', 'pi', 'sigma', 'tau', 'int', 'oint', 'iint', 'iiint', 
-            'partial', 'nabla', 'hbar', 'psi', 'lambda', 'omega', 'gamma', 'mu', 'nu', 'eta', 'delta', 
-            'beta', 'alpha', 'chi', 'zeta'
-        ];
-
-        foreach ($parts as $part) {
-            // Split by '+' and '-' while keeping the operators
-            $tokens = preg_split('/([+\-])/', $part, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-            
-            $currentSign = '+';
-            $terms = [];
-            
-            foreach ($tokens as $tok) {
-                if ($tok === '+' || $tok === '-') {
-                    $currentSign = $tok;
-                } else {
-                    $sortedTerm = $this->sortTermFactors($tok, $multiSymbols);
-                    if (!empty($sortedTerm)) {
-                        $terms[] = [
-                            'sign' => $currentSign,
-                            'term' => $sortedTerm
-                        ];
-                    }
-                    $currentSign = '+';
-                }
-            }
-            
-            // Sort terms alphabetically by the term itself (ignoring sign for sorting consistency)
-            usort($terms, function($a, $b) {
-                return strcmp($a['term'], $b['term']);
-            });
-            
-            // Re-join terms
-            $joined = '';
-            foreach ($terms as $i => $t) {
-                if ($i === 0) {
-                    if ($t['sign'] === '-') {
-                        $joined .= '-';
-                    }
-                    $joined .= $t['term'];
-                } else {
-                    $joined .= $t['sign'] . $t['term'];
-                }
-            }
-            $normalizedParts[] = $joined;
-        }
-        
-        return implode('=', $normalizedParts);
+        return $this->sanitizer->normalizeLatex($latex);
     }
 
     /**

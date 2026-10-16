@@ -177,7 +177,7 @@ def main():
             return
         if source not in all_formula_ids or target not in all_formula_ids:
             return
-        edge_key = f"{source}->{target}:{link_type}"
+        edge_key = f"{source}->{target}"
         if edge_key not in seen_links:
             seen_links.add(edge_key)
             links.append({
@@ -204,7 +204,13 @@ def main():
             "status": formula.get("status", "platinum")
         }
 
-        # 1. Subcomponents Link (Parent -> Child)
+        # 1. Explicit Parent Formula ID Link (Parent -> Child, with specific derivation_type label)
+        parent_id = formula.get("parent_formula_id")
+        if isinstance(parent_id, str) and parent_id in all_formula_ids:
+            dtype = formula.get("derivation_type", "DERIVED_FROM")
+            add_link(parent_id, fid, "derivation", dtype)
+
+        # 2. Subcomponents Link (Parent -> Child, reciprocal)
         subcomps = formula.get("subcomponents", [])
         if isinstance(subcomps, list):
             for sc in subcomps:
@@ -213,15 +219,15 @@ def main():
                 elif isinstance(sc, dict) and "id" in sc and sc["id"] in all_formula_ids:
                     add_link(fid, sc["id"], "subcomponent", sc.get("role", "Subcomponent"))
 
-        # 2. Prerequisites / Parent Links
+        # 3. Prerequisites / Parent Links (legacy fallback)
         prereqs = formula.get("prerequisites", [])
         if isinstance(prereqs, list):
             for pr in prereqs:
                 if isinstance(pr, str) and pr in all_formula_ids:
                     add_link(pr, fid, "derivation", "Derives")
 
-        # 3. Related Formulas
-        related = formula.get("related_formulas", [])
+        # 4. Related Formulas
+        related = formula.get("related_formulas") or formula.get("related_formula_ids") or []
         if isinstance(related, list):
             for rf in related:
                 if isinstance(rf, str) and rf in all_formula_ids:

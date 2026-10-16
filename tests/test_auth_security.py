@@ -244,3 +244,19 @@ def test_atomic_json_file_locking():
     )
     out = json.loads(res.stdout.strip())
     assert out == {"alpha": 1, "beta": 2}
+
+
+def test_native_php_unit_suite():
+    """Executes the full native PHP unit test suite (tests/php/run_php_tests.php) and verifies zero failures."""
+    res = subprocess.run(
+        ["php", "tests/php/run_php_tests.php", "--json"],
+        cwd=str(WORKSPACE_ROOT),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    payload = json.loads(res.stdout.strip())
+    assert payload["failed"] == 0, f"Native PHP unit tests failed: {payload}"
+    assert payload["passed"] >= 16
+    assert payload["assertions"] >= 35
+

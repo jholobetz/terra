@@ -18,7 +18,7 @@ Over successive engineering sprints, the **Terra Physics Lab** platform has atta
 | **Manifold Closure** | **100.0% equation closure** (0 unmapped prose identities across 8,649 expressions) | `php scripts/audit_prose_equations.php` |
 | **Symbolic CAS Engine** | Sandboxed SymPy worker ([`cas_engine.py`](../lib/cas/cas_engine.py)) with async `/physics/api/cas-evaluate` | `pytest tests/test_cas_engine.py` |
 | **Modular ES6 Client** | `equation_explainer.js` decoupled into `simulations`, `curator`, `dictionary` modules | Browser verification & regression suite |
-| **Regression Net** | **100% passing automated test suite** (524+ Pytest tests covering all 14,682 formulas in ~12s) | `.venv/bin/python3 -m pytest tests/` |
+| **Regression Net** | **100% passing automated test suite** (241 Pytest tests + 16 native PHP unit tests covering all 14,683 formulas) | `.venv/bin/python3 -m pytest tests/` & `composer test` |
 
 ---
 

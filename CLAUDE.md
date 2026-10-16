@@ -120,9 +120,10 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   # (Optional: add -t / --with-tests to include pytest in the prompt payload)
   ```
 * **Web GUI Assessment Console**: Live interactive telemetry, strict monotonic ratchets, shard partition auditing, and one-click autonomous self-healing available in the browser at [`http://localhost:8000/physics/admin/assess`](http://localhost:8000/physics/admin/assess).
-* **Automated Pytest Suite**: Runs the full regression net (524+ tests covering all 14,682 formulas, schemas, invariants, delimiters, and syntax):
+* **Automated Pytest & PHP Unit Suite**: Runs the full regression net (241 Pytest tests + 16 native PHP unit tests covering all 14,683 formulas, schemas, invariants, delimiters, PHP services, and syntax):
   ```bash
   .venv/bin/python3 -m pytest tests/
+  composer test
   ```
 * **Sitewide Integrity Shield Audit**: Scans all 13 primary content shards, 256 formula shards, 14,682 formulas, 100% manifold closure, and MathJax renderings:
   ```bash

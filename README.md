@@ -18,7 +18,7 @@ The web frontend is built on a streamlined **FlightPHP** MVC framework, while th
 | **Lineage Health Index (LHI)** | **95.0 / 100** | Derivation density score across parent-child mathematical DAG |
 | **Manifold Closure** | **100.0%** | Zero unmapped physical formulas detected in encyclopedia prose |
 | **Subtopic Articles** | **1,584** | High-density graduate-level articles across 12 primary domains |
-| **Automated Test Coverage** | **3,141 / 3,142 Passing (100.0%)** | Pytest regression suite covering schemas, math delimiters, and syntax |
+| **Automated Test Coverage** | **241 Pytest + 16 PHP Unit Tests (100.0%)** | Full-stack regression suite covering schemas, math delimiters, PHP services, and syntax |
 
 ---
 
@@ -147,7 +147,7 @@ physics-lab/
 │       ├── lineage_resolver.py       # Derivation graph lineage inference
 │       └── ...
 │
-├── tests/                            # Automated Pytest Suite (3,100+ tests)
+├── tests/                            # Automated Test Suite (241 Pytest + 16 PHP unit tests)
 ├── docs/                             # Architecture Reports, Sprints & Governance
 ├── orchestrator.py                   # TF-IDF Context-Affinity Engine
 ├── integrity_shield.py               # Sitewide Quality Assurance & Manifold Gate

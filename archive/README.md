@@ -33,6 +33,7 @@ These files are retained strictly for historical context, Git lineage, and techn
 * `merge_auto_draft_lineage.md`: Retrospective notes on automated derivation inference.
 
 ### 3. Historical Explorations & Retrospectives
+* `argon_first_report.md`: External architectural, security, content, and telemetry audit report (100% of actionable findings remediated across `AuthService.php`, `ShardSyncService.php`, `LatexSanitizer.php`, `fixlineage`, and `tests/php/run_php_tests.php`).
 * `incident_report_google_billing.md`: Root-cause analysis of early LLM token overruns that led to `docs/cost_governance.md`.
 * `_gem_3_8_report.md` & `_report_2026-08-08.md`: Mid-sprint development progress logs.
 * `_5_sciences.md`, `_beyond_5_sciences.md`, `_non_terra_sciences.md`: Conceptual vision for Project Terra multi-science expansion.

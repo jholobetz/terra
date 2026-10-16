@@ -216,7 +216,9 @@ class ShardSyncService
             }
         }
 
-        file_put_contents($registryPath, json_encode($newRegistry, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        if ($shardsUpdated > 0 || $newRegistry !== $hashRegistry) {
+            @file_put_contents($registryPath, json_encode($newRegistry, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
+        }
 
         return [
             'shards_checked' => count($shardFiles),

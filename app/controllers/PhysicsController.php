@@ -792,11 +792,8 @@ class PhysicsController
         if (file_exists($cachePath) && !$isStale && !$this->service()->isPreviewActive()) {
             header('Content-Type: text/html; charset=utf-8');
             $html = file_get_contents($cachePath);
-            $nonce = $this->app->get('csp_nonce');
-            if ($nonce) {
-                $html = preg_replace('/nonce=["\']([a-f0-9]{32})["\']/', 'nonce="' . $nonce . '"', $html);
-            }
-            echo $html;
+            $nonce = $this->app->get('csp_nonce') ?? '';
+            echo $this->injectLayoutDynamicTokens($html, $nonce, false);
             return;
         }
 
@@ -951,11 +948,8 @@ class PhysicsController
         if (file_exists($cachePath) && !$isStale && !$this->service()->isPreviewActive()) {
             header('Content-Type: text/html; charset=utf-8');
             $html = file_get_contents($cachePath);
-            $nonce = $this->app->get('csp_nonce');
-            if ($nonce) {
-                $html = preg_replace('/nonce=["\']([a-f0-9]{32})["\']/', 'nonce="' . $nonce . '"', $html);
-            }
-            echo $html;
+            $nonce = $this->app->get('csp_nonce') ?? '';
+            echo $this->injectLayoutDynamicTokens($html, $nonce, false);
             return;
         }
 
@@ -1076,7 +1070,75 @@ class PhysicsController
             file_put_contents($cachePath, $html);
         }
 
-        echo $html;
+        echo $this->injectLayoutDynamicTokens($html, $nonce, $isPreview && !$isBuildMode);
+    }
+
+    /**
+     * Injects per-request CSP nonces and the local development studio Admin menu
+     * without baking privileged markup into static disk cache files.
+     */
+    private function injectLayoutDynamicTokens(string $html, string $nonce, bool $isPreview): string
+    {
+        if ($nonce !== '') {
+            $html = preg_replace('/nonce=["\']([a-f0-9]{32})["\']/', 'nonce="' . $nonce . '"', $html);
+        }
+
+        $auth = Flight::authService();
+        $isDevStudio = $auth && method_exists($auth, 'isLocalDevStudio') && $auth->isLocalDevStudio();
+
+        if (!$isDevStudio) {
+            return str_replace('<!-- DEV_STUDIO_NAV_SLOT -->', '', $html);
+        }
+
+        $user = $auth->getCurrentUser();
+        $currentRole = htmlspecialchars($user->role ?? 'admin');
+        $previewToggleUrl = $isPreview ? '?preview=0' : '?preview=1';
+        $previewBadge = $isPreview
+            ? '<span class="admin-status-pill active">ON</span>'
+            : '<span class="admin-status-pill">OFF</span>';
+
+        $roles = ['admin' => 'Admin', 'curator' => 'Curator', 'contributor' => 'Contrib', 'guest' => 'Guest'];
+        $roleButtonsHtml = '';
+        foreach ($roles as $rKey => $rLabel) {
+            $activeClass = ($currentRole === $rKey) ? ' active' : '';
+            $roleButtonsHtml .= '<button type="button" class="dev-role-pill' . $activeClass . '" data-dev-role="' . $rKey . '">' . $rLabel . '</button>';
+        }
+
+        $adminMenuHtml = '
+            <div class="dropdown nav-admin-dropdown" id="dev-studio-admin-nav">
+                <a href="/physics/admin/assess" class="dropbtn btn btn-admin-studio" title="Local Developer Studio Controls">
+                    🛠️ Admin <span class="nav-caret">&blacktriangledown;</span>
+                </a>
+                <div class="dropdown-content dropdown-admin-studio">
+                    <div class="mega-section-label">Developer Studio Controls</div>
+                    <a href="/physics/admin/assess" class="nav-module-link admin-featured-link">
+                        <span class="module-title">🪐 Assessment &amp; Health Console</span>
+                        <span class="module-desc">Live telemetry, ratchets, shard audits &amp; self-healing</span>
+                    </a>
+                    <a href="/physics/sync" class="nav-module-link">
+                        <span class="module-title">🔄 Sync Shards to MariaDB</span>
+                        <span class="module-desc">Synchronize Git JSON shards &amp; search index</span>
+                    </a>
+                    <a href="' . $previewToggleUrl . '" class="nav-module-link">
+                        <span class="module-title" style="display:flex; align-items:center; justify-content:space-between;">
+                            <span>👁️ Shard Preview Mode</span>
+                            ' . $previewBadge . '
+                        </span>
+                        <span class="module-desc">Toggle live MariaDB vs. offline Git JSON shards</span>
+                    </a>
+                    <div class="admin-role-switcher-box">
+                        <div class="role-switcher-header">
+                            <span>🎭 Active Studio Role</span>
+                            <code id="dev-current-role-badge">' . strtoupper($currentRole) . '</code>
+                        </div>
+                        <div class="dev-role-pills-row">
+                            ' . $roleButtonsHtml . '
+                        </div>
+                    </div>
+                </div>
+            </div>';
+
+        return str_replace('<!-- DEV_STUDIO_NAV_SLOT -->', $adminMenuHtml, $html);
     }
 
     /**
@@ -1102,6 +1164,11 @@ class PhysicsController
         if (!file_exists($cachePath)) return true;
         $cacheMtime = filemtime($cachePath);
 
+        $layoutPath = PROJECT_ROOT . '/app/views/physics/layout.php';
+        if (file_exists($layoutPath) && filemtime($layoutPath) > $cacheMtime) {
+            return true;
+        }
+
         $viewPath = PROJECT_ROOT . '/app/views/physics/topic.php';
         if (file_exists($viewPath) && filemtime($viewPath) > $cacheMtime) {
             return true;
@@ -1126,6 +1193,11 @@ class PhysicsController
     {
         if (!file_exists($cachePath)) return true;
         $cacheMtime = filemtime($cachePath);
+
+        $layoutPath = PROJECT_ROOT . '/app/views/physics/layout.php';
+        if (file_exists($layoutPath) && filemtime($layoutPath) > $cacheMtime) {
+            return true;
+        }
 
         $aggregatorPath = PROJECT_ROOT . '/app/logic/VariableAggregator.php';
         if (file_exists($aggregatorPath) && filemtime($aggregatorPath) > $cacheMtime) {

@@ -23,8 +23,10 @@ class LatexSanitizer
     }
 
     /**
-     * Sanitizes all formula prose fields against control character collisions
-     * and normalizes inline math delimiters to canonical $ ... $ form.
+     * Sanitizes all formula prose fields against control character collisions,
+     * normalizes inline math delimiters to canonical $ ... $ form, and strips
+     * mechanical LLM boilerplate ("interpreted as follows:"), raw Markdown
+     * bold (**...**), and raw Markdown bullet lists (\n* ...).
      */
     public function sanitizeProseFields(array $data): array
     {
@@ -46,7 +48,7 @@ class LatexSanitizer
                 $val = preg_replace('/[\x00-\x08\x0b\x0c\x0e-\x1f]/', '', $val);
 
                 // Clean double backslashes before standard LaTeX macros
-                $val = preg_replace('/\\\\\\\\(mathcal|mathbf|oint|iint|frac|dot|ddot|vec|hat|bar|nabla|partial|sum|int|text|sigma|tau|mu|nu|rho|lambda)/', '\\$1', $val);
+                $val = preg_replace('/\\\\\\\\(mathcal|mathbf|oint|iint|frac|dot|ddot|vec|hat|bar|nabla|partial|sum|int|text|sigma|tau|mu|nu|rho|lambda)/', '\\\\$1', $val);
 
                 // Clean stray escaped dollars
                 $val = str_replace(['\\$', '\\ $'], '$', $val);
@@ -60,6 +62,71 @@ class LatexSanitizer
 
                 // Convert literal '\n' before numbered lists or bullet items to actual newlines
                 $val = preg_replace('/\\\\n(?=\s*(?:\d+\.|\*|-))/u', "\n", $val);
+
+                // Mask math blocks before prose artifact cleanup
+                $mathBlocks = [];
+                $masked = preg_replace_callback(
+                    '/(\$\$[\s\S]*?\$\$|\\\\\[[\s\S]*?\\\\\]|(?<!\\\\)\$(?:[^$\\\\]|\\\\.)+?\$)/u',
+                    function ($m) use (&$mathBlocks) {
+                        $idx = count($mathBlocks);
+                        $mathBlocks[] = $m[0];
+                        return "__MATH_{$idx}__";
+                    },
+                    $val
+                );
+
+                // Strip raw Markdown bold **...** outside math blocks
+                if (str_contains($masked, '**')) {
+                    $masked = preg_replace('/\*\*([^*\n]+)\*\*/u', '$1', $masked);
+                    $masked = str_replace('**', '', $masked);
+                }
+
+                // Strip mechanical "interpreted as follows:" boilerplate
+                if (stripos($masked, 'interpreted as follows') !== false) {
+                    $masked = preg_replace(
+                        '/(?:^(?:(?:Mathematically|Physically|Specifically|Here),\s+)?(?:the|this|it)\s+(?:(?:\w+\s+){0,3})?(?:formula|equation|relation|expression|identity|statement|term|law|condition|form)?\s*(?:__MATH_\d+__\s*)?(?:is|can\s+be|may\s+be)\s+interpreted\s+as\s+follows\s*:\s*)|(?:(?:,\s*|\s+)(?:which\s+)?(?:is|can\s+be)\s+interpreted\s+as\s+follows\s*:\s*)|(?:interpreted\s+as\s+follows\s*:\s*)/iu',
+                        ' ',
+                        $masked
+                    );
+                    $masked = ltrim($masked, " \t\n\r\0\x0B.,;:");
+                }
+
+                // Convert raw Markdown bullet lists (\n* ... or ^* ...) into continuous prose sentences
+                if (preg_match('/(?:^|\n)\s*[\*-]\s+/u', $masked)) {
+                    $lines = explode("\n", $masked);
+                    $parts = [];
+                    foreach ($lines as $line) {
+                        $s = trim($line);
+                        if ($s === '') {
+                            continue;
+                        }
+                        if (preg_match('/^[\*-]\s+(.*)$/u', $s, $bm)) {
+                            $item = trim($bm[1]);
+                            if ($item !== '' && !in_array( substr($item, -1), ['.', '!', '?'], true)) {
+                                $item .= '.';
+                            }
+                            $parts[] = $item;
+                        } else {
+                            if (str_ends_with($s, ':')) {
+                                $s = rtrim(substr($s, 0, -1)) . '.';
+                            } elseif (!in_array(substr($s, -1), ['.', '!', '?'], true)) {
+                                $s .= '.';
+                            }
+                            $parts[] = $s;
+                        }
+                    }
+                    $masked = implode(' ', $parts);
+                }
+
+                $masked = trim(preg_replace('/ {2,}/', ' ', $masked));
+                if ($masked !== '' && ctype_lower($masked[0])) {
+                    $masked = strtoupper($masked[0]) . substr($masked, 1);
+                }
+
+                // Unmask math blocks
+                $val = preg_replace_callback('/__MATH_(\d+)__/', function ($m) use ($mathBlocks) {
+                    return $mathBlocks[(int)$m[1]] ?? $m[0];
+                }, $masked);
 
                 $data[$field] = trim($val);
             }

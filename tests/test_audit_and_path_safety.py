@@ -79,3 +79,29 @@ def test_aligned_density_targets_integrity_shield():
     assert "density_target = 30 if is_subjective else 60" in shield_content, (
         "integrity_shield.py target limits are out of alignment with the 30/60 system."
     )
+
+
+def test_documentation_test_counts_not_inflated():
+    """Ensure active documentation files do not contain stale inflated Pytest count claims (e.g. 3,100+, 3,150+, 524+)."""
+    stale_patterns = [
+        r"3,100\+\s*tests",
+        r"3,141\s*/\s*3,142",
+        r"3,150\+\s*(?:Pytest\s+|regression\s+)?tests",
+        r"524\+\s*Pytest\s+tests",
+    ]
+    combined = re.compile("|".join(stale_patterns), re.IGNORECASE)
+    doc_files = [
+        "README.md",
+        "CLAUDE.md",
+        "GEMINI.md",
+        "docs/roadmap.md",
+        "docs/architecture.md",
+    ]
+    for rel_path in doc_files:
+        if not os.path.exists(rel_path):
+            continue
+        with open(rel_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        matches = combined.findall(content)
+        assert not matches, f"Stale inflated test count claim found in {rel_path}: {matches}"
+

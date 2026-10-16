@@ -1510,26 +1510,15 @@ def heal_all():
             except Exception:
                 pass
 
-    # 3. Lineage Isolated Nodes Healing
-    dag_path = WORKSPACE_ROOT / "app" / "config" / "formula_derivation_graph.json"
+    # 3. Lineage Reciprocity & Isolated Nodes Healing (No Synthetic Dummy Parents)
+    enricher_script = WORKSPACE_ROOT / "scripts" / "maintenance" / "enrich_lineage_families.py"
     healed_nodes = 0
-    if dag_path.exists():
+    if enricher_script.exists():
         try:
-            dag = json.loads(dag_path.read_text(encoding="utf-8"))
-            target_nodes = dag.get("nodes", dag) if isinstance(dag, dict) else {}
-            if isinstance(target_nodes, dict):
-                for fid, fnode in target_nodes.items():
-                    if fid in ("metadata", "domains", "nodes", "links"):
-                        continue
-                    if isinstance(fnode, dict) and ("parents" in fnode or "children" in fnode):
-                        parents = fnode.get("parents", [])
-                        children = fnode.get("children", [])
-                        if not parents and not children:
-                            domain = fnode.get("domain", "General Physics")
-                            fnode["parents"] = [f"axiom-{domain.lower().replace(' ', '-')}"]
-                            healed_nodes += 1
-            if healed_nodes > 0:
-                dag_path.write_text(json.dumps(dag, indent=2), encoding="utf-8")
+            code, out, _ = run_command_capture([PYTHON_BIN, str(enricher_script)], timeout=30)
+            m = re.search(r"Newly Enriched Parent Connections:\s*([\d,]+)", out)
+            if m:
+                healed_nodes = int(m.group(1).replace(",", ""))
         except Exception:
             pass
 

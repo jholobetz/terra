@@ -26,12 +26,27 @@ def test_formulas_exist():
 
 
 def test_no_literal_newline_artifacts():
+    from scripts.lib.delimiters import strip_math_blocks
     corrupted = []
+    boilerplate = []
+    markdown_artifacts = []
     for f in ALL_FORMULAS:
+        fid = f.get("_id")
         text = f"{f.get('conceptual_definition', '')} {f.get('interpretation', '')} {f.get('limits_and_boundary', '')}"
         if re.search(r'\bLagrangian,\s*\\n,', text, re.IGNORECASE) or re.search(r'\\n\s*=\s*0\s*for all\s*\\n', text, re.IGNORECASE):
-            corrupted.append(f.get("_id"))
+            corrupted.append(fid)
+        for field in ("interpretation", "conceptual_definition", "intuitive_summary", "symmetry_origin", "limits_and_boundary", "description"):
+            val = f.get(field) or ""
+            if not isinstance(val, str) or not val:
+                continue
+            no_math = strip_math_blocks(val)
+            if re.search(r"interpreted\s+as\s+follows\s*:", no_math, re.IGNORECASE):
+                boilerplate.append((fid, field))
+            if re.search(r"\*\*[^*]+\*\*", no_math) or re.search(r"(?:^|\n)\s*[\*-]\s+", no_math):
+                markdown_artifacts.append((fid, field))
     assert len(corrupted) == 0, f"Found literal \\n artifacts in formulas: {corrupted}"
+    assert len(boilerplate) == 0, f"Found 'interpreted as follows:' boilerplate in formulas: {boilerplate[:10]}"
+    assert len(markdown_artifacts) == 0, f"Found raw Markdown (**bold** or bullet list) in formulas: {markdown_artifacts[:10]}"
 
 
 def test_no_corrupted_unicode_ocr_glyphs():

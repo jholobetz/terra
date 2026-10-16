@@ -42,52 +42,152 @@
                 </button>
             </div>
 
-            <nav>
+            <?php
+            $topicAccentColors = [
+                'classical-mechanics' => 'var(--accent-classical)',
+                'electromagnetism' => 'var(--accent-electromagnetism)',
+                'relativity' => 'var(--accent-relativity)',
+                'quantum-physics' => 'var(--accent-quantum)',
+                'astrophysics' => 'var(--accent-astrophysics)',
+                'thermodynamics-statistical-mechanics' => 'var(--accent-thermodynamics)',
+                'fluids-nonlinear' => 'var(--accent-fluids)',
+                'condensed-matter-optics' => 'var(--accent-condensed)',
+                'particle-nuclear-physics' => 'var(--accent-standard-model)',
+                'quantum-field-theory-high-energy' => 'var(--accent-theoretical)',
+                'mathematical-methods-computational' => 'var(--accent-math-methods)',
+                'foundations-philosophy-of-physics' => 'var(--accent-philosophy)',
+                'biophysics-complex-systems' => 'var(--accent-default)',
+            ];
+            $flagshipSimSlugs = ['relativistic-black-hole', 'pendulum', 'projectile-motion'];
+            ?>
+            <nav class="primary-nav-bar">
+                <!-- 1. TOPICS PILLAR -->
                 <div class="dropdown">
-                    <a href="#" class="dropbtn btn btn-secondary">Topics &blacktriangledown;</a>
-                    <div class="dropdown-content dropdown-content-secondary">
-                        <?php foreach($menu_topics as $slug => $topic): ?>
-                            <a href="/physics/topic/<?= $slug ?>"><?= $topic['title'] ?></a>
-                        <?php endforeach; ?>
+                    <a href="/physics" class="dropbtn btn btn-secondary">Topics <span class="nav-caret">&blacktriangledown;</span></a>
+                    <div class="dropdown-content dropdown-mega dropdown-mega-topics">
+                        <div class="mega-section-label">13 Encyclopedia Pillar Hubs</div>
+                        <div class="mega-topics-grid">
+                            <?php foreach ($menu_topics as $slug => $topic):
+                                $dotColor = $topicAccentColors[$slug] ?? 'var(--accent-default)';
+                            ?>
+                                <a href="/physics/topic/<?= htmlspecialchars($slug) ?>" class="mega-topic-item">
+                                    <span class="topic-color-dot" style="background: <?= $dotColor ?>; box-shadow: 0 0 8px <?= $dotColor ?>;"></span>
+                                    <span class="topic-item-title"><?= $topic['title'] ?></span>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="mega-dropdown-footer">
+                            <a href="/physics/random" class="mega-footer-link">🎲 Random Subtopic</a>
+                            <a href="/physics" class="mega-footer-link accent">🌌 View All 13 Pillars &rarr;</a>
+                        </div>
                     </div>
                 </div>
+
+                <!-- 2. SIMULATIONS PILLAR -->
                 <div class="dropdown">
-                    <a href="/physics/lab-tools" class="dropbtn btn btn-primary">Lab Tools &blacktriangledown;</a>
-                    <div class="dropdown-content dropdown-content-tertiary">
-                        <a href="/physics/notation-toggle" class="nav-module-link">
-                            <span class="module-title">Notation Toggle</span>
-                            <span class="module-desc">Compare mathematical frameworks</span>
+                    <a href="/physics/simulations" class="dropbtn btn btn-simulations-nav">Simulations <span class="nav-caret">&blacktriangledown;</span></a>
+                    <div class="dropdown-content dropdown-mega dropdown-mega-sims">
+                        <a href="/physics/simulations" class="mega-featured-banner sims-banner">
+                            <div class="banner-top-row">
+                                <span class="banner-title">🔭 The Simulations Observatory</span>
+                                <span class="banner-cta">Explore All &rarr;</span>
+                            </div>
+                            <span class="banner-desc"><?= count($menu_simulations ?: []) ?: 16 ?> Real-Time Numerical Solvers, RK4 Integrators &amp; WebGL2 GPU Sandboxes</span>
                         </a>
-                        <a href="/physics/legendre-transformer" class="nav-module-link">
-                            <span class="module-title">Legendre Transformer</span>
-                            <span class="module-desc">Symbolic Lagrangian-Hamiltonian mapping</span>
-                        </a>
-                        <a href="/physics/noethers-vault" class="nav-module-link">
-                            <span class="module-title">Noether's Vault</span>
-                            <span class="module-desc">Symmetry &amp; conservation mapping</span>
-                        </a>
-                        <a href="/physics/correspondence-workspace" class="nav-module-link">
-                            <span class="module-title">Correspondence Workspace</span>
-                            <span class="module-desc">Classical vs quantum trajectories</span>
-                        </a>
-                        <a href="/physics/anthropic-tuner" class="nav-module-link">
-                            <span class="module-title">Anthropic Tuner</span>
-                            <span class="module-desc">Cosmological dials &amp; scales</span>
-                        </a>
-                        <a href="/physics/equation-explainer" class="nav-module-link">
-                            <span class="module-title">Equation Explainer</span>
-                            <span class="module-desc">Deconstruct LaTeX identities</span>
-                        </a>
-                        <a href="/physics/universe-graph" class="nav-module-link">
-                            <span class="module-title">Universe Graph</span>
-                            <span class="module-desc">14,666 formula derivation map</span>
-                        </a>
-                        <a href="/physics/simulations" class="nav-module-link">
-                            <span class="module-title">Simulations</span>
-                            <span class="module-desc">Interactive physics sandboxes</span>
-                        </a>
+
+                        <div class="mega-section-label">Flagship Elevated Sandboxes</div>
+                        <div class="mega-flagship-sims">
+                            <a href="/physics/simulations/relativistic-black-hole" class="nav-module-link">
+                                <span class="module-title">🌌 Relativistic Kerr Black Hole</span>
+                                <span class="module-desc">WebGL2 GPU null geodesic raytracer, Doppler beaming &amp; accretion disk</span>
+                            </a>
+                            <a href="/physics/simulations/pendulum" class="nav-module-link">
+                                <span class="module-title">⏳ Chaotic Driven Pendulum</span>
+                                <span class="module-desc">RK4 nonlinear solver with real-time Poincaré phase sections</span>
+                            </a>
+                            <a href="/physics/simulations/projectile-motion" class="nav-module-link">
+                                <span class="module-title">🚀 Projectile &amp; Newton's Cannon</span>
+                                <span class="module-desc">Sub-orbital kinematics, circular orbits &amp; escape trajectories</span>
+                            </a>
+                        </div>
+
+                        <?php if (!empty($menu_simulations)): ?>
+                            <div class="mega-section-label" style="margin-top: 6px;">Interactive Sandbox Directory</div>
+                            <div class="mega-sims-directory-grid">
+                                <?php foreach ($menu_simulations as $simSlug => $sim):
+                                    if (in_array($simSlug, $flagshipSimSlugs, true)) continue;
+                                ?>
+                                    <a href="/physics/simulations/<?= htmlspecialchars($simSlug) ?>" class="mega-sim-pill">
+                                        <?= $sim['title'] ?>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
+
+                <!-- 3. LAB TOOLS PILLAR -->
+                <div class="dropdown">
+                    <a href="/physics/lab-tools" class="dropbtn btn btn-primary">Lab Tools <span class="nav-caret">&blacktriangledown;</span></a>
+                    <div class="dropdown-content dropdown-content-tertiary dropdown-mega dropdown-mega-lab">
+                        <a href="/physics/lab-tools" class="mega-featured-banner lab-banner">
+                            <div class="banner-top-row">
+                                <span class="banner-title">⚡ Unified Physics Cockpit &amp; Cosmic Arena</span>
+                                <span class="banner-cta">Launch Lab &rarr;</span>
+                            </div>
+                            <span class="banner-desc">6 Physical Systems &bull; 5 Transformation Prisms &bull; Live SymPy CAS</span>
+                        </a>
+
+                        <div class="mega-two-col">
+                            <div class="mega-col">
+                                <div class="mega-section-label">Analytical &amp; Duality Workbenches</div>
+                                <a href="/physics/legendre-transformer" class="nav-module-link">
+                                    <span class="module-title">Analytical Mechanics Workbench</span>
+                                    <span class="module-desc">SymPy CAS Lagrangian &harr; Hamiltonian Legendre mapping</span>
+                                </a>
+                                <a href="/physics/noethers-vault" class="nav-module-link">
+                                    <span class="module-title">The Symmetry Playground</span>
+                                    <span class="module-desc">Noether's Vault: Lie symmetries &amp; conserved currents \(J^\mu\)</span>
+                                </a>
+                                <a href="/physics/correspondence-workspace" class="nav-module-link">
+                                    <span class="module-title">Quantum-to-Classical Bridge</span>
+                                    <span class="module-desc">Correspondence Workspace: Ehrenfest &amp; Wigner flow</span>
+                                </a>
+                                <a href="/physics/notation-toggle" class="nav-module-link">
+                                    <span class="module-title">The Rosetta Stone</span>
+                                    <span class="module-desc">Notation Toggle: Vectors &harr; Tensors &harr; Differential Forms</span>
+                                </a>
+                                <a href="/physics/anthropic-tuner" class="nav-module-link">
+                                    <span class="module-title">The Multiverse Creator</span>
+                                    <span class="module-desc">Anthropic Tuner: Cosmological dials (\(G, c, \hbar, \alpha\))</span>
+                                </a>
+                            </div>
+
+                            <div class="mega-col">
+                                <div class="mega-section-label">Manifold Explorers &amp; Registers</div>
+                                <a href="/physics/equation-explainer" class="nav-module-link">
+                                    <span class="module-title">Equation Explainer</span>
+                                    <span class="module-desc">Deconstruct LaTeX identities, dimensions &amp; CAS proofs</span>
+                                </a>
+                                <a href="/physics/universe-graph" class="nav-module-link">
+                                    <span class="module-title">Physics Universe Graph</span>
+                                    <span class="module-desc">14,683-formula derivation DAG &amp; shortest-path solver</span>
+                                </a>
+                                <a href="/physics/constants" class="nav-module-link">
+                                    <span class="module-title">Fundamental Physical Constants</span>
+                                    <span class="module-desc">Exact SI values, uncertainties &amp; dimensional groups</span>
+                                </a>
+                                <a href="/physics/symbols" class="nav-module-link">
+                                    <span class="module-title">Symbols &amp; Manifold Lexicon</span>
+                                    <span class="module-desc">Tensor indices, differential operators &amp; field notation</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. LOCAL DEV STUDIO ADMIN SLOT (Populated dynamically only in local dev studio) -->
+                <!-- DEV_STUDIO_NAV_SLOT -->
             </nav>
         </div>
     </header>
@@ -130,5 +230,25 @@
     <script src="/js/formula_inspector.js" nonce="<?= $nonce ?>" defer></script>
     <script src="/js/mathjax_inspector.js" nonce="<?= $nonce ?>" defer></script>
     <script src="/js/derivation_accordions.js" nonce="<?= $nonce ?>" defer></script>
+    <script nonce="<?= $nonce ?>">
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.dev-role-pill');
+            if (!btn) return;
+            e.preventDefault();
+            const role = btn.getAttribute('data-dev-role');
+            if (!role) return;
+            fetch('/physics/api/auth/switch-role', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: role })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data && data.success) {
+                    window.location.reload();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

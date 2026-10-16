@@ -108,65 +108,126 @@ def is_trivial_variable(eq):
         return True
     return False
 
-def calculate_lhi(fid, form, formulas, parent_map, child_map):
-    upstream_score = 0
-    is_axiom = form.get('derivation_type') == 'AXIOMATIC_FOUNDATION'
-    has_parent = fid in parent_map
-    
-    if is_axiom or has_parent:
-        upstream_score = 35
-    
-    children = child_map.get(fid, [])
-    non_trivial_children = []
-    trivial_children = []
-    
-    for cid in children:
-        child_form = formulas.get(cid, {})
-        child_eq = child_form.get('equation', '')
-        if is_trivial_variable(child_eq):
-            trivial_children.append(cid)
-        else:
-            non_trivial_children.append(cid)
-            
-    n_valid = len(non_trivial_children)
-    if n_valid >= 3:
-        downstream_score = 35
-    elif n_valid == 2:
-        downstream_score = 25
-    elif n_valid == 1:
-        downstream_score = 15
-    elif len(trivial_children) > 0:
-        downstream_score = 5
-    else:
-        downstream_score = 0
+VALID_DERIVATION_TYPES = {
+    'AXIOMATIC_FOUNDATION',
+    'DERIVED_FROM',
+    'SPECIAL_CASE',
+    'LIMITING_CASE',
+    'APPROXIMATION',
+    'DEFINITION',
+}
 
-    has_grandparent = False
+
+def has_loop_free_ancestry(fid, parent_map, max_steps=25):
+    """Returns (depth, loop_free) tracing parent_map upward from fid."""
+    visited = {fid}
+    curr = fid
+    depth = 0
+    while curr in parent_map and depth < max_steps:
+        nxt = parent_map[curr]
+        if nxt in visited:
+            return depth, False
+        visited.add(nxt)
+        curr = nxt
+        depth += 1
+    return depth, True
+
+
+def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
+    """
+    Role-Aware & Reciprocity-Enforced Lineage Health Index (0-100):
+      1. Upstream Lineage & Tree Depth (40 pts)
+      2. Reciprocal Graph Closure & Derivation Type (30 pts)
+      3. Physical Grounding: Symmetry, Limits & Variables (30 pts)
+    """
+    has_parent = fid in parent_map
+    reciprocal_children = reciprocal_child_map.get(fid, [])
+    declared_subs = [c for c in form.get('subcomponents', []) if isinstance(c, str) and c in formulas]
+    unreciprocal_subs = [c for c in declared_subs if formulas.get(c, {}).get('parent_formula_id') != fid]
+
+    is_axiom = (form.get('derivation_type') == 'AXIOMATIC_FOUNDATION') or (not has_parent and len(reciprocal_children) > 0)
+
+    # Strict Isolation Gate: if a formula has no valid parent and no reciprocal children, it is Isolated (0).
+    if not has_parent and len(reciprocal_children) == 0:
+        return {
+            'id': fid,
+            'title': form.get('title', fid),
+            'equation': form.get('equation', ''),
+            'score': 0,
+            'tier': 'BLACK',
+            'status_label': 'Isolated',
+            'upstream_score': 0,
+            'downstream_score': 0,
+            'depth_score': 0,
+            'quality_score': 0,
+            'parent_id': None,
+            'is_axiom': False,
+            'children_count': len(declared_subs),
+            'valid_children_count': 0,
+            'trivial_children_count': 0,
+            'unreciprocal_children_count': len(unreciprocal_subs),
+        }
+
+    # Bucket 1: Upstream Lineage & Tree Depth (up to 40 pts: 25 upstream + 15 depth)
+    upstream_score = 25 if (has_parent or is_axiom) else 0
+    ancestry_depth, loop_free = has_loop_free_ancestry(fid, parent_map)
+
+    depth_score = 0
+    if loop_free:
+        if ancestry_depth >= 2:
+            depth_score = 15
+        elif ancestry_depth == 1:
+            p_id = parent_map[fid]
+            # If parent is a root axiom/hub with multiple children, leaf is at depth 1 from root pillar
+            if len(reciprocal_child_map.get(p_id, [])) >= 2 or formulas.get(p_id, {}).get('derivation_type') == 'AXIOMATIC_FOUNDATION':
+                depth_score = 15
+            else:
+                depth_score = 10
+        elif is_axiom and len(reciprocal_children) > 0:
+            has_grandchild = any(len(reciprocal_child_map.get(c, [])) > 0 for c in reciprocal_children)
+            depth_score = 15 if (has_grandchild or len(reciprocal_children) >= 2) else 10
+
+    # Bucket 2: Reciprocal Graph Closure & Derivation Type (up to 30 pts: 20 reciprocity + 10 type/structure)
+    reciprocity_score = 20
     if has_parent:
         p_id = parent_map[fid]
-        if p_id in parent_map or formulas.get(p_id, {}).get('derivation_type') == 'AXIOMATIC_FOUNDATION':
-            has_grandparent = True
-            
-    has_grandchild = False
-    for cid in non_trivial_children:
-        if len(child_map.get(cid, [])) > 0:
-            has_grandchild = True
-            break
-            
-    depth_score = 0
-    if (has_parent or is_axiom) and n_valid > 0:
-        depth_score = 10
-        if has_grandparent or has_grandchild:
-            depth_score = 15
-    elif has_parent or n_valid > 0:
-        depth_score = 5
+        parent_subs = formulas.get(p_id, {}).get('subcomponents', [])
+        if fid not in parent_subs:
+            reciprocity_score -= 10
+    if unreciprocal_subs:
+        reciprocity_score = max(0, reciprocity_score - 10 * len(unreciprocal_subs))
 
-    quality_score = 15
-    if len(children) > 0 and len(non_trivial_children) == 0:
-        quality_score = 5
-    elif len(children) == 0 and not has_parent and not is_axiom:
-        quality_score = 0
+    dtype = form.get('derivation_type', '')
+    eq = form.get('equation', '')
+    trivial = is_trivial_variable(eq)
+    type_score = 0
+    if dtype in VALID_DERIVATION_TYPES or is_axiom:
+        type_score += 5
+    if not trivial:
+        type_score += 5
 
-    total_score = max(0, min(100, upstream_score + downstream_score + depth_score + quality_score))
+    downstream_score = reciprocity_score + type_score
+
+    # Bucket 3: Physical Grounding — Symmetry, Limits & Variables (up to 30 pts)
+    quality_score = 0
+    sym_orig = (form.get('symmetry_origin') or '').strip()
+    lim_bound = (form.get('limits_and_boundary') or '').strip()
+    sem_vars = form.get('semantic_variables')
+
+    if len(sym_orig) >= 20:
+        quality_score += 10
+    elif len(sym_orig) > 0:
+        quality_score += 5
+
+    if len(lim_bound) >= 20:
+        quality_score += 10
+    elif len(lim_bound) > 0:
+        quality_score += 5
+
+    if isinstance(sem_vars, dict) and len(sem_vars) >= 1:
+        quality_score += 10
+
+    total_score = max(0, min(100, upstream_score + depth_score + downstream_score + quality_score))
 
     if total_score >= 75:
         tier = "GREEN"
@@ -181,10 +242,13 @@ def calculate_lhi(fid, form, formulas, parent_map, child_map):
         tier = "BLACK"
         status_label = "Isolated"
 
+    non_trivial_children = [c for c in reciprocal_children if not is_trivial_variable(formulas.get(c, {}).get('equation', ''))]
+    trivial_children = [c for c in reciprocal_children if is_trivial_variable(formulas.get(c, {}).get('equation', ''))]
+
     return {
         'id': fid,
         'title': form.get('title', fid),
-        'equation': form.get('equation', ''),
+        'equation': eq,
         'score': total_score,
         'tier': tier,
         'status_label': status_label,
@@ -194,32 +258,29 @@ def calculate_lhi(fid, form, formulas, parent_map, child_map):
         'quality_score': quality_score,
         'parent_id': parent_map.get(fid),
         'is_axiom': is_axiom,
-        'children_count': len(children),
+        'children_count': len(reciprocal_children),
         'valid_children_count': len(non_trivial_children),
-        'trivial_children_count': len(trivial_children)
+        'trivial_children_count': len(trivial_children),
+        'unreciprocal_children_count': len(unreciprocal_subs),
     }
+
 
 def audit_all(formulas):
     parent_map = {}
-    child_map = {}
+    reciprocal_child_map = {}
 
     for fid, f in formulas.items():
         p = f.get('parent_formula_id')
-        if p and p in formulas:
+        if p and isinstance(p, str) and p in formulas and p != fid:
             parent_map[fid] = p
-            child_map.setdefault(p, []).append(fid)
-        for c in f.get('subcomponents', []):
-            if c in formulas:
-                child_map.setdefault(fid, []).append(c)
-                if c not in parent_map:
-                    parent_map[c] = fid
+            reciprocal_child_map.setdefault(p, []).append(fid)
 
-    for k in child_map:
-        child_map[k] = list(set(child_map[k]))
+    for k in reciprocal_child_map:
+        reciprocal_child_map[k] = sorted(set(reciprocal_child_map[k]))
 
     results = {}
     for fid, form in formulas.items():
-        results[fid] = calculate_lhi(fid, form, formulas, parent_map, child_map)
+        results[fid] = calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map)
 
     return results
 

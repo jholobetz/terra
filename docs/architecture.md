@@ -49,7 +49,7 @@ flowchart TD
         Lineage_Skill[".agents/skills/lineage-graph-healer"]
         CAS_Skill[".agents/skills/cas-symbolic-prover"]
         DB_Skill[".agents/skills/mariadb-shard-sync"]
-        Shield["integrity_shield.py & Pytest Suite (3,150+ tests)"]
+        Shield["integrity_shield.py & Test Suite (241 Pytest + 16 PHP unit tests)"]
     end
 
     UI --> Router
@@ -183,7 +183,7 @@ When auditing or enriching any entity in the encyclopedia, these skills interact
 1. **Auditor Skill** identifies deficiencies (e.g. thin derivation edges, unmapped prose equations, missing asymptotic limits).
 2. **CAS Prover Skill** verifies mathematical properties symbolically before proposing changes.
 3. **Write Bridge** updates the Git JSON shard and MariaDB atomically.
-4. **Integrity Shield** verifies that all 3,150+ tests pass and manifold closure is preserved.
+4. **Integrity Shield** verifies that all 241 Pytest and 16 native PHP unit tests pass and manifold closure is preserved.
 
 ---
 
@@ -195,4 +195,4 @@ Physics Lab serves as the flagship domain module of **Project Terra**, an overar
 * **Production Environment**: Independent Linux LAMP stack (Apache/Nginx, PHP 8.2+, MariaDB 10.6+).
 * **Automated Quality Gates**:
   - `integrity_shield.py`: Verifies zero broken links, delimiter purity, 100% manifold closure, and schema validity.
-  - `pytest tests/`: 3,150+ regression tests executed in ~13 seconds prior to any deployment.
+  - `pytest tests/` & `composer test`: 241 Pytest and 16 native PHP regression tests executed prior to any deployment.

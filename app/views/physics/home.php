@@ -62,29 +62,29 @@ $topicCubes = [
         'badge' => 'MIND',
         'theme' => 'var(--accent-philosophy)',
         'equation' => '\\langle \\hat{A} \\rangle = \\text{Tr}(\\rho \\hat{A})'
+    ],
+    'history-of-physics' => [
+        'badge' => 'HISTORY',
+        'theme' => '#f59e0b',
+        'equation' => 'E = h\\nu, \\quad F = G\\frac{m_1 m_2}{r^2}'
     ]
 ];
 ?>
 
 <!-- Hero Section with Canvas Particles -->
-<section class="hero" style="margin-bottom: 20px;">
+<section class="hero" style="margin-bottom: 0;">
     <canvas id="hero-canvas"></canvas>
     <div class="hero-content">
         <h1><?= htmlspecialchars($title) ?></h1>
-        <p class="subtitle"><?= htmlspecialchars($subtitle) ?></p>
-
-        <div class="hero-cta" style="margin-top: 24px;">
-            <a href="/physics/random" class="btn btn-secondary">🎲 Start Exploring</a>
-            <a href="/physics/lab-tools" class="btn btn-primary">Lab Tools</a>
-        </div>
+        <p class="subtitle" style="margin-bottom: 0;"><?= htmlspecialchars($subtitle) ?></p>
     </div>
 </section>
 
 <!-- 3D Translucent Glass Cubes Halo Orbit Menu Section -->
-<section class="halo-orbit-section" style="margin-top: 20px; margin-bottom: 80px; text-align: center; position: relative;">
+<section class="halo-orbit-section" style="margin-top: -10px; margin-bottom: 70px; text-align: center; position: relative;">
 
     <!-- 3D Halo Orbit Container with Expanded Room -->
-    <div id="halo-orbit-container" style="position: relative; width: 100%; height: 520px; margin: 0 auto; perspective: 1200px; cursor: grab; user-select: none; overflow: visible;">
+    <div id="halo-orbit-container" style="position: relative; width: 100%; height: 500px; margin: 0 auto; perspective: 1200px; cursor: grab; user-select: none; overflow: visible;">
         <!-- Glowing Tilted Wire Ring -->
         <div id="halo-orbit-ring" style="position: absolute; top: 50%; left: 50%; width: 960px; height: 280px; margin-left: -480px; margin-top: -140px; border: 1.5px dashed rgba(100, 255, 218, 0.25); border-radius: 50%; transform: rotateX(72deg); pointer-events: none; box-shadow: 0 0 40px rgba(100, 255, 218, 0.12);"></div>
 
@@ -95,12 +95,21 @@ $topicCubes = [
                 $meta = get_topic_icon_and_class($slug);
                 $cube = $topicCubes[$slug] ?? [];
                 $themeColor = $cube['theme'] ?? 'var(--accent-color)';
+                $badgeText = $cube['badge'] ?? 'PHYSICS';
+                $descText = $topic['description'] ?? '';
             ?>
                 <!-- Entire 3D Glass Cube is a Clickable Anchor -->
-                <a href="/physics/topic/<?= htmlspecialchars($slug) ?>" class="glass-cube" style="--cube-accent: <?= $themeColor ?>;" data-slug="<?= htmlspecialchars($slug) ?>">
+                <a href="/physics/topic/<?= htmlspecialchars($slug) ?>"
+                   class="glass-cube"
+                   style="--cube-accent: <?= $themeColor ?>;"
+                   data-slug="<?= htmlspecialchars($slug) ?>"
+                   data-title="<?= htmlspecialchars($topic['title']) ?>"
+                   data-badge="<?= htmlspecialchars($badgeText) ?>"
+                   data-theme="<?= htmlspecialchars($themeColor) ?>"
+                   data-description="<?= htmlspecialchars($descText) ?>">
                     <!-- 6 Glass Cube Faces -->
                     <div class="cube-face cube-face-front">
-                        <div class="cube-badge" style="border-color: <?= $themeColor ?>; color: <?= $themeColor ?>;"><?= $cube['badge'] ?? 'PHYSICS' ?></div>
+                        <div class="cube-badge" style="border-color: <?= $themeColor ?>; color: <?= $themeColor ?>;"><?= htmlspecialchars($badgeText) ?></div>
                         <div class="cube-icon-wrapper"><?= $meta['svg'] ?></div>
                         <h4 class="cube-title"><?= htmlspecialchars($topic['title']) ?></h4>
                         <?php if (!empty($cube['equation'])): ?>

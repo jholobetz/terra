@@ -1104,14 +1104,17 @@ class PhysicsController
             $roleButtonsHtml .= '<button type="button" class="dev-role-pill' . $activeClass . '" data-dev-role="' . $rKey . '">' . $rLabel . '</button>';
         }
 
+        $reqUrl = parse_url($this->app->request()->url ?? '', PHP_URL_PATH) ?: '';
+        $isAdminActive = (bool)preg_match('#^/physics/admin(?:/|$)#', $reqUrl);
+
         $adminMenuHtml = '
-            <div class="dropdown nav-admin-dropdown" id="dev-studio-admin-nav">
-                <a href="/physics/admin/assess" class="dropbtn btn btn-admin-studio" title="Local Developer Studio Controls">
+            <div class="dropdown nav-admin-dropdown" id="dev-studio-admin-nav" data-nav-pillar="admin">
+                <a href="/physics/admin/assess" class="dropbtn btn btn-admin-studio' . ($isAdminActive ? ' nav-pillar-active' : '') . '" title="Local Developer Studio Controls">
                     🛠️ Admin <span class="nav-caret">&blacktriangledown;</span>
                 </a>
                 <div class="dropdown-content dropdown-admin-studio">
                     <div class="mega-section-label">Developer Studio Controls</div>
-                    <a href="/physics/admin/assess" class="nav-module-link admin-featured-link">
+                    <a href="/physics/admin/assess" class="nav-module-link admin-featured-link' . ($isAdminActive ? ' is-current' : '') . '">
                         <span class="module-title">🪐 Assessment &amp; Health Console</span>
                         <span class="module-desc">Live telemetry, ratchets, shard audits &amp; self-healing</span>
                     </a>
@@ -1148,8 +1151,10 @@ class PhysicsController
     {
         $topics = $this->service()->fetchAllData('topics');
         foreach ($topics as &$topic) {
-            $cleanContent = strip_tags($topic['content'] ?? $topic['intro'] ?? '');
-            $topic['description'] = mb_strimwidth($cleanContent, 0, 120, "...");
+            $cleanContent = trim(strip_tags($topic['content'] ?? $topic['intro'] ?? ''));
+            $sentences = preg_split('/(?<=[.!?])\s+/', $cleanContent, 2);
+            $firstSentence = $sentences[0] ?? $cleanContent;
+            $topic['description'] = mb_strimwidth($firstSentence, 0, 195, "...");
         }
 
         $this->renderWithLayout('physics/home', [

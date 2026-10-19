@@ -130,7 +130,7 @@ $topicCubes = [
     </div>
 </section>
 
-<!-- Option A 3D Translucent Cubes CSS Styling -->
+<!-- Option A 3D Translucent Cubes CSS Styling (GPU-Optimized) -->
 <style>
 .glass-cube {
     position: absolute;
@@ -139,6 +139,8 @@ $topicCubes = [
     margin-left: -125px;
     margin-top: -105px;
     transform-style: preserve-3d;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
     text-decoration: none;
     color: inherit;
@@ -150,13 +152,12 @@ $topicCubes = [
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.84) 0%, rgba(10, 15, 30, 0.68) 100%);
     border: 1.5px solid var(--cube-accent, var(--accent-color));
     border-radius: 14px;
     box-sizing: border-box;
-    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.03), 0 10px 30px rgba(0,0,0,0.5);
+    backface-visibility: hidden;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), inset 0 0 20px rgba(255, 255, 255, 0.03), 0 10px 28px rgba(0, 0, 0, 0.5);
 }
 
 .cube-face-front {
@@ -167,14 +168,22 @@ $topicCubes = [
     justify-content: space-between;
     text-align: center;
     box-sizing: border-box;
-    transform: translateZ(20px);
+    transform: translateZ(12px);
 }
 
-.cube-face-back { transform: rotateY(180deg) translateZ(20px); opacity: 0.3; }
-.cube-face-left { transform: rotateY(-90deg) translateZ(20px); opacity: 0.2; }
-.cube-face-right { transform: rotateY(90deg) translateZ(20px); opacity: 0.2; }
-.cube-face-top { transform: rotateX(90deg) translateZ(20px); opacity: 0.2; }
-.cube-face-bottom { transform: rotateX(-90deg) translateZ(20px); opacity: 0.2; }
+/* Parallel depth plane avoids 3D BSP polygon-splitting in Chrome GPU compositor */
+.cube-face-back {
+    transform: translateZ(-8px);
+    opacity: 0.28;
+    pointer-events: none;
+}
+
+.cube-face-left,
+.cube-face-right,
+.cube-face-top,
+.cube-face-bottom {
+    display: none;
+}
 
 .cube-badge {
     font-family: 'Space Grotesk', sans-serif;
@@ -183,7 +192,7 @@ $topicCubes = [
     letter-spacing: 0.08em;
     padding: 2px 8px;
     border-radius: 10px;
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(15, 23, 42, 0.88);
     border: 1px solid;
 }
 
@@ -200,7 +209,7 @@ $topicCubes = [
 }
 
 .cube-equation-core {
-    background: rgba(2, 6, 23, 0.7);
+    background: rgba(2, 6, 23, 0.78);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 6px 8px;
@@ -244,14 +253,11 @@ $topicCubes = [
     transition: opacity 0.2s;
 }
 
-.glass-cube.focused .cube-face {
+.glass-cube.focused .cube-face-front {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 0 35px var(--cube-accent, var(--accent-color)), inset 0 0 25px rgba(255, 255, 255, 0.1);
     border-color: #ffffff;
-}
-
-#hero-search-trigger:hover {
-    border-color: #64ffda;
-    box-shadow: 0 12px 35px rgba(100, 255, 218, 0.25) !important;
 }
 </style>
 

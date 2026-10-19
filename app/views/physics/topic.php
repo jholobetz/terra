@@ -528,24 +528,28 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
             aura.setAttribute('stroke-width', '1.5');
             aura.setAttribute('opacity', '0.4');
 
-            // Inner Core Body
+            // Inner Core Body (glow filter applied selectively to active node only)
             const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
             core.setAttribute('r', '6');
             core.setAttribute('class', 'node-core');
             core.setAttribute('fill', getTierColor(data.level));
-            core.setAttribute('filter', 'url(#glow-filter)');
 
-            // Label Text (Capsule badge)
+            // Label Text (Capsule badge — static geometry initialized once)
             const textBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             textBg.setAttribute('class', 'node-label-bg');
             textBg.setAttribute('rx', '4');
             textBg.setAttribute('ry', '4');
+            textBg.setAttribute('x', '14');
+            textBg.setAttribute('y', '-10');
+            textBg.setAttribute('height', '16');
             textBg.setAttribute('fill', 'rgba(11, 17, 32, 0.85)');
             textBg.setAttribute('stroke', 'rgba(255, 255, 255, 0.1)');
             textBg.setAttribute('stroke-width', '0.8');
 
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('class', 'node-label-text');
+            text.setAttribute('x', '20');
+            text.setAttribute('y', '2');
             text.setAttribute('font-family', "'Space Grotesk', sans-serif");
             text.setAttribute('font-size', '9');
             text.setAttribute('font-weight', '600');
@@ -573,12 +577,30 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         });
     });
 
+    // Measure text bounding boxes in a single batch once after DOM insertion (avoids per-frame layout thrashing)
+    nodes.forEach(n => {
+        let labelWidth = 60;
+        try {
+            const bbox = n.text.getBBox();
+            if (bbox && bbox.width > 0) {
+                labelWidth = bbox.width;
+            } else {
+                labelWidth = (n.data.title || '').length * 5.2;
+            }
+        } catch (e) {
+            labelWidth = (n.data.title || '').length * 5.2;
+        }
+        n.textBg.setAttribute('width', Math.max(50, Math.round(labelWidth + 12)));
+    });
+
     function getTierColor(level) {
         const l = (level || '').toLowerCase();
         if (l === 'foundational') return '#10b981'; // Emerald
         if (l === 'frontier') return '#d946ef';     // Violet
         return '#00d2ff';                           // Analytical Cyan
     }
+
+    let activeNodeRef = null;
 
     // 5. Update HUD Inspector Deck with Concept Data
     function updateHUD(slug) {
@@ -634,30 +656,33 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
             hudAbstractBody.innerHTML = `<p>Comprehensive monograph detailing ${data.title} inside the physics manifold.</p>`;
         }
 
-        // Update gravitational connector ray
-        const activeNode = nodes.find(n => n.slug === slug);
-        if (activeNode && gravityRay) {
-            gravityRay.setAttribute('x1', cx);
-            gravityRay.setAttribute('y1', cy);
-            gravityRay.setAttribute('x2', activeNode.currentX || cx);
-            gravityRay.setAttribute('y2', activeNode.currentY || cy);
-            gravityRay.setAttribute('opacity', '0.75');
-        }
-
-        // Highlight active node in SVG
+        // Highlight active node in SVG & scope GPU glow filter strictly to active node
+        activeNodeRef = null;
         nodes.forEach(n => {
             if (n.slug === slug) {
+                activeNodeRef = n;
                 n.element.classList.add('is-active');
                 n.aura.setAttribute('r', '18');
                 n.aura.setAttribute('opacity', '0.9');
                 n.core.setAttribute('r', '8');
+                n.core.setAttribute('filter', 'url(#glow-filter)');
             } else {
                 n.element.classList.remove('is-active');
                 n.aura.setAttribute('r', '14');
                 n.aura.setAttribute('opacity', '0.4');
                 n.core.setAttribute('r', '6');
+                n.core.removeAttribute('filter');
             }
         });
+
+        // Update gravitational connector ray
+        if (activeNodeRef && gravityRay) {
+            gravityRay.setAttribute('x1', cx);
+            gravityRay.setAttribute('y1', cy);
+            gravityRay.setAttribute('x2', activeNodeRef.currentX || cx);
+            gravityRay.setAttribute('y2', activeNodeRef.currentY || cy);
+            gravityRay.setAttribute('opacity', '0.75');
+        }
     }
 
     function sprintf2(n) {
@@ -687,53 +712,106 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         });
     });
 
-    // 7. Continuous Orbital Animation Loop
+    // 7. Continuous Orbital Animation Loop (Capped at 30 FPS with Lifecycle & Visibility Gating)
     let isPaused = false;
+    let isOrbitMode = true;
+    let isInViewport = true;
+    let isWindowFocused = document.hasFocus ? document.hasFocus() : true;
+    let rafId = null;
+    let lastFrameTime = 0;
+    const frameInterval = 1000 / 30; // Cap at 30fps
+    const baseTickMs = 1000 / 60;    // Reference 60Hz tick for cfg.speed
 
-    function animateOrbits() {
-        if (!isPaused) {
-            nodes.forEach(n => {
-                n.angle += n.cfg.speed;
-            });
-        }
+    function shouldAnimate() {
+        return !isPaused && isOrbitMode && !document.hidden && isWindowFocused && isInViewport;
+    }
 
-        // Position nodes on their respective orbital ellipses
-        nodes.forEach(n => {
+    function renderOrbitPositions() {
+        for (let i = 0, len = nodes.length; i < len; i++) {
+            const n = nodes[i];
             const x = cx + Math.cos(n.angle) * n.cfg.rx;
             const y = cy + Math.sin(n.angle) * n.cfg.ry;
             n.currentX = x;
             n.currentY = y;
-
-            n.element.setAttribute('transform', `translate(${x}, ${y})`);
-
-            // Position label badge next to the planet
-            const bbox = n.text.getBBox();
-            n.textBg.setAttribute('x', 14);
-            n.textBg.setAttribute('y', -10);
-            n.textBg.setAttribute('width', Math.max(50, bbox.width + 12));
-            n.textBg.setAttribute('height', 16);
-            n.text.setAttribute('x', 20);
-            n.text.setAttribute('y', 2);
-        });
-
-        // Update gravitational connector ray to follow active node in real time
-        if (activeSlug && gravityRay) {
-            const activeNode = nodes.find(n => n.slug === activeSlug);
-            if (activeNode) {
-                gravityRay.setAttribute('x2', activeNode.currentX || cx);
-                gravityRay.setAttribute('y2', activeNode.currentY || cy);
-            }
+            n.element.setAttribute('transform', `translate(${x.toFixed(1)}, ${y.toFixed(1)})`);
         }
 
-        requestAnimationFrame(animateOrbits);
+        // Update gravitational connector ray to follow active node in real time
+        if (activeNodeRef && gravityRay) {
+            gravityRay.setAttribute('x2', (activeNodeRef.currentX || cx).toFixed(1));
+            gravityRay.setAttribute('y2', (activeNodeRef.currentY || cy).toFixed(1));
+        }
     }
 
-    // Start animation loop
-    requestAnimationFrame(animateOrbits);
+    function animateOrbits(timestamp) {
+        if (!shouldAnimate()) {
+            rafId = null;
+            return;
+        }
 
-    // Initial HUD Activation
+        if (!lastFrameTime) lastFrameTime = timestamp;
+        const elapsed = timestamp - lastFrameTime;
+
+        if (elapsed >= frameInterval) {
+            const tickScale = Math.min(elapsed / baseTickMs, 3.0);
+            lastFrameTime = timestamp - (elapsed % frameInterval);
+
+            for (let i = 0, len = nodes.length; i < len; i++) {
+                nodes[i].angle += nodes[i].cfg.speed * tickScale;
+            }
+            renderOrbitPositions();
+        }
+
+        rafId = requestAnimationFrame(animateOrbits);
+    }
+
+    function startLoop() {
+        if (rafId === null && shouldAnimate()) {
+            lastFrameTime = 0;
+            rafId = requestAnimationFrame(animateOrbits);
+        }
+    }
+
+    function stopLoop() {
+        if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+    }
+
+    // Initial static layout + HUD activation + start loop
+    renderOrbitPositions();
     if (activeSlug) {
         updateHUD(activeSlug);
+    }
+    startLoop();
+
+    // Lifecycle & Visibility Listeners
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopLoop();
+        else startLoop();
+    });
+
+    window.addEventListener('focus', () => {
+        isWindowFocused = true;
+        startLoop();
+    });
+
+    window.addEventListener('blur', () => {
+        isWindowFocused = false;
+        stopLoop();
+    });
+
+    const constellationViewport = document.getElementById('constellation-viewport');
+    if ('IntersectionObserver' in window && constellationViewport) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                isInViewport = entry.isIntersecting;
+                if (isInViewport) startLoop();
+                else stopLoop();
+            });
+        }, { threshold: 0.05 });
+        observer.observe(constellationViewport);
     }
 
     // 8. Orbit Pause / Play Toggle
@@ -741,11 +819,13 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         btnOrbitPause.addEventListener('click', () => {
             isPaused = !isPaused;
             if (isPaused) {
+                stopLoop();
                 btnOrbitPause.classList.add('is-paused');
                 btnOrbitPause.innerHTML = '<span id="orbit-pause-icon">▶</span> Resume Drift';
             } else {
                 btnOrbitPause.classList.remove('is-paused');
                 btnOrbitPause.innerHTML = '<span id="orbit-pause-icon">⏸</span> Pause Drift';
+                startLoop();
             }
         });
     }
@@ -775,7 +855,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
                     r.setAttribute('stroke', 'rgba(100, 255, 218, 0.45)');
                     r.setAttribute('stroke-width', '1.8');
                 } else {
-                    r.setAttribute('stroke', 'rgba(255, 255, 255, 0.05)');
+                    r.setAttribute('stroke', 'rgba(255, 255, 218, 0.05)');
                     r.setAttribute('stroke-width', '0.8');
                 }
             });
@@ -785,13 +865,17 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     // 10. View Mode Switcher (Constellation vs Directory)
     if (btnModeOrbit && btnModeDirectory) {
         btnModeOrbit.addEventListener('click', () => {
+            isOrbitMode = true;
             btnModeOrbit.classList.add('active');
             btnModeDirectory.classList.remove('active');
             stageConstellation.style.display = 'block';
             stageDirectory.style.display = 'none';
+            startLoop();
         });
 
         btnModeDirectory.addEventListener('click', () => {
+            isOrbitMode = false;
+            stopLoop();
             btnModeDirectory.classList.add('active');
             btnModeOrbit.classList.remove('active');
             stageConstellation.style.display = 'none';

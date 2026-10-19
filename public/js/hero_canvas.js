@@ -83,8 +83,17 @@ document.addEventListener('DOMContentLoaded', () => {
         height = canvas.height = canvas.offsetHeight;
     });
     
-    // Animation loop
-    function animate() {
+    let isInViewport = true;
+    let isWindowFocused = document.hasFocus ? document.hasFocus() : true;
+    let rafId = null;
+    let lastFrameTime = 0;
+    const frameInterval = 1000 / 30;
+
+    function shouldAnimate() {
+        return !document.hidden && isWindowFocused && isInViewport;
+    }
+
+    function drawFrame() {
         ctx.clearRect(0, 0, width, height);
         
         // Draw connection lines
@@ -95,22 +104,81 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let j = i + 1; j < particles.length; j++) {
                 const dx = particles[i].x - particles[j].x;
                 const dy = particles[i].y - particles[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+                const distSq = dx * dx + dy * dy;
                 
-                if (dist < maxDistance) {
+                if (distSq < maxDistance * maxDistance) {
+                    const dist = Math.sqrt(distSq);
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
                     const alpha = (maxDistance - dist) / maxDistance * 0.15;
-                    ctx.strokeStyle = `rgba(100, 255, 218, ${alpha})`;
+                    ctx.strokeStyle = `rgba(100, 255, 218, ${alpha.toFixed(3)})`;
                     ctx.lineWidth = 0.8;
                     ctx.stroke();
                 }
             }
         }
-        
-        requestAnimationFrame(animate);
     }
-    
-    animate();
+
+    // Animation loop
+    function animate(timestamp) {
+        if (!shouldAnimate()) {
+            rafId = null;
+            return;
+        }
+
+        if (!lastFrameTime) lastFrameTime = timestamp;
+        const elapsed = timestamp - lastFrameTime;
+
+        if (elapsed >= frameInterval) {
+            lastFrameTime = timestamp - (elapsed % frameInterval);
+            drawFrame();
+        }
+        
+        rafId = requestAnimationFrame(animate);
+    }
+
+    function startLoop() {
+        if (rafId === null && shouldAnimate()) {
+            lastFrameTime = 0;
+            rafId = requestAnimationFrame(animate);
+        }
+    }
+
+    function stopLoop() {
+        if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopLoop();
+        else startLoop();
+    });
+
+    window.addEventListener('focus', () => {
+        isWindowFocused = true;
+        startLoop();
+    });
+
+    window.addEventListener('blur', () => {
+        isWindowFocused = false;
+        mouse.active = false;
+        stopLoop();
+    });
+
+    if ('IntersectionObserver' in window && hero) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                isInViewport = entry.isIntersecting;
+                if (isInViewport) startLoop();
+                else stopLoop();
+            });
+        }, { threshold: 0.05 });
+        observer.observe(hero);
+    }
+
+    drawFrame();
+    startLoop();
 });

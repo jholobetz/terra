@@ -319,14 +319,13 @@ function loadSymmetry(id) {
     setupSliderListeners();
 
     // Start Simulation Loop
-    if (simAnimationId) {
-        cancelAnimationFrame(simAnimationId);
-    }
+    stopVaultLoop();
     
     // Make sure canvas size is updated
     resizeCanvas();
     
-    simAnimationId = requestAnimationFrame(simulationLoop);
+    renderVaultFrame();
+    startVaultLoop();
 }
 
 // Dynamically generate sliders
@@ -372,8 +371,59 @@ function setupSliderListeners() {
     });
 }
 
-// Master Loop
-function simulationLoop() {
+// Lifecycle & 30 FPS Throttling State
+let isVaultInViewport = true;
+let isVaultWindowFocused = document.hasFocus ? document.hasFocus() : true;
+let lastVaultFrameTime = 0;
+const vaultFrameInterval = 1000 / 30;
+let vaultLifecycleInitialized = false;
+
+function shouldAnimateVault() {
+    return !document.hidden && isVaultWindowFocused && isVaultInViewport;
+}
+
+function startVaultLoop() {
+    if (!vaultLifecycleInitialized) {
+        vaultLifecycleInitialized = true;
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) stopVaultLoop();
+            else startVaultLoop();
+        });
+        window.addEventListener("focus", () => {
+            isVaultWindowFocused = true;
+            startVaultLoop();
+        });
+        window.addEventListener("blur", () => {
+            isVaultWindowFocused = false;
+            stopVaultLoop();
+        });
+        if ("IntersectionObserver" in window && canvas) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    isVaultInViewport = entry.isIntersecting;
+                    if (isVaultInViewport) startVaultLoop();
+                    else stopVaultLoop();
+                });
+            }, { threshold: 0.05 });
+            observer.observe(canvas);
+        }
+    }
+
+    if (simAnimationId === null && shouldAnimateVault()) {
+        lastVaultFrameTime = 0;
+        simAnimationId = requestAnimationFrame(simulationLoop);
+    }
+}
+
+function stopVaultLoop() {
+    if (simAnimationId !== null) {
+        cancelAnimationFrame(simAnimationId);
+        simAnimationId = null;
+    }
+}
+
+function renderVaultFrame() {
+    if (!ctx || !canvas) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     let conservedVal = 0;
@@ -416,6 +466,22 @@ function simulationLoop() {
 
     // Render moving line chart
     drawChart(isSymmetric);
+}
+
+// Master Loop (Capped at 30 FPS)
+function simulationLoop(timestamp) {
+    if (!shouldAnimateVault()) {
+        simAnimationId = null;
+        return;
+    }
+
+    if (!lastVaultFrameTime) lastVaultFrameTime = timestamp;
+    const elapsed = timestamp - lastVaultFrameTime;
+
+    if (elapsed >= vaultFrameInterval) {
+        lastVaultFrameTime = timestamp - (elapsed % vaultFrameInterval);
+        renderVaultFrame();
+    }
 
     simAnimationId = requestAnimationFrame(simulationLoop);
 }

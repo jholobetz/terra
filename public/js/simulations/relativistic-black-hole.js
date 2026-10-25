@@ -24,9 +24,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Inject custom styling
+    // Inject custom styling (with CSP nonce compliance)
     const style = document.createElement('style');
+    const nonceScript = document.querySelector('script[nonce]');
+    if (nonceScript) {
+        const n = nonceScript.nonce || nonceScript.getAttribute('nonce') || '';
+        if (n) style.setAttribute('nonce', n);
+    }
     style.innerHTML = `
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            min-height: 540px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000000;
+        }
+        #simulation-canvas {
+            display: block;
+            cursor: grab;
+        }
+        #simulation-canvas:active {
+            cursor: grabbing;
+        }
         .rbh-section {
             margin-bottom: 14px;
             background: rgba(15, 23, 42, 0.5);
@@ -34,6 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
             padding: 12px;
             border-radius: 8px;
             backdrop-filter: blur(12px);
+        }
+        .rbh-section-error {
+            color: #f43f5e;
         }
         .rbh-section-title {
             font-size: 0.78rem;
@@ -141,15 +165,21 @@ document.addEventListener('DOMContentLoaded', () => {
             pointer-events: none;
             font-family: 'Fira Code', monospace;
             font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.7);
-            background: rgba(15, 23, 42, 0.6);
+            color: rgba(255, 255, 255, 0.75);
+            background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(8px);
             padding: 6px 10px;
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             gap: 12px;
             z-index: 10;
+        }
+        .rbh-hud-fps {
+            color: #38bdf8;
+        }
+        .rbh-hud-spin {
+            color: #64ffda;
         }
     `;
     document.head.appendChild(style);
@@ -157,14 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add HUD overlay to canvas container
     const canvasContainer = canvas.parentElement;
     if (canvasContainer) {
-        canvasContainer.style.position = 'relative';
         const hud = document.createElement('div');
         hud.className = 'rbh-hud-overlay';
         hud.id = 'rbh-canvas-hud';
         hud.innerHTML = `
-            <span>FPS: <strong id="hud-fps" style="color: #38bdf8;">--</strong></span>
-            <span>Spin a/M: <strong id="hud-spin" style="color: #64ffda;">0.850</strong></span>
-            <span>Drag Canvas to Orbit</span>
+            <span>FPS: <strong id="hud-fps" class="rbh-hud-fps">30</strong></span>
+            <span>Spin a/M: <strong id="hud-spin" class="rbh-hud-spin">0.850</strong></span>
+            <span>Drag to Orbit • Scroll to Zoom</span>
         `;
         canvasContainer.appendChild(hud);
     }
@@ -229,8 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="rbh-control-group">
                 <div class="rbh-toggle-row">
+                    <button class="rbh-btn active" id="btn-play-pause">❚❚ Pause</button>
                     <button class="rbh-btn active" id="btn-toggle-stars">Starfield: ON</button>
-                    <button class="rbh-btn" id="btn-reset-cam">Reset View</button>
+                    <button class="rbh-btn" id="btn-reset-cam">Reset</button>
                     <button class="rbh-btn" id="btn-capture-png">Snapshot</button>
                 </div>
             </div>
@@ -289,42 +319,54 @@ document.addEventListener('DOMContentLoaded', () => {
     uniform int u_stars_enabled;   // 1 = on, 0 = off
 
     #define PI 3.14159265359
-    #define MAX_STEPS 140
-    #define ESCAPE_RADIUS 35.0
+    #define MAX_STEPS 180
+    #define ESCAPE_RADIUS 38.0
 
-    // Procedural pseudo-random hash for background stellar field
-    float hash(vec3 p) {
-        p = fract(p * 0.3183099 + 0.1);
-        p *= 17.0;
-        return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+    // 2D & 3D procedural hashes for plasma turbulence and starfield
+    float hash21(vec2 p) {
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
     }
 
-    // Stars background sampling with celestial coordinate projection
+    float noise2D(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+        float a = hash21(i);
+        float b = hash21(i + vec2(1.0, 0.0));
+        float c = hash21(i + vec2(0.0, 1.0));
+        float d = hash21(i + vec2(1.0, 1.0));
+        return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+    }
+
+    // Stars background sampling with spherical celestial projection
     vec3 sampleStarfield(vec3 dir) {
         if (u_stars_enabled == 0) return vec3(0.002, 0.003, 0.008);
 
-        // Normalize direction
         vec3 d = normalize(dir);
 
-        // Cosmic background faint glow / dust lane
-        float milkyway = pow(max(0.0, 1.0 - abs(d.y * 1.5 + 0.1 * sin(d.x * 3.0))), 4.0);
-        vec3 bg = vec3(0.004, 0.006, 0.015) + vec3(0.02, 0.015, 0.035) * milkyway;
+        // Cosmic background faint glow / galactic dust lane
+        float milkyway = pow(max(1e-4, 1.0 - abs(d.y * 1.4 + 0.12 * sin(d.x * 2.5 + d.z * 1.5))), 3.5);
+        vec3 bg = vec3(0.005, 0.008, 0.018) + vec3(0.028, 0.022, 0.05) * milkyway;
 
-        // Multi-tier procedural stars
-        vec3 starCoord = d * 180.0;
-        vec3 ip = floor(starCoord);
-        vec3 fp = fract(starCoord) - 0.5;
+        // Spherical coordinate grid for round, artifact-free stars
+        float phi = atan(d.z, d.x);
+        float theta = asin(clamp(d.y, -0.999, 0.999));
+        vec2 skyUV = vec2(phi * 28.0, theta * 28.0);
+        vec2 cell = floor(skyUV);
+        vec2 local = fract(skyUV) - 0.5;
 
-        float rnd = hash(ip);
-        if (rnd > 0.975) {
-            float dist = length(fp);
-            float brightness = smoothstep(0.18, 0.0, dist) * pow((rnd - 0.975) / 0.025, 2.0);
-            
-            // Star color temperature variation
-            vec3 starColor = (rnd > 0.992) ? vec3(0.7, 0.85, 1.0) : // Blue-white
-                             (rnd > 0.985) ? vec3(1.0, 0.95, 0.8) : // Solar yellow
-                                             vec3(1.0, 0.7, 0.5);   // Red dwarf
-            bg += starColor * brightness * 3.5;
+        float rnd = hash21(cell);
+        if (rnd > 0.94) {
+            vec2 starOffset = vec2(fract(rnd * 43.17) - 0.5, fract(rnd * 91.53) - 0.5) * 0.55;
+            float dist = length(local - starOffset);
+            float intensity = smoothstep(0.22, 0.0, dist) * pow(max(1e-4, (rnd - 0.94) / 0.06), 1.6);
+
+            vec3 starColor = (rnd > 0.985) ? vec3(0.72, 0.86, 1.0) :
+                             (rnd > 0.965) ? vec3(1.0, 0.96, 0.84) :
+                                             vec3(1.0, 0.72, 0.52);
+            bg += starColor * intensity * 3.8;
         }
 
         return bg;
@@ -332,21 +374,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Blackbody color approximation for accretion disk plasma
     vec3 blackbodyColor(float tempNorm) {
-        // Temperature normalized 0.0 to 1.0 (from cool red/orange to hot blue-white)
-        float t = clamp(tempNorm, 0.0, 1.0);
+        float t = clamp(tempNorm, 0.0, 1.35);
         vec3 col;
         if (t < 0.35) {
-            col = mix(vec3(0.3, 0.02, 0.0), vec3(1.0, 0.35, 0.05), t / 0.35);
-        } else if (t < 0.7) {
-            col = mix(vec3(1.0, 0.35, 0.05), vec3(1.0, 0.95, 0.75), (t - 0.35) / 0.35);
+            col = mix(vec3(0.35, 0.03, 0.0), vec3(1.0, 0.38, 0.06), t / 0.35);
+        } else if (t < 0.75) {
+            col = mix(vec3(1.0, 0.38, 0.06), vec3(1.0, 0.92, 0.72), (t - 0.35) / 0.40);
         } else {
-            col = mix(vec3(1.0, 0.95, 0.75), vec3(0.75, 0.88, 1.3), (t - 0.7) / 0.3);
+            col = mix(vec3(1.0, 0.92, 0.72), vec3(0.68, 0.86, 1.35), clamp((t - 0.75) / 0.55, 0.0, 1.0));
         }
         return col;
     }
 
     void main() {
-        // Normalized device coordinates (-1.0 to 1.0 with aspect ratio correction)
         vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / u_resolution.y;
 
         // Camera ray setup (Field of View ~ 45 deg)
@@ -363,14 +403,20 @@ document.addEventListener('DOMContentLoaded', () => {
         float rIsco = u_isco;
         float rOuter = u_disk_outer;
 
+        // Photon sphere effective radius for relativistic ring glow
+        float rPhoton = M * (1.0 + 2.0 * cos(acos(clamp(-a, -0.998, 0.998)) / 3.0));
+        float minR = 1000.0;
+        bool plunged = false;
+
         // Raymarch numerical geodesic integration loop
         for (int i = 0; i < MAX_STEPS; i++) {
             float r = length(rayPos);
+            minR = min(minR, r);
 
             // 1. Plunge check: Has ray crossed the event horizon shadow?
-            if (r <= rPlus * 1.01) {
-                // Ray trapped in the black hole event horizon
+            if (r <= rPlus * 1.02) {
                 transmittance = 0.0;
+                plunged = true;
                 break;
             }
 
@@ -379,11 +425,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             }
 
-            // Adaptive step size: ultra-fine near photon sphere, larger far away
-            float dt = clamp(r * 0.065, 0.02, 0.45);
+            // Adaptive step size: fine near photon sphere & disk, larger far out
+            float dt = clamp((r - rPlus * 0.75) * 0.075, 0.025, 0.48);
 
-            // Calculate Boyer-Lindquist / Kerr effective acceleration
-            // Gravitational pull towards center (1/r^2 + 1/r^3 relativistic term)
             float r2 = r * r;
             float r3 = r2 * r;
             float r5 = r3 * r2;
@@ -392,64 +436,69 @@ document.addEventListener('DOMContentLoaded', () => {
             vec3 L = cross(rayPos, rayDir);
             float L2 = dot(L, L);
 
-            // Relativistic Schwarzschild/Kerr central acceleration
-            vec3 aGrav = - (M / r3 + 1.5 * M * L2 / r5) * rayPos;
+            // Relativistic Schwarzschild/Kerr central geodesic deflection
+            vec3 aGrav = - (0.35 * M / r3 + 1.5 * M * L2 / r5) * rayPos;
 
-            // Kerr frame-dragging (Lense-Thirring) Coriolis-like torque from spin vector (0, a, 0)
-            // Spin vector aligned with Y-axis in world space
+            // Kerr frame-dragging (Lense-Thirring) Coriolis-like torque from spin vector (0, a*M, 0)
             vec3 spinVec = vec3(0.0, a * M, 0.0);
             float rho2 = r2 + a * a * (rayPos.y * rayPos.y / r2);
             vec3 aDrag = (2.0 * a * M / (rho2 * rho2)) * cross(cross(rayDir, spinVec), rayPos);
 
             vec3 totalAccel = aGrav + aDrag;
 
-            // Previous position for plane intersection test
             vec3 prevPos = rayPos;
 
-            // Leapfrog / Verlet numerical stepping
+            // Velocity-Verlet numerical stepping
             rayPos += rayDir * dt + 0.5 * totalAccel * dt * dt;
             rayDir = normalize(rayDir + totalAccel * dt);
 
             // 3. Accretion Disk Interaction (Equatorial Plane crossing y = 0)
             if (u_disk_enabled == 1 && (prevPos.y * rayPos.y <= 0.0)) {
-                // Calculate exact plane intersection point
                 float tPlane = abs(prevPos.y) / (abs(prevPos.y) + abs(rayPos.y) + 1e-6);
                 vec3 hitPos = mix(prevPos, rayPos, tPlane);
                 float rHit = length(hitPos.xz);
 
-                // Is hit point within accretion disk bounds?
-                if (rHit >= rIsco && rHit <= rOuter) {
-                    // Shakura-Sunyaev / Novikov-Thorne normalized temperature profile
-                    // T(r) proportional to r^(-3/4) * (1 - sqrt(r_isco / r))^(1/4)
-                    float rRatio = rHit / rIsco;
-                    float baseTemp = pow(rRatio, -0.75) * pow(max(0.001, 1.0 - sqrt(1.0 / rRatio)), 0.25);
+                if (rHit >= rIsco * 0.96 && rHit <= rOuter) {
+                    float rRatio = max(1.001, rHit / rIsco);
+                    // Normalized Novikov-Thorne temperature profile (rescaled so peak ~ 0.95)
+                    float baseTemp = 2.05 * pow(rRatio, -0.75) * pow(max(0.002, 1.0 - sqrt(1.0 / rRatio)), 0.25);
 
                     // Keplerian orbital velocity in Kerr metric: v_phi = sqrt(M) / (r^(3/2) + a*sqrt(M))
                     float vPhi = sqrt(M) / (pow(rHit, 1.5) + a * sqrt(M));
-                    vec3 phiHat = normalize(vec3(-hitPos.z, 0.0, hitPos.x)); // Counter-clockwise rotation
+                    vec3 phiHat = normalize(vec3(-hitPos.z, 0.0, hitPos.x));
+
+                    // Real-time differential Keplerian rotation & spiral plasma filaments
+                    float phiAngle = atan(hitPos.z, hitPos.x);
+                    float omegaFlow = 3.2 * sqrt(M) / (pow(rHit / rIsco, 1.35) + 0.25);
+                    float rotPhase = phiAngle - u_time * omegaFlow;
+
+                    float spiral1 = noise2D(vec2(rHit * 1.6, rotPhase * 2.0 + rHit * 0.85));
+                    float spiral2 = noise2D(vec2(rHit * 3.8 - u_time * 0.7, rotPhase * 4.0 + rHit * 1.7));
+                    float rings = 0.5 + 0.5 * sin(rHit * 4.2 - rotPhase * 2.0);
+                    float plasmaTex = 0.52 + 0.35 * spiral1 + 0.22 * spiral2 + 0.16 * rings;
 
                     // Relativistic Doppler Factor: g = sqrt(1 - 2M/r) / (1 - v . n)
                     float gFactor = 1.0;
                     if (u_doppler_enabled == 1) {
-                        float vDotRay = dot(phiHat, -rayDir); // Motion towards observer
-                        float gravRedshift = sqrt(max(0.05, 1.0 - 2.0 * M / rHit));
-                        gFactor = gravRedshift / max(0.2, 1.0 - vPhi * vDotRay);
+                        float vDotRay = dot(phiHat, -rayDir);
+                        float gravRedshift = sqrt(max(0.18, 1.0 - 1.65 * M / rHit));
+                        gFactor = gravRedshift / max(0.25, 1.0 - 1.35 * vPhi * vDotRay);
                     }
 
                     // Relativistic Beaming: Specific Intensity scales as g^4
-                    float beaming = pow(gFactor, 4.0);
+                    float beaming = clamp(pow(max(1e-4, gFactor), 3.6), 0.12, 6.5);
 
-                    // Disk opacity / density profile
-                    float edgeFade = smoothstep(rIsco, rIsco + 0.4, rHit) * (1.0 - smoothstep(rOuter - 2.5, rOuter, rHit));
-                    float density = edgeFade * 0.42 * (1.0 / (0.8 + 0.2 * rRatio));
+                    // Disk opacity & radial falloff
+                    float innerEdge = smoothstep(rIsco * 0.96, rIsco * 1.18, rHit);
+                    float outerEdge = 1.0 - smoothstep(rOuter * 0.72, rOuter, rHit);
+                    float edgeFade = innerEdge * outerEdge;
+                    float density = clamp(edgeFade * plasmaTex * (0.78 / (0.65 + 0.18 * rRatio)), 0.0, 0.92);
 
-                    // Color mapped from temperature and Doppler-shifted
-                    vec3 diskCol = blackbodyColor(baseTemp * 1.5 * gFactor);
-                    vec3 emission = diskCol * beaming * u_disk_bright * 2.2;
+                    vec3 diskCol = blackbodyColor(baseTemp * gFactor * (0.85 + 0.3 * spiral1));
+                    vec3 emission = diskCol * beaming * u_disk_bright * 2.8;
 
-                    // Volumetric optical accumulation
                     accumColor += emission * density * transmittance;
-                    transmittance *= max(0.0, 1.0 - density * 2.5);
+                    transmittance *= max(0.0, 1.0 - density * 1.15);
 
                     if (transmittance < 0.02) {
                         break;
@@ -458,15 +507,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Rays still trapped near the horizon at step limit are absorbed by the shadow
+        if (!plunged && length(rayPos) < rPlus * 1.85) {
+            transmittance = 0.0;
+            plunged = true;
+        }
+
+        // Relativistic Photon Ring glow at critical impact parameter boundary
+        if (u_disk_enabled == 1) {
+            float ringDist = abs(minR - rPhoton);
+            float photonRing = exp(-ringDist * ringDist * 14.0) * (plunged ? 0.55 : 0.95);
+            accumColor += vec3(1.0, 0.82, 0.45) * photonRing * u_disk_bright * 0.55;
+        }
+
         // Add background starfield for escaped rays
         if (transmittance > 0.0) {
             vec3 starfield = sampleStarfield(rayDir);
             accumColor += starfield * transmittance;
         }
 
-        // Tonemapping (Reinhard + ACES curve approximation) and subtle bloom
-        vec3 mapped = accumColor / (accumColor + vec3(1.0));
-        mapped = pow(mapped, vec3(1.0 / 2.2)); // Gamma correction
+        // ACES Filmic Tonemapping & Gamma Correction
+        vec3 x = max(vec3(0.0), accumColor);
+        vec3 mapped = clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
+        mapped = pow(max(mapped, vec3(1e-5)), vec3(1.0 / 2.2));
 
         fragColor = vec4(mapped, 1.0);
     }
@@ -492,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         harness.setShaders(fragmentShaderSource);
     } catch (err) {
         console.error('[RelativisticBlackHole] Failed to initialize WebGL Harness:', err);
-        controls.innerHTML = `<div class="rbh-section" style="color: #f43f5e;">
+        controls.innerHTML = `<div class="rbh-section rbh-section-error">
             <strong>WebGL Initialization Error:</strong><br>${err.message}
         </div>`;
         return;
@@ -509,8 +572,10 @@ document.addEventListener('DOMContentLoaded', () => {
         starsEnabled: 1
     };
 
-    // Mathematical Helpers for Kerr Horizons & ISCO
-    function computeRelativisticQuantities(M, a) {
+    // Mathematical Helpers for Kerr Horizons & ISCO (spin is dimensionless a/M in [0, 0.998])
+    function computeRelativisticQuantities(M, spin) {
+        const aStar = Math.min(0.998, Math.max(0.0, spin));
+        const a = aStar * M;
         // Event horizons: r_± = M ± sqrt(M^2 - a^2)
         const discriminant = Math.max(0, M * M - a * a);
         const rPlus = M + Math.sqrt(discriminant);
@@ -518,7 +583,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const rErgo = 2.0 * M; // Ergosphere maximum on equator
 
         // ISCO calculation for prograde Kerr orbits
-        const aStar = Math.min(0.998, a / M);
         const z1 = 1.0 + Math.cbrt(1.0 - aStar * aStar) * (Math.cbrt(1.0 + aStar) + Math.cbrt(1.0 - aStar));
         const z2 = Math.sqrt(3.0 * aStar * aStar + z1 * z1);
         const rIsco = M * (3.0 + z2 - Math.sqrt(Math.max(0, (3.0 - z1) * (3.0 + z1 + 2.0 * z2))));
@@ -559,6 +623,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (telRIsco) telRIsco.textContent = `${rIsco.toFixed(3)} M`;
         if (telOmega) telOmega.textContent = `${omegaH.toFixed(3)} c/M`;
         if (hudSpin) hudSpin.textContent = state.spin.toFixed(3);
+
+        harness.updateCameraVectors();
+        harness.render();
     }
 
     // Sliders & DOM Controls
@@ -608,7 +675,10 @@ document.addEventListener('DOMContentLoaded', () => {
         paramCamDist.addEventListener('input', (e) => {
             const dist = parseFloat(e.target.value);
             harness.cameraTargetAngles.distance = dist;
+            harness.camera.distance = dist;
             valCamDist.textContent = `${dist.toFixed(1)} M`;
+            harness.updateCameraVectors();
+            harness.render();
         });
     }
 
@@ -620,11 +690,23 @@ document.addEventListener('DOMContentLoaded', () => {
             // Elevation = 90 - Inclination
             const elevationRad = ((90 - incDeg) * Math.PI) / 180.0;
             harness.cameraTargetAngles.elevation = elevationRad;
+            harness.camera.elevation = elevationRad;
             valCamInc.textContent = `${incDeg}°`;
+            harness.updateCameraVectors();
+            harness.render();
         });
     }
 
     // Toggle Buttons
+    const btnPlayPause = document.getElementById('btn-play-pause');
+    if (btnPlayPause) {
+        btnPlayPause.addEventListener('click', () => {
+            const running = harness.togglePlayPause();
+            btnPlayPause.textContent = running ? '❚❚ Pause' : '▶ Play';
+            btnPlayPause.classList.toggle('active', running);
+        });
+    }
+
     const btnDoppler = document.getElementById('btn-toggle-doppler');
     if (btnDoppler) {
         btnDoppler.addEventListener('click', () => {
@@ -659,10 +741,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnResetCam) {
         btnResetCam.addEventListener('click', () => {
             harness.setCameraOrbit(0.85, 0.24, 16.0);
+            harness.camera.azimuth = 0.85;
+            harness.camera.elevation = 0.24;
+            harness.camera.distance = 16.0;
             if (paramCamDist) paramCamDist.value = '16.0';
             if (valCamDist) valCamDist.textContent = '16.0 M';
             if (paramCamInc) paramCamInc.value = '76';
             if (valCamInc) valCamInc.textContent = '76°';
+            harness.updateCameraVectors();
+            harness.render();
         });
     }
 
@@ -689,6 +776,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.diskOuter = 16.0;
                     state.dopplerEnabled = 1;
                     state.diskEnabled = 1;
+                    state.starsEnabled = 1;
                     harness.setCameraOrbit(0.85, 0.15, 14.5); // ~81 deg inclination
                     break;
                 case 'm87':
@@ -698,6 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.diskOuter = 10.0;
                     state.dopplerEnabled = 1;
                     state.diskEnabled = 1;
+                    state.starsEnabled = 1;
                     harness.setCameraOrbit(0.3, 1.27, 18.0); // ~17 deg inclination
                     break;
                 case 'schwarzschild':
@@ -707,6 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.diskOuter = 18.0;
                     state.dopplerEnabled = 1;
                     state.diskEnabled = 1;
+                    state.starsEnabled = 1;
                     harness.setCameraOrbit(0.6, 0.35, 17.0);
                     break;
                 case 'extreme':
@@ -716,6 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.diskOuter = 14.0;
                     state.dopplerEnabled = 1;
                     state.diskEnabled = 1;
+                    state.starsEnabled = 1;
                     harness.setCameraOrbit(1.1, 0.2, 13.0);
                     break;
                 case 'polar':
@@ -725,6 +816,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.diskOuter = 15.0;
                     state.dopplerEnabled = 1;
                     state.diskEnabled = 1;
+                    state.starsEnabled = 1;
                     harness.setCameraOrbit(0.0, 1.48, 16.0); // ~5 deg from pole
                     break;
                 case 'lensing':
@@ -737,16 +829,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
             }
 
-            // Sync slider inputs
+            // Sync slider inputs & toggle buttons
             if (paramSpin) paramSpin.value = state.spin;
             if (valSpin) valSpin.textContent = state.spin.toFixed(3);
             if (paramMass) paramMass.value = state.mass;
             if (valMass) valMass.textContent = state.mass.toFixed(1);
             if (paramDiskBright) paramDiskBright.value = state.diskBright;
             if (valDiskBright) valDiskBright.textContent = state.diskBright.toFixed(1);
+            if (paramDiskOuter) paramDiskOuter.value = state.diskOuter;
+            if (valDiskOuter) valDiskOuter.textContent = `${state.diskOuter.toFixed(1)} M`;
+            if (paramCamDist) {
+                const targetDist = harness.cameraTargetAngles.distance;
+                paramCamDist.value = targetDist.toFixed(1);
+                if (valCamDist) valCamDist.textContent = `${targetDist.toFixed(1)} M`;
+            }
+            if (paramCamInc) {
+                const targetInc = Math.max(2, Math.min(88, Math.round(90 - (harness.cameraTargetAngles.elevation * 180.0) / Math.PI)));
+                paramCamInc.value = targetInc;
+                if (valCamInc) valCamInc.textContent = `${targetInc}°`;
+            }
+            if (btnDoppler) {
+                btnDoppler.textContent = `Relativistic Doppler: ${state.dopplerEnabled ? 'ON' : 'OFF'}`;
+                btnDoppler.classList.toggle('active', !!state.dopplerEnabled);
+            }
             if (btnDisk) {
                 btnDisk.textContent = `Accretion Disk: ${state.diskEnabled ? 'ON' : 'OFF'}`;
                 btnDisk.classList.toggle('active', !!state.diskEnabled);
+            }
+            if (btnStars) {
+                btnStars.textContent = `Starfield: ${state.starsEnabled ? 'ON' : 'OFF'}`;
+                btnStars.classList.toggle('active', !!state.starsEnabled);
             }
 
             updateTelemetryAndUniforms();
@@ -759,17 +871,18 @@ document.addEventListener('DOMContentLoaded', () => {
             hudFps.textContent = harness.fps;
         }
 
-        // Sync slider display with interactive drag rotation
-        if (paramCamDist && Math.abs(parseFloat(paramCamDist.value) - harness.camera.distance) > 0.1) {
-            const d = harness.camera.distance;
-            paramCamDist.value = d.toFixed(1);
-            if (valCamDist) valCamDist.textContent = `${d.toFixed(1)} M`;
-        }
-
-        if (paramCamInc) {
-            const incDeg = Math.round(90 - (harness.camera.elevation * 180.0) / Math.PI);
-            paramCamInc.value = incDeg;
-            if (valCamInc) valCamInc.textContent = `${incDeg}°`;
+        // Sync slider display with interactive canvas drag or zoom
+        if (harness.mouseState.isDown) {
+            if (paramCamDist && Number.isFinite(harness.camera.distance)) {
+                const d = harness.camera.distance;
+                paramCamDist.value = d.toFixed(1);
+                if (valCamDist) valCamDist.textContent = `${d.toFixed(1)} M`;
+            }
+            if (paramCamInc && Number.isFinite(harness.camera.elevation)) {
+                const incDeg = Math.max(2, Math.min(88, Math.round(90 - (harness.camera.elevation * 180.0) / Math.PI)));
+                paramCamInc.value = incDeg;
+                if (valCamInc) valCamInc.textContent = `${incDeg}°`;
+            }
         }
     };
 

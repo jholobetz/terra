@@ -108,16 +108,32 @@ const ExplainerSimulations = {
     },
 
     stopSandbox() {
+        this._sandboxActive = false;
         if (this.sandboxAnimationId) {
             cancelAnimationFrame(this.sandboxAnimationId);
             this.sandboxAnimationId = null;
+        }
+        if (this._sandboxObserver) {
+            this._sandboxObserver.disconnect();
+            this._sandboxObserver = null;
         }
     },
 
     startSandboxLoop() {
         let time = 0;
+        let lastFrameTime = 0;
+        const frameInterval = 1000 / 30; // Cap at 30fps
+        const baseTickMs = 1000 / 60;
+        this._sandboxActive = true;
+        this._sandboxInViewport = true;
+        this._sandboxWindowFocused = (typeof document !== 'undefined' && document.hasFocus) ? document.hasFocus() : true;
 
-        const render = () => {
+        const shouldAnimate = () => {
+            const hidden = (typeof document !== 'undefined') ? document.hidden : false;
+            return this._sandboxActive && !hidden && this._sandboxWindowFocused && this._sandboxInViewport;
+        };
+
+        const drawFrame = (dtScale) => {
             if (!this.sandboxCanvas || !this.sandboxCtx) return;
 
             const w = this.sandboxCanvas.width;
@@ -126,25 +142,23 @@ const ExplainerSimulations = {
 
             ctx.clearRect(0, 0, w, h);
 
-            // Draw base grid
+            // Draw base grid in a single batched path
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
             ctx.lineWidth = 1;
             const step = 20;
+            ctx.beginPath();
             for (let x = 0; x < w; x += step) {
-                ctx.beginPath();
                 ctx.moveTo(x, 0);
                 ctx.lineTo(x, h);
-                ctx.stroke();
             }
             for (let y = 0; y < h; y += step) {
-                ctx.beginPath();
                 ctx.moveTo(0, y);
                 ctx.lineTo(w, y);
-                ctx.stroke();
             }
+            ctx.stroke();
 
             // Draw active animation
-            time += 0.05;
+            time += 0.05 * dtScale;
             if (this.sandboxType === 'divergence') {
                 this.drawDivergence(ctx, w, h, time, this.sandboxParams['strength']);
             } else if (this.sandboxType === 'curl') {
@@ -154,13 +168,71 @@ const ExplainerSimulations = {
             } else {
                 this.drawScaling(ctx, w, h, time, this.sandboxParams['input']);
             }
+        };
+
+        const render = (timestamp) => {
+            if (!shouldAnimate()) {
+                this.sandboxAnimationId = null;
+                return;
+            }
+
+            if (!lastFrameTime) lastFrameTime = timestamp;
+            const elapsed = timestamp - lastFrameTime;
+
+            if (elapsed >= frameInterval) {
+                const tickScale = Math.min(elapsed / baseTickMs, 3.0);
+                lastFrameTime = timestamp - (elapsed % frameInterval);
+                drawFrame(tickScale);
+            }
 
             if (typeof window !== 'undefined' && window.requestAnimationFrame) {
                 this.sandboxAnimationId = window.requestAnimationFrame(render);
             }
         };
 
-        render();
+        const startLoop = () => {
+            if (!this.sandboxAnimationId && shouldAnimate() && typeof window !== 'undefined' && window.requestAnimationFrame) {
+                lastFrameTime = 0;
+                this.sandboxAnimationId = window.requestAnimationFrame(render);
+            }
+        };
+
+        const stopLoop = () => {
+            if (this.sandboxAnimationId) {
+                cancelAnimationFrame(this.sandboxAnimationId);
+                this.sandboxAnimationId = null;
+            }
+        };
+
+        if (!this._lifecycleBound && typeof window !== 'undefined') {
+            this._lifecycleBound = true;
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) stopLoop();
+                else startLoop();
+            });
+            window.addEventListener('focus', () => {
+                this._sandboxWindowFocused = true;
+                startLoop();
+            });
+            window.addEventListener('blur', () => {
+                this._sandboxWindowFocused = false;
+                stopLoop();
+            });
+        }
+
+        if (typeof IntersectionObserver !== 'undefined' && this.sandboxCanvas) {
+            this._sandboxObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    this._sandboxInViewport = entry.isIntersecting;
+                    if (this._sandboxInViewport) startLoop();
+                    else stopLoop();
+                });
+            }, { threshold: 0.05 });
+            this._sandboxObserver.observe(this.sandboxCanvas);
+        }
+
+        drawFrame(1.0);
+        startLoop();
     },
 
     drawDivergence(ctx, w, h, t, strength) {

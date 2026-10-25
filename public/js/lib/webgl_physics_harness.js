@@ -30,6 +30,20 @@
             }
 
             this.canvas = canvas;
+            const defaultCamera = {
+                distance: 18.0,
+                azimuth: 0.85,
+                elevation: 0.28,
+                target: [0.0, 0.0, 0.0],
+                minDistance: 3.0,
+                maxDistance: 60.0,
+                minElevation: -Math.PI / 2 + 0.05,
+                maxElevation: Math.PI / 2 - 0.05,
+                sensitivity: 0.005,
+                zoomSensitivity: 0.05,
+                damping: 0.12
+            };
+
             this.options = Object.assign({
                 contextType: 'webgl2',
                 powerPreference: 'high-performance',
@@ -37,22 +51,12 @@
                 alpha: false,
                 depth: false,
                 preserveDrawingBuffer: true,
+                targetFps: 30,
                 pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
-                cameraEnabled: true,
-                initialCamera: {
-                    distance: 18.0,
-                    azimuth: 0.85,
-                    elevation: 0.28,
-                    target: [0.0, 0.0, 0.0],
-                    minDistance: 3.0,
-                    maxDistance: 60.0,
-                    minElevation: -Math.PI / 2 + 0.05,
-                    maxElevation: Math.PI / 2 - 0.05,
-                    sensitivity: 0.005,
-                    zoomSensitivity: 0.05,
-                    damping: 0.12
-                }
+                cameraEnabled: true
             }, options);
+
+            this.options.initialCamera = Object.assign({}, defaultCamera, (options && options.initialCamera) || {});
 
             this.gl = this._initContext();
             this.isWebGL2 = (typeof WebGL2RenderingContext !== 'undefined' && this.gl instanceof WebGL2RenderingContext);
@@ -67,6 +71,11 @@
 
             // Timing & Loop
             this.isRunning = false;
+            this._userPaused = false;
+            this._isInViewport = true;
+            this._isWindowFocused = (typeof document !== 'undefined' && document.hasFocus) ? document.hasFocus() : true;
+            this._frameInterval = 1000.0 / (this.options.targetFps || 30);
+            this._lastRenderTick = 0;
             this.animationFrameId = null;
             this.startTime = performance.now();
             this.currentTime = 0;
@@ -75,12 +84,12 @@
             this.frameCount = 0;
 
             // Telemetry & FPS
-            this.fps = 60;
+            this.fps = this.options.targetFps || 30;
             this._fpsHistory = [];
             this._lastFpsUpdate = performance.now();
 
             // Camera System
-            this.camera = Object.assign({}, this.options.initialCamera);
+            this.camera = Object.assign({}, defaultCamera, this.options.initialCamera);
             this.cameraTargetAngles = {
                 azimuth: this.camera.azimuth,
                 elevation: this.camera.elevation,
@@ -114,6 +123,7 @@
             // Bind listeners & observers
             this._bindEvents();
             this._setupResizeObserver();
+            this._setupLifecycleObservers();
             this.updateCameraVectors();
             this.resize();
         }
@@ -297,6 +307,7 @@
         setUniform(name, type, value) {
             this.customUniforms.set(name, { type, value });
             if (this.program) {
+                this.gl.useProgram(this.program);
                 this._applyUniform(name, type, value);
             }
         }
@@ -388,8 +399,15 @@
         // =========================================================================
 
         updateCameraVectors() {
-            // Apply smooth inertia damping toward target angles
-            const d = this.camera.damping;
+            // Apply smooth inertia damping toward target angles with finite guards
+            const d = Number.isFinite(this.camera.damping) ? this.camera.damping : 0.14;
+            if (!Number.isFinite(this.camera.azimuth)) this.camera.azimuth = 0.85;
+            if (!Number.isFinite(this.camera.elevation)) this.camera.elevation = 0.24;
+            if (!Number.isFinite(this.camera.distance)) this.camera.distance = 16.0;
+            if (!Number.isFinite(this.cameraTargetAngles.azimuth)) this.cameraTargetAngles.azimuth = this.camera.azimuth;
+            if (!Number.isFinite(this.cameraTargetAngles.elevation)) this.cameraTargetAngles.elevation = this.camera.elevation;
+            if (!Number.isFinite(this.cameraTargetAngles.distance)) this.cameraTargetAngles.distance = this.camera.distance;
+
             this.camera.azimuth += (this.cameraTargetAngles.azimuth - this.camera.azimuth) * d;
             this.camera.elevation += (this.cameraTargetAngles.elevation - this.camera.elevation) * d;
             this.camera.distance += (this.cameraTargetAngles.distance - this.camera.distance) * d;
@@ -397,7 +415,7 @@
             const az = this.camera.azimuth;
             const el = this.camera.elevation;
             const dist = this.camera.distance;
-            const tgt = this.camera.target;
+            const tgt = this.camera.target || [0, 0, 0];
 
             // Cartesian coordinates from spherical (Y-up)
             const cx = tgt[0] + dist * Math.cos(el) * Math.sin(az);
@@ -423,12 +441,17 @@
 
             // World Up: (0, 1, 0)
             // Camera Right = Normalize(Cross(Dir, WorldUp))
-            let rx = dz; // dx * 0 - dz * 1
+            let rx = dz;
             let ry = 0;
-            let rz = -dx; // dx * 1 - 0
-            const rightLen = Math.hypot(rx, rz) || 1.0;
-            rx /= rightLen;
-            rz /= rightLen;
+            let rz = -dx;
+            const rightLen = Math.hypot(rx, rz);
+            if (rightLen > 1e-5) {
+                rx /= rightLen;
+                rz /= rightLen;
+            } else {
+                rx = -Math.cos(az);
+                rz = Math.sin(az);
+            }
 
             this.cameraVectors.right[0] = rx;
             this.cameraVectors.right[1] = ry;
@@ -449,16 +472,19 @@
         }
 
         setCameraOrbit(azimuth, elevation, distance = null) {
-            this.cameraTargetAngles.azimuth = azimuth;
-            this.cameraTargetAngles.elevation = Math.max(
-                this.camera.minElevation,
-                Math.min(this.camera.maxElevation, elevation)
-            );
-            if (distance !== null) {
-                this.cameraTargetAngles.distance = Math.max(
-                    this.camera.minDistance,
-                    Math.min(this.camera.maxDistance, distance)
-                );
+            const minEl = Number.isFinite(this.camera.minElevation) ? this.camera.minElevation : (-Math.PI / 2 + 0.05);
+            const maxEl = Number.isFinite(this.camera.maxElevation) ? this.camera.maxElevation : (Math.PI / 2 - 0.05);
+            const minDist = Number.isFinite(this.camera.minDistance) ? this.camera.minDistance : 3.0;
+            const maxDist = Number.isFinite(this.camera.maxDistance) ? this.camera.maxDistance : 60.0;
+
+            if (Number.isFinite(azimuth)) {
+                this.cameraTargetAngles.azimuth = azimuth;
+            }
+            if (Number.isFinite(elevation)) {
+                this.cameraTargetAngles.elevation = Math.max(minEl, Math.min(maxEl, elevation));
+            }
+            if (distance !== null && Number.isFinite(distance)) {
+                this.cameraTargetAngles.distance = Math.max(minDist, Math.min(maxDist, distance));
             }
         }
 
@@ -590,10 +616,18 @@
                 this.options.pixelRatio = targetPixelRatio;
             }
 
-            const rect = this.canvas.getBoundingClientRect();
+            const container = this.canvas.parentElement || this.canvas;
+            const rect = container.getBoundingClientRect();
+            const cssWidth = Math.max(320, Math.round(container.clientWidth || rect.width || 760));
+            const cssHeight = Math.max(480, Math.min(640, Math.round(cssWidth * 0.75)));
+
+            this.canvas.style.width = `${cssWidth}px`;
+            this.canvas.style.height = `${cssHeight}px`;
+
             const dpr = this.options.pixelRatio;
-            const displayWidth = Math.max(1, Math.round(rect.width * dpr));
-            const displayHeight = Math.max(1, Math.round(rect.height * dpr));
+            const maxDim = 4096;
+            const displayWidth = Math.min(maxDim, Math.max(1, Math.round(cssWidth * dpr)));
+            const displayHeight = Math.min(maxDim, Math.max(1, Math.round(cssHeight * dpr)));
 
             if (this.canvas.width !== displayWidth || this.canvas.height !== displayHeight) {
                 this.canvas.width = displayWidth;
@@ -603,6 +637,88 @@
                 if (this.onResizeHook) {
                     this.onResizeHook(displayWidth, displayHeight);
                 }
+
+                if (this.program) {
+                    if (this.options.cameraEnabled) {
+                        this.updateCameraVectors();
+                    }
+                    this.render();
+                }
+            }
+        }
+
+        _setupLifecycleObservers() {
+            if (typeof document === 'undefined' || typeof window === 'undefined') return;
+
+            const syncLoop = () => {
+                if (this._shouldAnimate()) {
+                    this._resumeInternalLoop();
+                } else {
+                    this._stopInternalLoop();
+                }
+            };
+
+            document.addEventListener('visibilitychange', syncLoop);
+
+            if (typeof IntersectionObserver !== 'undefined') {
+                this.intersectionObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        this._isInViewport = entry.isIntersecting;
+                        syncLoop();
+                    });
+                }, { threshold: 0.01 });
+                this.intersectionObserver.observe(this.canvas.parentElement || this.canvas);
+            }
+        }
+
+        _shouldAnimate() {
+            const docHidden = (typeof document !== 'undefined') ? document.hidden : false;
+            return this.isRunning && !this._userPaused && !docHidden && this._isInViewport;
+        }
+
+        _resumeInternalLoop() {
+            if (this.animationFrameId !== null || !this._shouldAnimate()) return;
+            this.lastFrameTime = performance.now();
+            this._lastRenderTick = 0;
+
+            const loop = (now) => {
+                if (!this._shouldAnimate()) {
+                    this.animationFrameId = null;
+                    return;
+                }
+
+                if (!this._lastRenderTick) this._lastRenderTick = now;
+                const elapsed = now - this._lastRenderTick;
+
+                if (elapsed >= this._frameInterval) {
+                    this.deltaTime = Math.min((now - this.lastFrameTime) / 1000.0, 0.1);
+                    this.lastFrameTime = now;
+                    this._lastRenderTick = now - (elapsed % this._frameInterval);
+                    this.currentTime += this.deltaTime;
+                    this.frameCount++;
+
+                    // Update FPS calculation
+                    this._updateFps(now);
+
+                    // Update Camera
+                    if (this.options.cameraEnabled) {
+                        this.updateCameraVectors();
+                    }
+
+                    // Render single frame
+                    this.render();
+                }
+
+                this.animationFrameId = requestAnimationFrame(loop);
+            };
+
+            this.animationFrameId = requestAnimationFrame(loop);
+        }
+
+        _stopInternalLoop() {
+            if (this.animationFrameId !== null) {
+                cancelAnimationFrame(this.animationFrameId);
+                this.animationFrameId = null;
             }
         }
 
@@ -611,41 +727,20 @@
         // =========================================================================
 
         start() {
-            if (this.isRunning) return;
             this.isRunning = true;
-            this.lastFrameTime = performance.now();
-
-            const loop = (now) => {
-                if (!this.isRunning) return;
-
-                this.deltaTime = Math.min((now - this.lastFrameTime) / 1000.0, 0.1); // clamp to 100ms max
-                this.lastFrameTime = now;
-                this.currentTime = (now - this.startTime) / 1000.0;
-                this.frameCount++;
-
-                // Update FPS calculation
-                this._updateFps(now);
-
-                // Update Camera
-                if (this.options.cameraEnabled) {
-                    this.updateCameraVectors();
-                }
-
-                // Render single frame
-                this.render();
-
-                this.animationFrameId = requestAnimationFrame(loop);
-            };
-
-            this.animationFrameId = requestAnimationFrame(loop);
+            this._userPaused = false;
+            this.resize();
+            if (this.options.cameraEnabled) {
+                this.updateCameraVectors();
+            }
+            this.render();
+            this._resumeInternalLoop();
         }
 
         pause() {
             this.isRunning = false;
-            if (this.animationFrameId) {
-                cancelAnimationFrame(this.animationFrameId);
-                this.animationFrameId = null;
-            }
+            this._userPaused = true;
+            this._stopInternalLoop();
         }
 
         togglePlayPause() {
@@ -684,7 +779,16 @@
                 this.onFrameHook(this.deltaTime, this.currentTime);
             }
 
+            gl.viewport(0, 0, this.canvas.width, this.canvas.height);
             this._applyStandardUniforms();
+
+            const positionLocation = gl.getAttribLocation(this.program, 'a_position');
+            if (positionLocation !== -1) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+                gl.enableVertexAttribArray(positionLocation);
+                gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+            }
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
         }
 
@@ -768,6 +872,9 @@
             this.pause();
             if (this.resizeObserver) {
                 this.resizeObserver.disconnect();
+            }
+            if (this.intersectionObserver) {
+                this.intersectionObserver.disconnect();
             }
             if (this.quadBuffer) {
                 this.gl.deleteBuffer(this.quadBuffer);

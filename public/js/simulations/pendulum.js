@@ -172,15 +172,48 @@ document.addEventListener('DOMContentLoaded', () => {
         F0 = 1.20; fSlider.value = F0; fVal.textContent = F0.toFixed(2); updateRegimeBadge();
     };
 
+    let animId = null;
+    let isInViewport = true;
+    let isWindowFocused = document.hasFocus ? document.hasFocus() : true;
+    let lastRenderTick = 0;
+    const frameInterval = 1000 / 30;
+    let lastTime = performance.now();
+
+    function shouldAnimate() {
+        return isRunning && !document.hidden && isWindowFocused && isInViewport;
+    }
+
+    function startLoop() {
+        if (animId === null && shouldAnimate()) {
+            lastTime = performance.now();
+            lastRenderTick = 0;
+            animId = requestAnimationFrame(loop);
+        }
+    }
+
+    function stopLoop() {
+        if (animId !== null) {
+            cancelAnimationFrame(animId);
+            animId = null;
+        }
+    }
+
     toggleBtn.onclick = () => {
         isRunning = !isRunning;
         toggleBtn.textContent = isRunning ? '❚❚ Pause' : '▶ Resume';
+        if (isRunning) startLoop();
+        else stopLoop();
     };
-    clearPoincareBtn.onclick = () => { poincarePoints = []; dotsCount.textContent = '0'; };
+    clearPoincareBtn.onclick = () => {
+        poincarePoints = [];
+        dotsCount.textContent = '0';
+        if (!shouldAnimate()) renderFrame();
+    };
     resetBtn.onclick = () => {
         theta = 0.2; omega = 0.0; time = 0.0;
         phaseTrail = []; poincarePoints = [];
         dotsCount.textContent = '0';
+        if (!shouldAnimate()) renderFrame();
     };
 
     // RK4 Equations of Motion:
@@ -237,6 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dist < 32) {
             isDragging = true;
             omega = 0;
+            renderFrame();
         }
     });
 
@@ -249,27 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const pivY = 160;
         theta = Math.atan2(mx - pivX, my - pivY);
         omega = 0;
+        if (!shouldAnimate()) renderFrame();
     });
 
     window.addEventListener('mouseup', () => { isDragging = false; });
 
-    // Main 60fps Loop
-    let lastTime = performance.now();
-
-    function loop(now) {
-        requestAnimationFrame(loop);
-        const elapsed = Math.min((now - lastTime) / 1000, 0.05);
-        lastTime = now;
-
-        if (isRunning && !isDragging) {
-            // Substep RK4 for numerical stability
-            const substeps = 10;
-            const subDt = elapsed / substeps;
-            for (let i = 0; i < substeps; i++) {
-                rk4Step(subDt);
-            }
-        }
-
+    function renderFrame() {
         // Telemetry Update
         thetaReadout.textContent = `${theta.toFixed(2)} rad`;
         omegaReadout.textContent = `${omega.toFixed(2)} rad/s`;
@@ -372,13 +391,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Coordinate Axes (θ = 0, ω = 0)
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
         ctx.lineWidth = 1;
-        // Horizontal axis (θ)
         ctx.beginPath();
         ctx.moveTo(v2Left + 15, psCenterY);
         ctx.lineTo(v2Left + v2Width - 25, psCenterY);
-        ctx.stroke();
-        // Vertical axis (ω)
-        ctx.beginPath();
         ctx.moveTo(psCenterX, 45);
         ctx.lineTo(psCenterX, height - 25);
         ctx.stroke();
@@ -420,13 +435,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = '#ffd700';
         ctx.shadowColor = '#ffd700';
         ctx.shadowBlur = 6;
+        ctx.beginPath();
         poincarePoints.forEach(pt => {
             const px = psCenterX + pt.th * psScaleX;
             const py = psCenterY - pt.w * psScaleY;
-            ctx.beginPath();
+            ctx.moveTo(px + 2.2, py);
             ctx.arc(px, py, 2.2, 0, Math.PI * 2);
-            ctx.fill();
         });
+        ctx.fill();
         ctx.restore();
 
         // Current State Point in Phase Space
@@ -442,5 +458,60 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
     }
 
-    requestAnimationFrame(loop);
+    // Main 30fps Throttled Loop
+    function loop(now) {
+        if (!shouldAnimate()) {
+            animId = null;
+            return;
+        }
+
+        if (!lastRenderTick) lastRenderTick = now;
+        const tickElapsed = now - lastRenderTick;
+
+        if (tickElapsed >= frameInterval) {
+            lastRenderTick = now - (tickElapsed % frameInterval);
+            const elapsed = Math.min((now - lastTime) / 1000, 0.05);
+            lastTime = now;
+
+            if (isRunning && !isDragging) {
+                // Substep RK4 for numerical stability
+                const substeps = 10;
+                const subDt = elapsed / substeps;
+                for (let i = 0; i < substeps; i++) {
+                    rk4Step(subDt);
+                }
+            }
+
+            renderFrame();
+        }
+
+        animId = requestAnimationFrame(loop);
+    }
+
+    // Lifecycle Observers
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopLoop();
+        else startLoop();
+    });
+    window.addEventListener('focus', () => {
+        isWindowFocused = true;
+        startLoop();
+    });
+    window.addEventListener('blur', () => {
+        isWindowFocused = false;
+        stopLoop();
+    });
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                isInViewport = entry.isIntersecting;
+                if (isInViewport) startLoop();
+                else stopLoop();
+            });
+        }, { threshold: 0.05 });
+        observer.observe(canvas);
+    }
+
+    renderFrame();
+    startLoop();
 });

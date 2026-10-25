@@ -20,7 +20,17 @@
             <div class="physics-info">
                 <h4>The Physics</h4>
                 <p><?= $physics ?></p>
-                <?php $this->render('physics/_equations_partial', ['equations' => $equations, 'breakdowns' => $breakdowns ?? [], 'nonce' => $nonce]); ?>
+                <?php if (!empty($formulas) && is_array($formulas)): ?>
+                    <?php $this->render('physics/_equations_partial', ['formulas' => $formulas, 'equations' => $equations ?? [], 'breakdowns' => $breakdowns ?? [], 'nonce' => $nonce]); ?>
+                <?php elseif (!empty($equations) && is_array($equations)): ?>
+                    <div class="equations">
+                        <?php foreach ($equations as $eq): ?>
+                            <div class="sim-equation-item" style="margin: 10px 0; padding: 8px 10px; background: rgba(2, 6, 23, 0.55); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; color: #ffd700; overflow-x: auto;">
+                                \[ <?= $eq ?> \]
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </aside>
     </div>
@@ -30,5 +40,9 @@
     </footer>
 </article>
 
-<script src="/js/lib/webgl_physics_harness.js" nonce="<?= $nonce ?>"></script>
-<script src="/js/simulations/<?= $slug ?>.js" nonce="<?= $nonce ?>"></script>
+<?php
+$harnessVer = @filemtime(PROJECT_ROOT . '/public/js/lib/webgl_physics_harness.js') ?: 1;
+$simJsVer = @filemtime(PROJECT_ROOT . "/public/js/simulations/{$slug}.js") ?: 1;
+?>
+<script src="/js/lib/webgl_physics_harness.js?v=<?= $harnessVer ?>" nonce="<?= $nonce ?>"></script>
+<script src="/js/simulations/<?= $slug ?>.js?v=<?= $simJsVer ?>" nonce="<?= $nonce ?>"></script>

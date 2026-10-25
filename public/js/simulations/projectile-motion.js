@@ -117,6 +117,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let pxPerKm = 140 / R_EARTH_KM;
     let center = { x: 400, y: 260 };
 
+    let cachedAtmosGrad = null;
+    let cachedEarthGrad = null;
+
+    function rebuildGradients() {
+        const earthPxR = R_EARTH_KM * pxPerKm;
+        cachedAtmosGrad = ctx.createRadialGradient(center.x, center.y, earthPxR, center.x, center.y, earthPxR + 14);
+        cachedAtmosGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+        cachedAtmosGrad.addColorStop(1, 'rgba(56, 189, 248, 0.0)');
+
+        cachedEarthGrad = ctx.createRadialGradient(center.x - 30, center.y - 40, 15, center.x, center.y, earthPxR);
+        cachedEarthGrad.addColorStop(0, '#1e3a8a');
+        cachedEarthGrad.addColorStop(0.7, '#0f172a');
+        cachedEarthGrad.addColorStop(1, '#020617');
+    }
+
     function resize() {
         const rect = canvas.parentElement.getBoundingClientRect();
         width = rect.width || 800;
@@ -127,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.scale(dpr, dpr);
         center = { x: width * 0.5, y: height * 0.52 };
         pxPerKm = 135 / R_EARTH_KM;
+        rebuildGradients();
     }
     window.addEventListener('resize', resize);
     resize();
@@ -188,6 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         altitude_km = parseInt(hSlider.value);
         hVal.textContent = `${altitude_km} km`;
         updateTelemetry();
+        if (!shouldAnimate()) renderFrame();
     };
 
     atmosToggle.onchange = () => {
@@ -215,11 +232,43 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTelemetry(); fireCannon();
     };
 
+    let animId = null;
+    let isInViewport = true;
+    let isWindowFocused = document.hasFocus ? document.hasFocus() : true;
+    let lastRenderTick = 0;
+    const frameInterval = 1000 / 30;
+    let lastTime = performance.now();
+
+    function shouldAnimate() {
+        return isRunning && !document.hidden && isWindowFocused && isInViewport;
+    }
+
+    function startLoop() {
+        if (animId === null && shouldAnimate()) {
+            lastTime = performance.now();
+            lastRenderTick = 0;
+            animId = requestAnimationFrame(loop);
+        }
+    }
+
+    function stopLoop() {
+        if (animId !== null) {
+            cancelAnimationFrame(animId);
+            animId = null;
+        }
+    }
+
     fireBtn.onclick = fireCannon;
-    clearBtn.onclick = () => { projectiles = []; persistentTrails = []; };
+    clearBtn.onclick = () => {
+        projectiles = [];
+        persistentTrails = [];
+        if (!shouldAnimate()) renderFrame();
+    };
     pauseBtn.onclick = () => {
         isRunning = !isRunning;
         pauseBtn.textContent = isRunning ? '❚❚' : '▶';
+        if (isRunning) startLoop();
+        else stopLoop();
     };
 
     function fireCannon() {
@@ -234,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             active: true,
             color: v0_kms > 11.19 ? '#c084fc' : (v0_kms > 7.8 ? '#34d399' : '#f87171')
         });
+        if (!shouldAnimate()) renderFrame();
     }
 
     // RK4 Central Gravity Step
@@ -275,6 +325,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const r = Math.sqrt(p.x*p.x + p.y*p.y);
         p.path.push({ x: p.x, y: p.y });
+        if (p.path.length > maxPathPoints) {
+            p.path.shift();
+        }
 
         // Check ground impact
         if (r <= R_EARTH_KM) {
@@ -289,55 +342,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Auto-fire initial circular orbit
-    updateTelemetry();
-    fireCannon();
-
-    // 60fps Loop
-    let lastTime = performance.now();
-
-    function loop(now) {
-        requestAnimationFrame(loop);
-        const elapsed = Math.min((now - lastTime) / 1000, 0.05);
-        lastTime = now;
-
-        if (isRunning) {
-            // Speed up time: 10 substeps per frame
-            const simDt = 2.8; 
-            for (let s = 0; s < 8; s++) {
-                projectiles.forEach(p => stepProjectile(p, simDt));
-            }
-        }
-
+    function renderFrame() {
         // Render Canvas
         ctx.clearRect(0, 0, width, height);
 
-        // 1. Draw Coordinate Grid & Distant Stars
+        // 1. Draw Coordinate Grid & Distant Stars (Single Batched Path)
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
         ctx.lineWidth = 1;
+        ctx.beginPath();
         for (let r_ring = 1; r_ring <= 4; r_ring++) {
-            ctx.beginPath();
-            ctx.arc(center.x, center.y, (R_EARTH_KM * r_ring) * pxPerKm, 0, Math.PI * 2);
-            ctx.stroke();
+            const rad = (R_EARTH_KM * r_ring) * pxPerKm;
+            ctx.moveTo(center.x + rad, center.y);
+            ctx.arc(center.x, center.y, rad, 0, Math.PI * 2);
         }
+        ctx.stroke();
 
-        // 2. Draw Atmospheric Halo
+        // 2. Draw Atmospheric Halo (Cached Gradient)
         const earthPxR = R_EARTH_KM * pxPerKm;
-        const atmosGrad = ctx.createRadialGradient(center.x, center.y, earthPxR, center.x, center.y, earthPxR + 14);
-        atmosGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
-        atmosGrad.addColorStop(1, 'rgba(56, 189, 248, 0.0)');
-        ctx.fillStyle = atmosGrad;
+        if (!cachedAtmosGrad || !cachedEarthGrad) rebuildGradients();
+        ctx.fillStyle = cachedAtmosGrad;
         ctx.beginPath();
         ctx.arc(center.x, center.y, earthPxR + 14, 0, Math.PI * 2);
         ctx.fill();
 
-        // 3. Draw Spherical Earth
-        const earthGrad = ctx.createRadialGradient(center.x - 30, center.y - 40, 15, center.x, center.y, earthPxR);
-        earthGrad.addColorStop(0, '#1e3a8a');
-        earthGrad.addColorStop(0.7, '#0f172a');
-        earthGrad.addColorStop(1, '#020617');
-
-        ctx.fillStyle = earthGrad;
+        // 3. Draw Spherical Earth (Cached Gradient)
+        ctx.fillStyle = cachedEarthGrad;
         ctx.beginPath();
         ctx.arc(center.x, center.y, earthPxR, 0, Math.PI * 2);
         ctx.fill();
@@ -413,5 +442,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    requestAnimationFrame(loop);
+    // 30fps Throttled Loop
+    function loop(now) {
+        if (!shouldAnimate()) {
+            animId = null;
+            return;
+        }
+
+        if (!lastRenderTick) lastRenderTick = now;
+        const tickElapsed = now - lastRenderTick;
+
+        if (tickElapsed >= frameInterval) {
+            lastRenderTick = now - (tickElapsed % frameInterval);
+            lastTime = now;
+
+            if (isRunning) {
+                // Speed up time: substeps per frame
+                const simDt = 2.8;
+                for (let s = 0; s < 8; s++) {
+                    projectiles.forEach(p => stepProjectile(p, simDt));
+                }
+            }
+
+            renderFrame();
+        }
+
+        animId = requestAnimationFrame(loop);
+    }
+
+    // Lifecycle Observers
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopLoop();
+        else startLoop();
+    });
+    window.addEventListener('focus', () => {
+        isWindowFocused = true;
+        startLoop();
+    });
+    window.addEventListener('blur', () => {
+        isWindowFocused = false;
+        stopLoop();
+    });
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                isInViewport = entry.isIntersecting;
+                if (isInViewport) startLoop();
+                else stopLoop();
+            });
+        }, { threshold: 0.05 });
+        observer.observe(canvas);
+    }
+
+    // Auto-fire initial circular orbit
+    updateTelemetry();
+    fireCannon();
+    renderFrame();
+    startLoop();
 });

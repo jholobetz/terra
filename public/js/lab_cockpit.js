@@ -232,6 +232,10 @@
             this.activeSystemId = 'sho';
             this.activePrism = 'variational';
             this.isRunning = true;
+            this.isInViewport = true;
+            this.isWindowFocused = document.hasFocus ? document.hasFocus() : true;
+            this.lastFrameTime = 0;
+            this.frameInterval = 1000 / 30; // Cap at 30fps
             this.soundEnabled = false;
             this.audioCtx = null;
             this.simTime = 0;
@@ -318,6 +322,11 @@
                     this.playPauseBtn.innerHTML = this.isRunning
                         ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Pause'
                         : '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Resume';
+                    if (this.isRunning) {
+                        this.startLoop();
+                    } else {
+                        this.stopLoop();
+                    }
                 });
             }
 
@@ -326,6 +335,8 @@
                 this.resetBtn.addEventListener('click', () => {
                     this.simTime = 0;
                     this.resetActiveSimulation();
+                    this.renderCanvas();
+                    this.updateTelemetry();
                 });
             }
 
@@ -344,6 +355,10 @@
                         if (activeVar) {
                             this.scrubber.setTokenValue(activeVar, val);
                         }
+                    }
+                    if (!this.shouldAnimate()) {
+                        this.renderCanvas();
+                        this.updateTelemetry();
                     }
                 });
             }
@@ -384,6 +399,24 @@
             });
         }
 
+        shouldAnimate() {
+            return this.isRunning && !document.hidden && this.isWindowFocused && this.isInViewport;
+        }
+
+        startLoop() {
+            if (this.animFrameId === null && this.shouldAnimate()) {
+                this.lastFrameTime = 0;
+                this.animFrameId = requestAnimationFrame(this.loop);
+            }
+        }
+
+        stopLoop() {
+            if (this.animFrameId !== null) {
+                cancelAnimationFrame(this.animFrameId);
+                this.animFrameId = null;
+            }
+        }
+
         initCanvas() {
             if (!this.canvas) return;
             const resize = () => {
@@ -395,13 +428,39 @@
                 this.canvas.height = Math.floor(this.height * this.dpr);
                 this.ctx.resetTransform();
                 this.ctx.scale(this.dpr, this.dpr);
+                this.renderCanvas();
             };
+            this.loop = this.loop.bind(this);
             resize();
             window.addEventListener('resize', resize);
 
-            // Start 60fps Animation Loop
-            this.loop = this.loop.bind(this);
-            this.animFrameId = requestAnimationFrame(this.loop);
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) this.stopLoop();
+                else this.startLoop();
+            });
+
+            window.addEventListener('focus', () => {
+                this.isWindowFocused = true;
+                this.startLoop();
+            });
+
+            window.addEventListener('blur', () => {
+                this.isWindowFocused = false;
+                this.stopLoop();
+            });
+
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        this.isInViewport = entry.isIntersecting;
+                        if (this.isInViewport) this.startLoop();
+                        else this.stopLoop();
+                    });
+                }, { threshold: 0.05 });
+                observer.observe(this.canvas);
+            }
+
+            this.startLoop();
         }
 
         initAudio() {
@@ -753,15 +812,29 @@
         }
 
         // =====================================================================
-        // 3. 60FPS NUMERICAL CANVAS RENDER LOOP
+        // 3. 30FPS NUMERICAL CANVAS RENDER LOOP
         // =====================================================================
-        loop() {
-            if (this.isRunning) {
-                this.simTime += 0.016;
-                this.stepPhysics(0.016);
+        loop(timestamp) {
+            if (!this.shouldAnimate()) {
+                this.animFrameId = null;
+                return;
             }
-            this.renderCanvas();
-            this.updateTelemetry();
+
+            if (!this.lastFrameTime) this.lastFrameTime = timestamp;
+            const elapsed = timestamp - this.lastFrameTime;
+
+            if (elapsed >= this.frameInterval) {
+                const substeps = Math.min(Math.max(1, Math.round(elapsed / 16.67)), 3);
+                this.lastFrameTime = timestamp - (elapsed % this.frameInterval);
+
+                for (let s = 0; s < substeps; s++) {
+                    this.simTime += 0.016;
+                    this.stepPhysics(0.016);
+                }
+                this.renderCanvas();
+                this.updateTelemetry();
+            }
+
             this.animFrameId = requestAnimationFrame(this.loop);
         }
 
@@ -858,16 +931,20 @@
             ctx.fillStyle = '#060911';
             ctx.fillRect(0, 0, w, h);
 
-            // Draw subtle background coordinate grid
+            // Draw subtle background coordinate grid in a single batched path
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
             ctx.lineWidth = 1;
             const step = 40;
+            ctx.beginPath();
             for (let x = 0; x < w; x += step) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
             }
             for (let y = 0; y < h; y += step) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
             }
+            ctx.stroke();
 
             const cx = w * 0.5;
             const cy = h * 0.5;

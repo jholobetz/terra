@@ -187,6 +187,9 @@ function setMode(mode, updateURL = true) {
         MathJax.typesetPromise();
     }
 
+    resetSimulation();
+}
+
 function setPotential(pot, updateURL = true) {
     activePotential = pot;
 
@@ -267,11 +270,60 @@ function updatePotential() {
     }
 }
 
+// Lifecycle & 30 FPS Throttling State
+let isCorrInViewport = true;
+let isCorrWindowFocused = document.hasFocus ? document.hasFocus() : true;
+let lastCorrFrameTime = 0;
+const corrFrameInterval = 1000 / 30;
+let corrLifecycleInitialized = false;
+
+function shouldAnimateCorr() {
+    return !document.hidden && isCorrWindowFocused && isCorrInViewport;
+}
+
+function startCorrLoop() {
+    if (!corrLifecycleInitialized) {
+        corrLifecycleInitialized = true;
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) stopCorrLoop();
+            else startCorrLoop();
+        });
+        window.addEventListener("focus", () => {
+            isCorrWindowFocused = true;
+            startCorrLoop();
+        });
+        window.addEventListener("blur", () => {
+            isCorrWindowFocused = false;
+            stopCorrLoop();
+        });
+        if ("IntersectionObserver" in window && canvas) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    isCorrInViewport = entry.isIntersecting;
+                    if (isCorrInViewport) startCorrLoop();
+                    else stopCorrLoop();
+                });
+            }, { threshold: 0.05 });
+            observer.observe(canvas);
+        }
+    }
+
+    if (simAnimationId === null && shouldAnimateCorr()) {
+        lastCorrFrameTime = 0;
+        simAnimationId = requestAnimationFrame(simulationLoop);
+    }
+}
+
+function stopCorrLoop() {
+    if (simAnimationId !== null) {
+        cancelAnimationFrame(simAnimationId);
+        simAnimationId = null;
+    }
+}
+
 // Reset quantum wave packet and classical position
 function resetSimulation() {
-    if (simAnimationId) {
-        cancelAnimationFrame(simAnimationId);
-    }
+    stopCorrLoop();
 
     classX = initialX;
     classP = initialP;
@@ -331,12 +383,12 @@ function resetSimulation() {
         }
     }
 
-    simAnimationId = requestAnimationFrame(simulationLoop);
+    renderCorrFrame();
+    startCorrLoop();
 }
 
-// Master loop
-function simulationLoop() {
-    if (!ctx) return;
+function renderCorrFrame() {
+    if (!ctx || !canvas) return;
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -344,6 +396,22 @@ function simulationLoop() {
         runEhrenfestEngine();
     } else {
         runPhaseSpaceEngine();
+    }
+}
+
+// Master loop (Capped at 30 FPS)
+function simulationLoop(timestamp) {
+    if (!shouldAnimateCorr()) {
+        simAnimationId = null;
+        return;
+    }
+
+    if (!lastCorrFrameTime) lastCorrFrameTime = timestamp;
+    const elapsed = timestamp - lastCorrFrameTime;
+
+    if (elapsed >= corrFrameInterval) {
+        lastCorrFrameTime = timestamp - (elapsed % corrFrameInterval);
+        renderCorrFrame();
     }
 
     simAnimationId = requestAnimationFrame(simulationLoop);

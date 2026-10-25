@@ -752,28 +752,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // MAIN TICK / ANIMATION LOOP
+    // MAIN TICK / ANIMATION LOOP (Capped at 30 FPS with Lifecycle Gating)
     // =========================================================================
     let lastTick = performance.now();
+    let lastFrameTime = 0;
+    const frameInterval = 1000 / 30;
+    let isInViewport = true;
+    let isWindowFocused = document.hasFocus ? document.hasFocus() : true;
 
-    function loop(now) {
-        const dt = Math.min((now - lastTick) / 1000, 0.05);
-        lastTick = now;
+    function shouldAnimate() {
+        return isRunning && !document.hidden && isWindowFocused && isInViewport;
+    }
 
-        if (isRunning) {
-            simTime += dt;
-            if (currentMode === 'chaos') {
-                chaosState.step(dt * 1.5);
-            } else if (currentMode === 'quantum') {
-                quantumState.step(dt);
-            } else if (currentMode === 'collapse') {
-                collapseState.step(dt * 1.4);
-            } else if (currentMode === 'noether') {
-                noetherState.step(dt * 2.2);
-            }
-        }
-
-        // Render Active Mode
+    function renderActiveMode() {
         ctx.clearRect(0, 0, width, height);
         if (currentMode === 'chaos') {
             renderChaos();
@@ -784,10 +775,82 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentMode === 'noether') {
             renderNoether();
         }
+    }
+
+    function loop(now) {
+        if (!shouldAnimate()) {
+            animFrameId = null;
+            return;
+        }
+
+        if (!lastFrameTime) {
+            lastFrameTime = now;
+            lastTick = now;
+        }
+        const elapsed = now - lastFrameTime;
+
+        if (elapsed >= frameInterval) {
+            const dt = Math.min((now - lastTick) / 1000, 0.05);
+            lastTick = now;
+            lastFrameTime = now - (elapsed % frameInterval);
+
+            simTime += dt;
+            if (currentMode === 'chaos') {
+                chaosState.step(dt * 1.5);
+            } else if (currentMode === 'quantum') {
+                quantumState.step(dt);
+            } else if (currentMode === 'collapse') {
+                collapseState.step(dt * 1.4);
+            } else if (currentMode === 'noether') {
+                noetherState.step(dt * 2.2);
+            }
+
+            renderActiveMode();
+        }
 
         animFrameId = requestAnimationFrame(loop);
     }
-    animFrameId = requestAnimationFrame(loop);
+
+    function startLoop() {
+        if (animFrameId === null && shouldAnimate()) {
+            lastFrameTime = 0;
+            lastTick = performance.now();
+            animFrameId = requestAnimationFrame(loop);
+        }
+    }
+
+    function stopLoop() {
+        if (animFrameId !== null) {
+            cancelAnimationFrame(animFrameId);
+            animFrameId = null;
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopLoop();
+        else startLoop();
+    });
+
+    window.addEventListener('focus', () => {
+        isWindowFocused = true;
+        startLoop();
+    });
+
+    window.addEventListener('blur', () => {
+        isWindowFocused = false;
+        stopLoop();
+    });
+
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                isInViewport = entry.isIntersecting;
+                if (isInViewport) startLoop();
+                else stopLoop();
+            });
+        }, { threshold: 0.05 });
+        observer.observe(canvas);
+    }
 
     // =========================================================================
     // MODE SWITCHING & UI SYNCHRONIZATION
@@ -838,6 +901,8 @@ document.addEventListener('DOMContentLoaded', () => {
             noetherState.reset();
         }
 
+        renderActiveMode();
+        startLoop();
         playTone(440, 'sine', 0.1, 0.04);
     }
 
@@ -864,6 +929,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentMode === 'noether') {
             noetherState.epsilon = val;
         }
+        if (!shouldAnimate()) renderActiveMode();
     });
 
     // Event: Play / Pause
@@ -872,6 +938,8 @@ document.addEventListener('DOMContentLoaded', () => {
         playPauseBtn.innerHTML = isRunning 
             ? `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Pause`
             : `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Resume`;
+        if (isRunning) startLoop();
+        else stopLoop();
     });
 
     // Event: Reset
@@ -880,6 +948,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'quantum') quantumState.reset();
         else if (currentMode === 'collapse') collapseState.reset();
         else if (currentMode === 'noether') noetherState.reset();
+        renderActiveMode();
         playTone(523.25, 'sine', 0.12, 0.05); // C5 ping
     });
 

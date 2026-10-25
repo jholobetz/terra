@@ -81,7 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initial check & start loop
     recalculateScaling();
-    simAnimationId = requestAnimationFrame(simulationLoop);
+    renderTunerFrame();
+    startTunerLoop();
 });
 
 function resizeCanvas() {
@@ -343,9 +344,59 @@ function checkAnthropicBoundaries(bohrRadius, rydbergEnergy, chLimit, starLifeti
     }
 }
 
-// Master Loop
-function simulationLoop() {
-    if (!ctx) return;
+// Lifecycle & 30 FPS Throttling State
+let isTunerInViewport = true;
+let isTunerWindowFocused = document.hasFocus ? document.hasFocus() : true;
+let lastTunerFrameTime = 0;
+const tunerFrameInterval = 1000 / 30;
+let tunerLifecycleInitialized = false;
+
+function shouldAnimateTuner() {
+    return !document.hidden && isTunerWindowFocused && isTunerInViewport;
+}
+
+function startTunerLoop() {
+    if (!tunerLifecycleInitialized) {
+        tunerLifecycleInitialized = true;
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) stopTunerLoop();
+            else startTunerLoop();
+        });
+        window.addEventListener("focus", () => {
+            isTunerWindowFocused = true;
+            startTunerLoop();
+        });
+        window.addEventListener("blur", () => {
+            isTunerWindowFocused = false;
+            stopTunerLoop();
+        });
+        if ("IntersectionObserver" in window && canvas) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    isTunerInViewport = entry.isIntersecting;
+                    if (isTunerInViewport) startTunerLoop();
+                    else stopTunerLoop();
+                });
+            }, { threshold: 0.05 });
+            observer.observe(canvas);
+        }
+    }
+
+    if (simAnimationId === null && shouldAnimateTuner()) {
+        lastTunerFrameTime = 0;
+        simAnimationId = requestAnimationFrame(simulationLoop);
+    }
+}
+
+function stopTunerLoop() {
+    if (simAnimationId !== null) {
+        cancelAnimationFrame(simAnimationId);
+        simAnimationId = null;
+    }
+}
+
+function renderTunerFrame() {
+    if (!ctx || !canvas) return;
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -382,6 +433,22 @@ function simulationLoop() {
 
     // 3. STELLAR FUSION VIEWPORT (Right Pane)
     drawStellarViewport(paneW * 2, 0, paneW, H);
+}
+
+// Master Loop (Capped at 30 FPS)
+function simulationLoop(timestamp) {
+    if (!shouldAnimateTuner()) {
+        simAnimationId = null;
+        return;
+    }
+
+    if (!lastTunerFrameTime) lastTunerFrameTime = timestamp;
+    const elapsed = timestamp - lastTunerFrameTime;
+
+    if (elapsed >= tunerFrameInterval) {
+        lastTunerFrameTime = timestamp - (elapsed % tunerFrameInterval);
+        renderTunerFrame();
+    }
 
     simAnimationId = requestAnimationFrame(simulationLoop);
 }

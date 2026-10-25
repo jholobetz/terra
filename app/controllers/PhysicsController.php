@@ -761,11 +761,21 @@ class PhysicsController
     public function viewSimulation(string $slug)
     {
         $data = $this->service()->fetchAndPrepare('simulations', $slug);
+        $configPath = PROJECT_ROOT . '/app/config/simulations.json';
+        $simsConfig = file_exists($configPath) ? (json_decode(file_get_contents($configPath), true) ?: []) : [];
+        if (isset($simsConfig[$slug])) {
+            $data = array_merge($data ?: [], $simsConfig[$slug]);
+        }
         if (!$data) {
             $this->app->notFound();
             return;
         }
+        if (isset($data['equations']) && is_string($data['equations'])) {
+            $data['equations'] = json_decode($data['equations'], true) ?: [];
+        }
         $this->renderWithLayout('physics/simulation_page', array_merge($data, [
+            'slug' => $slug,
+            'equations' => $data['equations'] ?? [],
             'physics' => $data['physics'] ?? $data['description'] ?? '',
         ]));
     }

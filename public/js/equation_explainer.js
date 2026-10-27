@@ -591,9 +591,8 @@ const EquationExplainer = {
             });
         }
 
-        // Initialize Curator Drawer & Dev Role Switcher
+        // Initialize Curator Drawer
         this.initCuratorDrawer();
-        this.initDevRoleSwitcher();
     },
 
     switchTab(targetId) {

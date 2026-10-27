@@ -31,7 +31,8 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                 </div>
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
-                <button id="btn-open-curator-drawer" style="padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.08); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                <?php $canCurate = in_array($currentUser->role ?? 'guest', ['admin', 'curator'], true); ?>
+                <button id="btn-open-curator-drawer" style="padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.08); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: <?= $canCurate ? 'inline-flex' : 'none' ?>; align-items: center; gap: 6px;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                     <span id="btn-curator-label">Curate / Suggest Fix</span>
                 </button>
@@ -707,20 +708,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
             </button>
         </div>
     </div>
-</div>
-
-<!-- Floating Dev Role Switcher Toolbar (Development Mode) -->
-<div id="dev-role-switcher-bar" style="position: fixed; bottom: 20px; left: 20px; z-index: 9990; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(100, 255, 218, 0.25); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 30px; padding: 6px 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-    <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--accent-default, #64ffda); font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 4px;">
-        <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981;"></span>
-        Role:
-    </span>
-    <select id="dev-role-select" style="background: rgba(3, 7, 18, 0.8); border: 1px solid rgba(100, 255, 218, 0.2); color: #ffffff; border-radius: 15px; padding: 3px 10px; font-size: 0.74rem; font-family: 'Space Grotesk', sans-serif; font-weight: 600; cursor: pointer; outline: none;">
-        <option value="admin">Admin (Core Maintainer)</option>
-        <option value="curator">Curator (Physicist)</option>
-        <option value="contributor">Contributor (Student)</option>
-        <option value="guest">Anonymous Guest</option>
-    </select>
 </div>
 
 <style>

@@ -459,37 +459,6 @@ const ExplainerCurator = {
         });
     },
 
-    initDevRoleSwitcher() {
-        const select = document.getElementById('dev-role-select');
-        if (!select) return;
-
-        const user = window.CURRENT_USER || { role: 'admin' };
-        select.value = user.role || 'admin';
-
-        select.addEventListener('change', () => {
-            const newRole = select.value;
-            fetch('/physics/api/auth/switch-role', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ role: newRole })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success && data.user) {
-                    window.CURRENT_USER = data.user;
-                    if (this.drawerRoleBadge) {
-                        this.drawerRoleBadge.textContent = data.user.role.toUpperCase();
-                    }
-                    const isPrivileged = data.user.role === 'curator' || data.user.role === 'admin';
-                    if (this.drawerBtnApplyDirect) {
-                        this.drawerBtnApplyDirect.style.display = isPrivileged ? 'inline-block' : 'none';
-                    }
-                    this.loadReviewsForDrawer();
-                }
-            });
-        });
-    },
-
     triggerAutoDraft() {
         const latex = (this.drawerLatexInput ? this.drawerLatexInput.value.trim() : '') || this.currentLatex;
         if (!latex) {

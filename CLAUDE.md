@@ -265,3 +265,37 @@ All AI automation scripts, batch runners, and model integrations MUST adhere to 
    * Budget checks must occur **pre-dispatch** (before network requests are fired), preventing in-flight concurrent thread debt.
 5. **Mandatory Canary Calibration**:
    * Any batch run exceeding 10 items must execute a 5-item canary sample, display empirical token and dollar statistics, and require explicit user authorization before proceeding.
+
+---
+
+## 🛡️ 7. Structural Anti-Goodhart & Data Integrity Safeguards
+
+To uphold our guiding ethos of **Intellectual Honesty and Structural Rigor** ([`docs/mandate.md`](docs/mandate.md)) and prevent automated scripts from gaming coverage metrics at the expense of physical truth:
+
+1. **Pair Every Completeness Metric with a Structural Shape Constraint**:
+   * Never measure or gate solely on a raw coverage percentage (e.g., *"100% of formulas have a parent"*). Every completeness metric MUST be paired with a distribution/shape invariant (e.g., maximum direct children per node $\le 25$, plus shared physical symbol or subtopic affinity between parent and child) so catch-all buckets cannot pass the gate.
+2. **Strict Ban on Silent Catch-All Fallbacks in Data-Mutating Scripts**:
+   * Batch enrichment and healing scripts MUST NEVER use a default/fallback catch-all parent or category (e.g., dumping unmatched formulas onto `stationary-action-principle-8836edf7` or `theoretical-physics`) to reach 100% completion. If an item cannot be matched with high structural confidence, it must remain explicitly marked as `UNMAPPED` / `UNVERIFIED` or as an honest root (`DEFINITION`, `AXIOMATIC_FOUNDATION`, `EMPIRICAL_LAW`).
+3. **Separate "Coverage" from "Verified Truth" (`lineage_confidence`)**:
+   * Automated heuristic assignments must never be conflated with human-curated or CAS-verified ground truth. Diagnostics and scorecards must distinguish between `curated` / `cas_verified` links and `heuristic` / `unverified` links.
+4. **Mandatory Extreme-Tail & Random Spot Check Before Committing Batch Scripts**:
+   * Whenever any batch script modifies $> 50$ records across the shards, the developer/agent MUST inspect and report the **top 5 most-affected nodes** (e.g., parents that gained the most children) alongside **5 random samples** before committing, ensuring star-hub packing or regex false positives are caught immediately.
+5. **Honest Baseline Recalibration Over Synthetic Ratchets**:
+   * Monotonic quality ratchets in `scripts/assess` (`docs/reports/latest.json`) exist to catch accidental regressions during normal work—they must NEVER lock in synthetic or regex-inflated data. When purging false or heuristic edges, `latest.json` must be explicitly recalibrated to the honest baseline.
+
+---
+
+## 🛡️ 7. Structural Anti-Goodhart & Data Integrity Safeguards
+
+To uphold our guiding ethos of **Intellectual Honesty and Structural Rigor** ([`docs/mandate.md`](docs/mandate.md)) and prevent automated scripts from gaming coverage metrics at the expense of physical truth:
+
+1. **Pair Every Completeness Metric with a Structural Shape Constraint**:
+   * Never measure or gate solely on a raw coverage percentage (e.g., *"100% of formulas have a parent"*). Every completeness metric MUST be paired with a distribution/shape invariant (e.g., maximum direct children per node $\le 25$, plus shared physical symbol or subtopic affinity between parent and child) so catch-all buckets cannot pass the gate.
+2. **Strict Ban on Silent Catch-All Fallbacks in Data-Mutating Scripts**:
+   * Batch enrichment and healing scripts MUST NEVER use a default/fallback catch-all parent or category (e.g., dumping unmatched formulas onto `stationary-action-principle-8836edf7` or `theoretical-physics`) to reach 100% completion. If an item cannot be matched with high structural confidence, it must remain explicitly marked as `UNMAPPED` / `UNVERIFIED` or as an honest root (`DEFINITION`, `AXIOMATIC_FOUNDATION`, `EMPIRICAL_LAW`).
+3. **Separate "Coverage" from "Verified Truth" (`lineage_confidence`)**:
+   * Automated heuristic assignments must never be conflated with human-curated or CAS-verified ground truth. Diagnostics and scorecards must distinguish between `curated` / `cas_verified` links and `heuristic` / `unverified` links.
+4. **Mandatory Extreme-Tail & Random Spot Check Before Committing Batch Scripts**:
+   * Whenever any batch script modifies $> 50$ records across the shards, the developer/agent MUST inspect and report the **top 5 most-affected nodes** (e.g., parents that gained the most children) alongside **5 random samples** before committing, ensuring star-hub packing or regex false positives are caught immediately.
+5. **Honest Baseline Recalibration Over Synthetic Ratchets**:
+   * Monotonic quality ratchets in `scripts/assess` (`docs/reports/latest.json`) exist to catch accidental regressions during normal work—they must NEVER lock in synthetic or regex-inflated data. When purging false or heuristic edges, `latest.json` must be explicitly recalibrated to the honest baseline.

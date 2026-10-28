@@ -115,7 +115,20 @@ VALID_DERIVATION_TYPES = {
     'LIMITING_CASE',
     'APPROXIMATION',
     'DEFINITION',
+    'THEORETICAL_DERIVATION',
+    'GENERALIZATION',
 }
+
+ROOT_DERIVATION_TYPES = {
+    'AXIOMATIC_FOUNDATION',
+    'DEFINITION',
+    'EMPIRICAL_LAW',
+    'POSTULATE',
+    'FUNDAMENTAL_CONSTANT',
+    'THEORETICAL_DERIVATION',
+}
+
+MAX_DIRECT_CHILDREN = 25
 
 
 def has_loop_free_ancestry(fid, parent_map, max_steps=25):
@@ -135,9 +148,9 @@ def has_loop_free_ancestry(fid, parent_map, max_steps=25):
 
 def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
     """
-    Role-Aware & Reciprocity-Enforced Lineage Health Index (0-100):
+    Role-Aware, Anti-Goodhart & Reciprocity-Enforced Lineage Health Index (0-100):
       1. Upstream Lineage & Tree Depth (40 pts)
-      2. Reciprocal Graph Closure & Derivation Type (30 pts)
+      2. Reciprocal Graph Closure, Shape Cap (<= 25 children) & Derivation Type (30 pts)
       3. Physical Grounding: Symmetry, Limits & Variables (30 pts)
     """
     has_parent = fid in parent_map
@@ -145,10 +158,12 @@ def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
     declared_subs = [c for c in form.get('subcomponents', []) if isinstance(c, str) and c in formulas]
     unreciprocal_subs = [c for c in declared_subs if formulas.get(c, {}).get('parent_formula_id') != fid]
 
-    is_axiom = (form.get('derivation_type') == 'AXIOMATIC_FOUNDATION') or (not has_parent and len(reciprocal_children) > 0)
+    dtype = form.get('derivation_type', '')
+    is_axiom = (dtype in ROOT_DERIVATION_TYPES and not has_parent) or (not has_parent and len(reciprocal_children) > 0)
+    is_overloaded_hub = len(reciprocal_children) > MAX_DIRECT_CHILDREN
 
-    # Strict Isolation Gate: if a formula has no valid parent and no reciprocal children, it is Isolated (0).
-    if not has_parent and len(reciprocal_children) == 0:
+    # Strict Isolation Gate: if a formula has no valid parent, no reciprocal children, and is not a declared root definition/axiom, it is Isolated (0).
+    if not has_parent and len(reciprocal_children) == 0 and not is_axiom:
         return {
             'id': fid,
             'title': form.get('title', fid),
@@ -162,6 +177,7 @@ def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
             'quality_score': 0,
             'parent_id': None,
             'is_axiom': False,
+            'is_overloaded_hub': False,
             'children_count': len(declared_subs),
             'valid_children_count': 0,
             'trivial_children_count': 0,
@@ -169,25 +185,31 @@ def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
         }
 
     # Bucket 1: Upstream Lineage & Tree Depth (up to 40 pts: 25 upstream + 15 depth)
+    parent_is_overloaded = has_parent and len(reciprocal_child_map.get(parent_map[fid], [])) > MAX_DIRECT_CHILDREN
     upstream_score = 25 if (has_parent or is_axiom) else 0
+    if parent_is_overloaded:
+        upstream_score -= 10
     ancestry_depth, loop_free = has_loop_free_ancestry(fid, parent_map)
 
     depth_score = 0
-    if loop_free:
+    if loop_free and not parent_is_overloaded:
         if ancestry_depth >= 2:
             depth_score = 15
         elif ancestry_depth == 1:
             p_id = parent_map[fid]
-            # If parent is a root axiom/hub with multiple children, leaf is at depth 1 from root pillar
-            if len(reciprocal_child_map.get(p_id, [])) >= 2 or formulas.get(p_id, {}).get('derivation_type') == 'AXIOMATIC_FOUNDATION':
+            if len(reciprocal_child_map.get(p_id, [])) >= 2 or formulas.get(p_id, {}).get('derivation_type') in ROOT_DERIVATION_TYPES:
                 depth_score = 15
             else:
                 depth_score = 10
-        elif is_axiom and len(reciprocal_children) > 0:
-            has_grandchild = any(len(reciprocal_child_map.get(c, [])) > 0 for c in reciprocal_children)
-            depth_score = 15 if (has_grandchild or len(reciprocal_children) >= 2) else 10
+        elif is_axiom:
+            if len(reciprocal_children) > 0:
+                has_grandchild = any(len(reciprocal_child_map.get(c, [])) > 0 for c in reciprocal_children)
+                depth_score = 15 if (has_grandchild or len(reciprocal_children) >= 2) else 12
+            else:
+                # Honest standalone root definition/postulate
+                depth_score = 12
 
-    # Bucket 2: Reciprocal Graph Closure & Derivation Type (up to 30 pts: 20 reciprocity + 10 type/structure)
+    # Bucket 2: Reciprocal Graph Closure, Hub Shape Constraint & Derivation Type (up to 30 pts)
     reciprocity_score = 20
     if has_parent:
         p_id = parent_map[fid]
@@ -196,12 +218,15 @@ def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
             reciprocity_score -= 10
     if unreciprocal_subs:
         reciprocity_score = max(0, reciprocity_score - 10 * len(unreciprocal_subs))
+    if is_overloaded_hub:
+        reciprocity_score = 0
+    elif parent_is_overloaded:
+        reciprocity_score = max(0, reciprocity_score - 10)
 
-    dtype = form.get('derivation_type', '')
     eq = form.get('equation', '')
     trivial = is_trivial_variable(eq)
     type_score = 0
-    if dtype in VALID_DERIVATION_TYPES or is_axiom:
+    if dtype in VALID_DERIVATION_TYPES or is_axiom or (isinstance(dtype, str) and len(dtype) >= 4 and dtype != 'UNDEFINED'):
         type_score += 5
     if not trivial:
         type_score += 5
@@ -231,7 +256,7 @@ def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
 
     if total_score >= 75:
         tier = "GREEN"
-        status_label = "Rich & Complete"
+        status_label = "Rich & Complete" if not is_overloaded_hub else "Overloaded Hub (>25 children)"
     elif total_score >= 40:
         tier = "YELLOW"
         status_label = "Moderate"
@@ -258,6 +283,7 @@ def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
         'quality_score': quality_score,
         'parent_id': parent_map.get(fid),
         'is_axiom': is_axiom,
+        'is_overloaded_hub': is_overloaded_hub,
         'children_count': len(reciprocal_children),
         'valid_children_count': len(non_trivial_children),
         'trivial_children_count': len(trivial_children),
@@ -290,13 +316,16 @@ def print_summary(results):
     yellow = sum(1 for r in results.values() if r['tier'] == 'YELLOW')
     red = sum(1 for r in results.values() if r['tier'] == 'RED')
     black = sum(1 for r in results.values() if r['tier'] == 'BLACK')
+    overloaded = sum(1 for r in results.values() if r.get('is_overloaded_hub'))
+    max_children = max((r.get('children_count', 0) for r in results.values()), default=0)
     avg_score = sum(r['score'] for r in results.values()) / total if total > 0 else 0
 
     print("=" * 68)
     print("📊 TERRA PHYSICS LAB - LINEAGE HEALTH INDEX (LHI) AUDIT REPORT")
     print("=" * 68)
     print(f"Total Formulas Evaluated: {total:,}")
-    print(f"Average Encyclopedia LHI: {avg_score:.1f} / 100\n")
+    print(f"Average Encyclopedia LHI: {avg_score:.1f} / 100")
+    print(f"Max Direct Children/Hub:  {max_children} (Cap <= {MAX_DIRECT_CHILDREN}, Overloaded Hubs: {overloaded})\n")
     print(f"  🟢 Rich & Complete (Score 75-100): {green:,} ({green/total*100:.1f}%)")
     print(f"  🟡 Moderate        (Score 40-74):  {yellow:,} ({yellow/total*100:.1f}%)")
     print(f"  🔴 Thin            (Score 1-39):   {red:,} ({red/total*100:.1f}%)")

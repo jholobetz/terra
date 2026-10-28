@@ -2,6 +2,7 @@
 
 > **Status**: Active North Star & Foundational Mandate  
 > **Core Purpose**: Describing How It All Connects  
+> **Guiding Ethos**: Intellectual Honesty and Structural Rigor (Zero Vanity Metrics or Synthetic Connections)  
 > **Companion Documents**: [`docs/ideas.md`](ideas.md) (Brainstorming Incubator), [`docs/roadmap.md`](roadmap.md) (Engineering Execution), [`CLAUDE.md`](../CLAUDE.md) (Operational Authority)
 
 ---
@@ -86,15 +87,22 @@ To maintain focus and avoid the capability trap, we establish strict definitions
 
 ---
 
-## 4. The Decision Filter
+## 4. The Decision Filter & Anti-Goodhart Principle
 
 Whenever a feature, phase, script, or refactor is proposed:
 
 > **The Sovereign Question**:  
 > *"Does this feature make the connection between physical principles clearer, more rigorous, or more breathtaking to explore?"*
 
-* If the answer is **YES**, it is evaluated, prioritized, and graduated to [`docs/roadmap.md`](roadmap.md).
-* If the answer is **NO** (e.g., cosmetic complexity, disconnected games, or administrative bloat), it is respectfully rejected.
+* **Intellectual Honesty and Structural Rigor**: We always choose intellectual honesty and structural rigor over gamed vanity metrics. A scorecard that reports `99.3 / 100` by rewarding synthetic regex-matched links or flat star-hubs violates this mandate; an honest metric that exposes unverified or missing connections is always preferred.
+* **The Five Anti-Goodhart Safeguards**:
+  1. **Pair Completeness with Shape Constraints**: Never gate on raw coverage alone; always pair coverage metrics with structural distribution constraints (e.g., max direct children per hub $\le 25$, shared variable/subtopic affinity).
+  2. **Ban Silent Catch-All Fallbacks**: Data-mutating scripts must never dump unmatched records into a default fallback hub to reach 100%; unverified records must remain explicitly flagged or typed as honest roots (`DEFINITION`, `AXIOMATIC_FOUNDATION`, `EMPIRICAL_LAW`).
+  3. **Separate Coverage from Verified Truth**: Distinguish `curated` / `cas_verified` connections from `heuristic` / `unverified` candidates in all telemetry.
+  4. **Mandatory Extreme-Tail Spot Checks**: Any batch operation modifying $>50$ records must audit the top 5 most-affected nodes (to catch hub-packing) plus 5 random samples before commit.
+  5. **Honest Baseline Recalibration**: Monotonic ratchets (`latest.json`) must never prevent deleting synthetic or false data; baselines are recalibrated whenever synthetic bloat is purged.
+* If the answer to the Sovereign Question is **YES**, it is evaluated, prioritized, and graduated to [`docs/roadmap.md`](roadmap.md).
+* If the answer is **NO** (e.g., cosmetic complexity, synthetic graph inflation, disconnected games, or administrative bloat), it is respectfully rejected.
 
 ---
 

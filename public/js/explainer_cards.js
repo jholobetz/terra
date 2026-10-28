@@ -87,14 +87,13 @@ const ExplainerCards = {
         }
 
         if (hasSubcomponents) {
-            html += `
-                <div style="margin-top: 10px;">
-                    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted, #94a3b8); margin-bottom: 8px; font-weight: 600;">⬇ Formula Component Sub-equations (${formula.subcomponents.length})</div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;">
-            `;
+            // Deduplicate near-identical downstream formulas by normalized equation + title
+            const seenKeys = new Set();
+            const uniqueChildren = [];
             formula.subcomponents.forEach(child => {
                 const childId = typeof child === 'string' ? child : child.id;
-                const childTitle = typeof child === 'string' ? childId.replace(/-/g, ' ') : child.title;
+                if (!childId || childId === formula.id) return;
+                const childTitle = typeof child === 'string' ? childId.replace(/-/g, ' ') : (child.title || childId.replace(/-/g, ' '));
                 let rawChildEq = (typeof child === 'object' && child.equation) ? child.equation : '';
                 let childEq = (typeof this.getCleanLatexFromEq === 'function')
                     ? this.getCleanLatexFromEq(rawChildEq)
@@ -102,13 +101,54 @@ const ExplainerCards = {
                 if (childEq && (childEq.includes(' ') && !childEq.includes('\\') && !childEq.includes('=') && !childEq.includes('+') && !childEq.includes('-'))) {
                     childEq = '';
                 }
-                const safeChildEq = this.escapeMathForHtml(childEq);
+                const normEq = childEq.replace(/\s+/g, '');
+                const normTitle = childTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
+                const dedupKey = normEq ? `eq:${normEq}` : `title:${normTitle}`;
+                if (seenKeys.has(dedupKey)) return;
+                seenKeys.add(dedupKey);
+                uniqueChildren.push({
+                    id: childId,
+                    title: childTitle,
+                    equation: childEq,
+                    derivation_type: (typeof child === 'object' && child.derivation_type) ? child.derivation_type : 'DERIVED_FROM'
+                });
+            });
+
+            const totalUnique = uniqueChildren.length;
+            const initialCap = 12;
+            const hasMore = totalUnique > initialCap;
+
+            html += `
+                <div style="margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted, #94a3b8); font-weight: 600;">
+                            ⬇ Direct Derived & Downstream Equations (${totalUnique})
+                        </div>
+                        ${hasMore ? `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="text" id="lineage-downstream-filter" placeholder="Filter downstream equations..." style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 3px 8px; font-size: 0.75rem; color: #f1f5f9; outline: none; width: 180px;" />
+                            <button type="button" id="btn-toggle-all-downstream" data-expanded="false" style="background: rgba(100, 255, 218, 0.1); border: 1px solid rgba(100, 255, 218, 0.3); border-radius: 6px; color: var(--accent-default, #64ffda); font-size: 0.72rem; padding: 3px 10px; cursor: pointer; font-weight: 600;">
+                                Show All (${totalUnique})
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div id="lineage-downstream-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;">
+            `;
+            uniqueChildren.forEach((child, idx) => {
+                const safeChildEq = this.escapeMathForHtml(child.equation);
                 const safeChildAttr = safeChildEq.replace(/"/g, '&quot;');
-                const childUrl = `/physics/equation-explainer?id=${encodeURIComponent(childId)}`;
+                const childUrl = `/physics/equation-explainer?id=${encodeURIComponent(child.id)}`;
+                const dtypeLabel = (child.derivation_type || 'DERIVED_FROM').replace(/_/g, ' ');
                 const mathPart = safeChildEq ? `<span data-latex="${safeChildAttr}" style="font-size: 0.9rem; color: #ffd700;">\\(${safeChildEq}\\)</span>` : '';
+                const hiddenStyle = (hasMore && idx >= initialCap) ? 'display: none;' : 'display: flex;';
+                const searchKey = `${child.title} ${child.id} ${dtypeLabel}`.toLowerCase().replace(/"/g, '');
                 html += `
-                    <a href="${childUrl}" class="lineage-formula-link" data-formula-id="${childId}" data-latex="${safeChildAttr}" style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(100,255,218,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
-                        <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${childTitle}</span>
+                    <a href="${childUrl}" class="lineage-formula-link lineage-downstream-item" data-index="${idx}" data-search="${searchKey}" data-formula-id="${child.id}" data-latex="${safeChildAttr}" style="${hiddenStyle} flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(100,255,218,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;">
+                            <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${child.title}</span>
+                            <span style="font-size: 0.62rem; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; background: rgba(100, 255, 218, 0.08); color: #64ffda; border: 1px solid rgba(100, 255, 218, 0.2); white-space: nowrap; flex-shrink: 0;">${dtypeLabel}</span>
+                        </div>
                         ${mathPart}
                     </a>
                 `;
@@ -140,6 +180,37 @@ const ExplainerCards = {
                 }
             });
         });
+
+        const toggleDownstreamBtn = details.querySelector('#btn-toggle-all-downstream');
+        const downstreamFilterInput = details.querySelector('#lineage-downstream-filter');
+        const downstreamItems = details.querySelectorAll('.lineage-downstream-item');
+        const applyDownstreamVisibility = () => {
+            const isExpanded = toggleDownstreamBtn && toggleDownstreamBtn.getAttribute('data-expanded') === 'true';
+            const query = downstreamFilterInput ? downstreamFilterInput.value.trim().toLowerCase() : '';
+            downstreamItems.forEach(item => {
+                const idx = parseInt(item.getAttribute('data-index') || '0', 10);
+                const searchStr = item.getAttribute('data-search') || '';
+                if (query) {
+                    item.style.display = searchStr.includes(query) ? 'flex' : 'none';
+                } else {
+                    item.style.display = (isExpanded || idx < 12) ? 'flex' : 'none';
+                }
+            });
+        };
+        if (toggleDownstreamBtn) {
+            toggleDownstreamBtn.addEventListener('click', () => {
+                const isExpanded = toggleDownstreamBtn.getAttribute('data-expanded') === 'true';
+                const nextState = !isExpanded;
+                toggleDownstreamBtn.setAttribute('data-expanded', nextState ? 'true' : 'false');
+                toggleDownstreamBtn.textContent = nextState
+                    ? 'Show Top 12'
+                    : `Show All (${downstreamItems.length})`;
+                applyDownstreamVisibility();
+            });
+        }
+        if (downstreamFilterInput) {
+            downstreamFilterInput.addEventListener('input', applyDownstreamVisibility);
+        }
 
         const jumpBtn = details.querySelector('.btn-jump-to-derivation');
         if (jumpBtn) {

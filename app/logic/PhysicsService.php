@@ -804,8 +804,9 @@ class PhysicsService
                     if ($childObj) {
                         $resolvedChildren[] = [
                             'id' => $childId,
-                            'title' => $childObj['title'] ?? 'Subcomponent Equation',
+                            'title' => $childObj['title'] ?? 'Derived Equation',
                             'equation' => $childObj['equation'] ?? '',
+                            'derivation_type' => $childObj['derivation_type'] ?? 'DERIVED_FROM',
                             'url' => '/physics/equation-explainer?id=' . urlencode($childId)
                         ];
                     }
@@ -815,8 +816,9 @@ class PhysicsService
                     if ($childObj) {
                         $resolvedChildren[] = [
                             'id' => $childIdStr,
-                            'title' => $childObj['title'] ?? ($childId['title'] ?? 'Subcomponent Equation'),
+                            'title' => $childObj['title'] ?? ($childId['title'] ?? 'Derived Equation'),
                             'equation' => $childObj['equation'] ?? ($childId['equation'] ?? ''),
+                            'derivation_type' => $childObj['derivation_type'] ?? ($childId['derivation_type'] ?? 'DERIVED_FROM'),
                             'url' => '/physics/equation-explainer?id=' . urlencode($childIdStr)
                         ];
                     }

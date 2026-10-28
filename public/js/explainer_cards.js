@@ -43,20 +43,24 @@ const ExplainerCards = {
         if (formula.parent_formula && formula.parent_formula.id) {
             const p = formula.parent_formula;
             const parentUrl = p.url || `/physics/equation-explainer?id=${encodeURIComponent(p.id)}`;
-            const safeParentEq = this.escapeMathForHtml(p.equation || '');
+            const cleanParentEq = (typeof this.getCleanLatexFromEq === 'function')
+                ? this.getCleanLatexFromEq(p.equation || '')
+                : (p.equation || '').trim();
+            const safeParentEq = this.escapeMathForHtml(cleanParentEq);
+            const safeParentAttr = safeParentEq.replace(/"/g, '&quot;');
             html += `
                 <div style="margin-bottom: 14px; background: rgba(100, 255, 218, 0.05); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 8px; padding: 12px;">
                     <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted, #94a3b8); margin-bottom: 4px; font-weight: 600;">⬆ Parent Master Equation</div>
-                    <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; font-weight: 600; font-size: 1.05rem; display: inline-flex; align-items: center; gap: 8px;">
+                    <a href="${parentUrl}" class="lineage-formula-link" data-formula-id="${p.id}" data-latex="${safeParentAttr}" style="color: var(--accent-default, #64ffda); text-decoration: none; font-weight: 600; font-size: 1.05rem; display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                         <span>${p.title}</span>
-                        ${safeParentEq ? `<span style="color: #ffd700; font-family: monospace;">($\\;${safeParentEq}\\;$)</span>` : ''}
+                        ${safeParentEq ? `<span data-latex="${safeParentAttr}" style="color: #ffd700; font-family: monospace;">(\\(${safeParentEq}\\))</span>` : ''}
                     </a>
                 </div>
             `;
         } else if (formula.parent_formula_id) {
             const parentUrl = `/physics/equation-explainer?id=${encodeURIComponent(formula.parent_formula_id)}`;
             const parentName = formula.parent_formula_id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            html += `<div style="margin-bottom: 10px;"><strong>Master Parent Law:</strong> <a href="${parentUrl}" style="color: var(--accent-default, #64ffda); text-decoration: none; border-bottom: 1px dashed rgba(100,255,218,0.4); font-weight: 600;">${parentName}</a></div>`;
+            html += `<div style="margin-bottom: 10px;"><strong>Master Parent Law:</strong> <a href="${parentUrl}" class="lineage-formula-link" data-formula-id="${formula.parent_formula_id}" style="color: var(--accent-default, #64ffda); text-decoration: none; border-bottom: 1px dashed rgba(100,255,218,0.4); font-weight: 600;">${parentName}</a></div>`;
         }
 
         if (Array.isArray(formula.derivation_steps) && formula.derivation_steps.length > 0) {
@@ -91,15 +95,19 @@ const ExplainerCards = {
             formula.subcomponents.forEach(child => {
                 const childId = typeof child === 'string' ? child : child.id;
                 const childTitle = typeof child === 'string' ? childId.replace(/-/g, ' ') : child.title;
-                let childEq = (typeof child === 'object' && child.equation) ? child.equation : '';
+                let rawChildEq = (typeof child === 'object' && child.equation) ? child.equation : '';
+                let childEq = (typeof this.getCleanLatexFromEq === 'function')
+                    ? this.getCleanLatexFromEq(rawChildEq)
+                    : rawChildEq.trim();
                 if (childEq && (childEq.includes(' ') && !childEq.includes('\\') && !childEq.includes('=') && !childEq.includes('+') && !childEq.includes('-'))) {
                     childEq = '';
                 }
                 const safeChildEq = this.escapeMathForHtml(childEq);
+                const safeChildAttr = safeChildEq.replace(/"/g, '&quot;');
                 const childUrl = `/physics/equation-explainer?id=${encodeURIComponent(childId)}`;
-                const mathPart = safeChildEq ? `<span style="font-size: 0.9rem; color: #ffd700;">\\(${safeChildEq}\\)</span>` : '';
+                const mathPart = safeChildEq ? `<span data-latex="${safeChildAttr}" style="font-size: 0.9rem; color: #ffd700;">\\(${safeChildEq}\\)</span>` : '';
                 html += `
-                    <a href="${childUrl}" style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(100,255,218,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+                    <a href="${childUrl}" class="lineage-formula-link" data-formula-id="${childId}" data-latex="${safeChildAttr}" style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(100,255,218,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
                         <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${childTitle}</span>
                         ${mathPart}
                     </a>
@@ -121,6 +129,17 @@ const ExplainerCards = {
             } catch(e) {}
         }
         details.innerHTML = html;
+
+        details.querySelectorAll('.lineage-formula-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                const targetId = link.getAttribute('data-formula-id');
+                if (targetId && typeof this.loadFormulaById === 'function') {
+                    e.preventDefault();
+                    this.loadFormulaById(targetId, { switchToNarrative: true, scrollToTop: true });
+                }
+            });
+        });
 
         const jumpBtn = details.querySelector('.btn-jump-to-derivation');
         if (jumpBtn) {

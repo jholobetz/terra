@@ -104,6 +104,7 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
         // Tooltip container (interactive & clickable)
         this.tooltip = document.createElement('div');
+        this.tooltip.className = 'no-inspect';
         this.tooltip.style.cssText = 'position: absolute; display: none; z-index: 50; pointer-events: auto; cursor: pointer; background: rgba(3, 7, 18, 0.96); border: 1px solid rgba(100, 255, 218, 0.4); border-radius: 10px; padding: 12px 16px; max-width: 300px; box-shadow: 0 12px 30px rgba(0,0,0,0.7), 0 0 15px rgba(100,255,218,0.15); backdrop-filter: blur(10px); transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;';
         
         this.tooltip.addEventListener('mouseenter', () => {

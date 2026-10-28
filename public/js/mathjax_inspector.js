@@ -252,9 +252,32 @@ const MathJaxInspector = {
                 if (container.classList && (container.classList.contains('var-math-token') || container.closest('.var-math-token'))) {
                     return;
                 }
-                if (container.closest('.var-desc-lbl, .var-unit-lbl, .symbol-badge, .symbol-row, .edit-var-form, .no-inspect')) {
+                if (container.closest('.var-desc-lbl, .var-unit-lbl, .symbol-badge, .symbol-row, .edit-var-form, .no-inspect, .lineage-formula-link')) {
                     return;
                 }
+                const formulaContainer = container.closest('[data-formula-id]');
+                let formulaId = formulaContainer ? formulaContainer.getAttribute('data-formula-id') : null;
+
+                const linkEl = container.closest('a[href*="equation-explainer"]');
+                let linkHasLatexParam = false;
+                if (linkEl && linkEl.href) {
+                    try {
+                        const u = new URL(linkEl.href, window.location.origin);
+                        if (!formulaId) {
+                            formulaId = u.searchParams.get('id');
+                        }
+                        linkHasLatexParam = u.searchParams.has('latex');
+                    } catch (err) {}
+                }
+
+                if (formulaId && linkEl && !linkHasLatexParam) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
+                    window.location.href = baseUrl + '/physics/equation-explainer?id=' + encodeURIComponent(formulaId);
+                    return;
+                }
+
                 const latex = this.getLatexForElement(container);
                 if (latex) {
                     const cleanLatex = latex.trim().replace(/^\\\(|^\\\[|^\$+|\\\)$|\\\]$|\$+$/g, '').trim();
@@ -264,16 +287,6 @@ const MathJaxInspector = {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    const formulaContainer = container.closest('[data-formula-id]');
-                    let formulaId = formulaContainer ? formulaContainer.getAttribute('data-formula-id') : null;
-
-                    if (!formulaId && container.href) {
-                        try {
-                            const u = new URL(container.href, window.location.origin);
-                            formulaId = u.searchParams.get('id');
-                        } catch (err) {}
-                    }
-                    
                     const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
                     let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
                     if (formulaId) {
@@ -340,7 +353,7 @@ const MathJaxInspector = {
             }
         }
 
-        // 2. MathJax 3 CHTML container check
+        // 2. MathJax 3 CHTML/SVG container check
         const mathJaxContainer = el.closest('.MathJax, mjx-container, .math-content, .formula-math-display');
         if (mathJaxContainer && window.MathJax && window.MathJax.startup && window.MathJax.startup.document && window.MathJax.startup.document.math) {
             try {
@@ -350,7 +363,7 @@ const MathJaxInspector = {
                         mathItem.typesetRoot.contains(mathJaxContainer) ||
                         mathJaxContainer.contains(mathItem.typesetRoot)
                     )) {
-                        return mathItem.math;
+                        return (mathItem.math || '').replace(/^\\;+|\\;+$/g, '').trim();
                     }
                 }
             } catch (err) {
@@ -358,10 +371,11 @@ const MathJaxInspector = {
             }
         }
 
-        // 3. Inner SVG check inside math container
-        const innerSvg = mathJaxContainer?.querySelector('svg[data-tex], [data-tex]');
-        if (innerSvg && innerSvg.getAttribute('data-tex')) {
-            return innerSvg.getAttribute('data-tex');
+        // 3. Inner SVG or data-latex check inside math container
+        const innerSvg = mathJaxContainer?.querySelector('svg[data-tex], [data-tex], [data-latex]');
+        if (innerSvg) {
+            const innerAttr = innerSvg.getAttribute('data-tex') || innerSvg.getAttribute('data-latex');
+            if (innerAttr) return innerAttr;
         }
 
         // 4. Fallback check for MathML annotation
@@ -370,8 +384,13 @@ const MathJaxInspector = {
             return mmlAnnotation.textContent.trim();
         }
 
-        // 5. Fallback text content extraction
-        if (mathJaxContainer) {
+        // 5. Fallback text content extraction (only for unrendered raw TeX containers, never rendered mjx-container/SVG)
+        const isRenderedMathJax = mathJaxContainer && (
+            mathJaxContainer.tagName.toLowerCase() === 'mjx-container' ||
+            mathJaxContainer.classList.contains('MathJax') ||
+            mathJaxContainer.querySelector('mjx-container, mjx-assistive-mml, svg')
+        );
+        if (mathJaxContainer && !isRenderedMathJax) {
             const text = mathJaxContainer.textContent.trim();
             const clean = text.replace(/^\\\[/, '').replace(/\\\]$/, '').replace(/^\$\$/, '').replace(/\$\$$/, '').replace(/^\$/, '').replace(/\$/, '').trim();
             if (clean.length > 0) {

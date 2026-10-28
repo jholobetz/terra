@@ -631,10 +631,12 @@ const EquationExplainer = {
             });
         }
 
-        // Trigger MathJax typeset on the activated stage
+        // Typeset any unrendered math on the activated stage without clearing existing MathItem sources
         const activePane = document.getElementById(targetId);
-        if (activePane) {
-            this.triggerTypeset([activePane]);
+        if (activePane && window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise([activePane])
+                .then(() => this.stampMathJaxSources())
+                .catch(err => console.warn('MathJax stage typeset failed:', err));
         }
     },
 
@@ -798,36 +800,37 @@ const EquationExplainer = {
         
         let cleanedLatex = latex.replace(/\\par\b/g, ' ').trim();
         
-        const knownTexCmds = new Set([
+        const safeBareTexCmds = new Set([
             'delta', 'alpha', 'beta', 'gamma', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa',
-            'lambda', 'mu', 'nu', 'xi', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega',
+            'lambda', 'mu', 'nu', 'xi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega',
             'Gamma', 'Delta', 'Theta', 'Lambda', 'Xi', 'Pi', 'Sigma', 'Upsilon', 'Phi', 'Psi', 'Omega',
-            'frac', 'sqrt', 'left', 'right', 'partial', 'infty', 'approx', 'to', 'le', 'ge', 'ne', 'equiv',
-            'sim', 'simeq', 'propto', 'nabla', 'cdot', 'times', 'div', 'pm', 'mp', 'ast', 'star',
-            'sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'log', 'ln', 'exp', 'lim', 'max', 'min', 'sum', 'int', 'prod',
-            'lozenge', 'iff', 'exists', 'in', 'vDash', 'vdash', 'models', 'forall', 'subset', 'supset',
-            'cup', 'cap', 'implies', 'Rightarrow', 'Leftarrow', 'Leftrightarrow', 'coprod', 'oint', 'iint', 'iiint',
-            'dim', 'det', 'ker', 'tr', 'diag', 'rank', 'supp', 'span', 'bra', 'ket', 'braket',
-            'text', 'mathrm', 'mathbf', 'mathcal', 'mathbb', 'operatorname', 'quad', 'qquad', 'vec', 'hat', 'bar', 'dot', 'ddot', 'tilde',
-            'begin', 'end', 'pmatrix', 'matrix', 'bmatrix', 'vmatrix', 'Vmatrix', 'cases', 'align', 'aligned', 'gather', 'gathered', 'split', 'array', 'multline'
+            'partial', 'infty', 'approx', 'equiv', 'simeq', 'propto', 'nabla', 'cdot', 'times',
+            'sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'sinh', 'cosh', 'tanh', 'log', 'exp', 'lim', 'max', 'min',
+            'dim', 'det', 'ker', 'gcd', 'deg', 'arg', 'inf', 'sup', 'forall', 'exists', 'implies'
         ]);
 
-        // 1. Protect existing backslashed LaTeX macros and macro environments (e.g. \text{enc}, \mathbf{v}_d, \begin{pmatrix}...\end{pmatrix})
+        // 1. Protect existing backslashed LaTeX macros and environments
         const macroPlaceholders = [];
-        let tempLatex = cleanedLatex.replace(/(?:\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname|vec|hat|bar|dot|ddot|tilde|frac|sqrt|color)\{(?:[^{}]|\{[^{}]*\})*\}|\\(?:begin|end)\{[a-zA-Z*]+\}|\\[a-zA-Z]+|\\[^a-zA-Z])/g, (match) => {
+        let tempLatex = cleanedLatex.replace(/(?:\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname)\{(?:[^{}]|\{[^{}]*\})*\}|\\(?:begin|end)\{[a-zA-Z*]+\}|\\[a-zA-Z]+|\\[^a-zA-Z])/g, (match) => {
             macroPlaceholders.push(match);
             return `___TEXMACRO_${macroPlaceholders.length - 1}___`;
         });
 
-        // 2. Wrap un-escaped Multi-Letter variables/words in \text{} unless known TeX commands
-        tempLatex = tempLatex.replace(/\b([a-zA-Z]{2,})\b/g, (match) => {
-            if (knownTexCmds.has(match) || knownTexCmds.has(match.toLowerCase())) {
+        // 2. Wrap un-escaped multi-letter words (3+ chars) inside subscripts/superscripts directly in \text{}
+        tempLatex = tempLatex.replace(/([_^]\{)\s*([a-zA-Z]{3,})\s*(\})/g, (m, open, word, close) => {
+            macroPlaceholders.push(`\\text{${word}}`);
+            return `${open}___TEXMACRO_${macroPlaceholders.length - 1}___${close}`;
+        });
+
+        // 3. Wrap remaining un-escaped 3+ letter words in \text{} unless safe parameterless TeX commands
+        tempLatex = tempLatex.replace(/\b([a-zA-Z]{3,})\b/g, (match) => {
+            if (safeBareTexCmds.has(match)) {
                 return `\\${match}`;
             }
             return `\\text{${match}}`;
         });
 
-        // 3. Restore backslashed LaTeX macros
+        // 4. Restore backslashed LaTeX macros
         for (let i = 0; i < macroPlaceholders.length; i++) {
             tempLatex = tempLatex.replace(`___TEXMACRO_${i}___`, () => macroPlaceholders[i]);
         }
@@ -885,28 +888,32 @@ const EquationExplainer = {
         runCompile();
     },
 
+    stampMathJaxSources() {
+        if (window.MathJax && window.MathJax.startup && window.MathJax.startup.document && window.MathJax.startup.document.math) {
+            try {
+                for (const mathItem of window.MathJax.startup.document.math) {
+                    if (mathItem && mathItem.typesetRoot && mathItem.math && !mathItem.typesetRoot.getAttribute('data-latex')) {
+                        mathItem.typesetRoot.setAttribute('data-latex', mathItem.math);
+                    }
+                }
+            } catch (e) {}
+        }
+    },
+
     triggerTypeset(elements) {
         if (!elements || elements.length === 0) return;
 
         const runTypeset = (retryCount = 0) => {
             if (window.MathJax && window.MathJax.typesetPromise) {
-                if (window.MathJax.typesetClear) {
-                    try {
-                        window.MathJax.typesetClear(elements);
-                    } catch (err) {
-                        console.warn('MathJax typesetClear failed:', err);
-                    }
-                }
+                this.stampMathJaxSources();
                 window.MathJax.typesetPromise(elements)
+                    .then(() => this.stampMathJaxSources())
                     .catch(err => console.warn('MathJax typesetting failed:', err));
             } else if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
                 window.MathJax.startup.promise.then(() => {
-                    if (window.MathJax.typesetClear) {
-                        try {
-                            window.MathJax.typesetClear(elements);
-                        } catch (e) {}
-                    }
+                    this.stampMathJaxSources();
                     window.MathJax.typesetPromise(elements)
+                        .then(() => this.stampMathJaxSources())
                         .catch(err => console.warn('MathJax typesetting failed (deferred):', err));
                 });
             } else if (retryCount < 30) {
@@ -992,7 +999,7 @@ const EquationExplainer = {
             });
     },
 
-    loadFormulaById(id) {
+    loadFormulaById(id, options = {}) {
         if (!id) return;
         fetch(`${BASE_URL}/physics/api/explain?id=${encodeURIComponent(id)}`)
             .then(res => res.json())
@@ -1004,9 +1011,17 @@ const EquationExplainer = {
                         this.latexInput.value = this.currentLatex;
                     }
                     this.compileMathJax(this.currentLatex);
+
+                    if (options.switchToNarrative) {
+                        this.switchTab('stage-narrative');
+                    }
                     
                     // Render formula immediately
                     this.renderFormula(data.formula, []);
+
+                    if (options.scrollToTop !== false) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
 
                     this.fetchSubtopicsForFormula(data.formula.id).then(subtopics => {
                         if (this.currentId === data.formula.id) {

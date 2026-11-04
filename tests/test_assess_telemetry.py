@@ -34,6 +34,8 @@ def mock_audit_data():
                 "rich_count": 13800,
                 "moderate_count": 871,
                 "isolated_nodes": 0,
+                "overloaded_hubs": 0,
+                "max_direct_children": 19,
             },
             "gqs": {
                 "total_subtopics": 1584,
@@ -136,14 +138,16 @@ def test_verify_strict_invariants_failing(mock_audit_data):
     """Verifies that invariant violations are properly flagged and cause failure."""
     # Inject violations
     mock_audit_data["diagnostics"]["lineage"]["isolated_nodes"] = 3
+    mock_audit_data["diagnostics"]["lineage"]["overloaded_hubs"] = 2
     mock_audit_data["diagnostics"]["gqs"]["broken_links"] = 1
     mock_audit_data["roadmap"]["phase_2"]["items"][0] = ("Dual-Layer Hash Sync", "2 Shards Drifted", False)
 
     passes, violations = verify_strict_invariants(mock_audit_data)
     assert passes is False
-    assert len(violations) >= 3
+    assert len(violations) >= 4
     violation_text = " ".join(violations)
     assert "isolated formula" in violation_text
+    assert "overloaded star-hub" in violation_text
     assert "broken subtopic cross-link" in violation_text
     assert "Shard drift" in violation_text
 

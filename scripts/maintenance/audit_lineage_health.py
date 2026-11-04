@@ -192,7 +192,7 @@ def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
     ancestry_depth, loop_free = has_loop_free_ancestry(fid, parent_map)
 
     depth_score = 0
-    if loop_free and not parent_is_overloaded:
+    if loop_free and not parent_is_overloaded and not is_overloaded_hub:
         if ancestry_depth >= 2:
             depth_score = 15
         elif ancestry_depth == 1:
@@ -254,12 +254,12 @@ def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map):
 
     total_score = max(0, min(100, upstream_score + depth_score + downstream_score + quality_score))
 
-    if total_score >= 75:
+    if total_score >= 75 and not is_overloaded_hub:
         tier = "GREEN"
-        status_label = "Rich & Complete" if not is_overloaded_hub else "Overloaded Hub (>25 children)"
+        status_label = "Rich & Complete"
     elif total_score >= 40:
         tier = "YELLOW"
-        status_label = "Moderate"
+        status_label = "Moderate" if not is_overloaded_hub else "Overloaded Hub (>25 children)"
     elif total_score > 0:
         tier = "RED"
         status_label = "Thin"

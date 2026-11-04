@@ -193,6 +193,13 @@ def audit_diagnostics():
         mod_m = re.search(r"Moderate.*?:\s*([\d,]+)", out)
         moderate_count = int(mod_m.group(1).replace(",", "")) if mod_m else 0
 
+        max_children = 0
+        overloaded_hubs = 0
+        shape_m = re.search(r"Max Direct Children/Hub:\s*(\d+)\s*\(Cap\s*<=\s*\d+,\s*Overloaded Hubs:\s*(\d+)\)", out)
+        if shape_m:
+            max_children = int(shape_m.group(1))
+            overloaded_hubs = int(shape_m.group(2))
+
         dag_edges = 0
         dag_path = WORKSPACE_ROOT / "app" / "config" / "formula_derivation_graph.json"
         if dag_path.exists():
@@ -208,6 +215,8 @@ def audit_diagnostics():
         results["lineage"] = {
             "lhi_score": lhi_score,
             "isolated_nodes": isolated,
+            "overloaded_hubs": overloaded_hubs,
+            "max_direct_children": max_children,
             "total_formulas": total_eval,
             "rich_count": rich_count,
             "moderate_count": moderate_count,
@@ -1887,6 +1896,9 @@ def verify_strict_invariants(data):
         iso = lin.get("isolated_nodes")
         if isinstance(iso, int) and iso > 0:
             violations.append(f"Mathematical Lineage DAG: {iso} isolated formula node(s) detected (expected 0)")
+        ov = lin.get("overloaded_hubs", 0)
+        if isinstance(ov, int) and ov > 0:
+            violations.append(f"Mathematical Lineage DAG: {ov} overloaded star-hub(s) (>25 children) detected (expected 0)")
         if lin.get("error"):
             violations.append(f"Lineage audit error: {lin.get('error')}")
 

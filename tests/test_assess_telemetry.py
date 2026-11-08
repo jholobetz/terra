@@ -29,8 +29,8 @@ def mock_audit_data():
         "diagnostics": {
             "lineage": {
                 "total_formulas": 14681,
-                "dag_edges": 44691,
-                "lhi_score": 99.8,
+                "dag_edges": 14108,
+                "lhi_score": 99.9,
                 "rich_count": 14681,
                 "moderate_count": 0,
                 "isolated_nodes": 0,
@@ -104,8 +104,8 @@ def test_telemetry_schema_v1_structure(mock_audit_data):
     assert "mathematical_manifold" in telemetry
     manifold = telemetry["mathematical_manifold"]
     assert manifold["total_formulas"] == 14681
-    assert manifold["dag_edges"] == 44691
-    assert manifold["lhi_score"] == 99.8
+    assert manifold["dag_edges"] == 14108
+    assert manifold["lhi_score"] == 99.9
     assert manifold["isolated_nodes"] == 0
     assert manifold["multi_step_proofs"] == 103
     assert manifold["cas_latency_ms"] == 250.0

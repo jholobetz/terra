@@ -13,12 +13,12 @@ Over successive engineering sprints, the **Terra Physics Lab** platform has atta
 | Metric / Dimension | Benchmark Status | Verification Gate |
 | :--- | :--- | :--- |
 | **Subtopic Coverage** | **1,584 / 1,584 Subtopics (100.0%)** graduated to Organic Platinum Standard (OPS) | `integrity_shield.py` (OPS Lead & Density Audit) |
-| **Formula Catalog** | **14,682 Physical Formulas** partitioned across 256 hex shards (`00` to `ff`) | `integrity_shield.py` (Shard Hex Partition Audit) |
-| **Derivation Lineage DAG** | **Lineage Health Index (LHI) of 95.2 / 100** with **0 isolated nodes** (44,725 edges) | `scripts/fixlineage --summary` |
+| **Formula Catalog** | **14,681 Physical Formulas** (`11,943` equations, `2,738` symbols/terms) across 256 hex shards (`00` to `ff`) | `integrity_shield.py` (Shard Hex Partition Audit) |
+| **Derivation Lineage DAG** | **Lineage Health Index (LHI) of 99.9 / 100** with **0 isolated nodes** (14,108 edges) | `scripts/fixlineage --summary` |
 | **Manifold Closure** | **100.0% equation closure** (0 unmapped prose identities across 8,649 expressions) | `php scripts/audit_prose_equations.php` |
 | **Symbolic CAS Engine** | Sandboxed SymPy worker ([`cas_engine.py`](../lib/cas/cas_engine.py)) with async `/physics/api/cas-evaluate` | `pytest tests/test_cas_engine.py` |
 | **Modular ES6 Client** | `equation_explainer.js` decoupled into `simulations`, `curator`, `dictionary` modules | Browser verification & regression suite |
-| **Regression Net** | **100% passing automated test suite** (241 Pytest tests + 16 native PHP unit tests covering all 14,683 formulas) | `.venv/bin/python3 -m pytest tests/` & `composer test` |
+| **Regression Net** | **100% passing automated test suite** (241+ Pytest tests + 16 native PHP unit tests covering all 14,681 formulas) | `.venv/bin/python3 -m pytest tests/` & `composer test` |
 
 ---
 
@@ -28,7 +28,7 @@ Over successive engineering sprints, the **Terra Physics Lab** platform has atta
 flowchart TD
     subgraph Phase1["Phase 1: Stabilization & Hardening (Completed)"]
         P1A["100% OPS Prose Graduation"]
-        P1B["LHI Derivation Healing (95.2 / 100, 0 Isolated)"]
+        P1B["LHI Derivation Healing (99.9 / 100, 0 Isolated)"]
         P1C["Modularize equation_explainer.js"]
         P1D["Centralized Delimiter Standardization"]
     end
@@ -37,11 +37,11 @@ flowchart TD
         P2A["Purge & Archive scratch/ & scripts/"]
         P2B["Step-by-Step Derivation Accordions"]
         P2C["Modular Canvas/WebGL Visualizer Library"]
-        P2D["Multi-Step Derivation Proof Seeding (102 Proofs)"]
+        P2D["Multi-Step Derivation Proof Seeding (103 Proofs)"]
     end
 
     subgraph Phase3["Phase 3: Formal Verification & Unified Ingestion (Completed)"]
-        P3A["Database-wide SymPy CAS Proof Sweep (9,149 Verified)"]
+        P3A["Database-wide SymPy CAS Proof Sweep (9,302 Verified)"]
         P3B["Autonomous Agent Sweeps under Budget Contracts"]
         P3C["Unified 5-Stage Formula Ingestion Pipeline"]
     end
@@ -184,7 +184,7 @@ flowchart TD
 * **Goal**: Upgrade derivation links and formula identities from pedagogical references to **algebraically proven identities** and catalog verified badges across the encyclopedia.
 * **Current Status**:
   * **Option A (Engine & Lexicon Expansion)**: 🟢 **Completed** (`commit 6aee2609`). Added CGS, astrophysics, particle physics, natural units ($\hbar=c=k_B=1$), and subscript/prefix heuristics.
-  * **Option B (Batch Shard Tagging & DB Sync)**: 🟢 **Completed**. Audited all **14,683 formulas** across the 256 Git shards, certifying and tagging **9,149 homogeneous physical invariants (62.3%)** with `cas_validation` metadata, updating `cas_validation_report.json` and `formulas_hash_registry.json` with 0 drift, and enabling Dual-Layer Resilience hydration in `PhysicsService::loadFormula()`.
+  * **Option B (Batch Shard Tagging & DB Sync)**: 🟢 **Completed**. Audited all **14,681 formulas** (`11,943` equations, `2,738` symbols/terms) across the 256 Git shards, certifying and tagging **9,302 homogeneous physical invariants (63.4% overall / 77.9% of equations)** with `cas_validation` metadata, updating `cas_validation_report.json` and `formulas_hash_registry.json` with 0 drift, and enabling Dual-Layer Resilience hydration in `PhysicsService::loadFormula()`.
   * **Option C (Multi-Step Derivation & Lineage DAG Prover)**: 🟢 **Completed**. Audited all **103 multi-step derivation proofs** (`scripts/cascheck --derivations`), certifying **103 complete proof chains (100.0%)** with **103 / 103 terminal equation matches**.
 
 ### 3.2 Unified 5-Stage Formula Ingestion Pipeline
@@ -241,7 +241,7 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | Horizon | ID | Initiative | Key Components / Files | Priority | Status |
 | :--- | :--- | :--- | :--- | :---: | :---: |
 | **Phase 1** | 1.1 | Modularize `equation_explainer.js` | `public/js/explainer_simulations.js`<br/>`public/js/explainer_curator.js` | 🔴 **P1** | 🟢 Completed |
-| **Phase 1** | 1.2 | Derivation Lineage DAG Healing (LHI 95.2) | `scripts/fixlineage`<br/>`formula_derivation_graph.json` | 🔴 **P1** | 🟢 Completed |
+| **Phase 1** | 1.2 | Derivation Lineage DAG Healing (LHI 99.9) | `scripts/fixlineage`<br/>`formula_derivation_graph.json` | 🔴 **P1** | 🟢 Completed |
 | **Phase 1** | 1.3 | 100% OPS Subtopic Graduation | `app/config/content/*.json`<br/>`integrity_shield.py` | 🔴 **P1** | 🟢 Completed |
 | **Phase 2** | 2.1 | Scratch & Maintenance Script Archival | `scratch/`<br/>`archive/README.md` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.2 | Step-by-Step Derivation Infrastructure | `equation_explainer.php`<br/>`shard_[00-ff].json` | 🟡 **P2** | 🟢 Completed |
@@ -251,7 +251,7 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 2** | 2.6 | Analytical Mechanics Workbench Deepening | `legendre_transformer.js`<br/>`legendre_transformer.php`<br/>`cas_engine.py` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.7 | Derivation Steps Proof Seeding | `shard_[00-ff].json`<br/>`tests/test_derivation_steps.py` | 🟡 **P2** | 🟢 Completed (103 Proofs) |
 | **Phase 2** | 2.8 | Thin Shard Curriculum Enrichment | `fluids-nonlinear.json`<br/>`gqs.py` | 🟢 **P3** | ⏸️ Deferred (Next-Level) |
-| **Phase 3** | 3.1 | Database-wide SymPy CAS Proof Sweep | `cas_engine.py`<br/>`batch_cas_prover.py` | 🔴 **P1** | 🟢 Completed (9,149 Tagged) |
+| **Phase 3** | 3.1 | Database-wide SymPy CAS Proof Sweep | `cas_engine.py`<br/>`batch_cas_prover.py` | 🔴 **P1** | 🟢 Completed (9,302 Tagged) |
 | **Phase 3** | 3.2 | Unified 5-Stage Ingestion Pipeline | `lib/pipeline/formula_pipeline.py`<br/>`gqs.py`<br/>`generate_gemini_formula.py` | 🔴 **P1** | 🟢 Completed |
 | **Phase 3** | 3.3 | Autonomous Governance Safeguards | `docs/cost_governance.md`<br/>`.agents/skills/` | 🟢 **P3** | 🟢 Guarded |
 | **Phase 4** | 4.1 | Undetermined at This Time | TBD | ⚪ **TBD** | ⏳ Undetermined |

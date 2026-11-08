@@ -10,21 +10,33 @@ window.MathJax = {
     }
 };
 
+window.hasUnrenderedMath = function(rootEl) {
+    const el = rootEl || (typeof document !== 'undefined' ? document.body : null);
+    if (!el) return false;
+    const text = el.textContent || '';
+    return /\\[\(\[]|\$\$|\$[^$\n]+\$/.test(text);
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Fallback typesetting trigger if loaded dynamically or already active
-    if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise().then(() => {
-            const hash = window.location.hash;
-            if (hash) {
-                try {
-                    const target = document.querySelector(hash);
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                } catch (e) {
-                    console.warn("Invalid hash selector:", hash, e);
+    const scrollToHash = () => {
+        const hash = window.location.hash;
+        if (hash) {
+            try {
+                const target = document.querySelector(hash);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
+            } catch (e) {
+                console.warn("Invalid hash selector:", hash, e);
             }
-        }).catch(err => console.warn("MathJax initial typeset error:", err));
+        }
+    };
+
+    // Fallback typesetting trigger only when unrendered math delimiters exist in the DOM
+    if (window.MathJax && window.MathJax.typesetPromise && window.hasUnrenderedMath(document.body)) {
+        window._initialMathJaxTypesetQueued = true;
+        window.MathJax.typesetPromise().then(scrollToHash).catch(err => console.warn("MathJax initial typeset error:", err));
+    } else {
+        scrollToHash();
     }
 });

@@ -891,16 +891,42 @@ class PhysicsController
         $intro = $firstParagraph ?? ($topic['intro'] ?? null);
         $intro = $wrapVariableTriggers($inlineSvgFunc($intro ?? ''));
 
+        // Decode pillars early so we only compile SVG/variable triggers for subtopics in this Topic Hub
+        $pillars = !empty($topic['pillars']) ? (is_string($topic['pillars']) ? json_decode($topic['pillars'], true) : $topic['pillars']) : null;
+        $targetSlugs = [];
+        if (is_array($pillars)) {
+            foreach ($pillars as $p) {
+                if (!empty($p['slugs']) && is_array($p['slugs'])) {
+                    foreach ($p['slugs'] as $s) {
+                        $targetSlugs[$s] = true;
+                    }
+                }
+            }
+        }
+
         // Construct subtopics lookup map for subtopic card details
         $subtopicsMap = [];
-        foreach ($content['subtopics'] as $subSlug => $sub) {
-            if (!is_array($sub)) continue;
-            $subtopicsMap[$subSlug] = [
-                'title' => $sub['title'] ?? $subSlug,
-                'snippet' => $sub['snippet'] ?? '',
-                'snippet_svg' => $wrapVariableTriggers($inlineSvgFunc($sub['snippet_svg'] ?? '')),
-                'hero_math' => $inlineSvgFunc($sub['hero_math'] ?? '')
-            ];
+        if (!empty($targetSlugs)) {
+            foreach ($targetSlugs as $subSlug => $_) {
+                $sub = $content['subtopics'][$subSlug] ?? null;
+                if (!is_array($sub)) continue;
+                $subtopicsMap[$subSlug] = [
+                    'title' => $sub['title'] ?? $subSlug,
+                    'snippet' => $sub['snippet'] ?? '',
+                    'snippet_svg' => $wrapVariableTriggers($inlineSvgFunc($sub['snippet_svg'] ?? '')),
+                    'hero_math' => $inlineSvgFunc($sub['hero_math'] ?? '')
+                ];
+            }
+        } else {
+            foreach ($content['subtopics'] as $subSlug => $sub) {
+                if (!is_array($sub)) continue;
+                $subtopicsMap[$subSlug] = [
+                    'title' => $sub['title'] ?? $subSlug,
+                    'snippet' => $sub['snippet'] ?? '',
+                    'snippet_svg' => $wrapVariableTriggers($inlineSvgFunc($sub['snippet_svg'] ?? '')),
+                    'hero_math' => $inlineSvgFunc($sub['hero_math'] ?? '')
+                ];
+            }
         }
 
         // Map cross-pillar bridge links
@@ -931,7 +957,7 @@ class PhysicsController
         $this->renderWithLayout('physics/topic', array_merge($topic, [
             'topic' => $topic,
             'subtopics_map' => $subtopicsMap,
-            'pillars' => !empty($topic['pillars']) ? (is_string($topic['pillars']) ? json_decode($topic['pillars'], true) : $topic['pillars']) : null,
+            'pillars' => $pillars,
             'bridges' => $resolvedBridges,
             'intro' => $intro,
             'field' => $topic['field'] ?? null,

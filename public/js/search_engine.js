@@ -23,32 +23,42 @@ document.addEventListener('DOMContentLoaded', () => {
         ).join(' &rsaquo; ');
     }
 
-    // Load Search Index
+    // Load Search Index (Lazily invoked only when offline fallback search is needed)
+    let indexLoadPromise = null;
     async function loadIndex() {
-        if (searchData) return;
-        input.placeholder = "Loading encyclopedia index...";
-        try {
-            const response = await fetch('/physics/search-index');
-            if (!response.ok) throw new Error('Search index load failed');
-            searchData = await response.json();
-            input.placeholder = "Search equations, topics, and constants...";
-            console.log('Spotlight Search Engine initialized:', Object.keys(searchData).length, 'topics indexed.');
-        } catch (e) {
-            input.placeholder = "Search currently unavailable";
-            console.error('Search Index Error:', e);
-        }
+        if (searchData) return searchData;
+        if (indexLoadPromise) return indexLoadPromise;
+        indexLoadPromise = (async () => {
+            try {
+                const response = await fetch('/physics/search-index');
+                if (!response.ok) throw new Error('Search index load failed');
+                searchData = await response.json();
+                return searchData;
+            } catch (e) {
+                console.error('Search Index Error:', e);
+                return null;
+            } finally {
+                indexLoadPromise = null;
+            }
+        })();
+        return indexLoadPromise;
     }
+
+    let activeSearchController = null;
 
     // Modal Control Functions
     function openModal() {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden'; // Lock background scrolling
-        loadIndex();
         setTimeout(() => input.focus(), 50); // Autofocus input field
         highlightedIndex = -1;
     }
 
     function closeModal() {
+        if (activeSearchController) {
+            activeSearchController.abort();
+            activeSearchController = null;
+        }
         modal.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
         input.value = '';
@@ -119,8 +129,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let debounceTimer = null;
 
+    // Offline client-side fallback search (lazily loads /physics/search-index only if API fails)
+    async function performFallbackSearch(query) {
+        const index = await loadIndex();
+        if (!index) {
+            results.innerHTML = '<div class="search-placeholder"><p>Search currently unavailable</p><small>Please check your connection and try again.</small></div>';
+            resultItems = [];
+            highlightedIndex = -1;
+            return;
+        }
+
+        const qLower = query.toLowerCase();
+        const matches = [];
+        for (const [slug, entry] of Object.entries(index)) {
+            const title = entry.t || slug;
+            const keywords = Array.isArray(entry.k) ? entry.k : [];
+            const titleMatch = title.toLowerCase().includes(qLower) || slug.toLowerCase().includes(qLower);
+            const kwMatch = keywords.some(k => String(k).toLowerCase().includes(qLower));
+            if (titleMatch || kwMatch) {
+                matches.push({
+                    url: `/physics/subtopic/${slug}`,
+                    title,
+                    type: 'Subtopic',
+                    snippet: formatPath(entry.p)
+                });
+                if (matches.length >= 10) break;
+            }
+        }
+
+        if (matches.length > 0) {
+            results.innerHTML = matches.map(m => `
+                <a href="${m.url}" class="modal-search-item">
+                    <div class="modal-search-item-header">
+                        <span class="modal-search-item-title">${m.title}</span>
+                        <span class="modal-search-item-badge">${m.type}</span>
+                    </div>
+                    <div class="modal-search-item-path">
+                        <span>${m.snippet}</span>
+                    </div>
+                </a>
+            `).join('');
+
+            resultItems = Array.from(results.querySelectorAll('.modal-search-item'));
+            highlightedIndex = 0;
+            updateHighlight();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
+            }
+        } else {
+            results.innerHTML = '<div class="search-placeholder"><p>No matches in the manifold...</p><small>Try searching another physical concept or symbol.</small></div>';
+            resultItems = [];
+            highlightedIndex = -1;
+        }
+    }
+
     // Perform API search request
     async function performSearch(query) {
+        if (activeSearchController) {
+            activeSearchController.abort();
+            activeSearchController = null;
+        }
+
         if (query.length < 2) {
             resetResultsPlaceholder();
             resultItems = [];
@@ -128,8 +198,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const controller = new AbortController();
+        activeSearchController = controller;
+        const { signal } = controller;
+
         try {
-            const response = await fetch(`/physics/api/search?q=${encodeURIComponent(query)}&limit=10`);
+            const response = await fetch(`/physics/api/search?q=${encodeURIComponent(query)}&limit=10`, { signal });
             if (!response.ok) throw new Error('API search failed');
             const data = await response.json();
             
@@ -156,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Try AI Semantic Vector Search Fallback
                 try {
-                    const semRes = await fetch(`/physics/api/semantic-search?q=${encodeURIComponent(query)}&limit=8`);
+                    const semRes = await fetch(`/physics/api/semantic-search?q=${encodeURIComponent(query)}&limit=8`, { signal });
                     if (semRes.ok) {
                         const semData = await semRes.json();
                         if (semData.results && semData.results.length > 0) {
@@ -186,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 } catch (semErr) {
+                    if (semErr && semErr.name === 'AbortError') return;
                     console.warn('Semantic search fallback failed:', semErr);
                 }
 
@@ -194,8 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 highlightedIndex = -1;
             }
         } catch (err) {
+            if (err && err.name === 'AbortError') return;
             console.warn('API search failed, attempting fallback index...', err);
-            performFallbackSearch(query);
+            await performFallbackSearch(query);
         }
     }
 
@@ -212,14 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchQuery) {
         openModal();
         input.value = searchQuery;
-        
-        // Wait for the index to load before running search query
-        const checkIndex = setInterval(() => {
-            if (searchData) {
-                clearInterval(checkIndex);
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-            }
-        }, 50);
-        setTimeout(() => clearInterval(checkIndex), 3000);
+        performSearch(searchQuery.trim());
     }
 });

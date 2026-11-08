@@ -120,12 +120,12 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   # (Optional: add -t / --with-tests to include pytest in the prompt payload)
   ```
 * **Web GUI Assessment Console**: Live interactive telemetry, strict monotonic ratchets, shard partition auditing, and one-click autonomous self-healing available in the browser at [`http://localhost:8000/physics/admin/assess`](http://localhost:8000/physics/admin/assess).
-* **Automated Pytest & PHP Unit Suite**: Runs the full regression net (241 Pytest tests + 16 native PHP unit tests covering all 14,683 formulas, schemas, invariants, delimiters, PHP services, and syntax):
+* **Automated Pytest & PHP Unit Suite**: Runs the full regression net (241+ Pytest tests + 16 native PHP unit tests covering all 14,681 formulas, schemas, invariants, delimiters, PHP services, and syntax):
   ```bash
   .venv/bin/python3 -m pytest tests/
   composer test
   ```
-* **Sitewide Integrity Shield Audit**: Scans all 13 primary content shards, 256 formula shards, 14,682 formulas, 100% manifold closure, and MathJax renderings:
+* **Sitewide Integrity Shield Audit**: Scans all 13 primary content shards, 256 formula shards, 14,681 formulas, 100% manifold closure, and MathJax renderings:
   ```bash
   .venv/bin/python3 integrity_shield.py
   ```
@@ -209,7 +209,7 @@ The platform maintains a deliberate dual-layer operational model:
 ### B. Mathematical Derivation Lineage Graph (DAG)
 * Lineage is tracked as an acyclic graph in `app/config/formula_derivation_graph.json` (and `.gz`).
 * Formulas connect hierarchically from foundational axioms down to phenomenological identities.
-* The **Lineage Health Index (LHI)** continuously benchmarks derivation density on a 0–100 scale (currently at **95.2 / 100**, with **0 isolated nodes**).
+* The **Lineage Health Index (LHI)** continuously benchmarks derivation density on a 0–100 scale (currently at **99.9 / 100**, with **0 isolated nodes**).
 
 ### C. Equation Explainer & Dissection Suite
 * Located at `/physics/equation-explainer`.
@@ -242,8 +242,8 @@ To eliminate counter-productive amnesia, glossing over existing features, or rei
 | **Elevated Dynamic Simulations** | [`public/js/simulations/pendulum.js`](file:///Users/holobetj/code/gemini/terra/public/js/simulations/pendulum.js)<br/>[`public/js/simulations/projectile-motion.js`](file:///Users/holobetj/code/gemini/terra/public/js/simulations/projectile-motion.js) | **Operational**. RK4 chaotic damped-driven pendulum with real-time Poincaré sections and period-doubling cascades; Newton's orbital cannon with circular, elliptical, and hyperbolic escape trajectories. | Browser at `/physics/simulations` |
 | **Hero Stage Cosmic Arena** | [`public/js/cosmic_arena.js`](file:///Users/holobetj/code/gemini/terra/public/js/cosmic_arena.js)<br/>[`public/js/lab_cockpit.js`](file:///Users/holobetj/code/gemini/terra/public/js/lab_cockpit.js) | **Operational**. 60fps high-DPI canvas engine on `/physics/lab-tools`. 4 physical regimes, Web Audio harmonic frequency synthesis, color-coupled telemetry HUD, and interactive What-If micro-challenges. | Browser at `/physics/lab-tools` |
 | **Cross-Encyclopedia Lab Hydration** | [`app/logic/LabToolsLauncher.php`](file:///Users/holobetj/code/gemini/terra/app/logic/LabToolsLauncher.php)<br/>[`app/views/physics/subtopic.php`](file:///Users/holobetj/code/gemini/terra/app/views/physics/subtopic.php) | **Operational**. 1,584/1,584 subtopics mapped to deep-linked interactive instruments, duality workbenches, and simulations with URL state pre-hydration and in-prose cockpit bridge cards. | `.venv/bin/python3 -m pytest tests/test_lab_tools_hydration.py` |
-| **Multi-Step Derivations Engine** | `equation_explainer.php`<br/>[`tests/test_derivation_steps.py`](file:///Users/holobetj/code/gemini/terra/tests/test_derivation_steps.py) | **Operational (102 verified proofs sitewide)**. Collapsible derivation accordions with MathJax typesetting, sequential step schema, TeX brace balance, and universal Domain Parity ($\ge 8$ proofs across all 12 platform domains). | `.venv/bin/python3 -m pytest tests/test_derivation_steps.py` |
-| **Lineage DAG & LHI** | `scripts/fixlineage`<br/>`formula_derivation_graph.json` | **Operational**. Lineage Health Index of 95.2/100, 0 isolated nodes, 44,558 derivation edges. | `scripts/fixlineage --summary` |
+| **Multi-Step Derivations Engine** | `equation_explainer.php`<br/>[`tests/test_derivation_steps.py`](file:///Users/holobetj/code/gemini/terra/tests/test_derivation_steps.py) | **Operational (103 verified proofs sitewide)**. Collapsible derivation accordions with MathJax typesetting, sequential step schema, TeX brace balance, and universal Domain Parity ($\ge 8$ proofs across all 12 platform domains). | `.venv/bin/python3 -m pytest tests/test_derivation_steps.py` |
+| **Lineage DAG & LHI** | `scripts/fixlineage`<br/>`formula_derivation_graph.json` | **Operational**. Lineage Health Index of 99.9/100, 0 isolated nodes, 14,108 derivation edges. | `scripts/fixlineage --summary` |
 | **Dual-Layer Hash Synchronizer** | `app/config/formulas_hash_registry.json`<br/>`PhysicsService.php` | **Operational**. 256/256 formula shards synchronized with zero hash drift. | `scripts/assess --roadmap --no-tests` |
 
 ---

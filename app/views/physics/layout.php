@@ -12,9 +12,9 @@
 
     <!-- MathJax Static-Safe Configuration -->
     <script src="/js/mathjax_config.js" nonce="<?= $nonce ?>"></script>
-    <script src="/js/math_prose_formatter.js" nonce="<?= $nonce ?>"></script>
+    <script src="/js/math_prose_formatter.js" nonce="<?= $nonce ?>" defer></script>
     <script src="/js/lib/tex-svg-full.js" id="MathJax-script" nonce="<?= $nonce ?>" defer></script>
-    <script src="/js/hub_interactions.js" nonce="<?= $nonce ?>"></script>
+    <script src="/js/hub_interactions.js" nonce="<?= $nonce ?>" defer></script>
     <link rel="stylesheet" href="/css/physics.css?v=<?= @filemtime(PROJECT_ROOT . '/public/css/physics.css') ?: 1 ?>">
     <script nonce="<?= $nonce ?>">
         const BASE_URL = '<?= (Flight::request()->base && Flight::request()->base !== '.') ? rtrim(Flight::request()->base, '/') : '' ?>';

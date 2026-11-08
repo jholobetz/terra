@@ -27,8 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 2. Global MathJax Fallback Trigger (for complex layouts)
-    if (window.MathJax && window.MathJax.typesetPromise) {
+    // 2. Global MathJax Fallback Trigger (only when unrendered math delimiters exist in DOM)
+    const hasRawMath = typeof window.hasUnrenderedMath === 'function'
+        ? window.hasUnrenderedMath(document.body)
+        : /\\[\(\[]|\$\$|\$[^$\n]+\$/.test((document.body && document.body.textContent) || '');
+    if (hasRawMath && !window._initialMathJaxTypesetQueued && window.MathJax && window.MathJax.typesetPromise) {
+        window._initialMathJaxTypesetQueued = true;
         window.MathJax.typesetPromise();
     }
 
@@ -58,6 +62,69 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 3. Helper: Parse LaTeX Variable Symbols to Candidate MathJax Hex Suffixes
+    const greekLower = {
+        'alpha': ['1D6FC', '03B1'],
+        'beta': ['1D6FD', '03B2'],
+        'gamma': ['1D6FE', '03B3'],
+        'delta': ['1D6FF', '03B4'],
+        'epsilon': ['1D700', '03B5', '1D71B'],
+        'zeta': ['1D701', '03B6'],
+        'eta': ['1D702', '03B7'],
+        'theta': ['1D703', '03B8', '1D71F'],
+        'iota': ['1D704', '03B9'],
+        'kappa': ['1D705', '03BA'],
+        'lambda': ['1D706', '03BB'],
+        'mu': ['1D707', '03BC'],
+        'nu': ['1D708', '03BD'],
+        'xi': ['1D709', '03BE'],
+        'pi': ['1D70B', '03C0'],
+        'rho': ['1D70C', '03C1', '1D71A'],
+        'sigma': ['1D70E', '03C3'],
+        'tau': ['1D70F', '03C4'],
+        'upsilon': ['1D710', '03C5'],
+        'phi': ['1D711', '03C6', '1D71D'],
+        'chi': ['1D712', '03C7'],
+        'psi': ['1D713', '03C8'],
+        'omega': ['1D714', '03C9']
+    };
+
+    const greekUpper = {
+        'Gamma': ['1D6E2', '0393'],
+        'Delta': ['1D6E4', '0394'],
+        'Theta': ['1D6E9', '0398'],
+        'Lambda': ['1D6EC', '039B'],
+        'Xi': ['1D6EF', '039E'],
+        'Pi': ['1D6F1', '03A0'],
+        'Sigma': ['1D6F4', '03A3'],
+        'Upsilon': ['1D6F7', '03A5'],
+        'Phi': ['1D6F8', '03A6'],
+        'Psi': ['1D6F9', '03A8'],
+        'Omega': ['1D6FA', '03A9']
+    };
+
+    const specialSymbols = {
+        'hbar': ['210F'],
+        'partial': ['2202'],
+        'nabla': ['2207'],
+        'oint': ['222E'],
+        'int': ['222B'],
+        'Box': ['25A1', '2610'],
+        'square': ['25A1'],
+        'lozenge': ['25CA']
+    };
+
+    const mathcalUpper = {
+        'A': '1D49C', 'B': '212C', 'C': '1D49E', 'D': '1D49F',
+        'E': '2130', 'F': '2131', 'G': '1D4A2', 'H': '210B',
+        'I': '2110', 'J': '1D4A5', 'K': '1D4A6', 'L': '2112',
+        'M': '2133', 'N': '1D4A9', 'O': '1D4AA', 'P': '1D4AB',
+        'Q': '2118', 'R': '211B', 'S': '1D4AE', 'T': '1D4AF',
+        'U': '1D4B0', 'V': '1D4B1', 'W': '1D4B2', 'X': '1D4B3',
+        'Y': '1D4B4', 'Z': '2128'
+    };
+
+    const selectorCache = new Map();
+
     function getCandidateHexCodes(symbol) {
         if (!symbol) return [];
         // Split by subscript/superscript/function boundaries
@@ -74,67 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         base = base.trim();
         let candidates = new Set();
-        
-        const greekLower = {
-            'alpha': ['1D6FC', '03B1'],
-            'beta': ['1D6FD', '03B2'],
-            'gamma': ['1D6FE', '03B3'],
-            'delta': ['1D6FF', '03B4'],
-            'epsilon': ['1D700', '03B5', '1D71B'],
-            'zeta': ['1D701', '03B6'],
-            'eta': ['1D702', '03B7'],
-            'theta': ['1D703', '03B8', '1D71F'],
-            'iota': ['1D704', '03B9'],
-            'kappa': ['1D705', '03BA'],
-            'lambda': ['1D706', '03BB'],
-            'mu': ['1D707', '03BC'],
-            'nu': ['1D708', '03BD'],
-            'xi': ['1D709', '03BE'],
-            'pi': ['1D70B', '03C0'],
-            'rho': ['1D70C', '03C1', '1D71A'],
-            'sigma': ['1D70E', '03C3'],
-            'tau': ['1D70F', '03C4'],
-            'upsilon': ['1D710', '03C5'],
-            'phi': ['1D711', '03C6', '1D71D'],
-            'chi': ['1D712', '03C7'],
-            'psi': ['1D713', '03C8'],
-            'omega': ['1D714', '03C9']
-        };
-        
-        const greekUpper = {
-            'Gamma': ['1D6E2', '0393'],
-            'Delta': ['1D6E4', '0394'],
-            'Theta': ['1D6E9', '0398'],
-            'Lambda': ['1D6EC', '039B'],
-            'Xi': ['1D6EF', '039E'],
-            'Pi': ['1D6F1', '03A0'],
-            'Sigma': ['1D6F4', '03A3'],
-            'Upsilon': ['1D6F7', '03A5'],
-            'Phi': ['1D6F8', '03A6'],
-            'Psi': ['1D6F9', '03A8'],
-            'Omega': ['1D6FA', '03A9']
-        };
-        
-        const specialSymbols = {
-            'hbar': ['210F'],
-            'partial': ['2202'],
-            'nabla': ['2207'],
-            'oint': ['222E'],
-            'int': ['222B'],
-            'Box': ['25A1', '2610'],
-            'square': ['25A1'],
-            'lozenge': ['25CA']
-        };
-
-        const mathcalUpper = {
-            'A': '1D49C', 'B': '212C', 'C': '1D49E', 'D': '1D49F',
-            'E': '2130', 'F': '2131', 'G': '1D4A2', 'H': '210B',
-            'I': '2110', 'J': '1D4A5', 'K': '1D4A6', 'L': '2112',
-            'M': '2133', 'N': '1D4A9', 'O': '1D4AA', 'P': '1D4AB',
-            'Q': '2118', 'R': '211B', 'S': '1D4AE', 'T': '1D4AF',
-            'U': '1D4B0', 'V': '1D4B1', 'W': '1D4B2', 'X': '1D4B3',
-            'Y': '1D4B4', 'Z': '2128'
-        };
 
         if (base.startsWith('\\')) {
             let name = base.substring(1);
@@ -184,6 +190,34 @@ document.addEventListener('DOMContentLoaded', function() {
         return Array.from(candidates);
     }
 
+    function getSelectorForSymbol(symbol) {
+        if (selectorCache.has(symbol)) {
+            return selectorCache.get(symbol);
+        }
+        const candidates = getCandidateHexCodes(symbol);
+        if (candidates.length === 0) {
+            selectorCache.set(symbol, '');
+            return '';
+        }
+        const selectors = [];
+        candidates.forEach(hex => {
+            const lower = hex.toLowerCase();
+            // SVG hrefs
+            selectors.push(`use[href$="-${hex}"]`);
+            selectors.push(`use[*|href$="-${hex}"]`);
+            selectors.push(`use[href$="-${lower}"]`);
+            selectors.push(`use[*|href$="-${lower}"]`);
+            // CHTML classes
+            selectors.push(`mjx-c.mjx-c${hex}`);
+            selectors.push(`mjx-c.mjx-c${lower}`);
+            selectors.push(`mjx-c[class*="c${hex}"]`);
+            selectors.push(`mjx-c[class*="c${lower}"]`);
+        });
+        const compiled = selectors.join(',');
+        selectorCache.set(symbol, compiled);
+        return compiled;
+    }
+
     // 4. Semantic Variable Hover Synchronization Event Delegation
     document.addEventListener('mouseover', function(event) {
         const varTag = event.target.closest('.var-tag');
@@ -198,26 +232,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const mathContent = card.querySelector('.math-content');
         if (!mathContent) return;
         
-        const candidates = getCandidateHexCodes(symbol);
-        if (candidates.length === 0) return;
+        const selectorStr = getSelectorForSymbol(symbol);
+        if (!selectorStr) return;
         
-        // Construct selectors for SVG (use) and CHTML (mjx-c)
-        let selectors = [];
-        candidates.forEach(hex => {
-            // SVG hrefs
-            selectors.push(`use[href$="-${hex}"]`);
-            selectors.push(`use[*|href$="-${hex}"]`);
-            selectors.push(`use[href$="-${hex.toLowerCase()}"]`);
-            selectors.push(`use[*|href$="-${hex.toLowerCase()}"]`);
-            
-            // CHTML classes
-            selectors.push(`mjx-c.mjx-c${hex}`);
-            selectors.push(`mjx-c.mjx-c${hex.toLowerCase()}`);
-            selectors.push(`mjx-c[class*="c${hex}"]`);
-            selectors.push(`mjx-c[class*="c${hex.toLowerCase()}"]`);
-        });
-        
-        const matchingElements = mathContent.querySelectorAll(selectors.join(','));
+        const matchingElements = mathContent.querySelectorAll(selectorStr);
         if (matchingElements.length > 0) {
             mathContent.classList.add('has-highlighted');
             matchingElements.forEach(el => {

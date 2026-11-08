@@ -288,7 +288,10 @@ const EquationExplainer = {
 
         const symbol = latex.trim();
         
+        if (this.mathPreviewCard) this.mathPreviewCard.style.display = 'block';
         this.explainerPlaceholder.style.display = 'none';
+        if (this.explainerNavTabs) this.explainerNavTabs.style.display = 'flex';
+        this.switchTab('stage-narrative');
         this.officialBreakdown.style.display = 'none';
         this.symbolsBreakdown.style.display = 'block';
         this.topologicalBridges.style.display = 'none';
@@ -465,6 +468,59 @@ const EquationExplainer = {
         this.derivationStepsList = document.getElementById('derivation-steps-list');
         this.derivationStepsCount = document.getElementById('derivation-steps-count');
         this.btnToggleAllDerivationSteps = document.getElementById('btn-toggle-all-derivation-steps');
+
+        this.mathPreviewCard = document.getElementById('math-preview-card');
+        this.launchpadInput = document.getElementById('launchpad-latex-input');
+        this.launchpadAutocomplete = document.getElementById('launchpad-autocomplete-dropdown');
+        this.launchpadCompileBtn = document.getElementById('launchpad-compile-btn');
+        this.launchpadRandomBtn = document.getElementById('launchpad-random-btn');
+        this.btnReturnLaunchpad = document.getElementById('btn-return-launchpad');
+        this.btnHeaderRandomFormula = document.getElementById('btn-header-random-formula');
+        this.launchpadExampleCards = document.querySelectorAll('.launchpad-example-card');
+    },
+
+    flagshipProofIds: [
+        'euler-lagrange-equations-dcda7a85',
+        'time-independent-schrodinger-53ae29ae',
+        'relativistic-energy-momentum-invariant-f61a9ff1',
+        'schwarzschild-metric',
+        'wave-equation-physics-816dc899',
+        'local-energy-conservation-in-electromagnetism-7fd769fd',
+        'dirac-equation-relativistic',
+        'algebraic-uncertainty-bound-9e7e0df3',
+        'plancks-law',
+        'carnot-efficiency-factor-47f8b746',
+        'exact-gravitational-redshift-factor-schwarzschild-5a0de121',
+        'hamiltons-equations',
+        'virial-theorem',
+        'snells-law-of-refraction-74d97afe',
+        'larmor-formula-aa594928',
+        'de-broglie-relation-8bbf6275',
+        'bernoulli-constant-standard-form-ff90fb4b',
+        'jeans-mass-critical-threshold-21a223b3',
+        'stefan-boltzmann-law',
+        'maxwell-boltzmann-speed-distribution'
+    ],
+
+    loadRandomFlagshipFormula() {
+        const pool = this.flagshipProofIds.filter(id => id !== this.currentId);
+        const targetId = pool[Math.floor(Math.random() * pool.length)] || this.flagshipProofIds[0];
+        this.loadFormulaById(targetId, { switchToNarrative: true });
+    },
+
+    submitLaunchpadInput() {
+        if (!this.launchpadInput) return;
+        const val = this.launchpadInput.value.trim();
+        if (!val) {
+            this.launchpadInput.focus();
+            return;
+        }
+        if (this.launchpadAutocomplete) this.launchpadAutocomplete.style.display = 'none';
+        if (this.latexInput) {
+            this.latexInput.value = val;
+        }
+        this.updateUrlParams(val, null);
+        this.handleInputChange();
     },
 
     bindEvents() {
@@ -492,7 +548,73 @@ const EquationExplainer = {
             if (this.autocompleteDropdown && this.latexInput && !this.latexInput.contains(e.target) && !this.autocompleteDropdown.contains(e.target)) {
                 this.autocompleteDropdown.style.display = 'none';
             }
+            if (this.launchpadAutocomplete && this.launchpadInput && !this.launchpadInput.contains(e.target) && !this.launchpadAutocomplete.contains(e.target)) {
+                this.launchpadAutocomplete.style.display = 'none';
+            }
         });
+
+        // Launchpad Quick-Load Example Cards
+        if (this.launchpadExampleCards) {
+            this.launchpadExampleCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = card.getAttribute('data-formula-id');
+                    if (id) {
+                        this.loadFormulaById(id, { switchToNarrative: true });
+                    }
+                });
+            });
+        }
+
+        // Launchpad Search & Compile Input
+        if (this.launchpadInput) {
+            this.launchpadInput.addEventListener('input', () => {
+                clearTimeout(this.launchpadDebounceTimer);
+                this.launchpadDebounceTimer = setTimeout(() => {
+                    const q = this.launchpadInput.value.trim();
+                    if (q) {
+                        this.fetchAutocompleteSuggestions(q, this.launchpadAutocomplete);
+                    } else if (this.launchpadAutocomplete) {
+                        this.launchpadAutocomplete.style.display = 'none';
+                    }
+                }, 250);
+            });
+
+            this.launchpadInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.submitLaunchpadInput();
+                }
+            });
+        }
+
+        if (this.launchpadCompileBtn) {
+            this.launchpadCompileBtn.addEventListener('click', () => {
+                this.submitLaunchpadInput();
+            });
+        }
+
+        if (this.launchpadRandomBtn) {
+            this.launchpadRandomBtn.addEventListener('click', () => {
+                this.loadRandomFlagshipFormula();
+            });
+        }
+
+        if (this.btnHeaderRandomFormula) {
+            this.btnHeaderRandomFormula.addEventListener('click', () => {
+                this.loadRandomFlagshipFormula();
+            });
+        }
+
+        if (this.btnReturnLaunchpad) {
+            this.btnReturnLaunchpad.addEventListener('click', () => {
+                if (this.latexInput) this.latexInput.value = '';
+                if (this.launchpadInput) this.launchpadInput.value = '';
+                this.currentId = null;
+                this.currentLatex = '';
+                this.updateUrlParams('', null);
+                this.resetExplanation();
+            });
+        }
 
         // Handle browser back/forward buttons natively
         window.addEventListener('popstate', () => {
@@ -721,11 +843,12 @@ const EquationExplainer = {
         this.lookupFormulaByLatex(latex);
     },
 
-    async fetchAutocompleteSuggestions(query) {
-        if (!this.autocompleteDropdown) return;
+    async fetchAutocompleteSuggestions(query, targetDropdown = null) {
+        const dropdown = targetDropdown || this.autocompleteDropdown;
+        if (!dropdown) return;
         const clean = (query || '').trim();
         if (clean.length < 2) {
-            this.autocompleteDropdown.style.display = 'none';
+            dropdown.style.display = 'none';
             return;
         }
 
@@ -758,12 +881,12 @@ const EquationExplainer = {
             }
 
             if (items.length === 0) {
-                this.autocompleteDropdown.style.display = 'none';
+                dropdown.style.display = 'none';
                 return;
             }
 
-            this.autocompleteDropdown.innerHTML = items.map(item => `
-                <div class="latex-suggestion-item" data-eq="${encodeURIComponent(item.equation)}" style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 4px;">
+            dropdown.innerHTML = items.map(item => `
+                <div class="latex-suggestion-item" data-id="${encodeURIComponent(item.id || '')}" data-eq="${encodeURIComponent(item.equation)}" style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 4px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 600; color: #ffffff;">${item.title}</span>
                         ${item.confidence ? `<span style="font-size: 0.7rem; color: #10b981; background: rgba(16, 185, 129, 0.15); padding: 1px 6px; border-radius: 4px;">✨ ${item.confidence} Match</span>` : ''}
@@ -774,21 +897,26 @@ const EquationExplainer = {
                 </div>
             `).join('');
 
-            this.autocompleteDropdown.querySelectorAll('.latex-suggestion-item').forEach(el => {
+            dropdown.querySelectorAll('.latex-suggestion-item').forEach(el => {
                 el.addEventListener('mouseenter', () => el.style.background = 'rgba(100, 255, 218, 0.12)');
                 el.addEventListener('mouseleave', () => el.style.background = 'transparent');
-                el.addEventListener('click', (e) => {
+                el.addEventListener('click', () => {
+                    const id = decodeURIComponent(el.getAttribute('data-id') || '');
                     const eq = decodeURIComponent(el.getAttribute('data-eq'));
-                    this.latexInput.value = eq;
-                    this.autocompleteDropdown.style.display = 'none';
-                    this.handleInputChange();
+                    dropdown.style.display = 'none';
+                    if (id) {
+                        this.loadFormulaById(id, { switchToNarrative: true });
+                    } else {
+                        if (this.latexInput) this.latexInput.value = eq;
+                        this.handleInputChange();
+                    }
                 });
             });
 
-            this.autocompleteDropdown.style.display = 'block';
+            dropdown.style.display = 'block';
 
             if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise([this.autocompleteDropdown]).catch(e => {});
+                window.MathJax.typesetPromise([dropdown]).catch(e => {});
             }
         } catch (e) {
             console.warn('Autocomplete fetch failed:', e);
@@ -1044,6 +1172,7 @@ const EquationExplainer = {
         this.currentSubtopics = subtopics;
 
         // Display status
+        if (this.mathPreviewCard) this.mathPreviewCard.style.display = 'block';
         this.explainerPlaceholder.style.display = 'none';
         if (this.explainerNavTabs) this.explainerNavTabs.style.display = 'flex';
         
@@ -1167,8 +1296,11 @@ const EquationExplainer = {
         this.currentFormula = null;
         this.currentSubtopics = [];
 
-        // Hide old layout elements
+        // Show workbench & hide launchpad placeholder
+        if (this.mathPreviewCard) this.mathPreviewCard.style.display = 'block';
         this.explainerPlaceholder.style.display = 'none';
+        if (this.explainerNavTabs) this.explainerNavTabs.style.display = 'flex';
+        this.switchTab('stage-narrative');
         this.officialBreakdown.style.display = 'none';
         this.symbolsBreakdown.style.display = 'block';
         this.topologicalBridges.style.display = 'none';
@@ -1841,7 +1973,9 @@ const EquationExplainer = {
         this.stopSandbox();
         this.stopSonification();
         
+        if (this.mathPreviewCard) this.mathPreviewCard.style.display = 'none';
         this.explainerPlaceholder.style.display = 'flex';
+        this.triggerTypeset([this.explainerPlaceholder]);
         if (this.explainerNavTabs) this.explainerNavTabs.style.display = 'none';
         if (this.tabPanes) {
             this.tabPanes.forEach(pane => pane.style.display = 'none');

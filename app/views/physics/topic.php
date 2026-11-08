@@ -84,18 +84,11 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
         <div class="header-headline-row">
             <div class="header-title-block">
                 <div class="header-badge-tag">FACULTY OF <?= strtoupper(str_replace('-', ' ', $theme)) ?></div>
-                <h1 class="constellation-title"><?= htmlspecialchars($title ?? 'Physics Hub') ?></h1>
-                <p id="topic-beginning-abstract" class="constellation-subtitle"><?= $intro ?? 'Comprehensive radial manifold of the physical discipline.' ?></p>
+                <h1 class="constellation-title">
+                    <a href="/physics/subtopic/<?= htmlspecialchars($slug) ?>-overview" class="constellation-title-link" title="Read the <?= htmlspecialchars($title ?? 'Physics Hub') ?> Overview Treatise"><?= htmlspecialchars($title ?? 'Physics Hub') ?></a>
+                </h1>
             </div>
-            <div class="header-meta-badge">
-                <span class="meta-item"><strong><?= $totalPillars ?></strong> Orbital Tracks</span>
-                <span class="meta-sep">/</span>
-                <span class="meta-item"><strong><?= $totalConcepts ?></strong> Planetary Nodes</span>
-                <?php if ($totalFormulas > 0): ?>
-                    <span class="meta-sep">/</span>
-                    <span class="meta-item"><strong><?= $totalFormulas ?></strong> Identities</span>
-                <?php endif; ?>
-            </div>
+            <p id="topic-beginning-abstract" class="constellation-subtitle"><?= $intro ?? 'Comprehensive radial manifold of the physical discipline.' ?></p>
         </div>
 
         <!-- Toolbar: Mode Switcher & Quick Actions -->
@@ -218,17 +211,12 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
                     <!-- Outer Pulsing Corona -->
                     <circle r="72" fill="url(#sun-glow-core)" class="sun-pulse-ring" />
                     <circle r="44" fill="rgba(11, 17, 32, 0.92)" stroke="var(--accent-color, #64ffda)" stroke-width="2" filter="url(#glow-filter)" />
-                    
-                    <!-- Faculty SVG Glyph Inside Core -->
-                    <g transform="translate(-16, -24) scale(0.32)">
-                        <?= $meta['svg'] ?>
-                    </g>
 
                     <!-- Axiomatic Core Label -->
-                    <text y="18" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-size="8" font-weight="700" letter-spacing="1.5" fill="var(--accent-color, #64ffda)">
+                    <text y="-3" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-size="8" font-weight="700" letter-spacing="1.5" fill="var(--accent-color, #64ffda)">
                         AXIOMATIC CORE
                     </text>
-                    <text y="28" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-size="7" font-weight="600" fill="#94a3b8">
+                    <text y="9" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-size="7" font-weight="600" fill="#94a3b8">
                         <?= strtoupper(htmlspecialchars($slug)) ?>
                     </text>
                 </g>
@@ -972,8 +960,8 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 18px;
+    gap: 8px 16px;
+    margin-bottom: 16px;
 }
 
 .header-title-block {
@@ -995,38 +983,28 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
     font-size: 2.1rem;
     font-weight: 700;
     color: #ffffff;
-    margin: 0 0 6px;
+    margin: 0;
     line-height: 1.15;
 }
 
+.constellation-title-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.constellation-title-link:hover {
+    color: var(--accent-color, #64ffda);
+}
+
 .constellation-subtitle {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: none;
     font-size: 0.94rem;
     color: var(--text-muted, #94a3b8);
     margin: 0;
-    max-width: 820px;
     line-height: 1.45;
-}
-
-.header-meta-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(11, 17, 32, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 6px 16px;
-    border-radius: 24px;
-    font-size: 0.82rem;
-    color: #cbd5e1;
-    font-family: 'Space Grotesk', sans-serif;
-    white-space: nowrap;
-}
-
-.header-meta-badge strong {
-    color: #ffffff;
-}
-
-.meta-sep {
-    color: rgba(255, 255, 255, 0.25);
 }
 
 /* Toolbar */

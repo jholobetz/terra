@@ -8,10 +8,13 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
         <h1 style="font-size: 2.3rem; color: #ffffff; margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; background: linear-gradient(135deg, #ffffff 40%, var(--accent-default, #64ffda)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
             🔬 Interactive Equation Explainer
         </h1>
+        <p style="margin: 8px auto 0; max-width: 760px; font-size: 0.94rem; color: var(--text-muted, #94a3b8); line-height: 1.45;">
+            Deconstruct physical identities into constituent variables, inspect multi-step mathematical derivations, verify dimensional invariance, and traverse the 14,681-formula derivation graph.
+        </p>
     </div>
 
     <!-- Math Rendering Box (Full-Width Top Panel with Integrated Title & Curation) -->
-    <div class="glass-card math-preview-fullwidth" style="margin-bottom: 25px; padding: 22px 24px;">
+    <div id="math-preview-card" class="glass-card math-preview-fullwidth" style="<?= (!empty($formula) || !empty($latex)) ? 'display: block;' : 'display: none;' ?> margin-bottom: 25px; padding: 22px 24px;">
         <!-- Integrated Header: Title, Breadcrumbs, Compiler Status, and Curate Button -->
         <div id="explanation-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 14px;">
             <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -30,7 +33,15 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     </span>
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <button id="btn-return-launchpad" type="button" title="Return to Equation Launchpad &amp; Quick-Load Examples" style="padding: 6px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(255, 255, 255, 0.04); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 5px;">
+                    <span>⚡</span>
+                    <span>Examples</span>
+                </button>
+                <button id="btn-header-random-formula" type="button" title="Load a random verified formula with multi-step proof" style="padding: 6px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(255, 255, 255, 0.04); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 5px;">
+                    <span>🎲</span>
+                    <span>Random</span>
+                </button>
                 <?php $canCurate = in_array($currentUser->role ?? 'guest', ['admin', 'curator'], true); ?>
                 <button id="btn-open-curator-drawer" style="padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.08); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: <?= $canCurate ? 'inline-flex' : 'none' ?>; align-items: center; gap: 6px;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -48,18 +59,121 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
         </div>
     </div>
 
-    <!-- Fallback Placeholder when no equation loaded -->
-    <div id="explainer-placeholder" class="glass-card" style="text-align: center; padding: 60px 20px; color: var(--text-muted, #94a3b8); margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;">
-        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4;">
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <line x1="10" y1="9" x2="8" y2="9"/>
-        </svg>
+    <!-- Interactive Equation Launchpad (Displayed when no equation is loaded) -->
+    <div id="explainer-placeholder" class="glass-card explainer-launchpad" style="<?= (!empty($formula) || !empty($latex)) ? 'display: none;' : 'display: flex;' ?> padding: 28px 28px 26px; margin-bottom: 25px; flex-direction: column; gap: 24px;">
+        
+        <!-- 1. Search or Compile Any LaTeX Equation Bar -->
+        <div class="launchpad-search-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+                <label for="launchpad-latex-input" style="font-family: 'Space Grotesk', sans-serif; font-size: 0.84rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-default, #64ffda);">
+                    Search Catalog or Paste LaTeX Expression
+                </label>
+                <span style="font-size: 0.78rem; color: var(--text-muted, #94a3b8);">
+                    Search 14,681 physical formulas by name or enter custom LaTeX
+                </span>
+            </div>
+            <div style="position: relative; display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap;">
+                <div style="position: relative; flex: 1; min-width: 260px;">
+                    <input type="text"
+                           id="launchpad-latex-input"
+                           placeholder="Search 'Schrödinger', 'Euler-Lagrange', 'Blackbody', or type LaTeX like E = mc^2..."
+                           autocomplete="off"
+                           style="width: 100%; height: 46px; padding: 0 16px; background: rgba(3, 7, 18, 0.85); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #f8fafc; font-family: 'Fira Code', 'Space Grotesk', monospace; font-size: 0.94rem; box-sizing: border-box; outline: none; transition: border-color 0.2s, box-shadow 0.2s;" />
+                    <div id="launchpad-autocomplete-dropdown" style="display: none; position: absolute; z-index: 120; left: 0; right: 0; top: calc(100% + 6px); background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(16px); border: 1px solid rgba(100, 255, 218, 0.28); border-radius: 10px; max-height: 320px; overflow-y: auto; box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);"></div>
+                </div>
+                <button type="button" id="launchpad-compile-btn" class="launchpad-btn-primary">
+                    <span>Analyze Equation</span>
+                    <span>&rarr;</span>
+                </button>
+                <button type="button" id="launchpad-random-btn" class="launchpad-btn-secondary" title="Load a random verified formula with multi-step proof">
+                    <span>🎲</span>
+                    <span>Surprise Me</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. Curated Flagship Equations Quick-Load Grid -->
         <div>
-            <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #f1f5f9;">No Equation Loaded</p>
-            <p style="margin: 4px 0 0 0; font-size: 0.88rem; opacity: 0.7;">Type a LaTeX formula or click one of the quick load examples to analyze.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #cbd5e1;">
+                    ⚡ Flagship Identities — Click to Dissect
+                </span>
+                <span style="font-size: 0.75rem; color: #38bdf8; font-family: 'Space Grotesk', sans-serif;">
+                    ✓ Includes Multi-Step Proofs, CAS Verification &amp; Lineage Trees
+                </span>
+            </div>
+
+            <div class="launchpad-examples-grid">
+                <button type="button" class="launchpad-example-card" data-formula-id="euler-lagrange-equations-dcda7a85">
+                    <div class="launchpad-card-top">
+                        <span class="launchpad-card-domain">Analytical Mechanics</span>
+                        <span class="launchpad-card-badge">Proof + CAS ✓</span>
+                    </div>
+                    <div class="launchpad-card-title">Euler–Lagrange Equations</div>
+                    <div class="launchpad-card-math">\(\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{q}_i}\right) - \frac{\partial L}{\partial q_i} = 0\)</div>
+                </button>
+
+                <button type="button" class="launchpad-example-card" data-formula-id="time-independent-schrodinger-53ae29ae">
+                    <div class="launchpad-card-top">
+                        <span class="launchpad-card-domain">Quantum Mechanics</span>
+                        <span class="launchpad-card-badge">Proof + CAS ✓</span>
+                    </div>
+                    <div class="launchpad-card-title">Time-Independent Schrödinger Equation</div>
+                    <div class="launchpad-card-math">\(\hat{H}|\psi\rangle = E|\psi\rangle\)</div>
+                </button>
+
+                <button type="button" class="launchpad-example-card" data-formula-id="schwarzschild-metric">
+                    <div class="launchpad-card-top">
+                        <span class="launchpad-card-domain">General Relativity</span>
+                        <span class="launchpad-card-badge">Proof + CAS ✓</span>
+                    </div>
+                    <div class="launchpad-card-title">Schwarzschild Spacetime Metric</div>
+                    <div class="launchpad-card-math">\(ds^2 = -\left(1 - \frac{2GM}{c^2 r}\right)c^2 dt^2 + \left(1 - \frac{2GM}{c^2 r}\right)^{-1} dr^2 + r^2 d\Omega^2\)</div>
+                </button>
+
+                <button type="button" class="launchpad-example-card" data-formula-id="dirac-equation-relativistic">
+                    <div class="launchpad-card-top">
+                        <span class="launchpad-card-domain">Quantum Field Theory</span>
+                        <span class="launchpad-card-badge">Proof + CAS ✓</span>
+                    </div>
+                    <div class="launchpad-card-title">Relativistic Dirac Equation</div>
+                    <div class="launchpad-card-math">\((i\gamma^\mu \partial_\mu - m)\psi = 0\)</div>
+                </button>
+
+                <button type="button" class="launchpad-example-card" data-formula-id="local-energy-conservation-in-electromagnetism-7fd769fd">
+                    <div class="launchpad-card-top">
+                        <span class="launchpad-card-domain">Electrodynamics</span>
+                        <span class="launchpad-card-badge">Proof + CAS ✓</span>
+                    </div>
+                    <div class="launchpad-card-title">Poynting's Theorem (EM Energy Conservation)</div>
+                    <div class="launchpad-card-math">\(\frac{\partial u}{\partial t} + \nabla \cdot \mathbf{S} = -\mathbf{J} \cdot \mathbf{E}\)</div>
+                </button>
+
+                <button type="button" class="launchpad-example-card" data-formula-id="plancks-law">
+                    <div class="launchpad-card-top">
+                        <span class="launchpad-card-domain">Thermodynamics &amp; Quantum</span>
+                        <span class="launchpad-card-badge">Proof + CAS ✓</span>
+                    </div>
+                    <div class="launchpad-card-title">Planck's Blackbody Radiation Law</div>
+                    <div class="launchpad-card-math">\(B_\nu(\nu, T) = \frac{2h\nu^3}{c^2} \frac{1}{e^{h\nu / k_B T} - 1}\)</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Workbench Capabilities Strip -->
+        <div class="launchpad-capabilities-strip">
+            <div class="launchpad-capability-item">
+                <div class="launchpad-cap-title">🧬 Variable &amp; Operator Dissection</div>
+                <div class="launchpad-cap-desc">Tokenizes every base symbol, differential operator, and tensor index with SI units and click-to-drill-down definitions.</div>
+            </div>
+            <div class="launchpad-capability-item">
+                <div class="launchpad-cap-title">📐 Step-by-Step Proofs &amp; SymPy CAS</div>
+                <div class="launchpad-cap-desc">Unfolds sequential algebraic derivation steps alongside automated dimensional homogeneity and boundary limit checks.</div>
+            </div>
+            <div class="launchpad-capability-item">
+                <div class="launchpad-cap-title">🌌 Derivation Lineage DAG</div>
+                <div class="launchpad-cap-desc">Maps upstream foundational axioms and downstream derived identities across the 14,681-formula physics manifold.</div>
+            </div>
         </div>
     </div>
 
@@ -343,6 +457,177 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
     border-color: rgba(100, 255, 218, 0.3) !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(100, 255, 218, 0.05);
+}
+
+/* Equation Launchpad Styles */
+.launchpad-search-section {
+    background: rgba(11, 17, 32, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 18px 20px;
+}
+
+#launchpad-latex-input:focus {
+    border-color: var(--accent-default, #64ffda) !important;
+    box-shadow: 0 0 14px rgba(100, 255, 218, 0.2);
+}
+
+.launchpad-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 46px;
+    padding: 0 20px;
+    background: var(--accent-default, #64ffda);
+    color: #020617;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(100, 255, 218, 0.25);
+}
+
+.launchpad-btn-primary:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+.launchpad-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 46px;
+    padding: 0 16px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.launchpad-btn-secondary:hover {
+    border-color: var(--accent-default, #64ffda);
+    color: #ffffff;
+    background: rgba(100, 255, 218, 0.1);
+}
+
+#btn-return-launchpad:hover,
+#btn-header-random-formula:hover {
+    border-color: var(--accent-default, #64ffda) !important;
+    color: #ffffff !important;
+    background: rgba(100, 255, 218, 0.1) !important;
+}
+
+.launchpad-examples-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 14px;
+}
+
+.launchpad-example-card {
+    background: rgba(11, 17, 32, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.2s ease;
+    color: #f1f5f9;
+}
+
+.launchpad-example-card:hover {
+    border-color: var(--accent-default, #64ffda);
+    background: rgba(15, 23, 42, 0.92);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 14px rgba(100, 255, 218, 0.12);
+}
+
+.launchpad-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.launchpad-card-domain {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-default, #64ffda);
+}
+
+.launchpad-card-badge {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.66rem;
+    font-weight: 600;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+.launchpad-card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.launchpad-card-math {
+    font-size: 0.96rem;
+    color: #ffd700;
+    background: rgba(2, 6, 23, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+}
+
+.launchpad-capabilities-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 18px;
+}
+
+.launchpad-capability-item {
+    background: rgba(11, 17, 32, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 12px 15px;
+}
+
+.launchpad-cap-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+}
+
+.launchpad-cap-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted, #94a3b8);
+    line-height: 1.4;
 }
 
 .explainer-example-btn:active {

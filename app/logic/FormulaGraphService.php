@@ -96,14 +96,17 @@ class FormulaGraphService {
 
         // 2. Traverse Downstream (Subcomponents / Limiting Cases / Consequences)
         $currentLayer = [$formulaId];
-        $maxPerLayer = 30;
+        $maxPerLayer = 12;
         for ($d = 1; $d <= $depth; $d++) {
             $nextLayer = [];
+            $layerAddedCount = 0;
+            $maxPerParent = ($d === 1) ? $maxPerLayer : max(3, (int)ceil($maxPerLayer / max(1, count($currentLayer))));
             foreach ($currentLayer as $currId) {
+                if ($layerAddedCount >= $maxPerLayer) break;
                 $children = $downstream[$currId] ?? [];
-                $addedCount = 0;
+                $parentAdded = 0;
                 foreach ($children as $c) {
-                    if ($addedCount >= $maxPerLayer) break;
+                    if ($layerAddedCount >= $maxPerLayer || $parentAdded >= $maxPerParent) break;
                     $cid = $c['id'];
                     $edgeKey = "$currId->$cid";
                     if (!isset($seenLinks[$edgeKey])) {
@@ -119,7 +122,8 @@ class FormulaGraphService {
                     if (!isset($visitedNodes[$cid])) {
                         $visitedNodes[$cid] = $d;
                         $nextLayer[] = $cid;
-                        $addedCount++;
+                        $layerAddedCount++;
+                        $parentAdded++;
                     }
                 }
             }
@@ -152,45 +156,97 @@ class FormulaGraphService {
     }
 
     /**
-     * Compute the shortest mathematical derivation path between two formulas using BFS
+     * Resolve a user query (exact ID or title/keyword) to a canonical node ID in the graph.
+     */
+    private static function resolveNodeId(string $query, array $nodes): ?string {
+        $q = trim($query);
+        if ($q === '') return null;
+        if (isset($nodes[$q])) return $q;
+
+        $qLower = mb_strtolower($q);
+        // 1. Exact case-insensitive title or ID match
+        foreach ($nodes as $id => $n) {
+            if (mb_strtolower($id) === $qLower || mb_strtolower($n['title'] ?? '') === $qLower) {
+                return $id;
+            }
+        }
+        // 2. Substring match on title (preferring nodes with children/parents)
+        $bestId = null;
+        foreach ($nodes as $id => $n) {
+            $titleLower = mb_strtolower($n['title'] ?? '');
+            if ($titleLower !== '' && str_contains($titleLower, $qLower)) {
+                return $id;
+            }
+        }
+        return $bestId;
+    }
+
+    /**
+     * Compute the shortest mathematical derivation path between two formulas using BFS.
+     * Checks directed downstream first, then directed upstream, then bidirectional bridge.
      */
     public static function findDerivationPath(string $startId, string $endId): array {
         $graph = self::loadGraph();
         $nodes = $graph['nodes'] ?? [];
         $downstream = $graph['downstream'] ?? [];
+        $upstream = $graph['upstream'] ?? [];
 
-        if (!isset($nodes[$startId]) || !isset($nodes[$endId])) {
-            return ['found' => false, 'error' => 'Start or end formula not found'];
+        $resolvedStart = self::resolveNodeId($startId, $nodes);
+        $resolvedEnd = self::resolveNodeId($endId, $nodes);
+
+        if (!$resolvedStart || !$resolvedEnd) {
+            return ['found' => false, 'message' => 'Start or target formula not found in graph.'];
         }
+        $startId = $resolvedStart;
+        $endId = $resolvedEnd;
 
-        $queue = [[$startId]];
-        $visited = [$startId => true];
+        // Helper for BFS traversal
+        $runBfs = function(string $mode) use ($startId, $endId, $nodes, $downstream, $upstream): ?array {
+            $queue = [[$startId]];
+            $visited = [$startId => true];
+            $maxDepth = 10;
 
-        while (!empty($queue)) {
-            $path = array_shift($queue);
-            $curr = end($path);
+            while (!empty($queue)) {
+                $path = array_shift($queue);
+                if (count($path) > $maxDepth) continue;
+                $curr = end($path);
 
-            if ($curr === $endId) {
-                $pathNodes = array_map(fn($id) => $nodes[$id] ?? ['id' => $id], $path);
-                return [
-                    'found' => true,
-                    'hops' => count($path) - 1,
-                    'path_ids' => $path,
-                    'path_nodes' => $pathNodes
-                ];
-            }
+                if ($curr === $endId) {
+                    $pathNodes = array_map(fn($id) => $nodes[$id] ?? ['id' => $id], $path);
+                    return [
+                        'found' => true,
+                        'mode' => $mode,
+                        'hops' => count($path) - 1,
+                        'path_ids' => $path,
+                        'path_nodes' => $pathNodes
+                    ];
+                }
 
-            foreach ($downstream[$curr] ?? [] as $neighbor) {
-                $nid = $neighbor['id'];
-                if (!isset($visited[$nid])) {
-                    $visited[$nid] = true;
-                    $newPath = $path;
-                    $newPath[] = $nid;
-                    $queue[] = $newPath;
+                $neighbors = [];
+                if ($mode === 'downstream' || $mode === 'bridge') {
+                    foreach ($downstream[$curr] ?? [] as $n) $neighbors[] = $n['id'];
+                }
+                if ($mode === 'upstream' || $mode === 'bridge') {
+                    foreach ($upstream[$curr] ?? [] as $n) $neighbors[] = $n['id'];
+                }
+
+                foreach ($neighbors as $nid) {
+                    if (!isset($visited[$nid])) {
+                        $visited[$nid] = true;
+                        $newPath = $path;
+                        $newPath[] = $nid;
+                        $queue[] = $newPath;
+                    }
                 }
             }
+            return null;
+        };
+
+        $res = $runBfs('downstream') ?? $runBfs('upstream') ?? $runBfs('bridge');
+        if ($res !== null) {
+            return $res;
         }
 
-        return ['found' => false, 'message' => 'No direct derivation path found between these equations.'];
+        return ['found' => false, 'message' => 'No derivation path found between these equations.'];
     }
 }

@@ -22,6 +22,11 @@ const ExplainerCards = {
 
         card.style.display = 'flex';
 
+        const openUniverseBtn = document.getElementById('btn-lineage-open-universe');
+        if (openUniverseBtn) {
+            openUniverseBtn.href = `/physics/universe-graph?id=${encodeURIComponent(formula.id)}`;
+        }
+
         if (window.FormulaLineageGraph && canvasContainer) {
             if (!this.lineageGraph) {
                 this.lineageGraph = new window.FormulaLineageGraph('formula-lineage-graph-canvas', {
@@ -29,6 +34,14 @@ const ExplainerCards = {
                         this.loadFormulaById(node.id);
                     }
                 });
+                const fsHeaderBtn = document.getElementById('btn-lineage-fullscreen');
+                if (fsHeaderBtn) {
+                    fsHeaderBtn.addEventListener('click', () => {
+                        if (this.lineageGraph) {
+                            this.lineageGraph.toggleFullscreen(true);
+                        }
+                    });
+                }
             }
             this.lineageGraph.loadFormula(formula.id);
         }

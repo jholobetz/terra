@@ -398,7 +398,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
     <!-- WORKBENCH STAGE 3: Full-Width Derivation Lineage Map -->
     <div id="stage-lineage" class="explainer-tab-pane glass-card" style="display: none; padding: 28px; flex-direction: column; gap: 20px;">
         <div id="knowledge-graph-card" style="display: flex; flex-direction: column; gap: 18px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                 <div>
                     <h3 style="font-size: 1.25rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 4px 0; letter-spacing: 0.08em; display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif;">
                         🌌 Mathematical Lineage &amp; Derivation Map
@@ -407,11 +407,18 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         Explore multi-hop mathematical ancestry, prerequisite foundational laws, and derived component sub-equations.
                     </p>
                 </div>
-                <span style="font-size: 0.8rem; color: #94a3b8;">Click node to navigate • Drag canvas to pan • Scroll to zoom</span>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <a id="btn-lineage-open-universe" href="/physics/universe-graph" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(100, 255, 218, 0.28); color: #cbd5e1; border-radius: 7px; text-decoration: none; font-size: 0.78rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;">
+                        <span>🌌 Open in Universe Graph</span>
+                    </a>
+                    <button type="button" id="btn-lineage-fullscreen" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(100, 255, 218, 0.14); border: 1px solid rgba(100, 255, 218, 0.45); color: #64ffda; border-radius: 7px; font-size: 0.78rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; cursor: pointer; transition: all 0.2s;">
+                        <span>⛶ Full Screen Map</span>
+                    </button>
+                </div>
             </div>
             
-            <!-- Full-Width Canvas: 540px high -->
-            <div id="formula-lineage-graph-canvas" style="height: 540px; width: 100%; position: relative; border-radius: 12px; overflow: hidden;"></div>
+            <!-- Full-Width Canvas: 620px high -->
+            <div id="formula-lineage-graph-canvas" style="height: 620px; width: 100%; position: relative; border-radius: 12px; overflow: hidden;"></div>
             
             <!-- Ancestry and Subcomponent Details -->
             <div id="knowledge-graph-details" style="font-size: 0.95rem; line-height: 1.6; color: #cbd5e1;">

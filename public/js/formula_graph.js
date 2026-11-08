@@ -24,6 +24,9 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         this.nodes = [];
         this.links = [];
         this.animFrame = null;
+        this.isFullscreen = false;
+        this.hudCollapsed = false;
+        this.activeRootNode = null;
 
         // Domain palette - 12 Canonical Physics Branches
         this.domainColors = {
@@ -59,34 +62,49 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         this.container.innerHTML = '';
         this.container.style.position = 'relative';
         this.container.style.overflow = 'hidden';
-        this.container.style.background = 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.8) 0%, rgba(3, 7, 18, 0.95) 100%)';
+        this.container.style.background = 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.85) 0%, rgba(2, 6, 23, 0.98) 100%)';
         this.container.style.borderRadius = '12px';
         this.container.style.border = '1px solid rgba(100, 255, 218, 0.2)';
         this.container.style.minHeight = '360px';
 
         // 1. Controls Header
         const header = document.createElement('div');
-        header.style.cssText = 'position: absolute; top: 12px; left: 16px; right: 16px; z-index: 10; display: flex; align-items: center; justify-content: space-between; pointer-events: none;';
+        header.style.cssText = 'position: absolute; top: 12px; left: 16px; right: 16px; z-index: 25; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; pointer-events: none;';
         header.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 8px; pointer-events: auto;">
+            <div style="display: flex; align-items: center; gap: 10px; pointer-events: auto; flex-wrap: wrap;">
                 <span style="font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--accent-default, #64ffda); font-family: 'Space Grotesk', sans-serif;">
                     🌌 Lineage &amp; Derivation Map
                 </span>
-                <span id="graph-node-count-badge" style="font-size: 0.68rem; padding: 2px 7px; background: rgba(100,255,218,0.12); color: #64ffda; border-radius: 12px; border: 1px solid rgba(100,255,218,0.25);">
+                <span id="graph-node-count-badge" style="font-size: 0.68rem; padding: 2px 8px; background: rgba(100,255,218,0.12); color: #64ffda; border-radius: 12px; border: 1px solid rgba(100,255,218,0.25);">
                     Loading...
                 </span>
+                <!-- Full-Screen Quick Search Bar (shown in Full-Screen mode) -->
+                <div id="graph-fs-search-wrap" style="display: none; position: relative; min-width: 280px;">
+                    <input type="text"
+                           id="graph-fs-search-input"
+                           placeholder="🔍 Search &amp; center any formula..."
+                           autocomplete="off"
+                           style="width: 100%; box-sizing: border-box; background: rgba(3, 7, 18, 0.92); border: 1px solid rgba(100, 255, 218, 0.35); border-radius: 8px; padding: 5px 12px; color: #ffffff; font-size: 0.78rem; font-family: 'Space Grotesk', sans-serif; outline: none; box-shadow: 0 4px 14px rgba(0,0,0,0.5);" />
+                    <div id="graph-fs-search-dropdown" style="display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 100; background: rgba(3, 7, 18, 0.98); border: 1px solid rgba(100, 255, 218, 0.4); border-radius: 8px; max-height: 280px; overflow-y: auto; box-shadow: 0 12px 30px rgba(0,0,0,0.85); backdrop-filter: blur(12px);"></div>
+                </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 6px; pointer-events: auto;">
-                <label style="font-size: 0.72rem; color: #94a3b8; display: flex; align-items: center; gap: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px; pointer-events: auto; flex-wrap: wrap;">
+                <label style="font-size: 0.72rem; color: #94a3b8; display: flex; align-items: center; gap: 4px; background: rgba(15,23,42,0.85); padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">
                     Depth:
-                    <select id="graph-depth-select" style="background: rgba(3,7,18,0.85); border: 1px solid rgba(100,255,218,0.3); color: #64ffda; border-radius: 6px; padding: 2px 6px; font-size: 0.72rem; outline: none; cursor: pointer;">
-                        <option value="1">1 Hop (Direct)</option>
-                        <option value="2" selected>2 Hops (Lineage)</option>
-                        <option value="3">3 Hops (Expanded)</option>
+                    <select id="graph-depth-select" style="background: transparent; border: none; color: #64ffda; font-size: 0.72rem; font-weight: 600; outline: none; cursor: pointer;">
+                        <option value="1" style="background: #030712;">1 Hop (Direct)</option>
+                        <option value="2" selected style="background: #030712;">2 Hops (Lineage)</option>
+                        <option value="3" style="background: #030712;">3 Hops (Expanded)</option>
                     </select>
                 </label>
-                <button id="graph-btn-reset" title="Reset View" style="background: rgba(15,23,42,0.8); border: 1px solid rgba(100,255,218,0.3); color: #e2e8f0; border-radius: 6px; padding: 3px 8px; font-size: 0.72rem; cursor: pointer;">
-                    ⟲ Reset
+                <div style="display: inline-flex; align-items: center; background: rgba(15,23,42,0.85); border: 1px solid rgba(100,255,218,0.25); border-radius: 6px; overflow: hidden;">
+                    <button type="button" id="graph-btn-zoom-out" title="Zoom Out" style="background: transparent; border: none; color: #e2e8f0; padding: 3px 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">−</button>
+                    <button type="button" id="graph-btn-reset" title="Auto-Fit &amp; Reset View" style="background: rgba(100,255,218,0.08); border: none; border-left: 1px solid rgba(100,255,218,0.2); border-right: 1px solid rgba(100,255,218,0.2); color: #e2e8f0; padding: 3px 9px; font-size: 0.72rem; cursor: pointer;">⟲ Fit</button>
+                    <button type="button" id="graph-btn-zoom-in" title="Zoom In" style="background: transparent; border: none; color: #e2e8f0; padding: 3px 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">+</button>
+                </div>
+                <button type="button" id="graph-btn-fullscreen" title="Toggle Full-Screen View (Esc to exit)" style="background: rgba(100, 255, 218, 0.14); border: 1px solid rgba(100, 255, 218, 0.45); color: #64ffda; border-radius: 6px; padding: 4px 10px; font-size: 0.73rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s;">
+                    <span>⛶</span>
+                    <span id="graph-btn-fullscreen-label">Full Screen</span>
                 </button>
             </div>
         `;
@@ -102,10 +120,16 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         this.g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         this.svg.appendChild(this.g);
 
-        // Tooltip container (interactive & clickable)
+        // 3. Floating Active Formula HUD Bar (visible in Full-Screen mode)
+        this.fsHud = document.createElement('div');
+        this.fsHud.id = 'graph-fs-hud';
+        this.fsHud.style.cssText = 'display: none; position: absolute; bottom: 20px; left: 20px; z-index: 30; width: 440px; max-width: calc(100vw - 40px); background: rgba(3, 7, 18, 0.94); border: 1px solid rgba(100, 255, 218, 0.35); border-radius: 12px; padding: 14px 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.8), 0 0 20px rgba(100,255,218,0.12); backdrop-filter: blur(14px); color: #f1f5f9; font-family: "Space Grotesk", sans-serif;';
+        this.container.appendChild(this.fsHud);
+
+        // 4. Tooltip container (interactive & clickable)
         this.tooltip = document.createElement('div');
         this.tooltip.className = 'no-inspect';
-        this.tooltip.style.cssText = 'position: absolute; display: none; z-index: 50; pointer-events: auto; cursor: pointer; background: rgba(3, 7, 18, 0.96); border: 1px solid rgba(100, 255, 218, 0.4); border-radius: 10px; padding: 12px 16px; max-width: 300px; box-shadow: 0 12px 30px rgba(0,0,0,0.7), 0 0 15px rgba(100,255,218,0.15); backdrop-filter: blur(10px); transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;';
+        this.tooltip.style.cssText = 'position: absolute; display: none; z-index: 50; pointer-events: auto; cursor: pointer; background: rgba(3, 7, 18, 0.96); border: 1px solid rgba(100, 255, 218, 0.4); border-radius: 10px; padding: 12px 16px; max-width: 320px; box-shadow: 0 12px 30px rgba(0,0,0,0.7), 0 0 15px rgba(100,255,218,0.15); backdrop-filter: blur(10px); transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;';
         
         this.tooltip.addEventListener('mouseenter', () => {
             if (this.hideTimeout) {
@@ -168,24 +192,29 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         // Zoom with mouse wheel
         svg.addEventListener('wheel', (e) => {
             e.preventDefault();
-            const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
-            const newK = Math.max(0.3, Math.min(3.0, this.transform.k * zoomFactor));
-            
-            // Zoom toward mouse center
-            const rect = svg.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-
-            this.transform.x = mouseX - (mouseX - this.transform.x) * (newK / this.transform.k);
-            this.transform.y = mouseY - (mouseY - this.transform.y) * (newK / this.transform.k);
-            this.transform.k = newK;
-            this.updateTransform();
+            const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
+            this.zoomBy(zoomFactor, e.clientX, e.clientY);
         }, { passive: false });
 
         // Controls
         const resetBtn = this.container.querySelector('#graph-btn-reset');
         if (resetBtn) {
             resetBtn.addEventListener('click', () => this.resetView());
+        }
+
+        const zoomInBtn = this.container.querySelector('#graph-btn-zoom-in');
+        if (zoomInBtn) {
+            zoomInBtn.addEventListener('click', () => this.zoomBy(1.22));
+        }
+
+        const zoomOutBtn = this.container.querySelector('#graph-btn-zoom-out');
+        if (zoomOutBtn) {
+            zoomOutBtn.addEventListener('click', () => this.zoomBy(0.82));
+        }
+
+        const fullscreenBtn = this.container.querySelector('#graph-btn-fullscreen');
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
         }
 
         const depthSelect = this.container.querySelector('#graph-depth-select');
@@ -198,12 +227,261 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
             });
         }
 
-        // Window resize
-        window.addEventListener('resize', () => {
-            if (this.data && this.data.nodes && this.data.nodes.length > 0) {
-                this.resetView();
+        // Escape key to exit Full-Screen
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isFullscreen) {
+                this.toggleFullscreen(false);
             }
         });
+
+        // Bind Full-Screen Quick Search Autocomplete
+        this.bindFullscreenSearch();
+
+        // ResizeObserver so hidden tab reveal or container resize automatically re-fits the graph
+        if (typeof ResizeObserver !== 'undefined') {
+            let lastW = 0;
+            this.resizeObserver = new ResizeObserver((entries) => {
+                for (const entry of entries) {
+                    const w = entry.contentRect.width;
+                    if (w > 0 && Math.abs(w - lastW) > 20) {
+                        lastW = w;
+                        if (this.data && this.data.nodes && this.data.nodes.length > 0) {
+                            this.resetView();
+                        }
+                    }
+                }
+            });
+            this.resizeObserver.observe(this.container);
+        } else {
+            window.addEventListener('resize', () => {
+                if (this.data && this.data.nodes && this.data.nodes.length > 0) {
+                    this.resetView();
+                }
+            });
+        }
+    }
+
+    zoomBy(factor, clientX = null, clientY = null) {
+        const rect = this.svg.getBoundingClientRect();
+        const centerX = clientX !== null ? (clientX - rect.left) : (rect.width / 2);
+        const centerY = clientY !== null ? (clientY - rect.top) : (rect.height / 2);
+        const newK = Math.max(0.28, Math.min(3.5, this.transform.k * factor));
+
+        this.transform.x = centerX - (centerX - this.transform.x) * (newK / this.transform.k);
+        this.transform.y = centerY - (centerY - this.transform.y) * (newK / this.transform.k);
+        this.transform.k = newK;
+        this.updateTransform();
+    }
+
+    toggleFullscreen(forceState = null) {
+        const nextState = forceState !== null ? Boolean(forceState) : !this.isFullscreen;
+        if (nextState === this.isFullscreen) return;
+        this.isFullscreen = nextState;
+
+        const labelEl = this.container.querySelector('#graph-btn-fullscreen-label');
+        const fsSearchWrap = this.container.querySelector('#graph-fs-search-wrap');
+
+        if (this.isFullscreen) {
+            this.savedContainerStyle = {
+                position: this.container.style.position,
+                top: this.container.style.top,
+                left: this.container.style.left,
+                right: this.container.style.right,
+                bottom: this.container.style.bottom,
+                width: this.container.style.width,
+                height: this.container.style.height,
+                zIndex: this.container.style.zIndex,
+                borderRadius: this.container.style.borderRadius,
+                boxSizing: this.container.style.boxSizing
+            };
+
+            // Portal to document.body so ancestor backdrop-filter/transform cards
+            // (such as .glass-card in Equation Explainer) do not create a shifted fixed containing block
+            if (this.container.parentNode && this.container.parentNode !== document.body) {
+                this.domPlaceholder = document.createElement('div');
+                this.domPlaceholder.style.height = this.container.style.height || '620px';
+                this.domPlaceholder.style.width = '100%';
+                this.container.parentNode.insertBefore(this.domPlaceholder, this.container);
+                document.body.appendChild(this.container);
+            }
+
+            this.container.style.position = 'fixed';
+            this.container.style.top = '0';
+            this.container.style.left = '0';
+            this.container.style.right = '0';
+            this.container.style.bottom = '0';
+            this.container.style.width = '100%';
+            this.container.style.height = '100%';
+            this.container.style.boxSizing = 'border-box';
+            this.container.style.zIndex = '9999';
+            this.container.style.borderRadius = '0';
+            document.body.style.overflow = 'hidden';
+
+            if (labelEl) labelEl.textContent = 'Exit Full Screen (Esc)';
+            if (fsSearchWrap) fsSearchWrap.style.display = 'block';
+            if (this.fsHud && this.activeRootNode) {
+                this.fsHud.style.display = 'block';
+                this.updateFullscreenHud(this.activeRootNode);
+            }
+        } else {
+            if (this.domPlaceholder && this.domPlaceholder.parentNode) {
+                this.domPlaceholder.parentNode.insertBefore(this.container, this.domPlaceholder);
+                this.domPlaceholder.remove();
+                this.domPlaceholder = null;
+            }
+
+            if (this.savedContainerStyle) {
+                this.container.style.position = this.savedContainerStyle.position || 'relative';
+                this.container.style.top = this.savedContainerStyle.top || '';
+                this.container.style.left = this.savedContainerStyle.left || '';
+                this.container.style.right = this.savedContainerStyle.right || '';
+                this.container.style.bottom = this.savedContainerStyle.bottom || '';
+                this.container.style.width = this.savedContainerStyle.width || '100%';
+                this.container.style.height = this.savedContainerStyle.height || '';
+                this.container.style.boxSizing = this.savedContainerStyle.boxSizing || '';
+                this.container.style.zIndex = this.savedContainerStyle.zIndex || '';
+                this.container.style.borderRadius = this.savedContainerStyle.borderRadius || '12px';
+            }
+            document.body.style.overflow = '';
+
+            if (labelEl) labelEl.textContent = 'Full Screen';
+            if (fsSearchWrap) fsSearchWrap.style.display = 'none';
+            if (this.fsHud) this.fsHud.style.display = 'none';
+        }
+
+        // Re-render with mode-specific node/layer spacing and auto-fit to the new viewport
+        if (this.data && this.data.nodes && this.data.nodes.length > 0) {
+            setTimeout(() => {
+                this.renderGraph(this.data);
+            }, 30);
+        }
+    }
+
+    bindFullscreenSearch() {
+        const inputEl = this.container.querySelector('#graph-fs-search-input');
+        const dropdownEl = this.container.querySelector('#graph-fs-search-dropdown');
+        if (!inputEl || !dropdownEl) return;
+
+        let debounceTimer = null;
+        inputEl.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            const q = inputEl.value.trim();
+            if (q.length < 2) {
+                dropdownEl.style.display = 'none';
+                return;
+            }
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/physics/api/search?q=${encodeURIComponent(q)}&limit=8`);
+                    const items = await res.json();
+                    const formulas = (Array.isArray(items) ? items : []).filter(item => item.type === 'formula' && item.slug);
+                    if (formulas.length === 0) {
+                        dropdownEl.innerHTML = `<div style="padding: 8px 12px; color: #94a3b8; font-size: 0.76rem;">No matching formulas found.</div>`;
+                        dropdownEl.style.display = 'block';
+                        return;
+                    }
+                    dropdownEl.innerHTML = formulas.map(f => `
+                        <div class="fs-search-item" data-slug="${f.slug}" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 2px;">
+                            <div style="font-size: 0.8rem; font-weight: 700; color: #f8fafc;">${f.title}</div>
+                            <div style="font-size: 0.68rem; color: #64ffda; font-family: monospace;">${f.slug}</div>
+                        </div>
+                    `).join('');
+                    dropdownEl.style.display = 'block';
+
+                    dropdownEl.querySelectorAll('.fs-search-item').forEach(row => {
+                        row.addEventListener('mouseenter', () => { row.style.background = 'rgba(100,255,218,0.12)'; });
+                        row.addEventListener('mouseleave', () => { row.style.background = 'transparent'; });
+                        row.addEventListener('click', () => {
+                            const slug = row.getAttribute('data-slug');
+                            inputEl.value = '';
+                            dropdownEl.style.display = 'none';
+                            if (slug) {
+                                this.loadFormula(slug);
+                            }
+                        });
+                    });
+                } catch (err) {
+                    dropdownEl.style.display = 'none';
+                }
+            }, 180);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!inputEl.contains(e.target) && !dropdownEl.contains(e.target)) {
+                dropdownEl.style.display = 'none';
+            }
+        });
+    }
+
+    updateFullscreenHud(node) {
+        if (!this.fsHud || !node) return;
+        this.activeRootNode = node;
+        if (!this.isFullscreen) return;
+
+        const domainCfg = this.domainColors[node.domain] || { fill: '#64ffda' };
+        const isOnUniversePage = window.location.pathname.includes('/universe-graph');
+
+        this.fsHud.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: ${this.hudCollapsed ? '0' : '8px'};">
+                <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+                    <span style="font-size: 0.68rem; text-transform: uppercase; color: ${domainCfg.fill}; font-weight: 700; letter-spacing: 0.06em; white-space: nowrap;">
+                        ${node.domain_label || node.domain || 'Physics'}
+                    </span>
+                    <span style="font-size: 0.68rem; color: #64748b; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${node.id}
+                    </span>
+                </div>
+                <button type="button" id="graph-fs-hud-toggle" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; border-radius: 5px; padding: 2px 7px; font-size: 0.68rem; cursor: pointer;">
+                    ${this.hudCollapsed ? '▴ Expand' : '▾ Minimize'}
+                </button>
+            </div>
+            <div style="font-size: 1.02rem; font-weight: 700; color: #ffffff; margin-bottom: ${this.hudCollapsed ? '0' : '8px'};">
+                ${node.title}
+            </div>
+            ${!this.hudCollapsed ? `
+                ${node.equation ? `
+                    <div id="graph-fs-hud-math" style="font-size: 0.96rem; color: #ffd700; background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 7px 11px; margin-bottom: 8px; overflow-x: auto;">
+                        \\(${node.equation}\\)
+                    </div>
+                ` : ''}
+                <div style="font-size: 0.78rem; color: #94a3b8; line-height: 1.45; margin-bottom: 12px;">
+                    ${node.summary || 'Click any node in the graph to re-center or explore its derivation neighborhood.'}
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <a href="/physics/equation-explainer?id=${encodeURIComponent(node.id)}" id="graph-fs-open-explainer" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--accent-default, #64ffda); color: #020c1b; font-weight: 700; border-radius: 6px; text-decoration: none; font-size: 0.76rem;">
+                        <span>🔬 Open in Explainer</span>
+                        <span>➔</span>
+                    </a>
+                    ${!isOnUniversePage ? `
+                        <a href="/physics/universe-graph?id=${encodeURIComponent(node.id)}" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(100,255,218,0.3); color: #e2e8f0; font-weight: 600; border-radius: 6px; text-decoration: none; font-size: 0.76rem;">
+                            <span>🌌 Open in Universe Graph</span>
+                        </a>
+                    ` : ''}
+                </div>
+            ` : ''}
+        `;
+
+        const toggleBtn = this.fsHud.querySelector('#graph-fs-hud-toggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                this.hudCollapsed = !this.hudCollapsed;
+                this.updateFullscreenHud(this.activeRootNode);
+            });
+        }
+
+        const openExplainerLink = this.fsHud.querySelector('#graph-fs-open-explainer');
+        if (openExplainerLink && !isOnUniversePage && typeof this.options.onNodeClick === 'function') {
+            openExplainerLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggleFullscreen(false);
+                this.options.onNodeClick(node);
+            });
+        }
+
+        const mathEl = this.fsHud.querySelector('#graph-fs-hud-math');
+        if (mathEl && window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise([mathEl]).catch(() => {});
+        }
     }
 
     updateTransform() {
@@ -214,7 +492,23 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         const rect = this.svg.getBoundingClientRect();
         const w = (rect && rect.width > 0) ? rect.width : (this.container.clientWidth || 800);
         const h = (rect && rect.height > 0) ? rect.height : (this.container.clientHeight || 650);
-        this.transform = { x: w / 2, y: h / 2, k: 1.0 };
+
+        if (this.lastBounds && (this.lastBounds.maxX > this.lastBounds.minX || this.lastBounds.maxY > this.lastBounds.minY)) {
+            const padX = 150;
+            const padY = 120;
+            const graphW = Math.max(200, (this.lastBounds.maxX - this.lastBounds.minX) + padX * 2);
+            const graphH = Math.max(200, (this.lastBounds.maxY - this.lastBounds.minY) + padY * 2);
+            const k = Math.max(0.42, Math.min(1.05, Math.min(w / graphW, h / graphH)));
+            const centerX = (this.lastBounds.minX + this.lastBounds.maxX) / 2;
+            const centerY = (this.lastBounds.minY + this.lastBounds.maxY) / 2;
+            this.transform = {
+                x: (w / 2) - centerX * k,
+                y: (h / 2) - centerY * k + 12,
+                k: k
+            };
+        } else {
+            this.transform = { x: w / 2, y: h / 2, k: 1.0 };
+        }
         this.updateTransform();
     }
 
@@ -229,6 +523,13 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
             if (res.success && res.data && res.data.nodes && res.data.nodes.length > 0) {
                 this.data = res.data;
+                if (res.data.root_node) {
+                    this.activeRootNode = res.data.root_node;
+                    if (this.isFullscreen && this.fsHud) {
+                        this.fsHud.style.display = 'block';
+                        this.updateFullscreenHud(res.data.root_node);
+                    }
+                }
                 this.renderGraph(res.data);
                 if (badge) {
                     badge.innerText = `${res.data.stats.total_nodes} nodes • ${res.data.stats.total_links} links`;
@@ -247,6 +548,7 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
     }
 
     renderEmptyState(message) {
+        this.lastBounds = null;
         this.g.innerHTML = `
             <text x="0" y="0" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="'Space Grotesk', sans-serif">
                 ${message}
@@ -261,9 +563,8 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         const rootId = data.root_id;
 
         this.g.innerHTML = '';
-        this.resetView();
 
-        // 1. Hierarchical Layout by Layer
+        // 1. Hierarchical Layout by Layer (expanded spacing in Full-Screen mode)
         const layers = {};
         nodes.forEach(n => {
             const l = n.layer || 0;
@@ -272,10 +573,12 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         });
 
         const layerKeys = Object.keys(layers).map(Number).sort((a, b) => a - b);
-        const layerSpacingY = 110;
-        const nodeSpacingX = 160;
+        const layerSpacingY = this.isFullscreen ? 195 : 152;
+        const nodeSpacingX = this.isFullscreen ? 240 : 188;
+        const staggerStepY = this.isFullscreen ? 30 : 22;
 
         const nodePositions = {};
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
 
         layerKeys.forEach(layerIdx => {
             const layerNodes = layers[layerIdx];
@@ -284,10 +587,18 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
             layerNodes.forEach((node, idx) => {
                 const x = startX + idx * nodeSpacingX;
-                const y = layerIdx * layerSpacingY;
+                const staggerY = (layerNodes.length > 4 && idx % 2 === 1) ? staggerStepY : 0;
+                const y = layerIdx * layerSpacingY + staggerY;
                 nodePositions[node.id] = { x, y, node };
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
             });
         });
+
+        this.lastBounds = (minX <= maxX) ? { minX, maxX, minY, maxY } : null;
+        this.resetView();
 
         // 2. Draw Curved Directional Links
         const linkGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -308,8 +619,8 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
             path.setAttribute('d', `M ${src.x} ${src.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${tgt.x} ${tgt.y}`);
             path.setAttribute('fill', 'none');
-            path.setAttribute('stroke', link.direction === 'upstream' ? 'rgba(56, 189, 248, 0.4)' : 'rgba(100, 255, 218, 0.4)');
-            path.setAttribute('stroke-width', '1.5');
+            path.setAttribute('stroke', link.direction === 'upstream' ? 'rgba(56, 189, 248, 0.45)' : 'rgba(100, 255, 218, 0.45)');
+            path.setAttribute('stroke-width', this.isFullscreen ? '2' : '1.6');
             path.setAttribute('stroke-dasharray', link.type === 'subcomponent' ? '3,3' : 'none');
             linkGroup.appendChild(path);
         });
@@ -317,6 +628,10 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         // 3. Draw Nodes
         const nodeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         this.g.appendChild(nodeGroup);
+
+        const rootRadius = this.isFullscreen ? 21 : 18;
+        const childRadius = this.isFullscreen ? 14 : 12;
+        const maxTitleLen = this.isFullscreen ? 34 : 24;
 
         nodes.forEach(node => {
             const pos = nodePositions[node.id];
@@ -332,19 +647,19 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
             // Glow Circle
             if (isRoot) {
                 const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                glow.setAttribute('r', '28');
+                glow.setAttribute('r', String(rootRadius + 10));
                 glow.setAttribute('fill', 'none');
                 glow.setAttribute('stroke', 'var(--accent-default, #64ffda)');
                 glow.setAttribute('stroke-width', '2');
                 glow.setAttribute('opacity', '0.6');
-                glow.innerHTML = `<animate attributeName="r" values="24;32;24" dur="2.5s" repeatCount="indefinite"/>
+                glow.innerHTML = `<animate attributeName="r" values="${rootRadius + 6};${rootRadius + 14};${rootRadius + 6}" dur="2.5s" repeatCount="indefinite"/>
                                   <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.5s" repeatCount="indefinite"/>`;
                 gNode.appendChild(glow);
             }
 
             // Main Circle
             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            circle.setAttribute('r', isRoot ? '18' : '12');
+            circle.setAttribute('r', String(isRoot ? rootRadius : childRadius));
             circle.setAttribute('fill', isRoot ? '#64ffda' : domainCfg.fill);
             circle.setAttribute('stroke', '#0f172a');
             circle.setAttribute('stroke-width', '2.5');
@@ -353,15 +668,15 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
             // Label Text
             const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            label.setAttribute('y', isRoot ? '32' : '24');
+            label.setAttribute('y', String(isRoot ? (rootRadius + 15) : (childRadius + 14)));
             label.setAttribute('text-anchor', 'middle');
             label.setAttribute('fill', isRoot ? '#ffffff' : '#cbd5e1');
-            label.setAttribute('font-size', isRoot ? '12' : '10.5');
+            label.setAttribute('font-size', isRoot ? (this.isFullscreen ? '13' : '12') : (this.isFullscreen ? '11.5' : '10.8'));
             label.setAttribute('font-weight', isRoot ? '700' : '500');
             label.setAttribute('font-family', "'Space Grotesk', sans-serif");
             
-            // Truncate long titles
-            const titleText = node.title.length > 20 ? node.title.substring(0, 18) + '…' : node.title;
+            // Truncate long titles cleanly
+            const titleText = node.title.length > maxTitleLen ? node.title.substring(0, maxTitleLen - 2) + '…' : node.title;
             label.textContent = titleText;
             gNode.appendChild(label);
 
@@ -371,12 +686,12 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
                     clearTimeout(this.hideTimeout);
                     this.hideTimeout = null;
                 }
-                circle.setAttribute('r', isRoot ? '22' : '16');
+                circle.setAttribute('r', String(isRoot ? (rootRadius + 4) : (childRadius + 4)));
                 this.showTooltip(node, e);
             });
 
             gNode.addEventListener('mouseleave', () => {
-                circle.setAttribute('r', isRoot ? '18' : '12');
+                circle.setAttribute('r', String(isRoot ? rootRadius : childRadius));
                 this.hideTimeout = setTimeout(() => {
                     this.hideTooltip();
                 }, 300);
@@ -385,7 +700,13 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
             // Click navigation
             gNode.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (this.options.onNodeClick) {
+                if (this.isFullscreen) {
+                    // In Full-Screen mode, clicking a node centers the graph on it and updates the HUD
+                    this.loadFormula(node.id);
+                    if (this.options.onNodeClick && window.location.pathname.includes('/universe-graph')) {
+                        this.options.onNodeClick(node);
+                    }
+                } else if (this.options.onNodeClick) {
                     this.options.onNodeClick(node);
                 } else {
                     window.location.href = `/physics/equation-explainer?id=${encodeURIComponent(node.id)}`;

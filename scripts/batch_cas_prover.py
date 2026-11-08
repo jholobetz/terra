@@ -183,14 +183,26 @@ def run_batch_prover(
             try:
                 with open(s_path, "r", encoding="utf-8") as f:
                     s_data = json.load(f)
+                changed = False
                 for fid, meta in updates.items():
                     if fid in s_data:
+                        old_cas = s_data[fid].get("cas_validation")
+                        if (
+                            isinstance(old_cas, dict)
+                            and old_cas.get("is_homogeneous") is True
+                            and old_cas.get("status") == meta["status"]
+                            and old_cas.get("quantity") == meta["quantity"]
+                            and old_cas.get("dimension_latex") == meta["dimension_latex"]
+                        ):
+                            continue
                         s_data[fid]["cas_validation"] = meta
-                tmp_s_path = s_path + ".tmp"
-                with open(tmp_s_path, "w", encoding="utf-8") as f:
-                    json.dump(s_data, f, indent=4, ensure_ascii=False)
-                    f.write("\n")
-                os.replace(tmp_s_path, s_path)
+                        changed = True
+                if changed:
+                    tmp_s_path = s_path + ".tmp"
+                    with open(tmp_s_path, "w", encoding="utf-8") as f:
+                        json.dump(s_data, f, indent=4, ensure_ascii=False)
+                        f.write("\n")
+                    os.replace(tmp_s_path, s_path)
             except Exception as e:
                 print(f"⚠️ Failed to tag shard {s_path}: {e}", file=sys.stderr)
 

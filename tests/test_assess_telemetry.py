@@ -28,11 +28,11 @@ def mock_audit_data():
         },
         "diagnostics": {
             "lineage": {
-                "total_formulas": 14671,
+                "total_formulas": 14681,
                 "dag_edges": 44691,
-                "lhi_score": 95.2,
-                "rich_count": 13800,
-                "moderate_count": 871,
+                "lhi_score": 99.8,
+                "rich_count": 14681,
+                "moderate_count": 0,
                 "isolated_nodes": 0,
                 "overloaded_hubs": 0,
                 "max_direct_children": 19,
@@ -68,7 +68,7 @@ def mock_audit_data():
                 "progress_pct": 100,
                 "items": [
                     ("Dual-Layer Hash Sync", "256/256 Shards Synchronized", True),
-                    ("Multi-Step Derivations", "102 / 100 Verified Derivation Proofs", True),
+                    ("Multi-Step Derivations", "103 / 100 Verified Derivation Proofs", True),
                 ],
             },
             "phase_3": {"title": "Phase 3", "status": "IN_PROGRESS", "progress_pct": 15, "items": []},
@@ -103,11 +103,11 @@ def test_telemetry_schema_v1_structure(mock_audit_data):
 
     assert "mathematical_manifold" in telemetry
     manifold = telemetry["mathematical_manifold"]
-    assert manifold["total_formulas"] == 14671
+    assert manifold["total_formulas"] == 14681
     assert manifold["dag_edges"] == 44691
-    assert manifold["lhi_score"] == 95.2
+    assert manifold["lhi_score"] == 99.8
     assert manifold["isolated_nodes"] == 0
-    assert manifold["multi_step_proofs"] == 102
+    assert manifold["multi_step_proofs"] == 103
     assert manifold["cas_latency_ms"] == 250.0
 
     assert "knowledge_web" in telemetry
@@ -200,7 +200,7 @@ def test_print_telemetry_diff_rendering(capsys, mock_audit_data):
     # Clone for prev with slight variations
     prev = dict(curr)
     prev["mathematical_manifold"] = dict(curr["mathematical_manifold"])
-    prev["mathematical_manifold"]["total_formulas"] = 14660
+    prev["mathematical_manifold"]["total_formulas"] = curr["mathematical_manifold"]["total_formulas"] - 11
 
     print_telemetry_diff(curr, prev, target_label="test_baseline")
     captured = capsys.readouterr().out

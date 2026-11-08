@@ -104,3 +104,70 @@ def test_anti_goodhart_lhi_safeguards_in_memory():
     assert def_res["tier"] == "GREEN"
     assert def_res["score"] >= 75
 
+
+def test_corrupted_equation_and_zero_affinity_detection_in_memory():
+    """
+    Red-team in-memory test verifying that:
+      1. Corrupted equation strings (prose bleed, raw MathML, truncated commands) are flagged and capped at RED.
+      2. Zero-affinity parent-child links (0 shared math symbols, subtopics, or concept keywords) are flagged and demoted out of GREEN.
+    """
+    from scripts.maintenance.audit_lineage_health import audit_all, is_corrupted_equation
+
+    assert is_corrupted_equation("approaches the speed of light", "Speed Limit")[0] is True
+    assert is_corrupted_equation('math xmlns="http://www.w3.org/1998/Math/MathML"', "Freq")[0] is True
+    assert is_corrupted_equation(r"p = \frac{ tial L}{ tial v}", "Momentum")[0] is True
+    assert is_corrupted_equation(r"E = mc^2", "Mass-Energy Equivalence")[0] is False
+
+    mock_formulas = {
+        "unrelated-parent": {
+            "title": "Ideal Gas Law",
+            "equation": r"P V = n R T",
+            "parent_formula_id": None,
+            "derivation_type": "EMPIRICAL_LAW",
+            "subcomponents": ["zero-affinity-child", "corrupted-child"],
+            "symmetry_origin": "Spatial homogeneity and isotropy of thermal equilibrium.",
+            "limits_and_boundary": "Valid in the dilute gas limit at low density.",
+            "semantic_variables": {"P": "Pressure", "V": "Volume", "T": "Temperature"},
+        },
+        "zero-affinity-child": {
+            "title": "Femto Metric Prefix Multiplier",
+            "equation": r"10^{-15}",
+            "parent_formula_id": "unrelated-parent",
+            "derivation_type": "DERIVED_FROM",
+            "subcomponents": [],
+            "symmetry_origin": "Decimal scaling convention in SI metrology.",
+            "limits_and_boundary": "Exact constant multiplier across all regimes.",
+            "semantic_variables": {"10^{-15}": "Femto factor"},
+        },
+        "corrupted-child": {
+            "title": "Corrupted Prose Bleed Formula",
+            "equation": "approaches zero as the density decreases in the outer envelope",
+            "parent_formula_id": "unrelated-parent",
+            "derivation_type": "DERIVED_FROM",
+            "subcomponents": [],
+            "symmetry_origin": "Spatial homogeneity and isotropy of thermal equilibrium.",
+            "limits_and_boundary": "Valid in the dilute gas limit at low density.",
+            "semantic_variables": {"P": "Pressure"},
+        },
+    }
+
+    results = audit_all(mock_formulas)
+    assert results["zero-affinity-child"]["has_parent_affinity"] is False
+    assert results["zero-affinity-child"]["tier"] != "GREEN"
+    assert results["corrupted-child"]["is_corrupted_equation"] is True
+    assert results["corrupted-child"]["tier"] == "RED"
+
+
+def test_sitewide_zero_corrupted_equations_and_affinity():
+    """Verifies that all formula shards have 0 corrupted equations and 0 zero-affinity parent-child links."""
+    from scripts.maintenance.audit_lineage_health import load_all_formulas, audit_all
+
+    formulas, _ = load_all_formulas()
+    results = audit_all(formulas)
+    corrupted = [fid for fid, r in results.items() if r.get("is_corrupted_equation")]
+    zero_aff = [fid for fid, r in results.items() if r.get("parent_id") and not r.get("has_parent_affinity", True)]
+
+    assert corrupted == [], f"Found corrupted formula equations: {corrupted[:10]}"
+    assert zero_aff == [], f"Found zero-affinity parent-child links: {zero_aff[:10]}"
+
+

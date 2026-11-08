@@ -1000,9 +1000,7 @@ class PhysicsService
      */
     public function performSync(bool $force = false): void
     {
-        $this->loadAllShards();
-        $data = $this->getPhysicsContent();
-        $this->syncService->performSync($data, $force);
+        $this->syncService->performSync($force);
     }
 
     /**
@@ -1011,9 +1009,7 @@ class PhysicsService
      */
     public function pruneOrphans(bool $dryRun = true): array
     {
-        $this->loadAllShards();
-        $content = $this->getPhysicsContent();
-        return $this->syncService->pruneOrphans(array_keys($content['subtopics']), $dryRun);
+        return $this->syncService->pruneOrphans($dryRun);
     }
 
     /**

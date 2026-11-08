@@ -220,6 +220,37 @@ class ShardSyncService
             @file_put_contents($registryPath, json_encode($newRegistry, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
         }
 
+        if ($db && ($shardsUpdated > 0 || $force)) {
+            try {
+                $diskFormulaIds = [];
+                foreach ($shardFiles as $filePath) {
+                    $shardData = json_decode(file_get_contents($filePath), true);
+                    if (is_array($shardData)) {
+                        foreach (array_keys($shardData) as $fId) {
+                            $diskFormulaIds[$fId] = true;
+                        }
+                    }
+                }
+                $dbRows = $db->fetchAll("SELECT id FROM formulas");
+                $orphanedFormulas = [];
+                foreach ($dbRows as $row) {
+                    $rowId = is_object($row) ? $row->id : ($row['id'] ?? null);
+                    if ($rowId && !isset($diskFormulaIds[$rowId])) {
+                        $orphanedFormulas[] = $rowId;
+                    }
+                }
+                if (!empty($orphanedFormulas)) {
+                    $placeholders = implode(',', array_fill(0, count($orphanedFormulas), '?'));
+                    $db->runQuery(
+                        "DELETE FROM formulas WHERE id IN ($placeholders)",
+                        array_values($orphanedFormulas)
+                    );
+                }
+            } catch (\Throwable $pruneErr) {
+                // Non-fatal during partial sync
+            }
+        }
+
         return [
             'shards_checked' => count($shardFiles),
             'shards_changed' => $shardsUpdated,

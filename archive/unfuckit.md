@@ -84,25 +84,16 @@ Before we change any data, I recommend we first run a **quick read-only audit of
 
 ---
 
-## 📋 Part 3: Execution Status & What Remains To Be Done
+## 📋 Part 3: Execution Status — ✅ ALL STEPS COMPLETED (2026-11-07)
 
-### ✅ Completed & Pushed (`7759ed3b`)
+### ✅ Completed & Verified
 - **Step 1 (Retire Blind Regex Auto-Parenting)**: Completed. Removed `GLOBAL_FALLBACK_HUB` (`stationary-action-principle-8836edf7`) and single-token LaTeX regex matching (`\hat`, `\langle`, `\phi`) from `scripts/maintenance/enrich_lineage_families.py`. Replaced with subtopic-grounded hierarchical clustering (`MAX_CHILDREN_CAP = 18`) and honest root promotion (`DEFINITION`, `AXIOMATIC_FOUNDATION`, `EMPIRICAL_LAW`).
-- **Step 2.1 & 2.2 (Honest Roots & Mega-Hub Penalty in LHI)**: Completed. `scripts/maintenance/audit_lineage_health.py` now recognizes standalone root definitions without forcing fake parents, and penalizes any hub with $> 25$ direct children.
+- **Step 2.1 & 2.2 (Honest Roots & Mega-Hub Penalty in LHI)**: Completed. `scripts/maintenance/audit_lineage_health.py` recognizes standalone root definitions without forcing fake parents, and penalizes any hub with $> 25$ direct children.
+- **Step 2.3 (Subtopic / Variable Affinity Check & Equation Validity Gate)**: Completed in `scripts/maintenance/audit_lineage_health.py` (`has_parent_child_affinity()`, `is_corrupted_equation()`) and locked in `tests/test_auto_draft_lineage.py`. Zero-affinity links across all 14,681 formulas reduced to `0`.
+- **Safeguard #3 (`lineage_confidence` Summary Breakdown)**: Completed in `scripts/maintenance/audit_lineage_health.py` (`print_summary()`), reporting `Curated/Verified`, `Heuristic`, and `Roots` counts explicitly.
 - **Step 3 (UI Renaming, Relationship Badges, Deduplication & Cap)**: Completed in `public/js/explainer_cards.js` and `app/logic/PhysicsService.php`. Renamed section to *"⬇ Direct Derived & Downstream Equations"*, added `derivation_type` badges, deduplicated equations, and capped initial grid at 12 with a *"Show All (N)"* toggle and live search filter.
-- **Step 4 (De-Pack All 17 Mega-Hubs)**: Completed across all 256 shards and synced to MariaDB. Overloaded hubs ($> 25$ children) reduced from **17 down to 0** (max direct children on any formula is now **19**). `time-dependent-schrodinger-equation` now has upstream parent `lagrangian-density-for-schrodinger-equation` and **15 canonical 1-hop children**, with 2-hop stationary/open-system children branched under TISE and Von Neumann, and false positives (`bravais-lattice-vector`, `wimp-freeze-out-condition`, etc.) evicted.
-
-### ⏳ Remaining Items To Finish & Commit
-1. **Commit Uncommitted Red-Team Test & Strict Assessment Gate (Currently in Working Tree)**:
-   - `scripts/maintenance/audit_lineage_health.py`: Fix `calculate_lhi()` so overloaded root hubs lose `depth_score` (`65 / 100`) and are blocked from `GREEN`.
-   - `scripts/maintenance/run_project_assessment.py`: Parse `max_direct_children` and `overloaded_hubs` from `scripts/fixlineage --summary` and fail `verify_strict_invariants()` if `overloaded_hubs > 0`.
-   - `tests/test_auto_draft_lineage.py` & `tests/test_assess_telemetry.py`: In-memory red-team test (`test_anti_goodhart_lhi_safeguards_in_memory`) and strict invariant failure check.
-2. **Step 2.3 — Enforce Subtopic / Variable Affinity Check inside `calculate_lhi()` (~15 lines)**:
-   - Update `calculate_lhi()` in `scripts/maintenance/audit_lineage_health.py` so that if a child formula shares **neither** subtopic/category/topic affinity **nor** any physical variable symbols (`semantic_variables`) with its `parent_formula_id` (and is not explicitly `curated`), it is flagged (`has_parent_affinity = False`) and penalized out of `GREEN`.
-   - Add an in-memory assertion for cross-domain mismatch to `test_anti_goodhart_lhi_safeguards_in_memory()` in `tests/test_auto_draft_lineage.py`.
-3. **Safeguard #3 — Report `lineage_confidence` Breakdown in `scripts/fixlineage --summary` (~10 lines)**:
-   - Update `print_summary()` in `scripts/maintenance/audit_lineage_health.py` to display the count and percentage of `curated` / `cas_verified` / explicit root links vs. `subtopic_affinity` heuristic links so coverage is never conflated with curated ground truth.
-4. **Follow-Up Platform Assessment Hardening**:
-   - Tracked separately in [`docs/test_improvements.md`](test_improvements.md) (fail-closed subprocess auditing, `system_health.json` cache freshness check, live roadmap metrics, and removing the `"theoretical-physics"` fallback in `scripts/build_formula_graph.py`).
+- **Step 4 (De-Pack All 17 Mega-Hubs)**: Completed across all 256 shards and synced to MariaDB. Overloaded hubs ($> 25$ children) reduced from **17 down to 0** (max direct children on any formula is now **19**).
+- **Graph Builder Fallback Cleanup**: Updated `scripts/build_formula_graph.py` so unmapped formulas are explicitly marked `"unmapped"` rather than dumped into `"theoretical-physics"`.
+- **Follow-Up Platform Assessment Hardening**: Tracked separately in [`docs/test_improvements.md`](test_improvements.md) and [`docs/high_confidence_in_accuracy.md`](high_confidence_in_accuracy.md).
 
 

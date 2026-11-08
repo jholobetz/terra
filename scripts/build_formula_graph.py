@@ -76,6 +76,20 @@ def resolve_all_domains(formulas, formula_to_domain, subtopic_to_domain):
     """
     resolved = dict(formula_to_domain)
 
+    # 0. Direct subtopics list or category field on the formula record itself
+    for fid, fval in formulas.items():
+        if fid in resolved:
+            continue
+        for sub_id in fval.get("subtopics", []):
+            if sub_id in subtopic_to_domain:
+                resolved[fid] = subtopic_to_domain[sub_id]
+                break
+        if fid not in resolved:
+            cat = fval.get("category", "")
+            cat_slug = cat.lower().replace(" & ", "-").replace(" ", "-")
+            if cat_slug in set(subtopic_to_domain.values()):
+                resolved[fid] = cat_slug
+
     # 1. Multi-pass graph propagation
     changed = True
     passes = 0
@@ -122,15 +136,15 @@ def resolve_all_domains(formulas, formula_to_domain, subtopic_to_domain):
                 prefix_matched += 1
                 break
 
-    # 3. Controlled fallback (flagged, never silently dumped to classical)
+    # 3. Controlled fallback (explicitly marked 'unmapped', never dumped into a catch-all domain)
     orphan_count = 0
     for fid in formulas.keys():
         if fid not in resolved:
             orphan_count += 1
-            resolved[fid] = "theoretical-physics"
+            resolved[fid] = "unmapped"
 
     if orphan_count > 0:
-        print(f"[WARN] {orphan_count} orphan formulas could not be mapped and were assigned to 'theoretical-physics'.")
+        print(f"[WARN] {orphan_count} orphan formulas could not be mapped and were marked as 'unmapped'.")
 
     return resolved
 
@@ -192,7 +206,7 @@ def main():
         title = formula.get("title", fid)
         eq = formula.get("equation", "")
         summary = formula.get("intuitive_summary", "")
-        domain = resolved_domains.get(fid, "theoretical-physics")
+        domain = resolved_domains.get(fid, "unmapped")
 
         nodes[fid] = {
             "id": fid,
@@ -200,7 +214,7 @@ def main():
             "equation": eq,
             "summary": summary,
             "domain": domain,
-            "domain_label": categories.get(domain, domain),
+            "domain_label": categories.get(domain, "Unmapped / General" if domain == "unmapped" else domain),
             "status": formula.get("status", "platinum")
         }
 

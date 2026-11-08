@@ -28,6 +28,28 @@ ACTIVE_SPRINT_PATH = "subfiles/active_expansion_sprint.json"
 HEALTH_PATH = "system_health.json"
 
 
+def is_system_health_stale(health_path=HEALTH_PATH, content_dir="app/config/content"):
+    """Checks whether system_health.json is older than any subtopic content shard on disk."""
+    if not os.path.exists(health_path) or not os.path.exists(content_dir):
+        return False
+    try:
+        health_mtime = os.path.getmtime(health_path)
+        excluded = {
+            "categories.json", "formulas.json", "constants.json", "search_index.json",
+            "entities.json", "global_slug_registry.json", "compiled_trie_regex.json",
+            "notation.json", "particles.json", "pillar_profiles.json",
+            "formula_aliases.json", "formulas_latex_index.json",
+        }
+        for fname in os.listdir(content_dir):
+            if fname.endswith(".json") and fname not in excluded:
+                fpath = os.path.join(content_dir, fname)
+                if os.path.isfile(fpath) and os.path.getmtime(fpath) > health_mtime:
+                    return True
+    except OSError:
+        return False
+    return False
+
+
 def print_quality_breakdown(health_path=HEALTH_PATH):
     """Surface the platinum classification + qualitative violations from
     system_health.json so users see both the CTA-aligned (flagged) count
@@ -35,6 +57,13 @@ def print_quality_breakdown(health_path=HEALTH_PATH):
     file is missing or malformed — the CTA dashboard above is the
     authoritative live source.
     """
+    if health_path == HEALTH_PATH and is_system_health_stale(health_path):
+        print("🔄 Notice: system_health.json is older than subtopic shards; refreshing telemetry...")
+        try:
+            subprocess.run([sys.executable, "scripts/maintenance/generate_system_health.py"], check=False)
+        except Exception:
+            pass
+
     if not os.path.exists(health_path):
         return
     try:

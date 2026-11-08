@@ -289,3 +289,39 @@ def test_audit_ratchets_regressions(mock_audit_data):
     assert "LHI" in violation_str
     assert "Formula count dropped" in violation_str
     assert "CAS latency" in violation_str
+
+
+def test_verify_strict_invariants_fails_closed_on_na(mock_audit_data):
+    """Verifies that verify_strict_invariants fails closed when graduated_platinum or lhi_score is N/A."""
+    mock_audit_data["diagnostics"]["gqs"]["graduated_platinum"] = "N/A"
+    mock_audit_data["diagnostics"]["lineage"]["lhi_score"] = "N/A"
+
+    passed, violations = verify_strict_invariants(mock_audit_data)
+    assert passed is False
+    v_str = " ".join(violations)
+    assert "GQS telemetry parse failure" in v_str
+    assert "Lineage telemetry parse failure" in v_str
+
+
+def test_system_health_freshness_guard(tmp_path):
+    """Verifies that is_system_health_stale detects when system_health.json is older than a content shard."""
+    import os
+    from gqs import is_system_health_stale
+
+    health_file = tmp_path / "system_health.json"
+    content_dir = tmp_path / "content"
+    content_dir.mkdir()
+    shard_file = content_dir / "quantum-physics.json"
+
+    health_file.write_text("{}", encoding="utf-8")
+    shard_file.write_text("{}", encoding="utf-8")
+
+    # Make shard newer than health_file
+    os.utime(health_file, (1000, 1000))
+    os.utime(shard_file, (2000, 2000))
+    assert is_system_health_stale(str(health_file), str(content_dir)) is True
+
+    # Make health_file newer than shard_file
+    os.utime(health_file, (3000, 3000))
+    assert is_system_health_stale(str(health_file), str(content_dir)) is False
+

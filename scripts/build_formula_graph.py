@@ -63,6 +63,32 @@ def build_ground_truth_domain_map(categories):
         except Exception as e:
             print(f"[WARN] Error reading {cat_path}: {e}")
 
+    # Also map subtopics in legacy-orphans.json to their canonical parent domain
+    legacy_path = os.path.join(CONTENT_DIR, "legacy-orphans.json")
+    if os.path.exists(legacy_path):
+        try:
+            with open(legacy_path, "r", encoding="utf-8") as f:
+                legacy_data = json.load(f)
+            for _ in range(5):
+                for subtopic_id, subtopic in legacy_data.items():
+                    if subtopic_id in subtopic_to_domain or not isinstance(subtopic, dict):
+                        continue
+                    for parent_slug in subtopic.get("parents", []):
+                        if parent_slug in categories:
+                            subtopic_to_domain[subtopic_id] = parent_slug
+                            break
+                        elif parent_slug in subtopic_to_domain:
+                            subtopic_to_domain[subtopic_id] = subtopic_to_domain[parent_slug]
+                            break
+            for subtopic_id, subtopic in legacy_data.items():
+                if isinstance(subtopic, dict) and subtopic_id in subtopic_to_domain:
+                    dom = subtopic_to_domain[subtopic_id]
+                    for fid in subtopic.get("formula_ids", []):
+                        if isinstance(fid, str) and fid not in formula_to_domain:
+                            formula_to_domain[fid] = dom
+        except Exception as e:
+            print(f"[WARN] Error reading {legacy_path}: {e}")
+
     return formula_to_domain, subtopic_to_domain
 
 

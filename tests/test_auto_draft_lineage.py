@@ -170,4 +170,51 @@ def test_sitewide_zero_corrupted_equations_and_affinity():
     assert corrupted == [], f"Found corrupted formula equations: {corrupted[:10]}"
     assert zero_aff == [], f"Found zero-affinity parent-child links: {zero_aff[:10]}"
 
+    # Also verify 0 desynchronized semantic_variables and 0 duplicated boilerplate prose >15 across shards
+    from collections import Counter
+    from scripts.maintenance.audit_lineage_health import has_aligned_semantic_variables
+    from scripts.build_formula_graph import (
+        load_canonical_domains,
+        build_ground_truth_domain_map,
+        resolve_all_domains,
+    )
+
+    desync_sem = [
+        fid for fid, f in formulas.items()
+        if not has_aligned_semantic_variables(f.get("equation", ""), f.get("semantic_variables"))
+    ]
+    assert desync_sem == [], f"Found desynchronized/empty semantic_variables: {desync_sem[:10]}"
+
+    for field in ["conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary"]:
+        cnt = Counter((f.get(field) or "").strip() for f in formulas.values() if (f.get(field) or "").strip())
+        over_15 = [(val[:60], c) for val, c in cnt.most_common(5) if c > 15]
+        assert over_15 == [], f"Field {field} has copy-pasted boilerplate duplicated >15 times: {over_15}"
+
+    categories = load_canonical_domains()
+    f2d, s2d = build_ground_truth_domain_map(categories)
+    resolved_domains = resolve_all_domains(formulas, f2d, s2d)
+    unmapped = [fid for fid, dom in resolved_domains.items() if dom == "unmapped"]
+    assert unmapped == [], f"Found unmapped domain orphans: {unmapped[:10]}"
+
+
+def test_boilerplate_and_semantic_variables_gate_in_memory():
+    """Verifies that copy-pasted boilerplate and misaligned semantic_variables receive 0 quality points."""
+    from scripts.maintenance.audit_lineage_health import audit_all
+
+    mock_formulas = {
+        "boilerplate-node": {
+            "title": "Boilerplate Test Formula",
+            "equation": "F = m a",
+            "parent_formula_id": None,
+            "derivation_type": "AXIOMATIC_FOUNDATION",
+            "subcomponents": [],
+            "symmetry_origin": "Formulated in coordinate-free tensor or vector notation, maintaining spatial rotation and translation invariance.",
+            "limits_and_boundary": "Subject to asymptotic boundary conditions and non-relativistic conservation limits.",
+            "semantic_variables": {"\\xi": "Unrelated variable not in equation"},
+        }
+    }
+    res = audit_all(mock_formulas)
+    assert res["boilerplate-node"]["quality_score"] == 0
+
+
 

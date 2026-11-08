@@ -336,7 +336,26 @@ def has_loop_free_ancestry(fid, parent_map, max_steps=25):
     return depth, True
 
 
-def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map, subtopic_ctx=None):
+KNOWN_BOILERPLATE_STRINGS = {
+    "Formulated in coordinate-free tensor or vector notation, maintaining spatial rotation and translation invariance.",
+    "Subject to asymptotic boundary conditions and non-relativistic conservation limits.",
+    "Defines key conservation, boundary, or dynamical balance relations in the physical manifold.",
+    "The left-hand side of the relation establishes how spatial gradients or field variations are balanced by the right-hand side source or rate terms.",
+}
+
+
+def has_aligned_semantic_variables(eq: str, sem_vars) -> bool:
+    """Returns True if sem_vars is a non-empty dict and at least one key appears in eq."""
+    if not isinstance(sem_vars, dict) or len(sem_vars) < 1 or not eq:
+        return False
+    for k in sem_vars.keys():
+        k_clean = k.strip("$ ").strip()
+        if k_clean and k_clean in eq:
+            return True
+    return False
+
+
+def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map, subtopic_ctx=None, boilerplate_strings=None):
     """
     Role-Aware, Anti-Goodhart & Reciprocity-Enforced Lineage Health Index (0-100):
       1. Upstream Lineage & Tree Depth (40 pts)
@@ -441,18 +460,21 @@ def calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map, subtopi
     sym_orig = (form.get('symmetry_origin') or '').strip()
     lim_bound = (form.get('limits_and_boundary') or '').strip()
     sem_vars = form.get('semantic_variables')
+    bp_set = KNOWN_BOILERPLATE_STRINGS | (boilerplate_strings or set())
 
-    if len(sym_orig) >= 20:
-        quality_score += 10
-    elif len(sym_orig) > 0:
-        quality_score += 5
+    if sym_orig not in bp_set:
+        if len(sym_orig) >= 20:
+            quality_score += 10
+        elif len(sym_orig) > 0:
+            quality_score += 5
 
-    if len(lim_bound) >= 20:
-        quality_score += 10
-    elif len(lim_bound) > 0:
-        quality_score += 5
+    if lim_bound not in bp_set:
+        if len(lim_bound) >= 20:
+            quality_score += 10
+        elif len(lim_bound) > 0:
+            quality_score += 5
 
-    if isinstance(sem_vars, dict) and len(sem_vars) >= 1:
+    if has_aligned_semantic_variables(eq, sem_vars):
         quality_score += 10
 
     total_score = max(0, min(100, upstream_score + depth_score + downstream_score + quality_score))
@@ -562,9 +584,17 @@ def audit_all(formulas):
 
     subtopic_ctx = _build_subtopic_context(formulas) if len(formulas) > 500 else None
 
+    from collections import Counter
+    sym_cnt = Counter((f.get('symmetry_origin') or '').strip() for f in formulas.values() if (f.get('symmetry_origin') or '').strip())
+    lim_cnt = Counter((f.get('limits_and_boundary') or '').strip() for f in formulas.values() if (f.get('limits_and_boundary') or '').strip())
+    boilerplate_strings = {s for s, c in sym_cnt.items() if c > 15} | {s for s, c in lim_cnt.items() if c > 15}
+
     results = {}
     for fid, form in formulas.items():
-        results[fid] = calculate_lhi(fid, form, formulas, parent_map, reciprocal_child_map, subtopic_ctx=subtopic_ctx)
+        results[fid] = calculate_lhi(
+            fid, form, formulas, parent_map, reciprocal_child_map,
+            subtopic_ctx=subtopic_ctx, boilerplate_strings=boilerplate_strings
+        )
 
     return results
 

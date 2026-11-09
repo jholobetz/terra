@@ -196,8 +196,49 @@ def test_semantic_variables_schema_strict():
             invalid_schema.append(f"{formula_id}: type is {type(sem_vars).__name__}, expected dict")
             continue
 
-        for key in sem_vars.keys():
+        for key, vinfo in sem_vars.items():
             if "$" in key:
                 invalid_schema.append(f"{formula_id}: variable key contains raw '$' delimiter: '{key}'")
+            if key.endswith("\\") or key.count("{") != key.count("}"):
+                invalid_schema.append(f"{formula_id}: variable key has malformed braces or trailing backslash: '{key}'")
+            if isinstance(vinfo, dict):
+                vdesc = (vinfo.get("description") or "").strip()
+                if vdesc == "Physics variable or parameter." or (0 < len(vdesc) < 10):
+                    invalid_schema.append(f"{formula_id}: variable '{key}' has stub description: '{vdesc}'")
 
     assert len(invalid_schema) == 0, f"Found {len(invalid_schema)} semantic_variables schema violations: {invalid_schema[:10]}"
+
+
+def test_no_placeholder_titles_or_templated_prefixes():
+    """Enforces Priority 2 & Priority 3 anti-regression gates across all 256 shards (14,684 formulas)."""
+    violations = []
+    valid_categories = {
+        "astrophysics", "classical-mechanics", "condensed-matter", "electromagnetism",
+        "fluids-nonlinear", "mathematical-methods", "philosophy-of-physics", "quantum-physics",
+        "relativity", "standard-model", "theoretical-physics", "thermodynamics-statistical-mechanics"
+    }
+    bad_title_re = re.compile(r"^(?:custom physical relation|technical relation\b|unknown formula$)", re.IGNORECASE)
+    bad_prefix_re = re.compile(
+        r"^(?:In the study of\s+.+?formalizes a core mathematical condition:|"
+        r"Expresses the quantitative condition\s+\$.+?\$\s+governing|"
+        r"In the physical context of\s+.+?links the active degrees of freedom|"
+        r"Arises within\s+.+?through the transformation and invariance structure of)",
+        re.DOTALL,
+    )
+
+    for f in ALL_FORMULAS:
+        fid = f.get("_id") or f.get("id", "unknown")
+        title = (f.get("title") or "").strip()
+        if not title or bad_title_re.search(title):
+            violations.append((fid, "title", f"Placeholder or empty title: '{title}'"))
+        cat = (f.get("category") or "").strip()
+        if cat not in valid_categories:
+            violations.append((fid, "category", f"Invalid or missing category: '{cat}'"))
+        for field in ("description", "conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary"):
+            val = (f.get(field) or "").strip()
+            if len(val) < 20:
+                violations.append((fid, field, f"Field too short ({len(val)} chars)"))
+            elif bad_prefix_re.match(val):
+                violations.append((fid, field, f"Contains legacy mechanical boilerplate prefix: '{val[:55]}...'"))
+
+    assert len(violations) == 0, f"Found {len(violations)} placeholder title or templated prose violations: {violations[:10]}"

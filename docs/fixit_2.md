@@ -1,8 +1,8 @@
 # 🪐 Physics Lab — Semantic Integrity & Red-Team Anomaly Audit (`docs/fixit_2.md`)
 
 **Date:** November 8, 2026  
-**Scope:** All 256 Formula Hex Shards (`14,684` formulas), Schema Validators (`app/config/formula.schema.json`), and GQS Seeding Pipeline (`gqs.py`)  
-**Status:** Phase 1 Complete (Schema Hardened + Missing Fields & `philosophy-of-physics` Misclassifications Healed) | Phase 2 Actionable Backlog Cataloged Below
+**Scope:** All 256 Formula Hex Shards (`14,684` formulas), Schema Validators (`app/config/formula.schema.json`), Test Suite (`tests/test_formula_latex_integrity.py`), and GQS Seeding Pipeline (`gqs.py`)  
+**Status:** ✅ Phases 1–4 Complete (Schema Hardened, Missing Fields & Categories Healed, `semantic_variables` Cleaned, 864 Placeholder Titles Replaced, 871 Templated Narratives De-Templated, and Permanent Regression Gates Active)
 
 ---
 

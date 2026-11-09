@@ -250,38 +250,21 @@ To eliminate counter-productive amnesia, glossing over existing features, or rei
 
 ## 🛡️ 6. AI Cost Governance & Deterministic Token Safety Policy
 
-All AI automation scripts, batch runners, and model integrations MUST adhere to the **Deterministic Token Governance Standard** detailed in `docs/cost_governance.md`:
+Since the upgrade to **Gemini 4 Argon**, Google AI Studio and Gemini API keys (`GEMINI_FREE_API_KEY` / `GEMINI_API_KEY`) are metered and **must never be assumed to be a $0.00 unbillable free tier**. All AI automation scripts, batch runners, and runtime services MUST adhere to the **6-Pillar Deterministic Token Governance Standard** detailed in [`docs/cost_governance.md`](docs/cost_governance.md):
 
-1. **Pure Free Tier as Default**:
-   * Interactive formula drafting and local developer tooling MUST default to `provider="free"` utilizing Google AI Studio keys (`GEMINI_FREE_API_KEY`).
-   * This tier is hard-locked at **$0.00** at Google's infrastructure level and physically cannot incur credit card debt.
-2. **Deterministic Pre-Flight Token Counting**:
-   * Never guess input tokens. Sizing must be performed using `client.models.count_tokens()` prior to dispatching any generative calls.
-3. **Hard-Capped Worst-Case Outputs**:
-   * Every batch generation request must strictly bound `max_output_tokens` (e.g., 800) and `thinking_budget` (e.g., 512).
-   * Unbounded or open-ended reasoning configurations in batch operations are strictly prohibited.
-4. **Mandatory Non-Zero Budget Ceilings**:
-   * If running paid cloud pipelines, `--max-cost-dollars` MUST require an explicit non-zero value (e.g., defaulting to $1.00, NEVER defaulting to 0.0 / unlimited).
-   * Budget checks must occur **pre-dispatch** (before network requests are fired), preventing in-flight concurrent thread debt.
-5. **Mandatory Canary Calibration**:
-   * Any batch run exceeding 10 items must execute a 5-item canary sample, display empirical token and dollar statistics, and require explicit user authorization before proceeding.
-
----
-
-## 🛡️ 7. Structural Anti-Goodhart & Data Integrity Safeguards
-
-To uphold our guiding ethos of **Intellectual Honesty and Structural Rigor** ([`docs/mandate.md`](docs/mandate.md)) and prevent automated scripts from gaming coverage metrics at the expense of physical truth:
-
-1. **Pair Every Completeness Metric with a Structural Shape Constraint**:
-   * Never measure or gate solely on a raw coverage percentage (e.g., *"100% of formulas have a parent"*). Every completeness metric MUST be paired with a distribution/shape invariant (e.g., maximum direct children per node $\le 25$, plus shared physical symbol or subtopic affinity between parent and child) so catch-all buckets cannot pass the gate.
-2. **Strict Ban on Silent Catch-All Fallbacks in Data-Mutating Scripts**:
-   * Batch enrichment and healing scripts MUST NEVER use a default/fallback catch-all parent or category (e.g., dumping unmatched formulas onto `stationary-action-principle-8836edf7` or `theoretical-physics`) to reach 100% completion. If an item cannot be matched with high structural confidence, it must remain explicitly marked as `UNMAPPED` / `UNVERIFIED` or as an honest root (`DEFINITION`, `AXIOMATIC_FOUNDATION`, `EMPIRICAL_LAW`).
-3. **Separate "Coverage" from "Verified Truth" (`lineage_confidence`)**:
-   * Automated heuristic assignments must never be conflated with human-curated or CAS-verified ground truth. Diagnostics and scorecards must distinguish between `curated` / `cas_verified` links and `heuristic` / `unverified` links.
-4. **Mandatory Extreme-Tail & Random Spot Check Before Committing Batch Scripts**:
-   * Whenever any batch script modifies $> 50$ records across the shards, the developer/agent MUST inspect and report the **top 5 most-affected nodes** (e.g., parents that gained the most children) alongside **5 random samples** before committing, ensuring star-hub packing or regex false positives are caught immediately.
-5. **Honest Baseline Recalibration Over Synthetic Ratchets**:
-   * Monotonic quality ratchets in `scripts/assess` (`docs/reports/latest.json`) exist to catch accidental regressions during normal work—they must NEVER lock in synthetic or regex-inflated data. When purging false or heuristic edges, `latest.json` must be explicitly recalibrated to the honest baseline.
+1. **Pillar 0 — Local-First & In-Session Execution Mandate (Zero External API Calls)**:
+   * Never invoke external `google.genai` network API calls for tasks that can be solved deterministically (local SymPy CAS `lib/cas/cas_engine.py`, LaTeX AST parsing, cross-shard lookup, `scripts/fixlineage`) or directly in-session by the active Antigravity coding agent.
+   * CLI scripts that support external Gemini API calls (`gqs.py seed`, `gqs.py formula-auto-seed`, `scripts/maintenance/generate_gemini_formula.py`) are locked behind an explicit `--allow-external-api` flag.
+2. **Pillar 1 — Deterministic Pre-Flight Token Counting**:
+   * Whenever `--allow-external-api` is authorized, never guess input tokens. Exact sizing must be measured using `client.models.count_tokens()` prior to dispatching any generative calls.
+3. **Pillar 2 — Hard-Capped Worst-Case Outputs**:
+   * Every external generation request must strictly bound both `max_output_tokens` (e.g., 800) and `thinking_config=types.ThinkingConfig(thinking_budget=512)`. Unbounded reasoning budgets are strictly prohibited.
+4. **Pillar 3 — Pre-Dispatch Budget Ceilings**:
+   * Every external API run requires an explicit `--max-cost-dollars` ceiling (defaulting to `$0.50`, NEVER `0.0` / unlimited), evaluated **pre-dispatch** before network requests are fired.
+5. **Pillar 4 — Mandatory Cost Confirmation & Canary Calibration**:
+   * External API scripts must display measured input tokens and worst-case USD cost and require explicit `[y/N]` user confirmation before firing. Batch runs exceeding 10 items must execute a 5-item canary sample first.
+6. **Pillar 5 — Persistent Runtime Embedding Cache**:
+   * [`SemanticSearchService::embedQuery()`](app/logic/SemanticSearchService.php) caches normalized query vectors on disk (`public/cache/embeddings_query_cache.json`) so repeated search queries never trigger redundant external API calls.
 
 ---
 

@@ -379,9 +379,9 @@ def is_formula_pending(formula):
         "great expansion: symmetry derivation pending.",
         "great expansion: limiting case analysis pending."
     ]
-    for field in ["conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary"]:
+    for field in ["description", "conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary"]:
         val = str(formula.get(field, "")).strip().lower()
-        if not val:
+        if not val or val in ("n/a", "null", "none"):
             return True
         if any(p in val for p in placeholders):
             return True
@@ -476,6 +476,7 @@ def generate_formula_template(num_items=5):
             "title": formula.get("title", "Unknown Formula"),
             "equation_svg": formula.get("equation", ""),
             "latex": latex_src,
+            "description": "[AI-DRAFT: A concise subtitle describing what this equation specifies or governs.]",
             "conceptual_definition": "[AI-DRAFT: A high-level conceptual explanation of what this physics formula represents.]",
             "intuitive_summary": "[AI-DRAFT: A concise, single-sentence summary of the physical intuition behind the equation.]",
             "interpretation": "[AI-DRAFT: A paragraph explaining the role of variables in the equation and their physical relationships.]",
@@ -561,8 +562,9 @@ def ingest_formulas():
             
         formula = dict(shard_data[f_id])
         formula["id"] = f_id
+        formula["description"] = draft.get("description") or draft.get("intuitive_summary", "")
         formula["conceptual_definition"] = draft.get("conceptual_definition", "")
-        formula["intuitive_summary"] = draft.get("intuitive_summary", "")
+        formula["intuitive_summary"] = draft.get("intuitive_summary") or draft.get("description", "")
         formula["interpretation"] = draft.get("interpretation", "")
         formula["symmetry_origin"] = draft.get("symmetry_origin", "")
         formula["limits_and_boundary"] = draft.get("limits_and_boundary", "")
@@ -627,6 +629,7 @@ class SemanticVariable(BaseModel):
     description: str = Field(description="Detailed explanation of what this variable represents in this context.")
 
 class PhysicsFormulaMetadata(BaseModel):
+    description: str = Field(description="A concise one-sentence subtitle describing what this physics formula specifies or governs.")
     conceptual_definition: str = Field(description="A high-level conceptual explanation of what this physics formula represents.")
     intuitive_summary: str = Field(description="A concise, single-sentence summary of the physical intuition behind the equation.")
     interpretation: str = Field(description="A paragraph explaining the role of variables in the equation and their physical relationships.")
@@ -636,8 +639,13 @@ class PhysicsFormulaMetadata(BaseModel):
 
 def seed(rate_tier="free"):
     """Enrich empty/placeholder formula entries across the 256 JSON shards using the Gemini API.
-    Supports Vertex AI (GCP credits) and concurrent parallel execution.
+    Requires explicit --allow-external-api opt-in per docs/cost_governance.md (Gemini 4 Argon metered billing).
     """
+    if "--allow-external-api" not in sys.argv:
+        print("🛑 BLOCKED BY COST GOVERNANCE (Pillar 0 - Local-First Mandate):")
+        print("   Under Gemini 4 Argon plan structures, external Gemini API calls are metered.")
+        print("   Please enrich formulas locally in-session or pass '--allow-external-api' to explicitly authorize metered API calls.")
+        sys.exit(1)
     import glob
     import re
     import html
@@ -662,17 +670,17 @@ def seed(rate_tier="free"):
         sys.exit(1)
 
     # Parse rate tier or custom cooldown
-    cooldown = 5.0  # Default safe delay for Free Tier (approx 12 RPM, limit is 15 RPM)
+    cooldown = 5.0  # Default safe delay (12 RPM)
     try:
         cooldown = float(rate_tier)
     except ValueError:
         if rate_tier in ["paid", "pay", "unlimited"]:
             cooldown = 0.2
-            print("Using paid/high-throughput rate tier (0.2s cooldown per request).")
+            print("Using high-throughput rate tier (0.2s cooldown per request).")
         else:
-            print(f"Using default free rate tier (5.0s cooldown per request).")
+            print(f"Using standard rate tier (5.0s cooldown per request).")
 
-    # 1. Configure Gemini API Client (Pure Free Tier - Google AI Studio $0.00)
+    # 1. Configure Gemini API Client (Metered API under Gemini 4 Argon — Governed by docs/cost_governance.md)
     api_key = (
         os.environ.get("GEMINI_FREE_API_KEY")
         or os.environ.get("GEMINI_API_KEY")
@@ -682,13 +690,13 @@ def seed(rate_tier="free"):
         print("Error: No GEMINI_FREE_API_KEY or GEMINI_API_KEY found in environment or keyring.", flush=True)
         sys.exit(1)
     if rate_tier == "vertex":
-        print("Error: Vertex AI is permanently disabled to guarantee $0.00 cost per docs/cost_governance.md.", flush=True)
+        print("Error: Vertex AI is permanently disabled per docs/cost_governance.md.", flush=True)
         sys.exit(1)
 
-    print("API key successfully retrieved (Google AI Studio Free Tier - $0.00).", flush=True)
+    print("API key retrieved (Metered Gemini API — governed by docs/cost_governance.md).", flush=True)
     client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
     MODEL_NAME = get_flash_model()
-    print(f"Using Google AI Studio Model: {MODEL_NAME}", flush=True)
+    print(f"Using Gemini Model: {MODEL_NAME}", flush=True)
 
     SHARDS_DIR = "app/config/content/formulas"
     consecutive_429s = [0]
@@ -815,8 +823,9 @@ def seed(rate_tier="free"):
                             "description": v.get("description", "")
                         }
 
+                formula["description"] = meta.get("description") or meta.get("intuitive_summary", "Concise description pending.")
                 formula["conceptual_definition"] = meta.get("conceptual_definition", "Conceptual definition pending.")
-                formula["intuitive_summary"] = meta.get("intuitive_summary", "Intuitive summary pending.")
+                formula["intuitive_summary"] = meta.get("intuitive_summary") or meta.get("description", "Intuitive summary pending.")
                 formula["interpretation"] = meta.get("interpretation", "Analysis pending.")
                 formula["symmetry_origin"] = meta.get("symmetry_origin", "Theoretical origin under investigation.")
                 formula["limits_and_boundary"] = meta.get("limits_and_boundary", "Boundary conditions pending.")
@@ -1027,9 +1036,15 @@ def formula_auto_seed(limit=5, rate_tier="free"):
         print("Error: Vertex AI is permanently disabled to guarantee $0.00 cost per docs/cost_governance.md.")
         return
 
+    if "--allow-external-api" not in sys.argv:
+        print("🛑 BLOCKED BY COST GOVERNANCE (Pillar 0 - Local-First Mandate):")
+        print("   Under Gemini 4 Argon plan structures, external Gemini API calls are metered.")
+        print("   Please register and enrich formulas locally in-session or pass '--allow-external-api' to explicitly authorize metered API calls.")
+        return
+
     client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
     MODEL_NAME = get_flash_model()
-    print(f"Using Google AI Studio Model (Free Tier - $0.00): {MODEL_NAME}", flush=True)
+    print(f"Using Gemini Model (Metered — governed by docs/cost_governance.md): {MODEL_NAME}", flush=True)
 
     # 2. Audit to find unregistered formulas
     print("🛡️ Scanning subtopics for unregistered equations...")

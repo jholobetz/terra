@@ -296,24 +296,24 @@ def invoke_antigravity_agent(latex_str):
 
     return None, "Invalid JSON returned by agent"
 
-def generate_definition(latex_str):
+def generate_definition(latex_str, allow_external_api=False):
     data = {}
     is_fallback = False
     fallback_reason = None
     source = "gemini_api"
 
-    # 1. Primary Engine: Local Antigravity Agent (Zero API keys, zero 20-call daily cap)
+    # 1. Primary Engine: Local Antigravity Agent (Zero external API keys or metered token spend)
     agent_data, agent_status = invoke_antigravity_agent(latex_str)
     if agent_data and isinstance(agent_data, dict) and agent_data.get("conceptual_definition"):
         data = agent_data
         source = "antigravity_agent"
-    else:
-        # 2. Fallback Engine: Google AI Studio API key cascade
+    elif allow_external_api:
+        # 2. Opt-in Fallback Engine: Metered Google AI Studio API key cascade (Requires --allow-external-api per docs/cost_governance.md)
         try:
             client, model_name = get_gemini_client()
             prompt = f"{SYSTEM_PROMPT}\n\nLaTeX Equation to Analyze: {latex_str}"
 
-            # Resilient multi-model cascade across free-tier candidate models
+            # Resilient multi-model cascade across candidate models
             models_to_try = [model_name]
             try:
                 from lib.ai.models import get_flash_candidates
@@ -332,13 +332,16 @@ def generate_definition(latex_str):
                 active_model = m_name
                 for attempt in range(1, 3):
                     try:
+                        # Pillar 1 & 2 (docs/cost_governance.md): Pre-flight token count + bounded output & thinking caps
+                        _ = client.models.count_tokens(model=m_name, contents=prompt).total_tokens
                         response = client.models.generate_content(
                             model=m_name,
                             contents=prompt,
                             config=types.GenerateContentConfig(
                                 response_mime_type="application/json",
                                 temperature=0.2,
-                                max_output_tokens=2500,
+                                max_output_tokens=800,
+                                thinking_config=types.ThinkingConfig(thinking_budget=512),
                             ),
                         )
                         if response and response.text:
@@ -391,6 +394,11 @@ def generate_definition(latex_str):
             source = "heuristic_fallback"
             fallback_reason = f"{type(e).__name__}: {str(e)}"
             data = synthesize_local_definition(latex_str)
+    else:
+        is_fallback = True
+        source = "heuristic_fallback"
+        fallback_reason = f"Local agent unavailable ({agent_status}) and --allow-external-api not set"
+        data = synthesize_local_definition(latex_str)
 
 
     if not isinstance(data, dict) or not data.get("conceptual_definition"):
@@ -527,10 +535,11 @@ def main():
     parser.add_argument('--latex', required=True, help="LaTeX equation string")
     parser.add_argument('--subtopic', required=False, default=None, help="Subtopic slug to link")
     parser.add_argument('--dry-run', action='store_true', help="Validate and prove without saving")
+    parser.add_argument('--allow-external-api', action='store_true', help="Explicitly authorize metered external Gemini API fallback if local agent is unavailable")
     args = parser.parse_args()
 
     try:
-        formula_obj, lineage_info = generate_definition(args.latex)
+        formula_obj, lineage_info = generate_definition(args.latex, allow_external_api=args.allow_external_api)
         result = save_and_sync(formula_obj, subtopic_slug=args.subtopic, dry_run=args.dry_run)
         if lineage_info and "lineage" not in result:
             result["lineage"] = lineage_info

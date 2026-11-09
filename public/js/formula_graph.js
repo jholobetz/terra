@@ -582,12 +582,20 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
         layerKeys.forEach(layerIdx => {
             const layerNodes = layers[layerIdx];
+            if (layerIdx === 0 && layerNodes.length > 1) {
+                const rootPos = layerNodes.findIndex(n => n.is_root);
+                if (rootPos !== -1) {
+                    const [rootNode] = layerNodes.splice(rootPos, 1);
+                    const centerIdx = Math.floor(layerNodes.length / 2);
+                    layerNodes.splice(centerIdx, 0, rootNode);
+                }
+            }
             const totalWidth = (layerNodes.length - 1) * nodeSpacingX;
             const startX = -totalWidth / 2;
 
             layerNodes.forEach((node, idx) => {
                 const x = startX + idx * nodeSpacingX;
-                const staggerY = (layerNodes.length > 4 && idx % 2 === 1) ? staggerStepY : 0;
+                const staggerY = (!node.is_root && layerNodes.length > 4 && idx % 2 === 1) ? staggerStepY : 0;
                 const y = layerIdx * layerSpacingY + staggerY;
                 nodePositions[node.id] = { x, y, node };
                 if (x < minX) minX = x;
@@ -619,9 +627,13 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
             path.setAttribute('d', `M ${src.x} ${src.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${tgt.x} ${tgt.y}`);
             path.setAttribute('fill', 'none');
-            path.setAttribute('stroke', link.direction === 'upstream' ? 'rgba(56, 189, 248, 0.45)' : 'rgba(100, 255, 218, 0.45)');
+            const isSiblingLink = link.direction === 'sibling' || link.type === 'sibling';
+            const strokeColor = isSiblingLink
+                ? 'rgba(167, 139, 250, 0.48)'
+                : (link.direction === 'upstream' ? 'rgba(56, 189, 248, 0.55)' : 'rgba(100, 255, 218, 0.45)');
+            path.setAttribute('stroke', strokeColor);
             path.setAttribute('stroke-width', this.isFullscreen ? '2' : '1.6');
-            path.setAttribute('stroke-dasharray', link.type === 'subcomponent' ? '3,3' : 'none');
+            path.setAttribute('stroke-dasharray', isSiblingLink ? '4,3' : (link.type === 'subcomponent' ? '3,3' : 'none'));
             linkGroup.appendChild(path);
         });
 

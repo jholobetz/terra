@@ -16,23 +16,23 @@
             <div id="controls" class="controls">
                 <!-- Controls will be injected here by simulation script -->
             </div>
-            
-            <div class="physics-info">
-                <h4>The Physics</h4>
-                <p><?= $physics ?></p>
-                <?php if (!empty($formulas) && is_array($formulas)): ?>
-                    <?php $this->render('physics/_equations_partial', ['formulas' => $formulas, 'equations' => $equations ?? [], 'breakdowns' => $breakdowns ?? [], 'nonce' => $nonce]); ?>
-                <?php elseif (!empty($equations) && is_array($equations)): ?>
-                    <div class="equations">
-                        <?php foreach ($equations as $eq): ?>
-                            <div class="sim-equation-item" style="margin: 10px 0; padding: 8px 10px; background: rgba(2, 6, 23, 0.55); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; color: #ffd700; overflow-x: auto;">
-                                \[ <?= $eq ?> \]
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
         </aside>
+
+        <div class="physics-info">
+            <h4>The Physics</h4>
+            <p><?= $physics ?></p>
+            <?php if (!empty($formulas) && is_array($formulas)): ?>
+                <?php $this->render('physics/_equations_partial', ['formulas' => $formulas, 'equations' => $equations ?? [], 'breakdowns' => $breakdowns ?? [], 'nonce' => $nonce]); ?>
+            <?php elseif (!empty($equations) && is_array($equations)): ?>
+                <div class="equations" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 14px; margin-top: 16px;">
+                    <?php foreach ($equations as $eq): ?>
+                        <div class="sim-equation-item" style="margin: 0; padding: 12px 16px; background: rgba(2, 6, 23, 0.55); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; color: #ffd700; min-width: 0; max-width: 100%; box-sizing: border-box; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            \[ <?= $eq ?> \]
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 
     <footer class="simulation-footer">

@@ -1542,9 +1542,46 @@ h1 .subtopic-link, h2 .subtopic-link, h3 .subtopic-link, h4 .subtopic-link,
     line-height: 1.55;
 }
 
-/* Equation Render Styling */
+/* Equation Render Styling & Universal Responsive SVG Auto-Fit */
 mjx-container {
     color: #fcd34d !important; /* Gold */
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+mjx-container[display="true"] {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0.4em 0 !important;
+    text-align: center;
+}
+
+mjx-container:not([display="true"]) {
+    display: inline-block;
+    max-width: 100% !important;
+    vertical-align: baseline;
+}
+
+mjx-container > svg {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+.sim-equation-item,
+.equation-container,
+.derivation-step-eq,
+.derivation-step-rationale,
+.tier-card,
+.tier-card p,
+#conceptual-intro-card,
+#ai-scenarios-list,
+#math-preview-box,
+#math-render-target {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
 }
 
 .equations-section {
@@ -1664,8 +1701,8 @@ mjx-container {
 .simulation-layout {
     display: grid;
     grid-template-columns: 1fr 340px;
-    gap: 30px;
-    margin-bottom: 60px;
+    gap: 24px;
+    margin-bottom: 40px;
     align-items: start;
 }
 
@@ -1677,8 +1714,6 @@ mjx-container {
     justify-content: center;
     align-items: center;
     min-height: 540px;
-    position: sticky;
-    top: 90px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 12px 40px rgba(0,0,0,0.6);
 }
@@ -1700,7 +1735,7 @@ mjx-container {
 
 .controls-panel {
     background: rgba(15, 23, 42, 0.6);
-    padding: 28px;
+    padding: 20px 22px;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     color: var(--text-color);
@@ -1709,15 +1744,15 @@ mjx-container {
 .controls-panel h3 {
     margin-top: 0;
     color: var(--accent-color);
-    font-size: 1.15rem;
-    margin-bottom: 20px;
+    font-size: 1.08rem;
+    margin-bottom: 14px;
 }
 
 .controls {
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    margin-bottom: 24px;
+    gap: 12px;
+    margin-bottom: 0;
 }
 
 .controls label {
@@ -1733,20 +1768,26 @@ mjx-container {
 }
 
 .physics-info {
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    padding-top: 20px;
+    grid-column: 1 / -1;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 22px 26px;
 }
 
 .physics-info h4 {
     margin: 0 0 10px 0;
-    font-size: 0.95rem;
-    color: #ffffff;
+    font-size: 1.02rem;
+    color: var(--accent-color, #64ffda);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .physics-info p {
-    font-size: 0.85rem;
+    font-size: 0.92rem;
     color: var(--text-muted);
-    line-height: 1.5;
+    line-height: 1.65;
+    margin: 0;
 }
 
 .physics-info .equations {

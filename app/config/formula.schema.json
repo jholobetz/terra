@@ -5,18 +5,66 @@
     "type": "object",
     "additionalProperties": {
         "type": "object",
-        "required": ["title", "equation", "status"],
+        "required": [
+            "title",
+            "equation",
+            "status",
+            "category",
+            "description",
+            "conceptual_definition",
+            "intuitive_summary",
+            "interpretation",
+            "symmetry_origin",
+            "limits_and_boundary",
+            "semantic_variables"
+        ],
         "properties": {
             "title": {
                 "type": "string",
+                "minLength": 3,
                 "description": "The display title of the formula."
             },
             "equation": {
                 "type": "string",
-                "description": "The compiled SVG string containing the data-tex LaTeX attribute."
+                "minLength": 1,
+                "description": "The LaTeX or compiled SVG string containing the formula."
+            },
+            "category": {
+                "type": "string",
+                "enum": [
+                    "astrophysics",
+                    "classical-mechanics",
+                    "condensed-matter",
+                    "electromagnetism",
+                    "fluids-nonlinear",
+                    "mathematical-methods",
+                    "philosophy-of-physics",
+                    "quantum-physics",
+                    "relativity",
+                    "standard-model",
+                    "theoretical-physics",
+                    "thermodynamics-statistical-mechanics"
+                ],
+                "description": "Canonical primary physics domain category."
+            },
+            "description": {
+                "type": "string",
+                "minLength": 20,
+                "description": "Concise one-sentence summary of what the formula specifies or governs."
+            },
+            "conceptual_definition": {
+                "type": "string",
+                "minLength": 20,
+                "description": "High-level conceptual explanation of the physical law or identity."
+            },
+            "intuitive_summary": {
+                "type": "string",
+                "minLength": 20,
+                "description": "Plain-English intuitive summary of the equation's physical meaning."
             },
             "semantic_variables": {
                 "type": "object",
+                "minProperties": 1,
                 "description": "Explicit mappings of LaTeX symbols to constants or concepts.",
                 "additionalProperties": {
                     "anyOf": [
@@ -34,9 +82,9 @@
                     ]
                 }
             },
-            "interpretation": { "type": "string" },
-            "symmetry_origin": { "type": "string" },
-            "limits_and_boundary": { "type": "string" },
+            "interpretation": { "type": "string", "minLength": 20 },
+            "symmetry_origin": { "type": "string", "minLength": 20 },
+            "limits_and_boundary": { "type": "string", "minLength": 20 },
             "status": {
                 "type": "string",
                 "enum": ["platinum", "platinum-draft", "draft", "published"]

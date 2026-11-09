@@ -65,10 +65,13 @@ class FormulaGraphService {
         $visitedNodes = [$formulaId => 0]; // id => distance/depth
         $subgraphLinks = [];
         $seenLinks = [];
+        $directChildren = $downstream[$formulaId] ?? [];
+        $isSparseLeaf = count($directChildren) < 3;
+        $upstreamDepth = ($isSparseLeaf && empty($directChildren)) ? max($depth, 3) : $depth;
 
         // 1. Traverse Upstream (Parents / Prerequisites / Axioms)
         $currentLayer = [$formulaId];
-        for ($d = 1; $d <= $depth; $d++) {
+        for ($d = 1; $d <= $upstreamDepth; $d++) {
             $nextLayer = [];
             foreach ($currentLayer as $currId) {
                 $parents = $upstream[$currId] ?? [];
@@ -130,12 +133,127 @@ class FormulaGraphService {
             $currentLayer = $nextLayer;
         }
 
+        // 2b. Leaf & Sparse Neighborhood Expansion (Co-Derived Siblings & Parallel Branches)
+        if ($isSparseLeaf) {
+            $directParentIds = array_keys(array_filter($visitedNodes, fn($v) => $v === -1));
+            $grandparentIds = array_keys(array_filter($visitedNodes, fn($v) => $v === -2));
+
+            // Expand co-derived siblings from direct parent(s) at Layer 0
+            $siblingsAdded = 0;
+            $siblingIds = [];
+            foreach ($directParentIds as $pid) {
+                foreach (($downstream[$pid] ?? []) as $sibEdge) {
+                    if ($siblingsAdded >= 6) break;
+                    $sibId = $sibEdge['id'];
+                    if ($sibId === $formulaId) continue;
+                    $edgeKey = "$pid->$sibId";
+                    if (!isset($seenLinks[$edgeKey])) {
+                        $seenLinks[$edgeKey] = true;
+                        $subgraphLinks[] = [
+                            'source' => $pid,
+                            'target' => $sibId,
+                            'type' => 'sibling',
+                            'label' => 'Co-Derived Sibling',
+                            'direction' => 'sibling'
+                        ];
+                    }
+                    if (!isset($visitedNodes[$sibId])) {
+                        $visitedNodes[$sibId] = 0;
+                        $siblingIds[] = $sibId;
+                        $siblingsAdded++;
+                    }
+                }
+            }
+
+            // Expand parallel branches (aunts/uncles) from grandparent(s) at Layer -1
+            $unclesAdded = 0;
+            $uncleIds = [];
+            foreach ($grandparentIds as $gpId) {
+                foreach (($downstream[$gpId] ?? []) as $uncleEdge) {
+                    if ($unclesAdded >= 5) break;
+                    $uncleId = $uncleEdge['id'];
+                    if (in_array($uncleId, $directParentIds, true)) continue;
+                    $edgeKey = "$gpId->$uncleId";
+                    if (!isset($seenLinks[$edgeKey])) {
+                        $seenLinks[$edgeKey] = true;
+                        $subgraphLinks[] = [
+                            'source' => $gpId,
+                            'target' => $uncleId,
+                            'type' => 'sibling',
+                            'label' => 'Parallel Branch',
+                            'direction' => 'sibling'
+                        ];
+                    }
+                    if (!isset($visitedNodes[$uncleId])) {
+                        $visitedNodes[$uncleId] = -1;
+                        $uncleIds[] = $uncleId;
+                        $unclesAdded++;
+                    }
+                }
+            }
+
+            // If Layer 0 still has < 4 nodes, include up to 2 children per parallel branch at Layer 0
+            if ($siblingsAdded < 3 && !empty($uncleIds)) {
+                foreach ($uncleIds as $uncleId) {
+                    $cousinPerUncle = 0;
+                    foreach (($downstream[$uncleId] ?? []) as $cousinEdge) {
+                        if ($siblingsAdded >= 5 || $cousinPerUncle >= 2) break;
+                        $cousinId = $cousinEdge['id'];
+                        $edgeKey = "$uncleId->$cousinId";
+                        if (!isset($seenLinks[$edgeKey])) {
+                            $seenLinks[$edgeKey] = true;
+                            $subgraphLinks[] = [
+                                'source' => $uncleId,
+                                'target' => $cousinId,
+                                'type' => 'sibling',
+                                'label' => 'Parallel Derivative',
+                                'direction' => 'sibling'
+                            ];
+                        }
+                        if (!isset($visitedNodes[$cousinId])) {
+                            $visitedNodes[$cousinId] = 0;
+                            $siblingIds[] = $cousinId;
+                            $siblingsAdded++;
+                            $cousinPerUncle++;
+                        }
+                    }
+                }
+            }
+
+            // Expand up to 2 downstream children of Layer 0 siblings at Layer +1
+            $nephewsAdded = 0;
+            foreach ($siblingIds as $sibId) {
+                $perSib = 0;
+                foreach (($downstream[$sibId] ?? []) as $nephewEdge) {
+                    if ($nephewsAdded >= 6 || $perSib >= 2) break;
+                    $nephewId = $nephewEdge['id'];
+                    $edgeKey = "$sibId->$nephewId";
+                    if (!isset($seenLinks[$edgeKey])) {
+                        $seenLinks[$edgeKey] = true;
+                        $subgraphLinks[] = [
+                            'source' => $sibId,
+                            'target' => $nephewId,
+                            'type' => $nephewEdge['type'] ?? 'subcomponent',
+                            'label' => $nephewEdge['label'] ?? 'Derived Equation',
+                            'direction' => 'downstream'
+                        ];
+                    }
+                    if (!isset($visitedNodes[$nephewId])) {
+                        $visitedNodes[$nephewId] = 1;
+                        $nephewsAdded++;
+                        $perSib++;
+                    }
+                }
+            }
+        }
+
         // 3. Assemble full node records
         $subgraphNodes = [];
         foreach ($visitedNodes as $nid => $layerDepth) {
             if (isset($nodes[$nid])) {
                 $nodeData = $nodes[$nid];
                 $nodeData['is_root'] = ($nid === $formulaId);
+                $nodeData['is_sibling'] = ($nid !== $formulaId && $layerDepth <= 0 && !in_array($nid, array_column($upstream[$formulaId] ?? [], 'id'), true));
                 $nodeData['layer'] = $layerDepth;
                 $subgraphNodes[] = $nodeData;
             }
@@ -150,7 +268,8 @@ class FormulaGraphService {
                 'total_nodes' => count($subgraphNodes),
                 'total_links' => count($subgraphLinks),
                 'upstream_count' => count(array_filter($visitedNodes, fn($v) => $v < 0)),
-                'downstream_count' => count(array_filter($visitedNodes, fn($v) => $v > 0))
+                'downstream_count' => count(array_filter($visitedNodes, fn($v) => $v > 0)),
+                'sibling_count' => max(0, count(array_filter($visitedNodes, fn($v) => $v === 0)) - 1)
             ]
         ];
     }

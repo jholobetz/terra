@@ -792,6 +792,55 @@ class PhysicsService
                     'equation' => $parentObj['equation'] ?? '',
                     'url' => '/physics/equation-explainer?id=' . urlencode($parentId)
                 ];
+
+                // 1b. Resolve Co-Derived Siblings & Parallel Family Equations
+                $siblings = [];
+                $seenSibIds = [$fId => true, $parentId => true];
+                $parentSubs = $parentObj['subcomponents'] ?? [];
+                if (is_array($parentSubs)) {
+                    foreach ($parentSubs as $sibItem) {
+                        $sibId = is_string($sibItem) ? $sibItem : ($sibItem['id'] ?? '');
+                        if (!$sibId || isset($seenSibIds[$sibId])) continue;
+                        $sibObj = $this->loadFormula($sibId);
+                        if ($sibObj) {
+                            $seenSibIds[$sibId] = true;
+                            $siblings[] = [
+                                'id' => $sibId,
+                                'title' => $sibObj['title'] ?? 'Co-Derived Equation',
+                                'equation' => $sibObj['equation'] ?? '',
+                                'derivation_type' => 'CO_DERIVED_SIBLING',
+                                'url' => '/physics/equation-explainer?id=' . urlencode($sibId)
+                            ];
+                        }
+                        if (count($siblings) >= 8) break;
+                    }
+                }
+
+                // If direct parent has few other children, include parallel branches from grandparent
+                if (count($siblings) < 6 && !empty($parentObj['parent_formula_id'])) {
+                    $gpId = $parentObj['parent_formula_id'];
+                    $gpObj = $this->loadFormula($gpId);
+                    if ($gpObj && !empty($gpObj['subcomponents']) && is_array($gpObj['subcomponents'])) {
+                        $seenSibIds[$gpId] = true;
+                        foreach ($gpObj['subcomponents'] as $uncleItem) {
+                            $uncleId = is_string($uncleItem) ? $uncleItem : ($uncleItem['id'] ?? '');
+                            if (!$uncleId || isset($seenSibIds[$uncleId])) continue;
+                            $uncleObj = $this->loadFormula($uncleId);
+                            if ($uncleObj) {
+                                $seenSibIds[$uncleId] = true;
+                                $siblings[] = [
+                                    'id' => $uncleId,
+                                    'title' => $uncleObj['title'] ?? 'Parallel Branch Equation',
+                                    'equation' => $uncleObj['equation'] ?? '',
+                                    'derivation_type' => 'PARALLEL_BRANCH',
+                                    'url' => '/physics/equation-explainer?id=' . urlencode($uncleId)
+                                ];
+                            }
+                            if (count($siblings) >= 8) break;
+                        }
+                    }
+                }
+                $formula['sibling_formulas'] = $siblings;
             }
         }
 

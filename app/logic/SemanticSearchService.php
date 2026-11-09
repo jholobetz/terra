@@ -10,9 +10,12 @@ class SemanticSearchService
     private string $embeddingsGzPath;
     private string $subtopicsPath;
     private string $subtopicsGzPath;
+    private string $queryCachePath;
     private ?array $embeddingsIndex = null;
     private ?array $subtopicsIndex = null;
+    private ?array $queryCache = null;
     private ?string $apiKey = null;
+    private bool $externalApiDisabled = false;
     private string $embeddingModel = 'gemini-embedding-001';
 
     public function __construct()
@@ -21,6 +24,7 @@ class SemanticSearchService
         $this->embeddingsGzPath = PROJECT_ROOT . '/app/config/physics_embeddings.json.gz';
         $this->subtopicsPath = PROJECT_ROOT . '/app/config/subtopic_embeddings.json';
         $this->subtopicsGzPath = PROJECT_ROOT . '/app/config/subtopic_embeddings.json.gz';
+        $this->queryCachePath = PROJECT_ROOT . '/public/cache/embeddings_query_cache.json';
 
         // Load model from centralized ai_models.json
         $modelsPath = PROJECT_ROOT . '/app/config/ai_models.json';
@@ -33,6 +37,8 @@ class SemanticSearchService
         if (file_exists(PROJECT_ROOT . '/.env')) {
             $env = parse_ini_file(PROJECT_ROOT . '/.env');
             $this->apiKey = $env['GEMINI_API_KEY'] ?? $env['GEMINI_FREE_API_KEY'] ?? getenv('GEMINI_API_KEY') ?: null;
+            $disableFlag = $env['DISABLE_EXTERNAL_EMBEDDING_API'] ?? getenv('DISABLE_EXTERNAL_EMBEDDING_API') ?: '0';
+            $this->externalApiDisabled = in_array(strtolower((string)$disableFlag), ['1', 'true', 'yes'], true);
         }
     }
 
@@ -77,20 +83,46 @@ class SemanticSearchService
     }
 
     /**
-     * Generates an embedding vector for a query using the centralized Gemini embedding model.
+     * Generates an embedding vector for a query using the centralized Gemini embedding model,
+     * backed by a persistent local disk cache (Pillar 5 of docs/cost_governance.md) so repeated
+     * queries never incur redundant external API calls.
      */
     public function embedQuery(string $text): ?array
     {
-        if (!$this->apiKey) {
+        $normalized = strtolower(trim(preg_replace('/\s+/', ' ', $text)));
+        if ($normalized === '' || strlen($normalized) > 500) {
             return null;
         }
 
         $model = $this->embeddingModel ?: 'gemini-embedding-001';
+        $cacheKey = hash('sha256', $model . ':' . $normalized);
+
+        if ($this->queryCache === null) {
+            $this->queryCache = [];
+            if (file_exists($this->queryCachePath)) {
+                $raw = @file_get_contents($this->queryCachePath);
+                if ($raw) {
+                    $decoded = json_decode($raw, true);
+                    if (is_array($decoded)) {
+                        $this->queryCache = $decoded;
+                    }
+                }
+            }
+        }
+
+        if (isset($this->queryCache[$cacheKey]) && is_array($this->queryCache[$cacheKey])) {
+            return $this->queryCache[$cacheKey];
+        }
+
+        if ($this->externalApiDisabled || !$this->apiKey) {
+            return null;
+        }
+
         $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:embedContent?key={$this->apiKey}";
         $payload = [
             'model' => "models/{$model}",
             'content' => [
-                'parts' => [['text' => $text]]
+                'parts' => [['text' => $normalized]]
             ]
         ];
 
@@ -108,7 +140,20 @@ class SemanticSearchService
 
         if ($code === 200 && $res) {
             $data = json_decode($res, true);
-            return $data['embedding']['values'] ?? null;
+            $values = $data['embedding']['values'] ?? null;
+            if (is_array($values) && !empty($values)) {
+                // Keep at most 1,000 recent query embeddings in the disk cache
+                if (count($this->queryCache) >= 1000) {
+                    $this->queryCache = array_slice($this->queryCache, -800, null, true);
+                }
+                $this->queryCache[$cacheKey] = $values;
+                $cacheDir = dirname($this->queryCachePath);
+                if (!is_dir($cacheDir)) {
+                    @mkdir($cacheDir, 0775, true);
+                }
+                @file_put_contents($this->queryCachePath, json_encode($this->queryCache), LOCK_EX);
+                return $values;
+            }
         }
 
         return null;

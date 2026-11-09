@@ -172,6 +172,44 @@ const ExplainerCards = {
             `;
         }
 
+        const hasSiblings = Array.isArray(formula.sibling_formulas) && formula.sibling_formulas.length > 0;
+        if (hasSiblings && (!hasSubcomponents || formula.subcomponents.length < 3)) {
+            html += `
+                <div style="margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; color: #a78bfa; font-weight: 600;">
+                            ↔ Parallel & Co-Derived Family Equations (${formula.sibling_formulas.length})
+                        </div>
+                        <span style="font-size: 0.72rem; color: #94a3b8;">Derived alongside this identity from the same parent/grandparent Hamiltonian</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;">
+            `;
+            formula.sibling_formulas.forEach((sib) => {
+                const rawSibEq = sib.equation || '';
+                let sibEq = (typeof this.getCleanLatexFromEq === 'function')
+                    ? this.getCleanLatexFromEq(rawSibEq)
+                    : rawSibEq.trim();
+                const safeSibEq = this.escapeMathForHtml(sibEq);
+                const safeSibAttr = safeSibEq.replace(/"/g, '&quot;');
+                const sibUrl = sib.url || `/physics/equation-explainer?id=${encodeURIComponent(sib.id)}`;
+                const badgeLabel = (sib.derivation_type || 'CO_DERIVED_SIBLING').replace(/_/g, ' ');
+                const mathPart = safeSibEq ? `<span data-latex="${safeSibAttr}" style="font-size: 0.9rem; color: #ffd700;">\\(${safeSibEq}\\)</span>` : '';
+                html += `
+                    <a href="${sibUrl}" class="lineage-formula-link" data-formula-id="${sib.id}" data-latex="${safeSibAttr}" style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(167, 139, 250, 0.18); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(167,139,250,0.5)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(167,139,250,0.18)'; this.style.transform='none'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;">
+                            <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${sib.title}</span>
+                            <span style="font-size: 0.62rem; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; background: rgba(167, 139, 250, 0.12); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.28); white-space: nowrap; flex-shrink: 0;">${badgeLabel}</span>
+                        </div>
+                        ${mathPart}
+                    </a>
+                `;
+            });
+            html += `
+                    </div>
+                </div>
+            `;
+        }
+
         if (formula.constraints) {
             try {
                 const c = typeof formula.constraints === 'string' ? JSON.parse(formula.constraints) : formula.constraints;

@@ -52,8 +52,8 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
         </div>
 
         <div id="math-preview-box" 
-             style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 0.8) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 36px 24px; min-height: 110px; display: flex; align-items: center; justify-content: flex-start; box-sizing: border-box; position: relative; overflow-x: auto; max-width: 100%; width: 100%; min-width: 0;">
-            <div id="math-render-target" style="font-size: 1.8rem; color: #ffd700; transition: color 0.2s; margin: 0 auto; line-height: 1.4;">
+             style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 0.8) 100%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 36px 24px; min-height: 110px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; position: relative; overflow: hidden; max-width: 100%; width: 100%; min-width: 0;">
+            <div id="math-render-target" style="font-size: 1.8rem; color: #ffd700; transition: color 0.2s; margin: 0 auto; line-height: 1.4; width: 100%; max-width: 100%; min-width: 0; text-align: center;">
                 <!-- LaTeX rendered here -->
             </div>
         </div>

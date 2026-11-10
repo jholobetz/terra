@@ -116,7 +116,7 @@ def test_no_html_inside_subtopic_svg_data_tex():
 
 def test_formula_narrative_math_delimiters():
     corrupted_formulas = []
-    fields_to_check = ["conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary"]
+    fields_to_check = ["description", "conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary"]
     
     for f in ALL_FORMULAS:
         formula_id = f.get("_id")
@@ -185,8 +185,13 @@ def test_disk_to_database_integrity():
     assert len(mismatches) == 0, f"Found {len(mismatches)} desynchronizations between disk shards and MariaDB: {mismatches[:10]}"
 
 def test_semantic_variables_schema_strict():
-    """Asserts that all formula records across all 256 shards have valid semantic_variables objects without corrupt key names or invalid types."""
+    """Asserts that all formula records across all 256 shards have valid semantic_variables objects without corrupt key names, self-referential names, or fallback placeholders."""
     invalid_schema = []
+    fallback_re = re.compile(
+        r"\b(Physical Quantity|Constant or Parameter|Dimensionless Parameter|"
+        r"Vector / Tensor Component|Differential Quantity|State Function or Operator|Unknown Variable)\b",
+        re.IGNORECASE,
+    )
 
     for f in ALL_FORMULAS:
         formula_id = f.get("_id") or f.get("id", "unknown")
@@ -201,6 +206,12 @@ def test_semantic_variables_schema_strict():
                 invalid_schema.append(f"{formula_id}: variable key contains raw '$' delimiter: '{key}'")
             if key.endswith("\\") or key.count("{") != key.count("}"):
                 invalid_schema.append(f"{formula_id}: variable key has malformed braces or trailing backslash: '{key}'")
+            vname = (vinfo.get("name") or "").strip() if isinstance(vinfo, dict) else str(vinfo).strip()
+            clean_key = key.strip("$\\ ")
+            if not vname or len(vname) <= 1 or vname == key.strip() or vname == clean_key:
+                invalid_schema.append(f"{formula_id}: variable '{key}' has self-referential or 1-char name: '{vname}'")
+            elif fallback_re.search(vname):
+                invalid_schema.append(f"{formula_id}: variable '{key}' has generic fallback name: '{vname}'")
             if isinstance(vinfo, dict):
                 vdesc = (vinfo.get("description") or "").strip()
                 if vdesc == "Physics variable or parameter." or (0 < len(vdesc) < 10):
@@ -217,7 +228,11 @@ def test_no_placeholder_titles_or_templated_prefixes():
         "fluids-nonlinear", "mathematical-methods", "philosophy-of-physics", "quantum-physics",
         "relativity", "standard-model", "theoretical-physics", "thermodynamics-statistical-mechanics"
     }
-    bad_title_re = re.compile(r"^(?:custom physical relation|technical relation\b|unknown formula$)", re.IGNORECASE)
+    bad_title_re = re.compile(r"^(?:custom physical relation|technical relation\b|unknown formula$|missing terms$)", re.IGNORECASE)
+    hex_byte_re = re.compile(r"0x[0-9A-Fa-f]{2}")
+    non_canonical_delim_re = re.compile(r"\\\(|\\\)|\\\[|\\\]|\$\$")
+    html_or_md_re = re.compile(r"<(?:ul|ol|li|b|i|strong|em|p|br)\b|\*\*[^*]+\*\*", re.IGNORECASE)
+    split_math_re = re.compile(r"\$\\(?:hat|vec|bar|tilde|dot|ddot|mathbf|mathcal|mathrm|text|frac|sqrt)\$\{\$")
     bad_prefix_re = re.compile(
         r"^(?:In the study of\s+.+?formalizes a core mathematical condition:|"
         r"Expresses the quantitative condition\s+\$.+?\$\s+governing|"
@@ -226,19 +241,56 @@ def test_no_placeholder_titles_or_templated_prefixes():
         re.DOTALL,
     )
 
+    valid_lineage_confidence = {"curated", "cas_verified", "root_axiom", "heuristic"}
+    valid_derivation_types = {
+        "AXIOMATIC_FOUNDATION", "DEFINITION", "DERIVED_FROM", "SPECIAL_CASE",
+        "GENERALIZATION", "LIMITING_CASE", "APPROXIMATION", "EMPIRICAL_LAW",
+        "THEORETICAL_DERIVATION", "PHENOMENOLOGICAL",
+    }
+    prose_fields = ("description", "conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary")
     for f in ALL_FORMULAS:
         fid = f.get("_id") or f.get("id", "unknown")
         title = (f.get("title") or "").strip()
+        eq = (f.get("equation") or "").strip()
         if not title or bad_title_re.search(title):
             violations.append((fid, "title", f"Placeholder or empty title: '{title}'"))
+        if hex_byte_re.search(title):
+            violations.append((fid, "title", f"Contains raw hex-byte sequence: '{title}'"))
+        if non_canonical_delim_re.search(title):
+            violations.append((fid, "title", f"Contains non-canonical math delimiter in title: '{title}'"))
+        if hex_byte_re.search(eq):
+            violations.append((fid, "equation", f"Contains raw hex-byte sequence: '{eq}'"))
         cat = (f.get("category") or "").strip()
         if cat not in valid_categories:
             violations.append((fid, "category", f"Invalid or missing category: '{cat}'"))
-        for field in ("description", "conceptual_definition", "intuitive_summary", "interpretation", "symmetry_origin", "limits_and_boundary"):
+        lc = (f.get("lineage_confidence") or "").strip()
+        if lc not in valid_lineage_confidence:
+            violations.append((fid, "lineage_confidence", f"Invalid or missing lineage_confidence: '{lc}'"))
+        dt = (f.get("derivation_type") or "").strip()
+        if dt not in valid_derivation_types:
+            violations.append((fid, "derivation_type", f"Non-canonical derivation_type: '{dt}'"))
+        cv = f.get("cas_validation")
+        if isinstance(cv, dict) and cv.get("status") in ("INHOMOGENEOUS", "UNVERIFIED"):
+            violations.append((fid, "cas_validation", f"Residual uncertified CAS status in shard: '{cv.get('status')}'"))
+        seen_vals = {}
+        for field in prose_fields:
             val = (f.get(field) or "").strip()
-            if len(val) < 20:
-                violations.append((fid, field, f"Field too short ({len(val)} chars)"))
+            min_len = 35 if field == "symmetry_origin" else 20
+            if len(val) < min_len:
+                violations.append((fid, field, f"Field too short ({len(val)} < {min_len} chars): '{val}'"))
             elif bad_prefix_re.match(val):
                 violations.append((fid, field, f"Contains legacy mechanical boilerplate prefix: '{val[:55]}...'"))
+            if hex_byte_re.search(val):
+                violations.append((fid, field, f"Contains raw hex-byte sequence in {field}"))
+            if non_canonical_delim_re.search(val):
+                violations.append((fid, field, f"Contains non-canonical math delimiter in {field}"))
+            if html_or_md_re.search(val):
+                violations.append((fid, field, f"Contains raw HTML tag or Markdown bold in {field}"))
+            if split_math_re.search(val):
+                violations.append((fid, field, f"Contains split-command math delimiter in {field}"))
+            if val in seen_vals:
+                violations.append((fid, field, f"Verbatim duplicate of {seen_vals[val]}"))
+            elif val:
+                seen_vals[val] = field
 
     assert len(violations) == 0, f"Found {len(violations)} placeholder title or templated prose violations: {violations[:10]}"

@@ -19,35 +19,24 @@
 
 ---
 
-## 🔄 Priority 2: Close the MariaDB Column Gap for Newly Enriched Formula Fields *(Production Parity Win)*
+## ✅ Priority 2: Close the MariaDB Column Gap for Newly Enriched Formula Fields *(COMPLETED)*
 
-* **What's Happening Now**:
-  Across `fixit_2.md` and `fixit_3.md`, four key fields were enriched and strictly gated across all **14,684** shard records:
-  1. `description` (formal technical specification, distinct from `intuitive_summary`)
-  2. `category` (the 12 canonical physics domains)
-  3. `lineage_confidence` (`curated`, `cas_verified`, `root_axiom`, `heuristic`)
-  4. `record_type` (`equation` vs. `symbol_or_term`)
-
-  However, inspecting [`ShardSyncService.php`](../app/logic/ShardSyncService.php) (lines 62–87, 379–399, 479–503) and [`PhysicsService::saveFormula()`](../app/logic/PhysicsService.php) (lines 548–567) shows that the MariaDB `formulas` table **does not yet have columns** for `description`, `category`, `lineage_confidence`, or `record_type`.
-* **Why It Matters**:
-  In production mode (`?preview=0`), [`PhysicsService::loadFormula()`](../app/logic/PhysicsService.php) (lines 345–412) queries MariaDB directly and returns without reading the JSON shard on disk—meaning those 4 fields silently return `null` / missing in live production queries.
-* **Proposed Optimization**:
-  1. Add `description` (`TEXT`), `category` (`VARCHAR(64)`, indexed), `lineage_confidence` (`VARCHAR(32)`, indexed), and `record_type` (`VARCHAR(32)`) to `ShardSyncService.php` and `PhysicsService::saveFormula()`.
-  2. Execute a forced MariaDB sync so all 14,684 rows in MariaDB match the 256 Git shards 1:1.
-  3. Expand `test_disk_to_database_integrity()` in [`tests/test_formula_latex_integrity.py`](../tests/test_formula_latex_integrity.py) to verify `description`, `category`, `lineage_confidence`, and `record_type` between disk shards and MariaDB.
+* **Original Gap**:
+  The MariaDB `formulas` table lacked 5 schema fields populated across the 256 Git shards: `category` (`14,684`), `description` (`14,684`), `lineage_confidence` (`14,684`), `record_type` (`14,684`), and `equation_family` (`6,017`). Live production reads (`?preview=0`) via [`PhysicsService::loadFormula()`](../app/logic/PhysicsService.php) returned without those fields.
+* **Implemented Resolution**:
+  1. Added `category` (`VARCHAR(64)`, indexed via `idx_formulas_category`), `description` (`TEXT`), `lineage_confidence` (`VARCHAR(32)`, indexed via `idx_formulas_lineage_conf`), `record_type` (`VARCHAR(32)`), and `equation_family` (`VARCHAR(128)`) to [`ShardSyncService.php`](../app/logic/ShardSyncService.php) and [`PhysicsService::saveFormula()`](../app/logic/PhysicsService.php).
+  2. Extended Dual-Layer Schema Resilience in [`PhysicsService::loadFormula()`](../app/logic/PhysicsService.php) and stripped numeric PDO keys (`PDO::FETCH_BOTH` guard) in both `loadFormula()` and `saveFormula()` (cleaning the 1 legacy numeric-key leak on `photon-energy` in `shard_fd.json` and backfilling `record_type` on the 3 newest shard entries for `14,684 / 14,684` parity).
+  3. Migrated and backfilled all **14,684** MariaDB rows via `php cli_sync.php` and expanded `test_disk_to_database_integrity()` in [`tests/test_formula_latex_integrity.py`](../tests/test_formula_latex_integrity.py) across all 10 prose & metadata columns.
 
 ---
 
-## ⚡ Priority 3: Unify Duplicate Formula Sync Paths in `ShardSyncService.php` *(~10x Faster Incremental Sync)*
+## ✅ Priority 3: Unify Duplicate Formula Sync Paths in `ShardSyncService.php` *(COMPLETED)*
 
-* **What's Happening Now**:
-  [`ShardSyncService.php`](../app/logic/ShardSyncService.php) currently maintains **two separate formula-sync implementations**:
-  - [`syncFormulasToDatabase()`](../app/logic/ShardSyncService.php) (lines 29–259): SHA-256 hash-driven via `formulas_hash_registry.json`, skipping unchanged shards before `json_decode()`.
-  - [`performSync()`](../app/logic/ShardSyncService.php) (lines 451–535, invoked by `cli_sync.php`): `filemtime()`-driven via `.last_sync`, which **reads and `json_decode()`s all 256 shard files on every run** to construct `$diskFormulaIds` for orphan pruning, and executes blind `ALTER TABLE` statements inside `try/catch` blocks on every run.
-* **Proposed Optimization**:
-  1. Consolidate `performSync()` step 4 to delegate directly to the unified `syncFormulasToDatabase($force)` upsert path so schema columns are maintained in a single SQL definition.
-  2. Query `INFORMATION_SCHEMA.COLUMNS` once per sync instead of firing `ALTER TABLE` exceptions on every invocation.
-  3. Only run full-catalog orphan scans when shard hashes have changed or `$force = true`.
+* **Original Bottleneck**:
+  [`ShardSyncService.php`](../app/logic/ShardSyncService.php) maintained two separate formula-sync engines (`syncFormulasToDatabase()` vs. `performSync()` step 4), decoding all 256 shards twice on every `cli_sync.php` run, leaving `formulas_hash_registry.json` un-updated, and firing 12 blind `ALTER TABLE` statements inside `try/catch`.
+* **Implemented Resolution**:
+  1. Added idempotent [`ShardSyncService::ensureFormulasSchema()`](../app/logic/ShardSyncService.php) using `INFORMATION_SCHEMA.COLUMNS` and `INFORMATION_SCHEMA.STATISTICS` (zero blind `ALTER TABLE` exceptions; auto-triggers full backfill only when new columns are added).
+  2. Consolidated `<svg data-tex="...">` extraction into [`syncFormulasToDatabase()`](../app/logic/ShardSyncService.php) and replaced the duplicate 90-line formula loop in `performSync()` step 4 with `$this->syncFormulasToDatabase($force)`, rebuilding `formulas_latex_index.json` only when shards changed or `$force = true`.
 
 ---
 

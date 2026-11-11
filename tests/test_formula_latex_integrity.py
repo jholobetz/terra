@@ -137,26 +137,35 @@ def fetch_mariadb_formulas():
     config_path = os.path.join(PROJECT_ROOT, "app", "config", "config.php")
     
     php_code = f'''
+    error_reporting(0);
+    ini_set('display_errors', '0');
+    ini_set('memory_limit', '512M');
     require '{autoload_path}';
     $config = require '{config_path}';
     $dbConfig = $config['database'] ?? [];
     $dsn = 'mysql:host=' . ($dbConfig['host'] ?? '127.0.0.1') . ';dbname=' . ($dbConfig['dbname'] ?? 'physicslab') . ';charset=utf8mb4';
     try {{
-        $pdo = new PDO($dsn, $dbConfig['user'] ?? 'doc', $dbConfig['password'] ?? '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-        $stmt = $pdo->query('SELECT id, equation, interpretation, symmetry_origin, limits_and_boundary FROM formulas');
-        $data = [];
+        $pdo = new PDO($dsn, $dbConfig['user'] ?? 'doc', $dbConfig['password'] ?? '', [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ]);
+        $stmt = $pdo->query('SELECT id, equation, description, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, category, lineage_confidence, record_type, equation_family FROM formulas');
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {{
-            $data[$row['id']] = $row;
+            echo json_encode($row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\\n";
         }}
-        echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }} catch (\\Throwable $e) {{
-        echo json_encode(null);
+        echo "__DB_ERROR__";
     }}
     '''
     res = subprocess.run(["php", "-r", php_code], capture_output=True, text=True, cwd=PROJECT_ROOT)
-    if res.returncode == 0 and res.stdout.strip():
+    out = res.stdout.strip()
+    if res.returncode == 0 and out and not out.startswith("__DB_ERROR__"):
         try:
-            return json.loads(res.stdout.strip())
+            data = {}
+            for line in out.splitlines():
+                if line:
+                    row = json.loads(line)
+                    data[row["id"]] = row
+            return data
         except Exception:
             return None
     return None
@@ -168,11 +177,26 @@ def test_disk_to_database_integrity():
         pytest.skip("MariaDB database is offline or unreachable.")
 
     mismatches = []
-    fields_to_compare = ["interpretation", "symmetry_origin", "limits_and_boundary"]
+    missing_in_db = []
+    fields_to_compare = [
+        "description",
+        "conceptual_definition",
+        "intuitive_summary",
+        "interpretation",
+        "symmetry_origin",
+        "limits_and_boundary",
+        "category",
+        "lineage_confidence",
+        "record_type",
+        "equation_family",
+    ]
 
     for f in ALL_FORMULAS:
         formula_id = f.get("_id")
-        if not formula_id or formula_id not in db_map:
+        if not formula_id:
+            continue
+        if formula_id not in db_map:
+            missing_in_db.append(formula_id)
             continue
 
         db_row = db_map[formula_id]
@@ -182,6 +206,7 @@ def test_disk_to_database_integrity():
             if shard_val != db_val:
                 mismatches.append((formula_id, key, f"Shard: '{shard_val[:30]}...' != MariaDB: '{db_val[:30]}...'"))
 
+    assert len(missing_in_db) == 0, f"Found {len(missing_in_db)} shard formulas missing in MariaDB: {missing_in_db[:10]}"
     assert len(mismatches) == 0, f"Found {len(mismatches)} desynchronizations between disk shards and MariaDB: {mismatches[:10]}"
 
 def test_semantic_variables_schema_strict():
@@ -263,6 +288,12 @@ def test_no_placeholder_titles_or_templated_prefixes():
         cat = (f.get("category") or "").strip()
         if cat not in valid_categories:
             violations.append((fid, "category", f"Invalid or missing category: '{cat}'"))
+        rt = (f.get("record_type") or "").strip()
+        if rt not in ("equation", "symbol_or_term"):
+            violations.append((fid, "record_type", f"Invalid or missing record_type: '{rt}'"))
+        num_keys = [k for k in f.keys() if str(k).isdigit()]
+        if num_keys:
+            violations.append((fid, "numeric_keys", f"Leaked numeric keys in shard record: {num_keys}"))
         lc = (f.get("lineage_confidence") or "").strip()
         if lc not in valid_lineage_confidence:
             violations.append((fid, "lineage_confidence", f"Invalid or missing lineage_confidence: '{lc}'"))

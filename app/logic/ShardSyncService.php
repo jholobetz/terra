@@ -24,6 +24,111 @@ class ShardSyncService
     }
 
     /**
+     * Ensures the MariaDB `formulas` table and all columns/indexes exist using
+     * INFORMATION_SCHEMA introspection (zero blind ALTER TABLE exceptions).
+     *
+     * @param mixed $db PDO wrapper instance
+     * @return bool True if any missing column was newly added (requiring a full backfill)
+     */
+    public function ensureFormulasSchema($db): bool
+    {
+        if (!$db || !method_exists($db, 'runQuery') || !method_exists($db, 'fetchAll')) {
+            return false;
+        }
+
+        $db->runQuery("CREATE TABLE IF NOT EXISTS formulas (
+            id VARCHAR(255) PRIMARY KEY,
+            parent_formula_id VARCHAR(255),
+            derivation_type VARCHAR(50),
+            lineage_confidence VARCHAR(32) DEFAULT NULL,
+            category VARCHAR(64) DEFAULT NULL,
+            record_type VARCHAR(32) DEFAULT 'equation',
+            equation_family VARCHAR(128) DEFAULT NULL,
+            constraints JSON,
+            related_formula_ids JSON,
+            subcomponents JSON,
+            derivation_steps JSON,
+            cas_validation JSON,
+            title VARCHAR(255) NOT NULL,
+            equation MEDIUMTEXT NOT NULL,
+            equation_svg MEDIUMTEXT,
+            description TEXT,
+            conceptual_definition TEXT,
+            intuitive_summary TEXT,
+            interpretation TEXT,
+            symmetry_origin TEXT,
+            limits_and_boundary TEXT,
+            semantic_variables JSON,
+            unit_system VARCHAR(50) DEFAULT 'SI',
+            status VARCHAR(50) DEFAULT 'platinum',
+            INDEX idx_formulas_category (category),
+            INDEX idx_formulas_lineage_conf (lineage_confidence),
+            FULLTEXT INDEX ft_formulas (title, conceptual_definition, equation)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        $existingCols = [];
+        $colRows = $db->fetchAll(
+            "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'formulas'"
+        ) ?: [];
+        foreach ($colRows as $r) {
+            $arr = is_object($r) ? (method_exists($r, 'getData') ? $r->getData() : (array) $r) : (array) $r;
+            $name = $arr['COLUMN_NAME'] ?? $arr['column_name'] ?? null;
+            if ($name) {
+                $existingCols[$name] = true;
+            }
+        }
+
+        $requiredColumns = [
+            'parent_formula_id'  => "ADD COLUMN parent_formula_id VARCHAR(255) AFTER id",
+            'derivation_type'    => "ADD COLUMN derivation_type VARCHAR(50) AFTER parent_formula_id",
+            'lineage_confidence' => "ADD COLUMN lineage_confidence VARCHAR(32) DEFAULT NULL AFTER derivation_type",
+            'category'           => "ADD COLUMN category VARCHAR(64) DEFAULT NULL AFTER lineage_confidence",
+            'record_type'        => "ADD COLUMN record_type VARCHAR(32) DEFAULT 'equation' AFTER category",
+            'equation_family'    => "ADD COLUMN equation_family VARCHAR(128) DEFAULT NULL AFTER record_type",
+            'constraints'        => "ADD COLUMN constraints JSON",
+            'related_formula_ids'=> "ADD COLUMN related_formula_ids JSON",
+            'subcomponents'      => "ADD COLUMN subcomponents JSON",
+            'derivation_steps'   => "ADD COLUMN derivation_steps JSON",
+            'cas_validation'     => "ADD COLUMN cas_validation JSON",
+            'equation_svg'       => "ADD COLUMN equation_svg MEDIUMTEXT AFTER equation",
+            'description'        => "ADD COLUMN description TEXT AFTER equation_svg",
+        ];
+
+        $columnsAdded = false;
+        foreach ($requiredColumns as $col => $ddlClause) {
+            if (!isset($existingCols[$col])) {
+                $db->runQuery("ALTER TABLE formulas {$ddlClause};");
+                $existingCols[$col] = true;
+                $columnsAdded = true;
+            }
+        }
+
+        $existingIdx = [];
+        $idxRows = $db->fetchAll(
+            "SELECT DISTINCT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'formulas'"
+        ) ?: [];
+        foreach ($idxRows as $r) {
+            $arr = is_object($r) ? (method_exists($r, 'getData') ? $r->getData() : (array) $r) : (array) $r;
+            $name = $arr['INDEX_NAME'] ?? $arr['index_name'] ?? null;
+            if ($name) {
+                $existingIdx[$name] = true;
+            }
+        }
+
+        if (!isset($existingIdx['idx_formulas_category'])) {
+            $db->runQuery("ALTER TABLE formulas ADD INDEX idx_formulas_category (category);");
+        }
+        if (!isset($existingIdx['idx_formulas_lineage_conf'])) {
+            $db->runQuery("ALTER TABLE formulas ADD INDEX idx_formulas_lineage_conf (lineage_confidence);");
+        }
+        if (!isset($existingIdx['ft_formulas'])) {
+            $db->runQuery("ALTER TABLE formulas ADD FULLTEXT INDEX ft_formulas (title, conceptual_definition, equation);");
+        }
+
+        return $columnsAdded;
+    }
+
+    /**
      * Fast, hash-based transactional upsert of modified JSON formula shards to MariaDB.
      */
     public function syncFormulasToDatabase(bool $force = false): array
@@ -46,29 +151,31 @@ class ShardSyncService
 
         if ($db) {
             try {
-                $db->runQuery("ALTER TABLE formulas ADD COLUMN derivation_steps JSON AFTER subcomponents;");
-                $force = true;
+                if ($this->ensureFormulasSchema($db)) {
+                    $force = true;
+                }
             } catch (\Throwable $e) {
-                // Column already exists
-            }
-            try {
-                $db->runQuery("ALTER TABLE formulas ADD COLUMN cas_validation JSON AFTER derivation_steps;");
-                $force = true;
-            } catch (\Throwable $e) {
-                // Column already exists
+                // Non-fatal if DB permissions restrict DDL introspection
             }
         }
 
-        $upsertWithStepsSql = "
+        $upsertFullSql = "
             INSERT INTO formulas (
-                id, title, equation, conceptual_definition, intuitive_summary,
+                id, title, category, record_type, equation_family,
+                equation, equation_svg, description, conceptual_definition, intuitive_summary,
                 interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
-                parent_formula_id, derivation_type, subcomponents, derivation_steps, cas_validation,
+                parent_formula_id, derivation_type, lineage_confidence,
+                subcomponents, derivation_steps, cas_validation,
                 constraints, related_formula_ids, status, unit_system
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
                 title = VALUES(title),
+                category = VALUES(category),
+                record_type = VALUES(record_type),
+                equation_family = VALUES(equation_family),
                 equation = VALUES(equation),
+                equation_svg = VALUES(equation_svg),
+                description = VALUES(description),
                 conceptual_definition = VALUES(conceptual_definition),
                 intuitive_summary = VALUES(intuitive_summary),
                 interpretation = VALUES(interpretation),
@@ -77,6 +184,7 @@ class ShardSyncService
                 semantic_variables = VALUES(semantic_variables),
                 parent_formula_id = VALUES(parent_formula_id),
                 derivation_type = VALUES(derivation_type),
+                lineage_confidence = VALUES(lineage_confidence),
                 subcomponents = VALUES(subcomponents),
                 derivation_steps = VALUES(derivation_steps),
                 cas_validation = VALUES(cas_validation),
@@ -111,6 +219,13 @@ class ShardSyncService
                 unit_system = VALUES(unit_system)
         ";
 
+        $encodeJsonField = static function ($val): ?string {
+            if (empty($val)) {
+                return null;
+            }
+            return is_string($val) ? $val : json_encode($val, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        };
+
         foreach ($shardFiles as $filePath) {
             $relativePath = str_replace(PROJECT_ROOT . '/', '', $filePath);
             $fileContent = file_get_contents($filePath);
@@ -141,12 +256,15 @@ class ShardSyncService
                         continue;
                     }
 
-                    $encodeJsonField = static function ($val): ?string {
-                        if (empty($val)) {
-                            return null;
+                    $eq = $formula['equation'] ?? '';
+                    $cleanEq = $eq;
+                    $eqSvg = $formula['equation_svg'] ?? null;
+                    if (strpos($eq, '<svg') === 0) {
+                        $eqSvg = $eq;
+                        if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
+                            $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
                         }
-                        return is_string($val) ? $val : json_encode($val, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-                    };
+                    }
 
                     $semanticVars = $encodeJsonField($formula['semantic_variables'] ?? null);
                     $subcomponents = $encodeJsonField($formula['subcomponents'] ?? null);
@@ -156,10 +274,15 @@ class ShardSyncService
                     $relatedIds = $encodeJsonField($formula['related_formula_ids'] ?? null);
 
                     try {
-                        $db->runQuery($upsertWithStepsSql, [
+                        $db->runQuery($upsertFullSql, [
                             $formulaId,
                             $formula['title'] ?? '',
-                            $formula['equation'] ?? '',
+                            $formula['category'] ?? null,
+                            $formula['record_type'] ?? (str_contains($cleanEq, '=') ? 'equation' : 'symbol_or_term'),
+                            $formula['equation_family'] ?? null,
+                            $cleanEq,
+                            $eqSvg,
+                            $formula['description'] ?? '',
                             $formula['conceptual_definition'] ?? '',
                             $formula['intuitive_summary'] ?? '',
                             $formula['interpretation'] ?? '',
@@ -168,6 +291,7 @@ class ShardSyncService
                             $semanticVars,
                             $formula['parent_formula_id'] ?? null,
                             $formula['derivation_type'] ?? null,
+                            $formula['lineage_confidence'] ?? null,
                             $subcomponents,
                             $derivationSteps,
                             $casValidation,
@@ -181,7 +305,7 @@ class ShardSyncService
                         $db->runQuery($upsertFallbackSql, [
                             $formulaId,
                             $formula['title'] ?? '',
-                            $formula['equation'] ?? '',
+                            $cleanEq,
                             $formula['conceptual_definition'] ?? '',
                             $formula['intuitive_summary'] ?? '',
                             $formula['interpretation'] ?? '',
@@ -342,8 +466,6 @@ class ShardSyncService
         $this->physicsService->loadAllShards();
         $data = $this->physicsService->getPhysicsContent();
         $db = $this->app->db();
-        $syncLock = PROJECT_ROOT . '/app/config/.last_sync';
-        $lastSyncTime = file_exists($syncLock) ? filemtime($syncLock) : 0;
 
         // 1. Auto-provision the database tables if they do not exist
         $db->runQuery("CREATE TABLE IF NOT EXISTS topics (
@@ -376,46 +498,23 @@ class ShardSyncService
             verification JSON
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
-        $db->runQuery("CREATE TABLE IF NOT EXISTS formulas (
-            id VARCHAR(255) PRIMARY KEY,
-            parent_formula_id VARCHAR(255),
-            derivation_type VARCHAR(50),
-            constraints JSON,
-            related_formula_ids JSON,
-            subcomponents JSON,
-            derivation_steps JSON,
-            cas_validation JSON,
-            title VARCHAR(255) NOT NULL,
-            equation MEDIUMTEXT NOT NULL,
-            equation_svg MEDIUMTEXT,
-            conceptual_definition TEXT,
-            intuitive_summary TEXT,
-            interpretation TEXT,
-            symmetry_origin TEXT,
-            limits_and_boundary TEXT,
-            semantic_variables JSON,
-            unit_system VARCHAR(50) DEFAULT 'SI',
-            status VARCHAR(50) DEFAULT 'published'
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-
-        $alterQueries = [
-            "ALTER TABLE formulas ADD COLUMN equation_svg MEDIUMTEXT AFTER equation;",
-            "ALTER TABLE formulas ADD COLUMN parent_formula_id VARCHAR(255) AFTER id;",
-            "ALTER TABLE formulas ADD COLUMN derivation_type VARCHAR(50) AFTER parent_formula_id;",
-            "ALTER TABLE formulas ADD COLUMN constraints JSON AFTER derivation_type;",
-            "ALTER TABLE formulas ADD COLUMN related_formula_ids JSON AFTER constraints;",
-            "ALTER TABLE formulas ADD COLUMN subcomponents JSON AFTER related_formula_ids;",
-            "ALTER TABLE formulas ADD COLUMN derivation_steps JSON AFTER subcomponents;",
-            "ALTER TABLE formulas ADD COLUMN cas_validation JSON AFTER derivation_steps;",
-            "ALTER TABLE subtopics ADD FULLTEXT INDEX ft_subtopics (title, content);",
-            "ALTER TABLE formulas ADD FULLTEXT INDEX ft_formulas (title, conceptual_definition, equation);"
-        ];
-        foreach ($alterQueries as $sql) {
-            try {
-                $db->runQuery($sql);
-            } catch (\Exception $e) {
-                // Column or index already exists, ignore
+        $subtopicIdxRows = $db->fetchAll(
+            "SELECT DISTINCT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'subtopics'"
+        ) ?: [];
+        $hasFtSubtopics = false;
+        foreach ($subtopicIdxRows as $r) {
+            $arr = is_object($r) ? (method_exists($r, 'getData') ? $r->getData() : (array) $r) : (array) $r;
+            if (($arr['INDEX_NAME'] ?? $arr['index_name'] ?? '') === 'ft_subtopics') {
+                $hasFtSubtopics = true;
+                break;
             }
+        }
+        if (!$hasFtSubtopics) {
+            $db->runQuery("ALTER TABLE subtopics ADD FULLTEXT INDEX ft_subtopics (title, content);");
+        }
+
+        if ($this->ensureFormulasSchema($db)) {
+            $force = true;
         }
 
         // 2. Sync Topics
@@ -448,101 +547,14 @@ class ShardSyncService
             $this->syncIndividualSubtopic($slug, $st);
         }
 
-        // 4. Sync Formulas (Grouped Transactionally & Differentially)
-        $formulasDir = PROJECT_ROOT . '/app/config/content/formulas/';
-        $formulaFiles = array_merge(glob($formulasDir . 'shard_*.json') ?: [], glob($formulasDir . '*/shard_*.json') ?: []);
+        // 4. Sync Formulas via unified SHA-256 hash-driven upsert & orphan pruning
+        $formulaSync = $this->syncFormulasToDatabase($force);
 
-        $db->runQuery("START TRANSACTION");
-        try {
-            $diskFormulaIds = [];
-
-            foreach ($formulaFiles as $file) {
-                $isModified = $force || (filemtime($file) > $lastSyncTime);
-                $content = json_decode(file_get_contents($file), true) ?: [];
-
-                foreach ($content as $fId => $fData) {
-                    $diskFormulaIds[] = $fId;
-
-                    if ($isModified) {
-                        $eq = $fData['equation'] ?? '';
-                        $cleanEq = $eq;
-                        $eqSvg = $fData['equation_svg'] ?? null;
-
-                        if (strpos($eq, '<svg') === 0) {
-                            $eqSvg = $eq;
-                            if (preg_match('/data-tex="([^"]+)"/i', $eq, $matches)) {
-                                $cleanEq = html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
-                            }
-                        }
-
-                        $db->runQuery(
-                            "INSERT INTO formulas (
-                                id, parent_formula_id, derivation_type, constraints, related_formula_ids, subcomponents, derivation_steps, cas_validation,
-                                title, equation, equation_svg, conceptual_definition, intuitive_summary, 
-                                interpretation, symmetry_origin, limits_and_boundary, semantic_variables,
-                                unit_system, status
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                            ON DUPLICATE KEY UPDATE 
-                                parent_formula_id = VALUES(parent_formula_id),
-                                derivation_type = VALUES(derivation_type),
-                                constraints = VALUES(constraints),
-                                related_formula_ids = VALUES(related_formula_ids),
-                                subcomponents = VALUES(subcomponents),
-                                derivation_steps = VALUES(derivation_steps),
-                                cas_validation = VALUES(cas_validation),
-                                title = VALUES(title),
-                                equation = VALUES(equation),
-                                equation_svg = VALUES(equation_svg),
-                                conceptual_definition = VALUES(conceptual_definition),
-                                intuitive_summary = VALUES(intuitive_summary),
-                                interpretation = VALUES(interpretation),
-                                symmetry_origin = VALUES(symmetry_origin),
-                                limits_and_boundary = VALUES(limits_and_boundary),
-                                semantic_variables = VALUES(semantic_variables),
-                                unit_system = VALUES(unit_system),
-                                status = VALUES(status)",
-                            [
-                                $fId,
-                                $fData['parent_formula_id'] ?? null,
-                                $fData['derivation_type'] ?? null,
-                                !empty($fData['constraints']) ? json_encode($fData['constraints']) : null,
-                                !empty($fData['related_formula_ids']) ? json_encode($fData['related_formula_ids']) : null,
-                                !empty($fData['subcomponents']) ? json_encode($fData['subcomponents']) : null,
-                                !empty($fData['derivation_steps']) ? json_encode($fData['derivation_steps']) : null,
-                                !empty($fData['cas_validation']) ? json_encode($fData['cas_validation'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null,
-                                $fData['title'],
-                                $cleanEq,
-                                $eqSvg,
-                                $fData['conceptual_definition'] ?? null,
-                                $fData['intuitive_summary'] ?? null,
-                                $fData['interpretation'] ?? null,
-                                $fData['symmetry_origin'] ?? null,
-                                $fData['limits_and_boundary'] ?? null,
-                                isset($fData['semantic_variables']) ? json_encode($fData['semantic_variables']) : null,
-                                $fData['unit_system'] ?? 'SI',
-                                $fData['status'] ?? 'published'
-                            ]
-                        );
-                    }
-                }
-            }
-
-            // Prune orphaned database formulas
-            $dbRows = $db->fetchAll("SELECT id FROM formulas");
-            $dbFormulaIds = array_map(fn($row) => $row->id, $dbRows);
-            $orphanedFormulas = array_diff($dbFormulaIds, $diskFormulaIds);
-            if (!empty($orphanedFormulas)) {
-                $placeholders = implode(',', array_fill(0, count($orphanedFormulas), '?'));
-                $db->runQuery(
-                    "DELETE FROM formulas WHERE id IN ($placeholders)",
-                    array_values($orphanedFormulas)
-                );
-            }
-
-            $db->runQuery("COMMIT");
-
-            // 4a. Compile formula LaTeX index for fast lookup (preserving existing prose aliases)
-            $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
+        // 4a. Compile formula LaTeX index only when shards changed, forced, or index missing
+        $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
+        if (($formulaSync['shards_changed'] ?? 0) > 0 || $force || !file_exists($indexFile)) {
+            $formulasDir = PROJECT_ROOT . '/app/config/content/formulas/';
+            $formulaFiles = array_merge(glob($formulasDir . 'shard_*.json') ?: [], glob($formulasDir . '*/shard_*.json') ?: []);
             $latexIndex = file_exists($indexFile) ? (json_decode(file_get_contents($indexFile), true) ?: []) : [];
             foreach ($formulaFiles as $file) {
                 $content = json_decode(file_get_contents($file), true) ?: [];
@@ -561,12 +573,10 @@ class ShardSyncService
                 }
             }
             file_put_contents(
-                PROJECT_ROOT . '/app/config/formulas_latex_index.json',
-                json_encode($latexIndex, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+                $indexFile,
+                json_encode($latexIndex, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+                LOCK_EX
             );
-        } catch (\Exception $e) {
-            $db->runQuery("ROLLBACK");
-            throw $e;
         }
 
         // 5. Automatically prune database subtopics

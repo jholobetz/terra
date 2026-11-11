@@ -365,6 +365,11 @@ class PhysicsService
                 $row = $this->app->db()->fetchRow("SELECT * FROM formulas WHERE id = ?", [$fId]);
                 if ($row) {
                     $formula = is_object($row) && method_exists($row, 'getData') ? $row->getData() : (array) $row;
+                    foreach (array_keys($formula) as $rawKey) {
+                        if (is_int($rawKey) || ctype_digit((string) $rawKey)) {
+                            unset($formula[$rawKey]);
+                        }
+                    }
                     if (!empty($formula)) {
                         if (isset($formula['semantic_variables'])) {
                             $formula['semantic_variables'] = is_string($formula['semantic_variables'])
@@ -388,6 +393,11 @@ class PhysicsService
                         }
                         $hasStepsCol = array_key_exists('derivation_steps', $formula);
                         $hasCasCol = array_key_exists('cas_validation', $formula);
+                        $hasEnrichedCols = array_key_exists('description', $formula)
+                            && array_key_exists('category', $formula)
+                            && array_key_exists('lineage_confidence', $formula)
+                            && array_key_exists('record_type', $formula)
+                            && array_key_exists('equation_family', $formula);
 
                         if (isset($formula['derivation_steps'])) {
                             $formula['derivation_steps'] = is_string($formula['derivation_steps'])
@@ -400,8 +410,8 @@ class PhysicsService
                                 : $formula['cas_validation'];
                         }
                         // Dual-Layer Schema Resilience: Only read the Git shard from disk if the MariaDB table
-                        // schema has not yet been migrated to include `derivation_steps` or `cas_validation`.
-                        if (!$hasStepsCol || !$hasCasCol) {
+                        // schema has not yet been migrated to include the full enriched column set.
+                        if (!$hasStepsCol || !$hasCasCol || !$hasEnrichedCols) {
                             $hexPrefix = substr(md5($fId), 0, 2);
                             $shardFile = PROJECT_ROOT . '/app/config/content/formulas/' . $hexPrefix . '/shard_' . $hexPrefix . '.json';
                             if (file_exists($shardFile)) {
@@ -414,6 +424,11 @@ class PhysicsService
                                 }
                                 if (!$hasCasCol && !empty($rawShard[$fId]['cas_validation'])) {
                                     $formula['cas_validation'] = $rawShard[$fId]['cas_validation'];
+                                }
+                                foreach (['description', 'category', 'lineage_confidence', 'record_type', 'equation_family'] as $enrichedField) {
+                                    if (!array_key_exists($enrichedField, $formula) && isset($rawShard[$fId][$enrichedField])) {
+                                        $formula[$enrichedField] = $rawShard[$fId][$enrichedField];
+                                    }
                                 }
                             }
                         }
@@ -481,6 +496,13 @@ class PhysicsService
             return false;
         }
 
+        // Strip any numeric keys (e.g. from PDO::FETCH_BOTH) so they never leak into shards
+        foreach (array_keys($data) as $rawKey) {
+            if (is_int($rawKey) || ctype_digit((string) $rawKey)) {
+                unset($data[$rawKey]);
+            }
+        }
+
         // 1. Sanitize equation against HTML tags and formatting leaks
         if (!empty($data['equation']) && is_string($data['equation'])) {
             $data['equation'] = $this->sanitizer->sanitizeEquation($data['equation']);
@@ -507,6 +529,19 @@ class PhysicsService
                 if ($oldEq === $newEq) {
                     $data['cas_validation'] = $shardData[$fId]['cas_validation'];
                 }
+            }
+
+            // Preserve enriched metadata fields from existing shard entry on partial updates
+            foreach (['category', 'record_type', 'lineage_confidence', 'equation_family', 'description'] as $metaField) {
+                if (empty($data[$metaField]) && !empty($shardData[$fId][$metaField])) {
+                    $data[$metaField] = $shardData[$fId][$metaField];
+                }
+            }
+            if (empty($data['record_type'])) {
+                $data['record_type'] = str_contains($data['equation'] ?? '', '=') ? 'equation' : 'symbol_or_term';
+            }
+            if (empty($data['lineage_confidence'])) {
+                $data['lineage_confidence'] = empty($data['parent_formula_id']) ? 'root_axiom' : 'curated';
             }
 
             // Ensure semantic_variables is an object in JSON (never empty array [])
@@ -565,7 +600,11 @@ class PhysicsService
                         $db->runQuery(
                             "UPDATE formulas SET 
                                 title = ?, 
+                                category = ?, 
+                                record_type = ?, 
+                                equation_family = ?, 
                                 equation = ?, 
+                                description = ?, 
                                 conceptual_definition = ?, 
                                 intuitive_summary = ?, 
                                 interpretation = ?, 
@@ -574,6 +613,7 @@ class PhysicsService
                                 semantic_variables = ?, 
                                 parent_formula_id = ?, 
                                 derivation_type = ?, 
+                                lineage_confidence = ?, 
                                 subcomponents = ?, 
                                 derivation_steps = ?, 
                                 cas_validation = ?, 
@@ -585,7 +625,11 @@ class PhysicsService
                             WHERE id = ?",
                             [
                                 $data['title'] ?? null,
+                                $data['category'] ?? null,
+                                $data['record_type'] ?? null,
+                                $data['equation_family'] ?? null,
                                 $data['equation'] ?? null,
+                                $data['description'] ?? null,
                                 $data['conceptual_definition'] ?? null,
                                 $data['intuitive_summary'] ?? null,
                                 $data['interpretation'] ?? null,
@@ -594,6 +638,7 @@ class PhysicsService
                                 $semanticVars,
                                 $data['parent_formula_id'] ?? null,
                                 $data['derivation_type'] ?? null,
+                                $data['lineage_confidence'] ?? null,
                                 $subcomponents,
                                 $derivationSteps,
                                 $casValidation,
@@ -605,7 +650,7 @@ class PhysicsService
                             ]
                         );
                     } catch (\Throwable $colErr) {
-                        // Fallback in case derivation_steps or cas_validation column is not migrated yet
+                        // Fallback in case schema migration has not run yet
                         $db->runQuery(
                             "UPDATE formulas SET 
                                 title = ?, 
@@ -648,12 +693,16 @@ class PhysicsService
                 } else {
                     try {
                         $db->runQuery(
-                            "INSERT INTO formulas (id, title, equation, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, parent_formula_id, derivation_type, subcomponents, derivation_steps, cas_validation, constraints, related_formula_ids, status, unit_system, equation_svg) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
+                            "INSERT INTO formulas (id, title, category, record_type, equation_family, equation, description, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, parent_formula_id, derivation_type, lineage_confidence, subcomponents, derivation_steps, cas_validation, constraints, related_formula_ids, status, unit_system, equation_svg) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
                             [
                                 $fId,
                                 $data['title'] ?? null,
+                                $data['category'] ?? null,
+                                $data['record_type'] ?? null,
+                                $data['equation_family'] ?? null,
                                 $data['equation'] ?? null,
+                                $data['description'] ?? null,
                                 $data['conceptual_definition'] ?? null,
                                 $data['intuitive_summary'] ?? null,
                                 $data['interpretation'] ?? null,
@@ -662,6 +711,7 @@ class PhysicsService
                                 $semanticVars,
                                 $data['parent_formula_id'] ?? null,
                                 $data['derivation_type'] ?? null,
+                                $data['lineage_confidence'] ?? null,
                                 $subcomponents,
                                 $derivationSteps,
                                 $casValidation,

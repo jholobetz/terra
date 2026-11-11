@@ -425,6 +425,16 @@ $runner->run('ShardSyncServiceTest', 'testSyncFormulasUsesTransactionalUpsert', 
     $t->assertContains('ON DUPLICATE KEY UPDATE', $src);
     $t->assertContains('$db->beginTransaction()', $src);
     $t->assertContains('$db->commit()', $src);
+    $t->assertContains('INFORMATION_SCHEMA.COLUMNS', $src);
+    foreach (['category', 'description', 'lineage_confidence', 'record_type', 'equation_family'] as $col) {
+        $t->assertContains($col, $src, "ShardSyncService must sync enriched column {$col}");
+    }
+    $t->assertContains('$this->syncFormulasToDatabase($force)', $src, 'performSync must delegate formula sync to unified syncFormulasToDatabase');
+
+    $svcSrc = (string)file_get_contents(PROJECT_ROOT . '/app/logic/PhysicsService.php');
+    foreach (['category', 'description', 'lineage_confidence', 'record_type', 'equation_family'] as $col) {
+        $t->assertContains("{$col} = ?", $svcSrc, "PhysicsService::saveFormula must update column {$col}");
+    }
 
     // When force=false and all 256 hashes match registry, 0 shards should require DB writes
     $app = new \flight\Engine();

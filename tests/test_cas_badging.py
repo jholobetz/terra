@@ -43,6 +43,8 @@ def test_schema_validates_sample_with_cas_validation():
         "sample-formula-id": {
             "title": "Kinetic Energy",
             "category": "classical-mechanics",
+            "record_type": "equation",
+            "lineage_confidence": "cas_verified",
             "equation": "E_k = \\frac{1}{2} m v^2",
             "status": "platinum",
             "description": "Defines the non-relativistic translational kinetic energy $E_k$ of a point mass $m$ moving at speed $v$ in an inertial frame.",
@@ -78,6 +80,8 @@ def test_schema_rejects_invalid_cas_status():
         "sample-formula-id": {
             "title": "Kinetic Energy",
             "category": "classical-mechanics",
+            "record_type": "equation",
+            "lineage_confidence": "cas_verified",
             "equation": "E_k = \\frac{1}{2} m v^2",
             "status": "platinum",
             "description": "Defines the non-relativistic translational kinetic energy $E_k$ of a point mass $m$ moving at speed $v$ in an inertial frame.",

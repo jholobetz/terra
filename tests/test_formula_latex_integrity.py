@@ -325,3 +325,59 @@ def test_no_placeholder_titles_or_templated_prefixes():
                 seen_vals[val] = field
 
     assert len(violations) == 0, f"Found {len(violations)} placeholder title or templated prose violations: {violations[:10]}"
+
+
+def test_derived_graph_and_latex_index_parity():
+    """Enforces Priority 4 node-count & provenance parity across formula_derivation_graph.json(.gz) and formulas_latex_index.json."""
+    import gzip
+
+    shard_ids = {f["_id"] for f in ALL_FORMULAS if f.get("_id")}
+    dag_json_path = os.path.join(PROJECT_ROOT, "app", "config", "formula_derivation_graph.json")
+    dag_gz_path = os.path.join(PROJECT_ROOT, "app", "config", "formula_derivation_graph.json.gz")
+    latex_idx_path = os.path.join(PROJECT_ROOT, "app", "config", "formulas_latex_index.json")
+
+    assert os.path.exists(dag_json_path), "Missing formula_derivation_graph.json"
+    assert os.path.exists(dag_gz_path), "Missing formula_derivation_graph.json.gz"
+    assert os.path.exists(latex_idx_path), "Missing formulas_latex_index.json"
+
+    with open(dag_json_path, "r", encoding="utf-8") as f:
+        dag = json.load(f)
+    with gzip.open(dag_gz_path, "rt", encoding="utf-8") as gf:
+        dag_gz = json.load(gf)
+
+    nodes = dag.get("nodes", {})
+    assert dag.get("metadata") == dag_gz.get("metadata"), "Uncompressed and gzipped derivation graph metadata diverged"
+    assert len(nodes) == len(dag_gz.get("nodes", {})), "Uncompressed and gzipped derivation graph node counts diverged"
+
+    missing_in_dag = sorted(shard_ids - set(nodes.keys()))
+    extra_in_dag = sorted(set(nodes.keys()) - shard_ids)
+    assert not missing_in_dag, f"Found {len(missing_in_dag)} shard formulas missing from derivation graph: {missing_in_dag[:10]}"
+    assert not extra_in_dag, f"Found {len(extra_in_dag)} dangling nodes in derivation graph: {extra_in_dag[:10]}"
+
+    valid_conf = {"curated", "cas_verified", "root_axiom", "heuristic"}
+    missing_prov = [
+        nid for nid, nd in nodes.items()
+        if nd.get("lineage_confidence") not in valid_conf
+        or nd.get("record_type") not in ("equation", "symbol_or_term")
+        or not isinstance(nd.get("cas_verified"), bool)
+    ]
+    assert not missing_prov, f"Found {len(missing_prov)} graph nodes missing provenance fields: {missing_prov[:10]}"
+
+    unmapped_nodes = [nid for nid, nd in nodes.items() if nd.get("domain") == "unmapped"]
+    assert not unmapped_nodes, f"Found {len(unmapped_nodes)} unmapped domain nodes in derivation graph: {unmapped_nodes[:10]}"
+
+    with open(latex_idx_path, "r", encoding="utf-8") as lf:
+        latex_idx = json.load(lf)
+
+    dangling_targets = []
+    hex_residue_keys = []
+    for k, target in latex_idx.items():
+        targets = target if isinstance(target, list) else [target]
+        for tid in targets:
+            if tid not in shard_ids:
+                dangling_targets.append((k, tid))
+        if k.startswith("0a0") or ("xxxx" in k and any(d in k for d in ("c2", "f0", "93", "88", "80"))):
+            hex_residue_keys.append((k, target))
+
+    assert not dangling_targets, f"Found {len(dangling_targets)} dangling formula IDs in formulas_latex_index.json: {dangling_targets[:10]}"
+    assert not hex_residue_keys, f"Found {len(hex_residue_keys)} stale hex-residue keys in formulas_latex_index.json: {hex_residue_keys[:10]}"

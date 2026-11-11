@@ -17,6 +17,7 @@ import json
 import re
 import hashlib
 import subprocess
+from functools import cmp_to_key
 from typing import Dict, Any, Optional, Tuple, List
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -53,12 +54,95 @@ def get_shard_hex(formula_id: str) -> str:
     return hashlib.md5(formula_id.encode("utf-8")).hexdigest()[:2]
 
 
+_MULTI_SYMBOLS = [
+    "dtau", "dtheta", "dphi", "dchi", "deta", "domega", "dlambda", "dpsi",
+    "ds", "dt", "dx", "dy", "dz", "dr", "dp", "dq", "df", "dg", "dh", "dk",
+    "epsilon", "theta", "phi", "rho", "pi", "sigma", "tau", "int", "oint", "iint", "iiint",
+    "partial", "nabla", "hbar", "psi", "lambda", "omega", "gamma", "mu", "nu", "eta", "delta",
+    "beta", "alpha", "chi", "zeta",
+]
+
+_DIV_PATTERN = re.compile(
+    r"/(?:[0-9]+|dtau|dtheta|dphi|dchi|deta|domega|dlambda|dpsi|"
+    r"ds|dt|dx|dy|dz|dr|dp|dq|df|dg|dh|dk|"
+    r"epsilon|theta|phi|rho|pi|sigma|tau|int|oint|iint|iiint|"
+    r"partial|nabla|hbar|psi|lambda|omega|gamma|mu|nu|eta|delta|beta|alpha|chi|zeta|[a-zA-Z])"
+)
+_SINGLE_VAR_PATTERN = re.compile(r"[a-zA-Z](?:_[a-zA-Z0-9]+)?(?:\^[0-9]+|[0-9]+)?")
+_NUM_PATTERN = re.compile(r"[0-9]+")
+
+
+def _php_sort_regular_cmp(a: str, b: str) -> int:
+    """Matches PHP sort(..., SORT_REGULAR) factor ordering for pure numeric vs string tokens."""
+    if a.isdigit() and b.isdigit():
+        ia, ib = int(a), int(b)
+        return -1 if ia < ib else (1 if ia > ib else 0)
+    return -1 if a < b else (1 if a > b else 0)
+
+
+def _sort_term_factors(term: str) -> str:
+    temp = term
+    factors: List[str] = []
+
+    def _collect_div(m: re.Match) -> str:
+        factors.append(m.group(0))
+        return ""
+
+    def _collect_space(m: re.Match) -> str:
+        factors.append(m.group(0))
+        return " "
+
+    temp = _DIV_PATTERN.sub(_collect_div, temp)
+    for sym in _MULTI_SYMBOLS:
+        sym_re = re.compile(re.escape(sym) + r"(?:_[a-zA-Z0-9]+)?(?:\^[0-9]+|[0-9]+)?")
+        temp = sym_re.sub(_collect_space, temp)
+    temp = _SINGLE_VAR_PATTERN.sub(_collect_space, temp)
+    temp = _NUM_PATTERN.sub(_collect_space, temp)
+
+    factors.sort(key=cmp_to_key(_php_sort_regular_cmp))
+    return "".join(factors)
+
+
+def _normalize_algebraic_structure(latex: str) -> str:
+    parts = latex.split("=")
+    normalized_parts: List[str] = []
+
+    for part in parts:
+        # Matches PHP PREG_SPLIT_NO_EMPTY + !empty($sortedTerm) behavior
+        tokens = [t for t in re.split(r"([+\-])", part) if t != "" and t != "0"]
+        current_sign = "+"
+        terms = []
+
+        for tok in tokens:
+            if tok in ("+", "-"):
+                current_sign = tok
+            else:
+                sorted_term = _sort_term_factors(tok)
+                if sorted_term and sorted_term != "0":
+                    terms.append((current_sign, sorted_term))
+                current_sign = "+"
+
+        terms.sort(key=lambda item: item[1])
+
+        joined = ""
+        for idx, (sign, t_str) in enumerate(terms):
+            if idx == 0:
+                if sign == "-":
+                    joined += "-"
+                joined += t_str
+            else:
+                joined += sign + t_str
+        normalized_parts.append(joined)
+
+    return "=".join(normalized_parts)
+
+
 def normalize_latex_key(latex: str) -> str:
     """
     Normalizes a LaTeX expression for lookup in formulas_latex_index.json.
-    Matches the canonical PHP implementation in PhysicsService::normalizeLatex.
+    Matches the canonical PHP implementation in LatexSanitizer::normalizeLatex.
     """
-    s = latex.strip()
+    s = latex
     s = re.sub(r"\\varepsilon(?![a-zA-Z])", r"\\epsilon", s)
     s = re.sub(r"\\vartheta(?![a-zA-Z])", r"\\theta", s)
     s = re.sub(r"\\varphi(?![a-zA-Z])", r"\\phi", s)
@@ -67,10 +151,14 @@ def normalize_latex_key(latex: str) -> str:
     s = re.sub(r"\\varsigma(?![a-zA-Z])", r"\\sigma", s)
 
     # Strip outer delimiters
-    s = re.sub(r"^\\\(|\\\)$", "", s)
-    s = re.sub(r"^\\\[|\\\]$", "", s)
-    s = re.sub(r"^\$\$|\$\$$", "", s)
-    s = re.sub(r"^\$|\$$", "", s)
+    s = re.sub(r"^\\\(", "", s)
+    s = re.sub(r"\\\)$", "", s)
+    s = re.sub(r"^\\\[", "", s)
+    s = re.sub(r"\\\]$", "", s)
+    s = re.sub(r"^\$\$", "", s)
+    s = re.sub(r"\$\$$", "", s)
+    s = re.sub(r"^\$", "", s)
+    s = re.sub(r"\$$", "", s)
 
     # Strip formatting macros
     s = re.sub(r"\\(mathbf|mathsf|mathrm|text|boldsymbol|mathcal|vec|hat|bar|tilde|dot|ddot|underline)\{([^}]+)\}", r"\2", s)
@@ -100,7 +188,7 @@ def normalize_latex_key(latex: str) -> str:
 
     # Strip spaces and special characters
     s = re.sub(r"[^a-zA-Z0-9_\^\-=+/*()\[\]<>\.,;?]", "", s)
-    return s.lower()
+    return _normalize_algebraic_structure(s.lower())
 
 
 def sanitize_prose_text(text: str) -> str:

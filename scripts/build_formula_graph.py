@@ -2,7 +2,7 @@
 """
 Terra Physics Lab - Formula Lineage & Derivation Graph Builder
 Extracts hierarchical parent-child relationships, subcomponents, boundary limits,
-and mathematical lineage across all 13,772 formulas in 256 shards.
+and mathematical lineage across all formulas in the 256 shards.
 Outputs:
 - app/config/formula_derivation_graph.json
 - app/config/formula_derivation_graph.json.gz
@@ -212,7 +212,7 @@ def main():
     links = []
     seen_links = set()
 
-    def add_link(source, target, link_type, label=""):
+    def add_link(source, target, link_type, label="", confidence=None):
         if not source or not target or source == target:
             return
         if source not in all_formula_ids or target not in all_formula_ids:
@@ -220,19 +220,28 @@ def main():
         edge_key = f"{source}->{target}"
         if edge_key not in seen_links:
             seen_links.add(edge_key)
-            links.append({
+            edge_obj = {
                 "source": source,
                 "target": target,
                 "type": link_type,
                 "label": label
-            })
+            }
+            if confidence:
+                edge_obj["confidence"] = confidence
+            links.append(edge_obj)
 
-    # Build nodes & links
+    # Pass 1: Build all nodes & explicit Parent -> Child derivation links first
+    # (so reciprocal subcomponents in earlier hex shards never shadow derivation_type & confidence)
     for fid, formula in formulas.items():
         title = formula.get("title", fid)
         eq = formula.get("equation", "")
         summary = formula.get("intuitive_summary", "")
         domain = resolved_domains.get(fid, "unmapped")
+        cas_val = formula.get("cas_validation")
+        is_cas_verified = bool(isinstance(cas_val, dict) and cas_val.get("overall_valid"))
+        lineage_conf = formula.get("lineage_confidence", "heuristic")
+        deriv_type = formula.get("derivation_type", "DERIVED_FROM")
+        rec_type = formula.get("record_type", "equation")
 
         nodes[fid] = {
             "id": fid,
@@ -241,14 +250,21 @@ def main():
             "summary": summary,
             "domain": domain,
             "domain_label": categories.get(domain, "Unmapped / General" if domain == "unmapped" else domain),
-            "status": formula.get("status", "platinum")
+            "status": formula.get("status", "platinum"),
+            "lineage_confidence": lineage_conf,
+            "derivation_type": deriv_type,
+            "record_type": rec_type,
+            "cas_verified": is_cas_verified
         }
 
-        # 1. Explicit Parent Formula ID Link (Parent -> Child, with specific derivation_type label)
+        # 1. Explicit Parent Formula ID Link (Parent -> Child, with specific derivation_type label & provenance)
         parent_id = formula.get("parent_formula_id")
         if isinstance(parent_id, str) and parent_id in all_formula_ids:
-            dtype = formula.get("derivation_type", "DERIVED_FROM")
-            add_link(parent_id, fid, "derivation", dtype)
+            add_link(parent_id, fid, "derivation", deriv_type, lineage_conf)
+
+    # Pass 2: Add reciprocal subcomponents, prerequisites, and related links without shadowing Pass 1
+    for fid, formula in formulas.items():
+        lineage_conf = formula.get("lineage_confidence", "heuristic")
 
         # 2. Subcomponents Link (Parent -> Child, reciprocal)
         subcomps = formula.get("subcomponents", [])
@@ -264,7 +280,7 @@ def main():
         if isinstance(prereqs, list):
             for pr in prereqs:
                 if isinstance(pr, str) and pr in all_formula_ids:
-                    add_link(pr, fid, "derivation", "Derives")
+                    add_link(pr, fid, "derivation", "Derives", lineage_conf)
 
         # 4. Related Formulas
         related = formula.get("related_formulas") or formula.get("related_formula_ids") or []
@@ -282,17 +298,24 @@ def main():
         t = link["target"]
         if t not in upstream:
             upstream[t] = []
-        upstream[t].append({"id": s, "type": link["type"], "label": link["label"]})
+        up_entry = {"id": s, "type": link["type"], "label": link["label"]}
+        if "confidence" in link:
+            up_entry["confidence"] = link["confidence"]
+        upstream[t].append(up_entry)
 
         if s not in downstream:
             downstream[s] = []
-        downstream[s].append({"id": t, "type": link["type"], "label": link["label"]})
+        down_entry = {"id": t, "type": link["type"], "label": link["label"]}
+        if "confidence" in link:
+            down_entry["confidence"] = link["confidence"]
+        downstream[s].append(down_entry)
 
+    latest_shard_mtime = max((os.path.getmtime(sf) for sf in shard_files), default=os.path.getmtime(SHARDS_DIR))
     graph_payload = {
         "metadata": {
             "total_nodes": len(nodes),
             "total_links": len(links),
-            "generated_at": int(os.path.getmtime(SHARDS_DIR))
+            "generated_at": int(latest_shard_mtime)
         },
         "domains": categories,
         "nodes": nodes,

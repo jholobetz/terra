@@ -488,5 +488,57 @@ $runner->run('PhysicsControllerTest', 'testSlidingWindowCasRateLimiterAndControl
     });
 });
 
+// ============================================================================
+// 8. FormulaGraphService & Reverse-LaTeX Lookup Suite
+// ============================================================================
+$runner->run('FormulaGraphServiceTest', 'testSubgraphProvenanceAndReverseLatexParity', function (NativePhpTestRunner $t) {
+    require_once PROJECT_ROOT . '/app/logic/FormulaGraphService.php';
+
+    // 1. Newly added shard formulas resolve in the compiled derivation graph with provenance metadata
+    foreach ([
+        'cross-field-electric-magnetic-drift-velocity-magnitude',
+        'eulerian-velocity-vector-field',
+        'three-dimensional-euclidean-line-element-in-spherical-coordinates',
+    ] as $newId) {
+        $sub = \App\Logic\FormulaGraphService::getFormulaSubgraph($newId, 1);
+        $t->assertTrue(($sub['stats']['total_nodes'] ?? 0) >= 2, "Subgraph for {$newId} must contain root + parent");
+        $root = $sub['root_node'] ?? [];
+        $t->assertSame($newId, $root['id'] ?? null);
+        $t->assertTrue(!empty($root['lineage_confidence']), "Root node {$newId} must expose lineage_confidence");
+        $t->assertTrue(!empty($root['record_type']), "Root node {$newId} must expose record_type");
+        $t->assertTrue(is_bool($root['cas_verified'] ?? null), "Root node {$newId} must expose boolean cas_verified");
+    }
+
+    // 2. Derivation links carry edge confidence
+    $driftSub = \App\Logic\FormulaGraphService::getFormulaSubgraph('cross-field-electric-magnetic-drift-velocity-magnitude', 1);
+    $derivEdges = array_values(array_filter($driftSub['links'] ?? [], fn($l) => ($l['type'] ?? '') === 'derivation'));
+    $t->assertTrue(count($derivEdges) >= 1, 'Expected at least 1 upstream derivation edge');
+    $t->assertSame('cas_verified', $derivEdges[0]['confidence'] ?? null, 'Derivation edge must forward lineage_confidence');
+
+    // 3. Reverse LaTeX lookup resolves hex-repaired equations cleanly in offline shard mode
+    $app = new \flight\Engine();
+    $app->register('db', stdClass::class);
+    $svc = new \app\logic\PhysicsService($app);
+    $prevPreview = $_GET['preview'] ?? null;
+    $_GET['preview'] = '1';
+    try {
+        foreach ([
+            '\\Psi(\\mathbf{r}, t)' => 'quantum-wave-function-symbol-a70d1c54',
+            '\\frac{\\mathbf{p} \\cdot \\mathbf{r}}{\\hbar}' => 'plane-wave-phase-argument-03b4af97',
+            '\\mathbf{p} \\cdot \\mathbf{r}' => 'momentum-position-dot-product-37631088',
+        ] as $tex => $expectedId) {
+            $found = $svc->searchFormulaByLatex($tex);
+            $t->assertTrue(is_array($found), "Reverse LaTeX lookup must resolve {$tex}");
+            $t->assertSame($expectedId, $found['id'] ?? null);
+        }
+    } finally {
+        if ($prevPreview === null) {
+            unset($_GET['preview']);
+        } else {
+            $_GET['preview'] = $prevPreview;
+        }
+    }
+});
+
 $jsonFlag = in_array('--json', $argv ?? [], true);
 exit($runner->summary($jsonFlag));

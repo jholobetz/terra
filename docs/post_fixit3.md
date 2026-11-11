@@ -40,14 +40,15 @@
 
 ---
 
-## 🕸️ Priority 4: Re-Sync Derived Graph & Reverse-LaTeX Lookup Artifacts *(Data Index Freshness)*
+## ✅ Priority 4: Re-Sync Derived Graph & Reverse-LaTeX Lookup Artifacts *(COMPLETED)*
 
-* **What's Happening Now**:
-  Comparing derived index artifacts against the `14,684` formulas in the 256 shards shows:
-  - [`app/config/formula_derivation_graph.json`](../app/config/formula_derivation_graph.json) (and `.gz`) currently contains **14,681 nodes** (3 newly added formulas behind the shards) and does not yet include the `lineage_confidence` provenance attribute on graph nodes/edges.
-  - [`app/config/formulas_latex_index.json`](../app/config/formulas_latex_index.json) contains `13,139` entries and should be refreshed so the hex-repaired equations from `fixit_3.md` Priority 2 (`\Psi(\mathbf{r}, t)`, `\frac{\mathbf{p} \cdot \mathbf{r}}{\hbar}`, `\mathbf{p} \cdot \mathbf{r}`) resolve cleanly via reverse LaTeX lookup.
-* **Proposed Optimization**:
-  Rebuild `formula_derivation_graph.json` (and `.gz`) with `lineage_confidence` metadata across all `14,684` nodes, refresh `formulas_latex_index.json`, and add a node-count parity assertion (`len(dag_nodes) == len(all_formulas)`) to the test suite.
+* **Original Gap**:
+  - [`app/config/formula_derivation_graph.json`](../app/config/formula_derivation_graph.json) (and `.gz`) contained `14,681` nodes (missing the 3 newest formulas) and omitted `lineage_confidence`, `derivation_type`, `record_type`, and `cas_verified` provenance metadata on nodes and edges.
+  - [`app/config/formulas_latex_index.json`](../app/config/formulas_latex_index.json) retained 3 stale pre-repair hex-garbage keys from `fixit_3.md` Priority 2 and 4 unsorted Python-ingested keys due to [`normalize_latex_key()`](../lib/pipeline/formula_pipeline.py) omitting commutative factor/term sorting.
+* **Implemented Resolution**:
+  1. Updated [`scripts/build_formula_graph.py`](../scripts/build_formula_graph.py) and [`FormulaGraphService.php`](../app/logic/FormulaGraphService.php) to include `lineage_confidence`, `derivation_type`, `record_type`, and `cas_verified` on all **14,684** graph nodes (`0` unmapped) and `confidence` on `14,119` links, regenerating both `.json` and `.json.gz`.
+  2. Aligned [`normalize_latex_key()`](../lib/pipeline/formula_pipeline.py) 100% with [`LatexSanitizer::normalizeLatex()`](../app/logic/LatexSanitizer.php) (`0 / 14,684` mismatches), pruned the stale keys from `formulas_latex_index.json` (`13,132` clean entries, `0` dangling targets), and updated [`PhysicsService::saveFormula()`](../app/logic/PhysicsService.php) to evict superseded normalized keys on equation edits.
+  3. Added automated parity gates `test_derived_graph_and_latex_index_parity` in [`tests/test_formula_latex_integrity.py`](../tests/test_formula_latex_integrity.py) and `FormulaGraphServiceTest` in [`tests/php/run_php_tests.php`](../tests/php/run_php_tests.php).
 
 ---
 

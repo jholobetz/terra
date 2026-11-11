@@ -34,9 +34,10 @@ def test_slugify_and_hex():
 def test_normalize_latex_key():
     k1 = normalize_latex_key(r"E = \frac{1}{2} m v^2")
     k2 = normalize_latex_key(r"E=\frac{1}{2}mv^2")
-    assert k1 == k2
+    k3 = normalize_latex_key(r"E = \frac{1}{2} v^2 m")
+    assert k1 == k2 == k3 == "e=/21mv^2"
     assert "frac" not in k1
-    assert "1/2" in k1
+    assert "/2" in k1
 
 
 def test_sanitize_prose_text():

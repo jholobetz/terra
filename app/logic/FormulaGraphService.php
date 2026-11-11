@@ -80,13 +80,17 @@ class FormulaGraphService {
                     $edgeKey = "$pid->$currId";
                     if (!isset($seenLinks[$edgeKey])) {
                         $seenLinks[$edgeKey] = true;
-                        $subgraphLinks[] = [
+                        $edgeData = [
                             'source' => $pid,
                             'target' => $currId,
                             'type' => $p['type'] ?? 'derivation',
                             'label' => $p['label'] ?? 'Derives',
                             'direction' => 'upstream'
                         ];
+                        if (!empty($p['confidence'])) {
+                            $edgeData['confidence'] = $p['confidence'];
+                        }
+                        $subgraphLinks[] = $edgeData;
                     }
                     if (!isset($visitedNodes[$pid])) {
                         $visitedNodes[$pid] = -$d;
@@ -114,13 +118,17 @@ class FormulaGraphService {
                     $edgeKey = "$currId->$cid";
                     if (!isset($seenLinks[$edgeKey])) {
                         $seenLinks[$edgeKey] = true;
-                        $subgraphLinks[] = [
+                        $edgeData = [
                             'source' => $currId,
                             'target' => $cid,
                             'type' => $c['type'] ?? 'subcomponent',
                             'label' => $c['label'] ?? 'Subcomponent',
                             'direction' => 'downstream'
                         ];
+                        if (!empty($c['confidence'])) {
+                            $edgeData['confidence'] = $c['confidence'];
+                        }
+                        $subgraphLinks[] = $edgeData;
                     }
                     if (!isset($visitedNodes[$cid])) {
                         $visitedNodes[$cid] = $d;
@@ -230,13 +238,17 @@ class FormulaGraphService {
                     $edgeKey = "$sibId->$nephewId";
                     if (!isset($seenLinks[$edgeKey])) {
                         $seenLinks[$edgeKey] = true;
-                        $subgraphLinks[] = [
+                        $edgeData = [
                             'source' => $sibId,
                             'target' => $nephewId,
                             'type' => $nephewEdge['type'] ?? 'subcomponent',
                             'label' => $nephewEdge['label'] ?? 'Derived Equation',
                             'direction' => 'downstream'
                         ];
+                        if (!empty($nephewEdge['confidence'])) {
+                            $edgeData['confidence'] = $nephewEdge['confidence'];
+                        }
+                        $subgraphLinks[] = $edgeData;
                     }
                     if (!isset($visitedNodes[$nephewId])) {
                         $visitedNodes[$nephewId] = 1;

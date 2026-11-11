@@ -443,7 +443,7 @@ class PhysicsService
                         return $formula;
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Database loadFormula failed, falling back to shards: " . $e->getMessage());
             }
         }
@@ -520,8 +520,10 @@ class PhysicsService
             mkdir($shardDir, 0755, true);
         }
 
+        $previousEquation = '';
         $jsonFlags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-        $jsonEncoded = $this->updateJsonFileLocked($shardPath, function (array $shardData) use ($fId, &$data) {
+        $jsonEncoded = $this->updateJsonFileLocked($shardPath, function (array $shardData) use ($fId, &$data, &$previousEquation) {
+            $previousEquation = $shardData[$fId]['equation'] ?? '';
             // Preserve existing cas_validation if not explicitly supplied and equation is unchanged
             if (!isset($data['cas_validation']) && isset($shardData[$fId]['cas_validation'])) {
                 $oldEq = $shardData[$fId]['equation'] ?? '';
@@ -758,9 +760,15 @@ class PhysicsService
         // 4. Update formulas_latex_index.json lookup mapping under LOCK_EX
         if (!empty($data['equation'])) {
             $normalizedKey = $this->normalizeLatex($data['equation']);
+            $oldNormalizedKey = ($previousEquation !== '' && $previousEquation !== $data['equation'])
+                ? $this->normalizeLatex($previousEquation)
+                : '';
             if (!empty($normalizedKey)) {
                 $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
-                $this->updateJsonFileLocked($indexFile, function (array $index) use ($normalizedKey, $fId) {
+                $this->updateJsonFileLocked($indexFile, function (array $index) use ($normalizedKey, $oldNormalizedKey, $fId) {
+                    if ($oldNormalizedKey !== '' && $oldNormalizedKey !== $normalizedKey && ($index[$oldNormalizedKey] ?? null) === $fId) {
+                        unset($index[$oldNormalizedKey]);
+                    }
                     $index[$normalizedKey] = $fId;
                     return $index;
                 }, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

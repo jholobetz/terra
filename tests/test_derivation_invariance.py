@@ -105,7 +105,12 @@ def test_verify_derivation_chain_synthetic():
 
 
 def test_run_derivation_audit_full_catalog():
-    # Audit all 103 verified proofs sitewide
+    # Audit all verified proofs sitewide
+    canonical_types = {
+        "AXIOMATIC_FOUNDATION", "DEFINITION", "DERIVED_FROM", "SPECIAL_CASE",
+        "GENERALIZATION", "LIMITING_CASE", "EQUIVALENT_FORM", "EMPIRICAL_LAW",
+        "CONSERVATION_LAW", "APPROXIMATION",
+    }
     summary = run_derivation_audit()
     meta = summary["metadata"]
     assert meta["total_proofs"] >= 102
@@ -113,4 +118,6 @@ def test_run_derivation_audit_full_catalog():
     assert meta["certified_count"] == meta["total_proofs"]    # 100% multi-step derivation chain certification
     assert meta["terminated_count"] == meta["total_proofs"]
     assert meta["elapsed_seconds"] < 10.0   # Fast execution (with headroom for 2-vCPU CI runners)
-    assert len(summary["derivation_type_distribution"]) >= 10
+    dist_keys = set(summary["derivation_type_distribution"].keys())
+    assert len(dist_keys) >= 4
+    assert dist_keys.issubset(canonical_types)

@@ -42,8 +42,20 @@ def test_schema_validates_sample_with_cas_validation():
     sample_shard = {
         "sample-formula-id": {
             "title": "Kinetic Energy",
+            "category": "classical-mechanics",
             "equation": "E_k = \\frac{1}{2} m v^2",
             "status": "platinum",
+            "description": "Defines the non-relativistic translational kinetic energy $E_k$ of a point mass $m$ moving at speed $v$ in an inertial frame.",
+            "conceptual_definition": "Translational energy stored in the motion of a massive body relative to an inertial observer.",
+            "intuitive_summary": "Doubling a body's speed quadruples the mechanical work required to bring it to rest.",
+            "interpretation": "Integrates the net mechanical power $F \\cdot v$ expended along a trajectory from rest up to speed $v$.",
+            "symmetry_origin": "Emerges as the spatial translational Noether invariant at leading quadratic order in $v/c$ of the Poincaré group.",
+            "limits_and_boundary": "Valid in the non-relativistic regime $v \\ll c$ where the Lorentz factor satisfies $\\gamma - 1 \\approx v^2 / (2c^2)$.",
+            "semantic_variables": {
+                "E_k": {"name": "Kinetic Energy", "unit": "J"},
+                "m": {"name": "Mass", "unit": "kg"},
+                "v": {"name": "Velocity", "unit": "m/s"}
+            },
             "cas_validation": {
                 "status": "HOMOGENEOUS",
                 "is_homogeneous": True,
@@ -65,8 +77,20 @@ def test_schema_rejects_invalid_cas_status():
     invalid_shard = {
         "sample-formula-id": {
             "title": "Kinetic Energy",
+            "category": "classical-mechanics",
             "equation": "E_k = \\frac{1}{2} m v^2",
             "status": "platinum",
+            "description": "Defines the non-relativistic translational kinetic energy $E_k$ of a point mass $m$ moving at speed $v$ in an inertial frame.",
+            "conceptual_definition": "Translational energy stored in the motion of a massive body relative to an inertial observer.",
+            "intuitive_summary": "Doubling a body's speed quadruples the mechanical work required to bring it to rest.",
+            "interpretation": "Integrates the net mechanical power $F \\cdot v$ expended along a trajectory from rest up to speed $v$.",
+            "symmetry_origin": "Emerges as the spatial translational Noether invariant at leading quadratic order in $v/c$ of the Poincaré group.",
+            "limits_and_boundary": "Valid in the non-relativistic regime $v \\ll c$ where the Lorentz factor satisfies $\\gamma - 1 \\approx v^2 / (2c^2)$.",
+            "semantic_variables": {
+                "E_k": {"name": "Kinetic Energy", "unit": "J"},
+                "m": {"name": "Mass", "unit": "kg"},
+                "v": {"name": "Velocity", "unit": "m/s"}
+            },
             "cas_validation": {
                 "status": "COMPLETELY_INVALID_STATUS",
                 "is_homogeneous": True
@@ -75,7 +99,7 @@ def test_schema_rejects_invalid_cas_status():
     }
 
     errors = list(validator.iter_errors(invalid_shard))
-    assert len(errors) > 0, "Schema must reject invalid cas_validation status enum"
+    assert any("COMPLETELY_INVALID_STATUS" in str(e) for e in errors), "Schema must reject invalid cas_validation status enum"
 
 
 def test_explainer_php_view_contains_cas_badge_markup():

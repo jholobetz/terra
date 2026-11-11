@@ -101,8 +101,7 @@ class PhysicsController
      */
     public function constants()
     {
-        $content = $this->service()->getPhysicsContent();
-        $notation = $content['notation'] ?? [];
+        $notation = $this->service()->getNotation();
         
         // Filter notation where type is 'constant'
         $constants = array_filter($notation, function($item) {
@@ -111,6 +110,7 @@ class PhysicsController
         
         // Fallback to legacy constants if notation is empty
         if (empty($constants)) {
+            $content = $this->service()->getPhysicsContent();
             $constants = $content['constants'] ?? [];
         }
         
@@ -123,7 +123,7 @@ class PhysicsController
     public function symbols()
     {
         $content = $this->service()->getPhysicsContent();
-        $notation = $content['notation'] ?? [];
+        $notation = $this->service()->getNotation();
         $searchIndex = $content['search_index'] ?? [];
         $topics = $content['topics'] ?? [];
         
@@ -996,8 +996,8 @@ class PhysicsController
         $subtopic = $this->service()->fetchAndPrepare('subtopics', $slug);
         if (empty($subtopic) || empty($subtopic['title'])) {
             // Check if slug is a notation/symbol reference
-            $content = $this->service()->getPhysicsContent();
-            if (isset($content['notation'][$slug])) {
+            $notation = $this->service()->getNotation();
+            if (isset($notation[$slug])) {
                 \Flight::redirect('/physics/symbols#' . $slug, 302);
                 return;
             }

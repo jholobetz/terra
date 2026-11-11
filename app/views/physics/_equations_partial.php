@@ -4,7 +4,15 @@
  */
 $hasFormulas = !empty($formulas) && is_array($formulas);
 
-if ($hasFormulas): ?>
+if ($hasFormulas):
+    $registryValues = json_decode(@file_get_contents(PROJECT_ROOT . '/global_slug_registry.json'), true) ?: [];
+    $validSlugMap = array_flip(array_values($registryValues));
+    $topicsMap = json_decode(@file_get_contents(PROJECT_ROOT . '/app/config/content/categories.json'), true) ?: [];
+    foreach ($topicsMap as $tSlug => $tInfo) {
+        $validSlugMap[$tSlug] = true;
+    }
+    $notationMap = null;
+?>
 <section class="equations-section">
     <h2>Key Theoretical Identities</h2>
     <p class="instruction">Interact with identities to explore their semantic depth.</p>
@@ -86,28 +94,20 @@ if ($hasFormulas): ?>
                                                 $notationSlug = str_replace('notation/', '', $ref);
                                                 $url = '/physics/symbols#' . $notationSlug;
                                             } else if (strpos($ref, 'subtopics/') === 0) {
-                                                $subtopicSlug = str_replace('subtopics/', '', $ref);
+                                                $refSubtopicSlug = str_replace('subtopics/', '', $ref);
                                                 
-                                                // Load valid subtopic slugs from the global slug registry
-                                                $registry = json_decode(@file_get_contents(PROJECT_ROOT . '/global_slug_registry.json'), true) ?: [];
-                                                $validSlugs = array_values($registry);
-                                                
-                                                // Add topics to valid slugs list
-                                                $topics = json_decode(@file_get_contents(PROJECT_ROOT . '/app/config/content/categories.json'), true) ?: [];
-                                                foreach ($topics as $t_slug => $t_info) {
-                                                    $validSlugs[] = $t_slug;
-                                                }
-                                                
-                                                if (in_array($subtopicSlug, $validSlugs)) {
-                                                    $url = '/physics/subtopic/' . $subtopicSlug;
+                                                if (isset($validSlugMap[$refSubtopicSlug])) {
+                                                    $url = '/physics/subtopic/' . $refSubtopicSlug;
                                                 } else {
-                                                    // If the slug represents a notation/symbol, map it to the symbols page
-                                                    $notation = json_decode(@file_get_contents(PROJECT_ROOT . '/app/config/content/notation.json'), true) ?: [];
-                                                    if (isset($notation[$subtopicSlug])) {
-                                                        $url = '/physics/symbols#' . $subtopicSlug;
+                                                    // Lazily load notation map once if a subtopic ref falls through
+                                                    if ($notationMap === null) {
+                                                        $notationMap = json_decode(@file_get_contents(PROJECT_ROOT . '/app/config/content/notation.json'), true) ?: [];
+                                                    }
+                                                    if (isset($notationMap[$refSubtopicSlug])) {
+                                                        $url = '/physics/symbols#' . $refSubtopicSlug;
                                                     } else {
                                                         // Fallback to the search engine to prevent 404 errors
-                                                        $url = '/physics?search=' . urlencode(str_replace('-', ' ', $subtopicSlug));
+                                                        $url = '/physics?search=' . urlencode(str_replace('-', ' ', $refSubtopicSlug));
                                                     }
                                                 }
                                             }

@@ -371,6 +371,33 @@ $runner->run('PhysicsServiceTest', 'testGetRelatedTopicsAndPreviewMode', functio
     $t->assertTrue(!empty($related[0]['slug']));
 });
 
+$runner->run('PhysicsServiceTest', 'testLazyNotationLoadingAndSlimSchema', function (NativePhpTestRunner $t) {
+    $notationPath = PROJECT_ROOT . '/app/config/content/notation.json';
+    $t->assertTrue(filesize($notationPath) < 512 * 1024, 'notation.json must remain slim (< 512 KB)');
+
+    $app = new \flight\Engine();
+    $svc = new \app\logic\PhysicsService($app);
+
+    // 1. Eager getPhysicsContent() must NOT decode notation.json
+    $contentBefore = $svc->getPhysicsContent();
+    $t->assertSame(0, count($contentBefore['notation']), 'notation must not be eagerly loaded by getPhysicsContent()');
+
+    // 2. On-demand getNotation() loads all 348 entries with clean descriptions and zero dead HTML bloat
+    $notation = $svc->getNotation();
+    $t->assertSame(348, count($notation), 'Must load all 348 notation entries');
+    $t->assertTrue(isset($notation['h-bar']['value']), 'Fundamental constants must preserve CODATA values');
+    foreach ($notation as $slug => $entry) {
+        $t->assertFalse(isset($entry['content']), "Dead content field must not exist on {$slug}");
+        $t->assertFalse(isset($entry['snippet_svg']), "Dead snippet_svg field must not exist on {$slug}");
+        $t->assertTrue(!empty($entry['description']), "Description must be populated on {$slug}");
+    }
+
+    // 3. Hydrates physicsContent['notation'] and resets cleanly on clearCache()
+    $t->assertSame(348, count($svc->getPhysicsContent()['notation']));
+    $svc->clearCache();
+    $t->assertSame(0, count($svc->getPhysicsContent()['notation']));
+});
+
 $runner->run('PhysicsServiceTest', 'testAtomicJsonFileLocking', function (NativePhpTestRunner $t) {
     $app = new \flight\Engine();
     $svc = new \app\logic\PhysicsService($app);

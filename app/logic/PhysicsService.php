@@ -13,6 +13,7 @@ class PhysicsService
     private LatexSanitizer $sanitizer;
     private ShardSyncService $syncService;
     private ?array $physicsContent = null;
+    private ?array $notationCache = null;
     private ?bool $isPreviewMode = null;
     private ?array $formulaAliases = null;
     public ?string $lastDbError = null;
@@ -31,6 +32,7 @@ class PhysicsService
     public function clearCache(): void
     {
         $this->physicsContent = null;
+        $this->notationCache = null;
     }
 
     /**
@@ -99,9 +101,7 @@ class PhysicsService
                 if (file_exists($baseDir . 'constants.json')) {
                     $this->physicsContent['constants'] = json_decode(file_get_contents($baseDir . 'constants.json'), true) ?: [];
                 }
-                if (file_exists($baseDir . 'notation.json')) {
-                    $this->physicsContent['notation'] = json_decode(file_get_contents($baseDir . 'notation.json'), true) ?: [];
-                }
+                // notation.json is lazily loaded on-demand via getNotation()
                 $simPath = PROJECT_ROOT . '/app/config/simulations.json';
                 if (file_exists($simPath)) {
                     $this->physicsContent['simulations'] = json_decode(file_get_contents($simPath), true) ?: [];
@@ -114,6 +114,24 @@ class PhysicsService
         }
 
         return $this->physicsContent;
+    }
+
+    /**
+     * Lazily loads and memoizes the notation and fundamental constants registry.
+     */
+    public function getNotation(): array
+    {
+        if ($this->notationCache === null) {
+            $notationPath = PROJECT_ROOT . '/app/config/content/notation.json';
+            $this->notationCache = file_exists($notationPath)
+                ? (json_decode(file_get_contents($notationPath), true) ?: [])
+                : [];
+            if ($this->physicsContent !== null) {
+                $this->physicsContent['notation'] = $this->notationCache;
+            }
+        }
+
+        return $this->notationCache;
     }
 
     /**

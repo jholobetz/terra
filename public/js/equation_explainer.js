@@ -1167,6 +1167,44 @@ const EquationExplainer = {
             .catch(err => console.warn('Could not load formula by id:', err));
     },
 
+    getLineageBadgeMeta(confidence) {
+        const map = {
+            curated: {
+                label: 'Curated Lineage',
+                icon: '✦',
+                color: '#10b981',
+                bg: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.32)',
+                title: 'Human-curated derivation lineage verified in the encyclopedia manifold'
+            },
+            cas_verified: {
+                label: 'CAS-Verified Lineage',
+                icon: '✓',
+                color: '#38bdf8',
+                bg: 'rgba(56, 189, 248, 0.1)',
+                border: '1px solid rgba(56, 189, 248, 0.32)',
+                title: 'Derivation lineage certified via symbolic CAS & shared physical invariants'
+            },
+            root_axiom: {
+                label: 'Foundational Axiom',
+                icon: '◈',
+                color: '#fbbf24',
+                bg: 'rgba(251, 191, 36, 0.1)',
+                border: '1px solid rgba(251, 191, 36, 0.34)',
+                title: 'Foundational axiom, canonical definition, or empirical root law'
+            },
+            heuristic: {
+                label: 'Heuristic Link',
+                icon: '◌',
+                color: '#94a3b8',
+                bg: 'rgba(148, 163, 184, 0.08)',
+                border: '1px dashed rgba(148, 163, 184, 0.36)',
+                title: 'Automated structural / heuristic lineage association'
+            }
+        };
+        return map[confidence] || null;
+    },
+
     renderFormula(formula, subtopics) {
         this.currentFormula = formula;
         this.currentSubtopics = subtopics;
@@ -1207,6 +1245,44 @@ const EquationExplainer = {
                 casBadge.title = `Symbolic CAS Verified: Homogeneous physical dimensions${dimInfo}`;
             } else {
                 casBadge.style.display = 'none';
+            }
+        }
+
+        // Lineage Provenance & Record Type Badges + Technical Description Subtitle
+        const provBadge = document.getElementById('lineage-provenance-badge');
+        const provIcon = document.getElementById('lineage-provenance-icon');
+        const provText = document.getElementById('lineage-provenance-text');
+        if (provBadge && provIcon && provText) {
+            const meta = this.getLineageBadgeMeta(formula.lineage_confidence);
+            if (meta) {
+                provBadge.style.display = 'inline-flex';
+                provBadge.style.color = meta.color;
+                provBadge.style.background = meta.bg;
+                provBadge.style.border = meta.border;
+                provBadge.title = meta.title;
+                provIcon.textContent = meta.icon;
+                provText.textContent = meta.label;
+            } else {
+                provBadge.style.display = 'none';
+            }
+        }
+
+        const recBadge = document.getElementById('record-type-badge');
+        if (recBadge) {
+            recBadge.style.display = (formula.record_type === 'symbol_or_term') ? 'inline-flex' : 'none';
+        }
+
+        const descSubtitle = document.getElementById('formula-description-subtitle');
+        if (descSubtitle) {
+            const rawDesc = (formula.description || '').trim();
+            const rawDef = (formula.conceptual_definition || '').trim();
+            if (rawDesc && rawDesc !== rawDef) {
+                descSubtitle.style.display = 'block';
+                descSubtitle.innerHTML = this.wrapTextMathDelimiters(rawDesc);
+                this.triggerTypeset([descSubtitle]);
+            } else {
+                descSubtitle.style.display = 'none';
+                descSubtitle.innerHTML = '';
             }
         }
 
@@ -1317,6 +1393,10 @@ const EquationExplainer = {
             this.formulaBadge.className = 'badge-status badge-unregistered';
             this.formulaBadge.textContent = 'Live Analysis';
         }
+        ['cas-verified-badge', 'lineage-provenance-badge', 'record-type-badge', 'formula-description-subtitle'].forEach(elId => {
+            const el = document.getElementById(elId);
+            if (el) el.style.display = 'none';
+        });
 
         if (this.conceptualIntroCard) {
             this.conceptualIntroCard.style.display = 'flex';

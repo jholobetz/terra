@@ -183,6 +183,8 @@ const FormulaInspector = {
                     <!-- Rendered LaTeX -->
                 </div>
 
+                <p id="drawer-description-text" style="display: none; margin: -4px 0 0 0; font-size: 0.87rem; line-height: 1.45; color: #94a3b8; padding: 0 2px;"></p>
+
                 <div id="drawer-concept-card" class="drawer-card">
                     <h4 class="drawer-card-title">✦ Conceptual Definition</h4>
                     <p id="drawer-concept-text" style="margin: 0; font-size: 0.92rem; line-height: 1.5; color: #cbd5e1;">Loading definition...</p>
@@ -245,6 +247,7 @@ const FormulaInspector = {
 
         const titleEl = this.drawerEl.querySelector('#drawer-formula-title');
         const targetEl = this.drawerEl.querySelector('#drawer-math-target');
+        const descText = this.drawerEl.querySelector('#drawer-description-text');
         const conceptText = this.drawerEl.querySelector('#drawer-concept-text');
         const summaryText = this.drawerEl.querySelector('#drawer-summary-text');
         const variablesCard = this.drawerEl.querySelector('#drawer-variables-card');
@@ -255,6 +258,10 @@ const FormulaInspector = {
 
         titleEl.textContent = 'Inspecting Equation...';
         targetEl.innerHTML = `\\[ ${latex} \\]`;
+        if (descText) {
+            descText.style.display = 'none';
+            descText.innerHTML = '';
+        }
         conceptText.textContent = 'Analyzing identity...';
         summaryText.textContent = 'Analyzing intuition...';
         variablesCard.style.display = 'none';
@@ -279,6 +286,14 @@ const FormulaInspector = {
             .then(data => {
                 if (data && data.formula) {
                     const f = data.formula;
+                    const provMap = {
+                        curated: { label: 'Curated Lineage', icon: '✦', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)' },
+                        cas_verified: { label: 'CAS-Verified Lineage', icon: '✓', color: '#38bdf8', bg: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.3)' },
+                        root_axiom: { label: 'Foundational Axiom', icon: '◈', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.32)' },
+                        heuristic: { label: 'Heuristic Link', icon: '◌', color: '#94a3b8', bg: 'rgba(148,163,184,0.08)', border: '1px dashed rgba(148,163,184,0.34)' }
+                    };
+                    const provMeta = provMap[f.lineage_confidence] || null;
+
                     if (f.title) {
                         titleEl.textContent = f.title;
                         if (f.cas_validation && f.cas_validation.is_homogeneous) {
@@ -287,8 +302,28 @@ const FormulaInspector = {
                             casSpan.innerHTML = `✓ CAS: ${f.cas_validation.quantity || 'Verified'}`;
                             titleEl.appendChild(casSpan);
                         }
+                        if (provMeta) {
+                            const provSpan = document.createElement('span');
+                            provSpan.style.cssText = `font-size: 0.7rem; color: ${provMeta.color}; background: ${provMeta.bg}; border: ${provMeta.border}; border-radius: 10px; padding: 1px 7px; font-weight: 600; margin-left: 6px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle;`;
+                            provSpan.innerHTML = `${provMeta.icon} ${provMeta.label}`;
+                            titleEl.appendChild(provSpan);
+                        }
+                        if (f.record_type === 'symbol_or_term') {
+                            const symSpan = document.createElement('span');
+                            symSpan.style.cssText = 'font-size: 0.68rem; color: #c084fc; background: rgba(192, 132, 252, 0.1); border: 1px solid rgba(192, 132, 252, 0.28); border-radius: 10px; padding: 1px 7px; font-weight: 600; margin-left: 6px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle;';
+                            symSpan.textContent = 'Symbol / Term';
+                            titleEl.appendChild(symSpan);
+                        }
                     }
                     const formatMath = (txt) => (window.MathProseFormatter && typeof window.MathProseFormatter.format === 'function') ? window.MathProseFormatter.format(txt) : txt;
+                    if (descText) {
+                        const rawDesc = (f.description || '').trim();
+                        const rawDef = (f.conceptual_definition || '').trim();
+                        if (rawDesc && rawDesc !== rawDef) {
+                            descText.style.display = 'block';
+                            descText.innerHTML = formatMath(rawDesc);
+                        }
+                    }
                     conceptText.innerHTML = formatMath(f.conceptual_definition) || 'Physical relationship between operators and fields.';
                     summaryText.innerHTML = formatMath(f.intuitive_summary) || 'Calculates the relative dynamics of the system.';
 
@@ -314,7 +349,10 @@ const FormulaInspector = {
                         graphCard.style.display = 'block';
                         let html = '';
                         if (f.derivation_type) {
-                            html += `<div style="margin-bottom: 6px;"><strong>Derivation Type:</strong> <span style="color: var(--accent-default, #64ffda); font-weight: 600;">${f.derivation_type}</span></div>`;
+                            const provHtml = provMeta
+                                ? ` <span style="font-size: 0.7rem; color: ${provMeta.color}; background: ${provMeta.bg}; border: ${provMeta.border}; border-radius: 4px; padding: 1px 6px; font-weight: 600; margin-left: 4px;">${provMeta.icon} ${provMeta.label}</span>`
+                                : '';
+                            html += `<div style="margin-bottom: 6px;"><strong>Derivation Type:</strong> <span style="color: var(--accent-default, #64ffda); font-weight: 600;">${f.derivation_type}</span>${provHtml}</div>`;
                         }
                         if (f.parent_formula_id) {
                             const pName = f.parent_formula_id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -377,6 +415,7 @@ const FormulaInspector = {
 
                 if (window.MathJax && window.MathJax.typesetPromise) {
                     const elsToTypeset = [conceptText, summaryText];
+                    if (descText && descText.style.display !== 'none') elsToTypeset.push(descText);
                     if (variablesList) elsToTypeset.push(variablesList);
                     if (graphContent) elsToTypeset.push(graphContent);
                     window.MathJax.typesetPromise(elsToTypeset).catch(err => console.warn(err));

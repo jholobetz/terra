@@ -9,15 +9,15 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
             🔬 Interactive Equation Explainer
         </h1>
         <p style="margin: 8px auto 0; max-width: 760px; font-size: 0.94rem; color: var(--text-muted, #94a3b8); line-height: 1.45;">
-            Deconstruct physical identities into constituent variables, inspect multi-step mathematical derivations, verify dimensional invariance, and traverse the 14,681-formula derivation graph.
+            Deconstruct physical identities into constituent variables, inspect multi-step mathematical derivations, verify dimensional invariance, and traverse the 14,684-formula derivation graph.
         </p>
     </div>
 
     <!-- Math Rendering Box (Full-Width Top Panel with Integrated Title & Curation) -->
     <div id="math-preview-card" class="glass-card math-preview-fullwidth" style="<?= (!empty($formula) || !empty($latex)) ? 'display: block;' : 'display: none;' ?> margin-bottom: 25px; padding: 22px 24px;">
         <!-- Integrated Header: Title, Breadcrumbs, Compiler Status, and Curate Button -->
-        <div id="explanation-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 14px;">
-            <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div id="explanation-header-wrapper" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 14px;">
+            <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1;">
                 <div id="explainer-breadcrumbs" style="display: none; font-size: 0.8rem; font-family: 'Space Grotesk', sans-serif; color: var(--text-muted, #94a3b8); align-items: center; gap: 6px;"></div>
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                     <h2 id="formula-title" style="margin: 0; font-size: 1.45rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">
@@ -31,7 +31,16 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                         <span style="font-size: 0.82rem; color: #38bdf8;">✓</span>
                         <span id="cas-verified-text">CAS Verified</span>
                     </span>
+                    <span id="lineage-provenance-badge" style="display: none; font-size: 0.74rem; align-items: center; gap: 5px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; padding: 2px 10px; border-radius: 12px; transition: all 0.2s;">
+                        <span id="lineage-provenance-icon">✦</span>
+                        <span id="lineage-provenance-text">Curated Lineage</span>
+                    </span>
+                    <span id="record-type-badge" style="display: none; font-size: 0.72rem; color: #c084fc; align-items: center; gap: 4px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; background: rgba(192, 132, 252, 0.1); padding: 2px 9px; border-radius: 12px; border: 1px solid rgba(192, 132, 252, 0.28);" title="Standalone physical symbol, operator, or term definition">
+                        <span>𝑆</span>
+                        <span>Symbol / Term</span>
+                    </span>
                 </div>
+                <p id="formula-description-subtitle" style="display: none; margin: 2px 0 0 0; font-size: 0.9rem; line-height: 1.45; color: #cbd5e1; max-width: 840px;"></p>
             </div>
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <button id="btn-return-launchpad" type="button" title="Return to Equation Launchpad &amp; Quick-Load Examples" style="padding: 6px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(255, 255, 255, 0.04); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 5px;">
@@ -69,7 +78,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     Search Catalog or Paste LaTeX Expression
                 </label>
                 <span style="font-size: 0.78rem; color: var(--text-muted, #94a3b8);">
-                    Search 14,681 physical formulas by name or enter custom LaTeX
+                    Search 14,684 physical formulas by name or enter custom LaTeX
                 </span>
             </div>
             <div style="position: relative; display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap;">
@@ -172,7 +181,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
             </div>
             <div class="launchpad-capability-item">
                 <div class="launchpad-cap-title">🌌 Derivation Lineage DAG</div>
-                <div class="launchpad-cap-desc">Maps upstream foundational axioms and downstream derived identities across the 14,681-formula physics manifold.</div>
+                <div class="launchpad-cap-desc">Maps upstream foundational axioms and downstream derived identities across the 14,684-formula physics manifold.</div>
             </div>
         </div>
     </div>

@@ -413,6 +413,27 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         });
     }
 
+    renderNodeProvenanceBadges(node) {
+        const badges = [];
+        if (node.cas_verified) {
+            badges.push(`<span style="font-size: 0.64rem; color: #38bdf8; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 1px 6px; font-weight: 600;">✓ CAS</span>`);
+        }
+        const provMap = {
+            curated: { label: 'Curated', icon: '✦', color: '#10b981', bg: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)' },
+            cas_verified: { label: 'CAS Lineage', icon: '✓', color: '#38bdf8', bg: 'rgba(56,189,248,0.12)', border: '1px solid rgba(56,189,248,0.3)' },
+            root_axiom: { label: 'Axiom', icon: '◈', color: '#fbbf24', bg: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.32)' },
+            heuristic: { label: 'Heuristic', icon: '◌', color: '#94a3b8', bg: 'rgba(148,163,184,0.1)', border: '1px dashed rgba(148,163,184,0.34)' }
+        };
+        const pm = provMap[node.lineage_confidence];
+        if (pm) {
+            badges.push(`<span style="font-size: 0.64rem; color: ${pm.color}; background: ${pm.bg}; border: ${pm.border}; border-radius: 8px; padding: 1px 6px; font-weight: 600;">${pm.icon} ${pm.label}</span>`);
+        }
+        if (node.record_type === 'symbol_or_term') {
+            badges.push(`<span style="font-size: 0.64rem; color: #c084fc; background: rgba(192,132,252,0.12); border: 1px solid rgba(192,132,252,0.3); border-radius: 8px; padding: 1px 6px; font-weight: 600;">Symbol</span>`);
+        }
+        return badges.length ? `<div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-bottom: 6px;">${badges.join('')}</div>` : '';
+    }
+
     updateFullscreenHud(node) {
         if (!this.fsHud || !node) return;
         this.activeRootNode = node;
@@ -435,9 +456,10 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
                     ${this.hudCollapsed ? '▴ Expand' : '▾ Minimize'}
                 </button>
             </div>
-            <div style="font-size: 1.02rem; font-weight: 700; color: #ffffff; margin-bottom: ${this.hudCollapsed ? '0' : '8px'};">
+            <div style="font-size: 1.02rem; font-weight: 700; color: #ffffff; margin-bottom: ${this.hudCollapsed ? '0' : '6px'};">
                 ${node.title}
             </div>
+            ${!this.hudCollapsed ? this.renderNodeProvenanceBadges(node) : ''}
             ${!this.hudCollapsed ? `
                 ${node.equation ? `
                     <div id="graph-fs-hud-math" style="font-size: 0.96rem; color: #ffd700; background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 7px 11px; margin-bottom: 8px; overflow-x: auto;">
@@ -633,7 +655,8 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
                 : (link.direction === 'upstream' ? 'rgba(56, 189, 248, 0.55)' : 'rgba(100, 255, 218, 0.45)');
             path.setAttribute('stroke', strokeColor);
             path.setAttribute('stroke-width', this.isFullscreen ? '2' : '1.6');
-            path.setAttribute('stroke-dasharray', isSiblingLink ? '4,3' : (link.type === 'subcomponent' ? '3,3' : 'none'));
+            const isHeuristicDerivation = link.type === 'derivation' && link.confidence === 'heuristic';
+            path.setAttribute('stroke-dasharray', isSiblingLink ? '4,3' : (link.type === 'subcomponent' ? '3,3' : (isHeuristicDerivation ? '5,3' : 'none')));
             linkGroup.appendChild(path);
         });
 
@@ -750,9 +773,10 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
                     Click to Open ➔
                 </span>
             </div>
-            <div style="font-size: 0.92rem; font-weight: 600; color: #ffffff; margin-bottom: 6px; line-height: 1.3;">
+            <div style="font-size: 0.92rem; font-weight: 600; color: #ffffff; margin-bottom: 5px; line-height: 1.3;">
                 ${node.title}
             </div>
+            ${this.renderNodeProvenanceBadges(node)}
             ${node.equation ? `
                 <div style="font-size: 0.88rem; color: #ffd700; background: rgba(0,0,0,0.5); padding: 5px 9px; border-radius: 6px; margin-bottom: 6px; overflow-x: auto; font-family: monospace; border: 1px solid rgba(255,255,255,0.06);">
                     $${node.equation}$

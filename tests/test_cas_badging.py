@@ -113,6 +113,9 @@ def test_explainer_php_view_contains_cas_badge_markup():
 
     assert 'id="cas-verified-badge"' in html, "View must contain #cas-verified-badge"
     assert 'id="cas-verified-text"' in html, "View must contain #cas-verified-text"
+    assert 'id="lineage-provenance-badge"' in html, "View must contain #lineage-provenance-badge"
+    assert 'id="record-type-badge"' in html, "View must contain #record-type-badge"
+    assert 'id="formula-description-subtitle"' in html, "View must contain #formula-description-subtitle"
 
 
 def test_explainer_js_handles_cas_validation():
@@ -122,6 +125,9 @@ def test_explainer_js_handles_cas_validation():
 
     assert "cas-verified-badge" in code, "equation_explainer.js must reference cas-verified-badge"
     assert "cas_validation" in code, "equation_explainer.js must read cas_validation property"
+    assert "lineage-provenance-badge" in code, "equation_explainer.js must populate lineage-provenance-badge"
+    assert "formula-description-subtitle" in code, "equation_explainer.js must populate formula-description-subtitle"
+    assert "lineage_confidence" in code, "equation_explainer.js must read lineage_confidence"
 
 
 def test_inspector_js_handles_cas_badge():
@@ -131,6 +137,22 @@ def test_inspector_js_handles_cas_badge():
 
     assert "cas_validation" in code, "formula_inspector.js must check cas_validation"
     assert "✓ CAS:" in code, "formula_inspector.js must render CAS badge label"
+    assert "drawer-description-text" in code, "formula_inspector.js must render distinct description lead"
+    assert "lineage_confidence" in code, "formula_inspector.js must surface lineage_confidence badge"
+
+
+def test_explainer_cards_and_graph_surface_provenance():
+    cards_js = os.path.join(PROJECT_ROOT, "public", "js", "explainer_cards.js")
+    graph_js = os.path.join(PROJECT_ROOT, "public", "js", "formula_graph.js")
+    with open(cards_js, "r", encoding="utf-8") as cf:
+        cards_code = cf.read()
+    with open(graph_js, "r", encoding="utf-8") as gf:
+        graph_code = gf.read()
+
+    assert "renderProvenancePill" in cards_code
+    assert "lineage_confidence" in cards_code
+    assert "renderNodeProvenanceBadges" in graph_code
+    assert "isHeuristicDerivation" in graph_code
 
 
 def test_sitewide_shards_tagged_with_cas_validation():

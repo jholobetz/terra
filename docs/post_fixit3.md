@@ -52,14 +52,14 @@
 
 ---
 
-## 🏅 Priority 5: Surface Provenance Badges & Distinct `description` in the UI *(User-Facing Payoff)*
+## ✅ Priority 5: Surface Provenance Badges & Distinct `description` in the UI *(COMPLETED)*
 
-* **What's Happening Now**:
-  Every formula now carries a formal `description` distinct from its `intuitive_summary`, a `lineage_confidence` provenance tier (`curated`, `cas_verified`, `root_axiom`, `heuristic`), and (for `9,318` formulas) a SymPy-certified `cas_validation` block.
-* **Proposed Optimization**:
-  Update the Equation Explainer (`/physics/equation-explainer`) and Formula Inspector modal to:
-  1. Render both the concise technical `description` subtitle and the `intuitive_summary` physical insight without repetition.
-  2. Display subtle provenance pills on derivation lineage links distinguishing **Curated Proof** / **CAS-Verified** links from **Structural / Heuristic** links (fulfilling the user-facing transparency mandate of [`GEMINI.md`](../GEMINI.md) §7.3).
+* **Original Gap**:
+  Although every formula carried a formal `description` distinct from its `intuitive_summary`, a `lineage_confidence` provenance tier (`curated`, `cas_verified`, `root_axiom`, `heuristic`), and `record_type` (`equation` vs. `symbol_or_term`), none of these fields were rendered in the UI, and [`PhysicsService::getFormulaWithHierarchy()`](../app/logic/PhysicsService.php) omitted child/parent provenance.
+* **Implemented Resolution**:
+  1. **Equation Explainer Header & Subtitle**: Added `#lineage-provenance-badge`, `#record-type-badge`, and the MathJax-typeset `#formula-description-subtitle` beneath `#formula-title` in [`equation_explainer.php`](../app/views/physics/equation_explainer.php) and [`equation_explainer.js`](../public/js/equation_explainer.js) (and updated catalog copy from `14,681` to `14,684`).
+  2. **Hierarchy Hydration & Lineage Cards**: Forwarded `lineage_confidence` and `record_type` across `parent_formula`, `subcomponents`, and `sibling_formulas` in [`PhysicsService::getFormulaWithHierarchy()`](../app/logic/PhysicsService.php), and surfaced provenance pills on **Derivation Relationship** and downstream equation cards in [`explainer_cards.js`](../public/js/explainer_cards.js).
+  3. **Formula Inspector Drawer & Interactive Graph**: Added `#drawer-description-text` and provenance badges to [`formula_inspector.js`](../public/js/formula_inspector.js), and added provenance badges + dashed strokes on `heuristic` derivation edges in [`formula_graph.js`](../public/js/formula_graph.js), verified via [`tests/test_cas_badging.py`](../tests/test_cas_badging.py) and [`tests/php/run_php_tests.php`](../tests/php/run_php_tests.php).
 
 ---
 

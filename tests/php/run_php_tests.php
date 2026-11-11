@@ -531,6 +531,15 @@ $runner->run('FormulaGraphServiceTest', 'testSubgraphProvenanceAndReverseLatexPa
             $t->assertTrue(is_array($found), "Reverse LaTeX lookup must resolve {$tex}");
             $t->assertSame($expectedId, $found['id'] ?? null);
         }
+
+        // 4. Hierarchy hydration forwards lineage_confidence & record_type on parent and downstream children
+        $hier = $svc->getFormulaWithHierarchy('cross-field-electric-magnetic-drift-velocity-magnitude');
+        $t->assertTrue(!empty($hier['description']), 'Hydrated formula must expose description');
+        $t->assertSame('cas_verified', $hier['lineage_confidence'] ?? null);
+        $t->assertTrue(!empty($hier['parent_formula']['lineage_confidence']), 'Parent formula must expose lineage_confidence');
+        $parentHier = $svc->getFormulaWithHierarchy('lorentz-force-law');
+        $t->assertTrue(!empty($parentHier['subcomponents']), 'Lorentz force law must hydrate subcomponents');
+        $t->assertTrue(!empty($parentHier['subcomponents'][0]['lineage_confidence']), 'Hydrated child subcomponent must expose lineage_confidence');
     } finally {
         if ($prevPreview === null) {
             unset($_GET['preview']);

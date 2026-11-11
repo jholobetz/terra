@@ -9,6 +9,20 @@
  */
 
 const ExplainerCards = {
+    renderProvenancePill(confidence, compact = false) {
+        const map = {
+            curated: { label: compact ? 'Curated' : 'Curated Lineage', icon: '✦', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', title: 'Human-curated derivation lineage' },
+            cas_verified: { label: compact ? 'CAS' : 'CAS-Verified Lineage', icon: '✓', color: '#38bdf8', bg: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.3)', title: 'CAS-certified derivation lineage' },
+            root_axiom: { label: compact ? 'Axiom' : 'Foundational Axiom', icon: '◈', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.32)', title: 'Foundational axiom or canonical definition' },
+            heuristic: { label: compact ? 'Heuristic' : 'Heuristic Link', icon: '◌', color: '#94a3b8', bg: 'rgba(148,163,184,0.08)', border: '1px dashed rgba(148,163,184,0.34)', title: 'Automated structural / heuristic lineage association' }
+        };
+        const m = map[confidence];
+        if (!m) return '';
+        const fontSize = compact ? '0.6rem' : '0.72rem';
+        const pad = compact ? '1px 5px' : '2px 7px';
+        return `<span title="${m.title}" style="display: inline-flex; align-items: center; gap: 3px; font-size: ${fontSize}; font-weight: 600; padding: ${pad}; color: ${m.color}; background: ${m.bg}; border: ${m.border}; border-radius: 4px; white-space: nowrap; flex-shrink: 0;"><span>${m.icon}</span><span>${m.label}</span></span>`;
+    },
+
     renderKnowledgeGraphCard(formula) {
         const card = document.getElementById('knowledge-graph-card');
         const details = document.getElementById('knowledge-graph-details');
@@ -50,7 +64,8 @@ const ExplainerCards = {
         let html = '';
 
         if (formula.derivation_type) {
-            html += `<div style="margin-bottom: 10px;"><strong>Derivation Relationship:</strong> <span class="badge-status badge-platinum" style="font-size: 0.72rem; padding: 2px 6px; background: rgba(100,255,218,0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100,255,218,0.3); border-radius: 4px;">${formula.derivation_type}</span></div>`;
+            const provPill = this.renderProvenancePill(formula.lineage_confidence, false);
+            html += `<div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><strong>Derivation Relationship:</strong> <span class="badge-status badge-platinum" style="font-size: 0.72rem; padding: 2px 6px; background: rgba(100,255,218,0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100,255,218,0.3); border-radius: 4px;">${formula.derivation_type}</span>${provPill}</div>`;
         }
 
         if (formula.parent_formula && formula.parent_formula.id) {
@@ -123,7 +138,8 @@ const ExplainerCards = {
                     id: childId,
                     title: childTitle,
                     equation: childEq,
-                    derivation_type: (typeof child === 'object' && child.derivation_type) ? child.derivation_type : 'DERIVED_FROM'
+                    derivation_type: (typeof child === 'object' && child.derivation_type) ? child.derivation_type : 'DERIVED_FROM',
+                    lineage_confidence: (typeof child === 'object' && child.lineage_confidence) ? child.lineage_confidence : null
                 });
             });
 
@@ -153,14 +169,18 @@ const ExplainerCards = {
                 const safeChildAttr = safeChildEq.replace(/"/g, '&quot;');
                 const childUrl = `/physics/equation-explainer?id=${encodeURIComponent(child.id)}`;
                 const dtypeLabel = (child.derivation_type || 'DERIVED_FROM').replace(/_/g, ' ');
+                const childProvPill = this.renderProvenancePill(child.lineage_confidence, true);
                 const mathPart = safeChildEq ? `<span data-latex="${safeChildAttr}" style="font-size: 0.9rem; color: #ffd700;">\\(${safeChildEq}\\)</span>` : '';
                 const hiddenStyle = (hasMore && idx >= initialCap) ? 'display: none;' : 'display: flex;';
-                const searchKey = `${child.title} ${child.id} ${dtypeLabel}`.toLowerCase().replace(/"/g, '');
+                const searchKey = `${child.title} ${child.id} ${dtypeLabel} ${child.lineage_confidence || ''}`.toLowerCase().replace(/"/g, '');
                 html += `
                     <a href="${childUrl}" class="lineage-formula-link lineage-downstream-item" data-index="${idx}" data-search="${searchKey}" data-formula-id="${child.id}" data-latex="${safeChildAttr}" style="${hiddenStyle} flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(100,255,218,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;">
                             <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${child.title}</span>
-                            <span style="font-size: 0.62rem; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; background: rgba(100, 255, 218, 0.08); color: #64ffda; border: 1px solid rgba(100, 255, 218, 0.2); white-space: nowrap; flex-shrink: 0;">${dtypeLabel}</span>
+                            <span style="display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;">
+                                <span style="font-size: 0.62rem; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; background: rgba(100, 255, 218, 0.08); color: #64ffda; border: 1px solid rgba(100, 255, 218, 0.2); white-space: nowrap;">${dtypeLabel}</span>
+                                ${childProvPill}
+                            </span>
                         </div>
                         ${mathPart}
                     </a>

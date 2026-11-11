@@ -866,6 +866,8 @@ class PhysicsService
                     'id' => $parentId,
                     'title' => $parentObj['title'] ?? 'Parent Formula',
                     'equation' => $parentObj['equation'] ?? '',
+                    'lineage_confidence' => $parentObj['lineage_confidence'] ?? null,
+                    'record_type' => $parentObj['record_type'] ?? null,
                     'url' => '/physics/equation-explainer?id=' . urlencode($parentId)
                 ];
 
@@ -885,6 +887,8 @@ class PhysicsService
                                 'title' => $sibObj['title'] ?? 'Co-Derived Equation',
                                 'equation' => $sibObj['equation'] ?? '',
                                 'derivation_type' => 'CO_DERIVED_SIBLING',
+                                'lineage_confidence' => $sibObj['lineage_confidence'] ?? null,
+                                'record_type' => $sibObj['record_type'] ?? null,
                                 'url' => '/physics/equation-explainer?id=' . urlencode($sibId)
                             ];
                         }
@@ -909,6 +913,8 @@ class PhysicsService
                                     'title' => $uncleObj['title'] ?? 'Parallel Branch Equation',
                                     'equation' => $uncleObj['equation'] ?? '',
                                     'derivation_type' => 'PARALLEL_BRANCH',
+                                    'lineage_confidence' => $uncleObj['lineage_confidence'] ?? null,
+                                    'record_type' => $uncleObj['record_type'] ?? null,
                                     'url' => '/physics/equation-explainer?id=' . urlencode($uncleId)
                                 ];
                             }
@@ -932,6 +938,8 @@ class PhysicsService
                             'title' => $childObj['title'] ?? 'Derived Equation',
                             'equation' => $childObj['equation'] ?? '',
                             'derivation_type' => $childObj['derivation_type'] ?? 'DERIVED_FROM',
+                            'lineage_confidence' => $childObj['lineage_confidence'] ?? null,
+                            'record_type' => $childObj['record_type'] ?? null,
                             'url' => '/physics/equation-explainer?id=' . urlencode($childId)
                         ];
                     }
@@ -944,6 +952,8 @@ class PhysicsService
                             'title' => $childObj['title'] ?? ($childId['title'] ?? 'Derived Equation'),
                             'equation' => $childObj['equation'] ?? ($childId['equation'] ?? ''),
                             'derivation_type' => $childObj['derivation_type'] ?? ($childId['derivation_type'] ?? 'DERIVED_FROM'),
+                            'lineage_confidence' => $childObj['lineage_confidence'] ?? ($childId['lineage_confidence'] ?? null),
+                            'record_type' => $childObj['record_type'] ?? ($childId['record_type'] ?? null),
                             'url' => '/physics/equation-explainer?id=' . urlencode($childIdStr)
                         ];
                     }

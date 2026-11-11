@@ -89,9 +89,10 @@ def commit_node(slug, html_file, identities_file=None):
         
     shard_name = orch.slug_to_shard[slug]
     shard_path = os.path.join("app/config/content", shard_name)
+    bak_path = shard_path + ".bak"
     
     # Backup shard
-    shutil.copy(shard_path, shard_path + ".bak")
+    shutil.copy(shard_path, bak_path)
 
     # Update JSON
     with open(shard_path, 'r') as f:
@@ -256,9 +257,13 @@ def commit_node(slug, html_file, identities_file=None):
     except Exception as e:
         print(f"Failed: {e}")
         # Revert
-        shutil.copy(shard_path + ".bak", shard_path)
-        print("Reverted shard to backup.")
+        if os.path.exists(bak_path):
+            shutil.copy(bak_path, shard_path)
+            print("Reverted shard to backup.")
         sys.exit(1)
+    finally:
+        if os.path.exists(bak_path):
+            os.remove(bak_path)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:

@@ -213,7 +213,7 @@ def test_subtopic_encyclopedia_launchers_resolution():
 
 
 def test_subtopic_html_rendering_with_launchers():
-    """Verify that Flight PHP renders subtopics with both the header launcher badge and cockpit bridge."""
+    """Verify that Flight PHP renders subtopics with the cockpit bridge and clean header (no title-bar badges)."""
     php_code = """
     define('FLIGHT_SKIP_START', true);
     require 'app/config/bootstrap.php';
@@ -237,7 +237,8 @@ def test_subtopic_html_rendering_with_launchers():
     $html = ob_get_clean();
 
     $checks = [
-        'lab-launcher-badge' => strpos($html, 'lab-launcher-badge') !== false,
+        'no-lab-launcher-badge' => strpos($html, 'lab-launcher-badge') === false,
+        'no-verification-badge-in-header' => strpos($html, 'Academic Consensus Verified') === false,
         'subtopic-cockpit-bridge' => strpos($html, 'subtopic-cockpit-bridge') !== false,
         'Analytical Mechanics Workbench' => strpos($html, 'Analytical Mechanics Workbench') !== false,
         'legendre-transformer?preset=sho' => strpos($html, 'legendre-transformer?preset=sho') !== false

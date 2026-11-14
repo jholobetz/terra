@@ -43,14 +43,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                 <p id="formula-description-subtitle" style="display: none; margin: 2px 0 0 0; font-size: 0.9rem; line-height: 1.45; color: #cbd5e1; max-width: 840px;"></p>
             </div>
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <button id="btn-return-launchpad" type="button" title="Return to Equation Launchpad &amp; Quick-Load Examples" style="padding: 6px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(255, 255, 255, 0.04); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 5px;">
-                    <span>⚡</span>
-                    <span>Examples</span>
-                </button>
-                <button id="btn-header-random-formula" type="button" title="Load a random verified formula with multi-step proof" style="padding: 6px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(255, 255, 255, 0.04); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 5px;">
-                    <span>🎲</span>
-                    <span>Random</span>
-                </button>
                 <?php $canCurate = in_array($currentUser->role ?? 'guest', ['admin', 'curator'], true); ?>
                 <button id="btn-open-curator-drawer" style="padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; background: rgba(100, 255, 218, 0.08); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); cursor: pointer; transition: all 0.2s ease; display: <?= $canCurate ? 'inline-flex' : 'none' ?>; align-items: center; gap: 6px;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -534,13 +526,6 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
     border-color: var(--accent-default, #64ffda);
     color: #ffffff;
     background: rgba(100, 255, 218, 0.1);
-}
-
-#btn-return-launchpad:hover,
-#btn-header-random-formula:hover {
-    border-color: var(--accent-default, #64ffda) !important;
-    color: #ffffff !important;
-    background: rgba(100, 255, 218, 0.1) !important;
 }
 
 .launchpad-examples-grid {

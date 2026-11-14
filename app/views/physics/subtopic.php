@@ -80,41 +80,24 @@ if (empty($labLauncher)) {
             <?= $meta['svg'] ?>
         </div>
 
-        <nav class="breadcrumb subtopic-glass-breadcrumb">
+        <nav class="breadcrumb subtopic-glass-breadcrumb" aria-label="Breadcrumb">
             <a href="/physics">Home</a>
             <?php foreach ($breadcrumbs as $crumb): ?>
-                <span>&rsaquo;</span>
+                <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
                 <?php if (isset($crumb['is_multi'])): ?>
                     <?php foreach ($crumb['links'] as $index => $link): ?>
-                        <?= $index > 0 ? ' | ' : '' ?>
-                        <a href="<?= htmlspecialchars($link['url']) ?>"><?= $link['title'] ?></a>
+                        <?php if ($index > 0): ?>
+                            <span class="breadcrumb-sep" aria-hidden="true">|</span>
+                        <?php endif; ?>
+                        <a href="<?= htmlspecialchars($link['url']) ?>" title="<?= htmlspecialchars(strip_tags($link['title'])) ?>"><?= $link['title'] ?></a>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <a href="<?= htmlspecialchars($crumb['url']) ?>"><?= $crumb['title'] ?></a>
+                    <a href="<?= htmlspecialchars($crumb['url']) ?>" title="<?= htmlspecialchars(strip_tags($crumb['title'])) ?>"><?= $crumb['title'] ?></a>
                 <?php endif; ?>
             <?php endforeach; ?>
-            <span>&rsaquo;</span>
-            <span style="opacity: 1; color: var(--accent-color, #64ffda); font-weight: 500;"><?= htmlspecialchars($title) ?></span>
         </nav>
 
         <h1 class="topic-title"><?= htmlspecialchars($title ?? 'Subtopic') ?></h1>
-
-        <div class="topic-actions-row" style="margin-top: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <?php if (!empty($verification)): ?>
-                <a href="#literature-consensus" class="verification-badge" style="cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(100, 255, 218, 0.08); border: 1px solid var(--accent-color); border-radius: 20px; font-size: 0.8rem; color: var(--accent-color); font-weight: 600; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.05em; transition: all 0.25s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.2)'; this.style.boxShadow='0 0 12px rgba(100, 255, 218, 0.3)'" onmouseout="this.style.background='rgba(100, 255, 218, 0.08)'; this.style.boxShadow='none'">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    <span>Academic Consensus Verified (<?= number_format(($verification['consensus_score'] ?? 1.0) * 100, 0) ?>%)</span>
-                </a>
-            <?php endif; ?>
-
-            <?php if (!empty($labLauncher)): ?>
-                <a href="<?= htmlspecialchars($labLauncher['url']) ?>" class="lab-launcher-badge" style="text-decoration: none; display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 20px; font-size: 0.8rem; color: #38bdf8; font-weight: 600; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.04em; transition: all 0.25s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.2)'; this.style.boxShadow='0 0 14px rgba(56, 189, 248, 0.35)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.boxShadow='none'; this.style.transform='none'">
-                    <span><?= $labLauncher['icon'] ?></span>
-                    <span><?= htmlspecialchars($labLauncher['action_label']) ?></span>
-                    <span style="font-size: 0.75rem; opacity: 0.7;">&rarr;</span>
-                </a>
-            <?php endif; ?>
-        </div>
     </header>
     
     <div class="content-body subtopic-prose-card" id="subtopic-main-prose">
@@ -607,8 +590,28 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
 .subtopic-glass-breadcrumb {
-    margin-bottom: 12px;
-    font-size: 0.85rem;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+    margin-bottom: 10px;
+    font-size: clamp(0.72rem, 0.8vw, 0.76rem);
+    line-height: 1.45;
+}
+
+.subtopic-glass-breadcrumb a {
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.subtopic-glass-breadcrumb .breadcrumb-sep {
+    flex-shrink: 0;
+    opacity: 0.45;
+    user-select: none;
 }
 
 .subtopic-prose-card {

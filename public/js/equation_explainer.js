@@ -474,8 +474,6 @@ const EquationExplainer = {
         this.launchpadAutocomplete = document.getElementById('launchpad-autocomplete-dropdown');
         this.launchpadCompileBtn = document.getElementById('launchpad-compile-btn');
         this.launchpadRandomBtn = document.getElementById('launchpad-random-btn');
-        this.btnReturnLaunchpad = document.getElementById('btn-return-launchpad');
-        this.btnHeaderRandomFormula = document.getElementById('btn-header-random-formula');
         this.launchpadExampleCards = document.querySelectorAll('.launchpad-example-card');
     },
 
@@ -596,23 +594,6 @@ const EquationExplainer = {
         if (this.launchpadRandomBtn) {
             this.launchpadRandomBtn.addEventListener('click', () => {
                 this.loadRandomFlagshipFormula();
-            });
-        }
-
-        if (this.btnHeaderRandomFormula) {
-            this.btnHeaderRandomFormula.addEventListener('click', () => {
-                this.loadRandomFlagshipFormula();
-            });
-        }
-
-        if (this.btnReturnLaunchpad) {
-            this.btnReturnLaunchpad.addEventListener('click', () => {
-                if (this.latexInput) this.latexInput.value = '';
-                if (this.launchpadInput) this.launchpadInput.value = '';
-                this.currentId = null;
-                this.currentLatex = '';
-                this.updateUrlParams('', null);
-                this.resetExplanation();
             });
         }
 

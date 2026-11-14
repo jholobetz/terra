@@ -16,6 +16,11 @@
     <script src="/js/lib/tex-svg-full.js" id="MathJax-script" nonce="<?= $nonce ?>" defer></script>
     <script src="/js/hub_interactions.js" nonce="<?= $nonce ?>" defer></script>
     <link rel="stylesheet" href="/css/physics.css?v=<?= @filemtime(PROJECT_ROOT . '/public/css/physics.css') ?: 1 ?>">
+    <?php if (!empty($extra_css) && is_array($extra_css)): ?>
+        <?php foreach ($extra_css as $cssAsset): ?>
+            <link rel="stylesheet" href="/css/<?= htmlspecialchars($cssAsset) ?>?v=<?= @filemtime(PROJECT_ROOT . '/public/css/' . $cssAsset) ?: 1 ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
     <script nonce="<?= $nonce ?>">
         const BASE_URL = '<?= (Flight::request()->base && Flight::request()->base !== '.') ? rtrim(Flight::request()->base, '/') : '' ?>';
     </script>

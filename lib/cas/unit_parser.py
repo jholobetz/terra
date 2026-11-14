@@ -576,14 +576,40 @@ def get_natural_dimension_power(dim_expr: Any) -> Optional[int | float]:
     Computes the single energy/mass dimension power d in natural units (hbar = c = k_B = 1):
         d_nat = M - L - T + Theta + I
     Returns:
-        int or float power of [E]^d, or None if unparseable.
+        int or float power of [E]^d, or None if inhomogeneous / unparseable.
     """
-    if dim_expr == 1 or dim_expr is None:
+    if dim_expr is None:
+        return None
+    if dim_expr == 1 or dim_expr == 0:
         return 0
 
-    powers = get_dimension_signature(dim_expr)
-    if not powers and dim_expr != 1:
+    try:
+        deps = dimsys_SI.get_dimensional_dependencies(dim_expr)
+    except Exception:
+        return None
+
+    if not deps:
         return 0
+
+    mapping = {
+        mass: "M",
+        length: "L",
+        time: "T",
+        current: "I",
+        temperature: "Theta",
+        amount_of_substance: "N",
+        luminous_intensity: "J",
+    }
+    powers: Dict[str, Any] = {}
+    for d_unit, p in deps.items():
+        for base_unit, symbol in mapping.items():
+            if d_unit == base_unit or str(d_unit) == str(base_unit):
+                powers[symbol] = (
+                    int(p)
+                    if (hasattr(p, "is_integer") and p.is_integer)
+                    or (isinstance(p, (int, float)) and int(p) == p)
+                    else float(p)
+                )
 
     m = powers.get("M", 0)
     l = powers.get("L", 0)
@@ -603,6 +629,8 @@ def parse_unit_string_natural(raw_unit: Optional[str]) -> Any:
     if si_dim is None:
         return None
     d = get_natural_dimension_power(si_dim)
+    if d is None:
+        return None
     if d == 0:
         return 1
     return DIM_NATURAL_ENERGY ** d

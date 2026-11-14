@@ -61,6 +61,32 @@ def test_symbolic_reduction_direct_algebraic_identity():
     assert res["is_equivalent"] is True
 
 
+def test_symbolic_reduction_preserves_time_derivatives_algebraically():
+    # Time-dependent driven Lagrangian L(q, \dot{q}, t) reducing to free oscillator as F_0 -> 0.
+    # Verifies \dot{q} is preserved as algebraic symbol dq rather than lowered to q / t.
+    res = verify_symbolic_reduction(
+        parent_latex=r"L = \frac{1}{2} m \dot{q}^2 - \frac{1}{2} k q^2 + F_0 q \cos(\omega t)",
+        child_latex=r"L = \frac{1}{2} m \dot{q}^2 - \frac{1}{2} k q^2",
+        limit_var="F_0",
+        limit_target=0,
+    )
+    assert res["success"] is True
+    assert res["is_equivalent"] is True
+    assert res["difference"] == "0"
+    assert "dq" in res["parent_limit"]
+    assert "t" not in res["parent_limit"]
+
+    # Relativistic dispersion rest-energy limit E = sqrt(p^2 c^2 + m^2 c^4) -> m c^2 as p -> 0
+    res_disp = verify_symbolic_reduction(
+        parent_latex=r"E = \sqrt{p^2 c^2 + m^2 c^4}",
+        child_latex=r"E = m c^2",
+        limit_var="p",
+        limit_target=0,
+    )
+    assert res_disp["success"] is True
+    assert res_disp["is_equivalent"] is True
+
+
 def test_verify_derivation_chain_synthetic():
     entry = {
         "title": "Synthetic Step Proof Test",

@@ -33,6 +33,7 @@ These files are retained strictly for historical context, Git lineage, and techn
 * `merge_auto_draft_lineage.md`: Retrospective notes on automated derivation inference.
 
 ### 3. Historical Explorations & Retrospectives
+* `phase_4_analysis.md`: Codebase & tooling architectural audit (100% of actionable findings remediated across `ShardSyncService.php` / `PhysicsService.php` dual-layer sync & atomic locking, `lib/cas/latex_parser.py` unified balanced-brace CAS pipeline, view monolith decomposition & CSP nonce hardening across `topic.php` / `equation_explainer.php` / `lab_tools.php` / `simulations.php`, and `scripts/` call-graph pruning).
 * `argon_first_report.md`: External architectural, security, content, and telemetry audit report (100% of actionable findings remediated across `AuthService.php`, `ShardSyncService.php`, `LatexSanitizer.php`, `fixlineage`, and `tests/php/run_php_tests.php`).
 * `incident_report_google_billing.md`: Root-cause analysis of early LLM token overruns that led to `docs/cost_governance.md`.
 * `_gem_3_8_report.md` & `_report_2026-08-08.md`: Mid-sprint development progress logs.

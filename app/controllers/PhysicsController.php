@@ -169,7 +169,8 @@ class PhysicsController
     public function labTools()
     {
         $this->renderWithLayout('physics/lab_tools', [
-            'title' => 'Lab Tools Hub'
+            'title' => 'Lab Tools Hub',
+            'extra_css' => ['lab_tools.css']
         ]);
     }
 
@@ -238,7 +239,8 @@ class PhysicsController
             'subtopicSlug' => $subtopicSlug,
             'subtopicVariables' => $subtopicVariables,
             'domain' => $domain,
-            'currentUser' => $currentUser
+            'currentUser' => $currentUser,
+            'extra_css' => ['equation_explainer.css']
         ]);
     }
 
@@ -346,6 +348,10 @@ class PhysicsController
 
         // 1. Check Deterministic SHA-256 CAS Result Cache (<1ms fast path)
         $scriptMtime = file_exists($casScript) ? filemtime($casScript) : 0;
+        $parserScript = PROJECT_ROOT . '/lib/cas/latex_parser.py';
+        if (file_exists($parserScript)) {
+            $scriptMtime = max($scriptMtime, (int)filemtime($parserScript));
+        }
         $cacheHash = hash('sha256', $jsonPayload . '|' . $scriptMtime);
         $cacheDir = is_writable(PROJECT_ROOT . '/public/cache')
             ? PROJECT_ROOT . '/public/cache/cas'
@@ -963,7 +969,8 @@ class PhysicsController
             'field' => $topic['field'] ?? null,
             'density' => $topic['density'] ?? null,
             'topicVariableMap' => $topicVariableMap,
-            'slug' => $slug
+            'slug' => $slug,
+            'extra_css' => ['topic_constellation.css']
         ]), $cachePath);
     }
 
@@ -1213,6 +1220,17 @@ class PhysicsController
         $viewPath = PROJECT_ROOT . '/app/views/physics/topic.php';
         if (file_exists($viewPath) && filemtime($viewPath) > $cacheMtime) {
             return true;
+        }
+
+        $hubAssets = [
+            PROJECT_ROOT . '/public/css/physics.css',
+            PROJECT_ROOT . '/public/css/topic_constellation.css',
+            PROJECT_ROOT . '/public/js/topic_constellation.js',
+        ];
+        foreach ($hubAssets as $assetPath) {
+            if (file_exists($assetPath) && filemtime($assetPath) > $cacheMtime) {
+                return true;
+            }
         }
 
         $aggregatorPath = PROJECT_ROOT . '/app/logic/VariableAggregator.php';

@@ -1,93 +1,30 @@
 """
 🔬 Terra Physics Lab - Derivation Invariance & Multi-Step Proof Prover
-Audits intermediate derivation step chains (102 verified proofs sitewide)
+Audits intermediate derivation step chains (104 verified proofs sitewide)
 and proves symbolic parent -> child algebraic reductions.
 """
 
 import re
 from typing import Dict, Any, List, Optional, Tuple
 import sympy
-from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application
-from sympy.physics.units.systems.si import dimsys_SI
-
-from lib.cas.cas_engine import (
-    latex_to_sympy_str,
-    _extract_dim_powers,
-    _format_dim_latex,
-    _identify_physical_quantity,
-    clean_equation_for_cas,
-    build_entry_dimensions,
-    evaluate_formula_invariance
+from sympy.parsing.sympy_parser import (
+    parse_expr,
+    standard_transformations,
+    implicit_multiplication_application,
 )
-from lib.cas.unit_parser import parse_unit_string
 
-
-def normalize_math_string(s: str) -> str:
-    """
-    Canonicalizes a LaTeX math string by stripping formatting macros, normalizing
-    Greek variants, fractions, derivatives, exponentials, and relational operators.
-    """
-    if not s:
-        return ""
-    s = s.strip()
-    # Strip trailing parenthetical annotations like \quad (\text{Noether Current})
-    s = re.sub(r"\\quad\s*\(\\text\{[^}]*\}\)\s*$", "", s)
-    s = re.sub(r"\(\\text\{[^}]*\}\)\s*$", "", s)
-
-    # Normalize Greek variants
-    s = re.sub(r"\\varepsilon(?![a-zA-Z])", r"\\epsilon", s)
-    s = re.sub(r"\\varphi(?![a-zA-Z])", r"\\phi", s)
-    s = re.sub(r"\\vartheta(?![a-zA-Z])", r"\\theta", s)
-    s = re.sub(r"\\varrho(?![a-zA-Z])", r"\\rho", s)
-
-    # Iteratively strip font/decorator wrappers (handles nested \mathrm{d}\mathbf{l}')
-    for _ in range(4):
-        next_s = re.sub(
-            r"\\(mathbf|mathrm|mathsf|text|boldsymbol|mathcal|vec|hat|bar|tilde|underline)\{([^{}]*)\}",
-            r"\2",
-            s
-        )
-        if next_s == s:
-            break
-        s = next_s
-
-    # Strip sizing macros
-    s = re.sub(r"\\(left|right|big|Big|bigg|Bigg)\b", "", s)
-
-    # Normalize time / proper-time derivatives to dot notation
-    s = re.sub(r"\\frac\{\\?(?:d|partial)\^2\s*([a-zA-Z0-9_\\^\{\}]+)\}\{\\?(?:d|partial)\s*(?:t|\\tau)\^2\}", r"\\ddot{\1}", s)
-    s = re.sub(r"\\frac\{\\?(?:d|partial)\s*([a-zA-Z0-9_\\^\{\}]+)\}\{\\?(?:d|partial)\s*(?:t|\\tau)\}", r"\\dot{\1}", s)
-
-    # Normalize \exp(...) -> e^{...}
-    s = re.sub(r"\\exp\s*\(([^()]+)\)", r"e^{\1}", s)
-
-    # Normalize \dfrac, \tfrac -> \frac and expand \frac{A}{B} -> A/B (supporting nested braces)
-    s = re.sub(r"\\(d|t)frac\b", r"\\frac", s)
-    for _ in range(5):
-        next_s = re.sub(
-            r"\\frac\{((?:[^{}]|\{[^{}]*\})*)\}\{((?:[^{}]|\{[^{}]*\})*)\}",
-            r"\1/\2",
-            s
-        )
-        if next_s == s:
-            break
-        s = next_s
-
-    # Normalize sum bounds (\sum_{i=1}^N, \sum_{i=1}^n, \sum_{i} -> \sum_i)
-    s = re.sub(r"\\sum_\{?([a-zA-Z])(?:=[^}^]+)?\}?(?:\^\{?[a-zA-Z0-9\\]+\}?)?", r"\\sum_\1", s)
-
-    # Normalize variational test function aliases (\dot{\eta}^i -> \delta\dot{q}^i, \eta^i -> \delta q^i)
-    s = re.sub(r"\\dot\{?\\eta\}?\^i", r"\\delta\\dot{q}^i", s)
-    s = re.sub(r"\\eta\^i", r"\\delta q^i", s)
-
-    # Normalize relational symbols to '='
-    s = re.sub(r"\\(equiv|approx|propto|sim|to|rightarrow|xrightarrow\{[^{}]*\})", "=", s)
-    s = re.sub(r"\\(le|leq)\b", "<=", s)
-    s = re.sub(r"\\(ge|geq)\b", ">=", s)
-
-    # Strip delimiters, parens, brackets, braces, underscores, carets, whitespace, and punctuation spacing
-    s = re.sub(r"[\(\)\[\]\{\}\s\\,;!\|'_\^]+|\\,|\\;|\\!|\\quad|\\qquad", "", s)
-    return s
+from lib.cas.latex_parser import (
+    latex_to_sympy_str,
+    clean_latex_equation,
+    clean_equation_for_cas,
+    normalize_math_string,
+    split_top_level_equals,
+)
+from lib.cas.cas_engine import (
+    build_physics_symbols,
+    build_entry_dimensions,
+    evaluate_formula_invariance,
+)
 
 
 def _split_step_clauses(raw_latex: str) -> List[str]:
@@ -95,7 +32,6 @@ def _split_step_clauses(raw_latex: str) -> List[str]:
     Splits a multi-clause LaTeX step (separated by \\implies, \\iff, \\quad, or ;)
     into individual mathematical statements.
     """
-    # Normalize implication / transition arrows into clause separators
     s = re.sub(r"\\xrightarrow\{[^{}]*\}", r"\\implies", raw_latex)
     parts = re.split(r"\\implies|\\Rightarrow|\\iff|\\Longleftrightarrow|;|\\quad|\\qquad", s)
     clauses = []
@@ -103,7 +39,6 @@ def _split_step_clauses(raw_latex: str) -> List[str]:
         p = p.strip().strip(",")
         if not p or p.startswith(r"(\text{") or p.startswith(r"\text{"):
             continue
-        # Further split comma-separated independent definitions (e.g. "A = B, C = D")
         if "," in p and p.count("=") + p.count(r"\equiv") >= 2:
             subparts = [sp.strip() for sp in p.split(",") if sp.strip()]
             clauses.extend(subparts)
@@ -118,63 +53,51 @@ def _evaluate_clause_homogeneity(
     clause_latex: str,
     entry: Dict[str, Any],
     symbols_dict: Dict[str, Any],
-    transformations: Any
 ) -> Tuple[Optional[bool], Optional[str], Optional[str]]:
     """
-    Evaluates dimensional homogeneity of a single mathematical clause.
-    Supports chained equalities (A = B = C), SI + Natural Units fallback,
-    primed coordinates, and differential/tensor/bra-ket operator recognition.
+    Evaluates dimensional homogeneity of a single mathematical clause via the unified
+    `evaluate_formula_invariance` engine. Supports chained equalities (A = B = C),
+    SI + Natural Units fallback, primed coordinates, and operator recognition.
     """
-    # Normalize relational operators (\equiv, \approx, \propto) to '=' for dimensional check
     norm_clause = re.sub(r"\\(equiv|approx|propto|sim)\b", "=", clause_latex)
-    # Sanitize primes (x' -> x_prime) so SymPy parser does not see unmatched single quotes
     norm_clause = re.sub(r"([a-zA-Z0-9\}\]])'+", r"\1_prime", norm_clause)
 
-    clean_eq = clean_equation_for_cas(norm_clause)
-    if "=" not in clean_eq:
+    # Check if clause has any relational operator after dimensional pre-cleaning
+    probe_clean = clean_equation_for_cas(norm_clause)
+    if len(split_top_level_equals(probe_clean)) < 2:
         return True, None, None
 
-    # Split chained equalities A = B = C into segments [A, B, C]
-    segments = [seg.strip() for seg in clean_eq.split("=") if seg.strip()]
-    if len(segments) < 2:
+    # Preserve all chained equality segments A = B = C before pairwise evaluation
+    raw_segments = [seg.strip() for seg in split_top_level_equals(norm_clause) if seg.strip()]
+    if len(raw_segments) < 2:
+        raw_segments = [seg.strip() for seg in split_top_level_equals(probe_clean) if seg.strip()]
+    if len(raw_segments) < 2:
         return True, None, None
 
     last_err = None
-    for i in range(len(segments) - 1):
-        lhs_raw, rhs_raw = segments[i], segments[i + 1]
-        try:
-            lhs_str = latex_to_sympy_str(lhs_raw)
-            rhs_str = latex_to_sympy_str(rhs_raw)
-            if lhs_str.strip() and rhs_str.strip():
-                lhs_expr = parse_expr(lhs_str, local_dict=symbols_dict, transformations=transformations)
-                rhs_expr = parse_expr(rhs_str, local_dict=symbols_dict, transformations=transformations)
+    for i in range(len(raw_segments) - 1):
+        lhs_raw, rhs_raw = raw_segments[i], raw_segments[i + 1]
+        sub_entry = dict(entry)
+        sub_entry["equation"] = f"{lhs_raw} = {rhs_raw}"
+        cas_res = evaluate_formula_invariance(
+            f"{formula_id}_s{st_idx}",
+            sub_entry,
+            precomputed_si_dims=symbols_dict,
+        )
+        if cas_res.get("is_homogeneous") is True:
+            return True, cas_res.get("quantity"), None
 
-                lhs_deps = dimsys_SI.get_dimensional_dependencies(lhs_expr)
-                rhs_deps = dimsys_SI.get_dimensional_dependencies(rhs_expr)
-
-                lhs_powers = _extract_dim_powers(lhs_deps)
-                rhs_powers = _extract_dim_powers(rhs_deps)
-
-                if lhs_powers == rhs_powers:
-                    return True, _identify_physical_quantity(lhs_powers), None
-        except Exception as e:
-            last_err = str(e)
-
-        # Fast-path check if clause is a formal calculus / differential / operator / bra-ket identity
         if re.search(
             r"\\langle|\\rangle|\|[a-zA-Z0-9_\\'\s]+\\rangle|\\nabla|\\partial|\\int|\\sum|\\lim|\\delta|\\mathcal\{L\}|\\text\{Tr\}|\\hat\{",
-            clause_latex
+            clause_latex,
         ):
             return True, "Operator / Calculus Step", None
 
-        # Fallback to full CAS formula evaluator (includes Natural Units & operator/tensor checks)
-        sub_entry = dict(entry)
-        sub_entry["equation"] = f"{lhs_raw} = {rhs_raw}"
-        cas_res = evaluate_formula_invariance(f"{formula_id}_s{st_idx}", sub_entry)
-        if cas_res.get("is_homogeneous") is True:
-            return True, cas_res.get("quantity"), None
         if cas_res.get("status") == "OPERATOR_OR_TENSOR":
             return True, "Operator / Tensor Identity", None
+
+        if cas_res.get("error"):
+            last_err = cas_res.get("error")
 
     return False, None, last_err
 
@@ -190,7 +113,6 @@ def _step_matches_master(step_latex: str, master_eq: str) -> bool:
     if not norm_master:
         return False
 
-    # Check full step and each sub-clause
     candidates = [step_latex] + _split_step_clauses(step_latex)
     for cand in candidates:
         norm_cand = normalize_math_string(cand)
@@ -203,7 +125,6 @@ def _step_matches_master(step_latex: str, master_eq: str) -> bool:
         ):
             return True
 
-        # Handle chained inequalities (e.g. Bell CHSH |E...| <= ... <= 2)
         for ineq_op in ("<=", ">="):
             if ineq_op in norm_cand and ineq_op in norm_master:
                 c_in_parts = [p for p in norm_cand.split(ineq_op) if p]
@@ -212,7 +133,6 @@ def _step_matches_master(step_latex: str, master_eq: str) -> bool:
                     if c_in_parts[0] == m_in_parts[0] and c_in_parts[-1] == m_in_parts[-1]:
                         return True
 
-        # Handle chained equalities A = B = C and symmetric equalities B = A
         cand_eq = re.sub(r"\\(equiv|approx|propto|sim|to|rightarrow)\b", "=", cand)
         master_eq_norm = re.sub(r"\\(equiv|approx|propto|sim|to|rightarrow)\b", "=", master_eq)
         if "=" in cand_eq and "=" in master_eq_norm:
@@ -221,16 +141,12 @@ def _step_matches_master(step_latex: str, master_eq: str) -> bool:
             if len(cand_parts) >= 2 and len(master_parts) >= 2:
                 m_lhs, m_rhs = master_parts[0], master_parts[-1]
                 c_lhs, c_rhs = cand_parts[0], cand_parts[-1]
-                # Direct or transitive match (first LHS and last RHS)
                 if (c_lhs == m_lhs and c_rhs == m_rhs) or (c_lhs == m_rhs and c_rhs == m_lhs):
                     return True
-                # RHS match when LHS is a standard alias (e.g. |\psi'\rangle vs |\psi\rangle or \dot{q}_i vs dq_i/dt)
                 if c_rhs and m_rhs and (c_rhs == m_rhs or c_rhs in m_rhs or m_rhs in c_rhs):
                     return True
-                # Any segment in chained equality matches master RHS
                 if m_rhs and any(p == m_rhs or (len(m_rhs) >= 6 and m_rhs in p) for p in cand_parts[1:]):
                     return True
-                # Metric tensor component derivation (g_{00} = -(1 - 2GM/c^2r) for ds^2 metric)
                 if m_lhs == "ds2" and c_lhs in ("ds2", "g00", "rs"):
                     return True
 
@@ -253,15 +169,14 @@ def verify_derivation_chain(formula_id: str, entry: Dict[str, Any]) -> Dict[str,
         return {
             "id": formula_id,
             "has_proof": False,
-            "error": "No derivation steps defined"
+            "error": "No derivation steps defined",
         }
 
     total_steps = len(steps)
     step_indices = [s.get("step") for s in steps]
-    is_consecutive = (step_indices == list(range(1, total_steps + 1)))
+    is_consecutive = step_indices == list(range(1, total_steps + 1))
 
     symbols_dict = build_entry_dimensions(entry)
-    transformations = standard_transformations + (implicit_multiplication_application,)
 
     step_results = []
     homogeneous_steps = 0
@@ -279,7 +194,7 @@ def verify_derivation_chain(formula_id: str, entry: Dict[str, Any]) -> Dict[str,
 
         for cl in clauses:
             is_h, qty, err = _evaluate_clause_homogeneity(
-                formula_id, st_idx, cl, entry, symbols_dict, transformations
+                formula_id, st_idx, cl, entry, symbols_dict
             )
             clause_homo_results.append(is_h)
             if qty and not chosen_qty:
@@ -294,7 +209,7 @@ def verify_derivation_chain(formula_id: str, entry: Dict[str, Any]) -> Dict[str,
             "rationale": rationale,
             "is_homogeneous": step_is_homo,
             "quantity": chosen_qty,
-            "error": None if step_is_homo else last_err
+            "error": None if step_is_homo else last_err,
         }
 
         if step_is_homo:
@@ -305,7 +220,6 @@ def verify_derivation_chain(formula_id: str, entry: Dict[str, Any]) -> Dict[str,
 
         step_results.append(step_info)
 
-    # Termination verification: does the final step (or a derivation milestone step) reach master_eq?
     terminates_correctly = False
     for s in reversed(steps):
         if _step_matches_master(s.get("latex", ""), master_eq):
@@ -313,7 +227,7 @@ def verify_derivation_chain(formula_id: str, entry: Dict[str, Any]) -> Dict[str,
             break
 
     step_homo_rate = (homogeneous_steps / total_steps * 100) if total_steps > 0 else 0.0
-    is_certified = (is_consecutive and (step_homo_rate >= 60.0 or terminates_correctly))
+    is_certified = is_consecutive and (step_homo_rate >= 60.0 or terminates_correctly)
 
     return {
         "id": formula_id,
@@ -328,7 +242,7 @@ def verify_derivation_chain(formula_id: str, entry: Dict[str, Any]) -> Dict[str,
         "step_homogeneity_rate_pct": round(step_homo_rate, 1),
         "terminates_correctly": terminates_correctly,
         "is_proof_certified": is_certified,
-        "steps": step_results
+        "steps": step_results,
     }
 
 
@@ -336,76 +250,94 @@ def verify_symbolic_reduction(
     parent_latex: str,
     child_latex: str,
     limit_var: Optional[str] = None,
-    limit_target: Any = 0
+    limit_target: Any = 0,
 ) -> Dict[str, Any]:
     """
-    Symbolically proves that Child is an asymptotic limit or reduction of Parent:
-    Simplify( Limit(Parent, limit_var -> limit_target) - Child ) == 0
-    """
-    clean_p = clean_equation_for_cas(parent_latex)
-    clean_c = clean_equation_for_cas(child_latex)
+    Symbolically proves that Child is an asymptotic limit or algebraic reduction of Parent:
+    `Simplify( Limit(Parent, limit_var -> limit_target) - Child ) == 0`
 
-    # Take RHS if equations
-    p_expr_str = clean_p.split("=", 1)[-1] if "=" in clean_p else clean_p
-    c_expr_str = clean_c.split("=", 1)[-1] if "=" in clean_c else clean_c
+    Uses `mode="algebraic"` pre-cleaning so phase-space time derivatives (`\\dot{q}` -> `dq`)
+    are preserved as independent algebraic symbols rather than lowered to `q / t`.
+    """
+    clean_p = clean_latex_equation(parent_latex, mode="algebraic")
+    clean_c = clean_latex_equation(child_latex, mode="algebraic")
+
+    p_parts = split_top_level_equals(clean_p)
+    c_parts = split_top_level_equals(clean_c)
+    p_expr_str = p_parts[-1].strip() if len(p_parts) >= 2 else clean_p
+    c_expr_str = c_parts[-1].strip() if len(c_parts) >= 2 else clean_c
 
     s_p = latex_to_sympy_str(p_expr_str)
     s_c = latex_to_sympy_str(c_expr_str)
 
+    symbols_dict = build_physics_symbols(f"{s_p} {s_c}")
     transformations = standard_transformations + (implicit_multiplication_application,)
 
     try:
-        p_expr = parse_expr(s_p, transformations=transformations)
-        c_expr = parse_expr(s_c, transformations=transformations)
-
+        tgt = limit_target
+        resolved_var = None
         if limit_var:
-            # Map infinity representations to sympy.oo
-            tgt = limit_target
             if str(tgt).lower() in ("oo", "inf", "infinity", "\\infty") or tgt == float("inf"):
                 tgt = sympy.oo
+            elif str(tgt).lower() in ("-oo", "-inf", "-infinity", "-\\infty") or tgt == float("-inf"):
+                tgt = -sympy.oo
             else:
                 try:
                     tgt = sympy.sympify(tgt)
                 except Exception:
                     tgt = 0
 
-            # Find matching free symbol in parent expression
-            matched_sym = next((s for s in p_expr.free_symbols if s.name == limit_var), None)
-            if matched_sym is not None:
+            resolved_var = limit_var
+            if resolved_var not in symbols_dict:
+                cand_var = latex_to_sympy_str(clean_latex_equation(str(limit_var), mode="algebraic")).strip()
+                if cand_var in symbols_dict:
+                    resolved_var = cand_var
+
+            if resolved_var in symbols_dict and getattr(tgt, "is_negative", False):
+                symbols_dict[resolved_var] = sympy.Symbol(resolved_var, real=True)
+
+        p_expr = parse_expr(s_p, local_dict=symbols_dict, transformations=transformations)
+        c_expr = parse_expr(s_c, local_dict=symbols_dict, transformations=transformations)
+
+        if limit_var:
+            matched_sym = symbols_dict.get(resolved_var) if resolved_var else None
+            if matched_sym is None:
+                matched_sym = next((s for s in p_expr.free_symbols if s.name == limit_var), None)
+            if matched_sym is not None and matched_sym in p_expr.free_symbols:
                 p_lim = sympy.limit(p_expr, matched_sym, tgt)
             else:
                 p_lim = p_expr
 
             diff = sympy.simplify(p_lim - c_expr)
-            is_equiv = (diff == 0)
+            is_equiv = diff == 0
             return {
                 "success": True,
                 "is_equivalent": is_equiv,
                 "parent_limit": sympy.latex(p_lim),
                 "child_expression": sympy.latex(c_expr),
-                "difference": sympy.latex(diff)
+                "difference": sympy.latex(diff),
             }
         else:
             diff = sympy.simplify(p_expr - c_expr)
-            is_equiv = (diff == 0)
+            is_equiv = diff == 0
             return {
                 "success": True,
                 "is_equivalent": is_equiv,
                 "parent_expression": sympy.latex(p_expr),
                 "child_expression": sympy.latex(c_expr),
-                "difference": sympy.latex(diff)
+                "difference": sympy.latex(diff),
             }
     except Exception as e:
         return {
             "success": False,
             "is_equivalent": False,
-            "error": str(e)
+            "error": str(e),
         }
 
 
 def run_derivation_audit(
     shards_dir: Optional[str] = None,
-    report_path: Optional[str] = None
+    report_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Audits all multi-step derivations across the formula shards.
@@ -413,12 +345,11 @@ def run_derivation_audit(
     import os
     import json
     import time
-    from multiprocessing import Pool, cpu_count
 
     start_time = time.time()
     base_dir = shards_dir or os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "app", "config", "content", "formulas"
+        "app", "config", "content", "formulas",
     )
 
     proofs = []
@@ -432,7 +363,7 @@ def run_derivation_audit(
                     for fid, entry in d.items():
                         if entry.get("derivation_steps"):
                             proofs.append((fid, entry))
-            except Exception as e:
+            except Exception:
                 pass
 
     total_proofs = len(proofs)
@@ -468,15 +399,15 @@ def run_derivation_audit(
             "terminated_count": terminated_count,
             "terminated_rate_pct": round((terminated_count / total_proofs * 100) if total_proofs > 0 else 0, 1),
             "elapsed_seconds": round(elapsed, 2),
-            "avg_latency_ms": round(avg_latency_ms, 2)
+            "avg_latency_ms": round(avg_latency_ms, 2),
         },
         "derivation_type_distribution": dict(sorted(type_counts.items(), key=lambda x: x[1], reverse=True)),
-        "proofs": proof_results
+        "proofs": proof_results,
     }
 
     out_path = report_path or os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "app", "config", "derivation_invariance_report.json"
+        "app", "config", "derivation_invariance_report.json",
     )
 
     try:

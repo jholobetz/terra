@@ -40,4 +40,36 @@ This directory contains historical, one-off migration scripts, legacy fixers, an
 | `heal_residual_isolated.py` | `scripts/fixlineage --heal` | One-time isolated DAG node healer. |
 | `sanitize_all_shards.py` | `LatexSanitizer.php` | One-time shard prose sanitization sweep. |
 | `inject_tex_attributes.py` | Dynamic MathJax 3.x rendering | Legacy static `data-tex` attribute injector. |
+| `seed_physics_database.py` | `gqs.py seed` & `generate_gemini_formula.py` | Legacy un-gated Gemini formula seeder (superseded by `--allow-external-api` governance). |
+| `auto_seed_gqs.py` | `gqs.py formula-auto-seed` | Legacy keyless seeder mandating `\(` inline delimiters. |
+| `generate_subcomponent_formulas_vertex.py` | `generate_gemini_formula.py` | Retired Phase 3 Vertex AI batch subcomponent seeder. |
+| `ops_batch_template.md` | `gqs.py template` | Retired JSON prompt template for early batch drafting. |
+| `math_verification_shield.py` | `lib.cas` & `scripts/cascheck` | Prototype SymPy dimensional solver (`L, M, T` manual symbols). |
+| `global_tex_repair_engine.php` | `scripts/fixlatex` & `LatexSanitizer.php` | One-off global TeX AST repair sweep. |
+| `audit_prose_and_variables.py` | `integrity_shield.py` & `LatexSanitizer.php` | One-off global shard prose and variable scanner. |
+| `audit_shard_anomalies.py` | `integrity_shield.py` | One-off OCR corruption and shard anomaly detector. |
+| `clean_formula_prose_artifacts.py` | `LatexSanitizer.php` & `scripts.lib.delimiters` | One-off formula prose artifact cleanup script. |
+| `sanitize_shard_control_chars.py` | `LatexSanitizer.php` | One-off shard TeX control-character sanitizer. |
+| `retrieve_raw_latex.py` | `scripts/fixlatex` | Historical LaTeX recovery helper. |
+| `reimport_shards_to_mariadb.php` | `scripts/sync_formulas_to_mariadb.php` & `ShardSyncService.php` | Legacy partial 6-column MariaDB re-importer. |
+| `heal_derivation_graph.py` | `scripts/fixlineage` & `enrich_lineage_families.py` | Early local multi-tier derivation graph healer. |
+| `link_formula_derivations.py` | `scripts/link_lineage` & `scripts/fixlineage` | Early automated formula lineage linker. |
+| `audit_equation_components.py` | `audit_prose_equations.php` | Phase 1 subcomponent equation discovery prototype. |
+| `deduplicate_formulas.py` | `PhysicsService::saveFormula()` | One-time formula deduplication campaign script. |
+| `generate_formula_shard.py` | `PhysicsService::saveFormula()` | Legacy standalone formula shard generator. |
+| `export_js_dictionaries.js` | `explainer_dictionary.js` | One-off JS dictionary exporter used by `generate_formula_shard.py`. |
+| `map_prose_equation_aliases.php` | `audit_prose_equations.php` & `ingest_unmapped_prose_equations.php` | One-off prose equation alias matcher. |
+| `auto_register_references.py` | `gqs.py` & `orchestrator.py` | Historical semantic reference registration script. |
+| `check_draft_compliance.py` | `gqs.py audit` & `integrity_shield.py` | Pre-GQS live quality-gate draft watcher. |
+| `format_neighbors.py` | `auto_linker.py` & `orchestrator.py` | Pre-GQS neighbor bolding formatter. |
+| `generate_adoption_suggestions.py` | `gqs.py` & `auto_linker.py` | One-off cross-link adoption suggestion generator. |
+| `generate_hub_tracker.py` | `gqs.py status` & `scripts/assess` | Legacy hub completion tracker. |
+| `generate_orphans_list.py` | `gqs.py status` & `integrity_shield.py` | One-off orphan subtopic list dumper. |
+| `generate_search_index.py` | `orchestrator.py` | Standalone search index prototype superseded by `orchestrator.py`. |
+| `generate_substandard_report.py` | `gqs.py status` & `scripts/assess` | Legacy pre-graduation substandard article reporter. |
+| `generate_unlinked_freq.py` | `auto_linker.py` | One-off unlinked term frequency counter. |
+| `list_backlog_candidates.py` | `gqs.py status` & `sync_backlog.py` | Legacy backlog candidate printer. |
+| `maintenance_watcher.py` | `gqs.py ingest` & `run_gqs_sprint.py` | Retired inbox file-watcher daemon. |
+| `retrieve_concept.py` | `gqs.py` | Legacy single-concept JSON reader helper. |
+| `scaffold_upgrade.py` | `gqs.py template` | Pre-GQS subtopic upgrade scaffolder. |
 

@@ -257,3 +257,105 @@ def test_unified_cas_pipeline_and_symbol_inference():
     assert "=" in clean_equation_for_cas(r"p \approx m v")
 
 
+def test_balanced_brace_deep_nesting_parser():
+    from lib.cas.latex_parser import (
+        latex_to_sympy_str,
+        clean_latex_equation,
+        normalize_math_string,
+    )
+    import scripts.lib.cas_engine as compat_cas
+    import lib.cas.cas_engine as core_cas
+
+    # Canonical object identity across lib.cas.latex_parser, lib.cas.cas_engine, and scripts.lib.cas_engine
+    assert compat_cas.latex_to_sympy_str is core_cas.latex_to_sympy_str
+    assert core_cas.latex_to_sympy_str is latex_to_sympy_str
+    assert compat_cas.evaluate_symbolic is core_cas.evaluate_symbolic
+    assert compat_cas.check_dimensions is core_cas.check_dimensions
+
+    # 4+ nested brace levels across \sqrt, \frac, subscripts, and nested exponents
+    deep_latex = r"\sqrt{1 - \frac{v_{x,0}^{2^{(k)}}}{c^{2}}}"
+    res = evaluate_symbolic(deep_latex, limit_var="v_x_0", limit_to="0")
+    assert res["success"] is True
+    assert res["limit"]["result_latex"] == "1"
+
+    # Cube root \sqrt[3]{...} with nested fraction and decorators
+    cube_root = r"r = \sqrt[3]{\frac{G \mathbf{\hat{M}_{0}} T^{2}}{4 \pi^{2}}}"
+    res_cube = evaluate_symbolic(cube_root)
+    assert res_cube["success"] is True
+    assert {"G", "M_0", "T"}.issubset(set(res_cube["variables"]))
+
+    # Deeply nested \frac inside normalize_math_string
+    n1 = normalize_math_string(r"\frac{\frac{a_{1}}{b_{1}}}{\frac{c_{1}}{d_{1}}}")
+    n2 = normalize_math_string(r"(a_1 / b_1) / (c_1 / d_1)")
+    assert n1 == n2
+
+    # Algebraic vs dimensional time-derivative mode separation
+    alg = clean_latex_equation(r"T = \frac{1}{2} m \dot{q}^2", mode="algebraic")
+    dim = clean_latex_equation(r"T = \frac{1}{2} m \dot{q}^2", mode="dimensional")
+    assert "dq" in alg and "/ t" not in alg
+    assert "/ t" in dim
+
+
+def test_evaluate_symbolic_annotations_primes_and_chained_equals():
+    # Trailing \quad (\text{...}) annotation should not break algebraic evaluation
+    res_ann = evaluate_symbolic(
+        r"E_F = \frac{p_F^2}{2m} \quad (\text{Fermi Energy})",
+        limit_var="p_F",
+        limit_to="0",
+    )
+    assert res_ann["success"] is True
+    assert res_ann["lhs"] == "E_F"
+    assert res_ann["limit"]["result_latex"] == "0"
+
+    # Primed coordinates (Lorentz transformation)
+    res_prime = evaluate_symbolic(
+        r"t' = \gamma \left( t - \frac{v x'}{c^2} \right)",
+        limit_var="c",
+        limit_to="oo",
+    )
+    assert res_prime["success"] is True
+    assert res_prime["lhs"] == "t_prime"
+    assert "x_prime" in res_prime["variables"]
+
+    # Chained equality: LHS symbol paired with terminal explicit RHS expression
+    res_chain = evaluate_symbolic(
+        r"p = \gamma m v = \frac{m v}{\sqrt{1 - \frac{v^2}{c^2}}}",
+        limit_var="c",
+        limit_to="oo",
+    )
+    assert res_chain["success"] is True
+    assert res_chain["lhs"] == "p"
+    assert res_chain["limit"]["result_latex"] == "m v"
+
+
+def test_check_dimensions_zero_rhs_and_natural_units_parity():
+    from lib.cas.cas_engine import check_dimensions
+
+    # 1. Zero-RHS homogeneous identity (F - m a = 0)
+    res_zero = check_dimensions("F - m a = 0")
+    assert res_zero["success"] is True
+    assert res_zero["is_equation"] is True
+    assert res_zero["is_homogeneous"] is True
+    assert res_zero["lhs"]["dimension_powers"] == {"M": 1, "L": 1, "T": -2}
+    assert res_zero["rhs"]["dimension_powers"] == {"M": 1, "L": 1, "T": -2}
+
+    # 2. Zero-RHS inhomogeneous sum (F - m v = 0) must be rejected
+    res_bad_zero = check_dimensions("F - m v = 0")
+    assert res_bad_zero["success"] is True
+    assert res_bad_zero["is_homogeneous"] is False
+
+    # 3. Natural Units (hbar = c = k_B = 1) relativistic dispersion (E^2 = p^2 + m^2)
+    res_nat = check_dimensions("E^2 = p^2 + m^2")
+    assert res_nat["success"] is True
+    assert res_nat["is_equation"] is True
+    assert res_nat["is_homogeneous"] is True
+    assert res_nat["framework"] == "natural_units"
+    assert res_nat["lhs"]["dimension_powers"] == {"E": 2}
+
+    # 4. Explicit velocity-exponent error (E = m v^3) must never be rescued by c = 1
+    res_vel_err = check_dimensions("E = m v^3")
+    assert res_vel_err["success"] is True
+    assert res_vel_err["is_homogeneous"] is False
+
+
+

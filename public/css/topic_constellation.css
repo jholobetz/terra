@@ -1,0 +1,931 @@
+.solar-constellation-view {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 16px;
+    color: #f1f5f9;
+}
+
+/* Header */
+.constellation-header {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 2px solid var(--accent-color, #64ffda);
+    border-radius: 14px;
+    padding: 22px 26px 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.header-headline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 16px;
+}
+
+.header-title-block {
+    flex: 1;
+    min-width: 320px;
+}
+
+.header-badge-tag {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--accent-color, #64ffda);
+    margin-bottom: 4px;
+}
+
+.constellation-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.15;
+}
+
+.constellation-title-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.constellation-title-link:hover {
+    color: var(--accent-color, #64ffda);
+}
+
+.constellation-subtitle {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: none;
+    font-size: 0.94rem;
+    color: var(--text-muted, #94a3b8);
+    margin: 0;
+    line-height: 1.45;
+}
+
+/* Toolbar */
+.constellation-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.view-mode-switch {
+    display: flex;
+    gap: 6px;
+    background: rgba(11, 17, 32, 0.85);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-mode-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted, #94a3b8);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-mode-pill:hover {
+    color: #ffffff;
+}
+
+.btn-mode-pill.active {
+    background: var(--accent-color, #64ffda);
+    color: #020617;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(100, 255, 218, 0.25);
+}
+
+.constellation-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 340px;
+}
+
+.constellation-search-wrapper input {
+    width: 100%;
+    padding: 7px 50px 7px 32px;
+    background: rgba(11, 17, 32, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.constellation-search-wrapper input:focus {
+    border-color: var(--accent-color, #64ffda);
+    box-shadow: 0 0 12px rgba(100, 255, 218, 0.2);
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 0.8rem;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.match-counter {
+    position: absolute;
+    right: 12px;
+    font-size: 0.75rem;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--accent-color, #64ffda);
+    font-weight: 600;
+}
+
+.constellation-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-console-link {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-console-link:hover {
+    color: #ffffff;
+    border-color: var(--accent-color, #64ffda);
+    background: rgba(100, 255, 218, 0.08);
+}
+
+/* SECTION 1: THE SOLAR CONSTELLATION STAGE */
+.constellation-manifold-stage {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 16px 20px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Track Filter Strip */
+.celestial-track-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 12px;
+}
+
+.track-bar-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent-color, #64ffda);
+}
+
+.track-pills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.orbit-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(11, 17, 32, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.orbit-filter-chip:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.orbit-filter-chip.active {
+    background: rgba(100, 255, 218, 0.12);
+    border-color: var(--accent-color, #64ffda);
+    color: #ffffff;
+}
+
+.orbit-chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.orbit-chip-dot.all { background: var(--accent-color, #64ffda); }
+.orbit-chip-dot.orbit-0 { background: #10b981; }
+.orbit-chip-dot.orbit-1 { background: #00d2ff; }
+.orbit-chip-dot.orbit-2 { background: #d946ef; }
+.orbit-chip-dot.orbit-3 { background: #f59e0b; }
+
+.btn-orbit-tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-orbit-tool:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-orbit-tool.is-paused {
+    color: var(--accent-color, #64ffda);
+    border-color: var(--accent-color, #64ffda);
+}
+
+/* Viewport for Full-Width SVG Stage */
+.constellation-viewport {
+    position: relative;
+    width: 100%;
+    min-height: 520px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 0.45) 0%, rgba(2, 6, 23, 0.98) 75%);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.universe-corner-display {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    z-index: 5;
+    pointer-events: auto;
+    max-width: 480px;
+}
+
+.universe-corner-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    line-height: 1.25;
+    display: inline-block;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.6);
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+.universe-corner-title:hover {
+    color: var(--accent-color, #64ffda);
+    text-shadow: 0 0 12px var(--accent-color, #64ffda);
+}
+
+.constellation-svg-plane {
+    width: 100%;
+    height: 520px;
+    display: block;
+}
+
+/* Celestial Nodes in SVG */
+.celestial-node {
+    cursor: pointer;
+    transition: transform 0.05s linear;
+}
+
+.celestial-node:focus {
+    outline: none;
+}
+
+.celestial-node:focus .node-aura {
+    opacity: 1;
+    stroke-width: 2.5;
+    stroke: #ffffff;
+}
+
+.celestial-node:hover .node-aura {
+    opacity: 1;
+    stroke-width: 2.5;
+}
+
+.celestial-node:hover .node-label-bg {
+    fill: rgba(15, 23, 42, 0.95);
+    stroke: var(--accent-color, #64ffda);
+}
+
+.celestial-node:hover .node-label-text {
+    fill: #ffffff;
+    font-weight: 700;
+}
+
+.celestial-node.is-active .node-label-bg {
+    stroke: var(--accent-color, #64ffda);
+    fill: rgba(100, 255, 218, 0.15);
+}
+
+/* Horizontal Holographic HUD Telemetry Console (Docked at Bottom) */
+.holographic-hud-deck {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 18px;
+    background: rgba(11, 17, 32, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-top: 2px solid var(--accent-color, #64ffda);
+    border-radius: 12px;
+    padding: 20px 24px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 10;
+}
+
+.hud-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hud-meta-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 280px;
+}
+
+.hud-row-equation {
+    width: 100%;
+}
+
+.hud-row-abstract {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .universe-corner-display {
+        top: 14px;
+        left: 16px;
+        max-width: 80%;
+    }
+    .universe-corner-title {
+        font-size: 1.15rem;
+    }
+    .hud-row-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .hud-actions-bar {
+        width: 100%;
+    }
+    .constellation-svg-plane {
+        height: 380px;
+    }
+    .constellation-viewport {
+        min-height: 380px;
+    }
+}
+
+.hud-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.hud-orbit-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent-color, #64ffda);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hud-level-tag {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.hud-level-tag.level-foundational {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.hud-level-tag.level-analytical {
+    background: rgba(0, 210, 255, 0.15);
+    color: #00d2ff;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+}
+.hud-level-tag.level-frontier {
+    background: rgba(217, 70, 239, 0.15);
+    color: #d946ef;
+    border: 1px solid rgba(217, 70, 239, 0.3);
+}
+
+.hud-concept-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 4px;
+}
+
+.hud-title-link {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.hud-title-link:hover {
+    color: var(--accent-color, #64ffda);
+}
+
+.hud-pillar-narrative {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: rgba(2, 6, 23, 0.6);
+    border-left: 2px solid var(--accent-color, #64ffda);
+    padding: 6px 10px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+.hud-glyph {
+    color: var(--accent-color, #64ffda);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.hud-narrative-text {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    line-height: 1.35;
+    font-style: italic;
+}
+
+.hud-box-header {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--accent-color, #64ffda);
+    margin-bottom: 6px;
+}
+
+.hud-equation-inset {
+    background: rgba(2, 6, 23, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.hud-equation-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+    padding: 4px 0;
+    width: 100%;
+}
+
+.hud-equation-display svg {
+    max-height: 38px;
+    width: auto;
+    filter: drop-shadow(0 0 10px rgba(100, 255, 218, 0.2));
+}
+
+.hud-abstract-card {
+    background: rgba(2, 6, 23, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.hud-abstract-body {
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: #cbd5e1;
+}
+
+.hud-abstract-body p {
+    margin: 0 0 6px;
+}
+.hud-abstract-body p:last-child {
+    margin-bottom: 0;
+}
+
+.hud-actions-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    border: none;
+}
+
+.btn-hud-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-color, #64ffda);
+    color: #020617;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(100, 255, 218, 0.25);
+}
+
+.btn-hud-primary:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+.hud-arrow {
+    transition: transform 0.2s;
+}
+.btn-hud-primary:hover .hud-arrow {
+    transform: translateX(3px);
+}
+
+.btn-hud-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-hud-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.btn-hud-subtle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-hud-subtle:hover {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* SECTION 2: THE CURRICULUM DIRECTORY */
+.curriculum-directory-section {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 24px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+.directory-pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.directory-pillar-column {
+    background: rgba(11, 17, 32, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.directory-column-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.column-track-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--accent-color, #64ffda);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.column-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 6px;
+}
+
+.column-narrative {
+    font-size: 0.8rem;
+    color: var(--text-muted, #94a3b8);
+    line-height: 1.35;
+    margin: 0;
+    font-style: italic;
+}
+
+.directory-column-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.directory-card {
+    background: rgba(2, 6, 23, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    padding: 10px 12px;
+    transition: all 0.15s;
+}
+
+.directory-card:hover {
+    border-color: var(--accent-color, #64ffda);
+    background: rgba(100, 255, 218, 0.04);
+    transform: translateY(-1px);
+}
+
+.directory-card-link {
+    text-decoration: none;
+    display: block;
+}
+
+.card-headline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.directory-card:hover .card-name {
+    color: var(--accent-color, #64ffda);
+}
+
+.card-mini-math {
+    margin-top: 6px;
+    display: flex;
+    justify-content: center;
+}
+.card-mini-math svg {
+    max-height: 24px;
+    width: auto;
+}
+
+/* Level Badges */
+.topic-level-badge {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.level-badge-foundational {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.level-badge-analytical {
+    background: rgba(0, 210, 255, 0.12);
+    color: #00d2ff;
+    border: 1px solid rgba(0, 210, 255, 0.25);
+}
+.level-badge-frontier {
+    background: rgba(217, 70, 239, 0.12);
+    color: #d946ef;
+    border: 1px solid rgba(217, 70, 239, 0.25);
+}
+
+/* Connected Faculties Bridges Strip */
+.constellation-bridges-strip {
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+}
+
+.bridges-strip-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--accent-color, #64ffda);
+    margin-bottom: 12px;
+}
+
+.bridges-strip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.bridge-console-card {
+    background: rgba(11, 17, 32, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.bridge-console-card:hover {
+    border-color: var(--accent-color, #64ffda);
+    background: rgba(100, 255, 218, 0.04);
+    transform: translateY(-1px);
+}
+
+.bridge-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.bridge-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.bridge-arrow {
+    color: var(--accent-color, #64ffda);
+    font-size: 0.84rem;
+    transition: transform 0.2s;
+}
+.bridge-console-card:hover .bridge-arrow {
+    transform: translateX(3px);
+}
+
+.bridge-card-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted, #94a3b8);
+    line-height: 1.35;
+}
+
+/* Equations Drawer */
+.constellation-equations-drawer {
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.drawer-header-toggle {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(11, 17, 32, 0.7);
+    color: #ffffff;
+    font-family: 'Space Grotesk', sans-serif;
+    user-select: none;
+}
+
+.drawer-header-toggle:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.drawer-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.drawer-hint {
+    font-size: 0.75rem;
+    color: var(--accent-color, #64ffda);
+    opacity: 0.8;
+}
+
+.drawer-body {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.constellation-footer {
+    padding: 16px 0 32px;
+    text-align: center;
+}
+
+.btn-console-back {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted, #94a3b8);
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.2s;
+}
+
+.btn-console-back:hover {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+}

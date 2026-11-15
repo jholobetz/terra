@@ -1,7 +1,7 @@
-# 🛠️ Post-Audit Optimization & Production Parity Roadmap (`docs/post_fixit3.md`)
+# 🛠️ Post-Audit Optimization & Production Parity Roadmap (`archive/post_fixit3.md`)
 
-**Audit Date**: 2026-11-11  
-**Baseline**: Commit `7ce9af626` (Completion of [`archive/fixit_2.md`](../archive/fixit_2.md) and [`archive/fixit_3.md`](../archive/fixit_3.md) across all **14,684** formulas in 256 shards).  
+**Audit Date**: 2026-11-11 *(Archived — 6 / 6 Priorities Completed)*  
+**Baseline**: Commit `7ce9af626` (Completion of [`archive/fixit_2.md`](./fixit_2.md) and [`archive/fixit_3.md`](./fixit_3.md) across all **14,684** formulas in 256 shards).  
 **Scope**: Live audit of the PHP runtime bootstrap ([`PhysicsService.php`](../app/logic/PhysicsService.php)), dual-layer MariaDB synchronization ([`ShardSyncService.php`](../app/logic/ShardSyncService.php)), derived graph/trie indices, frontend provenance surfacing, and disk footprint.
 
 ---
@@ -63,24 +63,25 @@
 
 ---
 
-## 🧹 Priority 6: Purge `37.61 MB` of Stale `.bak` Content Shards *(Instant Disk Hygiene)*
+## ✅ Priority 6: Purge `37.61 MB` of Stale `.bak` Content Shards *(COMPLETED)*
 
-* **What's Happening Now**:
-  Two leftover backup files remain inside `app/config/content/`:
+* **Original Gap**:
+  Two leftover backup files remained inside `app/config/content/` because [`scripts/maintenance/commit_node.py`](../scripts/maintenance/commit_node.py) created `shard_path + ".bak"` without removing it after commit or rollback:
   - `app/config/content/theoretical-physics.json.bak` (`21.37 MB`)
   - `app/config/content/philosophy-of-physics.json.bak` (`16.24 MB`)
-* **Proposed Optimization**:
-  Delete both `.bak` files (reclaiming `37.61 MB`) and ensure `*.bak` is covered in `.gitignore` so backup shards never pollute `app/config/content/` scans.
+* **Implemented Resolution**:
+  1. Deleted both untracked `.bak` files from `app/config/content/`, reclaiming **`37.61 MB`** of disk space (`0` backup artifacts remaining across the repository; `*.bak` verified in [`.gitignore`](../.gitignore)).
+  2. Added a `finally:` cleanup block in [`scripts/maintenance/commit_node.py`](../scripts/maintenance/commit_node.py) so temporary `.bak` shard backups are always unlinked after commit or rollback.
 
 ---
 
-## 📊 Summary Matrix
+## 📊 Summary Matrix (6 / 6 Completed)
 
-| Priority | Initiative | Target Component(s) | Primary Benefit | Effort |
-| :---: | :--- | :--- | :--- | :---: |
-| **P1** | Lazy-load `16.72 MB` `notation.json` | `app/logic/PhysicsService.php` | Cuts ~16.7 MB disk I/O & ~60+ MB RAM per dynamic request | Low |
-| **P2** | MariaDB column parity (`description`, `category`, `lineage_confidence`, `record_type`) | `ShardSyncService.php`, `PhysicsService.php`, `test_formula_latex_integrity.py` | 100% shard-to-MariaDB production parity across all 14,684 rows | Low/Med |
-| **P3** | Unify duplicate formula sync loops & `INFORMATION_SCHEMA` DDL check | `app/logic/ShardSyncService.php`, `cli_sync.php` | Single SQL write path; ~10x faster incremental `cli_sync.php` | Low/Med |
-| **P4** | Rebuild `formula_derivation_graph.json` (`.gz`) & `formulas_latex_index.json` | `scripts/fixlineage`, `formulas_latex_index.json` | 14,684/14,684 node parity + `lineage_confidence` in DAG | Low |
-| **P5** | Surface `description` + `lineage_confidence` badges in UI | `equation_explainer.php`, `equation_explainer.js`, `formula_inspector.js` | Exposes formal verification & provenance directly to users | Medium |
-| **P6** | Remove stale `.bak` shard backups (`37.61 MB`) | `app/config/content/*.bak`, `.gitignore` | Reclaims `37.61 MB` disk space & prevents stray glob matches | Trivial |
+| Priority | Status | Initiative | Target Component(s) | Delivered Benefit |
+| :---: | :---: | :--- | :--- | :--- |
+| **P1** | ✅ | Slim (`99.2%`) & lazy-load `notation.json` + hoist partial maps | `notation.json`, `PhysicsService.php`, `_equations_partial.php` | Shrank `notation.json` `16.72 MB` $\to$ `129.5 KB`; zero eager load on dynamic bootstrap |
+| **P2** | ✅ | MariaDB column parity (`description`, `category`, `lineage_confidence`, `record_type`, `equation_family`) | `ShardSyncService.php`, `PhysicsService.php`, `test_formula_latex_integrity.py` | 100% shard-to-MariaDB parity across all `14,684` rows $\times$ 10 prose/metadata columns |
+| **P3** | ✅ | Unify duplicate formula sync loops & `INFORMATION_SCHEMA` DDL check | `app/logic/ShardSyncService.php`, `cli_sync.php` | Single transactional SQL write path; ~10x faster incremental `cli_sync.php` |
+| **P4** | ✅ | Rebuild `formula_derivation_graph.json` (`.gz`) & clean `formulas_latex_index.json` | `build_formula_graph.py`, `FormulaGraphService.php`, `formula_pipeline.py` | `14,684 / 14,684` node parity + provenance in DAG; `0 / 14,684` Python/PHP LaTeX key drift |
+| **P5** | ✅ | Surface `description` + `lineage_confidence` badges in UI | `equation_explainer.php`, `equation_explainer.js`, `explainer_cards.js`, `formula_inspector.js`, `formula_graph.js` | Exposes formal verification, distinct descriptions, & provenance pills across all 4 UI surfaces |
+| **P6** | ✅ | Remove stale `.bak` shard backups (`37.61 MB`) & fix `commit_node.py` cleanup | `app/config/content/*.bak`, `scripts/maintenance/commit_node.py` | Reclaimed `37.61 MB` disk space & prevented future `.bak` accumulation |

@@ -226,13 +226,13 @@ if (!empty($unmappedEquations)) {
     }
 }
 
-// 7. Save JSON Delta Report
+// 7. Save JSON Delta Report (idempotent: skip rewrite when structural payload is unchanged)
 $dataDir = __DIR__ . '/../lib/data';
 if (!is_dir($dataDir)) {
     mkdir($dataDir, 0755, true);
 }
 $reportPath = $dataDir . '/unmapped_prose_equations.json';
-file_put_contents($reportPath, json_encode([
+$newPayload = [
     'timestamp' => date('c'),
     'total_unique' => $totalUnique,
     'resolved_count' => $resolvedCount,
@@ -241,6 +241,29 @@ file_put_contents($reportPath, json_encode([
     'unmapped_fragments_count' => count($unmappedFragments),
     'unmapped_equations' => $unmappedEquations,
     'unmapped_fragments' => $unmappedFragments
-], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+];
 
-echo "[REPORT SAVED] Full delta details saved to: {$reportPath}\n";
+$shouldWrite = true;
+if (file_exists($reportPath)) {
+    $existing = json_decode((string)file_get_contents($reportPath), true);
+    if (is_array($existing)) {
+        $existingCmp = $existing;
+        $newCmp = $newPayload;
+        unset($existingCmp['timestamp'], $newCmp['timestamp']);
+        $cmpFlags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+        if (json_encode($existingCmp, $cmpFlags) === json_encode($newCmp, $cmpFlags)) {
+            $shouldWrite = false;
+        }
+    }
+}
+
+if ($shouldWrite) {
+    file_put_contents(
+        $reportPath,
+        json_encode($newPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+        LOCK_EX
+    );
+    echo "[REPORT SAVED] Full delta details saved to: {$reportPath}\n";
+} else {
+    echo "[REPORT UNCHANGED] Manifold delta unchanged; skipped rewrite of: {$reportPath}\n";
+}

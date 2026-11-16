@@ -1,19 +1,19 @@
 # 🚀 Terra Physics Lab — Development-to-Production Rollout Blueprint
 
-> **Status**: Active Production-Readiness Blueprint  
-> **Target Production Host**: **Debian 13 (Trixie) + Apache 2.4 + PHP 8 (8.4) + MariaDB + Python 3 `.venv` (`sympy`)**  
-> **Authoring & Release Model**: Local macOS Studio $\to$ Git $\to$ Pruned Release Bundle to Read-Only Public LAMP Server  
-> **Authoritative References**: [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](architecture.md), [`docs/ideas.md`](ideas.md), [`docs/roadmap.md`](roadmap.md), [`docs/cost_governance.md`](cost_governance.md)
+> **Status**: Archived Historical Record (Stages 1–3 Completed; Stage 4 & Operations in [`docs/final_stages.md`](../docs/final_stages.md))  
+> **Target Production Host**: **Debian 13 (Trixie) + Apache 2.4 + PHP 8 (8.4) + MariaDB + Python 3 `.venv` (`sympy`)** (`https://physicslab.ca`)  
+> **Authoring & Release Model**: Local macOS Studio $\to$ GitHub $\to$ `git clone` / `git pull --ff-only` in `/srv/www/physicslab.ca` (`DocumentRoot /srv/www/physicslab.ca/public`)  
+> **Authoritative References**: [`docs/final_stages.md`](../docs/final_stages.md), [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](../docs/architecture.md), [`docs/ideas.md`](../docs/ideas.md), [`docs/roadmap.md`](../docs/roadmap.md), [`docs/cost_governance.md`](../docs/cost_governance.md)
 
 ---
 
 ## 1. Confirmed Target Architecture & Baseline Capabilities
 
 ### 1.1 Confirmed Production Stack & Operating Model
-Per [`README.md`](../README.md#L8), [`docs/architecture.md`](architecture.md#L190-L198), [`docs/ideas.md`](ideas.md#L79-L83), and live server provisioning:
+Per [`README.md`](../README.md#L8), [`docs/architecture.md`](../docs/architecture.md#L190-L198), [`docs/ideas.md`](../docs/ideas.md#L79-L83), and live server provisioning:
 * **Operating System & Web Stack**: **Debian 13 (Trixie)** running **Apache 2.4** (`DocumentRoot` strictly pointed to `/public` using [`public/.htaccess`](../public/.htaccess)), **PHP 8** (Debian 13 native PHP 8.4 with OPcache), and **MariaDB**.
 * **Authoring Model (v1 Launch)**: **Immutable Git-Driven Production** — all content/formula authoring and curation stays in the local macOS Studio $\to$ Git $\to$ synchronized into MariaDB via [`cli_sync.php`](../cli_sync.php). Public visitors are strictly read-only (`guest`), eliminating production-vs-Git split-brain.
-* **Pruned Server Release Footprint**: Deployment packages exclude dev-only directories (`/tests`, `/docs`, `/archive`, `.git`, scratch files) while retaining `/public`, `/app`, `/vendor`, `/lib` (SymPy CAS engine), `/hub_manifests`, and precomputed `.json.gz` vector embeddings.
+* **Directory Isolation (`DocumentRoot /srv/www/physicslab.ca/public`)**: Cloning via `git clone` into `/srv/www/physicslab.ca` while pointing Apache's `DocumentRoot` strictly to `/srv/www/physicslab.ca/public` keeps `.git/`, `app/config/config.php`, `vendor/`, `tests/`, `docs/`, and `cli_sync.php` outside the web root, while [`.gitignore`](../.gitignore) ensures `git pull --ff-only` never overwrites server-owned state (`config.php`, `vendor/`, `.venv/`, `app/log/`, `public/cache/`, `*_embeddings.json.gz`).
 * **Filesystem Privilege Separation (`www-data`)**: Code, `vendor/`, `lib/`, and all 256 JSON shards remain **read-only** to Apache's `www-data` worker; only `app/log/` and `public/cache/` grant group-write (`2775` setgid `www-data`).
 
 ### 1.2 Baseline Production Safeguards Already Live
@@ -76,12 +76,6 @@ Per [`README.md`](../README.md#L8), [`docs/architecture.md`](architecture.md#L19
 
 ---
 
-## 5. Stage 4: Debian 13 Apache Tuning, MariaDB Provisioning & Release Script *(Next)*
+## 5. Stage 4: Moved to Active Blueprint ([`docs/final_stages.md`](../docs/final_stages.md))
 
-1. **Apache 2.4 & [`.htaccess`](../public/.htaccess) Hardening on Debian 13**:
-   * Enable required Apache modules (`a2enmod rewrite headers expires deflate`), set `DocumentRoot /var/www/terra/public` with `AllowOverride All` (or move rules directly into the `<VirtualHost>` config for faster filesystem traversal), and disable `ServerSignature` / `ServerTokens Prod`.
-   * Enrich [`public/.htaccess`](../public/.htaccess) with `mod_deflate` compression (`text/html`, `text/css`, `application/javascript`, `application/json`, `image/svg+xml` — shrinking `tex-svg-full.js` and `search_index.json` by ~75%) and long-lived immutable `Cache-Control` headers for `?v=mtime` CSS/JS assets.
-2. **MariaDB Least-Privilege User & Buffer Pool**:
-   * Provision a dedicated `terra_app` MariaDB account (`SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX` on `terra.*`—replacing `root` in [`app/config/config_sample.php`](../app/config/config_sample.php#L78-L83)) and tune `innodb_buffer_pool_size` (~`256M–512M`) so all `14,684` formulas and `1,584` subtopics stay resident in RAM.
-3. **One-Command Pruned Release & Deploy Script**:
-   * Build a local release script that runs pre-flight gates (`composer test`, `pytest`, `scripts/assess -q`), packages the pruned production bundle (excluding `/tests`, `/docs`, `/archive`, `.git` per [`docs/ideas.md`](ideas.md#L81) while including `.gitignore`d `app/config/*_embeddings.json.gz`), syncs via `rsync`/SSH to Debian 13, enforces `2775` `www-data` group permissions on `app/log/` and `public/cache/` (read-only elsewhere), runs `composer install --no-dev --optimize-autoloader` + `.venv/bin/pip install -r requirements.txt` + `php cli_sync.php --warm-cache`, and verifies `/healthz` returns `200 OK`.
+Stage 4 (Debian 13 Apache `.htaccess` tuning, MariaDB least-privilege provisioning, ongoing-revision cache/migration safeguards, and the Git-native `scripts/update_prod.sh` pipeline) is tracked in [`docs/final_stages.md`](../docs/final_stages.md).

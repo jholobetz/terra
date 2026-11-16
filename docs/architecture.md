@@ -192,7 +192,7 @@ When auditing or enriching any entity in the encyclopedia, these skills interact
 Physics Lab serves as the flagship domain module of **Project Terra**, an overarching laboratory and computational manifold designed to scale across five primary sciences (Physics, Chemistry, Mathematics, Biology, Earth Sciences).
 
 * **Development Environment**: Local macOS developer workstation (`http://localhost:8000`), version-controlled with Git.
-* **Production Environment**: Independent Linux LAMP stack (Apache/Nginx, PHP 8.2+, MariaDB 10.6+).
+* **Production Environment (`https://physicslab.ca`)**: **Debian 13 (Trixie)** running **Apache 2.4**, **PHP 8** (8.4 with OPcache), **MariaDB** (`terra_app` least-privilege account), and a PEP 668 Python `.venv` (`sympy`, `mpmath`). The repository is cloned into `/srv/www/physicslab.ca` with Apache's `DocumentRoot` isolated strictly to `/srv/www/physicslab.ca/public` and updated via `git pull --ff-only` + `cli_sync.php` (detailed in [`docs/final_stages.md`](final_stages.md)).
 * **Automated Quality Gates**:
   - `integrity_shield.py`: Verifies zero broken links, delimiter purity, 100% manifold closure, and schema validity.
   - `pytest tests/` & `composer test`: 241 Pytest and 16 native PHP regression tests executed prior to any deployment.

@@ -205,6 +205,9 @@ The platform maintains a deliberate dual-layer operational model:
 3. **The Service Synchronization Bridge (`PhysicsService.php`)**:
    * Bridges the two layers: `PhysicsService::saveFormula()` serves as the single write funnel, atomically updating the Git JSON shard, MariaDB record, and reverse LaTeX trie (`formulas_latex_index.json`).
    * Deployment synchronization (`syncFormulasToDatabase()`) uses SHA-256 hash registries (`formulas_hash_registry.json`) to detect changed shards and update MariaDB in batch.
+4. **Canonical Production Target (`https://physicslab.ca`)**:
+   * Runs on **Debian 13 (Trixie)** with **Apache 2.4**, **PHP 8**, **MariaDB**, and local `.venv` (`sympy`).
+   * Git working tree lives at `/srv/www/physicslab.ca` while Apache `DocumentRoot` is strictly `/srv/www/physicslab.ca/public` (keeping `.git/`, `app/`, `vendor/`, `lib/`, and `tests/` outside the web root; full runbook in [`docs/final_stages.md`](docs/final_stages.md)).
 
 ### B. Mathematical Derivation Lineage Graph (DAG)
 * Lineage is tracked as an acyclic graph in `app/config/formula_derivation_graph.json` (and `.gz`).

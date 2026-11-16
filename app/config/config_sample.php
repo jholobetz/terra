@@ -81,8 +81,8 @@ return [
 	/**************************************
 	 *      Application Environment       *
 	 **************************************/
-	'app_env' => 'development',         // Set to 'production' on live Debian LAMP server
-	'app_url' => 'http://localhost:8000', // Canonical base URL (no trailing slash) for sitemap & canonical tags
+	'app_env' => 'development',         // Set to 'production' on Debian 13 (/srv/www/physicslab.ca)
+	'app_url' => 'http://localhost:8000', // Set to 'https://physicslab.ca' in production (no trailing slash)
 
 	/**************************************
 	 *         Database Settings          *
@@ -90,7 +90,7 @@ return [
 	'database' => [
 		'host'     => '127.0.0.1',      // Database host (e.g., '127.0.0.1', 'localhost')
 		'dbname'   => 'terra',          // Database name
-		'user'     => 'root',           // Database user
+		'user'     => 'root',           // Set to least-privilege 'terra_app' in production
 		'password' => '',               // Database password
 	],
 

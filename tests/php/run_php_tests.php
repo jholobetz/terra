@@ -20,6 +20,7 @@ require_once PROJECT_ROOT . '/app/logic/AuthService.php';
 require_once PROJECT_ROOT . '/app/logic/LatexSanitizer.php';
 require_once PROJECT_ROOT . '/app/logic/ShardSyncService.php';
 require_once PROJECT_ROOT . '/app/logic/PhysicsService.php';
+require_once PROJECT_ROOT . '/app/logic/SemanticSearchService.php';
 require_once PROJECT_ROOT . '/app/logic/VariableAggregator.php';
 require_once PROJECT_ROOT . '/app/logic/LabToolsLauncher.php';
 require_once PROJECT_ROOT . '/app/controllers/PhysicsController.php';
@@ -141,15 +142,28 @@ function withIsolatedEnv(array $env, array $server, callable $callback): mixed
 {
     $origServer = $_SERVER;
     $origEnv = $_ENV;
+    $origGet = $_GET ?? [];
     $origCookie = $_COOKIE ?? [];
-    $origAppEnv = getenv('APP_ENV');
-    $origAdminKey = getenv('TERRA_ADMIN_KEY');
+    $trackedKeys = ['APP_ENV', 'TERRA_ADMIN_KEY', 'TRUSTED_PROXY_IPS', 'DISABLE_EXTERNAL_EMBEDDING_API'];
+    $origPutenv = [];
+    foreach ($trackedKeys as $tk) {
+        $origPutenv[$tk] = getenv($tk);
+    }
 
     try {
-        putenv('APP_ENV');
-        putenv('TERRA_ADMIN_KEY');
-        unset($_ENV['APP_ENV'], $_ENV['TERRA_ADMIN_KEY']);
-        unset($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_X_FORWARDED_FOR'], $_SERVER['HTTP_X_REAL_IP'], $_SERVER['HTTP_X_TERRA_ADMIN_KEY']);
+        foreach ($trackedKeys as $tk) {
+            putenv($tk);
+            unset($_ENV[$tk]);
+        }
+        unset(
+            $_SERVER['REMOTE_ADDR'],
+            $_SERVER['HTTP_X_FORWARDED_FOR'],
+            $_SERVER['HTTP_X_REAL_IP'],
+            $_SERVER['HTTP_X_TERRA_ADMIN_KEY'],
+            $_SERVER['APP_ENV'],
+            $_SERVER['REDIRECT_APP_ENV']
+        );
+        $_GET = [];
         $_COOKIE = [];
 
         foreach ($env as $k => $v) {
@@ -163,16 +177,14 @@ function withIsolatedEnv(array $env, array $server, callable $callback): mixed
     } finally {
         $_SERVER = $origServer;
         $_ENV = $origEnv;
+        $_GET = $origGet;
         $_COOKIE = $origCookie;
-        if ($origAppEnv === false) {
-            putenv('APP_ENV');
-        } else {
-            putenv("APP_ENV={$origAppEnv}");
-        }
-        if ($origAdminKey === false) {
-            putenv('TERRA_ADMIN_KEY');
-        } else {
-            putenv("TERRA_ADMIN_KEY={$origAdminKey}");
+        foreach ($origPutenv as $tk => $val) {
+            if ($val === false) {
+                putenv($tk);
+            } else {
+                putenv("{$tk}={$val}");
+            }
         }
     }
 }
@@ -545,6 +557,272 @@ $runner->run('FormulaGraphServiceTest', 'testSubgraphProvenanceAndReverseLatexPa
             unset($_GET['preview']);
         } else {
             $_GET['preview'] = $prevPreview;
+        }
+    }
+});
+
+// ============================================================================
+// 9. Stage 1 Production Hardening Suite
+// ============================================================================
+$runner->run('ProductionHardeningTest', 'testPreviewModeBlockedForPublicAndProductionVisitors', function (NativePhpTestRunner $t) {
+    // 1. Production environment ignores ?preview=1, ?build_mode=1, and physics_preview cookie
+    withIsolatedEnv(['APP_ENV' => 'production'], ['REMOTE_ADDR' => '127.0.0.1'], function () use ($t) {
+        $_GET['preview'] = '1';
+        $_GET['build_mode'] = '1';
+        $_COOKIE['physics_preview'] = '1';
+        $app = new \flight\Engine();
+        $svc = new \app\logic\PhysicsService($app);
+        $t->assertFalse($svc->isPreviewActive(), 'Production visitors must never activate shard preview mode');
+
+        // Explicit CLI override via setPreviewMode(true) remains functional for cli_sync.php
+        $svc->setPreviewMode(true);
+        $t->assertTrue($svc->isPreviewActive(), 'Explicit CLI setPreviewMode(true) must still work');
+    });
+
+    // 2. External public IP in development also cannot trigger ?preview=1
+    withIsolatedEnv(['APP_ENV' => 'development'], ['REMOTE_ADDR' => '203.0.113.55'], function () use ($t) {
+        $_GET['preview'] = '1';
+        $_COOKIE['physics_preview'] = '1';
+        $app = new \flight\Engine();
+        $svc = new \app\logic\PhysicsService($app);
+        $t->assertFalse($svc->isPreviewActive(), 'External IPs must not bypass cache via ?preview=1');
+    });
+
+    // 3. Local loopback studio retains ?preview=1
+    withIsolatedEnv(['APP_ENV' => 'development'], ['REMOTE_ADDR' => '127.0.0.1'], function () use ($t) {
+        $_GET['preview'] = '1';
+        $app = new \flight\Engine();
+        $svc = new \app\logic\PhysicsService($app);
+        $t->assertTrue($svc->isPreviewActive(), 'Local studio must retain ?preview=1 workflow');
+    });
+});
+
+$runner->run('ProductionHardeningTest', 'testClientIpSpoofingResistanceAndScopedRateLimiter', function (NativePhpTestRunner $t) {
+    // 1. Direct external caller cannot spoof X-Forwarded-For or X-Real-IP
+    withIsolatedEnv(
+        ['APP_ENV' => 'production'],
+        [
+            'REMOTE_ADDR' => '203.0.113.88',
+            'HTTP_X_FORWARDED_FOR' => '1.2.3.4',
+            'HTTP_X_REAL_IP' => '5.6.7.8',
+        ],
+        function () use ($t) {
+            $auth = new \app\logic\AuthService();
+            $t->assertSame('203.0.113.88', $auth->resolveClientIp(), 'Untrusted REMOTE_ADDR must ignore forged proxy headers');
+        }
+    );
+
+    // 2. Behind trusted loopback proxy, right-to-left hop parsing ignores attacker-prepended X-Forwarded-For entry
+    withIsolatedEnv(
+        ['APP_ENV' => 'production'],
+        [
+            'REMOTE_ADDR' => '127.0.0.1',
+            'HTTP_X_FORWARDED_FOR' => '9.9.9.9, 198.51.100.77',
+        ],
+        function () use ($t) {
+            $auth = new \app\logic\AuthService();
+            $t->assertSame('198.51.100.77', $auth->resolveClientIp(), 'Right-to-left hop extraction must defeat prepended spoofed IPs');
+        }
+    );
+
+    // 3. Scoped rate limiter isolates semantic_search from cas buckets
+    $app = new \flight\Engine();
+    $ctrl = new \app\controllers\PhysicsController($app);
+    $ip = '198.51.100.200_' . uniqid();
+    $casBucket = sys_get_temp_dir() . '/terra_cas_ratelimit/' . hash('sha256', $ip) . '.json';
+    $semBucket = sys_get_temp_dir() . '/terra_cas_ratelimit/' . hash('sha256', 'semantic_search|' . $ip) . '.json';
+    try {
+        $t->assertTrue($ctrl->consumeCasRateLimit($ip, 1, 60, 'cas'));
+        $t->assertFalse($ctrl->consumeCasRateLimit($ip, 1, 60, 'cas'));
+        $t->assertTrue($ctrl->consumeCasRateLimit($ip, 1, 60, 'semantic_search'), 'semantic_search bucket must be independent from cas');
+        $t->assertFalse($ctrl->consumeCasRateLimit($ip, 1, 60, 'semantic_search'));
+    } finally {
+        @unlink($casBucket);
+        @unlink($semBucket);
+    }
+});
+
+$runner->run('ProductionHardeningTest', 'testErrorSanitizationCostFirewallAndNoDevGuards', function (NativePhpTestRunner $t) {
+    $app = new \flight\Engine();
+    $ctrl = new \app\controllers\PhysicsController($app);
+    $refErr = new ReflectionMethod($ctrl, 'publicErrorMessage');
+
+    // 1. Development returns detailed exception text; production returns sanitized fallback
+    withIsolatedEnv(['APP_ENV' => 'development'], ['REMOTE_ADDR' => '127.0.0.1'], function () use ($t, $ctrl, $refErr) {
+        $msg = $refErr->invoke($ctrl, new RuntimeException('SQLSTATE[HY000] secret host details'), 'Safe error.');
+        $t->assertContains('SQLSTATE', $msg);
+    });
+    withIsolatedEnv(['APP_ENV' => 'production'], ['REMOTE_ADDR' => '203.0.113.10'], function () use ($t, $ctrl, $refErr) {
+        $prevErrLog = ini_set('error_log', '/dev/null');
+        try {
+            $msg = $refErr->invoke($ctrl, new RuntimeException('SQLSTATE[HY000] secret host details'), 'Safe error.');
+            $t->assertSame('Safe error.', $msg);
+        } finally {
+            if ($prevErrLog !== false) {
+                ini_set('error_log', $prevErrLog);
+            }
+        }
+    });
+
+    // 2. SemanticSearchService defaults external API disabled in production unless explicitly overridden
+    withIsolatedEnv(['APP_ENV' => 'production'], [], function () use ($t) {
+        $sem = new \app\logic\SemanticSearchService();
+        $t->assertTrue($sem->isExternalApiDisabled(), 'Production must default live external embedding API to disabled');
+    });
+    withIsolatedEnv(['APP_ENV' => 'production', 'DISABLE_EXTERNAL_EMBEDDING_API' => '0'], [], function () use ($t) {
+        $sem = new \app\logic\SemanticSearchService();
+        $t->assertFalse($sem->isExternalApiDisabled(), 'Explicit DISABLE_EXTERNAL_EMBEDDING_API=0 must allow opt-in');
+    });
+
+    // 3. Verify services.php --no-dev guards, migration guard, and stale stub removal
+    $servicesSrc = (string)file_get_contents(PROJECT_ROOT . '/app/config/services.php');
+    $t->assertContains('Debugger::Production', $servicesSrc);
+    $t->assertContains('class_exists(TracyExtensionLoader::class)', $servicesSrc);
+    $t->assertContains('class_exists(PdoQueryCapture::class)', $servicesSrc);
+
+    $migSrc = (string)file_get_contents(PROJECT_ROOT . '/scripts/migrations/001_create_rbac_and_review_tables.php');
+    $t->assertContains("appEnv === 'production'", $migSrc);
+    $t->assertFalse(file_exists(PROJECT_ROOT . '/app/config/PhysicsService.php'), 'Empty app/config/PhysicsService.php stub must remain deleted');
+});
+
+// ============================================================================
+// 10. Stage 2 Debian Packaging, Readiness Probe & Cache Warmer Suite
+// ============================================================================
+$runner->run('Stage2PackagingTest', 'testDebianAppEnvResolutionAcrossServerRedirectAndConfig', function (NativePhpTestRunner $t) {
+    // 1. Debian variables_order="GPCS": getenv() & $_ENV empty, Apache SetEnv populates $_SERVER['APP_ENV']
+    withIsolatedEnv([], ['APP_ENV' => 'Production', 'REMOTE_ADDR' => '127.0.0.1'], function () use ($t) {
+        $t->assertSame('production', \app\logic\AuthService::resolveAppEnv());
+        $auth = new \app\logic\AuthService();
+        $t->assertTrue($auth->isProduction());
+        $t->assertFalse($auth->isLocalDevStudio(), 'Production via $_SERVER[APP_ENV] must disable studio auto-admin');
+    });
+
+    // 2. Apache mod_rewrite internal redirect prefixes SetEnv vars as REDIRECT_APP_ENV
+    withIsolatedEnv([], ['REDIRECT_APP_ENV' => 'production', 'REMOTE_ADDR' => '127.0.0.1'], function () use ($t) {
+        $t->assertSame('production', \app\logic\AuthService::resolveAppEnv());
+        $sem = new \app\logic\SemanticSearchService();
+        $t->assertTrue($sem->isExternalApiDisabled(), 'SemanticSearchService must honor REDIRECT_APP_ENV=production');
+    });
+
+    // 3. PHP-FPM clear_env=yes fallback to config.php ('app_env')
+    withIsolatedEnv([], [], function () use ($t) {
+        $t->assertSame('production', \app\logic\AuthService::resolveAppEnv('production'));
+        $t->assertSame('development', \app\logic\AuthService::resolveAppEnv());
+    });
+
+    // 4. OS getenv('APP_ENV') takes precedence over config fallback
+    withIsolatedEnv(['APP_ENV' => 'staging'], [], function () use ($t) {
+        $t->assertSame('staging', \app\logic\AuthService::resolveAppEnv('production'));
+    });
+});
+
+$runner->run('Stage2PackagingTest', 'testZeroLeakHealthzReadinessProbe', function (NativePhpTestRunner $t) {
+    // 1. Degraded state when database service is unreachable/unconfigured
+    $appBad = new \flight\Engine();
+    $appBad->register('db', stdClass::class);
+    $ctrlBad = new \app\controllers\PhysicsController($appBad);
+    $badReport = $ctrlBad->evaluateHealthChecks();
+    $t->assertSame('degraded', $badReport['status']);
+    $t->assertSame(503, $badReport['http_code']);
+    $t->assertFalse($badReport['checks']['database']);
+    $t->assertTrue($badReport['checks']['storage']);
+    $t->assertTrue($badReport['checks']['cas_runtime']);
+
+    // 2. Healthy state when database responds to SELECT 1
+    $healthyDb = new class {
+        public function runQuery(string $sql): object
+        {
+            return (object)['sql' => $sql];
+        }
+    };
+    $appOk = new \flight\Engine();
+    $appOk->set('db_mock', $healthyDb);
+    $appOk->map('db', fn() => $healthyDb);
+    $ctrlOk = new \app\controllers\PhysicsController($appOk);
+    $okReport = $ctrlOk->evaluateHealthChecks();
+    $t->assertSame('ok', $okReport['status']);
+    $t->assertSame(200, $okReport['http_code']);
+    $t->assertTrue($okReport['checks']['database']);
+
+    ob_start();
+    try {
+        $ctrlOk->healthz();
+        $rawJson = (string)ob_get_clean();
+    } catch (Throwable $e) {
+        ob_end_clean();
+        throw $e;
+    }
+    $decoded = json_decode($rawJson, true);
+    $t->assertSame('ok', $decoded['status'] ?? null);
+    $t->assertSame(['database' => true, 'storage' => true, 'cas_runtime' => true], $decoded['checks'] ?? null);
+    $t->assertFalse(str_contains($rawJson, PROJECT_ROOT), 'healthz JSON must never leak filesystem paths');
+});
+
+$runner->run('Stage2PackagingTest', 'testInProcessWarmHtmlCacheAndPythonManifests', function (NativePhpTestRunner $t) {
+    // 1. Verify minimal Debian PEP 668 requirements.txt vs requirements-dev.txt
+    $reqProd = (string)file_get_contents(PROJECT_ROOT . '/requirements.txt');
+    $reqDev = (string)file_get_contents(PROJECT_ROOT . '/requirements-dev.txt');
+    $t->assertContains('sympy==', $reqProd);
+    $t->assertContains('mpmath==', $reqProd);
+    $t->assertFalse(str_contains($reqProd, 'google-genai'), 'Production requirements.txt must omit external AI SDKs');
+    $t->assertFalse(str_contains($reqProd, 'pytest'), 'Production requirements.txt must omit dev test runners');
+    $t->assertContains('-r requirements.txt', $reqDev);
+    $t->assertContains('pytest==', $reqDev);
+
+    $cliSyncSrc = (string)file_get_contents(PROJECT_ROOT . '/cli_sync.php');
+    $t->assertContains('--warm-cache', $cliSyncSrc);
+    $t->assertContains('--force-cache', $cliSyncSrc);
+    $t->assertContains('--cache-only', $cliSyncSrc);
+
+    // 2. Verify in-process warmHtmlCache builds fresh HTML with 32-hex nonce + DEV_STUDIO_NAV_SLOT, then skips on incremental run
+    Flight::register('authService', \app\logic\AuthService::class);
+    $app = new \flight\Engine();
+    $app->set('flight.views.path', PROJECT_ROOT . '/app/views');
+    $app->register('db', stdClass::class);
+    $app->register('authService', \app\logic\AuthService::class);
+    $app->register('physicsService', \app\logic\PhysicsService::class, [$app]);
+    $ctrl = new \app\controllers\PhysicsController($app);
+
+    $hubCache = PROJECT_ROOT . '/public/cache/topic/classical-mechanics.html';
+    $subCache = PROJECT_ROOT . '/public/cache/subtopic/generalized-coordinates.html';
+    $hadHub = file_exists($hubCache) ? file_get_contents($hubCache) : null;
+    $hadSub = file_exists($subCache) ? file_get_contents($subCache) : null;
+    $prevErrLog = ini_set('error_log', '/dev/null');
+
+    try {
+        withIsolatedEnv(['APP_ENV' => 'production'], ['REMOTE_ADDR' => '127.0.0.1'], function () use ($t, $ctrl, $hubCache, $subCache) {
+            $first = $ctrl->warmHtmlCache(true, ['classical-mechanics', 'generalized-coordinates']);
+            $t->assertSame([], $first['errors'], 'warmHtmlCache must complete with 0 errors');
+            $t->assertSame(1, $first['hubs_built']);
+            $t->assertSame(1, $first['subtopics_built']);
+
+            $hubHtml = (string)file_get_contents($hubCache);
+            $subHtml = (string)file_get_contents($subCache);
+            $t->assertTrue((bool)preg_match('/nonce="[a-f0-9]{32}"/', $hubHtml), 'Cached hub HTML must preserve 32-hex CSP nonce placeholder');
+            $t->assertTrue((bool)preg_match('/nonce="[a-f0-9]{32}"/', $subHtml), 'Cached subtopic HTML must preserve 32-hex CSP nonce placeholder');
+            $t->assertContains('<!-- DEV_STUDIO_NAV_SLOT -->', $subHtml, 'Cached HTML must preserve dynamic studio nav slot');
+            $t->assertContains('nav-pillar-active', $subHtml, 'Cached subtopic HTML must mark Topics nav pillar active');
+            $t->assertFalse(str_contains($subHtml, 'preview-banner'), 'Cached HTML must never bake preview-mode banner');
+
+            $second = $ctrl->warmHtmlCache(false, ['classical-mechanics', 'generalized-coordinates']);
+            $t->assertSame(0, $second['hubs_built']);
+            $t->assertSame(1, $second['hubs_skipped'], 'Fresh hub cache must be skipped on incremental warm');
+            $t->assertSame(0, $second['subtopics_built']);
+            $t->assertSame(1, $second['subtopics_skipped'], 'Fresh subtopic cache must be skipped on incremental warm');
+        });
+    } finally {
+        if ($prevErrLog !== false) {
+            ini_set('error_log', $prevErrLog);
+        }
+        if ($hadHub === null) {
+            @unlink($hubCache);
+        } else {
+            file_put_contents($hubCache, $hadHub, LOCK_EX);
+        }
+        if ($hadSub === null) {
+            @unlink($subCache);
+        } else {
+            file_put_contents($subCache, $hadSub, LOCK_EX);
         }
     }
 });

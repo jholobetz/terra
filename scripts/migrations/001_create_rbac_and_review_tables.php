@@ -70,59 +70,65 @@ try {
     ");
     echo "[OK] Table 'formula_audit_logs' verified/created.\n";
 
-    // 4. Seed development users for zero-friction local impersonation
-    $devUsers = [
-        [
-            'oauth_provider' => 'dev_mock',
-            'oauth_id' => 'dev_admin_1',
-            'email' => 'admin@physicslab.local',
-            'display_name' => 'Dr. Terra Admin',
-            'avatar_url' => '/images/avatars/admin.png',
-            'role' => 'admin'
-        ],
-        [
-            'oauth_provider' => 'dev_mock',
-            'oauth_id' => 'dev_curator_1',
-            'email' => 'curator@physicslab.local',
-            'display_name' => 'Prof. Jane Curator (Physicist)',
-            'avatar_url' => '/images/avatars/curator.png',
-            'role' => 'curator'
-        ],
-        [
-            'oauth_provider' => 'dev_mock',
-            'oauth_id' => 'dev_student_1',
-            'email' => 'student@physicslab.local',
-            'display_name' => 'Alex Contributor (Student)',
-            'avatar_url' => '/images/avatars/student.png',
-            'role' => 'contributor'
-        ],
-        [
-            'oauth_provider' => 'dev_mock',
-            'oauth_id' => 'dev_guest_1',
-            'email' => 'guest@physicslab.local',
-            'display_name' => 'Anonymous Visitor',
-            'avatar_url' => null,
-            'role' => 'guest'
-        ]
-    ];
+    // 4. Seed development users for zero-friction local impersonation (skipped in production)
+    require_once __DIR__ . '/../../app/logic/AuthService.php';
+    $appEnv = \app\logic\AuthService::resolveAppEnv($config['app_env'] ?? null);
+    if ($appEnv === 'production') {
+        echo "[SKIP] APP_ENV=production detected; skipping dev_mock user seeding.\n";
+    } else {
+        $devUsers = [
+            [
+                'oauth_provider' => 'dev_mock',
+                'oauth_id' => 'dev_admin_1',
+                'email' => 'admin@physicslab.local',
+                'display_name' => 'Dr. Terra Admin',
+                'avatar_url' => '/images/avatars/admin.png',
+                'role' => 'admin'
+            ],
+            [
+                'oauth_provider' => 'dev_mock',
+                'oauth_id' => 'dev_curator_1',
+                'email' => 'curator@physicslab.local',
+                'display_name' => 'Prof. Jane Curator (Physicist)',
+                'avatar_url' => '/images/avatars/curator.png',
+                'role' => 'curator'
+            ],
+            [
+                'oauth_provider' => 'dev_mock',
+                'oauth_id' => 'dev_student_1',
+                'email' => 'student@physicslab.local',
+                'display_name' => 'Alex Contributor (Student)',
+                'avatar_url' => '/images/avatars/student.png',
+                'role' => 'contributor'
+            ],
+            [
+                'oauth_provider' => 'dev_mock',
+                'oauth_id' => 'dev_guest_1',
+                'email' => 'guest@physicslab.local',
+                'display_name' => 'Anonymous Visitor',
+                'avatar_url' => null,
+                'role' => 'guest'
+            ]
+        ];
 
-    $stmt = $pdo->prepare("
-        INSERT INTO users (oauth_provider, oauth_id, email, display_name, avatar_url, role)
-        VALUES (?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE display_name = VALUES(display_name), role = VALUES(role)
-    ");
+        $stmt = $pdo->prepare("
+            INSERT INTO users (oauth_provider, oauth_id, email, display_name, avatar_url, role)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE display_name = VALUES(display_name), role = VALUES(role)
+        ");
 
-    foreach ($devUsers as $u) {
-        $stmt->execute([
-            $u['oauth_provider'],
-            $u['oauth_id'],
-            $u['email'],
-            $u['display_name'],
-            $u['avatar_url'],
-            $u['role']
-        ]);
+        foreach ($devUsers as $u) {
+            $stmt->execute([
+                $u['oauth_provider'],
+                $u['oauth_id'],
+                $u['email'],
+                $u['display_name'],
+                $u['avatar_url'],
+                $u['role']
+            ]);
+        }
+        echo "[OK] Default development users seeded successfully.\n";
     }
-    echo "[OK] Default development users seeded successfully.\n";
     echo "[SUCCESS] Migration completed!\n";
 
 } catch (\Throwable $e) {

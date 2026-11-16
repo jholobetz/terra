@@ -61,17 +61,20 @@ use Tracy\Debugger;
  *
  * For more options, see https://tracy.nette.org/en/configuration
  **********************************************/
-Debugger::enable(); // Auto-detects environment
-// Debugger::enable(Debugger::Development); // Explicitly set environment
-// Debugger::enable('23.75.345.200'); // Restrict debug bar to specific IPs
-Debugger::$logDirectory = __DIR__ . $ds . '..' . $ds . 'log'; // Log directory
-Debugger::$strictMode = true; // Show all errors (set to E_ALL & ~E_DEPRECATED for less noise)
-// Debugger::$maxLen = 1000; // Max length of dumped variables (default: 150)
-// Debugger::$maxDepth = 5; // Max depth of dumped structures (default: 3)
-// Debugger::$editor = 'vscode'; // Enable clickable file links in debug bar
-// Debugger::$email = 'your@email.com'; // Send error notifications
-if (Debugger::$showBar === true && php_sapi_name() !== 'cli') {
-	(new TracyExtensionLoader($app)); // Load FlightPHP Tracy extensions
+require_once __DIR__ . $ds . '..' . $ds . 'logic' . $ds . 'AuthService.php';
+$appEnv = \app\logic\AuthService::resolveAppEnv($config['app_env'] ?? null);
+$isProductionEnv = ($appEnv === 'production');
+
+if (class_exists(Debugger::class)) {
+	// Explicitly bind Tracy mode to APP_ENV so reverse proxies on 127.0.0.1 never trigger Development mode
+	Debugger::enable($isProductionEnv ? Debugger::Production : Debugger::Development);
+	Debugger::$logDirectory = __DIR__ . $ds . '..' . $ds . 'log';
+	Debugger::$strictMode = !$isProductionEnv;
+	if ($isProductionEnv) {
+		Debugger::$showBar = false;
+	} elseif (Debugger::$showBar === true && php_sapi_name() !== 'cli' && class_exists(TracyExtensionLoader::class)) {
+		(new TracyExtensionLoader($app)); // Load FlightPHP Tracy extensions when dev dependencies are installed
+	}
 }
 
 /**********************************************
@@ -84,8 +87,9 @@ if (!isset($config['database']['host'])) {
 $dsn = 'mysql:host=' . $config['database']['host'] . ';dbname=' . $config['database']['dbname'] . ';charset=utf8mb4';
 
 // Register Flight::db() service
-// In development, use PdoQueryCapture to log queries; in production, use PdoWrapper for performance.
-$pdoClass = Debugger::$showBar === true ? PdoQueryCapture::class : PdoWrapper::class;
+// In development, use PdoQueryCapture when available; in production, always use PdoWrapper for performance.
+$showDebugBar = !$isProductionEnv && class_exists(Debugger::class) && (Debugger::$showBar === true);
+$pdoClass = ($showDebugBar && class_exists(PdoQueryCapture::class)) ? PdoQueryCapture::class : PdoWrapper::class;
 $app->register('db', $pdoClass, [$dsn, $config['database']['user'] ?? null, $config['database']['password'] ?? null]);
 
 /**********************************************

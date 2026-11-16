@@ -3,7 +3,7 @@
 > **Document Status**: Authoritative Architectural Proposal & Evaluation Blueprint  
 > **Document Reference**: `docs/OPS 2.0 (The Qualitative Rubric).md`  
 > **Target Horizon**: Platform Quality Architecture & Editorial Evolution  
-> **Related References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md), [`docs/roadmap.md`](roadmap.md), [`docs/add_new_subtopics_hypothetical.md`](add_new_subtopics_hypothetical.md)
+> **Related References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md), [`docs/roadmap.md`](roadmap.md), [`archive/add_new_subtopics_hypothetical.md`](../archive/add_new_subtopics_hypothetical.md)
 
 ---
 
@@ -15,7 +15,7 @@ The **Organic Platinum Standard (OPS 1.0)** was created as a necessary set of pr
 3. **Variable decoupling**: Mentioning physical concepts in prose without immediately binding them to standard mathematical symbols.
 4. **Equation detachment**: Dropping orphaned LaTeX blocks with no narrative or grammatical connective tissue.
 
-To counter these failure modes, OPS 1.0 established deterministic, regex-enforced rules via [`integrity_shield.py`](file:///Users/holobetj/code/gemini/terra/integrity_shield.py): *In Media Res* physical leads, strict word bounds (650–1,000 words), mandatory inline MathJax density (2–4 expressions per paragraph), and strict bans on lists (`<ul>`, `<ol>`) and markdown asterisks (`**`).
+To counter these failure modes, OPS 1.0 established deterministic, regex-enforced rules via [`integrity_shield.py`](../integrity_shield.py): *In Media Res* physical leads, strict word bounds (650–1,000 words), mandatory inline MathJax density (2–4 expressions per paragraph), and strict bans on lists (`<ul>`, `<ol>`) and markdown asterisks (`**`).
 
 ### The Limitation of Syntactic Proxies
 While OPS 1.0 successfully achieved **100% platform-wide graduation** and zero broken links, these programmatic metrics are fundamentally **syntactic and structural proxies for pedagogical quality**. 

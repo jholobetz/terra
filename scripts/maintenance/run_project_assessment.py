@@ -385,7 +385,7 @@ def audit_cache_freshness():
 def audit_roadmap_realization(heal_hashes: bool = False, arch_data=None):
     """
     Evaluates the Implementation Gap:
-    Compares Documented Specifications (docs/roadmap.md, docs/OPS 2.0, docs/sim_fixes)
+    Compares Documented Specifications (docs/roadmap.md, docs/OPS 2.0, docs/architecture.md)
     against live operational codebase probes.
     """
     print(f"{Colors.CYAN}📋 Auditing Roadmap Realization (Spec vs. Code Gap)...{Colors.RESET}")
@@ -986,10 +986,14 @@ def generate_agent_prompt(data):
             for iname, idesc, ok in pdata.get("items", []):
                 prompt += f"  • {iname}: {idesc} [{'OK' if ok else 'PENDING'}]\n"
 
+    core_refs = ", ".join(f["path"] for f in docs.get("files", []) if "path" in f)
+    if not core_refs:
+        core_refs = "CLAUDE.md, README.md, docs/mandate.md, docs/roadmap.md, docs/architecture.md"
+
     prompt += (
         f"\n### 4. Documentation Scope\n"
         f"- Total Docs Audited: {docs.get('file_count', 0)} files ({docs.get('total_words', 0):,} words)\n"
-        f"- Core References: CLAUDE.md, README.md, docs/mandate.md, docs/ideas.md, docs/roadmap.md, docs/OPS 2.0 (The Qualitative Rubric).md, docs/sim_fixes.md, docs/Lab_Tools_UI_design_ideas.md\n\n"
+        f"- Core References: {core_refs}\n\n"
         "Synthesize these findings into an executive evaluation covering system health, architecture strengths, implementation gaps, and strategic next steps."
     )
     return prompt
@@ -1333,7 +1337,9 @@ def audit_git_changed(strict: bool = True):
             }
         ):
             changed_subtopic_files.append(path_obj)
-        elif rel_path.startswith("docs/") and rel_path.endswith(".md") and not rel_path.startswith("docs/reports/"):
+        elif rel_path in {"CLAUDE.md", "README.md"} or (
+            rel_path.startswith("docs/") and rel_path.endswith(".md") and not rel_path.startswith("docs/reports/")
+        ):
             changed_docs.append(path_obj)
         else:
             changed_other.append(rel_path)
@@ -1451,9 +1457,16 @@ def audit_git_changed(strict: bool = True):
             text = doc_path.read_text(encoding="utf-8")
             for m in re.finditer(r"\[([^\]]+)\]\(((?:[^()]|\([^()]*\))+)\)", text):
                 link_target = m.group(2)
-                if link_target.startswith(("http", "#", "mailto", "file://")):
+                if link_target.startswith("file://") or "/Users/" in link_target:
+                    violations.append(
+                        f"{doc_path.name}: Machine-local path in markdown link '({link_target})' — use portable relative paths"
+                    )
+                    continue
+                if link_target.startswith(("http", "#", "mailto")):
                     continue
                 target_file = urllib.parse.unquote(link_target.split("#")[0])
+                if "[" in target_file or "]" in target_file:
+                    continue
                 if target_file and not (doc_path.parent / target_file).exists():
                     violations.append(f"{doc_path.name}: Broken relative markdown link '({link_target})'")
         except Exception:

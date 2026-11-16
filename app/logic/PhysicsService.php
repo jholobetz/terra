@@ -4,6 +4,7 @@ namespace app\logic;
 
 use flight\Engine;
 
+require_once __DIR__ . '/AuthService.php';
 require_once __DIR__ . '/LatexSanitizer.php';
 require_once __DIR__ . '/ShardSyncService.php';
 
@@ -45,6 +46,8 @@ class PhysicsService
 
     /**
      * Toggles or queries the active preview state.
+     * Restricted to local developer studio or explicit CLI setPreviewMode(true)
+     * so anonymous visitors cannot bypass MariaDB and HTML disk caches via ?preview=1.
      */
     public function isPreviewActive(): bool
     {
@@ -52,12 +55,16 @@ class PhysicsService
             return $this->isPreviewMode;
         }
 
-        $previewQuery = $this->app->request()->query->preview;
-        $buildMode = $this->app->request()->query->build_mode;
-        
+        $auth = new AuthService();
+        if (!$auth->isLocalDevStudio()) {
+            return false;
+        }
+
+        $previewQuery = $this->app->request()->query->preview ?? ($_GET['preview'] ?? null);
+        $buildMode = $this->app->request()->query->build_mode ?? ($_GET['build_mode'] ?? null);
+
         if ($previewQuery !== null || $buildMode !== null) {
-            $isActive = ($previewQuery === '1' || $buildMode === '1');
-            return $isActive;
+            return ($previewQuery === '1' || $buildMode === '1');
         }
 
         return ($_COOKIE['physics_preview'] ?? '0') === '1';
@@ -1041,9 +1048,18 @@ class PhysicsService
     {
         $content = $this->getPhysicsContent($slug);
         
-        // Dynamic stale-cache fallback
-        if (!$this->isPreviewActive() && $table === 'subtopics' && isset($content['subtopics'][$slug])) {
-            $this->syncIndividualSubtopic($slug, $content['subtopics'][$slug]);
+        // Dynamic stale-cache fallback (local development only; production syncs atomically via cli_sync.php)
+        if (
+            !$this->isPreviewActive()
+            && AuthService::resolveAppEnv() !== 'production'
+            && $table === 'subtopics'
+            && isset($content['subtopics'][$slug])
+        ) {
+            try {
+                $this->syncIndividualSubtopic($slug, $content['subtopics'][$slug]);
+            } catch (\Throwable $e) {
+                // Non-fatal when running in offline/db-unavailable fallback mode
+            }
         }
 
         if ($this->isPreviewActive()) {
@@ -1075,6 +1091,16 @@ class PhysicsService
             $data = $content[$table][$slug] ?? null;
             if (!$data) return [];
             $data['slug'] = $slug;
+            $data['formulas'] = [];
+            if (!empty($data['formula_ids'])) {
+                foreach ($data['formula_ids'] as $f_id) {
+                    $formula = $this->loadFormula($f_id);
+                    if ($formula) {
+                        $formula['id'] = $f_id;
+                        $data['formulas'][] = $formula;
+                    }
+                }
+            }
             return $data;
         }
 

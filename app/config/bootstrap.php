@@ -33,6 +33,13 @@ $app = Flight::app();
  * will be returned by the require statement where you can assign it to a var.
  */
 $config = require('config.php');
+if (is_array($config) && !empty($config['app_env']) && !defined('TERRA_CONFIG_APP_ENV')) {
+    define('TERRA_CONFIG_APP_ENV', strtolower(trim((string)$config['app_env'])));
+    if (TERRA_CONFIG_APP_ENV === 'production') {
+        error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+        ini_set('display_errors', '0');
+    }
+}
 
 /*
  * Load the services file.

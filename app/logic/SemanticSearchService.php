@@ -33,13 +33,41 @@ class SemanticSearchService
             $this->embeddingModel = $models['embedding'] ?? 'gemini-embedding-001';
         }
 
-        // Load environment variables if not loaded
+        // Load environment variables from .env and OS process environment
+        $env = [];
         if (file_exists(PROJECT_ROOT . '/.env')) {
-            $env = parse_ini_file(PROJECT_ROOT . '/.env');
-            $this->apiKey = $env['GEMINI_API_KEY'] ?? $env['GEMINI_FREE_API_KEY'] ?? getenv('GEMINI_API_KEY') ?: null;
-            $disableFlag = $env['DISABLE_EXTERNAL_EMBEDDING_API'] ?? getenv('DISABLE_EXTERNAL_EMBEDDING_API') ?: '0';
-            $this->externalApiDisabled = in_array(strtolower((string)$disableFlag), ['1', 'true', 'yes'], true);
+            $parsed = @parse_ini_file(PROJECT_ROOT . '/.env');
+            if (is_array($parsed)) {
+                $env = $parsed;
+            }
         }
+
+        require_once __DIR__ . '/AuthService.php';
+        $effectiveAppEnv = AuthService::resolveAppEnv($env['APP_ENV'] ?? null);
+        $isProduction = ($effectiveAppEnv === 'production');
+
+        $osApiKey = getenv('GEMINI_API_KEY') ?: (getenv('GEMINI_FREE_API_KEY') ?: ($_ENV['GEMINI_API_KEY'] ?? $_ENV['GEMINI_FREE_API_KEY'] ?? null));
+        $this->apiKey = $osApiKey ?: ($env['GEMINI_API_KEY'] ?? $env['GEMINI_FREE_API_KEY'] ?? null);
+
+        $osDisable = getenv('DISABLE_EXTERNAL_EMBEDDING_API');
+        $rawDisableFlag = ($osDisable !== false && $osDisable !== '')
+            ? $osDisable
+            : ($_ENV['DISABLE_EXTERNAL_EMBEDDING_API'] ?? $env['DISABLE_EXTERNAL_EMBEDDING_API'] ?? null);
+
+        if ($rawDisableFlag !== null && $rawDisableFlag !== '') {
+            $this->externalApiDisabled = in_array(strtolower((string)$rawDisableFlag), ['1', 'true', 'yes'], true);
+        } else {
+            // Production defaults to $0.00 live external embedding spend unless explicitly enabled via DISABLE_EXTERNAL_EMBEDDING_API=0
+            $this->externalApiDisabled = $isProduction;
+        }
+    }
+
+    /**
+     * Indicates whether outbound live Gemini embedding API calls are disabled.
+     */
+    public function isExternalApiDisabled(): bool
+    {
+        return $this->externalApiDisabled;
     }
 
     /**

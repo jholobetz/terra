@@ -22,8 +22,14 @@ $ds = DIRECTORY_SEPARATOR;
 // Set your timezone (e.g., 'America/New_York', 'UTC')
 date_default_timezone_set('UTC');
 
-// Error reporting level (E_ALL recommended for development)
-error_reporting(E_ALL);
+// Error reporting level (E_ALL in development; suppress deprecation/display noise in production)
+$bootEnv = strtolower((string)(getenv('APP_ENV') ?: ($_SERVER['APP_ENV'] ?? $_SERVER['REDIRECT_APP_ENV'] ?? 'development')));
+if ($bootEnv === 'production') {
+	error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+	ini_set('display_errors', '0');
+} else {
+	error_reporting(E_ALL);
+}
 
 // Character encoding
 if (function_exists('mb_internal_encoding') === true) {
@@ -72,6 +78,12 @@ $app->set('csp_nonce', $nonce);
 // you'll get this array back for your configuration settings.
 // $config = include PROJECT_ROOT .'/app/config/config.php';
 return [
+	/**************************************
+	 *      Application Environment       *
+	 **************************************/
+	'app_env' => 'development',         // Set to 'production' on live Debian LAMP server
+	'app_url' => 'http://localhost:8000', // Canonical base URL (no trailing slash) for sitemap & canonical tags
+
 	/**************************************
 	 *         Database Settings          *
 	 **************************************/

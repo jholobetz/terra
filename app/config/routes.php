@@ -14,9 +14,11 @@ use flight\net\Router;
 $router->group('', function(Router $router) use ($app) {
 
 	$router->get('/', [ $app->physicsController(), 'index' ]);
+	$router->get('/healthz', [ $app->physicsController(), 'healthz' ]);
 
 	$router->group('/physics', function() use ($router, $app) {
 		$router->get('/', [ $app->physicsController(), 'index' ]);
+		$router->get('/healthz', [ $app->physicsController(), 'healthz' ]);
 		$router->get('/random', [ $app->physicsController(), 'randomSubtopic' ]);
 		$router->get('/sync', [ $app->physicsController(), 'sync' ]);
 		$router->get('/simulations', [ $app->physicsController(), 'simulations' ]);

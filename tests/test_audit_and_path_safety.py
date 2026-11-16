@@ -105,3 +105,25 @@ def test_documentation_test_counts_not_inflated():
         matches = combined.findall(content)
         assert not matches, f"Stale inflated test count claim found in {rel_path}: {matches}"
 
+
+def test_no_machine_local_paths_in_active_docs():
+    """Ensure active documentation files use portable relative links rather than file:// or /Users/ paths."""
+    local_path_pattern = re.compile(r"(?:file://|/Users/[A-Za-z0-9_.-]+/)")
+    target_docs = ["CLAUDE.md", "README.md"]
+    if os.path.isdir("docs"):
+        for entry in sorted(os.listdir("docs")):
+            if entry.endswith(".md"):
+                target_docs.append(os.path.join("docs", entry))
+
+    for rel_path in target_docs:
+        if not os.path.exists(rel_path):
+            continue
+        with open(rel_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        matches = local_path_pattern.findall(content)
+        assert not matches, (
+            f"Machine-local path detected in {rel_path}: {matches}. "
+            "Active docs must use portable repository-relative links."
+        )
+
+

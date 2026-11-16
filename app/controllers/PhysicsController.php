@@ -5,6 +5,7 @@ namespace app\controllers;
 use flight\Engine;
 use Flight;
 
+require_once PROJECT_ROOT . '/app/logic/AuthService.php';
 require_once PROJECT_ROOT . '/app/logic/VariableAggregator.php';
 
 class PhysicsController
@@ -22,6 +23,111 @@ class PhysicsController
     private function service()
     {
         return $this->app->physicsService();
+    }
+
+    /**
+     * Resolves a fresh AuthService instance reflecting current environment and request headers.
+     */
+    private function authService(): \app\logic\AuthService
+    {
+        return new \app\logic\AuthService();
+    }
+
+    /**
+     * Logs internal exceptions in production and returns a sanitized message safe for public JSON responses.
+     */
+    private function publicErrorMessage(\Throwable $e, string $fallback = 'Internal server error.'): string
+    {
+        if ($this->authService()->isProduction()) {
+            error_log('[PhysicsController] ' . get_class($e) . ': ' . $e->getMessage());
+            return $fallback;
+        }
+        return $e->getMessage();
+    }
+
+    /**
+     * Evaluates production readiness across MariaDB, writable log/cache directories,
+     * and local SymPy CAS runtime availability without spawning subprocesses or leaking paths.
+     */
+    public function evaluateHealthChecks(): array
+    {
+        $dbOk = false;
+        try {
+            $db = $this->app->db();
+            if ($db) {
+                if (method_exists($db, 'runQuery')) {
+                    $stmt = $db->runQuery('SELECT 1');
+                    $dbOk = ($stmt !== false);
+                } elseif (method_exists($db, 'query')) {
+                    $stmt = $db->query('SELECT 1');
+                    $dbOk = ($stmt !== false);
+                }
+            }
+        } catch (\Throwable $e) {
+            $dbOk = false;
+        }
+
+        $logDir = PROJECT_ROOT . '/app/log';
+        $cacheDir = PROJECT_ROOT . '/public/cache';
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0775, true);
+        }
+        if (!is_dir($cacheDir)) {
+            @mkdir($cacheDir, 0775, true);
+        }
+        $storageOk = is_dir($logDir) && is_writable($logDir) && is_dir($cacheDir) && is_writable($cacheDir);
+
+        $casScript = is_file(PROJECT_ROOT . '/lib/cas/cas_engine.py')
+            ? PROJECT_ROOT . '/lib/cas/cas_engine.py'
+            : PROJECT_ROOT . '/scripts/lib/cas_engine.py';
+        $casScriptOk = is_file($casScript);
+
+        $pythonOk = false;
+        $venvPython = PROJECT_ROOT . '/.venv/bin/python3';
+        if (is_file($venvPython) && is_executable($venvPython)) {
+            $pythonOk = true;
+        } else {
+            $pathDirs = explode(PATH_SEPARATOR, (string)(getenv('PATH') ?: '/usr/local/bin:/usr/bin:/bin'));
+            foreach ($pathDirs as $dir) {
+                $candidate = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'python3';
+                if ($dir !== '' && is_file($candidate) && is_executable($candidate)) {
+                    $pythonOk = true;
+                    break;
+                }
+            }
+        }
+        $casOk = $casScriptOk && $pythonOk;
+
+        $allHealthy = $dbOk && $storageOk && $casOk;
+        return [
+            'status' => $allHealthy ? 'ok' : 'degraded',
+            'http_code' => $allHealthy ? 200 : 503,
+            'checks' => [
+                'database' => $dbOk,
+                'storage' => $storageOk,
+                'cas_runtime' => $casOk,
+            ],
+        ];
+    }
+
+    /**
+     * Zero-leak JSON readiness probe (/healthz and /physics/healthz).
+     */
+    public function healthz(): void
+    {
+        if (class_exists('\Tracy\Debugger')) {
+            \Tracy\Debugger::$showBar = false;
+        }
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=utf-8');
+            header('Cache-Control: no-store, no-cache, must-revalidate');
+        }
+        $report = $this->evaluateHealthChecks();
+        http_response_code($report['http_code']);
+        echo json_encode([
+            'status' => $report['status'],
+            'checks' => $report['checks'],
+        ], JSON_UNESCAPED_SLASHES);
     }
 
     /**
@@ -370,13 +476,13 @@ class PhysicsController
         }
 
         // 2. Per-IP Sliding-Window Rate Limiter on Cold Subprocess Spawns
-        $auth = Flight::authService();
+        $auth = $this->authService();
         $isLocalAdmin = $auth->isLocalDevStudio();
         $maxPerWindow = $isLocalAdmin ? 120 : 20;
         $windowSeconds = 60;
-        $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $clientIp = $auth->resolveClientIp();
 
-        if (!$this->consumeCasRateLimit((string)$clientIp, $maxPerWindow, $windowSeconds)) {
+        if (!$this->consumeCasRateLimit($clientIp, $maxPerWindow, $windowSeconds)) {
             http_response_code(429);
             echo json_encode([
                 'success' => false,
@@ -396,7 +502,13 @@ class PhysicsController
 
         $result = json_decode($output, true);
         if (!$result) {
-            echo json_encode(['success' => false, 'error' => 'Invalid response from CAS engine.', 'raw_output' => $output]);
+            $errPayload = ['success' => false, 'error' => 'Invalid response from CAS engine.'];
+            if (!$auth->isProduction()) {
+                $errPayload['raw_output'] = $output;
+            } else {
+                error_log('[PhysicsController::apiCasEvaluate] Invalid CAS output: ' . substr((string)$output, 0, 500));
+            }
+            echo json_encode($errPayload);
             return;
         }
 
@@ -413,17 +525,18 @@ class PhysicsController
     }
 
     /**
-     * Sliding-window rate limiter for cold CAS subprocess spawns (stored outside DocumentRoot).
+     * Sliding-window rate limiter for expensive API endpoints (stored outside DocumentRoot).
      * Uses flock(LOCK_EX) to prevent race conditions under concurrent HTTP requests.
      */
-    public function consumeCasRateLimit(string $clientIp, int $maxRequests, int $windowSeconds): bool
+    public function consumeCasRateLimit(string $clientIp, int $maxRequests, int $windowSeconds, string $scope = 'cas'): bool
     {
         $rlDir = sys_get_temp_dir() . '/terra_cas_ratelimit';
         if (!is_dir($rlDir)) {
             @mkdir($rlDir, 0775, true);
         }
 
-        $bucketFile = $rlDir . '/' . hash('sha256', $clientIp) . '.json';
+        $bucketKey = ($scope === 'cas') ? $clientIp : ($scope . '|' . $clientIp);
+        $bucketFile = $rlDir . '/' . hash('sha256', $bucketKey) . '.json';
         $fp = @fopen($bucketFile, 'c+');
         if ($fp === false) {
             return true;
@@ -586,6 +699,18 @@ class PhysicsController
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         $minScore = isset($_GET['min_score']) ? (float)$_GET['min_score'] : 0.40;
 
+        $auth = $this->authService();
+        $maxPerWindow = $auth->isLocalDevStudio() ? 120 : 30;
+        if (!$this->consumeCasRateLimit($auth->resolveClientIp(), $maxPerWindow, 60, 'semantic_search')) {
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Rate limit exceeded for semantic search. Please wait a moment and try again.',
+                'results' => []
+            ]);
+            return;
+        }
+
         try {
             $semanticService = Flight::semanticSearchService();
             $results = $semanticService->search($query, $limit, $minScore);
@@ -596,9 +721,10 @@ class PhysicsController
                 'results' => $results
             ]);
         } catch (\Throwable $e) {
+            http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => $this->publicErrorMessage($e, 'Semantic search is temporarily unavailable.'),
                 'results' => []
             ]);
         }
@@ -620,9 +746,10 @@ class PhysicsController
                 'results' => $results
             ]);
         } catch (\Throwable $e) {
+            http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => $this->publicErrorMessage($e, 'Could not load related subtopics.'),
                 'results' => []
             ]);
         }
@@ -645,9 +772,10 @@ class PhysicsController
                 'data' => $subgraph
             ]);
         } catch (\Throwable $e) {
+            http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $this->publicErrorMessage($e, 'Could not load formula derivation graph.')
             ]);
         }
     }
@@ -672,9 +800,10 @@ class PhysicsController
                 'data' => $path
             ]);
         } catch (\Throwable $e) {
+            http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $this->publicErrorMessage($e, 'Could not compute formula derivation path.')
             ]);
         }
     }
@@ -794,19 +923,25 @@ class PhysicsController
         $cachePath = PROJECT_ROOT . "/public/cache/topic/{$slug}.html";
         $isStale = $this->isHubCacheStale($slug, $cachePath);
 
-        // Auto-sync stale hub manifests
-        if ($isStale || $this->service()->isPreviewActive()) {
+        // Auto-sync stale hub manifests (local development only; production syncs atomically via cli_sync.php)
+        if (!$this->authService()->isProduction() && ($isStale || $this->service()->isPreviewActive())) {
             $manifestPath = PROJECT_ROOT . "/hub_manifests/{$slug}.json";
             if (file_exists($manifestPath)) {
                 $manifestData = json_decode(file_get_contents($manifestPath), true);
                 if ($manifestData) {
-                    $this->service()->syncIndividualTopic($slug, $manifestData);
+                    try {
+                        $this->service()->syncIndividualTopic($slug, $manifestData);
+                    } catch (\Throwable $e) {
+                        // Non-fatal when running in offline/db-unavailable fallback mode
+                    }
                 }
             }
         }
 
         if (file_exists($cachePath) && !$isStale && !$this->service()->isPreviewActive()) {
-            header('Content-Type: text/html; charset=utf-8');
+            if (!headers_sent()) {
+                header('Content-Type: text/html; charset=utf-8');
+            }
             $html = file_get_contents($cachePath);
             $nonce = $this->app->get('csp_nonce') ?? '';
             echo $this->injectLayoutDynamicTokens($html, $nonce, false);
@@ -989,7 +1124,9 @@ class PhysicsController
         $isStale = $this->isCacheStale($slug, $cachePath);
 
         if (file_exists($cachePath) && !$isStale && !$this->service()->isPreviewActive()) {
-            header('Content-Type: text/html; charset=utf-8');
+            if (!headers_sent()) {
+                header('Content-Type: text/html; charset=utf-8');
+            }
             $html = file_get_contents($cachePath);
             $nonce = $this->app->get('csp_nonce') ?? '';
             echo $this->injectLayoutDynamicTokens($html, $nonce, false);
@@ -1040,8 +1177,9 @@ class PhysicsController
      */
     public function renderWithLayout(string $view, array $data = [], ?string $cachePath = null): void
     {
+        $isStudio = $this->authService()->isLocalDevStudio();
         $isPreview = $this->service()->isPreviewActive();
-        $isBuildMode = ($this->app->request()->query->build_mode === '1');
+        $isBuildMode = $isStudio && ($this->app->request()->query->build_mode === '1');
 
         if ($isPreview) {
             $this->service()->loadAllShards();
@@ -1107,10 +1245,10 @@ class PhysicsController
 
         if ($cachePath && !$isPreview && !$isBuildMode) {
             $dir = dirname($cachePath);
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0775, true);
             }
-            file_put_contents($cachePath, $html);
+            file_put_contents($cachePath, $html, LOCK_EX);
         }
 
         echo $this->injectLayoutDynamicTokens($html, $nonce, $isPreview && !$isBuildMode);
@@ -1327,6 +1465,171 @@ class PhysicsController
             return rtrim(substr($html, 0, $endPos)) . ' ...';
         }
         return $html;
+    }
+
+    /**
+     * Pre-renders Topic Hub and Subtopic HTML cache files in-process without requiring
+     * a running local HTTP server or curl subprocesses. Preserves 32-char CSP nonce
+     * placeholders and <!-- DEV_STUDIO_NAV_SLOT --> markers for dynamic per-request injection.
+     *
+     * @param bool        $force      Rebuild even when existing cache file is fresh
+     * @param array|null  $onlySlugs  Optional allowlist of slugs to warm (for targeted runs/tests)
+     * @param callable|null $onProgress Optional callback(int $done, int $total, string $slug, string $status)
+     */
+    public function warmHtmlCache(bool $force = false, ?array $onlySlugs = null, ?callable $onProgress = null): array
+    {
+        $svc = $this->service();
+        $wasPreview = $svc->isPreviewActive();
+
+        $prevGetPreview = $_GET['preview'] ?? null;
+        $prevGetBuild = $_GET['build_mode'] ?? null;
+        $prevCookiePreview = $_COOKIE['physics_preview'] ?? null;
+        $prevAppReqUrl = $this->app->request()->url ?? '';
+        $prevFlightReqUrl = \Flight::request()->url ?? '';
+
+        // Guarantee a valid 32-hex-char nonce placeholder so injectLayoutDynamicTokens() always matches on cache hit
+        $currentNonce = (string)($this->app->get('csp_nonce') ?? '');
+        if (!preg_match('/^[a-f0-9]{32}$/', $currentNonce)) {
+            $this->app->set('csp_nonce', bin2hex(random_bytes(16)));
+        }
+
+        // Guarantee Flight view path is configured even in standalone CLI/test Engine instances
+        if (!$this->app->get('flight.views.path')) {
+            $this->app->set('flight.views.path', PROJECT_ROOT . '/app/views');
+        }
+
+        $hubsBuilt = 0;
+        $hubsSkipped = 0;
+        $subtopicsBuilt = 0;
+        $subtopicsSkipped = 0;
+        $errors = [];
+
+        try {
+            unset($_GET['preview'], $_GET['build_mode'], $_COOKIE['physics_preview']);
+            $svc->setPreviewMode(false);
+
+            $svc->loadAllShards();
+            $content = $svc->getPhysicsContent();
+
+            $hubSlugs = array_keys($content['topics'] ?? []);
+            $subSlugs = array_keys($content['subtopics'] ?? []);
+
+            if ($onlySlugs !== null) {
+                $allow = array_flip($onlySlugs);
+                $hubSlugs = array_values(array_filter($hubSlugs, fn($s) => isset($allow[$s])));
+                $subSlugs = array_values(array_filter($subSlugs, fn($s) => isset($allow[$s])));
+            }
+
+            $total = count($hubSlugs) + count($subSlugs);
+            $done = 0;
+
+            foreach ($hubSlugs as $slug) {
+                $done++;
+                $cachePath = PROJECT_ROOT . "/public/cache/topic/{$slug}.html";
+                if ($force && file_exists($cachePath)) {
+                    @unlink($cachePath);
+                }
+                if (!$force && file_exists($cachePath) && !$this->isHubCacheStale($slug, $cachePath)) {
+                    $hubsSkipped++;
+                    if ($onProgress) {
+                        $onProgress($done, $total, $slug, 'skipped');
+                    }
+                    continue;
+                }
+
+                ob_start();
+                try {
+                    $targetUrl = "/physics/topic/{$slug}";
+                    $this->app->request()->url = $targetUrl;
+                    \Flight::request()->url = $targetUrl;
+                    $this->viewTopic($slug);
+                } catch (\Throwable $e) {
+                    $errors[] = "topic/{$slug}: " . $e->getMessage();
+                } finally {
+                    ob_end_clean();
+                }
+
+                if (file_exists($cachePath) && filesize($cachePath) > 0) {
+                    $hubsBuilt++;
+                    if ($onProgress) {
+                        $onProgress($done, $total, $slug, 'built');
+                    }
+                } else {
+                    $errors[] = "topic/{$slug}: cache file was not written";
+                    if ($onProgress) {
+                        $onProgress($done, $total, $slug, 'error');
+                    }
+                }
+            }
+
+            foreach ($subSlugs as $slug) {
+                $done++;
+                if ($slug === 'maxwell-equations') {
+                    $subtopicsSkipped++;
+                    if ($onProgress) {
+                        $onProgress($done, $total, $slug, 'skipped');
+                    }
+                    continue;
+                }
+
+                $cachePath = PROJECT_ROOT . "/public/cache/subtopic/{$slug}.html";
+                if ($force && file_exists($cachePath)) {
+                    @unlink($cachePath);
+                }
+                if (!$force && file_exists($cachePath) && !$this->isCacheStale($slug, $cachePath)) {
+                    $subtopicsSkipped++;
+                    if ($onProgress) {
+                        $onProgress($done, $total, $slug, 'skipped');
+                    }
+                    continue;
+                }
+
+                ob_start();
+                try {
+                    $targetUrl = "/physics/subtopic/{$slug}";
+                    $this->app->request()->url = $targetUrl;
+                    \Flight::request()->url = $targetUrl;
+                    $this->viewSubtopic($slug);
+                } catch (\Throwable $e) {
+                    $errors[] = "subtopic/{$slug}: " . $e->getMessage();
+                } finally {
+                    ob_end_clean();
+                }
+
+                if (file_exists($cachePath) && filesize($cachePath) > 0) {
+                    $subtopicsBuilt++;
+                    if ($onProgress) {
+                        $onProgress($done, $total, $slug, 'built');
+                    }
+                } else {
+                    $errors[] = "subtopic/{$slug}: cache file was not written";
+                    if ($onProgress) {
+                        $onProgress($done, $total, $slug, 'error');
+                    }
+                }
+            }
+        } finally {
+            $svc->setPreviewMode($wasPreview);
+            $this->app->request()->url = $prevAppReqUrl;
+            \Flight::request()->url = $prevFlightReqUrl;
+            if ($prevGetPreview !== null) {
+                $_GET['preview'] = $prevGetPreview;
+            }
+            if ($prevGetBuild !== null) {
+                $_GET['build_mode'] = $prevGetBuild;
+            }
+            if ($prevCookiePreview !== null) {
+                $_COOKIE['physics_preview'] = $prevCookiePreview;
+            }
+        }
+
+        return [
+            'hubs_built' => $hubsBuilt,
+            'hubs_skipped' => $hubsSkipped,
+            'subtopics_built' => $subtopicsBuilt,
+            'subtopics_skipped' => $subtopicsSkipped,
+            'errors' => $errors,
+        ];
     }
 
     /**

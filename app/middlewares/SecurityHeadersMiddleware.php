@@ -23,9 +23,16 @@ class SecurityHeadersMiddleware
 			$this->app->set('csp_nonce', $nonce);
 		}
 
-		// Disable Tracy debug bar on API endpoints, health probes, and AJAX requests to ensure clean JSON responses
+		// Disable Tracy debug bar on API endpoints, health probes, machine-readable discovery files, and AJAX requests
 		$url = $this->app->request()->url;
-		if (strpos($url, '/api/') !== false || strpos($url, '/api') === 0 || strpos($url, '/healthz') !== false || $this->app->request()->ajax) {
+		$isMachineEndpoint = strpos($url, '/api/') !== false
+			|| strpos($url, '/api') === 0
+			|| strpos($url, '/healthz') !== false
+			|| $url === '/robots.txt'
+			|| $url === '/sitemap.xml'
+			|| $url === '/favicon.ico'
+			|| $this->app->request()->ajax;
+		if ($isMachineEndpoint && class_exists(Debugger::class)) {
 			Debugger::$showBar = false;
 		}
 

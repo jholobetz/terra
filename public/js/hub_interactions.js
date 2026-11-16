@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const list = document.getElementById('equations-list');
     if (list) {
         list.addEventListener('click', function(event) {
+            if (event.target.closest('.explainer-link-btn')) return;
             const trigger = event.target.closest('.formula-expand-trigger');
             if (!trigger) return;
             const card = trigger.closest('.platinum-formula-card');

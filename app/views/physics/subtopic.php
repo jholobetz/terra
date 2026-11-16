@@ -125,7 +125,7 @@ if (empty($labLauncher)) {
                     </p>
                 </div>
             </div>
-            <a href="<?= htmlspecialchars($labLauncher['url']) ?>" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; padding: 10px 18px; border-radius: 8px; color: #fff; font-size: 0.88rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25); white-space: nowrap; flex-shrink: 0; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(2, 132, 199, 0.4)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 14px rgba(2, 132, 199, 0.25)'">
+            <a href="<?= htmlspecialchars($labLauncher['url']) ?>" class="btn btn-primary lab-launcher-cta" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; padding: 10px 18px; border-radius: 8px; color: #fff; font-size: 0.88rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25); white-space: nowrap; flex-shrink: 0; transition: transform 0.2s, box-shadow 0.2s;">
                 <?= htmlspecialchars($labLauncher['action_label']) ?> &rarr;
             </a>
         </section>
@@ -174,11 +174,11 @@ if (empty($labLauncher)) {
                 <h4 style="color: var(--accent-color); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0; margin-bottom: 16px; font-weight: 600; font-family: 'Space Grotesk', sans-serif;">Verified References</h4>
                 <ul class="citation-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
                     <?php foreach ($verification['citations'] as $cit): ?>
-                        <li style="position: relative; padding-left: 24px; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='none'">
+                        <li class="citation-item" style="position: relative; padding-left: 24px; transition: transform 0.2s;">
                             <span style="position: absolute; left: 0; top: 1px; color: var(--accent-color); font-size: 1.2rem; line-height: 1;">&bull;</span>
                             <div style="font-size: 0.95rem; color: #ccd6f6; font-weight: 500; line-height: 1.4;">
                                 <?php if (!empty($cit['url'])): ?>
-                                    <a href="<?= htmlspecialchars($cit['url']) ?>" target="_blank" rel="noopener noreferrer" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dashed rgba(100, 255, 218, 0.4); transition: all 0.2s;" onmouseover="this.style.color='var(--accent-color)'; this.style.borderBottomColor='var(--accent-color)'" onmouseout="this.style.color='#ccd6f6'; this.style.borderBottomColor='rgba(100, 255, 218, 0.4)'">
+                                    <a href="<?= htmlspecialchars($cit['url']) ?>" target="_blank" rel="noopener noreferrer" class="citation-ext-link" style="color: #ccd6f6; text-decoration: none; border-bottom: 1px dashed rgba(100, 255, 218, 0.4); transition: all 0.2s;">
                                         <?= htmlspecialchars($cit['title']) ?>
                                     </a>
                                 <?php else: ?>
@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 d.innerHTML = `
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                         <span style="font-weight:600; color:#e2e8f0; font-size:0.75rem;">${eq.title}:</span>
-                        <a href="${explainerUrl}" class="explainer-link-btn" style="font-size: 0.68rem; font-weight: 600; color: #64ffda; text-decoration: none; border: 1px solid rgba(100, 255, 218, 0.3); padding: 1px 6px; border-radius: 4px; background: rgba(100, 255, 218, 0.08); transition: all 0.2s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.2)'" onmouseout="this.style.background='rgba(100, 255, 218, 0.08)'">Analyze &rarr;</a>
+                        <a href="${explainerUrl}" class="explainer-link-btn" style="font-size: 0.68rem; font-weight: 600; color: #64ffda; text-decoration: none; border: 1px solid rgba(100, 255, 218, 0.3); padding: 1px 6px; border-radius: 4px; background: rgba(100, 255, 218, 0.08); transition: all 0.2s;">Analyze &rarr;</a>
                     </div>
                     <div style="color:#64ffda; font-size:0.8rem;">${formattedEq}</div>
                 `;
@@ -640,6 +640,25 @@ document.addEventListener('DOMContentLoaded', () => {
     border-bottom-style: solid;
     border-bottom-color: var(--secondary-color, #b485ff);
     text-shadow: 0 0 10px rgba(180, 133, 255, 0.5);
+}
+
+.explainer-link-btn:hover {
+    background: rgba(100, 255, 218, 0.14) !important;
+    border-color: var(--accent-default, #64ffda) !important;
+}
+
+.lab-launcher-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4) !important;
+}
+
+.citation-list .citation-item:hover {
+    transform: translateX(4px);
+}
+
+.citation-list .citation-ext-link:hover {
+    color: var(--accent-color) !important;
+    border-bottom-color: var(--accent-color) !important;
 }
 
 @media (max-width: 800px) {

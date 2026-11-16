@@ -40,6 +40,15 @@ if (is_array($config) && !empty($config['app_env']) && !defined('TERRA_CONFIG_AP
         ini_set('display_errors', '0');
     }
 }
+if (is_array($config) && !empty($config['app_url'])) {
+    $normalizedAppUrl = rtrim(trim((string)$config['app_url']), '/');
+    if ($normalizedAppUrl !== '') {
+        $app->set('terra.app_url', $normalizedAppUrl);
+        if (!defined('TERRA_CONFIG_APP_URL')) {
+            define('TERRA_CONFIG_APP_URL', $normalizedAppUrl);
+        }
+    }
+}
 
 /*
  * Load the services file.

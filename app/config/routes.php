@@ -15,6 +15,9 @@ $router->group('', function(Router $router) use ($app) {
 
 	$router->get('/', [ $app->physicsController(), 'index' ]);
 	$router->get('/healthz', [ $app->physicsController(), 'healthz' ]);
+	$router->get('/robots.txt', [ $app->physicsController(), 'robotsTxt' ]);
+	$router->get('/sitemap.xml', [ $app->physicsController(), 'sitemapXml' ]);
+	$router->get('/favicon.ico', [ $app->physicsController(), 'faviconIco' ]);
 
 	$router->group('/physics', function() use ($router, $app) {
 		$router->get('/', [ $app->physicsController(), 'index' ]);

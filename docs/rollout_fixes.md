@@ -64,14 +64,19 @@ Per [`README.md`](../README.md#L8), [`docs/architecture.md`](architecture.md#L19
 
 ---
 
-## 4. Stage 3: Public Web Polish, Branded Error Views & SEO Discovery *(Next)*
+## 4. Stage 3: Public Web Polish, Branded Error Views & SEO Discovery *(✅ Completed)*
 
-1. **Themed Error Views (`404` / `500`)**: Replace FlightPHP's bare default `$this->app->notFound()` ([`PhysicsController.php`](../app/controllers/PhysicsController.php#L1052)) and `500` responses with branded Physics Lab views rendered inside [`app/views/physics/layout.php`](../app/views/physics/layout.php) featuring search and pillar navigation.
-2. **SEO, OpenGraph & Sitemap**: Add `public/robots.txt`, a CLI-generated `public/sitemap.xml` parameterized by `app_url` (indexing all `1,584` Platinum articles, `12` hubs, `16` simulations, and lab workbenches), `<meta name="description">`, `<link rel="canonical">`, OpenGraph tags, and favicon assets in [`app/views/physics/layout.php`](../app/views/physics/layout.php#L1-L27).
+### 4.1 Minimal Error Views (`404` / `500`) & `--no-dev` Exception Handling *(✅ Completed)*
+* **Files**: [`app/views/physics/error_404.php`](../app/views/physics/error_404.php), [`app/views/physics/error_500.php`](../app/views/physics/error_500.php), [`app/config/services.php`](../app/config/services.php#L112-L122), [`app/controllers/PhysicsController.php`](../app/controllers/PhysicsController.php#L218-L329), [`app/middlewares/SecurityHeadersMiddleware.php`](../app/middlewares/SecurityHeadersMiddleware.php#L26-L37)
+* **Resolution**: Added minimal neutral `404` and `500` views inside [`app/views/physics/layout.php`](../app/views/physics/layout.php) (`noindex, nofollow` + CSP headers) for browser visitors and clean JSON payloads (`{"error": ..., "status": 404|500}`) for `/api/*` callers; enabled `flight.handle_errors` when `APP_ENV=production` or when Tracy (`--no-dev`) is absent; guarded `Debugger::$showBar` with `class_exists()`.
+
+### 4.2 Dynamic SEO, Canonical URLs, OpenGraph, Favicon, `robots.txt` & `sitemap.xml` *(✅ Completed)*
+* **Files**: [`app/views/physics/layout.php`](../app/views/physics/layout.php#L1-L36), [`public/favicon.svg`](../public/favicon.svg), [`app/config/routes.php`](../app/config/routes.php#L16-L20), [`app/config/bootstrap.php`](../app/config/bootstrap.php#L43-L51), [`app/controllers/PhysicsController.php`](../app/controllers/PhysicsController.php#L133-L216), [`cli_sync.php`](../cli_sync.php)
+* **Resolution**: Added Host-header-safe `resolveBaseUrl()` driven by `$config['app_url']`, automatic plain-text `<meta name="description">`, `<link rel="canonical">`, and OpenGraph tags in [`app/views/physics/layout.php`](../app/views/physics/layout.php), removed public footer admin link + CSP-violating inline event attributes, added placeholder [`public/favicon.svg`](../public/favicon.svg) (`301` from `/favicon.ico`), and wired dynamic `/robots.txt` + cached `/sitemap.xml` (`1,600+` canonical URLs, regenerable via `php cli_sync.php --sitemap` or `--warm-cache`).
 
 ---
 
-## 5. Stage 4: Debian 13 Apache Tuning, MariaDB Provisioning & Release Script
+## 5. Stage 4: Debian 13 Apache Tuning, MariaDB Provisioning & Release Script *(Next)*
 
 1. **Apache 2.4 & [`.htaccess`](../public/.htaccess) Hardening on Debian 13**:
    * Enable required Apache modules (`a2enmod rewrite headers expires deflate`), set `DocumentRoot /var/www/terra/public` with `AllowOverride All` (or move rules directly into the `<VirtualHost>` config for faster filesystem traversal), and disable `ServerSignature` / `ServerTokens Prod`.

@@ -1,9 +1,37 @@
+<?php
+$pageTitle = htmlspecialchars(($title ?? 'Physics Lab') . ' - Terra', ENT_QUOTES, 'UTF-8');
+$metaDesc = !empty($meta_description) ? htmlspecialchars((string)$meta_description, ENT_QUOTES, 'UTF-8') : '';
+$canonicalHref = !empty($canonical_url) ? htmlspecialchars((string)$canonical_url, ENT_QUOTES, 'UTF-8') : '';
+$ogTypeVal = htmlspecialchars((string)($og_type ?? 'website'), ENT_QUOTES, 'UTF-8');
+$robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UTF-8') : '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($title ?? 'Physics Lab') ?> - Terra</title>
+    <title><?= $pageTitle ?></title>
+    <?php if ($metaDesc !== ''): ?>
+    <meta name="description" content="<?= $metaDesc ?>">
+    <?php endif; ?>
+    <?php if ($robotsVal !== ''): ?>
+    <meta name="robots" content="<?= $robotsVal ?>">
+    <?php endif; ?>
+    <?php if ($canonicalHref !== ''): ?>
+    <link rel="canonical" href="<?= $canonicalHref ?>">
+    <?php endif; ?>
+    <meta property="og:site_name" content="Physics Lab">
+    <meta property="og:type" content="<?= $ogTypeVal ?>">
+    <meta property="og:title" content="<?= $pageTitle ?>">
+    <?php if ($metaDesc !== ''): ?>
+    <meta property="og:description" content="<?= $metaDesc ?>">
+    <?php endif; ?>
+    <?php if ($canonicalHref !== ''): ?>
+    <meta property="og:url" content="<?= $canonicalHref ?>">
+    <?php endif; ?>
+    <meta name="twitter:card" content="summary">
+    <meta name="theme-color" content="#030712">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -216,7 +244,7 @@
     </main>
 
     <footer class="main-footer">
-        <p>&copy; <?= date('Y') ?> Physics Lab Digital Encyclopedia. All rights reserved. &nbsp;&bull;&nbsp; <a href="/physics/admin/assess" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s;" onmouseover="this.style.color='#64ffda'" onmouseout="this.style.color='var(--text-muted)'">🪐 Assessment Console</a></p>
+        <p>&copy; <?= date('Y') ?> Physics Lab Digital Encyclopedia. All rights reserved.</p>
     </footer>
 
     <!-- Spotlight Search Modal -->

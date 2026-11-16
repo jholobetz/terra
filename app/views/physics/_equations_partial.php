@@ -36,7 +36,7 @@ if ($hasFormulas):
                                     $explainUrl .= '&domain=' . urlencode($domain);
                                 }
                             ?>
-                            <a href="<?= $explainUrl ?>" class="explainer-link-btn" style="font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 600; color: var(--accent-default, #64ffda); text-decoration: none; border: 1px solid rgba(100, 255, 218, 0.3); padding: 3px 10px; border-radius: 6px; background: rgba(100, 255, 218, 0.03); transition: all 0.2s;" onmouseover="this.style.background='rgba(100, 255, 218, 0.1)'; this.style.borderColor='var(--accent-default, #64ffda)'" onmouseout="this.style.background='rgba(100, 255, 218, 0.03)'; this.style.borderColor='rgba(100, 255, 218, 0.3)'" onclick="event.stopPropagation();">
+                            <a href="<?= $explainUrl ?>" class="explainer-link-btn" style="font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 600; color: var(--accent-default, #64ffda); text-decoration: none; border: 1px solid rgba(100, 255, 218, 0.3); padding: 3px 10px; border-radius: 6px; background: rgba(100, 255, 218, 0.03); transition: all 0.2s;">
                                 Analyze Equation &rarr;
                             </a>
                             <span class="expand-icon" style="font-size: 0.7rem; opacity: 0.5;">[ Click to Expand Depth ]</span>

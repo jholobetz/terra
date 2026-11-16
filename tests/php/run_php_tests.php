@@ -827,5 +827,155 @@ $runner->run('Stage2PackagingTest', 'testInProcessWarmHtmlCacheAndPythonManifest
     }
 });
 
+// ============================================================================
+// 11. Stage 3 Error Views, SEO Metadata, Favicon, robots.txt & sitemap.xml Suite
+// ============================================================================
+$runner->run('Stage3WebPolishTest', 'testBranded404And500HtmlAndJsonResponses', function (NativePhpTestRunner $t) {
+    Flight::register('authService', \app\logic\AuthService::class);
+    $app = new \flight\Engine();
+    $app->set('flight.views.path', PROJECT_ROOT . '/app/views');
+    $app->register('db', stdClass::class);
+    $app->register('authService', \app\logic\AuthService::class);
+    $app->register('physicsService', \app\logic\PhysicsService::class, [$app]);
+    $ctrl = new \app\controllers\PhysicsController($app);
+
+    $prevErrLog = ini_set('error_log', '/dev/null');
+    try {
+        withIsolatedEnv(['APP_ENV' => 'production'], ['REMOTE_ADDR' => '203.0.113.20'], function () use ($t, $app, $ctrl) {
+            // 1. Browser HTML 404 response
+            $app->request()->url = '/physics/subtopic/does-not-exist-anywhere';
+            $ctrl->renderNotFound();
+            $t->assertSame(404, $app->response()->status());
+            $html404 = $app->response()->getBody();
+            $t->assertContains('Page Not Found', $html404);
+            $t->assertContains('noindex, nofollow', $html404);
+            $t->assertFalse(str_contains($html404, 'rel="canonical"'), '404 pages must omit canonical link');
+            $t->assertTrue(!empty($app->response()->getHeader('Content-Security-Policy')), '404 must emit CSP header');
+
+            // 2. API JSON 404 response
+            $app->request()->url = '/physics/api/nonexistent-endpoint';
+            $ctrl->renderNotFound();
+            $t->assertSame(404, $app->response()->status());
+            $json404 = json_decode($app->response()->getBody(), true);
+            $t->assertSame(404, $json404['status'] ?? null);
+            $t->assertSame('Endpoint not found.', $json404['error'] ?? null);
+
+            // 3. Browser HTML 500 response (zero internal message/trace leakage in production)
+            $app->request()->url = '/physics/lab-tools';
+            $ctrl->renderServerError(new RuntimeException('PDO secret host 10.0.0.99 failure'), false);
+            $t->assertSame(500, $app->response()->status());
+            $html500 = $app->response()->getBody();
+            $t->assertContains('Unexpected Server Error', $html500);
+            $t->assertContains('noindex, nofollow', $html500);
+            $t->assertFalse(str_contains($html500, '10.0.0.99'), 'Production 500 HTML must never leak exception details');
+
+            // 4. API JSON 500 response (sanitized in production)
+            $app->request()->url = '/physics/api/explain';
+            $ctrl->renderServerError(new RuntimeException('PDO secret host 10.0.0.99 failure'), false);
+            $t->assertSame(500, $app->response()->status());
+            $json500 = json_decode($app->response()->getBody(), true);
+            $t->assertSame(500, $json500['status'] ?? null);
+            $t->assertSame('Internal server error.', $json500['error'] ?? null);
+        });
+    } finally {
+        if ($prevErrLog !== false) {
+            ini_set('error_log', $prevErrLog);
+        }
+    }
+});
+
+$runner->run('Stage3WebPolishTest', 'testSeoMetadataCanonicalOpenGraphFaviconAndFooterHygiene', function (NativePhpTestRunner $t) {
+    $t->assertTrue(is_file(PROJECT_ROOT . '/public/favicon.svg'), 'public/favicon.svg must exist');
+
+    Flight::register('authService', \app\logic\AuthService::class);
+    $app = new \flight\Engine();
+    $app->set('flight.views.path', PROJECT_ROOT . '/app/views');
+    $app->set('terra.app_url', 'https://physics.example.org');
+    $app->register('db', stdClass::class);
+    $app->register('authService', \app\logic\AuthService::class);
+    $app->register('physicsService', \app\logic\PhysicsService::class, [$app]);
+    $ctrl = new \app\controllers\PhysicsController($app);
+
+    $subCache = PROJECT_ROOT . '/public/cache/subtopic/generalized-coordinates.html';
+    $hadSub = file_exists($subCache) ? file_get_contents($subCache) : null;
+    $prevErrLog = ini_set('error_log', '/dev/null');
+
+    try {
+        // Test Host-header poisoning resistance in production
+        withIsolatedEnv(
+            ['APP_ENV' => 'production'],
+            ['REMOTE_ADDR' => '203.0.113.50', 'HTTP_HOST' => 'evil-attacker.invalid'],
+            function () use ($t, $ctrl, $subCache) {
+                $t->assertSame('https://physics.example.org', $ctrl->resolveBaseUrl(), 'Production base URL must ignore forged Host header');
+
+                $res = $ctrl->warmHtmlCache(true, ['generalized-coordinates']);
+                $t->assertSame([], $res['errors']);
+                $html = (string)file_get_contents($subCache);
+
+                $t->assertContains('<meta name="description" content="Mapping the physical configurations of a system', $html);
+                $t->assertContains('<link rel="canonical" href="https://physics.example.org/physics/subtopic/generalized-coordinates">', $html);
+                $t->assertContains('<meta property="og:type" content="article">', $html);
+                $t->assertContains('<meta property="og:url" content="https://physics.example.org/physics/subtopic/generalized-coordinates">', $html);
+                $t->assertContains('<link rel="icon" type="image/svg+xml" href="/favicon.svg">', $html);
+                $t->assertFalse(str_contains($html, 'onmouseover='), 'Public layout must contain zero inline JS event handlers');
+                $t->assertFalse(str_contains($html, '/physics/admin/assess'), 'Cached public HTML must not expose admin console link');
+            }
+        );
+    } finally {
+        if ($prevErrLog !== false) {
+            ini_set('error_log', $prevErrLog);
+        }
+        if ($hadSub === null) {
+            @unlink($subCache);
+        } else {
+            file_put_contents($subCache, $hadSub, LOCK_EX);
+        }
+    }
+});
+
+$runner->run('Stage3WebPolishTest', 'testRobotsTxtAndSitemapXmlGeneration', function (NativePhpTestRunner $t) {
+    Flight::register('authService', \app\logic\AuthService::class);
+    $app = new \flight\Engine();
+    $app->set('terra.app_url', 'https://physics.example.org');
+    $app->register('db', stdClass::class);
+    $app->register('authService', \app\logic\AuthService::class);
+    $app->register('physicsService', \app\logic\PhysicsService::class, [$app]);
+    $ctrl = new \app\controllers\PhysicsController($app);
+
+    $sitemapCache = PROJECT_ROOT . '/public/cache/sitemap.xml';
+    $hadSitemap = file_exists($sitemapCache) ? file_get_contents($sitemapCache) : null;
+
+    try {
+        // 1. Verify /robots.txt directives and dynamic Sitemap URL
+        $ctrl->robotsTxt();
+        $t->assertSame(200, $app->response()->status());
+        $robots = $app->response()->getBody();
+        $t->assertContains('Disallow: /physics/admin/', $robots);
+        $t->assertContains('Disallow: /physics/api/', $robots);
+        $t->assertContains('Disallow: /healthz', $robots);
+        $t->assertContains('Sitemap: https://physics.example.org/sitemap.xml', $robots);
+
+        // 2. Verify /sitemap.xml structure, coverage, and canonical exclusions
+        $app->response()->clearBody();
+        $xml = $ctrl->buildSitemapXml(true);
+        $t->assertContains('<?xml version="1.0" encoding="UTF-8"?>', $xml);
+        $t->assertContains('<loc>https://physics.example.org/physics/topic/classical-mechanics</loc>', $xml);
+        $t->assertContains('<loc>https://physics.example.org/physics/simulations/pendulum</loc>', $xml);
+        $t->assertContains('<loc>https://physics.example.org/physics/subtopic/generalized-coordinates</loc>', $xml);
+        $t->assertFalse(str_contains($xml, '/physics/subtopic/maxwell-equations<'), 'Redirect alias maxwell-equations must be excluded from sitemap');
+        $t->assertFalse(str_contains($xml, '/physics/admin'), 'Admin routes must never appear in sitemap.xml');
+        $t->assertTrue(substr_count($xml, '<url>') >= 1600, 'Sitemap must index all 1,580+ subtopics, 12 hubs, simulations, and workbenches');
+
+        $parsed = simplexml_load_string($xml);
+        $t->assertTrue($parsed !== false, 'Generated sitemap.xml must be well-formed XML');
+    } finally {
+        if ($hadSitemap === null) {
+            @unlink($sitemapCache);
+        } else {
+            file_put_contents($sitemapCache, $hadSitemap, LOCK_EX);
+        }
+    }
+});
+
 $jsonFlag = in_array('--json', $argv ?? [], true);
 exit($runner->summary($jsonFlag));

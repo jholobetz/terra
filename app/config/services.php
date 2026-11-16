@@ -109,4 +109,16 @@ $app->register('physicsController', \app\controllers\PhysicsController::class, [
 $app->register('adminController', \app\controllers\AdminController::class, [ $app ]);
 $app->register('reviewController', \app\controllers\ReviewController::class, [ $app ]);
 
+// Route uncaught exceptions through Flight's error handler in production or when Tracy (--no-dev) is absent
+$app->set('flight.handle_errors', $isProductionEnv || !class_exists(Debugger::class));
+
+// Branded 404 and 500 error handlers (HTML for browsers, JSON for /api/* requests)
+$app->map('notFound', function () use ($app): void {
+	$app->physicsController()->renderNotFound();
+});
+
+$app->map('error', function (\Throwable $e) use ($app): void {
+	$app->physicsController()->renderServerError($e);
+});
+
 // Add more service registrations below as needed

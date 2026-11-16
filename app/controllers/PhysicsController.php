@@ -131,6 +131,378 @@ class PhysicsController
     }
 
     /**
+     * Resolves the canonical public base URL (without trailing slash) from app config or environment,
+     * never trusting arbitrary Host headers in production to prevent Host-header cache poisoning.
+     */
+    public function resolveBaseUrl(): string
+    {
+        $osAppUrl = getenv('APP_URL');
+        $candidates = [
+            $this->app->get('terra.app_url'),
+            ($osAppUrl !== false && $osAppUrl !== '') ? $osAppUrl : null,
+            $_SERVER['APP_URL'] ?? null,
+            $_SERVER['REDIRECT_APP_URL'] ?? null,
+            $_ENV['APP_URL'] ?? null,
+            defined('TERRA_CONFIG_APP_URL') ? constant('TERRA_CONFIG_APP_URL') : null,
+        ];
+
+        foreach ($candidates as $val) {
+            if (is_string($val)) {
+                $trimmed = rtrim(trim($val), '/');
+                if ($trimmed !== '' && preg_match('#^https?://[a-zA-Z0-9.-]+(?::\d{1,5})?(?:/.*)?$#', $trimmed)) {
+                    return $trimmed;
+                }
+            }
+        }
+
+        if (!$this->authService()->isProduction()) {
+            $host = trim((string)($_SERVER['HTTP_HOST'] ?? ''));
+            if ($host !== '' && preg_match('/^[a-zA-Z0-9.-]+(?::\d{1,5})?$/', $host)) {
+                $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                return "{$scheme}://{$host}";
+            }
+        }
+
+        return 'http://localhost:8000';
+    }
+
+    /**
+     * Strips inline SVGs and HTML markup from prose/snippets into a clean plain-text SEO description.
+     */
+    public function cleanMetaDescription(string $raw, int $maxLen = 165): string
+    {
+        if ($raw === '') {
+            return '';
+        }
+        $withoutSvg = preg_replace('/<svg\b[^>]*>.*?<\/svg>/is', '', $raw) ?? $raw;
+        $plain = html_entity_decode(strip_tags($withoutSvg), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $plain = trim(preg_replace('/\s+/', ' ', $plain) ?? $plain);
+        // Clean stray spacing before punctuation left when inline SVGs are removed
+        $plain = preg_replace('/\s+([,.;:!?])/', '$1', $plain) ?? $plain;
+
+        if ($plain === '' || mb_strlen($plain, 'UTF-8') <= $maxLen) {
+            return $plain;
+        }
+
+        $slice = mb_substr($plain, 0, $maxLen - 3, 'UTF-8');
+        $lastSpace = mb_strrpos($slice, ' ', 0, 'UTF-8');
+        if ($lastSpace !== false && $lastSpace > (int)($maxLen * 0.6)) {
+            $slice = mb_substr($slice, 0, $lastSpace, 'UTF-8');
+        }
+        return rtrim($slice, " \t\n\r\0\x0B,.;:-") . '...';
+    }
+
+    /**
+     * Determines whether the current request expects a JSON API error response rather than HTML.
+     */
+    private function isApiOrJsonRequest(): bool
+    {
+        $url = parse_url($this->app->request()->url ?? '', PHP_URL_PATH) ?: '';
+        if (
+            strpos($url, '/api/') !== false
+            || str_starts_with($url, '/api')
+            || ($this->app->request()->ajax ?? false)
+        ) {
+            return true;
+        }
+        $accept = strtolower((string)($_SERVER['HTTP_ACCEPT'] ?? ''));
+        return str_contains($accept, 'application/json') && !str_contains($accept, 'text/html');
+    }
+
+    /**
+     * Ensures CSP nonce and security headers are populated on the Flight Response object
+     * even for unmatched 404 routes or top-level 500 error handlers.
+     */
+    private function applySecurityHeaders(): void
+    {
+        require_once __DIR__ . '/../middlewares/SecurityHeadersMiddleware.php';
+        (new \app\middlewares\SecurityHeadersMiddleware($this->app))->before([]);
+    }
+
+    /**
+     * Branded 404 handler (HTML inside layout.php for browsers; JSON for API endpoints).
+     */
+    public function renderNotFound(): void
+    {
+        $this->applySecurityHeaders();
+
+        if ($this->isApiOrJsonRequest()) {
+            if (class_exists('\Tracy\Debugger')) {
+                \Tracy\Debugger::$showBar = false;
+            }
+            $payload = json_encode(['error' => 'Endpoint not found.', 'status' => 404], JSON_UNESCAPED_SLASHES);
+            $this->app->response()
+                ->clearBody()
+                ->status(404)
+                ->header('Content-Type', 'application/json; charset=utf-8')
+                ->write((string)$payload);
+            return;
+        }
+
+        if (!$this->app->get('flight.views.path')) {
+            $this->app->set('flight.views.path', PROJECT_ROOT . '/app/views');
+        }
+
+        ob_start();
+        try {
+            $this->renderWithLayout('physics/error_404', [
+                'title' => '404 Not Found',
+                'robots' => 'noindex, nofollow',
+                'meta_description' => 'The requested page, topic, or equation could not be found.',
+            ], null);
+            $html = (string)ob_get_clean();
+        } catch (\Throwable $e) {
+            ob_end_clean();
+            $html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>404 Not Found - Terra</title></head><body><h1>404 — Page Not Found</h1><p><a href="/physics">Return to Physics Lab</a></p></body></html>';
+        }
+
+        $this->app->response()
+            ->clearBody()
+            ->status(404)
+            ->header('Content-Type', 'text/html; charset=utf-8')
+            ->write($html);
+    }
+
+    /**
+     * Branded 500 handler with server-side logging, zero stack-trace leakage in production,
+     * and a static HTML fallback if layout rendering itself fails.
+     */
+    public function renderServerError(\Throwable $e, bool $sendImmediately = true): void
+    {
+        error_log(sprintf(
+            '[PhysicsController 500] %s: %s in %s:%d',
+            get_class($e),
+            $e->getMessage(),
+            $e->getFile(),
+            $e->getLine()
+        ));
+        if (class_exists('\Tracy\Debugger') && \Tracy\Debugger::isEnabled()) {
+            try {
+                \Tracy\Debugger::log($e, \Tracy\Debugger::EXCEPTION);
+            } catch (\Throwable $logErr) {
+                // Non-fatal if log directory is unavailable
+            }
+        }
+
+        $this->applySecurityHeaders();
+
+        if ($this->isApiOrJsonRequest()) {
+            if (class_exists('\Tracy\Debugger')) {
+                \Tracy\Debugger::$showBar = false;
+            }
+            $payload = json_encode([
+                'error' => $this->publicErrorMessage($e, 'Internal server error.'),
+                'status' => 500,
+            ], JSON_UNESCAPED_SLASHES);
+            $this->app->response()
+                ->clearBody()
+                ->status(500)
+                ->header('Content-Type', 'application/json; charset=utf-8')
+                ->write((string)$payload);
+            if ($sendImmediately) {
+                $this->app->response()->send();
+            }
+            return;
+        }
+
+        if (!$this->app->get('flight.views.path')) {
+            $this->app->set('flight.views.path', PROJECT_ROOT . '/app/views');
+        }
+
+        ob_start();
+        try {
+            $this->renderWithLayout('physics/error_500', [
+                'title' => '500 Server Error',
+                'robots' => 'noindex, nofollow',
+                'meta_description' => 'An unexpected error occurred while processing this request.',
+            ], null);
+            $html = (string)ob_get_clean();
+        } catch (\Throwable $renderErr) {
+            ob_end_clean();
+            $html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>500 Server Error - Terra</title></head><body><h1>500 — Unexpected Server Error</h1><p><a href="/physics">Return to Physics Lab</a></p></body></html>';
+        }
+
+        $this->app->response()
+            ->clearBody()
+            ->status(500)
+            ->header('Content-Type', 'text/html; charset=utf-8')
+            ->write($html);
+
+        if ($sendImmediately) {
+            $this->app->response()->send();
+        }
+    }
+
+    /**
+     * Redirects legacy /favicon.ico requests to /favicon.svg so browsers never trigger 404 logs.
+     */
+    public function faviconIco(): void
+    {
+        $this->app->redirect('/favicon.svg', 301);
+    }
+
+    /**
+     * Serves /robots.txt dynamically parameterized with the configured base app_url.
+     */
+    public function robotsTxt(): void
+    {
+        if (class_exists('\Tracy\Debugger')) {
+            \Tracy\Debugger::$showBar = false;
+        }
+        $baseUrl = $this->resolveBaseUrl();
+        $lines = [
+            'User-agent: *',
+            'Allow: /',
+            'Disallow: /healthz',
+            'Disallow: /physics/healthz',
+            'Disallow: /physics/admin/',
+            'Disallow: /physics/sync',
+            'Disallow: /physics/random',
+            'Disallow: /physics/api/',
+            '',
+            "Sitemap: {$baseUrl}/sitemap.xml",
+            '',
+        ];
+        $this->app->response()
+            ->status(200)
+            ->header('Content-Type', 'text/plain; charset=utf-8')
+            ->header('Cache-Control', 'public, max-age=3600')
+            ->write(implode("\n", $lines));
+    }
+
+    /**
+     * Compiles and caches public/cache/sitemap.xml across all canonical encyclopedia routes,
+     * Topic Hubs, Simulations, and Lab Workbenches using the configured base app_url.
+     */
+    public function buildSitemapXml(bool $force = false): string
+    {
+        $baseUrl = $this->resolveBaseUrl();
+        $cachePath = PROJECT_ROOT . '/public/cache/sitemap.xml';
+
+        $isStale = $force || !file_exists($cachePath);
+        if (!$isStale) {
+            $cacheMtime = (int)@filemtime($cachePath);
+            foreach ([
+                PROJECT_ROOT . '/app/config/content/search_index.json',
+                PROJECT_ROOT . '/app/config/simulations.json',
+                PROJECT_ROOT . '/app/config/.last_sync',
+            ] as $depPath) {
+                if (file_exists($depPath) && (int)@filemtime($depPath) > $cacheMtime) {
+                    $isStale = true;
+                    break;
+                }
+            }
+            if (!$isStale) {
+                $cachedXml = (string)@file_get_contents($cachePath);
+                $expectedRootLoc = '<loc>' . htmlspecialchars($baseUrl . '/', ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</loc>';
+                if ($cachedXml !== '' && str_contains($cachedXml, $expectedRootLoc)) {
+                    return $cachedXml;
+                }
+                $isStale = true;
+            }
+        }
+
+        $svc = $this->service();
+        $svc->loadAllShards();
+        $content = $svc->getPhysicsContent();
+
+        $paths = [
+            '/' => '1.0',
+            '/physics' => '0.9',
+            '/physics/simulations' => '0.8',
+            '/physics/lab-tools' => '0.8',
+            '/physics/legendre-transformer' => '0.7',
+            '/physics/noethers-vault' => '0.7',
+            '/physics/correspondence-workspace' => '0.7',
+            '/physics/notation-toggle' => '0.7',
+            '/physics/anthropic-tuner' => '0.7',
+            '/physics/equation-explainer' => '0.8',
+            '/physics/universe-graph' => '0.8',
+            '/physics/constants' => '0.7',
+            '/physics/symbols' => '0.7',
+        ];
+
+        $topicSlugs = [];
+        foreach ($content['topics'] ?? [] as $tSlug => $tMeta) {
+            if (($tMeta['status'] ?? '') === 'draft') {
+                continue;
+            }
+            $topicSlugs[] = (string)$tSlug;
+        }
+        sort($topicSlugs, SORT_STRING);
+        foreach ($topicSlugs as $tSlug) {
+            $paths['/physics/topic/' . rawurlencode($tSlug)] = '0.9';
+        }
+
+        $simSlugsMap = [];
+        foreach (array_keys($content['simulations'] ?? []) as $sSlug) {
+            $simSlugsMap[(string)$sSlug] = true;
+        }
+        $simsConfigPath = PROJECT_ROOT . '/app/config/simulations.json';
+        if (file_exists($simsConfigPath)) {
+            $simsConfig = json_decode((string)file_get_contents($simsConfigPath), true) ?: [];
+            foreach (array_keys($simsConfig) as $sSlug) {
+                $simSlugsMap[(string)$sSlug] = true;
+            }
+        }
+        $simSlugs = array_keys($simSlugsMap);
+        sort($simSlugs, SORT_STRING);
+        foreach ($simSlugs as $sSlug) {
+            if ($sSlug !== '') {
+                $paths['/physics/simulations/' . rawurlencode($sSlug)] = '0.8';
+            }
+        }
+
+        $subtopicSlugs = array_keys($content['subtopics'] ?? []);
+        if (empty($subtopicSlugs) && !empty($content['search_index'])) {
+            $subtopicSlugs = array_keys($content['search_index']);
+        }
+        sort($subtopicSlugs, SORT_STRING);
+        foreach ($subtopicSlugs as $subSlug) {
+            $subSlug = (string)$subSlug;
+            if ($subSlug === '' || $subSlug === 'maxwell-equations') {
+                continue;
+            }
+            $paths['/physics/subtopic/' . rawurlencode($subSlug)] = '0.7';
+        }
+
+        $xmlLines = [
+            '<?xml version="1.0" encoding="UTF-8"?>',
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        ];
+        foreach ($paths as $relPath => $priority) {
+            $loc = htmlspecialchars($baseUrl . $relPath, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+            $xmlLines[] = "  <url><loc>{$loc}</loc><priority>{$priority}</priority></url>";
+        }
+        $xmlLines[] = '</urlset>';
+        $xml = implode("\n", $xmlLines) . "\n";
+
+        $cacheDir = dirname($cachePath);
+        if (!is_dir($cacheDir)) {
+            @mkdir($cacheDir, 0775, true);
+        }
+        @file_put_contents($cachePath, $xml, LOCK_EX);
+
+        return $xml;
+    }
+
+    /**
+     * Serves /sitemap.xml with proper XML headers.
+     */
+    public function sitemapXml(): void
+    {
+        if (class_exists('\Tracy\Debugger')) {
+            \Tracy\Debugger::$showBar = false;
+        }
+        $xml = $this->buildSitemapXml(false);
+        $this->app->response()
+            ->status(200)
+            ->header('Content-Type', 'application/xml; charset=utf-8')
+            ->header('Cache-Control', 'public, max-age=3600')
+            ->write($xml);
+    }
+
+    /**
      * Database index synchronization endpoint (Admin / Local Studio Only).
      */
     public function sync(): void
@@ -902,7 +1274,7 @@ class PhysicsController
             $data = array_merge($data ?: [], $simsConfig[$slug]);
         }
         if (!$data) {
-            $this->app->notFound();
+            $this->renderNotFound();
             return;
         }
         if (isset($data['equations']) && is_string($data['equations'])) {
@@ -955,7 +1327,7 @@ class PhysicsController
         $this->service()->loadAllShards();
         $topic = $this->service()->fetchAndPrepare('topics', $slug);
         if (empty($topic)) {
-            $this->app->notFound();
+            $this->renderNotFound();
             return;
         }
 
@@ -1145,7 +1517,7 @@ class PhysicsController
                 \Flight::redirect('/physics/symbols#' . $slug, 302);
                 return;
             }
-            $this->app->notFound();
+            $this->renderNotFound();
             return;
         }
 
@@ -1159,6 +1531,7 @@ class PhysicsController
         $labLauncher = \App\Logic\LabToolsLauncher::resolve($slug, $firstParent);
 
         $this->renderWithLayout('physics/subtopic', array_merge($subtopic, [
+            'slug' => $slug,
             'parents' => $parents,
             'breadcrumbs' => $breadcrumbs,
             'related_topics' => $related,
@@ -1223,7 +1596,66 @@ class PhysicsController
         }
 
         $nonce = $this->app->get('csp_nonce') ?? '';
-        $viewData = array_merge($data, ['nonce' => $nonce]);
+
+        // Derive SEO metadata, canonical URL, OpenGraph type, and robots directives
+        $robots = isset($data['robots'])
+            ? (string)$data['robots']
+            : ((str_starts_with($view, 'physics/admin/') || str_starts_with($view, 'physics/error_')) ? 'noindex, nofollow' : '');
+        $isNoIndex = str_contains($robots, 'noindex');
+
+        $rawDesc = '';
+        foreach ([
+            $data['meta_description'] ?? null,
+            $data['snippet'] ?? null,
+            $data['description'] ?? null,
+            $data['subtitle'] ?? null,
+            $data['intro'] ?? null,
+            $data['formula']['description'] ?? null,
+            $data['formula']['intuitive_summary'] ?? null,
+            $data['formula']['conceptual_definition'] ?? null,
+        ] as $descCandidate) {
+            if (is_string($descCandidate) && trim($descCandidate) !== '') {
+                $rawDesc = $descCandidate;
+                break;
+            }
+        }
+        if ($rawDesc === '') {
+            $rawDesc = 'Digital physics encyclopedia, mathematical derivation lineage manifold, and interactive simulation laboratory.';
+        }
+        $metaDescription = $this->cleanMetaDescription($rawDesc, 165);
+
+        $canonicalUrl = '';
+        if (!$isNoIndex) {
+            if (!empty($data['canonical_path']) && is_string($data['canonical_path'])) {
+                $canonicalPath = $data['canonical_path'];
+            } elseif ($view === 'physics/subtopic' && !empty($data['slug'])) {
+                $canonicalPath = '/physics/subtopic/' . rawurlencode((string)$data['slug']);
+            } elseif ($view === 'physics/topic' && !empty($data['slug'])) {
+                $canonicalPath = '/physics/topic/' . rawurlencode((string)$data['slug']);
+            } elseif ($view === 'physics/simulation_page' && !empty($data['slug'])) {
+                $canonicalPath = '/physics/simulations/' . rawurlencode((string)$data['slug']);
+            } elseif ($view === 'physics/equation_explainer') {
+                $canonicalPath = !empty($data['formula']['id'])
+                    ? '/physics/equation-explainer?id=' . rawurlencode((string)$data['formula']['id'])
+                    : '/physics/equation-explainer';
+            } elseif ($view === 'physics/home') {
+                $canonicalPath = '/';
+            } else {
+                $reqPath = parse_url($this->app->request()->url ?? '/', PHP_URL_PATH) ?: '/';
+                $canonicalPath = '/' . ltrim($reqPath, '/');
+            }
+            $canonicalUrl = $this->resolveBaseUrl() . $canonicalPath;
+        }
+
+        $ogType = (string)($data['og_type'] ?? (($view === 'physics/subtopic' || $view === 'physics/equation_explainer') ? 'article' : 'website'));
+
+        $viewData = array_merge($data, [
+            'nonce' => $nonce,
+            'meta_description' => $metaDescription,
+            'canonical_url' => $canonicalUrl,
+            'og_type' => $ogType,
+            'robots' => $robots,
+        ]);
         $bodyContent = $this->app->view()->fetch($view, $viewData) ?: '';
 
         if ($isPreview && !$isBuildMode) {
@@ -1607,6 +2039,10 @@ class PhysicsController
                         $onProgress($done, $total, $slug, 'error');
                     }
                 }
+            }
+
+            if ($onlySlugs === null) {
+                $this->buildSitemapXml($force);
             }
         } finally {
             $svc->setPreviewMode($wasPreview);

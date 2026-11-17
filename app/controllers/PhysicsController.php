@@ -1774,7 +1774,7 @@ class PhysicsController
 
         $this->renderWithLayout('physics/home', [
             'title' => 'The Physics Lab',
-            'subtitle' => 'Explore the fundamental laws of the universe through interactive simulations and detailed explanations.',
+            'subtitle' => 'Disclaimer: Physics Lab is an exploratory project built to gain hands-on experience with AI-assisted software development using undergraduate-level physics as an interest base.',
             'topics' => $topics
         ]);
     }

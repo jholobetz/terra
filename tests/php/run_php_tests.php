@@ -1161,14 +1161,19 @@ $runner->run('Stage4DeploymentTest', 'testHtaccessCompressionAcmeExemptionAndUpd
     $t->assertContains('--rollback', $updateSrc);
     $t->assertContains('--resolve "${DOMAIN}:443:127.0.0.1"', $updateSrc);
 
-    // Guard against PHP 8.4+ E_STRICT deprecation in production bootstrap/config
+    // Guard against PHP 8.4+ E_STRICT deprecation and bare include_path requires in production bootstrap/config
     $bootstrapSrc = (string)file_get_contents(PROJECT_ROOT . '/app/config/bootstrap.php');
     $configSampleSrc = (string)file_get_contents(PROJECT_ROOT . '/app/config/config_sample.php');
     $t->assertFalse(str_contains($bootstrapSrc, 'E_STRICT'), 'bootstrap.php must not reference PHP 8.4-deprecated E_STRICT');
     $t->assertFalse(str_contains($configSampleSrc, 'E_STRICT'), 'config_sample.php must not reference PHP 8.4-deprecated E_STRICT');
+    $t->assertFalse(str_contains($bootstrapSrc, "require('config.php')"), 'bootstrap.php must use __DIR__ for config.php');
+    $t->assertFalse(str_contains($bootstrapSrc, "require('services.php')"), 'bootstrap.php must use __DIR__ for services.php');
+    $t->assertFalse(str_contains($bootstrapSrc, "require('routes.php')"), 'bootstrap.php must use __DIR__ for routes.php');
 
-    // Guard against non-root polkit pkttyagent errors in update_prod.sh
+    // Guard against non-root polkit pkttyagent errors and config.php group-loss lockouts in update_prod.sh
     $t->assertContains('--no-ask-password', $updateSrc, 'update_prod.sh must avoid spawning polkit pkttyagent');
+    $t->assertContains('app/config/config.php', $updateSrc, 'update_prod.sh must verify/restore www-data group access on config.php');
+    $t->assertContains('chmod 640 "${cfg_file}"', $updateSrc, 'update_prod.sh must preserve 640 mode on config.php');
 });
 
 $jsonFlag = in_array('--json', $argv ?? [], true);

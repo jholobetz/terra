@@ -90,6 +90,9 @@ python3 -m venv .venv
 cp app/config/config_sample.php app/config/config.php
 chmod 640 app/config/config.php
 sudo chgrp www-data app/config/config.php
+# Note: in-place file-replacing tools (like 'sed -i') reset group ownership to your login group,
+# which locks www-data (php-fpm/apache2) out of a 640 file. Always re-apply 'sudo chgrp www-data'
+# after replacing config.php (scripts/update_prod.sh also auto-heals this check).
 # Edit app/config/config.php:
 #   'app_env' => 'production',
 #   'app_url' => 'https://physicslab.ca',

@@ -99,6 +99,24 @@ fix_runtime_permissions() {
     mkdir -p "${REPO_ROOT}/app/log" "${REPO_ROOT}/public/cache"
     if getent group "${WEB_GROUP}" >/dev/null 2>&1; then
         chgrp -R "${WEB_GROUP}" "${REPO_ROOT}/app/log" "${REPO_ROOT}/public/cache" 2>/dev/null || sudo -n chgrp -R "${WEB_GROUP}" "${REPO_ROOT}/app/log" "${REPO_ROOT}/public/cache" 2>/dev/null || true
+
+        local cfg_file="${REPO_ROOT}/app/config/config.php"
+        if [[ -f "${cfg_file}" ]]; then
+            local cfg_group=""
+            cfg_group="$(stat -c '%G' "${cfg_file}" 2>/dev/null || stat -f '%Sg' "${cfg_file}" 2>/dev/null || echo "")"
+            if [[ "${cfg_group}" != "${WEB_GROUP}" ]]; then
+                echo "-> Restoring ${WEB_GROUP} group read access on app/config/config.php..."
+                if chgrp "${WEB_GROUP}" "${cfg_file}" 2>/dev/null || sudo -n chgrp "${WEB_GROUP}" "${cfg_file}" 2>/dev/null; then
+                    chmod 640 "${cfg_file}" 2>/dev/null || true
+                elif [[ -t 0 && -t 1 ]]; then
+                    sudo chgrp "${WEB_GROUP}" "${cfg_file}" && chmod 640 "${cfg_file}" 2>/dev/null || true
+                else
+                    echo "[WARN] app/config/config.php group is '${cfg_group}' (expected '${WEB_GROUP}'); run 'sudo chgrp ${WEB_GROUP} ${cfg_file} && chmod 640 ${cfg_file}'." >&2
+                fi
+            else
+                chmod 640 "${cfg_file}" 2>/dev/null || true
+            fi
+        fi
     fi
     chmod 2775 "${REPO_ROOT}/app/log" "${REPO_ROOT}/public/cache" 2>/dev/null || true
     chmod -R g+rwX "${REPO_ROOT}/app/log" "${REPO_ROOT}/public/cache" 2>/dev/null || true

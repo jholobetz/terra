@@ -32,7 +32,7 @@ $app = Flight::app();
  * P.S. When you require a php file and that file returns an array, the array
  * will be returned by the require statement where you can assign it to a var.
  */
-$config = require('config.php');
+$config = require(__DIR__ . $ds . 'config.php');
 if (is_array($config) && !empty($config['app_env']) && !defined('TERRA_CONFIG_APP_ENV')) {
     define('TERRA_CONFIG_APP_ENV', strtolower(trim((string)$config['app_env'])));
     if (TERRA_CONFIG_APP_ENV === 'production') {
@@ -65,7 +65,7 @@ if (is_array($config) && !empty($config['app_url'])) {
  * That's a discussion for another day. Suffice to say, that Flight has a basic concept
  * of a services container by registering classes to the Engine class.
  */ 
-require('services.php');
+require(__DIR__ . $ds . 'services.php');
 
 // Whip out the ol' router and we'll pass that to the routes file
 $router = $app->router();
@@ -77,7 +77,7 @@ $router = $app->router();
  * When someone hits that URL, you point them to a function or method 
  * that will handle the request.
  */
-require('routes.php');
+require(__DIR__ . $ds . 'routes.php');
 
 // At this point, your app should have all the instructions it needs and it'll
 // "start" processing everything. This is where the magic happens.

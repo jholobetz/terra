@@ -25,7 +25,7 @@ date_default_timezone_set('UTC');
 // Error reporting level (E_ALL in development; suppress deprecation/display noise in production)
 $bootEnv = strtolower((string)(getenv('APP_ENV') ?: ($_SERVER['APP_ENV'] ?? $_SERVER['REDIRECT_APP_ENV'] ?? 'development')));
 if ($bootEnv === 'production') {
-	error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+	error_reporting(E_ALL & ~E_DEPRECATED);
 	ini_set('display_errors', '0');
 } else {
 	error_reporting(E_ALL);

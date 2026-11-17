@@ -1160,6 +1160,12 @@ $runner->run('Stage4DeploymentTest', 'testHtaccessCompressionAcmeExemptionAndUpd
     $t->assertContains('--quick', $updateSrc);
     $t->assertContains('--rollback', $updateSrc);
     $t->assertContains('--resolve "${DOMAIN}:443:127.0.0.1"', $updateSrc);
+
+    // Guard against PHP 8.4+ E_STRICT deprecation in production bootstrap/config
+    $bootstrapSrc = (string)file_get_contents(PROJECT_ROOT . '/app/config/bootstrap.php');
+    $configSampleSrc = (string)file_get_contents(PROJECT_ROOT . '/app/config/config_sample.php');
+    $t->assertFalse(str_contains($bootstrapSrc, 'E_STRICT'), 'bootstrap.php must not reference PHP 8.4-deprecated E_STRICT');
+    $t->assertFalse(str_contains($configSampleSrc, 'E_STRICT'), 'config_sample.php must not reference PHP 8.4-deprecated E_STRICT');
 });
 
 $jsonFlag = in_array('--json', $argv ?? [], true);

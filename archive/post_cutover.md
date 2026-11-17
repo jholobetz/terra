@@ -1,14 +1,14 @@
 # 🛰️ Terra Physics Lab — Post-Cutover Burn-In & Operations Guide
 
-> **Status**: Post-Cutover Burn-In Completed (`8 / 8` Checks Verified — 2026-11-17)  
+> **Status**: Archived Historical Record (Post-Cutover Burn-In Completed `8 / 8` — 2026-11-17)  
 > **Canonical Production Target**: [`https://physicslab.ca`](https://physicslab.ca) (`/srv/www/terra`, Debian 13 + Apache 2.4 + `php8.4-fpm` + MariaDB + `.venv`)  
-> **Companion Documents**: [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](architecture.md), [`docs/roadmap.md`](roadmap.md), [`docs/ideas.md`](ideas.md)
+> **Companion Documents**: [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](../docs/architecture.md), [`docs/roadmap.md`](../docs/roadmap.md), [`docs/ideas.md`](../docs/ideas.md), [`archive/final_stages.md`](final_stages.md)
 
 ---
 
 ## 1. The Post-Cutover Mindset Shift
 
-Crossing from a private local development studio (`http://localhost:8000`) to a live public HTTPS domain (`https://physicslab.ca`) shifts engineering priorities from **raw feature velocity** to **operational stability and burn-in verification**. Before starting the next major feature horizon (**Phase 5** in [`docs/roadmap.md`](roadmap.md)), the live deployment should be exercised across real browsers, dynamic subprocess boundaries, unattended system timers, and routine Git delta updates.
+Crossing from a private local development studio (`http://localhost:8000`) to a live public HTTPS domain (`https://physicslab.ca`) shifts engineering priorities from **raw feature velocity** to **operational stability and burn-in verification**. Before starting the next major feature horizon (**Phase 5** in [`docs/roadmap.md`](../docs/roadmap.md)), the live deployment should be exercised across real browsers, dynamic subprocess boundaries, unattended system timers, and routine Git delta updates.
 
 ---
 
@@ -97,7 +97,7 @@ Evaluating `https://physicslab.ca` across desktop and mobile **from a first-time
    * Dedicated `/physics/about` overview page + richer footer links (`About`, `Universe Graph`, `Constants`, `Sitemap`), allowing the homepage hero subtitle to return to a concise physics tagline while keeping the exploratory project disclaimer prominent.
    * Surfacing unlisted routes (`/physics/dimensional-solver`, `/physics/genealogy-explorer`) in the `Lab Tools` mega-navigation.
    * Responsive viewport pass (`375px`–`768px`) across the homepage `#halo-orbit-ring`, mega-menus, and Equation Explainer variable dissector.
-2. **"How It All Connects" Discovery Features** ([`docs/ideas.md`](ideas.md)):
+2. **"How It All Connects" Discovery Features** ([`docs/ideas.md`](../docs/ideas.md)):
    * *"Surprise Me With a Bridge"* cross-domain multi-hop launcher, Equation Explainer derivation journey breadcrumbs, and one-click *"Copy as SymPy / Python"* export snippets.
 3. **Mathematical & Interactive Depth**:
    * Expanding multi-step derivation proofs beyond the initial `104` canonical proofs toward all high-traffic Topic Hub equations, interactive series/classical-limit sliders in the Equation Explainer, Wave 2 simulation elevations, or deferred `fluids-nonlinear.json` curriculum enrichment (`2.8`).

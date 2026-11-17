@@ -16,7 +16,7 @@ These files are retained strictly for historical context, Git lineage, and techn
 ## 🗂️ Categorized Archive Index
 
 ### 1. Superseded Milestones & Prototype Specifications
-* `rollout_fixes.md` & `final_stages.md`: Stages 1–4 development-to-production hardening, Debian 13 provisioning, and `physicslab.ca` cutover blueprints (completed and codified as Phase 4 in `docs/roadmap.md` and `CLAUDE.md`).
+* `rollout_fixes.md`, `final_stages.md` & `post_cutover.md`: Stages 1–4 development-to-production hardening, Debian 13 provisioning, `physicslab.ca` cutover, and `8/8` post-cutover burn-in verification blueprints (completed and codified as Phase 4 in `docs/roadmap.md` and `CLAUDE.md`).
 * `sim_fixes.md`: Simulations Observatory modernization blueprint (Phases 1 & 2 completed in `simulations.php`; Phase 3 elevation tracked in `docs/roadmap.md`).
 * `Lab_Tools_UI_design_ideas.md`: Next-gen UI design ideas (Unified Cockpit, Legendre Transformer presets, and CAS coupling completed in Phase 2).
 * `add_new_subtopics_hypothetical.md`: Hypothetical ingestion guide for thin shards (commands and workflow formalized in `CLAUDE.md` and `docs/roadmap.md`).

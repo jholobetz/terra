@@ -225,7 +225,7 @@ flowchart TD
 
 ## 6. Phase 4: Production Hardening & `physicslab.ca` Cutover (Completed)
 
-> **Rollout Blueprints Archive**: [`archive/rollout_fixes.md`](../archive/rollout_fixes.md) (Stages 1–3) & [`archive/final_stages.md`](../archive/final_stages.md) (Stage 4 & Cutover)
+> **Rollout Blueprints Archive**: [`archive/rollout_fixes.md`](../archive/rollout_fixes.md) (Stages 1–3), [`archive/final_stages.md`](../archive/final_stages.md) (Stage 4 & Cutover) & [`archive/post_cutover.md`](../archive/post_cutover.md) (8/8 Burn-In Verification)
 
 ### 4.1 Security & `--no-dev` Production Hardening
 * **Status**: Completed (`commit 198f3a3b1`).

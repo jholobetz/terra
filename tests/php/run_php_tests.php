@@ -819,7 +819,11 @@ $runner->run('Stage2PackagingTest', 'testInProcessWarmHtmlCacheAndPythonManifest
     $prevErrLog = ini_set('error_log', '/dev/null');
 
     try {
-        withIsolatedEnv(['APP_ENV' => 'production'], ['REMOTE_ADDR' => '127.0.0.1'], function () use ($t, $ctrl, $hubCache, $subCache) {
+        withIsolatedEnv(['APP_ENV' => 'production'], ['REMOTE_ADDR' => '127.0.0.1', 'SCRIPT_NAME' => '/srv/www/terra/cli_sync.php'], function () use ($t, $app, $ctrl, $hubCache, $subCache) {
+            // Simulate CLI absolute-path invocation (php /srv/www/terra/cli_sync.php) poisoning Flight::request()->base
+            $app->request()->base = '/srv/www/terra';
+            \Flight::request()->base = '/srv/www/terra';
+
             $first = $ctrl->warmHtmlCache(true, ['classical-mechanics', 'generalized-coordinates']);
             $t->assertSame([], $first['errors'], 'warmHtmlCache must complete with 0 errors');
             $t->assertSame(1, $first['hubs_built']);
@@ -829,6 +833,9 @@ $runner->run('Stage2PackagingTest', 'testInProcessWarmHtmlCacheAndPythonManifest
             $subHtml = (string)file_get_contents($subCache);
             $t->assertTrue((bool)preg_match('/nonce="[a-f0-9]{32}"/', $hubHtml), 'Cached hub HTML must preserve 32-hex CSP nonce placeholder');
             $t->assertTrue((bool)preg_match('/nonce="[a-f0-9]{32}"/', $subHtml), 'Cached subtopic HTML must preserve 32-hex CSP nonce placeholder');
+            $t->assertContains("const BASE_URL = '';", $hubHtml, 'Cached hub HTML must never bake CLI filesystem directory into BASE_URL');
+            $t->assertContains("const BASE_URL = '';", $subHtml, 'Cached subtopic HTML must never bake CLI filesystem directory into BASE_URL');
+            $t->assertFalse(str_contains($subHtml, '/srv/www/terra'), 'Cached HTML must never leak server filesystem path');
             $t->assertContains('<!-- DEV_STUDIO_NAV_SLOT -->', $subHtml, 'Cached HTML must preserve dynamic studio nav slot');
             $t->assertContains('nav-pillar-active', $subHtml, 'Cached subtopic HTML must mark Topics nav pillar active');
             $t->assertFalse(str_contains($subHtml, 'preview-banner'), 'Cached HTML must never bake preview-mode banner');

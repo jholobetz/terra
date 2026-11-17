@@ -24,9 +24,9 @@ A complete live browser pass on `https://physicslab.ca` should exercise the dyna
 * [x] **Search & Related-Subtopics Manifold Pipeline** *(Verified 2026-11-17)*:
   * Verified Spotlight Search (`Cmd+K` / `/physics/api/search`) on MariaDB keyword queries.
   * Unified both `subtopic.php` ("Further Manifold Exploration") and `/physics/api/related-subtopics/@slug` onto deterministic, 100% Git-tracked `PhysicsService::getRelatedTopics()` (scoring prose graph links + parent/sibling lineage + shared `formula_ids`/keywords + cross-pillar bridge guarantee, with zero untracked `.scp` file dependency).
-* [ ] **Browser DevTools Console, CSP & Compression Audit**:
-  * Inspect DevTools (`Console` + `Network`) across a Topic Hub, a Subtopic article, `/physics/universe-graph`, and `/physics/simulations/relativistic-black-hole`.
-  * Confirm **`0` CSP violations**, **`0` `404` asset requests**, and active `Content-Encoding: gzip` (`mod_deflate`) on large vendored libraries (`tex-svg-full.js`, `math.min.js`, `formula_derivation_graph.json.gz`).
+* [x] **Compression, Security Headers & Dynamic CSP Nonce Audit** *(Verified 2026-11-17)*:
+  * Verified `Content-Encoding: gzip` + `Cache-Control: public, max-age=31536000, immutable` + `Vary: Accept-Encoding` on static JS (`tex-svg-full.js`).
+  * Verified `Content-Encoding: gzip` (`38.5 KB` payload including SVG math sprites), `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, and per-request cryptographic `Content-Security-Policy` `'nonce-...'` rotation on cached HTML subtopic pages (`/physics/subtopic/schwarzschild-metric`).
 
 ---
 

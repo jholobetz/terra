@@ -1948,6 +1948,8 @@ class PhysicsController
         $prevCookiePreview = $_COOKIE['physics_preview'] ?? null;
         $prevAppReqUrl = $this->app->request()->url ?? '';
         $prevFlightReqUrl = \Flight::request()->url ?? '';
+        $prevAppReqBase = $this->app->request()->base ?? '/';
+        $prevFlightReqBase = \Flight::request()->base ?? '/';
 
         // Guarantee a valid 32-hex-char nonce placeholder so injectLayoutDynamicTokens() always matches on cache hit
         $currentNonce = (string)($this->app->get('csp_nonce') ?? '');
@@ -1969,6 +1971,8 @@ class PhysicsController
         try {
             unset($_GET['preview'], $_GET['build_mode'], $_COOKIE['physics_preview']);
             $svc->setPreviewMode(false);
+            $this->app->request()->base = '/';
+            \Flight::request()->base = '/';
 
             if ($onlySlugs !== null) {
                 foreach ($onlySlugs as $targetSlug) {
@@ -2084,6 +2088,8 @@ class PhysicsController
             $svc->setPreviewMode($wasPreview);
             $this->app->request()->url = $prevAppReqUrl;
             \Flight::request()->url = $prevFlightReqUrl;
+            $this->app->request()->base = $prevAppReqBase;
+            \Flight::request()->base = $prevFlightReqBase;
             if ($prevGetPreview !== null) {
                 $_GET['preview'] = $prevGetPreview;
             }

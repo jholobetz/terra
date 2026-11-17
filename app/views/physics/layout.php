@@ -49,8 +49,17 @@ $robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UT
             <link rel="stylesheet" href="/css/<?= htmlspecialchars($cssAsset) ?>?v=<?= @filemtime(PROJECT_ROOT . '/public/css/' . $cssAsset) ?: 1 ?>">
         <?php endforeach; ?>
     <?php endif; ?>
+    <?php
+    $configuredBase = (string)(Flight::get('flight.base_url') ?? '');
+    $rawBaseUrl = (php_sapi_name() === 'cli')
+        ? $configuredBase
+        : ($configuredBase !== '' ? $configuredBase : (string)(Flight::request()->base ?? ''));
+    $jsBaseUrl = ($rawBaseUrl !== '' && $rawBaseUrl !== '/' && $rawBaseUrl !== '.')
+        ? rtrim($rawBaseUrl, '/')
+        : '';
+    ?>
     <script nonce="<?= $nonce ?>">
-        const BASE_URL = '<?= (Flight::request()->base && Flight::request()->base !== '.') ? rtrim(Flight::request()->base, '/') : '' ?>';
+        const BASE_URL = '<?= htmlspecialchars($jsBaseUrl, ENT_QUOTES, 'UTF-8') ?>';
     </script>
 </head>
 <body class="physics-lab">

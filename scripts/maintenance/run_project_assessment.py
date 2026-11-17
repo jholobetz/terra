@@ -584,16 +584,25 @@ def audit_roadmap_realization(heal_hashes: bool = False, arch_data=None):
     }
 
     roadmap["phase_5"] = {
-        "title": "Phase 5: OPS 2.0 Upgrade (5.1)",
-        "status": "PLANNED",
+        "title": "Phase 5: Next Horizon (5.1)",
+        "status": "UNDETERMINED",
         "progress_pct": 0,
         "items": [
-            ("5.1 OPS 2.0 Upgrade", "Qualitative Rubric & Referee Panel (docs/OPS 2.0)", False),
+            ("5.1 Undetermined", "Undetermined at this time", False),
         ]
     }
 
     roadmap["phase_6"] = {
-        "title": "Phase 6: Project Terra Multi-Science (6.1)",
+        "title": "Phase 6: OPS 2.0 Upgrade (6.1)",
+        "status": "PLANNED",
+        "progress_pct": 0,
+        "items": [
+            ("6.1 OPS 2.0 Upgrade", "Qualitative Rubric & Referee Panel (docs/OPS 2.0)", False),
+        ]
+    }
+
+    roadmap["phase_7"] = {
+        "title": "Phase 7: Project Terra Multi-Science (7.1)",
         "status": "STRATEGIC_HORIZON",
         "progress_pct": 0,
         "items": [
@@ -668,7 +677,7 @@ def build_standard_telemetry(data, mode="rapid", strict_passed=True, violations=
     p3_pct = roadmap.get("phase_3", {}).get("progress_pct", 15)
     ops_pct = roadmap.get("ops_2", {}).get("progress_pct", 10)
     p4_pct = roadmap.get("phase_4", {}).get("progress_pct", 0)
-    p6_pct = roadmap.get("phase_6", {}).get("progress_pct", 0)
+    p6_pct = roadmap.get("phase_7", {}).get("progress_pct", 0)
 
     shard_drift = 0
     proofs_count = 0

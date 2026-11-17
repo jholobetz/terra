@@ -54,14 +54,18 @@ flowchart TD
         P4D["4.4 Apache/MariaDB Provisioning & Git Deploy Pipeline"]
     end
 
-    subgraph Phase5["Phase 5: OPS 2.0 Upgrade"]
-        P5A["5.1 OPS 2.0 Qualitative Rubric & Referee Panel"]
+    subgraph Phase5["Phase 5: Next Horizon (Undetermined)"]
+        P5A["5.1 Undetermined at This Time"]
     end
 
-    subgraph Phase6["Phase 6: Project Terra Expansion (Flagship Scale)"]
-        P6A["6.1 Chemistry Lab Manifold"]
-        P6B["Mathematics Lab Manifold"]
-        P6C["Cross-Domain Scientific Ontology"]
+    subgraph Phase6["Phase 6: OPS 2.0 Upgrade"]
+        P6A["6.1 OPS 2.0 Qualitative Rubric & Referee Panel"]
+    end
+
+    subgraph Phase7["Phase 7: Project Terra Expansion (Flagship Scale)"]
+        P7A["7.1 Chemistry Lab Manifold"]
+        P7B["Mathematics Lab Manifold"]
+        P7C["Cross-Domain Scientific Ontology"]
     end
 
     Phase1 --> Phase2
@@ -69,6 +73,7 @@ flowchart TD
     Phase3 --> Phase4
     Phase4 --> Phase5
     Phase5 --> Phase6
+    Phase6 --> Phase7
 ```
 
 ---
@@ -254,13 +259,19 @@ flowchart TD
 
 ---
 
-## 7. Phase 5: OPS 2.0 Upgrade (5.1)
+## 7. Phase 5: Next Horizon (5.1)
 
-* **5.1 OPS 2.0 Qualitative & Linguistic Architecture**: Qualitative 5-point rubric evaluation, deterministic discourse linting (`gqs.py lint`), and multi-agent referee critique (`gqs.py critique`) as specified in [`docs/OPS 2.0 (The Qualitative Rubric).md`](OPS%202.0%20(The%20Qualitative%20Rubric).md).
+* **5.1**: Undetermined at this time.
 
 ---
 
-## 8. Phase 6: Project Terra Multi-Science Expansion (6.1)
+## 8. Phase 6: OPS 2.0 Upgrade (6.1)
+
+* **6.1 OPS 2.0 Qualitative & Linguistic Architecture**: Qualitative 5-point rubric evaluation, deterministic discourse linting (`gqs.py lint`), and multi-agent referee critique (`gqs.py critique`) as specified in [`docs/OPS 2.0 (The Qualitative Rubric).md`](OPS%202.0%20(The%20Qualitative%20Rubric).md).
+
+---
+
+## 9. Phase 7: Project Terra Multi-Science Expansion (7.1)
 
 Physics Lab serves as the flagship domain module for **Project Terra**. With the core architecture (FlightPHP microframework, 256-shard partitioning, dual-engine math rendering, and automated integrity shields) proven at scale:
 
@@ -270,7 +281,7 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 
 ---
 
-## 9. Master Priority & Implementation Ledger
+## 10. Master Priority & Implementation Ledger
 
 | Horizon | ID | Initiative | Key Components / Files | Priority | Status |
 | :--- | :--- | :--- | :--- | :---: | :---: |
@@ -292,5 +303,6 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 4** | 4.2 | Debian 13 Packaging, `/healthz` & Cache Warmer | `requirements.txt`<br/>`PhysicsController.php`<br/>`cli_sync.php` | 🔴 **P1** | 🟢 Completed |
 | **Phase 4** | 4.3 | Branded Error Views, CSP Hygiene & SEO/Sitemap | `error_404.php`<br/>`error_500.php`<br/>`layout.php` | 🔴 **P1** | 🟢 Completed |
 | **Phase 4** | 4.4 | Apache/MariaDB Provisioning & Git Deploy Pipeline | `public/.htaccess`<br/>`ShardSyncService.php`<br/>`scripts/update_prod.sh` | 🔴 **P1** | 🟢 Completed (Live on `physicslab.ca`) |
-| **Phase 5** | 5.1 | OPS 2.0 Upgrade | `docs/OPS 2.0 (The Qualitative Rubric).md`<br/>`gqs.py` | 🟡 **P2** | 📋 Planned |
-| **Phase 6** | 6.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |
+| **Phase 5** | 5.1 | Undetermined at This Time | TBD | ⚪ **TBD** | ⏳ Undetermined |
+| **Phase 6** | 6.1 | OPS 2.0 Upgrade | `docs/OPS 2.0 (The Qualitative Rubric).md`<br/>`gqs.py` | 🟡 **P2** | 📋 Planned |
+| **Phase 7** | 7.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |

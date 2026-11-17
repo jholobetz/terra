@@ -134,6 +134,19 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   php scripts/audit_prose_equations.php
   ```
 
+### 🚀 Production Deployment (`https://physicslab.ca` — `/srv/www/terra`)
+```bash
+# Standard deploy: git pull --ff-only, DB migrations, delta shard sync, HTML cache warm, OPcache reload & /healthz check
+bash scripts/update_prod.sh
+
+# Fast content/equation push (~2-5s): git pull --ff-only + cli_sync.php --warm-cache
+bash scripts/update_prod.sh --quick
+
+# Emergency rollback to prior deployed SHA (or explicit ref) + cache/DB resync & /healthz check
+bash scripts/update_prod.sh --rollback
+```
+* **Production Guardrails**: Keep `/srv/www/terra` git working tree clean so `git pull --ff-only` never hits split-brain conflicts; `app/config/config.php` (`640`, group `www-data`), `app/log/`, and `public/cache/` (`2775`, group `www-data`) are `.gitignore`d server-local state.
+
 ---
 
 ## 🧮 2. Direct URL Equation Repair Protocol (AI Agent Directive)
@@ -206,8 +219,8 @@ The platform maintains a deliberate dual-layer operational model:
    * Bridges the two layers: `PhysicsService::saveFormula()` serves as the single write funnel, atomically updating the Git JSON shard, MariaDB record, and reverse LaTeX trie (`formulas_latex_index.json`).
    * Deployment synchronization (`syncFormulasToDatabase()`) uses SHA-256 hash registries (`formulas_hash_registry.json`) to detect changed shards and update MariaDB in batch.
 4. **Canonical Production Target (`https://physicslab.ca`)**:
-   * Runs on **Debian 13 (Trixie)** with **Apache 2.4**, **PHP 8**, **MariaDB**, and local `.venv` (`sympy`).
-   * Git working tree lives at `/srv/www/terra` while Apache `DocumentRoot` is strictly `/srv/www/terra/public` (keeping `.git/`, `app/`, `vendor/`, `lib/`, and `tests/` outside the web root; full runbook in [`docs/final_stages.md`](docs/final_stages.md)).
+   * Runs on **Debian 13 (Trixie)** with **Apache 2.4**, **PHP 8** (`php8.4-fpm` + OPcache), **MariaDB**, and local `.venv` (`sympy`).
+   * Git working tree lives at `/srv/www/terra` while Apache `DocumentRoot` is strictly `/srv/www/terra/public` (keeping `.git/`, `app/`, `vendor/`, `lib/`, and `tests/` outside the web root; deployed via [`scripts/update_prod.sh`](scripts/update_prod.sh)).
 
 ### B. Mathematical Derivation Lineage Graph (DAG)
 * Lineage is tracked as an acyclic graph in `app/config/formula_derivation_graph.json` (and `.gz`).
@@ -248,7 +261,7 @@ To eliminate counter-productive amnesia, glossing over existing features, or rei
 | **Multi-Step Derivations Engine** | `equation_explainer.php`<br/>[`tests/test_derivation_steps.py`](tests/test_derivation_steps.py) | **Operational (104 verified proofs sitewide)**. Collapsible derivation accordions with MathJax typesetting, sequential step schema, TeX brace balance, and universal Domain Parity ($\ge 8$ proofs across all 12 platform domains). | `.venv/bin/python3 -m pytest tests/test_derivation_steps.py` |
 | **Lineage DAG & LHI** | `scripts/fixlineage`<br/>`formula_derivation_graph.json` | **Operational**. Lineage Health Index of 99.9/100, 0 isolated nodes, 14,119 derivation edges. | `scripts/fixlineage --summary` |
 | **Dual-Layer Hash Synchronizer** | `app/config/formulas_hash_registry.json`<br/>`PhysicsService.php` | **Operational**. 256/256 formula shards synchronized with zero hash drift. | `scripts/assess --roadmap --no-tests` |
-| **Production Cutover & Deploy Pipeline** | [`scripts/update_prod.sh`](scripts/update_prod.sh)<br/>[`docs/final_stages.md`](docs/final_stages.md) | **Operational (`https://physicslab.ca`)**. Hardened Debian 13 + Apache 2.4 + MariaDB deployment (`/srv/www/terra`), `/healthz` probe, in-process HTML cache warmer, and DB-backed `shard_sync_state`. | `composer test` |
+| **Production Cutover & Deploy Pipeline** | [`scripts/update_prod.sh`](scripts/update_prod.sh)<br/>[`cli_sync.php`](cli_sync.php) | **Operational (`https://physicslab.ca`)**. Hardened Debian 13 + Apache 2.4 + MariaDB deployment (`/srv/www/terra`), `/healthz` probe, in-process HTML cache warmer, and DB-backed `shard_sync_state`. | `composer test` |
 
 ---
 

@@ -2,7 +2,7 @@
 
 > **Status**: Active Master Roadmap  
 > **Target Horizon**: 2026–2027  
-> **Authoritative References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md), [`docs/architecture.md`](architecture.md), [`docs/final_stages.md`](final_stages.md), [`archive/horizons_and_expansion.md`](../archive/horizons_and_expansion.md)
+> **Authoritative References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md), [`docs/architecture.md`](architecture.md), [`archive/horizons_and_expansion.md`](../archive/horizons_and_expansion.md)
 
 ---
 
@@ -220,7 +220,7 @@ flowchart TD
 
 ## 6. Phase 4: Production Hardening & `physicslab.ca` Cutover (Completed)
 
-> **Operational Runbook**: [`docs/final_stages.md`](final_stages.md) | **Pre-Cutover Audit Archive**: [`archive/rollout_fixes.md`](../archive/rollout_fixes.md)
+> **Rollout Blueprints Archive**: [`archive/rollout_fixes.md`](../archive/rollout_fixes.md) (Stages 1–3) & [`archive/final_stages.md`](../archive/final_stages.md) (Stage 4 & Cutover)
 
 ### 4.1 Security & `--no-dev` Production Hardening
 * **Status**: Completed (`commit 198f3a3b1`).

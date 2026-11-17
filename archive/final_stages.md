@@ -1,11 +1,11 @@
 # 🚀 Terra Physics Lab — Stage 4, Git Deployment & Ongoing Revisions Guide
 
-> **Status**: Stage 4 Completed & Active Operations Runbook  
+> **Status**: Archived Historical Record (Stage 4 Completed — Codified as Phase 4 in [`docs/roadmap.md`](../docs/roadmap.md))  
 > **Canonical Production Domain**: `https://physicslab.ca`  
 > **Target Production Host**: **Debian 13 (Trixie) + Apache 2.4 + PHP 8 (8.4) + MariaDB + Python 3 `.venv` (`sympy`)**  
 > **Server Paths**: Repo Root `/srv/www/terra` | Apache `DocumentRoot /srv/www/terra/public`  
 > **Deployment Transport**: **Git-Native (`git clone` $\to$ `git pull --ff-only`)** with Web-Root Directory Isolation  
-> **Companion Docs**: [`archive/rollout_fixes.md`](../archive/rollout_fixes.md) (Completed Stages 1–3 Record), [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](architecture.md)
+> **Companion Docs**: [`archive/rollout_fixes.md`](rollout_fixes.md) (Completed Stages 1–3 Record), [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](../docs/architecture.md)
 
 ---
 

@@ -5,7 +5,7 @@ Physics Lab is a university-level digital physics encyclopedia and computational
 The web frontend is built on a streamlined **FlightPHP** MVC framework, while the underlying data layer is partitioned across a **256-shard deterministic mathematical formula manifold** and **14 thematic subtopic prose shards** on disk, synchronized with a **MariaDB** query engine. Content transitions and mathematical rigor are governed by the **Organic Platinum Standard (OPS)**, automated derivation graph audits (Lineage Health Index), and pre-push integrity shields.
 
 > [!NOTE]
-> **Project Terra Blueprint & Deployment Model:** Physics Lab is the flagship domain module of **Project Terra**, an overarching scientific laboratory and reference ecosystem. The project is developed locally on macOS (`http://localhost:8000`), tracked via Git, and deployed live at [`https://physicslab.ca`](https://physicslab.ca) on a hardened Debian 13 + Apache 2.4 + MariaDB stack. For details, see [`docs/architecture.md`](docs/architecture.md), [`docs/roadmap.md`](docs/roadmap.md), and [`docs/final_stages.md`](docs/final_stages.md).
+> **Project Terra Blueprint & Deployment Model:** Physics Lab is the flagship domain module of **Project Terra**, an overarching scientific laboratory and reference ecosystem. The project is developed locally on macOS (`http://localhost:8000`), tracked via Git, and deployed live at [`https://physicslab.ca`](https://physicslab.ca) on a hardened Debian 13 + Apache 2.4 + MariaDB stack. For details, see [`docs/architecture.md`](docs/architecture.md) and [`docs/roadmap.md`](docs/roadmap.md).
 
 ---
 

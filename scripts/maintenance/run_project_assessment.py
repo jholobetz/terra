@@ -536,7 +536,7 @@ def audit_roadmap_realization(heal_hashes: bool = False, arch_data=None):
     routes_path = WORKSPACE_ROOT / "app" / "config" / "routes.php"
     htaccess_path = WORKSPACE_ROOT / "public" / ".htaccess"
     update_prod_path = WORKSPACE_ROOT / "scripts" / "update_prod.sh"
-    final_stages_path = WORKSPACE_ROOT / "docs" / "final_stages.md"
+    mariadb_prov_path = WORKSPACE_ROOT / "deploy" / "mariadb" / "provision_terra.sql"
     apache_vhost_path = WORKSPACE_ROOT / "deploy" / "apache" / "physicslab.ca-le-ssl.conf.example"
 
     auth_text = auth_service_path.read_text(encoding="utf-8", errors="ignore") if auth_service_path.exists() else ""
@@ -562,7 +562,7 @@ def audit_roadmap_realization(heal_hashes: bool = False, arch_data=None):
     p4_4_ok = (
         update_prod_path.exists()
         and os.access(update_prod_path, os.X_OK)
-        and final_stages_path.exists()
+        and mariadb_prov_path.exists()
         and apache_vhost_path.exists()
         and "AddOutputFilterByType" in htaccess_text
     )

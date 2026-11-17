@@ -183,7 +183,7 @@ When auditing or enriching any entity in the encyclopedia, these skills interact
 1. **Auditor Skill** identifies deficiencies (e.g. thin derivation edges, unmapped prose equations, missing asymptotic limits).
 2. **CAS Prover Skill** verifies mathematical properties symbolically before proposing changes.
 3. **Write Bridge** updates the Git JSON shard and MariaDB atomically.
-4. **Integrity Shield** verifies that all 241 Pytest and 16 native PHP unit tests pass and manifold closure is preserved.
+4. **Integrity Shield** verifies that all 241+ Pytest and 30 native PHP unit suites pass and manifold closure is preserved.
 
 ---
 
@@ -192,7 +192,7 @@ When auditing or enriching any entity in the encyclopedia, these skills interact
 Physics Lab serves as the flagship domain module of **Project Terra**, an overarching laboratory and computational manifold designed to scale across five primary sciences (Physics, Chemistry, Mathematics, Biology, Earth Sciences).
 
 * **Development Environment**: Local macOS developer workstation (`http://localhost:8000`), version-controlled with Git.
-* **Production Environment (`https://physicslab.ca`)**: **Debian 13 (Trixie)** running **Apache 2.4**, **PHP 8** (8.4 with OPcache), **MariaDB** (`terra_app` least-privilege account), and a PEP 668 Python `.venv` (`sympy`, `mpmath`). The repository is cloned into `/srv/www/terra` with Apache's `DocumentRoot` isolated strictly to `/srv/www/terra/public` and updated via `git pull --ff-only` + `cli_sync.php` (detailed in [`docs/final_stages.md`](final_stages.md)).
+* **Production Environment (`https://physicslab.ca`)**: **Debian 13 (Trixie)** running **Apache 2.4**, **PHP 8** (`php8.4-fpm` with OPcache), **MariaDB** (`terra_app` least-privilege account), and a PEP 668 Python `.venv` (`sympy`, `mpmath`). The repository is cloned into `/srv/www/terra` with Apache's `DocumentRoot` isolated strictly to `/srv/www/terra/public` and updated via [`scripts/update_prod.sh`](../scripts/update_prod.sh) (`git pull --ff-only` + `cli_sync.php --warm-cache`).
 * **Automated Quality Gates**:
   - `integrity_shield.py`: Verifies zero broken links, delimiter purity, 100% manifold closure, and schema validity.
-  - `pytest tests/` & `composer test`: 241 Pytest and 16 native PHP regression tests executed prior to any deployment.
+  - `pytest tests/` & `composer test`: 241+ Pytest tests and 30 native PHP regression suites executed prior to any deployment.

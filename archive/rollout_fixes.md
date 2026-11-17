@@ -1,9 +1,9 @@
 # 🚀 Terra Physics Lab — Development-to-Production Rollout Blueprint
 
-> **Status**: Archived Historical Record (Stages 1–3 Completed; Stage 4 & Operations in [`docs/final_stages.md`](../docs/final_stages.md))  
+> **Status**: Archived Historical Record (Stages 1–3 Completed; Stage 4 Archived in [`archive/final_stages.md`](final_stages.md))  
 > **Target Production Host**: **Debian 13 (Trixie) + Apache 2.4 + PHP 8 (8.4) + MariaDB + Python 3 `.venv` (`sympy`)** (`https://physicslab.ca`)  
 > **Authoring & Release Model**: Local macOS Studio $\to$ GitHub $\to$ `git clone` / `git pull --ff-only` in `/srv/www/terra` (`DocumentRoot /srv/www/terra/public`)  
-> **Authoritative References**: [`docs/final_stages.md`](../docs/final_stages.md), [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](../docs/architecture.md), [`docs/ideas.md`](../docs/ideas.md), [`docs/roadmap.md`](../docs/roadmap.md), [`docs/cost_governance.md`](../docs/cost_governance.md)
+> **Authoritative References**: [`archive/final_stages.md`](final_stages.md), [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](../docs/architecture.md), [`docs/ideas.md`](../docs/ideas.md), [`docs/roadmap.md`](../docs/roadmap.md), [`docs/cost_governance.md`](../docs/cost_governance.md)
 
 ---
 
@@ -76,6 +76,6 @@ Per [`README.md`](../README.md#L8), [`docs/architecture.md`](../docs/architectur
 
 ---
 
-## 5. Stage 4: Moved to Active Blueprint ([`docs/final_stages.md`](../docs/final_stages.md))
+## 5. Stage 4: Archived Blueprint ([`archive/final_stages.md`](final_stages.md))
 
-Stage 4 (Debian 13 Apache `.htaccess` tuning, MariaDB least-privilege provisioning, ongoing-revision cache/migration safeguards, and the Git-native `scripts/update_prod.sh` pipeline) is tracked in [`docs/final_stages.md`](../docs/final_stages.md).
+Stage 4 (Debian 13 Apache `.htaccess` tuning, MariaDB least-privilege provisioning, ongoing-revision cache/migration safeguards, and the Git-native `scripts/update_prod.sh` pipeline) is archived in [`archive/final_stages.md`](final_stages.md) and codified as Phase 4 in [`docs/roadmap.md`](../docs/roadmap.md).

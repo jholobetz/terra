@@ -1,6 +1,6 @@
 # 🛰️ Terra Physics Lab — Post-Cutover Burn-In & Operations Guide
 
-> **Status**: Active Post-Cutover Burn-In & Evaluation Checklist  
+> **Status**: Post-Cutover Burn-In Completed (`8 / 8` Checks Verified — 2026-11-17)  
 > **Canonical Production Target**: [`https://physicslab.ca`](https://physicslab.ca) (`/srv/www/terra`, Debian 13 + Apache 2.4 + `php8.4-fpm` + MariaDB + `.venv`)  
 > **Companion Documents**: [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](architecture.md), [`docs/roadmap.md`](roadmap.md), [`docs/ideas.md`](ideas.md)
 
@@ -30,14 +30,11 @@ A complete live browser pass on `https://physicslab.ca` should exercise the dyna
 
 ---
 
-## 3. Reverse-Proxy & Client IP Rate-Limiting Verification
+## 3. Reverse-Proxy (Anubis) & Client IP Rate-Limiting Verification
 
-During initial log inspection, Apache recorded `[client 127.0.0.1:...]` on external requests to `https://physicslab.ca`:
-
-* [ ] **Verify Forwarding Headers Behind Loopback Proxies/Tunnels**:
-  * [`AuthService::resolveClientIp()`](../app/logic/AuthService.php) trusts `127.0.0.1` as a local proxy and extracts the caller's real IP from `X-Forwarded-For` or `X-Real-IP`.
-  * If a local reverse proxy sits in front of Apache *without* forwarding `X-Forwarded-For` / `X-Real-IP`, every external visitor resolves to `'127.0.0.1'` and shares a single `20 req/min` sliding-window rate-limit bucket for CAS and semantic search.
-  * **Quick Check**: Load a page from an external network (e.g., phone on cellular data) and inspect `/var/log/apache2/*access*.log` (or forwarded headers) to confirm distinct visitor IPs are preserved.
+* [x] **Pre-Anubis / Post-Anubis Proxy Topology Verified** *(Verified 2026-11-17)*:
+  * Apache terminates public HTTPS (`access_pre-anubis_https_physicslab.log`, recording real caller IPs), passes traffic through **Anubis** anti-scraper protection, and forwards verified requests to the backend listener (`access_post-anubis_https_physicslab.log` on `127.0.0.1`).
+  * [`AuthService::resolveClientIp()`](../app/logic/AuthService.php) already trusts `127.0.0.1` and extracts `X-Forwarded-For` / `X-Real-IP` forwarded by the proxy/Anubis layer so per-IP CAS rate-limiting buckets remain isolated per visitor.
 
 ---
 
@@ -45,24 +42,18 @@ During initial log inspection, Apache recorded `[client 127.0.0.1:...]` on exter
 
 Three quick checks on Debian 13 prevent silent operational failures weeks or months after launch:
 
-* [ ] **Reboot Auto-Start Survival**:
-  ```bash
-  systemctl is-enabled apache2 php8.4-fpm mariadb
-  ```
-  Confirm all three print `enabled` so an unexpected host reboot restores `https://physicslab.ca` automatically.
-* [ ] **60-Day Let's Encrypt TLS Renewal Dry-Run**:
+* [x] **Reboot Auto-Start Survival** *(Verified 2026-11-17)*:
+  * Verified `apache2`, `php8.4-fpm`, and `mariadb` are `enabled`, and `anubis@physicslab.ca.service` (`Anubis Web AI Firewall Instance - physicslab.ca`) is `loaded active running`.
+* [x] **60-Day Let's Encrypt TLS Renewal Dry-Run** *(Verified 2026-11-17)*:
   ```bash
   sudo certbot renew --dry-run
   ```
-  Proves Certbot's HTTP-01 challenge reaches `/.well-known/acme-challenge/` cleanly through [`public/.htaccess`](../public/.htaccess).
-* [ ] **Canonical Host & HTTPS Redirects (`301`)**:
-  ```bash
-  curl -I http://physicslab.ca/
-  curl -I https://www.physicslab.ca/
-  ```
-  Verify both redirect cleanly (`301`) to `https://physicslab.ca` so search engines never index duplicate hosts.
-* [ ] **Disable Production Xdebug (If Loaded)**:
-  * If `php-xdebug` is enabled in `php8.4-fpm` or `apache2` (indicated by multi-line `PHP Stack trace:` notices in Apache error logs), disabling it for web SAPIs (`sudo phpdismod -s fpm xdebug && sudo phpdismod -s apache2 xdebug && sudo systemctl reload php8.4-fpm apache2`) reduces CPU and memory overhead on dynamic requests.
+  Verified: `Congratulations, all simulated renewals succeeded: /etc/letsencrypt/live/physicslab.ca/fullchain.pem (success)`.
+* [x] **Canonical Host & HTTPS Redirects (`301`)** *(Verified 2026-11-17)*:
+  * Verified `http://physicslab.ca/` returns `301 Moved Permanently` $\rightarrow$ `https://physicslab.ca/`.
+  * Canonical host policy is bare **`https://physicslab.ca`** only (matching `jholobetz.ca`); unintended registrar `www` DNS record removed in DNS panel.
+* [x] **Disable Production Xdebug** *(Verified 2026-11-17)*:
+  * Detected `20-xdebug.ini` across `apache2`, `fpm`, and `cli`; disabled via `sudo phpdismod xdebug` and reloaded `php8.4-fpm` + `apache2` to eliminate Zend hook overhead and stack-trace log noise.
 
 ---
 

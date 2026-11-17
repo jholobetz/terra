@@ -380,9 +380,35 @@ $runner->run('PhysicsServiceTest', 'testGetRelatedTopicsAndPreviewMode', functio
     $svc->setPreviewMode(false);
     $t->assertFalse($svc->isPreviewActive());
 
-    $related = $svc->getRelatedTopics('special-relativity', 3);
-    $t->assertSame(3, count($related));
+    $related = $svc->getRelatedTopics('special-relativity', 4);
+    $t->assertSame(4, count($related));
     $t->assertTrue(!empty($related[0]['slug']));
+    $t->assertTrue(!empty($related[0]['title']));
+    $t->assertTrue(!empty($related[0]['domain']));
+    $t->assertTrue(!empty($related[0]['url']));
+    $t->assertTrue(!empty($related[0]['snippet']), 'Related topics must include real physical snippets');
+    $t->assertFalse(
+        str_contains($related[0]['snippet'], 'Explore theoretical mechanics, governing equations'),
+        'Related topics must not use legacy hardcoded boilerplate snippets'
+    );
+
+    // Ensure deterministic cross-pillar bridge guarantee when limit >= 2
+    $hasBridge = false;
+    foreach ($related as $item) {
+        if (!empty($item['is_bridge'])) {
+            $hasBridge = true;
+            break;
+        }
+    }
+    $t->assertTrue($hasBridge, 'getRelatedTopics must include at least one cross-pillar bridge candidate');
+
+    // Ensure subtopic.php contains zero CSP-violating inline onclick attributes
+    $subtopicViewSrc = (string)file_get_contents(PROJECT_ROOT . '/app/views/physics/subtopic.php');
+    $t->assertFalse(str_contains($subtopicViewSrc, 'onclick='), 'subtopic.php must not contain inline onclick handlers');
+
+    // Ensure /physics/api/related-subtopics/@slug delegates to unified PhysicsService::getRelatedTopics
+    $controllerSrc = (string)file_get_contents(PROJECT_ROOT . '/app/controllers/PhysicsController.php');
+    $t->assertContains('$this->service()->getRelatedTopics($slug, 4)', $controllerSrc);
 });
 
 $runner->run('PhysicsServiceTest', 'testLazyNotationLoadingAndSlimSchema', function (NativePhpTestRunner $t) {

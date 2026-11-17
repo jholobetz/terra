@@ -207,20 +207,27 @@ if (empty($labLauncher)) {
                 <span style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace; letter-spacing: 0.1em;">CONNECTED SUBTOPICS</span>
             </div>
             <div class="concept-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-                <?php foreach ($related_topics as $rel): ?>
-                    <div class="concept-card related-concept-card" data-subtopic-slug="<?= htmlspecialchars($rel['slug']) ?>" style="cursor: pointer;" onclick="window.location.href='/physics/subtopic/<?= htmlspecialchars($rel['slug']) ?>'">
+                <?php foreach ($related_topics as $rel):
+                    $relUrl = $rel['url'] ?? ('/physics/subtopic/' . ($rel['slug'] ?? ''));
+                    $relDomain = $rel['domain'] ?? 'Physics';
+                    $relSnippet = $rel['snippet'] ?? 'Explore governing principles, mathematical derivations, and topological connections.';
+                    $isBridge = !empty($rel['is_bridge']);
+                ?>
+                    <a href="<?= htmlspecialchars($relUrl) ?>" class="concept-card related-concept-card" data-subtopic-slug="<?= htmlspecialchars($rel['slug']) ?>">
                         <div class="card-glass-sheen"></div>
-                        <div class="concept-anchor">
-                            <span class="level-tag level-analytical">Analytical</span>
-                            <h4><strong><a href="/physics/subtopic/<?= htmlspecialchars($rel['slug']) ?>" class="subtopic-link"><?= htmlspecialchars($rel['title']) ?></a></strong></h4>
+                        <div class="concept-anchor related-card-anchor">
+                            <span class="level-tag <?= $isBridge ? 'level-bridge' : 'level-analytical' ?>">
+                                <?= $isBridge ? '⇄ Bridge &middot; ' : '' ?><?= htmlspecialchars($relDomain) ?>
+                            </span>
+                            <h4><strong><?= htmlspecialchars($rel['title']) ?></strong></h4>
                         </div>
                         <div class="concept-detail subtopic-card-abstract">
-                            <p>Explore theoretical mechanics, governing equations, and derivation bridges.</p>
+                            <p><?= htmlspecialchars($relSnippet) ?></p>
                         </div>
                         <div class="concept-card-footer">
                             <span class="explore-subtopic-btn">Explore Deep Dive &rarr;</span>
                         </div>
-                    </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
         </section>
@@ -659,6 +666,24 @@ document.addEventListener('DOMContentLoaded', () => {
 .citation-list .citation-ext-link:hover {
     color: var(--accent-color) !important;
     border-bottom-color: var(--accent-color) !important;
+}
+
+a.related-concept-card {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.related-concept-card .related-card-anchor {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.related-concept-card .level-bridge {
+    background: rgba(180, 133, 255, 0.12);
+    color: #c4a1ff;
+    border: 1px solid rgba(180, 133, 255, 0.32);
 }
 
 @media (max-width: 800px) {

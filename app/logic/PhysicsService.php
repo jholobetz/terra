@@ -217,45 +217,279 @@ class PhysicsService
     }
 
     /**
-     * Scans registry keywords to find related content nodes.
+     * Resolves related subtopics deterministically using 100% Git-tracked manifold topology:
+     *   1. Explicit outgoing prose cross-links (<a href="/physics/subtopic/...">)
+     *   2. Direct parent/child or sibling parent lineage
+     *   3. Shared formula_ids and search_index concept tokens
+     *   4. Guaranteed cross-pillar bridge diversity ("Describing How It All Connects")
+     *
+     * Used identically by both subtopic.php (static HTML cache) and /physics/api/related-subtopics/@slug.
      */
     public function getRelatedTopics(string $currentSlug, int $limit = 3): array
     {
-        $content = $this->getPhysicsContent();
+        if ($limit < 1 || $currentSlug === '') {
+            return [];
+        }
+
+        $content = $this->getPhysicsContent($currentSlug);
         $index = $content['search_index'] ?? [];
-        
-        if (!isset($index[$currentSlug])) return [];
-        
-        $currentKeywords = $index[$currentSlug]['k'] ?? [];
-        if (empty($currentKeywords)) return [];
-        
-        $scores = [];
-        foreach ($index as $slug => $data) {
-            if ($slug === $currentSlug) continue;
-            
-            $otherKeywords = $data['k'] ?? [];
-            $overlap = count(array_intersect($currentKeywords, $otherKeywords));
-            
-            if ($overlap > 0) {
-                if (!empty($data['p']) && !empty($index[$currentSlug]['p']) && $data['p'][0] === $index[$currentSlug]['p'][0]) {
-                    $overlap += 2;
-                }
-                $scores[$slug] = $overlap;
+        $topics = $content['topics'] ?? [];
+
+        $currentNode = $content['subtopics'][$currentSlug] ?? null;
+        if ($currentNode === null && !isset($index[$currentSlug])) {
+            $fetched = $this->fetchAndPrepare('subtopics', $currentSlug);
+            if (!empty($fetched) && is_array($fetched)) {
+                $currentNode = $fetched;
             }
         }
-        
-        arsort($scores);
-        $relatedSlugs = array_slice(array_keys($scores), 0, $limit);
-        
+
+        if ($currentNode === null && !isset($index[$currentSlug])) {
+            return [];
+        }
+
+        // 1. Outgoing topological prose links from current article HTML
+        $outgoingMap = [];
+        $htmlContent = (string)($currentNode['content'] ?? '');
+        if ($htmlContent !== '' && preg_match_all('~/physics/subtopic/([a-z0-9-]+)~', $htmlContent, $matches)) {
+            foreach ($matches[1] as $linkedSlug) {
+                if ($linkedSlug !== $currentSlug) {
+                    $outgoingMap[$linkedSlug] = true;
+                }
+            }
+        }
+
+        // 2. Parent lineage lookup map
+        $rawParents = $currentNode['parents'] ?? ($index[$currentSlug]['p'] ?? []);
+        if (is_string($rawParents)) {
+            $rawParents = json_decode($rawParents, true) ?: [$rawParents];
+        }
+        $currentParentMap = [];
+        foreach ((array)$rawParents as $p) {
+            if (is_string($p) && $p !== '') {
+                $currentParentMap[$p] = true;
+            }
+        }
+
+        // 3. Keyword & normalized formula_id lookup map (works even before search_index rebuild)
+        $currentKeywordMap = [];
+        foreach ((array)($index[$currentSlug]['k'] ?? []) as $kw) {
+            if (is_string($kw) && $kw !== '') {
+                $currentKeywordMap[$kw] = true;
+            }
+        }
+        foreach ((array)($currentNode['formula_ids'] ?? []) as $fid) {
+            if (is_string($fid) && $fid !== '') {
+                $currentKeywordMap[str_replace('-', ' ', strtolower($fid))] = true;
+            }
+        }
+
+        $currentShard = $this->resolveLogicalShard($currentSlug, $index, $topics);
+
+        // Candidate pool: all search_index nodes + any brand-new outgoing linked slugs
+        $candidateSlugs = array_keys($index);
+        foreach (array_keys($outgoingMap) as $outSlug) {
+            if (!isset($index[$outSlug])) {
+                $candidateSlugs[] = $outSlug;
+            }
+        }
+
+        $scored = [];
+        foreach ($candidateSlugs as $slug) {
+            if ($slug === $currentSlug) {
+                continue;
+            }
+
+            $data = $index[$slug] ?? [];
+            $score = 0.0;
+
+            if (isset($outgoingMap[$slug])) {
+                $score += 10.0;
+            }
+
+            $otherParents = (array)($data['p'] ?? []);
+            if (isset($currentParentMap[$slug]) || in_array($currentSlug, $otherParents, true)) {
+                $score += 8.0;
+            } else {
+                foreach ($otherParents as $op) {
+                    if (is_string($op) && isset($currentParentMap[$op])) {
+                        $score += 6.0;
+                        break;
+                    }
+                }
+            }
+
+            if (!empty($currentKeywordMap) && !empty($data['k'])) {
+                $overlap = 0;
+                foreach ($data['k'] as $okw) {
+                    if (is_string($okw) && isset($currentKeywordMap[$okw])) {
+                        $overlap++;
+                    }
+                }
+                if ($overlap > 0) {
+                    $score += $overlap * 1.5;
+                }
+            }
+
+            if ($score <= 0.0) {
+                continue;
+            }
+
+            if (str_ends_with($slug, '-overview')) {
+                $score -= 6.0;
+            }
+
+            if ($score > 0.0) {
+                $scored[] = [
+                    'slug' => $slug,
+                    'score' => $score,
+                    'shard' => $this->resolveLogicalShard($slug, $index, $topics),
+                ];
+            }
+        }
+
+        if (empty($scored)) {
+            return [];
+        }
+
+        usort($scored, static function (array $a, array $b): int {
+            $cmp = $b['score'] <=> $a['score'];
+            return $cmp !== 0 ? $cmp : strcmp($a['slug'], $b['slug']);
+        });
+
+        $selected = array_slice($scored, 0, $limit);
+
+        // 4. Cross-pillar bridge guarantee: ensure at least 1 cross-domain bridge when limit >= 2
+        if ($limit >= 2 && count($selected) === $limit && $currentShard !== '') {
+            $hasBridge = false;
+            foreach ($selected as $item) {
+                if ($item['shard'] !== '' && $item['shard'] !== $currentShard) {
+                    $hasBridge = true;
+                    break;
+                }
+            }
+            if (!$hasBridge) {
+                $totalCandidates = count($scored);
+                for ($i = $limit; $i < $totalCandidates; $i++) {
+                    $cand = $scored[$i];
+                    if ($cand['shard'] !== '' && $cand['shard'] !== $currentShard && $cand['score'] >= 6.0) {
+                        $selected[$limit - 1] = $cand;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // 5. Lazily enrich only the winning slugs with domain titles and clean physical snippets
         $results = [];
-        foreach ($relatedSlugs as $rSlug) {
+        foreach ($selected as $item) {
+            $rSlug = $item['slug'];
+            $rShard = $item['shard'];
+            $this->loadShardForSlug($rSlug);
+            $winnerNode = $this->physicsContent['subtopics'][$rSlug] ?? null;
+            if ($winnerNode === null) {
+                $fetchedWinner = $this->fetchAndPrepare('subtopics', $rSlug);
+                if (!empty($fetchedWinner) && is_array($fetchedWinner)) {
+                    $winnerNode = $fetchedWinner;
+                }
+            }
+
+            $title = (string)($winnerNode['title'] ?? ($index[$rSlug]['t'] ?? $rSlug));
+            $domain = $this->resolveShardDomainTitle($rShard, $topics);
+            $snippet = $this->extractCleanSubtopicSnippet(is_array($winnerNode) ? $winnerNode : []);
+            $isBridge = ($rShard !== '' && $currentShard !== '' && $rShard !== $currentShard);
+
             $results[] = [
                 'slug' => $rSlug,
-                'title' => $index[$rSlug]['t']
+                'title' => $title,
+                'domain' => $domain,
+                'url' => '/physics/subtopic/' . $rSlug,
+                'snippet' => $snippet,
+                'is_bridge' => $isBridge,
             ];
         }
-        
+
         return $results;
+    }
+
+    /**
+     * Resolves a subtopic's logical primary pillar shard (walking parent links for legacy-orphans.json).
+     */
+    private function resolveLogicalShard(string $slug, array $index, array $topics, array $seen = []): string
+    {
+        if (isset($seen[$slug])) {
+            return '';
+        }
+        $seen[$slug] = true;
+
+        if (isset($topics[$slug])) {
+            return $slug . '.json';
+        }
+
+        $entry = $index[$slug] ?? [];
+        $shard = (string)($entry['s'] ?? '');
+        if ($shard !== '' && $shard !== 'legacy-orphans.json') {
+            return $shard;
+        }
+
+        foreach ((array)($entry['p'] ?? []) as $parentSlug) {
+            if (is_string($parentSlug) && $parentSlug !== '') {
+                $resolved = $this->resolveLogicalShard($parentSlug, $index, $topics, $seen);
+                if ($resolved !== '' && $resolved !== 'legacy-orphans.json') {
+                    return $resolved;
+                }
+            }
+        }
+
+        return $shard;
+    }
+
+    /**
+     * Maps a primary content shard filename (e.g. 'astrophysics.json') to its canonical Pillar title.
+     */
+    private function resolveShardDomainTitle(string $shardFile, array $topics): string
+    {
+        if ($shardFile === '') {
+            return 'Physics';
+        }
+        $stem = basename($shardFile, '.json');
+        if (isset($topics[$stem]['title']) && is_string($topics[$stem]['title'])) {
+            return $topics[$stem]['title'];
+        }
+        if ($stem === 'legacy-orphans') {
+            return 'Foundational Physics';
+        }
+        return ucwords(str_replace('-', ' ', $stem));
+    }
+
+    /**
+     * Extracts a clean, plain-text summary snippet for related-subtopic cards.
+     */
+    private function extractCleanSubtopicSnippet(array $node, int $maxChars = 165): string
+    {
+        $snippet = trim((string)($node['snippet'] ?? ''));
+        if ($snippet === '' && !empty($node['content'])) {
+            $raw = (string)$node['content'];
+            if (preg_match('~<p[^>]*>(.*?)</p>~is', $raw, $m)) {
+                $raw = $m[1];
+            }
+            $raw = preg_replace('~<svg\b[^>]*>.*?</svg>~is', '', $raw) ?? $raw;
+            $snippet = trim(preg_replace('/\s+/', ' ', strip_tags($raw)) ?? '');
+        }
+
+        if ($snippet === '') {
+            return 'Explore governing principles, mathematical derivations, and topological connections.';
+        }
+
+        if (mb_strlen($snippet, 'UTF-8') > $maxChars) {
+            $cut = mb_substr($snippet, 0, $maxChars, 'UTF-8');
+            $lastSpace = mb_strrpos($cut, ' ', 0, 'UTF-8');
+            if ($lastSpace !== false && $lastSpace > (int)($maxChars * 0.6)) {
+                $cut = mb_substr($cut, 0, $lastSpace, 'UTF-8');
+            }
+            $snippet = rtrim($cut, " \t\n\r\0\x0B,.;:-") . '…';
+        }
+
+        return $snippet;
     }
 
     /**

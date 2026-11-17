@@ -1105,14 +1105,13 @@ class PhysicsController
     }
 
     /**
-     * API action returning conceptually isomorphic related subtopics computed via dense vectors.
+     * API action returning deterministic related subtopics resolved from Git-tracked manifold topology.
      */
     public function apiRelatedSubtopics(string $slug)
     {
         header('Content-Type: application/json; charset=utf-8');
         try {
-            $semanticService = Flight::semanticSearchService();
-            $results = $semanticService->getRelatedSubtopics($slug, 4);
+            $results = $this->service()->getRelatedTopics($slug, 4);
             echo json_encode([
                 'success' => true,
                 'slug' => $slug,
@@ -1525,7 +1524,7 @@ class PhysicsController
 
         $parents = !empty($subtopic['parents']) ? (is_string($subtopic['parents']) ? (json_decode($subtopic['parents'], true) ?: []) : (array)$subtopic['parents']) : [];
         $breadcrumbs = $this->service()->resolveBreadcrumbs($parents);
-        $related = $this->service()->getRelatedTopics($slug);
+        $related = $this->service()->getRelatedTopics($slug, 4);
         $subtopicVariables = \App\Logic\VariableAggregator::buildSubtopicVariables($subtopic);
 
         require_once __DIR__ . '/../logic/LabToolsLauncher.php';
@@ -1850,6 +1849,7 @@ class PhysicsController
         $subDependencies = array_merge($this->getSharedLayoutDependencies(), [
             PROJECT_ROOT . '/app/views/physics/subtopic.php',
             PROJECT_ROOT . '/app/views/physics/_equations_partial.php',
+            PROJECT_ROOT . '/app/logic/PhysicsService.php',
             PROJECT_ROOT . '/app/logic/VariableAggregator.php',
             PROJECT_ROOT . '/app/logic/LabToolsLauncher.php',
         ]);

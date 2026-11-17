@@ -1,19 +1,37 @@
 <?php
 
 require_once __DIR__ . '/../../vendor/autoload.php';
-$config = require __DIR__ . '/../../app/config/config.php';
+require_once __DIR__ . '/../../app/logic/AuthService.php';
+
+$isEmbeddedMigration = isset($migrationExecSql) && is_callable($migrationExecSql);
+$config = [];
+if (!$isEmbeddedMigration) {
+    $config = require __DIR__ . '/../../app/config/config.php';
+}
 
 try {
-    $dsn = "mysql:host={$config['database']['host']};dbname={$config['database']['dbname']};charset=utf8mb4";
-    $pdo = new PDO($dsn, $config['database']['user'], $config['database']['password'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
+    if ($isEmbeddedMigration) {
+        $execSql = $migrationExecSql;
+    } else {
+        $dsn = "mysql:host={$config['database']['host']};dbname={$config['database']['dbname']};charset=utf8mb4";
+        $pdo = new PDO($dsn, $config['database']['user'], $config['database']['password'], [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ]);
+        $execSql = static function (string $sql, array $params = []) use ($pdo): void {
+            if (empty($params)) {
+                $pdo->exec($sql);
+            } else {
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
+            }
+        };
+    }
 
     echo "[INFO] Running RBAC & Review Queue Migration...\n";
 
     // 1. Create users table
-    $pdo->exec("
+    $execSql("
         CREATE TABLE IF NOT EXISTS users (
             id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             oauth_provider ENUM('github', 'google', 'dev_mock') NOT NULL,
@@ -32,7 +50,7 @@ try {
     echo "[OK] Table 'users' verified/created.\n";
 
     // 2. Create formula_reviews table (Staging / Quarantine)
-    $pdo->exec("
+    $execSql("
         CREATE TABLE IF NOT EXISTS formula_reviews (
             id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             formula_id VARCHAR(191) NOT NULL,
@@ -53,7 +71,7 @@ try {
     echo "[OK] Table 'formula_reviews' verified/created.\n";
 
     // 3. Create formula_audit_logs table
-    $pdo->exec("
+    $execSql("
         CREATE TABLE IF NOT EXISTS formula_audit_logs (
             id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             formula_id VARCHAR(191) NOT NULL,
@@ -71,7 +89,6 @@ try {
     echo "[OK] Table 'formula_audit_logs' verified/created.\n";
 
     // 4. Seed development users for zero-friction local impersonation (skipped in production)
-    require_once __DIR__ . '/../../app/logic/AuthService.php';
     $appEnv = \app\logic\AuthService::resolveAppEnv($config['app_env'] ?? null);
     if ($appEnv === 'production') {
         echo "[SKIP] APP_ENV=production detected; skipping dev_mock user seeding.\n";
@@ -111,14 +128,14 @@ try {
             ]
         ];
 
-        $stmt = $pdo->prepare("
+        $upsertUserSql = "
             INSERT INTO users (oauth_provider, oauth_id, email, display_name, avatar_url, role)
             VALUES (?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE display_name = VALUES(display_name), role = VALUES(role)
-        ");
+        ";
 
         foreach ($devUsers as $u) {
-            $stmt->execute([
+            $execSql($upsertUserSql, [
                 $u['oauth_provider'],
                 $u['oauth_id'],
                 $u['email'],
@@ -132,6 +149,9 @@ try {
     echo "[SUCCESS] Migration completed!\n";
 
 } catch (\Throwable $e) {
+    if ($isEmbeddedMigration) {
+        throw $e;
+    }
     echo "[ERROR] Migration failed: " . $e->getMessage() . "\n";
     exit(1);
 }

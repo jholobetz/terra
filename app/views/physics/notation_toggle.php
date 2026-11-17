@@ -434,4 +434,4 @@
 }
 </style>
 
-<script src="/js/notation_toggle.js" defer></script>
+<script src="/js/notation_toggle.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/notation_toggle.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>

@@ -94,6 +94,8 @@ class NativePhpTestRunner
                 'error' => $e->getMessage(),
                 'line' => $e->getLine(),
             ];
+        } finally {
+            gc_collect_cycles();
         }
     }
 
@@ -975,6 +977,177 @@ $runner->run('Stage3WebPolishTest', 'testRobotsTxtAndSitemapXmlGeneration', func
             file_put_contents($sitemapCache, $hadSitemap, LOCK_EX);
         }
     }
+});
+
+// ============================================================================
+// 12. Stage 4 Ongoing-Revision Cache, Migrations, .htaccess & Deploy Script Suite
+// ============================================================================
+$runner->run('Stage4DeploymentTest', 'testJsAssetCacheBustingAndFormulaShardCacheInvalidation', function (NativePhpTestRunner $t) {
+    // 1. Verify every local <script src="/js/..."> tag across views carries ?v= cache-busting
+    $viewsToAudit = [
+        'layout.php',
+        'home.php',
+        'legendre_transformer.php',
+        'anthropic_tuner.php',
+        'correspondence_workspace.php',
+        'noethers_vault.php',
+        'notation_toggle.php',
+        'lab_tools.php',
+        'simulations.php',
+        'simulation_page.php',
+        'topic.php',
+        'equation_explainer.php',
+        'universe_graph.php',
+    ];
+    foreach ($viewsToAudit as $viewFile) {
+        $src = (string)file_get_contents(PROJECT_ROOT . '/app/views/physics/' . $viewFile);
+        if (preg_match_all('/<script\b[^>]*\bsrc="(\/js\/[^"]+)"/i', $src, $matches)) {
+            foreach ($matches[1] as $scriptSrc) {
+                $t->assertContains('?v=', $scriptSrc, "Script tag in {$viewFile} must carry ?v=filemtime cache-busting");
+            }
+        }
+    }
+
+    // 2. Verify modifying a referenced hex formula shard invalidates the subtopic HTML cache on incremental warm
+    Flight::register('authService', \app\logic\AuthService::class);
+    $app = new \flight\Engine();
+    $app->set('flight.views.path', PROJECT_ROOT . '/app/views');
+    $app->register('db', stdClass::class);
+    $app->register('authService', \app\logic\AuthService::class);
+    $app->register('physicsService', \app\logic\PhysicsService::class, [$app]);
+    $ctrl = new \app\controllers\PhysicsController($app);
+
+    $subCache = PROJECT_ROOT . '/public/cache/subtopic/generalized-coordinates.html';
+    $hadSub = file_exists($subCache) ? file_get_contents($subCache) : null;
+
+    // generalized-coordinates references 'degrees-of-freedom-9057cc89'
+    $targetFormulaId = 'degrees-of-freedom-9057cc89';
+    $hex = substr(md5($targetFormulaId), 0, 2);
+    $formulaShardPath = PROJECT_ROOT . "/app/config/content/formulas/{$hex}/shard_{$hex}.json";
+    $origShardMtime = (int)filemtime($formulaShardPath);
+    $prevErrLog = ini_set('error_log', '/dev/null');
+
+    try {
+        withIsolatedEnv(['APP_ENV' => 'production'], ['REMOTE_ADDR' => '127.0.0.1'], function () use ($t, $ctrl, $subCache, $formulaShardPath) {
+            $build1 = $ctrl->warmHtmlCache(true, ['generalized-coordinates']);
+            $t->assertSame(1, $build1['subtopics_built']);
+
+            $build2 = $ctrl->warmHtmlCache(false, ['generalized-coordinates']);
+            $t->assertSame(0, $build2['subtopics_built']);
+            $t->assertSame(1, $build2['subtopics_skipped']);
+
+            // Simulate a fixlatex update to the referenced formula's hex shard
+            $cacheMtime = (int)filemtime($subCache);
+            touch($formulaShardPath, $cacheMtime + 10);
+
+            $build3 = $ctrl->warmHtmlCache(false, ['generalized-coordinates']);
+            $t->assertSame(1, $build3['subtopics_built'], 'Formula shard update must invalidate referencing subtopic HTML cache');
+            $t->assertSame(0, $build3['subtopics_skipped']);
+        });
+    } finally {
+        touch($formulaShardPath, $origShardMtime);
+        clearstatcache(true, $formulaShardPath);
+        if ($prevErrLog !== false) {
+            ini_set('error_log', $prevErrLog);
+        }
+        if ($hadSub === null) {
+            @unlink($subCache);
+        } else {
+            file_put_contents($subCache, $hadSub, LOCK_EX);
+        }
+    }
+});
+
+$runner->run('Stage4DeploymentTest', 'testSchemaMigrationsRunnerAndProductionSeedGuard', function (NativePhpTestRunner $t) {
+    $mockDb = new class {
+        public array $queries = [];
+        public array $appliedRows = [];
+
+        public function runQuery(string $sql, array $params = []): object
+        {
+            $this->queries[] = ['sql' => trim($sql), 'params' => $params];
+            if (str_starts_with(trim($sql), 'INSERT INTO schema_migrations') && !empty($params[0])) {
+                $this->appliedRows[$params[0]] = ['migration' => $params[0], 'checksum' => $params[1] ?? ''];
+            }
+            return (object)['ok' => true];
+        }
+
+        public function fetchAll(string $sql): array
+        {
+            if (str_contains($sql, 'FROM schema_migrations')) {
+                return array_values($this->appliedRows);
+            }
+            return [];
+        }
+    };
+
+    $app = new \flight\Engine();
+    $app->map('db', fn() => $mockDb);
+    $svc = new \app\logic\PhysicsService($app);
+
+    // 1. Test lexical ordering (.sql + .php) and idempotency via schema_migrations ledger
+    $tmpDir = sys_get_temp_dir() . '/terra_mig_test_' . uniqid();
+    mkdir($tmpDir, 0775, true);
+    file_put_contents($tmpDir . '/001_init.sql', "CREATE TABLE IF NOT EXISTS demo_a (id INT PRIMARY KEY);\n");
+    file_put_contents($tmpDir . '/002_seed.php', "<?php\n\$migrationExecSql('CREATE TABLE IF NOT EXISTS demo_b (id INT PRIMARY KEY)');\n");
+
+    try {
+        $first = $svc->runMigrations($tmpDir);
+        $t->assertSame(2, $first['checked']);
+        $t->assertSame(['001_init.sql', '002_seed.php'], $first['applied']);
+        $t->assertSame([], $first['skipped']);
+
+        $second = $svc->runMigrations($tmpDir);
+        $t->assertSame([], $second['applied'], 'Second run must skip already-applied migrations');
+        $t->assertSame(['001_init.sql', '002_seed.php'], $second['skipped']);
+    } finally {
+        @unlink($tmpDir . '/001_init.sql');
+        @unlink($tmpDir . '/002_seed.php');
+        @rmdir($tmpDir);
+    }
+
+    // 2. Test real scripts/migrations/001_create_rbac_and_review_tables.php under APP_ENV=production
+    $mockDb->queries = [];
+    $mockDb->appliedRows = [];
+    withIsolatedEnv(['APP_ENV' => 'production'], [], function () use ($t, $svc, $mockDb) {
+        $prodMig = $svc->runMigrations(PROJECT_ROOT . '/scripts/migrations');
+        $t->assertTrue(in_array('001_create_rbac_and_review_tables.php', $prodMig['applied'], true), '001 migration must be applied');
+
+        $allSql = implode("\n", array_column($mockDb->queries, 'sql'));
+        $t->assertContains('CREATE TABLE IF NOT EXISTS users', $allSql);
+        $t->assertContains('CREATE TABLE IF NOT EXISTS formula_reviews', $allSql);
+        $t->assertContains('CREATE TABLE IF NOT EXISTS formula_audit_logs', $allSql);
+        $t->assertFalse(str_contains($allSql, 'INSERT INTO users'), 'Production migration must not seed dev_mock users');
+    });
+});
+
+$runner->run('Stage4DeploymentTest', 'testHtaccessCompressionAcmeExemptionAndUpdateProdScript', function (NativePhpTestRunner $t) {
+    $htaccess = (string)file_get_contents(PROJECT_ROOT . '/public/.htaccess');
+    $t->assertContains('AddOutputFilterByType DEFLATE', $htaccess);
+    $t->assertContains('application/javascript', $htaccess);
+    $t->assertContains('max-age=31536000, immutable', $htaccess);
+    $t->assertContains('!^/\.well-known/', $htaccess, '.htaccess must exempt /.well-known/ for Let\'s Encrypt renewals');
+    $t->assertContains('RewriteRule (?:^|/)\. - [F,L]', $htaccess);
+
+    $apacheExample = (string)file_get_contents(PROJECT_ROOT . '/deploy/apache/physicslab.ca-le-ssl.conf.example');
+    $t->assertContains('ServerName physicslab.ca', $apacheExample);
+    $t->assertContains('DocumentRoot /srv/www/terra/public', $apacheExample);
+    $t->assertContains('SetEnv APP_ENV production', $apacheExample);
+
+    $sqlProv = (string)file_get_contents(PROJECT_ROOT . '/deploy/mariadb/provision_terra.sql');
+    $t->assertContains("'terra_app'@'localhost'", $sqlProv);
+    $t->assertFalse(str_contains($sqlProv, 'GRANT ALL'), 'MariaDB user must follow least-privilege grants');
+
+    $tuning = (string)file_get_contents(PROJECT_ROOT . '/deploy/mariadb/99-terra-tuning.cnf');
+    $t->assertContains('innodb_buffer_pool_size', $tuning);
+
+    $updateScriptPath = PROJECT_ROOT . '/scripts/update_prod.sh';
+    $t->assertTrue(is_file($updateScriptPath) && is_executable($updateScriptPath), 'scripts/update_prod.sh must exist and be executable');
+    $updateSrc = (string)file_get_contents($updateScriptPath);
+    $t->assertContains('git pull --ff-only', $updateSrc);
+    $t->assertContains('--quick', $updateSrc);
+    $t->assertContains('--rollback', $updateSrc);
+    $t->assertContains('--resolve "${DOMAIN}:443:127.0.0.1"', $updateSrc);
 });
 
 $jsonFlag = in_array('--json', $argv ?? [], true);

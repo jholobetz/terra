@@ -530,4 +530,4 @@
 }
 </style>
 
-<script src="/js/noethers_vault.js" nonce="<?= $nonce ?>" defer></script>
+<script src="/js/noethers_vault.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/noethers_vault.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>

@@ -581,6 +581,6 @@
 </style>
 
 <!-- math.js for symbolic differentiation and simplification -->
-<script src="/js/lib/math.min.js"></script>
+<script src="/js/lib/math.min.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/lib/math.min.js') ?: 1 ?>" nonce="<?= $nonce ?>"></script>
 <!-- Client-side controller script -->
-<script src="/js/legendre_transformer.js" defer></script>
+<script src="/js/legendre_transformer.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/legendre_transformer.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>

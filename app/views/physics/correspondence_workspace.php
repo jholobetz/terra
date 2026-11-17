@@ -488,4 +488,4 @@
 }
 </style>
 
-<script src="/js/correspondence_workspace.js" nonce="<?= $nonce ?>" defer></script>
+<script src="/js/correspondence_workspace.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/correspondence_workspace.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>

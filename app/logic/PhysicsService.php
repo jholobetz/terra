@@ -1165,6 +1165,14 @@ class PhysicsService
     }
 
     /**
+     * Runs pending numbered database migrations in scripts/migrations/ using schema_migrations ledger.
+     */
+    public function runMigrations(?string $migrationsDir = null): array
+    {
+        return $this->syncService->runMigrations($migrationsDir);
+    }
+
+    /**
      * Identifies and optionally prunes database subtopics that no longer exist on disk.
      * Supports dry-run auditing.
      */

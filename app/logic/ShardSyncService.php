@@ -148,14 +148,32 @@ class ShardSyncService
         $formulasSynced = 0;
         $newRegistry = $hashRegistry;
         $db = $this->app->db();
+        $hasLiveDb = $db && method_exists($db, 'runQuery') && method_exists($db, 'fetchAll');
+        $dbShardHashes = null;
 
-        if ($db) {
+        if ($hasLiveDb) {
             try {
                 if ($this->ensureFormulasSchema($db)) {
                     $force = true;
                 }
+                $db->runQuery("CREATE TABLE IF NOT EXISTS shard_sync_state (
+                    shard_path VARCHAR(255) PRIMARY KEY,
+                    sha256 CHAR(64) NOT NULL,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+                $stateRows = $db->fetchAll("SELECT shard_path, sha256 FROM shard_sync_state") ?: [];
+                $dbShardHashes = [];
+                foreach ($stateRows as $sr) {
+                    $arr = is_object($sr) ? (method_exists($sr, 'getData') ? $sr->getData() : (array)$sr) : (array)$sr;
+                    $sPath = $arr['shard_path'] ?? $arr['SHARD_PATH'] ?? null;
+                    $sHash = $arr['sha256'] ?? $arr['SHA256'] ?? null;
+                    if (is_string($sPath) && is_string($sHash)) {
+                        $dbShardHashes[$sPath] = $sHash;
+                    }
+                }
             } catch (\Throwable $e) {
                 // Non-fatal if DB permissions restrict DDL introspection
+                $dbShardHashes = null;
             }
         }
 
@@ -231,7 +249,8 @@ class ShardSyncService
             $fileContent = file_get_contents($filePath);
             $currentHash = hash('sha256', $fileContent);
 
-            if (!$force && isset($hashRegistry[$relativePath]) && $hashRegistry[$relativePath] === $currentHash) {
+            $baselineHashes = is_array($dbShardHashes) ? $dbShardHashes : $hashRegistry;
+            if (!$force && isset($baselineHashes[$relativePath]) && $baselineHashes[$relativePath] === $currentHash) {
                 $newRegistry[$relativePath] = $currentHash;
                 continue;
             }
@@ -337,10 +356,23 @@ class ShardSyncService
 
             if ($shardSuccess) {
                 $newRegistry[$relativePath] = $currentHash;
+                if ($hasLiveDb && is_array($dbShardHashes)) {
+                    try {
+                        $db->runQuery(
+                            "INSERT INTO shard_sync_state (shard_path, sha256) VALUES (?, ?)
+                             ON DUPLICATE KEY UPDATE sha256 = VALUES(sha256), updated_at = CURRENT_TIMESTAMP",
+                            [$relativePath, $currentHash]
+                        );
+                    } catch (\Throwable $stateErr) {
+                        // Non-fatal
+                    }
+                }
             }
         }
 
-        if ($shardsUpdated > 0 || $newRegistry !== $hashRegistry) {
+        require_once __DIR__ . '/AuthService.php';
+        $isProduction = AuthService::resolveAppEnv() === 'production';
+        if ((!$isProduction && ($shardsUpdated > 0 || $newRegistry !== $hashRegistry)) || !file_exists($registryPath)) {
             @file_put_contents($registryPath, json_encode($newRegistry, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
         }
 
@@ -467,6 +499,9 @@ class ShardSyncService
         $data = $this->physicsService->getPhysicsContent();
         $db = $this->app->db();
 
+        // 0. Apply any pending numbered schema migrations in scripts/migrations/
+        $this->runMigrations();
+
         // 1. Auto-provision the database tables if they do not exist
         $db->runQuery("CREATE TABLE IF NOT EXISTS topics (
             slug VARCHAR(255) PRIMARY KEY,
@@ -550,9 +585,11 @@ class ShardSyncService
         // 4. Sync Formulas via unified SHA-256 hash-driven upsert & orphan pruning
         $formulaSync = $this->syncFormulasToDatabase($force);
 
-        // 4a. Compile formula LaTeX index only when shards changed, forced, or index missing
+        // 4a. Compile formula LaTeX index only in non-production studio or when missing (preserves clean git status on server)
+        require_once __DIR__ . '/AuthService.php';
+        $isProduction = AuthService::resolveAppEnv() === 'production';
         $indexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
-        if (($formulaSync['shards_changed'] ?? 0) > 0 || $force || !file_exists($indexFile)) {
+        if ((!$isProduction && (($formulaSync['shards_changed'] ?? 0) > 0 || $force)) || !file_exists($indexFile)) {
             $formulasDir = PROJECT_ROOT . '/app/config/content/formulas/';
             $formulaFiles = array_merge(glob($formulasDir . 'shard_*.json') ?: [], glob($formulasDir . '*/shard_*.json') ?: []);
             $latexIndex = file_exists($indexFile) ? (json_decode(file_get_contents($indexFile), true) ?: []) : [];
@@ -611,5 +648,102 @@ class ShardSyncService
         }
 
         return array_values($orphans);
+    }
+
+    /**
+     * Executes pending numbered database migrations (scripts/migrations/NNN_*.{php,sql})
+     * in lexical order and records applied filenames + SHA-256 checksums in `schema_migrations`.
+     */
+    public function runMigrations(?string $migrationsDir = null): array
+    {
+        $db = $this->app->db();
+        if (!$db || !method_exists($db, 'runQuery') || !method_exists($db, 'fetchAll')) {
+            return ['checked' => 0, 'applied' => [], 'skipped' => []];
+        }
+
+        $dir = $migrationsDir ?? (PROJECT_ROOT . '/scripts/migrations');
+        if (!is_dir($dir)) {
+            return ['checked' => 0, 'applied' => [], 'skipped' => []];
+        }
+
+        $db->runQuery("CREATE TABLE IF NOT EXISTS schema_migrations (
+            migration VARCHAR(255) PRIMARY KEY,
+            checksum CHAR(64) NOT NULL,
+            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        $appliedMap = [];
+        $rows = $db->fetchAll("SELECT migration FROM schema_migrations") ?: [];
+        foreach ($rows as $r) {
+            $arr = is_object($r) ? (method_exists($r, 'getData') ? $r->getData() : (array)$r) : (array)$r;
+            $name = $arr['migration'] ?? $arr['MIGRATION'] ?? null;
+            if (is_string($name) && $name !== '') {
+                $appliedMap[$name] = true;
+            }
+        }
+
+        $entries = scandir($dir) ?: [];
+        $files = [];
+        foreach ($entries as $entry) {
+            if (preg_match('/^\d+_[a-zA-Z0-9_-]+\.(php|sql)$/', $entry) && is_file($dir . '/' . $entry)) {
+                $files[] = $entry;
+            }
+        }
+        sort($files, SORT_STRING);
+
+        $execSql = static function (string $sql, array $params = []) use ($db): void {
+            $db->runQuery($sql, $params);
+        };
+
+        $applied = [];
+        $skipped = [];
+
+        foreach ($files as $filename) {
+            if (isset($appliedMap[$filename])) {
+                $skipped[] = $filename;
+                continue;
+            }
+
+            $fullPath = $dir . '/' . $filename;
+            $checksum = hash_file('sha256', $fullPath) ?: '';
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+            if ($ext === 'sql') {
+                $rawSql = (string)file_get_contents($fullPath);
+                $statements = preg_split('/;\s*(?:\r?\n|$)/', $rawSql) ?: [];
+                foreach ($statements as $stmt) {
+                    $trimmed = trim($stmt);
+                    if ($trimmed !== '' && !str_starts_with($trimmed, '--')) {
+                        $execSql($trimmed);
+                    }
+                }
+            } else {
+                $runner = static function (string $__migPath, callable $migrationExecSql) use ($db): void {
+                    ob_start();
+                    try {
+                        $ret = include $__migPath;
+                        if (is_callable($ret)) {
+                            $ret($db, $migrationExecSql);
+                        }
+                    } finally {
+                        ob_end_clean();
+                    }
+                };
+                $runner($fullPath, $execSql);
+            }
+
+            $db->runQuery(
+                "INSERT INTO schema_migrations (migration, checksum) VALUES (?, ?)
+                 ON DUPLICATE KEY UPDATE checksum = VALUES(checksum)",
+                [$filename, $checksum]
+            );
+            $applied[] = $filename;
+        }
+
+        return [
+            'checked' => count($files),
+            'applied' => $applied,
+            'skipped' => $skipped,
+        ];
     }
 }

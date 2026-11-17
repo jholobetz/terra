@@ -7,6 +7,8 @@ if (in_array('--help', $args, true) || in_array('-h', $args, true)) {
     echo "Options:\n";
     echo "  --warm-cache    Incrementally pre-render missing/stale Topic Hub, Subtopic, and Sitemap caches\n";
     echo "  --force-cache   Force full rebuild of all 12 Topic Hubs, 1,584 Subtopics, and Sitemap caches\n";
+    echo "  --force-sync    Force full re-upsert of all 256 formula shards regardless of hash state\n";
+    echo "  --migrate       Run pending numbered database migrations in scripts/migrations/ only\n";
     echo "  --cache-only    Skip MariaDB synchronization and only warm HTML disk caches\n";
     echo "  --sitemap       Regenerate public/cache/sitemap.xml using configured app_url\n";
     echo "  -h, --help      Show this help message\n";
@@ -14,18 +16,39 @@ if (in_array('--help', $args, true) || in_array('-h', $args, true)) {
 }
 
 $forceCache = in_array('--force-cache', $args, true);
+$forceSync = in_array('--force-sync', $args, true);
+$migrateOnly = in_array('--migrate', $args, true);
 $warmCache = $forceCache || in_array('--warm-cache', $args, true) || in_array('--cache-only', $args, true);
 $sitemapOnly = in_array('--sitemap', $args, true);
-$cacheOnly = in_array('--cache-only', $args, true) || ($sitemapOnly && !$warmCache);
+$cacheOnly = in_array('--cache-only', $args, true) || (($sitemapOnly || $migrateOnly) && !$warmCache);
 
 require __DIR__ . '/app/config/bootstrap.php';
 
 try {
     $service = $app->physicsService();
 
-    if (!$cacheOnly) {
-        echo "Starting CLI Synchronization (Safe Mode)...\n";
+    if ($migrateOnly) {
+        echo "Checking numbered database migrations...\n";
+        $migRes = $service->runMigrations();
+        echo "✓ Migrations checked: {$migRes['checked']} ("
+            . count($migRes['applied']) . " newly applied, "
+            . count($migRes['skipped']) . " already up to date).\n";
+        foreach ($migRes['applied'] as $mName) {
+            echo "  + Applied: {$mName}\n";
+        }
+    }
+
+    if (!$cacheOnly && !$migrateOnly) {
+        echo "Starting CLI Synchronization (Delta Mode" . ($forceSync ? " — FORCED FULL REBUILD" : "") . ")...\n";
         $service->setPreviewMode(true);
+
+        echo "Checking numbered database migrations...\n";
+        $migRes = $service->runMigrations();
+        if (!empty($migRes['applied'])) {
+            foreach ($migRes['applied'] as $mName) {
+                echo "  + Applied migration: {$mName}\n";
+            }
+        }
 
         echo "Loading all shards...\n";
         $service->loadAllShards();
@@ -42,7 +65,7 @@ try {
         }
 
         echo "Performing database sync and pruning...\n";
-        $service->performSync(true);
+        $service->performSync($forceSync);
 
         $syncLock = __DIR__ . '/app/config/.last_sync';
         touch($syncLock);

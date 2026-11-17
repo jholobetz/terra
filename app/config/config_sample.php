@@ -51,7 +51,9 @@ if (empty($app) === true) {
 }
 
 // Refer to this constant to get the project root directory
-define('PROJECT_ROOT', __DIR__ . '/../..');
+if (!defined('PROJECT_ROOT')) {
+	define('PROJECT_ROOT', __DIR__ . '/../..');
+}
 
 // This autoloads your code in the app directory so you don't have to require_once everything
 // You'll need to namespace your classes with "app\folder\" to include them properly
@@ -81,7 +83,7 @@ return [
 	/**************************************
 	 *      Application Environment       *
 	 **************************************/
-	'app_env' => 'development',         // Set to 'production' on Debian 13 (/srv/www/physicslab.ca)
+	'app_env' => 'development',         // Set to 'production' on Debian 13 (/srv/www/terra)
 	'app_url' => 'http://localhost:8000', // Set to 'https://physicslab.ca' in production (no trailing slash)
 
 	/**************************************

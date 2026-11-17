@@ -2,7 +2,7 @@
 
 > **Status**: Archived Historical Record (Stages 1–3 Completed; Stage 4 & Operations in [`docs/final_stages.md`](../docs/final_stages.md))  
 > **Target Production Host**: **Debian 13 (Trixie) + Apache 2.4 + PHP 8 (8.4) + MariaDB + Python 3 `.venv` (`sympy`)** (`https://physicslab.ca`)  
-> **Authoring & Release Model**: Local macOS Studio $\to$ GitHub $\to$ `git clone` / `git pull --ff-only` in `/srv/www/physicslab.ca` (`DocumentRoot /srv/www/physicslab.ca/public`)  
+> **Authoring & Release Model**: Local macOS Studio $\to$ GitHub $\to$ `git clone` / `git pull --ff-only` in `/srv/www/terra` (`DocumentRoot /srv/www/terra/public`)  
 > **Authoritative References**: [`docs/final_stages.md`](../docs/final_stages.md), [`CLAUDE.md`](../CLAUDE.md), [`docs/architecture.md`](../docs/architecture.md), [`docs/ideas.md`](../docs/ideas.md), [`docs/roadmap.md`](../docs/roadmap.md), [`docs/cost_governance.md`](../docs/cost_governance.md)
 
 ---
@@ -13,7 +13,7 @@
 Per [`README.md`](../README.md#L8), [`docs/architecture.md`](../docs/architecture.md#L190-L198), [`docs/ideas.md`](../docs/ideas.md#L79-L83), and live server provisioning:
 * **Operating System & Web Stack**: **Debian 13 (Trixie)** running **Apache 2.4** (`DocumentRoot` strictly pointed to `/public` using [`public/.htaccess`](../public/.htaccess)), **PHP 8** (Debian 13 native PHP 8.4 with OPcache), and **MariaDB**.
 * **Authoring Model (v1 Launch)**: **Immutable Git-Driven Production** — all content/formula authoring and curation stays in the local macOS Studio $\to$ Git $\to$ synchronized into MariaDB via [`cli_sync.php`](../cli_sync.php). Public visitors are strictly read-only (`guest`), eliminating production-vs-Git split-brain.
-* **Directory Isolation (`DocumentRoot /srv/www/physicslab.ca/public`)**: Cloning via `git clone` into `/srv/www/physicslab.ca` while pointing Apache's `DocumentRoot` strictly to `/srv/www/physicslab.ca/public` keeps `.git/`, `app/config/config.php`, `vendor/`, `tests/`, `docs/`, and `cli_sync.php` outside the web root, while [`.gitignore`](../.gitignore) ensures `git pull --ff-only` never overwrites server-owned state (`config.php`, `vendor/`, `.venv/`, `app/log/`, `public/cache/`, `*_embeddings.json.gz`).
+* **Directory Isolation (`DocumentRoot /srv/www/terra/public`)**: Cloning via `git clone` into `/srv/www/terra` while pointing Apache's `DocumentRoot` strictly to `/srv/www/terra/public` keeps `.git/`, `app/config/config.php`, `vendor/`, `tests/`, `docs/`, and `cli_sync.php` outside the web root, while [`.gitignore`](../.gitignore) ensures `git pull --ff-only` never overwrites server-owned state (`config.php`, `vendor/`, `.venv/`, `app/log/`, `public/cache/`, `*_embeddings.json.gz`).
 * **Filesystem Privilege Separation (`www-data`)**: Code, `vendor/`, `lib/`, and all 256 JSON shards remain **read-only** to Apache's `www-data` worker; only `app/log/` and `public/cache/` grant group-write (`2775` setgid `www-data`).
 
 ### 1.2 Baseline Production Safeguards Already Live

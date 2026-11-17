@@ -207,7 +207,7 @@ The platform maintains a deliberate dual-layer operational model:
    * Deployment synchronization (`syncFormulasToDatabase()`) uses SHA-256 hash registries (`formulas_hash_registry.json`) to detect changed shards and update MariaDB in batch.
 4. **Canonical Production Target (`https://physicslab.ca`)**:
    * Runs on **Debian 13 (Trixie)** with **Apache 2.4**, **PHP 8**, **MariaDB**, and local `.venv` (`sympy`).
-   * Git working tree lives at `/srv/www/physicslab.ca` while Apache `DocumentRoot` is strictly `/srv/www/physicslab.ca/public` (keeping `.git/`, `app/`, `vendor/`, `lib/`, and `tests/` outside the web root; full runbook in [`docs/final_stages.md`](docs/final_stages.md)).
+   * Git working tree lives at `/srv/www/terra` while Apache `DocumentRoot` is strictly `/srv/www/terra/public` (keeping `.git/`, `app/`, `vendor/`, `lib/`, and `tests/` outside the web root; full runbook in [`docs/final_stages.md`](docs/final_stages.md)).
 
 ### B. Mathematical Derivation Lineage Graph (DAG)
 * Lineage is tracked as an acyclic graph in `app/config/formula_derivation_graph.json` (and `.gz`).

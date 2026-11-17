@@ -394,4 +394,4 @@
 }
 </style>
 
-<script src="/js/anthropic_tuner.js" nonce="<?= $nonce ?>" defer></script>
+<script src="/js/anthropic_tuner.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/anthropic_tuner.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>

@@ -11,6 +11,8 @@ require_once PROJECT_ROOT . '/app/logic/VariableAggregator.php';
 class PhysicsController
 {
     protected Engine $app;
+    private array $formulaShardMtimes = [];
+    private ?array $formulaAliasesCache = null;
 
     public function __construct(Engine $app)
     {
@@ -1777,40 +1779,62 @@ class PhysicsController
         ]);
     }
 
+    /**
+     * Global layout templates and versioned CSS/JS assets shared across all cached HTML pages.
+     * Any update to these files bumps ?v=filemtime URLs in layout.php and invalidates HTML caches.
+     */
+    private function getSharedLayoutDependencies(): array
+    {
+        return [
+            PROJECT_ROOT . '/app/views/physics/layout.php',
+            PROJECT_ROOT . '/public/css/physics.css',
+            PROJECT_ROOT . '/public/js/mathjax_config.js',
+            PROJECT_ROOT . '/public/js/math_prose_formatter.js',
+            PROJECT_ROOT . '/public/js/hub_interactions.js',
+            PROJECT_ROOT . '/public/js/search_engine.js',
+            PROJECT_ROOT . '/public/js/formula_inspector.js',
+            PROJECT_ROOT . '/public/js/mathjax_inspector.js',
+            PROJECT_ROOT . '/public/js/derivation_accordions.js',
+        ];
+    }
+
+    /**
+     * Returns the modification timestamp of the hex formula shard containing $formulaId.
+     */
+    private function getFormulaShardMtime(string $formulaId): int
+    {
+        if ($this->formulaAliasesCache === null) {
+            $aliasPath = PROJECT_ROOT . '/app/config/content/formula_aliases.json';
+            $this->formulaAliasesCache = file_exists($aliasPath)
+                ? (json_decode((string)file_get_contents($aliasPath), true) ?: [])
+                : [];
+        }
+        $resolvedId = (string)($this->formulaAliasesCache[$formulaId] ?? $formulaId);
+        $hex = substr(md5($resolvedId), 0, 2);
+
+        if (!array_key_exists($hex, $this->formulaShardMtimes)) {
+            $shardPath = PROJECT_ROOT . "/app/config/content/formulas/{$hex}/shard_{$hex}.json";
+            $this->formulaShardMtimes[$hex] = file_exists($shardPath) ? (int)filemtime($shardPath) : 0;
+        }
+        return $this->formulaShardMtimes[$hex];
+    }
+
     private function isHubCacheStale(string $slug, string $cachePath): bool
     {
         if (!file_exists($cachePath)) return true;
         $cacheMtime = filemtime($cachePath);
 
-        $layoutPath = PROJECT_ROOT . '/app/views/physics/layout.php';
-        if (file_exists($layoutPath) && filemtime($layoutPath) > $cacheMtime) {
-            return true;
-        }
-
-        $viewPath = PROJECT_ROOT . '/app/views/physics/topic.php';
-        if (file_exists($viewPath) && filemtime($viewPath) > $cacheMtime) {
-            return true;
-        }
-
-        $hubAssets = [
-            PROJECT_ROOT . '/public/css/physics.css',
+        $hubDependencies = array_merge($this->getSharedLayoutDependencies(), [
+            PROJECT_ROOT . '/app/views/physics/topic.php',
             PROJECT_ROOT . '/public/css/topic_constellation.css',
             PROJECT_ROOT . '/public/js/topic_constellation.js',
-        ];
-        foreach ($hubAssets as $assetPath) {
-            if (file_exists($assetPath) && filemtime($assetPath) > $cacheMtime) {
+            PROJECT_ROOT . '/app/logic/VariableAggregator.php',
+            PROJECT_ROOT . '/app/config/variable_registry.json',
+        ]);
+        foreach ($hubDependencies as $depPath) {
+            if (file_exists($depPath) && filemtime($depPath) > $cacheMtime) {
                 return true;
             }
-        }
-
-        $aggregatorPath = PROJECT_ROOT . '/app/logic/VariableAggregator.php';
-        if (file_exists($aggregatorPath) && filemtime($aggregatorPath) > $cacheMtime) {
-            return true;
-        }
-
-        $registryPath = PROJECT_ROOT . '/app/config/variable_registry.json';
-        if (file_exists($registryPath) && filemtime($registryPath) > $cacheMtime) {
-            return true;
         }
 
         $manifestPath = PROJECT_ROOT . "/hub_manifests/{$slug}.json";
@@ -1823,34 +1847,38 @@ class PhysicsController
         if (!file_exists($cachePath)) return true;
         $cacheMtime = filemtime($cachePath);
 
-        $layoutPath = PROJECT_ROOT . '/app/views/physics/layout.php';
-        if (file_exists($layoutPath) && filemtime($layoutPath) > $cacheMtime) {
-            return true;
-        }
-
-        $aggregatorPath = PROJECT_ROOT . '/app/logic/VariableAggregator.php';
-        if (file_exists($aggregatorPath) && filemtime($aggregatorPath) > $cacheMtime) {
-            return true;
-        }
-
-        $launcherPath = PROJECT_ROOT . '/app/logic/LabToolsLauncher.php';
-        if (file_exists($launcherPath) && filemtime($launcherPath) > $cacheMtime) {
-            return true;
-        }
-
-        $subtopicViewPath = PROJECT_ROOT . '/app/views/physics/subtopic.php';
-        if (file_exists($subtopicViewPath) && filemtime($subtopicViewPath) > $cacheMtime) {
-            return true;
+        $subDependencies = array_merge($this->getSharedLayoutDependencies(), [
+            PROJECT_ROOT . '/app/views/physics/subtopic.php',
+            PROJECT_ROOT . '/app/views/physics/_equations_partial.php',
+            PROJECT_ROOT . '/app/logic/VariableAggregator.php',
+            PROJECT_ROOT . '/app/logic/LabToolsLauncher.php',
+        ]);
+        foreach ($subDependencies as $depPath) {
+            if (file_exists($depPath) && filemtime($depPath) > $cacheMtime) {
+                return true;
+            }
         }
 
         $content = $this->service()->getPhysicsContent($slug);
         $shardFile = $content['search_index'][$slug]['s'] ?? null;
-        if (!$shardFile) return false;
+        if ($shardFile) {
+            $shardPath = PROJECT_ROOT . '/app/config/content/' . $shardFile;
+            if (file_exists($shardPath) && filemtime($shardPath) > $cacheMtime) {
+                return true;
+            }
+        }
 
-        $shardPath = PROJECT_ROOT . '/app/config/content/' . $shardFile;
-        if (!file_exists($shardPath)) return false;
+        // Invalidate subtopic HTML cache whenever any referenced formula's hex shard is updated (e.g. fixlatex / proofs)
+        $formulaIds = $content['subtopics'][$slug]['formula_ids'] ?? [];
+        if (is_array($formulaIds)) {
+            foreach ($formulaIds as $fId) {
+                if (is_string($fId) && $fId !== '' && $this->getFormulaShardMtime($fId) > $cacheMtime) {
+                    return true;
+                }
+            }
+        }
 
-        return filemtime($shardPath) > $cacheMtime;
+        return false;
     }
 
     private function getFirstSentences(string $html, int $count = 3): string
@@ -1910,6 +1938,8 @@ class PhysicsController
      */
     public function warmHtmlCache(bool $force = false, ?array $onlySlugs = null, ?callable $onProgress = null): array
     {
+        clearstatcache();
+        $this->formulaShardMtimes = [];
         $svc = $this->service();
         $wasPreview = $svc->isPreviewActive();
 
@@ -1940,7 +1970,13 @@ class PhysicsController
             unset($_GET['preview'], $_GET['build_mode'], $_COOKIE['physics_preview']);
             $svc->setPreviewMode(false);
 
-            $svc->loadAllShards();
+            if ($onlySlugs !== null) {
+                foreach ($onlySlugs as $targetSlug) {
+                    $svc->getPhysicsContent((string)$targetSlug);
+                }
+            } else {
+                $svc->loadAllShards();
+            }
             $content = $svc->getPhysicsContent();
 
             $hubSlugs = array_keys($content['topics'] ?? []);

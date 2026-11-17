@@ -262,5 +262,5 @@ $topicCubes = [
 </style>
 
 <!-- Scripts -->
-<script src="/js/hero_canvas.js" defer></script>
-<script src="/js/halo_orbit.js" defer></script>
+<script src="/js/hero_canvas.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/hero_canvas.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
+<script src="/js/halo_orbit.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/halo_orbit.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>

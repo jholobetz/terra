@@ -39,10 +39,10 @@ $robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UT
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- MathJax Static-Safe Configuration -->
-    <script src="/js/mathjax_config.js" nonce="<?= $nonce ?>"></script>
-    <script src="/js/math_prose_formatter.js" nonce="<?= $nonce ?>" defer></script>
-    <script src="/js/lib/tex-svg-full.js" id="MathJax-script" nonce="<?= $nonce ?>" defer></script>
-    <script src="/js/hub_interactions.js" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/mathjax_config.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/mathjax_config.js') ?: 1 ?>" nonce="<?= $nonce ?>"></script>
+    <script src="/js/math_prose_formatter.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/math_prose_formatter.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/lib/tex-svg-full.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/lib/tex-svg-full.js') ?: 1 ?>" id="MathJax-script" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/hub_interactions.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/hub_interactions.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
     <link rel="stylesheet" href="/css/physics.css?v=<?= @filemtime(PROJECT_ROOT . '/public/css/physics.css') ?: 1 ?>">
     <?php if (!empty($extra_css) && is_array($extra_css)): ?>
         <?php foreach ($extra_css as $cssAsset): ?>
@@ -273,10 +273,10 @@ $robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UT
         </div>
     </div>
 
-    <script src="/js/search_engine.js" nonce="<?= $nonce ?>" defer></script>
-    <script src="/js/formula_inspector.js" nonce="<?= $nonce ?>" defer></script>
-    <script src="/js/mathjax_inspector.js" nonce="<?= $nonce ?>" defer></script>
-    <script src="/js/derivation_accordions.js" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/search_engine.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/search_engine.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/formula_inspector.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/formula_inspector.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/mathjax_inspector.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/mathjax_inspector.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
+    <script src="/js/derivation_accordions.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/derivation_accordions.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
     <script nonce="<?= $nonce ?>">
         document.addEventListener('click', function (e) {
             // 1. Dev Role Switcher handler

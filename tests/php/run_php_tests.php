@@ -676,9 +676,10 @@ $runner->run('ProductionHardeningTest', 'testErrorSanitizationCostFirewallAndNoD
         $t->assertFalse($sem->isExternalApiDisabled(), 'Explicit DISABLE_EXTERNAL_EMBEDDING_API=0 must allow opt-in');
     });
 
-    // 3. Verify services.php --no-dev guards, migration guard, and stale stub removal
+    // 3. Verify services.php --no-dev guards, Tracy Bar content_length guard, migration guard, and stale stub removal
     $servicesSrc = (string)file_get_contents(PROJECT_ROOT . '/app/config/services.php');
     $t->assertContains('Debugger::Production', $servicesSrc);
+    $t->assertContains("set('flight.content_length', false)", $servicesSrc);
     $t->assertContains('class_exists(TracyExtensionLoader::class)', $servicesSrc);
     $t->assertContains('class_exists(PdoQueryCapture::class)', $servicesSrc);
 

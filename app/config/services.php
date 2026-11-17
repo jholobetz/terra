@@ -72,8 +72,11 @@ if (class_exists(Debugger::class)) {
 	Debugger::$strictMode = !$isProductionEnv;
 	if ($isProductionEnv) {
 		Debugger::$showBar = false;
-	} elseif (Debugger::$showBar === true && php_sapi_name() !== 'cli' && class_exists(TracyExtensionLoader::class)) {
-		(new TracyExtensionLoader($app)); // Load FlightPHP Tracy extensions when dev dependencies are installed
+	} elseif (Debugger::$showBar === true && php_sapi_name() !== 'cli') {
+		$app->set('flight.content_length', false); // Prevent Content-Length conflict with Tracy Debug Bar
+		if (class_exists(TracyExtensionLoader::class)) {
+			(new TracyExtensionLoader($app)); // Load FlightPHP Tracy extensions when dev dependencies are installed
+		}
 	}
 }
 

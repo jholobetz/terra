@@ -504,8 +504,10 @@ class ShardSyncService
 
         // 1. Auto-provision the database tables if they do not exist
         $db->runQuery("CREATE TABLE IF NOT EXISTS topics (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
             slug VARCHAR(255) PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
+            description TEXT,
             content MEDIUMTEXT,
             pillars JSON,
             intro TEXT,
@@ -514,10 +516,12 @@ class ShardSyncService
             density VARCHAR(50),
             equations JSON,
             breakdowns JSON,
-            formula_data JSON
+            formula_data JSON,
+            UNIQUE KEY uk_topics_id (id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
         $db->runQuery("CREATE TABLE IF NOT EXISTS subtopics (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
             slug VARCHAR(255) PRIMARY KEY,
             parent_topic VARCHAR(255),
             title VARCHAR(255) NOT NULL,
@@ -530,7 +534,22 @@ class ShardSyncService
             formula_data JSON,
             parents JSON,
             standard VARCHAR(50) DEFAULT 'legacy',
-            verification JSON
+            verification JSON,
+            UNIQUE KEY uk_subtopics_id (id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        $db->runQuery("CREATE TABLE IF NOT EXISTS simulations (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            slug VARCHAR(255) PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            description TEXT,
+            physics MEDIUMTEXT,
+            category VARCHAR(128),
+            category_name VARCHAR(128),
+            engine VARCHAR(128),
+            difficulty VARCHAR(64),
+            equations JSON,
+            UNIQUE KEY uk_simulations_id (id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
         $subtopicIdxRows = $db->fetchAll(
@@ -554,27 +573,92 @@ class ShardSyncService
 
         // 2. Sync Topics
         foreach ($data['topics'] ?? [] as $slug => $t) {
-            $db->runQuery(
-                "INSERT INTO topics (slug, title, content, pillars, intro, bridges, field, density, equations, breakdowns, formula_data) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE 
-                    title = VALUES(title), content = VALUES(content), pillars = VALUES(pillars), intro = VALUES(intro), 
-                    bridges = VALUES(bridges), field = VALUES(field), density = VALUES(density), equations = VALUES(equations), 
-                    breakdowns = VALUES(breakdowns), formula_data = VALUES(formula_data)",
-                [
-                    $slug,
-                    $t['title'],
-                    $t['content'] ?? '',
-                    json_encode($t['pillars'] ?? []),
-                    $t['intro'] ?? '',
-                    json_encode($t['bridges'] ?? []),
-                    $t['field'] ?? '',
-                    $t['density'] ?? '',
-                    json_encode($t['equations'] ?? []),
-                    json_encode($t['breakdowns'] ?? []),
-                    json_encode($t['formula_ids'] ?? [])
-                ]
-            );
+            try {
+                $db->runQuery(
+                    "INSERT INTO topics (slug, title, description, content, pillars, intro, bridges, field, density, equations, breakdowns, formula_data) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE 
+                        title = VALUES(title), description = VALUES(description), content = VALUES(content), pillars = VALUES(pillars), intro = VALUES(intro), 
+                        bridges = VALUES(bridges), field = VALUES(field), density = VALUES(density), equations = VALUES(equations), 
+                        breakdowns = VALUES(breakdowns), formula_data = VALUES(formula_data)",
+                    [
+                        $slug,
+                        $t['title'],
+                        $t['description'] ?? ($t['intro'] ?? ''),
+                        $t['content'] ?? '',
+                        json_encode($t['pillars'] ?? []),
+                        $t['intro'] ?? '',
+                        json_encode($t['bridges'] ?? []),
+                        $t['field'] ?? '',
+                        $t['density'] ?? '',
+                        json_encode($t['equations'] ?? []),
+                        json_encode($t['breakdowns'] ?? []),
+                        json_encode($t['formula_ids'] ?? [])
+                    ]
+                );
+            } catch (\Throwable $legacyTopicErr) {
+                $db->runQuery(
+                    "INSERT INTO topics (slug, title, content, pillars, intro, bridges, field, density, equations, breakdowns, formula_data) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE 
+                        title = VALUES(title), content = VALUES(content), pillars = VALUES(pillars), intro = VALUES(intro), 
+                        bridges = VALUES(bridges), field = VALUES(field), density = VALUES(density), equations = VALUES(equations), 
+                        breakdowns = VALUES(breakdowns), formula_data = VALUES(formula_data)",
+                    [
+                        $slug,
+                        $t['title'],
+                        $t['content'] ?? '',
+                        json_encode($t['pillars'] ?? []),
+                        $t['intro'] ?? '',
+                        json_encode($t['bridges'] ?? []),
+                        $t['field'] ?? '',
+                        $t['density'] ?? '',
+                        json_encode($t['equations'] ?? []),
+                        json_encode($t['breakdowns'] ?? []),
+                        json_encode($t['formula_ids'] ?? [])
+                    ]
+                );
+            }
+        }
+
+        // 2b. Sync Simulations
+        $simsMap = $data['simulations'] ?? [];
+        $simsConfigPath = PROJECT_ROOT . '/app/config/simulations.json';
+        if (file_exists($simsConfigPath)) {
+            $simsConfig = json_decode((string)file_get_contents($simsConfigPath), true) ?: [];
+            foreach ($simsConfig as $simSlug => $simCfg) {
+                if (is_array($simCfg)) {
+                    $simsMap[$simSlug] = array_merge($simsMap[$simSlug] ?? [], $simCfg);
+                }
+            }
+        }
+        foreach ($simsMap as $simSlug => $sim) {
+            if (!is_array($sim) || empty($sim['title'])) {
+                continue;
+            }
+            try {
+                $db->runQuery(
+                    "INSERT INTO simulations (slug, title, description, physics, category, category_name, engine, difficulty, equations)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     ON DUPLICATE KEY UPDATE
+                        title = VALUES(title), description = VALUES(description), physics = VALUES(physics),
+                        category = VALUES(category), category_name = VALUES(category_name),
+                        engine = VALUES(engine), difficulty = VALUES(difficulty), equations = VALUES(equations)",
+                    [
+                        (string)$simSlug,
+                        $sim['title'],
+                        $sim['description'] ?? '',
+                        $sim['physics'] ?? ($sim['description'] ?? ''),
+                        $sim['category'] ?? '',
+                        $sim['category_name'] ?? '',
+                        $sim['engine'] ?? '',
+                        $sim['difficulty'] ?? '',
+                        json_encode($sim['equations'] ?? []),
+                    ]
+                );
+            } catch (\Throwable $simErr) {
+                // Non-fatal on legacy custom simulations table schema
+            }
         }
 
         // 3. Sync Subtopics
@@ -630,8 +714,20 @@ class ShardSyncService
         $content = $this->physicsService->getPhysicsContent();
         $diskSlugs = array_keys($content['subtopics']);
 
-        $dbRows = $this->app->db()->fetchAll("SELECT slug FROM subtopics");
-        $dbSlugs = array_map(fn($row) => $row->slug, $dbRows);
+        try {
+            $dbRows = $this->app->db()->fetchAll("SELECT slug FROM subtopics") ?: [];
+        } catch (\Throwable $e) {
+            // Table does not exist yet on a brand-new database prior to initial performSync()
+            return [];
+        }
+
+        $dbSlugs = [];
+        foreach ($dbRows as $row) {
+            $s = is_object($row) ? ($row->slug ?? null) : ($row['slug'] ?? null);
+            if (is_string($s) && $s !== '') {
+                $dbSlugs[] = $s;
+            }
+        }
 
         $orphans = array_diff($dbSlugs, $diskSlugs);
 

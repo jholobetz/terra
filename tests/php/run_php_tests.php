@@ -1119,6 +1119,18 @@ $runner->run('Stage4DeploymentTest', 'testSchemaMigrationsRunnerAndProductionSee
         $t->assertContains('CREATE TABLE IF NOT EXISTS formula_audit_logs', $allSql);
         $t->assertFalse(str_contains($allSql, 'INSERT INTO users'), 'Production migration must not seed dev_mock users');
     });
+
+    // 3. Verify pruneOrphans(true) returns [] gracefully on a brand-new empty DB before subtopics table exists
+    $emptyNewDb = new class {
+        public function fetchAll(string $sql): array
+        {
+            throw new RuntimeException("SQLSTATE[42S02]: Base table or view not found: 1146 Table 'terra.subtopics' doesn't exist");
+        }
+    };
+    $appFresh = new \flight\Engine();
+    $appFresh->map('db', fn() => $emptyNewDb);
+    $svcFresh = new \app\logic\PhysicsService($appFresh);
+    $t->assertSame([], $svcFresh->pruneOrphans(true), 'pruneOrphans must not crash on fresh empty database');
 });
 
 $runner->run('Stage4DeploymentTest', 'testHtaccessCompressionAcmeExemptionAndUpdateProdScript', function (NativePhpTestRunner $t) {

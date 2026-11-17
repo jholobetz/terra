@@ -5,7 +5,7 @@ Physics Lab is a university-level digital physics encyclopedia and computational
 The web frontend is built on a streamlined **FlightPHP** MVC framework, while the underlying data layer is partitioned across a **256-shard deterministic mathematical formula manifold** and **14 thematic subtopic prose shards** on disk, synchronized with a **MariaDB** query engine. Content transitions and mathematical rigor are governed by the **Organic Platinum Standard (OPS)**, automated derivation graph audits (Lineage Health Index), and pre-push integrity shields.
 
 > [!NOTE]
-> **Project Terra Blueprint & Deployment Model:** Physics Lab is the flagship domain module of **Project Terra**, an overarching scientific laboratory and reference ecosystem. The project is developed locally on macOS (`http://localhost:8000`), tracked via Git, and deployed to an independent production LAMP stack. For details, see [`docs/architecture.md`](docs/architecture.md).
+> **Project Terra Blueprint & Deployment Model:** Physics Lab is the flagship domain module of **Project Terra**, an overarching scientific laboratory and reference ecosystem. The project is developed locally on macOS (`http://localhost:8000`), tracked via Git, and deployed live at [`https://physicslab.ca`](https://physicslab.ca) on a hardened Debian 13 + Apache 2.4 + MariaDB stack. For details, see [`docs/architecture.md`](docs/architecture.md), [`docs/roadmap.md`](docs/roadmap.md), and [`docs/final_stages.md`](docs/final_stages.md).
 
 ---
 
@@ -13,12 +13,14 @@ The web frontend is built on a streamlined **FlightPHP** MVC framework, while th
 
 | Metric | Current Status | Description |
 | :--- | :---: | :--- |
-| **Cataloged Formulas** | **14,613** | Fully indexed, with semantic variables, symmetry origins, and limits |
+| **Cataloged Formulas** | **14,684** | Fully indexed, with semantic variables, symmetry origins, and limits |
 | **Formula Data Shards** | **256** (`00`–`ff`) | Deterministic $O(1)$ hex-hashed flat-file JSON shards (`shard_xx.json`) |
-| **Lineage Health Index (LHI)** | **95.0 / 100** | Derivation density score across parent-child mathematical DAG |
+| **Lineage Health Index (LHI)** | **99.9 / 100** | Derivation density score across parent-child mathematical DAG (`0` isolated nodes, `14,119` edges) |
+| **Multi-Step Proofs** | **104** | Verified step-by-step mathematical derivations across all 12 pillar domains |
 | **Manifold Closure** | **100.0%** | Zero unmapped physical formulas detected in encyclopedia prose |
-| **Subtopic Articles** | **1,584** | High-density graduate-level articles across 12 primary domains |
-| **Automated Test Coverage** | **241 Pytest + 16 PHP Unit Tests (100.0%)** | Full-stack regression suite covering schemas, math delimiters, PHP services, and syntax |
+| **Subtopic Articles** | **1,584 / 1,584 (100% OPS)** | High-density graduate-level articles across 12 primary domains |
+| **Production Target** | **[`https://physicslab.ca`](https://physicslab.ca)** | Debian 13, Apache 2.4, PHP 8.4, MariaDB, Let's Encrypt TLS, `/healthz` & Git deploy pipeline |
+| **Automated Test Coverage** | **241+ Pytest + 30 PHP Unit Suites (100.0%)** | Full-stack regression suite covering schemas, math delimiters, PHP services, production hardening, and syntax |
 
 ---
 
@@ -29,12 +31,13 @@ All Python-based data maintenance, content generation, and quality compilation o
 ### 🌐 Web Server (FlightPHP Frontend)
 The frontend serves the encyclopedia, manages URL routing to subtopics, renders dynamic MathJax 3.x vector equations, and hosts the interactive Equation Explainer workbench.
 * **Prerequisites**: PHP 8.0+ and Composer.
-* **Launch Local Server**:
+* **Launch Local Server & Run PHP Tests**:
   ```bash
   composer install
+  composer test
   composer start
   ```
-  The application is served at `http://localhost:8000`.
+  The local development studio is served at `http://localhost:8000`.
 
 ### 🐍 Pipeline & Content CLI (Python Backend)
 * **Check Status & Quality Metrics**:
@@ -69,7 +72,7 @@ The frontend serves the encyclopedia, manages URL routing to subtopics, renders 
 ## 🏛️ 2. Key Architectural Systems
 
 ### 🧮 1. The Mathematical Formula Manifold (256 Hex Shards)
-Rather than maintaining an unwieldy single JSON file, all **14,613 formulas** are distributed across 256 deterministic hex shards located in `app/config/content/formulas/[00-ff]/shard_[00-ff].json`. 
+Rather than maintaining an unwieldy single JSON file, all **14,684 formulas** are distributed across 256 deterministic hex shards located in `app/config/content/formulas/[00-ff]/shard_[00-ff].json`. 
 - Target shard paths are computed mathematically in $O(1)$ time via `md5($id)[0:2]`.
 - Eliminates file-locking bottlenecks, enables parallel asynchronous batch read/writes, and synchronizes seamlessly with MariaDB tables.
 
@@ -138,7 +141,10 @@ physics-lab/
 │           ├── subtopic.php          # Single subtopic rendering template
 │           └── equation_explainer.php# Flagship interactive formula workbench
 │
-├── scripts/                          # Maintenance & Repair Tooling
+├── scripts/                          # Maintenance, Assessment & Deploy Tooling
+│   ├── assess                        # Unified Platform Assessment & Health CLI
+│   ├── update_prod.sh                # Zero-downtime production Git rollout & /healthz verifier
+│   ├── cli_sync.php                  # DB migration, shard sync, cache warmer & sitemap builder
 │   ├── fixlatex                      # CLI tool: URL & formula TeX decorruptor
 │   ├── fixlineage                    # CLI tool: Derivation graph health auditor
 │   └── maintenance/                  # Automation & Pipeline Scripts
@@ -147,8 +153,9 @@ physics-lab/
 │       ├── lineage_resolver.py       # Derivation graph lineage inference
 │       └── ...
 │
-├── tests/                            # Automated Test Suite (241 Pytest + 16 PHP unit tests)
-├── docs/                             # Architecture Reports, Sprints & Governance
+├── deploy/                           # Production Apache 2.4 & MariaDB Templates
+├── tests/                            # Automated Test Suite (241+ Pytest + 30 PHP unit suites)
+├── docs/                             # Architecture Reports, Runbooks & Governance
 ├── orchestrator.py                   # TF-IDF Context-Affinity Engine
 ├── integrity_shield.py               # Sitewide Quality Assurance & Manifold Gate
 ├── gqs.py                            # Graduation Queue Stack CLI
@@ -159,8 +166,8 @@ physics-lab/
 
 ## 🛡️ 5. AI Cost Governance & Token Safety Standard
 
-All AI automation scripts in this repository adhere to the **Deterministic Token Estimation Standard** detailed in [`docs/cost_governance.md`](docs/cost_governance.md):
-1. **Pure Free-Tier Default**: Interactive drafting and automated local tools default to Google AI Studio's Free Tier (`GEMINI_FREE_API_KEY`) capped at **$0.00**.
-2. **Pre-Flight Token Counting**: Input payloads are sized via `client.models.count_tokens()` before dispatching calls.
-3. **Hard Output Caps**: Thinking budgets and maximum output tokens are bounded mathematically.
-4. **Mandatory Budget Ceilings**: Batch runners enforce strict, non-zero dollar cutoffs (`--max-cost-dollars`).
+Since Gemini API keys (`GEMINI_FREE_API_KEY` / `GEMINI_API_KEY`) are metered, all AI automation scripts and runtime services adhere to the **6-Pillar Deterministic Token Governance Standard** detailed in [`docs/cost_governance.md`](docs/cost_governance.md):
+1. **Local-First & Zero External API Default**: Deterministic engines (`lib/cas/cas_engine.py`, `scripts/fixlineage`, LaTeX AST parsing) run locally with zero external network calls; generative CLI scripts require an explicit `--allow-external-api` flag, and production disables live embedding API calls (`SemanticSearchService.php`).
+2. **Pre-Flight Token Counting**: Input payloads are measured via `client.models.count_tokens()` prior to dispatching any authorized external calls.
+3. **Hard-Capped Worst-Case Outputs**: Both `max_output_tokens` and `thinking_budget` are strictly bounded.
+4. **Mandatory Budget Ceilings & Confirmation**: Authorized external runs enforce pre-dispatch dollar ceilings (`--max-cost-dollars`, defaulting to `$0.50`), explicit `[y/N]` cost confirmation, canary calibration, and persistent local embedding caches.

@@ -125,7 +125,10 @@ def audit_docs():
     if readme_md.exists():
         files_to_read.append(readme_md)
     if docs_dir.exists():
-        files_to_read.extend(sorted(docs_dir.glob("*.md")))
+        files_to_read.extend(
+            p for p in sorted(docs_dir.glob("*.md"))
+            if "credentials" not in p.name.lower()
+        )
 
     summaries = []
     total_words = 0
@@ -529,13 +532,55 @@ def audit_roadmap_realization(heal_hashes: bool = False, arch_data=None):
         "items": phase3_items,
     }
 
+    auth_service_path = WORKSPACE_ROOT / "app" / "logic" / "AuthService.php"
+    routes_path = WORKSPACE_ROOT / "app" / "config" / "routes.php"
+    htaccess_path = WORKSPACE_ROOT / "public" / ".htaccess"
+    update_prod_path = WORKSPACE_ROOT / "scripts" / "update_prod.sh"
+    final_stages_path = WORKSPACE_ROOT / "docs" / "final_stages.md"
+    apache_vhost_path = WORKSPACE_ROOT / "deploy" / "apache" / "physicslab.ca-le-ssl.conf.example"
+
+    auth_text = auth_service_path.read_text(encoding="utf-8", errors="ignore") if auth_service_path.exists() else ""
+    routes_text = routes_path.read_text(encoding="utf-8", errors="ignore") if routes_path.exists() else ""
+    htaccess_text = htaccess_path.read_text(encoding="utf-8", errors="ignore") if htaccess_path.exists() else ""
+
+    p4_1_ok = (
+        "isLocalDevStudio" in auth_text
+        and "resolveClientIp" in auth_text
+        and (WORKSPACE_ROOT / "app" / "logic" / "SemanticSearchService.php").exists()
+    )
+    p4_2_ok = (
+        (WORKSPACE_ROOT / "requirements.txt").exists()
+        and (WORKSPACE_ROOT / "requirements-dev.txt").exists()
+        and "'/healthz'" in routes_text
+    )
+    p4_3_ok = (
+        (WORKSPACE_ROOT / "app" / "views" / "physics" / "error_404.php").exists()
+        and (WORKSPACE_ROOT / "app" / "views" / "physics" / "error_500.php").exists()
+        and "'/sitemap.xml'" in routes_text
+        and "'/robots.txt'" in routes_text
+    )
+    p4_4_ok = (
+        update_prod_path.exists()
+        and os.access(update_prod_path, os.X_OK)
+        and final_stages_path.exists()
+        and apache_vhost_path.exists()
+        and "AddOutputFilterByType" in htaccess_text
+    )
+
+    phase4_items = [
+        ("4.1 Security Hardening", "Studio gate, --no-dev guards & API firewall", p4_1_ok),
+        ("4.2 Debian 13 & /healthz", "Split requirements, /healthz & CLI cache warmer", p4_2_ok),
+        ("4.3 Error Views & SEO", "Branded 404/500, CSP hygiene & sitemap.xml", p4_3_ok),
+        ("4.4 Deploy & Ops Pipeline", "Live on https://physicslab.ca (update_prod.sh)", p4_4_ok),
+    ]
+    completed_p4 = sum(1 for _, _, ok in phase4_items if ok)
+    p4_pct = int(round((completed_p4 / len(phase4_items)) * 100))
+
     roadmap["phase_4"] = {
-        "title": "Phase 4: Next Horizon (4.1)",
-        "status": "UNDETERMINED",
-        "progress_pct": 0,
-        "items": [
-            ("4.1 Undetermined", "Undetermined at this time", False),
-        ]
+        "title": "Phase 4: Production Cutover & Hardening",
+        "status": "COMPLETED" if p4_pct == 100 else "AUDIT_REQUIRED",
+        "progress_pct": p4_pct,
+        "items": phase4_items,
     }
 
     roadmap["phase_5"] = {
@@ -623,6 +668,7 @@ def build_standard_telemetry(data, mode="rapid", strict_passed=True, violations=
     p3_pct = roadmap.get("phase_3", {}).get("progress_pct", 15)
     ops_pct = roadmap.get("ops_2", {}).get("progress_pct", 10)
     p4_pct = roadmap.get("phase_4", {}).get("progress_pct", 0)
+    p6_pct = roadmap.get("phase_6", {}).get("progress_pct", 0)
 
     shard_drift = 0
     proofs_count = 0
@@ -715,8 +761,9 @@ def build_standard_telemetry(data, mode="rapid", strict_passed=True, violations=
             "phase_1_stabilization_pct": p1_pct,
             "phase_2_hygiene_interactivity_pct": p2_pct,
             "phase_3_formal_verification_pct": p3_pct,
+            "phase_4_production_cutover_pct": p4_pct,
             "ops_2_qualitative_pct": ops_pct,
-            "phase_4_multi_science_pct": p4_pct,
+            "phase_4_multi_science_pct": p6_pct,
             "shard_drift_count": shard_drift,
         },
         "infrastructure": {

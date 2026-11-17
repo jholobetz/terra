@@ -35,7 +35,7 @@ Our unified developer CLI manages the entire GQS pipeline lifecycle, offering au
   # scripts/fixlatex "http://localhost:8000/physics/equation-explainer?id=schrodinger-equation"
   # scripts/fixlatex "\mathbf{F} = m \mathbf{a}" "Newton's Second Law"
   ```
-* **Lineage Health Index (LHI) & Graph Audit (`fixlineage`)**: Audits the mathematical derivation tree (DAG), detects circular loops, and reports LHI metrics across all 14,613 formulas:
+* **Lineage Health Index (LHI) & Graph Audit (`fixlineage`)**: Audits the mathematical derivation tree (DAG), detects circular loops, and reports LHI metrics across all 14,684 formulas:
   ```bash
   # Check overall encyclopedia lineage score and distribution:
   scripts/fixlineage --summary
@@ -120,12 +120,12 @@ Consolidates the entire GQS cycle into a single transaction, automating syntax c
   # (Optional: add -t / --with-tests to include pytest in the prompt payload)
   ```
 * **Web GUI Assessment Console**: Live interactive telemetry, strict monotonic ratchets, shard partition auditing, and one-click autonomous self-healing available in the browser at [`http://localhost:8000/physics/admin/assess`](http://localhost:8000/physics/admin/assess).
-* **Automated Pytest & PHP Unit Suite**: Runs the full regression net (241+ Pytest tests + 16 native PHP unit tests covering all 14,681 formulas, schemas, invariants, delimiters, PHP services, and syntax):
+* **Automated Pytest & PHP Unit Suite**: Runs the full regression net (241+ Pytest tests + 30 native PHP unit suites covering all 14,684 formulas, schemas, invariants, delimiters, PHP services, production hardening, and syntax):
   ```bash
   .venv/bin/python3 -m pytest tests/
   composer test
   ```
-* **Sitewide Integrity Shield Audit**: Scans all 13 primary content shards, 256 formula shards, 14,681 formulas, 100% manifold closure, and MathJax renderings:
+* **Sitewide Integrity Shield Audit**: Scans all 13 primary content shards, 256 formula shards, 14,684 formulas, 100% manifold closure, and MathJax renderings:
   ```bash
   .venv/bin/python3 integrity_shield.py
   ```
@@ -234,7 +234,7 @@ The platform maintains a deliberate dual-layer operational model:
 To eliminate counter-productive amnesia, glossing over existing features, or reinventing existing code:
 1. **Pre-Flight Asset Audit**: Before proposing, architecting, or discussing any roadmap phase or feature, all AI assistants and developers MUST inspect existing repository files (`lib/`, `app/logic/`, `public/js/`, `scripts/`) to identify already implemented components.
 2. **Grounding in Code Reality**: Always state what is **already operational** before outlining incremental deltas. Never assume an engine or tool is unbuilt simply because an overall roadmap phase is not yet marked 100%.
-3. **Execution vs. Tooling Distinction**: Distinguish clearly between an **Engine/Tool** (software that exists and runs) and a **Data Sweep/Campaign** (applying that engine across the 14,613 formulas or 1,584 subtopics).
+3. **Execution vs. Tooling Distinction**: Distinguish clearly between an **Engine/Tool** (software that exists and runs) and a **Data Sweep/Campaign** (applying that engine across the 14,684 formulas or 1,584 subtopics).
 
 ### B. Live Platform Capability Matrix (Do NOT Reinvent or Re-propose)
 | Capability / System | Implementation Path | Live Status & Capabilities | Verification Command |
@@ -245,9 +245,10 @@ To eliminate counter-productive amnesia, glossing over existing features, or rei
 | **Elevated Dynamic Simulations** | [`public/js/simulations/pendulum.js`](public/js/simulations/pendulum.js)<br/>[`public/js/simulations/projectile-motion.js`](public/js/simulations/projectile-motion.js) | **Operational**. RK4 chaotic damped-driven pendulum with real-time Poincaré sections and period-doubling cascades; Newton's orbital cannon with circular, elliptical, and hyperbolic escape trajectories. | Browser at `/physics/simulations` |
 | **Hero Stage Cosmic Arena** | [`public/js/cosmic_arena.js`](public/js/cosmic_arena.js)<br/>[`public/js/lab_cockpit.js`](public/js/lab_cockpit.js) | **Operational**. 60fps high-DPI canvas engine on `/physics/lab-tools`. 4 physical regimes, Web Audio harmonic frequency synthesis, color-coupled telemetry HUD, and interactive What-If micro-challenges. | Browser at `/physics/lab-tools` |
 | **Cross-Encyclopedia Lab Hydration** | [`app/logic/LabToolsLauncher.php`](app/logic/LabToolsLauncher.php)<br/>[`app/views/physics/subtopic.php`](app/views/physics/subtopic.php) | **Operational**. 1,584/1,584 subtopics mapped to deep-linked interactive instruments, duality workbenches, and simulations with URL state pre-hydration and in-prose cockpit bridge cards. | `.venv/bin/python3 -m pytest tests/test_lab_tools_hydration.py` |
-| **Multi-Step Derivations Engine** | `equation_explainer.php`<br/>[`tests/test_derivation_steps.py`](tests/test_derivation_steps.py) | **Operational (103 verified proofs sitewide)**. Collapsible derivation accordions with MathJax typesetting, sequential step schema, TeX brace balance, and universal Domain Parity ($\ge 8$ proofs across all 12 platform domains). | `.venv/bin/python3 -m pytest tests/test_derivation_steps.py` |
-| **Lineage DAG & LHI** | `scripts/fixlineage`<br/>`formula_derivation_graph.json` | **Operational**. Lineage Health Index of 99.9/100, 0 isolated nodes, 14,108 derivation edges. | `scripts/fixlineage --summary` |
+| **Multi-Step Derivations Engine** | `equation_explainer.php`<br/>[`tests/test_derivation_steps.py`](tests/test_derivation_steps.py) | **Operational (104 verified proofs sitewide)**. Collapsible derivation accordions with MathJax typesetting, sequential step schema, TeX brace balance, and universal Domain Parity ($\ge 8$ proofs across all 12 platform domains). | `.venv/bin/python3 -m pytest tests/test_derivation_steps.py` |
+| **Lineage DAG & LHI** | `scripts/fixlineage`<br/>`formula_derivation_graph.json` | **Operational**. Lineage Health Index of 99.9/100, 0 isolated nodes, 14,119 derivation edges. | `scripts/fixlineage --summary` |
 | **Dual-Layer Hash Synchronizer** | `app/config/formulas_hash_registry.json`<br/>`PhysicsService.php` | **Operational**. 256/256 formula shards synchronized with zero hash drift. | `scripts/assess --roadmap --no-tests` |
+| **Production Cutover & Deploy Pipeline** | [`scripts/update_prod.sh`](scripts/update_prod.sh)<br/>[`docs/final_stages.md`](docs/final_stages.md) | **Operational (`https://physicslab.ca`)**. Hardened Debian 13 + Apache 2.4 + MariaDB deployment (`/srv/www/terra`), `/healthz` probe, in-process HTML cache warmer, and DB-backed `shard_sync_state`. | `composer test` |
 
 ---
 

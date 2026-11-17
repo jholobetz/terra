@@ -2,7 +2,7 @@
 
 > **Status**: Active Master Roadmap  
 > **Target Horizon**: 2026–2027  
-> **Authoritative References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md), [`docs/architecture.md`](architecture.md), [`archive/horizons_and_expansion.md`](../archive/horizons_and_expansion.md)
+> **Authoritative References**: [`CLAUDE.md`](../CLAUDE.md), [`README.md`](../README.md), [`docs/architecture.md`](architecture.md), [`docs/final_stages.md`](final_stages.md), [`archive/horizons_and_expansion.md`](../archive/horizons_and_expansion.md)
 
 ---
 
@@ -13,12 +13,13 @@ Over successive engineering sprints, the **Terra Physics Lab** platform has atta
 | Metric / Dimension | Benchmark Status | Verification Gate |
 | :--- | :--- | :--- |
 | **Subtopic Coverage** | **1,584 / 1,584 Subtopics (100.0%)** graduated to Organic Platinum Standard (OPS) | `integrity_shield.py` (OPS Lead & Density Audit) |
-| **Formula Catalog** | **14,681 Physical Formulas** (`11,943` equations, `2,738` symbols/terms) across 256 hex shards (`00` to `ff`) | `integrity_shield.py` (Shard Hex Partition Audit) |
-| **Derivation Lineage DAG** | **Lineage Health Index (LHI) of 99.9 / 100** with **0 isolated nodes** (14,108 edges) | `scripts/fixlineage --summary` |
+| **Formula Catalog** | **14,684 Physical Formulas** across 256 hex shards (`00` to `ff`) | `integrity_shield.py` (Shard Hex Partition Audit) |
+| **Derivation Lineage DAG** | **Lineage Health Index (LHI) of 99.9 / 100** with **0 isolated nodes** (14,119 edges) | `scripts/fixlineage --summary` |
 | **Manifold Closure** | **100.0% equation closure** (0 unmapped prose identities across 8,649 expressions) | `php scripts/audit_prose_equations.php` |
 | **Symbolic CAS Engine** | Sandboxed SymPy worker ([`cas_engine.py`](../lib/cas/cas_engine.py)) with async `/physics/api/cas-evaluate` | `pytest tests/test_cas_engine.py` |
 | **Modular ES6 Client** | `equation_explainer.js` decoupled into `simulations`, `curator`, `dictionary` modules | Browser verification & regression suite |
-| **Regression Net** | **100% passing automated test suite** (241+ Pytest tests + 16 native PHP unit tests covering all 14,681 formulas) | `.venv/bin/python3 -m pytest tests/` & `composer test` |
+| **Production Deployment** | **Live on [`https://physicslab.ca`](https://physicslab.ca)** (Debian 13, Apache 2.4, PHP 8.4, MariaDB, Let's Encrypt TLS) | `/healthz` & `scripts/update_prod.sh` |
+| **Regression Net** | **100% passing automated test suite** (241+ Pytest tests + 30 native PHP unit suites covering all 14,684 formulas) | `.venv/bin/python3 -m pytest tests/` & `composer test` |
 
 ---
 
@@ -37,7 +38,7 @@ flowchart TD
         P2A["Purge & Archive scratch/ & scripts/"]
         P2B["Step-by-Step Derivation Accordions"]
         P2C["Modular Canvas/WebGL Visualizer Library"]
-        P2D["Multi-Step Derivation Proof Seeding (103 Proofs)"]
+        P2D["Multi-Step Derivation Proof Seeding (104 Proofs)"]
     end
 
     subgraph Phase3["Phase 3: Formal Verification & Unified Ingestion (Completed)"]
@@ -46,8 +47,11 @@ flowchart TD
         P3C["Unified 5-Stage Formula Ingestion Pipeline"]
     end
 
-    subgraph Phase4["Phase 4: Next Horizon (Undetermined)"]
-        P4A["4.1 Undetermined at This Time"]
+    subgraph Phase4["Phase 4: Production Hardening & Cutover (Completed)"]
+        P4A["4.1 Security & --no-dev Hardening"]
+        P4B["4.2 Debian 13 Packaging, /healthz & Cache Warmer"]
+        P4C["4.3 Branded Error Views, CSP Hygiene & SEO/Sitemap"]
+        P4D["4.4 Apache/MariaDB Provisioning & Git Deploy Pipeline"]
     end
 
     subgraph Phase5["Phase 5: OPS 2.0 Upgrade"]
@@ -214,9 +218,39 @@ flowchart TD
 
 ---
 
-## 6. Phase 4: Next Horizon (4.1)
+## 6. Phase 4: Production Hardening & `physicslab.ca` Cutover (Completed)
 
-* **4.1**: Undetermined at this time.
+> **Operational Runbook**: [`docs/final_stages.md`](final_stages.md) | **Pre-Cutover Audit Archive**: [`archive/rollout_fixes.md`](../archive/rollout_fixes.md)
+
+### 4.1 Security & `--no-dev` Production Hardening
+* **Status**: Completed (`commit 198f3a3b1`).
+* **Accomplished**:
+  1. Restricted `?preview=1` shard overrides and developer studio privileges via `AuthService::isLocalDevStudio()` so public visitors in `APP_ENV=production` cannot bypass cached MariaDB reads.
+  2. Enforced `Debugger::Production` error isolation and `class_exists()` Composer `--no-dev` guards across [`app/config/services.php`](../app/config/services.php) and [`SecurityHeadersMiddleware.php`](../app/middlewares/SecurityHeadersMiddleware.php) so `tracy/tracy` and `runway` are cleanly omitted on production hosts.
+  3. Implemented spoof-resistant client IP resolution (`AuthService::resolveClientIp()`), per-IP semantic search rate limiting, a zero-external-API production firewall in [`SemanticSearchService.php`](../app/logic/SemanticSearchService.php), `dev_mock` seed skipping in production RBAC migrations, and atomic `0775` / `LOCK_EX` disk cache writes.
+
+### 4.2 Debian 13 Packaging, `/healthz` Probe & CLI Cache Warmer
+* **Status**: Completed (`commit 198f3a3b1`).
+* **Accomplished**:
+  1. Standardized multi-SAPI `APP_ENV` resolution (`getenv()`, `$_SERVER['APP_ENV']`, `$_SERVER['REDIRECT_APP_ENV']`, and `config.php` `'app_env'`) across Apache `mod_php`/`php-fpm` and CLI maintenance runners.
+  2. Split minimal runtime Python dependencies ([`requirements.txt`](../requirements.txt): `sympy==1.14.0`, `mpmath==1.3.0`) from development/test tooling ([`requirements-dev.txt`](../requirements-dev.txt)) for clean Debian 13 Python 3.13 `.venv` provisioning.
+  3. Added zero-leak `/healthz` and `/physics/healthz` endpoints verifying MariaDB connectivity, writable cache storage, and sandboxed SymPy CAS execution (`HTTP 200` vs `503`).
+  4. Eliminated `GET`-time database upserts in production and built in-process `PhysicsController::warmHtmlCache()` + `php scripts/cli_sync.php --warm-cache` (`1,596` hub and subtopic HTML pages pre-rendered in `< 1s`).
+
+### 4.3 Branded Error Views, CSP Hygiene & Search Discovery
+* **Status**: Completed (`commit 3bffa5b6d`).
+* **Accomplished**:
+  1. Created branded [`error_404.php`](../app/views/physics/error_404.php) and [`error_500.php`](../app/views/physics/error_500.php) templates mapped via `$app->map('notFound', ...)` and `$app->map('error', ...)` with zero stack-trace leakage.
+  2. Replaced legacy inline `onmouseover`/`onmouseout`/`onclick` attributes across encyclopedia templates with strict CSP-compliant CSS `:hover` rules and delegated event listeners, and removed the public footer admin link outside local studio mode.
+  3. Added Host-header-safe canonical URL resolution (`$config['app_url']`), dynamic `<meta name="description">`, `<link rel="canonical">`, OpenGraph metadata, [`public/favicon.svg`](../public/favicon.svg), `/robots.txt` (`Disallow: /physics/admin`, `Disallow: /physics/api/`), and cached `/sitemap.xml` (`1,600+` canonical URLs via `cli_sync.php --sitemap`).
+
+### 4.4 Apache/MariaDB Provisioning, Revision Safeguards & Live Cutover
+* **Status**: Completed & Live on [`https://physicslab.ca`](https://physicslab.ca) (`commits 74caaf5ca`, `fcdea6991`, `866289200`).
+* **Accomplished**:
+  1. Provisioned `/srv/www/terra` on **Debian 13 (Trixie)** with Apache 2.4 (`DocumentRoot /srv/www/terra/public`, keeping `.git/`, `app/`, `vendor/`, `lib/`, and `tests/` outside the web root), Let's Encrypt TLS (`:443`), PHP 8.4, MariaDB, and `sympy` `.venv`, codified in [`deploy/apache/physicslab.ca-le-ssl.conf.example`](../deploy/apache/physicslab.ca-le-ssl.conf.example), [`deploy/mariadb/provision_terra.sql`](../deploy/mariadb/provision_terra.sql), and [`deploy/mariadb/99-terra-tuning.cnf`](../deploy/mariadb/99-terra-tuning.cnf).
+  2. Hardened [`public/.htaccess`](../public/.htaccess) with `mod_deflate` compression, 1-year `immutable` static asset caching paired with `?v=filemtime` script query strings, and ACME-safe dotfile blocking (`!^/\.well-known/`).
+  3. Extended `PhysicsController::isCacheStale()` to track shared layout CSS/JS and memoized hex formula shard `mtime`s, added DB-backed `schema_migrations` and `shard_sync_state` tables in [`ShardSyncService.php`](../app/logic/ShardSyncService.php) so production `cli_sync.php` never dirties Git-tracked files, and added first-boot empty-schema table provisioning.
+  4. Built and verified [`scripts/update_prod.sh`](../scripts/update_prod.sh) (`--quick`, `--rollback`, `--dry-run`, automatic `:443` `/healthz` verification) on the live server, backed by **14 new PHP test suites** (`Stage1`–`Stage4`, bringing `composer test` to **30 suites / 1,317 assertions**).
 
 ---
 
@@ -249,11 +283,14 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 2** | 2.4 | Hero Stage Cosmic Arena & Cockpit | `cosmic_arena.js`<br/>`lab_cockpit.js`<br/>`lab_tools.php` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.5 | Cross-Encyclopedia Lab Tools Ingestion | `LabToolsLauncher.php`<br/>`subtopic.php`<br/>`test_lab_tools_hydration.py` | 🟡 **P2** | 🟢 Completed |
 | **Phase 2** | 2.6 | Analytical Mechanics Workbench Deepening | `legendre_transformer.js`<br/>`legendre_transformer.php`<br/>`cas_engine.py` | 🟡 **P2** | 🟢 Completed |
-| **Phase 2** | 2.7 | Derivation Steps Proof Seeding | `shard_[00-ff].json`<br/>`tests/test_derivation_steps.py` | 🟡 **P2** | 🟢 Completed (103 Proofs) |
+| **Phase 2** | 2.7 | Derivation Steps Proof Seeding | `shard_[00-ff].json`<br/>`tests/test_derivation_steps.py` | 🟡 **P2** | 🟢 Completed (104 Proofs) |
 | **Phase 2** | 2.8 | Thin Shard Curriculum Enrichment | `fluids-nonlinear.json`<br/>`gqs.py` | 🟢 **P3** | ⏸️ Deferred (Next-Level) |
 | **Phase 3** | 3.1 | Database-wide SymPy CAS Proof Sweep | `cas_engine.py`<br/>`batch_cas_prover.py` | 🔴 **P1** | 🟢 Completed (9,302 Tagged) |
 | **Phase 3** | 3.2 | Unified 5-Stage Ingestion Pipeline | `lib/pipeline/formula_pipeline.py`<br/>`gqs.py`<br/>`generate_gemini_formula.py` | 🔴 **P1** | 🟢 Completed |
 | **Phase 3** | 3.3 | Autonomous Governance Safeguards | `docs/cost_governance.md`<br/>`.agents/skills/` | 🟢 **P3** | 🟢 Guarded |
-| **Phase 4** | 4.1 | Undetermined at This Time | TBD | ⚪ **TBD** | ⏳ Undetermined |
+| **Phase 4** | 4.1 | Security & `--no-dev` Hardening | `AuthService.php`<br/>`SemanticSearchService.php`<br/>`services.php` | 🔴 **P1** | 🟢 Completed |
+| **Phase 4** | 4.2 | Debian 13 Packaging, `/healthz` & Cache Warmer | `requirements.txt`<br/>`PhysicsController.php`<br/>`cli_sync.php` | 🔴 **P1** | 🟢 Completed |
+| **Phase 4** | 4.3 | Branded Error Views, CSP Hygiene & SEO/Sitemap | `error_404.php`<br/>`error_500.php`<br/>`layout.php` | 🔴 **P1** | 🟢 Completed |
+| **Phase 4** | 4.4 | Apache/MariaDB Provisioning & Git Deploy Pipeline | `public/.htaccess`<br/>`ShardSyncService.php`<br/>`scripts/update_prod.sh` | 🔴 **P1** | 🟢 Completed (Live on `physicslab.ca`) |
 | **Phase 5** | 5.1 | OPS 2.0 Upgrade | `docs/OPS 2.0 (The Qualitative Rubric).md`<br/>`gqs.py` | 🟡 **P2** | 📋 Planned |
 | **Phase 6** | 6.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |

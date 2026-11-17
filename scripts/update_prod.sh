@@ -106,15 +106,34 @@ fix_runtime_permissions() {
 
 reload_web_workers() {
     echo "-> Reloading PHP / Apache workers to refresh OPcache..."
-    if command -v systemctl >/dev/null 2>&1; then
-        for svc in php8.4-fpm php8.3-fpm php8.2-fpm php-fpm; do
-            if systemctl is-active --quiet "${svc}" 2>/dev/null; then
-                systemctl reload "${svc}" 2>/dev/null || sudo -n systemctl reload "${svc}" 2>/dev/null || echo "   [NOTE] Run 'sudo systemctl reload ${svc}' to flush FPM OPcache."
-            fi
-        done
-        if systemctl is-active --quiet apache2 2>/dev/null; then
-            systemctl reload apache2 2>/dev/null || sudo -n systemctl reload apache2 2>/dev/null || echo "   [NOTE] Run 'sudo systemctl reload apache2' to flush Apache OPcache."
+    if ! command -v systemctl >/dev/null 2>&1; then
+        return 0
+    fi
+
+    local active_svcs=()
+    for svc in php8.4-fpm php8.3-fpm php8.2-fpm php-fpm apache2; do
+        if systemctl is-active --quiet "${svc}" 2>/dev/null; then
+            active_svcs+=("${svc}")
         fi
+    done
+
+    if [[ "${#active_svcs[@]}" -eq 0 ]]; then
+        return 0
+    fi
+
+    if [[ "${EUID:-$(id -u)}" -eq 0 ]]; then
+        systemctl --no-ask-password reload "${active_svcs[@]}"
+        echo "✓ Reloaded: ${active_svcs[*]}"
+    elif sudo -n systemctl reload "${active_svcs[@]}" 2>/dev/null; then
+        echo "✓ Reloaded: ${active_svcs[*]}"
+    elif [[ -t 0 && -t 1 ]]; then
+        if sudo systemctl reload "${active_svcs[@]}"; then
+            echo "✓ Reloaded: ${active_svcs[*]}"
+        else
+            echo "   [NOTE] Run 'sudo systemctl reload ${active_svcs[*]}' to flush OPcache."
+        fi
+    else
+        echo "   [NOTE] Run 'sudo systemctl reload ${active_svcs[*]}' to flush OPcache."
     fi
 }
 

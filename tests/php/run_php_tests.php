@@ -1166,6 +1166,9 @@ $runner->run('Stage4DeploymentTest', 'testHtaccessCompressionAcmeExemptionAndUpd
     $configSampleSrc = (string)file_get_contents(PROJECT_ROOT . '/app/config/config_sample.php');
     $t->assertFalse(str_contains($bootstrapSrc, 'E_STRICT'), 'bootstrap.php must not reference PHP 8.4-deprecated E_STRICT');
     $t->assertFalse(str_contains($configSampleSrc, 'E_STRICT'), 'config_sample.php must not reference PHP 8.4-deprecated E_STRICT');
+
+    // Guard against non-root polkit pkttyagent errors in update_prod.sh
+    $t->assertContains('--no-ask-password', $updateSrc, 'update_prod.sh must avoid spawning polkit pkttyagent');
 });
 
 $jsonFlag = in_array('--json', $argv ?? [], true);

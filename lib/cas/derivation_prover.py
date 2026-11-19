@@ -8,9 +8,12 @@ import re
 from typing import Dict, Any, List, Optional, Tuple
 import sympy
 from sympy.parsing.sympy_parser import (
-    parse_expr,
     standard_transformations,
     implicit_multiplication_application,
+)
+from lib.cas.safe_parse import (
+    safe_parse_expr as parse_expr,
+    safe_sympify_scalar,
 )
 
 from lib.cas.latex_parser import (
@@ -283,7 +286,7 @@ def verify_symbolic_reduction(
                 tgt = -sympy.oo
             else:
                 try:
-                    tgt = sympy.sympify(tgt)
+                    tgt = safe_sympify_scalar(tgt)
                 except Exception:
                     tgt = 0
 

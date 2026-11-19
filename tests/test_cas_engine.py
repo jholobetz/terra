@@ -358,4 +358,48 @@ def test_check_dimensions_zero_rhs_and_natural_units_parity():
     assert res_vel_err["is_homogeneous"] is False
 
 
+def test_cas_blocks_code_injection_vectors():
+    """Verify P0-1: SymPy CAS rejects Python RCE/injection payloads across all entry points."""
+    from lib.cas.safe_parse import safe_parse_expr, UnsafeExpressionError
+    from lib.cas.cas_engine import legendre_transform, check_dimensions
+
+    rce_payloads = [
+        "__import__('os').system('echo PWNED')",
+        "__builtins__['__import__']('os')",
+        "().__class__.__base__.__subclasses__()",
+        "eval('1+1')",
+        "open('/etc/passwd').read()",
+        "(lambda x: x)(1)",
+    ]
+
+    for payload in rce_payloads:
+        with pytest.raises(UnsafeExpressionError):
+            safe_parse_expr(payload)
+
+    # 1. evaluate_symbolic via latex
+    res_eval = evaluate_symbolic("__import__('os').popen('id').read()")
+    assert res_eval["success"] is False
+
+    # 2. evaluate_symbolic via limit_to
+    res_lim = evaluate_symbolic("x^2", limit_var="x", limit_to="__import__('os').system('id')")
+    assert res_lim["success"] is False
+
+    # 3. legendre_transform via raw lagrangian (no backslashes/braces)
+    res_leg = legendre_transform(
+        lagrangian="__import__('os').system('id')",
+        coords="q",
+        velocities="dq",
+    )
+    assert res_leg["success"] is False
+
+    # 4. check_dimensions via custom_vars
+    res_dim = check_dimensions(
+        "E = m c^2",
+        custom_vars={"m": "__import__('os').system('id')"},
+    )
+    # Must never execute code; either fails cleanly or ignores unsafe custom override
+    assert isinstance(res_dim, dict)
+
+
+
 

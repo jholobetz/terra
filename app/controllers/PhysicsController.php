@@ -794,14 +794,16 @@ class PhysicsController
             $payload = $req->query->getData() ?: [];
         }
 
-        $latex = $payload['latex'] ?? $payload['lagrangian'] ?? '';
-        if (empty($latex)) {
+        $rawExpr = $payload['latex'] ?? $payload['lagrangian'] ?? $payload['expression'] ?? '';
+        if (!is_string($rawExpr) || trim($rawExpr) === '') {
+            Flight::response()->status(400);
             echo json_encode(['success' => false, 'error' => 'No mathematical equation or Lagrangian provided.']);
             return;
         }
+        $latex = $rawExpr;
 
-        if (strlen((string)$latex) > 2048) {
-            http_response_code(400);
+        if (strlen($latex) > 2048) {
+            Flight::response()->status(400);
             echo json_encode(['success' => false, 'error' => 'Payload exceeds maximum allowed expression length (2048 bytes).']);
             return;
         }
@@ -814,23 +816,75 @@ class PhysicsController
             $pythonBin = 'python3';
         }
 
-        $mode = $payload['mode'] ?? 'evaluate';
-        $casPayload = array_merge([
-            'mode' => $mode,
-            'latex' => $latex,
-            'limit_var' => $payload['limit_var'] ?? null,
-            'limit_to' => $payload['limit_to'] ?? null,
-            'series_order' => isset($payload['series_order']) ? (int)$payload['series_order'] : 4
-        ], $payload);
+        $allowedModes = ['evaluate', 'legendre', 'dimensions'];
+        $rawMode = is_string($payload['mode'] ?? null) ? $payload['mode'] : 'evaluate';
+        $mode = in_array($rawMode, $allowedModes, true) ? $rawMode : 'evaluate';
+
+        // Strict mode-aware payload allowlist (prevents arbitrary key injection & unbounded payloads)
+        if ($mode === 'legendre') {
+            $sanitizeList = static function ($val, string $default): string {
+                if (is_array($val)) {
+                    $parts = array_filter(array_map(static fn($v) => is_scalar($v) ? trim((string)$v) : '', $val));
+                    $str = implode(',', $parts);
+                } elseif (is_scalar($val)) {
+                    $str = trim((string)$val);
+                } else {
+                    $str = $default;
+                }
+                return substr($str !== '' ? $str : $default, 0, 256);
+            };
+            $casPayload = [
+                'mode' => 'legendre',
+                'lagrangian' => $latex,
+                'coords' => $sanitizeList($payload['coords'] ?? $payload['coord'] ?? 'q', 'q'),
+                'velocities' => $sanitizeList($payload['velocities'] ?? $payload['velocity'] ?? 'dq', 'dq'),
+                'parameters' => $sanitizeList($payload['parameters'] ?? '', ''),
+            ];
+        } elseif ($mode === 'dimensions') {
+            $customVars = null;
+            if (isset($payload['custom_vars']) && is_array($payload['custom_vars'])) {
+                $customVars = [];
+                foreach (array_slice($payload['custom_vars'], 0, 20, true) as $k => $v) {
+                    if (is_string($k) && is_string($v) && strlen($k) <= 32 && strlen($v) <= 128) {
+                        $customVars[$k] = $v;
+                    }
+                }
+            }
+            $casPayload = [
+                'mode' => 'dimensions',
+                'latex' => $latex,
+            ];
+            if (!empty($customVars)) {
+                $casPayload['custom_vars'] = $customVars;
+            }
+        } else {
+            $limitVar = (isset($payload['limit_var']) && is_string($payload['limit_var']))
+                ? substr(trim($payload['limit_var']), 0, 64)
+                : null;
+            $limitTo = (isset($payload['limit_to']) && is_scalar($payload['limit_to']))
+                ? substr(trim((string)$payload['limit_to']), 0, 64)
+                : null;
+            $seriesOrder = isset($payload['series_order']) && is_numeric($payload['series_order'])
+                ? max(1, min(10, (int)$payload['series_order']))
+                : 4;
+            $casPayload = [
+                'mode' => 'evaluate',
+                'latex' => $latex,
+                'limit_var' => ($limitVar !== '') ? $limitVar : null,
+                'limit_to' => ($limitTo !== '') ? $limitTo : null,
+                'series_order' => $seriesOrder,
+            ];
+        }
         ksort($casPayload);
 
         $jsonPayload = json_encode($casPayload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         // 1. Check Deterministic SHA-256 CAS Result Cache (<1ms fast path)
-        $scriptMtime = file_exists($casScript) ? filemtime($casScript) : 0;
-        $parserScript = PROJECT_ROOT . '/lib/cas/latex_parser.py';
-        if (file_exists($parserScript)) {
-            $scriptMtime = max($scriptMtime, (int)filemtime($parserScript));
+        $scriptMtime = file_exists($casScript) ? (int)filemtime($casScript) : 0;
+        foreach ([PROJECT_ROOT . '/lib/cas/latex_parser.py', PROJECT_ROOT . '/lib/cas/safe_parse.py'] as $depScript) {
+            if (file_exists($depScript)) {
+                $scriptMtime = max($scriptMtime, (int)filemtime($depScript));
+            }
         }
         $cacheHash = hash('sha256', $jsonPayload . '|' . $scriptMtime);
         $cacheDir = is_writable(PROJECT_ROOT . '/public/cache')
@@ -838,7 +892,9 @@ class PhysicsController
             : sys_get_temp_dir() . '/terra_cas_cache';
         $cacheFile = $cacheDir . '/' . $cacheHash . '.json';
 
-        $bypassCache = !empty($payload['nocache']);
+        $auth = $this->authService();
+        // Only authenticated curators/admins may bypass the deterministic CAS cache
+        $bypassCache = !empty($payload['nocache']) && $auth->isCuratorOrAdmin();
         if (!$bypassCache && file_exists($cacheFile)) {
             $cachedRaw = file_get_contents($cacheFile);
             $cachedResult = json_decode($cachedRaw ?: '', true);
@@ -850,14 +906,13 @@ class PhysicsController
         }
 
         // 2. Per-IP Sliding-Window Rate Limiter on Cold Subprocess Spawns
-        $auth = $this->authService();
         $isLocalAdmin = $auth->isLocalDevStudio();
         $maxPerWindow = $isLocalAdmin ? 120 : 20;
         $windowSeconds = 60;
         $clientIp = $auth->resolveClientIp();
 
         if (!$this->consumeCasRateLimit($clientIp, $maxPerWindow, $windowSeconds)) {
-            http_response_code(429);
+            Flight::response()->status(429);
             echo json_encode([
                 'success' => false,
                 'error' => 'Rate limit exceeded for live symbolic CAS evaluation. Please wait a moment and try again.'

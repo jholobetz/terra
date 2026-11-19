@@ -19,7 +19,6 @@ if PROJECT_ROOT not in sys.path:
 
 import sympy
 from sympy.parsing.sympy_parser import (
-    parse_expr,
     standard_transformations,
     implicit_multiplication_application,
 )
@@ -27,6 +26,12 @@ from sympy.physics.units import (
     length, mass, time, current, temperature, amount_of_substance, luminous_intensity,
 )
 from sympy.physics.units.systems.si import dimsys_SI
+
+from lib.cas.safe_parse import (
+    safe_parse_expr as parse_expr,
+    safe_sympify_scalar,
+    UnsafeExpressionError,
+)
 
 from lib.cas.latex_parser import (
     latex_to_sympy_str,
@@ -124,7 +129,9 @@ def evaluate_symbolic(
             target = sympy.oo
         elif limit_to is not None:
             try:
-                target = sympy.sympify(limit_to)
+                target = safe_sympify_scalar(limit_to)
+            except UnsafeExpressionError as ue:
+                return {"success": False, "error": f"Invalid limit target: {str(ue)}"}
             except Exception:
                 target = 0
 

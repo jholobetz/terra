@@ -7,11 +7,12 @@ into exact SymPy physical dimensions for dimensional homogeneity verification.
 import re
 from typing import Optional, Dict, Any
 import sympy
-from sympy.parsing.sympy_parser import parse_expr, standard_transformations
+from sympy.parsing.sympy_parser import standard_transformations
 from sympy.physics.units import (
     length, mass, time, current, temperature, amount_of_substance, luminous_intensity
 )
 from sympy.physics.units.systems.si import dimsys_SI
+from lib.cas.safe_parse import safe_parse_expr as parse_expr
 
 # Base SI Dimensions
 DIM_MASS = mass

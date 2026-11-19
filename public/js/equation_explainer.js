@@ -60,7 +60,7 @@ const EquationExplainer = {
         if (subtopicParam) {
             window.SUBTOPIC_SLUG = subtopicParam;
             if (!window.SUBTOPIC_VARIABLES || Object.keys(window.SUBTOPIC_VARIABLES).length === 0) {
-                fetch(`${BASE_URL}/physics/api/subtopic-variables/${subtopicParam}`)
+                fetch(`${BASE_URL}/physics/api/subtopic-variables/${encodeURIComponent(subtopicParam)}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
@@ -300,7 +300,8 @@ const EquationExplainer = {
 
         let symbolInfo = this.resolveSymbolInfo(symbol, type);
 
-        this.formulaTitle.innerHTML = `${symbolInfo.name} (\\( ${symbol} \\))`;
+        const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        this.formulaTitle.innerHTML = `${esc(symbolInfo.name)} (\\( ${esc(symbol)} \\))`;
         if (this.formulaBadge) {
             this.formulaBadge.style.display = 'inline-block';
             if (symbolInfo.type === 'constant') {
@@ -606,7 +607,7 @@ const EquationExplainer = {
             this.navigationStack = []; // Reset stack on external history change
             
             if (id) {
-                fetch(`${BASE_URL}/physics/api/explain?latex=` + encodeURIComponent(latex || '') + `&id=${id}`)
+                fetch(`${BASE_URL}/physics/api/explain?latex=` + encodeURIComponent(latex || '') + `&id=${encodeURIComponent(id)}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data.success && data.formula) {

@@ -266,10 +266,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         dropdownEl.style.display = 'none';
                         return;
                     }
+                    const escapeHtml = (s) => String(s ?? '')
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
                     dropdownEl.innerHTML = items.map(item => `
                         <div class="graph-ac-item" data-id="${encodeURIComponent(item.id)}" data-title="${encodeURIComponent(item.title || item.id)}">
-                            <div class="graph-ac-title">${item.title || item.id}</div>
-                            ${item.equation ? `<div class="graph-ac-eq">\\(${item.equation}\\)</div>` : ''}
+                            <div class="graph-ac-title">${escapeHtml(item.title || item.id)}</div>
+                            ${item.equation ? `<div class="graph-ac-eq">\\(${escapeHtml(item.equation)}\\)</div>` : ''}
                         </div>
                     `).join('');
                     dropdownEl.style.display = 'block';
@@ -339,11 +345,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     const modeLabel = res.data.mode === 'bridge' ? 'Shared Axiom Bridge' : 'Direct Derivation Chain';
                     let html = `<div style="color: #64ffda; font-weight: 700; margin-bottom: 6px;">✓ ${modeLabel} (${res.data.hops} Steps):</div>`;
                     html += `<ol style="margin: 0; padding-left: 18px; color: #cbd5e1; line-height: 1.65;">`;
+                    const esc = (s) => String(s ?? '')
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
                     res.data.path_nodes.forEach(pn => {
                         html += `
                             <li style="margin-bottom: 4px;">
-                                <button type="button" class="path-node-focus-btn" data-id="${pn.id}" title="Center graph on this formula">
-                                    ${pn.title || pn.id}
+                                <button type="button" class="path-node-focus-btn" data-id="${esc(pn.id)}" title="Center graph on this formula">
+                                    ${esc(pn.title || pn.id)}
                                 </button>
                                 <a href="/physics/equation-explainer?id=${encodeURIComponent(pn.id)}" title="Open in Equation Explainer" style="color: #94a3b8; text-decoration: none; font-size: 0.72rem; margin-left: 4px;">↗</a>
                             </li>`;
@@ -357,7 +369,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     });
                 } else {
-                    resultBox.innerHTML = `<span style="color: #f87171;">${res.data?.message || 'No derivation path found.'}</span>`;
+                    const escMsg = String(res.data?.message || 'No derivation path found.')
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;');
+                    resultBox.innerHTML = `<span style="color: #f87171;">${escMsg}</span>`;
                 }
             } catch (e) {
                 resultBox.innerHTML = '<span style="color: #f87171;">Route search error.</span>';

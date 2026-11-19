@@ -394,24 +394,32 @@ const ExplainerCurator = {
             return;
         }
 
+        const escapeHtml = (str) => String(str ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
         const user = window.CURRENT_USER || { role: 'guest' };
         const canApprove = user.role === 'curator' || user.role === 'admin';
 
         let html = '';
         reviews.forEach(r => {
+            const safeId = Number.parseInt(r.id, 10) || 0;
             html += `
                 <div style="background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 0.75rem; font-weight: 600; color: #f1f5f9;">${r.author_name} <small style="color:#94a3b8;">(${r.author_role})</small></span>
-                        <span style="font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); text-transform: uppercase;">${r.status}</span>
+                        <span style="font-size: 0.75rem; font-weight: 600; color: #f1f5f9;">${escapeHtml(r.author_name)} <small style="color:#94a3b8;">(${escapeHtml(r.author_role)})</small></span>
+                        <span style="font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); text-transform: uppercase;">${escapeHtml(r.status)}</span>
                     </div>
-                    ${r.proposed_latex ? `<div style="font-size: 0.75rem; color: #64ffda; font-family: 'Fira Code', monospace; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px;">${r.proposed_latex}</div>` : ''}
-                    ${r.hint_text ? `<div style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.3;">${r.hint_text.slice(0, 150)}...</div>` : ''}
-                    <div style="font-size: 0.68rem; color: #64748b;">${new Date(r.created_at).toLocaleString()}</div>
+                    ${r.proposed_latex ? `<div style="font-size: 0.75rem; color: #64ffda; font-family: 'Fira Code', monospace; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px;">${escapeHtml(r.proposed_latex)}</div>` : ''}
+                    ${r.hint_text ? `<div style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.3;">${escapeHtml(String(r.hint_text).slice(0, 150))}...</div>` : ''}
+                    <div style="font-size: 0.68rem; color: #64748b;">${escapeHtml(new Date(r.created_at).toLocaleString())}</div>
                     ${canApprove && r.status === 'pending' ? `
                         <div style="display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end;">
-                            <button onclick="EquationExplainer.rejectReview(${r.id})" style="padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; background: transparent; border: 1px solid rgba(244,63,94,0.4); color: #f43f5e; cursor: pointer;">Reject</button>
-                            <button onclick="EquationExplainer.approveReview(${r.id})" style="padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.4); color: #10b981; cursor: pointer;">✓ Approve &amp; Sync</button>
+                            <button type="button" class="curator-review-action-btn" data-action="reject" data-review-id="${safeId}" style="padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; background: transparent; border: 1px solid rgba(244,63,94,0.4); color: #f43f5e; cursor: pointer;">Reject</button>
+                            <button type="button" class="curator-review-action-btn" data-action="approve" data-review-id="${safeId}" style="padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.4); color: #10b981; cursor: pointer;">✓ Approve &amp; Sync</button>
                         </div>
                     ` : ''}
                 </div>
@@ -419,6 +427,17 @@ const ExplainerCurator = {
         });
 
         this.drawerReviewsContainer.innerHTML = html;
+        this.drawerReviewsContainer.querySelectorAll('.curator-review-action-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const reviewId = Number.parseInt(btn.getAttribute('data-review-id'), 10);
+                if (!reviewId) return;
+                if (btn.getAttribute('data-action') === 'approve') {
+                    this.approveReview(reviewId);
+                } else {
+                    this.rejectReview(reviewId);
+                }
+            });
+        });
     },
 
     approveReview(reviewId) {

@@ -1626,9 +1626,9 @@ class PhysicsService
                 $pos = stripos($plainContent, $cleanQuery);
                 if ($pos !== false) {
                     $start = max(0, $pos - 40);
-                    $snippet = '...' . substr($plainContent, $start, 120) . '...';
+                    $snippet = '...' . mb_substr($plainContent, $start, 120, 'UTF-8') . '...';
                 } else {
-                    $snippet = substr($plainContent, 0, 120) . '...';
+                    $snippet = mb_substr($plainContent, 0, 120, 'UTF-8') . '...';
                 }
 
                 $results[] = [
@@ -1653,7 +1653,7 @@ class PhysicsService
                         'type' => 'subtopic',
                         'slug' => $slug,
                         'title' => $st['title'] ?? $slug,
-                        'snippet' => substr(strip_tags($st['content'] ?? ''), 0, 120) . '...',
+                        'snippet' => mb_substr(strip_tags($st['content'] ?? ''), 0, 120, 'UTF-8') . '...',
                         'url' => '/physics/subtopic/' . $slug
                     ];
                 }
@@ -1677,7 +1677,7 @@ class PhysicsService
                         'type' => 'topic',
                         'slug' => $tr['slug'],
                         'title' => $tr['title'],
-                        'snippet' => substr(strip_tags($tr['description'] ?? ''), 0, 120) . '...',
+                        'snippet' => mb_substr(strip_tags($tr['description'] ?? ''), 0, 120, 'UTF-8') . '...',
                         'url' => '/physics/topic/' . $tr['slug']
                     ];
                 }
@@ -1686,28 +1686,30 @@ class PhysicsService
             }
         }
 
-        // 2. Search Formulas if room available
+        // 3. Search Formulas if room available
         if (count($results) < $limit) {
-            $remaining = $limit - count($results);
+            $remaining = max(1, (int)$limit - count($results));
             try {
                 $formulaRows = $db->runQuery(
-                    "SELECT id, title, conceptual_definition 
+                    "SELECT id, title, equation, conceptual_definition 
                      FROM formulas 
                      WHERE title LIKE ? OR id LIKE ? OR conceptual_definition LIKE ?
-                     LIMIT ?",
-                    ['%' . $cleanQuery . '%', '%' . $cleanQuery . '%', '%' . $cleanQuery . '%', $remaining]
-                );
+                     LIMIT {$remaining}",
+                    ['%' . $cleanQuery . '%', '%' . $cleanQuery . '%', '%' . $cleanQuery . '%']
+                )->fetchAll();
 
                 foreach ($formulaRows as $f) {
                     $results[] = [
                         'type' => 'formula',
+                        'id' => $f['id'],
                         'slug' => $f['id'],
                         'title' => $f['title'],
-                        'snippet' => substr(strip_tags($f['conceptual_definition'] ?? ''), 0, 120) . '...',
+                        'equation' => $f['equation'] ?? '',
+                        'snippet' => mb_substr(strip_tags($f['conceptual_definition'] ?? ''), 0, 120, 'UTF-8') . '...',
                         'url' => '/physics/equation-explainer?id=' . $f['id']
                     ];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Ignore formula fallback errors
             }
         }

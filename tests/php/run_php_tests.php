@@ -471,6 +471,41 @@ $runner->run('PhysicsServiceTest', 'testAtomicJsonFileLocking', function (Native
     }
 });
 
+$runner->run('PhysicsServiceTest', 'testSearchContentQueriesFormulasWithValidLimitAndFetchAll', function (NativePhpTestRunner $t) {
+    $mockDb = new class {
+        public array $queries = [];
+        public function runQuery(string $sql, array $params = []) {
+            $this->queries[] = ['sql' => $sql, 'params' => $params];
+            $rows = [];
+            if (stripos($sql, 'FROM formulas') !== false) {
+                if (stripos($sql, 'LIMIT ?') !== false) {
+                    throw new \RuntimeException('Invalid parameterized LIMIT ? in MariaDB');
+                }
+                $rows = [[
+                    'id' => 'schrodinger-equation',
+                    'title' => 'Schrödinger Equation',
+                    'equation' => 'i\\hbar\\partial_t\\psi = \\hat{H}\\psi',
+                    'conceptual_definition' => 'Governs non-relativistic quantum wavefunctions.',
+                ]];
+            }
+            return new class($rows) {
+                private array $rows;
+                public function __construct(array $rows) { $this->rows = $rows; }
+                public function fetchAll(): array { return $this->rows; }
+            };
+        }
+    };
+    $app = new \flight\Engine();
+    $app->map('db', static fn() => $mockDb);
+    $svc = new \app\logic\PhysicsService($app);
+    $res = $svc->searchContent('Schrodinger', 5);
+    $formulas = array_values(array_filter($res['results'] ?? [], fn($r) => ($r['type'] ?? '') === 'formula'));
+    $t->assertSame(1, count($formulas), 'DB formula search must return matching formula rows');
+    $t->assertSame('schrodinger-equation', $formulas[0]['id'] ?? null, 'Formula search result must include id');
+    $t->assertSame('schrodinger-equation', $formulas[0]['slug'] ?? null, 'Formula search result must include slug');
+    $t->assertContains('\\hbar', $formulas[0]['equation'] ?? '', 'Formula search result must include equation');
+});
+
 // ============================================================================
 // 6. ShardSyncService Suite
 // ============================================================================

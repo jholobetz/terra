@@ -1895,6 +1895,9 @@ class PhysicsController
             PROJECT_ROOT . '/app/logic/PhysicsService.php',
             PROJECT_ROOT . '/app/logic/VariableAggregator.php',
             PROJECT_ROOT . '/app/config/variable_registry.json',
+            PROJECT_ROOT . '/app/config/content/categories.json',
+            PROJECT_ROOT . "/app/config/content/topics/{$slug}.json",
+            PROJECT_ROOT . "/app/config/content/{$slug}.json",
         ]);
         foreach ($hubDependencies as $depPath) {
             if (file_exists($depPath) && filemtime($depPath) > $cacheMtime) {
@@ -1918,6 +1921,8 @@ class PhysicsController
             PROJECT_ROOT . '/app/logic/PhysicsService.php',
             PROJECT_ROOT . '/app/logic/VariableAggregator.php',
             PROJECT_ROOT . '/app/logic/LabToolsLauncher.php',
+            PROJECT_ROOT . '/app/config/variable_registry.json',
+            PROJECT_ROOT . '/app/config/content/search_index.json',
         ]);
         foreach ($subDependencies as $depPath) {
             if (file_exists($depPath) && filemtime($depPath) > $cacheMtime) {

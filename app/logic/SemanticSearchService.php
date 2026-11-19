@@ -351,34 +351,52 @@ class SemanticSearchService
             $sim = ($vNormSq > 0) ? ($dot / ($queryNorm * sqrt($vNormSq))) : 0.0;
 
             if ($sim >= $minScore) {
-                $subtopics = class_exists('\Flight') && \Flight::has('physicsService') 
-                    ? \Flight::physicsService()->getSubtopicsByFormula($formulaId) 
-                    : [];
-                $primarySubtopic = !empty($subtopics) ? $subtopics[0] : null;
-                $url = $primarySubtopic 
-                    ? ('/physics/subtopic/' . $primarySubtopic['slug']) 
-                    : ('/physics/equation-explainer?latex=' . urlencode($entry['equation'] ?? ''));
-                $displayTitle = $primarySubtopic ? $primarySubtopic['title'] : ($entry['title'] ?? $formulaId);
-                $snippet = $primarySubtopic ? ($entry['title'] . ' — $$' . ($entry['equation'] ?? '') . '$$') : ('$$' . ($entry['equation'] ?? '') . '$$');
-
                 $scored[] = [
                     'id' => $formulaId,
-                    'type' => 'formula',
-                    'title' => $displayTitle,
-                    'formula_title' => $entry['title'] ?? '',
-                    'equation' => $entry['equation'] ?? '',
-                    'snippet' => $snippet,
-                    'url' => $url,
-                    'similarity' => round($sim, 4),
-                    'confidence' => round($sim * 100, 1) . '%'
+                    'entry' => $entry,
+                    'similarity' => $sim,
                 ];
             }
         }
 
-        // Sort descending by cosine similarity
+        // Sort descending by cosine similarity and slice BEFORE hydrating subtopic metadata (eliminates N+1 scans)
         usort($scored, fn($a, $b) => $b['similarity'] <=> $a['similarity']);
+        $topScored = array_slice($scored, 0, $limit);
 
-        return array_slice($scored, 0, $limit);
+        $physicsService = (class_exists('\Flight') && \Flight::has('physicsService'))
+            ? \Flight::physicsService()
+            : null;
+
+        $hydrated = [];
+        foreach ($topScored as $cand) {
+            $formulaId = $cand['id'];
+            $entry = $cand['entry'];
+            $sim = $cand['similarity'];
+
+            $subtopics = $physicsService ? $physicsService->getSubtopicsByFormula($formulaId) : [];
+            $primarySubtopic = !empty($subtopics) ? $subtopics[0] : null;
+            $url = $primarySubtopic
+                ? ('/physics/subtopic/' . $primarySubtopic['slug'])
+                : ('/physics/equation-explainer?latex=' . urlencode($entry['equation'] ?? ''));
+            $displayTitle = $primarySubtopic ? $primarySubtopic['title'] : ($entry['title'] ?? $formulaId);
+            $snippet = $primarySubtopic
+                ? ($entry['title'] . ' — $$' . ($entry['equation'] ?? '') . '$$')
+                : ('$$' . ($entry['equation'] ?? '') . '$$');
+
+            $hydrated[] = [
+                'id' => $formulaId,
+                'type' => 'formula',
+                'title' => $displayTitle,
+                'formula_title' => $entry['title'] ?? '',
+                'equation' => $entry['equation'] ?? '',
+                'snippet' => $snippet,
+                'url' => $url,
+                'similarity' => round($sim, 4),
+                'confidence' => round($sim * 100, 1) . '%'
+            ];
+        }
+
+        return $hydrated;
     }
 }
 

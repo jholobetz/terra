@@ -153,6 +153,7 @@ class PhysicsService
             $shardPath = $baseDir . $this->physicsContent['topics'][$slug]['shard'];
             if (file_exists($shardPath)) {
                 $topicData = json_decode(file_get_contents($shardPath), true) ?: [];
+                $topicData = $this->applyHubManifestOverlay($slug, $topicData);
                 $this->physicsContent['topics'][$slug] = array_merge($this->physicsContent['topics'][$slug], $topicData);
             }
         }
@@ -179,12 +180,13 @@ class PhysicsService
         $this->getPhysicsContent();
         $baseDir = PROJECT_ROOT . '/app/config/content/';
 
-        // Load Main Topic Shards
+        // Load Main Topic Shards (with authoritative hub_manifests/*.json overlay)
         foreach ($this->physicsContent['topics'] as $slug => $meta) {
             if (isset($meta['shard'])) {
                 $shardPath = $baseDir . $meta['shard'];
                 if (file_exists($shardPath)) {
                     $topicData = json_decode(file_get_contents($shardPath), true) ?: [];
+                    $topicData = $this->applyHubManifestOverlay((string)$slug, $topicData);
                     $this->physicsContent['topics'][$slug] = array_merge($this->physicsContent['topics'][$slug], $topicData);
                 }
             }
@@ -214,6 +216,44 @@ class PhysicsService
                 }
             }
         }
+    }
+
+    /**
+     * Overlays authoritative hub_manifests/{$slug}.json pillars & metadata onto a topic hub shard
+     * so production cli_sync.php and offline/preview renders never drift from hub_manifests/.
+     */
+    private function applyHubManifestOverlay(string $slug, array $topicData): array
+    {
+        $manifestPath = PROJECT_ROOT . '/hub_manifests/' . $slug . '.json';
+        if (!file_exists($manifestPath)) {
+            return $topicData;
+        }
+        $manifest = json_decode((string)file_get_contents($manifestPath), true);
+        if (!is_array($manifest)) {
+            return $topicData;
+        }
+
+        if (!empty($manifest['title'])) {
+            $topicData['title'] = $manifest['title'];
+        }
+        if (!empty($manifest['pillars']) && is_array($manifest['pillars'])) {
+            $topicData['pillars'] = $manifest['pillars'];
+        }
+        $meta = is_array($manifest['metadata'] ?? null) ? $manifest['metadata'] : [];
+        if (!empty($meta['intro'])) {
+            $topicData['intro'] = $meta['intro'];
+        }
+        if (!empty($meta['field'])) {
+            $topicData['field'] = $meta['field'];
+        }
+        if (!empty($meta['density'])) {
+            $topicData['density'] = $meta['density'];
+        }
+        if (!empty($meta['bridges']) && is_array($meta['bridges'])) {
+            $topicData['bridges'] = $meta['bridges'];
+        }
+
+        return $topicData;
     }
 
     /**

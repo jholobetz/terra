@@ -369,6 +369,21 @@ $runner->run('PhysicsServiceTest', 'testLoadAllShardsUsesStrictAllowlist', funct
 
     $t->assertSame(1584, count($content['subtopics']), 'Must load exactly 1,584 canonical subtopics');
     $t->assertFalse(isset($content['subtopics']['topics']), 'Auxiliary JSON files must not leak into subtopics');
+
+    // Verify all 12 topic hubs match hub_manifests/*.json pillar counts (zero prod vs dev constellation drift)
+    $manifestFiles = glob(PROJECT_ROOT . '/hub_manifests/*.json') ?: [];
+    $t->assertSame(12, count($manifestFiles), 'Expected 12 hub manifest files');
+    foreach ($manifestFiles as $mfPath) {
+        $hubSlug = basename($mfPath, '.json');
+        $manifest = json_decode((string)file_get_contents($mfPath), true);
+        $expectedPillars = count($manifest['pillars'] ?? []);
+        $actualPillars = count($content['topics'][$hubSlug]['pillars'] ?? []);
+        $t->assertSame(
+            $expectedPillars,
+            $actualPillars,
+            "Topic hub '{$hubSlug}' pillar count must match hub_manifests/{$hubSlug}.json"
+        );
+    }
 });
 
 $runner->run('PhysicsServiceTest', 'testGetRelatedTopicsAndPreviewMode', function (NativePhpTestRunner $t) {

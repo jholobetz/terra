@@ -1827,6 +1827,7 @@ class PhysicsController
             PROJECT_ROOT . '/app/views/physics/topic.php',
             PROJECT_ROOT . '/public/css/topic_constellation.css',
             PROJECT_ROOT . '/public/js/topic_constellation.js',
+            PROJECT_ROOT . '/app/logic/PhysicsService.php',
             PROJECT_ROOT . '/app/logic/VariableAggregator.php',
             PROJECT_ROOT . '/app/config/variable_registry.json',
         ]);

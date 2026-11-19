@@ -519,7 +519,7 @@ class PhysicsController
         $this->service()->performSync();
         $syncLock = PROJECT_ROOT . '/app/config/.last_sync';
         touch($syncLock);
-        $this->app->redirect($this->app->request()->referrer ?: '/physics');
+        $this->app->redirect('/physics');
     }
 
     /**
@@ -1348,6 +1348,11 @@ class PhysicsController
      */
     public function viewTopic(string $slug)
     {
+        if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
+            $this->renderNotFoundPage("Invalid topic identifier.");
+            return;
+        }
+
         $cachePath = PROJECT_ROOT . "/public/cache/topic/{$slug}.html";
         $isStale = $this->isHubCacheStale($slug, $cachePath);
 
@@ -1542,6 +1547,11 @@ class PhysicsController
      */
     public function viewSubtopic(string $slug)
     {
+        if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
+            $this->renderNotFoundPage("Invalid subtopic identifier.");
+            return;
+        }
+
         // 1. Canonical alias redirects
         if ($slug === 'maxwell-equations') {
             \Flight::redirect('/physics/subtopic/maxwells-equations', 301);

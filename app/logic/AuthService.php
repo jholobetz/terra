@@ -134,11 +134,18 @@ class AuthService
         }
 
         // Guard against reverse-proxy forwarded external requests appearing as 127.0.0.1
-        $forwardedFor = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_X_REAL_IP'] ?? '');
+        // Use right-to-left proxy-aware IP resolution and reject any non-loopback hop
+        if (!in_array($this->resolveClientIp(), $loopbackIps, true)) {
+            return false;
+        }
+
+        $forwardedFor = (string)($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_X_REAL_IP'] ?? ''));
         if ($forwardedFor !== '') {
-            $clientIp = trim(explode(',', $forwardedFor)[0]);
-            if (!in_array($clientIp, $loopbackIps, true)) {
-                return false;
+            foreach (explode(',', $forwardedFor) as $hop) {
+                $hopIp = trim($hop);
+                if ($hopIp !== '' && !in_array($hopIp, $loopbackIps, true)) {
+                    return false;
+                }
             }
         }
 

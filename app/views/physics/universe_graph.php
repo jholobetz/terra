@@ -260,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
             timer = setTimeout(async () => {
                 try {
                     const res = await fetch(`/physics/api/search?q=${encodeURIComponent(q)}&limit=6`);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     const data = await res.json();
                     const items = (data.results || []).filter(r => r.type === 'formula' && r.id);
                     if (items.length === 0) {
@@ -339,6 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 const resp = await fetch(`/physics/api/formula-path?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 const res = await resp.json();
 
                 if (res.success && res.data && res.data.found) {

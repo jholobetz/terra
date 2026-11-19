@@ -446,7 +446,10 @@ const ExplainerCurator = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ review_id: reviewId })
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
         .then(data => {
             if (data.success) {
                 this.showDrawerAlert('✓ Review approved and shard synced!');
@@ -457,17 +460,24 @@ const ExplainerCurator = {
             } else {
                 this.showDrawerAlert(data.error || 'Failed to approve review.', true);
             }
+        })
+        .catch(err => {
+            this.showDrawerAlert(`Network error approving review: ${err.message}`, true);
         });
     },
 
     rejectReview(reviewId) {
         const notes = prompt('Reason for rejection (optional):');
+        if (notes === null) return;
         fetch('/physics/api/reviews/reject', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ review_id: reviewId, notes: notes })
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
         .then(data => {
             if (data.success) {
                 this.showDrawerAlert('Suggestion rejected.');
@@ -475,6 +485,9 @@ const ExplainerCurator = {
             } else {
                 this.showDrawerAlert(data.error || 'Failed to reject review.', true);
             }
+        })
+        .catch(err => {
+            this.showDrawerAlert(`Network error rejecting review: ${err.message}`, true);
         });
     },
 

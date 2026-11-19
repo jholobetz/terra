@@ -299,11 +299,17 @@ $robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UT
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ role: role })
                 })
-                .then(function (r) { return r.json(); })
+                .then(function (r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
                 .then(function (data) {
                     if (data && data.success) {
                         window.location.reload();
                     }
+                })
+                .catch(function (err) {
+                    console.warn('Dev role switch failed:', err);
                 });
                 return;
             }

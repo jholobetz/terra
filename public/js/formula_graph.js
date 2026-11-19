@@ -546,6 +546,7 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
 
         try {
             const resp = await fetch(`/physics/api/formula-graph/${encodeURIComponent(formulaId)}?depth=${this.options.depth}`);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const res = await resp.json();
 
             if (res.success && res.data && res.data.nodes && res.data.nodes.length > 0) {

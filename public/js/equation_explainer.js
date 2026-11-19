@@ -608,7 +608,10 @@ const EquationExplainer = {
             
             if (id) {
                 fetch(`${BASE_URL}/physics/api/explain?latex=` + encodeURIComponent(latex || '') + `&id=${encodeURIComponent(id)}`)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.success && data.formula) {
                             this.currentId = data.formula.id;
@@ -623,7 +626,8 @@ const EquationExplainer = {
                                 }
                             });
                         }
-                    });
+                    })
+                    .catch(err => console.warn('History navigation formula fetch failed:', err));
             } else if (latex) {
                 this.latexInput.value = latex;
                 this.compileMathJax(latex);

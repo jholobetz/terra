@@ -281,7 +281,10 @@ const FormulaInspector = {
         // Fetch formula data & graph from API
         const apiUrl = `/physics/equation-explainer?format=json${formulaId ? '&id=' + encodeURIComponent(formulaId) : ''}${latex ? '&latex=' + encodeURIComponent(latex) : ''}`;
         fetch(apiUrl)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json();
+            })
             .catch(() => null)
             .then(data => {
                 if (data && data.formula) {
@@ -455,7 +458,10 @@ const FormulaInspector = {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ latex, limit_var: ql.var, limit_to: ql.to })
                     })
-                    .then(r => r.json())
+                    .then(r => {
+                        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                        return r.json();
+                    })
                     .then(data => {
                         if (data.success && data.limit && data.limit.result_latex) {
                             const tgt = ql.to === 'oo' ? '\\infty' : ql.to;

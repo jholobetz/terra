@@ -1857,7 +1857,7 @@ const EquationExplainer = {
 
         // Build name link or strong label
         const displayName = (info.name && /[\\[\]_{}^]/.test(info.name) && !info.name.includes('<')) ? `$${info.name}$` : (info.name || symbol);
-        let nameHtml = `<span class="var-name-lbl" style="color: var(--accent-default, #64ffda); text-decoration: none; font-size: 0.92rem; font-weight: 600; cursor: pointer; border-bottom: 1px dashed rgba(100,255,218,0.3); transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-default)'" onmouseout="this.style.borderColor='rgba(100,255,218,0.3)'">${displayName}</span>`;
+        let nameHtml = `<span class="var-name-lbl" style="color: var(--accent-default, #64ffda); text-decoration: none; font-size: 0.92rem; font-weight: 600; cursor: pointer; border-bottom: 1px dashed rgba(100,255,218,0.3); transition: border-color 0.2s;">${displayName}</span>`;
 
         let disambigHtml = '';
         const dictEntry = this.physicsDictionary[symbol];
@@ -1882,9 +1882,7 @@ const EquationExplainer = {
                                     data-type="${opt.type}" 
                                     data-unit="${opt.unit}" 
                                     data-desc="${opt.description}"
-                                    style="background: rgba(100,255,218,0.05); border: 1px solid rgba(100,255,218,0.15); color: var(--accent-default, #64ffda); padding: 1px 6px; border-radius: 3px; cursor: pointer; font-size: 0.72rem; font-family: inherit; transition: all 0.2s;"
-                                    onmouseover="this.style.background='rgba(100,255,218,0.12)'"
-                                    onmouseout="this.style.background='rgba(100,255,218,0.05)'">
+                                    style="background: rgba(100,255,218,0.05); border: 1px solid rgba(100,255,218,0.15); color: var(--accent-default, #64ffda); padding: 1px 6px; border-radius: 3px; cursor: pointer; font-size: 0.72rem; font-family: inherit; transition: all 0.2s;">
                                 ${opt.name}
                             </button>
                         `).join('')}

@@ -174,7 +174,7 @@ const ExplainerCards = {
                 const hiddenStyle = (hasMore && idx >= initialCap) ? 'display: none;' : 'display: flex;';
                 const searchKey = `${child.title} ${child.id} ${dtypeLabel} ${child.lineage_confidence || ''}`.toLowerCase().replace(/"/g, '');
                 html += `
-                    <a href="${childUrl}" class="lineage-formula-link lineage-downstream-item" data-index="${idx}" data-search="${searchKey}" data-formula-id="${child.id}" data-latex="${safeChildAttr}" style="${hiddenStyle} flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(100,255,218,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='none'">
+                    <a href="${childUrl}" class="lineage-formula-link lineage-downstream-item" data-index="${idx}" data-search="${searchKey}" data-formula-id="${child.id}" data-latex="${safeChildAttr}" style="${hiddenStyle} flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; text-decoration: none; transition: all 0.2s;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;">
                             <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${child.title}</span>
                             <span style="display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;">
@@ -215,7 +215,7 @@ const ExplainerCards = {
                 const badgeLabel = (sib.derivation_type || 'CO_DERIVED_SIBLING').replace(/_/g, ' ');
                 const mathPart = safeSibEq ? `<span data-latex="${safeSibAttr}" style="font-size: 0.9rem; color: #ffd700;">\\(${safeSibEq}\\)</span>` : '';
                 html += `
-                    <a href="${sibUrl}" class="lineage-formula-link" data-formula-id="${sib.id}" data-latex="${safeSibAttr}" style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(167, 139, 250, 0.18); border-radius: 8px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(167,139,250,0.5)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(167,139,250,0.18)'; this.style.transform='none'">
+                    <a href="${sibUrl}" class="lineage-formula-link lineage-sibling-item" data-formula-id="${sib.id}" data-latex="${safeSibAttr}" style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(167, 139, 250, 0.18); border-radius: 8px; text-decoration: none; transition: all 0.2s;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;">
                             <span style="font-size: 0.82rem; color: #f1f5f9; font-weight: 600;">${sib.title}</span>
                             <span style="font-size: 0.62rem; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; background: rgba(167, 139, 250, 0.12); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.28); white-space: nowrap; flex-shrink: 0;">${badgeLabel}</span>

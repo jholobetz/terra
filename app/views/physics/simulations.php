@@ -91,7 +91,7 @@ foreach ($simulations as $sim) {
                 <button id="hero-reset" class="btn btn-secondary" style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.78rem; padding: 6px 12px; border-radius: 6px; cursor: pointer; backdrop-filter: blur(8px);">
                     ↺ Reset
                 </button>
-                <a id="hero-launch-link" href="/physics/simulations/relativistic-black-hole" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; color: #fff; font-size: 0.78rem; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: gap: 4px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
+                <a id="hero-launch-link" href="/physics/simulations/relativistic-black-hole" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; color: #fff; font-size: 0.78rem; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
                     Launch Full Sandbox &rarr;
                 </a>
             </div>
@@ -161,8 +161,6 @@ foreach ($simulations as $sim) {
                     id="sim-search-input" 
                     placeholder="Search by concept, equation, or keyword (e.g. chaos, kerr, wave, tunneling, rk4)..." 
                     style="width: 100%; box-sizing: border-box; background: rgba(2, 6, 23, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 11px 16px 11px 40px; color: #ffffff; font-size: 0.92rem; outline: none; transition: all 0.2s;"
-                    onfocus="this.style.borderColor='var(--accent-default)'; this.style.boxShadow='0 0 0 2px rgba(56, 189, 248, 0.2)';"
-                    onblur="this.style.borderColor='rgba(255, 255, 255, 0.12)'; this.style.boxShadow='none';"
                 />
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">

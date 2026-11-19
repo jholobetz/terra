@@ -373,17 +373,22 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
             debounceTimer = setTimeout(async () => {
                 try {
                     const res = await fetch(`/physics/api/search?q=${encodeURIComponent(q)}&limit=8`);
-                    const items = await res.json();
-                    const formulas = (Array.isArray(items) ? items : []).filter(item => item.type === 'formula' && item.slug);
+                    if (!res.ok) throw new Error(`Search failed (${res.status})`);
+                    const payload = await res.json();
+                    const rawItems = Array.isArray(payload) ? payload : (Array.isArray(payload.results) ? payload.results : []);
+                    const formulas = rawItems
+                        .filter(item => item.type === 'formula' && (item.id || item.slug))
+                        .map(item => ({ id: item.id || item.slug, title: item.title || item.id || item.slug }));
                     if (formulas.length === 0) {
                         dropdownEl.innerHTML = `<div style="padding: 8px 12px; color: #94a3b8; font-size: 0.76rem;">No matching formulas found.</div>`;
                         dropdownEl.style.display = 'block';
                         return;
                     }
+                    const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                     dropdownEl.innerHTML = formulas.map(f => `
-                        <div class="fs-search-item" data-slug="${f.slug}" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 2px;">
-                            <div style="font-size: 0.8rem; font-weight: 700; color: #f8fafc;">${f.title}</div>
-                            <div style="font-size: 0.68rem; color: #64ffda; font-family: monospace;">${f.slug}</div>
+                        <div class="fs-search-item" data-slug="${esc(f.id)}" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 2px;">
+                            <div style="font-size: 0.8rem; font-weight: 700; color: #f8fafc;">${esc(f.title)}</div>
+                            <div style="font-size: 0.68rem; color: #64ffda; font-family: monospace;">${esc(f.id)}</div>
                         </div>
                     `).join('');
                     dropdownEl.style.display = 'block';

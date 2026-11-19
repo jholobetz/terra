@@ -24,21 +24,21 @@ class AdminController
 
     /**
      * Enforces Local Single-Developer Studio or Admin token authority.
+     * Returns true when authorized; writes 403 via Flight response (preserving middleware headers) when denied.
      */
-    public function requireAdminAuthority(bool $jsonResponse = true): void
+    public function requireAdminAuthority(bool $jsonResponse = true): bool
     {
         $auth = Flight::authService();
         if (!$auth->hasRole('admin')) {
-            http_response_code(403);
             if ($jsonResponse) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'error' => 'Forbidden: Local studio or admin privileges required.']);
+                $this->app->json(['success' => false, 'error' => 'Forbidden: Local studio or admin privileges required.'], 403);
             } else {
-                header('HTTP/1.1 403 Forbidden');
+                $this->app->response()->status(403);
                 echo 'Forbidden: Admin access restricted to localhost studio.';
             }
-            exit;
+            return false;
         }
+        return true;
     }
 
     /**
@@ -46,7 +46,9 @@ class AdminController
      */
     public function adminAssess()
     {
-        $this->requireAdminAuthority(false);
+        if (!$this->requireAdminAuthority(false)) {
+            return;
+        }
 
         $latestPath = PROJECT_ROOT . '/docs/reports/latest.json';
         $latest = [];
@@ -90,7 +92,9 @@ class AdminController
      */
     public function apiAssessTelemetry()
     {
-        $this->requireAdminAuthority(true);
+        if (!$this->requireAdminAuthority(true)) {
+            return;
+        }
 
         $latestPath = PROJECT_ROOT . '/docs/reports/latest.json';
         $latest = file_exists($latestPath) ? (json_decode(file_get_contents($latestPath), true) ?: []) : [];
@@ -108,13 +112,11 @@ class AdminController
             }
         }
 
-        header('Content-Type: application/json');
-        echo json_encode([
+        $this->app->json([
             'success' => true,
             'telemetry' => $latest,
             'timeline' => $timeline
         ]);
-        exit;
     }
 
     /**
@@ -122,7 +124,9 @@ class AdminController
      */
     public function apiRunAssess()
     {
-        $this->requireAdminAuthority(true);
+        if (!$this->requireAdminAuthority(true)) {
+            return;
+        }
 
         $input = json_decode(file_get_contents('php://input'), true) ?: [];
         $action = $input['action'] ?? 'quick';
@@ -177,8 +181,7 @@ class AdminController
         $latestPath = PROJECT_ROOT . '/docs/reports/latest.json';
         $latest = file_exists($latestPath) ? (json_decode(file_get_contents($latestPath), true) ?: []) : [];
 
-        header('Content-Type: application/json');
-        echo json_encode([
+        $this->app->json([
             'success' => ($returnCode === 0),
             'return_code' => $returnCode,
             'action' => $action,
@@ -186,7 +189,6 @@ class AdminController
             'logs' => implode("\n", $output),
             'telemetry' => $latest
         ]);
-        exit;
     }
 
     /**
@@ -194,17 +196,17 @@ class AdminController
      */
     public function apiAssessDiff()
     {
-        $this->requireAdminAuthority(true);
+        if (!$this->requireAdminAuthority(true)) {
+            return;
+        }
 
         $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && bash scripts/assess --diff --quick 2>&1";
         exec($cmd, $output, $returnCode);
 
-        header('Content-Type: application/json');
-        echo json_encode([
+        $this->app->json([
             'success' => ($returnCode === 0),
             'logs' => implode("\n", $output)
         ]);
-        exit;
     }
 
     /**
@@ -228,19 +230,19 @@ class AdminController
      */
     public function apiRunAutoLinker()
     {
-        $this->requireAdminAuthority(true);
+        if (!$this->requireAdminAuthority(true)) {
+            return;
+        }
 
         $cmd = "cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/auto_linker.py 2>&1";
         exec($cmd, $output, $return_var);
 
         exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
 
-        header('Content-Type: application/json');
-        echo json_encode([
+        $this->app->json([
             'success' => ($return_var === 0),
             'logs' => implode("\n", $output)
         ]);
-        exit;
     }
 
     /**
@@ -248,7 +250,9 @@ class AdminController
      */
     public function apiRunCritic()
     {
-        $this->requireAdminAuthority(true);
+        if (!$this->requireAdminAuthority(true)) {
+            return;
+        }
 
         $input = json_decode(file_get_contents('php://input'), true);
         $slug = $input['slug'] ?? '';
@@ -274,12 +278,10 @@ class AdminController
 
         exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
 
-        header('Content-Type: application/json');
-        echo json_encode([
+        $this->app->json([
             'success' => ($return_var === 0),
             'logs' => implode("\n", $output)
         ]);
-        exit;
     }
 
     /**
@@ -287,7 +289,9 @@ class AdminController
      */
     public function apiRegisterReference()
     {
-        $this->requireAdminAuthority(true);
+        if (!$this->requireAdminAuthority(true)) {
+            return;
+        }
 
         $input = json_decode(file_get_contents('php://input'), true);
         $slug = $input['slug'] ?? '';
@@ -296,9 +300,8 @@ class AdminController
         $keywordsInput = $input['keywords'] ?? '';
 
         if (empty($slug) || empty($title) || empty($prose) || empty($keywordsInput)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'All fields are required.']);
-            exit;
+            $this->app->json(['success' => false, 'error' => 'All fields are required.'], 400);
+            return;
         }
 
         $keywords = array_map('trim', explode(',', $keywordsInput));
@@ -311,9 +314,8 @@ class AdminController
         }
 
         if (isset($references[$slug])) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Subtopic already registered as reference.']);
-            exit;
+            $this->app->json(['success' => false, 'error' => 'Subtopic already registered as reference.'], 409);
+            return;
         }
 
         $references[$slug] = [
@@ -322,15 +324,12 @@ class AdminController
             'keywords' => array_values($keywords)
         ];
 
-        if (file_put_contents($refPath, json_encode($references, JSON_PRETTY_PRINT)) === false) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Failed to write to database file.']);
-            exit;
+        if (file_put_contents($refPath, json_encode($references, JSON_PRETTY_PRINT), LOCK_EX) === false) {
+            $this->app->json(['success' => false, 'error' => 'Failed to write to database file.'], 500);
+            return;
         }
 
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true]);
-        exit;
+        $this->app->json(['success' => true]);
     }
 
     /**
@@ -338,16 +337,17 @@ class AdminController
      */
     public function apiUpdateVerification()
     {
-        $this->requireAdminAuthority(true);
+        if (!$this->requireAdminAuthority(true)) {
+            return;
+        }
 
         $input = json_decode(file_get_contents('php://input'), true);
         $slug = $input['slug'] ?? '';
         $citations = $input['citations'] ?? [];
 
         if (empty($slug)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Subtopic slug is required.']);
-            exit;
+            $this->app->json(['success' => false, 'error' => 'Subtopic slug is required.'], 400);
+            return;
         }
 
         $content = $this->service()->getPhysicsContent($slug);
@@ -356,16 +356,14 @@ class AdminController
         $baseDir = PROJECT_ROOT . '/app/config/content/';
 
         if (!$shardFile || !file_exists($baseDir . $shardFile)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Shard file for subtopic not found.']);
-            exit;
+            $this->app->json(['success' => false, 'error' => 'Shard file for subtopic not found.'], 404);
+            return;
         }
 
         $shardData = json_decode(file_get_contents($baseDir . $shardFile), true) ?: [];
         if (!isset($shardData[$slug])) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Subtopic not found in content shard.']);
-            exit;
+            $this->app->json(['success' => false, 'error' => 'Subtopic not found in content shard.'], 404);
+            return;
         }
 
         $verification = $shardData[$slug]['verification'] ?? [];
@@ -399,10 +397,9 @@ class AdminController
         $verification['citations'] = $cleanedCitations;
         $shardData[$slug]['verification'] = $verification;
 
-        if (file_put_contents($baseDir . $shardFile, json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) === false) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Failed to save updated shard back to disk.']);
-            exit;
+        if (file_put_contents($baseDir . $shardFile, json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX) === false) {
+            $this->app->json(['success' => false, 'error' => 'Failed to save updated shard back to disk.'], 500);
+            return;
         }
 
         $this->service()->clearCache();
@@ -413,9 +410,7 @@ class AdminController
 
         exec("cd " . escapeshellarg(PROJECT_ROOT) . " && PYTHONPATH=. .venv/bin/python3 scripts/maintenance/generate_system_health.py > /dev/null 2>&1");
 
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true]);
-        exit;
+        $this->app->json(['success' => true]);
     }
 
     /**
@@ -423,7 +418,9 @@ class AdminController
      */
     public function apiSaveDraft()
     {
-        $this->requireAdminAuthority(true);
+        if (!$this->requireAdminAuthority(true)) {
+            return;
+        }
 
         $input = json_decode(file_get_contents('php://input'), true);
         $slug = $input['slug'] ?? '';
@@ -433,9 +430,8 @@ class AdminController
         $identities = $input['identities'] ?? [];
 
         if (empty($slug) || empty($content)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Slug and content are required.']);
-            exit;
+            $this->app->json(['success' => false, 'error' => 'Slug and content are required.'], 400);
+            return;
         }
 
         $payloadPath = PROJECT_ROOT . '/subfiles/batch_payload.json';
@@ -452,11 +448,9 @@ class AdminController
             'identities' => $identities
         ];
 
-        file_put_contents($payloadPath, json_encode($payloads, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        file_put_contents($payloadPath, json_encode($payloads, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
 
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true]);
-        exit;
+        $this->app->json(['success' => true]);
     }
 
     /**
@@ -464,15 +458,16 @@ class AdminController
      */
     public function apiGetSubtopic($slug)
     {
-        $this->requireAdminAuthority(true);
+        if (!$this->requireAdminAuthority(true)) {
+            return;
+        }
 
         $content = $this->service()->getPhysicsContent($slug);
         $subtopic = $content['subtopics'][$slug] ?? null;
 
         if (!$subtopic) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Subtopic not found']);
-            exit;
+            $this->app->json(['success' => false, 'error' => 'Subtopic not found'], 404);
+            return;
         }
 
         $parent = null;
@@ -505,8 +500,7 @@ class AdminController
             }
         }
 
-        header('Content-Type: application/json');
-        echo json_encode([
+        $this->app->json([
             'success' => true,
             'subtopic' => [
                 'slug' => $slug,
@@ -517,6 +511,5 @@ class AdminController
                 'identities' => $identities
             ]
         ]);
-        exit;
     }
 }

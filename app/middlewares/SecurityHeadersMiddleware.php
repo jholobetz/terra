@@ -36,13 +36,17 @@ class SecurityHeadersMiddleware
 			Debugger::$showBar = false;
 		}
 
-		$csp = "default-src 'self'; script-src 'self' 'nonce-{$nonce}'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:;";
+		$csp = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'nonce-{$nonce}'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:;";
 		$this->app->response()->header('X-Frame-Options', 'SAMEORIGIN');
 		$this->app->response()->header("Content-Security-Policy", $csp);
-		$this->app->response()->header('X-XSS-Protection', '1; mode=block');
 		$this->app->response()->header('X-Content-Type-Options', 'nosniff');
 		$this->app->response()->header('Referrer-Policy', 'no-referrer-when-downgrade');
-		$this->app->response()->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+		$isHttps = (!empty($_SERVER['HTTPS']) && strtolower((string)$_SERVER['HTTPS']) !== 'off')
+			|| strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
+			|| (int)($_SERVER['SERVER_PORT'] ?? 0) === 443;
+		if ($isHttps) {
+			$this->app->response()->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+		}
 		$this->app->response()->header('Permissions-Policy', 'geolocation=()');
 	}
 }

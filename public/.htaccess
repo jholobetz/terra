@@ -7,6 +7,9 @@ Options -Indexes
     RewriteCond %{REQUEST_URI} !^/\.well-known/ [NC]
     RewriteRule (?:^|/)\. - [F,L]
 
+    # Block direct HTTP access to internal PHP cache files (served via FlightPHP with CSP nonces)
+    RewriteRule ^cache(?:/|$) - [F,L]
+
     # Route all non-file, non-directory requests through FlightPHP front controller
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d

@@ -14,6 +14,11 @@ class ReviewController
         $this->app = $app;
     }
 
+    private function jsonResponse(array $payload, int $status = 200): void
+    {
+        $this->app->json($payload, $status);
+    }
+
     /**
      * REST Endpoint: Get Current Authenticated User & Role
      */
@@ -22,8 +27,7 @@ class ReviewController
         $auth = Flight::authService();
         $user = $auth->getCurrentUser();
 
-        header('Content-Type: application/json');
-        echo json_encode([
+        $this->jsonResponse([
             'success' => true,
             'user' => [
                 'id' => $user->id ?? 0,
@@ -33,7 +37,6 @@ class ReviewController
                 'avatar_url' => $user->avatar_url ?? null
             ]
         ]);
-        exit;
     }
 
     /**
@@ -48,11 +51,7 @@ class ReviewController
         $success = $auth->switchDevRole($role);
         $user = $auth->getCurrentUser();
 
-        header('Content-Type: application/json');
-        if (!$success) {
-            http_response_code(403);
-        }
-        echo json_encode([
+        $this->jsonResponse([
             'success' => $success,
             'user' => [
                 'id' => $user->id ?? 0,
@@ -61,8 +60,7 @@ class ReviewController
                 'role' => $user->role ?? 'guest',
                 'avatar_url' => $user->avatar_url ?? null
             ]
-        ]);
-        exit;
+        ], $success ? 200 : 403);
     }
 
     /**
@@ -87,10 +85,8 @@ class ReviewController
         $user = $auth->getCurrentUser();
 
         if (!$auth->hasRole('curator', $user)) {
-            header('Content-Type: application/json');
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
-            exit;
+            $this->jsonResponse(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.'], 403);
+            return;
         }
 
         $input = json_decode(file_get_contents('php://input'), true);
@@ -111,31 +107,25 @@ class ReviewController
         }
 
         if (empty($target)) {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Valid URL, Formula ID, or LaTeX equation is required.']);
-            exit;
+            $this->jsonResponse(['success' => false, 'error' => 'Valid URL, Formula ID, or LaTeX equation is required.'], 400);
+            return;
         }
 
         try {
             $reviewService = Flight::formulaReviewService();
             $result = $reviewService->repairTarget($target, $hint, $user->id ?: 1, $prose);
 
-            header('Content-Type: application/json');
-            echo json_encode([
+            $this->jsonResponse([
                 'success' => true,
                 'message' => 'Formula updated and synchronized successfully via fixlatex engine!',
                 'data' => $result
             ]);
         } catch (\Throwable $e) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode([
+            $this->jsonResponse([
                 'success' => false,
                 'error' => 'Failed to apply repair: ' . $e->getMessage()
-            ]);
+            ], 500);
         }
-        exit;
     }
 
     /**
@@ -147,10 +137,8 @@ class ReviewController
         $user = $auth->getCurrentUser();
 
         if (!$auth->hasRole('curator', $user)) {
-            header('Content-Type: application/json');
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
-            exit;
+            $this->jsonResponse(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.'], 403);
+            return;
         }
 
         $status = $_GET['status'] ?? 'pending';
@@ -160,14 +148,10 @@ class ReviewController
             $reviewService = Flight::formulaReviewService();
             $reviews = $reviewService->getReviews($status, $formulaId);
 
-            header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'reviews' => $reviews]);
+            $this->jsonResponse(['success' => true, 'reviews' => $reviews]);
         } catch (\Throwable $e) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
         }
-        exit;
     }
 
     /**
@@ -179,38 +163,30 @@ class ReviewController
         $user = $auth->getCurrentUser();
 
         if (!$auth->hasRole('curator', $user)) {
-            header('Content-Type: application/json');
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
-            exit;
+            $this->jsonResponse(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.'], 403);
+            return;
         }
 
         $input = json_decode(file_get_contents('php://input'), true);
         $reviewId = (int)($input['review_id'] ?? 0);
 
         if ($reviewId <= 0) {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Valid review ID is required.']);
-            exit;
+            $this->jsonResponse(['success' => false, 'error' => 'Valid review ID is required.'], 400);
+            return;
         }
 
         try {
             $reviewService = Flight::formulaReviewService();
             $result = $reviewService->approveReview($reviewId, $user->id);
 
-            header('Content-Type: application/json');
-            echo json_encode([
+            $this->jsonResponse([
                 'success' => true,
                 'message' => 'Review approved and changes committed to shard & database!',
                 'data' => $result
             ]);
         } catch (\Throwable $e) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
         }
-        exit;
     }
 
     /**
@@ -222,10 +198,8 @@ class ReviewController
         $user = $auth->getCurrentUser();
 
         if (!$auth->hasRole('curator', $user)) {
-            header('Content-Type: application/json');
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.']);
-            exit;
+            $this->jsonResponse(['success' => false, 'error' => 'Permission denied: Curator or Admin privileges required.'], 403);
+            return;
         }
 
         $input = json_decode(file_get_contents('php://input'), true);
@@ -233,26 +207,20 @@ class ReviewController
         $notes = $input['notes'] ?? null;
 
         if ($reviewId <= 0) {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Valid review ID is required.']);
-            exit;
+            $this->jsonResponse(['success' => false, 'error' => 'Valid review ID is required.'], 400);
+            return;
         }
 
         try {
             $reviewService = Flight::formulaReviewService();
             $reviewService->rejectReview($reviewId, $user->id, $notes);
 
-            header('Content-Type: application/json');
-            echo json_encode([
+            $this->jsonResponse([
                 'success' => true,
                 'message' => 'Review rejected.'
             ]);
         } catch (\Throwable $e) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
         }
-        exit;
     }
 }

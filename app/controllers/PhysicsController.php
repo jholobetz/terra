@@ -125,7 +125,7 @@ class PhysicsController
             header('Cache-Control: no-store, no-cache, must-revalidate');
         }
         $report = $this->evaluateHealthChecks();
-        http_response_code($report['http_code']);
+        $this->app->response()->status((int)$report['http_code']);
         echo json_encode([
             'status' => $report['status'],
             'checks' => $report['checks'],
@@ -511,7 +511,7 @@ class PhysicsController
     {
         $auth = Flight::authService();
         if (!$auth->hasRole('admin')) {
-            http_response_code(403);
+            $this->app->response()->status(403);
             echo '403 Forbidden: Admin privileges required.';
             return;
         }
@@ -1018,7 +1018,7 @@ class PhysicsController
 
         $auth = Flight::authService();
         if (!$auth->hasRole('admin')) {
-            http_response_code(403);
+            $this->app->response()->status(403);
             echo json_encode(['success' => false, 'error' => '403 Forbidden: Admin or Local Studio authority required.']);
             return;
         }
@@ -1131,7 +1131,7 @@ class PhysicsController
         $auth = $this->authService();
         $maxPerWindow = $auth->isLocalDevStudio() ? 120 : 30;
         if (!$this->consumeCasRateLimit($auth->resolveClientIp(), $maxPerWindow, 60, 'semantic_search')) {
-            http_response_code(429);
+            $this->app->response()->status(429);
             echo json_encode([
                 'success' => false,
                 'error' => 'Rate limit exceeded for semantic search. Please wait a moment and try again.',
@@ -1150,7 +1150,7 @@ class PhysicsController
                 'results' => $results
             ]);
         } catch (\Throwable $e) {
-            http_response_code(500);
+            $this->app->response()->status(500);
             echo json_encode([
                 'success' => false,
                 'error' => $this->publicErrorMessage($e, 'Semantic search is temporarily unavailable.'),
@@ -1174,7 +1174,7 @@ class PhysicsController
                 'results' => $results
             ]);
         } catch (\Throwable $e) {
-            http_response_code(500);
+            $this->app->response()->status(500);
             echo json_encode([
                 'success' => false,
                 'error' => $this->publicErrorMessage($e, 'Could not load related subtopics.'),
@@ -1200,7 +1200,7 @@ class PhysicsController
                 'data' => $subgraph
             ]);
         } catch (\Throwable $e) {
-            http_response_code(500);
+            $this->app->response()->status(500);
             echo json_encode([
                 'success' => false,
                 'error' => $this->publicErrorMessage($e, 'Could not load formula derivation graph.')
@@ -1228,7 +1228,7 @@ class PhysicsController
                 'data' => $path
             ]);
         } catch (\Throwable $e) {
-            http_response_code(500);
+            $this->app->response()->status(500);
             echo json_encode([
                 'success' => false,
                 'error' => $this->publicErrorMessage($e, 'Could not compute formula derivation path.')

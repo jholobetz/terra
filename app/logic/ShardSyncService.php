@@ -152,17 +152,31 @@ class ShardSyncService
         $dbShardHashes = null;
 
         if ($hasLiveDb) {
+            // 1. Optional DDL schema verification (non-fatal for least-privilege DB users)
             try {
                 if ($this->ensureFormulasSchema($db)) {
                     $force = true;
                 }
+            } catch (\Throwable $e) {
+                error_log('[ShardSyncService] Schema introspection/DDL skipped (least-privilege DB user): ' . $e->getMessage());
+            }
+
+            // 2. Ensure shard_sync_state table exists if DDL is permitted (non-fatal if already migrated)
+            try {
                 $db->runQuery("CREATE TABLE IF NOT EXISTS shard_sync_state (
                     shard_path VARCHAR(255) PRIMARY KEY,
                     sha256 CHAR(64) NOT NULL,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+            } catch (\Throwable $e) {
+                error_log('[ShardSyncService] CREATE TABLE shard_sync_state skipped (assuming pre-migrated): ' . $e->getMessage());
+            }
+
+            // 3. Read DB-backed shard state independently of DDL permissions.
+            // Never fall back to Git's formulas_hash_registry.json on a live DB (would tautologically skip all 256 shards).
+            $dbShardHashes = [];
+            try {
                 $stateRows = $db->fetchAll("SELECT shard_path, sha256 FROM shard_sync_state") ?: [];
-                $dbShardHashes = [];
                 foreach ($stateRows as $sr) {
                     $arr = is_object($sr) ? (method_exists($sr, 'getData') ? $sr->getData() : (array)$sr) : (array)$sr;
                     $sPath = $arr['shard_path'] ?? $arr['SHARD_PATH'] ?? null;
@@ -172,8 +186,8 @@ class ShardSyncService
                     }
                 }
             } catch (\Throwable $e) {
-                // Non-fatal if DB permissions restrict DDL introspection
-                $dbShardHashes = null;
+                error_log('[ShardSyncService] Failed reading shard_sync_state; forcing full shard reconciliation: ' . $e->getMessage());
+                $dbShardHashes = [];
             }
         }
 

@@ -498,6 +498,56 @@ $runner->run('ShardSyncServiceTest', 'testSyncFormulasUsesTransactionalUpsert', 
     $res = $svc->syncFormulasToDatabase(false);
     $t->assertSame(256, $res['shards_checked'], 'Should inspect all 256 shards');
     $t->assertSame(0, $res['shards_changed'], 'Up-to-date hash registry should skip unmodified shards');
+
+    // P0-2 regression: Least-privilege DB user (DDL throws Access denied, SELECT/INSERT allowed)
+    // must STILL read shard_sync_state and sync any shard whose DB hash differs from disk.
+    $registryPath = PROJECT_ROOT . '/app/config/formulas_hash_registry.json';
+    $allHashes = json_decode((string)file_get_contents($registryPath), true) ?: [];
+    $firstShardPath = array_key_first($allHashes);
+    $mockStateRows = [];
+    foreach ($allHashes as $sp => $sh) {
+        $mockStateRows[] = [
+            'shard_path' => $sp,
+            'sha256' => ($sp === $firstShardPath) ? str_repeat('0', 64) : $sh,
+        ];
+    }
+    $leastPrivDb = new class($mockStateRows) {
+        public array $stateRows;
+        public int $upserts = 0;
+        public int $stateWrites = 0;
+        public function __construct(array $rows) { $this->stateRows = $rows; }
+        public function runQuery(string $sql, array $params = []) {
+            if (stripos($sql, 'CREATE TABLE') !== false || stripos($sql, 'ALTER TABLE') !== false) {
+                throw new \RuntimeException('CREATE/ALTER command denied to least-privilege user');
+            }
+            if (stripos($sql, 'INSERT INTO formulas') !== false) {
+                $this->upserts++;
+            } elseif (stripos($sql, 'INSERT INTO shard_sync_state') !== false) {
+                $this->stateWrites++;
+            }
+            return true;
+        }
+        public function fetchAll(string $sql, array $params = []): array {
+            if (stripos($sql, 'INFORMATION_SCHEMA.COLUMNS') !== false) {
+                throw new \RuntimeException('DDL introspection denied');
+            }
+            if (stripos($sql, 'FROM shard_sync_state') !== false) {
+                return $this->stateRows;
+            }
+            return [];
+        }
+        public function beginTransaction(): bool { return true; }
+        public function inTransaction(): bool { return false; }
+        public function commit(): bool { return true; }
+        public function rollBack(): bool { return true; }
+    };
+    $app2 = new \flight\Engine();
+    $app2->map('db', static fn() => $leastPrivDb);
+    $svc2 = new \app\logic\PhysicsService($app2);
+    $res2 = $svc2->syncFormulasToDatabase(false);
+    $t->assertSame(1, $res2['shards_changed'], 'Least-privilege DB user must still detect and sync drifted shard');
+    $t->assertTrue($leastPrivDb->upserts > 0, 'Drifted shard formulas must be upserted despite DDL denial');
+    $t->assertSame(1, $leastPrivDb->stateWrites, 'shard_sync_state must be updated for the synced shard');
 });
 
 // ============================================================================

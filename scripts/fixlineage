@@ -8,4 +8,9 @@
 #   scripts/fixlineage --heal
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-python3 "${SCRIPT_DIR}/maintenance/audit_lineage_health.py" "$@"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+PYTHON_BIN="${REPO_ROOT}/.venv/bin/python3"
+if [[ ! -x "${PYTHON_BIN}" ]]; then
+    PYTHON_BIN="python3"
+fi
+"${PYTHON_BIN}" "${SCRIPT_DIR}/maintenance/audit_lineage_health.py" "$@"

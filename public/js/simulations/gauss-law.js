@@ -1,7 +1,8 @@
-(function() {
+document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('simulation-canvas');
-    const ctx = canvas.getContext('2d');
     const controls = document.getElementById('controls');
+    if (!canvas || !controls) return;
+    const ctx = canvas.getContext('2d');
 
     let charges = [];
     let currentType = 1; // 1 for positive, -1 for negative
@@ -332,4 +333,4 @@
     }
 
     draw();
-})();
+});

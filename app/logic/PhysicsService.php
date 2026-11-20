@@ -605,7 +605,7 @@ class PhysicsService
             }
             return $list;
         }
-        if (!in_array($table, ['topics', 'subtopics', 'formulas'], true)) {
+        if (!in_array($table, ['topics', 'subtopics', 'formulas', 'simulations'], true)) {
             throw new \InvalidArgumentException("Invalid physics table requested: {$table}");
         }
         try {
@@ -1369,7 +1369,7 @@ class PhysicsService
             return $data;
         }
 
-        if (!in_array($table, ['topics', 'subtopics', 'formulas'], true)) {
+        if (!in_array($table, ['topics', 'subtopics', 'formulas', 'simulations'], true)) {
             throw new \InvalidArgumentException("Invalid physics table requested: {$table}");
         }
         $row = null;

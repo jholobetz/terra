@@ -45,4 +45,4 @@ $harnessVer = @filemtime(PROJECT_ROOT . '/public/js/lib/webgl_physics_harness.js
 $simJsVer = @filemtime(PROJECT_ROOT . "/public/js/simulations/{$slug}.js") ?: 1;
 ?>
 <script src="/js/lib/webgl_physics_harness.js?v=<?= $harnessVer ?>" nonce="<?= $nonce ?>"></script>
-<script src="/js/simulations/<?= $slug ?>.js?v=<?= $simJsVer ?>" nonce="<?= $nonce ?>"></script>
+<script src="/js/simulations/<?= htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') ?>.js?v=<?= $simJsVer ?>" nonce="<?= $nonce ?>"></script>

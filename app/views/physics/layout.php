@@ -147,7 +147,7 @@ $robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UT
                                 <span class="banner-title">🔭 The Simulations Observatory</span>
                                 <span class="banner-cta">Explore All &rarr;</span>
                             </div>
-                            <span class="banner-desc"><?= count($menu_simulations ?: []) ?: 16 ?> Real-Time Numerical Solvers, RK4 Integrators &amp; WebGL2 GPU Sandboxes</span>
+                            <span class="banner-desc"><?= count($menu_simulations ?: []) ?: 17 ?> Real-Time Numerical Solvers, RK4 Integrators &amp; WebGL2 GPU Sandboxes</span>
                         </a>
 
                         <div class="mega-section-label">Flagship Elevated Sandboxes</div>
@@ -227,7 +227,7 @@ $robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UT
                                 </a>
                                 <a href="/physics/universe-graph" class="nav-module-link<?= $reqUrl === '/physics/universe-graph' ? ' is-current' : '' ?>">
                                     <span class="module-title">Physics Universe Graph</span>
-                                    <span class="module-desc">14,683-formula derivation DAG &amp; shortest-path solver</span>
+                                    <span class="module-desc">14,684-formula derivation DAG &amp; shortest-path solver</span>
                                 </a>
                                 <a href="/physics/constants" class="nav-module-link<?= $reqUrl === '/physics/constants' ? ' is-current' : '' ?>">
                                     <span class="module-title">Fundamental Physical Constants</span>

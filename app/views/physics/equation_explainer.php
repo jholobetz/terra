@@ -592,13 +592,14 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 <script nonce="<?= $nonce ?>">
 window.INITIAL_ID = <?= json_encode($id) ?>;
 window.INITIAL_LATEX = <?= json_encode($latex) ?>;
-window.INITIAL_FORMULA = <?= json_encode($formula) ?>;
-window.INITIAL_SUBTOPICS = <?= json_encode($subtopics) ?>;
+<?php $jsonFlags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP; ?>
+window.INITIAL_FORMULA = <?= json_encode($formula, $jsonFlags) ?>;
+window.INITIAL_SUBTOPICS = <?= json_encode($subtopics, $jsonFlags) ?>;
 window.PHYSICS_CONSTANTS = <?= $constantsJson ?>;
-window.SUBTOPIC_SLUG = <?= json_encode($subtopicSlug) ?>;
-window.SUBTOPIC_VARIABLES = <?= json_encode($subtopicVariables) ?>;
-window.INITIAL_DOMAIN = <?= json_encode($domain) ?>;
-window.CURRENT_USER = <?= json_encode($currentUser ?? (object)['role' => 'guest', 'display_name' => 'Guest']) ?>;
+window.SUBTOPIC_SLUG = <?= json_encode($subtopicSlug, $jsonFlags) ?>;
+window.SUBTOPIC_VARIABLES = <?= json_encode($subtopicVariables, $jsonFlags) ?>;
+window.INITIAL_DOMAIN = <?= json_encode($domain, $jsonFlags) ?>;
+window.CURRENT_USER = <?= json_encode($currentUser ?? (object)['role' => 'guest', 'display_name' => 'Guest'], $jsonFlags) ?>;
 </script>
 
 <script src="/js/formula_graph.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/formula_graph.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>

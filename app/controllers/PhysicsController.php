@@ -357,6 +357,7 @@ class PhysicsController
             'Allow: /',
             'Disallow: /healthz',
             'Disallow: /physics/healthz',
+            'Disallow: /physics/admin',
             'Disallow: /physics/admin/',
             'Disallow: /physics/sync',
             'Disallow: /physics/random',

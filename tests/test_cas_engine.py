@@ -400,6 +400,15 @@ def test_cas_blocks_code_injection_vectors():
     # Must never execute code; either fails cleanly or ignores unsafe custom override
     assert isinstance(res_dim, dict)
 
+    # 5. Numeric power towers / huge literal exponents (CPU-DoS guard + Penrose 10^{-10^{123}})
+    for dos_payload in ["9**(9**9)", "10**(-10**123)", "2**100000"]:
+        with pytest.raises(UnsafeExpressionError):
+            safe_parse_expr(dos_payload)
+
+    res_penrose = check_dimensions(r"P \sim 10^{-10^{123}}", custom_vars={"P": "1"})
+    assert res_penrose["success"] is True
+    assert res_penrose["is_homogeneous"] is True
+
 
 
 

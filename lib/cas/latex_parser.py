@@ -575,6 +575,9 @@ def clean_latex_equation(latex: str, mode: str = "dimensional") -> str:
 
         # Normalize explicit time-argument notation: x(t) -> x, a(t) -> a
         s = re.sub(r"([a-zA-Z0-9_]+)\s*\([t]\)", r"\1", s)
+
+        # Lower pure numeric power towers (e.g., Penrose's 10^{-10^{123}}) to dimensionless 1
+        s = re.sub(r"\b\d+\s*\^\s*\{\s*-?\s*\d+\s*\^\s*\{?\s*\d+\s*\}?\s*\}", " 1 ", s)
     else:
         # Algebraic mode: preserve \ddot{q} -> ddq and \dot{q} -> dq without dividing by t
         s = _convert_algebraic_time_dots(s)

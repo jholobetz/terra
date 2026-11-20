@@ -115,6 +115,11 @@ SAFE_SYMPY_GLOBALS: Dict[str, Any] = {
 }
 
 
+# Rejects numeric power towers (e.g. 10**(-10**123), 9**(9**9)) and huge literal integer exponents (> 999)
+_POWER_TOWER_RE = re.compile(r"\b\d+\s*\*\*\s*\(?\s*[+-]?\s*\d+\s*\*\*\s*\(?\s*[+-]?\s*\d+")
+_HUGE_EXPONENT_RE = re.compile(r"\*\*\s*\(?\s*[+-]?\s*(\d{4,})\s*\)?")
+
+
 class UnsafeExpressionError(ValueError):
     """Raised when an input string contains forbidden Python syntax or tokens."""
 
@@ -131,6 +136,11 @@ def validate_safe_expr_str(expr_str: str) -> str:
         raise UnsafeExpressionError("Expression contains forbidden syntax.")
     if _FORBIDDEN_KEYWORDS_RE.search(expr_str):
         raise UnsafeExpressionError("Expression contains forbidden keyword.")
+    if _POWER_TOWER_RE.search(expr_str):
+        raise UnsafeExpressionError("Numeric power tower exceeds safe evaluation bounds.")
+    for m in _HUGE_EXPONENT_RE.finditer(expr_str):
+        if int(m.group(1)) > 1000:
+            raise UnsafeExpressionError("Numeric exponent exceeds safe evaluation bound (1000).")
     return expr_str
 
 

@@ -440,8 +440,8 @@ def audit_roadmap_realization(heal_hashes: bool = False, arch_data=None):
             if heal_hashes and updated_any:
                 hash_reg_path.write_text(json.dumps(reg, indent=4), encoding="utf-8")
                 hash_mismatches = []
-        except Exception:
-            pass
+        except Exception as e:
+            hash_mismatches.append(f"HASH_REGISTRY_AUDIT_ERROR: {e}")
 
     # OPS 2.0 Cliché Linting & Live Subtopic Graduation Count
     cliches = ['rich tapestry', 'unassailable pinnacle', 'intricate dance', 'testament to', 'crucial cornerstone', 'ontological bedrock']
@@ -1338,7 +1338,12 @@ def print_scorecard(data):
             print(f"   {icon} {name:<26} {val:<14} [{stat_color}{status}{Colors.RESET}]")
 
     print("-" * 76)
-    print(f"Overall Platform Rating: {Colors.BOLD}{Colors.GREEN}Publication-Grade / Production-Ready (A+){Colors.RESET}")
+    has_ratchet_fail = bool(data.get("ratchets") and not all(ok for _, _, _, ok in data["ratchets"].get("checks", [])))
+    has_test_fail = bool(data.get("tests") and data["tests"].get("failed", 0) > 0)
+    if has_ratchet_fail or has_test_fail:
+        print(f"Overall Platform Rating: {Colors.BOLD}{Colors.RED}Attention Required (Violations Detected){Colors.RESET}")
+    else:
+        print(f"Overall Platform Rating: {Colors.BOLD}{Colors.GREEN}Publication-Grade / Production-Ready (A+){Colors.RESET}")
     print("=" * 76 + "\n")
 
 
@@ -1454,7 +1459,7 @@ def audit_git_changed(strict: bool = True):
 
         for f_id, f_data in shard_data.items():
             inspected_formulas += 1
-            latex = f_data.get("latex", "")
+            latex = f_data.get("equation") or f_data.get("latex", "")
             if latex.count("{") != latex.count("}"):
                 violations.append(f"{f_id}: Unbalanced LaTeX curly braces in '{latex[:30]}...'")
 
@@ -1602,21 +1607,30 @@ def heal_all():
     # 3. Lineage Reciprocity & Isolated Nodes Healing (No Synthetic Dummy Parents)
     enricher_script = WORKSPACE_ROOT / "scripts" / "maintenance" / "enrich_lineage_families.py"
     healed_nodes = 0
+    heal_errors = []
     if enricher_script.exists():
         try:
-            code, out, _ = run_command_capture([PYTHON_BIN, str(enricher_script)], timeout=30)
+            code, out, err = run_command_capture([PYTHON_BIN, str(enricher_script)], timeout=30)
+            if code != 0:
+                heal_errors.append(f"enrich_lineage_families.py exited {code}: {(err or out).strip()[:160]}")
             m = re.search(r"Newly Enriched Parent Connections:\s*([\d,]+)", out)
             if m:
                 healed_nodes = int(m.group(1).replace(",", ""))
-        except Exception:
-            pass
+        except Exception as e:
+            heal_errors.append(f"enrich_lineage_families.py exception: {e}")
 
     # Consolidated Report
     print(f"✔ {Colors.BOLD}Shard Hash Registry:{Colors.RESET}     {hashes_healed} drifted hash(es) updated ({total_shards}/256 synchronized)")
     print(f"✔ {Colors.BOLD}Compiled Disk Cache:{Colors.RESET}     {purged_count} stale cache file(s) purged (100% fresh)")
     print(f"✔ {Colors.BOLD}Lineage Derivation DAG:{Colors.RESET}  {healed_nodes} isolated node(s) connected (0 isolated)")
     print("-" * 76)
-    print(f"{Colors.GREEN}{Colors.BOLD}✅ Platform state restored to pristine compliance!{Colors.RESET}\n")
+    if heal_errors:
+        print(f"{Colors.YELLOW}{Colors.BOLD}⚠️ Self-healing completed with {len(heal_errors)} warning(s):{Colors.RESET}")
+        for he in heal_errors:
+            print(f"   • {he}")
+        print()
+    else:
+        print(f"{Colors.GREEN}{Colors.BOLD}✅ Platform state restored to pristine compliance!{Colors.RESET}\n")
 
 
 def audit_domain_scope(domain_query: str):
@@ -1805,7 +1819,7 @@ def audit_shard_scope(shard_hex: str):
     for fid, fitem in data.items():
         if not isinstance(fitem, dict):
             continue
-        latex = fitem.get("latex", "")
+        latex = fitem.get("equation") or fitem.get("latex", "")
         if latex.count("{") != latex.count("}"):
             syntax_errors += 1
         if fitem.get("derivation_steps"):
@@ -2255,7 +2269,7 @@ def main():
     # 3. Roadmap Realization (Spec vs Code Gap)
     if include_roadmap or args.heal:
         data["roadmap"] = audit_roadmap_realization(
-            heal_hashes=(args.heal or args.run_all),
+            heal_hashes=args.heal,
             arch_data=data.get("diagnostics"),
         )
 
@@ -2272,6 +2286,29 @@ def main():
     strict_passed, violations = verify_strict_invariants(data)
     telemetry = build_standard_telemetry(data, mode=mode, strict_passed=strict_passed, violations=violations)
 
+    # Pre-load diff baseline BEFORE save_standard_assessment() overwrites docs/reports/latest.json
+    diff_target_path = None
+    prev_telemetry_for_diff = None
+    diff_read_error = None
+    if args.diff is not None:
+        target_arg = args.diff
+        reports_dir = WORKSPACE_ROOT / "docs" / "reports"
+        if target_arg in ("latest.json", "latest"):
+            diff_target_path = reports_dir / "latest.json"
+        elif Path(target_arg).exists():
+            diff_target_path = Path(target_arg)
+        elif (reports_dir / target_arg).exists():
+            diff_target_path = reports_dir / target_arg
+        else:
+            matches = list(reports_dir.glob(f"*{target_arg}*"))
+            if matches:
+                diff_target_path = sorted(matches)[-1]
+        if diff_target_path and diff_target_path.exists():
+            try:
+                prev_telemetry_for_diff = json.loads(diff_target_path.read_text(encoding="utf-8"))
+            except Exception as e:
+                diff_read_error = str(e)
+
     # Persist latest.json, timeline.jsonl, and Markdown report
     md_content = generate_markdown_report(telemetry, data)
     saved_path = save_standard_assessment(telemetry, md_content=md_content, save_target=args.save)
@@ -2287,31 +2324,15 @@ def main():
 
     # Output Handling
     if args.diff is not None:
-        target_arg = args.diff
-        target_path = None
-        reports_dir = WORKSPACE_ROOT / "docs" / "reports"
-
-        if target_arg in ("latest.json", "latest"):
-            target_path = reports_dir / "latest.json"
-        elif Path(target_arg).exists():
-            target_path = Path(target_arg)
-        elif (reports_dir / target_arg).exists():
-            target_path = reports_dir / target_arg
-        else:
-            matches = list(reports_dir.glob(f"*{target_arg}*"))
-            if matches:
-                target_path = sorted(matches)[-1]
-
-        if not target_path or not target_path.exists():
-            print(f"{Colors.RED}Diff target snapshot not found: {target_arg}{Colors.RESET}")
+        if not diff_target_path or not diff_target_path.exists():
+            reports_dir = WORKSPACE_ROOT / "docs" / "reports"
+            print(f"{Colors.RED}Diff target snapshot not found: {args.diff}{Colors.RESET}")
             print(f"Available baseline: {reports_dir / 'latest.json'}")
             return
-
-        try:
-            prev_telemetry = json.loads(target_path.read_text(encoding="utf-8"))
-            print_telemetry_diff(telemetry, prev_telemetry, target_label=target_path.name)
-        except Exception as e:
-            print(f"{Colors.RED}Failed reading diff target {target_path}: {e}{Colors.RESET}")
+        if diff_read_error is not None:
+            print(f"{Colors.RED}Failed reading diff target {diff_target_path}: {diff_read_error}{Colors.RESET}")
+            return
+        print_telemetry_diff(telemetry, prev_telemetry_for_diff, target_label=diff_target_path.name)
         return
 
     if args.json:

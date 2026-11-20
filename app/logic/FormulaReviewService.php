@@ -325,59 +325,26 @@ class FormulaReviewService
         }
         unset($fVal);
 
-        $encodedShard = json_encode($shardData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        file_put_contents($shardFile, $encodedShard, LOCK_EX);
-
-        // Synchronize SHA-256 hash registry for this shard
-        $registryPath = PROJECT_ROOT . '/app/config/formulas_hash_registry.json';
-        if (file_exists($registryPath)) {
-            $relativePath = str_replace(PROJECT_ROOT . '/', '', $shardFile);
-            $reg = json_decode(file_get_contents($registryPath), true) ?: [];
-            $reg[$relativePath] = hash('sha256', $encodedShard);
-            file_put_contents($registryPath, json_encode($reg, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        // Guard against dirtying Git-tracked shards in production
+        require_once __DIR__ . '/AuthService.php';
+        if (AuthService::resolveAppEnv() === 'production') {
+            throw new \RuntimeException('Direct shard edits are disabled in production to keep the Git deployment tree clean.');
         }
 
-        // 7. Commit to MariaDB (INSERT or UPDATE with equation_svg = NULL for clean client MathJax)
+        // Preserve existing status (never downgrade 'platinum' -> 'published') and persist atomically across
+        // shard JSON, formulas_hash_registry.json (LOCK_EX), MariaDB (all 24 columns, equation_svg = NULL),
+        // and formulas_latex_index.json via the canonical PhysicsService::saveFormula() write funnel.
+        $formulaData['equation'] = $cleanEq;
+        $formulaData['equation_svg'] = null;
+        if (empty($formulaData['status'])) {
+            $formulaData['status'] = 'platinum';
+        }
+        $saved = $this->physicsService->saveFormula($formulaId, $formulaData);
+        if (!$saved) {
+            throw new \RuntimeException('Failed to persist formula repair via PhysicsService::saveFormula().');
+        }
+
         $pdo = Flight::db();
-        $dbStmt = $pdo->prepare("
-            INSERT INTO formulas (id, title, equation, equation_svg, conceptual_definition, intuitive_summary, interpretation, symmetry_origin, limits_and_boundary, semantic_variables, status)
-            VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'published')
-            ON DUPLICATE KEY UPDATE
-                title = VALUES(title),
-                equation = VALUES(equation),
-                equation_svg = NULL,
-                conceptual_definition = VALUES(conceptual_definition),
-                intuitive_summary = VALUES(intuitive_summary),
-                interpretation = VALUES(interpretation),
-                symmetry_origin = VALUES(symmetry_origin),
-                limits_and_boundary = VALUES(limits_and_boundary),
-                semantic_variables = VALUES(semantic_variables),
-                status = 'published'
-        ");
-
-        $dbStmt->execute([
-            $formulaId,
-            $formulaData['title'] ?? 'Custom Physical Relation',
-            $cleanEq,
-            $formulaData['conceptual_definition'] ?? null,
-            $formulaData['intuitive_summary'] ?? null,
-            $formulaData['interpretation'] ?? null,
-            $formulaData['symmetry_origin'] ?? null,
-            $formulaData['limits_and_boundary'] ?? null,
-            isset($formulaData['semantic_variables']) ? json_encode($formulaData['semantic_variables'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null
-        ]);
-
-        // 8. Synchronize formulas_latex_index.json
-        $latexIndexFile = PROJECT_ROOT . '/app/config/formulas_latex_index.json';
-        if (file_exists($latexIndexFile)) {
-            $indexData = json_decode(file_get_contents($latexIndexFile), true) ?: [];
-            $normLatex = $this->physicsService->normalizeLatex($cleanEq);
-            if (!empty($normLatex)) {
-                $indexData[$normLatex] = $formulaId;
-                file_put_contents($latexIndexFile, json_encode($indexData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), LOCK_EX);
-            }
-        }
-
         $afterSnapshot = $formulaData;
 
         // 9. Record Audit Log

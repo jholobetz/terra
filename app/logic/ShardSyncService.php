@@ -145,6 +145,8 @@ class ShardSyncService
         sort($shardFiles);
 
         $shardsUpdated = 0;
+        $shardsFailed = 0;
+        $failedErrors = [];
         $formulasSynced = 0;
         $newRegistry = $hashRegistry;
         $db = $this->app->db();
@@ -362,10 +364,13 @@ class ShardSyncService
                 }
             } catch (\Throwable $shardErr) {
                 $shardSuccess = false;
+                $shardsFailed++;
+                $failedErrors[] = "{$relativePath}: " . $shardErr->getMessage();
                 if ($inTransaction && $db && method_exists($db, 'inTransaction') && $db->inTransaction()) {
                     $db->rollBack();
                 }
                 $this->physicsService->lastDbError = $shardErr->getMessage();
+                error_log("[ShardSyncService] Shard sync failed for {$relativePath}: " . $shardErr->getMessage());
             }
 
             if ($shardSuccess) {
@@ -424,6 +429,8 @@ class ShardSyncService
         return [
             'shards_checked' => count($shardFiles),
             'shards_changed' => $shardsUpdated,
+            'shards_failed' => $shardsFailed,
+            'errors' => $failedErrors,
             'formulas_synced' => $formulasSynced
         ];
     }
@@ -474,31 +481,47 @@ class ShardSyncService
     }
 
     /**
-     * Synchronizes a single topic hub manifest to MariaDB.
+     * Synchronizes a single topic hub manifest or flat topic shard to MariaDB.
      */
     public function syncIndividualTopic(string $slug, array $data): void
     {
-        $pillars = !empty($data['pillars']) ? json_encode($data['pillars']) : '[]';
-        $bridges = !empty($data['metadata']['bridges']) ? json_encode($data['metadata']['bridges']) : '[]';
+        $meta = is_array($data['metadata'] ?? null) ? $data['metadata'] : [];
+        $pillars = !empty($data['pillars']) ? (is_string($data['pillars']) ? $data['pillars'] : json_encode($data['pillars'])) : '[]';
+        $bridgesRaw = $meta['bridges'] ?? ($data['bridges'] ?? []);
+        $bridges = !empty($bridgesRaw) ? (is_string($bridgesRaw) ? $bridgesRaw : json_encode($bridgesRaw)) : '[]';
+        $intro = (string)($meta['intro'] ?? ($data['intro'] ?? ''));
+        $field = (string)($meta['field'] ?? ($data['field'] ?? ''));
+        $density = (string)($meta['density'] ?? ($data['density'] ?? ''));
+        $description = (string)($data['description'] ?? $intro);
+        $content = (string)($data['content'] ?? '');
+        $formulaData = !empty($data['formula_ids'])
+            ? (is_string($data['formula_ids']) ? $data['formula_ids'] : json_encode($data['formula_ids']))
+            : (!empty($data['formula_data']) ? (is_string($data['formula_data']) ? $data['formula_data'] : json_encode($data['formula_data'])) : '[]');
 
         $this->app->db()->runQuery(
-            "INSERT INTO topics (slug, title, intro, field, density, pillars, bridges) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)
+            "INSERT INTO topics (slug, title, description, content, intro, field, density, pillars, bridges, formula_data) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE 
                 title = VALUES(title), 
-                intro = VALUES(intro), 
-                field = VALUES(field), 
-                density = VALUES(density), 
+                description = IF(VALUES(description) != '', VALUES(description), description),
+                content = IF(VALUES(content) != '', VALUES(content), content),
+                intro = IF(VALUES(intro) != '', VALUES(intro), intro), 
+                field = IF(VALUES(field) != '', VALUES(field), field), 
+                density = IF(VALUES(density) != '', VALUES(density), density), 
                 pillars = VALUES(pillars), 
-                bridges = VALUES(bridges)",
+                bridges = VALUES(bridges),
+                formula_data = IF(VALUES(formula_data) != '[]', VALUES(formula_data), formula_data)",
             [
                 $slug,
-                $data['title'],
-                $data['metadata']['intro'] ?? '',
-                $data['metadata']['field'] ?? '',
-                $data['metadata']['density'] ?? '',
+                $data['title'] ?? $slug,
+                $description,
+                $content,
+                $intro,
+                $field,
+                $density,
                 $pillars,
-                $bridges
+                $bridges,
+                $formulaData
             ]
         );
     }
@@ -682,6 +705,12 @@ class ShardSyncService
 
         // 4. Sync Formulas via unified SHA-256 hash-driven upsert & orphan pruning
         $formulaSync = $this->syncFormulasToDatabase($force);
+        if (($formulaSync['shards_failed'] ?? 0) > 0) {
+            $firstErr = $formulaSync['errors'][0] ?? 'Unknown shard DB error';
+            throw new \RuntimeException(
+                "Formula synchronization failed on {$formulaSync['shards_failed']} shard(s): {$firstErr}"
+            );
+        }
 
         // 4a. Compile formula LaTeX index only in non-production studio or when missing (preserves clean git status on server)
         require_once __DIR__ . '/AuthService.php';

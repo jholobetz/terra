@@ -19,8 +19,9 @@ $forceCache = in_array('--force-cache', $args, true);
 $forceSync = in_array('--force-sync', $args, true);
 $migrateOnly = in_array('--migrate', $args, true);
 $warmCache = $forceCache || in_array('--warm-cache', $args, true) || in_array('--cache-only', $args, true);
-$sitemapOnly = in_array('--sitemap', $args, true);
-$cacheOnly = in_array('--cache-only', $args, true) || (($sitemapOnly || $migrateOnly) && !$warmCache);
+$generateSitemap = in_array('--sitemap', $args, true);
+$explicitCacheOnly = in_array('--cache-only', $args, true);
+$skipDbSync = $explicitCacheOnly || (($generateSitemap || $migrateOnly) && !$warmCache && !$forceSync);
 
 require __DIR__ . '/app/config/bootstrap.php';
 
@@ -38,7 +39,7 @@ try {
         }
     }
 
-    if (!$cacheOnly && !$migrateOnly) {
+    if (!$skipDbSync && !$migrateOnly) {
         echo "Starting CLI Synchronization (Delta Mode" . ($forceSync ? " — FORCED FULL REBUILD" : "") . ")...\n";
         $service->setPreviewMode(true);
 
@@ -97,7 +98,9 @@ try {
             }
             exit(1);
         }
-    } elseif ($sitemapOnly) {
+    }
+
+    if ($generateSitemap) {
         $ctrl = $app->physicsController();
         $xml = $ctrl->buildSitemapXml(true);
         $urlCount = substr_count($xml, '<url>');

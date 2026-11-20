@@ -741,7 +741,14 @@ class PhysicsService
             if (file_exists($shardPath)) {
                 $shardContent = json_decode(file_get_contents($shardPath), true) ?: [];
                 if (isset($shardContent[$fId])) {
-                    $formula = $this->sanitizeFormulaText($shardContent[$fId]);
+                    $formula = $shardContent[$fId];
+                    if (!empty($formula['equation'])) {
+                        $formula['latex_source'] = $formula['equation'];
+                    }
+                    if (!empty($formula['equation_svg'])) {
+                        $formula['equation'] = $formula['equation_svg'];
+                    }
+                    $formula = $this->sanitizeFormulaText($formula);
                     $this->physicsContent['formula_registry'][$fId] = $formula;
                     return $formula;
                 }
@@ -1397,6 +1404,14 @@ class PhysicsService
         
         if (isset($data['verification']) && is_string($data['verification'])) {
             $data['verification'] = json_decode($data['verification'], true);
+        }
+
+        if (isset($data['pillars']) && is_string($data['pillars'])) {
+            $data['pillars'] = json_decode($data['pillars'], true) ?: [];
+        }
+
+        if (isset($data['bridges']) && is_string($data['bridges'])) {
+            $data['bridges'] = json_decode($data['bridges'], true) ?: [];
         }
 
         $data['formulas'] = [];

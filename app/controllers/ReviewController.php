@@ -19,6 +19,16 @@ class ReviewController
         $this->app->json($payload, $status);
     }
 
+    private function safeErrorMessage(\Throwable $e, string $fallback): string
+    {
+        $auth = Flight::authService();
+        if ($auth->isProduction()) {
+            error_log('[ReviewController] ' . $e->getMessage());
+            return $fallback;
+        }
+        return $fallback . ': ' . $e->getMessage();
+    }
+
     /**
      * REST Endpoint: Get Current Authenticated User & Role
      */
@@ -123,7 +133,7 @@ class ReviewController
         } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
-                'error' => 'Failed to apply repair: ' . $e->getMessage()
+                'error' => $this->safeErrorMessage($e, 'Failed to apply repair')
             ], 500);
         }
     }
@@ -150,7 +160,7 @@ class ReviewController
 
             $this->jsonResponse(['success' => true, 'reviews' => $reviews]);
         } catch (\Throwable $e) {
-            $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            $this->jsonResponse(['success' => false, 'error' => $this->safeErrorMessage($e, 'Review operation failed')], 500);
         }
     }
 
@@ -185,7 +195,7 @@ class ReviewController
                 'data' => $result
             ]);
         } catch (\Throwable $e) {
-            $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            $this->jsonResponse(['success' => false, 'error' => $this->safeErrorMessage($e, 'Review operation failed')], 500);
         }
     }
 
@@ -220,7 +230,7 @@ class ReviewController
                 'message' => 'Review rejected.'
             ]);
         } catch (\Throwable $e) {
-            $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+            $this->jsonResponse(['success' => false, 'error' => $this->safeErrorMessage($e, 'Review operation failed')], 500);
         }
     }
 }

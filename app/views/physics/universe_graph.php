@@ -168,7 +168,7 @@
     </div>
 </div>
 
-<script src="/js/formula_graph.js?v=<?= filemtime(PROJECT_ROOT . '/public/js/formula_graph.js') ?>" nonce="<?= $nonce ?>" defer></script>
+<script src="/js/formula_graph.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/formula_graph.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
 <script nonce="<?= $nonce ?>">
 document.addEventListener('DOMContentLoaded', () => {
     const canvasContainer = document.getElementById('universe-graph-canvas');

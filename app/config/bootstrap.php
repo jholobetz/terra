@@ -35,10 +35,14 @@ $app = Flight::app();
 $config = require(__DIR__ . $ds . 'config.php');
 if (is_array($config) && !empty($config['app_env']) && !defined('TERRA_CONFIG_APP_ENV')) {
     define('TERRA_CONFIG_APP_ENV', strtolower(trim((string)$config['app_env'])));
-    if (TERRA_CONFIG_APP_ENV === 'production') {
-        error_reporting(E_ALL & ~E_DEPRECATED);
-        ini_set('display_errors', '0');
-    }
+}
+$effectiveAppEnv = strtolower(trim((string)(
+    getenv('APP_ENV')
+    ?: ($_SERVER['APP_ENV'] ?? ($_SERVER['REDIRECT_APP_ENV'] ?? ($_ENV['APP_ENV'] ?? (defined('TERRA_CONFIG_APP_ENV') ? TERRA_CONFIG_APP_ENV : ''))))
+)));
+if ($effectiveAppEnv === 'production') {
+    error_reporting(E_ALL & ~E_DEPRECATED);
+    ini_set('display_errors', '0');
 }
 if (is_array($config) && !empty($config['app_url'])) {
     $normalizedAppUrl = rtrim(trim((string)$config['app_url']), '/');

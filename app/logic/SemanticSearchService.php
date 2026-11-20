@@ -79,11 +79,16 @@ class SemanticSearchService
             return $this->embeddingsIndex;
         }
 
+        if (file_exists($this->embeddingsGzPath) && function_exists('gzdecode')) {
+            $raw = file_get_contents($this->embeddingsGzPath);
+            $json = $raw !== false ? gzdecode($raw) : false;
+            if ($json !== false) {
+                $this->embeddingsIndex = json_decode($json, true);
+                return $this->embeddingsIndex;
+            }
+        }
         if (file_exists($this->embeddingsPath)) {
             $json = file_get_contents($this->embeddingsPath);
-            $this->embeddingsIndex = json_decode($json, true);
-        } elseif (file_exists($this->embeddingsGzPath)) {
-            $json = gzdecode(file_get_contents($this->embeddingsGzPath));
             $this->embeddingsIndex = json_decode($json, true);
         }
 
@@ -99,11 +104,16 @@ class SemanticSearchService
             return $this->subtopicsIndex;
         }
 
+        if (file_exists($this->subtopicsGzPath) && function_exists('gzdecode')) {
+            $raw = file_get_contents($this->subtopicsGzPath);
+            $json = $raw !== false ? gzdecode($raw) : false;
+            if ($json !== false) {
+                $this->subtopicsIndex = json_decode($json, true);
+                return $this->subtopicsIndex;
+            }
+        }
         if (file_exists($this->subtopicsPath)) {
             $json = file_get_contents($this->subtopicsPath);
-            $this->subtopicsIndex = json_decode($json, true);
-        } elseif (file_exists($this->subtopicsGzPath)) {
-            $json = gzdecode(file_get_contents($this->subtopicsGzPath));
             $this->subtopicsIndex = json_decode($json, true);
         }
 

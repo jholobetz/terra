@@ -605,6 +605,9 @@ class PhysicsService
             }
             return $list;
         }
+        if (!in_array($table, ['topics', 'subtopics', 'formulas'], true)) {
+            throw new \InvalidArgumentException("Invalid physics table requested: {$table}");
+        }
         try {
             return $this->app->db()->fetchAll("SELECT * FROM {$table} ORDER BY id ASC");
         } catch (\Throwable $e) {
@@ -1268,7 +1271,12 @@ class PhysicsService
         }
 
         $formula['id'] = $formulaId;
-        $db = $this->app->db();
+        $db = null;
+        try {
+            $db = $this->app->db();
+        } catch (\Throwable $e) {
+            $db = null;
+        }
 
         $parent = null;
         if (!empty($formula['parent_formula_id'])) {
@@ -1361,6 +1369,9 @@ class PhysicsService
             return $data;
         }
 
+        if (!in_array($table, ['topics', 'subtopics', 'formulas'], true)) {
+            throw new \InvalidArgumentException("Invalid physics table requested: {$table}");
+        }
         $row = null;
         try {
             $row = $this->app->db()->fetchRow("SELECT * FROM {$table} WHERE slug = ?", [$slug]);

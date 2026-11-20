@@ -659,10 +659,10 @@ class PhysicsController
      */
     public function equationExplainer()
     {
-        $id = $this->app->request()->query['id'] ?? '';
-        $latex = $this->app->request()->query['latex'] ?? '';
-        $subtopicSlug = $this->app->request()->query['subtopic'] ?? '';
-        $domain = $this->app->request()->query['domain'] ?? '';
+        $id = is_string($this->app->request()->query['id'] ?? null) ? $this->app->request()->query['id'] : '';
+        $latex = is_string($this->app->request()->query['latex'] ?? null) ? $this->app->request()->query['latex'] : '';
+        $subtopicSlug = is_string($this->app->request()->query['subtopic'] ?? null) ? $this->app->request()->query['subtopic'] : '';
+        $domain = is_string($this->app->request()->query['domain'] ?? null) ? $this->app->request()->query['domain'] : '';
         
         if (!empty($latex)) {
             $latex = trim($latex, " '\t\n\r\0\x0B\"");
@@ -731,8 +731,8 @@ class PhysicsController
     {
         header('Content-Type: application/json; charset=utf-8');
         
-        $id = $this->app->request()->query['id'] ?? '';
-        $latex = $this->app->request()->query['latex'] ?? '';
+        $id = is_string($this->app->request()->query['id'] ?? null) ? $this->app->request()->query['id'] : '';
+        $latex = is_string($this->app->request()->query['latex'] ?? null) ? $this->app->request()->query['latex'] : '';
 
         if (!empty($latex)) {
             $latex = trim($latex, " '\t\n\r\0\x0B\"");
@@ -1111,8 +1111,10 @@ class PhysicsController
     public function apiSearch()
     {
         header('Content-Type: application/json; charset=utf-8');
-        $query = $_GET['q'] ?? '';
-        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        $query = is_string($_GET['q'] ?? null) ? $_GET['q'] : '';
+        $limit = isset($_GET['limit']) && is_numeric($_GET['limit'])
+            ? max(1, min(50, (int)$_GET['limit']))
+            : 10;
         
         $results = $this->service()->searchContent($query, $limit);
         echo json_encode($results);
@@ -1124,9 +1126,13 @@ class PhysicsController
     public function apiSemanticSearch()
     {
         header('Content-Type: application/json; charset=utf-8');
-        $query = $_GET['q'] ?? '';
-        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
-        $minScore = isset($_GET['min_score']) ? (float)$_GET['min_score'] : 0.40;
+        $query = is_string($_GET['q'] ?? null) ? $_GET['q'] : '';
+        $limit = isset($_GET['limit']) && is_numeric($_GET['limit'])
+            ? max(1, min(50, (int)$_GET['limit']))
+            : 10;
+        $minScore = isset($_GET['min_score']) && is_numeric($_GET['min_score'])
+            ? max(0.0, min(1.0, (float)$_GET['min_score']))
+            : 0.40;
 
         $auth = $this->authService();
         $maxPerWindow = $auth->isLocalDevStudio() ? 120 : 30;

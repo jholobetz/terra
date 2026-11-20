@@ -164,11 +164,16 @@ class AuthService
         }
 
         if ($this->isLocalDevStudio()) {
+            $devRole = 'admin';
+            $cookieRole = $_COOKIE['terra_dev_role'] ?? '';
+            if (is_string($cookieRole) && isset(self::ROLE_HIERARCHY[$cookieRole])) {
+                $devRole = $cookieRole;
+            }
             $this->currentUser = (object)[
                 'id' => 1,
                 'display_name' => 'Lead Developer',
                 'email' => 'developer@physicslab.local',
-                'role' => 'admin',
+                'role' => $devRole,
                 'avatar_url' => null
             ];
         } else {
@@ -213,6 +218,15 @@ class AuthService
 
         $user = $this->getCurrentUser();
         $user->role = $role;
+        $_COOKIE['terra_dev_role'] = $role;
+        if (!headers_sent() && php_sapi_name() !== 'cli') {
+            setcookie('terra_dev_role', $role, [
+                'expires' => time() + 86400,
+                'path' => '/',
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
+        }
         return true;
     }
 }

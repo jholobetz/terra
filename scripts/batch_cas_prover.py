@@ -10,6 +10,8 @@ import os
 import json
 import re
 import time
+import signal
+import hashlib
 import argparse
 import warnings
 from typing import Dict, Any, List, Optional, Tuple
@@ -28,6 +30,7 @@ from sympy.physics.units.systems.si import dimsys_SI
 from sympy.physics.units import length, mass, time as sympy_time, current, temperature
 
 from lib.cas.cas_engine import (
+    TimeoutException,
     STANDARD_PHYSICS_DIMENSIONS,
     RESERVED_MATH_TOKENS,
     latex_to_sympy_str,
@@ -53,14 +56,39 @@ SHARDS_BASE_DIR = os.path.join(PROJECT_ROOT, "app", "config", "content", "formul
 DEFAULT_REPORT_PATH = os.path.join(PROJECT_ROOT, "app", "config", "cas_validation_report.json")
 
 
-def _worker_wrapper(item: Tuple[str, Dict[str, Any], str]) -> Tuple[Dict[str, Any], str]:
+def _formula_timeout_handler(signum, frame):
+    raise TimeoutException("Per-formula CAS evaluation timeout")
+
+
+def _worker_wrapper(item: Tuple[str, Dict[str, Any], str, float]) -> Tuple[Dict[str, Any], str]:
     warnings.filterwarnings("ignore")
-    formula_id, entry, shard_path = item
-    res = evaluate_formula_invariance(formula_id, entry)
+    formula_id, entry, shard_path, timeout_sec = item
+    use_alarm = hasattr(signal, "SIGALRM") and hasattr(signal, "setitimer") and timeout_sec > 0
+    if use_alarm:
+        signal.signal(signal.SIGALRM, _formula_timeout_handler)
+        signal.setitimer(signal.ITIMER_REAL, timeout_sec)
+    try:
+        res = evaluate_formula_invariance(formula_id, entry)
+    except TimeoutException:
+        res = {
+            "id": formula_id,
+            "title": entry.get("title", ""),
+            "raw_equation": entry.get("equation", ""),
+            "status": "TIMEOUT",
+            "is_homogeneous": False,
+            "error": f"Exceeded {timeout_sec:.1f}s per-formula CAS timeout",
+        }
+    finally:
+        if use_alarm:
+            signal.setitimer(signal.ITIMER_REAL, 0)
     return res, shard_path
 
 
-def load_shard_formulas(shard_hex: Optional[str] = None, limit: Optional[int] = None) -> List[Tuple[str, Dict[str, Any], str]]:
+def load_shard_formulas(
+    shard_hex: Optional[str] = None,
+    limit: Optional[int] = None,
+    only_unverified: bool = False,
+) -> List[Tuple[str, Dict[str, Any], str]]:
     """
     Loads formula items from one or all 256 Git shards with their shard paths.
     """
@@ -84,6 +112,10 @@ def load_shard_formulas(shard_hex: Optional[str] = None, limit: Optional[int] = 
             with open(shard_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 for fid, entry in data.items():
+                    if only_unverified:
+                        cv = entry.get("cas_validation")
+                        if isinstance(cv, dict) and cv.get("is_homogeneous") is True:
+                            continue
                     items.append((fid, entry, shard_path))
                     if limit and len(items) >= limit:
                         return items
@@ -100,7 +132,9 @@ def run_batch_prover(
     num_workers: Optional[int] = None,
     report_path: Optional[str] = None,
     tag: bool = False,
-    verbose: bool = False
+    verbose: bool = False,
+    only_unverified: bool = False,
+    per_formula_timeout: float = 1.5,
 ) -> Dict[str, Any]:
     """
     Executes the batch CAS invariance audit across formula shards, optionally tagging verified formulas.
@@ -108,11 +142,12 @@ def run_batch_prover(
     start_time = time.time()
 
     if target_id:
-        # Search for specific formula ID across shards
+        # O(1) direct shard lookup via md5(target_id)[:2], with linear fallback only if misplaced
         items = []
         found = False
-        for i in range(256):
-            h = f"{i:02x}"
+        direct_hex = hashlib.md5(target_id.encode("utf-8")).hexdigest()[:2]
+        candidate_hexes = [direct_hex] + [f"{i:02x}" for i in range(256) if f"{i:02x}" != direct_hex]
+        for h in candidate_hexes:
             p = os.path.join(SHARDS_BASE_DIR, h, f"shard_{h}.json")
             if os.path.exists(p):
                 with open(p, "r", encoding="utf-8") as f:
@@ -125,19 +160,31 @@ def run_batch_prover(
             print(f"❌ Formula ID '{target_id}' not found in any shard.", file=sys.stderr)
             return {"error": "Target ID not found"}
     else:
-        items = load_shard_formulas(shard_hex=shard_hex, limit=limit)
+        items = load_shard_formulas(shard_hex=shard_hex, limit=limit, only_unverified=only_unverified)
 
     total_formulas = len(items)
     if total_formulas == 0:
         print("No formulas found matching criteria.", file=sys.stderr)
         return {}
 
+    work_items = [(fid, entry, sp, per_formula_timeout) for fid, entry, sp in items]
     workers = num_workers or max(1, cpu_count() - 1)
     if total_formulas <= 5 or workers == 1:
-        raw_results = [_worker_wrapper(item) for item in items]
+        raw_results = [_worker_wrapper(item) for item in work_items]
     else:
+        raw_results = []
+        chunksize = max(1, min(32, total_formulas // (workers * 4) or 1))
+        show_progress = total_formulas > 200
         with Pool(processes=workers) as pool:
-            raw_results = pool.map(_worker_wrapper, items)
+            for idx, res_tuple in enumerate(pool.imap_unordered(_worker_wrapper, work_items, chunksize=chunksize), 1):
+                raw_results.append(res_tuple)
+                if show_progress and (idx % 1000 == 0 or idx == total_formulas):
+                    elapsed_so_far = time.time() - start_time
+                    print(
+                        f"  [CAS Sweep] {idx:,} / {total_formulas:,} ({idx/total_formulas*100:.1f}%) — {elapsed_so_far:.1f}s",
+                        file=sys.stderr,
+                        flush=True,
+                    )
 
     results = [r[0] for r in raw_results]
 
@@ -222,8 +269,8 @@ def run_batch_prover(
         "results": results if total_formulas <= 100 else results[:100]
     }
 
-    # Save validation report (only on full catalog audit or when report_path is explicitly requested)
-    if report_path or (not target_id and not shard_hex and not limit):
+    # Save validation report only when explicitly requested via --report or during --tag
+    if report_path or (tag and not target_id and not shard_hex and not limit):
         out_path = report_path or DEFAULT_REPORT_PATH
         try:
             os.makedirs(os.path.dirname(out_path), exist_ok=True)
@@ -283,6 +330,8 @@ def main():
     parser.add_argument("--target-id", type=str, help="Audit a single specific formula by ID")
     parser.add_argument("--workers", type=int, help="Number of worker processes")
     parser.add_argument("--report", type=str, help="Output JSON report file path")
+    parser.add_argument("--only-unverified", action="store_true", help="Skip formulas already tagged as homogeneous")
+    parser.add_argument("--timeout", type=float, default=1.5, help="Per-formula SymPy timeout in seconds (default: 1.5)")
     parser.add_argument("--summary", action="store_true", help="Print scorecard summary")
     parser.add_argument("--verbose", action="store_true", help="Print detailed formula outputs")
 
@@ -301,7 +350,9 @@ def main():
         num_workers=args.workers,
         report_path=args.report,
         tag=args.tag,
-        verbose=args.verbose
+        verbose=args.verbose,
+        only_unverified=args.only_unverified,
+        per_formula_timeout=args.timeout,
     )
 
     if args.summary or not args.target_id:

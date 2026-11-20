@@ -41,18 +41,11 @@ def _eval_auth_scenario(env_vars: dict, server_vars: dict) -> dict:
 
 
 def test_php_syntax_auth_and_controller():
-    """Verifies zero PHP syntax errors in AuthService, decomposed Services, and all split Controllers."""
-    for rel_path in [
-        "app/logic/AuthService.php",
-        "app/logic/LatexSanitizer.php",
-        "app/logic/ShardSyncService.php",
-        "app/logic/PhysicsService.php",
-        "app/controllers/PhysicsController.php",
-        "app/controllers/AdminController.php",
-        "app/controllers/ReviewController.php",
-        "app/config/routes.php",
-        "app/config/services.php",
-    ]:
+    """Verifies zero PHP syntax errors across every PHP source file in app/."""
+    php_files = sorted((WORKSPACE_ROOT / "app").rglob("*.php"))
+    assert len(php_files) >= 30, f"Expected >= 30 PHP files under app/, found {len(php_files)}"
+    for abs_path in php_files:
+        rel_path = str(abs_path.relative_to(WORKSPACE_ROOT))
         res = subprocess.run(
             ["php", "-l", rel_path],
             cwd=str(WORKSPACE_ROOT),
@@ -257,6 +250,6 @@ def test_native_php_unit_suite():
     )
     payload = json.loads(res.stdout.strip())
     assert payload["failed"] == 0, f"Native PHP unit tests failed: {payload}"
-    assert payload["passed"] >= 16
-    assert payload["assertions"] >= 35
+    assert payload["passed"] >= 31
+    assert payload["assertions"] >= 1350
 

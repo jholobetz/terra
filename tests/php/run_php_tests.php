@@ -1310,5 +1310,71 @@ $runner->run('Stage4DeploymentTest', 'testHtaccessCompressionAcmeExemptionAndUpd
     $t->assertContains('chmod 640 "${cfg_file}"', $updateSrc, 'update_prod.sh must preserve 640 mode on config.php');
 });
 
+// ============================================================================
+// 11. Post-Launch Behavioral API, RBAC & All-12-Hubs Suite (P0-7, P1-27)
+// ============================================================================
+$runner->run('PostLaunchHardeningTest', 'testPublicApisAndRbacControllersPreserveSecurityHeaders', function (NativePhpTestRunner $t) {
+    // 1. AdminController & ReviewController must return 403 via Flight response without calling exit;
+    withIsolatedEnv(['APP_ENV' => 'production'], ['REMOTE_ADDR' => '203.0.113.99'], function () use ($t) {
+        $app = new \flight\Engine();
+        Flight::register('authService', \app\logic\AuthService::class);
+        $mw = new \app\middlewares\SecurityHeadersMiddleware($app);
+        $mw->before([]);
+
+        $adminCtrl = new \app\controllers\AdminController($app);
+        ob_start();
+        $ok = $adminCtrl->requireAdminAuthority(true);
+        ob_end_clean();
+        $t->assertFalse($ok, 'Guest must be denied by AdminController::requireAdminAuthority()');
+        $t->assertSame(403, $app->response()->status(), 'AdminController must set Flight HTTP 403');
+        $t->assertTrue(!empty($app->response()->getHeader('Content-Security-Policy')), 'AdminController 403 must preserve CSP header');
+
+        $app2 = new \flight\Engine();
+        $mw2 = new \app\middlewares\SecurityHeadersMiddleware($app2);
+        $mw2->before([]);
+        $reviewCtrl = new \app\controllers\ReviewController($app2);
+        ob_start();
+        $reviewCtrl->apiGetReviews();
+        ob_end_clean();
+        $t->assertSame(403, $app2->response()->status(), 'ReviewController::apiGetReviews must return Flight HTTP 403 for guest');
+        $t->assertTrue(!empty($app2->response()->getHeader('Content-Security-Policy')), 'ReviewController 403 must preserve CSP header');
+    });
+
+    // 2. Public JSON API: apiRelatedSubtopics & apiSearch array-param / limit safety
+    $app = new \flight\Engine();
+    $app->register('physicsService', \app\logic\PhysicsService::class, [$app]);
+    $app->register('authService', \app\logic\AuthService::class);
+    $ctrl = new \app\controllers\PhysicsController($app);
+
+    ob_start();
+    $ctrl->apiRelatedSubtopics('schrodinger-equation');
+    $relRaw = (string)ob_get_clean();
+    $relJson = json_decode($relRaw, true);
+    $t->assertTrue(is_array($relJson) && !empty($relJson['success']), 'apiRelatedSubtopics must return valid JSON success');
+
+    $origGet = $_GET;
+    try {
+        $_GET = ['q' => ['injected_array'], 'limit' => '-50'];
+        ob_start();
+        $ctrl->apiSearch();
+        $searchRaw = (string)ob_get_clean();
+        $searchJson = json_decode($searchRaw, true);
+        $t->assertTrue(is_array($searchJson) && isset($searchJson['results']), 'apiSearch must handle array query & negative limit safely');
+    } finally {
+        $_GET = $origGet;
+    }
+
+    // 3. Verify all 12 Topic Hub manifests load with non-empty pillars & nodes via PhysicsService
+    $svc = $app->physicsService();
+    $svc->setPreviewMode(true);
+    $manifestFiles = glob(PROJECT_ROOT . '/hub_manifests/*.json') ?: [];
+    $t->assertSame(12, count($manifestFiles), 'All 12 hub manifests must be present');
+    foreach ($manifestFiles as $mf) {
+        $slug = basename($mf, '.json');
+        $topic = $svc->fetchAndPrepare('topics', $slug);
+        $t->assertTrue(!empty($topic['pillars']), "Topic hub {$slug} must have non-empty pillars");
+    }
+});
+
 $jsonFlag = in_array('--json', $argv ?? [], true);
 exit($runner->summary($jsonFlag));

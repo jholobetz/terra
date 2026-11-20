@@ -75,3 +75,51 @@ def test_inline_executable_scripts_have_csp_nonce():
         "Executable inline <script> tags without nonce are blocked by SecurityHeadersMiddleware CSP:\n"
         + "\n".join(violations)
     )
+
+
+def test_all_first_party_js_passes_node_syntax_check():
+    """P1-27: Verify every first-party JS file under public/js/ parses cleanly under node --check."""
+    import shutil
+    import subprocess
+
+    node_bin = shutil.which("node")
+    if not node_bin:
+        return
+
+    js_dir = ROOT / "public" / "js"
+    js_files = [
+        p for p in sorted(js_dir.rglob("*.js"))
+        if "lib" not in p.relative_to(js_dir).parts and "dist" not in p.relative_to(js_dir).parts
+    ]
+    assert len(js_files) >= 15, f"Expected >= 15 first-party JS files, found {len(js_files)}"
+
+    failures = []
+    for js_path in js_files:
+        res = subprocess.run([node_bin, "--check", str(js_path)], capture_output=True, text=True)
+        if res.returncode != 0:
+            failures.append(f"{js_path.relative_to(ROOT)}: {res.stderr.strip()}")
+
+    assert not failures, "First-party JS syntax errors detected:\n" + "\n".join(failures)
+
+
+def test_zero_inline_js_event_handlers_in_views_and_js():
+    """P1-19: Enforce zero CSP-blocked inline on(click|focus|blur|mouseover|mouseout)= handlers."""
+    inline_ev_re = re.compile(r"\bon(?:click|focus|blur|mouseover|mouseout)\s*=\s*[\"']", re.IGNORECASE)
+    violations = []
+
+    for view_path in sorted(VIEWS_DIR.rglob("*.php")):
+        content = view_path.read_text(encoding="utf-8")
+        for m in inline_ev_re.finditer(content):
+            line_no = content[: m.start()].count("\n") + 1
+            violations.append(f"{view_path.relative_to(ROOT)}:{line_no}")
+
+    js_dir = ROOT / "public" / "js"
+    for js_path in sorted(js_dir.rglob("*.js")):
+        if "lib" in js_path.relative_to(js_dir).parts or "dist" in js_path.relative_to(js_dir).parts:
+            continue
+        content = js_path.read_text(encoding="utf-8")
+        for m in inline_ev_re.finditer(content):
+            line_no = content[: m.start()].count("\n") + 1
+            violations.append(f"{js_path.relative_to(ROOT)}:{line_no}")
+
+    assert not violations, "CSP-blocked inline JS event handlers found:\n" + "\n".join(violations)

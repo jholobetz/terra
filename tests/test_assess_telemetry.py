@@ -28,10 +28,10 @@ def mock_audit_data():
         },
         "diagnostics": {
             "lineage": {
-                "total_formulas": 14681,
-                "dag_edges": 14108,
+                "total_formulas": 14684,
+                "dag_edges": 14119,
                 "lhi_score": 99.9,
-                "rich_count": 14681,
+                "rich_count": 14684,
                 "moderate_count": 0,
                 "isolated_nodes": 0,
                 "overloaded_hubs": 0,
@@ -68,7 +68,7 @@ def mock_audit_data():
                 "progress_pct": 100,
                 "items": [
                     ("Dual-Layer Hash Sync", "256/256 Shards Synchronized", True),
-                    ("Multi-Step Derivations", "103 / 100 Verified Derivation Proofs", True),
+                    ("Multi-Step Derivations", "104 / 14684 Formulas (~0.7% Catalog; 12/12 Domain Parity ✓)", True),
                 ],
             },
             "phase_3": {"title": "Phase 3", "status": "IN_PROGRESS", "progress_pct": 15, "items": []},
@@ -103,11 +103,11 @@ def test_telemetry_schema_v1_structure(mock_audit_data):
 
     assert "mathematical_manifold" in telemetry
     manifold = telemetry["mathematical_manifold"]
-    assert manifold["total_formulas"] == 14681
-    assert manifold["dag_edges"] == 14108
+    assert manifold["total_formulas"] == 14684
+    assert manifold["dag_edges"] == 14119
     assert manifold["lhi_score"] == 99.9
     assert manifold["isolated_nodes"] == 0
-    assert manifold["multi_step_proofs"] == 103
+    assert manifold["multi_step_proofs"] == 104
     assert manifold["cas_latency_ms"] == 250.0
 
     assert "knowledge_web" in telemetry

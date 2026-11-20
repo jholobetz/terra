@@ -48,7 +48,7 @@ from lib.cas.unit_parser import (
 )
 
 
-class TimeoutException(Exception):
+class TimeoutException(BaseException):
     pass
 
 

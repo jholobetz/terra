@@ -332,8 +332,17 @@ def generate_definition(latex_str, allow_external_api=False):
                 active_model = m_name
                 for attempt in range(1, 3):
                     try:
-                        # Pillar 1 & 2 (docs/cost_governance.md): Pre-flight token count + bounded output & thinking caps
-                        _ = client.models.count_tokens(model=m_name, contents=prompt).total_tokens
+                        # Pillars 1, 2 & 3 (docs/cost_governance.md): Pre-flight token count + worst-case budget ceiling
+                        input_tokens = client.models.count_tokens(model=m_name, contents=prompt).total_tokens
+                        max_cost_dollars = float(os.environ.get("TERRA_MAX_COST_DOLLARS", "0.50"))
+                        if max_cost_dollars <= 0.0:
+                            raise RuntimeError("Cost governance violation: TERRA_MAX_COST_DOLLARS must be > 0.0")
+                        # Conservative worst-case pricing ($2.00/M input, $12.00/M output+thinking)
+                        worst_case_usd = (input_tokens * 2.0 + (800 + 512) * 12.0) / 1_000_000.0
+                        if worst_case_usd > max_cost_dollars:
+                            raise RuntimeError(
+                                f"Cost governance ceiling exceeded: worst-case ${worst_case_usd:.4f} > ${max_cost_dollars:.2f}"
+                            )
                         response = client.models.generate_content(
                             model=m_name,
                             contents=prompt,

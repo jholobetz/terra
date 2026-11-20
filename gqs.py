@@ -541,12 +541,15 @@ def ingest_formulas():
     pipeline = FormulaIngestionPipeline()
     shards_updated = set()
     
+    ingested_ids = []
     for f_id, draft in payload.items():
         hex_prefix = hashlib.md5(f_id.encode('utf-8')).hexdigest()[:2]
-        shard_path = os.path.join(shards_dir, f"shard_{hex_prefix}.json")
+        nested_path = os.path.join(shards_dir, hex_prefix, f"shard_{hex_prefix}.json")
+        flat_path = os.path.join(shards_dir, f"shard_{hex_prefix}.json")
+        shard_path = nested_path if os.path.exists(nested_path) else flat_path
         
         if not os.path.exists(shard_path):
-            print(f"  ⚠️ Error: Shard file does not exist: {shard_path} for formula '{f_id}'")
+            print(f"  ⚠️ Error: Shard file does not exist: {nested_path} for formula '{f_id}'")
             continue
             
         with open(shard_path, 'r', encoding='utf-8') as f:
@@ -587,6 +590,7 @@ def ingest_formulas():
             res = pipeline.ingest(formula)
             if res.get("success"):
                 shards_updated.add(res.get("shard_file"))
+                ingested_ids.append(f_id)
                 cas_stat = res.get("cas_validation", {}).get("status", "evaluated")
                 print(f"  ✓ Ingested '{f_id}' via Pipeline in {res.get('shard_file')} (CAS: {cas_stat})")
             else:
@@ -594,10 +598,11 @@ def ingest_formulas():
         except Exception as e:
             print(f"  ⚠️ Pipeline exception for '{f_id}': {e}")
             
+    remaining_payload = {k: v for k, v in payload.items() if k not in set(ingested_ids)}
     with open(payload_path, 'w', encoding='utf-8') as f:
-        json.dump({}, f, indent=4)
+        json.dump(remaining_payload, f, indent=4)
         
-    print(f"\n✓ SUCCESS: Ingested drafts and updated {len(shards_updated)} shard files with zero hash drift.")
+    print(f"\n✓ SUCCESS: Ingested {len(ingested_ids)}/{len(payload)} drafts and updated {len(shards_updated)} shard files ({len(remaining_payload)} remaining).")
 
 class FormulaNaming(BaseModel):
     latex: str = Field(description="The input LaTeX equation.")
@@ -637,6 +642,28 @@ class PhysicsFormulaMetadata(BaseModel):
     limits_and_boundary: str = Field(description="Asymptotic limits when variables approach zero or infinity.")
     semantic_variables: list[SemanticVariable] = Field(description="List of all mathematical variables in the formula.")
 
+def _enforce_external_api_budget(operation_name: str, default_max_dollars: float = 0.50) -> float:
+    """Enforces Cost Governance Pillars 3 & 4 (--max-cost-dollars + interactive [y/N] confirmation)."""
+    max_dollars = default_max_dollars
+    for i, arg in enumerate(sys.argv):
+        if arg == "--max-cost-dollars" and i + 1 < len(sys.argv):
+            max_dollars = float(sys.argv[i + 1])
+        elif arg.startswith("--max-cost-dollars="):
+            max_dollars = float(arg.split("=", 1)[1])
+    if max_dollars <= 0.0:
+        print("🛑 BLOCKED BY COST GOVERNANCE (Pillar 3): --max-cost-dollars must be > 0.0 (unlimited runs forbidden).")
+        sys.exit(1)
+    if "--yes" not in sys.argv:
+        if not sys.stdin.isatty():
+            print(f"🛑 BLOCKED BY COST GOVERNANCE (Pillar 4): Non-interactive metered run '{operation_name}' requires interactive [y/N] confirmation.")
+            sys.exit(1)
+        ans = input(f"⚠️ Authorize metered external Gemini API run '{operation_name}' (ceiling: ${max_dollars:.2f})? [y/N]: ").strip().lower()
+        if ans != "y":
+            print("Aborted by user.")
+            sys.exit(0)
+    return max_dollars
+
+
 def seed(rate_tier="free"):
     """Enrich empty/placeholder formula entries across the 256 JSON shards using the Gemini API.
     Requires explicit --allow-external-api opt-in per docs/cost_governance.md (Gemini 4 Argon metered billing).
@@ -646,6 +673,7 @@ def seed(rate_tier="free"):
         print("   Under Gemini 4 Argon plan structures, external Gemini API calls are metered.")
         print("   Please enrich formulas locally in-session or pass '--allow-external-api' to explicitly authorize metered API calls.")
         sys.exit(1)
+    _enforce_external_api_budget("gqs.py seed")
     import glob
     import re
     import html
@@ -1041,6 +1069,7 @@ def formula_auto_seed(limit=5, rate_tier="free"):
         print("   Under Gemini 4 Argon plan structures, external Gemini API calls are metered.")
         print("   Please register and enrich formulas locally in-session or pass '--allow-external-api' to explicitly authorize metered API calls.")
         return
+    _enforce_external_api_budget("gqs.py formula-auto-seed")
 
     client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30_000))
     MODEL_NAME = get_flash_model()

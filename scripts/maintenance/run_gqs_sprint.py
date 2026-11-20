@@ -71,9 +71,17 @@ def run_pre_flight():
     committed = False
     if code == 0 and out.strip():
         print("📝 Staging uncommitted changes and creating an automated pre-flight savepoint...")
-        run_command(["git", "add", "."])
-        run_command(["git", "commit", "-m", f"chore: automated pre-flight GQS savepoint {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
-        committed = True
+        add_code, _, add_err = run_command(["git", "add", "."])
+        if add_code == 0:
+            commit_code, _, commit_err = run_command(
+                ["git", "commit", "-m", f"chore: automated pre-flight GQS savepoint {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"]
+            )
+            if commit_code == 0:
+                committed = True
+            else:
+                print(f"⚠️ Pre-flight savepoint commit failed (exit {commit_code}): {commit_err.strip()}")
+        else:
+            print(f"⚠️ Pre-flight git add failed (exit {add_code}): {add_err.strip()}")
     return get_git_savepoint(), committed
 
 def run_syntax_guards(payload_path):

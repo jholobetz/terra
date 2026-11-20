@@ -541,7 +541,8 @@ def clean_latex_equation(latex: str, mode: str = "dimensional") -> str:
         s = re.sub(r"\\(?:mathbf|boldsymbol|vec)\{B\}", "B", s)
 
         # Dimensional lowering of vector differential operators (div, grad, curl, laplacian)
-        s = re.sub(r"\\nabla\^2\s*(?:\\mathbf\{([a-zA-Z])\}|([a-zA-Z])|\\Phi|\\phi)", r"(\1\2Phi / (L**2))", s)
+        s = re.sub(r"\\nabla\^2\s*\\(?:Phi|phi)\b", "(Phi / (L**2))", s)
+        s = re.sub(r"\\nabla\^2\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / (L**2))", s)
         s = re.sub(r"\\nabla\s*\\times\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / L)", s)
         s = re.sub(r"\\nabla\s*\\cdot\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / L)", s)
         s = re.sub(r"\\nabla\s*(?:\\mathbf\{([a-zA-Z_]+)\}|([a-zA-Z]))", r"(\1\2 / L)", s)

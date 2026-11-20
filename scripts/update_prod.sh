@@ -196,12 +196,25 @@ if [[ "${MODE}" == "rollback" ]]; then
         exit 0
     fi
 
-    git checkout "${ROLLBACK_REF}"
+    # Stay attached to ${BRANCH} rather than leaving production in detached HEAD
+    git checkout -B "${BRANCH}" "${ROLLBACK_REF}"
+    if git diff --name-only "${PRE_SHA}" "${ROLLBACK_REF}" | grep -qE '^composer\.(json|lock)$'; then
+        if command -v composer >/dev/null 2>&1; then
+            echo "=== Reconciling Composer production dependencies ==="
+            composer install --no-dev --optimize-autoloader --no-interaction
+        fi
+    fi
+    if git diff --name-only "${PRE_SHA}" "${ROLLBACK_REF}" | grep -qE '^requirements(-prod)?\.txt$'; then
+        if [[ -x "${REPO_ROOT}/.venv/bin/pip" && -f "${REPO_ROOT}/requirements-prod.txt" ]]; then
+            echo "=== Reconciling Python production dependencies ==="
+            "${REPO_ROOT}/.venv/bin/pip" install -q -r "${REPO_ROOT}/requirements-prod.txt"
+        fi
+    fi
     APP_ENV=production php "${REPO_ROOT}/cli_sync.php" --warm-cache
     fix_runtime_permissions
     reload_web_workers
     verify_healthz
-    echo "✓ Rollback to $(git rev-parse --short HEAD) complete."
+    echo "✓ Rollback to $(git rev-parse --short HEAD) on branch '${BRANCH}' complete."
     exit 0
 fi
 

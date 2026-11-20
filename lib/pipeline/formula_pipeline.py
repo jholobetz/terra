@@ -196,7 +196,7 @@ def sanitize_prose_text(text: str) -> str:
     if not text or not isinstance(text, str):
         return ""
     val = text
-    val = val.replace("\x08ar{", r"\bar{").replace(r"\x08\bar{", r"\bar{").replace("ar{", r"\bar{")
+    val = val.replace("\x08ar{", r"\bar{").replace(r"\x08ar{", r"\bar{").replace(r"\x08\bar{", r"\bar{")
     val = val.replace("\x08eta", r"\beta").replace("\x08", "")
     val = val.replace("\x0crac", r"\frac").replace("\x0c", "")
     val = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", val)
@@ -531,37 +531,39 @@ class FormulaIngestionPipeline:
                     f.write(p_json)
                 modified_shards.append((p_shard_path, p_json))
 
-            # 4. Synchronize SHA-256 Hash Registry
+            # 4. Synchronize SHA-256 Hash Registry (fail fast on read/parse error; write atomically)
             hash_reg = {}
             if os.path.exists(self.registry_path):
-                try:
-                    with open(self.registry_path, "r", encoding="utf-8") as f:
-                        hash_reg = json.load(f)
-                except Exception:
-                    hash_reg = {}
+                with open(self.registry_path, "r", encoding="utf-8") as f:
+                    hash_reg = json.load(f)
+                if not isinstance(hash_reg, dict):
+                    raise ValueError(f"Corrupt hash registry (expected JSON object): {self.registry_path}")
 
             for s_path, s_content in modified_shards:
                 rel_path = os.path.relpath(s_path, self.project_root)
                 s_hash = hashlib.sha256(s_content.encode("utf-8")).hexdigest()
                 hash_reg[rel_path] = s_hash
 
-            with open(self.registry_path, "w", encoding="utf-8") as f:
+            tmp_reg = f"{self.registry_path}.tmp.{os.getpid()}"
+            with open(tmp_reg, "w", encoding="utf-8") as f:
                 json.dump(hash_reg, f, indent=4, ensure_ascii=False)
+            os.replace(tmp_reg, self.registry_path)
 
-            # 5. Synchronize LaTeX Index
+            # 5. Synchronize LaTeX Index (fail fast on read/parse error; write atomically)
             latex_idx = {}
             if os.path.exists(self.latex_index_path):
-                try:
-                    with open(self.latex_index_path, "r", encoding="utf-8") as f:
-                        latex_idx = json.load(f)
-                except Exception:
-                    latex_idx = {}
+                with open(self.latex_index_path, "r", encoding="utf-8") as f:
+                    latex_idx = json.load(f)
+                if not isinstance(latex_idx, dict):
+                    raise ValueError(f"Corrupt LaTeX index (expected JSON object): {self.latex_index_path}")
 
             norm_eq = normalize_latex_key(formula_data.get("equation", ""))
             if norm_eq:
                 latex_idx[norm_eq] = f_id
-                with open(self.latex_index_path, "w", encoding="utf-8") as f:
+                tmp_idx = f"{self.latex_index_path}.tmp.{os.getpid()}"
+                with open(tmp_idx, "w", encoding="utf-8") as f:
                     json.dump(latex_idx, f, indent=4, ensure_ascii=False)
+                os.replace(tmp_idx, self.latex_index_path)
 
             # 6. Database Synchronization (MariaDB formulas table)
             db_synced = False

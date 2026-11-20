@@ -150,7 +150,6 @@ function sanitizeProseTeX(string $text): string {
         'χ_m' => '$\\chi_m$',
         'μ_0' => '$\\mu_0$',
         '4π'  => '$4\\pi$',
-        'dau' => '\\tau',
         'extbf' => '\\mathbf',
         '\\text{\\} \\text{' => '$\\epsilon_0$',
         '\\text{\\} \\text$' => '$\\epsilon_0$',
@@ -290,9 +289,9 @@ function sanitizeProseTeX(string $text): string {
         $text = str_replace('___MATHBLOCK_' . $i . '___', $mathBlocks[$i], $text);
     }
 
-    // 10. Clean duplicate dollars and normalize spacing while preserving paragraph newlines
-    $text = preg_replace('/\$+/', '$', $text);
-    $text = preg_replace('/\$\s*\$/', '', $text);
+    // 10. Clean triple+ dollars (preserving valid $$ display math) and normalize spacing while preserving paragraph newlines
+    $text = preg_replace('/\${3,}/', '$$', $text);
+    $text = preg_replace('/(?<!\$)\$\s+\$(?!\$)/', '', $text);
     $lines = explode("\n", $text);
     $lines = array_map(function($line) {
         return trim(preg_replace('/[ \t]+/', ' ', $line));
@@ -448,7 +447,7 @@ foreach ($targets as $input) {
                 if (!empty($recs)) {
                     $formulaRecords = $recs;
                 } else {
-                    $escapedLatex = addcslashes($targetLatex, '%_');
+                    $escapedLatex = addcslashes($targetLatex, '\\%_');
                     $stmt = $pdo->prepare("SELECT * FROM formulas WHERE equation LIKE ?");
                     $stmt->execute(['%' . $escapedLatex . '%']);
                     $recs = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -622,43 +621,43 @@ foreach ($targets as $input) {
     $targetResult['repairs_made'] = $repairsMade;
 
     // 5. Write Back (unless Dry Run)
+    $saved = true;
     if (!$isDryRun) {
         $service = Flight::physicsService();
         $saved = $service->saveFormula($formulaId, $formulaData);
         if ($saved) {
+            $dbUpdated = $service->lastDbSaved;
+            if (!$dbUpdated && $pdo !== null) {
+                try {
+                    $semanticVars = !empty($formulaData['semantic_variables']) ? (is_string($formulaData['semantic_variables']) ? $formulaData['semantic_variables'] : json_encode($formulaData['semantic_variables'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                    $constraints = !empty($formulaData['constraints']) ? (is_string($formulaData['constraints']) ? $formulaData['constraints'] : json_encode($formulaData['constraints'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                    $subcomponents = !empty($formulaData['subcomponents']) ? (is_string($formulaData['subcomponents']) ? $formulaData['subcomponents'] : json_encode($formulaData['subcomponents'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+                    $relatedIds = !empty($formulaData['related_formula_ids']) ? (is_string($formulaData['related_formula_ids']) ? $formulaData['related_formula_ids'] : json_encode($formulaData['related_formula_ids'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
+
+                    $stmt = $pdo->prepare("UPDATE formulas SET 
+                        title = ?, equation = ?, conceptual_definition = ?, intuitive_summary = ?, 
+                        interpretation = ?, symmetry_origin = ?, limits_and_boundary = ?, 
+                        semantic_variables = ?, parent_formula_id = ?, derivation_type = ?, 
+                        subcomponents = ?, constraints = ?, related_formula_ids = ?, 
+                        status = ?, unit_system = ?, equation_svg = NULL WHERE id = ?");
+                    $stmt->execute([
+                        $formulaData['title'] ?? null, $formulaData['equation'] ?? null,
+                        $formulaData['conceptual_definition'] ?? null, $formulaData['intuitive_summary'] ?? null,
+                        $formulaData['interpretation'] ?? null, $formulaData['symmetry_origin'] ?? null,
+                        $formulaData['limits_and_boundary'] ?? null, $semanticVars,
+                        $formulaData['parent_formula_id'] ?? null, $formulaData['derivation_type'] ?? null,
+                        $subcomponents, $constraints, $relatedIds,
+                        $formulaData['status'] ?? 'platinum', $formulaData['unit_system'] ?? null,
+                        $formulaId
+                    ]);
+                    $dbUpdated = true;
+                } catch (\Throwable $e) {
+                    $service->lastDbError = $e->getMessage();
+                }
+            }
+
             if (!$isJson) {
                 echo "[OK] Saved updated formula definition to shard: {$shardFile}\n";
-
-                $dbUpdated = $service->lastDbSaved;
-                if (!$dbUpdated && $pdo !== null) {
-                    try {
-                        $semanticVars = !empty($formulaData['semantic_variables']) ? (is_string($formulaData['semantic_variables']) ? $formulaData['semantic_variables'] : json_encode($formulaData['semantic_variables'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
-                        $constraints = !empty($formulaData['constraints']) ? (is_string($formulaData['constraints']) ? $formulaData['constraints'] : json_encode($formulaData['constraints'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
-                        $subcomponents = !empty($formulaData['subcomponents']) ? (is_string($formulaData['subcomponents']) ? $formulaData['subcomponents'] : json_encode($formulaData['subcomponents'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
-                        $relatedIds = !empty($formulaData['related_formula_ids']) ? (is_string($formulaData['related_formula_ids']) ? $formulaData['related_formula_ids'] : json_encode($formulaData['related_formula_ids'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) : null;
-
-                        $stmt = $pdo->prepare("UPDATE formulas SET 
-                            title = ?, equation = ?, conceptual_definition = ?, intuitive_summary = ?, 
-                            interpretation = ?, symmetry_origin = ?, limits_and_boundary = ?, 
-                            semantic_variables = ?, parent_formula_id = ?, derivation_type = ?, 
-                            subcomponents = ?, constraints = ?, related_formula_ids = ?, 
-                            status = ?, unit_system = ?, equation_svg = NULL WHERE id = ?");
-                        $stmt->execute([
-                            $formulaData['title'] ?? null, $formulaData['equation'] ?? null,
-                            $formulaData['conceptual_definition'] ?? null, $formulaData['intuitive_summary'] ?? null,
-                            $formulaData['interpretation'] ?? null, $formulaData['symmetry_origin'] ?? null,
-                            $formulaData['limits_and_boundary'] ?? null, $semanticVars,
-                            $formulaData['parent_formula_id'] ?? null, $formulaData['derivation_type'] ?? null,
-                            $subcomponents, $constraints, $relatedIds,
-                            $formulaData['status'] ?? 'platinum', $formulaData['unit_system'] ?? null,
-                            $formulaId
-                        ]);
-                        $dbUpdated = true;
-                    } catch (\Throwable $e) {
-                        $service->lastDbError = $e->getMessage();
-                    }
-                }
-
                 if ($dbUpdated) {
                     echo "[OK] Updated MariaDB formulas table record (equation_svg set to NULL).\n";
                 } else {
@@ -710,7 +709,7 @@ foreach ($targets as $input) {
         if (!$isJson) echo "[WARN] In-process verification error: " . $e->getMessage() . "\n";
     }
 
-    $targetResult['success'] = true;
+    $targetResult['success'] = $isDryRun ? true : (bool)$saved;
     $results[] = $targetResult;
 
     if (!$isJson) echo "\nDone!\n\n";

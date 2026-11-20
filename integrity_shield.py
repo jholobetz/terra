@@ -211,10 +211,12 @@ class IntegrityShield:
             if isinstance(subcomponents, list):
                 for child_id in subcomponents:
                     resolved_child = self.aliases.get(child_id, child_id)
-                    if (resolved_child not in self.formula_registry and 
-                        child_id not in self.formula_registry and 
-                        child_id not in self.all_slugs and
-                        not isinstance(child_id, str)):
+                    if (
+                        isinstance(child_id, str)
+                        and resolved_child not in self.formula_registry
+                        and child_id not in self.formula_registry
+                        and child_id not in self.all_slugs
+                    ):
                         self.errors.append(f"Broken Formula Subcomponent Link: Formula '{f_id}' refs unknown subcomponent '{child_id}'")
 
     def check_duplicates(self):
@@ -442,6 +444,9 @@ class IntegrityShield:
             try:
                 cmd = ["php", "scripts/audit_prose_equations.php"]
                 result = subprocess.run(cmd, capture_output=True, text=True)
+                if result.returncode != 0:
+                    err_snippet = (result.stderr or result.stdout or "").strip()[:300]
+                    self.errors.append(f"MANIFOLD CLOSURE AUDIT FAILED (exit {result.returncode}): {err_snippet}")
                 report_path = "lib/data/unmapped_prose_equations.json"
                 if os.path.exists(report_path):
                     with open(report_path, "r") as f:

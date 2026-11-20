@@ -201,3 +201,28 @@ def test_isolated_sandbox_stage4_dual_layer_sync_and_rollback():
         }
         with pytest.raises(RuntimeError, match="rolled back"):
             failing_pipe.ingest(fail_data)
+
+
+def test_sanitize_prose_preserves_bar_and_star():
+    """Verify P0-4: sanitize_prose_text does not corrupt valid \\bar{x} or \\star{x}."""
+    assert sanitize_prose_text(r"The mean $\bar{x}$ and dual $\star{F}$") == r"The mean $\bar{x}$ and dual $\star{F}$"
+    assert sanitize_prose_text("Corrupt \x08ar{x}") == r"Corrupt \bar{x}"
+
+
+def test_pipeline_fails_fast_on_corrupt_hash_registry():
+    """Verify P0-6: corrupt formulas_hash_registry.json must raise instead of wiping all hashes."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        os.makedirs(os.path.join(tmpdir, "app", "config", "content", "formulas"), exist_ok=True)
+        reg_path = os.path.join(tmpdir, "app", "config", "formulas_hash_registry.json")
+        latex_idx_path = os.path.join(tmpdir, "app", "config", "formulas_latex_index.json")
+        with open(reg_path, "w") as f:
+            f.write("{corrupt json")
+        with open(latex_idx_path, "w") as f:
+            json.dump({}, f)
+
+        pipeline = FormulaIngestionPipeline(project_root=tmpdir, sync_db=False, rebuild_graph=False)
+        with pytest.raises(RuntimeError, match="rolled back"):
+            pipeline.ingest({"title": "Test", "equation": "a = b"})
+        # Original corrupt file must NOT be silently overwritten with a 1-entry dict
+        with open(reg_path, "r") as f:
+            assert f.read() == "{corrupt json"

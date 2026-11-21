@@ -3070,5 +3070,66 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "kraus-cptp-operator-sum": {
+    "title": "Kraus Operator-Sum Representation of a CPTP Quantum Channel",
+    "equation": "\\mathcal{E}(\\hat{\\rho}) = \\sum_k \\hat{K}_k \\hat{\\rho} \\hat{K}_k^\\dagger, \\quad \\sum_k \\hat{K}_k^\\dagger \\hat{K}_k = \\hat{I}",
+    "category": "quantum-physics",
+    "record_type": "equation",
+    "parent_formula_id": "gksl-lindblad-master-equation",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Expresses any finite-time completely positive trace-preserving (CPTP) quantum channel $\\mathcal{E}(\\hat{\\rho})$ as a sum over Kraus operators $\\hat{K}_k$ constrained by the completeness identity $\\sum_k \\hat{K}_k^\\dagger \\hat{K}_k = \\hat{I}$.",
+    "conceptual_definition": "Obtained directly by tracing out an initially factorized environment $|e_0\\rangle$ after joint unitary evolution $\\hat{U}_{SB}$, yielding Kraus operators $\\hat{K}_k = \\langle e_k | \\hat{U}_{SB} | e_0 \\rangle$.",
+    "intuitive_summary": "Shows that every physically valid open-system evolution acts like a weighted mixture of possible environmental measurement outcomes whose probabilities sum to $1$.",
+    "interpretation": "Forms the discrete-time counterpart to Lindblad evolution in quantum error correction, noisy quantum circuits, and Stinespring dilation theory.",
+    "symmetry_origin": "Follows from Choi's theorem on completely positive maps and unitarity of the dilated system-plus-environment evolution $\\hat{U}_{SB}^\\dagger \\hat{U}_{SB} = \\hat{I}_{SB}$; non-unique up to unitary mixing $\\hat{K}'_j = \\sum_k u_{jk}\\hat{K}_k$.",
+    "limits_and_boundary": "Reduces to a single unitary channel $\\hat{U}\\hat{\\rho}\\hat{U}^\\dagger$ when only one Kraus operator is nonzero; holds for both Markovian and non-Markovian finite-time maps starting from factorized initial states.",
+    "semantic_variables": {
+      "\\mathcal{E}(\\hat{\\rho})": "Output density operator after applying the CPTP quantum channel",
+      "\\hat{K}_k": "Kraus operator corresponding to environmental basis outcome k",
+      "\\hat{\\rho}": "Input reduced density operator of the quantum system",
+      "\\hat{I}": "Identity operator on the system Hilbert space"
+    },
+    "cas_validation": {
+      "status": "OPERATOR_OR_TENSOR",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Density Operator",
+      "dimension_latex": "1",
+      "verified_at": 1795287000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "blp-non-markovian-trace-distance-flow"
+    ]
+  },
+  "qubit-decoherence-t2-t1-bound": {
+    "title": "Qubit Transverse Decoherence Rate and T2 <= 2T1 Bound",
+    "equation": "\\frac{1}{T_2} = \\frac{1}{2 T_1} + \\frac{1}{T_\\phi} \\implies T_2 \\le 2 T_1",
+    "category": "quantum-physics",
+    "record_type": "equation",
+    "parent_formula_id": "gksl-lindblad-master-equation",
+    "derivation_type": "SPECIAL_CASE",
+    "description": "Relates the total transverse dephasing time $T_2$ of a two-level quantum system to its longitudinal energy relaxation time $T_1$ and pure dephasing time $T_\\phi$, establishing the fundamental ceiling $T_2 \\le 2 T_1$.",
+    "conceptual_definition": "Obtained by solving the two-level Lindblad master equation with amplitude-damping jump operator $\\hat{L}_- = \\sqrt{1/T_1}\\,\\hat{\\sigma}_-$ and pure-dephasing operator $\\hat{L}_\\phi = \\sqrt{1/(2T_\\phi)}\\,\\hat{\\sigma}_z$.",
+    "intuitive_summary": "Shows that energy decay alone automatically destroys quantum phase at half the energy-loss rate, so even a perfectly noise-free qubit cannot stay coherent longer than $2 T_1$.",
+    "interpretation": "Core benchmarking relation in NMR spectroscopy, superconducting transmon qubits, NV centers in diamond, and trapped-ion quantum processors.",
+    "symmetry_origin": "Reflects the factor-of-two difference between population decay ($|\\alpha|^2 \\propto e^{-t/T_1}$) and off-diagonal coherence amplitude decay ($\\alpha \\beta^* \\propto e^{-t/(2T_1)}$) under completely positive amplitude damping.",
+    "limits_and_boundary": "Saturates the upper bound $T_2 = 2 T_1$ in the pure radiative limit $T_\\phi \\to \\infty$; collapses to $T_2 \\approx T_\\phi \\ll T_1$ when low-frequency flux or charge noise dominates.",
+    "semantic_variables": {
+      "T_2": "Transverse coherence (dephasing) time governing off-diagonal density matrix decay",
+      "T_1": "Longitudinal energy relaxation time governing excited-state population decay",
+      "T_\\phi": "Pure dephasing time arising from elastic energy-level fluctuations"
+    },
+    "cas_validation": {
+      "status": "DIMENSIONAL_EXPRESSION",
+      "is_homogeneous": true,
+      "quantity": "Decoherence Rate",
+      "dimension_latex": "T^{-1}",
+      "verified_at": 1795287000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

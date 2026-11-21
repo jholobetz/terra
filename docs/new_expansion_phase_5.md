@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+40` subtopics live across 8 batches, bringing the encyclopedia from `1,584 → 1,624` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+50` subtopics live across 10 batches, bringing the encyclopedia from `1,584 → 1,634` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -115,3 +115,31 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 38 | Kubo Formula and Linear Response Theory | http://localhost:8000/physics/subtopic/kubo-linear-response-theory | https://physicslab.ca/physics/subtopic/kubo-linear-response-theory |
 | 39 | Jarzynski Equality and Crooks Fluctuation Theorem | http://localhost:8000/physics/subtopic/jarzynski-equality-fluctuation-theorems | https://physicslab.ca/physics/subtopic/jarzynski-equality-fluctuation-theorems |
 | 40 | Master Equations, Detailed Balance and Stochastic Thermodynamics | http://localhost:8000/physics/subtopic/master-equations-detailed-balance | https://physicslab.ca/physics/subtopic/master-equations-detailed-balance |
+
+---
+
+## Batch 9 — `quantum-physics` · *7. Atomic Physics, Spin & Quantum Scattering*
+* **Date:** 2026-11-21 (`quantum-physics`: `47 → 52`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/quantum-physics) · [Live](https://physicslab.ca/physics/topic/quantum-physics)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 41 | Stern-Gerlach Experiment and Spin-1/2 Quantization | http://localhost:8000/physics/subtopic/stern-gerlach-spin-quantization | https://physicslab.ca/physics/subtopic/stern-gerlach-spin-quantization |
+| 42 | Zeeman and Stark Effects in Atomic Spectra | http://localhost:8000/physics/subtopic/zeeman-stark-atomic-effects | https://physicslab.ca/physics/subtopic/zeeman-stark-atomic-effects |
+| 43 | Fine Structure, Lamb Shift and Hyperfine Splitting | http://localhost:8000/physics/subtopic/fine-hyperfine-atomic-structure | https://physicslab.ca/physics/subtopic/fine-hyperfine-atomic-structure |
+| 44 | Born Approximation and Quantum Scattering Theory | http://localhost:8000/physics/subtopic/born-approximation-quantum-scattering | https://physicslab.ca/physics/subtopic/born-approximation-quantum-scattering |
+| 45 | Coherent and Squeezed States of the Quantum Harmonic Oscillator | http://localhost:8000/physics/subtopic/coherent-squeezed-quantum-states | https://physicslab.ca/physics/subtopic/coherent-squeezed-quantum-states |
+
+---
+
+## Batch 10 — `quantum-physics` · *8. Open Quantum Systems, Quantum Optics & Quantum Information*
+* **Date:** 2026-11-21 (`quantum-physics`: `52 → 57`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/quantum-physics) · [Live](https://physicslab.ca/physics/topic/quantum-physics)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 46 | Lindblad Master Equation and Open Quantum Systems | http://localhost:8000/physics/subtopic/lindblad-open-quantum-systems | https://physicslab.ca/physics/subtopic/lindblad-open-quantum-systems |
+| 47 | Cavity QED and the Jaynes-Cummings Model | http://localhost:8000/physics/subtopic/cavity-qed-jaynes-cummings | https://physicslab.ca/physics/subtopic/cavity-qed-jaynes-cummings |
+| 48 | Qubits, Quantum Gates and Quantum Information | http://localhost:8000/physics/subtopic/qubits-quantum-gates-information | https://physicslab.ca/physics/subtopic/qubits-quantum-gates-information |
+| 49 | Quantum Decoherence and Quantum Error Correction | http://localhost:8000/physics/subtopic/quantum-decoherence-error-correction | https://physicslab.ca/physics/subtopic/quantum-decoherence-error-correction |
+| 50 | Quantum Optics, Photon Antibunching and Hong-Ou-Mandel Interference | http://localhost:8000/physics/subtopic/quantum-optics-photon-antibunching | https://physicslab.ca/physics/subtopic/quantum-optics-photon-antibunching |

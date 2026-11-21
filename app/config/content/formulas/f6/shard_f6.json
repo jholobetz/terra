@@ -2610,5 +2610,49 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "mps-schmidt-truncation-error": {
+    "title": "Optimal MPS Schmidt Truncation Error",
+    "equation": "\\epsilon = \\sum_{\\alpha > \\chi} \\lambda_{\\alpha}^2",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "bipartite-schmidt-decomposition",
+    "derivation_type": "DERIVED_FROM",
+    "description": "Quantifies the exact squared Hilbert-space norm error $\\epsilon = \\| |\\Psi\\rangle - |\\tilde{\\Psi}\\rangle \\|^2$ incurred when compressing a bipartite quantum state to bond dimension $\\chi$ by discarding all Schmidt weights with $\\alpha > \\chi$.",
+    "conceptual_definition": "By the Eckart-Young-Mirsky theorem, retaining the $\\chi$ largest Schmidt singular values produces the provably optimal rank-$\\chi$ approximation in the 2-norm, with discarded weight equal to the sum of the discarded squared singular values.",
+    "intuitive_summary": "The error you make by capping an MPS bond at dimension $\\chi$ is simply the total probability weight of the tiny Schmidt states you threw away, providing a built-in accuracy gauge at every step of a DMRG sweep.",
+    "interpretation": "Because $|\\phi_{\\alpha}^L\\rangle |\\phi_{\\alpha}^R\\rangle$ form an orthonormal set, dropping all terms with $\\alpha > \\chi$ leaves a residual vector of squared norm $\\epsilon = \\sum_{\\alpha > \\chi} \\lambda_{\\alpha}^2$. In DMRG calculations, extrapolating the variational ground-state energy linearly against the discarded weight $\\epsilon \\to 0$ yields controlled error bars and sub-$10^{-10}$ energy precision in gapped 1D spin chains.",
+    "symmetry_origin": "Guaranteed by unitary invariance of the Frobenius (Hilbert-Schmidt) norm under local basis changes in $\\mathcal{H}_L$ and $\\mathcal{H}_R$, which establishes the Eckart-Young-Mirsky optimality bound.",
+    "limits_and_boundary": "When $\\chi$ reaches or exceeds the exact Schmidt rank, $\\epsilon = 0$ and the compression is lossless. Across an $N$-site chain with per-bond truncation errors $\\epsilon_k$, the global state infidelity is bounded above by $2 \\sum_{k=1}^{N-1} \\epsilon_k$ in canonical form.",
+    "semantic_variables": {
+      "\\epsilon": {
+        "name": "Discarded Weight / Truncation Error",
+        "type": "variable",
+        "unit": "1",
+        "description": "Squared Euclidean distance between the exact state and its rank-$\\chi$ truncated approximation."
+      },
+      "\\lambda_{\\alpha}": {
+        "name": "Discarded Schmidt Coefficient",
+        "type": "variable",
+        "unit": "1",
+        "description": "Tail singular values indexed by $\\alpha > \\chi$ omitted during bond-dimension compression."
+      },
+      "\\chi": {
+        "name": "Retained Bond Dimension",
+        "type": "variable",
+        "unit": "1",
+        "description": "Maximum number of largest Schmidt states retained across the truncated virtual bond."
+      }
+    },
+    "cas_validation": {
+      "status": "DIMENSIONAL_EXPRESSION",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Squared Norm Error",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

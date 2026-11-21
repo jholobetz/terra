@@ -2055,7 +2055,9 @@
     "equation": "S = \\int \\mathcal{L} \\, d^4x",
     "status": "published",
     "parent_formula_id": "action-integral-definition-08f87cc6",
-    "subcomponents": [],
+    "subcomponents": [
+      "elastic-strain-energy-density"
+    ],
     "id": "action-from-lagrangian-density-integral-48ad8f3e",
     "intuitive_summary": "Imagine a physical system like an electromagnetic field existing throughout space and time. The Lagrangian density is a number at every single point that tells you the 'cost' (a balance of kinetic and potential energy) of the field's state at that point. The total action is the sum of this 'cost' over the entire history and volume of the system. Nature then chooses the field evolution that makes this total cost stationary (usually a minimum).",
     "cas_validation": {
@@ -2978,6 +2980,56 @@
       "quantity": "Vanishing 3-Form",
       "dimension_latex": "1",
       "verified_at": 1795287000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
+  },
+  "fem-stiffness-matrix-assembly": {
+    "title": "Finite-Element Stiffness Matrix Entry",
+    "equation": "K_{ij} = \\int_\\Omega \\nabla \\phi_i \\cdot \\nabla \\phi_j \\, d\\Omega",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "galerkin-weak-formulation",
+    "derivation_type": "SPECIAL_CASE",
+    "description": "Defines the $(i, j)$ entry of the global finite-element stiffness matrix $K$ for the Laplacian operator $-\\nabla^2 u = f$ as the domain integral of the inner product between basis function gradients $\\nabla \\phi_i$ and $\\nabla \\phi_j$.",
+    "conceptual_definition": "The stiffness matrix $K_{ij} = \\int_\\Omega \\nabla \\phi_i \\cdot \\nabla \\phi_j \\, d\\Omega$ encodes the discrete Dirichlet energy coupling between nodal degrees of freedom on an unstructured mesh, translating continuum elliptic operators into sparse symmetric linear algebra.",
+    "intuitive_summary": "Each matrix entry $K_{ij}$ measures how strongly the slopes of two local element shape functions overlap; because basis functions only cover neighboring elements, almost all entries are zero.",
+    "interpretation": "In practical finite-element codes, the global integral over $\\Omega$ is decomposed into a sum over individual mesh elements $T_e$, mapped to a canonical reference triangle or tetrahedron via Jacobian coordinate transformations and evaluated by Gauss quadrature. Because each nodal basis function $\\phi_i$ is supported only on the patch of elements sharing node $i$, $K_{ij} = 0$ unless nodes $i$ and $j$ belong to a common element, producing a sparse banded or graph-structured matrix. For piecewise polynomials of degree $p$ on quasi-uniform meshes of size $h$, the spectral condition number scales as $\\kappa(K) \\sim O(h^{-2})$.",
+    "symmetry_origin": "Inherits symmetry $K_{ij} = K_{ji}$ and positive-definiteness from the self-adjointness and rotational invariance of the Dirichlet energy functional $\\frac{1}{2}\\int_\\Omega |\\nabla u|^2 d\\Omega$.",
+    "limits_and_boundary": "As mesh diameter $h \\to 0$, $K$ converges spectrally to the continuum Neumann/Dirichlet Laplacian, while $\\kappa(K) \\propto h^{-2}$ diverges and demands multigrid or domain-decomposition preconditioning. On distorted elements with vanishing minimum angles, the Jacobian degenerates and inflates local matrix entries.",
+    "semantic_variables": {
+      "K_{ij}": {
+        "name": "Stiffness Matrix Entry",
+        "type": "variable",
+        "unit": "m^{d-2}",
+        "description": "Coupling coefficient between global degrees of freedom $i$ and $j$ in the discrete elliptic linear system."
+      },
+      "\\phi_i": {
+        "name": "Row Basis Shape Function",
+        "type": "variable",
+        "unit": "1",
+        "description": "Locally supported piecewise-polynomial test basis function associated with mesh node $i$."
+      },
+      "\\phi_j": {
+        "name": "Column Basis Shape Function",
+        "type": "variable",
+        "unit": "1",
+        "description": "Locally supported piecewise-polynomial trial basis function associated with mesh node $j$."
+      },
+      "\\Omega": {
+        "name": "Spatial Computational Domain",
+        "type": "variable",
+        "unit": "m^d",
+        "description": "Bounded $d$-dimensional physical region partitioned into finite elements over which integration is performed."
+      }
+    },
+    "cas_validation": {
+      "status": "OPERATOR_OR_TENSOR",
+      "is_homogeneous": true,
+      "quantity": "Discrete Elliptic Matrix Operator",
+      "dimension_latex": "[\\text{L}^{d-2}]",
+      "verified_at": 1795290000
     },
     "status": "platinum",
     "lineage_confidence": "curated",

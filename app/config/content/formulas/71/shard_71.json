@@ -2999,5 +2999,64 @@
     "record_type": "equation",
     "description": "Formulates the mathematical identity for Spatial Curvature Density (The Cosmic Budget (Energy Inventory)) by coupling physical Density Distribution ($\\rho$).",
     "lineage_confidence": "heuristic"
+  },
+  "navier-cauchy-elastodynamic-equation": {
+    "title": "Navier-Cauchy Elastodynamic Wave Equation",
+    "equation": "\\rho \\frac{\\partial^2 \\mathbf{u}}{\\partial t^2} = (\\lambda + \\mu)\\nabla(\\nabla \\cdot \\mathbf{u}) + \\mu \\nabla^2 \\mathbf{u} + \\mathbf{f}",
+    "category": "classical-mechanics",
+    "record_type": "equation",
+    "parent_formula_id": "cauchy-elastodynamic-momentum-balance",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Governs the full three-dimensional dynamics of small elastic deformations and wave propagation in a homogeneous, isotropic solid by coupling the displacement field $\\mathbf{u}(\\mathbf{x}, t)$ to Lamé parameters $\\lambda$ and $\\mu$.",
+    "conceptual_definition": "The Navier-Cauchy equation is the fundamental hyperbolic vector partial differential equation of linear elastodynamics, uniting Newton's second law, strain kinematics, and isotropic Hooke's law into a single evolution equation for $\\mathbf{u}$.",
+    "intuitive_summary": "This master wave equation for solid matter shows how any local push or twist spreads outward through a solid as a combination of compression waves driven by $\\nabla(\\nabla \\cdot \\mathbf{u})$ and shear ripples driven by $\\nabla^2 \\mathbf{u}$.",
+    "interpretation": "Using the vector identity $\\nabla^2 \\mathbf{u} = \\nabla(\\nabla \\cdot \\mathbf{u}) - \\nabla \\times (\\nabla \\times \\mathbf{u})$, the equation can be rewritten as $\\rho \\partial_t^2 \\mathbf{u} = (\\lambda + 2\\mu)\\nabla(\\nabla \\cdot \\mathbf{u}) - \\mu \\nabla \\times (\\nabla \\times \\mathbf{u}) + \\mathbf{f}$. Taking the divergence isolates the longitudinal compressional P-wave equation, whereas taking the curl isolates the transverse shear S-wave equation, demonstrating that isotropic solids inherently support two distinct bulk wave speeds.",
+    "symmetry_origin": "Emerges as the Euler-Lagrange field equation from varying the continuum action $\\mathcal{S} = \\int (\\frac{1}{2}\\rho|\\partial_t \\mathbf{u}|^2 - W_{\\mathrm{el}} + \\mathbf{f}\\cdot\\mathbf{u})\\,d^3x\\,dt$ under spatial translation and $\\mathrm{SO}(3)$ rotational symmetries.",
+    "limits_and_boundary": "In the static limit ($\\partial_t^2 \\mathbf{u} = 0$), it reduces to the elliptic Navier equilibrium equations of elastostatics. Setting $\\mu \\to 0$ eliminates the curl term and recovers the linear acoustic wave equation for an inviscid compressible fluid.",
+    "semantic_variables": {
+      "\\rho": {
+        "name": "Mass Density",
+        "type": "variable",
+        "unit": "kg/m^3",
+        "description": "Uniform mass density of the homogeneous elastic solid."
+      },
+      "\\mathbf{u}": {
+        "name": "Displacement Vector Field",
+        "type": "variable",
+        "unit": "m",
+        "description": "Three-dimensional vector field giving the local displacement of material points at position $\\mathbf{x}$ and time $t$."
+      },
+      "\\lambda": {
+        "name": "First Lamé Parameter",
+        "type": "constant",
+        "unit": "Pa",
+        "description": "Elastic modulus contributing to compressional wave restoring forces."
+      },
+      "\\mu": {
+        "name": "Shear Modulus",
+        "type": "constant",
+        "unit": "Pa",
+        "description": "Shear rigidity governing both transverse shear restoring forces and part of longitudinal stiffness."
+      },
+      "\\mathbf{f}": {
+        "name": "Body Force Density Vector",
+        "type": "variable",
+        "unit": "N/m^3",
+        "description": "External volumetric force per unit volume driving the solid continuum."
+      }
+    },
+    "cas_validation": {
+      "status": "OPERATOR_OR_TENSOR",
+      "is_homogeneous": true,
+      "quantity": "Force Density",
+      "dimension_latex": "[\\text{M} \\cdot \\text{L}^{-2} \\cdot \\text{T}^{-2}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "elastic-p-wave-speed",
+      "elastic-s-wave-speed"
+    ]
   }
 }

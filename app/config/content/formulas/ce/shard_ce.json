@@ -2125,5 +2125,61 @@
       "qubit-decoherence-t2-t1-bound",
       "quantum-trajectory-effective-hamiltonian"
     ]
+  },
+  "cea-lemma-quasi-optimality": {
+    "title": "Céa's Lemma Quasi-Optimality Bound",
+    "equation": "\\|u - u_h\\|_{H^1} \\le \\frac{C}{\\alpha} \\inf_{v_h \\in V_h} \\|u - v_h\\|_{H^1}",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "galerkin-weak-formulation",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Bounds the Sobolev $H^1$ error between the exact weak solution $u$ and its Galerkin approximation $u_h$ by a constant multiple $C/\\alpha$ of the best possible approximation error attainable within the discrete subspace $V_h$.",
+    "conceptual_definition": "Céa's lemma proves that a coercive Galerkin discretization is quasi-optimal in the energy norm, separating the stability properties of the continuum operator ($C/\\alpha$) from the pure polynomial or spectral approximation power of $V_h$.",
+    "intuitive_summary": "The Galerkin approximation $u_h$ is guaranteed to be within a fixed constant factor $C/\\alpha$ of the absolute closest function to the true solution $u$ that can possibly be built from the chosen basis.",
+    "interpretation": "Subtracting the discrete weak equation $a(u_h, v_h) = \\ell(v_h)$ from the continuum weak equation $a(u, v_h) = \\ell(v_h)$ gives Galerkin orthogonality $a(u - u_h, v_h) = 0$ for all $v_h \\in V_h$. Combining coercivity $\\alpha \\|u - u_h\\|_{H^1}^2 \\le a(u - u_h, u - u_h) = a(u - u_h, u - v_h)$ with continuity $|a(w, z)| \\le C \\|w\\|_{H^1}\\|z\\|_{H^1}$ immediately yields the bound. When $a$ is symmetric, the prefactor sharpens to $\\sqrt{C/\\alpha}$, and in the induced energy norm $\\|w\\|_a = \\sqrt{a(w, w)}$ the Galerkin solution is the exact orthogonal projection.",
+    "symmetry_origin": "Follows directly from Hilbert-space orthogonal projection geometry (Galerkin orthogonality) under a bounded, coercive bilinear inner product.",
+    "limits_and_boundary": "When $a$ is symmetric and $C/\\alpha \\to 1$ (well-conditioned isotropic diffusion), $u_h$ becomes strictly optimal in $H^1$. In convection-dominated advection-diffusion where the Péclet number grows large, $\\alpha \\to 0$ causes $C/\\alpha \\to \\infty$, signaling spurious oscillations unless Petrov-Galerkin stabilization is introduced.",
+    "semantic_variables": {
+      "u": {
+        "name": "Exact Weak Solution",
+        "type": "variable",
+        "unit": "1",
+        "description": "True solution of the continuum variational problem in the infinite-dimensional Sobolev space $H^1(\\Omega)$."
+      },
+      "u_h": {
+        "name": "Galerkin Discrete Solution",
+        "type": "variable",
+        "unit": "1",
+        "description": "Computed numerical solution belonging to the finite-dimensional subspace $V_h$."
+      },
+      "C": {
+        "name": "Continuity Constant",
+        "type": "constant",
+        "unit": "1",
+        "description": "Upper boundedness constant satisfying $|a(w, z)| \\le C \\|w\\|_{H^1}\\|z\\|_{H^1}$ across $H^1(\\Omega)$."
+      },
+      "\\alpha": {
+        "name": "Coercivity Constant",
+        "type": "constant",
+        "unit": "1",
+        "description": "Strict positive ellipticity lower bound satisfying $a(w, w) \\ge \\alpha \\|w\\|_{H^1}^2$."
+      },
+      "v_h": {
+        "name": "Arbitrary Subspace Element",
+        "type": "variable",
+        "unit": "1",
+        "description": "Any candidate approximating function in the discrete subspace $V_h$ over which the infimum is taken."
+      }
+    },
+    "cas_validation": {
+      "status": "OPERATOR_OR_TENSOR",
+      "is_homogeneous": true,
+      "quantity": "Sobolev Norm Error Bound",
+      "dimension_latex": "[\\text{Norm Inequality}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

@@ -3288,5 +3288,95 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "elastic-s-wave-speed": {
+    "title": "Transverse Shear (S-Wave) Speed",
+    "equation": "c_S = \\sqrt{\\frac{\\mu}{\\rho}}",
+    "category": "classical-mechanics",
+    "record_type": "equation",
+    "parent_formula_id": "navier-cauchy-elastodynamic-equation",
+    "derivation_type": "SPECIAL_CASE",
+    "description": "Gives the propagation speed $c_S$ of divergence-free, transverse shear (secondary) elastic waves in a homogeneous isotropic solid solely in terms of the shear modulus $\\mu$ and mass density $\\rho$.",
+    "conceptual_definition": "The S-wave speed $c_S$ is the phase velocity of volume-preserving shear waves whose particle motion oscillates perpendicular to the propagation direction across two degenerate transverse polarizations.",
+    "intuitive_summary": "A sideways wiggle travels through a solid at a speed set purely by its shear stiffness $\\mu$ divided by its density $\\rho$—which is why liquids, having zero shear stiffness, cannot transmit S-waves at all.",
+    "interpretation": "Taking the curl of the force-free Navier-Cauchy equation annihilates the gradient term and yields $\\partial_t^2(\\nabla \\times \\mathbf{u}) = c_S^2 \\nabla^2(\\nabla \\times \\mathbf{u})$. Because S-waves involve zero volumetric compression ($\\nabla \\cdot \\mathbf{u} = 0$), their speed is independent of $\\lambda$ and $K$. In Earth's mantle, $c_S$ ranges from $3.5$ to $4.5\\,\\mathrm{km/s}$ in the crust and uppermost mantle before dropping abruptly to zero at the liquid outer core boundary, producing the global S-wave shadow zone.",
+    "symmetry_origin": "Isolated by projecting the $\\mathrm{SO}(3)$-invariant Navier-Cauchy operator onto the divergence-free (transverse, two-polarization) subspace of the Helmholtz decomposition.",
+    "limits_and_boundary": "As $\\mu \\to 0$ (inviscid liquid or gas), $c_S \\to 0$ and transverse elastic waves cannot propagate. In structural steel ($\\mu \\approx 77\\,\\mathrm{GPa}$, $\\rho \\approx 7850\\,\\mathrm{kg/m^3}$), $c_S \\approx 3.13\\,\\mathrm{km/s}$ compared with $c_P \\approx 5.95\\,\\mathrm{km/s}$.",
+    "semantic_variables": {
+      "c_S": {
+        "name": "Transverse S-Wave Speed",
+        "type": "variable",
+        "unit": "m/s",
+        "description": "Phase velocity of transverse shear elastic waves in an isotropic solid."
+      },
+      "\\mu": {
+        "name": "Shear Modulus",
+        "type": "constant",
+        "unit": "Pa",
+        "description": "Elastic shear rigidity governing resistance to volume-preserving angular distortion."
+      },
+      "\\rho": {
+        "name": "Mass Density",
+        "type": "variable",
+        "unit": "kg/m^3",
+        "description": "Mass per unit volume of the elastic solid."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Wave Speed",
+      "dimension_latex": "[\\text{L} \\cdot \\text{T}^{-1}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
+  },
+  "monte-carlo-standard-error-scaling": {
+    "title": "Monte Carlo Integration Standard Error",
+    "equation": "\\sigma_I = \\frac{\\sigma_f}{\\sqrt{M}}",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "characteristic-polynomial-secular-equation-92ea3e14",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Gives the root-mean-square statistical error $\\sigma_I$ of a Monte Carlo integral estimator over $M$ independent random samples in terms of the integrand standard deviation $\\sigma_f$, independent of spatial dimension $d$.",
+    "conceptual_definition": "The Monte Carlo standard error $\\sigma_I = \\sigma_f / \\sqrt{M}$ expresses the universal inverse-square-root convergence of unbiased stochastic quadrature dictated by the central limit theorem, avoiding the exponential $M^{-1/d}$ degradation of deterministic grid rules.",
+    "intuitive_summary": "Averaging $M$ independent random probes shrinks the uncertainty of an integral by $\\sqrt{M}$ regardless of whether the integration space has three dimensions or ten million.",
+    "interpretation": "For any square-integrable observable $f$ with finite variance $\\sigma_f^2 = \\langle f^2 \\rangle - \\langle f \\rangle^2$, the sample mean $\\bar{f}_M = M^{-1} \\sum_{k=1}^M f(x_k)$ has variance $\\sigma_I^2 = \\sigma_f^2 / M$. Reducing the statistical error by one decimal digit therefore requires a hundredfold increase in independent samples, while variance-reduction techniques such as importance sampling or antithetic variates shrink the numerator $\\sigma_f$ directly.",
+    "symmetry_origin": "Follows from permutation invariance of independent, identically distributed random draws and the additivity of variances under convolution in probability space.",
+    "limits_and_boundary": "As $M \\to \\infty$, $\\sigma_I \\to 0$ almost surely by the strong law of large numbers, provided $\\sigma_f < \\infty$. If the integrand has heavy tails with divergent second moment ($\\sigma_f \\to \\infty$), standard $M^{-1/2}$ convergence fails and slower Levy-stable scaling governs the fluctuations.",
+    "semantic_variables": {
+      "\\sigma_I": {
+        "name": "Monte Carlo Standard Error",
+        "type": "variable",
+        "unit": "1",
+        "description": "Root-mean-square statistical uncertainty of the stochastic integral estimator."
+      },
+      "\\sigma_f": {
+        "name": "Integrand Standard Deviation",
+        "type": "variable",
+        "unit": "1",
+        "description": "Standard deviation of the sampled observable $f(x)$ under the sampling probability distribution."
+      },
+      "M": {
+        "name": "Independent Sample Count",
+        "type": "variable",
+        "unit": "1",
+        "description": "Number of statistically independent configurations drawn to form the sample average."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Statistical Error of Observable Estimator",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "integrated-autocorrelation-time"
+    ]
   }
 }

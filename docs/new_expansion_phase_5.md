@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+60` subtopics live across 12 batches, bringing the encyclopedia from `1,584 → 1,644` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+70` subtopics live across 14 batches, bringing the encyclopedia from `1,584 → 1,654` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -171,3 +171,31 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 58 | Kuramoto Model and Coupled Oscillator Synchronization | http://localhost:8000/physics/subtopic/kuramoto-synchronization-oscillators | https://physicslab.ca/physics/subtopic/kuramoto-synchronization-oscillators |
 | 59 | Active Matter and Flocking Hydrodynamics | http://localhost:8000/physics/subtopic/active-matter-flocking-hydrodynamics | https://physicslab.ca/physics/subtopic/active-matter-flocking-hydrodynamics |
 | 60 | Quantum Vortices and Superfluid Turbulence | http://localhost:8000/physics/subtopic/quantum-vortices-superfluid-turbulence | https://physicslab.ca/physics/subtopic/quantum-vortices-superfluid-turbulence |
+
+---
+
+## Batch 13 — `classical-mechanics` · *9. Continuum Elasticity, Integrable Tori & Hamiltonian Chaos*
+* **Date:** 2026-11-21 (`classical-mechanics`: `62 → 67`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/classical-mechanics) · [Live](https://physicslab.ca/physics/topic/classical-mechanics)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 61 | Linear Elasticity, Stress-Strain Tensors and Elastic Waves | http://localhost:8000/physics/subtopic/linear-elasticity-stress-strain-waves | https://physicslab.ca/physics/subtopic/linear-elasticity-stress-strain-waves |
+| 62 | KAM Theorem and Perturbed Integrable Tori | http://localhost:8000/physics/subtopic/kam-theorem-integrable-tori | https://physicslab.ca/physics/subtopic/kam-theorem-integrable-tori |
+| 63 | Hamiltonian Chaos, Poincaré Sections and Arnold Diffusion | http://localhost:8000/physics/subtopic/hamiltonian-chaos-poincare-sections | https://physicslab.ca/physics/subtopic/hamiltonian-chaos-poincare-sections |
+| 64 | Adiabatic Invariants and Hannay Geometric Phase | http://localhost:8000/physics/subtopic/adiabatic-invariants-hannay-phase | https://physicslab.ca/physics/subtopic/adiabatic-invariants-hannay-phase |
+| 65 | Granular Media and Jamming Transitions | http://localhost:8000/physics/subtopic/granular-media-jamming-transitions | https://physicslab.ca/physics/subtopic/granular-media-jamming-transitions |
+
+---
+
+## Batch 14 — `mathematical-methods` · *8. Topology, Spinors & Computational Physics*
+* **Date:** 2026-11-21 (`mathematical-methods`: `38 → 43`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/mathematical-methods) · [Live](https://physicslab.ca/physics/topic/mathematical-methods)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 66 | Homotopy Groups and Topological Defects in Physics | http://localhost:8000/physics/subtopic/homotopy-groups-topological-defects | https://physicslab.ca/physics/subtopic/homotopy-groups-topological-defects |
+| 67 | Clifford Algebras and Spinor Representations | http://localhost:8000/physics/subtopic/clifford-algebras-spinor-representations | https://physicslab.ca/physics/subtopic/clifford-algebras-spinor-representations |
+| 68 | Monte Carlo Integration and Metropolis-Hastings Sampling | http://localhost:8000/physics/subtopic/monte-carlo-metropolis-sampling | https://physicslab.ca/physics/subtopic/monte-carlo-metropolis-sampling |
+| 69 | Spectral and Finite-Element PDE Methods | http://localhost:8000/physics/subtopic/spectral-finite-element-pde-methods | https://physicslab.ca/physics/subtopic/spectral-finite-element-pde-methods |
+| 70 | Tensor Networks and Matrix Product States | http://localhost:8000/physics/subtopic/tensor-networks-matrix-product-states | https://physicslab.ca/physics/subtopic/tensor-networks-matrix-product-states |

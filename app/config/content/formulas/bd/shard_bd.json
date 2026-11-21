@@ -2516,5 +2516,43 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "von-neumann-amplification-factor": {
+    "title": "von Neumann Spectral Stability Criterion",
+    "equation": "|G(k)| \\le 1",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "cfl-explicit-stability-condition",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Requires the modulus of the Fourier amplification factor $G(k)$ to remain at or below unity for every resolved wavenumber $k$ so that discrete time-stepping neither amplifies floating-point round-off nor triggers numerical blowup.",
+    "conceptual_definition": "The von Neumann stability criterion $|G(k)| \\le 1$ characterizes $L^2$ stability of linear constant-coefficient finite-difference, finite-element, and spectral time-evolution schemes by examining the single-step spectral multiplier of each Fourier mode.",
+    "intuitive_summary": "A time-marching PDE solver is stable only if every spatial wave mode $k$ either keeps its amplitude or shrinks after one time step—if any mode gets multiplied by more than $1$, tiny rounding errors explode.",
+    "interpretation": "Inserting a single spatial Fourier mode $u_j^n = \\hat{u}^n e^{i k x_j}$ into a linear one-step discrete update yields $\\hat{u}^{n+1} = G(k) \\hat{u}^n$, where $G(k)$ is the complex amplification factor. By Parseval's identity, ensuring $|G(k)| \\le 1$ for all $k$ guarantees that the discrete $L^2$ energy norm never grows (or at most grows at a bounded physical rate $|G(k)| \\le 1 + O(\\Delta t)$ for genuinely growing modes). Furthermore, comparing $|G(k)|$ and $\\arg G(k)$ against the exact continuum exponential $e^{-i\\omega(k)\\Delta t}$ quantifies numerical dissipation and phase dispersion errors across the spectrum.",
+    "symmetry_origin": "Follows from discrete spatial translation invariance on periodic lattices, under which linear update operators diagonalize in the Fourier eigenbasis and preserve $L^2$ norm by Parseval's theorem.",
+    "limits_and_boundary": "In the low-wavenumber continuum limit $k \\Delta x \\to 0$, a consistent scheme satisfies $G(k) \\to 1 - i\\omega(k)\\Delta t + O(\\Delta t^2)$. Near the Nyquist wavenumber $k \\Delta x = \\pi$, violating $|G(k)| \\le 1$ produces alternating grid-scale sawtooth instabilities; on non-periodic domains with inflow/outflow boundaries, non-normal operator effects require full GKS (Gustafsson-Kreiss-Sundström) or energy-method stability analysis beyond pure von Neumann bounds.",
+    "semantic_variables": {
+      "G(k)": {
+        "name": "Fourier Amplification Factor",
+        "type": "variable",
+        "unit": "1",
+        "description": "Complex spectral multiplier mapping the modal amplitude $\\hat{u}^n(k)$ to $\\hat{u}^{n+1}(k)$ over one discrete time step."
+      },
+      "k": {
+        "name": "Spatial Wavenumber",
+        "type": "variable",
+        "unit": "m^{-1}",
+        "description": "Fourier wavevector magnitude indexing the spatial oscillation frequency of a discrete perturbation mode."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Spectral Multiplier",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

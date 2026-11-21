@@ -2439,5 +2439,64 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "bipartite-schmidt-decomposition": {
+    "title": "Bipartite Schmidt Decomposition of a Many-Body State",
+    "equation": "|\\Psi\\rangle = \\sum_{\\alpha=1}^{\\chi} \\lambda_{\\alpha} |\\phi_{\\alpha}^L\\rangle |\\phi_{\\alpha}^R\\rangle",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "characteristic-polynomial-secular-equation-92ea3e14",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Expresses any pure state $|\\Psi\\rangle$ of a bipartite system $\\mathcal{H}_L \\otimes \\mathcal{H}_R$ as a single sum over orthonormal left and right Schmidt states $|\\phi_{\\alpha}^L\\rangle$ and $|\\phi_{\\alpha}^R\\rangle$ weighted by non-negative real singular values $\\lambda_{\\alpha}$.",
+    "conceptual_definition": "The Schmidt decomposition diagonalizes quantum correlations across any spatial cut by applying the matrix singular value decomposition to the reshaped wavefunction amplitude matrix, isolating all entanglement into a single vector of weights $\\lambda_{\\alpha}$.",
+    "intuitive_summary": "Cutting a quantum chain in two and performing a singular value decomposition pairs each relevant state on the left half with a unique partner state on the right half, ranked cleanly by importance $\\lambda_{\\alpha}$.",
+    "interpretation": "Tracing out the right subsystem yields $\\rho_L = \\sum_{\\alpha=1}^{\\chi} \\lambda_{\\alpha}^2 |\\phi_{\\alpha}^L\\rangle\\langle\\phi_{\\alpha}^L|$, showing that the squared Schmidt coefficients $\\lambda_{\\alpha}^2$ are identical eigenvalues of both $\\rho_L$ and $\\rho_R$. Repeatedly applying this decomposition from site $1$ to site $N$ directly constructs the canonical MPS tensors $A^{[k]s_k}$ and exposes the full entanglement spectrum $\\{-\\ln \\lambda_{\\alpha}^2\\}$.",
+    "symmetry_origin": "Follows from the unitary equivalence of the singular value decomposition $C = U \\Lambda V^\\dagger$ on the rectangular coefficient matrix $C_{ij}$ under independent local basis rotations $U \\in U(d_L)$ and $V \\in U(d_R)$.",
+    "limits_and_boundary": "A state is separable (zero entanglement) if and only if its Schmidt rank is $\\chi = 1$ ($\\lambda_1 = 1$). A maximally entangled state across a balanced cut has all $\\chi = \\min(d_L, d_R)$ singular values equal to $\\lambda_{\\alpha} = 1/\\sqrt{\\chi}$.",
+    "semantic_variables": {
+      "|\\Psi\\rangle": {
+        "name": "Bipartite Pure State",
+        "type": "variable",
+        "unit": "1",
+        "description": "Normalized pure state vector defined on the composite Hilbert space $\\mathcal{H}_L \\otimes \\mathcal{H}_R$."
+      },
+      "\\lambda_{\\alpha}": {
+        "name": "Schmidt Coefficient",
+        "type": "variable",
+        "unit": "1",
+        "description": "Non-negative real singular value ordered monotonically ($\\lambda_1 \\ge \\lambda_2 \\ge \\cdots \\ge 0$) satisfying $\\sum_{\\alpha} \\lambda_{\\alpha}^2 = 1$."
+      },
+      "|\\phi_{\\alpha}^L\\rangle": {
+        "name": "Left Schmidt Basis State",
+        "type": "variable",
+        "unit": "1",
+        "description": "Orthonormal eigenstate of the left reduced density matrix $\\rho_L$ corresponding to eigenvalue $\\lambda_{\\alpha}^2$."
+      },
+      "|\\phi_{\\alpha}^R\\rangle": {
+        "name": "Right Schmidt Basis State",
+        "type": "variable",
+        "unit": "1",
+        "description": "Orthonormal eigenstate of the right reduced density matrix $\\rho_R$ paired uniquely with $|\\phi_{\\alpha}^L\\rangle$."
+      },
+      "\\chi": {
+        "name": "Schmidt Rank / Bond Dimension",
+        "type": "variable",
+        "unit": "1",
+        "description": "Number of non-zero (or retained) Schmidt singular values across the spatial bipartition."
+      }
+    },
+    "cas_validation": {
+      "status": "OPERATOR_OR_TENSOR",
+      "is_homogeneous": true,
+      "quantity": "Quantum State Vector",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "mps-schmidt-truncation-error",
+      "mps-bond-dimension-entropy-bound"
+    ]
   }
 }

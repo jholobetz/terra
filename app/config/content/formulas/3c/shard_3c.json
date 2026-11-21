@@ -3297,5 +3297,55 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "mps-state-representation": {
+    "title": "Matrix Product State (MPS) Representation",
+    "equation": "|\\Psi\\rangle = \\sum_{s_1,\\dots,s_N} \\mathrm{Tr}\\left(A^{[1]s_1} A^{[2]s_2} \\cdots A^{[N]s_N}\\right) |s_1 \\cdots s_N\\rangle",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "bra-ket-synergy-8d2b867e",
+    "derivation_type": "DEFINITION",
+    "description": "Factorizes a quantum many-body state $|\\Psi\\rangle$ of $N$ local $d$-level sites into a one-dimensional chain of contracted site-dependent matrices $A^{[k]s_k}$ of virtual bond dimension $\\chi$, reducing the parameter count from $d^N$ to $O(N d \\chi^2)$.",
+    "conceptual_definition": "A Matrix Product State represents every probability amplitude of an $N$-site quantum wavefunction as the trace of an ordered product of $\\chi \\times \\chi$ auxiliary matrices indexed by the physical basis states $s_1, \\dots, s_N$.",
+    "intuitive_summary": "Instead of storing one huge table of $d^N$ numbers for every spin configuration, an MPS builds each amplitude by multiplying a chain of small local matrices along the lattice, keeping only the entanglement channels that matter.",
+    "interpretation": "For each physical configuration $|s_1 \\cdots s_N\\rangle$, selecting the corresponding $\\chi \\times \\chi$ matrix $A^{[k]s_k}$ at site $k$ and taking the trace of their ordered product yields the complex wavefunction amplitude. For open boundary conditions, the first matrix $A^{[1]s_1}$ reduces to a $1 \\times \\chi$ row vector and $A^{[N]s_N}$ to a $\\chi \\times 1$ column vector, so the trace simplifies to a scalar inner product. The representation is exact for any state if $\\chi$ grows exponentially up to $d^{\\lfloor N/2 \\rfloor}$, and remains highly accurate at constant $\\chi$ for gapped one-dimensional ground states.",
+    "symmetry_origin": "Invariant under local virtual gauge transformations $A^{[k]s_k} \\to X_{k-1}^{-1} A^{[k]s_k} X_k$ with invertible matrices $X_k \\in GL(\\chi, \\mathbb{C})$, which enables left-, right-, and mixed-canonical isometric forms.",
+    "limits_and_boundary": "When $\\chi = 1$, every $A^{[k]s_k}$ is a scalar and $|\\Psi\\rangle$ reduces to an unentangled product state. For translationally invariant infinite chains, setting $A^{[k]s} = A^s$ yields uniform infinite MPS whose correlation length $\\xi$ is governed by the ratio of the two largest eigenvalues of the transfer matrix $E = \\sum_s A^s \\otimes (A^s)^*$.",
+    "semantic_variables": {
+      "|\\Psi\\rangle": {
+        "name": "Many-Body Quantum State",
+        "type": "variable",
+        "unit": "1",
+        "description": "Normalized pure state vector in the $d^N$-dimensional composite many-body Hilbert space."
+      },
+      "A^{[k]s_k}": {
+        "name": "Local MPS Tensor",
+        "type": "variable",
+        "unit": "1",
+        "description": "Rank-3 site tensor acting as a $\\chi \\times \\chi$ matrix for each fixed physical basis label $s_k \\in \\{1, \\dots, d\\}$ at lattice site $k$."
+      },
+      "|s_1 \\cdots s_N\\rangle": {
+        "name": "Local Computational Basis State",
+        "type": "variable",
+        "unit": "1",
+        "description": "Tensor product of single-site orthonormal basis kets across all $N$ sites of the chain."
+      },
+      "N": {
+        "name": "Lattice Site Count",
+        "type": "variable",
+        "unit": "1",
+        "description": "Total number of interacting quantum sites in the one-dimensional system."
+      }
+    },
+    "cas_validation": {
+      "status": "OPERATOR_OR_TENSOR",
+      "is_homogeneous": true,
+      "quantity": "Quantum State Vector",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

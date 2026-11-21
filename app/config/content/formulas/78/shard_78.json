@@ -2517,7 +2517,9 @@
     "equation": "\\int L \\, dt",
     "status": "published",
     "parent_formula_id": "action-functional-identity-3120986d",
-    "subcomponents": [],
+    "subcomponents": [
+      "longitudinal-bounce-second-adiabatic-invariant"
+    ],
     "id": "action-integral-92a065ca",
     "intuitive_summary": "Imagine a system can take many possible paths between two points in time, like a hiker choosing a route over a mountain. The action is a number assigned to each path, representing a kind of 'total effort'. Nature is economical and chooses the path of 'least effort' (or more generally, stationary effort). This single principle determines the entire trajectory of the system.",
     "cas_validation": {
@@ -3723,5 +3725,63 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "boltzmann-importance-sampling-estimator": {
+    "title": "Canonical Boltzmann Expectation Value Integral",
+    "equation": "\\langle \\mathcal{O} \\rangle = \\frac{1}{Z} \\int \\mathcal{O}(x) e^{-\\beta E(x)} \\, dx",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "action-functional-notation",
+    "derivation_type": "DEFINITION",
+    "description": "Defines the canonical thermal expectation value $\\langle \\mathcal{O} \\rangle$ of an observable $\\mathcal{O}(x)$ weighted by the Boltzmann factor $e^{-\\beta E(x)}$ and normalized by the partition function $Z = \\int e^{-\\beta E(x)} \\, dx$.",
+    "conceptual_definition": "The Boltzmann expectation integral $\\langle \\mathcal{O} \\rangle = Z^{-1} \\int \\mathcal{O}(x) e^{-\\beta E(x)} \\, dx$ is the canonical target of importance-sampling Monte Carlo methods in statistical mechanics and Euclidean lattice field theory.",
+    "intuitive_summary": "The macroscopic average of any physical quantity is obtained by weighting every microscopic configuration $x$ by its thermal probability $e^{-\\beta E(x)} / Z$ and summing over all possible states.",
+    "interpretation": "In high-dimensional systems, $e^{-\\beta E(x)}$ varies over hundreds of orders of magnitude across configuration space, making direct uniform quadrature useless. Drawing states $x_k$ directly from $\\pi(x) = e^{-\\beta E(x)} / Z$ collapses the weighted integral into the unweighted arithmetic average $M^{-1} \\sum_{k=1}^M \\mathcal{O}(x_k)$, with $Z$ never explicitly computed.",
+    "symmetry_origin": "Arises from maximizing Shannon-Gibbs entropy subject to fixed mean energy, and in Euclidean quantum field theory from Wick-rotating the real-time Feynman path integral $e^{i S[\\phi]/\\hbar} \\to e^{-S_E[\\phi]/\\hbar}$.",
+    "limits_and_boundary": "In the zero-temperature limit $\\beta \\to \\infty$, the Boltzmann weight collapses onto the global energy minima, recovering classical ground-state optimization. In the high-temperature limit $\\beta \\to 0$, $e^{-\\beta E(x)} \\to 1$ and the integral reduces to a uniform geometric average over configuration space.",
+    "semantic_variables": {
+      "\\langle \\mathcal{O} \\rangle": {
+        "name": "Canonical Expectation Value",
+        "type": "variable",
+        "unit": "1",
+        "description": "Thermal ensemble average of the physical observable $\\mathcal{O}$."
+      },
+      "Z": {
+        "name": "Canonical Partition Function",
+        "type": "variable",
+        "unit": "1",
+        "description": "Normalization integral $Z = \\int e^{-\\beta E(x)} \\, dx$ summing Boltzmann weights over all microstates."
+      },
+      "\\mathcal{O}(x)": {
+        "name": "Configuration Observable",
+        "type": "variable",
+        "unit": "1",
+        "description": "Physical quantity evaluated on microscopic configuration $x$."
+      },
+      "\\beta": {
+        "name": "Inverse Thermal Energy",
+        "type": "variable",
+        "unit": "J^-1",
+        "description": "Inverse temperature $\\beta = (k_B T)^{-1}$ controlling the steepness of the Boltzmann weight."
+      },
+      "E(x)": {
+        "name": "Configuration Energy",
+        "type": "variable",
+        "unit": "J",
+        "description": "Hamiltonian energy or Euclidean action associated with microstate $x$."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Ensemble Expectation Value",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "fermion-sign-problem-decay"
+    ]
   }
 }

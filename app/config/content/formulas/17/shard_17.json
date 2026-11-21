@@ -3286,5 +3286,58 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "galerkin-weak-formulation": {
+    "title": "Galerkin Weak Variational Formulation",
+    "equation": "a(u_h, v_h) = \\ell(v_h)",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "beltrami-first-integral-identity",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Projects a continuum partial differential equation onto a finite-dimensional trial and test subspace $V_h \\subset H^1(\\Omega)$ by requiring the bilinear energy form $a(u_h, v_h)$ to match the source linear functional $\\ell(v_h)$ for every test function $v_h \\in V_h$.",
+    "conceptual_definition": "The Galerkin weak formulation $a(u_h, v_h) = \\ell(v_h)$ replaces pointwise second-order differentiation with an integral orthogonality condition stating that the PDE residual is orthogonal to every basis function in the discrete approximation space $V_h$.",
+    "intuitive_summary": "Instead of forcing a PDE to hold at every single point, the Galerkin method demands that the average error weighted against every chosen basis shape $v_h$ vanishes identically across the domain.",
+    "interpretation": "Obtained by multiplying a strong elliptic or parabolic PDE by a test function $v_h$ and integrating by parts, $a(u_h, v_h)$ lowers the required regularity of $u_h$ from twice continuously differentiable $C^2(\\Omega)$ to square-integrable weak first derivatives in $H^1(\\Omega)$. Natural Neumann or Robin boundary fluxes enter directly into the right-hand functional $\\ell(v_h)$, while essential Dirichlet boundary conditions constrain the trial space itself. Both finite-element and spectral-Galerkin discretizations share this unified variational statement, differing only in whether $V_h$ consists of local piecewise polynomials or global orthogonal functions.",
+    "symmetry_origin": "Arises from variational stationarity of quadratic energy functionals $J(v) = \\frac{1}{2}a(v, v) - \\ell(v)$ under infinitesimal perturbations $v \\to v + \\epsilon v_h$ in a Hilbert space.",
+    "limits_and_boundary": "As the subspace dimension $\\dim(V_h) \\to \\infty$ densely in $H^1(\\Omega)$, $u_h$ converges strongly to the exact weak solution $u$ provided $a$ is continuous and coercive. If $a$ fails coercivity (e.g., indefinite Helmholtz operators at high wavenumber), the weaker inf-sup Babuška-Brezzi condition replaces Lax-Milgram stability.",
+    "semantic_variables": {
+      "a(u_h, v_h)": {
+        "name": "Bilinear Variational Form",
+        "type": "operator",
+        "unit": "J",
+        "description": "Continuous, coercive bilinear mapping on $V_h \\times V_h$ representing the integrated differential operator after integration by parts."
+      },
+      "u_h": {
+        "name": "Discrete Trial Solution",
+        "type": "variable",
+        "unit": "1",
+        "description": "Approximate field sought within the finite-dimensional trial subspace $V_h \\subset H^1(\\Omega)$."
+      },
+      "v_h": {
+        "name": "Discrete Test Function",
+        "type": "variable",
+        "unit": "1",
+        "description": "Arbitrary weighting function drawn from the test subspace $V_h$ against which the PDE residual is made orthogonal."
+      },
+      "\\ell(v_h)": {
+        "name": "Load Linear Functional",
+        "type": "operator",
+        "unit": "J",
+        "description": "Bounded linear functional on $V_h$ encoding distributed volumetric source terms and natural boundary flux contributions."
+      }
+    },
+    "cas_validation": {
+      "status": "OPERATOR_OR_TENSOR",
+      "is_homogeneous": true,
+      "quantity": "Variational Energy Pairing",
+      "dimension_latex": "[\\text{Variational Form}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "cea-lemma-quasi-optimality",
+      "fem-stiffness-matrix-assembly"
+    ]
   }
 }

@@ -1764,7 +1764,9 @@
     "equation": "[\\nabla_\\mu, \\nabla_\\nu] V^\\rho = R^\\rho_{\\sigma\\mu\\nu} V^\\sigma",
     "status": "published",
     "parent_formula_id": "covariant-derivative-vector-field-ident-c94574fe",
-    "subcomponents": [],
+    "subcomponents": [
+      "spinor-covariant-derivative-curved-spacetime"
+    ],
     "id": "commutator-of-covariant-derivatives-on-a-vector-33156dcc",
     "intuitive_summary": "Parallel transporting a vector around an infinitesimal closed loop formed by directions $\\mu$ and $\\nu$ generally rotates the vector; this non-closure or holonomy defect is quantified by the Riemann curvature tensor.",
     "category": "mathematical-methods",
@@ -2653,5 +2655,49 @@
     "subcomponents": [
       "onsager-reciprocal-symmetry"
     ]
+  },
+  "metropolis-hastings-acceptance-probability": {
+    "title": "Metropolis-Hastings Acceptance Probability",
+    "equation": "A(x \\to y) = \\min\\left(1, \\frac{\\pi(y) g(y \\to x)}{\\pi(x) g(x \\to y)}\\right)",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "markov-chain-detailed-balance",
+    "derivation_type": "DERIVED_FROM",
+    "description": "Specifies the probability $A(x \\to y)$ of accepting a proposed Markov move from $x$ to $y$ drawn from proposal kernel $g(x \\to y)$ so that the composite transition $T = g A$ satisfies detailed balance for target measure $\\pi$.",
+    "conceptual_definition": "The Metropolis-Hastings acceptance probability $A(x \\to y) = \\min(1, [\\pi(y) g(y \\to x)] / [\\pi(x) g(x \\to y)])$ maximizes acceptance rates subject to detailed balance while depending only on unnormalized probability ratios $\\pi(y)/\\pi(x)$.",
+    "intuitive_summary": "Every move that increases the proposal-corrected target weight is accepted immediately, while downhill moves are accepted with a probability equal to the weight ratio, letting the chain explore uphill and downhill without ever needing the partition function $Z$.",
+    "interpretation": "Substituting $T(x \\to y) = g(x \\to y) A(x \\to y)$ into detailed balance gives $A(x \\to y) / A(y \\to x) = [\\pi(y) g(y \\to x)] / [\\pi(x) g(x \\to y)]$. Choosing the $\\min(1, \\cdot)$ form achieves Peskun optimality by maximizing off-diagonal transition probability, thereby minimizing asymptotic estimator variance among all local accept-reject filters.",
+    "symmetry_origin": "Constructed directly from detailed-balance invariance under time reversal, with the Hastings factor $g(y \\to x) / g(x \\to y)$ compensating for asymmetric proposal geometries.",
+    "limits_and_boundary": "When the proposal is symmetric ($g(x \\to y) = g(y \\to x)$), the formula reduces to the original 1953 Metropolis filter $A(x \\to y) = \\min(1, e^{-\\beta (E(y) - E(x))})$. In the zero-temperature limit $\\beta \\to \\infty$, uphill moves ($E(y) > E(x)$) are rejected with probability one, turning the sampler into greedy descent.",
+    "semantic_variables": {
+      "A(x \\to y)": {
+        "name": "Acceptance Probability",
+        "type": "variable",
+        "unit": "1",
+        "description": "Dimensionless probability in $[0, 1]$ of accepting the proposed transition from state $x$ to state $y$."
+      },
+      "\\pi(x)": {
+        "name": "Target Probability Density",
+        "type": "variable",
+        "unit": "1",
+        "description": "Target Boltzmann or posterior probability density (known up to an arbitrary normalization constant)."
+      },
+      "g(x \\to y)": {
+        "name": "Proposal Transition Density",
+        "type": "variable",
+        "unit": "1",
+        "description": "Conditional probability density of proposing trial configuration $y$ given current configuration $x$."
+      }
+    },
+    "cas_validation": {
+      "status": "DIMENSIONAL_EXPRESSION",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Transition Acceptance Probability",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

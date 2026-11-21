@@ -2573,5 +2573,49 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "chebyshev-gauss-lobatto-nodes": {
+    "title": "Chebyshev-Gauss-Lobatto Collocation Nodes",
+    "equation": "x_j = \\cos\\left(\\frac{\\pi j}{N}\\right)",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "boundary-of-a-manifold-98ec5510",
+    "derivation_type": "DEFINITION",
+    "description": "Specifies the $N + 1$ Chebyshev-Gauss-Lobatto collocation points $x_j \\in [-1, 1]$ for $j = 0, 1, \\dots, N$, obtained by projecting equispaced points on the upper unit semicircle onto the real diameter.",
+    "conceptual_definition": "The Chebyshev-Gauss-Lobatto grid $x_j = \\cos(\\pi j / N)$ distributes interpolation nodes with quadratic clustering near the domain endpoints $\\pm 1$, eliminating Runge's polynomial divergence while including both boundaries explicitly for Dirichlet or Neumann enforcement.",
+    "intuitive_summary": "Packing collocation points tightly near the two ends of an interval like shadows cast from a evenly spaced semicircle stops high-degree polynomials from oscillating wildly at the edges.",
+    "interpretation": "These nodes are the extrema of the $N$-th Chebyshev polynomial of the first kind $T_N(x) = \\cos(N \\arccos x)$ together with the endpoints $x_0 = 1$ and $x_N = -1$. Under this node distribution, the asymptotic point density scales as $N / (\\pi \\sqrt{1 - x^2})$, holding the interpolation Lebesgue constant to a benign $\\Lambda_N \\sim \\frac{2}{\\pi}\\ln N$ instead of the exponential $2^N / (e N \\ln N)$ blowup of uniform grids. Moreover, transforming between nodal values and Chebyshev coefficients reduces directly to a Discrete Cosine Transform executable in $O(N \\log N)$ operations.",
+    "symmetry_origin": "Reflects the conformal projection symmetry mapping uniform angular translation $\\theta_j = \\pi j / N$ on the unit circle $S^1$ onto the bounded interval $[-1, 1]$ with reflection invariance $x_{N-j} = -x_j$.",
+    "limits_and_boundary": "Near the center $x \\approx 0$, node spacing is $\\Delta x \\approx \\pi / N$; near the boundaries $x = \\pm 1$, spacing compresses to $\\Delta x_{\\min} = 1 - \\cos(\\pi/N) \\approx \\pi^2 / (2N^2)$ as $N \\to \\infty$, which resolves thin boundary layers accurately but tightens explicit CFL time-step constraints.",
+    "semantic_variables": {
+      "x_j": {
+        "name": "Collocation Node Coordinate",
+        "type": "variable",
+        "unit": "1",
+        "description": "Dimensionless spatial location of the $j$-th Chebyshev-Gauss-Lobatto grid point on the reference interval $[-1, 1]$."
+      },
+      "j": {
+        "name": "Node Index",
+        "type": "variable",
+        "unit": "1",
+        "description": "Integer index ranging from $0$ to $N$ ordering the collocation nodes from $x_0 = +1$ to $x_N = -1$."
+      },
+      "N": {
+        "name": "Polynomial Truncation Degree",
+        "type": "variable",
+        "unit": "1",
+        "description": "Maximum degree of the Chebyshev polynomial expansion, determining $N + 1$ total collocation points."
+      }
+    },
+    "cas_validation": {
+      "status": "DIMENSIONAL_EXPRESSION",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Reference Coordinate",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

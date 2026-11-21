@@ -3124,5 +3124,51 @@
       "dimension_latex": "1",
       "verified_at": 1795246757
     }
+  },
+  "integrated-autocorrelation-time": {
+    "title": "Integrated Autocorrelation Time",
+    "equation": "\\tau_{\\mathrm{int}} = \\frac{1}{2} + \\sum_{t=1}^{\\infty} \\frac{C_{\\mathcal{O}}(t)}{C_{\\mathcal{O}}(0)}",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "monte-carlo-standard-error-scaling",
+    "derivation_type": "DEFINITION",
+    "description": "Defines the integrated autocorrelation time $\\tau_{\\mathrm{int}}$ of an observable $\\mathcal{O}$ along a Markov chain as one-half plus the sum of normalized lag-$t$ autocovariances $C_{\\mathcal{O}}(t) / C_{\\mathcal{O}}(0)$.",
+    "conceptual_definition": "The integrated autocorrelation time $\\tau_{\\mathrm{int}}$ quantifies the factor $2\\tau_{\\mathrm{int}}$ by which serial Markov correlations inflate the variance of a sample mean relative to independent draws.",
+    "intuitive_summary": "It counts how many consecutive Markov steps you must wait before the chain forgets its previous value of $\\mathcal{O}$ and produces effectively fresh statistical information.",
+    "interpretation": "For a stationary time series of length $M \\gg \\tau_{\\mathrm{int}}$, the true variance of the sample mean is $\\mathrm{Var}(\\bar{\\mathcal{O}}_M) = (2\\tau_{\\mathrm{int}} / M) C_{\\mathcal{O}}(0)$. Because $C_{\\mathcal{O}}(t)$ decays as a sum of exponentials $\\sum_k c_k \\lambda_k^t$ governed by the eigenvalues of the transition matrix, $\\tau_{\\mathrm{int}}$ is bounded above by the slowest exponential relaxation mode $\\tau_{\\mathrm{exp}} = -1 / \\ln |\\lambda_2|$.",
+    "symmetry_origin": "Derives from discrete time-translation invariance of the stationary Markov chain, which ensures that the two-point covariance $C_{\\mathcal{O}}(t)$ depends solely on the lag $t = |t_2 - t_1|$.",
+    "limits_and_boundary": "For completely uncorrelated independent samples, $C_{\\mathcal{O}}(t) = 0$ for all $t \\ge 1$, giving the lower bound $\\tau_{\\mathrm{int}} = 1/2$ so that $2\\tau_{\\mathrm{int}} = 1$. As the spectral gap closes ($|\\lambda_2| \\to 1$), $\\tau_{\\mathrm{int}}$ diverges, signaling ergodicity breaking or critical slowing down.",
+    "semantic_variables": {
+      "\\tau_{\\mathrm{int}}": {
+        "name": "Integrated Autocorrelation Time",
+        "type": "variable",
+        "unit": "1",
+        "description": "Dimensionless correlation time measured in Markov chain sweeps or update steps."
+      },
+      "C_{\\mathcal{O}}(t)": {
+        "name": "Lag-t Autocovariance Function",
+        "type": "variable",
+        "unit": "1",
+        "description": "Connected time-lagged covariance $\\langle \\mathcal{O}(0) \\mathcal{O}(t) \\rangle - \\langle \\mathcal{O} \\rangle^2$ at step separation $t$."
+      },
+      "C_{\\mathcal{O}}(0)": {
+        "name": "Zero-Lag Observable Variance",
+        "type": "variable",
+        "unit": "1",
+        "description": "Instantaneous equilibrium variance $\\langle \\mathcal{O}^2 \\rangle - \\langle \\mathcal{O} \\rangle^2$ of the observable."
+      }
+    },
+    "cas_validation": {
+      "status": "DIMENSIONAL_EXPRESSION",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Autocorrelation Time in Monte Carlo Steps",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "critical-slowing-down-scaling"
+    ]
   }
 }

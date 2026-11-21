@@ -233,6 +233,131 @@ def load_all_existing_formulas() -> Dict[str, Dict[str, Any]]:
     return formulas
 
 
+def count_existing_incoming_links(target_slugs: Set[str]) -> Dict[str, Set[str]]:
+    """Scans all domain content shards and returns {target_slug: set_of_source_slugs}."""
+    incoming_map: Dict[str, Set[str]] = {s: set() for s in target_slugs}
+    if not target_slugs:
+        return incoming_map
+    skip = {
+        "categories.json",
+        "search_index.json",
+        "constants.json",
+        "entities.json",
+        "particles.json",
+        "compiled_trie_regex.json",
+        "notation.json",
+    }
+    link_re = re.compile(r'href="/physics/subtopic/([^"]+)"')
+    for cf in sorted(glob.glob(os.path.join(CONTENT_DIR, "*.json"))):
+        if os.path.basename(cf) in skip:
+            continue
+        with open(cf, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            continue
+        for src_slug, val in data.items():
+            if not isinstance(val, dict) or "content" not in val:
+                continue
+            for linked in link_re.findall(val["content"]):
+                if linked in incoming_map and src_slug != linked:
+                    incoming_map[linked].add(src_slug)
+    return incoming_map
+
+
+SVG_TAG_RE = re.compile(r"<svg\b([^>]*)>[\s\S]*?</svg>", re.IGNORECASE)
+DATA_TEX_ATTR_RE = re.compile(r'data-tex="([^"]+)"')
+
+
+def decompile_svgs_to_latex(html_str: str, context_label: str = "") -> str:
+    """
+    Replaces every compiled <svg ... data-tex="...">...</svg> tag with clean \\( ... \\) LaTeX.
+    Raises ValueError if any <svg> tag is missing a data-tex attribute.
+    """
+    def _repl(match: re.Match) -> str:
+        attrs = match.group(1)
+        m_tex = DATA_TEX_ATTR_RE.search(attrs)
+        if not m_tex:
+            raise ValueError(
+                f"Cannot safely round-trip {context_label or 'HTML'}: found <svg> missing data-tex attribute."
+            )
+        tex = html.unescape(m_tex.group(1)).strip()
+        return f"\\( {tex} \\)"
+
+    return SVG_TAG_RE.sub(_repl, html_str)
+
+
+def export_slugs_to_manifest(slugs: List[str], out_path: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Exports existing live subtopics from their domain shard into a clean, editable LaTeX manifest
+    ready for --dry-run --update-existing / --apply --update-existing --no-ledger.
+    """
+    if not slugs:
+        raise ValueError("At least one slug is required for --export-slugs.")
+
+    existing_slugs = load_all_existing_slugs()
+    missing = [s for s in slugs if s not in existing_slugs]
+    if missing:
+        raise ValueError(f"Unknown slug(s) not found in any content shard: {missing}")
+
+    domains = {existing_slugs[s] for s in slugs}
+    if len(domains) != 1:
+        raise ValueError(
+            f"All exported slugs must belong to a single domain (found: {sorted(domains)})."
+        )
+    domain = next(iter(domains))
+    domain_path = os.path.join(CONTENT_DIR, f"{domain}.json")
+    with open(domain_path, "r", encoding="utf-8") as f:
+        domain_data = json.load(f)
+
+    sem_refs: Dict[str, Any] = {}
+    if os.path.exists(SEMANTIC_REFS_PATH):
+        with open(SEMANTIC_REFS_PATH, "r", encoding="utf-8") as f:
+            sem_refs = json.load(f)
+
+    exported_subtopics: Dict[str, Any] = {}
+    for slug in slugs:
+        rec = domain_data[slug]
+        raw_content = decompile_svgs_to_latex(rec.get("content", ""), context_label=f"subtopic '{slug}' content")
+        hero_math = rec.get("hero_math", "")
+        hero_eq = ""
+        if hero_math:
+            m_hero = DATA_TEX_ATTR_RE.search(hero_math)
+            if m_hero:
+                hero_eq = html.unescape(m_hero.group(1)).strip()
+            else:
+                raise ValueError(f"Cannot safely round-trip '{slug}': hero_math <svg> is missing data-tex.")
+        if not hero_eq:
+            inlines = INLINE_MATH_RE.findall(raw_content)
+            hero_eq = inlines[0].strip() if inlines else ""
+
+        citations = rec.get("verification", {}).get("citations", [])
+        keywords = sem_refs.get(slug, {}).get("keywords", [])
+
+        exported_subtopics[slug] = {
+            "title": rec.get("title", ""),
+            "hero_equation": hero_eq,
+            "formula_ids": rec.get("formula_ids", []),
+            "content": raw_content,
+            "citations": citations,
+            "keywords": keywords,
+            "incoming_links": [],
+        }
+
+    manifest = {
+        "domain": domain,
+        "allow_short_tokens": [],
+        "verified_date": time.strftime("%Y-%m-%d"),
+        "subtopics": exported_subtopics,
+        "formulas": [],
+    }
+    if out_path:
+        os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+    return manifest
+
+
 def validate_manifest(
     manifest: Dict[str, Any],
     force_large_batch: bool = False,
@@ -261,10 +386,14 @@ def validate_manifest(
             f"Split into smaller batches or pass --force-large-batch."
         )
 
+    existing_slugs = load_all_existing_slugs()
+
     pillar = manifest.get("pillar")
     append_to_pillar = manifest.get("append_to_pillar")
+    all_exist = all(s in existing_slugs for s in subtopics)
     if not pillar and not append_to_pillar:
-        errors.append("Manifest must define either 'pillar' (new pillar object) or 'append_to_pillar' (existing pillar title).")
+        if not (allow_update_existing and all_exist):
+            errors.append("Manifest must define either 'pillar' (new pillar object) or 'append_to_pillar' (existing pillar title).")
     if pillar and append_to_pillar:
         errors.append("Manifest cannot define both 'pillar' and 'append_to_pillar'; choose one.")
     if pillar:
@@ -282,7 +411,7 @@ def validate_manifest(
 
     allow_short = set(manifest.get("allow_short_tokens", []))
 
-    existing_slugs = load_all_existing_slugs()
+    existing_incoming_map = count_existing_incoming_links(set(subtopics.keys())) if allow_update_existing else {}
     existing_formulas = load_all_existing_formulas()
     with open(LATEX_INDEX_PATH, "r", encoding="utf-8") as f:
         latex_index = json.load(f)
@@ -489,9 +618,15 @@ def validate_manifest(
         if len(cross_hub) < 1:
             errors.append(f"[{slug}] Missing cross-hub bridge link (must link to >= 1 subtopic outside '{domain}').")
 
-        # Incoming links
-        if len(incoming) < 2:
-            errors.append(f"[{slug}] Must declare >= 2 'incoming_links' from existing articles (found {len(incoming)}).")
+        # Incoming links (count existing live incoming links + manifest incoming_links under --update-existing)
+        existing_in = existing_incoming_map.get(slug, set()) if allow_update_existing else set()
+        manifest_in = {inc.get("from_slug", "") for inc in incoming if inc.get("from_slug")}
+        total_incoming_count = len(existing_in | manifest_in) if allow_update_existing else len(incoming)
+        if total_incoming_count < 2:
+            errors.append(
+                f"[{slug}] Must have >= 2 incoming links from existing articles "
+                f"(found {total_incoming_count}; manifest={len(incoming)}, existing={len(existing_in)})."
+            )
         for inc in incoming:
             src = inc.get("from_slug", "")
             sent = inc.get("sentence", "")
@@ -542,7 +677,7 @@ def validate_manifest(
             "math_tokens": len(subtopic_math_map[slug]),
             "outgoing_links": len(out_links),
             "cross_hub_links": len(cross_hub),
-            "incoming_links": len(incoming),
+            "incoming_links": total_incoming_count,
             "citations": len(citations),
         }
 
@@ -814,11 +949,12 @@ def apply_manifest(
             plain = re.sub(r"\s+", " ", plain).strip()
             snippet = plain[:240].rsplit(" ", 1)[0] + "..."
 
+            existing_parents = domain_data.get(slug, {}).get("parents") or [domain]
             domain_data[slug] = {
                 "title": sdata["title"],
                 "content": compiled_html,
                 "formula_ids": sdata.get("formula_ids", []),
-                "parents": [domain],
+                "parents": existing_parents,
                 "standard": "platinum",
                 "snippet": snippet,
                 "snippet_svg": snippet,
@@ -850,30 +986,37 @@ def apply_manifest(
             json.dump(domain_data, f, indent=2, ensure_ascii=False)
         print(f"[3/6] Compiled {len(subtopics)} subtopics & wove incoming links into {domain}.json.")
 
-        # 4. Sync Pillars, Slug Registry, Semantic References, and Search Index
-        for mpath in (hub_manifest_path, topic_manifest_path):
-            with open(mpath, "r", encoding="utf-8") as f:
-                mdata = json.load(f)
-            pillars = mdata.get("pillars", [])
-            if manifest.get("pillar"):
-                pdef = manifest["pillar"]
-                pillars = [p for p in pillars if p.get("title") != pdef["title"]]
-                pillars.append(pdef)
-            elif manifest.get("append_to_pillar"):
-                target_title = manifest["append_to_pillar"]
-                matched = False
-                for p in pillars:
-                    if p.get("title") == target_title:
-                        for s in subtopics:
-                            if s not in p["slugs"]:
-                                p["slugs"].append(s)
-                        matched = True
-                        break
-                if not matched:
-                    raise RuntimeError(f"Could not find existing pillar '{target_title}' in {mpath}")
-            mdata["pillars"] = pillars
-            with open(mpath, "w", encoding="utf-8") as f:
-                json.dump(mdata, f, indent=2, ensure_ascii=False)
+        # 4. Sync Pillars (if specified), Slug Registry, Semantic References, and Search Index
+        if manifest.get("pillar") or manifest.get("append_to_pillar"):
+            for mpath in (hub_manifest_path, topic_manifest_path):
+                with open(mpath, "r", encoding="utf-8") as f:
+                    mdata = json.load(f)
+                pillars = mdata.get("pillars", [])
+                if manifest.get("pillar"):
+                    pdef = manifest["pillar"]
+                    replaced = False
+                    for idx_p, existing_p in enumerate(pillars):
+                        if existing_p.get("title") == pdef["title"]:
+                            pillars[idx_p] = pdef
+                            replaced = True
+                            break
+                    if not replaced:
+                        pillars.append(pdef)
+                elif manifest.get("append_to_pillar"):
+                    target_title = manifest["append_to_pillar"]
+                    matched = False
+                    for p in pillars:
+                        if p.get("title") == target_title:
+                            for s in subtopics:
+                                if s not in p["slugs"]:
+                                    p["slugs"].append(s)
+                            matched = True
+                            break
+                    if not matched:
+                        raise RuntimeError(f"Could not find existing pillar '{target_title}' in {mpath}")
+                mdata["pillars"] = pillars
+                with open(mpath, "w", encoding="utf-8") as f:
+                    json.dump(mdata, f, indent=2, ensure_ascii=False)
 
         with open(SLUG_REGISTRY_PATH, "r", encoding="utf-8") as f:
             reg = json.load(f)
@@ -970,16 +1113,31 @@ def apply_manifest(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Terra Physics Lab 1-Step Hub Expansion Engine")
-    parser.add_argument("manifest", help="Path to declarative batch manifest JSON")
+    parser.add_argument("manifest", nargs="?", help="Path to declarative batch manifest JSON (required for --dry-run / --apply)")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true", help="Run all 6 pre-flight validation gates with zero disk writes")
     mode.add_argument("--apply", action="store_true", help="Validate and atomically apply the expansion batch")
+    mode.add_argument("--export-slugs", default=None, help="Comma-separated existing slugs to export into a clean editable LaTeX manifest")
+    parser.add_argument("--out", default=None, help="Output JSON path for --export-slugs")
     parser.add_argument("--force-large-batch", action="store_true", help=f"Allow batches larger than {MAX_RECOMMENDED_BATCH} subtopics")
     parser.add_argument("--update-existing", action="store_true", help="Allow updating already-existing subtopics/formulas (idempotent re-apply)")
     parser.add_argument("--sync-db", action="store_true", help="Also run php cli_sync.php after --apply")
     parser.add_argument("--ledger", default=None, help="Optional Markdown expansion ledger path (overrides manifest 'ledger_path')")
     parser.add_argument("--no-ledger", action="store_true", help="Skip updating any expansion ledger even if 'ledger_path' is set in manifest")
     args = parser.parse_args()
+
+    if args.export_slugs:
+        slug_list = [s.strip() for s in args.export_slugs.split(",") if s.strip()]
+        if not args.out:
+            parser.error("--out <manifest.json> is required when using --export-slugs.")
+        exported = export_slugs_to_manifest(slug_list, out_path=args.out)
+        print(
+            f"Exported {len(exported['subtopics'])} subtopic(s) from '{exported['domain']}' to '{args.out}'."
+        )
+        sys.exit(0)
+
+    if not args.manifest:
+        parser.error("A manifest path is required for --dry-run or --apply.")
 
     with open(args.manifest, "r", encoding="utf-8") as f:
         manifest = json.load(f)

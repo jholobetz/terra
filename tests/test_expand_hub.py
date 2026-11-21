@@ -5,6 +5,8 @@ import copy
 import pytest
 
 from scripts.expand_hub import (
+    decompile_svgs_to_latex,
+    export_slugs_to_manifest,
     is_single_variable_token,
     resolve_ledger_path,
     update_expansion_ledger,
@@ -202,4 +204,28 @@ def test_ledger_resolution_and_idempotent_append(tmp_path):
     text2 = ledger_file.read_text(encoding="utf-8")
     assert "## Batch 2 — `fluids-nonlinear`" in text2
     assert "| 2 | Second Synthetic Topic |" in text2
+
+
+def test_decompile_svgs_to_latex_and_missing_data_tex_guard():
+    compiled = '<p>Energy <svg data-tex="E = m c^2 &amp; p = 0"><g/></svg> holds.</p>'
+    assert decompile_svgs_to_latex(compiled) == r"<p>Energy \( E = m c^2 & p = 0 \) holds.</p>"
+
+    with pytest.raises(ValueError, match="missing data-tex"):
+        decompile_svgs_to_latex("<p>Broken <svg><path/></svg></p>", context_label="test")
+
+
+def test_export_slugs_and_update_existing_optional_pillar_and_incoming(tmp_path):
+    out_file = tmp_path / "exported_b1.json"
+    manifest = export_slugs_to_manifest(["mach-number-compressible-flow"], out_path=str(out_file))
+    assert out_file.exists()
+    assert manifest["domain"] == "fluids-nonlinear"
+    assert "pillar" not in manifest
+    assert "append_to_pillar" not in manifest
+    assert manifest["subtopics"]["mach-number-compressible-flow"]["incoming_links"] == []
+
+    # Validating exported manifest with --update-existing succeeds with 0 errors (no pillar/incoming_links needed)
+    errors, _, stats = validate_manifest(manifest, allow_update_existing=True)
+    assert errors == [], f"Unexpected errors on exported live slug: {errors}"
+    assert stats["subtopics"]["mach-number-compressible-flow"]["incoming_links"] >= 2
+
 

@@ -303,21 +303,39 @@ const MathJaxInspector = {
         const clean = latex.trim().replace(/^\\\(|^\\\[|^\$+|\\\)$|\\\]$|\$+$/g, '').trim();
         if (!clean) return false;
 
-        // 1. Single Latin letter (e.g. m, v, F, E, t, T, r, q, W, C, e, n, s, u, x, y, z)
-        if (/^[a-zA-Z]$/.test(clean)) return true;
+        // Strip optional leading unary sign or differential/delta/gradient prefix on a single variable
+        const strippedPrefix = clean.replace(/^(?:[-+]|\s*\\(?:pm|mp|Delta|delta|nabla)\s+)/, '').trim();
 
-        // 2. Single formatted letter macro (e.g. \mathbf{F}, \vec{F}, \mathbf{v}, \mathcal{L}, \hat{H})
-        if (/^\\[a-zA-Z]+\{[a-zA-Z]\}$/.test(clean)) return true;
+        // 1. Single Latin letter (e.g. m, v, F, E, t, T, r, q, W, C, e, n, s, u, x, y, z)
+        if (/^[a-zA-Z]$/.test(strippedPrefix)) return true;
+
+        // 2. Single formatted letter macro (e.g. \mathbf{F}, \vec{F}, \mathbf{v}, \mathcal{L}, \hat{H}, \mathrm{Ra})
+        if (/^\\[a-zA-Z]+\{[a-zA-Z0-9]+\}$/.test(strippedPrefix)) return true;
 
         // 3. Single Greek letter or standalone TeX symbol (e.g. \phi, \psi, \rho, \hbar, \partial, \omega)
-        if (/^\\[a-zA-Z]+$/.test(clean)) return true;
+        if (/^\\[a-zA-Z]+$/.test(strippedPrefix)) return true;
 
-        // 4. Single variable symbol with simple subscript/superscript (e.g. v_0, x_i, r_1, I_\nu, j_\nu, \alpha_\nu, S_\nu)
-        if (/^(\\?[a-zA-Z]|\\(mathbf|vec|mathcal|hat|mathbb)\{[a-zA-Z]\})+(_?\{?[a-zA-Z0-9\nu\mu\text]+\}?|\^?\{?[0-9a-zA-Z]+\}?)*$/.test(clean)) {
-            if (!/(=|\+|-|\\times|\\int|\\sum|\\frac|\\partial|\\cdot|\\to|\\approx|\\leq|\\geq)/.test(clean)) {
+        // 4. Single variable symbol with simple subscript/superscript (e.g. v_0, x_i, r_1, k^{-1}, \mathrm{Ra}_c, \mathrm{Re}^{-1}, \epsilon^{1/2}, \mathrm{Ra}^{\gamma}, U_{\min})
+        const singleVarAtom = /^(?:\\?[a-zA-Z]|\\(?:mathbf|vec|mathcal|hat|mathbb|mathrm|text)\{[a-zA-Z0-9]+\})+(?:_(?:\{[^=+\s]*\}|[a-zA-Z0-9]+)|(?:\^(?:\{[^=+\s]*\}|-?[a-zA-Z0-9]+)))*$/;
+        if (singleVarAtom.test(strippedPrefix)) {
+            if (!/(=|\+|-|\\times|\\int|\\sum|\\frac|\\partial|\\cdot|\\to|\\approx|\\leq|\\geq)/.test(strippedPrefix.replace(/\^\{-[0-9]+\}/g, ''))) {
                 return true;
             }
         }
+
+        // 5. Simple function notation of a single variable with 1-2 scalar arguments (e.g. T_0(z), W(z), \eta(x, t), h_b(t), \mathrm{Ra}(k), u(x, t), F_L(t), f(\xi))
+        const fnMatch = strippedPrefix.match(/^(.+?)\(\s*([a-zA-Z]|\\[a-zA-Z]+)(?:\s*,\s*([a-zA-Z]|\\[a-zA-Z]+))?\s*\)$/);
+        if (fnMatch) {
+            const head = fnMatch[1].trim();
+            if (!/^(?:\\?(?:sin|cos|tan|exp|log|ln|sinh|cosh|tanh|sech|arsinh|arcsin|arccos|arctan|det|tr|Tr))$/.test(head)) {
+                if (this.isSingleVariableToken(head)) {
+                    return true;
+                }
+            }
+        }
+
+        // 6. Simple nuclide/isotope notation (e.g. {}^{56}\text{Ni})
+        if (/^\{\}\^\{\d+\}\\(?:text|mathrm)\{[A-Za-z]{1,3}\}$/.test(clean)) return true;
 
         return false;
     },

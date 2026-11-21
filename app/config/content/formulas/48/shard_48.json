@@ -3020,7 +3020,10 @@
     "unit_system": "SI",
     "parent_formula_id": "hydrodynamic-stability-identity-1-2331b432-0e706a9a",
     "derivation_type": "DEFINITION",
-    "subcomponents": [],
+    "subcomponents": [
+      "vertical-density-stratification-gradient",
+      "vertical-velocity-shear-rate"
+    ],
     "status": "platinum",
     "semantic_variables": {
       "\\mathrm{Ri}": "Gradient Richardson number (dimensionless)",
@@ -3040,5 +3043,86 @@
     "record_type": "equation",
     "lineage_confidence": "curated",
     "description": "Dimensionless ratio of stabilizing gravitational density stratification to destabilizing squared vertical velocity shear."
+  },
+  "rayleigh-taylor-terminal-bubble-velocity-3d-boussinesq-limit": {
+    "id": "rayleigh-taylor-terminal-bubble-velocity-3d-boussinesq-limit",
+    "title": "Rayleigh-Taylor Terminal Bubble Velocity (3D Boussinesq Limit)",
+    "equation": "\\sqrt{A g \\lambda / \\pi}",
+    "conceptual_definition": "The expression $v_b = \\sqrt{A g \\lambda / \\pi}$ defines the asymptotic terminal rise velocity of a single-mode, three-dimensional fluid bubble during the nonlinear stage of the Rayleigh-Taylor instability in the Boussinesq limit ($A \\ll 1$). It arises from potential-flow buoyancy-drag balance models (such as the Layzer and Goncharov formulations) governing an unstable density-stratified fluid interface subject to an acceleration $g$.",
+    "intuitive_summary": "When a heavy fluid rests atop a slightly lighter fluid under gravity, rising plumes of light fluid (bubbles) accelerate until upward buoyancy is balanced by hydrodynamic form drag, reaching a steady terminal speed set by the density contrast $A$, acceleration $g$, and perturbation wavelength $\\lambda$.",
+    "interpretation": "In the nonlinear regime of the Rayleigh-Taylor instability, initial exponential perturbation growth saturates as rising light-fluid bubbles develop rounded tips and falling heavy-fluid spikes narrow. By expanding the incompressible irrotational velocity potential around the bubble apex in three dimensions, Goncharov's generalized Layzer model yields $v_b = \\sqrt{2 A g / [(1 + A) k]}$ for wavenumber $k = 2\\pi / \\lambda$, which simplifies to $\\sqrt{A g \\lambda / \\pi}$ when the Atwood number $A = (\\rho_2 - \\rho_1)/(\\rho_2 + \\rho_1)$ is small. The square-root scaling reflects a balance between buoyancy force per unit volume proportional to $A g$ and inertial drag proportional to $v_b^2 / \\lambda$, corresponding to a universal three-dimensional Boussinesq Froude number $\\mathrm{Fr} = v_b / \\sqrt{A g \\lambda} = 1 / \\sqrt{\\pi} \\approx 0.564$.",
+    "symmetry_origin": "The formula follows from dimensional analysis (Buckingham $\\Pi$ theorem) and scaling invariance of the incompressible Euler equations in the Boussinesq approximation, combined with azimuthal (rotational) symmetry of a three-dimensional axisymmetric bubble tip about the vertical axis and translational periodicity of wavelength $\\lambda$ in the transverse plane.",
+    "limits_and_boundary": "Valid in the inviscid, zero-surface-tension, incompressible, three-dimensional Boussinesq regime ($A \\ll 1$, Reynolds number $\\mathrm{Re} \\gg 1$, and $\\lambda$ far above the capillary cutoff wavelength). As $A \\to 0$, $v_b \\to 0$ as buoyancy vanishes; for finite $A \\to 1$, the full Goncharov factor $(1 + A)^{-1/2}$ reduces the terminal speed to $\\sqrt{g \\lambda / (2\\pi)}$. At late times in high-Reynolds-number flows, Kelvin-Helmholtz shear instabilities along the bubble-spike interface can induce re-acceleration beyond this single-mode potential-flow bound.",
+    "unit_system": "SI",
+    "parent_formula_id": "rayleigh-taylor-linear-growth-rate",
+    "derivation_type": "LIMITING_CASE",
+    "subcomponents": [
+      "lorentz-factor-expansion-low-velocity",
+      "classical-velocity-limit-f2d70293",
+      "proper-time-approximation-in-weak-fields-5773dc87"
+    ],
+    "status": "platinum",
+    "semantic_variables": {
+      "A": {
+        "name": "Atwood number",
+        "unit": "1 (dimensionless)",
+        "description": "Dimensionless density contrast across the fluid interface, defined as $A = (\\rho_2 - \\rho_1) / (\\rho_2 + \\rho_1)$ where $\\rho_2 > \\rho_1$."
+      },
+      "g": {
+        "name": "Gravitational or effective acceleration",
+        "unit": "m/s^2",
+        "description": "Magnitude of the gravitational field or effective interfacial acceleration directed from the heavier fluid toward the lighter fluid."
+      },
+      "\\lambda": {
+        "name": "Perturbation wavelength",
+        "unit": "m",
+        "description": "Spatial wavelength of the dominant single-mode interfacial perturbation, related to the wavenumber by $k = 2\\pi / \\lambda$."
+      },
+      "\\pi": {
+        "name": "Pi",
+        "unit": "1 (dimensionless)",
+        "description": "Mathematical constant equal to the ratio of a circle's circumference to its diameter, entering through the wavenumber conversion $k = 2\\pi / \\lambda$."
+      }
+    },
+    "cas_validation": {
+      "status": "DIMENSIONAL_EXPRESSION",
+      "is_homogeneous": true,
+      "quantity": "Velocity",
+      "dimension_latex": "L T^{-1}",
+      "verified_at": 1795246757
+    },
+    "equation_svg": null,
+    "record_type": "symbol_or_term",
+    "lineage_confidence": "curated",
+    "category": "fluids-nonlinear",
+    "description": "Three-dimensional Layzer terminal rise velocity of a single-mode Rayleigh-Taylor bubble of wavelength lambda."
+  },
+  "karman-hyperbolic-stability-condition": {
+    "title": "von Karman Staggered Vortex Street Stability Parameter",
+    "equation": "\\sinh(\\pi h / a)",
+    "category": "fluids-nonlinear",
+    "record_type": "symbol_or_term",
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "parent_formula_id": "karman-vortex-spacing-ratio",
+    "derivation_type": "DERIVED_FROM",
+    "subcomponents": [],
+    "description": "Hyperbolic sine geometric factor whose unit value defines the unique linearly stable aspect ratio of an infinite staggered vortex street.",
+    "conceptual_definition": "In Theodore von Karman's point-vortex wake stability analysis, the eigenvalue stability condition for a staggered double row reduces to $\\sinh(\\pi h / a) = 1$.",
+    "intuitive_summary": "This geometric factor encodes the balance of induced velocities between the two alternating vortex rows; only when it equals 1 do perturbations avoid exponential growth.",
+    "interpretation": "Inverting $\\sinh(\\pi h / a) = 1$ yields the universal spacing ratio $h / a = \\pi^{-1} \\operatorname{arsinh}(1) \\approx 0.28055$.",
+    "symmetry_origin": "Emerges from summing the cotangent velocity kernels of two infinite periodic point-vortex lattices offset by half a streamwise period $a/2$.",
+    "limits_and_boundary": "As $h/a \\to 0$, the two rows collapse and annihilate; for $h/a \\neq 0.28055$, linear perturbations grow exponentially.",
+    "semantic_variables": {
+      "h": "Transverse separation between opposite-signed vortex rows",
+      "a": "Streamwise spacing between consecutive vortices in one row"
+    },
+    "cas_validation": {
+      "status": "DIMENSIONAL_EXPRESSION",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Stability Factor",
+      "dimension_latex": "1",
+      "verified_at": 1795246757
+    }
   }
 }

@@ -3196,5 +3196,149 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "intracavity-photon-rate-equation": {
+    "title": "Intracavity Photon Number Rate Equation",
+    "equation": "\\frac{dq}{dt} = \\frac{V_a}{V_c} \\sigma_{21} c q N_2 - \\frac{q}{\\tau_c}",
+    "category": "electromagnetism",
+    "record_type": "equation",
+    "parent_formula_id": "four-level-population-rate-equation",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Describes the rate of change of the intracavity photon number $q(t)$ as the competition between stimulated photon generation across the active gain volume $V_a$ and exponential cavity decay with photon lifetime $\\tau_c$.",
+    "conceptual_definition": "This photon rate equation couples the optical field amplitude inside a resonant cavity to the inverted atomic population, predicting exponential amplification above threshold and exponential ring-down below it.",
+    "intuitive_summary": "Photons multiply inside the laser cavity whenever stimulated emission from the gain medium produces new photons faster than mirror transmission and internal scattering let them escape.",
+    "interpretation": "The geometric fill factor $V_a / V_c$ weights the overlap between the active gain medium volume $V_a$ and the resonator mode volume $V_c$. When $(V_a/V_c)\\sigma_{21} c N_2 > \\tau_c^{-1}$, $dq/dt > 0$ and the cavity field grows exponentially from spontaneous noise; in steady-state lasing above threshold, $dq/dt = 0$ pins $N_2$ to the exact threshold inversion.",
+    "symmetry_origin": "Expresses optical energy conservation for a single resonant electromagnetic cavity mode coupled to an inverted gain medium and dissipative output mirrors.",
+    "limits_and_boundary": "When $N_2 = 0$ (unpumped passive cavity), $q(t) = q(0)e^{-t/\\tau_c}$ decays exponentially at the cold-cavity ring-down rate $\\tau_c^{-1}$. In steady-state oscillation ($q > 0$, $dq/dt = 0$), the equation reduces directly to the laser threshold gain condition.",
+    "semantic_variables": {
+      "q": {
+        "name": "Intracavity Photon Number",
+        "type": "variable",
+        "unit": "1",
+        "description": "Total number of coherent photons stored in the oscillating resonator mode."
+      },
+      "t": {
+        "name": "Time",
+        "type": "variable",
+        "unit": "s",
+        "description": "Evolution time coordinate for the cavity photon population."
+      },
+      "V_a": {
+        "name": "Active Gain Volume",
+        "type": "variable",
+        "unit": "m^3",
+        "description": "Spatial volume of the inverted gain medium overlapping the cavity mode."
+      },
+      "V_c": {
+        "name": "Cavity Mode Volume",
+        "type": "variable",
+        "unit": "m^3",
+        "description": "Effective electromagnetic volume of the resonant optical cavity mode."
+      },
+      "\\sigma_{21}": {
+        "name": "Stimulated Emission Cross-Section",
+        "type": "variable",
+        "unit": "m^2",
+        "description": "Atomic cross-section quantifying stimulated emission probability at the lasing frequency."
+      },
+      "c": {
+        "name": "Speed of Light",
+        "type": "constant",
+        "unit": "m/s",
+        "description": "Optical phase and group velocity inside the cavity."
+      },
+      "N_2": {
+        "name": "Upper-Level Population Density",
+        "type": "variable",
+        "unit": "m^-3",
+        "description": "Inverted upper-state population density supplying optical gain."
+      },
+      "\\tau_c": {
+        "name": "Cavity Photon Lifetime",
+        "type": "variable",
+        "unit": "s",
+        "description": "Exponential decay time of photons inside the passive optical resonator due to mirror transmission and internal losses."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Photon Rate",
+      "dimension_latex": "[\\text{T}^{-1}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "laser-threshold-gain-condition"
+    ]
+  },
+  "shg-conversion-intensity-sinc": {
+    "title": "Second-Harmonic Generation Irradiance with Phase-Matching Factor",
+    "equation": "I_{2\\omega}(L) = \\frac{2 \\omega^2 d_{\\mathrm{eff}}^2 L^2}{n_{2\\omega} n_\\omega^2 c^3 \\varepsilon_0} I_\\omega^2 \\, \\mathrm{sinc}^2\\!\\left(\\frac{\\Delta k \\, L}{2}\\right)",
+    "category": "electromagnetism",
+    "record_type": "equation",
+    "parent_formula_id": "shg-coupled-wave-amplitude",
+    "derivation_type": "DERIVED_FROM",
+    "description": "Gives the output second-harmonic optical intensity $I_{2\\omega}(L)$ exiting a nonlinear crystal of length $L$ in the undepleted-pump regime as a function of pump intensity $I_\\omega$, effective nonlinearity $d_{\\mathrm{eff}}$, and phase-matching factor $\\mathrm{sinc}^2(\\Delta k L / 2)$.",
+    "conceptual_definition": "The undepleted-pump SHG intensity formula quantifies how quadratic power scaling, crystal length squared, and the interference envelope $\\mathrm{sinc}^2(\\Delta k L / 2)$ jointly control optical frequency-doubling efficiency.",
+    "intuitive_summary": "Doubling the fundamental laser intensity quadruples the frequency-doubled output, and doubling the crystal length also quadruples it—provided the phase mismatch stays near zero so the $\\mathrm{sinc}^2$ interference curve remains at its central peak.",
+    "interpretation": "Integrating the coupled-wave equation from $z = 0$ to $z = L$ with $A_{2\\omega}(0) = 0$ and converting field amplitudes to time-averaged Poynting intensities $I = \\frac{1}{2} n c \\varepsilon_0 |A|^2$ yields this closed-form result, where $\\mathrm{sinc}(x) = \\sin(x)/x$. The conversion efficiency $\\eta_{\\mathrm{SHG}} = I_{2\\omega}/I_\\omega$ scales linearly with $I_\\omega$, explaining why tightly focused or pulsed lasers achieve far higher conversion than weak continuous beams.",
+    "symmetry_origin": "Combines the quadratic field symmetry of the $\\chi^{(2)}$ interaction with the finite-aperture Fourier transform of a uniform rectangular crystal of length $L$, whose squared modulus produces the characteristic $\\mathrm{sinc}^2(\\Delta k L / 2)$ acceptance bandwidth.",
+    "limits_and_boundary": "At exact phase matching ($\\Delta k \\to 0$), $\\mathrm{sinc}^2(0) = 1$ and $I_{2\\omega}(L) \\propto L^2 I_\\omega^2$. For nonzero $\\Delta k$, the intensity oscillates with zeros at $L = 2 m L_c$ ($m = 1, 2, \\dots$) and never exceeds its value at $L = L_c$. When $I_{2\\omega}$ approaches $I_\\omega$, the undepleted-pump approximation breaks down and energy conservation bounds $I_{2\\omega}(L) \\le I_\\omega(0)$.",
+    "semantic_variables": {
+      "I_{2\\omega}(L)": {
+        "name": "Second-Harmonic Output Irradiance",
+        "type": "variable",
+        "unit": "W/m^2",
+        "description": "Time-averaged optical intensity of the frequency-doubled beam exiting a crystal of length $L$."
+      },
+      "I_\\omega": {
+        "name": "Fundamental Pump Irradiance",
+        "type": "variable",
+        "unit": "W/m^2",
+        "description": "Time-averaged incident optical intensity of the fundamental laser beam."
+      },
+      "L": {
+        "name": "Crystal Interaction Length",
+        "type": "variable",
+        "unit": "m",
+        "description": "Physical propagation length through the nonlinear optical crystal."
+      },
+      "n_\\omega": {
+        "name": "Fundamental Refractive Index",
+        "type": "variable",
+        "unit": "1",
+        "description": "Linear refractive index of the crystal at the fundamental frequency $\\omega$."
+      },
+      "n_{2\\omega}": {
+        "name": "Second-Harmonic Refractive Index",
+        "type": "variable",
+        "unit": "1",
+        "description": "Linear refractive index of the crystal at the second-harmonic frequency $2\\omega$."
+      },
+      "d_{\\mathrm{eff}}": {
+        "name": "Effective Nonlinear Coefficient",
+        "type": "variable",
+        "unit": "m/V",
+        "description": "Effective quadratic susceptibility coefficient governing the three-wave coupling strength."
+      },
+      "\\Delta k": {
+        "name": "Wavevector Phase Mismatch",
+        "type": "variable",
+        "unit": "rad/m",
+        "description": "Wavevector mismatch $k_{2\\omega} - 2 k_\\omega$ between harmonic and driving waves."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Optical Irradiance",
+      "dimension_latex": "[\\text{M} / \\text{T}^{3}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

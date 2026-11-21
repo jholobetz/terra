@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+70` subtopics live across 14 batches, bringing the encyclopedia from `1,584 → 1,654` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+75` subtopics live across 15 batches, bringing the encyclopedia from `1,584 → 1,659` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -199,3 +199,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 68 | Monte Carlo Integration and Metropolis-Hastings Sampling | http://localhost:8000/physics/subtopic/monte-carlo-metropolis-sampling | https://physicslab.ca/physics/subtopic/monte-carlo-metropolis-sampling |
 | 69 | Spectral and Finite-Element PDE Methods | http://localhost:8000/physics/subtopic/spectral-finite-element-pde-methods | https://physicslab.ca/physics/subtopic/spectral-finite-element-pde-methods |
 | 70 | Tensor Networks and Matrix Product States | http://localhost:8000/physics/subtopic/tensor-networks-matrix-product-states | https://physicslab.ca/physics/subtopic/tensor-networks-matrix-product-states |
+
+---
+
+## Batch 15 — `electromagnetism` · *7. Applied Optics, Lasers & Plasma Physics*
+* **Date:** 2026-11-21 (`electromagnetism`: `254 → 259`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/electromagnetism) · [Live](https://physicslab.ca/physics/topic/electromagnetism)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 71 | Laser Rate Equations and Population Inversion | http://localhost:8000/physics/subtopic/laser-rate-equations-population-inversion | https://physicslab.ca/physics/subtopic/laser-rate-equations-population-inversion |
+| 72 | Nonlinear Optics and Second-Harmonic Generation | http://localhost:8000/physics/subtopic/nonlinear-optics-second-harmonic-generation | https://physicslab.ca/physics/subtopic/nonlinear-optics-second-harmonic-generation |
+| 73 | Optical Waveguides, Fibers and Photonic Crystals | http://localhost:8000/physics/subtopic/optical-waveguides-photonic-crystals | https://physicslab.ca/physics/subtopic/optical-waveguides-photonic-crystals |
+| 74 | Debye Shielding and Langmuir Plasma Oscillations | http://localhost:8000/physics/subtopic/debye-shielding-langmuir-plasma-waves | https://physicslab.ca/physics/subtopic/debye-shielding-langmuir-plasma-waves |
+| 75 | Magnetohydrodynamic Waves and Collisionless Landau Damping | http://localhost:8000/physics/subtopic/mhd-waves-landau-damping | https://physicslab.ca/physics/subtopic/mhd-waves-landau-damping |

@@ -232,3 +232,18 @@ Composite OPS 2.0 Score: 4.0 / 5.0 (Ready for Graduation with Minor Polish)
 | **Phase 2** | **CLI Tooling (`gqs.py critique`)** | Implement critique command using sandboxed agent evaluator. |
 | **Phase 3** | **Linguistic Linting** | Build deterministic regex scanner for overused LLM tropes and cliches. |
 | **Phase 4** | **Platform Telemetry Integration** | Deploy micro-feedback ("Was this clear?") in the subtopic reading template. |
+
+---
+
+## 8. Round-Trip Editorial Execution Engine (`scripts/expand_hub.py --update-existing`)
+
+When OPS 2.0 upgrades begin across the existing encyclopedia, **do not build a second compilation pipeline**. Reuse the transactional compiler already built in Phase 5: [`scripts/expand_hub.py`](../scripts/expand_hub.py).
+
+### Operational Capabilities Already Available
+* **Transactional In-Place Upgrades (`--update-existing --no-ledger`):** Re-applies edited subtopic prose and formula definitions onto already-live slugs without tripping collision guards, with automatic rollback on any failure.
+* **Unified Pre-Flight Quality Gates:** Enforces whitespace-delimited stripped prose word counts (**`>= 720` hard floor**, **`750–880` sweet spot**), $\ge 2$ MathJax expressions per paragraph, balanced TeX braces, strict **Zero-Undefined-Click** 1-to-1 formula parity (`scripts/audit_clickable_equations.php`), and DAG fanout $\le 25$.
+* **End-to-End Artifact Sync:** Re-renders gold inline MathJax SVGs with `data-tex`, updates `hero_math`, rebuilds `formula_derivation_graph.json(.gz)`, synchronizes all 256 shard hashes, updates `search_index.json`, and purges stale HTML disk caches in one command (followed by `php cli_sync.php` for MariaDB parity).
+
+### Planned Small Extensions When Phase 6 (OPS 2.0) Starts
+1. **Make `pillar` / `append_to_pillar` optional under `--update-existing`:** Allow pure editorial/formula upgrade manifests for existing subtopics without requiring hub-pillar metadata.
+2. **Add `--export-slugs <slug1,slug2,...>`:** Reconstruct a clean, editable manifest with raw `\( ... \)` prose from compiled `data-tex` SVGs inside `app/config/content/*.json`, turning `expand_hub.py` into a full round-trip editorial compiler for all `1,614+` subtopics.

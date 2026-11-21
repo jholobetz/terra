@@ -286,6 +286,26 @@ def decompile_svgs_to_latex(html_str: str, context_label: str = "") -> str:
     return SVG_TAG_RE.sub(_repl, html_str)
 
 
+def print_domain_context(domain: str) -> None:
+    """Prints a compact authoring context for a domain: existing slugs, sample cross-hub bridges, and low-fanout parent formulas."""
+    if domain not in VALID_DOMAINS:
+        raise ValueError(f"Invalid domain '{domain}'. Must be one of {sorted(VALID_DOMAINS)}.")
+    existing_slugs = load_all_existing_slugs()
+    dom_slugs = sorted(s for s, d in existing_slugs.items() if d == domain)
+    existing_formulas = load_all_existing_formulas()
+    dom_parents = sorted(
+        (len(rec.get("subcomponents", [])), fid, rec.get("equation", ""))
+        for fid, rec in existing_formulas.items()
+        if rec.get("category") == domain and len(rec.get("subcomponents", [])) <= 15
+    )
+    print(f"=== EXPAND_HUB CONTEXT: {domain} ===")
+    print(f"Domain Slugs ({len(dom_slugs)}):")
+    print("  " + ", ".join(dom_slugs))
+    print(f"\nLow-Fanout Domain Parent Formulas (showing up to 25 of {len(dom_parents)}):")
+    for deg, fid, eq in dom_parents[:25]:
+        print(f"  - {fid:52s} (children={deg:2d}) | {eq[:60]}")
+
+
 def export_slugs_to_manifest(slugs: List[str], out_path: Optional[str] = None) -> Dict[str, Any]:
     """
     Exports existing live subtopics from their domain shard into a clean, editable LaTeX manifest
@@ -1116,6 +1136,7 @@ def main() -> None:
     mode.add_argument("--dry-run", action="store_true", help="Run all 6 pre-flight validation gates with zero disk writes")
     mode.add_argument("--apply", action="store_true", help="Validate and atomically apply the expansion batch")
     mode.add_argument("--export-slugs", default=None, help="Comma-separated existing slugs to export into a clean editable LaTeX manifest")
+    mode.add_argument("--context", default=None, help="Print existing domain slugs and low-fanout parent formula IDs for authoring")
     parser.add_argument("--out", default=None, help="Output JSON path for --export-slugs")
     parser.add_argument("--force-large-batch", action="store_true", help=f"Allow batches larger than {MAX_RECOMMENDED_BATCH} subtopics")
     parser.add_argument("--update-existing", action="store_true", help="Allow updating already-existing subtopics/formulas (idempotent re-apply)")
@@ -1123,6 +1144,10 @@ def main() -> None:
     parser.add_argument("--ledger", default=None, help="Optional Markdown expansion ledger path (overrides manifest 'ledger_path')")
     parser.add_argument("--no-ledger", action="store_true", help="Skip updating any expansion ledger even if 'ledger_path' is set in manifest")
     args = parser.parse_args()
+
+    if args.context:
+        print_domain_context(args.context.strip())
+        sys.exit(0)
 
     if args.export_slugs:
         slug_list = [s.strip() for s in args.export_slugs.split(",") if s.strip()]

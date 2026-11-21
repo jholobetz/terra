@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 thin-hub expansion campaign (`+30 / +60` subtopics complete — `+10` each across `fluids-nonlinear`, `condensed-matter`, and `mathematical-methods`, bringing the encyclopedia from `1,584 → 1,614` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+40` subtopics live across 8 batches, bringing the encyclopedia from `1,584 → 1,624` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -87,3 +87,31 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 28 | Perturbation Theory, Singular Layers and Multiple Scales | http://localhost:8000/physics/subtopic/perturbation-theory-multiple-scales | https://physicslab.ca/physics/subtopic/perturbation-theory-multiple-scales |
 | 29 | Symplectic Geometry and Hamiltonian Phase Space | http://localhost:8000/physics/subtopic/symplectic-geometry-hamiltonian-manifolds | https://physicslab.ca/physics/subtopic/symplectic-geometry-hamiltonian-manifolds |
 | 30 | Fiber Bundles, Connections and Characteristic Classes | http://localhost:8000/physics/subtopic/fiber-bundles-gauge-geometry | https://physicslab.ca/physics/subtopic/fiber-bundles-gauge-geometry |
+
+---
+
+## Batch 7 — `thermodynamics-statistical-mechanics` · *7. Classical Thermodynamics & Phase Equilibria*
+* **Date:** 2026-11-21 (`thermodynamics-statistical-mechanics`: `44 → 49`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/thermodynamics-statistical-mechanics) · [Live](https://physicslab.ca/physics/topic/thermodynamics-statistical-mechanics)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 31 | Carnot Cycle, Heat Engines and Thermodynamic Efficiency | http://localhost:8000/physics/subtopic/carnot-cycle-heat-engines | https://physicslab.ca/physics/subtopic/carnot-cycle-heat-engines |
+| 32 | Helmholtz and Gibbs Free Energy and Maxwell Relations | http://localhost:8000/physics/subtopic/thermodynamic-potentials-maxwell-relations | https://physicslab.ca/physics/subtopic/thermodynamic-potentials-maxwell-relations |
+| 33 | Chemical Potential, Fugacity and Multi-Phase Equilibria | http://localhost:8000/physics/subtopic/chemical-potential-phase-equilibria | https://physicslab.ca/physics/subtopic/chemical-potential-phase-equilibria |
+| 34 | Clausius-Clapeyron Equation and Phase Diagrams | http://localhost:8000/physics/subtopic/clausius-clapeyron-phase-diagrams | https://physicslab.ca/physics/subtopic/clausius-clapeyron-phase-diagrams |
+| 35 | Van der Waals Equation of State and Critical Points | http://localhost:8000/physics/subtopic/van-der-waals-real-gases | https://physicslab.ca/physics/subtopic/van-der-waals-real-gases |
+
+---
+
+## Batch 8 — `thermodynamics-statistical-mechanics` · *8. Nonequilibrium Statistical Mechanics & Fluctuation Theorems*
+* **Date:** 2026-11-21 (`thermodynamics-statistical-mechanics`: `49 → 54`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/thermodynamics-statistical-mechanics) · [Live](https://physicslab.ca/physics/topic/thermodynamics-statistical-mechanics)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 36 | Fluctuation-Dissipation Theorem and Thermal Noise | http://localhost:8000/physics/subtopic/fluctuation-dissipation-theorem | https://physicslab.ca/physics/subtopic/fluctuation-dissipation-theorem |
+| 37 | Onsager Reciprocal Relations and Irreversible Thermodynamics | http://localhost:8000/physics/subtopic/onsager-reciprocal-relations | https://physicslab.ca/physics/subtopic/onsager-reciprocal-relations |
+| 38 | Kubo Formula and Linear Response Theory | http://localhost:8000/physics/subtopic/kubo-linear-response-theory | https://physicslab.ca/physics/subtopic/kubo-linear-response-theory |
+| 39 | Jarzynski Equality and Crooks Fluctuation Theorem | http://localhost:8000/physics/subtopic/jarzynski-equality-fluctuation-theorems | https://physicslab.ca/physics/subtopic/jarzynski-equality-fluctuation-theorems |
+| 40 | Master Equations, Detailed Balance and Stochastic Thermodynamics | http://localhost:8000/physics/subtopic/master-equations-detailed-balance | https://physicslab.ca/physics/subtopic/master-equations-detailed-balance |

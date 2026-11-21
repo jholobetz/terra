@@ -1323,7 +1323,10 @@
         "description": "Time elapsed."
       }
     },
-    "subcomponents": [],
+    "subcomponents": [
+      "multiple-scales-envelope-ansatz",
+      "kuramoto-ott-antonsen-manifold-ode"
+    ],
     "description": "Describes the dynamics of a quantity whose rate of increase is directly proportional to its current value. This model is fundamental to processes ranging from population growth to the early expansion of the universe.",
     "derivation_type": "DERIVED_FROM",
     "parent_formula_id": "navier-stokes-momentum-fluids-27e5bf4d",
@@ -2749,5 +2752,57 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "kuramoto-phase-locking-condition": {
+    "title": "Kuramoto Phase-Locking Bandwidth Condition",
+    "equation": "|\\omega_i - \\Omega| \\le K r",
+    "category": "fluids-nonlinear",
+    "record_type": "equation",
+    "parent_formula_id": "kuramoto-mean-field-phase-equation",
+    "derivation_type": "DERIVED_FROM",
+    "description": "Establishes the exact frequency-detuning criterion separating phase-locked oscillators that entrain to the collective frequency $\\Omega$ from drifting oscillators whose detuning exceeds the mean-field locking torque $K r$.",
+    "conceptual_definition": "The phase-locking condition $|\\omega_i - \\Omega| \\le K r$ defines the Arnold-tongue bandwidth within the natural frequency distribution $g(\\omega)$ whose oscillators achieve stationary fixed points in the co-rotating frame.",
+    "intuitive_summary": "Only oscillators whose natural rhythm $\\omega_i$ sits within $\\pm K r$ of the group's collective beat $\\Omega$ can be captured into lockstep; faster or slower outliers keep slipping past the cluster.",
+    "interpretation": "In the frame rotating at the collective mean-field frequency $\\Omega = \\dot{\\psi}$, the shifted phase $\\phi_i = \\theta_i - \\psi$ satisfies $\\dot{\\phi}_i = (\\omega_i - \\Omega) - K r \\sin \\phi_i$. Stationary solutions $\\dot{\\phi}_i = 0$ require $\\sin \\phi_i = (\\omega_i - \\Omega)/(K r)$, which admits a real stable root $\\cos \\phi_i > 0$ if and only if $|\\omega_i - \\Omega| \\le K r$.",
+    "symmetry_origin": "Reflects the boundedness $|\\sin \\phi_i| \\le 1$ of the $2\\pi$-periodic sinusoidal coupling potential together with reflection symmetry around the mean frequency $\\Omega$.",
+    "limits_and_boundary": "At equality $|\\omega_i - \\Omega| = K r$, the stable and unstable fixed points coalesce in a saddle-node bifurcation at $\\phi_i = \\pm \\pi/2$. For $|\\omega_i - \\Omega| > K r$, oscillators drift with period $T_i = 2\\pi / \\sqrt{(\\omega_i - \\Omega)^2 - (K r)^2}$.",
+    "semantic_variables": {
+      "\\omega_i": {
+        "name": "Natural Angular Frequency",
+        "type": "parameter",
+        "unit": "rad/s",
+        "description": "Intrinsic frequency of the $i$-th oscillator."
+      },
+      "\\Omega": {
+        "name": "Collective Synchronization Frequency",
+        "type": "variable",
+        "unit": "rad/s",
+        "description": "Angular frequency $\\dot{\\psi}$ of the uniformly rotating macroscopic order parameter."
+      },
+      "K": {
+        "name": "Global Coupling Strength",
+        "type": "parameter",
+        "unit": "rad/s",
+        "description": "Uniform coupling strength across the ensemble."
+      },
+      "r": {
+        "name": "Phase Coherence Amplitude",
+        "type": "variable",
+        "unit": "1",
+        "description": "Dimensionless modulus of the collective order parameter."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Angular Frequency Detuning Bound",
+      "dimension_latex": "[\\text{T}^{-1}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "kuramoto-critical-coupling-threshold"
+    ]
   }
 }

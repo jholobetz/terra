@@ -1,0 +1,2282 @@
+{
+  "domain": "fluids-nonlinear",
+  "ledger_path": "docs/new_expansion_phase_5.md",
+  "pillar": {
+    "title": "7. Pattern Formation, Solitons & Active Matter",
+    "narrative": "Reaction-diffusion Turing morphogenesis, complex Ginzburg-Landau envelope selection, Kuramoto collective oscillator synchronization, self-propelled active matter, and quantized superfluid vortex turbulence.",
+    "slugs": [
+      "turing-patterns-reaction-diffusion",
+      "ginzburg-landau-amplitude-equations",
+      "kuramoto-synchronization-oscillators",
+      "active-matter-flocking-hydrodynamics",
+      "quantum-vortices-superfluid-turbulence"
+    ]
+  },
+  "allow_short_tokens": [],
+  "verified_date": "2026-11-21",
+  "subtopics": {
+    "turing-patterns-reaction-diffusion": {
+      "title": "Turing Patterns and Reaction-Diffusion Morphogenesis",
+      "hero_equation": "\\frac{\\partial u}{\\partial t} = f(u, v) + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = g(u, v) + D_v \\nabla^2 v",
+      "formula_ids": [
+        "turing-two-component-reaction-diffusion",
+        "turing-homogeneous-jacobian-stability",
+        "turing-dispersion-relation",
+        "turing-diffusion-instability-criterion",
+        "turing-critical-wavenumber-wavelength",
+        "gierer-meinhardt-activator-inhibitor",
+        "gray-scott-reaction-diffusion-model"
+      ],
+      "content": "<p>Molecular diffusion ordinarily erases spatial concentration gradients in strict compliance with the <a href=\"/physics/subtopic/thermodynamics-second-law\" class=\"subtopic-link\"><strong>Second Law of Thermodynamics</strong></a>, yet Alan Turing demonstrated in 1952 that diffusive transport can paradoxically generate periodic spatial order out of a completely uniform medium. In an open nonequilibrium chemical reactor or living embryonic tissue, two interacting morphogen species—a locally autocatalytic activator <em>u</em>(<strong>r</strong>, <em>t</em>) and a rapidly diffusing inhibitor <em>v</em>(<strong>r</strong>, <em>t</em>)—evolve according to the coupled partial differential system \\( \\frac{\\partial u}{\\partial t} = f(u, v) + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = g(u, v) + D_v \\nabla^2 v \\), where <em>f</em>(<em>u</em>, <em>v</em>) and <em>g</em>(<em>u</em>, <em>v</em>) encode local nonlinear reaction kinetics and <em>D<sub>u</sub></em>, <em>D<sub>v</sub></em> are positive molecular diffusivities. When spatially uniform, the equilibrium concentration pair (<em>u</em><sub>0</sub>, <em>v</em><sub>0</sub>) satisfying <em>f</em>(<em>u</em><sub>0</sub>, <em>v</em><sub>0</sub>) = <em>g</em>(<em>u</em><sub>0</sub>, <em>v</em><sub>0</sub>) = 0 remains linearly stable against homogeneous perturbations whenever the local Jacobian matrix <strong>J</strong> obeys the trace and determinant inequalities \\( f_u + g_v < 0, \\quad f_u g_v - f_v g_u > 0 \\). Nevertheless, unequal diffusivities <em>D<sub>v</sub></em> &gt; <em>D<sub>u</sub></em> can destabilize this uniform state, driving <a href=\"/physics/subtopic/spontaneous-symmetry-breaking\" class=\"subtopic-link\"><strong>Spontaneous Symmetry Breaking</strong></a> into stationary periodic chemical patterns.</p><p>Determining when diffusion destabilizes an otherwise stable homogeneous chemistry relies on normal-mode linearization via <a href=\"/physics/subtopic/fourier-analysis\" class=\"subtopic-link\"><strong>Fourier Analysis</strong></a> and matrix <a href=\"/physics/subtopic/eigenvalue-problems\" class=\"subtopic-link\"><strong>Eigenvalue Problems</strong></a>, directly paralleling methods of <a href=\"/physics/subtopic/hydrodynamic-stability\" class=\"subtopic-link\"><strong>Hydrodynamic Stability</strong></a>. Expanding small spatial perturbations (&delta;<em>u</em>, &delta;<em>v</em>) &prop; exp(<em>&sigma;t</em> + <em>i</em><strong>k</strong>&middot;<strong>r</strong>) around (<em>u</em><sub>0</sub>, <em>v</em><sub>0</sub>) inside \\( \\frac{\\partial u}{\\partial t} = f(u, v) + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = g(u, v) + D_v \\nabla^2 v \\) converts the Laplacian into &minus;<em>k</em><sup>2</sup> and yields the quadratic dispersion relation \\( \\sigma^2 - \\left(f_u + g_v - (D_u + D_v) k^2\\right) \\sigma + \\left(f_u - D_u k^2\\right)\\left(g_v - D_v k^2\\right) - f_v g_u = 0 \\) for the temporal growth rate <em>&sigma;</em>(<em>k</em>). Because the homogeneous trace <em>f<sub>u</sub></em> + <em>g<sub>v</sub></em> is strictly negative and &minus;(<em>D<sub>u</sub></em> + <em>D<sub>v</sub></em>)<em>k</em><sup>2</sup> adds further damping at every nonzero wavenumber <em>k</em>, no oscillatory Hopf instability can be induced by diffusion alone. Instead, a real eigenvalue crosses into Re(<em>&sigma;</em>) &gt; 0 solely when the constant term dips below zero over a finite band of wavenumbers, which occurs if and only if the reaction rates and diffusivities satisfy \\( D_v f_u + D_u g_v > 2 \\sqrt{D_u D_v (f_u g_v - f_v g_u)} \\).</p><p>Combining the homogeneous stability bounds \\( f_u + g_v < 0, \\quad f_u g_v - f_v g_u > 0 \\) with the diffusion-driven threshold \\( D_v f_u + D_u g_v > 2 \\sqrt{D_u D_v (f_u g_v - f_v g_u)} \\) exposes the physical mechanism of short-range activation coupled to long-range inhibition. Since <em>f<sub>u</sub></em> + <em>g<sub>v</sub></em> &lt; 0 while <em>D<sub>v</sub>f<sub>u</sub></em> + <em>D<sub>u</sub>g<sub>v</sub></em> &gt; 0, the diagonal Jacobian entries must carry opposite signs: the activator must promote its own production (<em>f<sub>u</sub></em> &gt; 0) while the inhibitor damps itself (<em>g<sub>v</sub></em> &lt; 0), and the diffusivity ratio <em>d</em> = <em>D<sub>v</sub></em>/<em>D<sub>u</sub></em> must exceed a strictly greater-than-unity critical threshold <em>d<sub>c</sub></em>. Physically, a random local spike in activator amplifies itself faster than it diffuses away, simultaneously generating inhibitor that spreads rapidly into the surrounding region and suppresses rival peaks nearby. At the onset of this stationary pitchfork transition in <a href=\"/physics/subtopic/bifurcation-theory\" class=\"subtopic-link\"><strong>Bifurcation Theory</strong></a>, the first unstable spatial mode locks onto the intrinsic critical wavenumber and wavelength \\( k_c^2 = \\sqrt{\\frac{f_u g_v - f_v g_u}{D_u D_v}}, \\quad \\lambda_c = \\frac{2\\pi}{k_c} \\), an emergent length scale dictated entirely by microscopic kinetics and transport rather than macroscopic vessel geometry.</p><p>Two canonical nonlinear models illustrate how reaction stoichiometry shapes finite-amplitude morphogenesis once linear modes outgrow the regime of \\( \\sigma^2 - \\left(f_u + g_v - (D_u + D_v) k^2\\right) \\sigma + \\left(f_u - D_u k^2\\right)\\left(g_v - D_v k^2\\right) - f_v g_u = 0 \\). Alfred Gierer and Hans Meinhardt formulated the prototype biological activator-inhibitor system \\( \\frac{\\partial u}{\\partial t} = \\rho_0 + c \\frac{u^2}{v} - \\mu_u u + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = c' u^2 - \\mu_v v + D_v \\nabla^2 v \\), where quadratic activator self-enhancement is throttled inversely by inhibitor concentration while basal source <em>&rho;</em><sub>0</sub> and linear decay rates <em>&mu;<sub>u</sub></em>, <em>&mu;<sub>v</sub></em> anchor a scale-regulating equilibrium capable of regenerating polarity after tissue excision. An equivalent activator-substrate depletion mechanism arises in the cubic autocatalytic Gray–Scott model \\( \\frac{\\partial u}{\\partial t} = -u v^2 + F(1 - u) + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = u v^2 - (F + \\kappa) v + D_v \\nabla^2 v \\), in which a fast-diffusing feed substrate <em>u</em> supplied at rate <em>F</em> is consumed by a slow-diffusing autocatalyst <em>v</em> decaying at rate <em>&kappa;</em>. Sweeping across the (<em>F</em>, <em>&kappa;</em>) parameter plane produces self-replicating spots, bifurcating stripes, labyrinthine coral networks, and localized solitons.</p><p>In two spatial dimensions, isotropic rotational symmetry renders an entire circle of wavevectors |<strong>k</strong>| = <em>k<sub>c</sub></em> simultaneously unstable just above the threshold \\( D_v f_u + D_u g_v > 2 \\sqrt{D_u D_v (f_u g_v - f_v g_u)} \\), raising the problem of nonlinear planform selection. Applying <a href=\"/physics/subtopic/perturbation-theory-multiple-scales\" class=\"subtopic-link\"><strong>Multiple-Scales Perturbation Theory</strong></a> yields coupled Stuart–Landau amplitude equations structurally identical to those governing convective rolls in <a href=\"/physics/subtopic/rayleigh-benard-convection\" class=\"subtopic-link\"><strong>Rayleigh-Bénard Convection</strong></a> and vortices in <a href=\"/physics/subtopic/taylor-couette-instability\" class=\"subtopic-link\"><strong>Taylor-Couette Instability</strong></a>. Resonant triads of wavevectors separated by 120 degrees interact through quadratic nonlinearities to stabilize hexagonal spot arrays (or inverted honeycomb lattices) subcritically near onset, whereas stronger supercritical forcing enhances cubic cross-mode saturation that selects parallel stripes and meandering labyrinths. When chemical kinetics also admit a bulk oscillatory instability, the stationary Turing scale \\( k_c^2 = \\sqrt{\\frac{f_u g_v - f_v g_u}{D_u D_v}}, \\quad \\lambda_c = \\frac{2\\pi}{k_c} \\) competes with temporal Hopf oscillations to generate spatiotemporal chaos, standing oscillons, and rotating spiral waves characteristic of the excitable Belousov–Zhabotinsky reaction.</p><p>Experimental realization of stationary chemical Turing patterns eluded laboratories for thirty-eight years because small-molecule aqueous diffusivities typically differ by less than a factor of two, far below the required critical ratio <em>d<sub>c</sub></em>. In 1990, Vincent Castets, Etiennette Dulos, Jacques Boissonade, and Patrick De Kepper overcame this barrier using the chlorite-iodide-malonic acid (CIMA) reaction inside a continuously fed polyacrylamide gel impregnated with immobile starch; reversible complexation of the triiodide activator to starch selectively lowered its effective diffusivity <em>D<sub>u</sub></em> by an order of magnitude, producing stationary hexagonal spots and striped bands with wavelength <em>&lambda;<sub>c</sub></em> &approx; 0.2 mm in quantitative agreement with \\( k_c^2 = \\sqrt{\\frac{f_u g_v - f_v g_u}{D_u D_v}}, \\quad \\lambda_c = \\frac{2\\pi}{k_c} \\). In developmental biology, coupled morphogen circuits modeled by \\( \\frac{\\partial u}{\\partial t} = f(u, v) + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = g(u, v) + D_v \\nabla^2 v \\) and mesoscopic intrinsic noise described by <a href=\"/physics/subtopic/master-equations-detailed-balance\" class=\"subtopic-link\"><strong>Master Equations and Detailed Balance</strong></a> govern periodic anatomical structures spanning 0.1 to 1 mm, including BMP–Sox9–Wnt digit patterning in mouse limb buds, mammalian hair-follicle spacing, and melanophore–xanthophore stripes on zebrafish skin, where kinetics resembling \\( \\frac{\\partial u}{\\partial t} = \\rho_0 + c \\frac{u^2}{v} - \\mu_u u + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = c' u^2 - \\mu_v v + D_v \\nabla^2 v \\) account for dynamic stripe insertion as the organism grows.</p>",
+      "citations": [
+        {
+          "doi": "10.1098/rstb.1952.0012",
+          "title": "The chemical basis of morphogenesis",
+          "authors": [
+            "Alan Mathison Turing"
+          ],
+          "year": 1952,
+          "journal": "Philosophical Transactions of the Royal Society of London. Series B, Biological Sciences"
+        },
+        {
+          "doi": "10.1007/BF00289234",
+          "title": "A theory of biological pattern formation",
+          "authors": [
+            "Alfred Gierer",
+            "Hans Meinhardt"
+          ],
+          "year": 1972,
+          "journal": "Kybernetik"
+        },
+        {
+          "doi": "10.1103/PhysRevLett.64.2953",
+          "title": "Experimental evidence of a sustained standing Turing-type nonequilibrium chemical pattern",
+          "authors": [
+            "Vincent Castets",
+            "Etiennette Dulos",
+            "Jacques Boissonade",
+            "Patrick De Kepper"
+          ],
+          "year": 1990,
+          "journal": "Physical Review Letters"
+        },
+        {
+          "doi": "10.1126/science.1252953",
+          "title": "Digit patterning is controlled by a Bmp-Sox9-Wnt Turing network modulated by morphogen gradients",
+          "authors": [
+            "Jelena Raspopovic",
+            "Luciano Marcon",
+            "Laura Russo",
+            "James Sharpe"
+          ],
+          "year": 2014,
+          "journal": "Science"
+        }
+      ],
+      "keywords": [
+        "turing-patterns",
+        "reaction-diffusion",
+        "morphogenesis",
+        "activator-inhibitor",
+        "diffusion-driven-instability",
+        "gierer-meinhardt",
+        "gray-scott",
+        "cima-reaction",
+        "pattern-formation"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "bifurcation-theory",
+          "sentence": " When spatial diffusion couples to nonlinear chemical kinetics, a stationary finite-wavenumber bifurcation destabilizes the uniform equilibrium to generate <a href=\"/physics/subtopic/turing-patterns-reaction-diffusion\" class=\"subtopic-link\"><strong>Turing Patterns and Reaction-Diffusion Morphogenesis</strong></a>."
+        },
+        {
+          "from_slug": "hydrodynamic-stability",
+          "sentence": " The identical normal-mode dispersion framework that determines critical wavenumbers in fluid instabilities also governs diffusion-driven pattern selection in <a href=\"/physics/subtopic/turing-patterns-reaction-diffusion\" class=\"subtopic-link\"><strong>Turing Patterns and Reaction-Diffusion Morphogenesis</strong></a>."
+        }
+      ]
+    },
+    "ginzburg-landau-amplitude-equations": {
+      "title": "Complex Ginzburg-Landau Equation and Spatiotemporal Pattern Selection",
+      "hero_equation": "\\partial_t A = A + (1 + i b)\\nabla^2 A - (1 + i c)|A|^2 A",
+      "formula_ids": [
+        "complex-ginzburg-landau-equation",
+        "newell-whitehead-segel-equation",
+        "multiple-scales-envelope-ansatz",
+        "cgle-plane-wave-dispersion",
+        "eckhaus-benjamin-feir-newell-criterion",
+        "cgle-topological-winding-number",
+        "nozaki-bekki-hole-solution"
+      ],
+      "content": "<p>Driving a spatially extended dissipative continuum slightly past a primary linear instability threshold excites a narrow band of critical modes whose slow spatiotemporal modulation decouples from fast carrier oscillations. Within <a href=\"/physics/subtopic/hydrodynamic-stability\" class=\"subtopic-link\"><strong>Hydrodynamic Stability</strong></a> and <a href=\"/physics/subtopic/bifurcation-theory\" class=\"subtopic-link\"><strong>Bifurcation Theory</strong></a>, the small supercritical distance <em>&epsilon;</em><sup>2</sup> above onset establishes a separation of scales between the carrier wavelength and slow envelope coordinates <em>X</em> = <em>&epsilon;x</em> and <em>T</em> = <em>&epsilon;</em><sup>2</sup><em>t</em>. Expanding around the uniform base state via <a href=\"/physics/subtopic/perturbation-theory-multiple-scales\" class=\"subtopic-link\"><strong>Multiple-Scales Perturbation Theory</strong></a> yields the weakly nonlinear ansatz \\( u(x, t) = \\epsilon A(X, T) e^{i(k_c x - \\omega_c t)} + \\mathrm{c.c.} + \\mathcal{O}(\\epsilon^2) \\), where <em>k<sub>c</sub></em> and <em>&omega;<sub>c</sub></em> denote the critical wavenumber and Hopf frequency. Imposing the Fredholm solvability condition at order <em>&epsilon;</em><sup>3</sup> removes secular divergences and reduces diverse partial differential equations to a single universal normal form: the dimensionless complex Ginzburg-Landau equation \\( \\partial_t A = A + (1 + i b)\\nabla^2 A - (1 + i c)|A|^2 A \\), governed solely by linear dispersion <em>b</em> and nonlinear frequency shift <em>c</em>.</p><p>When the primary instability breaks spatial translation invariance without temporal oscillation (<em>&omega;<sub>c</sub></em> = 0, <em>k<sub>c</sub></em> &ne; 0), rotational isotropy in a horizontal layer dictates anisotropic envelope scaling with longitudinal coordinate <em>X</em> = <em>&epsilon;x</em> and transverse coordinate <em>Y</em> = <em>&epsilon;</em><sup>1/2</sup><em>y</em>. Projecting the fluid equations onto the marginal roll mode in <a href=\"/physics/subtopic/rayleigh-benard-convection\" class=\"subtopic-link\"><strong>Rayleigh-Bénard Convection</strong></a> near <em>R<sub>c</sub></em> &approx; 1707.76, or onto toroidal rolls in <a href=\"/physics/subtopic/taylor-couette-instability\" class=\"subtopic-link\"><strong>Taylor-Couette Instability</strong></a>, yields the Newell-Whitehead-Segel equation \\( \\partial_T A = \\mu A + \\left(\\partial_X - \\frac{i}{2 k_c}\\partial_Y^2\\right)^2 A - |A|^2 A \\), where <em>&mu;</em> measures reduced supercriticality. Unlike oscillatory media, this real-coefficient dynamics admits a monotonic Lyapunov free-energy functional that drives rolls toward stationary equilibria selected by <a href=\"/physics/subtopic/spontaneous-symmetry-breaking\" class=\"subtopic-link\"><strong>Spontaneous Symmetry Breaking</strong></a>. Across stationary and oscillatory thresholds alike, the multiscale reconstruction \\( u(x, t) = \\epsilon A(X, T) e^{i(k_c x - \\omega_c t)} + \\mathrm{c.c.} + \\mathcal{O}(\\epsilon^2) \\) ensures that macroscopic pattern selection depends only on broken symmetries and conservation laws rather than microscopic constitutive details.</p><p>In one-dimensional oscillatory media governed by \\( \\partial_t A = A + (1 + i b)\\nabla^2 A - (1 + i c)|A|^2 A \\), the simplest nontrivial states form a continuous family of monochromatic traveling plane waves <em>A<sub>q</sub></em>(<em>x</em>, <em>t</em>) = (1 &minus; <em>q</em><sup>2</sup>)<sup>1/2</sup> exp[<em>i</em>(<em>qx</em> &minus; <em>&omega;</em>(<em>q</em>)<em>t</em>)] parameterized by wavenumber shift |<em>q</em>| &lt; 1. Substituting this family into the evolution equation fixes the nonlinear dispersion relation \\( \\omega(q) = c + (b - c) q^2 \\), showing how non-isochronicity <em>c</em> shifts the homogeneous frequency while <em>b</em> &minus; <em>c</em> sets group dispersion. Linearizing long-wavelength phase and amplitude perturbations around each plane wave yields an effective phase-diffusion equation whose diffusivity turns negative whenever \\( D_{\\mathrm{ph}}(q) = 1 + b c - \\frac{2(1 + c^2) q^2}{1 - q^2} < 0 \\). For 1 + <em>bc</em> &gt; 0, this inequality defines the Eckhaus instability band, restricting stable patterns to <em>q</em><sup>2</sup> &lt; (1 + <em>bc</em>)/(3 + <em>bc</em> + 2<em>c</em><sup>2</sup>); once the Benjamin-Feir-Newell threshold 1 + <em>bc</em> &lt; 0 is crossed, even the spatially uniform <em>q</em> = 0 oscillation becomes modulationally unstable and every plane-wave state collapses.</p><p>Crossing the Benjamin-Feir-Newell boundary 1 + <em>bc</em> &lt; 0 where \\( D_{\\mathrm{ph}}(q) = 1 + b c - \\frac{2(1 + c^2) q^2}{1 - q^2} < 0 \\) holds for all wavenumbers triggers two distinct regimes of spatiotemporal chaos characterized by positive spectra of <a href=\"/physics/subtopic/lyapunov-exponents\" class=\"subtopic-link\"><strong>Lyapunov Exponents</strong></a>. Just beyond onset, amplitude fluctuations stay slaved to slow phase gradients and |<em>A</em>| remains bounded away from zero, generating weak phase turbulence governed asymptotically by the Kuramoto-Sivashinsky equation. Deeper in the unstable region, steep phase modulations overwhelm saturation and drive |<em>A</em>| locally to zero, nucleating space-time phase slips that usher in defect-mediated amplitude turbulence with short correlation lengths. Between coherent wave trains and defect chaos sit localized propagating structures known as Nozaki-Bekki holes, described by \\( A(x, t) = R_0 \\tanh(\\kappa \\xi) \\exp\\left[i \\theta(\\xi) - i \\Omega t\\right] \\) in the comoving frame <em>&xi;</em> = <em>x</em> &minus; <em>vt</em>. Unlike conservative solitary waves in <a href=\"/physics/subtopic/korteweg-de-vries-solitons\" class=\"subtopic-link\"><strong>Korteweg-de Vries Solitons</strong></a>, where dispersion balances nonlinearity without energy flux, these dissipative phase sinks absorb incoming wave packets obeying \\( \\omega(q) = c + (b - c) q^2 \\) and destabilize into proliferating defects when their core accelerates.</p><p>In two spatial dimensions, zeros of the complex field <em>A</em> = |<em>A</em>|<em>e</em><sup><em>i&phi;</em></sup> form codimension-two point singularities where the nodal lines Re(<em>A</em>) = 0 and Im(<em>A</em>) = 0 intersect transversely. Integrating the phase gradient around any closed loop <em>C</em> enclosing an isolated core quantizes the topological charge through the winding number \\( n_{\\mathrm{top}} = \\frac{1}{2\\pi} \\oint_{\\mathcal{C}} \\nabla \\phi \\cdot d\\mathbf{l} = \\pm 1 \\), forbidding single defects from vanishing except via pairwise vortex-antivortex annihilation or boundary migration. Under the non-variational dynamics of \\( \\partial_t A = A + (1 + i b)\\nabla^2 A - (1 + i c)|A|^2 A \\), each unit-charge core winds into an Archimedean spiral wave that selects a unique asymptotic wavenumber and radiates traveling wavetrains colliding along sharp shock walls. Depending on <em>b</em> and <em>c</em>, ensembles of spirals self-organize into a frozen vortex glass—with pinned cores inside cellular domains—or melt into spiral-defect chaos via core instability and pair creation. This quantized circulation parallels superfluid vortices in <a href=\"/physics/subtopic/bose-einstein-condensate\" class=\"subtopic-link\"><strong>Bose-Einstein Condensates</strong></a>, except that linear gain and cubic dissipation replace Hamiltonian conservation with attractor selection.</p><p>Experimental platforms across fluid dynamics, chemistry, and photonics quantitatively realize these universal amplitude regimes. In binary-fluid convection of ethanol-water mixtures with negative separation ratios, oscillatory onset generates counterpropagating traveling-wave pulses and stationary sinks matching the Nozaki-Bekki core structure \\( A(x, t) = R_0 \\tanh(\\kappa \\xi) \\exp\\left[i \\theta(\\xi) - i \\Omega t\\right] \\). In oscillatory Belousov-Zhabotinsky chemical reactors and catalytic carbon-monoxide oxidation on platinum Pt(110) surfaces, optical imaging directly tracks rotating spiral arms, topological charge conservation \\( n_{\\mathrm{top}} = \\frac{1}{2\\pi} \\oint_{\\mathcal{C}} \\nabla \\phi \\cdot d\\mathbf{l} = \\pm 1 \\), and transitions from target waves to defect turbulence. Wide-aperture lasers and Kerr-nonlinear optical cavities similarly map transverse diffraction onto <em>b</em> and intensity-dependent refractive index detuning onto <em>c</em>, producing optical vortex lattices and spatiotemporal turbulence. Setting <em>b</em> = <em>c</em> = 0 recovers purely relaxational Model A dynamics of equilibrium <a href=\"/physics/subtopic/landau-ginzburg-phase-transitions\" class=\"subtopic-link\"><strong>Landau-Ginzburg Theory and Phase Transitions</strong></a>, positioning complex amplitude equations as the canonical bridge between equilibrium critical phenomena and driven nonequilibrium pattern formation.</p>",
+      "citations": [
+        {
+          "doi": "10.1103/RevModPhys.74.99",
+          "title": "The world of the complex Ginzburg-Landau equation",
+          "authors": [
+            "Igor S. Aranson",
+            "Lorenz Kramer"
+          ],
+          "year": 2002,
+          "journal": "Reviews of Modern Physics"
+        },
+        {
+          "doi": "10.1103/RevModPhys.65.851",
+          "title": "Pattern formation outside of equilibrium",
+          "authors": [
+            "Mark C. Cross",
+            "Pierre C. Hohenberg"
+          ],
+          "year": 1993,
+          "journal": "Reviews of Modern Physics"
+        },
+        {
+          "doi": "10.1017/S0022112069000176",
+          "title": "Finite bandwidth, finite amplitude convection",
+          "authors": [
+            "Alan C. Newell",
+            "John A. Whitehead"
+          ],
+          "year": 1969,
+          "journal": "Journal of Fluid Mechanics"
+        },
+        {
+          "doi": "10.1143/JPSJ.53.1581",
+          "title": "Exact solutions of the generalized Ginzburg-Landau equation",
+          "authors": [
+            "Kazuhiro Nozaki",
+            "Naoaki Bekki"
+          ],
+          "year": 1984,
+          "journal": "Journal of the Physical Society of Japan"
+        }
+      ],
+      "keywords": [
+        "complex-ginzburg-landau-equation",
+        "amplitude-equations",
+        "newell-whitehead-segel",
+        "eckhaus-instability",
+        "benjamin-feir-newell",
+        "phase-turbulence",
+        "defect-turbulence",
+        "spiral-waves",
+        "nozaki-bekki-holes",
+        "pattern-selection"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "rayleigh-benard-convection",
+          "sentence": " Near the onset of convective rolls, slow spatial modulations of the roll envelope obey the universal amplitude framework of <a href=\"/physics/subtopic/ginzburg-landau-amplitude-equations\" class=\"subtopic-link\"><strong>Complex Ginzburg-Landau Equation and Spatiotemporal Pattern Selection</strong></a>."
+        },
+        {
+          "from_slug": "taylor-couette-instability",
+          "sentence": " Weakly nonlinear sideband modulations and Eckhaus roll-wavelength adjustments above the critical Taylor number are governed directly by <a href=\"/physics/subtopic/ginzburg-landau-amplitude-equations\" class=\"subtopic-link\"><strong>Complex Ginzburg-Landau Equation and Spatiotemporal Pattern Selection</strong></a>."
+        }
+      ]
+    },
+    "kuramoto-synchronization-oscillators": {
+      "title": "Kuramoto Model and Coupled Oscillator Synchronization",
+      "hero_equation": "\\dot{\\theta}_i = \\omega_i + \\frac{K}{N} \\sum_{j=1}^{N} \\sin(\\theta_j - \\theta_i)",
+      "formula_ids": [
+        "kuramoto-phase-coupling-dynamics",
+        "kuramoto-complex-order-parameter",
+        "kuramoto-mean-field-phase-equation",
+        "kuramoto-phase-locking-condition",
+        "kuramoto-critical-coupling-threshold",
+        "kuramoto-lorentzian-order-parameter",
+        "kuramoto-ott-antonsen-manifold-ode"
+      ],
+      "content": "<p>Weakly interacting nonlinear limit cycles shed their radial amplitude degrees of freedom along invariant isochrons, collapsing high-dimensional dissipative trajectories onto circular phase coordinates <em>&theta;<sub>i</sub></em> &isin; [0, 2&pi;) evolving on an <em>N</em>-torus. In 1975, Yoshiki Kuramoto reduced a population of <em>N</em> globally interacting self-sustained rhythms with quenched natural frequencies <em>&omega;<sub>i</sub></em> drawn from a unimodal symmetric density <em>g</em>(<em>&omega;</em>) to the canonical all-to-all phase evolution \\( \\dot{\\theta}_i = \\omega_i + \\frac{K}{N} \\sum_{j=1}^{N} \\sin(\\theta_j - \\theta_i) \\), where <em>K</em> &ge; 0 sets the uniform coupling strength. Because sinusoidal interaction pulls lagging phases forward and retards leading phases, increasing <em>K</em> pits collective phase attraction against intrinsic frequency dispersion. Quantifying macroscopic coherence across the unit circle introduces the complex centroid order parameter \\( r e^{i\\psi} = \\frac{1}{N} \\sum_{j=1}^{N} e^{i\\theta_j} \\), whose amplitude <em>r</em> &isin; [0, 1] vanishes for uniformly splayed phases and approaches unity under tight mutual entrainment, framing the onset of collective rhythm as a sharp dynamical transition governed by <a href=\"/physics/subtopic/bifurcation-theory\" class=\"subtopic-link\"><strong>Bifurcation Theory</strong></a>.</p><p>Multiplying the complex centroid by exp(&minus;<em>i&theta;<sub>i</sub></em>) and extracting the imaginary part collapses the pairwise summation into a self-consistent mean-field equation \\( \\dot{\\theta}_i = \\omega_i + K r \\sin(\\psi - \\theta_i) \\), showing that each individual unit responds solely to the macroscopic amplitude <em>r</em> and average phase <em>&psi;</em> rather than to any specific neighbor. Transforming into a frame co-rotating at the ensemble mean frequency <em>&Omega;</em> reveals that the population bifurcates cleanly into two dynamically distinct subpopulations whenever <em>r</em> &gt; 0. Oscillators whose natural detuning satisfies \\( |\\omega_i - \\Omega| \\le K r \\) possess a stable fixed point at sin(<em>&psi;</em> &minus; <em>&theta;<sub>i</sub></em>) = (<em>&omega;<sub>i</sub></em> &minus; <em>&Omega;</em>)/(<em>Kr</em>) and lock rigidly to the collective beat, whereas more detuned units drift continuously around the circle with non-uniform angular speed. Selecting a definite collective phase <em>&psi;</em> out of the rotationally invariant incoherent state realizes continuous <em>U</em>(1) <a href=\"/physics/subtopic/spontaneous-symmetry-breaking\" class=\"subtopic-link\"><strong>Spontaneous Symmetry Breaking</strong></a>, accompanied by a neutral Goldstone phase-shift mode along the circle.</p><p>In the thermodynamic limit <em>N</em> &rarr; &infin;, demanding that the locked and drifting subpopulations reproduce the very mean field driving them yields an exact self-consistency integral. For any smooth symmetric unimodal distribution <em>g</em>(<em>&omega;</em>) centered at <em>&Omega;</em> = 0, the stationary density of drifting oscillators is antisymmetric in detuning and contributes identically zero to the real part of the order parameter, leaving solely the phase-locked core inside \\( \\dot{\\theta}_i = \\omega_i + K r \\sin(\\psi - \\theta_i) \\). Expanding the locked integral as <em>r</em> &rarr; 0<sup>+</sup> determines the exact critical coupling threshold \\( K_c = \\frac{2}{\\pi g(0)} \\), inversely proportional to the central peak height of the frequency distribution. Immediately above <em>K<sub>c</sub></em>, the incoherent branch loses stability through a supercritical pitchfork bifurcation with mean-field square-root scaling <em>r</em> &prop; (<em>K</em> &minus; <em>K<sub>c</sub></em>)<sup>1/2</sup>, mirroring classical critical exponents in <a href=\"/physics/subtopic/landau-ginzburg-phase-transitions\" class=\"subtopic-link\"><strong>Landau-Ginzburg Phase Transitions</strong></a>. For a Cauchy-Lorentz frequency density <em>g</em>(<em>&omega;</em>) = (<em>&gamma;</em>/&pi;)/(<em>&omega;</em><sup>2</sup> + <em>&gamma;</em><sup>2</sup>) of half-width <em>&gamma;</em>, residue integration evaluates the self-consistency integral in closed form across all supercritical couplings, giving \\( r = \\sqrt{1 - \\frac{K_c}{K}} \\) with <em>K<sub>c</sub></em> = 2<em>&gamma;</em>.</p><p>Understanding transient relaxation toward this synchronized manifold remained elusive for three decades because the continuum phase density <em>&rho;</em>(<em>&theta;</em>, <em>&omega;</em>, <em>t</em>) obeys an infinite-dimensional continuity equation—the zero-noise limit of <a href=\"/physics/subtopic/stochastic-calculus-fokker-planck\" class=\"subtopic-link\"><strong>Fokker-Planck Dynamics</strong></a>—whose linearized operator exhibits a continuous spectrum along the imaginary axis. In 2008, Edward Ott and Thomas Antonsen expanded <em>&rho;</em>(<em>&theta;</em>, <em>&omega;</em>, <em>t</em>) in circular harmonics via <a href=\"/physics/subtopic/fourier-analysis\" class=\"subtopic-link\"><strong>Fourier Analysis</strong></a> and discovered an exact, attracting invariant Poisson-kernel submanifold on which the <em>n</em>-th harmonic factorizes as the <em>n</em>-th power of the first mode. Projecting the continuum dynamics onto this manifold for a Lorentzian frequency distribution closes the entire infinite-dimensional hierarchy into a single Stuart-Landau amplitude equation \\( \\dot{r} = -\\gamma r + \\frac{K}{2} r (1 - r^2) \\). Its unique positive fixed point immediately recovers \\( r = \\sqrt{1 - \\frac{K_c}{K}} \\), while subcritical perturbations decay exponentially at rate <em>&gamma;</em> &minus; <em>K</em>/2 via phase-mixing Landau damping closely analogous to inviscid shear relaxation in <a href=\"/physics/subtopic/hydrodynamic-stability\" class=\"subtopic-link\"><strong>Hydrodynamic Stability</strong></a>.</p><p>Departing from uniform all-to-all attraction uncovers rich spatiotemporal regimes absent from the minimal mean-field transition. Introducing a uniform phase-lag parameter (the Sakaguchi-Kuramoto frustration angle) alongside finite-range nonlocal coupling kernels allows identical oscillators to spontaneously split into <strong>chimera states</strong>, in which a coherent phase-locked domain coexists persistently with an asynchronous drifting sea despite complete symmetry of the underlying equations. In bimodal frequency distributions, hierarchical modular networks, or ensembles augmented by second-order inertial terms, the macroscopic order parameter \\( r e^{i\\psi} = \\frac{1}{N} \\sum_{j=1}^{N} e^{i\\theta_j} \\) undergoes secondary Hopf bifurcations, standing-wave breathers, explosive first-order hysteresis, and chaotic macroscopic fluctuations quantified by positive <a href=\"/physics/subtopic/lyapunov-exponents\" class=\"subtopic-link\"><strong>Lyapunov Exponents</strong></a> and folded <a href=\"/physics/subtopic/strange-attractors\" class=\"subtopic-link\"><strong>Strange Attractors</strong></a>. Even in the classical all-to-all model \\( \\dot{\\theta}_i = \\omega_i + \\frac{K}{N} \\sum_{j=1}^{N} \\sin(\\theta_j - \\theta_i) \\), finite population size generates <em>O</em>(<em>N</em><sup>&minus;1/2</sup>) coherence fluctuations below \\( K_c = \\frac{2}{\\pi g(0)} \\) that round the transition and induce diffusive drift of the collective phase.</p><p>Because weak-coupling phase reduction is universal near any supercritical Hopf bifurcation, this mathematical framework governs diverse physical and biological networks. Series arrays of overdamped superconducting <a href=\"/physics/subtopic/josephson-junctions\" class=\"subtopic-link\"><strong>Josephson Junctions</strong></a> shunted by a common resistive-inductive-capacitive load map directly onto \\( \\dot{\\theta}_i = \\omega_i + K r \\sin(\\psi - \\theta_i) \\) in the resistively shunted junction limit, locking their gigahertz-to-terahertz voltage oscillations into narrow-linewidth coherent radiation. Continental alternating-current electrical grids regulated at 50 or 60 hertz generalize the phase balance to second-order swing equations with synchronous generator inertia, where line overloads pushing local frequency mismatches outside \\( |\\omega_i - \\Omega| \\le K r \\) trigger desynchronization cascades and wide-area blackouts. Coupled semiconductor laser arrays, Belousov-Zhabotinsky chemical micro-oscillators, flashing Southeast Asian firefly congregations, and roughly twenty thousand circadian pacemaker neurons in the mammalian suprachiasmatic nucleus similarly rely on collective coupling above \\( K_c = \\frac{2}{\\pi g(0)} \\) to maintain robust macroscopic timekeeping despite intrinsic cellular, fabrication, and thermal heterogeneity.</p>",
+      "citations": [
+        {
+          "doi": "10.1007/3-540-07171-7_1",
+          "title": "Self-entrainment of a population of coupled non-linear oscillators",
+          "authors": [
+            "Yoshiki Kuramoto"
+          ],
+          "year": 1975,
+          "journal": "Lecture Notes in Physics (International Symposium on Mathematical Problems in Theoretical Physics)"
+        },
+        {
+          "doi": "10.1016/S0167-2789(00)00094-4",
+          "title": "From Kuramoto to Crawford: exploring the onset of synchronization in populations of coupled oscillators",
+          "authors": [
+            "Steven H. Strogatz"
+          ],
+          "year": 2000,
+          "journal": "Physica D: Nonlinear Phenomena"
+        },
+        {
+          "doi": "10.1103/RevModPhys.77.137",
+          "title": "The Kuramoto model: A simple paradigm for synchronization phenomena",
+          "authors": [
+            "Juan A. Acebrón",
+            "Luis L. Bonilla",
+            "Conrad J. Pérez Vicente",
+            "Félix Ritort",
+            "Renato Spigler"
+          ],
+          "year": 2005,
+          "journal": "Reviews of Modern Physics"
+        },
+        {
+          "doi": "10.1063/1.2930766",
+          "title": "Low dimensional behavior of large systems of globally coupled oscillators",
+          "authors": [
+            "Edward Ott",
+            "Thomas M. Antonsen"
+          ],
+          "year": 2008,
+          "journal": "Chaos: An Interdisciplinary Journal of Nonlinear Science"
+        }
+      ],
+      "keywords": [
+        "kuramoto-model",
+        "coupled-oscillators",
+        "synchronization",
+        "order-parameter",
+        "critical-coupling",
+        "ott-antonsen-ansatz",
+        "chimera-states",
+        "phase-locking",
+        "mean-field-dynamics"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "bifurcation-theory",
+          "sentence": " In large ensembles of weakly coupled limit cycles, the onset of macroscopic phase coherence above a critical coupling threshold exemplifies a collective supercritical pitchfork transition formalized in <a href=\"/physics/subtopic/kuramoto-synchronization-oscillators\" class=\"subtopic-link\"><strong>Kuramoto Model and Coupled Oscillator Synchronization</strong></a>."
+        },
+        {
+          "from_slug": "strange-attractors",
+          "sentence": " Beyond uniform all-to-all entrainment, frustrated, inertial, or multi-population oscillator networks exhibit chaotic macroscopic order-parameter trajectories studied within <a href=\"/physics/subtopic/kuramoto-synchronization-oscillators\" class=\"subtopic-link\"><strong>Kuramoto Model and Coupled Oscillator Synchronization</strong></a>."
+        }
+      ]
+    },
+    "active-matter-flocking-hydrodynamics": {
+      "title": "Active Matter and Flocking Hydrodynamics",
+      "hero_equation": "\\partial_t \\mathbf{v} + \\lambda_1 (\\mathbf{v} \\cdot \\nabla)\\mathbf{v} = (\\alpha - \\beta |\\mathbf{v}|^2)\\mathbf{v} - \\nabla P(\\rho) + D_B \\nabla(\\nabla \\cdot \\mathbf{v}) + D_T \\nabla^2 \\mathbf{v} + \\mathbf{f}",
+      "formula_ids": [
+        "vicsek-polar-alignment-rule",
+        "toner-tu-hydrodynamic-equation",
+        "giant-number-fluctuations-scaling",
+        "mips-density-dependent-swim-speed",
+        "active-peclet-number",
+        "active-nematic-stress-tensor",
+        "active-stokes-nematic-momentum-balance"
+      ],
+      "content": "<p>Self-propelled microscopic units continuously transduce stored chemical fuel or ambient electromagnetic fields into directed mechanical thrust, driving macroscopic ensembles persistently far from thermal equilibrium. Because energy injection and viscous dissipation occur locally at every constituent rather than solely across external boundaries, these collectives violate microreversibility in <a href=\"/physics/subtopic/master-equations-detailed-balance\" class=\"subtopic-link\"><strong>Master Equations and Detailed Balance</strong></a> and break the <a href=\"/physics/subtopic/fluctuation-dissipation-theorem\" class=\"subtopic-link\"><strong>Fluctuation-Dissipation Theorem</strong></a> at the single-particle scale. In the minimal discrete flocking model formulated by Tam&aacute;s Vicsek and collaborators, point particles advance at fixed speed <em>v</em><sub>0</sub> while reorienting their heading angles <em>&theta;<sub>i</sub></em> toward the vector mean of neighbors within an interaction radius <em>R</em> perturbed by white angular noise <em>&eta;&xi;<sub>i</sub></em>, obeying \\( \\theta_i(t + \\Delta t) = \\arg\\left(\\sum_{j \\in \\mathcal{N}_i} e^{i \\theta_j(t)}\\right) + \\eta \\xi_i(t) \\). Lowering the noise amplitude <em>&eta;</em> or raising particle density <em>&rho;</em> drives a nonequilibrium ordering transition analyzed through <a href=\"/physics/subtopic/bifurcation-theory\" class=\"subtopic-link\"><strong>Bifurcation Theory</strong></a>, where locally aligned clusters coalesce into a coherent flock governed on macroscopic scales by \\( \\partial_t \\mathbf{v} + \\lambda_1 (\\mathbf{v} \\cdot \\nabla)\\mathbf{v} = (\\alpha - \\beta |\\mathbf{v}|^2)\\mathbf{v} - \\nabla P(\\rho) + D_B \\nabla(\\nabla \\cdot \\mathbf{v}) + D_T \\nabla^2 \\mathbf{v} + \\mathbf{f} \\).</p><p>Coarse-graining polar self-propelled swimmers moving over a frictional substrate replaces discrete trajectories with a compressible continuum velocity field <strong>v</strong>(<strong>r</strong>, <em>t</em>) coupled to conserved number density <em>&rho;</em>(<strong>r</strong>, <em>t</em>). Unlike momentum-conserving <a href=\"/physics/subtopic/navier-stokes-equations\" class=\"subtopic-link\"><strong>Navier-Stokes Equations</strong></a>, substrate friction breaks Galilean invariance and permits a non-unit convective advection coefficient <em>&lambda;</em><sub>1</sub> alongside a quartic Landau-type alignment potential (<em>&alpha;</em> &minus; <em>&beta;</em>|<strong>v</strong>|<sup>2</sup>)<strong>v</strong>, density-dependent pressure gradient &nabla;<em>P</em>(<em>&rho;</em>), bulk and shear diffusivities <em>D<sub>B</sub></em> and <em>D<sub>T</sub></em>, and additive stochastic forcing <strong>f</strong> in the Toner&ndash;Tu equation \\( \\partial_t \\mathbf{v} + \\lambda_1 (\\mathbf{v} \\cdot \\nabla)\\mathbf{v} = (\\alpha - \\beta |\\mathbf{v}|^2)\\mathbf{v} - \\nabla P(\\rho) + D_B \\nabla(\\nabla \\cdot \\mathbf{v}) + D_T \\nabla^2 \\mathbf{v} + \\mathbf{f} \\). Whenever <em>&alpha;</em> turns positive, the isotropic gas undergoes <a href=\"/physics/subtopic/spontaneous-symmetry-breaking\" class=\"subtopic-link\"><strong>Spontaneous Symmetry Breaking</strong></a> to select a uniform mean flock speed (<em>&alpha;</em>/<em>&beta;</em>)<sup>1/2</sup>. In two-dimensional equilibrium ferromagnets, long-wavelength Goldstone spin waves destroy long-range order according to the Mermin&ndash;Wagner theorem; in polar flocks, however, convective self-advection <em>&lambda;</em><sub>1</sub>(<strong>v</strong> &middot; &nabla;)<strong>v</strong> couples angular fluctuations directly to density currents, stiffening transverse modes and stabilizing true long-range orientational order in two dimensions while generating giant density variations following \\( \\Delta N = \\sqrt{\\langle N^2 \\rangle - \\langle N \\rangle^2} \\propto \\langle N \\rangle^\\alpha \\).</p><p>Because orientational Goldstone fluctuations and density perturbations propagate together as anisotropic active sound waves throughout the ordered phase, particle number variance inside any macroscopic subvolume of mean population &lang;<em>N</em>&rang; diverges anomalously according to \\( \\Delta N = \\sqrt{\\langle N^2 \\rangle - \\langle N \\rangle^2} \\propto \\langle N \\rangle^\\alpha \\). Whereas equilibrium statistical mechanics and the central limit theorem restrict normal compressibility fluctuations to <em>&alpha;</em> = 1/2, dynamic renormalization-group calculations of \\( \\partial_t \\mathbf{v} + \\lambda_1 (\\mathbf{v} \\cdot \\nabla)\\mathbf{v} = (\\alpha - \\beta |\\mathbf{v}|^2)\\mathbf{v} - \\nabla P(\\rho) + D_B \\nabla(\\nabla \\cdot \\mathbf{v}) + D_T \\nabla^2 \\mathbf{v} + \\mathbf{f} \\) yield <em>&alpha;</em> &approx; 0.8 in two dimensions and roughly 0.67 in three dimensions, producing dense coherent clusters and sweeping density waves without any attractive pair potential. Near the ordering threshold of \\( \\theta_i(t + \\Delta t) = \\arg\\left(\\sum_{j \\in \\mathcal{N}_i} e^{i \\theta_j(t)}\\right) + \\eta \\xi_i(t) \\), a linear instability of the homogeneous polar state amplifies longitudinal compression into high-density traveling bands traversing a disordered vapor, transforming the naive mean-field continuous transition into a discontinuous liquid&ndash;gas phase coexistence.</p><p>Collective phase separation emerges even when alignment interactions are completely absent, as demonstrated by purely repulsive active Brownian particles of hard-core diameter <em>&sigma;</em> and rotational persistence time <em>&tau;<sub>r</sub></em>. Head-on steric collisions stall swimmers temporarily, causing the effective local propulsion speed to decay monotonically with crowding according to \\( v(\\rho) = v_0 e^{-\\lambda \\rho} \\), where <em>v</em><sub>0</sub> is the unhindered swim speed and <em>&lambda;</em> parameterizes collisional slowdown. Because slower particles accumulate inside denser patches while faster particles rapidly vacate dilute zones, this self-trapping feedback triggers motility-induced phase separation (MIPS) once the dimensionless persistence ratio defined by the active P&eacute;clet number \\( \\mathrm{Pe} = \\frac{v_0 \\tau_r}{\\sigma} \\) surpasses a critical threshold near forty in two-dimensional hard-disk suspensions. Mapping the resulting density-dependent drift and diffusivity onto an effective chemical potential through <a href=\"/physics/subtopic/stochastic-calculus-fokker-planck\" class=\"subtopic-link\"><strong>Stochastic Calculus and Fokker-Planck Equations</strong></a> reproduces spinodal decomposition, coarsening kinetics, and binodal liquid&ndash;gas coexistence despite the total absence of cohesive intermolecular attractions.</p><p>Elongated apolar units such as microtubule&ndash;kinesin bundles, rod-like bacteria, and cytoskeletal actomyosin filaments lack head&ndash;tail polarity yet exhibit orientational order captured by the symmetric traceless nematic tensor <strong>Q</strong> familiar from <a href=\"/physics/subtopic/liquid-crystals-soft-condensed-matter\" class=\"subtopic-link\"><strong>Liquid Crystals and Soft Condensed Matter</strong></a>. Each active rod exerts a force dipole on the ambient fluid, contributing an active nematic stress tensor \\( \\boldsymbol{\\sigma}^a = -\\zeta \\mathbf{Q} \\), where positive activity <em>&zeta;</em> &gt; 0 denotes extensile pushers expelling fluid along their major axis and negative activity <em>&zeta;</em> &lt; 0 represents contractile pullers drawing fluid inward. At cellular and colloidal length scales, the <a href=\"/physics/subtopic/reynolds-number\" class=\"subtopic-link\"><strong>Reynolds Number</strong></a> drops below 10<sup>&minus;4</sup>, reducing solvent momentum conservation to overdamped <a href=\"/physics/subtopic/stokes-flow\" class=\"subtopic-link\"><strong>Stokes Flow</strong></a> driven by active stress divergence, \\( \\eta_s \\nabla^2 \\mathbf{u} - \\nabla p - \\zeta \\nabla \\cdot \\mathbf{Q} = \\mathbf{0} \\), with shear viscosity <em>&eta;<sub>s</sub></em>, fluid velocity <strong>u</strong>, and pressure <em>p</em>. Linear <a href=\"/physics/subtopic/hydrodynamic-stability\" class=\"subtopic-link\"><strong>Hydrodynamic Stability</strong></a> analysis proves that any uniform quiescent nematic state is unconditionally unstable at long wavelengths to bend distortions in extensile fluids and splay distortions in contractile fluids, spontaneously erupting into active turbulence filled with self-propelled +1/2 topological defects and nearly immobile &minus;1/2 counterparts.</p><p>Laboratory and field measurements confirm these hydrodynamic frameworks across six orders of magnitude in length scale. Dense suspensions of <em>Bacillus subtilis</em> and <em>Escherichia coli</em> swimming near <em>v</em><sub>0</sub> &sim; 20 &mu;m/s develop transient mesoscale vortices governed by \\( \\eta_s \\nabla^2 \\mathbf{u} - \\nabla p - \\zeta \\nabla \\cdot \\mathbf{Q} = \\mathbf{0} \\) alongside anomalous number fluctuations exceeding equilibrium expectations. Platinum-coated catalytic Janus colloids in hydrogen peroxide and light-activated thermophoretic spheres in critical binary mixtures allow continuous tuning of \\( \\mathrm{Pe} = \\frac{v_0 \\tau_r}{\\sigma} \\), directly resolving MIPS nucleation and active phase coexistence under video microscopy. In reconstituted two-dimensional microtubule&ndash;kinesin emulsions powered by adenosine triphosphate hydrolysis, sustained unbinding and annihilation of comet-shaped +1/2 defects directly measure the active stress scale in \\( \\boldsymbol{\\sigma}^a = -\\zeta \\mathbf{Q} \\), while high-speed stereo-photogrammetry of European starling murmurations reveals scale-free velocity correlations and linear dispersionless sound propagation across flocks of several thousand birds.</p>",
+      "citations": [
+        {
+          "doi": "10.1103/PhysRevLett.75.1226",
+          "title": "Novel Type of Phase Transition in a System of Self-Driven Particles",
+          "authors": [
+            "Tamás Vicsek",
+            "András Czirók",
+            "Eshel Ben-Jacob",
+            "Inon Cohen",
+            "Ofer Shochet"
+          ],
+          "year": 1995,
+          "journal": "Physical Review Letters",
+          "url": "https://doi.org/10.1103/PhysRevLett.75.1226"
+        },
+        {
+          "doi": "10.1103/PhysRevLett.75.4326",
+          "title": "Long-Range Order in a Two-Dimensional Dynamical XY Model: How Birds Fly Together",
+          "authors": [
+            "John Toner",
+            "Yuhai Tu"
+          ],
+          "year": 1995,
+          "journal": "Physical Review Letters",
+          "url": "https://doi.org/10.1103/PhysRevLett.75.4326"
+        },
+        {
+          "doi": "10.1103/RevModPhys.85.1143",
+          "title": "Hydrodynamics of soft active matter",
+          "authors": [
+            "M. C. Marchetti",
+            "J. F. Joanny",
+            "S. Ramaswamy",
+            "T. B. Liverpool",
+            "J. Prost",
+            "Madan Rao",
+            "R. Aditi Simha"
+          ],
+          "year": 2013,
+          "journal": "Reviews of Modern Physics",
+          "url": "https://doi.org/10.1103/RevModPhys.85.1143"
+        },
+        {
+          "doi": "10.1146/annurev-conmatphys-031214-014710",
+          "title": "Motility-Induced Phase Separation",
+          "authors": [
+            "Michael E. Cates",
+            "Julien Tailleur"
+          ],
+          "year": 2015,
+          "journal": "Annual Review of Condensed Matter Physics",
+          "url": "https://doi.org/10.1146/annurev-conmatphys-031214-014710"
+        }
+      ],
+      "keywords": [
+        "active-matter",
+        "flocking-hydrodynamics",
+        "vicsek-model",
+        "toner-tu-equations",
+        "giant-number-fluctuations",
+        "motility-induced-phase-separation",
+        "active-peclet-number",
+        "active-nematics",
+        "topological-defects"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "stokes-flow",
+          "sentence": " Coupling overdamped viscous momentum balance to internally generated force-dipole stresses governs bacterial swarms and cytoskeletal fluids in <a href=\"/physics/subtopic/active-matter-flocking-hydrodynamics\" class=\"subtopic-link\"><strong>Active Matter and Flocking Hydrodynamics</strong></a>."
+        },
+        {
+          "from_slug": "navier-stokes-equations",
+          "sentence": " Relaxing Galilean invariance and adding local self-propulsion generalizes continuum fluid momentum transport to polar swarms in <a href=\"/physics/subtopic/active-matter-flocking-hydrodynamics\" class=\"subtopic-link\"><strong>Active Matter and Flocking Hydrodynamics</strong></a>."
+        }
+      ]
+    },
+    "quantum-vortices-superfluid-turbulence": {
+      "title": "Quantum Vortices and Superfluid Turbulence",
+      "hero_equation": "\\Gamma = \\oint_C \\mathbf{v}_s \\cdot d\\mathbf{l} = n \\kappa = n \\frac{h}{m}",
+      "formula_ids": [
+        "superfluid-velocity-phase-gradient",
+        "onsager-feynman-circulation-quantum",
+        "gross-pitaevskii-equation",
+        "superfluid-healing-length",
+        "feynman-vortex-lattice-density",
+        "vinen-vortex-line-density-equation",
+        "kelvin-wave-dispersion-relation"
+      ],
+      "content": "<p>Cooling bosonic liquid helium-4 below its 2.17-kelvin lambda transition or trapping ultracold alkali vapors into a <a href=\"/physics/subtopic/bose-einstein-condensate\" class=\"subtopic-link\"><strong>Bose-Einstein Condensate</strong></a> locks a macroscopic population into a coherent complex order parameter <em>&Psi;</em>(<strong>r</strong>, <em>t</em>) = <em>n<sub>s</sub></em><sup>1/2</sup> exp(<em>i&phi;</em>) via <a href=\"/physics/subtopic/spontaneous-symmetry-breaking\" class=\"subtopic-link\"><strong>Spontaneous Symmetry Breaking</strong></a> of global U(1) phase invariance. The quantum probability current ties the superfluid velocity directly to the phase gradient through \\( \\mathbf{v}_s = \\frac{\\hbar}{m}\\nabla\\phi \\), enforcing strictly irrotational motion (&nabla; &times; <strong>v</strong><sub><em>s</em></sub> = 0) wherever condensate density remains nonzero, closely mirroring inviscid <a href=\"/physics/subtopic/potential-flow\" class=\"subtopic-link\"><strong>Potential Flow</strong></a>. Single-valuedness of <em>&Psi;</em> around any closed loop <em>C</em> encircling a topological line defect forces the phase to wind by integer multiples of 2<em>&pi;</em>, quantizing circulation into \\( \\Gamma = \\oint_C \\mathbf{v}_s \\cdot d\\mathbf{l} = n \\kappa = n \\frac{h}{m} \\). In liquid <sup>4</sup>He the Onsager-Feynman quantum equals <em>&kappa;</em> &approx; 9.97 &times; 10<sup>&minus;8</sup> m<sup>2</sup>/s, whereas fermionic superfluid <sup>3</sup>He-B condenses <a href=\"/physics/subtopic/cooper-pairs\" class=\"subtopic-link\"><strong>Cooper Pairs</strong></a> of effective mass 2<em>m</em><sub>3</sub>, halving the elementary circulation quantum.</p><p>Weakly interacting condensates obey the mean-field Gross-Pitaevskii nonlinear Schr&ouml;dinger equation \\( i\\hbar \\frac{\\partial \\Psi}{\\partial t} = \\left( -\\frac{\\hbar^2}{2m}\\nabla^2 + V_{\\mathrm{ext}}(\\mathbf{r}) + g|\\Psi|^2 \\right)\\Psi \\), where the contact interaction coupling <em>g</em> = 4<em>&pi;&hbar;</em><sup>2</sup><em>a<sub>s</sub></em>/<em>m</em> encodes low-energy two-body <em>s</em>-wave scattering length <em>a<sub>s</sub></em> inside an external confining trap <em>V</em><sub>ext</sub>. Applying the Madelung polar transformation separates real and imaginary components into mass continuity and a compressible momentum balance mirroring the <a href=\"/physics/subtopic/euler-fluid-equations\" class=\"subtopic-link\"><strong>Euler Fluid Equations</strong></a>, augmented by a dispersive Bohm quantum pressure &minus;(&hbar;<sup>2</sup>/2<em>m</em>)(&nabla;<sup>2</sup><em>n<sub>s</sub></em><sup>1/2</sup>)/<em>n<sub>s</sub></em><sup>1/2</sup> that resists sharp density gradients. Approaching a vortex axis where azimuthal speed from \\( \\mathbf{v}_s = \\frac{\\hbar}{m}\\nabla\\phi \\) diverges inversely as <em>r</em><sup>&minus;1</sup>, kinetic energy forces condensate density to vanish on axis and recover to bulk <em>n</em><sub>0</sub> over the healing length \\( \\xi = \\frac{\\hbar}{\\sqrt{2 m g n_0}} \\). Strong interatomic correlations shrink <em>&xi;</em> to roughly 0.1 nanometers in liquid <sup>4</sup>He, whereas dilute optically trapped <sup>87</sup>Rb condensates exhibit 0.3-micrometer cores permitting direct optical resolution.</p><p>Because \\( \\Gamma = \\oint_C \\mathbf{v}_s \\cdot d\\mathbf{l} = n \\kappa = n \\frac{h}{m} \\) forbids smooth distributed vorticity inside a simply connected domain, spinning a cylindrical superfluid vessel at angular frequency <em>&Omega;</em> leaves the liquid stationary until a critical threshold nucleates singly charged (<em>n</em> = 1) filaments, which are energetically favored over multiply wound cores whose kinetic energy scales quadratically as <em>n</em><sup>2</sup>. At higher rotation rates, repulsive Magnus-like flow interactions arrange parallel filaments into a minimum-energy triangular Abrikosov-Feynman lattice whose coarse-grained curl mimics solid-body rotation with uniform areal density \\( n_v = \\frac{2\\Omega}{\\kappa} = \\frac{m\\Omega}{\\pi\\hbar} \\). This crystalline array possesses finite transverse shear rigidity supporting collective Tkachenko oscillations, directly paralleling quantized magnetic flux-tube lattices penetrating type-II superconductors once applied fields breach the lower critical boundary of the <a href=\"/physics/subtopic/meissner-effect\" class=\"subtopic-link\"><strong>Meissner Effect</strong></a>. Between reconnections, each filament advects with the local background flow in strict accordance with <a href=\"/physics/subtopic/kelvins-circulation-theorem\" class=\"subtopic-link\"><strong>Kelvin's Circulation Theorem</strong></a> while retaining a microscopic core scale fixed by \\( \\xi = \\frac{\\hbar}{\\sqrt{2 m g n_0}} \\).</p><p>At finite temperatures below the transition, thermal phonons and rotons form a viscous normal fluid of density <em>&rho;<sub>n</sub></em> governed by the <a href=\"/physics/subtopic/navier-stokes-equations\" class=\"subtopic-link\"><strong>Navier-Stokes Equations</strong></a> interpenetrating the inviscid superfluid fraction <em>&rho;<sub>s</sub></em> = <em>&rho;</em> &minus; <em>&rho;<sub>n</sub></em>. Imposing a steady heat flux along a cryogenic channel drives thermal counterflow with relative velocity <strong>v</strong><sub><em>ns</em></sub> = <strong>v</strong><sub><em>n</em></sub> &minus; <strong>v</strong><sub><em>s</em></sub>, destabilizing pinned remnant lines via the Donnelly-Glaberson instability into a disordered three-dimensional tangle of vortex-line length per unit volume <em>L</em>. Quasiparticle scattering off vortex cores generates Hall-Vinen mutual friction of dimensionless strength <em>B</em>, balancing hydrodynamic line stretching against reconnection decay in Vinen's evolution law \\( \\frac{dL}{dt} = \\chi_1 B \\frac{\\rho_n}{2\\rho} |\\mathbf{v}_{ns}| L^{3/2} - \\chi_2 \\frac{\\kappa}{2\\pi} L^2 \\). Setting this rate to zero yields the steady scaling <em>L</em><sup>1/2</sup> &propto; |<strong>v</strong><sub><em>ns</em></sub>| verified by second-sound attenuation in <sup>4</sup>He, while moving optical barriers in trapped condensates shed staggered vortex dipoles resembling a quantized <a href=\"/physics/subtopic/von-karman-vortex-street\" class=\"subtopic-link\"><strong>Von Karman Vortex Street</strong></a> faithfully captured by \\( i\\hbar \\frac{\\partial \\Psi}{\\partial t} = \\left( -\\frac{\\hbar^2}{2m}\\nabla^2 + V_{\\mathrm{ext}}(\\mathbf{r}) + g|\\Psi|^2 \\right)\\Psi \\).</p><p>Below 0.5 kelvin in liquid <sup>4</sup>He or in nearly pure ultracold condensates, the normal-fluid fraction <em>&rho;<sub>n</sub></em>/<em>&rho;</em> drops below 10<sup>&minus;6</sup>, extinguishing mutual friction in \\( \\frac{dL}{dt} = \\chi_1 B \\frac{\\rho_n}{2\\rho} |\\mathbf{v}_{ns}| L^{3/2} - \\chi_2 \\frac{\\kappa}{2\\pi} L^2 \\) yet leaving observed tangles able to decay with a finite effective kinematic viscosity <em>&nu;</em>' &sim; 0.1<em>&kappa;</em>. Dissipation persists because colliding vortex filaments undergo local topological reconnections—violating classical circulation conservation solely through quantum pressure across \\( \\xi = \\frac{\\hbar}{\\sqrt{2 m g n_0}} \\)—leaving behind sharp cusps that relax into helical bending excitations. At wavenumbers <em>k</em> exceeding the inverse inter-vortex spacing <em>&ell;</em><sup>&minus;1</sup> = <em>L</em><sup>1/2</sup>, these helical modes propagate along isolated filaments obeying the Kelvin-wave dispersion relation \\( \\omega(k) = \\frac{\\kappa k^2}{4\\pi} \\left[ \\ln\\left(\\frac{1}{k a_0}\\right) + c_0 \\right] \\), with core cutoff <em>a</em><sub>0</sub> &sim; <em>&xi;</em> and order-unity core constant <em>c</em><sub>0</sub>. Weakly nonlinear wave couplings drive a <strong>Kelvin-wave cascade</strong> down to microscopic wavelengths where rapid oscillations radiate kinetic energy irreversibly as compressible sound phonons even at <em>T</em> &rarr; 0.</p><p>Cryogenic liquid and ultracold gas experiments establish two distinct turbulent regimes separated by the mean inter-vortex spacing <em>&ell;</em> = <em>L</em><sup>&minus;1/2</sup>. Thermally driven counterflow or impulse ion-ring injection generates an unpolarized <strong>Vinen tangle</strong> lacking large-scale eddies, displaying an energy spectrum peaked near <em>k</em> &sim; <em>&ell;</em><sup>&minus;1</sup> and free-decay scaling <em>L</em>(<em>t</em>) &propto; <em>t</em><sup>&minus;1</sup>. Conversely, towed grids or oscillating forks in <sup>4</sup>He and <sup>3</sup>He-B polarize coherent bundles of parallel filaments—locally mimicking coarse-grained patches of \\( n_v = \\frac{2\\Omega}{\\kappa} = \\frac{m\\Omega}{\\pi\\hbar} \\)—producing quasi-classical eddies across scales <em>k</em> &ll; <em>&ell;</em><sup>&minus;1</sup> that reproduce the inertial <em>E</em>(<em>k</em>) &propto; <em>&epsilon;</em><sup>2/3</sup><em>k</em><sup>&minus;5/3</sup> spectrum of the <a href=\"/physics/subtopic/kolmogorov-cascade\" class=\"subtopic-link\"><strong>Kolmogorov Cascade</strong></a> and <em>L</em>(<em>t</em>) &propto; <em>t</em><sup>&minus;3/2</sup> decay before handing energy down into the quantum filament cascade of \\( \\omega(k) = \\frac{\\kappa k^2}{4\\pi} \\left[ \\ln\\left(\\frac{1}{k a_0}\\right) + c_0 \\right] \\). Solid hydrogen tracers in <sup>4</sup>He, Andreev-reflection spectroscopy in <sup>3</sup>He-B, and time-of-flight absorption imaging of stirred <sup>87</sup>Rb condensates directly visualize individual reconnections, rotating lattices, and dual spectra anchored by \\( \\Gamma = \\oint_C \\mathbf{v}_s \\cdot d\\mathbf{l} = n \\kappa = n \\frac{h}{m} \\).</p>",
+      "citations": [
+        {
+          "doi": "10.1098/rspa.1957.0191",
+          "title": "Mutual friction in a heat current in liquid helium II. III. Theory of the mutual friction",
+          "authors": [
+            "William F. Vinen"
+          ],
+          "year": 1957,
+          "journal": "Proceedings of the Royal Society of London A",
+          "url": "https://doi.org/10.1098/rspa.1957.0191"
+        },
+        {
+          "doi": "10.1016/S0079-6417(08)60077-3",
+          "title": "Application of quantum mechanics to liquid helium",
+          "authors": [
+            "Richard P. Feynman"
+          ],
+          "year": 1955,
+          "journal": "Progress in Low Temperature Physics",
+          "url": "https://doi.org/10.1016/S0079-6417(08)60077-3"
+        },
+        {
+          "doi": "10.1073/pnas.1312545111",
+          "title": "Quantum turbulence",
+          "authors": [
+            "Carlo F. Barenghi",
+            "Ladislav Skrbek",
+            "Katepalli R. Sreenivasan"
+          ],
+          "year": 2014,
+          "journal": "Proceedings of the National Academy of Sciences",
+          "url": "https://doi.org/10.1073/pnas.1312545111"
+        }
+      ],
+      "keywords": [
+        "quantum-vortices",
+        "superfluid-turbulence",
+        "onsager-feynman-quantization",
+        "gross-pitaevskii-equation",
+        "healing-length",
+        "abrikosov-feynman-lattice",
+        "vinen-equation",
+        "kelvin-wave-cascade",
+        "liquid-helium-4",
+        "bose-einstein-condensate"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "kelvins-circulation-theorem",
+          "sentence": " In macroscopic superfluids, phase single-valuedness quantizes this conserved circulation into discrete topological filaments whose reconnections drive <a href=\"/physics/subtopic/quantum-vortices-superfluid-turbulence\" class=\"subtopic-link\"><strong>Quantum Vortices and Superfluid Turbulence</strong></a>."
+        },
+        {
+          "from_slug": "kolmogorov-cascade",
+          "sentence": " At ultralow temperatures where viscosity vanishes, polarized bundles of quantized filaments still reproduce this inertial power-law spectrum before handing energy to Kelvin waves in <a href=\"/physics/subtopic/quantum-vortices-superfluid-turbulence\" class=\"subtopic-link\"><strong>Quantum Vortices and Superfluid Turbulence</strong></a>."
+        }
+      ]
+    }
+  },
+  "formulas": [
+    {
+      "id": "turing-two-component-reaction-diffusion",
+      "title": "Two-Component Reaction-Diffusion System",
+      "equation": "\\frac{\\partial u}{\\partial t} = f(u, v) + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = g(u, v) + D_v \\nabla^2 v",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "cole-hopf-linear-heat-equation",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Governs the spatiotemporal evolution of two interacting chemical morphogens $u(\\mathbf{r}, t)$ and $v(\\mathbf{r}, t)$ subject to local nonlinear reaction kinetics $f(u, v)$, $g(u, v)$ and Fickian diffusion with constants $D_u$ and $D_v$.",
+      "conceptual_definition": "The two-component reaction-diffusion PDE system couples local chemical production and decay to spatial Laplacian transport, providing the minimal continuum framework for Turing's diffusion-driven morphogenesis.",
+      "intuitive_summary": "At every point in space, the concentration of each chemical changes because local reactions create or destroy it while random molecular motion spreads it from crowded regions to emptier ones.",
+      "interpretation": "Here $u$ represents the short-range autocatalytic activator (or slow-diffusing species) and $v$ represents the long-range inhibitor (or fast-diffusing depleted substrate). The local reaction terms $f(u, v)$ and $g(u, v)$ describe chemical kinetics in a well-stirred reactor, whereas $D_u \\nabla^2 u$ and $D_v \\nabla^2 v$ describe isotropic Fickian diffusion. When $D_v$ significantly exceeds $D_u$, spatial coupling can destabilize a uniform equilibrium that is strictly stable in the absence of diffusion.",
+      "symmetry_origin": "Follows from local mass conservation with Fick's first law $\\mathbf{J}_i = -D_i \\nabla c_i$ combined with continuous spatial translation and rotational invariance of an isotropic reaction medium.",
+      "limits_and_boundary": "When $D_u = D_v = 0$ (well-mixed limit), the system reduces to a two-dimensional autonomous ODE system $\\dot{u} = f(u,v)$, $\\dot{v} = g(u,v)$. When reaction terms vanish ($f = g = 0$), each field obeys an uncoupled linear heat/diffusion equation that smooths all gradients monotonically.",
+      "semantic_variables": {
+        "u": {
+          "name": "Activator Morphogen Concentration",
+          "type": "variable",
+          "unit": "mol/m^3",
+          "description": "Spatiotemporal concentration field of the first reacting chemical species, typically the short-range autocatalytic activator."
+        },
+        "v": {
+          "name": "Inhibitor Morphogen Concentration",
+          "type": "variable",
+          "unit": "mol/m^3",
+          "description": "Spatiotemporal concentration field of the second reacting chemical species, typically the rapidly diffusing long-range inhibitor."
+        },
+        "f(u, v)": {
+          "name": "Activator Reaction Kinetics",
+          "type": "variable",
+          "unit": "mol/(m^3*s)",
+          "description": "Local net chemical production rate of species $u$ as a nonlinear function of local concentrations $u$ and $v$."
+        },
+        "g(u, v)": {
+          "name": "Inhibitor Reaction Kinetics",
+          "type": "variable",
+          "unit": "mol/(m^3*s)",
+          "description": "Local net chemical production rate of species $v$ as a nonlinear function of local concentrations $u$ and $v$."
+        },
+        "D_u": {
+          "name": "Activator Diffusion Coefficient",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Fickian molecular diffusivity controlling the spatial spreading rate of species $u$."
+        },
+        "D_v": {
+          "name": "Inhibitor Diffusion Coefficient",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Fickian molecular diffusivity controlling the spatial spreading rate of species $v$."
+        }
+      },
+      "cas_validation": {
+        "status": "OPERATOR_OR_TENSOR",
+        "is_homogeneous": true,
+        "quantity": "Molar Concentration Rate",
+        "dimension_latex": "[\\text{N} \\cdot \\text{L}^{-3} \\cdot \\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "turing-homogeneous-jacobian-stability",
+      "title": "Homogeneous Steady-State Stability Conditions",
+      "equation": "f_u + g_v < 0, \\quad f_u g_v - f_v g_u > 0",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "turing-two-component-reaction-diffusion",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Establishes the trace and determinant inequalities on the local reaction Jacobian $\\mathbf{J}$ required for a spatially uniform steady state $(u_0, v_0)$ to be linearly stable against homogeneous ($k = 0$) perturbations.",
+      "conceptual_definition": "These Routh-Hurwitz stability conditions ensure that both eigenvalues of the two-component reaction Jacobian have strictly negative real parts in a well-stirred system, isolating diffusion as the sole driver of subsequent pattern formation.",
+      "intuitive_summary": "In a thoroughly mixed beaker with no spatial gradients, any small disturbance away from the uniform chemical balance dies back down only if the trace of the reaction Jacobian is negative and its determinant is positive.",
+      "interpretation": "Evaluating partial derivatives $f_u = \\partial f / \\partial u$, $f_v = \\partial f / \\partial v$, $g_u = \\partial g / \\partial u$, and $g_v = \\partial g / \\partial v$ at the homogeneous equilibrium $(u_0, v_0)$ yields the $2 \\times 2$ Jacobian $\\mathbf{J}$. Its characteristic polynomial $\\sigma^2 - (\\text{tr}\\,\\mathbf{J})\\sigma + \\det\\mathbf{J} = 0$ has both roots in the left half-plane if and only if $\\text{tr}\\,\\mathbf{J} = f_u + g_v < 0$ and $\\det\\mathbf{J} = f_u g_v - f_v g_u > 0$.",
+      "symmetry_origin": "Arises from the Routh-Hurwitz stability criterion for linear two-dimensional dynamical systems invariant under spatial translations ($k = 0$ subspace).",
+      "limits_and_boundary": "When $f_u + g_v = 0$ with $f_u g_v - f_v g_u > 0$, the homogeneous system undergoes a Hopf bifurcation into uniform temporal oscillations. When $f_u g_v - f_v g_u = 0$, a static saddle-node or pitchfork bifurcation destabilizes the uniform equilibrium even without diffusion.",
+      "semantic_variables": {
+        "f_u": {
+          "name": "Activator Self-Coupling Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Partial derivative $\\partial f / \\partial u$ evaluated at the homogeneous steady state $(u_0, v_0)$; positive for an autocatalytic activator."
+        },
+        "f_v": {
+          "name": "Inhibitor-to-Activator Cross Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Partial derivative $\\partial f / \\partial v$ evaluated at $(u_0, v_0)$; negative in classical activator-inhibitor kinetics."
+        },
+        "g_u": {
+          "name": "Activator-to-Inhibitor Cross Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Partial derivative $\\partial g / \\partial u$ evaluated at $(u_0, v_0)$; positive when the activator stimulates inhibitor synthesis."
+        },
+        "g_v": {
+          "name": "Inhibitor Self-Damping Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Partial derivative $\\partial g / \\partial v$ evaluated at $(u_0, v_0)$; negative for self-damped inhibitor decay."
+        }
+      },
+      "cas_validation": {
+        "status": "DIMENSIONAL_EXPRESSION",
+        "is_homogeneous": true,
+        "quantity": "Linear Reaction Rate",
+        "dimension_latex": "[\\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "turing-dispersion-relation",
+      "title": "Reaction-Diffusion Dispersion Relation",
+      "equation": "\\sigma^2 - \\left(f_u + g_v - (D_u + D_v) k^2\\right) \\sigma + \\left(f_u - D_u k^2\\right)\\left(g_v - D_v k^2\\right) - f_v g_u = 0",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "complex-normal-mode-frequency",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Determines the linear growth rate $\\sigma(k)$ of spatially periodic normal-mode perturbations with wavenumber $k$ around a homogeneous reaction-diffusion steady state.",
+      "conceptual_definition": "The characteristic polynomial $\\det(\\mathbf{J} - k^2 \\mathbf{D} - \\sigma \\mathbf{I}) = 0$ maps every spatial wavenumber $k$ to its two temporal eigenvalues $\\sigma_\\pm(k)$, identifying which spatial length scales amplify or decay.",
+      "intuitive_summary": "This quadratic equation tells you how fast a chemical ripple of spatial wavenumber $k$ grows or fades away once both local reactions and unequal diffusion rates are taken into account.",
+      "interpretation": "Substituting perturbations proportional to $e^{\\sigma t + i \\mathbf{k} \\cdot \\mathbf{r}}$ into the linearized reaction-diffusion equations replaces $\\nabla^2$ by $-k^2$. The coefficient of $-\\sigma$ is the modified trace $f_u + g_v - (D_u + D_v)k^2$, which remains strictly negative for all $k$ whenever the uniform state is stable. Consequently, an unstable mode with $\\text{Re}(\\sigma) > 0$ can appear only as a purely real root when the constant term $h(k^2) = (f_u - D_u k^2)(g_v - D_v k^2) - f_v g_u$ becomes negative.",
+      "symmetry_origin": "Follows from Fourier diagonalization of the translationally and rotationally invariant Laplacian operator $\\nabla^2 e^{i\\mathbf{k}\\cdot\\mathbf{r}} = -k^2 e^{i\\mathbf{k}\\cdot\\mathbf{r}}$, ensuring that $\\sigma$ depends solely on the magnitude $k = |\\mathbf{k}|$.",
+      "limits_and_boundary": "At $k \\to 0$ (uniform perturbations), the relation collapses to the homogeneous Jacobian characteristic equation $\\sigma^2 - (f_u + g_v)\\sigma + (f_u g_v - f_v g_u) = 0$. As $k \\to \\infty$ (short wavelengths), diffusion dominates and $\\sigma \\to -D_u k^2, -D_v k^2 < 0$, guaranteeing ultraviolet stability.",
+      "semantic_variables": {
+        "\\sigma": {
+          "name": "Normal-Mode Growth Rate",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Complex temporal eigenvalue governing exponential growth ($\\text{Re}\\,\\sigma > 0$) or decay ($\\text{Re}\\,\\sigma < 0$) of a spatial Fourier mode."
+        },
+        "k": {
+          "name": "Spatial Wavenumber",
+          "type": "variable",
+          "unit": "1/m",
+          "description": "Magnitude of the spatial wavevector $\\mathbf{k}$, related to pattern wavelength by $\\lambda = 2\\pi / k$."
+        },
+        "f_u": {
+          "name": "Activator Self-Coupling Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Linearized self-activation rate $\\partial f / \\partial u$ at the uniform equilibrium."
+        },
+        "g_v": {
+          "name": "Inhibitor Self-Damping Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Linearized self-damping rate $\\partial g / \\partial v$ at the uniform equilibrium."
+        },
+        "D_u": {
+          "name": "Activator Diffusion Coefficient",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Molecular diffusivity of species $u$."
+        },
+        "D_v": {
+          "name": "Inhibitor Diffusion Coefficient",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Molecular diffusivity of species $v$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Squared Growth Rate",
+        "dimension_latex": "[\\text{T}^{-2}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "turing-diffusion-instability-criterion",
+      "title": "Turing Diffusion-Driven Instability Condition",
+      "equation": "D_v f_u + D_u g_v > 2 \\sqrt{D_u D_v (f_u g_v - f_v g_u)}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "turing-dispersion-relation",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Specifies the exact necessary and sufficient algebraic inequality on diffusivities $D_u$, $D_v$ and Jacobian entries for a stable homogeneous reaction-diffusion state to exhibit a Turing instability.",
+      "conceptual_definition": "Derived by requiring the quadratic polynomial $h(k^2) = D_u D_v k^4 - (D_v f_u + D_u g_v)k^2 + \\det\\mathbf{J}$ to dip strictly below zero for positive $k^2$, this criterion fixes the critical diffusivity ratio $d_c = D_v / D_u$ needed for spontaneous pattern formation.",
+      "intuitive_summary": "Patterns can emerge spontaneously from a uniform chemical mixture only when the inhibitor diffuses enough times faster than the activator to overcome the stabilizing determinant of the local reactions.",
+      "interpretation": "Because $D_u, D_v > 0$ and $\\det\\mathbf{J} = f_u g_v - f_v g_u > 0$, the right-hand side is strictly positive, so satisfying this single inequality simultaneously enforces $D_v f_u + D_u g_v > 0$ and guarantees a negative minimum of $h(k^2)$ at $k^2 > 0$. Combined with $f_u + g_v < 0$, it proves that $D_u = D_v$ can never produce a Turing instability and requires $D_v / D_u > d_c > 1$ when $f_u > 0 > g_v$.",
+      "symmetry_origin": "Emerges from the discriminant condition of the wavenumber-dependent determinant $\\det(\\mathbf{J} - k^2 \\mathbf{D}) < 0$, marking the exact boundary of continuous translational symmetry breaking.",
+      "limits_and_boundary": "At equality, $D_v f_u + D_u g_v = 2\\sqrt{D_u D_v \\det\\mathbf{J}}$, the curve $h(k^2)$ is tangent to zero at a single critical wavenumber $k_c$, defining the Turing bifurcation threshold. When $D_u = D_v$, the left-hand side reduces to $D_u(f_u + g_v) < 0$, making the inequality impossible to satisfy.",
+      "semantic_variables": {
+        "D_v": {
+          "name": "Inhibitor Diffusion Coefficient",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Diffusion coefficient of the fast-diffusing inhibitor species $v$."
+        },
+        "D_u": {
+          "name": "Activator Diffusion Coefficient",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Diffusion coefficient of the slow-diffusing activator species $u$."
+        },
+        "f_u": {
+          "name": "Activator Self-Coupling Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Autocatalytic self-enhancement rate $\\partial f / \\partial u > 0$ at steady state."
+        },
+        "g_v": {
+          "name": "Inhibitor Self-Damping Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Self-damping rate $\\partial g / \\partial v < 0$ of the inhibitor at steady state."
+        },
+        "f_v": {
+          "name": "Inhibitor-to-Activator Cross Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Cross-coupling partial derivative $\\partial f / \\partial v$ at steady state."
+        },
+        "g_u": {
+          "name": "Activator-to-Inhibitor Cross Derivative",
+          "type": "variable",
+          "unit": "1/s",
+          "description": "Cross-coupling partial derivative $\\partial g / \\partial u$ at steady state."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Diffusivity-Rate Product",
+        "dimension_latex": "[\\text{L}^{2} \\cdot \\text{T}^{-2}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "turing-critical-wavenumber-wavelength",
+      "title": "Critical Turing Wavenumber and Pattern Wavelength",
+      "equation": "k_c^2 = \\sqrt{\\frac{f_u g_v - f_v g_u}{D_u D_v}}, \\quad \\lambda_c = \\frac{2\\pi}{k_c}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "turing-diffusion-instability-criterion",
+      "derivation_type": "SPECIAL_CASE",
+      "description": "Gives the exact critical wavenumber $k_c$ and intrinsic spatial wavelength $\\lambda_c$ of the first unstable spatial mode at the onset of a Turing bifurcation.",
+      "conceptual_definition": "At the bifurcation threshold where $h(k^2)$ touches zero tangentially, the selected pattern spacing $\\lambda_c$ is fixed solely by the geometric mean of reaction timescales and molecular diffusivities.",
+      "intuitive_summary": "The natural spacing between stripes or spots in a Turing pattern is set by the balance between how fast chemicals react and how far they diffuse before decaying, completely independent of the container size.",
+      "interpretation": "Minimizing $h(k^2) = D_u D_v k^4 - (D_v f_u + D_u g_v)k^2 + \\det\\mathbf{J}$ gives $k_{\\min}^2 = (D_v f_u + D_u g_v)/(2 D_u D_v)$. Substituting the marginal stability equality $D_v f_u + D_u g_v = 2\\sqrt{D_u D_v \\det\\mathbf{J}}$ yields $k_c^2 = \\sqrt{\\det\\mathbf{J}/(D_u D_v)}$, so $\\lambda_c = 2\\pi (D_u D_v / \\det\\mathbf{J})^{1/4}$. Typical chemical and embryonic diffusivities and reaction rates produce $\\lambda_c \\sim 0.1$–$1\\,\\text{mm}$.",
+      "symmetry_origin": "Selects a discrete characteristic lattice spacing $\\lambda_c$ that breaks continuous spatial translation symmetry down to a periodic crystal or stripe subgroup while preserving isotropy of the wavevector magnitude $|\\mathbf{k}| = k_c$.",
+      "limits_and_boundary": "In a finite domain of size $L$ with zero-flux Neumann boundary conditions, patterns appear only when $L$ is large enough to accommodate at least one half-wavelength ($L \\gtrsim \\lambda_c / 2$). Faster reaction kinetics (larger $\\det\\mathbf{J}$) or smaller diffusivities shrink $\\lambda_c$ proportionally to $(D_u D_v / \\det\\mathbf{J})^{1/4}$.",
+      "semantic_variables": {
+        "k_c": {
+          "name": "Critical Turing Wavenumber",
+          "type": "variable",
+          "unit": "1/m",
+          "description": "Spatial wavenumber of the marginally unstable mode at the onset of diffusion-driven instability."
+        },
+        "\\lambda_c": {
+          "name": "Critical Pattern Wavelength",
+          "type": "variable",
+          "unit": "m",
+          "description": "Intrinsic spatial period between adjacent activator peaks (stripes or spots) at bifurcation onset."
+        },
+        "D_u": {
+          "name": "Activator Diffusion Coefficient",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Molecular diffusivity of the activator morphogen."
+        },
+        "D_v": {
+          "name": "Inhibitor Diffusion Coefficient",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Molecular diffusivity of the inhibitor morphogen."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Squared Wavenumber",
+        "dimension_latex": "[\\text{L}^{-2}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "gierer-meinhardt-activator-inhibitor",
+      "title": "Gierer-Meinhardt Activator-Inhibitor Kinetics",
+      "equation": "\\frac{\\partial u}{\\partial t} = \\rho_0 + c \\frac{u^2}{v} - \\mu_u u + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = c' u^2 - \\mu_v v + D_v \\nabla^2 v",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "turing-two-component-reaction-diffusion",
+      "derivation_type": "SPECIAL_CASE",
+      "description": "Formulates the canonical 1972 Gierer-Meinhardt biological morphogenesis model featuring quadratic activator autocatalysis throttled inversely by a fast-diffusing inhibitor.",
+      "conceptual_definition": "A prototype nonlinear activator-inhibitor reaction-diffusion system demonstrating how short-range nonlinear self-enhancement ($u^2/v$) and long-range inhibition ($D_v \\gg D_u$) generate self-regulating, regenerable biological patterns.",
+      "intuitive_summary": "Activator molecules amplify themselves quadratically while inhibitor molecules dilute that amplification and diffuse much farther away, locking in evenly spaced peaks that even regenerate if part of the tissue is cut away.",
+      "interpretation": "The term $c u^2 / v$ provides nonlinear autocatalytic amplification of activator $u$ that is suppressed by inhibitor $v$, while $\\rho_0$ supplies a small basal production rate preventing extinction at low concentrations. Both species decay linearly at rates $\\mu_u$ and $\\mu_v$, and $c' u^2$ couples inhibitor production directly to local activator peaks. Provided $D_v / D_u$ exceeds the threshold set by $\\mu_v / \\mu_u$, the homogeneous steady state destabilizes into sharp activator spikes or periodic stripes.",
+      "symmetry_origin": "Specializes the translationally invariant two-component reaction-diffusion system to mass-action-inspired biological signaling kinetics exhibiting robust spontaneous spatial symmetry breaking.",
+      "limits_and_boundary": "When basal production $\\rho_0 \\to 0$, the homogeneous steady state satisfies $u_0 = (c \\mu_v)/(c' \\mu_u)$ and $v_0 = (c' / \\mu_v) u_0^2$, with $f_u = \\mu_u > 0$ and $g_v = -\\mu_v < 0$; stability requires $\\mu_v > \\mu_u$, and the critical diffusivity ratio scales as $d_c = (3 + 2\\sqrt{2}) \\mu_v / \\mu_u$.",
+      "semantic_variables": {
+        "u": {
+          "name": "Activator Concentration",
+          "type": "variable",
+          "unit": "mol/m^3",
+          "description": "Local concentration of the short-range autocatalytic morphogen."
+        },
+        "v": {
+          "name": "Inhibitor Concentration",
+          "type": "variable",
+          "unit": "mol/m^3",
+          "description": "Local concentration of the fast-diffusing inhibitory morphogen."
+        },
+        "\\rho_0": {
+          "name": "Basal Activator Source",
+          "type": "constant",
+          "unit": "mol/(m^3*s)",
+          "description": "Constant background synthesis rate of the activator independent of $u$ and $v$."
+        },
+        "\\mu_u": {
+          "name": "Activator Decay Rate",
+          "type": "constant",
+          "unit": "1/s",
+          "description": "First-order degradation rate constant of the activator."
+        },
+        "\\mu_v": {
+          "name": "Inhibitor Decay Rate",
+          "type": "constant",
+          "unit": "1/s",
+          "description": "First-order degradation rate constant of the inhibitor."
+        },
+        "D_u": {
+          "name": "Activator Diffusivity",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Diffusion coefficient of the activator."
+        },
+        "D_v": {
+          "name": "Inhibitor Diffusivity",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Diffusion coefficient of the inhibitor ($D_v \\gg D_u$)."
+        }
+      },
+      "cas_validation": {
+        "status": "OPERATOR_OR_TENSOR",
+        "is_homogeneous": true,
+        "quantity": "Molar Concentration Rate",
+        "dimension_latex": "[\\text{N} \\cdot \\text{L}^{-3} \\cdot \\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "gray-scott-reaction-diffusion-model",
+      "title": "Gray-Scott Cubic Autocatalytic Reaction-Diffusion Model",
+      "equation": "\\frac{\\partial u}{\\partial t} = -u v^2 + F(1 - u) + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = u v^2 - (F + \\kappa) v + D_v \\nabla^2 v",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "turing-two-component-reaction-diffusion",
+      "derivation_type": "SPECIAL_CASE",
+      "description": "Describes the dimensionless open-reactor cubic autocatalysis $U + 2V \\to 3V$ with substrate feed rate $F$, autocatalyst decay rate $\\kappa$, and unequal diffusivities $D_u > D_v$.",
+      "conceptual_definition": "The Gray-Scott model is the canonical activator-substrate depletion variant of Turing pattern formation, generating rich morphogenetic phases including self-replicating spots, labyrinths, stripes, and spatiotemporal pulses across the $(F, \\kappa)$ parameter plane.",
+      "intuitive_summary": "A fast-diffusing chemical fuel $u$ is continuously fed into a reactor and converted into a slower-diffusing catalyst $v$ via cubic self-replication, creating dividing spots, coral-like mazes, or stationary stripes depending on the feed and kill rates.",
+      "interpretation": "In dimensionless units, $u$ is the continuously replenished substrate diffusing faster ($D_u > D_v$, commonly $D_u / D_v = 2$) and $v$ is the autocatalytic species produced at rate $u v^2$ and removed at combined rate $(F + \\kappa)v$. Because local growth of $v$ depletes the surrounding fast-diffusing reservoir $u$, substrate depletion plays the exact same long-range inhibitory role as an explicit inhibitor in classical Turing kinetics.",
+      "symmetry_origin": "Arises from mass-action kinetics of the irreversible cubic autocatalytic step $U + 2V \\to 3V$ coupled to an open continuously stirred feed boundary and isotropic spatial diffusion.",
+      "limits_and_boundary": "The trivial extinct state $(u, v) = (1, 0)$ always exists and is linearly stable for all $F, \\kappa > 0$. Nontrivial uniform equilibria appear via a saddle-node bifurcation when $F \\ge 4(F + \\kappa)^2$, and finite-amplitude perturbations near the saddle-node boundary trigger self-replicating spots and Turing labyrinths.",
+      "semantic_variables": {
+        "u": {
+          "name": "Dimensionless Substrate Concentration",
+          "type": "variable",
+          "unit": "1",
+          "description": "Normalized concentration of the fast-diffusing feed chemical consumed by autocatalysis."
+        },
+        "v": {
+          "name": "Dimensionless Autocatalyst Concentration",
+          "type": "variable",
+          "unit": "1",
+          "description": "Normalized concentration of the slow-diffusing autocatalytic species."
+        },
+        "F": {
+          "name": "Dimensionless Feed Rate",
+          "type": "constant",
+          "unit": "1/s",
+          "description": "Rate at which fresh substrate $u$ is supplied to the open reactor and products are flushed out."
+        },
+        "\\kappa": {
+          "name": "Dimensionless Kill Rate",
+          "type": "constant",
+          "unit": "1/s",
+          "description": "Additional irreversible conversion rate of autocatalyst $v$ into an inert product."
+        },
+        "D_u": {
+          "name": "Substrate Diffusivity",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Diffusion coefficient of the fast-diffusing substrate $u$."
+        },
+        "D_v": {
+          "name": "Autocatalyst Diffusivity",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Diffusion coefficient of the slow-diffusing autocatalyst $v$ ($D_u > D_v$)."
+        }
+      },
+      "cas_validation": {
+        "status": "OPERATOR_OR_TENSOR",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Concentration Rate",
+        "dimension_latex": "[\\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "complex-ginzburg-landau-equation",
+      "title": "Complex Ginzburg-Landau Equation (CGLE)",
+      "equation": "\\partial_t A = A + (1 + i b)\\nabla^2 A - (1 + i c)|A|^2 A",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "complex-normal-mode-frequency",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Governs the slow spatiotemporal evolution of a complex oscillation amplitude $A(\\mathbf{x}, t)$ in a spatially extended dissipative medium near a supercritical Hopf bifurcation, parameterized by linear dispersion $b$ and nonlinear frequency shift $c$.",
+      "conceptual_definition": "The dimensionless complex Ginzburg-Landau equation $\\partial_t A = A + (1 + i b)\\nabla^2 A - (1 + i c)|A|^2 A$ is the universal weakly nonlinear normal form describing competition among linear growth, complex diffusion-dispersion, and saturating cubic nonlinearity.",
+      "intuitive_summary": "Just above the threshold where a fluid, laser, or chemical medium starts oscillating, this equation tracks how the slow envelope $A$ grows, spreads out with wave dispersion $b$, and saturates while shifting its oscillation frequency via $c$.",
+      "interpretation": "The linear term $+A$ drives supercritical exponential growth of small perturbations, $(1 + i b)\\nabla^2 A$ combines diffusive smoothing with dispersive wave propagation, and $-(1 + i c)|A|^2 A$ provides cubic amplitude saturation alongside amplitude-dependent frequency detuning. Because the equation is invariant under global phase rotations $A \\to A e^{i\\alpha}$ and spatial translations, it supports plane waves, localized holes, spiral vortices, and spatiotemporal chaos across a single two-parameter phase diagram $(b, c)$.",
+      "symmetry_origin": "Derived directly from continuous $U(1)$ phase-shift invariance (inherited from time-translation symmetry of the underlying Hopf limit cycle), spatial translation and rotation invariance, and reflection symmetry.",
+      "limits_and_boundary": "Setting $b = c = 0$ recovers the purely real, variational Ginzburg-Landau equation with a monotonic Lyapunov free energy. In the conservative singular limit $|b|, |c| \\to \\infty$ (rescaling time and dropping dissipative terms), the equation approaches the integrable cubic nonlinear Schrödinger equation.",
+      "semantic_variables": {
+        "A": {
+          "name": "Complex Envelope Amplitude",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless slowly varying complex order parameter encoding local oscillation amplitude $|A|$ and phase $\\arg(A)$."
+        },
+        "b": {
+          "name": "Linear Dispersion Coefficient",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Ratio of reactive linear dispersion to diffusive damping in the spatial coupling term $(1 + ib)\\nabla^2 A$."
+        },
+        "c": {
+          "name": "Nonlinear Frequency-Shift Coefficient",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Ratio of nonlinear frequency detuning (non-isochronicity) to cubic amplitude saturation."
+        },
+        "\\nabla^2": {
+          "name": "Spatial Laplacian Operator",
+          "type": "operator",
+          "unit": "1",
+          "description": "Dimensionless second-order spatial derivative operator acting on the slow spatial coordinates."
+        }
+      },
+      "cas_validation": {
+        "status": "OPERATOR_OR_TENSOR",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Amplitude Evolution Rate",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "newell-whitehead-segel-equation",
+      "title": "Newell-Whitehead-Segel Amplitude Equation",
+      "equation": "\\partial_T A = \\mu A + \\left(\\partial_X - \\frac{i}{2 k_c}\\partial_Y^2\\right)^2 A - |A|^2 A",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "cole-hopf-linear-heat-equation",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Describes the weakly nonlinear two-dimensional envelope evolution of stationary periodic rolls with critical wavenumber $k_c$ in a rotationally isotropic layer such as Rayleigh-Bénard convection.",
+      "conceptual_definition": "The Newell-Whitehead-Segel equation captures anisotropic longitudinal ($X$) and transverse ($Y$) modulations of stationary cellular rolls just above threshold, preserving rotational invariance of the underlying isotropic medium.",
+      "intuitive_summary": "For stationary convection rolls, bending a roll sideways costs far less energy than squeezing its wavelength, so the envelope equation mixes second derivatives along the roll normal $X$ with fourth derivatives along the roll axis $Y$.",
+      "interpretation": "Because rotational isotropy requires the linear growth rate to depend only on $|\\mathbf{k}|^2 - k_c^2 \\approx 2 k_c \\delta k_x + (\\delta k_y)^2$, transverse gradients scale as $\\partial_Y \\sim \\epsilon^{1/2}$ while longitudinal gradients scale as $\\partial_X \\sim \\epsilon$. The resulting operator $(\\partial_X - \\frac{i}{2k_c}\\partial_Y^2)^2$ governs both Eckhaus wavelength-compression instabilities and zigzag roll-bending instabilities, while the purely real coefficients guarantee relaxational gradient dynamics.",
+      "symmetry_origin": "Follows from two-dimensional Euclidean rotational symmetry $SO(2)$ combined with translational invariance of the critical circle $|\\mathbf{k}| = k_c$ in Fourier space.",
+      "limits_and_boundary": "For strictly one-dimensional modulations ($\\partial_Y A = 0$), the equation simplifies directly to the real Ginzburg-Landau equation $\\partial_T A = \\mu A + \\partial_X^2 A - |A|^2 A$. As $\\mu \\to 0^+$, roll amplitudes vanish continuously as $|A| \\propto \\mu^{1/2}$ while healing lengths diverge as $\\mu^{-1/2}$.",
+      "semantic_variables": {
+        "A": {
+          "name": "Complex Roll Envelope",
+          "type": "variable",
+          "unit": "1",
+          "description": "Slowly varying complex amplitude of stationary periodic rolls whose phase encodes local roll displacement."
+        },
+        "\\mu": {
+          "name": "Reduced Control Parameter",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Dimensionless supercritical distance above the primary stationary instability threshold."
+        },
+        "k_c": {
+          "name": "Critical Roll Wavenumber",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Characteristic spatial wavenumber of the marginal pattern emerging at onset."
+        },
+        "X": {
+          "name": "Slow Longitudinal Coordinate",
+          "type": "variable",
+          "unit": "1",
+          "description": "Rescaled spatial coordinate perpendicular to the roll axes, scaling as $\\epsilon x$."
+        },
+        "Y": {
+          "name": "Slow Transverse Coordinate",
+          "type": "variable",
+          "unit": "1",
+          "description": "Rescaled spatial coordinate parallel to the roll axes, scaling as $\\epsilon^{1/2} y$."
+        }
+      },
+      "cas_validation": {
+        "status": "OPERATOR_OR_TENSOR",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Envelope Evolution Rate",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "multiple-scales-envelope-ansatz",
+      "title": "Multiple-Scales Weakly Nonlinear Envelope Ansatz",
+      "equation": "u(x, t) = \\epsilon A(X, T) e^{i(k_c x - \\omega_c t)} + \\mathrm{c.c.} + \\mathcal{O}(\\epsilon^2)",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "exponential-growth",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Expresses a physical state perturbation $u(x, t)$ near a supercritical bifurcation as a fast harmonic carrier wave at $(k_c, \\omega_c)$ modulated by a slowly varying complex envelope $A(X, T)$ of order $\\epsilon$.",
+      "conceptual_definition": "The multiple-scales ansatz separates rapid microscopic carrier oscillations from macroscopic envelope dynamics on slow space $X = \\epsilon x$ and slow time $T = \\epsilon^2 t$, enabling systematic asymptotic reduction to universal amplitude equations.",
+      "intuitive_summary": "Just above an instability threshold, the pattern looks locally like a clean sine wave of wavenumber $k_c$ and frequency $\\omega_c$, while its height and phase drift slowly over much larger distances $X$ and longer times $T$.",
+      "interpretation": "Here $\\epsilon \\ll 1$ measures the square root of the supercritical control parameter distance above onset. Substituting this expansion into the governing nonlinear PDE and collecting powers of $\\epsilon$ reproduces the linear dispersion relation at $\\mathcal{O}(\\epsilon)$, generates second harmonics and mean-flow corrections at $\\mathcal{O}(\\epsilon^2)$, and enforces the Fredholm solvability condition at $\\mathcal{O}(\\epsilon^3)$ that yields the Ginzburg-Landau amplitude equation.",
+      "symmetry_origin": "Reflects asymptotic scale separation near a codimension-one bifurcation where a single critical band of eigenvalues crosses the imaginary axis while all other modes remain strongly damped.",
+      "limits_and_boundary": "Valid strictly in the weakly nonlinear regime $\\epsilon \\ll 1$ where the unstable wavenumber band width scales as $\\mathcal{O}(\\epsilon)$. Far above threshold ($\\epsilon \\sim 1$), higher harmonics and secondary short-wavelength modes invalidate the single-envelope truncation.",
+      "semantic_variables": {
+        "u(x, t)": {
+          "name": "Physical Perturbation Field",
+          "type": "variable",
+          "unit": "1",
+          "description": "Deviation of the macroscopic continuum field (velocity, temperature, or concentration) from the uniform base state."
+        },
+        "\\epsilon": {
+          "name": "Small Bifurcation Parameter",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Asymptotic expansion parameter scaling as the square root of the supercritical control distance."
+        },
+        "A(X, T)": {
+          "name": "Slowly Varying Complex Envelope",
+          "type": "variable",
+          "unit": "1",
+          "description": "Macroscopic amplitude and phase modulation depending on slow coordinates $X = \\epsilon x$ and $T = \\epsilon^2 t$."
+        },
+        "k_c": {
+          "name": "Critical Carrier Wavenumber",
+          "type": "parameter",
+          "unit": "m^{-1}",
+          "description": "Spatial wavenumber of the fastest-growing linear mode at the primary instability threshold."
+        },
+        "\\omega_c": {
+          "name": "Critical Carrier Frequency",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Temporal angular frequency of the marginal mode at a Hopf bifurcation (zero for stationary bifurcations)."
+        }
+      },
+      "cas_validation": {
+        "status": "DIMENSIONAL_EXPRESSION",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless State Perturbation",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "cgle-plane-wave-dispersion",
+      "title": "Plane-Wave Dispersion Relation of the Complex Ginzburg-Landau Equation",
+      "equation": "\\omega(q) = c + (b - c) q^2",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "complex-ginzburg-landau-equation",
+      "derivation_type": "SPECIAL_CASE",
+      "description": "Gives the oscillation frequency $\\omega(q)$ of monochromatic traveling plane-wave solutions $A_q(x, t) = \\sqrt{1 - q^2}\\exp[i(qx - \\omega(q)t)]$ of the dimensionless complex Ginzburg-Landau equation.",
+      "conceptual_definition": "The CGLE plane-wave dispersion relation couples the nonlinear frequency shift $c$ and linear dispersion $b$ to determine how wave frequency and group velocity depend on the envelope wavenumber shift $q$.",
+      "intuitive_summary": "A uniform oscillation ($q = 0$) rotates at frequency $c$, while adding spatial twists of wavenumber $q$ shifts the frequency by $(b - c)q^2$ because dispersion and amplitude suppression compete.",
+      "interpretation": "Substituting $A = R e^{i(qx - \\omega t)}$ into the dimensionless CGLE separates into real amplitude balance $R^2 = 1 - q^2$ (requiring $|q| < 1$ for existence) and imaginary frequency balance $\\omega = b q^2 + c R^2 = c + (b - c) q^2$. The resulting group velocity $v_g = d\\omega/dq = 2(b - c)q$ vanishes at $b = c$, where the nonlinear frequency shift exactly cancels linear dispersion.",
+      "symmetry_origin": "Arises from simultaneous invariance of the CGLE under spatial translations and $U(1)$ phase rotations, which permits rotating-wave solutions with constant modulus.",
+      "limits_and_boundary": "Exists only within the neutral existence band $|q| < 1$; as $|q| \\to 1^-$, the wave amplitude $R = \\sqrt{1 - q^2} \\to 0$ and $\\omega(q) \\to b$. At $q = 0$, the solution reduces to the spatially homogeneous limit cycle oscillating at $\\omega(0) = c$.",
+      "semantic_variables": {
+        "\\omega(q)": {
+          "name": "Envelope Angular Frequency",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless phase rotation rate of the plane-wave envelope with wavenumber shift $q$."
+        },
+        "q": {
+          "name": "Envelope Wavenumber Shift",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless spatial wavenumber of the plane-wave phase gradient, restricted to $|q| < 1$."
+        },
+        "b": {
+          "name": "Linear Dispersion Coefficient",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Imaginary part of the complex diffusion coefficient in the CGLE."
+        },
+        "c": {
+          "name": "Nonlinear Frequency-Shift Coefficient",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Imaginary part of the cubic saturation coefficient in the CGLE."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Angular Frequency",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "eckhaus-benjamin-feir-newell-criterion",
+      "title": "Benjamin-Feir-Newell and Eckhaus Stability Criterion",
+      "equation": "D_{\\mathrm{ph}}(q) = 1 + b c - \\frac{2(1 + c^2) q^2}{1 - q^2} < 0",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "cgle-plane-wave-dispersion",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Specifies when a monochromatic plane wave of wavenumber $q$ in the complex Ginzburg-Landau equation suffers a long-wavelength phase instability via negative effective phase diffusivity $D_{\\mathrm{ph}}(q)$.",
+      "conceptual_definition": "The sign of the phase diffusion coefficient $D_{\\mathrm{ph}}(q)$ unifies the finite-wavenumber Eckhaus stability boundary for $1 + bc > 0$ and the universal Benjamin-Feir-Newell modulational instability threshold $1 + bc < 0$.",
+      "intuitive_summary": "A wave pattern stays smooth only when phase ripples diffuse away ($D_{\\mathrm{ph}} > 0$); if $q$ is pushed too close to the band edge or if $1 + bc < 0$, phase diffusion turns negative and tiny ripples amplify into chaos.",
+      "interpretation": "Performing a long-wavelength sideband perturbation analysis around the plane wave $A_q$ yields a phase diffusion equation $\\partial_t \\delta\\phi = D_{\\mathrm{ph}}(q) \\partial_x^2 \\delta\\phi$ in the comoving group-velocity frame. When $1 + bc > 0$, waves with $q^2 < (1 + bc)/(3 + bc + 2c^2)$ remain stable inside the Eckhaus band. Once $1 + bc < 0$, $D_{\\mathrm{ph}}(q) < 0$ for every $q$, destabilizing all plane waves simultaneously via the Benjamin-Feir-Newell instability.",
+      "symmetry_origin": "Governed by the Goldstone zero mode associated with broken $U(1)$ phase invariance, which forces the long-wavelength perturbation spectrum to expand diffusively as $\\sigma(k) = -i v_g k - D_{\\mathrm{ph}}(q) k^2 + \\mathcal{O}(k^3)$.",
+      "limits_and_boundary": "At $q = 0$, the criterion reduces cleanly to the Benjamin-Feir-Newell condition $1 + bc < 0$. In the real Ginzburg-Landau limit $b = c = 0$, it reduces to the classical Eckhaus boundary $q^2 > 1/3$, proving that only the central $1/\\sqrt{3}$ fraction of the existence band is stable.",
+      "semantic_variables": {
+        "D_{\\mathrm{ph}}(q)": {
+          "name": "Effective Phase Diffusion Coefficient",
+          "type": "variable",
+          "unit": "1",
+          "description": "Long-wavelength diffusivity governing whether phase modulations around a plane wave decay ($D_{\\mathrm{ph}} > 0$) or grow ($D_{\\mathrm{ph}} < 0$)."
+        },
+        "q": {
+          "name": "Plane-Wave Wavenumber Shift",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless spatial wavenumber of the unperturbed plane-wave state ($|q| < 1$)."
+        },
+        "b": {
+          "name": "Linear Dispersion Coefficient",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Linear dispersive coupling parameter in the CGLE."
+        },
+        "c": {
+          "name": "Nonlinear Frequency-Shift Coefficient",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Nonlinear frequency detuning parameter in the CGLE."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Phase Diffusivity",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "cgle-topological-winding-number",
+      "title": "Topological Winding Number of a Phase Singularity",
+      "equation": "n_{\\mathrm{top}} = \\frac{1}{2\\pi} \\oint_{\\mathcal{C}} \\nabla \\phi \\cdot d\\mathbf{l} = \\pm 1",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "complex-ginzburg-landau-equation",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Quantifies the discrete integer topological charge $n_{\\mathrm{top}}$ of an isolated two-dimensional vortex or spiral-wave core where the complex amplitude $A = |A|e^{i\\phi}$ vanishes.",
+      "conceptual_definition": "Single-valuedness of the complex order parameter $A$ around any closed contour $\\mathcal{C}$ forces the integrated phase winding to be an integer multiple of $2\\pi$, stabilizing elementary spiral vortices with $n_{\\mathrm{top}} = \\pm 1$.",
+      "intuitive_summary": "Walking once around the center of a spiral wave carries the oscillation phase through one full $2\\pi$ turn, giving the core a conserved integer charge $+1$ or $-1$ that can only vanish by colliding with an opposite charge.",
+      "interpretation": "Because $A(\\mathbf{x}, t)$ is smooth and single-valued, its phase $\\phi$ can change only by $2\\pi n_{\\mathrm{top}}$ around a closed loop. A nonzero winding number forces $|A| = 0$ at a point inside $\\mathcal{C}$ where $\\mathrm{Re}(A) = 0$ and $\\mathrm{Im}(A) = 0$ intersect. Higher-charge defects ($|n_{\\mathrm{top}}| \\ge 2$) are energetically and dynamically unstable in the CGLE and split rapidly into elementary $n_{\\mathrm{top}} = \\pm 1$ spirals.",
+      "symmetry_origin": "Protected by the nontrivial first homotopy group $\\pi_1(S^1) = \\mathbb{Z}$ of the $U(1)$ phase manifold $S^1$ in two spatial dimensions.",
+      "limits_and_boundary": "If the contour $\\mathcal{C}$ encloses no amplitude zeros or an equal number of opposite-charge vortices, $n_{\\mathrm{top}} = 0$. Across defect-mediated turbulence, total topological charge inside a closed domain changes only when defects cross the domain boundary.",
+      "semantic_variables": {
+        "n_{\\mathrm{top}}": {
+          "name": "Topological Winding Number",
+          "type": "variable",
+          "unit": "1",
+          "description": "Discrete integer topological charge ($\\pm 1$ for stable elementary spirals) quantifying net phase rotation around a defect core."
+        },
+        "\\phi": {
+          "name": "Order-Parameter Phase Field",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Local phase angle $\\arg(A)$ of the complex oscillation amplitude."
+        },
+        "\\mathcal{C}": {
+          "name": "Closed Integration Contour",
+          "type": "variable",
+          "unit": "1",
+          "description": "Counterclockwise closed curve in two-dimensional space encircling the phase singularity."
+        },
+        "d\\mathbf{l}": {
+          "name": "Infinitesimal Line Element",
+          "type": "variable",
+          "unit": "1",
+          "description": "Oriented differential displacement vector along the closed contour $\\mathcal{C}$."
+        }
+      },
+      "cas_validation": {
+        "status": "OPERATOR_OR_TENSOR",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Topological Invariant",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "nozaki-bekki-hole-solution",
+      "title": "Nozaki-Bekki Hole Envelope Solution",
+      "equation": "A(x, t) = R_0 \\tanh(\\kappa \\xi) \\exp\\left[i \\theta(\\xi) - i \\Omega t\\right]",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "burgers-viscous-shock-profile",
+      "derivation_type": "GENERALIZATION",
+      "description": "Represents a localized one-dimensional dark-envelope depression (phase sink or source) propagating at velocity $v$ in the comoving coordinate $\\xi = x - vt$ within the complex Ginzburg-Landau equation.",
+      "conceptual_definition": "The Nozaki-Bekki hole is an exact coherent structure of the one-dimensional CGLE connecting two asymptotic plane waves with opposite-sign wavenumbers across a localized amplitude dip.",
+      "intuitive_summary": "A Nozaki-Bekki hole looks like a moving notch in the wave amplitude where two opposing wave trains meet and annihilate, acting as a dissipative cousin of a dark soliton.",
+      "interpretation": "In the comoving frame $\\xi = x - vt$, the hyperbolic tangent factor $R_0 \\tanh(\\kappa \\xi)$ depresses the modulus at the core while the spatially varying phase $\\theta(\\xi)$ smoothly switches the local wavenumber $d\\theta/d\\xi$ between asymptotic incoming or outgoing plane waves. Depending on $(b, c)$ and propagation speed $v$, these holes mediate transitions between coherent plane-wave patches and defect-mediated turbulence when core instabilities trigger spontaneous phase slips.",
+      "symmetry_origin": "Reflects the continuous family of traveling-wave reductions permitted by spatial translation and $U(1)$ phase invariance, generalizing viscous shock profiles to complex non-variational media.",
+      "limits_and_boundary": "As $\\xi \\to \\pm\\infty$, $|A| \\to R_0$ and $d\\theta/d\\xi \\to q_{\\pm}$, recovering asymptotic CGLE plane waves. For $v = 0$ and $b = c = 0$, the phase becomes piecewise constant and the profile reduces to the stationary kink $A(x) = \\tanh(x/\\sqrt{2})$ of the real Ginzburg-Landau equation.",
+      "semantic_variables": {
+        "A(x, t)": {
+          "name": "Complex Envelope Profile",
+          "type": "variable",
+          "unit": "1",
+          "description": "Spatiotemporal complex amplitude describing the localized hole structure."
+        },
+        "R_0": {
+          "name": "Asymptotic Envelope Amplitude",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Constant modulus approached by the plane-wave background far from the hole core."
+        },
+        "\\kappa": {
+          "name": "Inverse Core Width",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Characteristic spatial decay rate setting the width of the amplitude depression."
+        },
+        "\\xi": {
+          "name": "Comoving Spatial Coordinate",
+          "type": "variable",
+          "unit": "1",
+          "description": "Coordinate $\\xi = x - vt$ moving at the constant hole propagation velocity $v$."
+        },
+        "\\theta(\\xi)": {
+          "name": "Comoving Phase Profile",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Spatial phase variation encoding the wavenumber jump across the hole core."
+        },
+        "\\Omega": {
+          "name": "Comoving Oscillation Frequency",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Global temporal phase rotation rate of the coherent hole structure."
+        }
+      },
+      "cas_validation": {
+        "status": "DIMENSIONAL_EXPRESSION",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Complex Envelope",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "kuramoto-phase-coupling-dynamics",
+      "title": "Kuramoto All-to-All Phase Coupling Equation",
+      "equation": "\\dot{\\theta}_i = \\omega_i + \\frac{K}{N} \\sum_{j=1}^{N} \\sin(\\theta_j - \\theta_i)",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "angular-frequency-from-complex-frequencys-imaginary-part-d752efaf",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Governs the phase evolution $\\dot{\\theta}_i$ of $N$ weakly coupled limit-cycle oscillators with heterogeneous natural frequencies $\\omega_i$ interacting globally through sinusoidal phase differences with uniform coupling strength $K$.",
+      "conceptual_definition": "The Kuramoto equation is the universal weak-coupling phase-reduction model for globally interacting limit-cycle oscillators, balancing each unit's intrinsic frequency $\\omega_i$ against the mean sinusoidal phase pull exerted by all $N$ oscillators in the ensemble.",
+      "intuitive_summary": "Each oscillator tries to spin at its own natural rhythm $\\omega_i$, while every other oscillator nudges it faster if it lags behind and slower if it runs ahead, with strength $K/N$.",
+      "interpretation": "Derived via phase reduction near a supercritical Hopf bifurcation, the model retains only the fundamental harmonic $\\sin(\\theta_j - \\theta_i)$ of the pairwise interaction. Dividing by $N$ ensures a well-defined thermodynamic limit as $N \\to \\infty$ in which the coupling term remains finite and competes directly with the width of the natural frequency distribution $g(\\omega)$.",
+      "symmetry_origin": "Invariant under uniform global phase rotation $\\theta_i \\to \\theta_i + \\alpha$ ($U(1)$ rotational symmetry) and under Galilean frequency shifts $\\omega_i \\to \\omega_i + \\Omega$ accompanied by transforming to a rotating frame $\\theta_i \\to \\theta_i + \\Omega t$.",
+      "limits_and_boundary": "At $K = 0$, oscillators decouple and evolve linearly as $\\theta_i(t) = \\omega_i t + \\theta_i(0)$ with zero coherence. In the strong-coupling limit $K \\to \\infty$, all phases collapse onto a single rotating cluster with $\\theta_i - \\theta_j \\to 0$ and common frequency equal to the sample mean $\\bar{\\omega}$.",
+      "semantic_variables": {
+        "\\dot{\\theta}_i": {
+          "name": "Instantaneous Phase Velocity",
+          "type": "variable",
+          "unit": "rad/s",
+          "description": "Time derivative of the circular phase coordinate of the $i$-th oscillator."
+        },
+        "\\omega_i": {
+          "name": "Natural Angular Frequency",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Intrinsic uncoupled oscillation frequency of the $i$-th unit drawn from a probability density $g(\\omega)$."
+        },
+        "K": {
+          "name": "Global Coupling Strength",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Uniform positive interaction strength scaling the restoring phase torque across the oscillator ensemble."
+        },
+        "N": {
+          "name": "Number of Oscillators",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Total population size of the globally coupled oscillator network."
+        },
+        "\\theta_i": {
+          "name": "Oscillator Phase Angle",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Circular phase coordinate of the $i$-th limit-cycle oscillator modulo $2\\pi$."
+        },
+        "\\theta_j": {
+          "name": "Neighbor Oscillator Phase Angle",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Circular phase coordinate of the $j$-th interacting oscillator summed over the population."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Angular Frequency / Phase Velocity",
+        "dimension_latex": "[\\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "kuramoto-complex-order-parameter",
+      "title": "Kuramoto Complex Mean-Field Order Parameter",
+      "equation": "r e^{i\\psi} = \\frac{1}{N} \\sum_{j=1}^{N} e^{i\\theta_j}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "kuramoto-phase-coupling-dynamics",
+      "derivation_type": "DEFINITION",
+      "description": "Defines the macroscopic complex centroid $r e^{i\\psi}$ of $N$ oscillator phases $\\theta_j$ distributed on the unit circle in the complex plane, measuring collective phase coherence $r$ and average phase $\\psi$.",
+      "conceptual_definition": "The Kuramoto complex order parameter maps an $N$-body phase configuration on the unit circle to a single complex vector whose modulus $r \\in [0, 1]$ quantifies synchronization coherence and whose argument $\\psi$ tracks the collective phase.",
+      "intuitive_summary": "Imagine placing each oscillator as a unit-length arrow on a clock face; the order parameter $r e^{i\\psi}$ is simply the average of all those arrows, shrinking to zero when they point every which way and growing toward one when they align.",
+      "interpretation": "In the continuum limit $N \\to \\infty$, the empirical average becomes the first circular Fourier moment $r e^{i\\psi} = \\int_{-\\infty}^{\\infty} \\int_0^{2\\pi} e^{i\\theta} \\rho(\\theta, \\omega, t) g(\\omega) \\, d\\theta \\, d\\omega$. Because $r$ vanishes in the disordered state and rises smoothly above the synchronization threshold, it serves as the exact analog of magnetization in mean-field ferromagnets.",
+      "symmetry_origin": "Transforms covariantly as $r e^{i\\psi} \\to r e^{i(\\psi + \\alpha)}$ under global phase shifts $\\theta_j \\to \\theta_j + \\alpha$, making its modulus $r$ strictly $U(1)$-invariant while $\\psi$ records the spontaneously broken symmetry direction.",
+      "limits_and_boundary": "For uniformly distributed incoherent phases, $r = 0$ in the $N \\to \\infty$ limit (with $O(N^{-1/2})$ finite-size fluctuations). When all oscillators share an identical phase $\\theta_j = \\psi$, $r = 1$ attains its strict upper bound.",
+      "semantic_variables": {
+        "r": {
+          "name": "Phase Coherence Amplitude",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless modulus of the complex order parameter lying in $[0, 1]$, measuring macroscopic synchronization."
+        },
+        "\\psi": {
+          "name": "Mean Collective Phase",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Argument of the complex centroid representing the average phase of the synchronized cluster."
+        },
+        "N": {
+          "name": "Number of Oscillators",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Total number of phase oscillators averaged over the unit circle."
+        },
+        "\\theta_j": {
+          "name": "Oscillator Phase Angle",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Instantaneous phase coordinate of the $j$-th oscillator in the ensemble."
+        }
+      },
+      "cas_validation": {
+        "status": "DIMENSIONAL_EXPRESSION",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Complex Order Parameter",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "kuramoto-mean-field-phase-equation",
+      "title": "Mean-Field Decoupled Kuramoto Phase Equation",
+      "equation": "\\dot{\\theta}_i = \\omega_i + K r \\sin(\\psi - \\theta_i)",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "kuramoto-complex-order-parameter",
+      "derivation_type": "DERIVED_FROM",
+      "description": "Rewrites the all-to-all Kuramoto dynamics in mean-field form, showing that each oscillator $\\theta_i$ couples exclusively to the collective coherence amplitude $r$ and mean phase $\\psi$ with effective locking torque $K r$.",
+      "conceptual_definition": "The mean-field Kuramoto equation decouples the $N$-body pairwise sum into independent single-oscillator equations driven self-consistently by the macroscopic field $(r, \\psi)$.",
+      "intuitive_summary": "Instead of tracking every pairwise pull separately, each oscillator feels a single collective pull of strength $K r$ tugging it toward the crowd's average phase $\\psi$—the more synchronized the crowd, the stronger the pull.",
+      "interpretation": "Multiplying $r e^{i\\psi} = \\frac{1}{N} \\sum_j e^{i\\theta_j}$ by $e^{-i\\theta_i}$ gives $r e^{i(\\psi - \\theta_i)} = \\frac{1}{N} \\sum_j e^{i(\\theta_j - \\theta_i)}$. Equating imaginary parts yields $\\frac{1}{N} \\sum_j \\sin(\\theta_j - \\theta_i) = r \\sin(\\psi - \\theta_i)$, transforming the coupled system into an exact Adler-type phase-locking equation whose drive amplitude $K r$ must be determined self-consistently.",
+      "symmetry_origin": "Inherits the $U(1)$ phase-shift symmetry $(\\theta_i, \\psi) \\to (\\theta_i + \\alpha, \\psi + \\alpha)$ and rotational frame covariance of the microscopic all-to-all interaction.",
+      "limits_and_boundary": "When $r = 0$, the coupling term vanishes identically even for $K > 0$, leaving every oscillator drifting freely at $\\dot{\\theta}_i = \\omega_i$. When $r > 0$, the equation exhibits a saddle-node bifurcation on an invariant circle (SNIC) at $|\\omega_i - \\dot{\\psi}| = K r$.",
+      "semantic_variables": {
+        "\\dot{\\theta}_i": {
+          "name": "Instantaneous Phase Velocity",
+          "type": "variable",
+          "unit": "rad/s",
+          "description": "Time derivative of the phase of the $i$-th oscillator."
+        },
+        "\\omega_i": {
+          "name": "Natural Angular Frequency",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Intrinsic frequency of the $i$-th oscillator in the absence of coupling."
+        },
+        "K": {
+          "name": "Global Coupling Strength",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Microscopic coupling constant multiplying the macroscopic coherence."
+        },
+        "r": {
+          "name": "Phase Coherence Amplitude",
+          "type": "variable",
+          "unit": "1",
+          "description": "Modulus of the macroscopic Kuramoto order parameter."
+        },
+        "\\psi": {
+          "name": "Mean Collective Phase",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Average phase angle of the collective mean field."
+        },
+        "\\theta_i": {
+          "name": "Oscillator Phase Angle",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Phase coordinate of the $i$-th oscillator."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Angular Frequency / Phase Velocity",
+        "dimension_latex": "[\\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "kuramoto-phase-locking-condition",
+      "title": "Kuramoto Phase-Locking Bandwidth Condition",
+      "equation": "|\\omega_i - \\Omega| \\le K r",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "kuramoto-mean-field-phase-equation",
+      "derivation_type": "DERIVED_FROM",
+      "description": "Establishes the exact frequency-detuning criterion separating phase-locked oscillators that entrain to the collective frequency $\\Omega$ from drifting oscillators whose detuning exceeds the mean-field locking torque $K r$.",
+      "conceptual_definition": "The phase-locking condition $|\\omega_i - \\Omega| \\le K r$ defines the Arnold-tongue bandwidth within the natural frequency distribution $g(\\omega)$ whose oscillators achieve stationary fixed points in the co-rotating frame.",
+      "intuitive_summary": "Only oscillators whose natural rhythm $\\omega_i$ sits within $\\pm K r$ of the group's collective beat $\\Omega$ can be captured into lockstep; faster or slower outliers keep slipping past the cluster.",
+      "interpretation": "In the frame rotating at the collective mean-field frequency $\\Omega = \\dot{\\psi}$, the shifted phase $\\phi_i = \\theta_i - \\psi$ satisfies $\\dot{\\phi}_i = (\\omega_i - \\Omega) - K r \\sin \\phi_i$. Stationary solutions $\\dot{\\phi}_i = 0$ require $\\sin \\phi_i = (\\omega_i - \\Omega)/(K r)$, which admits a real stable root $\\cos \\phi_i > 0$ if and only if $|\\omega_i - \\Omega| \\le K r$.",
+      "symmetry_origin": "Reflects the boundedness $|\\sin \\phi_i| \\le 1$ of the $2\\pi$-periodic sinusoidal coupling potential together with reflection symmetry around the mean frequency $\\Omega$.",
+      "limits_and_boundary": "At equality $|\\omega_i - \\Omega| = K r$, the stable and unstable fixed points coalesce in a saddle-node bifurcation at $\\phi_i = \\pm \\pi/2$. For $|\\omega_i - \\Omega| > K r$, oscillators drift with period $T_i = 2\\pi / \\sqrt{(\\omega_i - \\Omega)^2 - (K r)^2}$.",
+      "semantic_variables": {
+        "\\omega_i": {
+          "name": "Natural Angular Frequency",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Intrinsic frequency of the $i$-th oscillator."
+        },
+        "\\Omega": {
+          "name": "Collective Synchronization Frequency",
+          "type": "variable",
+          "unit": "rad/s",
+          "description": "Angular frequency $\\dot{\\psi}$ of the uniformly rotating macroscopic order parameter."
+        },
+        "K": {
+          "name": "Global Coupling Strength",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Uniform coupling strength across the ensemble."
+        },
+        "r": {
+          "name": "Phase Coherence Amplitude",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless modulus of the collective order parameter."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Angular Frequency Detuning Bound",
+        "dimension_latex": "[\\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "kuramoto-critical-coupling-threshold",
+      "title": "Kuramoto Critical Coupling Threshold",
+      "equation": "K_c = \\frac{2}{\\pi g(0)}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "kuramoto-phase-locking-condition",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Determines the exact critical coupling strength $K_c$ above which an infinite population of Kuramoto oscillators with a unimodal symmetric natural frequency distribution $g(\\omega)$ spontaneously transitions from incoherence to partial synchronization.",
+      "conceptual_definition": "The critical coupling $K_c = 2 / (\\pi g(0))$ marks the continuous bifurcation threshold separating the disordered phase ($r = 0$) from the partially synchronized phase ($r > 0$) in terms of the central peak density $g(0)$.",
+      "intuitive_summary": "The taller and narrower the bell curve of natural frequencies is at its center $g(0)$, the easier it is for oscillators to agree on a rhythm, lowering the required coupling threshold $K_c$.",
+      "interpretation": "In the co-rotating frame centered at $\\Omega = 0$, the locked oscillators contribute $r = K r \\int_{-\\pi/2}^{\\pi/2} \\cos^2 \\phi \\, g(K r \\sin \\phi) \\, d\\phi$ to the self-consistency equation while symmetric drifters cancel identically. Dividing by $r > 0$ and taking the onset limit $r \\to 0^+$ yields $1 = K_c g(0) \\int_{-\\pi/2}^{\\pi/2} \\cos^2 \\phi \\, d\\phi = \\frac{\\pi}{2} K_c g(0)$, giving $K_c = 2 / (\\pi g(0))$.",
+      "symmetry_origin": "Follows from parity symmetry $g(-\\omega) = g(\\omega)$, which eliminates the drifting contribution to the real order parameter and pins the bifurcation to the distribution maximum at $\\omega = 0$.",
+      "limits_and_boundary": "For identical oscillators $g(\\omega) = \\delta(\\omega)$, $g(0) \\to \\infty$ drives $K_c \\to 0$, so any infinitesimal positive coupling synchronizes the ensemble. For a Gaussian distribution of standard deviation $\\sigma$, $g(0) = 1/(\\sqrt{2\\pi}\\sigma)$ yields $K_c = \\sqrt{8/\\pi}\\,\\sigma$; for a Lorentzian of half-width $\\gamma$, $g(0) = 1/(\\pi\\gamma)$ gives $K_c = 2\\gamma$.",
+      "semantic_variables": {
+        "K_c": {
+          "name": "Critical Coupling Strength",
+          "type": "variable",
+          "unit": "rad/s",
+          "description": "Minimum global coupling strength required to destabilize incoherence and nucleate macroscopic synchronization."
+        },
+        "g(0)": {
+          "name": "Central Frequency Density",
+          "type": "parameter",
+          "unit": "s/rad",
+          "description": "Peak probability density of the unimodal symmetric natural frequency distribution evaluated at its center $\\omega = 0$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Critical Coupling Strength (Angular Frequency)",
+        "dimension_latex": "[\\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "kuramoto-lorentzian-order-parameter",
+      "title": "Exact Lorentzian Kuramoto Synchronization Branch",
+      "equation": "r = \\sqrt{1 - \\frac{K_c}{K}}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "kuramoto-critical-coupling-threshold",
+      "derivation_type": "SPECIAL_CASE",
+      "description": "Provides the exact closed-form stationary synchronization order parameter $r$ for all $K \\ge K_c$ when natural frequencies follow a Cauchy-Lorentz distribution $g(\\omega) = (\\gamma/\\pi)/(\\omega^2 + \\gamma^2)$ with $K_c = 2\\gamma$.",
+      "conceptual_definition": "This exact analytical solution expresses macroscopic coherence $r$ purely in terms of the dimensionless coupling ratio $K_c / K$, exhibiting universal mean-field square-root scaling near onset and asymptotic saturation toward unity.",
+      "intuitive_summary": "Once coupling $K$ crosses the critical threshold $K_c$, synchronization rises sharply like a square root and smoothly approaches full alignment $r \\to 1$ as coupling grows much larger than $K_c$.",
+      "interpretation": "Substituting the Lorentzian density $g(\\omega) = \\gamma / [\\pi (\\omega^2 + \\gamma^2)]$ into the locked self-consistency integral $1 = K \\int_{-\\pi/2}^{\\pi/2} \\cos^2 \\phi \\, g(K r \\sin \\phi) \\, d\\phi$ yields $\\int_{-\\pi/2}^{\\pi/2} \\frac{\\cos^2\\phi \\, d\\phi}{(K r \\sin\\phi)^2 + \\gamma^2} = \\frac{\\pi}{\\gamma (\\gamma + \\sqrt{\\gamma^2 + K^2 r^2})}$. Solving for the square root gives $\\sqrt{\\gamma^2 + K^2 r^2} = K - \\gamma$; squaring both sides yields $K^2 r^2 = K^2 - 2\\gamma K$, and dividing by $K^2$ produces the exact branch $r = \\sqrt{1 - 2\\gamma/K} = \\sqrt{1 - K_c/K}$.",
+      "symmetry_origin": "Emerges from the single-pole analyticity of the Cauchy-Lorentz distribution in the lower half of the complex frequency plane, which also underlies exact closure of the Ott-Antonsen manifold.",
+      "limits_and_boundary": "Valid for $K \\ge K_c$; for $K < K_c$, $r = 0$. Near onset ($K \\to K_c^+$), $r \\approx \\sqrt{(K - K_c)/K_c}$, displaying the universal mean-field critical exponent $\\beta = 1/2$. As $K \\to \\infty$, $r \\to 1 - K_c/(2K) \\to 1$.",
+      "semantic_variables": {
+        "r": {
+          "name": "Phase Coherence Amplitude",
+          "type": "variable",
+          "unit": "1",
+          "description": "Stationary dimensionless modulus of the Kuramoto order parameter above threshold."
+        },
+        "K_c": {
+          "name": "Critical Coupling Strength",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Synchronization onset threshold equal to $2\\gamma$ for a Lorentzian frequency distribution of half-width $\\gamma$."
+        },
+        "K": {
+          "name": "Global Coupling Strength",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Applied global coupling strength satisfying $K \\ge K_c$."
+        }
+      },
+      "cas_validation": {
+        "status": "DIMENSIONAL_EXPRESSION",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Synchronization Order Parameter",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "kuramoto-ott-antonsen-manifold-ode",
+      "title": "Ott-Antonsen Reduced Order-Parameter Evolution Equation",
+      "equation": "\\dot{r} = -\\gamma r + \\frac{K}{2} r (1 - r^2)",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "exponential-growth",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Describes the exact low-dimensional time evolution of the macroscopic coherence $r(t)$ on the attracting Ott-Antonsen Poisson-kernel manifold for an infinite Kuramoto ensemble with Lorentzian frequency half-width $\\gamma$.",
+      "conceptual_definition": "The Ott-Antonsen reduced ODE collapses the infinite-dimensional continuum continuity equation of the Lorentzian Kuramoto model into a single exact Stuart-Landau amplitude equation governing both subcritical decay and supercritical saturation.",
+      "intuitive_summary": "The entire infinite swarm of coupled oscillators reduces to one simple tug-of-war equation: frequency spread $\\gamma$ damps coherence toward zero while coupling $K$ amplifies it until nonlinear saturation $(1 - r^2)$ halts growth.",
+      "interpretation": "Expanding the phase density in circular harmonics $\\rho(\\theta, \\omega, t) = \\frac{1}{2\\pi}[1 + \\sum_{n=1}^{\\infty} (\\alpha(\\omega, t)^n e^{i n \\theta} + \\text{c.c.})]$ yields an invariant submanifold obeying $\\dot{\\alpha} + i\\omega\\alpha + \\frac{K}{2}(r e^{i\\psi} \\alpha^2 - r e^{-i\\psi}) = 0$. Closing the residue integral at the lower-half-plane pole $\\omega = -i\\gamma$ identifies $r e^{-i\\psi} = \\alpha(-i\\gamma, t)$, whose modulus satisfies $\\dot{r} = -\\gamma r + \\frac{K}{2} r (1 - r^2)$.",
+      "symmetry_origin": "Reflects the Möbius-group invariance of the Poisson kernel on the unit disk, which preserves the geometric-series Fourier factorization under sinusoidal mean-field flow.",
+      "limits_and_boundary": "For $K < 2\\gamma$, the linear growth rate $(K/2 - \\gamma)$ is negative and $r(t) \\to 0$ exponentially via phase-mixing Landau damping. For $K > 2\\gamma$, $r = 0$ is unstable and all initial states on the manifold relax monotonically to the exact steady state $r = \\sqrt{1 - 2\\gamma/K}$.",
+      "semantic_variables": {
+        "\\dot{r}": {
+          "name": "Coherence Growth Rate",
+          "type": "variable",
+          "unit": "s^-1",
+          "description": "Time derivative of the macroscopic synchronization order parameter amplitude."
+        },
+        "\\gamma": {
+          "name": "Lorentzian Frequency Half-Width",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Half-width at half-maximum of the Cauchy-Lorentz natural frequency distribution, governing phase-mixing damping."
+        },
+        "K": {
+          "name": "Global Coupling Strength",
+          "type": "parameter",
+          "unit": "rad/s",
+          "description": "Uniform global coupling constant driving macroscopic synchronization."
+        },
+        "r": {
+          "name": "Phase Coherence Amplitude",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless modulus of the complex Kuramoto order parameter."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Order Parameter Relaxation Rate",
+        "dimension_latex": "[\\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "vicsek-polar-alignment-rule",
+      "title": "Vicsek Polar Alignment Update Rule",
+      "equation": "\\theta_i(t + \\Delta t) = \\arg\\left(\\sum_{j \\in \\mathcal{N}_i} e^{i \\theta_j(t)}\\right) + \\eta \\xi_i(t)",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "arrow-of-time-e01dc7cd",
+      "derivation_type": "DEFINITION",
+      "description": "Defines the discrete-time angular update for self-propelled particle $i$ in the two-dimensional Vicsek flocking model, aligning its heading $\\theta_i$ to the vector average of neighbors $j \\in \\mathcal{N}_i$ plus uniform angular noise $\\eta \\xi_i(t)$.",
+      "conceptual_definition": "The Vicsek polar alignment rule specifies a minimal nonequilibrium dynamical law in which constant-speed agents steer toward the local mean heading of nearby flockmates while subject to stochastic orientational perturbations.",
+      "intuitive_summary": "At each tick of the clock, every swimmer looks at the average direction its close neighbors are heading, points that way, and adds a small random wobble controlled by the noise level $\\eta$.",
+      "interpretation": "Summing unit phasors $e^{i\\theta_j(t)}$ over all particles $j$ within the interaction neighborhood $\\mathcal{N}_i$ (typically a disk of radius $R$ including particle $i$ itself) and taking the complex argument computes the circular mean heading without branch-cut discontinuities. Because particles advance simultaneously along their updated orientations at constant speed $v_0$, the neighbor set $\\mathcal{N}_i$ evolves dynamically, breaking equilibrium detailed balance and enabling macroscopic flocking even in two dimensions.",
+      "symmetry_origin": "Preserves global $O(2)$ rotational invariance in the plane (shifting all headings $\\theta_j \\to \\theta_j + \\theta_0$ shifts the updated angle identically) while explicitly breaking time-reversal symmetry through irreversible self-propelled advection.",
+      "limits_and_boundary": "In the zero-noise limit $\\eta \\to 0$, every connected cluster aligns perfectly into a coherent ballistic flock; in the high-noise limit $\\eta \\to 2\\pi$, angular orientations randomize uniformly into an isotropic active gas with vanishing polar order parameter. Setting $v_0 \\to 0$ removes particle motility and reduces the model to a static two-dimensional equilibrium XY magnet.",
+      "semantic_variables": {
+        "\\theta_i": {
+          "name": "Particle Heading Angle",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Instantaneous orientation angle of the $i$-th self-propelled particle in the two-dimensional plane."
+        },
+        "\\Delta t": {
+          "name": "Discrete Update Time Step",
+          "type": "parameter",
+          "unit": "s",
+          "description": "Fixed temporal interval separating successive synchronous alignment and position updates."
+        },
+        "\\mathcal{N}_i": {
+          "name": "Interaction Neighborhood",
+          "type": "variable",
+          "unit": "1",
+          "description": "Index set of neighboring particles located within the metric or topological alignment range of particle $i$."
+        },
+        "\\eta": {
+          "name": "Angular Noise Amplitude",
+          "type": "parameter",
+          "unit": "rad",
+          "description": "Control parameter governing the strength of stochastic orientational perturbations."
+        },
+        "\\xi_i": {
+          "name": "Stochastic Noise Variable",
+          "type": "variable",
+          "unit": "1",
+          "description": "Delta-correlated random variable drawn uniformly from $[-1/2, 1/2]$ at each step for particle $i$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Plane Angle",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "toner-tu-hydrodynamic-equation",
+      "title": "Toner-Tu Hydrodynamic Flocking Equation",
+      "equation": "\\partial_t \\mathbf{v} + \\lambda_1 (\\mathbf{v} \\cdot \\nabla)\\mathbf{v} = (\\alpha - \\beta |\\mathbf{v}|^2)\\mathbf{v} - \\nabla P(\\rho) + D_B \\nabla(\\nabla \\cdot \\mathbf{v}) + D_T \\nabla^2 \\mathbf{v} + \\mathbf{f}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "convective-inertial-acceleration-term",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Continuum hydrodynamic equation of motion for the coarse-grained velocity field $\\mathbf{v}(\\mathbf{r}, t)$ of a compressible dry polar flock, combining non-Galilean self-advection $\\lambda_1 (\\mathbf{v}\\cdot\\nabla)\\mathbf{v}$, symmetry-breaking alignment $(\\alpha - \\beta|\\mathbf{v}|^2)\\mathbf{v}$, pressure gradients, viscous diffusion, and stochastic noise.",
+      "conceptual_definition": "The Toner-Tu equation generalizes Navier-Stokes hydrodynamics to dry polar active fluids on a frictional substrate, incorporating spontaneous velocity ordering and broken Galilean invariance.",
+      "intuitive_summary": "A flock behaves like a compressible fluid that wants to cruise at a preferred speed $\\sqrt{\\alpha/\\beta}$, pushes back against crowding through pressure $P(\\rho)$, smooths out sharp turns via viscosity, and carries its own directional ripples downstream through the $\\lambda_1$ advection term.",
+      "interpretation": "When the linear alignment coefficient $\\alpha$ changes sign from negative to positive, the homogeneous isotropic state $\\mathbf{v} = \\mathbf{0}$ loses stability and the flock condenses into a spontaneously ordered state with speed $v_0 = \\sqrt{\\alpha/\\beta}$. Crucially, substrate drag breaks Galilean invariance so that $\\lambda_1 \\neq 1$; this convective nonlinearity couples transverse Goldstone orientation modes to density fluctuations and stabilizes true long-range orientational order in two dimensions, evading the equilibrium Mermin-Wagner theorem.",
+      "symmetry_origin": "Constructed systematically from global rotational invariance $SO(d)$ and spatial translation invariance without imposing Galilean boost invariance or momentum conservation, retaining all symmetry-allowed terms to leading order in gradients and fields.",
+      "limits_and_boundary": "For $\\alpha < 0$, the velocity relaxes rapidly to zero on timescale $|\\alpha|^{-1}$, leaving simple density diffusion. In the incompressible momentum-conserving limit with $\\alpha = \\beta = 0$, $\\lambda_1 = 1$, and $\\mathbf{f} = \\mathbf{0}$, the equation reduces structurally to the classical Navier-Stokes momentum equation.",
+      "semantic_variables": {
+        "\\mathbf{v}": {
+          "name": "Coarse-Grained Flock Velocity Field",
+          "type": "variable",
+          "unit": "m/s",
+          "description": "Mesoscopic polar velocity order parameter representing the local mean propulsion velocity of the flock."
+        },
+        "\\lambda_1": {
+          "name": "Self-Advection Coupling Coefficient",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Dimensionless convective transport coefficient whose departure from unity reflects broken Galilean invariance."
+        },
+        "\\alpha": {
+          "name": "Linear Alignment Rate",
+          "type": "parameter",
+          "unit": "1/s",
+          "description": "Control parameter driving the transition from an isotropic gas ($\\alpha < 0$) to an ordered polar flock ($\\alpha > 0$)."
+        },
+        "\\beta": {
+          "name": "Cubic Velocity Saturation Coefficient",
+          "type": "parameter",
+          "unit": "s/m^2",
+          "description": "Positive nonlinear damping coefficient that fixes the steady-state flock speed at $v_0 = \\sqrt{\\alpha/\\beta}$."
+        },
+        "P(\\rho)": {
+          "name": "Effective Kinematic Pressure",
+          "type": "variable",
+          "unit": "m^2/s^2",
+          "description": "Density-dependent effective pressure per unit mass resisting local compression of the flock."
+        },
+        "D_B": {
+          "name": "Bulk Velocity Diffusivity",
+          "type": "parameter",
+          "unit": "m^2/s",
+          "description": "Compressional kinematic viscosity damping longitudinal divergence gradients in the velocity field."
+        },
+        "D_T": {
+          "name": "Shear Velocity Diffusivity",
+          "type": "parameter",
+          "unit": "m^2/s",
+          "description": "Kinematic shear viscosity smoothing spatial variations in flock orientation."
+        },
+        "\\mathbf{f}": {
+          "name": "Stochastic Acceleration Noise",
+          "type": "variable",
+          "unit": "m/s^2",
+          "description": "Gaussian white random forcing representing microscopic orientational and collisional fluctuations."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Fluid Acceleration",
+        "dimension_latex": "[\\text{L} \\cdot \\text{T}^{-2}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "giant-number-fluctuations-scaling",
+      "title": "Giant Number Fluctuations Scaling Law",
+      "equation": "\\Delta N = \\sqrt{\\langle N^2 \\rangle - \\langle N \\rangle^2} \\propto \\langle N \\rangle^\\alpha",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "toner-tu-hydrodynamic-equation",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Power-law scaling of the root-mean-square particle number fluctuation $\\Delta N$ inside a subvolume of mean particle count $\\langle N \\rangle$, exhibiting an anomalous exponent $\\alpha > 1/2$ in orientationally ordered active matter.",
+      "conceptual_definition": "Giant number fluctuations quantify the breakdown of the equilibrium central limit theorem in ordered active fluids, where coupled orientational Goldstone modes and active currents amplify density variance far above $\\sqrt{\\langle N \\rangle}$.",
+      "intuitive_summary": "In an ordinary equilibrium gas, counting $N$ molecules in a box fluctuates by roughly $\\sqrt{N}$, but in an active flock or active nematic, collective steering sweeps huge clumps of particles in and out, making the fluctuations grow nearly as fast as $N$ itself.",
+      "interpretation": "In any equilibrium system away from a critical point, finite compressibility guarantees $\\Delta N \\propto \\langle N \\rangle^{1/2}$ ($\\alpha = 1/2$). In orientationally ordered active phases, long-wavelength director or heading fluctuations drive divergent static structure factors $S(q) \\sim q^{-\\sigma}$ as wavevector $q \\to 0$, elevating the fluctuation exponent to $\\alpha \\approx 0.8$ in two-dimensional Toner-Tu flocks and $\\alpha = 1$ in linearized dry active nematics.",
+      "symmetry_origin": "Arises from the interplay between spontaneously broken continuous rotational symmetry (yielding massless Goldstone orientation modes) and the broken time-reversal symmetry of self-propelled particle currents.",
+      "limits_and_boundary": "In the disordered isotropic active gas ($\\alpha_{\\text{align}} < 0$) or in passive equilibrium fluids away from criticality, the exponent collapses to the standard central-limit value $\\alpha = 1/2$. As $\\langle N \\rangle \\to \\infty$ in an unbounded ordered flock, the relative density fluctuation $\\Delta N / \\langle N \\rangle \\propto \\langle N \\rangle^{\\alpha - 1}$ decays anomalously slowly.",
+      "semantic_variables": {
+        "\\Delta N": {
+          "name": "Root-Mean-Square Particle Number Fluctuation",
+          "type": "variable",
+          "unit": "1",
+          "description": "Standard deviation of the instantaneous particle count $N$ measured within a fixed observation window."
+        },
+        "\\langle N \\rangle": {
+          "name": "Mean Particle Number",
+          "type": "variable",
+          "unit": "1",
+          "description": "Ensemble- or time-averaged number of active particles inside the observation subvolume."
+        },
+        "\\alpha": {
+          "name": "Number Fluctuation Scaling Exponent",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Dimensionless scaling exponent equal to $1/2$ in equilibrium and exceeding $1/2$ (typically $0.8$ in 2D polar flocks) in ordered active phases."
+        }
+      },
+      "cas_validation": {
+        "status": "DIMENSIONAL_EXPRESSION",
+        "is_homogeneous": true,
+        "quantity": "Particle Count",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "mips-density-dependent-swim-speed",
+      "title": "Density-Dependent Active Swim Speed Law",
+      "equation": "v(\\rho) = v_0 e^{-\\lambda \\rho}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "arrow-of-time-e01dc7cd",
+      "derivation_type": "DEFINITION",
+      "description": "Phenomenological relation expressing the effective propulsion speed $v(\\rho)$ of interacting active Brownian particles as an exponentially decaying function of local number density $\\rho$ due to steric crowding.",
+      "conceptual_definition": "The density-dependent swim speed law captures collisional traffic-jamming in purely repulsive active suspensions, providing the self-trapping feedback mechanism that drives motility-induced phase separation (MIPS).",
+      "intuitive_summary": "A lone active swimmer cruises at its full speed $v_0$, but as the neighborhood gets crowded with density $\\rho$, head-on collisions slow it down exponentially, causing swimmers to pile up into dense liquid droplets.",
+      "interpretation": "In steady state, the probability density of persistent random walkers scales inversely with their local speed, $\\rho \\propto 1/v(\\rho)$. Whenever the logarithmic slowdown slope $d\\ln v/d\\rho = -\\lambda$ satisfies $\\rho \\lambda > 1$, a positive density fluctuation slows particles enough to trap more incoming swimmers than can diffuse away, triggering a linear spinodal instability into coexisting dense and dilute phases without any attractive forces.",
+      "symmetry_origin": "Reflects isotropic steric repulsion between self-propelled particles lacking orientational alignment interactions, where persistent non-thermal motion breaks detailed balance while preserving spatial isotropy.",
+      "limits_and_boundary": "In the dilute ideal-swimmer limit $\\rho \\to 0$ (or vanishing steric slowdown $\\lambda \\to 0$), the propulsion speed recovers the bare single-particle value $v(\\rho) \\to v_0$. At high packing densities $\\lambda \\rho \\gg 1$, propulsion arrests exponentially ($v(\\rho) \\to 0$), corresponding to jammed dense MIPS clusters.",
+      "semantic_variables": {
+        "v(\\rho)": {
+          "name": "Density-Dependent Effective Swim Speed",
+          "type": "variable",
+          "unit": "m/s",
+          "description": "Coarse-grained mean self-propulsion speed of an active particle in a local environment of density $\\rho$."
+        },
+        "v_0": {
+          "name": "Isolated Swim Speed",
+          "type": "parameter",
+          "unit": "m/s",
+          "description": "Free-space propulsion speed of an unhindered active particle in the dilute limit."
+        },
+        "\\lambda": {
+          "name": "Collisional Slowdown Parameter",
+          "type": "parameter",
+          "unit": "m^3",
+          "description": "Effective excluded-volume crowding coefficient (with dimensions of inverse number density) controlling how sharply collisions impede propulsion."
+        },
+        "\\rho": {
+          "name": "Local Particle Number Density",
+          "type": "variable",
+          "unit": "1/m^3",
+          "description": "Coarse-grained number of active particles per unit volume (or per unit area in two dimensions)."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Velocity",
+        "dimension_latex": "[\\text{L} \\cdot \\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "active-peclet-number",
+      "title": "Active Péclet Number",
+      "equation": "\\mathrm{Pe} = \\frac{v_0 \\tau_r}{\\sigma}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "mips-density-dependent-swim-speed",
+      "derivation_type": "DEFINITION",
+      "description": "Dimensionless ratio of an active particle's ballistic persistence length $v_0 \\tau_r$ to its characteristic body diameter $\\sigma$, quantifying the strength of self-propulsion relative to rotational randomization.",
+      "conceptual_definition": "The active Péclet number $\\mathrm{Pe}$ measures how many body lengths a self-propelled particle travels in a straight line before rotational diffusion or tumbling reorients its heading, serving as the primary control parameter for motility-induced phase separation.",
+      "intuitive_summary": "The active Péclet number counts how many of its own body widths a microswimmer zips forward before random tumbling sends it in a new direction; when this number is large, colliding swimmers jam together into macroscopic clusters.",
+      "interpretation": "Multiplying the bare swim speed $v_0$ by the rotational decorrelation time $\\tau_r = D_r^{-1}$ yields the persistence length $\\ell_p = v_0 \\tau_r$. Comparing $\\ell_p$ against particle diameter $\\sigma$ governs the competition between persistent self-trapping and diffusive escape: purely repulsive hard-disk active Brownian suspensions remain homogeneous at low $\\mathrm{Pe}$ and phase-separate via MIPS once $\\mathrm{Pe}$ exceeds a critical value around $40$ at moderate area fractions.",
+      "symmetry_origin": "Emerges from dimensional analysis (Buckingham $\\Pi$ theorem) applied to overdamped active Brownian dynamics, pairing the nonequilibrium propulsion velocity $v_0$ with the rotational relaxation timescale $\\tau_r$ and steric length scale $\\sigma$.",
+      "limits_and_boundary": "As $v_0 \\to 0$ or $\\tau_r \\to 0$, $\\mathrm{Pe} \\to 0$ and the suspension reduces to a passive equilibrium Brownian colloid. In the highly persistent limit $\\mathrm{Pe} \\gg 1$, ballistic runs span many particle diameters, amplifying collisional trapping, active boundary accumulation, and MIPS coexistence.",
+      "semantic_variables": {
+        "\\mathrm{Pe}": {
+          "name": "Active Péclet Number",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless measure of self-propulsion persistence relative to rotational reorientation over one particle diameter."
+        },
+        "v_0": {
+          "name": "Bare Self-Propulsion Speed",
+          "type": "parameter",
+          "unit": "m/s",
+          "description": "Constant swimming speed of an isolated active Brownian particle."
+        },
+        "\\tau_r": {
+          "name": "Rotational Persistence Time",
+          "type": "parameter",
+          "unit": "s",
+          "description": "Characteristic autocorrelation time of the particle's propulsion orientation, equal to the inverse rotational diffusivity $D_r^{-1}$."
+        },
+        "\\sigma": {
+          "name": "Particle Diameter",
+          "type": "parameter",
+          "unit": "m",
+          "description": "Characteristic steric interaction diameter of the active colloid or microswimmer."
+        }
+      },
+      "cas_validation": {
+        "status": "DIMENSIONAL_EXPRESSION",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Persistence Ratio",
+        "dimension_latex": "[1]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "active-nematic-stress-tensor",
+      "title": "Active Nematic Stress Tensor",
+      "equation": "\\boldsymbol{\\sigma}^a = -\\zeta \\mathbf{Q}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "euler-equation-momentum",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Constitutive relation for the coarse-grained active stress tensor $\\boldsymbol{\\sigma}^a$ generated by force-dipole microswimmers or motor-filament complexes, proportional to the symmetric traceless nematic order tensor $\\mathbf{Q}$ with activity coefficient $\\zeta$.",
+      "conceptual_definition": "The active nematic stress tensor $\\boldsymbol{\\sigma}^a = -\\zeta \\mathbf{Q}$ encodes the macroscopic mechanical stresses continuously injected into a fluid by locally aligned apolar force dipoles.",
+      "intuitive_summary": "When rod-shaped active units line up along a common axis described by $\\mathbf{Q}$, their collective pushing ($\\zeta > 0$) or pulling ($\\zeta < 0$) creates an internal fluid stress that bends and churns the medium even without external pumps.",
+      "interpretation": "Because isolated swimmers in a viscous fluid are force-free, their leading hydrodynamic singularity is a force dipole proportional to the local alignment tensor $\\mathbf{Q} = S(\\mathbf{n}\\mathbf{n} - \\mathbf{I}/d)$. Positive activity $\\zeta > 0$ describes extensile pushers (such as microtubule-kinesin bundles or flagellated E. coli) that drive fluid outward along the director $\\mathbf{n}$, whereas negative activity $\\zeta < 0$ describes contractile pullers (such as actomyosin networks or Chlamydomonas algae) that pull fluid inward along $\\mathbf{n}$.",
+      "symmetry_origin": "Uniquely selected at zeroth order in spatial gradients by nematic head-tail inversion symmetry ($\\mathbf{n} \\to -\\mathbf{n}$), rotational covariance, and force-free momentum conservation inside the suspending solvent.",
+      "limits_and_boundary": "When activity vanishes ($\\zeta \\to 0$), $\\boldsymbol{\\sigma}^a \\to \\mathbf{0}$ and the medium reverts to a passive equilibrium nematic liquid crystal governed strictly by Ericksen-Leslie elastic stresses. In the isotropic disordered state ($\\mathbf{Q} = \\mathbf{0}$), the anisotropic active stress vanishes identically.",
+      "semantic_variables": {
+        "\\boldsymbol{\\sigma}^a": {
+          "name": "Active Stress Tensor",
+          "type": "variable",
+          "unit": "Pa",
+          "description": "Symmetric rank-2 mechanical stress tensor arising from microscopic force dipoles in an active nematic fluid."
+        },
+        "\\zeta": {
+          "name": "Active Stress Coefficient",
+          "type": "parameter",
+          "unit": "Pa",
+          "description": "Activity parameter proportional to dipole strength and concentration; $\\zeta > 0$ for extensile systems and $\\zeta < 0$ for contractile systems."
+        },
+        "\\mathbf{Q}": {
+          "name": "Nematic Order Parameter Tensor",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless symmetric traceless rank-2 tensor measuring both the magnitude and principal axis of local apolar orientational alignment."
+        }
+      },
+      "cas_validation": {
+        "status": "OPERATOR_OR_TENSOR",
+        "is_homogeneous": true,
+        "quantity": "Mechanical Stress Tensor",
+        "dimension_latex": "[\\text{M} \\cdot \\text{L}^{-1} \\cdot \\text{T}^{-2}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "active-stokes-nematic-momentum-balance",
+      "title": "Active Nematic Stokes Momentum Balance",
+      "equation": "\\eta_s \\nabla^2 \\mathbf{u} - \\nabla p - \\zeta \\nabla \\cdot \\mathbf{Q} = \\mathbf{0}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "creeping-flow-biharmonic-ident-7b1b56eb",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Overdamped low-Reynolds-number momentum balance for an incompressible active nematic fluid, equating viscous shear forces $\\eta_s \\nabla^2 \\mathbf{u}$ and hydrostatic pressure gradients $-\\nabla p$ against the internal active force density $-\\zeta \\nabla \\cdot \\mathbf{Q}$.",
+      "conceptual_definition": "The active nematic Stokes equation links spatial gradients in orientational order $\\mathbf{Q}$ directly to spontaneous viscous flows $\\mathbf{u}$, driving the generic bend-splay instability and self-propulsion of $+1/2$ topological defects.",
+      "intuitive_summary": "In the syrupy microscale world where inertia is negligible, any bend or splay in the alignment of active rods acts like a microscopic pump ($-\\zeta \\nabla \\cdot \\mathbf{Q}$) that immediately stirs the surrounding fluid.",
+      "interpretation": "Substituting the active stress $\\boldsymbol{\\sigma}^a = -\\zeta \\mathbf{Q}$ into the Stokes force balance $\\eta_s \\nabla^2 \\mathbf{u} - \\nabla p + \\nabla \\cdot \\boldsymbol{\\sigma}^a = \\mathbf{0}$ shows that uniform alignment produces zero net flow, whereas any spatial distortion $\\nabla \\cdot \\mathbf{Q} \\neq \\mathbf{0}$ injects momentum. Around a comet-shaped $+1/2$ disclination, the broken polar symmetry of $\\nabla \\cdot \\mathbf{Q}$ generates a net self-propelling jet, driving defects along their head (extensile, $\\zeta > 0$) or tail (contractile, $\\zeta < 0$) and sustaining chaotic active turbulence.",
+      "symmetry_origin": "Follows from local linear momentum conservation in the vanishing-Reynolds-number ($\\mathrm{Re} \\to 0$) limit combined with the nematic stress constitutive relation invariant under $\\mathbf{n} \\to -\\mathbf{n}$.",
+      "limits_and_boundary": "For $\\zeta \\to 0$ or spatially uniform nematic order ($\\nabla \\cdot \\mathbf{Q} = \\mathbf{0}$), the equation reduces identically to the classical homogeneous Stokes equation $\\eta_s \\nabla^2 \\mathbf{u} - \\nabla p = \\mathbf{0}$. Balancing the active stress $|\\zeta|$ against Frank elastic stiffness $K$ defines the intrinsic active length scale $\\ell_a = \\sqrt{K/|\\zeta|}$ controlling vortex size in active turbulence.",
+      "semantic_variables": {
+        "\\eta_s": {
+          "name": "Solvent Dynamic Shear Viscosity",
+          "type": "parameter",
+          "unit": "Pa*s",
+          "description": "Newtonian shear viscosity of the ambient fluid medium resisting velocity gradients."
+        },
+        "\\mathbf{u}": {
+          "name": "Solvent Velocity Field",
+          "type": "variable",
+          "unit": "m/s",
+          "description": "Incompressible continuum flow velocity of the suspending fluid ($\\nabla \\cdot \\mathbf{u} = 0$)."
+        },
+        "p": {
+          "name": "Hydrostatic Pressure",
+          "type": "variable",
+          "unit": "Pa",
+          "description": "Isotropic pressure field enforcing incompressibility of the active fluid."
+        },
+        "\\zeta": {
+          "name": "Active Stress Coefficient",
+          "type": "parameter",
+          "unit": "Pa",
+          "description": "Activity coupling strength setting the magnitude and extensile/contractile sign of active force dipoles."
+        },
+        "\\mathbf{Q}": {
+          "name": "Nematic Order Parameter Tensor",
+          "type": "variable",
+          "unit": "1",
+          "description": "Symmetric traceless rank-2 alignment tensor whose spatial divergence generates internal active force densities."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Volumetric Force Density",
+        "dimension_latex": "[\\text{M} \\cdot \\text{L}^{-2} \\cdot \\text{T}^{-2}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "superfluid-velocity-phase-gradient",
+      "title": "Superfluid Velocity from Condensate Phase Gradient",
+      "equation": "\\mathbf{v}_s = \\frac{\\hbar}{m}\\nabla\\phi",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "euler-equation-momentum",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Expresses the macroscopic superfluid velocity field $\\mathbf{v}_s$ as the spatial gradient of the coherent condensate phase $\\phi$ scaled by $\\hbar/m$.",
+      "conceptual_definition": "Writing the macroscopic superfluid order parameter in Madelung polar form $\\Psi(\\mathbf{r},t) = \\sqrt{n_s}\\,e^{i\\phi}$ maps the quantum probability current $\\mathbf{j} = (\\hbar/m)\\,\\mathrm{Im}(\\Psi^*\\nabla\\Psi)$ onto a hydrodynamic mass flow $n_s \\mathbf{v}_s$ with $\\mathbf{v}_s = (\\hbar/m)\\nabla\\phi$.",
+      "intuitive_summary": "A superfluid flows strictly because its shared quantum wave phase twists smoothly across space; the steeper the phase gradient $\\nabla\\phi$, the faster the fluid moves without friction.",
+      "interpretation": "Because $\\mathbf{v}_s$ is proportional to a scalar gradient, its curl $\\nabla \\times \\mathbf{v}_s$ vanishes identically wherever $\\phi$ is smooth and $n_s > 0$. Consequently, a superfluid behaves as a strictly irrotational potential flow except along singular one-dimensional vortex cores where the amplitude drops to zero and the phase becomes undefined.",
+      "symmetry_origin": "Follows directly from the Noether current of global $U(1)$ phase invariance in a spontaneously symmetry-broken Bose condensate.",
+      "limits_and_boundary": "Breaks down along vortex-line cores of radius $r \\lesssim \\xi$ where $n_s \\to 0$ and $\\nabla\\phi$ diverges as $1/r$, and also above the Landau critical velocity where elementary roton or phonon excitations deplete the condensate.",
+      "semantic_variables": {
+        "\\mathbf{v}_s": {
+          "name": "Superfluid Velocity Field",
+          "type": "variable",
+          "unit": "m/s",
+          "description": "Inviscid macroscopic velocity vector of the Bose-condensed or Cooper-paired superfluid component."
+        },
+        "\\hbar": {
+          "name": "Reduced Planck Constant",
+          "type": "constant",
+          "unit": "J*s",
+          "description": "Fundamental quantum of action setting the proportionality between phase gradient and canonical momentum."
+        },
+        "m": {
+          "name": "Condensate Boson Mass",
+          "type": "constant",
+          "unit": "kg",
+          "description": "Mass of a single constituent boson (such as a helium-4 atom) or effective mass of a Cooper pair in fermionic superfluids."
+        },
+        "\\phi": {
+          "name": "Macroscopic Condensate Phase",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Spatially varying phase angle of the complex macroscopic wavefunction $\\Psi = \\sqrt{n_s} e^{i\\phi}$."
+        }
+      },
+      "cas_validation": {
+        "status": "OPERATOR_OR_TENSOR",
+        "is_homogeneous": true,
+        "quantity": "Velocity Vector Field",
+        "dimension_latex": "[\\text{L} / \\text{T}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "onsager-feynman-circulation-quantum",
+      "title": "Onsager-Feynman Circulation Quantization",
+      "equation": "\\Gamma = \\oint_C \\mathbf{v}_s \\cdot d\\mathbf{l} = n \\kappa = n \\frac{h}{m}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "superfluid-velocity-phase-gradient",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Restricts the hydrodynamic circulation $\\Gamma$ around any closed loop $C$ in a superfluid to integer multiples $n$ of the elementary Onsager-Feynman quantum $\\kappa = h/m$.",
+      "conceptual_definition": "Integrating the irrotational phase-gradient velocity $\\mathbf{v}_s = (\\hbar/m)\\nabla\\phi$ around a closed contour enclosing a topological defect requires single-valuedness of $\\Psi$, forcing $\\Delta\\phi = 2\\pi n$ and quantizing $\\Gamma$ in units of $h/m$.",
+      "intuitive_summary": "Because a superfluid's quantum wave must reconnect smoothly with itself after looping around a vortex core, the swirl strength can only come in whole-number steps of $h/m$.",
+      "interpretation": "In liquid $^4\\mathrm{He}$, $\\kappa = h/m_4 \\approx 9.97 \\times 10^{-8}\\,\\mathrm{m}^2/\\mathrm{s}$, whereas in paired $^3\\mathrm{He}$-B the Cooper-pair mass $2m_3$ yields $\\kappa = h/(2m_3) \\approx 6.62 \\times 10^{-8}\\,\\mathrm{m}^2/\\mathrm{s}$. Because vortex kinetic energy per unit length scales as $n^2$, multiply quantized ($|n| > 1$) lines rapidly split into $|n|$ singly quantized ($|n| = 1$) filaments.",
+      "symmetry_origin": "Topological invariant classified by the fundamental homotopy group $\\pi_1(U(1)) = \\mathbb{Z}$ of the spontaneously broken phase order parameter.",
+      "limits_and_boundary": "Vanishes ($n = 0$) for any contractible contour in a simply connected region containing no vortex lines. In the classical limit $\\hbar \\to 0$ with $n \\to \\infty$ at fixed $n\\hbar$, circulation becomes a continuous classical variable obeying Kelvin's circulation theorem.",
+      "semantic_variables": {
+        "\\Gamma": {
+          "name": "Superfluid Circulation",
+          "type": "variable",
+          "unit": "m^2/s",
+          "description": "Line integral of the superfluid velocity around a closed contour $C$."
+        },
+        "\\mathbf{v}_s": {
+          "name": "Superfluid Velocity Field",
+          "type": "variable",
+          "unit": "m/s",
+          "description": "Irrotational superfluid velocity evaluated along the integration contour."
+        },
+        "d\\mathbf{l}": {
+          "name": "Contour Line Element",
+          "type": "variable",
+          "unit": "m",
+          "description": "Infinitesimal oriented displacement vector along the closed path $C$."
+        },
+        "n": {
+          "name": "Topological Winding Number",
+          "type": "variable",
+          "unit": "1",
+          "description": "Integer topological charge counting the net number of enclosed circulation quanta."
+        },
+        "\\kappa": {
+          "name": "Quantum of Circulation",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Elementary Onsager-Feynman circulation quantum equal to $h/m$."
+        },
+        "h": {
+          "name": "Planck Constant",
+          "type": "constant",
+          "unit": "J*s",
+          "description": "Fundamental quantum of action equal to $2\\pi\\hbar$."
+        },
+        "m": {
+          "name": "Condensate Boson Mass",
+          "type": "constant",
+          "unit": "kg",
+          "description": "Mass of the condensed bosonic particle or fermion pair."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Hydrodynamic Circulation",
+        "dimension_latex": "[\\text{L}^{2} / \\text{T}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "gross-pitaevskii-equation",
+      "title": "Time-Dependent Gross-Pitaevskii Equation",
+      "equation": "i\\hbar \\frac{\\partial \\Psi}{\\partial t} = \\left( -\\frac{\\hbar^2}{2m}\\nabla^2 + V_{\\mathrm{ext}}(\\mathbf{r}) + g|\\Psi|^2 \\right)\\Psi",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "fluid-acceleration",
+      "derivation_type": "GENERALIZATION",
+      "description": "Governs the mean-field spatio-temporal evolution of the macroscopic order parameter $\\Psi(\\mathbf{r},t)$ of a weakly interacting dilute Bose-Einstein condensate.",
+      "conceptual_definition": "Extends the single-particle Schrödinger equation by adding a cubic local self-interaction potential $g|\\Psi|^2$ representing low-energy $s$-wave contact collisions among condensed bosons.",
+      "intuitive_summary": "Describes how a superfluid matter wave flows, traps itself, and carves out quantized vortex cores under the combined pull of external potentials and repulsive interatomic collisions.",
+      "interpretation": "Under the Madelung decomposition $\\Psi = \\sqrt{n_s}e^{i\\phi}$, the Gross-Pitaevskii equation splits exactly into a continuity equation and a compressible Euler momentum equation augmented by the Bohm quantum pressure. It quantitatively captures vortex core structure, vortex-antivortex annihilation, reconnections, and phonon emission in ultracold atomic BECs and serves as a qualitative microscopic model for superfluid $^4\\mathrm{He}$.",
+      "symmetry_origin": "Stationarity condition $\\delta S / \\delta \\Psi^* = 0$ of a Galilean-invariant and global-$U(1)$-invariant classical field action for interacting bosons.",
+      "limits_and_boundary": "Reduces to the linear Schrödinger equation as $g \\to 0$ (non-interacting ideal Bose gas). In the Thomas-Fermi limit of large repulsive interaction energy ($g n_0 \\gg \\hbar^2/(m R^2)$), the kinetic Laplacian is negligible except inside vortex cores and boundary layers of width $\\xi$.",
+      "semantic_variables": {
+        "\\Psi": {
+          "name": "Condensate Order Parameter",
+          "type": "variable",
+          "unit": "m^(-3/2)",
+          "description": "Macroscopic complex wavefunction whose squared modulus $|\\Psi|^2 = n_s$ gives the local condensate number density."
+        },
+        "\\hbar": {
+          "name": "Reduced Planck Constant",
+          "type": "constant",
+          "unit": "J*s",
+          "description": "Quantum of action governing kinetic dispersion and phase evolution."
+        },
+        "m": {
+          "name": "Boson Mass",
+          "type": "constant",
+          "unit": "kg",
+          "description": "Mass of an individual condensed atom or boson."
+        },
+        "V_{\\mathrm{ext}}(\\mathbf{r})": {
+          "name": "External Confining Potential",
+          "type": "variable",
+          "unit": "J",
+          "description": "Magnetic, optical, or container potential energy landscape acting on the condensate."
+        },
+        "g": {
+          "name": "Contact Interaction Coupling",
+          "type": "constant",
+          "unit": "J*m^3",
+          "description": "Effective two-body $s$-wave interaction parameter $g = 4\\pi\\hbar^2 a_s / m$."
+        }
+      },
+      "cas_validation": {
+        "status": "OPERATOR_OR_TENSOR",
+        "is_homogeneous": true,
+        "quantity": "Nonlinear Wave Evolution Operator",
+        "dimension_latex": "[\\text{M} \\cdot \\text{L}^{1/2} / \\text{T}^{2}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "superfluid-healing-length",
+      "title": "Superfluid Vortex Core Healing Length",
+      "equation": "\\xi = \\frac{\\hbar}{\\sqrt{2 m g n_0}}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "gross-pitaevskii-equation",
+      "derivation_type": "DERIVED_FROM",
+      "description": "Defines the minimum spatial distance $\\xi$ over which a perturbed condensate density recovers to its bulk equilibrium value $n_0$, setting the radius of a quantized vortex core.",
+      "conceptual_definition": "Emerges by equating the quantum kinetic energy cost $\\hbar^2 / (2 m \\xi^2)$ of bending the condensate amplitude with the bulk interaction chemical potential $\\mu = g n_0$ in the Gross-Pitaevskii equation.",
+      "intuitive_summary": "Sets the physical thickness of a quantum vortex tube: tighter atomic repulsion or higher density squeezes the empty core down to a finer thread.",
+      "interpretation": "In dense, strongly interacting liquid $^4\\mathrm{He}$, $\\xi \\approx 0.1\\,\\mathrm{nm}$ is comparable to the interatomic spacing, making vortex filaments essentially one-dimensional topological strings. In dilute $^{87}\\mathrm{Rb}$ Bose-Einstein condensates, $\\xi \\sim 0.2\\text{--}0.5\\,\\mu\\mathrm{m}$, allowing direct optical imaging of vortex cores after ballistic expansion.",
+      "symmetry_origin": "Characteristic length scale arising from the competition between kinetic dispersion and cubic nonlinearity in the Gross-Pitaevskii energy functional.",
+      "limits_and_boundary": "Diverges ($\\xi \\to \\infty$) as either the interaction strength $g \\to 0$ or the condensate density $n_0 \\to 0$ (such as approaching the critical transition temperature $T_c$), signaling loss of superfluid stiffness. Shrinks continuously as $g n_0$ increases.",
+      "semantic_variables": {
+        "\\xi": {
+          "name": "Condensate Healing Length",
+          "type": "variable",
+          "unit": "m",
+          "description": "Characteristic core radius of a quantized vortex and minimum spatial scale for condensate density variations."
+        },
+        "\\hbar": {
+          "name": "Reduced Planck Constant",
+          "type": "constant",
+          "unit": "J*s",
+          "description": "Reduced Planck constant setting the quantum kinetic energy scale."
+        },
+        "m": {
+          "name": "Boson Mass",
+          "type": "constant",
+          "unit": "kg",
+          "description": "Mass of a single condensed boson."
+        },
+        "g": {
+          "name": "Contact Interaction Coupling",
+          "type": "constant",
+          "unit": "J*m^3",
+          "description": "Repulsive two-body $s$-wave interaction strength $g = 4\\pi\\hbar^2 a_s / m$."
+        },
+        "n_0": {
+          "name": "Bulk Condensate Number Density",
+          "type": "variable",
+          "unit": "m^(-3)",
+          "description": "Unperturbed equilibrium number density of condensed bosons far from the vortex core."
+        }
+      },
+      "cas_validation": {
+        "status": "DIMENSIONAL_EXPRESSION",
+        "is_homogeneous": true,
+        "quantity": "Length Scale",
+        "dimension_latex": "[\\text{L}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "feynman-vortex-lattice-density",
+      "title": "Abrikosov-Feynman Rotating Vortex Lattice Density",
+      "equation": "n_v = \\frac{2\\Omega}{\\kappa} = \\frac{m\\Omega}{\\pi\\hbar}",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "onsager-feynman-circulation-quantum",
+      "derivation_type": "DERIVED_FROM",
+      "description": "Gives the equilibrium areal number density $n_v$ of singly quantized vortex lines required for a rotating superfluid to mimic solid-body rotation at angular frequency $\\Omega$.",
+      "conceptual_definition": "Equates the macroscopic solid-body vorticity $2\\Omega$ integrated over area $A$ with the sum $N_v \\kappa$ of discrete circulation quanta carried by $N_v = n_v A$ parallel singly quantized filaments.",
+      "intuitive_summary": "Tells you how tightly packed the triangular forest of quantum whirlpools must become so that a spinning superfluid mimics the smooth rotation of an ordinary liquid.",
+      "interpretation": "Minimizing the free energy in the rotating frame $F' = F - \\Omega L_z$ arranges the $n_v$ vortices per unit area into a regular triangular lattice with lattice constant $a_v \\approx (2/\\sqrt{3} n_v)^{1/2}$. Rotating a bucket of liquid $^4\\mathrm{He}$ at $\\Omega = 1\\,\\mathrm{rad/s}$ nucleates roughly $2 \\times 10^7$ vortex lines per square meter, while rapidly spun atomic BECs exhibit lattices of over one hundred directly imaged cores.",
+      "symmetry_origin": "Follows from balancing angular momentum conservation in the rotating frame against topological quantization of circulation around each filament.",
+      "limits_and_boundary": "Valid when $\\Omega$ greatly exceeds the critical nucleation frequency $\\Omega_{c1} \\sim (\\kappa / 2\\pi R^2) \\ln(R/\\xi)$ so that many vortices occupy the vessel, yet remains far below the ultra-fast regime where vortex cores overlap ($n_v \\xi^2 \\ll 1$) and the condensate melts into correlated quantum Hall states.",
+      "semantic_variables": {
+        "n_v": {
+          "name": "Areal Vortex Density",
+          "type": "variable",
+          "unit": "m^(-2)",
+          "description": "Number of singly quantized parallel vortex filaments threading a unit cross-sectional area perpendicular to the rotation axis."
+        },
+        "\\Omega": {
+          "name": "Container Angular Velocity",
+          "type": "variable",
+          "unit": "rad/s",
+          "description": "Steady angular rotation rate imposed on the superfluid vessel or harmonic trap."
+        },
+        "\\kappa": {
+          "name": "Quantum of Circulation",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Elementary circulation quantum $\\kappa = h/m = 2\\pi\\hbar/m$ carried by each singly quantized filament."
+        },
+        "m": {
+          "name": "Condensate Boson Mass",
+          "type": "constant",
+          "unit": "kg",
+          "description": "Mass of a condensed boson or fermion pair."
+        },
+        "\\hbar": {
+          "name": "Reduced Planck Constant",
+          "type": "constant",
+          "unit": "J*s",
+          "description": "Reduced Planck constant fixing the quantum circulation scale."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Areal Number Density",
+        "dimension_latex": "[\\text{L}^{-2}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "vinen-vortex-line-density-equation",
+      "title": "Vinen Vortex-Line Density Evolution Equation",
+      "equation": "\\frac{dL}{dt} = \\chi_1 B \\frac{\\rho_n}{2\\rho} |\\mathbf{v}_{ns}| L^{3/2} - \\chi_2 \\frac{\\kappa}{2\\pi} L^2",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "onsager-feynman-circulation-quantum",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Models the macroscopic growth and decay of quantized vortex-line length per unit volume $L(t)$ in homogeneous superfluid counterflow turbulence driven by relative velocity $\\mathbf{v}_{ns}$.",
+      "conceptual_definition": "Balances mutual-friction-driven vortex stretching proportional to $|\\mathbf{v}_{ns}| L^{3/2}$ against binary reconnection-mediated line decay scaling as $\\kappa L^2$, with dimensionless order-unity parameters $\\chi_1$ and $\\chi_2$.",
+      "intuitive_summary": "Tracks the tug-of-war inside a turbulent superfluid tangle between heat-driven flow stretching new vortex length and tangled filaments colliding and shrinking away.",
+      "interpretation": "In steady counterflow ($dL/dt = 0$), Vinen's equation predicts $L^{1/2} = \\gamma(T) |\\mathbf{v}_{ns}|$, directly linking measurable second-sound attenuation to thermal heat flux. Once counterflow is switched off ($\\mathbf{v}_{ns} = 0$), the remaining $-\\chi_2 (\\kappa / 2\\pi) L^2$ sink yields the signature unstructured Vinen free-decay law $L(t) \\propto t^{-1}$, contrasting with the $t^{-3/2}$ decay of quasi-classical Kolmogorov tangles.",
+      "symmetry_origin": "Constructed from dimensional analysis and scale invariance of a statistically homogeneous, isotropic tangle characterized solely by the mean inter-vortex spacing $\\ell = L^{-1/2}$.",
+      "limits_and_boundary": "Applies to homogeneous unpolarized Vinen tangles well above the critical counterflow onset velocity. As $T \\to 0$, $\\rho_n / \\rho \\to 0$ eliminates the mutual-friction production term, while the decay term persists with an effective zero-temperature coefficient governed by Kelvin-wave phonon radiation.",
+      "semantic_variables": {
+        "L": {
+          "name": "Vortex-Line Density",
+          "type": "variable",
+          "unit": "m^(-2)",
+          "description": "Total length of quantized vortex filaments per unit volume of superfluid, related to inter-vortex spacing by $\\ell = L^{-1/2}$."
+        },
+        "\\chi_1": {
+          "name": "Vinen Generation Parameter",
+          "type": "constant",
+          "unit": "1",
+          "description": "Dimensionless order-unity coefficient quantifying vortex-line stretching efficiency under mutual friction."
+        },
+        "B": {
+          "name": "Hall-Vinen Mutual Friction Coefficient",
+          "type": "variable",
+          "unit": "1",
+          "description": "Temperature-dependent dimensionless dissipative mutual friction parameter arising from quasiparticle scattering off vortex cores."
+        },
+        "\\rho_n": {
+          "name": "Normal-Fluid Mass Density",
+          "type": "variable",
+          "unit": "kg/m^3",
+          "description": "Mass density of the thermally excited viscous normal-fluid component."
+        },
+        "\\rho": {
+          "name": "Total Fluid Mass Density",
+          "type": "variable",
+          "unit": "kg/m^3",
+          "description": "Combined mass density $\\rho = \\rho_s + \\rho_n$ of the superfluid and normal-fluid components."
+        },
+        "\\mathbf{v}_{ns}": {
+          "name": "Counterflow Relative Velocity",
+          "type": "variable",
+          "unit": "m/s",
+          "description": "Relative velocity vector $\\mathbf{v}_n - \\mathbf{v}_s$ between the normal-fluid and superfluid components."
+        },
+        "\\chi_2": {
+          "name": "Vinen Decay Parameter",
+          "type": "constant",
+          "unit": "1",
+          "description": "Dimensionless order-unity coefficient governing the rate of vortex-line length loss via reconnections and cascade dissipation."
+        },
+        "\\kappa": {
+          "name": "Quantum of Circulation",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Elementary Onsager-Feynman circulation quantum $h/m$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Vortex-Line Density Rate of Change",
+        "dimension_latex": "[\\text{L}^{-2} \\cdot \\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    },
+    {
+      "id": "kelvin-wave-dispersion-relation",
+      "title": "Kelvin-Wave Dispersion Relation on a Quantized Vortex",
+      "equation": "\\omega(k) = \\frac{\\kappa k^2}{4\\pi} \\left[ \\ln\\left(\\frac{1}{k a_0}\\right) + c_0 \\right]",
+      "category": "fluids-nonlinear",
+      "record_type": "equation",
+      "parent_formula_id": "vinen-vortex-line-density-equation",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Determines the angular frequency $\\omega(k)$ of helical bending waves (kelvons) of axial wavenumber $k$ propagating along an isolated quantized vortex filament of core radius $a_0$.",
+      "conceptual_definition": "Derives from the self-induced Biot-Savart velocity of a helically perturbed thin vortex filament in the long-wavelength limit $k a_0 \\ll 1$, exhibiting quadratic $k^2$ dispersion modulated by a logarithmic core cutoff.",
+      "intuitive_summary": "Describes how corkscrew ripples travel along a single quantum vortex thread, carrying turbulent energy down to tiny wavelengths where it radiates away as sound even at absolute zero.",
+      "interpretation": "Below the inter-vortex spacing ($k \\gg \\ell^{-1}$), individual vortex filaments decouple from collective eddy motion and support a weak-turbulence Kelvin-wave cascade. Nonlinear six-wave interactions funnel energy across scales with spectrum $E_{\\mathrm{KW}}(k) \\propto k^{-5/3}$ (L'vov-Nazarenko) until high-frequency oscillations radiate compressible phonons, providing the primary $T \\to 0$ dissipation sink of superfluid turbulence.",
+      "symmetry_origin": "Goldstone bending mode arising from the spontaneous breaking of transverse translational symmetry in the plane perpendicular to the vortex line.",
+      "limits_and_boundary": "Valid in the thin-filament regime $k a_0 \\ll 1$, where the logarithmic factor $\\ln(1 / k a_0)$ dominates the core-structure constant $c_0$ (with $c_0 \\approx 0.116$ for a hollow core and $c_0 \\approx -0.115$ in Gross-Pitaevskii condensates). Breaks down as $k \\sim a_0^{-1} \\sim \\xi^{-1}$, where core deformation and acoustic phonon emission dominate.",
+      "semantic_variables": {
+        "\\omega(k)": {
+          "name": "Kelvin-Wave Angular Frequency",
+          "type": "variable",
+          "unit": "rad/s",
+          "description": "Angular frequency of helical transverse oscillations propagating counter to the vortex circulation."
+        },
+        "\\kappa": {
+          "name": "Quantum of Circulation",
+          "type": "constant",
+          "unit": "m^2/s",
+          "description": "Elementary Onsager-Feynman circulation quantum $h/m$ of the vortex filament."
+        },
+        "k": {
+          "name": "Axial Wavenumber",
+          "type": "variable",
+          "unit": "m^(-1)",
+          "description": "Wavenumber of the helical perturbation measured along the unperturbed vortex axis."
+        },
+        "a_0": {
+          "name": "Effective Vortex Core Radius",
+          "type": "constant",
+          "unit": "m",
+          "description": "Microscopic core cutoff scale of the vortex filament, of order the healing length $\\xi$."
+        },
+        "c_0": {
+          "name": "Core-Structure Constant",
+          "type": "constant",
+          "unit": "1",
+          "description": "Dimensionless order-unity constant determined by the radial density profile inside the vortex core."
+        }
+      },
+      "cas_validation": {
+        "status": "DIMENSIONAL_EXPRESSION",
+        "is_homogeneous": true,
+        "quantity": "Angular Frequency",
+        "dimension_latex": "[\\text{T}^{-1}]",
+        "verified_at": 1795290000
+      }
+    }
+  ]
+}

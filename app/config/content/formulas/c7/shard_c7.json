@@ -3140,5 +3140,69 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "turing-diffusion-instability-criterion": {
+    "title": "Turing Diffusion-Driven Instability Condition",
+    "equation": "D_v f_u + D_u g_v > 2 \\sqrt{D_u D_v (f_u g_v - f_v g_u)}",
+    "category": "fluids-nonlinear",
+    "record_type": "equation",
+    "parent_formula_id": "turing-dispersion-relation",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Specifies the exact necessary and sufficient algebraic inequality on diffusivities $D_u$, $D_v$ and Jacobian entries for a stable homogeneous reaction-diffusion state to exhibit a Turing instability.",
+    "conceptual_definition": "Derived by requiring the quadratic polynomial $h(k^2) = D_u D_v k^4 - (D_v f_u + D_u g_v)k^2 + \\det\\mathbf{J}$ to dip strictly below zero for positive $k^2$, this criterion fixes the critical diffusivity ratio $d_c = D_v / D_u$ needed for spontaneous pattern formation.",
+    "intuitive_summary": "Patterns can emerge spontaneously from a uniform chemical mixture only when the inhibitor diffuses enough times faster than the activator to overcome the stabilizing determinant of the local reactions.",
+    "interpretation": "Because $D_u, D_v > 0$ and $\\det\\mathbf{J} = f_u g_v - f_v g_u > 0$, the right-hand side is strictly positive, so satisfying this single inequality simultaneously enforces $D_v f_u + D_u g_v > 0$ and guarantees a negative minimum of $h(k^2)$ at $k^2 > 0$. Combined with $f_u + g_v < 0$, it proves that $D_u = D_v$ can never produce a Turing instability and requires $D_v / D_u > d_c > 1$ when $f_u > 0 > g_v$.",
+    "symmetry_origin": "Emerges from the discriminant condition of the wavenumber-dependent determinant $\\det(\\mathbf{J} - k^2 \\mathbf{D}) < 0$, marking the exact boundary of continuous translational symmetry breaking.",
+    "limits_and_boundary": "At equality, $D_v f_u + D_u g_v = 2\\sqrt{D_u D_v \\det\\mathbf{J}}$, the curve $h(k^2)$ is tangent to zero at a single critical wavenumber $k_c$, defining the Turing bifurcation threshold. When $D_u = D_v$, the left-hand side reduces to $D_u(f_u + g_v) < 0$, making the inequality impossible to satisfy.",
+    "semantic_variables": {
+      "D_v": {
+        "name": "Inhibitor Diffusion Coefficient",
+        "type": "constant",
+        "unit": "m^2/s",
+        "description": "Diffusion coefficient of the fast-diffusing inhibitor species $v$."
+      },
+      "D_u": {
+        "name": "Activator Diffusion Coefficient",
+        "type": "constant",
+        "unit": "m^2/s",
+        "description": "Diffusion coefficient of the slow-diffusing activator species $u$."
+      },
+      "f_u": {
+        "name": "Activator Self-Coupling Derivative",
+        "type": "variable",
+        "unit": "1/s",
+        "description": "Autocatalytic self-enhancement rate $\\partial f / \\partial u > 0$ at steady state."
+      },
+      "g_v": {
+        "name": "Inhibitor Self-Damping Derivative",
+        "type": "variable",
+        "unit": "1/s",
+        "description": "Self-damping rate $\\partial g / \\partial v < 0$ of the inhibitor at steady state."
+      },
+      "f_v": {
+        "name": "Inhibitor-to-Activator Cross Derivative",
+        "type": "variable",
+        "unit": "1/s",
+        "description": "Cross-coupling partial derivative $\\partial f / \\partial v$ at steady state."
+      },
+      "g_u": {
+        "name": "Activator-to-Inhibitor Cross Derivative",
+        "type": "variable",
+        "unit": "1/s",
+        "description": "Cross-coupling partial derivative $\\partial g / \\partial u$ at steady state."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Diffusivity-Rate Product",
+      "dimension_latex": "[\\text{L}^{2} \\cdot \\text{T}^{-2}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "turing-critical-wavenumber-wavelength"
+    ]
   }
 }

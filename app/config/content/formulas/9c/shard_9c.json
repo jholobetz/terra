@@ -3232,5 +3232,61 @@
     "record_type": "equation",
     "lineage_confidence": "curated",
     "description": "Exact localized hyperbolic-secant-squared solitary wave solution of the Korteweg-de Vries equation traveling at speed c."
+  },
+  "vicsek-polar-alignment-rule": {
+    "title": "Vicsek Polar Alignment Update Rule",
+    "equation": "\\theta_i(t + \\Delta t) = \\arg\\left(\\sum_{j \\in \\mathcal{N}_i} e^{i \\theta_j(t)}\\right) + \\eta \\xi_i(t)",
+    "category": "fluids-nonlinear",
+    "record_type": "equation",
+    "parent_formula_id": "arrow-of-time-e01dc7cd",
+    "derivation_type": "DEFINITION",
+    "description": "Defines the discrete-time angular update for self-propelled particle $i$ in the two-dimensional Vicsek flocking model, aligning its heading $\\theta_i$ to the vector average of neighbors $j \\in \\mathcal{N}_i$ plus uniform angular noise $\\eta \\xi_i(t)$.",
+    "conceptual_definition": "The Vicsek polar alignment rule specifies a minimal nonequilibrium dynamical law in which constant-speed agents steer toward the local mean heading of nearby flockmates while subject to stochastic orientational perturbations.",
+    "intuitive_summary": "At each tick of the clock, every swimmer looks at the average direction its close neighbors are heading, points that way, and adds a small random wobble controlled by the noise level $\\eta$.",
+    "interpretation": "Summing unit phasors $e^{i\\theta_j(t)}$ over all particles $j$ within the interaction neighborhood $\\mathcal{N}_i$ (typically a disk of radius $R$ including particle $i$ itself) and taking the complex argument computes the circular mean heading without branch-cut discontinuities. Because particles advance simultaneously along their updated orientations at constant speed $v_0$, the neighbor set $\\mathcal{N}_i$ evolves dynamically, breaking equilibrium detailed balance and enabling macroscopic flocking even in two dimensions.",
+    "symmetry_origin": "Preserves global $O(2)$ rotational invariance in the plane (shifting all headings $\\theta_j \\to \\theta_j + \\theta_0$ shifts the updated angle identically) while explicitly breaking time-reversal symmetry through irreversible self-propelled advection.",
+    "limits_and_boundary": "In the zero-noise limit $\\eta \\to 0$, every connected cluster aligns perfectly into a coherent ballistic flock; in the high-noise limit $\\eta \\to 2\\pi$, angular orientations randomize uniformly into an isotropic active gas with vanishing polar order parameter. Setting $v_0 \\to 0$ removes particle motility and reduces the model to a static two-dimensional equilibrium XY magnet.",
+    "semantic_variables": {
+      "\\theta_i": {
+        "name": "Particle Heading Angle",
+        "type": "variable",
+        "unit": "rad",
+        "description": "Instantaneous orientation angle of the $i$-th self-propelled particle in the two-dimensional plane."
+      },
+      "\\Delta t": {
+        "name": "Discrete Update Time Step",
+        "type": "parameter",
+        "unit": "s",
+        "description": "Fixed temporal interval separating successive synchronous alignment and position updates."
+      },
+      "\\mathcal{N}_i": {
+        "name": "Interaction Neighborhood",
+        "type": "variable",
+        "unit": "1",
+        "description": "Index set of neighboring particles located within the metric or topological alignment range of particle $i$."
+      },
+      "\\eta": {
+        "name": "Angular Noise Amplitude",
+        "type": "parameter",
+        "unit": "rad",
+        "description": "Control parameter governing the strength of stochastic orientational perturbations."
+      },
+      "\\xi_i": {
+        "name": "Stochastic Noise Variable",
+        "type": "variable",
+        "unit": "1",
+        "description": "Delta-correlated random variable drawn uniformly from $[-1/2, 1/2]$ at each step for particle $i$."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Plane Angle",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

@@ -2804,5 +2804,123 @@
     "record_type": "equation",
     "description": "Formulates the mathematical identity for Quantum Expectation Value and Matrix Element (Orthonormal Basis) by coupling quantum Wavefunction State ($\\psi$).",
     "lineage_confidence": "heuristic"
+  },
+  "graphene-berry-phase-chirality": {
+    "title": "Graphene Sublattice Pseudospin Berry Phase",
+    "equation": "\\gamma_B = i \\oint_C \\langle u_{\\mathbf{q}} | \\nabla_{\\mathbf{q}} u_{\\mathbf{q}} \\rangle \\cdot d\\mathbf{q} = \\pm \\pi",
+    "category": "condensed-matter",
+    "record_type": "equation",
+    "parent_formula_id": "berry-curvature-pseudovector-symbol",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Quantifies the topological geometric phase $\\gamma_B = \\pm \\pi$ acquired by a graphene Dirac spinor $|u_{\\mathbf{q}}\\rangle$ when adiabatically transported around a closed momentum loop $C$ encircling a Dirac point.",
+    "conceptual_definition": "Integrating the Berry connection $i\\langle u_{\\mathbf{q}}|\\nabla_{\\mathbf{q}}u_{\\mathbf{q}}\\rangle$ around a valley Dirac cone yields a quantized winding phase of $\\pm \\pi$, directly encoding the spin-$1/2$ topology of the sublattice pseudospin texture.",
+    "intuitive_summary": "Walking an electron's momentum in a full circle around a Dirac cone rotates its sublattice pseudospin by 360 degrees, which flips the sign of its quantum wavefunction and produces a half-turn phase shift of $\\pi$.",
+    "interpretation": "In polar momentum coordinates $\\mathbf{q} = q(\\cos\\theta, \\sin\\theta)$, the valley-$K$ conduction spinor is $|u_{\\mathbf{q}}\\rangle = \\frac{1}{\\sqrt{2}}(1, e^{i\\theta})^T$, giving Berry connection $\\mathcal{A}_{\\theta} = \\frac{1}{2q}$ and closed-loop integral $\\gamma_B = \\pi$ (and $-\\pi$ at $K'$). This phase flip causes destructive interference between backscattered paths, suppressing intravalley backscattering and shifting the quantum Hall Landau-level sequence by $1/2$.",
+    "symmetry_origin": "Quantized to integer multiples of $\\pi$ (modulo $2\\pi$) by combined inversion and time-reversal symmetry ($\\mathcal{P}\\mathcal{T}$), which constrains the Berry curvature to vanish everywhere away from the singular Dirac points.",
+    "limits_and_boundary": "Any closed loop $C$ that does not enclose a Dirac point gives $\\gamma_B = 0$. In Bernal-stacked bilayer graphene, the pseudospin winds twice around each valley, doubling the Berry phase to $\\gamma_B = \\pm 2\\pi$.",
+    "semantic_variables": {
+      "\\gamma_B": {
+        "name": "Berry Phase",
+        "type": "variable",
+        "unit": "rad",
+        "description": "Gauge-invariant geometric phase (modulo $2\\pi$) accumulated along the closed momentum-space contour $C$."
+      },
+      "|u_{\\mathbf{q}}\\rangle": {
+        "name": "Cell-Periodic Bloch Spinor",
+        "type": "variable",
+        "unit": "1",
+        "description": "Normalized two-component sublattice eigenstate of the Dirac Hamiltonian at relative wavevector $\\mathbf{q}$."
+      },
+      "\\nabla_{\\mathbf{q}}": {
+        "name": "Momentum-Space Gradient",
+        "type": "operator",
+        "unit": "m",
+        "description": "Vector differential operator with respect to the wavevector components $(q_x, q_y)$."
+      },
+      "d\\mathbf{q}": {
+        "name": "Momentum Line Element",
+        "type": "variable",
+        "unit": "m^-1",
+        "description": "Infinitesimal tangent displacement along the closed contour $C$ encircling a Dirac point in reciprocal space."
+      }
+    },
+    "cas_validation": {
+      "status": "DIMENSIONAL_EXPRESSION",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Geometric Phase",
+      "dimension_latex": "[1]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
+  },
+  "gierer-meinhardt-activator-inhibitor": {
+    "title": "Gierer-Meinhardt Activator-Inhibitor Kinetics",
+    "equation": "\\frac{\\partial u}{\\partial t} = \\rho_0 + c \\frac{u^2}{v} - \\mu_u u + D_u \\nabla^2 u, \\quad \\frac{\\partial v}{\\partial t} = c' u^2 - \\mu_v v + D_v \\nabla^2 v",
+    "category": "fluids-nonlinear",
+    "record_type": "equation",
+    "parent_formula_id": "turing-two-component-reaction-diffusion",
+    "derivation_type": "SPECIAL_CASE",
+    "description": "Formulates the canonical 1972 Gierer-Meinhardt biological morphogenesis model featuring quadratic activator autocatalysis throttled inversely by a fast-diffusing inhibitor.",
+    "conceptual_definition": "A prototype nonlinear activator-inhibitor reaction-diffusion system demonstrating how short-range nonlinear self-enhancement ($u^2/v$) and long-range inhibition ($D_v \\gg D_u$) generate self-regulating, regenerable biological patterns.",
+    "intuitive_summary": "Activator molecules amplify themselves quadratically while inhibitor molecules dilute that amplification and diffuse much farther away, locking in evenly spaced peaks that even regenerate if part of the tissue is cut away.",
+    "interpretation": "The term $c u^2 / v$ provides nonlinear autocatalytic amplification of activator $u$ that is suppressed by inhibitor $v$, while $\\rho_0$ supplies a small basal production rate preventing extinction at low concentrations. Both species decay linearly at rates $\\mu_u$ and $\\mu_v$, and $c' u^2$ couples inhibitor production directly to local activator peaks. Provided $D_v / D_u$ exceeds the threshold set by $\\mu_v / \\mu_u$, the homogeneous steady state destabilizes into sharp activator spikes or periodic stripes.",
+    "symmetry_origin": "Specializes the translationally invariant two-component reaction-diffusion system to mass-action-inspired biological signaling kinetics exhibiting robust spontaneous spatial symmetry breaking.",
+    "limits_and_boundary": "When basal production $\\rho_0 \\to 0$, the homogeneous steady state satisfies $u_0 = (c \\mu_v)/(c' \\mu_u)$ and $v_0 = (c' / \\mu_v) u_0^2$, with $f_u = \\mu_u > 0$ and $g_v = -\\mu_v < 0$; stability requires $\\mu_v > \\mu_u$, and the critical diffusivity ratio scales as $d_c = (3 + 2\\sqrt{2}) \\mu_v / \\mu_u$.",
+    "semantic_variables": {
+      "u": {
+        "name": "Activator Concentration",
+        "type": "variable",
+        "unit": "mol/m^3",
+        "description": "Local concentration of the short-range autocatalytic morphogen."
+      },
+      "v": {
+        "name": "Inhibitor Concentration",
+        "type": "variable",
+        "unit": "mol/m^3",
+        "description": "Local concentration of the fast-diffusing inhibitory morphogen."
+      },
+      "\\rho_0": {
+        "name": "Basal Activator Source",
+        "type": "constant",
+        "unit": "mol/(m^3*s)",
+        "description": "Constant background synthesis rate of the activator independent of $u$ and $v$."
+      },
+      "\\mu_u": {
+        "name": "Activator Decay Rate",
+        "type": "constant",
+        "unit": "1/s",
+        "description": "First-order degradation rate constant of the activator."
+      },
+      "\\mu_v": {
+        "name": "Inhibitor Decay Rate",
+        "type": "constant",
+        "unit": "1/s",
+        "description": "First-order degradation rate constant of the inhibitor."
+      },
+      "D_u": {
+        "name": "Activator Diffusivity",
+        "type": "constant",
+        "unit": "m^2/s",
+        "description": "Diffusion coefficient of the activator."
+      },
+      "D_v": {
+        "name": "Inhibitor Diffusivity",
+        "type": "constant",
+        "unit": "m^2/s",
+        "description": "Diffusion coefficient of the inhibitor ($D_v \\gg D_u$)."
+      }
+    },
+    "cas_validation": {
+      "status": "OPERATOR_OR_TENSOR",
+      "is_homogeneous": true,
+      "quantity": "Molar Concentration Rate",
+      "dimension_latex": "[\\text{N} \\cdot \\text{L}^{-3} \\cdot \\text{T}^{-1}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

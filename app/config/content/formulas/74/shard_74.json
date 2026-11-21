@@ -3001,5 +3001,55 @@
       "rossby-beta-parameter",
       "rossby-radius-of-deformation"
     ]
+  },
+  "turing-homogeneous-jacobian-stability": {
+    "title": "Homogeneous Steady-State Stability Conditions",
+    "equation": "f_u + g_v < 0, \\quad f_u g_v - f_v g_u > 0",
+    "category": "fluids-nonlinear",
+    "record_type": "equation",
+    "parent_formula_id": "turing-two-component-reaction-diffusion",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Establishes the trace and determinant inequalities on the local reaction Jacobian $\\mathbf{J}$ required for a spatially uniform steady state $(u_0, v_0)$ to be linearly stable against homogeneous ($k = 0$) perturbations.",
+    "conceptual_definition": "These Routh-Hurwitz stability conditions ensure that both eigenvalues of the two-component reaction Jacobian have strictly negative real parts in a well-stirred system, isolating diffusion as the sole driver of subsequent pattern formation.",
+    "intuitive_summary": "In a thoroughly mixed beaker with no spatial gradients, any small disturbance away from the uniform chemical balance dies back down only if the trace of the reaction Jacobian is negative and its determinant is positive.",
+    "interpretation": "Evaluating partial derivatives $f_u = \\partial f / \\partial u$, $f_v = \\partial f / \\partial v$, $g_u = \\partial g / \\partial u$, and $g_v = \\partial g / \\partial v$ at the homogeneous equilibrium $(u_0, v_0)$ yields the $2 \\times 2$ Jacobian $\\mathbf{J}$. Its characteristic polynomial $\\sigma^2 - (\\text{tr}\\,\\mathbf{J})\\sigma + \\det\\mathbf{J} = 0$ has both roots in the left half-plane if and only if $\\text{tr}\\,\\mathbf{J} = f_u + g_v < 0$ and $\\det\\mathbf{J} = f_u g_v - f_v g_u > 0$.",
+    "symmetry_origin": "Arises from the Routh-Hurwitz stability criterion for linear two-dimensional dynamical systems invariant under spatial translations ($k = 0$ subspace).",
+    "limits_and_boundary": "When $f_u + g_v = 0$ with $f_u g_v - f_v g_u > 0$, the homogeneous system undergoes a Hopf bifurcation into uniform temporal oscillations. When $f_u g_v - f_v g_u = 0$, a static saddle-node or pitchfork bifurcation destabilizes the uniform equilibrium even without diffusion.",
+    "semantic_variables": {
+      "f_u": {
+        "name": "Activator Self-Coupling Derivative",
+        "type": "variable",
+        "unit": "1/s",
+        "description": "Partial derivative $\\partial f / \\partial u$ evaluated at the homogeneous steady state $(u_0, v_0)$; positive for an autocatalytic activator."
+      },
+      "f_v": {
+        "name": "Inhibitor-to-Activator Cross Derivative",
+        "type": "variable",
+        "unit": "1/s",
+        "description": "Partial derivative $\\partial f / \\partial v$ evaluated at $(u_0, v_0)$; negative in classical activator-inhibitor kinetics."
+      },
+      "g_u": {
+        "name": "Activator-to-Inhibitor Cross Derivative",
+        "type": "variable",
+        "unit": "1/s",
+        "description": "Partial derivative $\\partial g / \\partial u$ evaluated at $(u_0, v_0)$; positive when the activator stimulates inhibitor synthesis."
+      },
+      "g_v": {
+        "name": "Inhibitor Self-Damping Derivative",
+        "type": "variable",
+        "unit": "1/s",
+        "description": "Partial derivative $\\partial g / \\partial v$ evaluated at $(u_0, v_0)$; negative for self-damped inhibitor decay."
+      }
+    },
+    "cas_validation": {
+      "status": "DIMENSIONAL_EXPRESSION",
+      "is_homogeneous": true,
+      "quantity": "Linear Reaction Rate",
+      "dimension_latex": "[\\text{T}^{-1}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

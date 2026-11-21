@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+50` subtopics live across 10 batches, bringing the encyclopedia from `1,584 → 1,634` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+60` subtopics live across 12 batches, bringing the encyclopedia from `1,584 → 1,644` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -143,3 +143,31 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 48 | Qubits, Quantum Gates and Quantum Information | http://localhost:8000/physics/subtopic/qubits-quantum-gates-information | https://physicslab.ca/physics/subtopic/qubits-quantum-gates-information |
 | 49 | Quantum Decoherence and Quantum Error Correction | http://localhost:8000/physics/subtopic/quantum-decoherence-error-correction | https://physicslab.ca/physics/subtopic/quantum-decoherence-error-correction |
 | 50 | Quantum Optics, Photon Antibunching and Hong-Ou-Mandel Interference | http://localhost:8000/physics/subtopic/quantum-optics-photon-antibunching | https://physicslab.ca/physics/subtopic/quantum-optics-photon-antibunching |
+
+---
+
+## Batch 11 — `condensed-matter` · *8. 2D Quantum Materials, Spintronics & Topological Matter*
+* **Date:** 2026-11-21 (`condensed-matter`: `34 → 39`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/condensed-matter) · [Live](https://physicslab.ca/physics/topic/condensed-matter)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 51 | Graphene and Massless Dirac Fermions | http://localhost:8000/physics/subtopic/graphene-dirac-fermions | https://physicslab.ca/physics/subtopic/graphene-dirac-fermions |
+| 52 | Moiré Superlattices and Magic-Angle Flat Bands | http://localhost:8000/physics/subtopic/moire-superlattices-flat-bands | https://physicslab.ca/physics/subtopic/moire-superlattices-flat-bands |
+| 53 | Magnetic Skyrmions and Chiral Spintronics | http://localhost:8000/physics/subtopic/magnetic-skyrmions-chiral-spintronics | https://physicslab.ca/physics/subtopic/magnetic-skyrmions-chiral-spintronics |
+| 54 | Weyl and Dirac Semimetals and the Chiral Anomaly | http://localhost:8000/physics/subtopic/weyl-dirac-semimetals | https://physicslab.ca/physics/subtopic/weyl-dirac-semimetals |
+| 55 | Fractional Quantum Hall Effect and Composite Fermions | http://localhost:8000/physics/subtopic/fractional-quantum-hall-composite-fermions | https://physicslab.ca/physics/subtopic/fractional-quantum-hall-composite-fermions |
+
+---
+
+## Batch 12 — `fluids-nonlinear` · *7. Pattern Formation, Solitons & Active Matter*
+* **Date:** 2026-11-21 (`fluids-nonlinear`: `30 → 35`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/fluids-nonlinear) · [Live](https://physicslab.ca/physics/topic/fluids-nonlinear)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 56 | Turing Patterns and Reaction-Diffusion Morphogenesis | http://localhost:8000/physics/subtopic/turing-patterns-reaction-diffusion | https://physicslab.ca/physics/subtopic/turing-patterns-reaction-diffusion |
+| 57 | Complex Ginzburg-Landau Equation and Spatiotemporal Pattern Selection | http://localhost:8000/physics/subtopic/ginzburg-landau-amplitude-equations | https://physicslab.ca/physics/subtopic/ginzburg-landau-amplitude-equations |
+| 58 | Kuramoto Model and Coupled Oscillator Synchronization | http://localhost:8000/physics/subtopic/kuramoto-synchronization-oscillators | https://physicslab.ca/physics/subtopic/kuramoto-synchronization-oscillators |
+| 59 | Active Matter and Flocking Hydrodynamics | http://localhost:8000/physics/subtopic/active-matter-flocking-hydrodynamics | https://physicslab.ca/physics/subtopic/active-matter-flocking-hydrodynamics |
+| 60 | Quantum Vortices and Superfluid Turbulence | http://localhost:8000/physics/subtopic/quantum-vortices-superfluid-turbulence | https://physicslab.ca/physics/subtopic/quantum-vortices-superfluid-turbulence |

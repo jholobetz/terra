@@ -1877,5 +1877,69 @@
     "subcomponents": [
       "poincare-lindstedt-frequency-shift"
     ]
+  },
+  "kuramoto-mean-field-phase-equation": {
+    "title": "Mean-Field Decoupled Kuramoto Phase Equation",
+    "equation": "\\dot{\\theta}_i = \\omega_i + K r \\sin(\\psi - \\theta_i)",
+    "category": "fluids-nonlinear",
+    "record_type": "equation",
+    "parent_formula_id": "kuramoto-complex-order-parameter",
+    "derivation_type": "DERIVED_FROM",
+    "description": "Rewrites the all-to-all Kuramoto dynamics in mean-field form, showing that each oscillator $\\theta_i$ couples exclusively to the collective coherence amplitude $r$ and mean phase $\\psi$ with effective locking torque $K r$.",
+    "conceptual_definition": "The mean-field Kuramoto equation decouples the $N$-body pairwise sum into independent single-oscillator equations driven self-consistently by the macroscopic field $(r, \\psi)$.",
+    "intuitive_summary": "Instead of tracking every pairwise pull separately, each oscillator feels a single collective pull of strength $K r$ tugging it toward the crowd's average phase $\\psi$—the more synchronized the crowd, the stronger the pull.",
+    "interpretation": "Multiplying $r e^{i\\psi} = \\frac{1}{N} \\sum_j e^{i\\theta_j}$ by $e^{-i\\theta_i}$ gives $r e^{i(\\psi - \\theta_i)} = \\frac{1}{N} \\sum_j e^{i(\\theta_j - \\theta_i)}$. Equating imaginary parts yields $\\frac{1}{N} \\sum_j \\sin(\\theta_j - \\theta_i) = r \\sin(\\psi - \\theta_i)$, transforming the coupled system into an exact Adler-type phase-locking equation whose drive amplitude $K r$ must be determined self-consistently.",
+    "symmetry_origin": "Inherits the $U(1)$ phase-shift symmetry $(\\theta_i, \\psi) \\to (\\theta_i + \\alpha, \\psi + \\alpha)$ and rotational frame covariance of the microscopic all-to-all interaction.",
+    "limits_and_boundary": "When $r = 0$, the coupling term vanishes identically even for $K > 0$, leaving every oscillator drifting freely at $\\dot{\\theta}_i = \\omega_i$. When $r > 0$, the equation exhibits a saddle-node bifurcation on an invariant circle (SNIC) at $|\\omega_i - \\dot{\\psi}| = K r$.",
+    "semantic_variables": {
+      "\\dot{\\theta}_i": {
+        "name": "Instantaneous Phase Velocity",
+        "type": "variable",
+        "unit": "rad/s",
+        "description": "Time derivative of the phase of the $i$-th oscillator."
+      },
+      "\\omega_i": {
+        "name": "Natural Angular Frequency",
+        "type": "parameter",
+        "unit": "rad/s",
+        "description": "Intrinsic frequency of the $i$-th oscillator in the absence of coupling."
+      },
+      "K": {
+        "name": "Global Coupling Strength",
+        "type": "parameter",
+        "unit": "rad/s",
+        "description": "Microscopic coupling constant multiplying the macroscopic coherence."
+      },
+      "r": {
+        "name": "Phase Coherence Amplitude",
+        "type": "variable",
+        "unit": "1",
+        "description": "Modulus of the macroscopic Kuramoto order parameter."
+      },
+      "\\psi": {
+        "name": "Mean Collective Phase",
+        "type": "variable",
+        "unit": "rad",
+        "description": "Average phase angle of the collective mean field."
+      },
+      "\\theta_i": {
+        "name": "Oscillator Phase Angle",
+        "type": "variable",
+        "unit": "rad",
+        "description": "Phase coordinate of the $i$-th oscillator."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Angular Frequency / Phase Velocity",
+      "dimension_latex": "[\\text{T}^{-1}]",
+      "verified_at": 1795290000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "kuramoto-phase-locking-condition"
+    ]
   }
 }

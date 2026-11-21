@@ -367,7 +367,10 @@ $runner->run('PhysicsServiceTest', 'testLoadAllShardsUsesStrictAllowlist', funct
     $svc->loadAllShards();
     $content = $svc->getPhysicsContent();
 
-    $t->assertSame(1589, count($content['subtopics']), 'Must load exactly 1,589 canonical subtopics');
+    $searchIndex = json_decode((string)file_get_contents(PROJECT_ROOT . '/app/config/content/search_index.json'), true);
+    $expectedSubtopics = is_array($searchIndex) ? count($searchIndex) : 0;
+    $t->assertTrue(count($content['subtopics']) >= 1589, 'Subtopic catalog must preserve monotonic floor >= 1,589');
+    $t->assertSame($expectedSubtopics, count($content['subtopics']), 'Loaded canonical subtopics must match search_index.json count');
     $t->assertFalse(isset($content['subtopics']['topics']), 'Auxiliary JSON files must not leak into subtopics');
 
     // Verify all 12 topic hubs match hub_manifests/*.json pillar counts (zero prod vs dev constellation drift)

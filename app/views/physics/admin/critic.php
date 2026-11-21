@@ -240,7 +240,7 @@ function runCritic(slug, writeCitations) {
     const buttons = document.querySelectorAll('.btn-action');
     buttons.forEach(btn => btn.disabled = true);
 
-    fetch(BASE_URL + '/physics/admin/api/run-critic', {
+    fetch('/physics/admin/api/run-critic', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
             keywordsInput.value = "Extracting key terms...";
         }
 
-        fetch(BASE_URL + '/physics/admin/api/get-subtopic/' + slug)
+        fetch('/physics/admin/api/get-subtopic/' + slug)
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.subtopic) {
@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.disabled = true;
             }
 
-            fetch(BASE_URL + '/physics/admin/api/register-reference', {
+            fetch('/physics/admin/api/register-reference', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -673,7 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = document.getElementById('btn-submit-edit');
             if (submitBtn) submitBtn.disabled = true;
 
-            fetch(BASE_URL + '/physics/admin/api/update-verification', {
+            fetch('/physics/admin/api/update-verification', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

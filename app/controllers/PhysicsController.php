@@ -1201,7 +1201,7 @@ class PhysicsController
             if ($depth < 1) $depth = 1;
             if ($depth > 4) $depth = 4;
             require_once __DIR__ . '/../logic/FormulaGraphService.php';
-            $subgraph = \App\Logic\FormulaGraphService::getFormulaSubgraph($id, $depth);
+            $subgraph = \app\logic\FormulaGraphService::getFormulaSubgraph($id, $depth);
             echo json_encode([
                 'success' => true,
                 'data' => $subgraph
@@ -1229,7 +1229,7 @@ class PhysicsController
                 return;
             }
             require_once __DIR__ . '/../logic/FormulaGraphService.php';
-            $path = \App\Logic\FormulaGraphService::findDerivationPath($start, $end);
+            $path = \app\logic\FormulaGraphService::findDerivationPath($start, $end);
             echo json_encode([
                 'success' => true,
                 'data' => $path
@@ -1533,7 +1533,7 @@ class PhysicsController
         $fetchSubtopicFunc = function(string $sSlug) {
             return $this->service()->fetchAndPrepare('subtopics', $sSlug);
         };
-        $topicVariableMap = \App\Logic\VariableAggregator::buildTopicVariables($slug, $topic, $content['subtopics'] ?? [], $fetchSubtopicFunc);
+        $topicVariableMap = \app\logic\VariableAggregator::buildTopicVariables($slug, $topic, $content['subtopics'] ?? [], $fetchSubtopicFunc);
 
         $this->renderWithLayout('physics/topic', array_merge($topic, [
             'topic' => $topic,
@@ -1597,11 +1597,11 @@ class PhysicsController
         $parents = !empty($subtopic['parents']) ? (is_string($subtopic['parents']) ? (json_decode($subtopic['parents'], true) ?: []) : (array)$subtopic['parents']) : [];
         $breadcrumbs = $this->service()->resolveBreadcrumbs($parents);
         $related = $this->service()->getRelatedTopics($slug, 4);
-        $subtopicVariables = \App\Logic\VariableAggregator::buildSubtopicVariables($subtopic);
+        $subtopicVariables = \app\logic\VariableAggregator::buildSubtopicVariables($subtopic);
 
         require_once __DIR__ . '/../logic/LabToolsLauncher.php';
         $firstParent = !empty($parents) ? (is_array($parents) ? reset($parents) : (string)$parents) : '';
-        $labLauncher = \App\Logic\LabToolsLauncher::resolve($slug, $firstParent);
+        $labLauncher = \app\logic\LabToolsLauncher::resolve($slug, $firstParent);
 
         $this->renderWithLayout('physics/subtopic', array_merge($subtopic, [
             'slug' => $slug,

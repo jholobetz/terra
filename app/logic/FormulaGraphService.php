@@ -1,5 +1,5 @@
 <?php
-namespace App\Logic;
+namespace app\logic;
 
 class FormulaGraphService {
     private static ?array $graphData = null;

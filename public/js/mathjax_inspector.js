@@ -222,8 +222,7 @@ const MathJaxInspector = {
                     this.hide();
                     window.FormulaInspector.open(latex, formulaId);
                 } else {
-                    const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
-                    let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+                    let url = '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
                     if (formulaId) {
                         url += '&id=' + encodeURIComponent(formulaId);
                     }
@@ -273,8 +272,7 @@ const MathJaxInspector = {
                 if (formulaId && linkEl && !linkHasLatexParam) {
                     e.preventDefault();
                     e.stopPropagation();
-                    const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
-                    window.location.href = baseUrl + '/physics/equation-explainer?id=' + encodeURIComponent(formulaId);
+                    window.location.href = '/physics/equation-explainer?id=' + encodeURIComponent(formulaId);
                     return;
                 }
 
@@ -287,8 +285,7 @@ const MathJaxInspector = {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
-                    let url = baseUrl + '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
+                    let url = '/physics/equation-explainer?latex=' + encodeURIComponent(latex);
                     if (formulaId) {
                         url += '&id=' + encodeURIComponent(formulaId);
                     }

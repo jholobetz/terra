@@ -60,7 +60,7 @@ const EquationExplainer = {
         if (subtopicParam) {
             window.SUBTOPIC_SLUG = subtopicParam;
             if (!window.SUBTOPIC_VARIABLES || Object.keys(window.SUBTOPIC_VARIABLES).length === 0) {
-                fetch(`${BASE_URL}/physics/api/subtopic-variables/${encodeURIComponent(subtopicParam)}`)
+                fetch(`/physics/api/subtopic-variables/${encodeURIComponent(subtopicParam)}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
@@ -82,7 +82,7 @@ const EquationExplainer = {
             window.SUBTOPIC_SLUG = subtopicSlug;
             
             // Fetch variables for the referrer subtopic
-            fetch(`${BASE_URL}/physics/api/subtopic-variables/${subtopicSlug}`)
+            fetch(`/physics/api/subtopic-variables/${subtopicSlug}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
@@ -95,7 +95,7 @@ const EquationExplainer = {
                 .catch(err => console.warn('Could not fetch subtopic variables from referrer:', err));
             
             // Map the referrer subtopic back to its physics domain
-            fetch(`${BASE_URL}/physics/search-index`)
+            fetch(`/physics/search-index`)
                 .then(res => res.json())
                 .then(index => {
                     const entry = index[subtopicSlug];
@@ -607,7 +607,7 @@ const EquationExplainer = {
             this.navigationStack = []; // Reset stack on external history change
             
             if (id) {
-                fetch(`${BASE_URL}/physics/api/explain?latex=` + encodeURIComponent(latex || '') + `&id=${encodeURIComponent(id)}`)
+                fetch(`/physics/api/explain?latex=` + encodeURIComponent(latex || '') + `&id=${encodeURIComponent(id)}`)
                     .then(res => {
                         if (!res.ok) throw new Error(`HTTP ${res.status}`);
                         return res.json();
@@ -840,13 +840,13 @@ const EquationExplainer = {
 
         try {
             // Query search API (matches both keywords, formula titles, and semantic concepts)
-            let res = await fetch(`${BASE_URL}/physics/api/search?q=${encodeURIComponent(clean)}&limit=6`);
+            let res = await fetch(`/physics/api/search?q=${encodeURIComponent(clean)}&limit=6`);
             let data = await res.json();
             let items = (data.results || []).filter(r => r.type === 'formula' && r.equation);
 
             // If few formula matches, try semantic search
             if (items.length < 2) {
-                const semRes = await fetch(`${BASE_URL}/physics/api/semantic-search?q=${encodeURIComponent(clean)}&limit=5`);
+                const semRes = await fetch(`/physics/api/semantic-search?q=${encodeURIComponent(clean)}&limit=5`);
                 if (semRes.ok) {
                     const semData = await semRes.json();
                     if (semData.results && semData.results.length > 0) {
@@ -1059,7 +1059,7 @@ const EquationExplainer = {
 
     lookupFormulaByLatex(latex) {
         // Request database matching
-        fetch(`${BASE_URL}/physics/api/explain?latex=` + encodeURIComponent(latex))
+        fetch(`/physics/api/explain?latex=` + encodeURIComponent(latex))
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.formula) {
@@ -1088,7 +1088,7 @@ const EquationExplainer = {
     },
 
     fetchSubtopicsForFormula(id) {
-        return fetch(`${BASE_URL}/physics/search-index`)
+        return fetch(`/physics/search-index`)
             .then(res => res.json())
             .then(index => {
                 const results = [];
@@ -1115,7 +1115,7 @@ const EquationExplainer = {
 
     loadFormulaById(id, options = {}) {
         if (!id) return;
-        fetch(`${BASE_URL}/physics/api/explain?id=${encodeURIComponent(id)}`)
+        fetch(`/physics/api/explain?id=${encodeURIComponent(id)}`)
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.formula) {

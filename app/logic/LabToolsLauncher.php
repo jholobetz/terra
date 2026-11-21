@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Logic;
+namespace app\logic;
 
 /**
  * 🌌 PHYSICS LAB: Lab Tools Encyclopedia Launcher Resolver (Phase 2.5)

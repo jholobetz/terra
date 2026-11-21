@@ -68,7 +68,7 @@ if ($theme === 'default' && !empty($parentSlug)) {
 
 if (empty($labLauncher)) {
     require_once __DIR__ . '/../../logic/LabToolsLauncher.php';
-    $labLauncher = \App\Logic\LabToolsLauncher::resolve($slug ?? '', $parentSlug ?? '');
+    $labLauncher = \app\logic\LabToolsLauncher::resolve($slug ?? '', $parentSlug ?? '');
 }
 ?>
 
@@ -426,8 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 d.style.cssText = 'background: rgba(255,255,255,0.05); padding: 6px 8px; border-radius: 4px; border-left: 2px solid #64ffda; display: flex; flex-direction: column; gap: 4px;';
                 const rawEq = eq.equation || '';
                 const formattedEq = (rawEq.indexOf('\\(') !== -1 || rawEq.indexOf('$') !== -1) ? rawEq : `\\(${rawEq}\\)`;
-                const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
-                const explainerUrl = baseUrl + `/physics/equation-explainer?latex=${encodeURIComponent(rawEq)}${eq.id ? '&id=' + encodeURIComponent(eq.id) : ''}`;
+                const explainerUrl = `/physics/equation-explainer?latex=${encodeURIComponent(rawEq)}${eq.id ? '&id=' + encodeURIComponent(eq.id) : ''}`;
                 d.innerHTML = `
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                         <span style="font-weight:600; color:#e2e8f0; font-size:0.75rem;">${eq.title}:</span>

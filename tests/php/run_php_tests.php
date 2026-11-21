@@ -305,9 +305,9 @@ $runner->run('LatexSanitizerTest', 'testSynthesizeFormulaExplanation', function 
 // 3. VariableAggregator Suite
 // ============================================================================
 $runner->run('VariableAggregatorTest', 'testCleanSymbolExtractsBaseIdentifier', function (NativePhpTestRunner $t) {
-    $t->assertSame('F', \App\Logic\VariableAggregator::cleanSymbol('$\\mathbf{F}_{net}$'));
-    $t->assertSame('psi', \App\Logic\VariableAggregator::cleanSymbol('\\psi_0'));
-    $t->assertSame('E', \App\Logic\VariableAggregator::cleanSymbol('\\vec{E}'));
+    $t->assertSame('F', \app\logic\VariableAggregator::cleanSymbol('$\\mathbf{F}_{net}$'));
+    $t->assertSame('psi', \app\logic\VariableAggregator::cleanSymbol('\\psi_0'));
+    $t->assertSame('E', \app\logic\VariableAggregator::cleanSymbol('\\vec{E}'));
 });
 
 $runner->run('VariableAggregatorTest', 'testBuildSubtopicVariablesDeduplicatesEquations', function (NativePhpTestRunner $t) {
@@ -331,7 +331,7 @@ $runner->run('VariableAggregatorTest', 'testBuildSubtopicVariablesDeduplicatesEq
             ],
         ],
     ];
-    $vars = \App\Logic\VariableAggregator::buildSubtopicVariables($sampleSubtopic);
+    $vars = \app\logic\VariableAggregator::buildSubtopicVariables($sampleSubtopic);
     $t->assertTrue(count($vars) >= 2);
     foreach ($vars as $v) {
         if (($v['display_symbol'] ?? '') === 'E') {
@@ -345,15 +345,15 @@ $runner->run('VariableAggregatorTest', 'testBuildSubtopicVariablesDeduplicatesEq
 // ============================================================================
 $runner->run('LabToolsLauncherTest', 'testResolveSpecificDomainAndDefaultMappings', function (NativePhpTestRunner $t) {
     // 1. Direct match
-    $kepler = \App\Logic\LabToolsLauncher::resolve('keplers-second-law', 'astrophysics');
+    $kepler = \app\logic\LabToolsLauncher::resolve('keplers-second-law', 'astrophysics');
     $t->assertContains('preset=kepler', $kepler['url']);
 
     // 2. Domain fallback
-    $quantum = \App\Logic\LabToolsLauncher::resolve('unmapped-custom-quantum-node', 'quantum-physics');
+    $quantum = \app\logic\LabToolsLauncher::resolve('unmapped-custom-quantum-node', 'quantum-physics');
     $t->assertSame('quantum', $quantum['theme']);
 
     // 3. Default cockpit fallback
-    $default = \App\Logic\LabToolsLauncher::resolve('completely-unknown-slug-xyz', 'unknown-domain');
+    $default = \app\logic\LabToolsLauncher::resolve('completely-unknown-slug-xyz', 'unknown-domain');
     $t->assertSame('/physics/lab-tools', $default['url']);
     $t->assertSame('default', $default['theme']);
 });
@@ -643,7 +643,7 @@ $runner->run('FormulaGraphServiceTest', 'testSubgraphProvenanceAndReverseLatexPa
         'eulerian-velocity-vector-field',
         'three-dimensional-euclidean-line-element-in-spherical-coordinates',
     ] as $newId) {
-        $sub = \App\Logic\FormulaGraphService::getFormulaSubgraph($newId, 1);
+        $sub = \app\logic\FormulaGraphService::getFormulaSubgraph($newId, 1);
         $t->assertTrue(($sub['stats']['total_nodes'] ?? 0) >= 2, "Subgraph for {$newId} must contain root + parent");
         $root = $sub['root_node'] ?? [];
         $t->assertSame($newId, $root['id'] ?? null);
@@ -653,7 +653,7 @@ $runner->run('FormulaGraphServiceTest', 'testSubgraphProvenanceAndReverseLatexPa
     }
 
     // 2. Derivation links carry edge confidence
-    $driftSub = \App\Logic\FormulaGraphService::getFormulaSubgraph('cross-field-electric-magnetic-drift-velocity-magnitude', 1);
+    $driftSub = \app\logic\FormulaGraphService::getFormulaSubgraph('cross-field-electric-magnetic-drift-velocity-magnitude', 1);
     $derivEdges = array_values(array_filter($driftSub['links'] ?? [], fn($l) => ($l['type'] ?? '') === 'derivation'));
     $t->assertTrue(count($derivEdges) >= 1, 'Expected at least 1 upstream derivation edge');
     $t->assertSame('cas_verified', $derivEdges[0]['confidence'] ?? null, 'Derivation edge must forward lineage_confidence');
@@ -936,8 +936,10 @@ $runner->run('Stage2PackagingTest', 'testInProcessWarmHtmlCacheAndPythonManifest
             $subHtml = (string)file_get_contents($subCache);
             $t->assertTrue((bool)preg_match('/nonce="[a-f0-9]{32}"/', $hubHtml), 'Cached hub HTML must preserve 32-hex CSP nonce placeholder');
             $t->assertTrue((bool)preg_match('/nonce="[a-f0-9]{32}"/', $subHtml), 'Cached subtopic HTML must preserve 32-hex CSP nonce placeholder');
-            $t->assertContains("const BASE_URL = '';", $hubHtml, 'Cached hub HTML must never bake CLI filesystem directory into BASE_URL');
-            $t->assertContains("const BASE_URL = '';", $subHtml, 'Cached subtopic HTML must never bake CLI filesystem directory into BASE_URL');
+            $t->assertFalse(str_contains($hubHtml, 'const BASE_URL'), 'Cached hub HTML must not emit legacy BASE_URL global');
+            $t->assertFalse(str_contains($subHtml, 'const BASE_URL'), 'Cached subtopic HTML must not emit legacy BASE_URL global');
+            $t->assertFalse(str_contains($hubHtml, PROJECT_ROOT), 'Cached hub HTML must never leak local PROJECT_ROOT filesystem path');
+            $t->assertFalse(str_contains($subHtml, PROJECT_ROOT), 'Cached subtopic HTML must never leak local PROJECT_ROOT filesystem path');
             $t->assertFalse(str_contains($subHtml, '/srv/www/terra'), 'Cached HTML must never leak server filesystem path');
             $t->assertContains('<!-- DEV_STUDIO_NAV_SLOT -->', $subHtml, 'Cached HTML must preserve dynamic studio nav slot');
             $t->assertContains('nav-pillar-active', $subHtml, 'Cached subtopic HTML must mark Topics nav pillar active');

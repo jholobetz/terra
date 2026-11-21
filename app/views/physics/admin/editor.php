@@ -395,7 +395,7 @@ function saveDraft() {
         identities
     };
 
-    fetch(BASE_URL + '/physics/admin/api/save-draft', {
+    fetch('/physics/admin/api/save-draft', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -423,7 +423,7 @@ function loadExistingSubtopic() {
         return;
     }
 
-    fetch(BASE_URL + '/physics/admin/api/get-subtopic/' + slug)
+    fetch('/physics/admin/api/get-subtopic/' + slug)
     .then(res => res.json())
     .then(data => {
         if (data.success) {

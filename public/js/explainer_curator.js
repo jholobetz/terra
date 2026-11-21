@@ -515,7 +515,7 @@ const ExplainerCurator = {
 
         const adminKey = localStorage.getItem('terra_admin_key') || '';
 
-        fetch(`${BASE_URL}/physics/api/define-formula`, {
+        fetch('/physics/api/define-formula', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -725,8 +725,7 @@ const ExplainerCurator = {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 20000);
 
-        const baseUrl = (typeof BASE_URL !== 'undefined') ? BASE_URL : '';
-        fetch(`${baseUrl}/physics/api/apply-repair`, {
+        fetch('/physics/api/apply-repair', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',

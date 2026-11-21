@@ -9,7 +9,7 @@ define('FLIGHT_SKIP_START', true);
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../app/config/bootstrap.php';
 
-use App\Logic\PhysicsService;
+use app\logic\PhysicsService;
 
 $app = Flight::app();
 $service = new PhysicsService($app);

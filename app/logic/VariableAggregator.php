@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Logic;
+namespace app\logic;
 
 class VariableAggregator
 {

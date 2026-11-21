@@ -576,16 +576,14 @@ def validate_manifest(
             if fid not in existing_formulas and fid not in batch_formulas_by_id:
                 errors.append(f"[{slug}] formula_id '{fid}' not found in existing shards or manifest formulas.")
 
-        # Word count (whitespace-delimited stripped prose excluding HTML & MathJax)
+        # Word count (whitespace-delimited stripped prose excluding HTML & MathJax; 750 floor, 1000 soft ceiling)
         content_no_math = INLINE_MATH_RE.sub(" ", content)
         content_no_math = DISPLAY_MATH_RE.sub(" ", content_no_math)
         prose_words = len(re.sub(r"<[^>]+>", " ", content_no_math).split())
-        if prose_words < 720:
-            errors.append(f"[{slug}] Word count too low ({prose_words} < 720 stripped prose words; target 750-880).")
-        elif prose_words < 750:
-            warnings.append(f"[{slug}] Word count slightly below sweet spot ({prose_words}; target 750-880 stripped prose words).")
-        if prose_words > 980:
-            warnings.append(f"[{slug}] Word count high ({prose_words} > 980 stripped prose words).")
+        if prose_words < 750:
+            errors.append(f"[{slug}] Word count too low ({prose_words} < 750 stripped prose words; target 750-1000).")
+        elif prose_words > 1000:
+            warnings.append(f"[{slug}] Word count above soft ceiling ({prose_words} > 1000 stripped prose words; keep within reason).")
 
         # Paragraphs & MathJax density
         paras = re.findall(r"<p>(.*?)</p>", content, flags=re.DOTALL)

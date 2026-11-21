@@ -241,7 +241,7 @@ When OPS 2.0 upgrades begin across the existing encyclopedia, **do not build a s
 
 ### Operational Capabilities Already Available
 * **Transactional In-Place Upgrades (`--update-existing --no-ledger`):** Re-applies edited subtopic prose and formula definitions onto already-live slugs without tripping collision guards, with automatic rollback on any failure.
-* **Unified Pre-Flight Quality Gates:** Enforces whitespace-delimited stripped prose word counts (**`>= 720` hard floor**, **`750–880` sweet spot**), $\ge 2$ MathJax expressions per paragraph, balanced TeX braces, strict **Zero-Undefined-Click** 1-to-1 formula parity (`scripts/audit_clickable_equations.php`), and DAG fanout $\le 25$.
+* **Unified Pre-Flight Quality Gates:** Enforces whitespace-delimited stripped prose word counts (**`>= 750` hard floor**, **`750–1,000` organic target** with a non-blocking soft advisory above `1,000`), $\ge 2$ MathJax expressions per paragraph, balanced TeX braces, strict **Zero-Undefined-Click** 1-to-1 formula parity (`scripts/audit_clickable_equations.php`), and DAG fanout $\le 25$.
 * **End-to-End Artifact Sync:** Re-renders gold inline MathJax SVGs with `data-tex`, updates `hero_math`, rebuilds `formula_derivation_graph.json(.gz)`, synchronizes all 256 shard hashes, updates `search_index.json`, and purges stale HTML disk caches in one command (followed by `php cli_sync.php` for MariaDB parity).
 
 ### Planned Small Extensions When Phase 6 (OPS 2.0) Starts

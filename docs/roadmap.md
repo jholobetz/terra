@@ -259,9 +259,18 @@ flowchart TD
 
 ---
 
-## 7. Phase 5: Next Horizon (5.1)
+## 7. Phase 5: Physics Lab Curriculum Completion & Curatorial Polish (In Progress)
 
-* **5.1**: Undetermined at this time.
+> **Running Expansion Ledger**: [`docs/new_expansion_phase_5.md`](new_expansion_phase_5.md)
+
+Rather than chasing arbitrary topic quotas, **Phase 5** focuses on fleshing out Physics Lab into a genuinely complete, publication-grade digital physics encyclopedia before Phase 6 (OPS 2.0) and Phase 7 (Multi-Science Expansion):
+
+* **5.1 Hub Gateway Curation**: Surface existing hidden Platinum articles on sparse Hub Gateway roadmaps (`thermodynamics-statistical-mechanics`, `quantum-physics`) so visitors immediately see the full depth of each domain.
+* **5.2 Substance-First Curriculum Completion (`750–1,000` stripped words, `0` undefined clicks)**:
+  * **Completed Foundation Batches 1–6 (`+30` subtopics, `+191` formulas)**: Deepened thin hubs (`fluids-nonlinear` `20 → 30`, `condensed-matter` `24 → 34`, `mathematical-methods` `28 → 38`) and built the round-trip transactional compiler [`scripts/expand_hub.py`](../scripts/expand_hub.py) (`--export-slugs`, `--update-existing`, `750` word floor, `1,000` soft ceiling, Zero-Undefined-Click audit).
+  * **Wave A — Foundational Core Gaps**: Classical Thermodynamics & Phase Equilibria (`+5`), Nonequilibrium Statistical Mechanics (`+5`), Atomic & Experimental Quantum Physics (`+5`), Open Quantum Systems & Quantum Information (`+5`).
+  * **Wave B — Modern Frontiers & Cross-Science Bridges**: Condensed Matter 2D/Skyrmions (`+5`), Fluids & Nonlinear Pattern Formation (`+5`), Applied Optics, Lasers & Plasmas (`+5`), Classical Continuum & Integrable Dynamics (`+5`), Topology, Spinors & Computational Physics (`+5`).
+* **5.3 Post-Launch Hygiene & Audit Closure**: Completed `58 / 58` findings from [`archive/post_launch_eval-2026-11-19.md`](../archive/post_launch_eval-2026-11-19.md).
 
 ---
 
@@ -303,6 +312,6 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 4** | 4.2 | Debian 13 Packaging, `/healthz` & Cache Warmer | `requirements.txt`<br/>`PhysicsController.php`<br/>`cli_sync.php` | 🔴 **P1** | 🟢 Completed |
 | **Phase 4** | 4.3 | Branded Error Views, CSP Hygiene & SEO/Sitemap | `error_404.php`<br/>`error_500.php`<br/>`layout.php` | 🔴 **P1** | 🟢 Completed |
 | **Phase 4** | 4.4 | Apache/MariaDB Provisioning & Git Deploy Pipeline | `public/.htaccess`<br/>`ShardSyncService.php`<br/>`scripts/update_prod.sh` | 🔴 **P1** | 🟢 Completed (Live on `physicslab.ca`) |
-| **Phase 5** | 5.1 | Undetermined at This Time | TBD | ⚪ **TBD** | ⏳ Undetermined |
+| **Phase 5** | 5.1–5.3 | Physics Lab Curriculum Completion & Curatorial Polish | `scripts/expand_hub.py`<br/>`docs/new_expansion_phase_5.md`<br/>`hub_manifests/*.json` | 🔴 **P1** | 🚧 In Progress (Batches 1–6 Live) |
 | **Phase 6** | 6.1 | OPS 2.0 Upgrade | `docs/OPS 2.0 (The Qualitative Rubric).md`<br/>`gqs.py` | 🟡 **P2** | 📋 Planned |
 | **Phase 7** | 7.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |

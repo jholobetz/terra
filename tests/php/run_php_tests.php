@@ -367,7 +367,7 @@ $runner->run('PhysicsServiceTest', 'testLoadAllShardsUsesStrictAllowlist', funct
     $svc->loadAllShards();
     $content = $svc->getPhysicsContent();
 
-    $t->assertSame(1584, count($content['subtopics']), 'Must load exactly 1,584 canonical subtopics');
+    $t->assertSame(1589, count($content['subtopics']), 'Must load exactly 1,589 canonical subtopics');
     $t->assertFalse(isset($content['subtopics']['topics']), 'Auxiliary JSON files must not leak into subtopics');
 
     // Verify all 12 topic hubs match hub_manifests/*.json pillar counts (zero prod vs dev constellation drift)

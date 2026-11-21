@@ -227,7 +227,7 @@ $robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UT
                                 </a>
                                 <a href="/physics/universe-graph" class="nav-module-link<?= $reqUrl === '/physics/universe-graph' ? ' is-current' : '' ?>">
                                     <span class="module-title">Physics Universe Graph</span>
-                                    <span class="module-desc">14,684-formula derivation DAG &amp; shortest-path solver</span>
+                                    <span class="module-desc">Complete formula derivation DAG &amp; shortest-path solver</span>
                                 </a>
                                 <a href="/physics/constants" class="nav-module-link<?= $reqUrl === '/physics/constants' ? ' is-current' : '' ?>">
                                     <span class="module-title">Fundamental Physical Constants</span>

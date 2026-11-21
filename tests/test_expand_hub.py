@@ -4,7 +4,12 @@ Unit tests for scripts/expand_hub.py (1-Step Hub Expansion Engine).
 import copy
 import pytest
 
-from scripts.expand_hub import is_single_variable_token, validate_manifest
+from scripts.expand_hub import (
+    is_single_variable_token,
+    resolve_ledger_path,
+    update_expansion_ledger,
+    validate_manifest,
+)
 
 
 def _make_long_prose(extra_math: str = "") -> str:
@@ -168,3 +173,33 @@ def test_batch_size_over_20_rejected_by_default():
         manifest["subtopics"][f"synthetic-test-slug-{i}"] = copy.deepcopy(base)
     errors, _, _ = validate_manifest(manifest, force_large_batch=False)
     assert any("exceeds recommended cap (20)" in e for e in errors)
+
+
+def test_ledger_resolution_and_idempotent_append(tmp_path):
+    # Priority: --no-ledger > --ledger > manifest['ledger_path'] > None
+    assert resolve_ledger_path({}) is None
+    assert resolve_ledger_path({"ledger_path": "docs/custom.md"}, no_ledger=True) is None
+    assert resolve_ledger_path({"ledger_path": "docs/a.md"}, cli_ledger="docs/b.md").endswith("docs/b.md")
+
+    ledger_file = tmp_path / "phase_6_ledger.md"
+    m1 = _make_valid_manifest()
+    added1 = update_expansion_ledger(str(ledger_file), m1, "2026-11-21", domain_after_count=26)
+    assert added1 == 1
+    text1 = ledger_file.read_text(encoding="utf-8")
+    assert "## Batch 1 — `fluids-nonlinear`" in text1
+    assert "| 1 | Synthetic Test Instability | http://localhost:8000/physics/subtopic/synthetic-test-instability-slug | https://physicslab.ca/physics/subtopic/synthetic-test-instability-slug |" in text1
+
+    # Re-running with same slug is strictly idempotent (0 duplicate rows)
+    added_dup = update_expansion_ledger(str(ledger_file), m1, "2026-11-21", domain_after_count=26)
+    assert added_dup == 0
+    assert ledger_file.read_text(encoding="utf-8") == text1
+
+    # Second batch continues at Batch 2, row 2
+    m2 = _make_valid_manifest()
+    m2["subtopics"] = {"second-synthetic-slug": {"title": "Second Synthetic Topic"}}
+    added2 = update_expansion_ledger(str(ledger_file), m2, "2026-11-22", domain_after_count=27)
+    assert added2 == 1
+    text2 = ledger_file.read_text(encoding="utf-8")
+    assert "## Batch 2 — `fluids-nonlinear`" in text2
+    assert "| 2 | Second Synthetic Topic |" in text2
+

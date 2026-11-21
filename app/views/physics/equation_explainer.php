@@ -9,7 +9,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
             🔬 Interactive Equation Explainer
         </h1>
         <p style="margin: 8px auto 0; max-width: 760px; font-size: 0.94rem; color: var(--text-muted, #94a3b8); line-height: 1.45;">
-            Deconstruct physical identities into constituent variables, inspect multi-step mathematical derivations, verify dimensional invariance, and traverse the 14,684-formula derivation graph.
+            Deconstruct physical identities into constituent variables, inspect multi-step mathematical derivations, verify dimensional invariance, and traverse the formula derivation graph.
         </p>
     </div>
 
@@ -70,7 +70,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
                     Search Catalog or Paste LaTeX Expression
                 </label>
                 <span style="font-size: 0.78rem; color: var(--text-muted, #94a3b8);">
-                    Search 14,684 physical formulas by name or enter custom LaTeX
+                    Search physical formulas by name or enter custom LaTeX
                 </span>
             </div>
             <div style="position: relative; display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap;">
@@ -173,7 +173,7 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
             </div>
             <div class="launchpad-capability-item">
                 <div class="launchpad-cap-title">🌌 Derivation Lineage DAG</div>
-                <div class="launchpad-cap-desc">Maps upstream foundational axioms and downstream derived identities across the 14,684-formula physics manifold.</div>
+                <div class="launchpad-cap-desc">Maps upstream foundational axioms and downstream derived identities across the full physics formula manifold.</div>
             </div>
         </div>
     </div>

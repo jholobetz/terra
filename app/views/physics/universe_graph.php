@@ -8,9 +8,6 @@
                 <h1 style="margin: 0; font-size: 1.8rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em;">
                     Physics Universe Knowledge Graph
                 </h1>
-                <span style="font-size: 0.72rem; padding: 3px 10px; background: rgba(100, 255, 218, 0.1); color: var(--accent-default, #64ffda); border: 1px solid rgba(100, 255, 218, 0.3); border-radius: 12px; font-weight: 600;">
-                    14,684 Formulas • 14,119 Derivation Links
-                </span>
             </div>
             <p style="margin: 0; color: var(--text-muted, #94a3b8); font-size: 0.95rem; line-height: 1.5;">
                 Explore the complete mathematical lineage, upstream axiomatic foundations, and downstream derived consequences across all 12 branches of theoretical physics.

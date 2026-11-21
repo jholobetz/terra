@@ -596,11 +596,99 @@ def render_svgs_chunked(tex_expressions: List[str]) -> Dict[str, str]:
     return result
 
 
+def resolve_ledger_path(
+    manifest: Dict[str, Any],
+    cli_ledger: Optional[str] = None,
+    no_ledger: bool = False,
+) -> Optional[str]:
+    """Resolves optional expansion ledger path: --no-ledger > --ledger > manifest['ledger_path'] > None."""
+    if no_ledger:
+        return None
+    raw = (cli_ledger or manifest.get("ledger_path") or "").strip()
+    if not raw:
+        return None
+    return raw if os.path.isabs(raw) else os.path.join(PROJECT_ROOT, raw)
+
+
+def update_expansion_ledger(
+    ledger_path: str,
+    manifest: Dict[str, Any],
+    verified_date: str,
+    domain_after_count: Optional[int] = None,
+) -> int:
+    """
+    Self-initializing, idempotent Markdown ledger updater.
+    Creates ledger_path if missing, appends only subtopics not already listed,
+    and continues Batch / row numbering automatically. Returns count of rows added.
+    """
+    domain = manifest["domain"]
+    subtopics = manifest["subtopics"]
+    pillar_title = (
+        manifest.get("pillar", {}).get("title")
+        or manifest.get("append_to_pillar")
+        or "Expansion"
+    )
+
+    if os.path.exists(ledger_path):
+        with open(ledger_path, "r", encoding="utf-8") as f:
+            existing = f.read()
+    else:
+        title_stem = os.path.splitext(os.path.basename(ledger_path))[0].replace("_", " ").replace("-", " ").title()
+        existing = (
+            f"# {title_stem}\n\n"
+            f"Running index of newly authored Platinum subtopics.\n\n"
+            f"> **Note:** Live links (`https://physicslab.ca/...`) become active on production after running "
+            f"`cd /srv/www/terra && bash scripts/update_prod.sh`.\n"
+        )
+
+    new_items = [
+        (slug, sdata["title"])
+        for slug, sdata in subtopics.items()
+        if f"/physics/subtopic/{slug}" not in existing
+    ]
+    if not new_items:
+        return 0
+
+    batch_nums = [int(m) for m in re.findall(r"^## Batch (\d+)\b", existing, flags=re.MULTILINE)]
+    next_batch = (max(batch_nums) + 1) if batch_nums else 1
+
+    row_nums = [int(m) for m in re.findall(r"^\|\s*(\d+)\s*\|", existing, flags=re.MULTILINE)]
+    next_row = (max(row_nums) + 1) if row_nums else 1
+
+    count_note = ""
+    if domain_after_count is not None:
+        count_note = f" (`{domain}`: `{domain_after_count - len(new_items)} → {domain_after_count}`)"
+
+    lines = [
+        "",
+        "---",
+        "",
+        f"## Batch {next_batch} — `{domain}` · *{pillar_title}*",
+        f"* **Date:** {verified_date}{count_note}",
+        f"* **Hub Overview:** [Local](http://localhost:8000/physics/topic/{domain}) · [Live](https://physicslab.ca/physics/topic/{domain})",
+        "",
+        "| # | Subtopic Title | Local Link | Live Link |",
+        "| :---: | :--- | :--- | :--- |",
+    ]
+    for slug, title in new_items:
+        lines.append(
+            f"| {next_row} | {title} | http://localhost:8000/physics/subtopic/{slug} | https://physicslab.ca/physics/subtopic/{slug} |"
+        )
+        next_row += 1
+
+    os.makedirs(os.path.dirname(os.path.abspath(ledger_path)), exist_ok=True)
+    updated = existing.rstrip("\n") + "\n" + "\n".join(lines) + "\n"
+    with open(ledger_path, "w", encoding="utf-8") as f:
+        f.write(updated)
+    return len(new_items)
+
+
 def apply_manifest(
     manifest: Dict[str, Any],
     force_large_batch: bool = False,
     allow_update_existing: bool = False,
     sync_db: bool = False,
+    ledger_path: Optional[str] = None,
 ) -> None:
     errors, warnings, stats = validate_manifest(
         manifest,
@@ -635,6 +723,8 @@ def apply_manifest(
         SLUG_REGISTRY_PATH,
         SEMANTIC_REFS_PATH,
     }
+    if ledger_path:
+        touched_files.add(ledger_path)
     for fobj in formulas:
         touched_files.add(get_shard_path(fobj["id"]))
         if fobj.get("parent_formula_id"):
@@ -825,7 +915,17 @@ def apply_manifest(
                 }
         with open(SEARCH_INDEX_PATH, "w", encoding="utf-8") as f:
             json.dump(sidx, f, indent=2, ensure_ascii=False)
-        print("[4/6] Updated hub/topic manifests, slug registry, semantic references, and search_index.json.")
+        if ledger_path:
+            added_rows = update_expansion_ledger(
+                ledger_path=ledger_path,
+                manifest=manifest,
+                verified_date=verified_date,
+                domain_after_count=len(domain_data),
+            )
+            rel_ledger = os.path.relpath(ledger_path, PROJECT_ROOT)
+            print(f"[4/6] Updated manifests, registries, search_index.json, and ledger '{rel_ledger}' (+{added_rows} rows).")
+        else:
+            print("[4/6] Updated hub/topic manifests, slug registry, semantic references, and search_index.json.")
 
         # 5. Rebuild derivation graph, sync shard hashes, purge affected caches
         subprocess.run([sys.executable, os.path.join(PROJECT_ROOT, "scripts", "build_formula_graph.py")], cwd=PROJECT_ROOT, check=True)
@@ -876,10 +976,14 @@ def main() -> None:
     parser.add_argument("--force-large-batch", action="store_true", help=f"Allow batches larger than {MAX_RECOMMENDED_BATCH} subtopics")
     parser.add_argument("--update-existing", action="store_true", help="Allow updating already-existing subtopics/formulas (idempotent re-apply)")
     parser.add_argument("--sync-db", action="store_true", help="Also run php cli_sync.php after --apply")
+    parser.add_argument("--ledger", default=None, help="Optional Markdown expansion ledger path (overrides manifest 'ledger_path')")
+    parser.add_argument("--no-ledger", action="store_true", help="Skip updating any expansion ledger even if 'ledger_path' is set in manifest")
     args = parser.parse_args()
 
     with open(args.manifest, "r", encoding="utf-8") as f:
         manifest = json.load(f)
+
+    resolved_ledger = resolve_ledger_path(manifest, cli_ledger=args.ledger, no_ledger=args.no_ledger)
 
     if args.dry_run:
         errors, warnings, stats = validate_manifest(
@@ -915,6 +1019,7 @@ def main() -> None:
         force_large_batch=args.force_large_batch,
         allow_update_existing=args.update_existing,
         sync_db=args.sync_db,
+        ledger_path=resolved_ledger,
     )
 
 

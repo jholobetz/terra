@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 thin-hub expansion campaign (`+15` subtopics live in Git so far, bringing the encyclopedia from `1,584 → 1,599` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 thin-hub expansion campaign (`+30 / +60` subtopics complete — `+10` each across `fluids-nonlinear`, `condensed-matter`, and `mathematical-methods`, bringing the encyclopedia from `1,584 → 1,614` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -45,3 +45,45 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 13 | Calculus of Variations and Functional Derivatives | http://localhost:8000/physics/subtopic/calculus-of-variations-euler-lagrange | https://physicslab.ca/physics/subtopic/calculus-of-variations-euler-lagrange |
 | 14 | Laplace Transforms, Dispersion Relations and Causality | http://localhost:8000/physics/subtopic/laplace-transforms-causal-response | https://physicslab.ca/physics/subtopic/laplace-transforms-causal-response |
 | 15 | Stochastic Differential Equations and the Fokker-Planck Equation | http://localhost:8000/physics/subtopic/stochastic-calculus-fokker-planck | https://physicslab.ca/physics/subtopic/stochastic-calculus-fokker-planck |
+
+---
+
+## Batch 4 — `fluids-nonlinear` · *6. Compressible Flow, Shocks & Geophysical Fluids*
+* **Date:** 2026-11-21 (`fluids-nonlinear`: `25 → 30`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/fluids-nonlinear) · [Live](https://physicslab.ca/physics/topic/fluids-nonlinear)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 16 | Mach Number and Compressible Gas Dynamics | http://localhost:8000/physics/subtopic/mach-number-compressible-flow | https://physicslab.ca/physics/subtopic/mach-number-compressible-flow |
+| 17 | Rankine-Hugoniot Shock Relations | http://localhost:8000/physics/subtopic/rankine-hugoniot-shock-relations | https://physicslab.ca/physics/subtopic/rankine-hugoniot-shock-relations |
+| 18 | Burgers' Equation and Nonlinear Shock Waves | http://localhost:8000/physics/subtopic/burgers-equation-shock-waves | https://physicslab.ca/physics/subtopic/burgers-equation-shock-waves |
+| 19 | Taylor-Couette Flow and Centrifugal Instability | http://localhost:8000/physics/subtopic/taylor-couette-instability | https://physicslab.ca/physics/subtopic/taylor-couette-instability |
+| 20 | Rossby Waves and Geophysical Fluid Dynamics | http://localhost:8000/physics/subtopic/rossby-waves-geophysical-fluids | https://physicslab.ca/physics/subtopic/rossby-waves-geophysical-fluids |
+
+---
+
+## Batch 5 — `condensed-matter` · *7. Critical Phenomena, Quantum Matter & Soft Condensed Matter*
+* **Date:** 2026-11-21 (`condensed-matter`: `29 → 34`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/condensed-matter) · [Live](https://physicslab.ca/physics/topic/condensed-matter)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 21 | Landau-Ginzburg Theory of Phase Transitions | http://localhost:8000/physics/subtopic/landau-ginzburg-phase-transitions | https://physicslab.ca/physics/subtopic/landau-ginzburg-phase-transitions |
+| 22 | Renormalization Group and Critical Phenomena | http://localhost:8000/physics/subtopic/renormalization-group-critical-phenomena | https://physicslab.ca/physics/subtopic/renormalization-group-critical-phenomena |
+| 23 | Quantum Phase Transitions and Quantum Criticality | http://localhost:8000/physics/subtopic/quantum-phase-transitions | https://physicslab.ca/physics/subtopic/quantum-phase-transitions |
+| 24 | Berry Curvature, Anomalous Hall Effect and Spintronics | http://localhost:8000/physics/subtopic/berry-curvature-anomalous-hall | https://physicslab.ca/physics/subtopic/berry-curvature-anomalous-hall |
+| 25 | Liquid Crystals and Soft Condensed Matter | http://localhost:8000/physics/subtopic/liquid-crystals-soft-condensed-matter | https://physicslab.ca/physics/subtopic/liquid-crystals-soft-condensed-matter |
+
+---
+
+## Batch 6 — `mathematical-methods` · *7. Distributions, Integral Equations & Geometric Physics*
+* **Date:** 2026-11-21 (`mathematical-methods`: `33 → 38`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/mathematical-methods) · [Live](https://physicslab.ca/physics/topic/mathematical-methods)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 26 | Distributions, Generalized Functions and the Dirac Delta | http://localhost:8000/physics/subtopic/dirac-delta-distributions-theory | https://physicslab.ca/physics/subtopic/dirac-delta-distributions-theory |
+| 27 | Integral Equations and Fredholm-Volterra Theory | http://localhost:8000/physics/subtopic/integral-equations-fredholm-volterra | https://physicslab.ca/physics/subtopic/integral-equations-fredholm-volterra |
+| 28 | Perturbation Theory, Singular Layers and Multiple Scales | http://localhost:8000/physics/subtopic/perturbation-theory-multiple-scales | https://physicslab.ca/physics/subtopic/perturbation-theory-multiple-scales |
+| 29 | Symplectic Geometry and Hamiltonian Phase Space | http://localhost:8000/physics/subtopic/symplectic-geometry-hamiltonian-manifolds | https://physicslab.ca/physics/subtopic/symplectic-geometry-hamiltonian-manifolds |
+| 30 | Fiber Bundles, Connections and Characteristic Classes | http://localhost:8000/physics/subtopic/fiber-bundles-gauge-geometry | https://physicslab.ca/physics/subtopic/fiber-bundles-gauge-geometry |

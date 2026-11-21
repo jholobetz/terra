@@ -13,12 +13,12 @@ from scripts.expand_hub import (
 
 
 def _make_long_prose(extra_math: str = "") -> str:
-    """Builds a valid 5-paragraph OPS 1.0 prose block (~700 words, >=5 outgoing links, >=1 cross-hub)."""
+    """Builds a valid 5-paragraph OPS 1.0 prose block (~790 stripped words, >=5 outgoing links, >=1 cross-hub)."""
     base_para = (
         "Continuum transport in viscous media couples momentum diffusion, pressure gradients, and "
         "boundary shear across laboratory and geophysical length scales. "
     )
-    filler = " ".join([base_para] * 7)
+    filler = " ".join([base_para] * 8)
     p1 = (
         f"<p>Buoyant stratification across an incompressible layer couples "
         f"\\( \\nabla \\cdot \\mathbf{{u}} = 0 \\) with thermal forcing in the "

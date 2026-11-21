@@ -56,6 +56,7 @@ import argparse
 import datetime
 import glob
 import hashlib
+import html
 import json
 import os
 import re
@@ -588,6 +589,9 @@ def render_svgs_chunked(tex_expressions: List[str]) -> Dict[str, str]:
         svg = svg_cache.get(key)
         if not svg or "<svg" not in svg:
             raise RuntimeError(f"Failed to render SVG for LaTeX expression: {tex}")
+        if "data-tex=" not in svg[:120]:
+            escaped_tex = html.escape(tex, quote=True)
+            svg = svg.replace("<svg", f'<svg data-tex="{escaped_tex}"', 1)
         result[tex] = svg
     return result
 

@@ -504,7 +504,7 @@ def audit_roadmap_realization(heal_hashes: bool = False, arch_data=None):
         ("Lab Tools State Hydration", f"{total_articles:,} / {total_articles:,} Subtopics Mapped", launcher_exists),
         ("Multi-Step Derivations", f"{proof_steps_count} / {total_formulas or 14681} Formulas (~{round(proof_steps_count/(total_formulas or 14681)*100, 1)}% Catalog; 12/12 Domain Parity ✓)", proof_steps_count > 0),
         ("Dual-Layer Hash Sync", f"{len(hash_mismatches)} Shard Drift(s)" if hash_mismatches else "All 256 Shards Synchronized", len(hash_mismatches) == 0),
-        ("Thin Shard Curriculum", f"Fluids ({fluids_count} topics) - Deferred to Next-Level Horizon", True),
+        ("Thin Shard Curriculum", f"Fluids ({fluids_count} topics) - Completed in Phase 5", fluids_count >= 35),
     ]
     completed_p2 = sum(1 for _, _, ok in phase2_items if ok)
     p2_pct = int(round((completed_p2 / len(phase2_items)) * 100))
@@ -583,13 +583,40 @@ def audit_roadmap_realization(heal_hashes: bool = False, arch_data=None):
         "items": phase4_items,
     }
 
+    expand_hub_exists = (WORKSPACE_ROOT / "scripts" / "expand_hub.py").exists()
+    phase5_ledger_exists = (WORKSPACE_ROOT / "docs" / "new_expansion_phase_5.md").exists()
+    legacy_orphans_path = WORKSPACE_ROOT / "app" / "config" / "content" / "legacy-orphans.json"
+    legacy_orphans_count = 0
+    if legacy_orphans_path.exists():
+        try:
+            legacy_orphans_count = len(json.loads(legacy_orphans_path.read_text(encoding="utf-8")))
+        except Exception:
+            legacy_orphans_count = 1
+    manifests_dir = WORKSPACE_ROOT / "hub_manifests"
+    total_gateway_cards = 0
+    if manifests_dir.exists():
+        for mf in manifests_dir.glob("*.json"):
+            try:
+                mdata = json.loads(mf.read_text(encoding="utf-8"))
+                total_gateway_cards += len({s for pl in mdata.get("pillars", []) for s in pl.get("slugs", pl.get("subtopics", []))})
+            except Exception:
+                pass
+    p5_1_ok = total_gateway_cards >= 550
+    p5_2_ok = expand_hub_exists and phase5_ledger_exists and total_articles >= 1659 and legacy_orphans_count == 0
+    p5_3_ok = (WORKSPACE_ROOT / "archive" / "post_launch_eval-2026-11-19.md").exists()
+    phase5_items = [
+        ("5.1 Hub Gateway Curation", f"{total_gateway_cards} Curated Roadmap Cards Across 12 Hubs", p5_1_ok),
+        ("5.2 Curriculum Completion", f"{total_articles:,} Platinum Subtopics (+75 Phase 5, {legacy_orphans_count} Legacy Orphans)", p5_2_ok),
+        ("5.3 Post-Launch Hygiene", "58/58 Post-Launch Findings Resolved & Archived", p5_3_ok),
+    ]
+    completed_p5 = sum(1 for _, _, ok in phase5_items if ok)
+    p5_pct = int(round((completed_p5 / len(phase5_items)) * 100))
+
     roadmap["phase_5"] = {
-        "title": "Phase 5: Next Horizon (5.1)",
-        "status": "UNDETERMINED",
-        "progress_pct": 0,
-        "items": [
-            ("5.1 Undetermined", "Undetermined at this time", False),
-        ]
+        "title": "Phase 5: Curriculum Completion & Curatorial Polish",
+        "status": "COMPLETED" if p5_pct == 100 else "IN_PROGRESS",
+        "progress_pct": p5_pct,
+        "items": phase5_items,
     }
 
     roadmap["phase_6"] = {

@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+110` subtopics live across 22 batches, bringing the encyclopedia from `1,584 → 1,694` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+115` subtopics live across 23 batches, bringing the encyclopedia from `1,584 → 1,699` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -311,3 +311,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 108 | Seismology, Elastic Body and Surface Waves, and Earth's Interior | http://localhost:8000/physics/subtopic/seismology-earth-interior-waves | https://physicslab.ca/physics/subtopic/seismology-earth-interior-waves |
 | 109 | Geodynamo Theory, Magnetic Induction and Planetary Magnetism | http://localhost:8000/physics/subtopic/geodynamo-planetary-magnetism | https://physicslab.ca/physics/subtopic/geodynamo-planetary-magnetism |
 | 110 | Nonlinear Acoustics, Viscoelasticity and Brittle Fracture Mechanics | http://localhost:8000/physics/subtopic/acoustics-viscoelastic-fracture-continua | https://physicslab.ca/physics/subtopic/acoustics-viscoelastic-fracture-continua |
+
+---
+
+## Batch 23 — `thermodynamics-statistical-mechanics` · *10. Kinetic Theory, Transport & Disordered Systems*
+* **Date:** 2026-11-23 (`thermodynamics-statistical-mechanics`: `59 → 64`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/thermodynamics-statistical-mechanics) · [Live](https://physicslab.ca/physics/topic/thermodynamics-statistical-mechanics)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 111 | Boltzmann Transport Equation, Collisional Relaxation and the Chapman-Enskog Expansion | http://localhost:8000/physics/subtopic/boltzmann-transport-h-theorem | https://physicslab.ca/physics/subtopic/boltzmann-transport-h-theorem |
+| 112 | Brownian Motion, Langevin Stochastic Dynamics and the Fokker-Planck Equation | http://localhost:8000/physics/subtopic/brownian-motion-langevin-dynamics | https://physicslab.ca/physics/subtopic/brownian-motion-langevin-dynamics |
+| 113 | Percolation Theory, Cluster Scaling and Critical Connectivity | http://localhost:8000/physics/subtopic/percolation-theory-critical-connectivity | https://physicslab.ca/physics/subtopic/percolation-theory-critical-connectivity |
+| 114 | Spin Glasses, Quenched Disorder and Replica Symmetry Breaking | http://localhost:8000/physics/subtopic/spin-glasses-replica-symmetry-breaking | https://physicslab.ca/physics/subtopic/spin-glasses-replica-symmetry-breaking |
+| 115 | Shannon Entropy, Kullback-Leibler Divergence and Jaynes's Maximum Entropy Principle | http://localhost:8000/physics/subtopic/shannon-entropy-jaynes-maxent | https://physicslab.ca/physics/subtopic/shannon-entropy-jaynes-maxent |

@@ -3830,5 +3830,110 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "one-dimensional-fokker-planck-equation": {
+    "title": "One-Dimensional Fokker-Planck Probability Evolution Equation",
+    "equation": "\\frac{\\partial P}{\\partial t} = -\\frac{\\partial}{\\partial x}\\left[A(x) P\\right] + \\frac{1}{2}\\frac{\\partial^2}{\\partial x^2}\\left[B(x) P\\right]",
+    "category": "thermodynamics-statistical-mechanics",
+    "record_type": "equation",
+    "parent_formula_id": "underdamped-langevin-equation-of-motion",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Governs the deterministic time evolution of the probability density $P(x, t)$ of a continuous Markov stochastic process with local drift coefficient $A(x)$ and diffusion coefficient $B(x)$.",
+    "conceptual_definition": "A probability continuity equation balancing advective probability transport driven by deterministic drift against diffusive spreading driven by stochastic noise.",
+    "intuitive_summary": "Instead of following one jittery particle, the Fokker-Planck equation tracks how the entire cloud of possible positions drifts and spreads smoothly over time.",
+    "interpretation": "Truncating the Kramers-Moyal expansion at second order preserves total probability $\\int P(x,t)\\,dx = 1$ with probability current $J = A(x)P - \\frac{1}{2}\\partial_x[B(x)P]$, reducing to the Smoluchowski equation in overdamped potentials.",
+    "symmetry_origin": "Follows from probability conservation and the Chapman-Kolmogorov semigroup identity for continuous-path Markov processes under Pawula's theorem.",
+    "limits_and_boundary": "Exact for continuous Gaussian-driven diffusion processes (Itô interpretation); discontinuous jump processes retain higher-order Kramers-Moyal moments and require a full integro-differential master equation.",
+    "semantic_variables": {
+      "P": {
+        "name": "Probability Density",
+        "type": "variable",
+        "unit": "1/m",
+        "description": "Probability per unit length $P(x, t)$ of finding the stochastic state at position $x$ at time $t$."
+      },
+      "A(x)": {
+        "name": "Drift Coefficient",
+        "type": "variable",
+        "unit": "m/s",
+        "description": "First Kramers-Moyal jump moment specifying mean local velocity $\\lim_{\\Delta t \\to 0}\\langle \\Delta x\\rangle/\\Delta t$."
+      },
+      "B(x)": {
+        "name": "Diffusion Coefficient",
+        "type": "variable",
+        "unit": "m^2/s",
+        "description": "Second Kramers-Moyal jump moment specifying variance growth rate $\\lim_{\\Delta t \\to 0}\\langle \\Delta x^2\\rangle/\\Delta t$."
+      },
+      "x": {
+        "name": "State Coordinate",
+        "type": "variable",
+        "unit": "m",
+        "description": "Continuous spatial or reaction coordinate of the stochastic system."
+      },
+      "t": {
+        "name": "Time",
+        "type": "variable",
+        "unit": "s",
+        "description": "Elapsed evolution time of the probability distribution."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Probability Density Rate",
+      "dimension_latex": "[L^{-1} T^{-1}]",
+      "verified_at": 1795460000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "kramers-overdamped-barrier-escape-rate"
+    ]
+  },
+  "kullback-leibler-relative-entropy": {
+    "title": "Kullback-Leibler Relative Entropy Divergence",
+    "equation": "D_{\\mathrm{KL}}(P \\parallel Q) = \\sum_{i} p_i \\ln\\!\\left(\\frac{p_i}{q_i}\\right)",
+    "category": "thermodynamics-statistical-mechanics",
+    "record_type": "equation",
+    "parent_formula_id": "shannon-discrete-information-entropy",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Measures the directed relative entropy $D_{\\mathrm{KL}}(P \\parallel Q)$ of a true discrete probability distribution $P = \\{p_i\\}$ with respect to a reference model distribution $Q = \\{q_i\\}$.",
+    "conceptual_definition": "Kullback-Leibler divergence quantifies the expected logarithmic likelihood ratio—or extra coding length in nats—incurred when encoding outcomes drawn from $P$ using a code optimized for $Q$.",
+    "intuitive_summary": "Scores how badly a reference probability model $Q$ mismatches the true distribution $P$, equaling zero only when the two distributions are identical.",
+    "interpretation": "By Gibbs's inequality (Jensen's inequality applied to $-\\ln x$), $D_{\\mathrm{KL}}(P \\parallel Q) \\ge 0$ with equality if and only if $p_i = q_i$ for all $i$; it is asymmetric ($D_{\\mathrm{KL}}(P \\parallel Q) \\ne D_{\\mathrm{KL}}(Q \\parallel P)$) and invariant under invertible reparameterizations.",
+    "symmetry_origin": "Arises from the exponential large-deviation rate function in Sanov's theorem and serves as the canonical Bregman divergence generated by negative Shannon entropy.",
+    "limits_and_boundary": "Requires absolute continuity of $P$ with respect to $Q$ ($q_i = 0$ implies $p_i = 0$); otherwise the divergence becomes $+\\infty$.",
+    "semantic_variables": {
+      "D_{\\mathrm{KL}}(P \\parallel Q)": {
+        "name": "Kullback-Leibler Divergence",
+        "type": "variable",
+        "unit": "1",
+        "description": "Dimensionless non-negative relative entropy from reference distribution $Q$ to target distribution $P$ in nats."
+      },
+      "p_i": {
+        "name": "Target Distribution Probability",
+        "type": "variable",
+        "unit": "1",
+        "description": "True or empirical probability assigned to discrete state $i$ under distribution $P$."
+      },
+      "q_i": {
+        "name": "Reference Model Probability",
+        "type": "variable",
+        "unit": "1",
+        "description": "Prior, equilibrium, or model probability assigned to discrete state $i$ under distribution $Q$."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Relative Entropy",
+      "dimension_latex": "[1]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "shannon-mutual-information",
+      "nonequilibrium-excess-free-energy-kl"
+    ]
   }
 }

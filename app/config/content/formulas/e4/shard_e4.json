@@ -2904,5 +2904,57 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "jaynes-maxent-gibbs-distribution": {
+    "title": "Jaynes Maximum-Entropy Gibbs Exponential Distribution",
+    "equation": "p_i = \\frac{1}{Z(\\boldsymbol{\\lambda})}\\exp\\!\\left(-\\sum_{k} \\lambda_k f_k(x_i)\\right)",
+    "category": "thermodynamics-statistical-mechanics",
+    "record_type": "equation",
+    "parent_formula_id": "shannon-discrete-information-entropy",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Gives the unique probability distribution $p_i$ maximizing Shannon entropy subject to normalization and fixed expectation values of observables $f_k(x_i)$, parameterized by Lagrange multipliers $\\lambda_k$ and partition function $Z(\\boldsymbol{\\lambda})$.",
+    "conceptual_definition": "Jaynes's maximum-entropy distribution is the least-biased exponential-family probability assignment consistent with specified macroscopic expectation constraints.",
+    "intuitive_summary": "Among all probability distributions matching known averages, the one that assumes the least extra information always takes an exponential Boltzmann-like form.",
+    "interpretation": "Solving $\\delta\\left[H(P) - (\\lambda_0 - 1)\\sum_i p_i - \\sum_k \\lambda_k \\sum_i p_i f_k(x_i)\\right] = 0$ yields an exponential family with $Z(\\boldsymbol{\\lambda}) = \\sum_i \\exp(-\\sum_k \\lambda_k f_k(x_i))$; constraining mean energy recovers the canonical ensemble with $\\lambda_1 = \\beta = (k_B T)^{-1}$.",
+    "symmetry_origin": "Follows from constrained convex optimization of the strictly concave Shannon entropy functional over the probability simplex.",
+    "limits_and_boundary": "Requires that the normalization sum $Z(\\boldsymbol{\\lambda})$ converges for the multiplier vector $\\boldsymbol{\\lambda}$ and that the specified constraint expectations lie within the interior of the feasible convex hull.",
+    "semantic_variables": {
+      "p_i": {
+        "name": "Maximum-Entropy State Probability",
+        "type": "variable",
+        "unit": "1",
+        "description": "Normalized least-biased probability assigned to discrete state $x_i$."
+      },
+      "Z(\\boldsymbol{\\lambda})": {
+        "name": "Generalized Partition Function",
+        "type": "variable",
+        "unit": "1",
+        "description": "Normalization constant $\\sum_i \\exp(-\\sum_k \\lambda_k f_k(x_i))$ ensuring $\\sum_i p_i = 1$."
+      },
+      "\\lambda_k": {
+        "name": "Lagrange Multiplier",
+        "type": "parameter",
+        "unit": "1",
+        "description": "Dual intensive parameter conjugate to the $k$-th macroscopic constraint observable $f_k$ (having inverse units of $f_k$ so $\\lambda_k f_k$ is dimensionless)."
+      },
+      "f_k(x_i)": {
+        "name": "Constraint Observable",
+        "type": "variable",
+        "unit": "1",
+        "description": "Value of the $k$-th constrained microscopic observable evaluated on state $x_i$."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Probability",
+      "dimension_latex": "[1]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "jaynes-lagrange-multiplier-expectation"
+    ]
   }
 }

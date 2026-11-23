@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+100` subtopics live across 20 batches, bringing the encyclopedia from `1,584 → 1,684` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+105` subtopics live across 21 batches, bringing the encyclopedia from `1,584 → 1,689` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -283,3 +283,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 98 | Photovoltaics, Light-Emitting Diodes and the Shockley-Queisser Limit | http://localhost:8000/physics/subtopic/photovoltaics-leds-optoelectronics | https://physicslab.ca/physics/subtopic/photovoltaics-leds-optoelectronics |
 | 99 | SQUIDs, Flux Quantization and Superconducting Quantum Circuits | http://localhost:8000/physics/subtopic/squid-superconducting-circuits | https://physicslab.ca/physics/subtopic/squid-superconducting-circuits |
 | 100 | X-Ray, Electron and Neutron Diffraction Probes of Condensed Matter | http://localhost:8000/physics/subtopic/x-ray-neutron-diffraction-probes | https://physicslab.ca/physics/subtopic/x-ray-neutron-diffraction-probes |
+
+---
+
+## Batch 21 — `thermodynamics-statistical-mechanics` · *9. Biophysics & Polymer Statistical Mechanics*
+* **Date:** 2026-11-23 (`thermodynamics-statistical-mechanics`: `54 → 59`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/thermodynamics-statistical-mechanics) · [Live](https://physicslab.ca/physics/topic/thermodynamics-statistical-mechanics)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 101 | Polymer Statistical Mechanics, Entropic Elasticity and Flory-Huggins Theory | http://localhost:8000/physics/subtopic/polymer-physics-flory-huggins | https://physicslab.ca/physics/subtopic/polymer-physics-flory-huggins |
+| 102 | Brownian Ratchets, Flashing Potentials and Molecular Motors | http://localhost:8000/physics/subtopic/brownian-ratchets-molecular-motors | https://physicslab.ca/physics/subtopic/brownian-ratchets-molecular-motors |
+| 103 | Hodgkin-Huxley Action Potentials and Excitable Cell Membranes | http://localhost:8000/physics/subtopic/hodgkin-huxley-excitable-membranes | https://physicslab.ca/physics/subtopic/hodgkin-huxley-excitable-membranes |
+| 104 | Helfrich Bending Elasticity, Lipid Bilayers and Membrane Fluctuations | http://localhost:8000/physics/subtopic/helfrich-biomembrane-elasticity | https://physicslab.ca/physics/subtopic/helfrich-biomembrane-elasticity |
+| 105 | Protein Folding Energy Landscapes, Levinthal's Paradox and Random Energy Models | http://localhost:8000/physics/subtopic/protein-folding-energy-landscapes | https://physicslab.ca/physics/subtopic/protein-folding-energy-landscapes |

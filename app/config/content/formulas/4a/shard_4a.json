@@ -2233,5 +2233,131 @@
     "subcomponents": [
       "monopole-second-homotopy-isomorphism"
     ]
+  },
+  "smoluchowski-probability-current-density": {
+    "title": "Smoluchowski Probability Current Density",
+    "equation": "J(x, t) = -\\frac{1}{\\gamma}\\left(\\frac{\\partial U}{\\partial x} + F_{\\mathrm{load}}\\right)P(x,t) - D\\frac{\\partial P(x,t)}{\\partial x}",
+    "category": "thermodynamics-statistical-mechanics",
+    "record_type": "equation",
+    "parent_formula_id": "overdamped-langevin-ratchet-equation",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Expresses the probability flux $J(x, t)$ of an overdamped ensemble with probability density $P(x, t)$ as the sum of deterministic drift driven by potential gradient $\\partial U/\\partial x$ and load $F_{\\mathrm{load}}$ plus Fickian thermal diffusion with diffusivity $D$.",
+    "conceptual_definition": "The Smoluchowski current is the net rate at which probability crosses position $x$ per unit time, combining systematic drift down the tilted energy landscape with diffusive spreading down concentration gradients.",
+    "intuitive_summary": "The net flow of Brownian particles past any point equals the deterministic push from the landscape and load minus the tendency of particles to spread out from crowded regions.",
+    "interpretation": "Enters the one-dimensional Fokker-Planck continuity equation $\\partial P/\\partial t + \\partial J/\\partial x = 0$. Setting $J = 0$ for a static potential with $F_{\\mathrm{load}} = 0$ and $D = k_B T / \\gamma$ directly yields the equilibrium Boltzmann density $P_{\\mathrm{eq}}(x) \\propto \\exp[-U(x)/(k_B T)]$.",
+    "symmetry_origin": "Follows from local probability conservation combined with the Einstein-Smoluchowski fluctuation-dissipation balance $D\\gamma = k_B T$.",
+    "limits_and_boundary": "Valid in the overdamped Markovian regime with spatially uniform temperature and friction. For two-state flashing ratchets, coupled continuity equations include chemical transition sink and source terms between states.",
+    "semantic_variables": {
+      "J(x, t)": {
+        "name": "Probability Current Density",
+        "type": "variable",
+        "unit": "s^{-1}",
+        "description": "Net probability flux crossing coordinate $x$ at time $t$."
+      },
+      "\\gamma": {
+        "name": "Viscous Friction Coefficient",
+        "type": "parameter",
+        "unit": "kg/s",
+        "description": "Fluid drag coefficient setting the mobility $1/\\gamma$."
+      },
+      "U": {
+        "name": "Potential Energy",
+        "type": "variable",
+        "unit": "J",
+        "description": "Position- and time-dependent ratchet potential energy $U(x, t)$."
+      },
+      "x": {
+        "name": "Spatial Coordinate",
+        "type": "variable",
+        "unit": "m",
+        "description": "Coordinate along the one-dimensional periodic transport axis."
+      },
+      "F_{\\mathrm{load}}": {
+        "name": "External Load Force",
+        "type": "variable",
+        "unit": "N",
+        "description": "Constant opposing force resisting forward particle drift."
+      },
+      "P(x,t)": {
+        "name": "Probability Density",
+        "type": "variable",
+        "unit": "m^{-1}",
+        "description": "Normalized one-dimensional probability density of locating the particle at $(x, t)$."
+      },
+      "D": {
+        "name": "Diffusion Coefficient",
+        "type": "parameter",
+        "unit": "m^2/s",
+        "description": "Thermal diffusivity related to friction via $D = k_B T / \\gamma$."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Probability Current",
+      "dimension_latex": "[T^{-1}]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
+  },
+  "passive-axonal-cable-equation": {
+    "title": "One-Dimensional Passive Axonal Cable Equation",
+    "equation": "\\tau_m \\frac{\\partial V}{\\partial t} = \\lambda_m^2 \\frac{\\partial^2 V}{\\partial x^2} - V",
+    "category": "thermodynamics-statistical-mechanics",
+    "record_type": "equation",
+    "parent_formula_id": "onsager-linear-flux-force",
+    "derivation_type": "SPECIAL_CASE",
+    "description": "Governs the spatiotemporal spread and exponential decay of subthreshold electrotonic potential $V(x, t)$ along a uniform cylindrical passive neurite characterized by membrane time constant $\\tau_m$ and length constant $\\lambda_m$.",
+    "conceptual_definition": "The passive cable equation is a leaky diffusion equation expressing current conservation between longitudinal ohmic conduction along the cytoplasm and radial capacitive-resistive loss across the membrane.",
+    "intuitive_summary": "Subthreshold electrical signals diffuse along an axon like heat along an uninsulated wire, smearing out in time and fading exponentially with distance as charge leaks through the membrane.",
+    "interpretation": "Combining Ohm's law for axial current $I_a = -(\\pi a^2 / R_i) \\partial V / \\partial x$ with radial current conservation $-\\partial I_a / \\partial x = 2\\pi a (C_m \\partial V / \\partial t + V / R_m)$ yields the dimensionless time- and space-scaled parabolic PDE with $\\tau_m = R_m C_m$ and $\\lambda_m = \\sqrt{a R_m / (2 R_i)}$.",
+    "symmetry_origin": "Follows from local electric charge conservation and cylindrical translational invariance along a uniform passive ohmic fiber.",
+    "limits_and_boundary": "Valid for small subthreshold perturbations around resting potential where membrane conductance is linear and extracellular resistance is negligible. Breaks down once voltage-gated channels activate or when dendritic branching alters cable diameter.",
+    "semantic_variables": {
+      "\\tau_m": {
+        "name": "Membrane Time Constant",
+        "type": "parameter",
+        "unit": "s",
+        "description": "Product $R_m C_m$ governing the exponential temporal relaxation of membrane voltage."
+      },
+      "\\lambda_m": {
+        "name": "Electrotonic Length Constant",
+        "type": "parameter",
+        "unit": "m",
+        "description": "Characteristic spatial decay length over which steady subthreshold voltage falls by $1/e$."
+      },
+      "V": {
+        "name": "Electrotonic Membrane Voltage",
+        "type": "variable",
+        "unit": "V",
+        "description": "Deviation of transmembrane potential from its resting equilibrium value."
+      },
+      "t": {
+        "name": "Time",
+        "type": "variable",
+        "unit": "s",
+        "description": "Elapsed time coordinate."
+      },
+      "x": {
+        "name": "Axial Position",
+        "type": "variable",
+        "unit": "m",
+        "description": "Longitudinal spatial coordinate along the cylindrical axon or dendrite."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Electric Potential",
+      "dimension_latex": "[M L^2 T^{-3} I^{-1}]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "membrane-electrotonic-length-constant"
+    ]
   }
 }

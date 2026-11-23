@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+90` subtopics live across 18 batches, bringing the encyclopedia from `1,584 → 1,674` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+95` subtopics live across 19 batches, bringing the encyclopedia from `1,584 → 1,679` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -255,3 +255,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 88 | Doppler Laser Cooling, Magneto-Optical Traps and Optical Tweezers | http://localhost:8000/physics/subtopic/laser-cooling-optical-trapping | https://physicslab.ca/physics/subtopic/laser-cooling-optical-trapping |
 | 89 | Paul and Penning Ion Traps and Optical Atomic Clocks | http://localhost:8000/physics/subtopic/ion-traps-optical-atomic-clocks | https://physicslab.ca/physics/subtopic/ion-traps-optical-atomic-clocks |
 | 90 | Rydberg Atoms, Dipole Blockade and Neutral-Atom Quantum Simulators | http://localhost:8000/physics/subtopic/rydberg-atoms-quantum-simulators | https://physicslab.ca/physics/subtopic/rydberg-atoms-quantum-simulators |
+
+---
+
+## Batch 19 — `quantum-physics` · *10. Quantum Approximation & Many-Body Methods*
+* **Date:** 2026-11-23 (`quantum-physics`: `63 → 68`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/quantum-physics) · [Live](https://physicslab.ca/physics/topic/quantum-physics)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 91 | WKB Semiclassical Approximation and Barrier Tunneling | http://localhost:8000/physics/subtopic/wkb-semiclassical-approximation | https://physicslab.ca/physics/subtopic/wkb-semiclassical-approximation |
+| 92 | Time-Dependent Perturbation Theory and Fermi's Golden Rule | http://localhost:8000/physics/subtopic/time-dependent-perturbation-fermi-golden-rule | https://physicslab.ca/physics/subtopic/time-dependent-perturbation-fermi-golden-rule |
+| 93 | Angular Momentum Coupling, Clebsch-Gordan Coefficients and the Wigner-Eckart Theorem | http://localhost:8000/physics/subtopic/angular-momentum-coupling-wigner-eckart | https://physicslab.ca/physics/subtopic/angular-momentum-coupling-wigner-eckart |
+| 94 | Hartree-Fock Theory and Density Functional Theory (DFT) | http://localhost:8000/physics/subtopic/hartree-fock-density-functional-theory | https://physicslab.ca/physics/subtopic/hartree-fock-density-functional-theory |
+| 95 | Identical Particles, Slater Determinants and Second Quantization | http://localhost:8000/physics/subtopic/identical-particles-second-quantization | https://physicslab.ca/physics/subtopic/identical-particles-second-quantization |

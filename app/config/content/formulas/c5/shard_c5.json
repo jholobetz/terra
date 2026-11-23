@@ -2502,5 +2502,64 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "maxwell-viscoelastic-constitutive-equation": {
+    "title": "Maxwell Linear Viscoelastic Constitutive Equation",
+    "equation": "\\frac{d\\varepsilon}{dt} = \\frac{1}{E}\\frac{d\\sigma}{dt} + \\frac{\\sigma}{\\eta}",
+    "category": "fluids-nonlinear",
+    "record_type": "equation",
+    "parent_formula_id": "navier-stokes-momentum-viscous-form-7b93eee6",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Relates total uniaxial strain rate $d\\varepsilon/dt$ to stress $\\sigma$ and stress rate $d\\sigma/dt$ in a linear viscoelastic Maxwell material with elastic Young's modulus $E$ and dynamic viscosity $\\eta$.",
+    "conceptual_definition": "Models a viscoelastic fluid as an ideal elastic spring in series with a viscous dashpot, producing instantaneous elastic deformation followed by exponential stress relaxation under constant strain.",
+    "intuitive_summary": "A Maxwell material acts like a stiff spring when struck suddenly, yet flows steadily like thick honey when held under load for a long time.",
+    "interpretation": "Because the spring and dashpot share the same stress $\\sigma$, their strain rates add linearly ($\\dot{\\varepsilon} = \\dot{\\varepsilon}_e + \\dot{\\varepsilon}_v$). Holding strain constant ($\\dot{\\varepsilon} = 0$) yields exponential stress relaxation $\\sigma(t) = \\sigma_0 \\exp(-t/\\tau_r)$ with relaxation time $\\tau_r = \\eta / E$.",
+    "symmetry_origin": "Constructed from linear superposition of reversible Hookean elasticity and irreversible Newtonian viscous dissipation under time-translation invariance.",
+    "limits_and_boundary": "Captures stress relaxation accurately for dilute polymer solutions and viscoelastic liquids at small strains, but predicts unbounded linear creep under constant stress and neglects multi-mode relaxation spectra; large finite deformations require upper-convected Maxwell or Oldroyd-B tensor models.",
+    "semantic_variables": {
+      "\\varepsilon": {
+        "name": "Uniaxial Strain",
+        "type": "variable",
+        "unit": "1",
+        "description": "Dimensionless total mechanical deformation combining elastic and viscous contributions."
+      },
+      "\\sigma": {
+        "name": "Applied Stress",
+        "type": "variable",
+        "unit": "Pa",
+        "description": "Internal mechanical stress borne equally by the elastic and viscous elements."
+      },
+      "E": {
+        "name": "Elastic Modulus",
+        "type": "parameter",
+        "unit": "Pa",
+        "description": "Instantaneous Hookean Young's modulus of the elastic spring element."
+      },
+      "\\eta": {
+        "name": "Dynamic Viscosity",
+        "type": "parameter",
+        "unit": "Pa*s",
+        "description": "Newtonian viscosity governing steady-state dissipative flow of the dashpot."
+      },
+      "t": {
+        "name": "Time",
+        "type": "variable",
+        "unit": "s",
+        "description": "Elapsed loading time."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Strain Rate",
+      "dimension_latex": "[T^{-1}]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "viscoelastic-deborah-number",
+      "griffith-brittle-fracture-critical-stress"
+    ]
   }
 }

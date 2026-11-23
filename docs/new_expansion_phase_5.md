@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+105` subtopics live across 21 batches, bringing the encyclopedia from `1,584 → 1,689` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+110` subtopics live across 22 batches, bringing the encyclopedia from `1,584 → 1,694` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -297,3 +297,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 103 | Hodgkin-Huxley Action Potentials and Excitable Cell Membranes | http://localhost:8000/physics/subtopic/hodgkin-huxley-excitable-membranes | https://physicslab.ca/physics/subtopic/hodgkin-huxley-excitable-membranes |
 | 104 | Helfrich Bending Elasticity, Lipid Bilayers and Membrane Fluctuations | http://localhost:8000/physics/subtopic/helfrich-biomembrane-elasticity | https://physicslab.ca/physics/subtopic/helfrich-biomembrane-elasticity |
 | 105 | Protein Folding Energy Landscapes, Levinthal's Paradox and Random Energy Models | http://localhost:8000/physics/subtopic/protein-folding-energy-landscapes | https://physicslab.ca/physics/subtopic/protein-folding-energy-landscapes |
+
+---
+
+## Batch 22 — `fluids-nonlinear` · *8. Climate, Geophysical & Acoustic Continua*
+* **Date:** 2026-11-23 (`fluids-nonlinear`: `35 → 40`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/fluids-nonlinear) · [Live](https://physicslab.ca/physics/topic/fluids-nonlinear)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 106 | Planetary Energy Balance, Radiative Forcing and the Greenhouse Effect | http://localhost:8000/physics/subtopic/planetary-radiative-forcing-greenhouse | https://physicslab.ca/physics/subtopic/planetary-radiative-forcing-greenhouse |
+| 107 | Geostrophic Balance, Thermal Wind and Baroclinic Instability | http://localhost:8000/physics/subtopic/geostrophic-balance-baroclinic-instability | https://physicslab.ca/physics/subtopic/geostrophic-balance-baroclinic-instability |
+| 108 | Seismology, Elastic Body and Surface Waves, and Earth's Interior | http://localhost:8000/physics/subtopic/seismology-earth-interior-waves | https://physicslab.ca/physics/subtopic/seismology-earth-interior-waves |
+| 109 | Geodynamo Theory, Magnetic Induction and Planetary Magnetism | http://localhost:8000/physics/subtopic/geodynamo-planetary-magnetism | https://physicslab.ca/physics/subtopic/geodynamo-planetary-magnetism |
+| 110 | Nonlinear Acoustics, Viscoelasticity and Brittle Fracture Mechanics | http://localhost:8000/physics/subtopic/acoustics-viscoelastic-fracture-continua | https://physicslab.ca/physics/subtopic/acoustics-viscoelastic-fracture-continua |

@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+75` subtopics live across 15 batches, bringing the encyclopedia from `1,584 → 1,659` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+80` subtopics live across 16 batches, bringing the encyclopedia from `1,584 → 1,664` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -213,3 +213,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 73 | Optical Waveguides, Fibers and Photonic Crystals | http://localhost:8000/physics/subtopic/optical-waveguides-photonic-crystals | https://physicslab.ca/physics/subtopic/optical-waveguides-photonic-crystals |
 | 74 | Debye Shielding and Langmuir Plasma Oscillations | http://localhost:8000/physics/subtopic/debye-shielding-langmuir-plasma-waves | https://physicslab.ca/physics/subtopic/debye-shielding-langmuir-plasma-waves |
 | 75 | Magnetohydrodynamic Waves and Collisionless Landau Damping | http://localhost:8000/physics/subtopic/mhd-waves-landau-damping | https://physicslab.ca/physics/subtopic/mhd-waves-landau-damping |
+
+---
+
+## Batch 16 — `electromagnetism` · *8. Classical & Wave Optics*
+* **Date:** 2026-11-23 (`electromagnetism`: `259 → 264`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/electromagnetism) · [Live](https://physicslab.ca/physics/topic/electromagnetism)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 76 | Fresnel Equations, Brewster's Angle and Total Internal Reflection | http://localhost:8000/physics/subtopic/fresnel-equations-reflection-refraction | https://physicslab.ca/physics/subtopic/fresnel-equations-reflection-refraction |
+| 77 | Fraunhofer and Fresnel Diffraction and Optical Resolution | http://localhost:8000/physics/subtopic/fraunhofer-fresnel-diffraction | https://physicslab.ca/physics/subtopic/fraunhofer-fresnel-diffraction |
+| 78 | Optical Interferometry, Fabry-Pérot Cavities and Coherence | http://localhost:8000/physics/subtopic/optical-interferometry-coherence | https://physicslab.ca/physics/subtopic/optical-interferometry-coherence |
+| 79 | Geometric Optics, Fermat's Principle and ABCD Ray Matrices | http://localhost:8000/physics/subtopic/geometric-optics-abcd-matrices | https://physicslab.ca/physics/subtopic/geometric-optics-abcd-matrices |
+| 80 | Fourier Optics, Transfer Functions and Spatial Filtering | http://localhost:8000/physics/subtopic/fourier-optics-spatial-filtering | https://physicslab.ca/physics/subtopic/fourier-optics-spatial-filtering |

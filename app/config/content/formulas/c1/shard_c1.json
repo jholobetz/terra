@@ -2572,5 +2572,121 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "curved-medium-ray-equation": {
+    "title": "Curved-Medium Optical Ray Equation",
+    "equation": "\\frac{d}{ds}\\!\\left(n \\frac{d\\mathbf{r}}{ds}\\right) = \\nabla n",
+    "category": "electromagnetism",
+    "record_type": "equation",
+    "parent_formula_id": "eikonal-equation-geometric-optics",
+    "derivation_type": "DERIVED_FROM",
+    "description": "Determines the trajectory $\\mathbf{r}(s)$ of a light ray parameterized by geometric arc length $s$ through a continuously inhomogeneous medium with refractive index $n(\\mathbf{r})$.",
+    "conceptual_definition": "The differential ray equation $(d/ds)(n\\,d\\mathbf{r}/ds) = \\nabla n$ equates the arc-length rate of change of the optical momentum vector $n\\,d\\mathbf{r}/ds$ to the spatial gradient of the refractive index.",
+    "intuitive_summary": "A light ray always curves toward regions of higher refractive index, acting like a particle pulled along the gradient $\\nabla n$—creating atmospheric mirages and confining light inside graded-index fibers.",
+    "interpretation": "Because ray tangents satisfy $n\\,d\\mathbf{r}/ds = \\nabla S$, differentiating along $s$ gives $(d/ds)(n\\,d\\mathbf{r}/ds) = (d\\mathbf{r}/ds \\cdot \\nabla)\\nabla S = (1/n)(\\nabla S \\cdot \\nabla)\\nabla S = (1/2n)\\nabla(|\\nabla S|^2) = (1/2n)\\nabla(n^2) = \\nabla n$. In a radially parabolic GRIN fiber $n(r) \\approx n_0(1 - \\alpha^2 r^2/2)$, paraxial rays execute harmonic sinusoidal oscillations along the fiber axis.",
+    "symmetry_origin": "Follows from the Euler-Lagrange stationarity of optical path length under arc-length reparameterization and rotational isotropy of the local index $n(\\mathbf{r})$.",
+    "limits_and_boundary": "In a homogeneous medium ($\\nabla n = 0$), reduces to $d^2\\mathbf{r}/ds^2 = 0$, confirming rectilinear straight-line ray propagation; at a sharp planar interface, integrating across the discontinuity yields Snell's law $n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2$.",
+    "semantic_variables": {
+      "\\mathbf{r}": {
+        "name": "Ray Position Vector",
+        "type": "variable",
+        "unit": "m",
+        "description": "Three-dimensional coordinate tracing the optical ray path as a function of arc length $s$."
+      },
+      "s": {
+        "name": "Geometric Arc Length",
+        "type": "variable",
+        "unit": "m",
+        "description": "Euclidean distance measured along the curved ray trajectory satisfying $|d\\mathbf{r}/ds| = 1$."
+      },
+      "n": {
+        "name": "Refractive Index",
+        "type": "variable",
+        "unit": "1",
+        "description": "Local dimensionless refractive index $n(\\mathbf{r})$ of the inhomogeneous dielectric medium."
+      },
+      "\\nabla n": {
+        "name": "Refractive Index Gradient",
+        "type": "variable",
+        "unit": "m^-1",
+        "description": "Spatial gradient vector pointing in the direction of steepest increase in refractive index."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Inverse Length (Ray Curvature Weighted by Index)",
+      "dimension_latex": "[\\text{L}^{-1}]",
+      "verified_at": 1795460000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "paraxial-abcd-ray-transfer-matrix"
+    ]
+  },
+  "angular-spectrum-free-space-transfer-function": {
+    "title": "Angular Spectrum Free-Space Transfer Function",
+    "equation": "H(f_x, f_y; z) = \\exp\\!\\left[ i k z \\sqrt{1 - (\\lambda f_x)^2 - (\\lambda f_y)^2} \\right]",
+    "category": "electromagnetism",
+    "record_type": "equation",
+    "parent_formula_id": "3d-laplacian-operator-in-cartesian-coordinates-856414e5",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Exact linear shift-invariant transfer function $H(f_x, f_y; z)$ propagating the two-dimensional angular spectrum of a monochromatic optical field of wavelength $\\lambda$ and wavenumber $k = 2\\pi/\\lambda$ across a homogeneous free-space distance $z$.",
+    "conceptual_definition": "The angular spectrum transfer function multiplies each plane-wave Fourier component $(f_x, f_y)$ by its exact axial propagation factor $\\exp(i k_z z)$ determined by the scalar Helmholtz dispersion relation.",
+    "intuitive_summary": "Free space acts like a spatial-frequency filter: waves tilted at real angles simply shift in phase as they travel forward, while ripples finer than one wavelength die away exponentially before reaching the far field.",
+    "interpretation": "Substituting a plane-wave Fourier decomposition into the three-dimensional Helmholtz equation $(\\nabla^2 + k^2)U = 0$ yields $d^2 A/dz^2 + k_z^2 A = 0$ with $k_z = k\\sqrt{1 - (\\lambda f_x)^2 - (\\lambda f_y)^2}$. Inside the propagating circle $f_x^2 + f_y^2 \\le 1/\\lambda^2$, $|H| = 1$ and energy propagates without loss; outside it ($f_x^2 + f_y^2 > 1/\\lambda^2$), $k_z$ becomes purely imaginary and $|H| = \\exp(-|k_z| z)$ exponentially damps evanescent sub-wavelength features.",
+    "symmetry_origin": "Follows directly from transverse Euclidean translation invariance of homogeneous space, which diagonalizes the three-dimensional Helmholtz operator in the two-dimensional plane-wave Fourier basis.",
+    "limits_and_boundary": "At $z = 0$, $H = 1$ identically. In the paraxial limit $(\\lambda f_x)^2 + (\\lambda f_y)^2 \\ll 1$, expanding the square root to first order recovers the Fresnel quadratic phase transfer function. For $z \\gg \\lambda$, evanescent modes with $f_x^2 + f_y^2 > 1/\\lambda^2$ vanish completely.",
+    "semantic_variables": {
+      "H": {
+        "name": "Free-Space Angular Spectrum Transfer Function",
+        "type": "variable",
+        "unit": "1",
+        "description": "Complex frequency-domain multiplier mapping the angular spectrum from plane $z = 0$ to plane $z$."
+      },
+      "f_x": {
+        "name": "Horizontal Spatial Frequency",
+        "type": "variable",
+        "unit": "m^-1",
+        "description": "Inverse spatial period along the transverse $x$-axis."
+      },
+      "f_y": {
+        "name": "Vertical Spatial Frequency",
+        "type": "variable",
+        "unit": "m^-1",
+        "description": "Inverse spatial period along the transverse $y$-axis."
+      },
+      "z": {
+        "name": "Axial Propagation Distance",
+        "type": "variable",
+        "unit": "m",
+        "description": "Distance between the input and observation planes along the optical axis."
+      },
+      "k": {
+        "name": "Optical Wavenumber",
+        "type": "variable",
+        "unit": "m^-1",
+        "description": "Magnitude of the free-space propagation vector, $k = 2\\pi / \\lambda$."
+      },
+      "\\lambda": {
+        "name": "Optical Wavelength",
+        "type": "variable",
+        "unit": "m",
+        "description": "Wavelength of the monochromatic electromagnetic field in the homogeneous medium."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Transfer Function",
+      "dimension_latex": "[1]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "fresnel-paraxial-transfer-function"
+    ]
   }
 }

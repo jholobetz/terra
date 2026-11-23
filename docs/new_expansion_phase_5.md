@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+85` subtopics live across 17 batches, bringing the encyclopedia from `1,584 → 1,669` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+90` subtopics live across 18 batches, bringing the encyclopedia from `1,584 → 1,674` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -241,3 +241,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 83 | Alpha, Beta and Gamma Decay Selection Rules | http://localhost:8000/physics/subtopic/radioactive-decay-alpha-beta-gamma | https://physicslab.ca/physics/subtopic/radioactive-decay-alpha-beta-gamma |
 | 84 | Nuclear Fission, Fusion Cross Sections and the Lawson Criterion | http://localhost:8000/physics/subtopic/nuclear-fission-fusion-reactors | https://physicslab.ca/physics/subtopic/nuclear-fission-fusion-reactors |
 | 85 | Nuclear Magnetic Resonance and Mössbauer Spectroscopy | http://localhost:8000/physics/subtopic/nmr-mossbauer-nuclear-spectroscopy | https://physicslab.ca/physics/subtopic/nmr-mossbauer-nuclear-spectroscopy |
+
+---
+
+## Batch 18 — `quantum-physics` · *9. Molecular Physics & Ultracold AMO*
+* **Date:** 2026-11-23 (`quantum-physics`: `58 → 63`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/quantum-physics) · [Live](https://physicslab.ca/physics/topic/quantum-physics)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 86 | Born-Oppenheimer Approximation and Molecular Orbitals | http://localhost:8000/physics/subtopic/born-oppenheimer-molecular-structure | https://physicslab.ca/physics/subtopic/born-oppenheimer-molecular-structure |
+| 87 | Molecular Rotational, Vibrational and Raman Spectroscopy | http://localhost:8000/physics/subtopic/molecular-rovibrational-raman-spectra | https://physicslab.ca/physics/subtopic/molecular-rovibrational-raman-spectra |
+| 88 | Doppler Laser Cooling, Magneto-Optical Traps and Optical Tweezers | http://localhost:8000/physics/subtopic/laser-cooling-optical-trapping | https://physicslab.ca/physics/subtopic/laser-cooling-optical-trapping |
+| 89 | Paul and Penning Ion Traps and Optical Atomic Clocks | http://localhost:8000/physics/subtopic/ion-traps-optical-atomic-clocks | https://physicslab.ca/physics/subtopic/ion-traps-optical-atomic-clocks |
+| 90 | Rydberg Atoms, Dipole Blockade and Neutral-Atom Quantum Simulators | http://localhost:8000/physics/subtopic/rydberg-atoms-quantum-simulators | https://physicslab.ca/physics/subtopic/rydberg-atoms-quantum-simulators |

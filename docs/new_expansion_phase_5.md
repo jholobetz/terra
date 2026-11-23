@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+95` subtopics live across 19 batches, bringing the encyclopedia from `1,584 → 1,679` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+100` subtopics live across 20 batches, bringing the encyclopedia from `1,584 → 1,684` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -269,3 +269,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 93 | Angular Momentum Coupling, Clebsch-Gordan Coefficients and the Wigner-Eckart Theorem | http://localhost:8000/physics/subtopic/angular-momentum-coupling-wigner-eckart | https://physicslab.ca/physics/subtopic/angular-momentum-coupling-wigner-eckart |
 | 94 | Hartree-Fock Theory and Density Functional Theory (DFT) | http://localhost:8000/physics/subtopic/hartree-fock-density-functional-theory | https://physicslab.ca/physics/subtopic/hartree-fock-density-functional-theory |
 | 95 | Identical Particles, Slater Determinants and Second Quantization | http://localhost:8000/physics/subtopic/identical-particles-second-quantization | https://physicslab.ca/physics/subtopic/identical-particles-second-quantization |
+
+---
+
+## Batch 20 — `condensed-matter` · *9. Semiconductor Devices, Photonics & Quantum Hardware*
+* **Date:** 2026-11-23 (`condensed-matter`: `39 → 44`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/condensed-matter) · [Live](https://physicslab.ca/physics/topic/condensed-matter)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 96 | p-n Junctions, Depletion Layers and the Shockley Diode Equation | http://localhost:8000/physics/subtopic/pn-junction-diode-physics | https://physicslab.ca/physics/subtopic/pn-junction-diode-physics |
+| 97 | MOSFETs, Band Bending and Two-Dimensional Electron Gases | http://localhost:8000/physics/subtopic/mosfet-heterostructure-transistors | https://physicslab.ca/physics/subtopic/mosfet-heterostructure-transistors |
+| 98 | Photovoltaics, Light-Emitting Diodes and the Shockley-Queisser Limit | http://localhost:8000/physics/subtopic/photovoltaics-leds-optoelectronics | https://physicslab.ca/physics/subtopic/photovoltaics-leds-optoelectronics |
+| 99 | SQUIDs, Flux Quantization and Superconducting Quantum Circuits | http://localhost:8000/physics/subtopic/squid-superconducting-circuits | https://physicslab.ca/physics/subtopic/squid-superconducting-circuits |
+| 100 | X-Ray, Electron and Neutron Diffraction Probes of Condensed Matter | http://localhost:8000/physics/subtopic/x-ray-neutron-diffraction-probes | https://physicslab.ca/physics/subtopic/x-ray-neutron-diffraction-probes |

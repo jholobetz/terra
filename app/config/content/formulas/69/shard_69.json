@@ -3080,5 +3080,87 @@
     "lineage_confidence": "curated",
     "category": "classical-mechanics",
     "description": "Expresses the formal mathematical structure of Second Variation of Action / Entropy Stability ($\\delta^2 S_{\\text{bounded}}$) within the physical manifold."
+  },
+  "mosfet-saturation-drain-current": {
+    "title": "MOSFET Saturation Drain Current (Square-Law Model)",
+    "equation": "I_{D,\\mathrm{sat}} = \\frac{1}{2}\\mu_n C_{\\mathrm{ox}} \\frac{W}{L}(V_{GS} - V_{\\mathrm{th}})^2 (1 + \\lambda V_{DS})",
+    "category": "condensed-matter",
+    "record_type": "equation",
+    "parent_formula_id": "mosfet-gradual-channel-linear-current",
+    "derivation_type": "LIMITING_CASE",
+    "description": "Describes the pinched-off saturation drain current $I_{D,\\mathrm{sat}}$ of a MOSFET for $V_{DS} \\ge V_{GS} - V_{\\mathrm{th}}$, incorporating finite output conductance through the channel-length modulation parameter $\\lambda$.",
+    "conceptual_definition": "Evaluates the gradual-channel current at the pinch-off point $V_{DS,\\mathrm{sat}} = V_{GS} - V_{\\mathrm{th}}$ and multiplies by $(1 + \\lambda V_{DS})$ to model the slight shortening of the effective conducting channel as the drain depletion region expands.",
+    "intuitive_summary": "Once the drain voltage pinches off the channel near the drain, current stops rising sharply with drain bias and instead scales quadratically with gate overdrive like a voltage-controlled current source.",
+    "interpretation": "In this active regime, the MOSFET delivers high voltage gain because small gate-voltage swings modulate $I_{D,\\mathrm{sat}}$ strongly while output resistance $r_o \\approx (\\lambda I_{D,\\mathrm{sat}})^{-1}$ remains large.",
+    "symmetry_origin": "Arises from evaluating the gradual-channel transport integral at the pinch-off boundary and perturbing the effective channel length $L_{\\mathrm{eff}} = L - \\Delta L(V_{DS})$ to first order.",
+    "limits_and_boundary": "In the ideal long-channel limit $\\lambda \\to 0$, $I_{D,\\mathrm{sat}}$ becomes strictly independent of $V_{DS}$. In deep-submicron devices under high longitudinal fields, carrier velocity saturation replaces the $(V_{GS}-V_{\\mathrm{th}})^2$ scaling with a linear overdrive dependence.",
+    "semantic_variables": {
+      "I_{D,\\mathrm{sat}}": {
+        "name": "Saturation Drain Current",
+        "type": "variable",
+        "unit": "A",
+        "description": "Drain current flowing in the pinched-off active saturation regime."
+      },
+      "\\mu_n": {
+        "name": "Effective Electron Mobility",
+        "type": "parameter",
+        "unit": "m^2/(V*s)",
+        "description": "Inversion-layer electron drift mobility."
+      },
+      "C_{\\mathrm{ox}}": {
+        "name": "Gate Oxide Capacitance per Unit Area",
+        "type": "parameter",
+        "unit": "F/m^2",
+        "description": "Gate dielectric capacitance per unit area."
+      },
+      "W": {
+        "name": "Channel Width",
+        "type": "parameter",
+        "unit": "m",
+        "description": "Width of the transistor channel."
+      },
+      "L": {
+        "name": "Channel Length",
+        "type": "parameter",
+        "unit": "m",
+        "description": "Nominal metallurgical length of the transistor channel."
+      },
+      "V_{GS}": {
+        "name": "Gate-to-Source Voltage",
+        "type": "variable",
+        "unit": "V",
+        "description": "Applied gate bias relative to the source."
+      },
+      "V_{\\mathrm{th}}": {
+        "name": "Threshold Voltage",
+        "type": "parameter",
+        "unit": "V",
+        "description": "Onset voltage for strong channel inversion."
+      },
+      "\\lambda": {
+        "name": "Channel-Length Modulation Parameter",
+        "type": "parameter",
+        "unit": "V^{-1}",
+        "description": "Empirical inverse Early voltage characterizing finite output conductance in saturation."
+      },
+      "V_{DS}": {
+        "name": "Drain-to-Source Voltage",
+        "type": "variable",
+        "unit": "V",
+        "description": "Applied drain bias relative to the source."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Electric Current",
+      "dimension_latex": "[I]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "mosfet-gate-transconductance"
+    ]
   }
 }

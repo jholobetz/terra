@@ -2835,5 +2835,81 @@
     "subcomponents": [
       "local-conduction-electron-spin-density"
     ]
+  },
+  "mosfet-gradual-channel-linear-current": {
+    "title": "MOSFET Gradual-Channel Drain Current (Triode Regime)",
+    "equation": "I_D = \\mu_n C_{\\mathrm{ox}} \\frac{W}{L}\\left[(V_{GS}-V_{\\mathrm{th}})V_{DS} - \\frac{1}{2}V_{DS}^2\\right]",
+    "category": "condensed-matter",
+    "record_type": "equation",
+    "parent_formula_id": "mosfet-threshold-voltage",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Gives the steady-state drain current $I_D$ of a long-channel $n$-type MOSFET operating in the linear (triode) region $0 \\le V_{DS} \\le V_{GS} - V_{\\mathrm{th}}$ under the gradual-channel approximation.",
+    "conceptual_definition": "Integrates the local drift current $I_D = W \\mu_n |Q_i(y)| (dV/dy)$ from source ($V = 0$) to drain ($V = V_{DS}$) with mobile inversion charge $Q_i(y) = -C_{\\mathrm{ox}}[V_{GS} - V_{\\mathrm{th}} - V(y)]$.",
+    "intuitive_summary": "At small drain voltages the channel acts like a gate-tunable resistor, but as the drain voltage climbs it thins the inversion layer near the drain end, bending the current-voltage curve downward.",
+    "interpretation": "The leading term $(V_{GS}-V_{\\mathrm{th}})V_{DS}$ represents ohmic conduction through a uniform channel, while the quadratic subtraction $-\\frac{1}{2}V_{DS}^2$ accounts for spatial tapering of the inversion sheet charge toward the drain.",
+    "symmetry_origin": "Follows from one-dimensional current continuity along the channel combined with the local charge-sheet electrostatic relation of the gradual-channel approximation.",
+    "limits_and_boundary": "For $V_{DS} \\ll V_{GS} - V_{\\mathrm{th}}$, the quadratic term is negligible and the transistor behaves as a linear voltage-controlled resistor with conductance $g_{ds} = \\mu_n C_{\\mathrm{ox}}(W/L)(V_{GS}-V_{\\mathrm{th}})$. At $V_{DS} = V_{GS} - V_{\\mathrm{th}}$, the channel pinches off and the formula transitions smoothly into saturation.",
+    "semantic_variables": {
+      "I_D": {
+        "name": "Drain Current",
+        "type": "variable",
+        "unit": "A",
+        "description": "Steady-state electric current flowing from drain to source through the inversion channel."
+      },
+      "\\mu_n": {
+        "name": "Effective Electron Mobility",
+        "type": "parameter",
+        "unit": "m^2/(V*s)",
+        "description": "Surface drift mobility of electrons in the inversion layer."
+      },
+      "C_{\\mathrm{ox}}": {
+        "name": "Gate Oxide Capacitance per Unit Area",
+        "type": "parameter",
+        "unit": "F/m^2",
+        "description": "Gate dielectric capacitance per unit channel area."
+      },
+      "W": {
+        "name": "Channel Width",
+        "type": "parameter",
+        "unit": "m",
+        "description": "Lateral width of the MOSFET conducting channel."
+      },
+      "L": {
+        "name": "Channel Length",
+        "type": "parameter",
+        "unit": "m",
+        "description": "Distance separating the source and drain junctions."
+      },
+      "V_{GS}": {
+        "name": "Gate-to-Source Voltage",
+        "type": "variable",
+        "unit": "V",
+        "description": "Applied control voltage between gate and source terminals."
+      },
+      "V_{\\mathrm{th}}": {
+        "name": "Threshold Voltage",
+        "type": "parameter",
+        "unit": "V",
+        "description": "Gate voltage required to initiate strong inversion."
+      },
+      "V_{DS}": {
+        "name": "Drain-to-Source Voltage",
+        "type": "variable",
+        "unit": "V",
+        "description": "Applied longitudinal bias between drain and source terminals."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Electric Current",
+      "dimension_latex": "[I]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "mosfet-saturation-drain-current"
+    ]
   }
 }

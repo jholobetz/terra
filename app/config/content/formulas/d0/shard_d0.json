@@ -2692,7 +2692,8 @@
     "lineage_confidence": "curated",
     "subcomponents": [
       "drude-ac-optical-conductivity",
-      "wiedemann-franz-lorenz-law"
+      "wiedemann-franz-lorenz-law",
+      "electron-drift-diffusion-current-density"
     ]
   },
   "dirac-delta-sifting-functional": {
@@ -2782,5 +2783,69 @@
     "lineage_confidence": "curated",
     "category": "classical-mechanics",
     "description": "Expresses the formal mathematical structure of Fictitious Torques Relation (A25D) within the physical manifold."
+  },
+  "depletion-region-poisson-equation": {
+    "title": "One-Dimensional Poisson Equation in the Depletion Approximation",
+    "equation": "\\frac{d^2 \\phi}{dx^2} = -\\frac{q}{\\varepsilon_s}(N_D - N_A)",
+    "category": "condensed-matter",
+    "record_type": "equation",
+    "parent_formula_id": "pn-junction-built-in-potential",
+    "derivation_type": "SPECIAL_CASE",
+    "description": "Relates the second spatial derivative of the electrostatic potential $\\phi(x)$ inside the carrier-depleted space-charge layer of a planar p-n junction to the net fixed ionized dopant density $q(N_D - N_A)$.",
+    "conceptual_definition": "Inside the depletion region where mobile electrons and holes have been swept away, electrostatics is determined solely by the uncovered fixed donor and acceptor ions embedded in a dielectric medium of permittivity $\\varepsilon_s$.",
+    "intuitive_summary": "Because mobile charges are absent from the transition zone, the curvature of the voltage profile is set directly by the fixed positive donors and negative acceptors left behind.",
+    "interpretation": "Specializes Gauss's law $\\nabla^2 \\phi = -\\rho / \\varepsilon_s$ to one spatial dimension with $\\rho(x) = q(p - n + N_D - N_A) \\approx q(N_D - N_A)$. Integrating once yields a linear electric field $E(x) = -d\\phi/dx$, and integrating twice produces a parabolic potential profile.",
+    "symmetry_origin": "Derived from electrostatic Gauss's law under planar translational invariance parallel to the metallurgical junction interface.",
+    "limits_and_boundary": "Breaks down within a few Debye lengths $L_D = \\sqrt{\\varepsilon_s k_B T / (q^2 N)}$ of the depletion edges where mobile carrier tails smooth the abrupt charge step, and fails under strong forward bias when injected carriers rival $N_A$ or $N_D$.",
+    "semantic_variables": {
+      "\\phi": {
+        "name": "Electrostatic Potential",
+        "type": "variable",
+        "unit": "V",
+        "description": "Position-dependent electric potential across the planar junction."
+      },
+      "x": {
+        "name": "Position Coordinate",
+        "type": "variable",
+        "unit": "m",
+        "description": "Spatial coordinate normal to the metallurgical junction plane."
+      },
+      "q": {
+        "name": "Elementary Charge",
+        "type": "constant",
+        "unit": "C",
+        "description": "Magnitude of the charge carried by each singly ionized dopant atom."
+      },
+      "\\varepsilon_s": {
+        "name": "Semiconductor Static Permittivity",
+        "type": "parameter",
+        "unit": "F/m",
+        "description": "Product $\\varepsilon_r \\varepsilon_0$ of the semiconductor relative dielectric constant and vacuum permittivity."
+      },
+      "N_D": {
+        "name": "Donor Concentration",
+        "type": "variable",
+        "unit": "m^{-3}",
+        "description": "Local density of ionized donor atoms."
+      },
+      "N_A": {
+        "name": "Acceptor Concentration",
+        "type": "variable",
+        "unit": "m^{-3}",
+        "description": "Local density of ionized acceptor atoms."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Potential Curvature",
+      "dimension_latex": "[M T^{-3} I^{-1}]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "pn-junction-depletion-width"
+    ]
   }
 }

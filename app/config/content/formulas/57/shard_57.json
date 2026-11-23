@@ -3770,5 +3770,131 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "pn-junction-depletion-capacitance": {
+    "title": "Depletion-Layer Junction Capacitance",
+    "equation": "C_j = A\\sqrt{\\frac{q\\varepsilon_s N_A N_D}{2(N_A+N_D)(V_{\\mathrm{bi}}-V)}}",
+    "category": "condensed-matter",
+    "record_type": "equation",
+    "parent_formula_id": "pn-junction-depletion-width",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Expresses the small-signal differential space-charge capacitance $C_j = |dQ/dV|$ of an abrupt planar p-n junction of cross-sectional area $A$ as an inverse square-root function of the total barrier voltage $V_{\\mathrm{bi}} - V$.",
+    "conceptual_definition": "The depletion capacitance measures the incremental fixed dopant charge uncovered at the edges of the space-charge layer per unit change in applied voltage, matching a parallel-plate capacitor of dielectric thickness $W(V)$.",
+    "intuitive_summary": "A reverse-biased diode acts like a voltage-tunable capacitor whose plates move farther apart as reverse voltage increases, steadily lowering its capacitance.",
+    "interpretation": "Differentiating the stored space-charge magnitude $Q = q A N_D x_n$ with respect to $V$ yields $C_j = \\varepsilon_s A / W$, reproducing the exact parallel-plate relation with voltage-dependent gap $W(V)$.",
+    "symmetry_origin": "Follows directly from electrostatic charge conservation $\\delta Q_p = -\\delta Q_n$ at the two moving boundaries of the depleted dielectric slab.",
+    "limits_and_boundary": "Dominates the total diode reactance under reverse and zero bias ($V \\le 0$). Under strong forward bias, minority-carrier storage generates a much larger diffusion capacitance $C_d \\propto I$, while linearly graded junctions exhibit a $(V_{\\mathrm{bi}} - V)^{-1/3}$ scaling instead of $-1/2$.",
+    "semantic_variables": {
+      "C_j": {
+        "name": "Depletion Junction Capacitance",
+        "type": "variable",
+        "unit": "F",
+        "description": "Small-signal differential capacitance associated with space-charge width modulation."
+      },
+      "A": {
+        "name": "Junction Cross-Sectional Area",
+        "type": "variable",
+        "unit": "m^2",
+        "description": "Planar area of the metallurgical p-n interface."
+      },
+      "q": {
+        "name": "Elementary Charge",
+        "type": "constant",
+        "unit": "C",
+        "description": "Elementary charge carried by each ionized dopant atom."
+      },
+      "\\varepsilon_s": {
+        "name": "Semiconductor Static Permittivity",
+        "type": "parameter",
+        "unit": "F/m",
+        "description": "Static dielectric permittivity of the semiconductor."
+      },
+      "N_A": {
+        "name": "Acceptor Doping Concentration",
+        "type": "variable",
+        "unit": "m^{-3}",
+        "description": "Uniform acceptor density on the p-side."
+      },
+      "N_D": {
+        "name": "Donor Doping Concentration",
+        "type": "variable",
+        "unit": "m^{-3}",
+        "description": "Uniform donor density on the n-side."
+      },
+      "V_{\\mathrm{bi}}": {
+        "name": "Built-In Potential",
+        "type": "variable",
+        "unit": "V",
+        "description": "Zero-bias electrostatic barrier voltage."
+      },
+      "V": {
+        "name": "Applied Bias Voltage",
+        "type": "variable",
+        "unit": "V",
+        "description": "External DC bias applied across the diode terminals."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Capacitance",
+      "dimension_latex": "[M^{-1} L^{-2} T^4 I^2]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
+  },
+  "josephson-nonlinear-kinetic-inductance": {
+    "title": "Nonlinear Josephson Kinetic Inductance",
+    "equation": "L_J(\\varphi) = \\frac{\\Phi_0}{2\\pi I_c \\cos\\varphi}",
+    "category": "condensed-matter",
+    "record_type": "equation",
+    "parent_formula_id": "dc-josephson-relation-supercurrent-4ed24543",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Expresses the effective phase-dependent inductance $L_J(\\varphi)$ of a lossless Josephson tunnel junction derived from the ratio of instantaneous voltage to current rate of change.",
+    "conceptual_definition": "Because the Josephson supercurrent varies sinusoidally with phase rather than linearly with flux, the junction acts as a dissipationless nonlinear inductor whose inductance diverges as $\\varphi \\to \\pi/2$.",
+    "intuitive_summary": "A Josephson junction stores energy like an electrical coil with zero resistance, but its inductance grows rapidly as the current approaches the critical current, making superconducting resonators strongly anharmonic.",
+    "interpretation": "Differentiating $I = I_c \\sin\\varphi$ gives $dI/dt = I_c \\cos\\varphi\\,\\dot{\\varphi}$, and combining with $V = (\\Phi_0/2\\pi)\\dot{\\varphi} = L_J(\\varphi)\\,dI/dt$ immediately yields $L_J(\\varphi)$. This lossless nonlinearity is the essential circuit ingredient that creates unequally spaced energy levels in superconducting qubits.",
+    "symmetry_origin": "Follows directly from combining the dc supercurrent-phase relation with Faraday's inductive voltage-flux law in a dissipationless tunnel barrier.",
+    "limits_and_boundary": "Near zero bias ($\\varphi \\to 0$), the inductance approaches its minimum linear value $L_J(0) = \\Phi_0 / (2\\pi I_c)$. As $\\varphi \\to \\pi/2$ ($I \\to I_c$), $L_J(\\varphi)$ diverges and for $\\pi/2 < \\varphi < 3\\pi/2$ becomes negative, corresponding to unstable barrier-top curvature.",
+    "semantic_variables": {
+      "L_J(\\varphi)": {
+        "name": "Nonlinear Josephson Inductance",
+        "type": "variable",
+        "unit": "H",
+        "description": "Phase-dependent differential inductance of a Josephson tunnel junction."
+      },
+      "\\Phi_0": {
+        "name": "Superconducting Magnetic Flux Quantum",
+        "type": "constant",
+        "unit": "Wb",
+        "description": "Fundamental superconducting flux quantum $h/(2e)$."
+      },
+      "I_c": {
+        "name": "Junction Critical Current",
+        "type": "variable",
+        "unit": "A",
+        "description": "Maximum dissipationless supercurrent of the tunnel junction."
+      },
+      "\\varphi": {
+        "name": "Gauge-Invariant Josephson Phase",
+        "type": "variable",
+        "unit": "rad",
+        "description": "Operating superconducting phase difference across the junction."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Inductance",
+      "dimension_latex": "[M L^2 T^{-2} I^{-2}]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "transmon-qubit-hamiltonian"
+    ]
   }
 }

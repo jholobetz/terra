@@ -2483,5 +2483,129 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "mosfet-threshold-voltage": {
+    "title": "MOSFET Threshold Voltage",
+    "equation": "V_{\\mathrm{th}} = V_{\\mathrm{FB}} + 2\\phi_F + \\frac{\\sqrt{4\\varepsilon_s q N_A \\phi_F}}{C_{\\mathrm{ox}}}",
+    "category": "condensed-matter",
+    "record_type": "equation",
+    "parent_formula_id": "semiconductor-mass-action-law-fd2ec158",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Determines the gate-to-source voltage $V_{\\mathrm{th}}$ required to bend the semiconductor energy bands by $2\\phi_F$ at the oxide interface and establish a strong electron inversion channel in a $p$-type MOSFET.",
+    "conceptual_definition": "The threshold voltage is the sum of the flat-band offset $V_{\\mathrm{FB}}$, the surface band bending $2\\phi_F$ needed to invert carrier polarity, and the voltage drop across the gate oxide supporting the ionized depletion-layer charge.",
+    "intuitive_summary": "Turning on an insulated-gate transistor requires enough gate voltage to cancel work-function offsets, push the surface potential past strong inversion, and balance the fixed space charge uncovered beneath the channel.",
+    "interpretation": "Increasing substrate doping $N_A$ or thickening the gate dielectric (reducing $C_{\\mathrm{ox}}$) raises $V_{\\mathrm{th}}$ because more gate charge is required to support the depletion region before mobile inversion electrons accumulate.",
+    "symmetry_origin": "Follows from Gauss's law and one-dimensional electrostatic charge neutrality across the planar metal-oxide-semiconductor capacitor stack under the depletion approximation.",
+    "limits_and_boundary": "In the ultra-thin oxide limit $C_{\\mathrm{ox}} \\to \\infty$, the depletion-charge term vanishes and $V_{\\mathrm{th}} \\to V_{\\mathrm{FB}} + 2\\phi_F$. Valid for long-channel uniformly doped substrates; short-channel drain-induced barrier lowering and quantum confinement shift $V_{\\mathrm{th}}$ from this ideal expression.",
+    "semantic_variables": {
+      "V_{\\mathrm{th}}": {
+        "name": "Threshold Voltage",
+        "type": "variable",
+        "unit": "V",
+        "description": "Minimum gate-to-source voltage needed to form a strongly inverted conducting channel."
+      },
+      "V_{\\mathrm{FB}}": {
+        "name": "Flat-Band Voltage",
+        "type": "parameter",
+        "unit": "V",
+        "description": "Gate voltage required to eliminate band bending at the semiconductor-oxide interface."
+      },
+      "\\phi_F": {
+        "name": "Bulk Fermi Potential",
+        "type": "parameter",
+        "unit": "V",
+        "description": "Electrostatic potential equivalent of the separation between intrinsic and Fermi levels, $(k_B T/q)\\ln(N_A/n_i)$."
+      },
+      "\\varepsilon_s": {
+        "name": "Semiconductor Permittivity",
+        "type": "constant",
+        "unit": "F/m",
+        "description": "Static dielectric permittivity of the semiconductor substrate."
+      },
+      "q": {
+        "name": "Elementary Charge",
+        "type": "constant",
+        "unit": "C",
+        "description": "Magnitude of the electric charge of a single electron."
+      },
+      "N_A": {
+        "name": "Acceptor Doping Concentration",
+        "type": "parameter",
+        "unit": "m^{-3}",
+        "description": "Uniform density of ionized $p$-type acceptor impurities in the substrate."
+      },
+      "C_{\\mathrm{ox}}": {
+        "name": "Gate Oxide Capacitance per Unit Area",
+        "type": "parameter",
+        "unit": "F/m^2",
+        "description": "Parallel-plate dielectric capacitance per unit area of the gate insulator, $\\varepsilon_{\\mathrm{ox}}/t_{\\mathrm{ox}}$."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Electric Potential",
+      "dimension_latex": "[M L^2 T^{-3} I^{-1}]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "mosfet-gradual-channel-linear-current",
+      "mosfet-subthreshold-swing-limit"
+    ]
+  },
+  "geometric-crystal-structure-factor": {
+    "title": "Geometric Crystal Structure Factor",
+    "equation": "S(\\mathbf{G}) = \\sum_{j} f_j(\\mathbf{G}) \\exp\\!\\left(-i \\mathbf{G} \\cdot \\mathbf{d}_j\\right)",
+    "category": "condensed-matter",
+    "record_type": "equation",
+    "parent_formula_id": "laue-vector-diffraction-condition",
+    "derivation_type": "DEFINITION",
+    "description": "Sums the complex scattering amplitudes $f_j(\\mathbf{G})$ weighted by geometric phase factors $\\exp(-i\\mathbf{G}\\cdot\\mathbf{d}_j)$ over all basis atoms $j$ within a single crystal unit cell at a Bragg reflection $\\mathbf{G}$.",
+    "conceptual_definition": "The crystal structure factor encodes how interference among atoms inside a single unit cell modulates the amplitude and phase of every allowed Bragg reflection, determining systematic absences.",
+    "intuitive_summary": "Even when the outer lattice permits a reflection, atoms sitting at different positions inside the unit cell can reinforce or completely cancel one another's scattered waves.",
+    "interpretation": "Measured kinematic Bragg intensities are proportional to $|S(\\mathbf{G})|^2$; because detectors record intensity rather than complex phase, reconstructing the real-space electron density requires solving the crystallographic phase problem.",
+    "symmetry_origin": "Reflects the internal point-group, centering, screw-axis, and glide-plane symmetries of the crystal space group acting on the fractional basis coordinates $\\mathbf{d}_j$.",
+    "limits_and_boundary": "For a monatomic primitive Bravais lattice ($j=1$, $\\mathbf{d}_1=\\mathbf{0}$), $S(\\mathbf{G}) = f(\\mathbf{G})$ with no systematic absences. For neutrons, $f_j(\\mathbf{G})$ is replaced by the $Q$-independent coherent nuclear scattering length $b_j$.",
+    "semantic_variables": {
+      "S(\\mathbf{G})": {
+        "name": "Crystal Structure Factor",
+        "type": "variable",
+        "unit": "1",
+        "description": "Complex dimensionless scattering amplitude per unit cell evaluated at reciprocal lattice vector $\\mathbf{G}$."
+      },
+      "f_j(\\mathbf{G})": {
+        "name": "Atomic Form Factor of Basis Atom j",
+        "type": "variable",
+        "unit": "1",
+        "description": "Dimensionless scattering power of the $j$-th basis atom at momentum transfer $\\mathbf{G}$."
+      },
+      "\\mathbf{G}": {
+        "name": "Reciprocal Lattice Vector",
+        "type": "variable",
+        "unit": "m^{-1}",
+        "description": "Reciprocal lattice vector corresponding to a Bragg reflection $(hkl)$."
+      },
+      "\\mathbf{d}_j": {
+        "name": "Basis Atom Position Vector",
+        "type": "variable",
+        "unit": "m",
+        "description": "Position of the $j$-th atom relative to the origin of the unit cell."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Structure Amplitude",
+      "dimension_latex": "[1]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "atomic-xray-form-factor",
+      "debye-waller-thermal-attenuation-factor"
+    ]
   }
 }

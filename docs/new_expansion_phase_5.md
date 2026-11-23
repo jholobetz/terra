@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+80` subtopics live across 16 batches, bringing the encyclopedia from `1,584 → 1,664` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+85` subtopics live across 17 batches, bringing the encyclopedia from `1,584 → 1,669` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -227,3 +227,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 78 | Optical Interferometry, Fabry-Pérot Cavities and Coherence | http://localhost:8000/physics/subtopic/optical-interferometry-coherence | https://physicslab.ca/physics/subtopic/optical-interferometry-coherence |
 | 79 | Geometric Optics, Fermat's Principle and ABCD Ray Matrices | http://localhost:8000/physics/subtopic/geometric-optics-abcd-matrices | https://physicslab.ca/physics/subtopic/geometric-optics-abcd-matrices |
 | 80 | Fourier Optics, Transfer Functions and Spatial Filtering | http://localhost:8000/physics/subtopic/fourier-optics-spatial-filtering | https://physicslab.ca/physics/subtopic/fourier-optics-spatial-filtering |
+
+---
+
+## Batch 17 — `standard-model` · *8. Nuclear Structure, Decay & Reactions*
+* **Date:** 2026-11-23 (`standard-model`: `107 → 112`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/standard-model) · [Live](https://physicslab.ca/physics/topic/standard-model)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 81 | Liquid-Drop Model and the Semi-Empirical Mass Formula | http://localhost:8000/physics/subtopic/liquid-drop-semi-empirical-mass | https://physicslab.ca/physics/subtopic/liquid-drop-semi-empirical-mass |
+| 82 | Nuclear Shell Model, Spin-Orbit Coupling and Magic Numbers | http://localhost:8000/physics/subtopic/nuclear-shell-model-magic-numbers | https://physicslab.ca/physics/subtopic/nuclear-shell-model-magic-numbers |
+| 83 | Alpha, Beta and Gamma Decay Selection Rules | http://localhost:8000/physics/subtopic/radioactive-decay-alpha-beta-gamma | https://physicslab.ca/physics/subtopic/radioactive-decay-alpha-beta-gamma |
+| 84 | Nuclear Fission, Fusion Cross Sections and the Lawson Criterion | http://localhost:8000/physics/subtopic/nuclear-fission-fusion-reactors | https://physicslab.ca/physics/subtopic/nuclear-fission-fusion-reactors |
+| 85 | Nuclear Magnetic Resonance and Mössbauer Spectroscopy | http://localhost:8000/physics/subtopic/nmr-mossbauer-nuclear-spectroscopy | https://physicslab.ca/physics/subtopic/nmr-mossbauer-nuclear-spectroscopy |

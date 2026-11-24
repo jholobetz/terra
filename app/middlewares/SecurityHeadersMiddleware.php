@@ -40,13 +40,13 @@ class SecurityHeadersMiddleware
 		$this->app->response()->header('X-Frame-Options', 'SAMEORIGIN');
 		$this->app->response()->header("Content-Security-Policy", $csp);
 		$this->app->response()->header('X-Content-Type-Options', 'nosniff');
-		$this->app->response()->header('Referrer-Policy', 'no-referrer-when-downgrade');
+		$this->app->response()->header('Referrer-Policy', 'strict-origin-when-cross-origin');
 		$isHttps = (!empty($_SERVER['HTTPS']) && strtolower((string)$_SERVER['HTTPS']) !== 'off')
 			|| strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
 			|| (int)($_SERVER['SERVER_PORT'] ?? 0) === 443;
 		if ($isHttps) {
 			$this->app->response()->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 		}
-		$this->app->response()->header('Permissions-Policy', 'geolocation=()');
+		$this->app->response()->header('Permissions-Policy', 'geolocation=(), camera=(), microphone=()');
 	}
 }

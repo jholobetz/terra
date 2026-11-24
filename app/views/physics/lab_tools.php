@@ -194,7 +194,7 @@
         <div class="challenges-grid">
             <div class="challenge-card">
                 <div class="challenge-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24;">Symmetry &amp; Invariance</div>
-                <h4>The Symmetry Thief</h4>
+                <h3>The Symmetry Thief</h3>
                 <p>Can you break energy conservation without breaking spatial momentum? Wobble time in the potential to observe non-zero \(\partial \mathcal{L}/\partial t\).</p>
                 <button class="challenge-action-btn" data-target-mode="noether" data-target-val="0.55">
                     Launch Challenge &rarr;
@@ -203,7 +203,7 @@
 
             <div class="challenge-card">
                 <div class="challenge-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">Quantum Transitions</div>
-                <h4>The Quantum Escape</h4>
+                <h3>The Quantum Escape</h3>
                 <p>Lower the potential barrier until an incident Gaussian packet splits into an evanescent tunneling wave with \(>25\%\) transmission.</p>
                 <button class="challenge-action-btn" data-target-mode="quantum" data-target-val="1.8">
                     Launch Challenge &rarr;
@@ -212,7 +212,7 @@
 
             <div class="challenge-card">
                 <div class="challenge-badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">Relativistic Limits</div>
-                <h4>The Gravitational Crunch</h4>
+                <h3>The Gravitational Crunch</h3>
                 <p>Crank the gravitational constant \(G\) until the effective Schwarzschild potential loses its barrier and orbits collapse into the black hole horizon.</p>
                 <button class="challenge-action-btn" data-target-mode="collapse" data-target-val="3.2">
                     Launch Challenge &rarr;

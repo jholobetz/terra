@@ -56,19 +56,19 @@ if ($hasFormulas):
                     <div class="formula-body" style="display: none; padding: 20px; background: #0a192f; border-top: 1px solid #233554;">
                         <div class="platinum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h4>
+                                <h3 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">1. Local Tier: Identity</h3>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <?= $f['interpretation'] ?? 'Awaiting derivation.' ?>
                                 </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h4>
+                                <h3 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">2. Bridge Tier: Symmetry & Origin</h3>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <?= $f['symmetry_origin'] ?? 'Analysis pending.' ?>
                                 </p>
                             </div>
                             <div class="depth-column">
-                                <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h4>
+                                <h3 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">3. Foundational Anchor: Limits</h3>
                                 <p style="font-size: 0.95rem; line-height: 1.5;">
                                     <?= $f['limits_and_boundary'] ?? 'Case analysis pending.' ?>
                                 </p>
@@ -77,7 +77,7 @@ if ($hasFormulas):
 
                         <?php if (!empty($f['semantic_variables'])): ?>
                         <div class="variable-definitions" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(100, 255, 218, 0.1);">
-                            <h4 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h4>
+                            <h3 style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 10px;">4. Semantic Variables</h3>
                             <div style="display: flex; flex-wrap: wrap; gap: 15px;">
                                     <?php foreach ($f['semantic_variables'] as $symbol => $var): 
                                         $url = '';

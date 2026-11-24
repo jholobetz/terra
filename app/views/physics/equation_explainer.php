@@ -106,57 +106,57 @@ $constantsJson = @file_get_contents(PROJECT_ROOT . '/app/config/content/constant
 
             <div class="launchpad-examples-grid">
                 <button type="button" class="launchpad-example-card" data-formula-id="euler-lagrange-equations-dcda7a85">
-                    <div class="launchpad-card-top">
+                    <span class="launchpad-card-top">
                         <span class="launchpad-card-domain">Analytical Mechanics</span>
                         <span class="launchpad-card-badge">Proof + CAS ✓</span>
-                    </div>
-                    <div class="launchpad-card-title">Euler–Lagrange Equations</div>
-                    <div class="launchpad-card-math">\(\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{q}_i}\right) - \frac{\partial L}{\partial q_i} = 0\)</div>
+                    </span>
+                    <span class="launchpad-card-title">Euler–Lagrange Equations</span>
+                    <span class="launchpad-card-math">\(\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{q}_i}\right) - \frac{\partial L}{\partial q_i} = 0\)</span>
                 </button>
 
                 <button type="button" class="launchpad-example-card" data-formula-id="time-independent-schrodinger-53ae29ae">
-                    <div class="launchpad-card-top">
+                    <span class="launchpad-card-top">
                         <span class="launchpad-card-domain">Quantum Mechanics</span>
                         <span class="launchpad-card-badge">Proof + CAS ✓</span>
-                    </div>
-                    <div class="launchpad-card-title">Time-Independent Schrödinger Equation</div>
-                    <div class="launchpad-card-math">\(\hat{H}|\psi\rangle = E|\psi\rangle\)</div>
+                    </span>
+                    <span class="launchpad-card-title">Time-Independent Schrödinger Equation</span>
+                    <span class="launchpad-card-math">\(\hat{H}|\psi\rangle = E|\psi\rangle\)</span>
                 </button>
 
                 <button type="button" class="launchpad-example-card" data-formula-id="schwarzschild-metric">
-                    <div class="launchpad-card-top">
+                    <span class="launchpad-card-top">
                         <span class="launchpad-card-domain">General Relativity</span>
                         <span class="launchpad-card-badge">Proof + CAS ✓</span>
-                    </div>
-                    <div class="launchpad-card-title">Schwarzschild Spacetime Metric</div>
-                    <div class="launchpad-card-math">\(ds^2 = -\left(1 - \frac{2GM}{c^2 r}\right)c^2 dt^2 + \left(1 - \frac{2GM}{c^2 r}\right)^{-1} dr^2 + r^2 d\Omega^2\)</div>
+                    </span>
+                    <span class="launchpad-card-title">Schwarzschild Spacetime Metric</span>
+                    <span class="launchpad-card-math">\(ds^2 = -\left(1 - \frac{2GM}{c^2 r}\right)c^2 dt^2 + \left(1 - \frac{2GM}{c^2 r}\right)^{-1} dr^2 + r^2 d\Omega^2\)</span>
                 </button>
 
                 <button type="button" class="launchpad-example-card" data-formula-id="dirac-equation-relativistic">
-                    <div class="launchpad-card-top">
+                    <span class="launchpad-card-top">
                         <span class="launchpad-card-domain">Quantum Field Theory</span>
                         <span class="launchpad-card-badge">Proof + CAS ✓</span>
-                    </div>
-                    <div class="launchpad-card-title">Relativistic Dirac Equation</div>
-                    <div class="launchpad-card-math">\((i\gamma^\mu \partial_\mu - m)\psi = 0\)</div>
+                    </span>
+                    <span class="launchpad-card-title">Relativistic Dirac Equation</span>
+                    <span class="launchpad-card-math">\((i\gamma^\mu \partial_\mu - m)\psi = 0\)</span>
                 </button>
 
                 <button type="button" class="launchpad-example-card" data-formula-id="local-energy-conservation-in-electromagnetism-7fd769fd">
-                    <div class="launchpad-card-top">
+                    <span class="launchpad-card-top">
                         <span class="launchpad-card-domain">Electrodynamics</span>
                         <span class="launchpad-card-badge">Proof + CAS ✓</span>
-                    </div>
-                    <div class="launchpad-card-title">Poynting's Theorem (EM Energy Conservation)</div>
-                    <div class="launchpad-card-math">\(\frac{\partial u}{\partial t} + \nabla \cdot \mathbf{S} = -\mathbf{J} \cdot \mathbf{E}\)</div>
+                    </span>
+                    <span class="launchpad-card-title">Poynting's Theorem (EM Energy Conservation)</span>
+                    <span class="launchpad-card-math">\(\frac{\partial u}{\partial t} + \nabla \cdot \mathbf{S} = -\mathbf{J} \cdot \mathbf{E}\)</span>
                 </button>
 
                 <button type="button" class="launchpad-example-card" data-formula-id="plancks-law">
-                    <div class="launchpad-card-top">
+                    <span class="launchpad-card-top">
                         <span class="launchpad-card-domain">Thermodynamics &amp; Quantum</span>
                         <span class="launchpad-card-badge">Proof + CAS ✓</span>
-                    </div>
-                    <div class="launchpad-card-title">Planck's Blackbody Radiation Law</div>
-                    <div class="launchpad-card-math">\(B_\nu(\nu, T) = \frac{2h\nu^3}{c^2} \frac{1}{e^{h\nu / k_B T} - 1}\)</div>
+                    </span>
+                    <span class="launchpad-card-title">Planck's Blackbody Radiation Law</span>
+                    <span class="launchpad-card-math">\(B_\nu(\nu, T) = \frac{2h\nu^3}{c^2} \frac{1}{e^{h\nu / k_B T} - 1}\)</span>
                 </button>
             </div>
         </div>

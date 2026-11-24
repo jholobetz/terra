@@ -165,6 +165,10 @@ class PhysicsController
             }
         }
 
+        if ($this->authService()->isProduction()) {
+            return 'https://physicslab.ca';
+        }
+
         return 'http://localhost:8000';
     }
 

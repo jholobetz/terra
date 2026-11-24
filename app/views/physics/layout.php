@@ -4,6 +4,17 @@ $metaDesc = !empty($meta_description) ? htmlspecialchars((string)$meta_descripti
 $canonicalHref = !empty($canonical_url) ? htmlspecialchars((string)$canonical_url, ENT_QUOTES, 'UTF-8') : '';
 $ogTypeVal = htmlspecialchars((string)($og_type ?? 'website'), ENT_QUOTES, 'UTF-8');
 $robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UTF-8') : '';
+$hoistedStyles = '';
+if (!empty($body_content) && is_string($body_content) && stripos($body_content, '<style') !== false) {
+    $body_content = preg_replace_callback(
+        '/<style\b[^>]*>.*?<\/style>/is',
+        static function (array $m) use (&$hoistedStyles): string {
+            $hoistedStyles .= "\n    " . $m[0];
+            return '';
+        },
+        $body_content
+    ) ?? $body_content;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +59,7 @@ $robotsVal = !empty($robots) ? htmlspecialchars((string)$robots, ENT_QUOTES, 'UT
         <?php foreach ($extra_css as $cssAsset): ?>
             <link rel="stylesheet" href="/css/<?= htmlspecialchars($cssAsset) ?>?v=<?= @filemtime(PROJECT_ROOT . '/public/css/' . $cssAsset) ?: 1 ?>">
         <?php endforeach; ?>
-    <?php endif; ?>
+    <?php endif; ?><?= $hoistedStyles ?>
 </head>
 <body class="physics-lab">
 

@@ -194,6 +194,7 @@ To graduate a subtopic from standard "legacy" to "platinum," it must pass these 
 * **MathJax Frequency & Rich Variable Density**: Every single paragraph of every graduated subtopic node—including purely conceptual, interpretive, or philosophical nodes—MUST contain at least **2 to 4 distinct inline MathJax expressions** (e.g. \( g_{\mu\nu} \), \( |\Psi^+\rangle \), \( \hat{H} \)) to eliminate visual "walls of text."
 * **Explicit Variable Coupling**: Never reference a physics field, parameter, coordinate, or concept purely by name if it has a standard symbol representation; couple it immediately to its mathematical symbol (e.g., writing "metric tensor \( g_{\mu\nu} \)" instead of just "the metric tensor").
 * **Word Count Cushion**: Standard subtopics must contain **650 to 1,000 words** of stripped prose (~800-950 raw words). Category Hub Overviews (`-overview` slugs) are targeted at **800 to 1,000 words**.
+* **Organic Cardinality (No Fixed-Count Templating)**: Never collapse OPS ranges into rigid, identical per-article quotas in batch or subagent authoring prompts (e.g., forcing every article in a batch to have *exactly* 7 formulas, 6 paragraphs, 10 links, or 6 citations). Let each subtopic's physical depth and mathematical structure determine its natural counts within the organic OPS bands (typically **4 to 10 canonical formulas**, **5 to 7 `<p>` paragraphs**, **6 to 12 outgoing links**, and **4 to 7 citations**).
 
 ### B. Topological Symmetries
 * Minimum of **5 outgoing links** to neighboring subtopics.

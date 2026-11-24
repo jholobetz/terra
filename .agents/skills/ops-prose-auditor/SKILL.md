@@ -25,6 +25,7 @@ Every subtopic article must satisfy the **Organic Platinum Standard (OPS)**:
 | **Variable Coupling** | Every physical parameter, coordinate, or operator must be coupled directly with its mathematical symbol on first mention (e.g. "metric tensor \( g_{\mu\nu} \)"). | Prose review |
 | **Word Count Cushion** | Standard subtopics: **650 to 1,000 words** of stripped prose (~800–950 raw words). Category Hub Overviews: **800 to 1,000 words**. | Word count excluding HTML tags |
 | **Topological Symmetries** | Minimum **5 outgoing links**, minimum **2 incoming links**, and minimum **1 cross-hub bridge** connecting to a completely different primary Pillar Hub. | Graph linker check |
+| **Organic Cardinality** | **No fixed-count templating.** Never force identical counts across a batch (e.g. *always* 7 formulas or 6 paragraphs). Let each topic's physics dictate its natural shape within organic ranges (**4–10 canonical formulas**, **5–7 paragraphs**, **6–12 outgoing links**, **4–7 citations**). | Batch & prose review |
 
 ---
 
